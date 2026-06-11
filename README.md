@@ -32,6 +32,7 @@ engine, RTX 3070 8GB.
 | Decode speed (fast stack) | 675 → **21.6 ms/token** (31×), parity-gated |
 | Deferred librarian | 42 turns: hot path **0.27s max, flat** (inline spikes 3-9s); folds drain in idle(); recall 8/8 unchanged |
 | Fidelity-gated folding | a fold keeping <70% of source FACTS aborts; sources stay resident (no_fold, persisted) — recall > compression |
+| GQA arena (Qwen3-4B) | round-1 port 6/6 = MLA parity; full-key re-RoPE surgery, layer-0 \|q.k\| router, bounded residency |
 
 ## Layout
 
@@ -98,5 +99,7 @@ answer, info = repo.chat("What port does the ingest replacement use?")
   score order favors digests over verbatim turns — refuted).
 - Librarian: deferred mode keeps the hot path flat (folds drain between
   turns); true background-mission offload planned.
-- GQA (Qwen3) arena port. (VRAM paging: DONE — LRU write-back pager,
-  100 docs at a 64MB budget, 20/20.)
+- GQA (Qwen3) arena port: round 1 DONE (arena surgery + layer-0 router,
+  6/6). Remaining: ladder/trips/consolidation + repository persistence on
+  GQA, dialect-adapter unification. (VRAM paging: DONE — LRU write-back
+  pager, 100 docs at a 64MB budget, 20/20.)

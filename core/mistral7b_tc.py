@@ -325,8 +325,16 @@ class GQAAttentionTC:
         Sg = getattr(self, "graft_seats", 0)
         if kg_pre is not None:
             Sg = kg_pre.shape[2]
-        cseg = cos.slice(0, position_offset + Sg, L)
-        sseg = sin.slice(0, position_offset + Sg, L)
+        # Arena mode (live_shift set): live positions shift by the FIXED
+        # sink+arena width — mounts occupy a PREFIX of the arena and the
+        # unused remainder is a positional hole, so swapping mounts never
+        # moves live tokens (same law as MLAAttentionTC). Without
+        # live_shift: legacy behavior, shift = mount size.
+        shift = getattr(self, "live_shift", None)
+        if shift is None:
+            shift = Sg
+        cseg = cos.slice(0, position_offset + shift, L)
+        sseg = sin.slice(0, position_offset + shift, L)
         q = F.apply_rotary(q, cseg, sseg)
         k = F.apply_rotary(k, cseg, sseg)
 
