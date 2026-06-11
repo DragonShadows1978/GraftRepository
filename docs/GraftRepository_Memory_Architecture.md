@@ -43,6 +43,7 @@ What it kills, for the consumer and the agent alike:
 | Corpus scale + sibling confusability (CORPUS-100) | **PASSED 2026-06-10: 20/20** | 100 chunks = 10 families × 10 near-duplicate siblings (codes differ), 20 identifier-keyed probes, 416MB device grafts, 50KB index, 1.3s/probe. Took FOUR measured fixes: latent-only routing 4/20 @1 (centroids can't separate siblings) → +LEXICAL channel (probe identifier tokens vs source rare-tokens, exact match dominates) 20/20 routing; co-mounted siblings collapse reads (16/20) → PRECISE-MOUNT (identifier query = point lookup, mount rank-1 alone); live-window echo of the previous same-family Q&A beats the mounted doc and repeats across same-window retries → CLEAN-ROOM trip (fresh mini-cache); ladder order = precise → clean → siblings for identifier queries. End recall **20/20** |
 | EPHEMERAL BOAT — effectively infinite context | **BUILT + MEASURED 2026-06-10** | Live cache cleared at the START of every turn: each turn runs on [sink | mounts | turn] alone; recency = last-2 turn-grafts AS MOUNTS (anaphora "And what time exactly?" → 10:30, verified). 42-turn history at ≤456 resident seats FLAT (transcript would be 2,300+ and growing); the live-window echo failure class structurally eliminated. Era-fold recall is the open item (descent fix planned) |
 | VRAM paging + retrieval hygiene | **PASSED 2026-06-11** | 100 docs at a 64MB device budget: 20/20 recall (= unbudgeted), residency pinned ~66MB, 20 page-ins through cold storage, +0.1s/probe. Pager = LRU over last-MOUNTED, write-back before spill. Hygiene: a turn adding NO identifier tokens beyond mounts+question is DERIVATIVE (kind=recall) — kept for recency/anaphora, excluded from routing and folding (deposited Q&A turns were style attractors and folded into answer-mixing digests). Recency joins TOPICAL attempts only: for point lookups the previous turn IS the echo source |
+| DEFERRED LIBRARIAN + FIDELITY-GATED FOLDING | **PASSED 2026-06-11** | `librarian_mode="deferred"`: the hot path NEVER folds — add_turn deposits and plans only (stateless `_due()`); folds drain in `idle()` between turns (9 folds ~3.9s each, off-turn). 42-turn gate: max add_turn **0.27s FLAT** (inline spikes 3-9s at thresholds); recall 8/8 = inline reference; backpressure folds inline only at 2x threshold counting FOLDABLE turns (counting fold-exempt turns re-fired aborting folds — 9.17s spike, measured). FIDELITY GATE on EVERY fold: fact set = identifier tokens + multi-word named entities; the best candidate must cover >=0.70 of it or the fold ABORTS and sources are marked `no_fold` (persisted), permanently resident — root cause: a digest dropped "$7,400"+"Lake Arrowhead" at GENERATION; the facts then existed in NO node text -> unroutable, unrecoverable (**recall > compression**). Calibration is load-bearing: counting single capitalized words as facts exempted 28/34 turns — compression dead. TWO plausible "improvements" tested and REFUTED (8/8 -> 5-6/8): (1) exempting ERA folds from the gate ("eras are index nodes, never read") — folding RETIRES the children's individual routing surfaces and era expansion is BUDGET-BOUND: fit() truncated the 300-token child set in index order and dropped the one fact-bearing digest, making the era's own subtree unreachable; (2) score-ordered fit() truncation — max-over-child-cents inflates digest scores over verbatim turns, so "relevance" order kept prose digests and dropped raw fact turns. Regressions green: E4-C 6/6, CORPUS-100 20/20, trips 6/6, arena 6/6, paging 20/20, resume **7/7** — the no-identifier offsite residual CLEARED (fidelity-gated digests name their referents) |
 | PERSISTENT ARENA (swap/evict as cache surgery) | **BUILT + PASSED 2026-06-10** | E4-arena: 6/6 on ONE never-rebuilt cache through 20 turns, 6 routed swaps, per-turn evictions. Seating [SINK 6 | ARENA 256 | LIVE ~130]; residency 268-316 seats flat. live_shift = fixed arena width (decoupled from mount size); mounts occupy an arena prefix, remainder is a positional hole; MLA swap re-RoPEs only the 32-d k_pe |
 
 Key vocabulary carried forward: **seats** = position range inside the trained
@@ -412,8 +413,33 @@ diverse-token validation, doors ledger from day one.
   QC on ALL folds) — era-folded 42-turn gate 6/8 -> 8/8, infinite gate
   8/8 incl. anaphora; era folding back DEFAULT-ON (safe by construction:
   eras route, never read).
-  Remaining: librarian as a BACKGROUND AtlasForge mission (the cold path),
-  graph edges beyond lineage (contradiction / don't-co-seat).
+  DEFERRED LIBRARIAN + FIDELITY GATE (2026-06-11): `librarian_mode=
+  "deferred"` moves ALL folding off the hot path — add_turn deposits and
+  plans only (stateless `_due()`); `idle()` drains fold jobs between
+  turns; backpressure folds inline only when FOLDABLE turns reach 2x the
+  threshold (counting fold-exempt turns re-fired aborting folds every
+  turn — 9.17s hot-path spike, measured and fixed). 42-turn gate: max
+  add_turn 0.27s FLAT, recall 8/8 = inline reference. Every fold is
+  FIDELITY-GATED: the fold's fact set = identifier tokens + multi-word
+  named entities (single incidental caps are NOT facts — counting them
+  exempted 28/34 turns, compression dead); the best QC'd candidate must
+  cover >=0.70 or the fold ABORTS and its sources are marked no_fold
+  (persisted) and stay resident: recall > compression. Root cause: a
+  digest dropped "$7,400"+"Lake Arrowhead" at generation — the facts then
+  existed in NO node text, unroutable and unrecoverable. Era folds are
+  gated TOO — the exemption ("eras are index nodes, never read; lexical
+  keys are inherited") was tested and REFUTED (8/8 -> 5/8): folding
+  retires the children's individual routing surfaces, and era expansion
+  is budget-bound — fit() truncated the ~300-token child set in index
+  order and dropped exactly the fact-bearing digest. A second refuted
+  fix: score-ordered fit() truncation (8/8 -> 6/8) — max-over-child-cents
+  inflates digest scores over verbatim turns, so "relevance" order kept
+  prose and dropped facts. Relevance-aware truncation needs a leaf bias;
+  board item.
+  Remaining: librarian as a true BACKGROUND AtlasForge mission (deferred
+  mode is in-process between turns; one GPU means folds still borrow idle
+  time), graph edges beyond lineage (contradiction / don't-co-seat),
+  leaf-biased relevance truncation in fit().
 - **Phase 4 — persistence + product shape.** STATUS 2026-06-10: CORE DONE —
   repository directory (manifest.json + index.npz + nodes/NNNN.npz fp16),
   dialect wall enforced at load, route-layer guard, descent keys rebuilt

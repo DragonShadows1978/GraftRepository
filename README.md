@@ -27,9 +27,11 @@ engine, RTX 3070 8GB.
 | Consolidation (E4-C) | 6/6 through QC'd digest grafts; routing pool 14→8 |
 | Shuttling | 1-mount arena + grounded trips = 3-mount arena (6/6) |
 | CORPUS-100 | 20/20 against 100 near-duplicate docs; 50KB index; 1.3s/probe |
-| Cross-session resume | fresh process, 6/7 from disk artifacts alone (24.9MB) |
+| Cross-session resume | fresh process, **7/7** from disk artifacts alone (26.4MB) — fidelity-gated digests cleared the offsite residual |
 | Ephemeral boat ("infinite context") | 42-turn history at ≤456 resident seats, flat, 8/8 recall incl. era-folded facts + anaphora |
 | Decode speed (fast stack) | 675 → **21.6 ms/token** (31×), parity-gated |
+| Deferred librarian | 42 turns: hot path **0.27s max, flat** (inline spikes 3-9s); folds drain in idle(); recall 8/8 unchanged |
+| Fidelity-gated folding | a fold keeping <70% of source FACTS aborts; sources stay resident (no_fold, persisted) — recall > compression |
 
 ## Layout
 
@@ -85,12 +87,16 @@ answer, info = repo.chat("What port does the ingest replacement use?")
 
 ## Known open items
 
-- Era folding is DEFAULT-ON and safe by construction: eras are index
-  nodes (routed into, never read — the ladder expands them to child
-  digests at the primary attempt); relational first-gen digests + descent
-  took the era-folded 42-turn gate 3/8 → 8/8.
-- Topical routing between sibling digests (no-identifier probes) is the
-  one routing soft spot.
-- Librarian runs in-process; background-mission offload planned.
+- Era folding is DEFAULT-ON and fidelity-gated like every fold: an era
+  whose chronicle can't cover its children's facts ABORTS and the digests
+  stay directly routable. Exempting eras ("index nodes, never read") was
+  tested and refuted — folding retires the children's routing surfaces
+  and era expansion is budget-bound.
+- Topical routing between sibling digests (no-identifier probes) was the
+  one routing soft spot; the resume-gate instance cleared with
+  fidelity-gated digests. fit() truncation stays expansion-ordered (naive
+  score order favors digests over verbatim turns — refuted).
+- Librarian: deferred mode keeps the hot path flat (folds drain between
+  turns); true background-mission offload planned.
 - GQA (Qwen3) arena port. (VRAM paging: DONE — LRU write-back pager,
   100 docs at a 64MB budget, 20/20.)

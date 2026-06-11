@@ -142,25 +142,25 @@ class ArenaCache:
         # so +1 per full match wins outright, partial matches rank between.
         qrare = self._rare_tokens(bare_text)
 
-        def score(g):
-            # hierarchical descent: a digest node answers for its retired
-            # children — score by the best of its own centroid and theirs
-            # (a multi-topic digest's own centroid is diluted; the child
-            # keys keep it addressable per topic)
-            s = float(np.dot(p, g["cent"]))
-            for ch in g.get("child_cents", ()):
-                s = max(s, float(np.dot(p, ch)))
-            if qrare:
-                if "rare" not in g:
-                    g["rare"] = self._rare_tokens(g["text"])
-                s += len(qrare & g["rare"]) / len(qrare)
-            return s
-
         cand = [i for i in range(len(self.grafts))
                 if i not in exclude and not self.grafts[i].get("retired")
                 and self.grafts[i].get("kind", "turn") != "recall"]
-        cand.sort(key=lambda i: -score(self.grafts[i]))
+        cand.sort(key=lambda i: -self._node_score(p, qrare, self.grafts[i]))
         return cand                               # full ranking, best first
+
+    def _node_score(self, p, qrare, g):
+        # hierarchical descent: a digest node answers for its retired
+        # children — score by the best of its own centroid and theirs
+        # (a multi-topic digest's own centroid is diluted; the child
+        # keys keep it addressable per topic)
+        s = float(np.dot(p, g["cent"]))
+        for ch in g.get("child_cents", ()):
+            s = max(s, float(np.dot(p, ch)))
+        if qrare:
+            if "rare" not in g:
+                g["rare"] = self._rare_tokens(g["text"])
+            s += len(qrare & g["rare"]) / len(qrare)
+        return s
 
     # ------------------------------------------------------------ librarian
     # Mounted DIALOGUE turns pull generation into conversation mode — the
@@ -252,6 +252,41 @@ class ArenaCache:
                     return False
         return True
 
+    # consolidation fidelity bar: a fold whose best candidate covers fewer
+    # than this fraction of the sources' FACTS is ABORTED — a lossy digest
+    # is worse than no digest (the unfolded turns are clean readers AND
+    # clean topical routers; a drifted digest poisons both — measured
+    # 2026-06-11: a {5-8} digest dropped $7,400 + Lake Arrowhead, then
+    # folded into an era, and the facts existed in no node's text or
+    # centroid -> unroutable, unrecoverable).
+    MIN_FOLD_KEEP = 0.70
+    _FACT_STOP = {"user", "assistant", "noted", "heads", "the", "i", "archive",
+                  "note", "chronicle", "logged", "okay", "for", "in", "this",
+                  "project", "small", "update", "still", "true", "that"}
+
+    @classmethod
+    def _fact_set(cls, texts):
+        """The verbatim payload a fold MUST keep: IDENTIFIERS (digit/ALLCAPS
+        — 7,400, BX-44, NIGHTJAR) plus MULTI-WORD named entities (>=2
+        consecutive capitalized words — Lake Arrowhead, Priya Raghunathan).
+        Single incidental caps (Thursday, Tuesday) are NOT facts — counting
+        them made chatty turns look fact-dense and over-aborted folds
+        (2026-06-11: 28/34 turns exempted, compression dead)."""
+        out = set()
+        for t in texts:
+            out |= cls._rare_tokens(t)
+            for m in re.finditer(r"(?:[A-Z][\w\-]+\s+){1,}[A-Z][\w\-]+", t):
+                for w in m.group(0).split():
+                    out.add(w.lower().strip(".,;:"))
+        return out - cls._FACT_STOP
+
+    @classmethod
+    def _coverage(cls, text, need):
+        if not need:
+            return 1.0
+        have = cls._rare_tokens(text) | cls._caps_tokens(text, False)
+        return len(need & have) / len(need)
+
     def consolidate(self, idxs, ngen=120):
         """Phase-2 seat compression: mount the given grafts, generate ONE
         QC'd digest (E2-validated verbatim-preservation prompt), deposit it
@@ -271,8 +306,9 @@ class ArenaCache:
         srcs = [self.grafts[i]["text"] for i in idxs]
         deep = any(self.grafts[i].get("kind", "turn") != "turn" for i in idxs)
         prompts = self.ERA_PROMPTS if deep else self.DIGEST_PROMPTS
+        need = self._fact_set(srcs)
         try:
-            text, best, best_keep = None, None, -1.0
+            text, best, best_cov = None, None, -1.0
             for prompt in prompts:
                 primer = prompt.rsplit("Assistant:", 1)[1]
                 ids = self.encode(prompt)
@@ -293,19 +329,30 @@ class ArenaCache:
                     if stop in t:
                         t = t.split(stop)[0]
                 t = t.strip()
-                if self._digest_qc(t, srcs, forbid_lists=True):
+                if not self._digest_qc(t, None, forbid_lists=True):
+                    continue
+                cov = self._coverage(t, need)
+                if cov > best_cov:
+                    best, best_cov = t, cov
+                if cov >= self.MIN_FOLD_KEEP:
                     text = t
                     break
-                need = set()
-                for s in srcs:
-                    need |= self._rare_tokens(s)
-                keep = (len(need & self._rare_tokens(t)) / len(need)) if need else 0.0
-                if keep > best_keep:
-                    best, best_keep = t, keep
             if text is None:
-                text = best   # no attempt passed QC — keep the best keeper
+                text = best
         finally:
             kv_graft.clear_injection(self.m)
+        # FIDELITY GATE: abort the fold if no candidate kept the facts —
+        # the caller keeps the sources unfolded (recall > compression).
+        # This applies to ERA folds too — tested and REFUTED 2026-06-11:
+        # exempting eras ("index nodes, never read; lexical keys are
+        # inherited") dropped the 42-turn gates 8/8 -> 5/8. Folding RETIRES
+        # the children's individual routing surfaces, and era expansion is
+        # budget-bound — fit() truncated the 300-token child set and the
+        # one fact-bearing digest was the one dropped. An era over
+        # fact-dense digests can make its own subtree unreachable; the
+        # coverage bar keeps such digests directly routable instead.
+        if text is None or best_cov < self.MIN_FOLD_KEEP:
+            return None, None
         note = f"ARCHIVE NOTE. {text}\n"
         didx = self.deposit(note)
         self.grafts[didx]["kind"] = "digest"
@@ -570,6 +617,12 @@ class ArenaCache:
             return out
 
         def fit(picks):
+            # truncation is EXPANSION-ORDERED, deliberately. Score-ordered
+            # truncation was tried and REFUTED (2026-06-11, 6/8): max-over-
+            # child-cents inflates digest scores over verbatim turns, so
+            # "relevance" order kept prose digests and dropped the raw fact
+            # turns inside budget-bound expansions. A workable version
+            # needs a leaf bias — board item, not a one-liner.
             budget = self.width - sum(self.grafts[i]["ntok"] for i in rec)
             out, used = [], 0
             for i in picks:

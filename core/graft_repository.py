@@ -53,13 +53,20 @@ class GraftRepository:
     DIGESTS_HIGH, DIGESTS_FOLD = 6, 3
 
     def __init__(self, model, encode, decode, path, autosave=True,
-                 vram_budget_mb=None, **arena_kw):
+                 vram_budget_mb=None, librarian_mode="inline", **arena_kw):
         self.path = path
         self.autosave = autosave
         # device-byte budget for node tensors; least-recently-MOUNTED saved
         # nodes spill to cold storage above it (node_loader reloads on
         # demand — the descent machinery). None = unbounded.
         self.vram_budget = vram_budget_mb * 1024 * 1024 if vram_budget_mb else None
+        # "inline": folds run inside chat/add_turn when thresholds trip
+        # (simple; a fold stalls that turn ~3s). "deferred": the hot path
+        # NEVER folds — due work is computed statelessly and executed by
+        # idle() between turns (host loop / background mission drives it);
+        # a 2x backpressure threshold folds inline only as a last resort.
+        # One GPU = no true concurrency: background means BETWEEN turns.
+        self.librarian_mode = librarian_mode
         self.arena = ArenaCache(model, encode, decode, **arena_kw)
         cfg = model.config
         self.dialect = (f"{type(model).__name__}:{cfg.num_layers}"
@@ -101,20 +108,67 @@ class GraftRepository:
                 if not g.get("retired") and i not in live
                 and g.get("kind", "turn") in kinds]
 
-    def _librarian(self):
-        """Threshold-triggered consolidation. Documents are never folded —
-        they are reference material, not history."""
-        turns = self._active(("turn",))
+    def _due(self):
+        """Stateless fold plan. Documents are never folded — they are
+        reference material, not history. Fold-exempt nodes (a prior fidelity
+        abort) drop out so the window advances instead of looping."""
+        ok = lambda i: not self.arena.grafts[i].get("no_fold")
+        jobs = []
+        turns = [i for i in self._active(("turn",)) if ok(i)]
         if len(turns) >= self.TURNS_HIGH:
-            didx, _ = self.arena.consolidate(turns[:self.TURNS_FOLD])
-            self.arena.grafts[didx]["kind"] = "digest"
-            self._free_retired()
+            jobs.append(("digest", turns[:self.TURNS_FOLD]))
         if self.DIGESTS_HIGH:
-            digests = self._active(("digest",))
+            digests = [i for i in self._active(("digest",)) if ok(i)]
             if len(digests) >= self.DIGESTS_HIGH:
-                eidx, _ = self.arena.consolidate(digests[:self.DIGESTS_FOLD])
-                self.arena.grafts[eidx]["kind"] = "era"
-                self._free_retired()
+                jobs.append(("era", digests[:self.DIGESTS_FOLD]))
+        return jobs
+
+    def fold_pending(self):
+        return len(self._due())
+
+    def _fold_once(self):
+        jobs = self._due()
+        if not jobs:
+            return False
+        kind, idxs = jobs[0]
+        didx, _ = self.arena.consolidate(idxs)
+        if didx is None:
+            # fidelity abort: keep these sources unfolded (clean readers and
+            # routers), exempt them so the planner moves to another window.
+            self.folds_aborted = getattr(self, "folds_aborted", 0) + 1
+            for i in idxs:
+                self.arena.grafts[i]["no_fold"] = True
+            return True
+        self.arena.grafts[didx]["kind"] = kind
+        self._free_retired()
+        return True
+
+    def idle(self, max_jobs=1):
+        """Run deferred librarian work; call between turns or when the
+        conversation is quiet. Returns folds executed."""
+        done = 0
+        while done < max_jobs and self._fold_once():
+            done += 1
+        if done:
+            if self.autosave:
+                self.save()
+            self._page()
+        return done
+
+    def _librarian(self):
+        if self.librarian_mode == "inline":
+            while self._fold_once():
+                pass
+        else:
+            # deferred: backpressure only — bound the active pool if the
+            # host never grants idle time. Count FOLDABLE turns (exempt
+            # ones from a fidelity abort are permanently resident and must
+            # NOT re-trigger inline folds that would just abort again — the
+            # 9s hot-path spike, measured 2026-06-11).
+            foldable = sum(1 for i in self._active(("turn",))
+                           if not self.arena.grafts[i].get("no_fold"))
+            if foldable >= self.TURNS_HIGH * 2:
+                self._fold_once()
 
     def _node_bytes(self, g):
         # (c 256 + kpe 32) vals/token/layer, fp16
@@ -182,6 +236,7 @@ class GraftRepository:
                           "text": g["text"], "ntok": g["ntok"],
                           "sources": g.get("sources", []),
                           "retired": bool(g.get("retired")),
+                          "no_fold": bool(g.get("no_fold")),
                           "tags": g.get("tags", []),
                           "rare": sorted(g["rare"])})
         cents = np.stack([g["cent"] for g in self.arena.grafts]) \
@@ -211,6 +266,7 @@ class GraftRepository:
         for i, n in enumerate(man["nodes"]):
             g = {"kind": n["kind"], "text": n["text"], "ntok": n["ntok"],
                  "sources": n["sources"], "retired": n["retired"],
+                 "no_fold": n.get("no_fold", False),
                  "tags": n["tags"], "rare": set(n["rare"]),
                  "cent": cents[i].astype(np.float32), "saved": True, "h": None}
             if not n["retired"]:
@@ -238,4 +294,7 @@ class GraftRepository:
         return {"nodes": len(self.arena.grafts), "kinds": kinds,
                 "active_device": len(dev),
                 "device_mb": round(sum(self._node_bytes(g) for g in dev) / 1e6),
-                "page_ins": getattr(self.arena, "page_ins", 0)}
+                "page_ins": getattr(self.arena, "page_ins", 0),
+                "folds_aborted": getattr(self, "folds_aborted", 0),
+                "no_fold": sum(1 for g in self.arena.grafts
+                               if g.get("no_fold"))}
