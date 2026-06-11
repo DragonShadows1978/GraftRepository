@@ -33,6 +33,7 @@ engine, RTX 3070 8GB.
 | Deferred librarian | 42 turns: hot path **0.27s max, flat** (inline spikes 3-9s); folds drain in idle(); recall 8/8 unchanged |
 | Fidelity-gated folding | a fold keeping <70% of source FACTS aborts; sources stay resident (no_fold, persisted) — recall > compression |
 | GQA arena (Qwen3-4B) | round-1 port 6/6 = MLA parity; full-key re-RoPE surgery, layer-0 \|q.k\| router, bounded residency |
+| GQA port unified | dialect-surface ArenaCache: MLA suite preserved bit-identical; GQA arena 6/6, trips 6/6, E4-C recall 6/6; early-stop decoding (reasoning-leak style attractor killed, 0/6 -> 6/6) |
 
 ## Layout
 
