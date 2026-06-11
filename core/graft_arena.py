@@ -157,7 +157,8 @@ class ArenaCache:
             return s
 
         cand = [i for i in range(len(self.grafts))
-                if i not in exclude and not self.grafts[i].get("retired")]
+                if i not in exclude and not self.grafts[i].get("retired")
+                and self.grafts[i].get("kind", "turn") != "recall"]
         cand.sort(key=lambda i: -score(self.grafts[i]))
         return cand                               # full ranking, best first
 
@@ -330,13 +331,18 @@ class ArenaCache:
     # ------------------------------------------------------------ cache ops
     def _ensure_h(self, idxs):
         """Re-load freed/retired nodes from cold storage before mounting
-        (descent re-mounts children whose VRAM was reclaimed)."""
+        (descent re-mounts children whose VRAM was reclaimed; the pager
+        frees least-recently-mounted nodes). Touches the LRU clock."""
+        self.mount_clock = getattr(self, "mount_clock", 0) + 1
         for i in idxs:
-            if self.grafts[i].get("h") is None:
+            g = self.grafts[i]
+            g["last_used"] = self.mount_clock
+            if g.get("h") is None:
                 if self.node_loader is None:
                     raise RuntimeError(f"graft {i} has no tensors and no "
                                        f"node_loader is set")
-                self.grafts[i]["h"] = self.node_loader(i)
+                g["h"] = self.node_loader(i)
+                self.page_ins = getattr(self, "page_ins", 0) + 1
 
     def _graft_block(self, picks, li):
         """Arena-slice tensors for layer li: latent as-is (position-free),
@@ -502,7 +508,7 @@ class ArenaCache:
             self.cur_mounts, self.cur_mount_n = [], 0
             turns = [i for i, g in enumerate(self.grafts)
                      if not g.get("retired")
-                     and g.get("kind", "turn") == "turn"]
+                     and g.get("kind", "turn") in ("turn", "recall")]
             rec = turns[-self.recency_mounts:] if self.recency_mounts else []
         # exclude turns already present (live window / recency mounts)
         live_idx = {g for g, _ in self.live_segs if g is not None} | set(rec)
@@ -605,7 +611,12 @@ class ArenaCache:
                 # a zero-length live tail (engine slice/cat edge case)
                 self.caches, self.pos, self.live_segs = None, 0, []
                 self.cur_mounts, self.cur_mount_n = [], 0
-            mset = sorted(set(rec) | set(picks))
+            # recency joins topical attempts only: identifier-precise
+            # attempts and clean rooms are point lookups, and the previous
+            # turn IS the echo source (ephemeral corpus gate: wrong-sibling
+            # echoes rode the recency mount through every retry)
+            use_rec = rec and not clean and picks != precise
+            mset = sorted(set(rec) | set(picks)) if use_rec else sorted(set(picks))
             txt, info = self._attempt(user_text, mset, ngen, deposit, stops)
             info["trip"] = trip
             if clean:
@@ -660,6 +671,21 @@ class ArenaCache:
             # any post-stop tail) — the cache is the source of truth
             gidx = (self.deposit_from_cache(turn_text, seg_start_ntok + len(out))
                     if self.cache_deposits else self.deposit(turn_text))
+            if picks:
+                # retrieval hygiene: a turn that adds NO identifier tokens
+                # beyond its mounts and question is DERIVATIVE — keep it
+                # for recency/anaphora, exclude from routing and folding
+                # (deposited Q&A turns are style attractors and fold into
+                # answer-mixing digests — measured twice)
+                new_rare = (self._rare_tokens(turn_text)
+                            - self._rare_tokens(user_text))
+                for i in picks:
+                    g = self.grafts[i]
+                    if "rare" not in g:
+                        g["rare"] = self._rare_tokens(g["text"])
+                    new_rare -= g["rare"]
+                if not new_rare:
+                    self.grafts[gidx]["kind"] = "recall"
         self.live_segs.append((gidx, seg_start_ntok + len(out)))
         evicted = self.evict()
         S = self.caches[0][0].shape[1]

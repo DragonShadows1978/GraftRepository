@@ -52,9 +52,14 @@ class GraftRepository:
     TURNS_HIGH, TURNS_FOLD = 8, 4
     DIGESTS_HIGH, DIGESTS_FOLD = 6, 3
 
-    def __init__(self, model, encode, decode, path, autosave=True, **arena_kw):
+    def __init__(self, model, encode, decode, path, autosave=True,
+                 vram_budget_mb=None, **arena_kw):
         self.path = path
         self.autosave = autosave
+        # device-byte budget for node tensors; least-recently-MOUNTED saved
+        # nodes spill to cold storage above it (node_loader reloads on
+        # demand — the descent machinery). None = unbounded.
+        self.vram_budget = vram_budget_mb * 1024 * 1024 if vram_budget_mb else None
         self.arena = ArenaCache(model, encode, decode, **arena_kw)
         cfg = model.config
         self.dialect = (f"{type(model).__name__}:{cfg.num_layers}"
@@ -72,18 +77,21 @@ class GraftRepository:
         self._librarian()
         if self.autosave:
             self.save()
+        self._page()
         return ans, info
 
     def add_turn(self, user, assistant):
         """Deposit an already-complete turn (scripted or externally run)."""
         self.arena.feed(f"User: {user}\nAssistant: {assistant}\n")
         self._librarian()
+        self._page()
 
     def add_document(self, text, tags=()):
         idx = self.arena.deposit(text)
         g = self.arena.grafts[idx]
         g["kind"] = "doc"
         g["tags"] = list(tags)
+        self._page()
         return idx
 
     # ---------------------------------------------------------- librarian
@@ -107,6 +115,33 @@ class GraftRepository:
                 eidx, _ = self.arena.consolidate(digests[:self.DIGESTS_FOLD])
                 self.arena.grafts[eidx]["kind"] = "era"
                 self._free_retired()
+
+    def _node_bytes(self, g):
+        # (c 256 + kpe 32) vals/token/layer, fp16
+        return g["ntok"] * 288 * 2 * len(self.arena.m.layers)
+
+    def _page(self):
+        """Spill least-recently-mounted node tensors above the VRAM budget.
+        Only saved nodes spill (disk must hold them); unsaved nodes are
+        saved first when autosave is off would be unsafe — they just stay
+        resident until the next save()."""
+        if self.vram_budget is None:
+            return 0
+        resident = [g for g in self.arena.grafts if g.get("h") is not None]
+        if (sum(self._node_bytes(g) for g in resident) > self.vram_budget
+                and any(not g.get("saved") for g in resident)):
+            self.save()        # spill is a write-back; disk must hold it
+        live = [(g.get("last_used", 0), g) for g in self.arena.grafts
+                if g.get("h") is not None and g.get("saved")]
+        used = sum(self._node_bytes(g) for _, g in live)
+        freed = 0
+        for _, g in sorted(live, key=lambda x: x[0]):
+            if used <= self.vram_budget:
+                break
+            used -= self._node_bytes(g)
+            g["h"] = None
+            freed += 1
+        return freed
 
     def _free_retired(self):
         """Retired nodes leave VRAM; disk is their cold storage."""
@@ -199,6 +234,8 @@ class GraftRepository:
         for g in self.arena.grafts:
             k = ("retired " if g.get("retired") else "") + g.get("kind", "turn")
             kinds[k] = kinds.get(k, 0) + 1
+        dev = [g for g in self.arena.grafts if g.get("h") is not None]
         return {"nodes": len(self.arena.grafts), "kinds": kinds,
-                "active_device": sum(1 for g in self.arena.grafts
-                                     if g.get("h") is not None)}
+                "active_device": len(dev),
+                "device_mb": round(sum(self._node_bytes(g) for g in dev) / 1e6),
+                "page_ins": getattr(self.arena, "page_ins", 0)}
