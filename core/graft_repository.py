@@ -43,15 +43,14 @@ from core.mistral7b_tc import BlockTC, tc
 class GraftRepository:
     # librarian thresholds: consolidate when this many ACTIVE nodes of a
     # kind are older than the live window; how many to fold per pass.
-    # ERA FOLDING DEFAULT-OFF (DIGESTS_HIGH=None): measured 2026-06-10,
-    # neither digest-of-digest form works at 4B — list-style eras STRIP
-    # relations (probes bleed across facts), chronicle-prose eras INVENT
-    # them ("NIGHTJAR was conducted by Priya" — fact fusion). The right
-    # mechanism is DESCENT: route into the era, re-mount its child digests
-    # on grounding failure — not yet implemented. Digests are ~100 tokens;
-    # letting them accumulate is cheap and validated (E4-C 6/6).
+    # Era folding is ON and safe BY CONSTRUCTION: eras are INDEX nodes —
+    # the trips ladder expands them to their child digests at the primary
+    # attempt, so era text is routed into but never read (2026-06-10 it
+    # was read, and both list-form and prose-form era texts corrupted
+    # relations; descent + relational first-gen digests took the
+    # era-folded 42-turn gate from 3/8 to 8/8).
     TURNS_HIGH, TURNS_FOLD = 8, 4
-    DIGESTS_HIGH, DIGESTS_FOLD = None, 3
+    DIGESTS_HIGH, DIGESTS_FOLD = 6, 3
 
     def __init__(self, model, encode, decode, path, autosave=True, **arena_kw):
         self.path = path

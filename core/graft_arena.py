@@ -166,15 +166,24 @@ class ArenaCache:
     # model acknowledges the request ("I'll create an archive note...")
     # instead of executing it (E4-C round 1: 0/6, both digests fact-free
     # while routing worked). The primed prefix forces content mode.
+    # First-gen folds (turn sources). RELATIONAL SENTENCES required: a
+    # bare-bullet "- Priya Raghunathan" keeps the token but loses the
+    # relation ("backend hire"), and probes traverse relations (E2:
+    # narrative 7/7 vs list 1/3; both era-mode misses traced to bare
+    # bullets). Primers force content mode past the acknowledgment trap
+    # AND start mid-sentence so the continuation is prose, not a list.
     DIGEST_PROMPTS = (
+        "User: For the archive, restate every fact from the conversation "
+        "above as a complete sentence that says what each name, code, "
+        "number, and time refers to.\n"
+        "Assistant: For the archive: the",
+        "User: Write a brief archive note covering everything above in "
+        "complete sentences, preserving every name, code, number, and "
+        "time verbatim and stating what each one refers to.\n"
+        "Assistant: ARCHIVE NOTE — The conversation established that the",
         "User: List every fact from the conversation above: every name, "
         "code, number, and time, and what each one refers to.\n"
         "Assistant: The facts to archive are:",
-        "User: Write a brief archive note covering everything above, "
-        "preserving every name, code, number, and time verbatim.\n"
-        "Assistant: ARCHIVE NOTE —",
-        "User: Repeat every name, code, number, and time mentioned above, "
-        "each with what it refers to.\nAssistant: 1.",
     )
     # Depth>=1 folds (digests/eras as sources) MUST produce SENTENCES: an
     # era built list-style strips relations (E2: lists retrieve 1/3 vs
@@ -283,7 +292,7 @@ class ArenaCache:
                     if stop in t:
                         t = t.split(stop)[0]
                 t = t.strip()
-                if self._digest_qc(t, srcs, forbid_lists=deep):
+                if self._digest_qc(t, srcs, forbid_lists=True):
                     text = t
                     break
                 need = set()
