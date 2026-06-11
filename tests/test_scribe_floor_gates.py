@@ -166,13 +166,27 @@ for doc in docs:
     pred = predict_graft(ids)
     v = pred[44]["c"][0].astype(np.float32).mean(0)
     keys_pr.append(v / (np.linalg.norm(v) + 1e-8))
-hits = {"exact": [0, 0], "pred": [0, 0]}
+# CENTERED routing (2026-06-11 diagnostic): warm-trained predictions
+# carry a dominant shared-mean component (variance collapse, pred-pred
+# cos 0.989); centering probe and node keys on their populations exposes
+# the doc signal (margin 0.009 -> 0.263, measured). Applied to BOTH arms.
+KE, KP = np.stack(keys_ex), np.stack(keys_pr)
+KE = KE - KE.mean(0); KP = KP - KP.mean(0)
+keys_ex = [k / (np.linalg.norm(k) + 1e-9) for k in KE]
+keys_pr = [k / (np.linalg.norm(k) + 1e-9) for k in KP]
+probe_keys = []
 for i, code in enumerate(codes):
     q = f"What unit code does the {TOPICS[i]} carry?"
     pl = kv_graft.harvest_kv_mla(m, tok.encode(q).ids, layer_filter={44},
                                  max_layers=45)
     p = pl[44]["c"][0].astype(np.float32).mean(0)
-    p /= (np.linalg.norm(p) + 1e-8)
+    probe_keys.append(p / (np.linalg.norm(p) + 1e-8))
+PK = np.stack(probe_keys)
+PK = PK - PK.mean(0)
+probe_keys = [p / (np.linalg.norm(p) + 1e-9) for p in PK]
+hits = {"exact": [0, 0], "pred": [0, 0]}
+for i, code in enumerate(codes):
+    p = probe_keys[i]
     for tag, keys in (("exact", keys_ex), ("pred", keys_pr)):
         scores = [float(np.dot(p, k)) for k in keys]
         order = np.argsort(scores)[::-1]

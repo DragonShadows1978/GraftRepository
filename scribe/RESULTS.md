@@ -25,3 +25,9 @@ readable content.** ARM-S (Phase 2) is the real test.
 
 **Phase 2 (warm) verdict: attention buys fidelity (G2 +30pts), not yet
 content or addressability. Next: bias diagnostic -> functional loss.**
+| Variance-collapse diagnostic | 2026-06-11 | root cause found | warm Huber regresses to the mean: pred-pred centroid cos 0.989 (exact 0.863), match-mismatch margin 0.009. CENTERING exposes the buried doc signal: margin 0.263, recall 1/12 -> 7/12 on held-out organic chunks |
+| G4 centered (ARM-S warm) | 2026-06-11 | FAIL + finding | centered router: EXACT 20/20@1 (perfect — centering improves the production router, transferable to GraftRepository); predicted 4/20@1 7/20@3 on SYNTHETIC short docs vs 7/12 organic — predicted addressability is distribution-sensitive (§7 door in routing). Error-directed minting of short fact-dense docs is the registered answer |
+
+**Standing next steps: (1) L-func build (content/G3 — the registered
+"real loss"); (2) error-directed mint round: short fact-dense docs;
+(3) port centered routing to the production router (exact-graft win).**
