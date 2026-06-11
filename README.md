@@ -85,10 +85,14 @@ answer, info = repo.chat("What port does the ingest replacement use?")
 
 ## Known open items
 
-- Era-depth consolidation (digest-of-digest) is DEFAULT-OFF: at 4B,
-  list-form eras strip relations and prose-form eras invent them
-  (measured). The fix is descent — route into the era, re-mount child
-  digests on grounding failure — not yet implemented.
+- Era-depth consolidation is DEFAULT-OFF but VIABLE with DESCENT (built):
+  era texts are index nodes, never readers (lists strip relations, prose
+  invents them — measured); the trips ladder expands eras to their child
+  digests at the primary attempt, descends digests on grounding failure,
+  reloads cold-storage children, and budget-fits every mount set to the
+  arena. Era-folded 42-turn recall: 3/8 without descent → 6/8 with. The
+  residual gap is FIRST-GEN digest quality (bare-bullet lists bind
+  relations weakly).
 - Topical routing between sibling digests (no-identifier probes) is the
   one routing soft spot.
 - Librarian runs in-process; background-mission offload planned.

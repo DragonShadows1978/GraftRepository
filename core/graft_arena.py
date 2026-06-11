@@ -66,6 +66,9 @@ class ArenaCache:
         self.n_sink = len(sink_ids)
         self.live_shift = self.n_sink + arena_width
 
+        self.node_loader = None         # callable(idx) -> device h; lets
+                                        # DESCENT re-mount retired children
+                                        # from cold storage (repository disk)
         self.caches = None              # per layer (c_n, k_pe), built on turn 1
         self.pos = 0                    # live tokens processed (position counter)
         self.cur_mounts = []            # graft idxs currently seated
@@ -197,7 +200,9 @@ class ArenaCache:
         """Code/number-shaped tokens — the verbatim payload a digest must
         preserve. Mechanically checkable: the librarian holds the sources."""
         out = set()
-        for w in re.findall(r"[A-Za-z0-9][\w:.\-]*", text):
+        # ',' inside the token class keeps "7,400" whole — fragmenting it
+        # made a CORRECT answer fail grounding (descent diag, 2026-06-10)
+        for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text):
             w = w.rstrip(".,:;")
             if any(ch.isdigit() for ch in w) or (w.isupper() and len(w) >= 3):
                 out.add(w.lower())
@@ -314,6 +319,16 @@ class ArenaCache:
         return didx, text
 
     # ------------------------------------------------------------ cache ops
+    def _ensure_h(self, idxs):
+        """Re-load freed/retired nodes from cold storage before mounting
+        (descent re-mounts children whose VRAM was reclaimed)."""
+        for i in idxs:
+            if self.grafts[i].get("h") is None:
+                if self.node_loader is None:
+                    raise RuntimeError(f"graft {i} has no tensors and no "
+                                       f"node_loader is set")
+                self.grafts[i]["h"] = self.node_loader(i)
+
     def _graft_block(self, picks, li):
         """Arena-slice tensors for layer li: latent as-is (position-free),
         k_pe re-RoPE'd at the mount's arena seats n_sink..n_sink+n. Grafts
@@ -331,6 +346,7 @@ class ArenaCache:
         if picks == self.cur_mounts or self.caches is None:
             self.cur_mounts = picks
             return
+        self._ensure_h(picks)
         n_new = 0
         new_caches = []
         head = self.n_sink + self.cur_mount_n
@@ -460,7 +476,8 @@ class ArenaCache:
         return content <= have
 
     def step(self, user_text, ngen=48, deposit=True,
-             stops=("\nUser:", "User:", "\n\n"), max_trips=0):
+             stops=("\nUser:", "User:", "\nAssistant:", "Assistant:", "\n\n"),
+             max_trips=0):
         """One conversation turn through the arena. max_trips > 0 enables
         SHUTTLING: if the answer fails the grounding check, restore the
         pre-attempt cache (snapshot = the old tensor list + position —
@@ -503,26 +520,67 @@ class ArenaCache:
             sl = sorted(ranking[t * self.topk:(t + 1) * self.topk])
             if sl and (sl, False) not in attempts:
                 attempts.append((sl, False))
-        # budget: max_trips+1 attempts total, with a CLEAN-ROOM retry —
-        # repeated grounding failures implicate the live window
-        # (corpus-100: the previous same-family Q&A echoes over the
-        # mounted doc, and the echo REPEATS across same-window retries).
-        # Ladder ORDER follows the information need: for identifier
-        # queries (precise mount exists) the point lookup retries in
-        # ISOLATION before touching sibling slices — siblings are the
-        # known confusion trap (both corpus-100 residual misses were
-        # trip-1 sibling slices accepting a grounded-but-wrong sibling
-        # value before the clean room could run). For topical queries the
-        # clean room stays last.
+        # DESCENT (measured law, 2026-06-10): era texts are INDEX nodes,
+        # never readers — list-form eras strip relations and prose-form
+        # eras invent them, and a model reading a corrupt era faithfully
+        # reproduces the corruption ("the backend hire was Project
+        # NIGHTJAR", grounded). So eras expand to their children at the
+        # PRIMARY attempt; digests (E4-C-grade readers) expand only on a
+        # descent retry. Children are identifier-filtered when the probe
+        # names codes, and every mount set is BUDGET-FITTED to the arena
+        # width (an unbounded descent over-filled the arena and collided
+        # live positions with mount seats — descent diag). Cold-storage
+        # children reload via node_loader.
+        def kids(i):
+            srcs = self.grafts[i].get("sources") or []
+            if qrare:
+                hit = []
+                for s in srcs:
+                    g = self.grafts[s]
+                    if "rare" not in g:
+                        g["rare"] = self._rare_tokens(g["text"])
+                    if qrare & g["rare"]:
+                        hit.append(s)
+                return hit or srcs
+            return srcs
+
+        def expand(picks, kinds):
+            out = []
+            for i in picks:
+                if (self.grafts[i].get("kind") in kinds
+                        and self.grafts[i].get("sources")):
+                    out.extend(k for k in kids(i) if k not in out)
+                elif i not in out:
+                    out.append(i)
+            return out
+
+        def fit(picks):
+            budget = self.width - sum(self.grafts[i]["ntok"] for i in rec)
+            out, used = [], 0
+            for i in picks:
+                n = self.grafts[i]["ntok"]
+                if used + n <= budget:
+                    out.append(i)
+                    used += n
+            return sorted(out)
+
+        # budget: max_trips+1 attempts total. Ladder: primary (eras
+        # pre-expanded) -> descent (digests expanded too) -> clean room on
+        # the deepest mount set. Identifier queries keep precise-first.
         if max_trips >= 1 and attempts:
-            if precise:
-                rest = [a for a in attempts if a[0] != precise]
-                attempts = ([(precise, False), (precise, True)] + rest)[:max_trips + 1]
-            else:
-                attempts = attempts[:max_trips]
-                attempts.append((attempts[0][0], True))
-        else:
-            attempts = attempts[:1]
+            head = precise or attempts[0][0]
+            primary = fit(expand(head, ("era",)))
+            deep = fit(expand(primary, ("era", "digest")))
+            ladder = [(primary, False)]
+            if deep != primary:
+                ladder.append((deep, False))
+            ladder.append((deep, True))
+            if not precise:
+                ladder += [(fit(expand(a[0], ("era",))), False)
+                           for a in attempts[1:]]
+            attempts = ladder[:max_trips + 1]
+        elif attempts:
+            attempts = [(fit(expand(attempts[0][0], ("era",))), False)]
         best = None
         for trip, (picks, clean) in enumerate(attempts):
             if not picks:
@@ -557,6 +615,7 @@ class ArenaCache:
         return txt, info
 
     def _attempt(self, user_text, picks, ngen, deposit, stops):
+        self._ensure_h(picks)
         if self.caches is None:
             # bootstrap: sink (+ first mounts) enter via the injection path
             mounts = [{"h": self.sink_h}] + [self.grafts[i] for i in picks]

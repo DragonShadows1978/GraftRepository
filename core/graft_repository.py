@@ -60,6 +60,8 @@ class GraftRepository:
         cfg = model.config
         self.dialect = (f"{type(model).__name__}:{cfg.num_layers}"
                         f"x{cfg.hidden_dim}:r{cfg.kv_lora_rank}")
+        # descent re-mounts retired children from cold storage on demand
+        self.arena.node_loader = self._load_node
         if os.path.exists(os.path.join(path, "manifest.json")):
             self.load()
         else:
@@ -114,6 +116,16 @@ class GraftRepository:
                 g["h"] = None
 
     # --------------------------------------------------------- persistence
+    def _load_node(self, i):
+        """Cold-storage loader: node tensors disk -> device (descent hook)."""
+        z = np.load(os.path.join(self.path, "nodes", f"{i:04d}.npz"))
+        c, kpe = z["c"], z["kpe"]
+        dt = BlockTC.COMPUTE_DTYPE
+        return [{"c": tc.tensor(np.ascontiguousarray(c[li:li + 1])).astype(dt),
+                 "kpe": tc.tensor(np.ascontiguousarray(
+                     kpe[li:li + 1][None])).astype(dt)}
+                for li in range(len(self.arena.m.layers))]
+
     def _host(self, h):
         """Per-layer device dicts -> stacked host arrays (L,S,256)/(L,S,32)."""
         c = np.concatenate([d["c"].float().numpy().astype(np.float16)
@@ -168,13 +180,7 @@ class GraftRepository:
                  "tags": n["tags"], "rare": set(n["rare"]),
                  "cent": cents[i].astype(np.float32), "saved": True, "h": None}
             if not n["retired"]:
-                z = np.load(os.path.join(self.path, "nodes", f"{i:04d}.npz"))
-                c, kpe = z["c"], z["kpe"]
-                g["h"] = [{"c": tc.tensor(np.ascontiguousarray(
-                               c[li:li + 1])).astype(dt),
-                           "kpe": tc.tensor(np.ascontiguousarray(
-                               kpe[li:li + 1][None])).astype(dt)}
-                          for li in range(nl)]
+                g["h"] = self._load_node(i)
             self.arena.grafts.append(g)
         # descent keys rebuild from lineage (recursive: eras reach leaves)
         def cents_of(i, depth=0):

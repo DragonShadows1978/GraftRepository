@@ -395,6 +395,17 @@ diverse-token validation, doors ledger from day one.
   E4-C-validated). The fix is DESCENT: route into the era node, re-mount
   its child digests on grounding failure — child centroids and lexical
   keys already flatten through generations, so the machinery is ready.
+  DESCENT BUILT + GATED (2026-06-11): eras are INDEX nodes — expanded to
+  their child digests at the PRIMARY attempt (a model reading a corrupt
+  era faithfully reproduces the corruption, grounded); digests descend on
+  a retry; children identifier-filtered, cold-storage reloaded
+  (node_loader), every mount set budget-fitted to the arena (unbounded
+  descent over-filled the arena and collided live/mount positions —
+  measured). Era-folded 42-turn recall 3/8 -> 6/8; regressions green
+  (CORPUS-100 20/20, trips 6/6, arena 6/6). Grounding tokenizer keeps
+  "7,400" whole (fragmenting it rejected a correct answer); Assistant-
+  continuation stops added. Residual: first-gen bare-bullet digests bind
+  relations weakly (2 misses trace there, not to descent).
   Remaining: librarian as a BACKGROUND AtlasForge mission (the cold path),
   graph edges beyond lineage (contradiction / don't-co-seat).
 - **Phase 4 — persistence + product shape.** STATUS 2026-06-10: CORE DONE —
