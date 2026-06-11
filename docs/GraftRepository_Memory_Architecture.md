@@ -41,6 +41,7 @@ What it kills, for the consumer and the agent alike:
 | Shuttling — trips beat a bigger arena | **PASSED 2026-06-10** | Arena starved to ONE mount: 5/6; + max_trips=2 with grounding checks: **6/6 = the 3-mount arena.** Failed attempts roll back entirely (immutable cache tensors make snapshot/restore free — old list + position). Grounding = hedge detection + content-emptiness (deflections) + content-tokens ⊆ mounted sources; false trips cost latency only (fallback = first attempt). Trips trade latency for seats — the design's overflow law, measured |
 | FULL REPOSITORY: auto-librarian + persistence + cross-session resume | **BUILT + PASSED 2026-06-10** | `core/graft_repository.py` GraftRepository (chat / add_turn / add_document / save / load / stats). Build session: 14 turns + 2 docs, librarian auto-fired at the 8-active-turn threshold (2 digests formed mid-conversation, sources retired + VRAM-freed to disk cold storage); 18 nodes = 24.9MB. FRESH PROCESS resume (dialect-guarded, descent keys rebuilt from lineage, only active nodes re-uploaded): **6/7 recall from disk artifacts alone** incl. document fact; trips fired and recovered during resume. Miss = the no-identifier offsite probe (topical two-digest routing, grounded-but-wrong — the known residual). Live cache deliberately NOT persisted: history lives in the repository |
 | Corpus scale + sibling confusability (CORPUS-100) | **PASSED 2026-06-10: 20/20** | 100 chunks = 10 families × 10 near-duplicate siblings (codes differ), 20 identifier-keyed probes, 416MB device grafts, 50KB index, 1.3s/probe. Took FOUR measured fixes: latent-only routing 4/20 @1 (centroids can't separate siblings) → +LEXICAL channel (probe identifier tokens vs source rare-tokens, exact match dominates) 20/20 routing; co-mounted siblings collapse reads (16/20) → PRECISE-MOUNT (identifier query = point lookup, mount rank-1 alone); live-window echo of the previous same-family Q&A beats the mounted doc and repeats across same-window retries → CLEAN-ROOM trip (fresh mini-cache); ladder order = precise → clean → siblings for identifier queries. End recall **20/20** |
+| EPHEMERAL BOAT — effectively infinite context | **BUILT + MEASURED 2026-06-10** | Live cache cleared at the START of every turn: each turn runs on [sink | mounts | turn] alone; recency = last-2 turn-grafts AS MOUNTS (anaphora "And what time exactly?" → 10:30, verified). 42-turn history at ≤456 resident seats FLAT (transcript would be 2,300+ and growing); the live-window echo failure class structurally eliminated. Era-fold recall is the open item (descent fix planned) |
 | PERSISTENT ARENA (swap/evict as cache surgery) | **BUILT + PASSED 2026-06-10** | E4-arena: 6/6 on ONE never-rebuilt cache through 20 turns, 6 routed swaps, per-turn evictions. Seating [SINK 6 | ARENA 256 | LIVE ~130]; residency 268-316 seats flat. live_shift = fixed arena width (decoupled from mount size); mounts occupy an arena prefix, remainder is a positional hole; MLA swap re-RoPEs only the 32-d k_pe |
 
 Key vocabulary carried forward: **seats** = position range inside the trained
@@ -383,6 +384,17 @@ diverse-token validation, doors ledger from day one.
   retired nodes auto-freed from VRAM (disk = cold storage), documents
   exempt from folding (reference, not history). Era path coded, not yet
   exercised at depth (needs a longer session than the gate's 14 turns).
+  ERA-DEPTH NEGATIVE RESULT (2026-06-10, 42-turn infinite gate): folding
+  MULTIPLE digests into one era text fails BOTH ways at 4B — list-form
+  eras strip relations (probes bleed across facts: the demo's room became
+  the offsite's location) and chronicle-prose eras INVENT relations
+  ("Project NIGHTJAR was conducted by Priya Raghunathan" — fact fusion).
+  Note E2's fixed-point result still holds: re-digesting ONE digest is
+  lossless; it is multi-source re-synthesis that breaks. Era folding ships
+  DEFAULT-OFF (digests are ~100 tokens; accumulating them is cheap and
+  E4-C-validated). The fix is DESCENT: route into the era node, re-mount
+  its child digests on grounding failure — child centroids and lexical
+  keys already flatten through generations, so the machinery is ready.
   Remaining: librarian as a BACKGROUND AtlasForge mission (the cold path),
   graph edges beyond lineage (contradiction / don't-co-seat).
 - **Phase 4 — persistence + product shape.** STATUS 2026-06-10: CORE DONE —
