@@ -32,9 +32,14 @@ m.extend_rope(4096)
 print(f"loaded: {info}", flush=True)
 
 minter = Minter(m, lambda t: tok.encode(t).ids, ROOT)
+tc.set_alloc_pooling(True)
 np.random.seed(0)
 st = (ArmL if ARM == "ArmL" else ArmS)(StudentConfig())
-tr = WarmTrainer(st, m, minter, lr=3e-4)
+# ArmS at window 1024 OOMs (quadratic attention activations, full graph
+# retained — fit probe was at S=224; measured 2026-06-11). 512 fits.
+# Warm-phase cost: chunk tails beyond 512 unseen by ArmS (logged).
+tr = WarmTrainer(st, m, minter, lr=3e-4,
+                 window=512 if ARM == "ArmS" else 1024)
 print(f"train rows: {len(tr.rows)}", flush=True)
 if os.path.exists(CKPT):
     meta = tr.load(CKPT)
