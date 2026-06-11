@@ -18,3 +18,10 @@ green). Phase 1 (ARM-L floor) is next: needs the minted seed set.
 **Phase 1 verdict: floor recorded. The problem is NOT easier than
 believed — linear maps solve routing-adjacent layers, cannot write
 readable content.** ARM-S (Phase 2) is the real test.
+| G1 (ARM-S) | 2026-06-11 | recorded | bulge CRACKED vs floor: L31 0.168 vs floor plateau ~0.19; L0 0.042 (worse than floor's 0.002 — shared trunk vs 62 free linears); window 512 (OOM at 1024, measured) |
+| G2 (ARM-S warm) | 2026-06-11 | FAIL, closing | top-1 75-83%%, KL 0.48-0.62 (floor: ~52%%/0.9); held-out MATH is the BEST domain (83.3%%/0.483) — no dist-shift penalty |
+| G3 (ARM-S warm) | 2026-06-11 | FAIL 0/10 | H2 strong form persists through warm phase: content unreadable while logits 80%% right. The registered answer: L-func |
+| G4 (ARM-S warm, fixed instrument) | 2026-06-11 | FAIL | exact 14/20@1 18/20@3 (instrument healthy); predicted 2/20@1 4/20@3 — H1 failing at warm phase; suspect systematic latent-space bias (affine calibration diagnostic next) |
+
+**Phase 2 (warm) verdict: attention buys fidelity (G2 +30pts), not yet
+content or addressability. Next: bias diagnostic -> functional loss.**
