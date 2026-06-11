@@ -37,7 +37,6 @@ import os
 import numpy as np
 
 from core.graft_arena import ArenaCache
-from core.mistral7b_tc import BlockTC, tc
 
 
 class GraftRepository:
@@ -53,7 +52,8 @@ class GraftRepository:
     DIGESTS_HIGH, DIGESTS_FOLD = 6, 3
 
     def __init__(self, model, encode, decode, path, autosave=True,
-                 vram_budget_mb=None, librarian_mode="inline", **arena_kw):
+                 vram_budget_mb=None, librarian_mode="inline",
+                 arena_cls=ArenaCache, **arena_kw):
         self.path = path
         self.autosave = autosave
         # device-byte budget for node tensors; least-recently-MOUNTED saved
@@ -67,10 +67,15 @@ class GraftRepository:
         # a 2x backpressure threshold folds inline only as a last resort.
         # One GPU = no true concurrency: background means BETWEEN turns.
         self.librarian_mode = librarian_mode
-        self.arena = ArenaCache(model, encode, decode, **arena_kw)
+        self.arena = arena_cls(model, encode, decode, **arena_kw)
         cfg = model.config
+        # the dialect string names the K/V geometry: MLA models by latent
+        # rank, GQA models by kv-head shape
+        r = getattr(cfg, "kv_lora_rank", None)
+        tail = (f"r{r}" if r is not None
+                else f"g{cfg.num_kv_heads}x{cfg.head_dim}")
         self.dialect = (f"{type(model).__name__}:{cfg.num_layers}"
-                        f"x{cfg.hidden_dim}:r{cfg.kv_lora_rank}")
+                        f"x{cfg.hidden_dim}:{tail}")
         # descent re-mounts retired children from cold storage on demand
         self.arena.node_loader = self._load_node
         if os.path.exists(os.path.join(path, "manifest.json")):
@@ -171,8 +176,10 @@ class GraftRepository:
                 self._fold_once()
 
     def _node_bytes(self, g):
-        # (c 256 + kpe 32) vals/token/layer, fp16
-        return g["ntok"] * 288 * 2 * len(self.arena.m.layers)
+        # dialect vals/token/layer (MLA: c 256 + kpe 32; GQA: kv heads x
+        # head_dim x 2), fp16
+        return (g["ntok"] * self.arena.VALS_PER_TOK_LAYER * 2
+                * len(self.arena.m.layers))
 
     def _page(self):
         """Spill least-recently-mounted node tensors above the VRAM budget.
@@ -205,30 +212,17 @@ class GraftRepository:
 
     # --------------------------------------------------------- persistence
     def _load_node(self, i):
-        """Cold-storage loader: node tensors disk -> device (descent hook)."""
+        """Cold-storage loader: node tensors disk -> device (descent hook).
+        The on-disk format is the arena dialect's (pack/unpack_node)."""
         z = np.load(os.path.join(self.path, "nodes", f"{i:04d}.npz"))
-        c, kpe = z["c"], z["kpe"]
-        dt = BlockTC.COMPUTE_DTYPE
-        return [{"c": tc.tensor(np.ascontiguousarray(c[li:li + 1])).astype(dt),
-                 "kpe": tc.tensor(np.ascontiguousarray(
-                     kpe[li:li + 1][None])).astype(dt)}
-                for li in range(len(self.arena.m.layers))]
-
-    def _host(self, h):
-        """Per-layer device dicts -> stacked host arrays (L,S,256)/(L,S,32)."""
-        c = np.concatenate([d["c"].float().numpy().astype(np.float16)
-                            for d in h], axis=0)
-        kpe = np.concatenate([d["kpe"].float().numpy().astype(np.float16)[:, 0]
-                              for d in h], axis=0)
-        return c, kpe
+        return self.arena.unpack_node(z)
 
     def save(self):
         nodes = []
         for i, g in enumerate(self.arena.grafts):
             f = os.path.join(self.path, "nodes", f"{i:04d}.npz")
             if not g.get("saved") and g.get("h") is not None:
-                c, kpe = self._host(g["h"])
-                np.savez_compressed(f, c=c, kpe=kpe)
+                np.savez_compressed(f, **self.arena.pack_node(g["h"]))
                 g["saved"] = True
             if "rare" not in g:    # never routed yet — lexical keys must persist
                 g["rare"] = ArenaCache._rare_tokens(g["text"])
@@ -239,9 +233,8 @@ class GraftRepository:
                           "no_fold": bool(g.get("no_fold")),
                           "tags": g.get("tags", []),
                           "rare": sorted(g["rare"])})
-        cents = np.stack([g["cent"] for g in self.arena.grafts]) \
-            if self.arena.grafts else np.zeros((0, 256), np.float32)
-        np.savez_compressed(os.path.join(self.path, "index.npz"), cents=cents)
+        np.savez_compressed(os.path.join(self.path, "index.npz"),
+                            **self.arena.pack_index())
         with open(os.path.join(self.path, "manifest.json"), "w") as fh:
             json.dump({"dialect": self.dialect,
                        "route_layer": self.arena.route_layer,
@@ -259,31 +252,67 @@ class GraftRepository:
             raise RuntimeError(
                 f"routing index was built at layer {man['route_layer']}, "
                 f"arena is configured for {self.arena.route_layer}")
-        cents = np.load(os.path.join(self.path, "index.npz"))["cents"]
-        dt = BlockTC.COMPUTE_DTYPE
-        nl = len(self.arena.m.layers)
+        idx = np.load(os.path.join(self.path, "index.npz"))
         self.arena.grafts = []
         for i, n in enumerate(man["nodes"]):
             g = {"kind": n["kind"], "text": n["text"], "ntok": n["ntok"],
                  "sources": n["sources"], "retired": n["retired"],
                  "no_fold": n.get("no_fold", False),
                  "tags": n["tags"], "rare": set(n["rare"]),
-                 "cent": cents[i].astype(np.float32), "saved": True, "h": None}
+                 "cent": self.arena.unpack_index(idx, i),
+                 "saved": True, "h": None}
             if not n["retired"]:
                 g["h"] = self._load_node(i)
             self.arena.grafts.append(g)
-        # descent keys rebuild from lineage (recursive: eras reach leaves)
+        self._rebuild_child_keys()
+
+    def _rebuild_child_keys(self):
+        """Descent keys rebuild from lineage (recursive: eras reach leaves)."""
         def cents_of(i, depth=0):
             g = self.arena.grafts[i]
             out = [g["cent"]]
             if depth < 3:
-                for s in g["sources"]:
+                for s in g.get("sources", ()):
                     out += cents_of(s, depth + 1)
             return out
         for g in self.arena.grafts:
-            if g["sources"]:
+            if g.get("sources"):
                 g["child_cents"] = [c for s in g["sources"]
                                     for c in cents_of(s)]
+
+    def migrate(self, src_path):
+        """Rebuild THIS (empty) repository from another repository's TEXTS.
+
+        K/V artifacts never cross the dialect wall; text does. Every node —
+        turns, documents, digests, eras, retired or not — is re-harvested
+        by the resident model under its own weights. Digest/era texts are
+        carried VERBATIM (they are text, readable by any dialect); lineage
+        (sources), kinds, tags, retirement and fold-exemption flags are
+        preserved, so descent keys rebuild exactly. The source's tokenizer
+        does not matter: ntok is recounted in the destination's tokens.
+        Returns the number of migrated nodes."""
+        if self.arena.grafts:
+            raise RuntimeError("migrate into an EMPTY repository (got "
+                               f"{len(self.arena.grafts)} nodes)")
+        with open(os.path.join(src_path, "manifest.json")) as fh:
+            man = json.load(fh)
+        A = self.arena
+        for n in man["nodes"]:
+            gi = A.deposit(n["text"])
+            g = A.grafts[gi]
+            g["kind"] = n["kind"]
+            g["tags"] = n["tags"]
+            g["sources"] = n["sources"]
+            g["retired"] = n["retired"]
+            g["no_fold"] = n.get("no_fold", False)
+            # lexical keys are text-derived — recompute, don't copy (the
+            # source may predate a tokenizer-rule fix)
+            g["rare"] = A._rare_tokens(n["text"])
+        self._rebuild_child_keys()
+        self.save()
+        self._free_retired()
+        self._page()
+        return len(A.grafts)
 
     def stats(self):
         kinds = {}

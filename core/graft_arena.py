@@ -62,7 +62,7 @@ class ArenaCache:
         model.extend_rope(len(encode(sink_text)) + arena_width + max_live)
 
         sink_ids = encode(sink_text)
-        self.sink_h = kv_graft.harvest_kv_mla(model, sink_ids)
+        self.sink_h = self._harvest(sink_ids)
         self.n_sink = len(sink_ids)
         self.live_shift = self.n_sink + arena_width
 
@@ -76,17 +76,100 @@ class ArenaCache:
         self.live_segs = []             # [(graft_idx or None, ntok), ...]
         self.grafts = []                # {h, cent, ntok, text}
 
+    # ------------------------------------------------------ dialect surface
+    # Everything model-specific lives behind these members. The base class
+    # IS the MLA dialect (MiniCPM3: latent payload, latent-cosine router);
+    # GQAArenaCache at the bottom of this file overrides them for Qwen3.
+    PAYLOAD = (("c", 1), ("kpe", 2))    # payload tensors: (key, seq dim)
+    VALS_PER_TOK_LAYER = 288            # c 256 + kpe 32 (node VRAM math)
+
+    def _harvest(self, ids, layer_filter=None, max_layers=None):
+        return kv_graft.harvest_kv_mla(self.m, ids, layer_filter=layer_filter,
+                                       max_layers=max_layers)
+
+    def _probe_key(self, text):
+        """Routing key for a PROBE (bare user text)."""
+        pl = self._harvest(self.encode(text), layer_filter={self.route_layer},
+                           max_layers=self.route_layer + 1)
+        p = pl[self.route_layer]["c"][0].astype(np.float32).mean(0)
+        return p / (np.linalg.norm(p) + 1e-8)
+
+    def _node_key(self, text, h_host=None):
+        """Routing key for a NODE (pass h_host to reuse a full harvest)."""
+        if h_host is None:
+            h_host = self._harvest(self.encode(text),
+                                   layer_filter={self.route_layer},
+                                   max_layers=self.route_layer + 1)
+        return kv_graft.latent_centroid(h_host, self.route_layer)
+
+    def _key_score(self, pkey, nkey):
+        """Latent cos lives in ~[0.4, 0.9] — the lexical channel's +1 per
+        full identifier match dominates BY CALIBRATION. Any dialect's score
+        must stay in O(1) cosine range or routing law (2) breaks."""
+        return float(np.dot(pkey, nkey))
+
+    def _rope_block(self, blk, cs, sn):
+        """Apply rotation slices to the POSITIONAL key component of a
+        payload block (MLA: the 32-d shared k_pe; the latent is
+        position-free). Direction is the caller's: re-RoPE at mount seats,
+        or un-RoPE a cache slice with -sin (rotation composition)."""
+        blk["kpe"] = F.apply_rotary(blk["kpe"], cs, sn)
+        return blk
+
+    def _cache_key_of(self, seg):
+        """key_from_cache=True exploratory mode (measured 5/6 on MLA:
+        contextualized keys are polluted). None = standalone _node_key."""
+        if not getattr(self, "key_from_cache", False):
+            return None
+        v = seg["c"].numpy()[0].astype(np.float32).mean(0)
+        return v / (np.linalg.norm(v) + 1e-8)
+
+    def _set_inject(self, att, blk):
+        att.inject_kv = (blk["c"], blk["kpe"])
+        att.graft_seats = int(blk["c"].shape[1])
+
+    def _set_injection_host(self, inj):
+        kv_graft.set_injection_mla(self.m, inj)
+
+    def _cache_len(self):
+        return self.caches[0][0].shape[self.PAYLOAD[0][1]]
+
+    # persistence pack/unpack: the disk format is part of the dialect
+    # (GraftRepository delegates here). The MLA format predates this
+    # surface and stays byte-compatible with existing repositories.
+    def pack_node(self, h):
+        c = np.concatenate([d["c"].float().numpy().astype(np.float16)
+                            for d in h], axis=0)
+        kpe = np.concatenate([d["kpe"].float().numpy().astype(np.float16)[:, 0]
+                              for d in h], axis=0)
+        return {"c": c, "kpe": kpe}
+
+    def unpack_node(self, z):
+        dt = BlockTC.COMPUTE_DTYPE
+        c, kpe = z["c"], z["kpe"]
+        return [{"c": tc.tensor(np.ascontiguousarray(c[li:li + 1])).astype(dt),
+                 "kpe": tc.tensor(np.ascontiguousarray(
+                     kpe[li:li + 1][None])).astype(dt)}
+                for li in range(len(self.m.layers))]
+
+    def pack_index(self):
+        cents = np.stack([g["cent"] for g in self.grafts]) \
+            if self.grafts else np.zeros((0, 256), np.float32)
+        return {"cents": cents}
+
+    def unpack_index(self, z, i):
+        return z["cents"][i].astype(np.float32)
+
     # ------------------------------------------------------------ repository
     def deposit(self, text):
         """Standalone harvest deposit (document-in-isolation semantics, one
         dedicated forward). Stored DEVICE-resident: mounts never re-upload."""
         ids = self.encode(text)
-        h = kv_graft.harvest_kv_mla(self.m, ids)
-        dev = [{"c": tc.tensor(np.ascontiguousarray(h[li]["c"])).astype(self.dt),
-                "kpe": tc.tensor(np.ascontiguousarray(h[li]["kpe"])).astype(self.dt)}
+        h = self._harvest(ids)
+        dev = [{key: tc.tensor(np.ascontiguousarray(h[li][key])).astype(self.dt)
+                for key, _ in self.PAYLOAD}
                for li in range(len(self.m.layers))]
-        self.grafts.append({"h": dev,
-                            "cent": kv_graft.latent_centroid(h, self.route_layer),
+        self.grafts.append({"h": dev, "cent": self._node_key(text, h),
                             "ntok": len(ids), "text": text})
         return len(self.grafts) - 1
 
@@ -108,19 +191,18 @@ class ArenaCache:
         sneg = self.m.rope_sin.slice(0, p0, seg_ntok) * -1.0
         dev = []
         cent = None
-        for li, (c, kpe) in enumerate(self.caches):
-            S = c.shape[1]
-            cg = c.slice(1, S - seg_ntok, seg_ntok)
-            kg = F.apply_rotary(kpe.slice(2, S - seg_ntok, seg_ntok), cseg, sneg)
-            dev.append({"c": cg, "kpe": kg})
-            if li == self.route_layer and getattr(self, "key_from_cache", False):
-                v = cg.numpy()[0].astype(np.float32).mean(0)
-                cent = v / (np.linalg.norm(v) + 1e-8)
+        for li, cache in enumerate(self.caches):
+            seg = {}
+            for ei, (key, dim) in enumerate(self.PAYLOAD):
+                t = cache[ei]
+                S = t.shape[dim]
+                seg[key] = t.slice(dim, S - seg_ntok, seg_ntok)
+            seg = self._rope_block(seg, cseg, sneg)     # un-RoPE (-sin)
+            dev.append(seg)
+            if li == self.route_layer and cent is None:
+                cent = self._cache_key_of(seg)
         if cent is None:
-            pl = kv_graft.harvest_kv_mla(self.m, self.encode(text),
-                                         layer_filter={self.route_layer},
-                                         max_layers=self.route_layer + 1)
-            cent = kv_graft.latent_centroid(pl, self.route_layer)
+            cent = self._node_key(text)
         self.grafts.append({"h": dev, "cent": cent,
                             "ntok": seg_ntok, "text": text})
         return len(self.grafts) - 1
@@ -128,39 +210,48 @@ class ArenaCache:
     def route(self, bare_text, exclude):
         if not self.grafts:
             return []
-        pl = kv_graft.harvest_kv_mla(self.m, self.encode(bare_text),
-                                     layer_filter={self.route_layer},
-                                     max_layers=self.route_layer + 1)
-        p = pl[self.route_layer]["c"][0].astype(np.float32).mean(0)
-        p = p / (np.linalg.norm(p) + 1e-8)
+        p = self._probe_key(bare_text)
 
         # Lexical channel: identifier tokens in the probe (codes, numbers,
         # ALL-CAPS) are exact-match keys. Mean centroids CANNOT separate
         # sibling chunks that differ only in a code token (corpus-100:
         # @1 4/20 latent-only — family right, instance random); an exact
-        # identifier hit must dominate. Latent cos lives in ~[0.4, 0.9],
-        # so +1 per full match wins outright, partial matches rank between.
+        # identifier hit must dominate. _key_score lives in O(1) cosine
+        # range (every dialect must keep it there), so +1 per full match
+        # wins outright, partial matches rank between.
         qrare = self._rare_tokens(bare_text)
 
         cand = [i for i in range(len(self.grafts))
                 if i not in exclude and not self.grafts[i].get("retired")
                 and self.grafts[i].get("kind", "turn") != "recall"]
-        cand.sort(key=lambda i: -self._node_score(p, qrare, self.grafts[i]))
+        base = {i: self._cent_score(p, self.grafts[i]) for i in cand}
+        # dialect hook: a raw-score channel (GQA layer-0 |q.k|) rescales
+        # per-route into the O(1) band the lexical bonus was calibrated
+        # against. MLA cosine is already there — identity.
+        base = self._normalize_scores(base)
+        cand.sort(key=lambda i: -(base[i]
+                                  + self._lex_bonus(qrare, self.grafts[i])))
         return cand                               # full ranking, best first
 
-    def _node_score(self, p, qrare, g):
+    def _cent_score(self, p, g):
         # hierarchical descent: a digest node answers for its retired
         # children — score by the best of its own centroid and theirs
         # (a multi-topic digest's own centroid is diluted; the child
         # keys keep it addressable per topic)
-        s = float(np.dot(p, g["cent"]))
+        s = self._key_score(p, g["cent"])
         for ch in g.get("child_cents", ()):
-            s = max(s, float(np.dot(p, ch)))
-        if qrare:
-            if "rare" not in g:
-                g["rare"] = self._rare_tokens(g["text"])
-            s += len(qrare & g["rare"]) / len(qrare)
+            s = max(s, self._key_score(p, ch))
         return s
+
+    def _normalize_scores(self, base):
+        return base
+
+    def _lex_bonus(self, qrare, g):
+        if not qrare:
+            return 0.0
+        if "rare" not in g:
+            g["rare"] = self._rare_tokens(g["text"])
+        return len(qrare & g["rare"]) / len(qrare)
 
     # ------------------------------------------------------------ librarian
     # Mounted DIALOGUE turns pull generation into conversation mode — the
@@ -296,13 +387,14 @@ class ArenaCache:
         # standalone generation: arm device mounts directly, no live_shift
         for L in self.m.layers:
             L.self_attn.live_shift = None
+        self._ensure_h(idxs)        # sources may be paged out (cold storage)
         for li, layer in enumerate(self.m.layers):
             att = layer.self_attn
             hs = [self.grafts[i]["h"][li] for i in idxs]
-            c = hs[0]["c"] if len(hs) == 1 else tc.cat([h["c"] for h in hs], dim=1)
-            kpe = hs[0]["kpe"] if len(hs) == 1 else tc.cat([h["kpe"] for h in hs], dim=2)
-            att.inject_kv = (c, kpe)
-            att.graft_seats = int(c.shape[1])
+            blk = {key: (hs[0][key] if len(hs) == 1
+                         else tc.cat([h[key] for h in hs], dim=dim))
+                   for key, dim in self.PAYLOAD}
+            self._set_inject(att, blk)
         srcs = [self.grafts[i]["text"] for i in idxs]
         deep = any(self.grafts[i].get("kind", "turn") != "turn" for i in idxs)
         prompts = self.ERA_PROMPTS if deep else self.DIGEST_PROMPTS
@@ -392,16 +484,18 @@ class ArenaCache:
                 self.page_ins = getattr(self, "page_ins", 0) + 1
 
     def _graft_block(self, picks, li):
-        """Arena-slice tensors for layer li: latent as-is (position-free),
-        k_pe re-RoPE'd at the mount's arena seats n_sink..n_sink+n. Grafts
-        are device-resident tc tensors — no host->device upload per swap."""
+        """Arena-slice tensors for layer li: the positional key component
+        re-RoPEs at the mount's arena seats n_sink..n_sink+n (MLA: only the
+        32-d k_pe; GQA: the full key). Grafts are device-resident tc
+        tensors — no host->device upload per swap."""
         hs = [self.grafts[i]["h"][li] for i in picks]
-        c = hs[0]["c"] if len(hs) == 1 else tc.cat([h["c"] for h in hs], dim=1)
-        kpe = hs[0]["kpe"] if len(hs) == 1 else tc.cat([h["kpe"] for h in hs], dim=2)
-        n = c.shape[1]
-        kpe = F.apply_rotary(kpe, self.m.rope_cos.slice(0, self.n_sink, n),
-                             self.m.rope_sin.slice(0, self.n_sink, n))
-        return c, kpe, n
+        blk = {key: (hs[0][key] if len(hs) == 1
+                     else tc.cat([h[key] for h in hs], dim=dim))
+               for key, dim in self.PAYLOAD}
+        n = blk[self.PAYLOAD[0][0]].shape[self.PAYLOAD[0][1]]
+        blk = self._rope_block(blk, self.m.rope_cos.slice(0, self.n_sink, n),
+                               self.m.rope_sin.slice(0, self.n_sink, n))
+        return blk, n
 
     def swap(self, picks):
         """Replace the arena occupants. Pure cache surgery — live untouched."""
@@ -412,19 +506,22 @@ class ArenaCache:
         n_new = 0
         new_caches = []
         head = self.n_sink + self.cur_mount_n
-        for li, (c, kpe) in enumerate(self.caches):
-            S = c.shape[1]
-            parts_c = [c.slice(1, 0, self.n_sink)]
-            parts_k = [kpe.slice(2, 0, self.n_sink)]
+        for li, cache in enumerate(self.caches):
+            S = cache[0].shape[self.PAYLOAD[0][1]]
+            blk = None
             if picks:
-                cg, kg, n_new = self._graft_block(picks, li)
-                parts_c.append(cg)
-                parts_k.append(kg)
-            if S > head:        # zero-length live tail: nothing to carry
-                parts_c.append(c.slice(1, head, S - head))
-                parts_k.append(kpe.slice(2, head, S - head))
-            new_caches.append((tc.cat(parts_c, dim=1) if len(parts_c) > 1 else parts_c[0],
-                               tc.cat(parts_k, dim=2) if len(parts_k) > 1 else parts_k[0]))
+                blk, n_new = self._graft_block(picks, li)
+            new = []
+            for ei, (key, dim) in enumerate(self.PAYLOAD):
+                t = cache[ei]
+                parts = [t.slice(dim, 0, self.n_sink)]
+                if blk is not None:
+                    parts.append(blk[key])
+                if S > head:    # zero-length live tail: nothing to carry
+                    parts.append(t.slice(dim, head, S - head))
+                new.append(tc.cat(parts, dim=dim) if len(parts) > 1
+                           else parts[0])
+            new_caches.append(tuple(new))
         self.caches = new_caches
         self.cur_mounts = picks
         self.cur_mount_n = n_new
@@ -440,12 +537,15 @@ class ArenaCache:
         drop_n = sum(n for _, n in drop)
         head = self.n_sink + self.cur_mount_n
         out = []
-        for c, kpe in self.caches:
-            S = c.shape[1]
-            out.append((tc.cat([c.slice(1, 0, head),
-                                c.slice(1, head + drop_n, S - head - drop_n)], dim=1),
-                        tc.cat([kpe.slice(2, 0, head),
-                                kpe.slice(2, head + drop_n, S - head - drop_n)], dim=2)))
+        for cache in self.caches:
+            new = []
+            for ei, (key, dim) in enumerate(self.PAYLOAD):
+                t = cache[ei]
+                S = t.shape[dim]
+                new.append(tc.cat([t.slice(dim, 0, head),
+                                   t.slice(dim, head + drop_n,
+                                           S - head - drop_n)], dim=dim))
+            out.append(tuple(new))
         self.caches = out
         return drop_n
 
@@ -470,8 +570,7 @@ class ArenaCache:
             L.self_attn.live_shift = self.live_shift
         ids = self.encode(turn_text)
         if self.caches is None:    # bootstrap: sink enters via injection
-            kv_graft.set_injection_mla(self.m, [self.sink_h[li]
-                                                for li in range(len(self.m.layers))])
+            self._set_injection_host(self.sink_h)
         self._forward(ids)
         kv_graft.clear_injection(self.m)
         gidx = None
@@ -486,7 +585,13 @@ class ArenaCache:
     # question) is ungrounded; a content-free hedge is a miss. v1 is blind
     # to name-only confabulations (no digit/uppercase signal) — recorded.
     HEDGES = ("don't know", "do not know", "not sure", "no information",
-              "doesn't mention", "does not mention", "cannot", "can't find")
+              "doesn't mention", "does not mention", "cannot", "can't find",
+              "have access")
+    # dialogue scaffolding and meta-commentary words: present in every
+    # mounted "User:/Assistant:" turn, so they must never count as content
+    # overlap — "Okay, the user is asking about X" grounded via "user"
+    # (GQA trips gate, measured)
+    SCAFFOLD = {"user", "assistant", "okay", "asking", "about", "question"}
 
     @staticmethod
     def _caps_tokens(text, skip_sentence_initial=True):
@@ -532,8 +637,8 @@ class ArenaCache:
             # its payload words IN the mounted sources; a deflection ("same
             # place as last time") and an echo of an unmounted turn do not
             qw = {w.lower().rstrip(".,:;?") for w in question.split()}
-            subst = {w.lower().rstrip(".,:;") for w in ans.split()
-                     if len(w.rstrip(".,:;")) >= 4} - qw
+            subst = ({w.lower().rstrip(".,:;") for w in ans.split()
+                      if len(w.rstrip(".,:;")) >= 4} - qw - self.SCAFFOLD)
             return bool(subst) and bool(subst & words)
         return content <= have
 
@@ -696,9 +801,10 @@ class ArenaCache:
             # sink is host numpy; deposited grafts are device tensors
             _np = lambda t: t if isinstance(t, np.ndarray) else t.numpy()
             for li in range(len(self.m.layers)):
-                inj.append({"c": np.concatenate([_np(g["h"][li]["c"]) for g in mounts], axis=1),
-                            "kpe": np.concatenate([_np(g["h"][li]["kpe"]) for g in mounts], axis=2)})
-            kv_graft.set_injection_mla(self.m, inj)
+                inj.append({key: np.concatenate([_np(g["h"][li][key])
+                                                 for g in mounts], axis=dim)
+                            for key, dim in self.PAYLOAD})
+            self._set_injection_host(inj)
             self.cur_mounts = picks
             self.cur_mount_n = sum(self.grafts[i]["ntok"] for i in picks)
         else:
@@ -709,6 +815,16 @@ class ArenaCache:
         kv_graft.clear_injection(self.m)     # bootstrap injection fired once
         out = [int(row.argmax())]
         for _ in range(ngen - 1):
+            # EARLY STOP: break at the first stop sequence so post-answer
+            # tokens never enter the cache. Qwen3 leaks reasoning text
+            # after its answer; cached leak in the live window became a
+            # style attractor that flipped LATER probes into meta-answers
+            # (GQA trips gate: 6/6 with trips=0, 0/6 with trips=2 — the
+            # extra junk from retried attempts cascaded). MiniCPM3 simply
+            # never emitted post-answer junk, which is why decoding the
+            # full ngen was harmless on MLA.
+            if any(s in self.decode(out) for s in stops):
+                break
             row = self._forward([out[-1]])
             out.append(int(row.argmax()))
         # the answer tokens are in the cache; record the live segment
@@ -741,6 +857,112 @@ class ArenaCache:
                     self.grafts[gidx]["kind"] = "recall"
         self.live_segs.append((gidx, seg_start_ntok + len(out)))
         evicted = self.evict()
-        S = self.caches[0][0].shape[1]
+        S = self._cache_len()
         return txt, {"mounts": [i + 1 for i in picks], "resident": S,
                      "evicted": evicted, "live_tokens": sum(n for _, n in self.live_segs)}
+
+
+class GQAArenaCache(ArenaCache):
+    """The GQA dialect (Qwen3-family). Forks from MLA, each one measured:
+
+      - payload = per-layer pre-RoPE (k, v) FULL tensors, both seq dim=2;
+        mount surgery re-RoPEs the whole key (MLA re-RoPEs only the 32-d
+        shared k_pe — the latent is position-free)
+      - router = layer-0 |q.k| in the per-head qk-normed space (E1 router
+        law forks by model: MiniCPM3 has NO qk-norm -> outlier keys make
+        key-space scores probe-independent -> latent routing; Qwen3's
+        per-head norm makes layer-0 keys a normalized routing space).
+        Keys are unit-normalized per head-vector so scores stay in O(1)
+        cosine range and the lexical channel keeps its +1 dominance
+        calibration. route_layer must be 0 — part of the dialect.
+      - persistence: nodes carry (k, v) as (L, H, S, D) fp16; routing keys
+        are variable-length per node, so the index stores one array per
+        node instead of a stacked matrix.
+    """
+    PAYLOAD = (("k", 2), ("v", 2))
+
+    def __init__(self, model, *a, **kw):
+        cfg = model.config
+        # k + v vals/token/layer for node VRAM accounting (Qwen3-4B: 2048)
+        self.VALS_PER_TOK_LAYER = cfg.num_kv_heads * cfg.head_dim * 2
+        # arena surgery slices (k, v) tuples — the INT8-quantized cache
+        # form (k_u8, k_scale, v_u8, v_scale) is not surgeable
+        for L in model.layers:
+            L.self_attn.quant_kv_cache = False
+        super().__init__(model, *a, **kw)
+
+    # --------------------------------------------------- dialect overrides
+    def _harvest(self, ids, layer_filter=None, max_layers=None):
+        # full-depth forward (no early-exit on the GQA path); layer_filter
+        # still bounds what is STORED
+        return kv_graft.harvest_kv(self.m, ids, layer_filter=layer_filter)
+
+    def _probe_key(self, text):
+        qc = kv_graft.capture_queries(self.m, self.encode(text),
+                                      layer_filter={self.route_layer})
+        return qc[self.route_layer][0].astype(np.float32)
+
+    def _node_key(self, text, h_host=None):
+        if h_host is None:
+            h_host = self._harvest(self.encode(text),
+                                   layer_filter={self.route_layer})
+        return h_host[self.route_layer]["k"][0].astype(np.float32)
+
+    def _key_score(self, pkey, nkey):
+        # E1 protocol EXACTLY: mean over q heads of max over (probe pos,
+        # node pos) of |q.k|/sqrt(Dh), RAW vectors. Unit-normalizing q and
+        # k first was tested and REFUTED (2026-06-11, unified gate 2/6):
+        # norm information is load-bearing — max-over-pairs keys on
+        # high-salience tokens, and under cosine every pair weighs the
+        # same, so rankings collapsed probe-independent (the MiniCPM3
+        # key-space failure signature, reproduced on the model whose
+        # qk-norm was supposed to prevent it).
+        H, _, Dh = pkey.shape
+        kk = np.repeat(nkey, H // nkey.shape[0], axis=0)
+        sc = np.einsum("hqd,hkd->hqk", pkey, kk) / np.sqrt(Dh)
+        return float(np.abs(sc).max(axis=(1, 2)).mean())
+
+    def _normalize_scores(self, base):
+        # raw |q.k| has no calibrated scale; rescale per route so the best
+        # centroid-channel score sits at 1.0 — a monotone transform
+        # (ranking-preserving) that restores the lexical channel's +1
+        # dominance calibration
+        if not base:
+            return base
+        mx = max(abs(v) for v in base.values()) + 1e-8
+        return {i: v / mx for i, v in base.items()}
+
+    def _rope_block(self, blk, cs, sn):
+        blk["k"] = F.apply_rotary(blk["k"], cs, sn)
+        return blk
+
+    def _cache_key_of(self, seg):
+        return None     # GQA contextualized keys unimplemented: standalone
+
+    def _set_inject(self, att, blk):
+        att.inject_kv = (blk["k"], blk["v"], 1.0)
+        att.graft_seats = int(blk["k"].shape[2])
+
+    def _set_injection_host(self, inj):
+        kv_graft.set_injection(self.m, inj)
+
+    # ------------------------------------------------- persistence format
+    def pack_node(self, h):
+        _np = lambda t: (t if isinstance(t, np.ndarray)
+                         else t.float().numpy()).astype(np.float16)
+        return {"k": np.stack([_np(d["k"])[0] for d in h]),
+                "v": np.stack([_np(d["v"])[0] for d in h])}
+
+    def unpack_node(self, z):
+        dt = BlockTC.COMPUTE_DTYPE
+        k, v = z["k"], z["v"]
+        return [{"k": tc.tensor(np.ascontiguousarray(k[li][None])).astype(dt),
+                 "v": tc.tensor(np.ascontiguousarray(v[li][None])).astype(dt)}
+                for li in range(len(self.m.layers))]
+
+    def pack_index(self):
+        return {f"rkey_{i:04d}": g["cent"]
+                for i, g in enumerate(self.grafts)}
+
+    def unpack_index(self, z, i):
+        return z[f"rkey_{i:04d}"].astype(np.float32)

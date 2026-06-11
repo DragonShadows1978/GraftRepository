@@ -99,7 +99,17 @@ answer, info = repo.chat("What port does the ingest replacement use?")
   score order favors digests over verbatim turns — refuted).
 - Librarian: deferred mode keeps the hot path flat (folds drain between
   turns); true background-mission offload planned.
-- GQA (Qwen3) arena port: round 1 DONE (arena surgery + layer-0 router,
-  6/6). Remaining: ladder/trips/consolidation + repository persistence on
-  GQA, dialect-adapter unification. (VRAM paging: DONE — LRU write-back
-  pager, 100 docs at a 64MB budget, 20/20.)
+- GQA (Qwen3) port: UNIFIED — ArenaCache is a dialect surface (base class
+  = MLA; GQAArenaCache overrides payload/router/RoPE/injection/persistence).
+  Gated green: full MLA suite preserved bit-identical; GQA arena 6/6,
+  starved-arena trips 6/6 (hybrid harvest-on-generate deposits work),
+  E4-C recall 6/6 with BOTH folds fidelity-aborted (Qwen3 first-gen digest
+  generation needs prompt tuning — the gate holds the line). Two refuted
+  on the way: unit-normalized layer-0 routing (rankings collapse
+  probe-independent; norm info is load-bearing) and full-ngen decoding on
+  a reasoning-tuned model (post-answer leak in the live cache became a
+  style attractor, trips 6/6 -> 0/6; EARLY-STOP decoding fixed it and cut
+  probe latency 2-3x). Not yet re-gated after the early-stop fix: GQA
+  repository resume (6/7 pre-fix), GQA descent 42-turn (5/8 pre-fix);
+  cross-model migrate tool + gate written, NEVER RUN.
+  (VRAM paging: DONE — LRU write-back pager, 100 docs at 64MB, 20/20.)
