@@ -1,7 +1,7 @@
-"""Phase-1 ARM-L (linear floor) training runner. Self-contained,
+"""Phase-1/2 ARM training runner (ArmL floor or ArmS student). Self-contained,
 resumable: picks up its checkpoint if present.
 
-  python3 scribe/run_arm_l.py /mnt/ForgeRealm/scribe_mint_v1 [epochs]
+  python3 scribe/run_arm_l.py <mint_root> [epochs] [ArmL|ArmS]
 
 Warm phase only (the floor). Logs per-layer error head/mid/tail (G1 raw
 data) and per-domain loss; checkpoints every 200 steps and at end to
@@ -17,13 +17,14 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import tensor_cuda as tc                                   # noqa: E402
 from core.minicpm3_tc import MiniCPM3_TC, _snap            # noqa: E402
 from scribe.mint import Minter                             # noqa: E402
-from scribe.student import ArmL, StudentConfig             # noqa: E402
+from scribe.student import ArmL, ArmS, StudentConfig             # noqa: E402
 from scribe.train import WarmTrainer                       # noqa: E402
 from tokenizers import Tokenizer as HFTok                  # noqa: E402
 
 ROOT = sys.argv[1]
 EPOCHS = int(sys.argv[2]) if len(sys.argv) > 2 else 3
-CKPT = os.path.join(ROOT, "arm_l.ckpt")
+ARM = sys.argv[3] if len(sys.argv) > 3 else "ArmL"
+CKPT = os.path.join(ROOT, f"{ARM.lower()}.ckpt")
 
 tok = HFTok.from_file(os.path.join(_snap(), "tokenizer.json"))
 m, info = MiniCPM3_TC.from_pretrained()
@@ -32,7 +33,7 @@ print(f"loaded: {info}", flush=True)
 
 minter = Minter(m, lambda t: tok.encode(t).ids, ROOT)
 np.random.seed(0)
-st = ArmL(StudentConfig())
+st = (ArmL if ARM == "ArmL" else ArmS)(StudentConfig())
 tr = WarmTrainer(st, m, minter, lr=3e-4)
 print(f"train rows: {len(tr.rows)}", flush=True)
 if os.path.exists(CKPT):
@@ -54,5 +55,5 @@ while tr.cursor < total:
 tr.save(CKPT)
 print("\nG1 RAW — per-layer normalized error profile (EMA):", flush=True)
 print("  " + " ".join(f"{e:.3f}" for e in tr.layer_err), flush=True)
-print(f"ARM-L TRAINED: {tr.cursor} steps -> {CKPT}", flush=True)
+print(f"{ARM} TRAINED: {tr.cursor} steps -> {CKPT}", flush=True)
 print("DONE", flush=True)
