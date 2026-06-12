@@ -43,6 +43,10 @@ n_apa = 0
 for L in model.layers:
     if L.mixer.is_global:
         L.mixer.attention_mode = "apa_selective"
+        # r0.10 per the Architect's standing practice — ppl-verified on
+        # THIS model 2026-06-12 (sweep: r0.05..r0.15 all within noise of
+        # standard, post blend-mask fix)
+        L.mixer.refine_percentile = 0.10
         n_apa += 1
 print(f"loaded: {info} | APA apa_selective ON ({n_apa} global layers, "
       f"bulk{model.layers[5].mixer.bulk_bits}/refine "

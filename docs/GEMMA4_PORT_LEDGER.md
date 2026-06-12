@@ -177,6 +177,54 @@ Remaining levers (diminishing): `down` GEMV at 179 GB/s (others
 op or capacity-doubling); cold prefill on the tile path (column-
 blocked two-stage cuBLAS); CUDA graphs.
 
+### Softmax investigation (Architect-directed, 2026-06-12)
+
+Two latent bugs found, both invisible to every prior gate on every
+model:
+
+1. **Engine trailing-axis reductions ran one thread per OUTPUT**
+   (533µs for an 11K-element max — 16 working threads on the GPU).
+   Block-per-row fast path: 57×/51× (engine `eb20615`). Explains the
+   580µs/layer composed softmax completely. All composed paths (qwen
+   stack, training, APA internals) inherit the fix.
+2. **APA blend causal mask was TOP-LEFT aligned for cached chunks** —
+   and this bug had ALREADY BEEN FIXED ONCE (Architect's catch):
+   `functional._causal_mask` carries the bottom-right fix with the
+   measured anecdote from the KV-Graft era. The blend path kept its
+   OWN private mask construction (`_CAUSAL_BLOCK_CACHE`,
+   `triu(k=i+1)`, assumes L==S) and the fix never propagated. Every
+   rectangular-with-cache APA call silently blinded queries to the
+   most recent S−L keys; survived because ALL APA gates ran square
+   cacheless shapes. Found by the refine ppl sweep (ppl 121 →
+   11,000,000). Fix: the blend now SLICES the canonical
+   `functional._causal_mask` (single implementation, equivalence
+   verified incl. square shapes; private cache deleted); APA gate
+   carries a permanent rect-with-cache check. TWO LESSONS
+   (registered): (a) gate the regime the feature EXISTS FOR, not the
+   shapes that are convenient; (b) a fixed bug isn't fixed while a
+   duplicate of the buggy logic survives — fixes must hunt their
+   copies.
+
+**Refine-percentile ppl sweep** (wikitext raw, 6×2048-token windows,
+1024 scored each, blend forced active, post-fix):
+
+| setting | ppl | vs standard |
+|---|---|---|
+| standard | 121.74 | — |
+| apa r0.15 | 119.53 | −1.8% (noise) |
+| apa r0.10 | 117.30 | −3.6% (noise) |
+| apa r0.05 | 121.29 | −0.4% (noise) |
+
+The Architect's r0.10/r0.05 prior transfers: **refine cost is
+unmeasurable at this sample size, down to r0.05.** (Absolute ppl ~121
+on raw untemplated text is consistent with the -it model's hard
+template binding; HF control pending. The APA conclusion is relative —
+same harness, same data, only the attention path varies.)
+
+All attention softmaxes also now route through the fused row kernel at
+inference (`functional.py`): masks fold into scores, then
+causal_softmax over L=1 rows — 8× at band-mask prefill shapes.
+
 **Job economics at the ready gate: 10/10 validated templates in 16s
 warm** (vs 38s on the Qwen3.5 stack — fewer output tokens per accepted
 template; per-job this is already the fastest stack on the machine).

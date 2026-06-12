@@ -200,7 +200,6 @@ def _kv_dequant(q, scale):
     return (qd - 128.0) * scale
 
 
-_CAUSAL_BLOCK_CACHE = {}
 
 
 def _cublas_blend_attention(q, kH, kq_kv, v_kv, group, scale, z, causal, blk):
@@ -225,12 +224,16 @@ def _cublas_blend_attention(q, kH, kq_kv, v_kv, group, scale, z, causal, blk):
         bulk = tc.matmul(Qi, kqT) * scale
         rank = tc.matmul(Qi, kT) * scale
         if causal:
-            key = (i, e - i, S, q.device.split(":")[0], bulk.dtype)
-            ca = _CAUSAL_BLOCK_CACHE.get(key)
-            if ca is None:
-                cm = np.triu(np.full((e - i, S), -1e4, np.float32), i + 1)
-                ca = tc.tensor(cm).astype(bulk.dtype)
-                _CAUSAL_BLOCK_CACHE[key] = ca
+            # ONE canonical mask: rows [i, e) of functional._causal_mask
+            # (bottom-right aligned, cached per shape). This path used to
+            # build its OWN triu(k=i+1) — the top-left rectangle bug that
+            # _causal_mask's docstring records FIXING in the standard
+            # path was alive here the whole time because the logic was
+            # duplicated (caught 2026-06-12 by the Gemma 4 refine ppl
+            # sweep: ppl 121 -> 11M on cached chunks; every prior APA
+            # gate ran square shapes where the two constructions agree).
+            ca = F._causal_mask(L, S, q.device.split(":")[0],
+                                bulk.dtype).slice(0, i, e - i)
             bulk = bulk + ca
             rank = rank + ca
         w = tc.apa_blend_softmax(bulk, rank, z)
