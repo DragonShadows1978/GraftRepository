@@ -104,9 +104,13 @@ def common_prefix_len(a, b):
 
 def generate(prompt, temperature, num_predict):
     global LAST_IDS
-    ids = np.asarray(tok.apply_chat_template(
-        [{"role": "user", "content": prompt}],
-        add_generation_prompt=True), np.int64)
+    enc = tok.apply_chat_template(
+        [{"role": "user", "content": prompt}], add_generation_prompt=True)
+    # transformers 5.12 returns a BatchEncoding here — which subclasses
+    # UserDict, NOT dict (an isinstance(enc, dict) check silently
+    # misses it and np.asarray turns it into its KEY STRINGS)
+    ids = np.asarray(enc["input_ids"] if hasattr(enc, "keys") else enc,
+                     np.int64)
     t0 = time.perf_counter()
 
     hit = PREFIX.lookup(ids)
@@ -121,11 +125,22 @@ def generate(prompt, temperature, num_predict):
             lg, caches = model(ids[None, :], last_token_only=True)
             mounted = 0
         if LAST_IDS is not None and len(LAST_IDS):
-            cp = common_prefix_len(ids, LAST_IDS)
+            # cap at len-1: identical prompts must still mount (the
+            # mount needs >=1 tail token to prefill)
+            cp = min(common_prefix_len(ids, LAST_IDS), len(ids) - 1)
             if cp >= 64 and cp > mounted:
-                # last_token_only: the minting prefill's logits are
-                # unused, and full logits at cp~700 are a 1GB transient
-                _, pc = model(ids[None, :cp], last_token_only=True)
+                if len(ids) <= 1023:
+                    # pure-KV: the state-at-cp is EXACTLY a slice of
+                    # this request's own post-prefill caches (global KV
+                    # is append-only; below the window the sliding ring
+                    # holds every key). Minting is free — no re-prefill
+                    # (which was doubling request latency).
+                    pc = [(k.slice(2, 0, cp), v.slice(2, 0, cp))
+                          for k, v in caches]
+                else:
+                    # past the window the ring has trimmed: state-at-cp
+                    # is no longer a slice. Re-prefill to mint.
+                    _, pc = model(ids[None, :cp], last_token_only=True)
                 PREFIX.store(ids[:cp], pc)
                 del pc
                 tc.empty_cache()

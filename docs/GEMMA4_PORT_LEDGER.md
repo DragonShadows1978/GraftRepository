@@ -150,7 +150,31 @@ of the QAT benefit → exact import required.
 | **PARITY** | **PASS** — top-1 75/80; worst flip cost 1.081 (true near-ties; was 8.7-9.2 pre-QAT); L0/L5 caches 0.9999-1.0000; final-norm cos 0.965-0.9999. Engine-vs-QAT-GT distance = bf16 compute noise, as predicted. |
 | **STATE** | **PASS** — pure-KV save/restore bit-identical, post-prefill and mid-decode. |
 | **APA** | **PASS** — apa_selective bulk4/refine 0.15 on the 8 globals: 4/80 flips, worst 0.25 logits. **Bulk-bits law (qk-norm → 4): 6th architecture.** |
-| LONGCTX | (running — band mask + ring trim vs HF fp32 @ 1200 tok) |
+| **LONGCTX** | **PASS** — 1200-tok prefill vs HF fp32: top-1 match (the external adjudication of band mask + ring trim); cross-boundary chunking (512 vs 384) top-1 consistent; greedy continuations identical. |
+| **READY-TO-WORK** | **PASS** — corpus driver's own run_shard through the shim: **10/10 validated STORED_IN templates in 44s** (one request, cold). APA explicitly ON and logged. |
+
+### Speed ladder (begins 2026-06-12; measured at the ready gate)
+
+| Configuration | decode | cold prefill | warm (GRM mount) |
+|---|---|---|---|
+| v1: fused-tile/GEMV only, chunk 512 | 4.6 tok/s | 22 ms/tok (15.2s @ 691) | — |
+| + GEMV 96KB shmem (engine `2d628d6`; ffn_down K=15360 onto GEMV) | **8.6 tok/s** | 15.2s (unchanged, tile) | — |
+| + free prefix minting (slice the request's own caches) + len-1 cap | 8.6 tok/s | 15.2s | **prefill 0.2s, mounted 690/691** |
+
+**Job economics at the ready gate: 10/10 validated templates in 16s
+warm** (vs 38s on the Qwen3.5 stack — fewer output tokens per accepted
+template; per-job this is already the fastest stack on the machine).
+GRM mint discovery: pure-KV means the state-at-cp is EXACTLY a slice
+of the request's own post-prefill caches (below the sliding window) —
+minting is FREE; the re-prefill mint (which doubled request latency)
+is only needed past 1023 tokens. Identical prompts mount via the
+len(ids)-1 cap. Prefix states stored in HOST RAM (8 GPU-resident sets
+would eat half the card), uploaded on mount (~30ms, invisible).
+
+Remaining decode rungs (8.6 tok/s = 116ms/tok vs ~25ms bandwidth-ish
+floor): profile first (qwen pattern — orchestration vs kernel split);
+GEMV occupancy at 60KB shmem (1 block/SM); cold prefill via
+column-blocked two-stage cuBLAS; CUDA graphs.
 
 Fixes en route (both registered): (a) the parity gate's last-layer
 probe now compares final-normed output vs GT hidden[48] (pre-vs-post
