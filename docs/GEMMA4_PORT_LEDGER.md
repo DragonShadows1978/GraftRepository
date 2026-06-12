@@ -158,8 +158,24 @@ of the QAT benefit → exact import required.
 | Configuration | decode | cold prefill | warm (GRM mount) |
 |---|---|---|---|
 | v1: fused-tile/GEMV only, chunk 512 | 4.6 tok/s | 22 ms/tok (15.2s @ 691) | — |
-| + GEMV 96KB shmem (engine `2d628d6`; ffn_down K=15360 onto GEMV) | **8.6 tok/s** | 15.2s (unchanged, tile) | — |
+| + GEMV 96KB shmem (engine `2d628d6`; ffn_down K=15360 onto GEMV) | 8.6 tok/s | 15.2s (unchanged, tile) | — |
 | + free prefix minting (slice the request's own caches) + len-1 cap | 8.6 tok/s | 15.2s | **prefill 0.2s, mounted 690/691** |
+| + concat projections (qkv / gate\|up: 7→4 GEMV launches), fused head norms, no-repeat_kv decode attention | 13.5 tok/s | — | — |
+| + APA context threshold (blend only past 2048 tok; the per-token whole-cache requant at S=700 was pure overhead — gate forces threshold 0 to keep testing the machinery) | 15.0 tok/s | — | — |
+| + native-dtype GEMV staging + fused `rope_apply` (engine) | 15.4 tok/s | — | — |
+| + **fused causal_softmax at decode** (the composed softmax chain measured **580µs/layer** on an 11K-element tensor — 23ms/token!) + no-op ring-trim guard | **31.0 tok/s (32.3 ms/tok)** | — | — |
+
+Forensic method note: the rope rung "should" have saved 14ms and saved
+1.5 — the launch-cost model was wrong (dispatch measured 5.6µs, not
+25µs). Micro-benchmarks of every decode op at REAL shapes then put the
+missing 0.8ms/layer in softmax (580µs) and full-cache "trim" copies
+(91µs) — both confirmed by the post-fix step time landing within 1ms
+of the micro-bench prediction. Measure, don't model.
+
+Remaining levers (diminishing): `down` GEMV at 179 GB/s (others
+320-355); cat-append cache copies (~95µs/layer — needs an engine ring
+op or capacity-doubling); cold prefill on the tile path (column-
+blocked two-stage cuBLAS); CUDA graphs.
 
 **Job economics at the ready gate: 10/10 validated templates in 16s
 warm** (vs 38s on the Qwen3.5 stack — fewer output tokens per accepted

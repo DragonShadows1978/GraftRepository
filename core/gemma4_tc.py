@@ -131,8 +131,25 @@ def _band_mask(L, S, window, device, dtype):
     return m
 
 
+_ones_cache = {}
+
+
+def _ones(D):
+    t = _ones_cache.get(D)
+    if t is None:
+        t = tc.tensor(np.ones(D, np.float32), dtype="float32")
+        _ones_cache[D] = t
+    return t
+
+
 def _head_rmsnorm(x, w, eps, B, L, H, D):
-    """Per-head RMSNorm, PLAIN w (None = the scale-free v_norm)."""
+    """Per-head RMSNorm, PLAIN w (None = the scale-free v_norm).
+    Inference takes the engine's fused rms_norm kernel (one launch vs
+    the ~6-launch composed chain — 3 of these per attention layer)."""
+    if hasattr(tc, "rms_norm") and not tc.is_grad_enabled():
+        wt = w if w is not None else _ones(D)
+        return tc.rms_norm(x.reshape([B, L * H, D]), wt,
+                           eps).reshape([B, L, H * D])
     xf = x.reshape([B, L, H, D]).float()
     ms = (xf * xf).mean([-1], True)
     xf = xf * (ms + eps).pow(-0.5)
@@ -149,6 +166,7 @@ class Gemma4AttentionTC:
         self.kv_heads = (cfg.num_global_kv_heads if self.is_global
                          else cfg.num_kv_heads)
         self.q_proj = self.k_proj = self.v_proj = self.o_proj = None
+        self.qkv_proj = None      # concat [q|k(|v)] — one GEMV launch
         self.q_norm_w = self.k_norm_w = None     # fp32 PLAIN w
         # APA dials (qk-norm family -> bulk_bits 4 per the measured law;
         # 6th architecture test). cuBLAS blend path only — fused kernel's
@@ -158,37 +176,96 @@ class Gemma4AttentionTC:
         self.refine_percentile = 0.15
         self.bulk_bits = 4
         self.attn_block = 1024
+        # apa_selective engages the blend only past this context: APA's
+        # job is bounded transients at LONG context, and below this the
+        # blend's per-token whole-cache requantization is pure overhead
+        # (profiler: 2.49 ms/global-layer at S=700; APA==standard at
+        # short S per the zero-flip gate). Gates force this to 0 to
+        # keep the blend machinery itself tested.
+        self.apa_min_context = 2048
 
     def __call__(self, x, cos, sin, position_offset=0, kv_cache=None):
         cfg = self.cfg
         B, L, _ = x.shape
         H, KV, D = cfg.num_heads, self.kv_heads, self.head_dim
 
-        q = _head_rmsnorm(self.q_proj(x), self.q_norm_w, cfg.rms_norm_eps,
+        if self.qkv_proj is not None:
+            # one GEMV launch for [q|k(|v)] instead of 2-3
+            qkv = self.qkv_proj(x)
+            q_lin = qkv.slice(2, 0, H * D)
+            kraw = qkv.slice(2, H * D, KV * D)
+            vsrc = (kraw if self.is_global
+                    else qkv.slice(2, (H + KV) * D, KV * D))
+        else:
+            q_lin = self.q_proj(x)
+            kraw = self.k_proj(x)
+            # V source: global layers share k_proj (K=V projection);
+            # sliding layers have their own v_proj.
+            vsrc = kraw if self.is_global else self.v_proj(x)
+
+        q = _head_rmsnorm(q_lin, self.q_norm_w, cfg.rms_norm_eps,
                           B, L, H, D)
         q = q.reshape([B, L, H, D]).transpose(1, 2)          # (B,H,L,D)
-        kraw = self.k_proj(x)                                # (B,L,KV*D)
         k = _head_rmsnorm(kraw, self.k_norm_w, cfg.rms_norm_eps, B, L, KV, D)
         k = k.reshape([B, L, KV, D]).transpose(1, 2)
-        # V: scale-free RMSNorm, NO RoPE. Global layers share k_proj (K=V
-        # projection); sliding layers have their own v_proj.
-        vsrc = kraw if self.is_global else self.v_proj(x)
+        # V: scale-free RMSNorm, NO RoPE.
         v = _head_rmsnorm(vsrc, None, cfg.rms_norm_eps, B, L, KV, D)
         v = v.reshape([B, L, KV, D]).transpose(1, 2)
 
-        cseg = cos.slice(0, position_offset, L)
-        sseg = sin.slice(0, position_offset, L)
-        q = F.apply_rotary(q, cseg, sseg)
-        k = F.apply_rotary(k, cseg, sseg)
+        if hasattr(tc, "rope_apply") and not tc.is_grad_enabled():
+            # one launch per tensor vs ~8 for the composed chain
+            q = tc.rope_apply(q, cos, sin, position_offset)
+            k = tc.rope_apply(k, cos, sin, position_offset)
+        else:
+            cseg = cos.slice(0, position_offset, L)
+            sseg = sin.slice(0, position_offset, L)
+            q = F.apply_rotary(q, cseg, sseg)
+            k = F.apply_rotary(k, cseg, sseg)
 
         if kv_cache is not None:
             k = tc.cat([kv_cache[0], k], dim=2)
             v = tc.cat([kv_cache[1], v], dim=2)
         S_all = k.shape[2]
 
+        apa_active = (self.is_global
+                      and self.attention_mode == "apa_selective"
+                      and S_all > self.apa_min_context)
+
+        # decode fast path (L==1, non-blend): batched per-KV-group
+        # matmuls — q (B,KV,rep,D) @ k (B,KV,S,D)^T — instead of
+        # MATERIALIZING repeat_kv'd K and V (~23MB of copies per sliding
+        # layer per token; the profiler put 81% of the step in sliding
+        # layers). No mask needed at L==1: the ring is <= window and
+        # global attends everything.
+        if L == 1 and not apa_active:
+            rep = H // KV
+            qg = q.reshape([B, KV, rep, D])
+            sc = tc.matmul(qg, k, alpha=1.0, trans_b=True)   # (B,KV,rep,S)
+            # fused single-kernel softmax (at L==1 causal == full row);
+            # the composed softmax chain measured 580us PER LAYER on
+            # decode shapes — 23ms/token across the sliding layers.
+            # Reshape to L=1 rows first: causal_softmax reads dim -2 as
+            # L and would mask rep-1 keys off the earlier q heads.
+            if hasattr(tc, "causal_softmax"):
+                p = tc.causal_softmax(sc.reshape([B, KV * rep, 1, S_all]))
+                p = p.reshape([B, KV, rep, S_all])
+            else:
+                p = sc.softmax(-1)
+            attn = tc.matmul(p, v).reshape([B, L, H * D])
+            if self.is_global:
+                new_kv = (k, v)
+            else:
+                keep = min(cfg.sliding_window - 1, S_all)
+                # slice ONLY when the window actually binds — below it
+                # the "trim" was a full-cache copy every token
+                new_kv = ((k, v) if keep == S_all else
+                          (k.slice(2, S_all - keep, keep),
+                           v.slice(2, S_all - keep, keep)))
+            return self.o_proj(_cast(attn)), new_kv
+
         if self.is_global:
             new_kv = (k, v)                                  # append-only
-            if self.attention_mode == "apa_selective":
+            if apa_active:
                 from tensor_cuda.quant import (_norm_ppf, _quantize_keys,
                                                _tables)
                 from core.mistral7b_tc import _cublas_blend_attention
@@ -218,10 +295,12 @@ class Gemma4AttentionTC:
                     q, _repeat_kv(k, H // KV), _repeat_kv(v, H // KV),
                     attn_mask=_band_mask(L, S_all, W, dev, q.dtype),
                     scale=1.0)
-            # ring-trim: keep the last window-1 keys (priors for next step)
+            # ring-trim: keep the last window-1 keys (priors for next
+            # step); slice only when the window binds
             keep = min(W - 1, S_all)
-            new_kv = (k.slice(2, S_all - keep, keep),
-                      v.slice(2, S_all - keep, keep))
+            new_kv = ((k, v) if keep == S_all else
+                      (k.slice(2, S_all - keep, keep),
+                       v.slice(2, S_all - keep, keep)))
 
         attn = attn.transpose(1, 2).reshape([B, L, H * D])
         return self.o_proj(_cast(attn)), new_kv
@@ -230,9 +309,15 @@ class Gemma4AttentionTC:
 class GegluTC:
     def __init__(self):
         self.gate_proj = self.up_proj = self.down_proj = None
+        self.gu_proj = None        # concat [gate|up] — one GEMV launch
 
     def __call__(self, x):
         # gelu_pytorch_tanh — engine gelu IS the tanh approximation
+        if self.gu_proj is not None:
+            gu = self.gu_proj(x)
+            F2 = gu.shape[-1] // 2
+            return self.down_proj(gu.slice(2, 0, F2).gelu()
+                                  * gu.slice(2, F2, F2))
         return self.down_proj(self.gate_proj(x).gelu() * self.up_proj(x))
 
 
@@ -453,11 +538,23 @@ class Gemma4_TC:
         r = GGUFReader(gguf_path or _QAT_GGUF)
         T = {t.name: t for t in r.tensors}
 
+        def q40_parts(names_dims):
+            """Concat several q4_0 tensors row-wise into ONE Q40LinearTC
+            (per-row packing makes row concat exact): one GEMV launch
+            where there were 2-3."""
+            packs, scs = [], []
+            for name, N, K in names_dims:
+                t = T[name]
+                assert int(t.tensor_type) == 2, \
+                    f"{name}: expected Q4_0 (2), got {t.tensor_type}"
+                p, s = _q40_repack(np.asarray(t.data), N, K)
+                packs.append(p)
+                scs.append(s)
+            return Q40LinearTC(np.concatenate(packs, axis=0),
+                               np.concatenate(scs, axis=0))
+
         def q40(name, N, K):
-            t = T[name]
-            assert int(t.tensor_type) == 2, \
-                f"{name}: expected Q4_0 (2), got {t.tensor_type}"
-            return Q40LinearTC(*_q40_repack(np.asarray(t.data), N, K))
+            return q40_parts([(name, N, K)])
 
         def f32(name):
             return np.asarray(T[name].data, np.float32)
@@ -490,20 +587,20 @@ class Gemma4_TC:
                     f32(f"{b}.{theirs}.weight")), dtype="float32")
             Lr.layer_scalar = float(f32(f"{b}.layer_output_scale.weight")[0])
             mx = Lr.mixer
-            mx.q_proj = q40(f"{b}.attn_q.weight", cfg.num_heads * D, Hd)
-            mx.k_proj = q40(f"{b}.attn_k.weight", KV * D, Hd)
+            parts = [(f"{b}.attn_q.weight", cfg.num_heads * D, Hd),
+                     (f"{b}.attn_k.weight", KV * D, Hd)]
             if not g:
-                mx.v_proj = q40(f"{b}.attn_v.weight", KV * D, Hd)
+                parts.append((f"{b}.attn_v.weight", KV * D, Hd))
+            mx.qkv_proj = q40_parts(parts)
             mx.o_proj = q40(f"{b}.attn_output.weight", Hd,
                             cfg.num_heads * D)
             mx.q_norm_w = tc.tensor(np.ascontiguousarray(
                 f32(f"{b}.attn_q_norm.weight")), dtype="float32")
             mx.k_norm_w = tc.tensor(np.ascontiguousarray(
                 f32(f"{b}.attn_k_norm.weight")), dtype="float32")
-            Lr.mlp.gate_proj = q40(f"{b}.ffn_gate.weight",
-                                   cfg.intermediate_dim, Hd)
-            Lr.mlp.up_proj = q40(f"{b}.ffn_up.weight",
-                                 cfg.intermediate_dim, Hd)
+            Lr.mlp.gu_proj = q40_parts(
+                [(f"{b}.ffn_gate.weight", cfg.intermediate_dim, Hd),
+                 (f"{b}.ffn_up.weight", cfg.intermediate_dim, Hd)])
             Lr.mlp.down_proj = q40(f"{b}.ffn_down.weight", Hd,
                                    cfg.intermediate_dim)
             gc.collect()

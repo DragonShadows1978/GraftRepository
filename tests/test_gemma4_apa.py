@@ -27,6 +27,9 @@ def set_mode(mode):
     for L in m.layers:
         if L.mixer.is_global:
             L.mixer.attention_mode = mode
+            # force the blend at any context — this gate tests the APA
+            # MACHINERY; the serving threshold would skip it at short S
+            L.mixer.apa_min_context = 0
 
 
 overall = True
