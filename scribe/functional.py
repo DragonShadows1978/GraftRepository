@@ -38,8 +38,12 @@ def inject_student(m, pred, S):
     for li, layer in enumerate(m.layers):
         att = layer.self_attn
         sl = pred.slice(1, li, 1).reshape([1, S, 288])
-        c = sl.slice(-1, 0, 256)                       # (1, S, 256)
-        kpe = sl.slice(-1, 256, 32).reshape([1, 1, S, 32])
+        # Reader compute dtype is bf16; astype is differentiable (verified:
+        # grad flows). fp32 injection trips ew_binary dtype mismatch at the
+        # graft re-RoPE.
+        c = sl.slice(-1, 0, 256).astype("bfloat16")    # (1, S, 256)
+        kpe = sl.slice(-1, 256, 32).reshape(
+            [1, 1, S, 32]).astype("bfloat16")
         att.inject_kv = (c, kpe)
         att.graft_seats = S
 
@@ -62,6 +66,7 @@ class FuncTrainer:
         self.cursor = 0
         self._exact = {}                 # (pair id, probe idx) -> probs np
         self._pids = [self.encode(p) for p in PROBES]
+        self._grad_checked = False
 
     def _exact_probs(self, row, pi, ids):
         key = (row["id"], pi)
@@ -110,6 +115,17 @@ class FuncTrainer:
 
         self.opt.zero_grad()
         loss.backward()
+        if kind == "kl" and not self._grad_checked:
+            # One-time tripwire: a fused/no-backward op anywhere in the
+            # reader would cut the graph SILENTLY and train nothing.
+            self._grad_checked = True
+            gn = sum(float(np.abs(p.grad.numpy()).sum())
+                     for p in self.st.parameters() if p.grad is not None)
+            if gn == 0.0:
+                raise RuntimeError(
+                    "first KL backward produced ZERO student grads — "
+                    "graph cut inside the frozen reader")
+            print(f"grad tripwire OK: |g|_1 = {gn:.3e}", flush=True)
         self.opt.step()
         self.cursor += 1
         return kind, float(loss.numpy())
