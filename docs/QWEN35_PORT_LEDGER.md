@@ -123,6 +123,33 @@ reassociation scale, tie-flip class — NOT bit-identical). REQUIRED
 before FUSED_DECODE becomes the port default: re-run the full gate
 suite (parity / state / APA) under GEMV at the next GPU gap.
 
+## Speed ladder (2026-06-12, all gated — Architect directive: close the
+## gap to baseline; corpus paused for the work)
+
+| Rung | ms/tok | tok/s | What |
+|---|---|---|---|
+| v1 composed | 840 | 1.2 | two-stage INT4 dequantized ~31GB/tok |
+| + int4 GEMV default | 122 | 8.2 | engine 8501a5c kernel, dispatch flip |
+| + fused RMSNorm default | 34 | 29 | killed the ~85ms composed-op orchestration share |
+| + fused GDN step kernel | **26.4** | **38** | engine `gated_delta_step` (a3363b0/0eb2ca9): l2norm + gates + delta rule + readout in ONE launch/layer, warp-per-state-column |
+
+**38 tok/s = 1.5× the ollama baseline (25), ~half the 3070 bandwidth
+ceiling (~77).** Full suite green at every rung (parity margins
+unchanged, state restore bit-identical, APA zero/near-zero flips).
+
+Kernel design notes: folds MORE than llama.cpp's GGML_OP_GATED_DELTA_NET
+(their composed surroundings are C-launched ~1µs; ours were
+Python-launched ~25µs, so the norm/gate chains went INTO the kernel).
+**FUNCTIONAL contract enforced**: (out, new_state) with input state
+byte-untouched — the in-place variant corrupted held cache references
+(caught by the parity gate's L0-state cosine; branch-from-cache is
+GRM's restore-once-decode-many pattern). Same traffic, 0ms cost.
+
+Remaining levers (diminishing): mlp 12.2ms is now the biggest line
+(bandwidth-bound GEMVs — near floor), attention 4.4, deltanet-side
+composed remainder (conv/split/gated-norm ~6); batching/CUDA-graphs
+could approach ~50 tok/s but the easy 30× is banked.
+
 ## GRM design note
 
 A DeltaNet state is a *summary*, not a seat-addressable cache — the

@@ -114,6 +114,12 @@ def _per_head_rmsnorm(x, w, eps, B, L, H, D):
 
 
 class GatedDeltaNetTC:
+    # Fused decode step (engine gated_delta_step kernel): one launch for
+    # l2norm + gates + delta-rule update + readout, state updated in
+    # place. Gated 2026-06-12: tokens identical to the composed
+    # recurrence, state max|Δ| 5.7e-06, 36.4 -> 26.4 ms/tok.
+    USE_FUSED_STEP = True
+
     def __init__(self, cfg):
         self.cfg = cfg
         self.in_proj_qkv = self.in_proj_z = self.out_proj = None
@@ -148,6 +154,24 @@ class GatedDeltaNetTC:
                 + x_cat.slice(1, 2, L) * self.conv_w[2]
                 + x_cat.slice(1, 3, L) * self.conv_w[3]).silu()
         new_conv = x_cat.slice(1, L, 3)                  # last 3 raw rows
+
+        if (self.USE_FUSED_STEP and L == 1 and state is not None
+                and hasattr(tc, "gated_delta_step")):
+            # ---- fused decode step: one kernel from raw heads to readout.
+            # FUNCTIONAL: input state untouched, fresh state returned —
+            # callers may branch from / hold old caches (GRM contract).
+            o, S_new = tc.gated_delta_step(
+                conv.slice(2, 0, K).reshape([B, cfg.n_k_heads, Dk]),
+                conv.slice(2, K, K).reshape([B, cfg.n_k_heads, Dk]),
+                conv.slice(2, 2 * K, H * Dv).reshape([B, H, Dv]),
+                a.reshape([B, H]), b.reshape([B, H]),
+                self.neg_A, self.dt_bias, state[1])
+            of = o.reshape([B, L, H, Dv])
+            ms = (of * of).mean([-1], True)
+            of = of * (ms + cfg.rms_norm_eps).pow(-0.5) * self.norm_w
+            of = of * z.reshape([B, L, H, Dv]).silu()
+            out = self.out_proj(_cast(of.reshape([B, L, H * Dv])))
+            return out, (new_conv, S_new)
 
         q = conv.slice(2, 0, K).reshape([B, L, cfg.n_k_heads, Dk])
         k = conv.slice(2, K, K).reshape([B, L, cfg.n_k_heads, Dk])
@@ -421,6 +445,13 @@ class Qwen35_TC:
     def from_pretrained(cls, model_dir=None):
         BlockTC.COMPUTE_DTYPE = "bfloat16"
         LinearTC.DTYPE = "bfloat16"
+        # Decode-speed defaults (measured 2026-06-12, ledger "Decode
+        # forensics"): int4 GEMV at M<=8 (840 -> 122 ms/tok) and the fused
+        # rms_norm kernel (valid under tc.no_grad; our (1+w) bake is
+        # weight-side so the op is unchanged). Prefill (M>8) stays on the
+        # two-stage cuBLAS path automatically.
+        QuantLinearTC.FUSED_DECODE = True
+        RMSNormTC.USE_FUSED = True
         with tc.no_grad():
             m = cls()
             info = m.load_weights(model_dir)
