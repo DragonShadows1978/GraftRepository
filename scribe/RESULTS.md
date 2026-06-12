@@ -47,4 +47,45 @@ L-func pool (cap factual fraction / include organic ≤512-tok rows);
 says the readback probe's ANSWER positions carry ~all the loss, i.e.
 the student may need capacity/architecture (ARM-T) not more steps;
 (3) lr/step sweep before any architecture call.**
+
+---
+
+## TRACK CLOSED — 2026-06-11, Architect's call: premise refuted
+
+SCRIBE's strategic intent was an artificial process to generate
+weighted knowledge IN LIEU OF weights: train a model on procedure
+only, then scrape data and mint graft-weights for rote knowledge
+externally, without running the teacher. The evidence says the
+shortcut does not exist:
+
+- **Attention is the only cross-position channel** (MLPs/norms are
+  per-token), so everything document-shaped in a deep latent got
+  there through rounds of attention. Depth buys COMPOSITION, and a
+  shallow student cannot flatten a deep circuit: statistical texture
+  transferred (G2 factual 88.9%/KL 0.116), specific bindings never
+  did (G3 0/10 across floor/warm/L-func; G4 flat). The measured
+  contextualization BULGE (peak L36, L0 trivial) is the same fact in
+  profile form. H2 confirmed in its strongest form:
+  **cost-of-contextualization is the binding constraint — the
+  process IS the product.**
+- Every known fix (deeper student, teacher-prefix features, ARM-T)
+  re-adds attention rounds over the document and converges on just
+  running the teacher; the economics the track existed for vanish.
+- Teacher non-minimality footnote: only the 62 FINAL latents are
+  needed, so a cheaper process is not formally ruled out — but the
+  cheap end of the curve failed outright and the gradient points up.
+
+What stands: the entire exact-harvest stack (grafts, arena, folding,
+deferred librarian — all gates green), centered cosine routing
+(20/20@1, portable to production), the engine's
+backprop-through-frozen-INT4 capability (Project-Tensor 3a8bcc5),
+and the 20GB minted-pair corpus at /mnt/ForgeRealm/scribe_mint_v1.
+
+Refit for GRAPA: grafts are made THROUGH the trained model itself
+(self-harvest after training) — GRAPA is ~20M params, smaller than
+the 31M student trained here, so self-harvest costs less than the
+shortcut would have. Graft-native training (MEM socket in the loop)
+means GRAPA reads its own dialect natively — the thing a frozen
+teacher could never give. Procedure in weights, knowledge in grafts,
+unchanged.
 | L-func first run (engine unlock) | 2026-06-11 | RUNNING | first execution surfaced TWO engine gaps, both fixed in Project-Tensor: (1) int4_linear was inference-only — graph cut at every INT4 projection, caught by one-time zero-grad tripwire (|g|₁=0); VJP added: dx = g @ W_kn^T, weight re-dequantized transiently in backward, nothing weight-sized retained — verified vs analytic to 1.5e-07 rel. (2) backward kept ALL intermediate grads alive until graph death — 62-layer reader backward OOM'd 8 GB at step 2 (after AdamW moments allocated); fix: free each op node's grad after its grad_fn consumes it. Peak now 6,637 MiB (1.5 GB headroom). Student injection cast to bf16 (reader compute dtype; astype is differentiable). Tripwire |g|₁ = 9.929e+03 bit-identical across relaunches. KL ema 4.52 / anchor 0.224 at step 50 |
