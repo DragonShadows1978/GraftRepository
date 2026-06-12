@@ -1,0 +1,102 @@
+# Qwen3.5-9B → tensor_cuda port ledger
+
+Target: text-only INT4 inference on the 8GB 3070, then APA on the
+attention layers and GRM (graft dialect) on the hybrid cache.
+Ground truth law: adjudicate against PyTorch/transformers, never
+in-repo runs. Sources: local checkpoint config.json + transformers
+5.7 `modeling_qwen3_5.py` (read line-by-line), cross-checked by
+4-agent web recon (HF index, Gated DeltaNet paper 2412.06464, vLLM
+implementation). Serving for the corpus track is ollama `qwen3.5:9b`
+(verified 25 tok/s, `think:false` required) — this port is the
+research stack, not the corpus dependency.
+
+## Shape sheet (text_config)
+
+| | |
+|---|---|
+| layers | 32 = 24×GatedDeltaNet + 8×attention (indices 3,7,…,31; `3:1` blocks) |
+| hidden / FFN | 4096 / 12288 SwiGLU (silu), dense — no MoE |
+| attention | GQA 16q/4kv, head_dim 256, scale 256^-0.5, softmax fp32 |
+| output gate | `attn_out * sigmoid(gate)`, ELEMENTWISE per channel, pre-o_proj |
+| q_proj fused | 4096→8192; per head `[q(256) | gate(256)]`; gate bypasses q_norm AND RoPE |
+| qk-norm | per-head RMSNorm(256), eps 1e-6, **(1+w) convention** |
+| RoPE | partial 0.25 → first 64 dims, GLM rotate_half, θ=1e7; mRoPE = NO-OP for text (3 identical position streams) |
+| DeltaNet | 16 k-heads ×128, 32 v-heads ×128 (v 2i,2i+1 share kq head i via repeat_interleave); conv1d depthwise k=4 NO bias + SiLU; state fp32 |
+| DeltaNet projs | in_proj_qkv 4096→8192 rows `q2048|k2048|v4096`; in_proj_z 4096→4096; in_proj_b/a 4096→32 (keep unquantized) |
+| recurrence | q̃,k̃ = l2norm(eps 1e-6); q̃ /= √128; **S ← exp(g)·S FIRST**, kv_mem = Sᵀk̃, S += k̃⊗(v−kv_mem)·β, o = Sᵀq̃ |
+| gates | β = sigmoid(b); g = −exp(A_log)·softplus(a + dt_bias), fp32, per v-head |
+| DeltaNet out | per-head RMSNormGated(128): norm(o)·w·silu(z), **plain-w convention**, then out_proj |
+| embeddings | vocab 248320, UNTIED lm_head, no embedding scale |
+| final norm | RMSNorm 4096, (1+w) |
+| eos | 248044; chat template thinks by default |
+
+## Weight map (19.31GB bf16, 4 shards, dash-named `model.safetensors-0000X-of-00004.safetensors`)
+
+- KEEP: `model.language_model.*` (426 tensors), `lm_head.weight`
+- SKIP: `model.visual.*` (333), `mtp.*` (15)
+- Layer tensors are spread across shards — open all 4, filter by prefix.
+
+## Parity traps (registered before coding)
+
+1. TWO RMSNorm conventions in one model: standard norms multiply by
+   **(1+w)** (input/post/final/q/k norms — bake 1+w at load); the
+   DeltaNet's gated norm multiplies by plain w.
+2. q/gate interleave is PER HEAD (`[h0_q|h0_g|h1_q|h1_g|…]`), not two
+   contiguous blocks.
+3. DeltaNet decay order: state decays BEFORE the delta correction.
+4. l2norm of q/k happens INSIDE the rule (after conv+split), eps 1e-6,
+   and the 1/√d_k scale applies to q after l2norm.
+5. conv1d has NO bias; SiLU applied after; causal left-pad 3.
+6. `mamba_ssm_dtype: float32` — state and the g/β computation in fp32
+   (a bf16 state will drift on long sequences).
+7. mRoPE sections [11,11,10] interleaved are a no-op for text — do NOT
+   implement them; standard partial RoPE only.
+8. HF state layout (k_dim, v_dim) differs from vLLM (v_dim, k_dim) —
+   GRM serialization must pin ours (HF order) in the header.
+
+## VRAM budget (INT4)
+
+body ~3.6GB + lm_head 0.51GB + scales/zeros + embed HOST-side
+(2.03GB bf16 stays in RAM, gather rows per token) + DeltaNet states
+50MB/seq + KV 4KB/token ≈ **~4.6GB resident** — fits with headroom.
+
+## Plan
+
+1. GT vectors: transformers CPU forward (logits + per-layer probes).
+2. `core/qwen35_tc.py`: loader + attention side (reuse qwen3_tc/
+   mistral7b_tc patterns) + DeltaNet recurrent form (per-token loop,
+   correctness first; chunked form later if prefill speed matters).
+3. Parity: teacher-forced logits + greedy match vs GT (MiniCPM3
+   methodology), per-layer probe bisection on mismatch.
+4. APA on the 8 attention layers (qk-norm → predict bulk_bits 4).
+5. GRM: hybrid graft dialect = KV seats @ attention layers +
+   (recurrent, conv) state pairs @ DeltaNet layers; single-graft
+   restore is exact by construction (Markovian state); ARENA
+   composition is the open research question.
+
+## Results (2026-06-12, overnight run)
+
+| Gate | Verdict | Measurement |
+|---|---|---|
+| First parity run | near-pass, FIRST TRY | prompt 0 EXACT (5/5 teacher-forced + 16/16 greedy); L0 DeltaNet state cos 0.9986-0.9987 on all prompts; layer cosines 0.90-0.997 |
+| Tie-flip diagnostic | noise confirmed | every engine-vs-GT disagreement sits at a GT near-tie: worst flip cost 1.92 logits, typical <0.5 — INT4 perturbation, not math error. Gate re-registered margin-based (flip cost ≤3.0 + state cos ≥0.995 + L31 cos ≥0.90) |
+| **PARITY (registered)** | **PASS** | all 3 GT prompts OK under the margin gate |
+| **STATE (GRM gate)** | **PASS** | save/restore of the full hybrid cache (KV + conv + recurrent): post-prefill AND mid-decode restores continue BIT-IDENTICALLY (logits array-equal) |
+| Coherence smoke | clean | chat template + hybrid decode: correct Rayleigh answer, clean haiku |
+| Throughput v1 | recorded | ~1.2 tok/s end-to-end (per-token DeltaNet loop, ~300 launches/tok) — correctness-first; chunked prefill + fused step kernel are the known levers |
+| **APA (bulk4 / refine 0.15)** | **PASS** | cuBLAS blend path on the 8 attention layers, KV-head-granularity codebooks: **ZERO top-1 flips vs standard** on all GT prompts; APA-mode chat coherent. bulk_bits-tracks-key-normalization law holds on a 5th architecture (qk-norm → 4) |
+
+Serving for corpus work is ollama qwen3.5:9b (25 tok/s, Q4_K_M,
+`think:false`); readiness file dropped at
+`GRAPA-Native-LLM/corpus/QWEN_READY.md` 2026-06-12.
+
+## GRM design note
+
+A DeltaNet state is a *summary*, not a seat-addressable cache — the
+graft story for hybrids is: KV seats compose (existing arena math),
+states do NOT (state(A→B) ≠ f(state(A), state(B))). Single-mount
+grafts (template/boilerplate prefix) are exact. Multi-mount needs
+either (a) state-at-mount-boundary chaining (sequential semantics,
+order-dependent), or (b) research into state superposition error.
+Start with (a) — it matches the corpus use case (one template
+library prefix + live query).
