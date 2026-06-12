@@ -90,6 +90,39 @@ Serving for corpus work is ollama qwen3.5:9b (25 tok/s, Q4_K_M,
 `think:false`); readiness file dropped at
 `GRAPA-Native-LLM/corpus/QWEN_READY.md` 2026-06-12.
 
+## Decode forensics (2026-06-12, measured — tests/qwen35_profile.py)
+
+| Component (M=1, median of 20) | two-stage | int4 GEMV | speedup |
+|---|---|---|---|
+| **full step** | **840.3 ms** | **122.0 ms** | **6.9×** |
+| lm_head (248320×4096) | 348.8 ms | 1.5 ms | 232× |
+| MLP ×32 | 434.6 ms | 12.1 ms | 36× |
+| DeltaNet mixer ×24 | 142.5 ms | 18.7 ms | 7.6× |
+| attention mixer ×8 | 41.9 ms | 4.4 ms | 9.5× |
+| host argmax | 0.17 ms | 0.19 ms | — |
+| sum-of-parts | 968 ms | 36.9 ms | |
+
+Diagnosis CONFIRMED: two-stage INT4 dequantized ~31GB of weights per
+token (lm_head's 2GB transient alone = 349ms). One flag
+(`QuantLinearTC.FUSED_DECODE=True`, engine GEMV kernel 8501a5c) takes
+decode 1.2 → **8.2 tok/s**.
+
+**Plan reordered by measurement:** at 122ms/step only 37ms is in the
+measured mixers/heads — **~85ms is orchestration** (64 RMSNorm
+composed chains, casts, residuals, ~2k Python-dispatched launches at
+~25-50µs). So launch-count reduction now outranks the fused GDN step
+kernel (which would save only ~17ms): (1) flip RMSNormTC.USE_FUSED
+(engine-gated fused rms_norm; valid under tc.no_grad; our (1+w) bake
+is weight-side so the op is unchanged); (2) fused GDN step (~17ms);
+(3) CUDA-graph/batched residual+cast chains. llama.cpp reference
+(recon 2026-06-12): fused GGML_OP_GATED_DELTA_NET + MMVQ dp4a matvecs,
+50-60 tok/s on 8GB cards, 3070 bandwidth ceiling ~77 tok/s.
+
+Dispatch parity: GEMV vs two-stage max|Δlogit| = 0.125 (bf16
+reassociation scale, tie-flip class — NOT bit-identical). REQUIRED
+before FUSED_DECODE becomes the port default: re-run the full gate
+suite (parity / state / APA) under GEMV at the next GPU gap.
+
 ## GRM design note
 
 A DeltaNet state is a *summary*, not a seat-addressable cache — the
