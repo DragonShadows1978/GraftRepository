@@ -103,17 +103,14 @@ class Q40LinearTC:
         self.zeros = tc.tensor(np.zeros((0,), np.float16), dtype="float16")
 
     def __call__(self, x):
-        fused = QuantLinearTC.USE_FUSED
-        if not fused and QuantLinearTC.FUSED_DECODE:
-            M = 1
-            for d in x.shape[:-1]:
-                M *= d
-            fused = M <= QuantLinearTC.FUSED_M_MAX
-        if fused:
-            return tc.int4_linear_fused(x, self.packed, self.scales,
-                                        self.zeros, self.group_size)
-        return tc.int4_linear(x, self.packed, self.scales, self.zeros,
-                              self.group_size)
+        # ALWAYS the fused path: int4_linear_fused dequantizes inside
+        # shared-memory tiles (M=1 takes the GEMV kernel). The two-stage
+        # path's whole-weight transient (113MB per MLP matmul) does not
+        # fit next to the ~6.8GB QAT-exact body — prefill OOMs (longctx
+        # gate). Cold-prefill speed regression vs cuBLAS is accepted;
+        # registered as a speed-pass lever (column-blocked two-stage).
+        return tc.int4_linear_fused(x, self.packed, self.scales,
+                                    self.zeros, self.group_size)
 
 
 def _band_mask(L, S, window, device, dtype):
@@ -300,7 +297,47 @@ class Gemma4_TC:
             for e in (emb_l, emb_g))
         self._rope_len = seq_len
 
+    # Auto-chunked prefill: the QAT-exact body is ~6.8GB resident; a
+    # single-shot long prefill's transients (per-layer score tensors,
+    # two-stage dequant, pool fragmentation) OOM the card past a few
+    # hundred tokens (longctx gate caught it at 1200). Chunking bounds
+    # every transient; cache math is identical by construction (the
+    # longctx B-leg gates single-shot vs chunked equivalence).
+    PREFILL_CHUNK = 512
+
     def __call__(self, input_ids_np, caches=None, position_offset=0,
+                 last_token_only=False, max_layers=None):
+        B, L = input_ids_np.shape
+        C = self.PREFILL_CHUNK
+        if max_layers is None and L > C:
+            outs = []
+            lg = None
+            off = position_offset
+            for s0 in range(0, L, C):
+                seg = input_ids_np[:, s0:s0 + C]
+                # last_token_only passes through UNCHANGED: when the
+                # caller wants only the final logits, every chunk must
+                # compute 1-row logits (a wasted GEMV per non-final
+                # chunk, ~1ms) — NOT full chunk logits (512x262144 fp32
+                # = 0.8GB of discarded transient; OOMed the longctx
+                # gate).
+                lg, caches = self._forward(seg, caches, off,
+                                           last_token_only=last_token_only)
+                off += seg.shape[1]
+                if not last_token_only:
+                    outs.append(lg)
+                # trim the allocator pool at chunk boundaries: chunked
+                # long prefills create distinct transient shapes per
+                # chunk and the pooled high-water alone tips the ~7.1GB
+                # baseline over the card (longctx gate OOMed in a 25MB
+                # softmax). Decode is untouched — constant shapes reuse
+                # the pool correctly.
+                tc.empty_cache()
+            return (lg if last_token_only else tc.cat(outs, dim=1)), caches
+        return self._forward(input_ids_np, caches, position_offset,
+                             last_token_only, max_layers)
+
+    def _forward(self, input_ids_np, caches=None, position_offset=0,
                  last_token_only=False, max_layers=None):
         B, L = input_ids_np.shape
         self.extend_rope(position_offset + L)
@@ -311,6 +348,14 @@ class Gemma4_TC:
             cache = caches[i] if caches is not None else None
             h, c = layer(h, self.ropes, position_offset, cache)
             new_caches.append(c)
+            # CONTRACT: the input caches LIST is consumed — entries are
+            # released as their successors are built. Holding old+new
+            # cache sets simultaneously (~2x335MB at long context) does
+            # not fit next to the ~6.8GB QAT body. Callers that need to
+            # branch from a cache set must hold their own reference to
+            # the TENSORS (tuples), not rely on the passed list.
+            if caches is not None:
+                caches[i] = None
         if max_layers is not None:
             return None, new_caches, h
         h = _cast(self.norm(h))
@@ -420,8 +465,11 @@ class Gemma4_TC:
         emb = dequantize(T["token_embd.weight"].data,
                          T["token_embd.weight"].tensor_type
                          ).astype(np.float32)
-        self.lm_head = QuantLinearTC(np.ascontiguousarray(emb),
-                                     group_size=32)
+        # the tied head is the ONLY post-hoc requant (token_embd ships
+        # Q6_K); g128 here, not g32 — saves 100MB on a knife-edge VRAM
+        # budget, and the parity margin gate adjudicates the cost (it
+        # passed WITH g32; re-gated after this change).
+        self.lm_head = QuantLinearTC(np.ascontiguousarray(emb))
         emb *= np.float32(cfg.hidden_dim ** 0.5)
         self.embed_tokens.weight = np.ascontiguousarray(emb)
         del emb

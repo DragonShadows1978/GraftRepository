@@ -50,20 +50,32 @@ for pi in range(4):
     agree = int((top1_eng == top1_ref).sum())
     last_diff = float(np.abs(eng[-1] - ref[-1]).max())
 
-    # per-layer hidden cosine (gt hidden: (49, S, 3840) = embeds + 48
-    # layer outputs, post layer_scalar — matches max_layers probes)
+    # per-layer hidden cosine. GT hidden semantics (adjudicated from
+    # checkpoint math, see ledger): hidden[0] = scaled embeds,
+    # hidden[i+1] = layer-i output for i<=46, and hidden[48] is
+    # POST-FINAL-NORM — so the last probe must compare the engine's
+    # final-normed output, not raw layer 47 (massive-activation dims
+    # make the pre-vs-post-norm cosine collapse by construction).
     cos_by_layer = []
-    for li in (0, 1, 5, 11, 23, 35, 47):
+    for li in (0, 1, 5, 11, 23, 35, 46):
         with tc.no_grad():
             _, _, h = m(ids, max_layers=li + 1)
         he = h.float().numpy()[0]
         hr = gt["hidden"][li + 1]
         cos_by_layer.append((li, round(_cos(he[-1], hr[-1]), 4)))
+    with tc.no_grad():
+        _, _, h = m(ids, max_layers=48)
+        from core.gemma4_tc import _cast
+        hn = _cast(m.norm(h)).float().numpy()[0]
+    cos_by_layer.append(("fn", round(_cos(hn[-1], gt["hidden"][48][-1]), 4)))
 
     # greedy continuation with cache (informational; margin is the gate)
+    # list() copy: the model CONSUMES the entries of the list passed in
+    # (memory contract); the original list keeps the cache tuples alive
+    # for the cache checks below.
     greedy_ref = gt["greedy"][S:].tolist()
     n_gen = len(greedy_ref)
-    cur_caches, off = caches, S
+    cur_caches, off = list(caches), S
     out_tok = []
     nt = int(eng[-1].argmax())
     with tc.no_grad():

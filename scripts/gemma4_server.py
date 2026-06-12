@@ -1,21 +1,20 @@
-"""Ollama-API-compatible server over the APA-GRM Qwen3.5-9B port.
+"""Ollama-API-compatible server over the APA-GRM Gemma 4 12B port
+(QAT q4_0 exact import, symmetric-8 INT4 kernels).
 
-The corpus driver (GRAPA corpus/templates/local_wave.py) speaks
-ollama's POST /api/generate with {model, prompt, stream:false,
-think:false, options:{temperature, num_predict}}. This shim serves
-that contract from the tensor_cuda stack — APA on the attention
-layers, GRM doing real work underneath:
+Same contract as qwen35_server (the corpus driver's POST /api/generate
+with {model, prompt, stream:false, options:{temperature,num_predict}}).
+GRM PREFIX MOUNT: pure-KV caches — sliding rings (<=1023 keys) and
+append-only global K=V — are branch-safe by construction (cat/slice
+make fresh tensors); the state after the longest previously-seen token
+prefix is restored and only the request's variable tail prefills.
 
-  GRM PREFIX MOUNT: requests share long constant prompt prefixes
-  (conventions + hard rules). The hybrid state after the longest
-  previously-seen token prefix is cached (the functional kernel makes
-  held states branch-safe) and RESTORED instead of re-prefilled;
-  only the request's variable tail pays prefill. Cache is in-memory,
-  keyed by token-id prefix, LRU-capped.
+APA is ENABLED EXPLICITLY at startup on the 8 global layers and logged
+(the qwen35 shim relied on a default that was never flipped — the mode
+the server runs MUST be printed, not assumed).
 
-Single-threaded HTTP (the driver is sequential). Default port 11435.
+Single-threaded HTTP. Default port 11436 (qwen shim owns 11435).
 
-  python3 scripts/qwen35_server.py [port]
+  python3 scripts/gemma4_server.py [port]
 """
 import json
 import os
@@ -28,46 +27,48 @@ import numpy as np
 sys.path.insert(0, "/mnt/ForgeRealm/Project-Tensor/tensor_cuda")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import tensor_cuda as tc                                    # noqa: E402
-from core.qwen35_tc import Qwen35_TC, _snap                 # noqa: E402
+from core.gemma4_tc import Gemma4_TC, _MODEL_DIR, _cast    # noqa: E402
 
-PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 11435
-MAX_CACHED_PREFIXES = 8        # ~50MB states + small KV each
+PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 11436
+MAX_CACHED_PREFIXES = 8
+EOS = {1, 106, 50}                 # per generation_config.json
+SUPPRESS = (258882, 258883)        # eoi/eoa, per generation_config
 
 from transformers import AutoTokenizer                      # noqa: E402
-tok = AutoTokenizer.from_pretrained(_snap())
+tok = AutoTokenizer.from_pretrained(_MODEL_DIR)
 
 tc.set_alloc_pooling(True)
-model, info = Qwen35_TC.from_pretrained()
-# APA must be ENABLED EXPLICITLY and logged — attention_mode defaults
-# to "standard" in the port, and this shim previously relied on that
-# default while calling itself APA-GRM (caught 2026-06-12 during the
-# Gemma 4 shim work; the APA gate's zero-flip result means previously
-# served outputs were equivalent, but the mode the server runs must be
-# printed, not assumed).
+model, info = Gemma4_TC.from_pretrained()                   # QAT default
 n_apa = 0
 for L in model.layers:
-    if L.is_attn:
+    if L.mixer.is_global:
         L.mixer.attention_mode = "apa_selective"
         n_apa += 1
-print(f"loaded: {info} | APA apa_selective ON ({n_apa} attn layers)",
-      flush=True)
+print(f"loaded: {info} | APA apa_selective ON ({n_apa} global layers, "
+      f"bulk{model.layers[5].mixer.bulk_bits}/refine "
+      f"{model.layers[5].mixer.refine_percentile})", flush=True)
 
 
-def clone_caches(caches):
-    """Branch-safe copy. DeltaNet states are fp32 tensors the fused
-    kernel never mutates, and attention K/V tensors are append-only
-    (cat makes new tensors) — so sharing TENSORS is safe; only the
-    per-layer tuple list must be fresh."""
-    return [tuple(c) for c in caches]
+def to_host(caches):
+    """Prefix states live in HOST RAM: at 12B a single full-length
+    cache set is ~230-335MB — 8 GPU-resident entries would eat half
+    the card. fp32 round-trip is exact for bf16."""
+    return [(k.float().numpy(), v.float().numpy()) for k, v in caches]
+
+
+def to_device(host_caches):
+    """Upload on mount (~20-40ms at PCIe speed — noise vs the prefill
+    it replaces). A fresh upload is inherently branch-safe and
+    satisfies the model's consumed-list contract."""
+    return [(_cast(tc.tensor(k)), _cast(tc.tensor(v)))
+            for k, v in host_caches]
 
 
 class PrefixCache:
     def __init__(self):
-        self.entries = []          # (ids tuple, caches, hits, stamp)
+        self.entries = []          # [ids tuple, HOST caches, hits, stamp]
 
     def lookup(self, ids):
-        """Longest cached prefix of ids (must end before len(ids) so the
-        model still sees at least one new token)."""
         best = None
         for e in self.entries:
             p = e[0]
@@ -83,13 +84,14 @@ class PrefixCache:
         for e in self.entries:
             if e[0] == key:
                 return
-        self.entries.append([key, clone_caches(caches), 0, time.time()])
+        self.entries.append([key, to_host(caches), 0, time.time()])
         if len(self.entries) > MAX_CACHED_PREFIXES:
             self.entries.sort(key=lambda e: (e[2], e[3]))
             self.entries.pop(0)
 
 
 PREFIX = PrefixCache()
+LAST_IDS = []
 
 
 def common_prefix_len(a, b):
@@ -100,46 +102,43 @@ def common_prefix_len(a, b):
     return i
 
 
-LAST_IDS = []                     # previous request's ids (prefix mining)
-
-
 def generate(prompt, temperature, num_predict):
     global LAST_IDS
-    text = tok.apply_chat_template(
-        [{"role": "user", "content": prompt}], tokenize=False,
-        add_generation_prompt=True, enable_thinking=False)
-    ids = tok(text, return_tensors="np").input_ids.astype(np.int64)[0]
+    ids = np.asarray(tok.apply_chat_template(
+        [{"role": "user", "content": prompt}],
+        add_generation_prompt=True), np.int64)
     t0 = time.perf_counter()
 
     hit = PREFIX.lookup(ids)
     with tc.no_grad():
         if hit is not None:
-            caches = clone_caches(hit[1])
+            caches = to_device(hit[1])
             off = len(hit[0])
-            tail = ids[off:][None, :]
-            lg, caches = model(tail, caches=caches, position_offset=off,
-                               last_token_only=True)
+            lg, caches = model(ids[off:][None, :], caches=caches,
+                               position_offset=off, last_token_only=True)
             mounted = off
         else:
             lg, caches = model(ids[None, :], last_token_only=True)
             mounted = 0
-        # mine a prefix for next time: the shared boilerplate between
-        # consecutive requests (rounded down to a stable cut)
         if LAST_IDS is not None and len(LAST_IDS):
             cp = common_prefix_len(ids, LAST_IDS)
             if cp >= 64 and cp > mounted:
-                with tc.no_grad():
-                    _, pc = model(ids[None, :cp])
+                # last_token_only: the minting prefill's logits are
+                # unused, and full logits at cp~700 are a 1GB transient
+                _, pc = model(ids[None, :cp], last_token_only=True)
                 PREFIX.store(ids[:cp], pc)
+                del pc
+                tc.empty_cache()
         LAST_IDS = list(ids)
 
         off = len(ids)
         out = []
-        eos = model.config.eos_token_id
         rng = np.random.default_rng()
         nxt_logits = lg.float().numpy()[0, -1]
         t_prefill = time.perf_counter() - t0
         for _ in range(min(num_predict, 8192)):
+            for s in SUPPRESS:
+                nxt_logits[s] = -1e9
             if temperature and temperature > 0:
                 x = nxt_logits / temperature
                 x -= x.max()
@@ -148,7 +147,7 @@ def generate(prompt, temperature, num_predict):
                 nxt = int(rng.choice(len(p), p=p))
             else:
                 nxt = int(nxt_logits.argmax())
-            if nxt == eos:
+            if nxt in EOS:
                 break
             out.append(nxt)
             lg, caches = model(np.array([[nxt]], np.int64), caches=caches,
@@ -164,13 +163,13 @@ def generate(prompt, temperature, num_predict):
 
 
 class Handler(BaseHTTPRequestHandler):
-    def log_message(self, *a):                 # quiet access log
+    def log_message(self, *a):
         pass
 
     def do_GET(self):
         if self.path == "/api/tags":
             body = json.dumps({"models": [
-                {"name": "qwen3.5:9b-apa-grm", "model": "qwen3.5:9b-apa-grm"}
+                {"name": "gemma4:12b-apa-grm", "model": "gemma4:12b-apa-grm"}
             ]}).encode()
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
@@ -192,7 +191,7 @@ class Handler(BaseHTTPRequestHandler):
             req.get("prompt", ""), float(opts.get("temperature", 0.0)),
             int(opts.get("num_predict", 1024)))
         body = json.dumps({
-            "model": req.get("model", "qwen3.5:9b-apa-grm"),
+            "model": req.get("model", "gemma4:12b-apa-grm"),
             "response": txt, "done": True,
             "prompt_eval_count": n_in, "eval_count": n_out,
             "eval_duration": int(dt * 1e9),
@@ -203,5 +202,5 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
 
-print(f"APA-GRM shim serving on 127.0.0.1:{PORT}", flush=True)
+print(f"Gemma4 APA-GRM shim serving on 127.0.0.1:{PORT}", flush=True)
 HTTPServer(("127.0.0.1", PORT), Handler).serve_forever()

@@ -40,7 +40,11 @@ def greedy(caches, off, first_logits, n):
     return toks
 
 
-# ---- A) single prefill (band mask binds: 1200 > 1024)
+# Only ONE cache set may live at a time: two full sets (~670MB at this
+# length) do not fit next to the ~6.7GB body. A runs fully (prefill +
+# greedy) and is released before B starts.
+
+# ---- A) auto-chunked prefill (band mask binds: 1200 > 1024) + greedy
 with tc.no_grad():
     lg_a, c_a = m(ids, last_token_only=True)
 a = lg_a.float().numpy()[0, -1]
@@ -50,12 +54,20 @@ if int(a.argmax()) != int(ref.argmax()):
     flip_a = float(ref.max() - ref[a.argmax()])
 print(f"A vs GT: top1 {'match' if flip_a == 0 else f'flip cost {flip_a:.3f}'}"
       f" | last|d| {float(np.abs(a - ref).max()):.3f}", flush=True)
+t_a = greedy(c_a, S, lg_a, 8)
+del c_a
+tc.empty_cache()
 
-# ---- B) chunked prefill 1024 + 176 (cache + band, bottom-right)
+# ---- B) different chunk boundaries — PREFILL_CHUNK 384 makes the
+# auto-chunking genuinely differ from A's 512 (with both at 512 the
+# manual 1024-split decomposed into A's exact boundaries and B-vs-A
+# compared a run against itself, |d| 0.000)
+m.PREFILL_CHUNK = 384
 with tc.no_grad():
     _, c_b = m(ids[:, :1024], last_token_only=True)
     lg_b, c_b = m(ids[:, 1024:], caches=c_b, position_offset=1024,
                   last_token_only=True)
+m.PREFILL_CHUNK = 512
 b = lg_b.float().numpy()[0, -1]
 ab_flip = 0.0
 if int(a.argmax()) != int(b.argmax()):
@@ -63,8 +75,7 @@ if int(a.argmax()) != int(b.argmax()):
 print(f"B vs A: top1 {'match' if ab_flip == 0 else f'flip cost {ab_flip:.3f}'}"
       f" | |d| {float(np.abs(a - b).max()):.3f}", flush=True)
 
-# ---- C) greedy from both caches
-t_a = greedy(c_a, S, lg_a, 8)
+# ---- C) greedy from B's cache vs A's recorded tokens
 t_b = greedy(c_b, S, lg_b, 8)
 print(f"C greedy A {t_a} | B {t_b} | "
       f"{'MATCH' if t_a == t_b else 'DIFF'}", flush=True)

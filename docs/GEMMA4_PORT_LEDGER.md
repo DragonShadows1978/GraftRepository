@@ -143,4 +143,23 @@ of the QAT benefit → exact import required.
   48GB save_file OOMs 62GB RAM) → transformers is the oracle for the
   SAME weights the engine serves (tests/gemma4_qat_to_hf.py).
 
-(gates vs QAT GT: pending)
+### Gates vs QAT GT (engine = exact q4_0 import, 2026-06-12)
+
+| Gate | Result |
+|---|---|
+| **PARITY** | **PASS** — top-1 75/80; worst flip cost 1.081 (true near-ties; was 8.7-9.2 pre-QAT); L0/L5 caches 0.9999-1.0000; final-norm cos 0.965-0.9999. Engine-vs-QAT-GT distance = bf16 compute noise, as predicted. |
+| **STATE** | **PASS** — pure-KV save/restore bit-identical, post-prefill and mid-decode. |
+| **APA** | **PASS** — apa_selective bulk4/refine 0.15 on the 8 globals: 4/80 flips, worst 0.25 logits. **Bulk-bits law (qk-norm → 4): 6th architecture.** |
+| LONGCTX | (running — band mask + ring trim vs HF fp32 @ 1200 tok) |
+
+Fixes en route (both registered): (a) the parity gate's last-layer
+probe now compares final-normed output vs GT hidden[48] (pre-vs-post
+norm comparison collapses by construction under massive activations);
+(b) **auto-chunked prefill** (`PREFILL_CHUNK=512` in `__call__`) — the
+QAT body is ~6.8GB resident and single-shot long prefills OOM on
+transients; chunking bounds them. Trap within the fix:
+`last_token_only` must pass through to EVERY chunk — computing full
+chunk logits to discard them is a 0.8GB transient per chunk (OOMed
+once before the probe was caught). Operational lesson re-learned: ONE
+GPU job at a time — a second gate chain launched while the first still
+held the card produced two mutual-OOM casualties and one survivor.
