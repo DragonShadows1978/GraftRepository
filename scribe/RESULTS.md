@@ -32,4 +32,19 @@ content or addressability. Next: bias diagnostic -> functional loss.**
 "real loss"); (2) error-directed mint round: short fact-dense docs;
 (3) port centered routing to the production router (exact-graft win).**
 | Targeted mint round 1 | 2026-06-11 | done | 400 synthetic short fact-dense docs (8 templates, seed 4242), domain=factual, 16,184 tokens, ~1/33 heldout; warm top-up epoch over expanded set completed (4,928 steps total) |
+| L-func training curve | 2026-06-11 | recorded | 1200 steps, lr 1e-4, pool = 404 short rows (~96%% factual): KL ema 4.52 -> 4.22, PLATEAU 4.15-4.26 from step ~250 (epoch-2 revisits no better than first visit); Huber anchor monotone 0.27 -> 0.20. KL found little traction where Huber kept finding it |
+| G2 (ARM-S L-func) | 2026-06-11 | FAIL + split finding | **factual 88.9%%/KL 0.116 — best per-domain KL ever measured, 1.1pt from top-1 threshold** vs ALL organic domains REGRESSED vs warm: math 68.1/0.994 (was 83.3/0.483), narrative 69.4/0.973 (75.0/0.618), research 77.8/1.026 (83.3/0.520), technical 59.7/1.192 (75.0/0.580). L-func on a factual-skewed pool traded general fidelity for in-distribution fidelity — catastrophic-forgetting-shaped; Huber anchor on the SAME skewed rows does not anchor organic domains |
+| G3 (ARM-S L-func) | 2026-06-11 | FAIL 0/10 | the main bet did not pay: training on what the reader reads did NOT unlock fresh-doc needle readback (in-context 10/10, exact 10/10, predicted 0/10 — unchanged through floor, warm, L-func) |
+| G4 (ARM-S L-func) | 2026-06-11 | FAIL | exact 20/20@1 (centered router stays perfect); predicted 4/20@1 (= warm), @3 5/20 (down from 7/20) — L-func bought zero addressability |
+
+**L-func round-1 verdict: the loss works mechanically (engine VJP
+verified; factual KL 0.116 proves the reader CAN be satisfied by
+predicted latents in-distribution) but content generation (G3) and
+addressability (G4) did not move, and the factual-skewed pool cost
+every organic domain. Open levers, in evidence order: (1) balanced
+L-func pool (cap factual fraction / include organic ≤512-tok rows);
+(2) training-KL decomposition — ema 4.2 vs heldout-factual 0.116
+says the readback probe's ANSWER positions carry ~all the loss, i.e.
+the student may need capacity/architecture (ARM-T) not more steps;
+(3) lr/step sweep before any architecture call.**
 | L-func first run (engine unlock) | 2026-06-11 | RUNNING | first execution surfaced TWO engine gaps, both fixed in Project-Tensor: (1) int4_linear was inference-only — graph cut at every INT4 projection, caught by one-time zero-grad tripwire (|g|₁=0); VJP added: dx = g @ W_kn^T, weight re-dequantized transiently in backward, nothing weight-sized retained — verified vs analytic to 1.5e-07 rel. (2) backward kept ALL intermediate grads alive until graph death — 62-layer reader backward OOM'd 8 GB at step 2 (after AdamW moments allocated); fix: free each op node's grad after its grad_fn consumes it. Peak now 6,637 MiB (1.5 GB headroom). Student injection cast to bf16 (reader compute dtype; astype is differentiable). Tripwire |g|₁ = 9.929e+03 bit-identical across relaunches. KL ema 4.52 / anchor 0.224 at step 50 |
