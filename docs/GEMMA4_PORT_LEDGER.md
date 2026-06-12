@@ -225,6 +225,45 @@ All attention softmaxes also now route through the fused row kernel at
 inference (`functional.py`): masks fold into scores, then
 causal_softmax over L=1 rows — 8× at band-mask prefill shapes.
 
+### OOM ceiling probe (Architect-directed, 2026-06-12) — tests/gemma4_oom_ceiling.py
+
+Predictions registered BEFORE measurement; per-process ladders (an
+OOM episode leaves the allocator fragmentation-pinned — ~1GB of
+reserved segments survive gc + dual-pool flush; ONE MODE PER PROCESS
+is the only rigorous ladder). 1K stages, PREFILL_CHUNK=256.
+
+| mode | ceiling | decode at top rung |
+|---|---|---|
+| APA r0.10 (blend >2048) | **3,072 tok** | ~757 ms/tok |
+| standard | **6,144 tok** | ~791 ms/tok |
+
+**Standard runs 2× further — the registered MQA-expansion prediction
+confirmed, the Architect's design expectation ("APA should run
+longer") violated BY THE IMPLEMENTATION:** `_cublas_blend_attention`
+opens with `_repeat_kv(k, 16)` (+ expanded kq and V) — written in the
+GQA era (2-4× expansion), it materializes 16 copies of the global
+cache on this MQA architecture. Registered fix: grouped-batch GEMMs
+against UNEXPANDED K/V (the decode fast path's trick) — after which
+APA's bounded score blocks beat standard's L×S prefill scores by
+construction and the design contract holds.
+
+Both modes share the bigger disease: decode is ~770-790 ms/tok at
+EVERY rung past 1K (flat with S; 24× the 32ms at S=700) — the
+cat-churn signature: at full rings every token allocates+copies
+~670MB of cache tensors (cat append + trim slice ×40 layers) against
+a near-full card. **Registered fix (THE long-context enabler): ring
+buffers** — sliding layers get fixed (KV,1024,D) buffers + one
+in-place row write/token + bias-masked invalid rows (zero-init keeps
+softmax NaN-safe); globals get capacity-doubling append. Steady-state
+decode cache copies → ZERO. Contract change: in-place writes end
+pure-functional cache sharing — live caches are exclusively owned by
+their decode loop; sharing requires explicit copy (GRM already copies
+via the host round-trip; state gate re-registers the semantics).
+
+Serving today is unaffected (corpus prompts ~700 tok sit below all of
+this); these are the long-context tickets, in order: ring buffers →
+blend de-expansion → re-probe (expect APA > standard) → V-side APA.
+
 **Job economics at the ready gate: 10/10 validated templates in 16s
 warm** (vs 38s on the Qwen3.5 stack — fewer output tokens per accepted
 template; per-job this is already the fastest stack on the machine).
