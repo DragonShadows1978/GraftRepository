@@ -409,6 +409,12 @@ class Gemma4AttentionTC:
         # short S per the zero-flip gate). Gates force this to 0 to
         # keep the blend machinery itself tested.
         self.apa_min_context = 2048
+        # Above fast_max_seq, switch the APA blend (which materializes
+        # S-sized bulk/rank/recon transients — the prefill OOM driver) to
+        # the FUSED O(L)-memory apa_selective_attention kernel (now
+        # D=512-capable). Mirrors the MLA/GQA dispatch that gave MiniCPM3
+        # 32K at flat residency. 0 = always fused; 1e18 = always blend.
+        self.fast_max_seq = 4096
 
     def __call__(self, x, cos, sin, position_offset=0, kv_cache=None):
         cfg = self.cfg
@@ -543,15 +549,41 @@ class Gemma4AttentionTC:
                 from core.mistral7b_tc import _cublas_blend_attention
                 dev = q.device.split(":")[0]
                 R_t, C_t, B_t = _tables(D, self.bulk_bits, KV, True, dev)
-                kq = _quantize_keys(k, R_t, C_t, B_t)
+                # CHUNK the whole-span quantize: _quantize_keys on the
+                # full S materializes ~5 fp32 (B,KV,S,D) tensors (~140MB
+                # at 12K) — the prefill OOM the fused kernel does NOT
+                # touch (it takes pre-quantized kq). Row-independent
+                # (proven bit-exact), so slice-quantize-concat is
+                # identical and caps the transient to O(chunk*D).
+                if S_all > 4096:
+                    parts = []
+                    for s0 in range(0, S_all, 2048):
+                        n = min(2048, S_all - s0)
+                        parts.append(_quantize_keys(
+                            k.slice(2, s0, n), R_t, C_t, B_t))
+                        tc.empty_cache()
+                    kq = tc.cat(parts, dim=2)
+                else:
+                    kq = _quantize_keys(k, R_t, C_t, B_t)
                 z_ = _norm_ppf(1.0 - max(0.0, min(1.0,
                                                   self.refine_percentile)))
-                blk = max(64, min(self.attn_block,
-                                  int(300 * 1024 * 1024 // (H * S_all * 2))))
-                # UNEXPANDED k: the blend's MQA path folds q heads
-                # into rows instead of expanding the cache 16x
-                attn = _cublas_blend_attention(
-                    q, k, kq, v, H // KV, 1.0, float(z_), L > 1, blk)
+                if S_all > self.fast_max_seq:
+                    # FUSED O(L)-memory path: streams keys with online
+                    # softmax, never materializes the S-sized bulk/rank/w
+                    # score matrices the blend allocates (~0.9GB/global-
+                    # layer-chunk — the 12K-prefill OOM driver). D=512 now
+                    # accepted (engine d57b76e); MQA KVH=1 is the kernel's
+                    # best case; bottom-right causal handles S>L.
+                    attn = tc.apa_selective_attention(
+                        q, k, kq, v, 1.0, float(z_), L > 1)
+                else:
+                    blk = max(64, min(self.attn_block,
+                                      int(300 * 1024 * 1024 //
+                                          (H * S_all * 2))))
+                    # UNEXPANDED k: the blend's MQA path folds q heads
+                    # into rows instead of expanding the cache 16x
+                    attn = _cublas_blend_attention(
+                        q, k, kq, v, H // KV, 1.0, float(z_), L > 1, blk)
             else:
                 # MQA prefill de-expansion (KV=1): fold the 16 q-heads
                 # into rows — (B,1,H*L,D) against the UNEXPANDED cache,

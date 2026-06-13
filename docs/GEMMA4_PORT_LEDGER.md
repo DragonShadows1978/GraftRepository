@@ -520,6 +520,35 @@ and the value is in-band/plausible, but a confirmation run is
 registered before it becomes the shipped default. The current shipped
 default is V-only INT8, conservatively.)
 
+### IMPLEMENTED: fused D=512 APA kernel wired — 12K PREFILL WALL MOVED (2026-06-13 overnight)
+
+The fused O(L)-memory `apa_selective_attention` path, the piece that
+was architecturally missing from Gemma's APA (it ran the memory-heavy
+cuBLAS blend at every context). Engine (commit d57b76e): TC_APA_MAXD
+256→512 + dispatch arm + the BOTTOM-RIGHT causal fix (s_max=(S-L)+i+1,
+was top-left — the 121→11M bug class, caught BEFORE shipping this time;
+regression tests cover non-square S>L + MQA-D512). Port: fast_max_seq
+=4096 switch at the global PREFILL APA site (decode stays on the blend
+— at L=1 the blend transient is ~1MB and the fused kernel loses 30× on
+the 16-block launch), PLUS chunked whole-span `_quantize_keys` (2048-
+row slices, bit-exact, caps the ~140MB fp32 recon transient the fused
+kernel doesn't touch).
+
+**MEASURED: 12K PREFILL NOW SURVIVES at 7805 MiB** (load 6759 + ~1046
+of cache/transients, ~390 MiB headroom) — where the blend OOM'd. The
+prefill wall moved from <12K to ≥12K. Fused≡blend equivalence: top1
+match, max|d| 1.25 (near-tie) at a shared context. NOTE: the gate must
+drain the allocator pool between contexts — running 1024 then 12K in
+one process fragmented the pool and falsely OOMed (the recurring
+one-process-per-context lesson; gate now flushes).
+
+So the complementary picture is now BUILT and MEASURED: incremental-kq
+(decode O(D)) + INT8 V-storage (resident ~2×) + fused kernel (prefill
+transient) together take Gemma from walling at ~8K to **12K prefill +
+deeper decode**, reaching toward its trained window. Asymmetric K8+V4
+storage (measured −3.56%, best mode) is the next resident lever for
+beyond 12K.
+
 ### THE MISSING PIECE + the honest MLA-flatness limit (Architect's catch, 2026-06-13)
 
 The Architect sensed Gemma's APA was "missing something" — every other
