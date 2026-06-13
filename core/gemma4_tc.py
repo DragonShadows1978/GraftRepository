@@ -113,6 +113,104 @@ class Q40LinearTC:
                                     self.zeros, self.group_size)
 
 
+class KVRing:
+    """Mutable decode cache (2026-06-12 ring rework): sliding layers get
+    a FIXED (B,KV,window,D) buffer with in-place ring writes; global
+    layers get capacity-doubling append. Steady-state decode cache
+    copies: ZERO (was ~670MB/token of cat+trim churn — measured 0.8s/tok
+    past 1K context). Invalid rows are masked by an additive bias buffer
+    (-1e4, zeroed as rows fill; buffers zero-init so scores over unwritten
+    rows stay finite). OWNERSHIP CONTRACT: the decode loop owns these
+    buffers — sharing (save/mount/branch) must COPY. Created lazily from
+    the prefill tuple at the first decode step, per layer (the consumed-
+    list contract frees each tuple as its ring is built).
+    Attention math is permutation-invariant over keys (position lives in
+    the roped values), so a wrapped ring needs no reordering — at the
+    sliding steady state the ring content IS the window, maskless."""
+
+    __slots__ = ("kb", "vb", "bias", "count", "cap", "ring", "window")
+
+    def __init__(self, k, v, ring_cap=None):
+        B, KV, S, D = k.shape
+        # capacity-double from small for BOTH kinds — a fixed-size ring
+        # costs ~370MB per cache set regardless of context (the state
+        # gate holds three sets and OOMed at 48 tokens). Rings cap at
+        # the window and only then wrap; globals grow unbounded.
+        self.window = ring_cap                 # None for globals
+        self.ring = ring_cap is not None
+        self.cap = 64
+        while self.cap < S + 1:
+            self.cap *= 2
+        if self.ring:
+            self.cap = min(self.cap, ring_cap)
+        self.kb = _cast(tc.tensor(np.zeros((B, KV, self.cap, D),
+                                           np.float32)))
+        self.vb = _cast(tc.tensor(np.zeros((B, KV, self.cap, D),
+                                           np.float32)))
+        bias = np.full((self.cap, 1), -1e4, np.float32)
+        bias[:S] = 0.0
+        self.bias = _cast(tc.tensor(bias))
+        # rings are inference-only structures: guard the in-place writes
+        # so construction works from any scope (load_caches runs outside
+        # the caller's no_grad)
+        with tc.no_grad():
+            tc.write_rows(self.kb, k, 0)
+            tc.write_rows(self.vb, v, 0)
+        self.count = S
+
+    @property
+    def full(self):
+        return (self.ring and self.cap == self.window
+                and self.count >= self.cap)
+
+    def append(self, k1, v1, zero_row):
+        """k1/v1: (B,KV,1,D) post-norm/rope. zero_row: cached (1,1) zero
+        tensor in compute dtype (bias unmask write)."""
+        at_cap = self.count == self.cap
+        can_grow = (not self.ring) or self.cap < self.window
+        if at_cap and can_grow:
+            old_k, old_v, old_n = self.kb, self.vb, self.count
+            self.cap = (min(self.cap * 2, self.window) if self.ring
+                        else self.cap * 2)
+            B, KV, _, D = old_k.shape
+            self.kb = _cast(tc.tensor(np.zeros((B, KV, self.cap, D),
+                                               np.float32)))
+            self.vb = _cast(tc.tensor(np.zeros((B, KV, self.cap, D),
+                                               np.float32)))
+            with tc.no_grad():
+                tc.write_rows(self.kb, old_k, 0)
+                tc.write_rows(self.vb, old_v, 0)
+            bias = np.full((self.cap, 1), -1e4, np.float32)
+            bias[:old_n] = 0.0
+            self.bias = _cast(tc.tensor(bias))
+        pos = (self.count % self.cap
+               if self.ring and self.cap == self.window else self.count)
+        with tc.no_grad():
+            tc.write_rows(self.kb, k1, pos)
+            tc.write_rows(self.vb, v1, pos)
+            if not self.full:
+                tc.write_rows(self.bias, zero_row, pos)
+        self.count += 1
+
+    def ordered(self):
+        """Valid rows as (k, v) COPIES in LOGICAL order (oldest first) —
+        the prefill-continuation / export form. Band masks assume
+        temporal order, so a wrapped ring is unrolled via two slices.
+        Attention itself never needs this (permutation-invariant)."""
+        n = min(self.count, self.cap)
+        if self.ring and self.count > self.cap:
+            cut = self.count % self.cap
+            if cut == 0:
+                return (self.kb.slice(2, 0, self.cap),
+                        self.vb.slice(2, 0, self.cap))
+            k = tc.cat([self.kb.slice(2, cut, self.cap - cut),
+                        self.kb.slice(2, 0, cut)], dim=2)
+            v = tc.cat([self.vb.slice(2, cut, self.cap - cut),
+                        self.vb.slice(2, 0, cut)], dim=2)
+            return k, v
+        return self.kb.slice(2, 0, n), self.vb.slice(2, 0, n)
+
+
 def _band_mask(L, S, window, device, dtype):
     """Additive sliding-window mask, BOTTOM-RIGHT aligned like the engine's
     causal mask: query row i is absolute key index (S-L+i); col j visible
@@ -139,6 +237,19 @@ def _ones(D):
     if t is None:
         t = tc.tensor(np.ones(D, np.float32), dtype="float32")
         _ones_cache[D] = t
+    return t
+
+
+_zero_cache = {}
+
+
+def _zero_row():
+    """Cached (1,1) zero in compute dtype — the bias unmask write."""
+    cdt = BlockTC.COMPUTE_DTYPE
+    t = _zero_cache.get(cdt)
+    if t is None:
+        t = _cast(tc.tensor(np.zeros((1, 1), np.float32)))
+        _zero_cache[cdt] = t
     return t
 
 
@@ -222,49 +333,65 @@ class Gemma4AttentionTC:
             q = F.apply_rotary(q, cseg, sseg)
             k = F.apply_rotary(k, cseg, sseg)
 
-        if kv_cache is not None:
-            k = tc.cat([kv_cache[0], k], dim=2)
-            v = tc.cat([kv_cache[1], v], dim=2)
+        ring_cache = None
+        # ---- DECODE (L==1): ring path, zero cache copies ------------
+        # In-place append into a KVRing (lazy-converted from the prefill
+        # tuple on first decode; the consumed-list contract frees the
+        # tuple as the ring is built). Invalid rows are bias-masked;
+        # attention reads the FULL buffer — permutation-invariant, so a
+        # wrapped sliding ring needs no reordering and, at steady state,
+        # no mask either.
+        if L == 1 and kv_cache is not None:
+            if isinstance(kv_cache, tuple):
+                kv_cache = KVRing(
+                    kv_cache[0], kv_cache[1],
+                    ring_cap=None if self.is_global else cfg.sliding_window)
+            kv_cache.append(k, v, _zero_row())
+            S_all = min(kv_cache.count, kv_cache.cap)
+            apa_active = (self.is_global
+                          and self.attention_mode == "apa_selective"
+                          and S_all > self.apa_min_context)
+            if apa_active:
+                # blend fallback: ordered copies (globals never wrap).
+                # Integration with unexpanded ring buffers is the blend
+                # de-expansion ticket. The RING stays the live cache.
+                ring_cache = kv_cache
+                k, v = kv_cache.ordered()
+            else:
+                rep = H // KV
+                qg = q.reshape([B, KV, rep, D])
+                sc = tc.matmul(qg, kv_cache.kb, alpha=1.0, trans_b=True)
+                if not kv_cache.full:
+                    sc = sc + kv_cache.bias.reshape([1, 1, 1, kv_cache.cap])
+                # fused single-kernel softmax (at L==1 causal == full
+                # row); reshape to L=1 rows first — causal_softmax reads
+                # dim -2 as L and would mask keys off earlier q heads.
+                if hasattr(tc, "causal_softmax"):
+                    p = tc.causal_softmax(
+                        sc.reshape([B, KV * rep, 1, kv_cache.cap]))
+                    p = p.reshape([B, KV, rep, kv_cache.cap])
+                else:
+                    p = sc.softmax(-1)
+                attn = tc.matmul(p, kv_cache.vb).reshape([B, L, H * D])
+                return self.o_proj(_cast(attn)), kv_cache
+        else:
+            if isinstance(kv_cache, KVRing):
+                # prefill continuation onto a decode cache (multi-turn /
+                # ladder probes): unwrap to logically-ordered tuples —
+                # band masks need temporal order. One-time copy at
+                # prefill rates.
+                kv_cache = kv_cache.ordered()
+            if kv_cache is not None:
+                k = tc.cat([kv_cache[0], k], dim=2)
+                v = tc.cat([kv_cache[1], v], dim=2)
         S_all = k.shape[2]
 
         apa_active = (self.is_global
                       and self.attention_mode == "apa_selective"
                       and S_all > self.apa_min_context)
 
-        # decode fast path (L==1, non-blend): batched per-KV-group
-        # matmuls — q (B,KV,rep,D) @ k (B,KV,S,D)^T — instead of
-        # MATERIALIZING repeat_kv'd K and V (~23MB of copies per sliding
-        # layer per token; the profiler put 81% of the step in sliding
-        # layers). No mask needed at L==1: the ring is <= window and
-        # global attends everything.
-        if L == 1 and not apa_active:
-            rep = H // KV
-            qg = q.reshape([B, KV, rep, D])
-            sc = tc.matmul(qg, k, alpha=1.0, trans_b=True)   # (B,KV,rep,S)
-            # fused single-kernel softmax (at L==1 causal == full row);
-            # the composed softmax chain measured 580us PER LAYER on
-            # decode shapes — 23ms/token across the sliding layers.
-            # Reshape to L=1 rows first: causal_softmax reads dim -2 as
-            # L and would mask rep-1 keys off the earlier q heads.
-            if hasattr(tc, "causal_softmax"):
-                p = tc.causal_softmax(sc.reshape([B, KV * rep, 1, S_all]))
-                p = p.reshape([B, KV, rep, S_all])
-            else:
-                p = sc.softmax(-1)
-            attn = tc.matmul(p, v).reshape([B, L, H * D])
-            if self.is_global:
-                new_kv = (k, v)
-            else:
-                keep = min(cfg.sliding_window - 1, S_all)
-                # slice ONLY when the window actually binds — below it
-                # the "trim" was a full-cache copy every token
-                new_kv = ((k, v) if keep == S_all else
-                          (k.slice(2, S_all - keep, keep),
-                           v.slice(2, S_all - keep, keep)))
-            return self.o_proj(_cast(attn)), new_kv
-
         if self.is_global:
-            new_kv = (k, v)                                  # append-only
+            new_kv = ring_cache if ring_cache is not None else (k, v)
             if apa_active:
                 from tensor_cuda.quant import (_norm_ppf, _quantize_keys,
                                                _tables)
@@ -276,13 +403,31 @@ class Gemma4AttentionTC:
                                                   self.refine_percentile)))
                 blk = max(64, min(self.attn_block,
                                   int(300 * 1024 * 1024 // (H * S_all * 2))))
+                # UNEXPANDED k: the blend's MQA path folds q heads
+                # into rows instead of expanding the cache 16x
                 attn = _cublas_blend_attention(
-                    q, _repeat_kv(k, H // KV), kq, v, H // KV, 1.0,
-                    float(z_), L > 1, blk)
+                    q, k, kq, v, H // KV, 1.0, float(z_), L > 1, blk)
             else:
-                attn = F.scaled_dot_product_attention(
-                    q, _repeat_kv(k, H // KV), _repeat_kv(v, H // KV),
-                    is_causal=(L > 1), scale=1.0)
+                # MQA prefill de-expansion (KV=1): fold the 16 q-heads
+                # into rows — (B,1,H*L,D) against the UNEXPANDED cache,
+                # pure reshapes. repeat_kv here materialized 2x ~200MB
+                # per layer-chunk at 12K context (OOM-proven); this
+                # path allocates nothing but scores.
+                qf = q.reshape([B, 1, H * L, D])
+                sc = tc.matmul(qf, k, alpha=1.0, trans_b=True)
+                sc = sc.reshape([B, H, L, S_all])
+                if hasattr(tc, "causal_softmax") and not tc.is_grad_enabled():
+                    # bottom-right causal is built into the kernel —
+                    # NO mask tensors. Adaptive chunking gives every
+                    # chunk a unique (L,S), so materialized masks
+                    # churned ~200MB of cache at 12K (OOM-proven).
+                    p_ = tc.causal_softmax(sc)
+                else:
+                    dev = q.device.split(":")[0]
+                    p_ = (sc + F._causal_mask(L, S_all, dev,
+                                              sc.dtype)).softmax(-1)
+                attn = tc.matmul(p_.reshape([B, 1, H * L, S_all]),
+                                 v).reshape([B, H, L, D])
         else:
             W = cfg.sliding_window
             if S_all <= W:
@@ -398,8 +543,17 @@ class Gemma4_TC:
             outs = []
             lg = None
             off = position_offset
-            for s0 in range(0, L, C):
-                seg = input_ids_np[:, s0:s0 + C]
+            s0 = 0
+            while s0 < L:
+                # ADAPTIVE chunk: per-chunk global score transients are
+                # 16*step*S_all*2B (x2 for the mask add) — fixed steps
+                # OOM past ~3-4K context on the ~7GB baseline. Hold the
+                # transient under ~32MB; floor 64 keeps GEMM shapes sane.
+                S_ctx = off + C
+                step = min(C, max(64,
+                                  (32 * 1024 * 1024) // (32 * S_ctx)))
+                step = max(64, (step // 64) * 64)
+                seg = input_ids_np[:, s0:s0 + step]
                 # last_token_only passes through UNCHANGED: when the
                 # caller wants only the final logits, every chunk must
                 # compute 1-row logits (a wasted GEMV per non-final
@@ -409,6 +563,7 @@ class Gemma4_TC:
                 lg, caches = self._forward(seg, caches, off,
                                            last_token_only=last_token_only)
                 off += seg.shape[1]
+                s0 += seg.shape[1]
                 if not last_token_only:
                     outs.append(lg)
                 # trim the allocator pool at chunk boundaries: chunked
@@ -634,10 +789,25 @@ class Gemma4_TC:
 # entries are the full prefix. position_offset rides along.
 
 def save_caches(caches, path, position_offset):
+    """Tuple caches save their tensors; KVRings save RAW buffers + meta
+    (count/cap/ring) — exact regardless of wrap state. Saving is a COPY
+    (host round-trip), honoring the ring ownership contract."""
     arrs = {"position_offset": np.array([position_offset], np.int64)}
-    for i, (k, v) in enumerate(caches):
-        arrs[f"l{i}_k"] = k.float().numpy()
-        arrs[f"l{i}_v"] = v.float().numpy()
+    for i, c in enumerate(caches):
+        if isinstance(c, KVRing):
+            # save VALID ROWS ONLY in logical order (a full sliding
+            # buffer is 1024 rows of mostly zeros for short contexts —
+            # the buffer-dump version OOMed the state gate's restore
+            # next to the live set). The ring flag is the only meta
+            # needed: restore rebuilds capacity/bias from the rows.
+            k, v = c.ordered()
+            arrs[f"l{i}_k"] = k.float().numpy()
+            arrs[f"l{i}_v"] = v.float().numpy()
+            arrs[f"l{i}_ring"] = np.array([int(c.ring)], np.int64)
+        else:
+            k, v = c
+            arrs[f"l{i}_k"] = k.float().numpy()
+            arrs[f"l{i}_v"] = v.float().numpy()
     tmp = path + ".tmp"
     np.savez(tmp, **arrs)
     os.replace(tmp + ".npz", path)
@@ -648,6 +818,16 @@ def load_caches(path, cfg=None):
     z = np.load(path)
     caches = []
     for i in range(cfg.num_layers):
-        caches.append((_cast(tc.tensor(z[f"l{i}_k"])),
-                       _cast(tc.tensor(z[f"l{i}_v"]))))
+        k = _cast(tc.tensor(z[f"l{i}_k"]))
+        v = _cast(tc.tensor(z[f"l{i}_v"]))
+        if f"l{i}_ring" in z.files:
+            # rebuild the ring from valid rows: KVRing.__init__ writes
+            # them at [0:count) and sets the bias. A saved-wrapped ring
+            # arrives with count == cap, so the next append overwrites
+            # the logical-oldest row — FIFO semantics preserved.
+            ring = bool(int(z[f"l{i}_ring"][0]))
+            cfg_w = cfg.sliding_window if ring else None
+            caches.append(KVRing(k, v, ring_cap=cfg_w))
+        else:
+            caches.append((k, v))
     return caches, int(z["position_offset"][0])

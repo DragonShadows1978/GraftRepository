@@ -264,6 +264,94 @@ Serving today is unaffected (corpus prompts ~700 tok sit below all of
 this); these are the long-context tickets, in order: ring buffers →
 blend de-expansion → re-probe (expect APA > standard) → V-side APA.
 
+### Ring rework (2026-06-12, "build the ring buffers — APA gets its rematch")
+
+Engine: `write_rows` (in-place ring block write, grad-guarded, gated
+exact incl. wrap). Port: `KVRing` — sliding layers ring at window
+1024, globals capacity-double; decode appends are in-place; invalid
+rows bias-masked (zero-init keeps softmax finite); lazy per-layer
+conversion from prefill tuples at first decode; prefill-after-decode
+unwraps via `ordered()` (two-slice unroll on wrap — band masks need
+temporal order; attention itself doesn't). OWNERSHIP CONTRACT: the
+decode loop owns ring buffers; sharing copies (GRM host round-trip
+already does).
+
+**Measured (per-step, synchronized): steady decode 28.8 ms/tok at
+S=1100+ — flat with S, faster than the 32.3ms tuple-path at S=700,
+27× the churn-era 773ms.** Ring decode is exactly deterministic
+through the wrap boundary (C1 gate).
+
+Iteration lessons (each OOM-proven, each fixed):
+1. Saving rings as FULL BUFFERS made a 48-token state file 670MB and
+   OOMed its own restore → save VALID ROWS + ring flag; wrapped rings
+   restore with count==cap so the next append hits the logical-oldest.
+2. FIXED-size rings cost ~370MB per cache set at ANY context (state
+   gate holds 3 sets) → capacity-double from 64, cap at window, wrap
+   only at window.
+3. Per-chunk prefill score transients (16·step·S_all·2B ×2) OOM past
+   ~3-4K → ADAPTIVE chunking holds the transient ≤32MB (step shrinks
+   with context, floor 64).
+4. KVRing guards its own in-place writes (load_caches runs outside
+   caller no_grad).
+5. Probe methodology: the v1 ladder (interleaved prefill/decode
+   stages) produced decode numbers 27× off the clean per-step
+   measurement and cycled caches through unwrap/reconvert each rung —
+   superseded by gemma4_decode_probe.py (one prefill, long decode,
+   one process per (mode, S)). And — third strike — NEVER grep-filter
+   a failing gate's output; full logs to /tmp, always.
+
+### The rematch (blend de-expansion + maskless prefill, 2026-06-12/13)
+
+- **MQA blend de-expansion** (`_cublas_blend_attention` MQA branch +
+  unexpanded call site): q heads fold into rows against the unexpanded
+  K/quantized-K/V — the expansion path materialized 3× ~200MB per
+  chunk at 12K. **Proven numerically exact**: synthetic diff vs the
+  expansion path max|d| 0.0156 (bf16 ulp), isolated-real rect check
+  worst flip 0.361 (cleaner than the expansion path's 1.18).
+- **Maskless global prefill**: causal_softmax's built-in bottom-right
+  causal replaces materialized masks (adaptive chunking gave every
+  chunk a unique (L,S) → ~200MB of mask-cache churn at 12K;
+  rectangular semantics verified exact at all shapes incl. L=1).
+- **CASCADE SENSITIVITY (registered phenomenon, not a bug)**: two
+  equally-valid pipelines (blend vs standard, or different chunkings)
+  compound benign per-chunk rounding chaotically over 48 layers ×
+  hundreds of tokens — isolated blend worst 0.361 vs
+  blend-through-prefill 5.9 ON THE SAME INPUTS. Gates must test the
+  MACHINERY (isolated) and treat cross-pipeline cascades as
+  informational; the APA rect check now isolates (apa_min_context >
+  prefill length).
+
+**Ring-era scoreboard (decode probes, real serving shape):**
+
+| S | standard | APA r0.10 (de-expanded) |
+|---|---|---|
+| 1.1K | 28.8 ms/tok | — |
+| 4K | **47.0 ms/tok, SURVIVED** (7.39GB) | **56.1 ms/tok, SURVIVED** (7.54GB) |
+| 8K | **69.7 ms/tok, SURVIVED** (7.64GB) | OOM — `_quantize_keys` |
+| 12K | OOM — prefill budget (weights 6.77 + rings 0.34 + KV 0.2 leave ~340MB for transients+fragmentation) | OOM — `_quantize_keys` re-quantizes the WHOLE cache per call and materializes a reconstruction |
+
+**Verdict on the rematch:** standard reaches 8K, APA dies at 8K — APA
+runs SHORTER, the OPPOSITE of the design intent ("APA should run
+longer"), confirmed measured. BUT the cause is now pinpointed and it
+is NOT the algorithm: `_quantize_keys` (tensor_cuda/quant.py) rebuilds
+the entire quantized key set AND a full-precision reconstruction
+(`tc.matmul(centroids, Rb) * norms`) EVERY decode step — O(S) work and
+O(S) transient per token, on the whole growing cache. The
+`cache_apa_kq` lever (incremental: quantize only the appended key,
+reuse cached quantized prefix) already exists in GQAAttentionTC and
+was simply never wired into the Gemma port. Wiring it makes APA's
+per-step cost flat and its transient bounded — exactly the design
+contract — and is the gate to APA outrunning standard. Registered as
+the next ticket.
+
+Where the pre-ring stack decoded at 0.8s/tok and died at 5K, both
+modes now serve real decode at 4K+. Remaining long-context tickets:
+incremental kq caching (the `cache_apa_kq` lever that ALREADY EXISTS
+in GQAAttentionTC, never wired here), prefill-into-rings, and the arc
+that actually moves the 12K wall for BOTH modes: **quantized KV
+STORAGE** (INT8 → 4-bit bulk + hot set per the Architect's tail law —
+where APA stops being scoring-only and starts extending memory).
+
 **Job economics at the ready gate: 10/10 validated templates in 16s
 warm** (vs 38s on the Qwen3.5 stack — fewer output tokens per accepted
 template; per-job this is already the fastest stack on the machine).

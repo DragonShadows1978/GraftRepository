@@ -72,6 +72,14 @@ std_r = lg_std.float().numpy()[0]
 del lg_std
 tc.empty_cache()
 set_mode("apa_selective")
+# ISOLATE the blend to the scored chunk (prefill standard both sides):
+# this measures the blend MACHINERY. Running APA through the prefill
+# too compounds benign per-chunk rounding differences chaotically over
+# 48 layers x 896 tokens (measured: isolated worst 0.361 vs cascaded
+# 5.9 — same inputs, no bug; see ledger 'cascade sensitivity').
+for L in m.layers:
+    if L.mixer.is_global:
+        L.mixer.apa_min_context = half + 64
 with tc.no_grad():
     _, c_apa = m(ids_l[:, :half], last_token_only=True)
     lg_apa, _ = m(ids_l[:, half:], caches=c_apa, position_offset=half)

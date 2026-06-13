@@ -213,6 +213,32 @@ def _cublas_blend_attention(q, kH, kq_kv, v_kv, group, scale, z, causal, blk):
     """
     B, H, L, D = q.shape
     S = kH.shape[2]
+    if kH.shape[1] == 1 and H > 1:
+        # MQA de-expansion (Gemma 4 globals: 1 KV head x 16 q heads):
+        # fold q heads into rows against the UNEXPANDED cache — pure
+        # reshapes. The expansion path materialized 16 copies of K,
+        # quantized-K AND V (3 x ~200MB per chunk at 12K; OOM-proven,
+        # the 2x-ceiling loss in the first rematch probe).
+        kqT1 = kq_kv.transpose(-2, -1)            # (B,1,D,S)
+        kT1 = kH.transpose(-2, -1)
+        outs = []
+        for i in range(0, L, blk):
+            e = min(i + blk, L)
+            bl = e - i
+            Qf = q.slice(2, i, bl).reshape([B, 1, H * bl, D])
+            bulk = (tc.matmul(Qf, kqT1).reshape([B, H, bl, S])
+                    * scale)
+            rank = (tc.matmul(Qf, kT1).reshape([B, H, bl, S])
+                    * scale)
+            if causal:
+                ca = F._causal_mask(L, S, q.device.split(":")[0],
+                                    bulk.dtype).slice(0, i, bl)
+                bulk = bulk + ca
+                rank = rank + ca
+            w = tc.apa_blend_softmax(bulk, rank, z)
+            outs.append(tc.matmul(w.reshape([B, 1, H * bl, S]),
+                                  v_kv).reshape([B, H, bl, D]))
+        return tc.cat(outs, dim=2)
     kqH = _repeat_kv(kq_kv, group)
     vH = _repeat_kv(v_kv, group)
     kqT = kqH.transpose(-2, -1)

@@ -53,11 +53,21 @@ print(f"loaded: {info} | APA apa_selective ON ({n_apa} global layers, "
       f"{model.layers[5].mixer.refine_percentile})", flush=True)
 
 
+def _kv(c):
+    """Ordered (k, v) view of a tuple cache or a KVRing (pre-wrap)."""
+    return c.ordered() if hasattr(c, "ordered") else c
+
+
 def to_host(caches):
     """Prefix states live in HOST RAM: at 12B a single full-length
     cache set is ~230-335MB — 8 GPU-resident entries would eat half
-    the card. fp32 round-trip is exact for bf16."""
-    return [(k.float().numpy(), v.float().numpy()) for k, v in caches]
+    the card. fp32 round-trip is exact for bf16, and host export is a
+    COPY (the KVRing ownership contract)."""
+    out = []
+    for c in caches:
+        k, v = _kv(c)
+        out.append((k.float().numpy(), v.float().numpy()))
+    return out
 
 
 def to_device(host_caches):
@@ -138,9 +148,13 @@ def generate(prompt, temperature, num_predict):
                     # this request's own post-prefill caches (global KV
                     # is append-only; below the window the sliding ring
                     # holds every key). Minting is free — no re-prefill
-                    # (which was doubling request latency).
-                    pc = [(k.slice(2, 0, cp), v.slice(2, 0, cp))
-                          for k, v in caches]
+                    # (which was doubling request latency). _kv handles
+                    # both tuple caches and (pre-wrap) KVRings.
+                    pc = []
+                    for c in caches:
+                        kk, vv = _kv(c)
+                        pc.append((kk.slice(2, 0, cp),
+                                   vv.slice(2, 0, cp)))
                 else:
                     # past the window the ring has trimmed: state-at-cp
                     # is no longer a slice. Re-prefill to mint.
