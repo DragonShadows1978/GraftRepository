@@ -339,6 +339,11 @@ def _head_rmsnorm(x, w, eps, B, L, H, D):
 
 
 class Gemma4AttentionTC:
+    # KV-storage quant hook: None = off (zero cost). A callable
+    # fn(k, v, is_global) -> (k, v) round-trips K/V to simulate quantized
+    # STORAGE for the tail-law ppl gate (tests/gemma4_kv_quant_ppl.py).
+    KV_STORE_HOOK = None
+
     def __init__(self, cfg, layer_idx):
         self.cfg = cfg
         self.is_global = Gemma4Config.is_global(layer_idx)
@@ -401,6 +406,15 @@ class Gemma4AttentionTC:
             sseg = sin.slice(0, position_offset, L)
             q = F.apply_rotary(q, cseg, sseg)
             k = F.apply_rotary(k, cseg, sseg)
+
+        # KV-STORAGE QUANT HOOK (default None = zero cost). Set
+        # Gemma4AttentionTC.KV_STORE_HOOK = fn(k, v, is_global) -> (k, v)
+        # to simulate quantized STORAGE: every scored token's K/V passes
+        # here on EVERY path (prefill / decode / chunk), unlike the
+        # KVRing which only constructs at the first decode step. This is
+        # the correct measurement point for the tail-law ppl gate.
+        if Gemma4AttentionTC.KV_STORE_HOOK is not None:
+            k, v = Gemma4AttentionTC.KV_STORE_HOOK(k, v, self.is_global)
 
         ring_cache = None
         # ---- DECODE (L==1): ring path, zero cache copies ------------

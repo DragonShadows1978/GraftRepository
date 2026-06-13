@@ -463,6 +463,84 @@ extension (APA OUTRUNNING standard) still needs quantized KV STORAGE
 (the tail-law arc) — incremental kq carries +50% resident (the kqb
 ring), so it equals standard's ceiling, doesn't exceed it.
 
+### THE MISSING PIECE + the honest MLA-flatness limit (Architect's catch, 2026-06-13)
+
+The Architect sensed Gemma's APA was "missing something" — every other
+architecture saw massive memory gains, Gemma didn't. CONFIRMED in
+source: **Gemma's APA has NO fused-kernel branch.** MLA/GQA dispatch
+(minicpm3_tc.py:231-243, mistral7b_tc.py:432-441) switch to the fused
+O(L)-memory `apa_selective_attention` above fast_max_seq=4096 — that
+fused path is what ran MiniCPM3's 2,048→32,768 climb at ~10MB resident
+drift. Gemma runs `_cublas_blend_attention` at EVERY length (no
+fast_max_seq, no switch) because the fused kernel throws at head_dim>256
+and Gemma globals are 512. The prior "DON'T build D=512" verdict was
+correct ON THE SPEED axis and WRONG on the memory axis.
+
+**Two corrections to the framing (memory-feasibility investigation,
+conf 0.86):**
+1. The fused kernel saves memory at PREFILL, not DECODE (at L=1 the
+   blend transients collapse to ~1MB). The decode 8K wall was already
+   broken by incremental-kq. So the fused kernel is the **12K+ PREFILL
+   ceiling lever**, not the decode fix.
+2. **Gemma CANNOT get MLA-flat residency — it's a HARD architectural
+   difference.** MLA flattened because its cache is a tiny fixed latent
+   (~288 vals/token). Gemma globals are full-width MQA: kb+vb+kqb =
+   24KB/token, growing linearly, ~85× heavier per token, structural
+   (from the trained 512-wide single-head global attention). No kernel
+   flattens it. Honest ceiling: fused kernel converts an early ~8-12K
+   TRANSIENT wall into a later ~24-32K RESIDENT wall (a rising line
+   192→768MB across 8K→32K, NOT MLA's flat shelf); +INT8/4-bit storage
+   bends the slope ~1.5-2.7× shallower (clears 32K with margin). The
+   achievable goal is "reaches the trained 32K window as a managed
+   rising wall," not "memory never walls."
+
+**Build plan: BUILD-WITH-STORAGE.** Piece 1 (transient killer): D=512
+dispatch (TC_APA_MAXD 256→512, launch arm, delete throw) + fast_max_seq
+switch in the Gemma APA branch. TRAP (the same class that's bitten 3×):
+the fused kernel is TOP-LEFT causal (s_max=i+1) while the whole Gemma
+stack is BOTTOM-RIGHT — they agree ONLY at S==L, and Gemma always
+chunks prefill onto a cache (S>L), so a naive wire is the 121→11M-ppl
+bug AGAIN, and the existing kernel test runs only S==L so it passes
+while wrong. Needs a bottom-right/q_offset kernel mode + a NON-SQUARE
+regression test. Piece 2 (the load-bearing half — bends the resident
+slope, the only durable-ceiling lever): INT8/4-bit kb/vb storage in
+KVRing with dequant-on-read, gated by the ppl experiment below.
+
+**KV-STORAGE PPL (tests/gemma4_kv_quant_ppl.py, real wikitext 6×2048).**
+CORRECTION: an earlier version of this entry claimed "INT8 perceptually
+free, +0.000%, bit-identical" — that was a DEAD PATCH (it hooked
+KVRing.append, which only runs at first decode; the scored tokens flow
+through the prefill/cat path it never touched, so all 7 modes returned
+bit-identical ppl — the physical impossibility was the tell). The test
+now hooks `Gemma4AttentionTC.KV_STORE_HOOK` (every scored token's K/V,
+every path) with a NO-OP GUARD asserting each mode actually perturbs the
+logits. Real numbers (all ACTIVE, baseline 119.85):
+
+| mode | ppl | Δ | |
+|---|---|---|---|
+| int8_v | 118.02 | **−1.5%** | best — V-only INT8 safe |
+| int8_slide | 121.51 | +1.4% | safe |
+| int8_kv | 123.11 | +2.7% | borderline |
+| int4v_glob | 125.94 | +5.1% | marginal |
+| int8_glob | 127.25 | +6.2% | marginal |
+| int4v_slide | 2152 | **+1696%** | CATASTROPHIC |
+| int4v_all | 6559 | **+5373%** | CATASTROPHIC |
+
+**FINDINGS, against prediction:** (1) The "scale-free v_norm ⇒ V
+tolerates 4-bit like K" hypothesis is REFUTED — 4-bit V is fine on
+GLOBAL (+5%) but ANNIHILATES SLIDING (+1696%). Same quant, opposite
+outcome by layer class. (2) Likely mechanism: sliding attention sees
+only 1024 keys, so each V carries much higher weight (less softmax
+averaging) — a 4-bit V error on a high-weight value is NOT crushed (the
+un-crushed-hot-value risk the kernel workflow flagged). (3) INT8 is
+GOOD not free: int8_v (V-only) is the sweet spot at −1.5%; INT8 on K
+(int8_glob/kv) costs more (the score path is more precision-sensitive
+than the value path). (4) The tail-law arc's realistic operating point
+is **INT8 V-storage** (or INT8 sliding + INT8 V global), NOT blanket
+4-bit. 4-bit is reserved for the GLOBAL V only, and even there +5% needs
+a serving-quality decision. The 2.7× slope cut from blanket 4-bit is
+OFF THE TABLE; the achievable cut is ~2× (INT8) with a V-only refinement.
+
 ### CAN the fused kernel be fixed for D=512? (kernel-feasibility investigation, conf 0.86)
 
 VERDICT: mechanically YES, but it's the WRONG LEVER — DON'T build it;
