@@ -1,5 +1,31 @@
 # Gemma 4 12B Unified — tensor_cuda port ledger
 
+## K4+V4 RESIDENT KV-QUANT (2026-06-13) — the wall moved 14.3K → 16K+, MEASURED
+
+The tail-law arc completed: real 4-bit RESIDENT storage of BOTH K and V on
+the global layers (not a round-trip that stays bf16 — actual uint8 packed
+cache, ~4x cut). New engine primitive `tc.kv_int4_pack`/`kv_int4_unpack`
+(D-grouped symmetric-8, distinct from the K-grouped weight `int4_dequant`;
+the segfault-prone uint8 strided-copy avoided by writing raw uint8 in pack
+and st<float> in unpack). Bit-identical to the rt_int4 ppl math (max|d|=0).
+Wired into KVRing behind `GEMMA4_QUANT_KV4` (global-only — 4-bit V is fatal
+on the sliding window, +1696%). Config from the bulk-bits law (Gemma qk-norm
+=> 4): `int4_kv_glob` (K4+V4) = **+5.55% ppl** (baseline 119.85), survivable.
+
+**MEASURED PAYOFF — decode-to-16K, prefill-512 + sequential decode, 3070 8GB:**
+
+| | bf16 baseline | **K4+V4** |
+|---|---|---|
+| decode ceiling | **OOM at ~14,342** | **16,384 SURVIVED** |
+| peak vram | 7835 → tipped 8192 | **7737 MiB (~455 headroom)** |
+| @13,312 tok | 7835 MiB | 7609 MiB (−226) |
+
+bf16 dies before 16K; K4+V4 clears it with headroom and is still climbing
+(24K+ now in range). Lead widens with context (only the GROWING global
+cache is quantized). NO REGRESSION: Qwen3.5 parity PASS, Gemma parity
+(q4 off) PASS w/ KV cosines 1.0000; r0.10 refine still −4.1% below standard
+(the APA path untouched). gemma4_decode_ceiling.py is the probe.
+
 ## OVERNIGHT BUILD SUMMARY (2026-06-13) — KV-memory extension, 5 milestones shipped
 
 Goal: extend Gemma's context on 8GB beyond where bf16 walls (~8K). The

@@ -91,19 +91,24 @@ def make_split_hook(k_fn, v_fn, layers):
 
 MODES = {
     "baseline":    None,
+    # --- the INT4 question (every non-Qwen model runs KV at INT4; the
+    # bulk-bits law classed Gemma qk-norm => 4). These are the modes I
+    # never measured — K at 4-bit on global, the proven operating point.
+    "int4k_glob":  ("k", rt_int4, "global"),    # K-4bit alone, global
+    "int4_kv_glob": ("kv", rt_int4, "global"),  # K4+V4 global = THE law's config
+    "int4v_glob":  ("v", rt_int4, "global"),    # V-4bit alone (measured +5.1%)
+    # --- the INT8 fallback ladder (kept for comparison)
     "int8_v":      ("v", rt_int8, "all"),
     "int8_kv":     ("kv", rt_int8, "all"),
     "int8_glob":   ("kv", rt_int8, "global"),
     "int8_slide":  ("kv", rt_int8, "sliding"),
-    "int4v_glob":  ("v", rt_int4, "global"),
+    # --- sliding 4-bit is FATAL (confirmed): keep as the guard rail
     "int4v_slide": ("v", rt_int4, "sliding"),
-    "int4v_all":   ("v", rt_int4, "all"),
 }
-# the asymmetric combined mode the workflow flagged as MUST-MEASURE:
-# K-INT8 + V-4bit on global (does combined cost add to ~+11% or stay
-# sub-additive ~+7%? — decides if asymmetric is worth building).
+# per-tensor split modes (different bit-width K vs V on a layer class)
 SPLIT_MODES = {
-    "int8k_int4v_glob": (rt_int8, rt_int4, "global"),
+    "int8k_int4v_glob": (rt_int8, rt_int4, "global"),   # K8+V4 (prior best -3.56%)
+    "int4k_int4v_glob": (rt_int4, rt_int4, "global"),   # K4+V4 = the INT4 law config
 }
 
 from transformers import AutoTokenizer                      # noqa: E402
