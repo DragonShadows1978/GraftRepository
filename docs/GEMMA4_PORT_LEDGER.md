@@ -411,6 +411,41 @@ workspace. The cross-model "APA longer" baselines are from the
 MiniCPM3 results doc + code levers, not a freshly measured GQA
 scoreboard this session.
 
+### CAN the fused kernel be fixed for D=512? (kernel-feasibility investigation, conf 0.86)
+
+VERDICT: mechanically YES, but it's the WRONG LEVER — DON'T build it;
+wire `cache_apa_kq` instead. Three findings (an agent RE-COMPILED the
+kernel with nvcc 12.0 -arch=sm_86 -Xptxas -v, numbers measured not
+estimated):
+1. The `TC_APA_MAXD=256` throw guards a register cliff THAT DOESN'T
+   EXIST. `acc[DMAX]` is dynamically indexed → ptxas places it in
+   LOCAL memory at EVERY head_dim (stack frame 512/1024/2048 B at
+   D=128/256/512); the comment claiming register residency is false.
+   D=512 compiles clean (42 regs, 13312 B smem, 0 spills), launches
+   legally (~7 blocks/SM, smem-bound), correct output. Removing the
+   throw is a 3-line change.
+2. But the fused kernel is a DECODE LOSER BY STRUCTURE: one block per
+   (b,h,row) → at decode L=1,B=1 it launches B*H*L=16 blocks on a
+   46-SM card, 30 SMs idle every token. Measured ~5.0ms (fused) vs
+   ~0.16ms (cuBLAS blend) at S=8192 — 30× slower. cuBLAS GEMV
+   saturates the device; one-block-per-row cannot. Warp-scoping
+   (the only correct non-naive restructure) makes it WORSE.
+3. And it's UPSTREAM of the wrong problem: the 8K OOM is in
+   `_quantize_keys` (the CALLER, before attention dispatches) — no
+   attention backend can fix it. The fused kernel's only real win is
+   prefill memory, already delivered by the blend de-expansion.
+
+So: `cache_apa_kq` (≈1-2 days, machinery exists in GQAAttentionTC,
+removes the measured O(S) requant transient) gets essentially ALL the
+win and is the ONLY thing touching the real allocation. A D=512 fused
+kernel would matter only for a future PREFILL-ceiling push (~2× slower
+prefill-memory win, gate above fast_max_seq); a decode-fast fused
+kernel needs a FlashDecoding split-over-S redesign (1-2 weeks), none
+of the explored approaches. Expected outcome of the cheap fix: APA
+reaches a HIGHER context ceiling than standard ("runs longer"), while
+staying a few ms/tok SLOWER per token (more quant work) — longer, not
+faster. That distinction is the whole claim.
+
 **Job economics at the ready gate: 10/10 validated templates in 16s
 warm** (vs 38s on the Qwen3.5 stack — fewer output tokens per accepted
 template; per-job this is already the fastest stack on the machine).
