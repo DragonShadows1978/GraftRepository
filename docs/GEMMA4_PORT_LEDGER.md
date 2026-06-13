@@ -503,9 +503,22 @@ modest" framing): bf16 KV can't even hold trained 32K on 8GB (~25K
 wall); uniform INT8 (12.3KB/tok global vs 24KB bf16, ~2×) reaches
 ~38-51K realistic / ~51-65K optimistic — EXCEEDS trained 32K with
 margin. So INT8 is what lets Gemma reach its own designed context.
-Asymmetric (K8+V4+kqb4, ~1.4× further to ~53-92K) is a speculative
-reach for >65K, gated behind one unmeasured combined mode
-(int8k_int4v_glob, staged in the ppl test) — NOT default.
+Asymmetric (K8+V4+kqb4, ~1.4× further to ~53-92K) was a speculative
+reach gated behind the combined mode — **now MEASURED, and the result
+flips the decision:**
+
+**int8k_int4v_glob (K-INT8 + V-4bit on global) = 115.58 ppl, −3.56%
+vs baseline — the BEST mode in the entire table**, better than either
+component alone (int8_glob +6.2%, int4v_glob +5.1%) AND better than
+int8_v (−1.5%). The combination is ANTI-additive: the two perturbations
+partially cancel into net benefit (a regularizer effect), not compound.
+So asymmetric global K8+V4 is BOTH the best quality AND the bigger
+memory cut (~1.4× past uniform INT8) — genuinely worth building, not
+just survivable. (CAVEAT: a −3.56% "too good" result gets the same
+skepticism as the dead-patch +0.000% — ACTIVE-guard confirms it's real
+and the value is in-band/plausible, but a confirmation run is
+registered before it becomes the shipped default. The current shipped
+default is V-only INT8, conservatively.)
 
 ### THE MISSING PIECE + the honest MLA-flatness limit (Architect's catch, 2026-06-13)
 
