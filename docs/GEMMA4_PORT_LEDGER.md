@@ -1,5 +1,47 @@
 # Gemma 4 12B Unified — tensor_cuda port ledger
 
+## OVERNIGHT BUILD SUMMARY (2026-06-13) — KV-memory extension, 5 milestones shipped
+
+Goal: extend Gemma's context on 8GB beyond where bf16 walls (~8K). The
+APA was missing the fused O(L) path every other architecture uses; the
+tail-law storage arc was the load-bearing complement. Both built.
+
+| # | Milestone | Commit | Result |
+|---|---|---|---|
+| 1 | engine `write_rows` uint8 | `6b5e9b5` | storage-ring enabler, gated |
+| 2 | INT8 V-storage in KVRing | `a5c04b9` | all gates green; 8K survives 64MB lighter |
+| 3 | asymmetric K8+V4 measured | `a9f8373` | **−3.56% ppl, BEST mode** (anti-additive) |
+| 4 | D=512 fused kernel + bottom-right causal | `d57b76e` | engine 66/66; the causal trap caught proactively |
+| 5 | fused dispatch + chunked prefill quantize | `b267144` | **12K prefill survives at 7805 MiB — wall moved** |
+
+MEASURED CEILINGS (all rungs, one-process-each): **PREFILL** — bf16:
+solid ~10-11K, 12K RAGGED-EDGE (allocator nondeterminism at ~5%
+headroom — survived bare/gate at 7805 MiB, OOM'd in the ladder run),
+16K/20K hard OOM. qv (INT8-V): **12K SOLID at 7802 MiB** (firms up the
+ragged bf16 edge), 16K OOM. So the real prefill ceiling is **~12K**,
+bf16-marginal / qv-solid; INT8-V's ~64MB saving firmed the 12K floor
+but did NOT reach 16K (16K's footprint is well beyond the saving).
+**DECODE** — bf16 8K solid (12K OOMs in prefill), qv 8K at 7545 MiB
+(64MB lighter, ~6ms/tok dequant tax). NET: the stack took Gemma from
+walling at ~8K to a SOLID ~12K (prefill, qv) — a real ~1.5× extension
+toward the trained window, achieved as a managed rising wall, NOT
+MLA-flat (Gemma's full-width cache grows structurally). bf16 alone
+can't hold the trained 32K (~25K wall); these pieces let it climb. ·
+
+DISCIPLINE HELD: every quant test ACTIVE-guarded (no dead patches —
+one was caught: KVRing.append hook was a no-op, +0.000% across 7 modes
+flagged it); the bottom-right causal bug caught BEFORE shipping (vs the
+121→11M blowup it caused once); the −3.56% surprise flagged for
+confirmation not trusted; three fake OOMs correctly traced to
+allocator fragmentation, now fixed in test DESIGN (one-context-per-
+process). Open items: (a) confirm the −3.56% asymmetric; (b) asymmetric
+K8+V4 resident storage as a second opt-in (deepest-context config);
+(c) _v_get read-path opt (full-cap astype wasteful); (d) native uint8
+engine slice (nvcc segfaults on ld/st<uint8> — astype-then-slice
+workaround shipped).
+
+---
+
 **Started:** 2026-06-12 · **Hardware:** RTX 3070 8GB ·
 **Weights:** `/mnt/ForgeRealm/models/gemma-4-12B-it` (bf16, 22.3GB, Apache 2.0)
 **Directive:** straight to APA+GRM — no baseline benchmarking. PyTorch
