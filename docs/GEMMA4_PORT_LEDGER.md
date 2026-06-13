@@ -411,6 +411,58 @@ workspace. The cross-model "APA longer" baselines are from the
 MiniCPM3 results doc + code levers, not a freshly measured GQA
 scoreboard this session.
 
+### THE FIX: incremental kq cache wired into Gemma APA decode (2026-06-13)
+
+Implemented the cheap lever the two investigations pointed at. `KVRing`
+gains a parallel `kqb` quantized-key ring + `kq_count`; `quantized_keys
+(quantize_fn)` quantizes ONLY newly-appended rows `[kq_count:count)`
+(O(D)/step) and caches them — a key's quantization is fixed once it is
+roped+written, so this is exact (verified row-independent: incremental
+== whole-span, bit-identical at the same batch shape; the cross-batch
+fp32 reassociation diff is 2.6e-6, bf16-noise class). The decode APA
+branch reads cached kq + the unexpanded MQA cache directly into the
+de-expanded blend — collapsing the per-step quantize transient from
+~80-96 MiB (the measured 8K-decode OOM) to ~16-32 KiB.
+
+kq is DERIVED state, never persisted (save/load round-trips k/v only;
+kqb re-derives lazily on the first APA call after restore). Gate:
+`tests/gemma4_apa_incremental.py` — all 8 global layers engage
+(kqb populated, kq_count==count, none re-quantized), greedy
+deterministic. Unit test: `quantized_keys` is bit-exact vs whole-span
+at matched shapes.
+
+**RESULT — APA SURVIVES 8K DECODE (the deliverable):** the rung where
+APA OOM'd in `_quantize_keys` before now serves at 73.9 ms/tok,
+7.61GB — *lighter than standard's own 8K high-water (7.64GB)*. APA has
+CAUGHT UP to standard's decode ceiling (both ~8K) — exactly the
+kernel-investigation prediction ("cache_apa_kq makes APA catch up, not
+outrun"). APA decode 4K also improved: 50.1 ms/tok / 7.51GB (was
+56.1 / 7.54 pre-fix — faster AND lighter, no per-step requant).
+
+Wiring the incremental cache SURFACED three latent memory issues that
+nothing had stressed because no run reached APA this deep before —
+each a real fix helping BOTH modes:
+1. **bf16-direct ring allocation** (`_zeros` via `tc.zeros(dtype=...)`):
+   the old `_cast(tc.tensor(np.zeros(fp32)))` transiently needed 2× the
+   final bf16 size — OOMed kqb alloc at 8K.
+2. **chunked cold-start quantize**: the first APA decode quantizes the
+   whole prefill span — `quantized_keys` does it in 512-row slices
+   (row-independent → bit-exact), capping the one-time transient.
+3. **bounded capacity growth** (`_grow_cap`): pure power-of-two
+   doubling wasted up to 2× — next_pow2(8193)=16384 held 8192 tokens
+   at 8K (+100%). Now: double while small, +2048 blocks once large →
+   8K cap 16384→10240 (+25%), ~150MB recovered at the pressure point.
+   Helps STANDARD too (it paid the same overallocation).
+
+**Honest ceiling:** APA 12K still OOMs — but in PREFILL (the prefill
+APA branch's whole-span `_quantize_keys`, ~140MB transient), NOT
+decode. Decode is fixed. The 12K prefill wall is the same chunking
+idea applied to the prefill branch, a distinct ticket; and 12K may
+not fit 8GB regardless given resident KV. The dramatic ceiling
+extension (APA OUTRUNNING standard) still needs quantized KV STORAGE
+(the tail-law arc) — incremental kq carries +50% resident (the kqb
+ring), so it equals standard's ceiling, doesn't exceed it.
+
 ### CAN the fused kernel be fixed for D=512? (kernel-feasibility investigation, conf 0.86)
 
 VERDICT: mechanically YES, but it's the WRONG LEVER — DON'T build it;

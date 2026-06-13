@@ -113,6 +113,32 @@ class Q40LinearTC:
                                     self.zeros, self.group_size)
 
 
+def _zeros(*shape):
+    """Allocate zeros directly in the compute dtype — no fp32 numpy
+    intermediate and no fp32 device transient (the _cast(tc.tensor(
+    np.zeros(fp32))) pattern transiently needs 2x the final bf16 size,
+    which OOMed kqb allocation at 8K on a near-full card)."""
+    cdt = BlockTC.COMPUTE_DTYPE
+    return tc.zeros(*shape, dtype=cdt)
+
+
+_RING_BLOCK = 2048
+
+
+def _grow_cap(need):
+    """Capacity policy: double while small (cheap, amortizes the realloc),
+    then switch to fixed +2048 blocks once large. Pure power-of-two
+    doubling wastes up to 2x at high context — next_pow2(8193)=16384
+    held 8192 tokens at 8K, a 50% overallocation that OOMed BOTH modes
+    (and doubled APA's kqb). Block growth bounds waste to one block."""
+    if need <= _RING_BLOCK:
+        cap = 64
+        while cap < need:
+            cap *= 2
+        return cap
+    return ((need + _RING_BLOCK - 1) // _RING_BLOCK) * _RING_BLOCK
+
+
 class KVRing:
     """Mutable decode cache (2026-06-12 ring rework): sliding layers get
     a FIXED (B,KV,window,D) buffer with in-place ring writes; global
@@ -128,25 +154,28 @@ class KVRing:
     the roped values), so a wrapped ring needs no reordering — at the
     sliding steady state the ring content IS the window, maskless."""
 
-    __slots__ = ("kb", "vb", "bias", "count", "cap", "ring", "window")
+    __slots__ = ("kb", "vb", "bias", "count", "cap", "ring", "window",
+                 "kqb", "kq_count")
 
     def __init__(self, k, v, ring_cap=None):
         B, KV, S, D = k.shape
+        # APA quantized-key ring (lazy): kqb mirrors kb position-for-
+        # position, quantized once per key and never recomputed (a key's
+        # quantization is fixed once roped+written). None until APA first
+        # engages (apa_min_context). kq_count = rows already quantized.
+        self.kqb = None
+        self.kq_count = 0
         # capacity-double from small for BOTH kinds — a fixed-size ring
         # costs ~370MB per cache set regardless of context (the state
         # gate holds three sets and OOMed at 48 tokens). Rings cap at
         # the window and only then wrap; globals grow unbounded.
         self.window = ring_cap                 # None for globals
         self.ring = ring_cap is not None
-        self.cap = 64
-        while self.cap < S + 1:
-            self.cap *= 2
+        self.cap = _grow_cap(S + 1)
         if self.ring:
             self.cap = min(self.cap, ring_cap)
-        self.kb = _cast(tc.tensor(np.zeros((B, KV, self.cap, D),
-                                           np.float32)))
-        self.vb = _cast(tc.tensor(np.zeros((B, KV, self.cap, D),
-                                           np.float32)))
+        self.kb = _zeros(B, KV, self.cap, D)
+        self.vb = _zeros(B, KV, self.cap, D)
         bias = np.full((self.cap, 1), -1e4, np.float32)
         bias[:S] = 0.0
         self.bias = _cast(tc.tensor(bias))
@@ -169,17 +198,26 @@ class KVRing:
         at_cap = self.count == self.cap
         can_grow = (not self.ring) or self.cap < self.window
         if at_cap and can_grow:
-            old_k, old_v, old_n = self.kb, self.vb, self.count
-            self.cap = (min(self.cap * 2, self.window) if self.ring
-                        else self.cap * 2)
-            B, KV, _, D = old_k.shape
-            self.kb = _cast(tc.tensor(np.zeros((B, KV, self.cap, D),
-                                               np.float32)))
-            self.vb = _cast(tc.tensor(np.zeros((B, KV, self.cap, D),
-                                               np.float32)))
-            with tc.no_grad():
-                tc.write_rows(self.kb, old_k, 0)
-                tc.write_rows(self.vb, old_v, 0)
+            old_n = self.count
+            B, KV, _, D = self.kb.shape
+            self.cap = (min(_grow_cap(self.cap + 1), self.window)
+                        if self.ring else _grow_cap(self.cap + 1))
+
+            # Grow ONE buffer at a time, freeing each old before the next
+            # new — the doubling otherwise holds old+new for kb, vb AND
+            # kqb simultaneously (3x the spike), which OOMed APA at 8K on
+            # a near-full card. _grow1 allocates bf16 directly (no fp32
+            # device transient from _cast) and drops the old reference.
+            def _grow1(buf):
+                nb = _zeros(B, KV, self.cap, D)
+                with tc.no_grad():
+                    tc.write_rows(nb, buf, 0)
+                return nb
+            self.kb = _grow1(self.kb)
+            self.vb = _grow1(self.vb)
+            if self.kqb is not None:
+                self.kqb = _grow1(self.kqb)
+            tc.empty_cache()       # release the old buffers' device blocks
             bias = np.full((self.cap, 1), -1e4, np.float32)
             bias[:old_n] = 0.0
             self.bias = _cast(tc.tensor(bias))
@@ -191,6 +229,37 @@ class KVRing:
             if not self.full:
                 tc.write_rows(self.bias, zero_row, pos)
         self.count += 1
+
+    def quantized_keys(self, quantize_fn):
+        """APA incremental kq cache (#9, ported from GQAAttentionTC). A
+        key's quantization is fixed once it is roped + written, so kq is
+        cached in `kqb` and only NEWLY-appended rows [kq_count:count) are
+        quantized each call — O(D) per step instead of re-quantizing the
+        whole O(S*D) cache. quantize_fn(k_slice) -> kq_slice (same shape).
+        Globals never wrap (ring=False), so positions are stable.
+        Returns the valid kq view (B, KV, count, D)."""
+        new = self.count - self.kq_count
+        if new > 0:
+            if self.kqb is None:
+                B, KV, _, D = self.kb.shape
+                self.kqb = _zeros(B, KV, self.cap, D)
+            # CHUNK the quantize: the first call (cold start) quantizes
+            # the whole prefill span, recreating the ~80-96MB O(S*D)
+            # transient this cache exists to avoid — once, but enough to
+            # OOM at 8K. _quantize_keys is row-independent (verified
+            # bit-exact), so quantizing in CHUNK-row slices and writing
+            # each into kqb is identical and caps the transient to
+            # O(CHUNK*D). Steady-state decode (new==1) takes one pass.
+            CHUNK = 512
+            with tc.no_grad():
+                for s0 in range(self.kq_count, self.count, CHUNK):
+                    n = min(CHUNK, self.count - s0)
+                    kq_s = quantize_fn(self.kb.slice(2, s0, n))
+                    tc.write_rows(self.kqb, kq_s, s0)
+                    if new > CHUNK:
+                        tc.empty_cache()
+            self.kq_count = self.count
+        return self.kqb.slice(2, 0, self.count)
 
     def ordered(self):
         """Valid rows as (k, v) COPIES in LOGICAL order (oldest first) —
@@ -352,11 +421,30 @@ class Gemma4AttentionTC:
                           and self.attention_mode == "apa_selective"
                           and S_all > self.apa_min_context)
             if apa_active:
-                # blend fallback: ordered copies (globals never wrap).
-                # Integration with unexpanded ring buffers is the blend
-                # de-expansion ticket. The RING stays the live cache.
-                ring_cache = kv_cache
-                k, v = kv_cache.ordered()
+                # INCREMENTAL APA decode (#9): the kq cache quantizes only
+                # the new key (O(D)) instead of re-quantizing the whole
+                # O(S*D) cache every step — the measured 8K-decode OOM
+                # driver. kb/vb are the unexpanded MQA cache (globals
+                # never wrap, so slice(0,count) is logical order). The
+                # blend folds q-heads into rows, no 16x expansion.
+                from tensor_cuda.quant import (_norm_ppf, _quantize_keys,
+                                               _tables)
+                from core.mistral7b_tc import _cublas_blend_attention
+                dev = q.device.split(":")[0]
+                R_t, C_t, B_t = _tables(D, self.bulk_bits, KV, True, dev)
+                kq = kv_cache.quantized_keys(
+                    lambda ks: _quantize_keys(ks, R_t, C_t, B_t))
+                kk = kv_cache.kb.slice(2, 0, kv_cache.count)
+                vv = kv_cache.vb.slice(2, 0, kv_cache.count)
+                z_ = _norm_ppf(1.0 - max(0.0, min(1.0,
+                                                  self.refine_percentile)))
+                S_a = kv_cache.count
+                blk = max(64, min(self.attn_block,
+                                  int(300 * 1024 * 1024 // (H * S_a * 2))))
+                attn = _cublas_blend_attention(
+                    q, kk, kq, vv, H // KV, 1.0, float(z_), False, blk)
+                attn = attn.transpose(1, 2).reshape([B, L, H * D])
+                return self.o_proj(_cast(attn)), kv_cache
             else:
                 rep = H // KV
                 qg = q.reshape([B, KV, rep, D])
