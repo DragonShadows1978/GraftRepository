@@ -74,6 +74,21 @@ b_bit = all(np.array_equal(x, y) for x, y in zip(b_lgs, ref_lgs[4:]))
 print(f"B mid-decode restore: toks {'MATCH' if b_match else 'DIFF'} | "
       f"logits {'BIT-IDENTICAL' if b_bit else 'DIFFER'}", flush=True)
 
-ok = a_bit and b_bit and a_toks == ref_toks and b_match
+# Contract depends on storage mode. With QUANT_V (INT8 V-storage) the
+# "lossless bit-identical restore" property becomes "round-trip-
+# idempotent": restored V == stored V (deterministic round-trip), so
+# TOKENS match exactly (the behavioral guarantee), but bf16-exact logit
+# identity is gone by design (V passed through INT8). The honest gate:
+# tokens always match; bit-identity required only at bf16 storage.
+import os                                                   # noqa: E402
+quant_v = bool(int(os.environ.get("GEMMA4_QUANT_V", "0")))
+toks_ok = a_toks == ref_toks and b_match
+bits_ok = a_bit and b_bit
+if quant_v:
+    ok = toks_ok                      # idempotent contract: tokens match
+    print("(QUANT_V: contract is round-trip-idempotent, not "
+          "bit-identical — tokens are the guarantee)", flush=True)
+else:
+    ok = toks_ok and bits_ok          # lossless contract: bit-identical
 print(f"STATE GATE: {'PASS' if ok else 'FAIL'}", flush=True)
 print("DONE", flush=True)

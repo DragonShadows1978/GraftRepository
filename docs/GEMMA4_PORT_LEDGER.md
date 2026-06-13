@@ -463,6 +463,37 @@ extension (APA OUTRUNNING standard) still needs quantized KV STORAGE
 (the tail-law arc) — incremental kq carries +50% resident (the kqb
 ring), so it equals standard's ceiling, doesn't exceed it.
 
+### IMPLEMENTED: INT8 V-storage (the ceiling lever, 2026-06-13 overnight)
+
+Built the measured-safe storage quantization. Engine: `write_rows`
+uint8 path (commit 6b5e9b5 — strided raw copy, dtype-agnostic; the
+slice-uint8 companion was attempted but nvcc SEGFAULTS instantiating
+dimcopy's ld/st<uint8>, so a native uint8 slice is a future ticket).
+Port (KVRing): `QUANT_V` flag (env GEMMA4_QUANT_V, default off) makes
+`vb` uint8 + `vsb` per-row scale; `_v_put` quantizes on write,
+`_v_get` dequantizes on read (astype-then-slice, since the engine
+slice is float-only — resident stays uint8 so the ceiling win holds;
+the read transient is the full cap buffer, registered as a read-path
+optimization follow-up). All sites routed: init/append/_grow1/ordered/
+the two attention reads/save_caches(via ordered)/load_caches.
+WHY V-only INT8 and K bf16: measured int8_v −1.5% (a mild regularizer)
+vs int8_glob +6.2% (the global K score-path is precision-sensitive —
+head_dim 512 with attention scale 1.0, no 1/√d damping). Smoke: 48
+rings uint8+scale, coherent decode, save/load round-trips. Battery
+(parity/state/apa/longctx with QUANT_V) + ceiling probe: running.
+NOTE: the state gate's "lossless bit-identical restore" contract
+becomes "round-trip-idempotent" (V is lossy but the round-trip is
+deterministic) — to be re-baselined honestly, not forced.
+
+CEILING (workflow-verified byte math, corrects the earlier "~32K
+modest" framing): bf16 KV can't even hold trained 32K on 8GB (~25K
+wall); uniform INT8 (12.3KB/tok global vs 24KB bf16, ~2×) reaches
+~38-51K realistic / ~51-65K optimistic — EXCEEDS trained 32K with
+margin. So INT8 is what lets Gemma reach its own designed context.
+Asymmetric (K8+V4+kqb4, ~1.4× further to ~53-92K) is a speculative
+reach for >65K, gated behind one unmeasured combined mode
+(int8k_int4v_glob, staged in the ppl test) — NOT default.
+
 ### THE MISSING PIECE + the honest MLA-flatness limit (Architect's catch, 2026-06-13)
 
 The Architect sensed Gemma's APA was "missing something" — every other

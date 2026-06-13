@@ -74,6 +74,21 @@ def make_hook(which, fn, layers):
     return hook
 
 
+def make_split_hook(k_fn, v_fn, layers):
+    """Per-tensor: different quant for K vs V (the asymmetric scheme)."""
+    def hook(k, v, is_global):
+        applies = (layers == "all"
+                   or (layers == "global" and is_global)
+                   or (layers == "sliding" and not is_global))
+        if applies:
+            if k_fn is not None:
+                k = k_fn(k)
+            if v_fn is not None:
+                v = v_fn(v)
+        return k, v
+    return hook
+
+
 MODES = {
     "baseline":    None,
     "int8_v":      ("v", rt_int8, "all"),
@@ -83,6 +98,12 @@ MODES = {
     "int4v_glob":  ("v", rt_int4, "global"),
     "int4v_slide": ("v", rt_int4, "sliding"),
     "int4v_all":   ("v", rt_int4, "all"),
+}
+# the asymmetric combined mode the workflow flagged as MUST-MEASURE:
+# K-INT8 + V-4bit on global (does combined cost add to ~+11% or stay
+# sub-additive ~+7%? — decides if asymmetric is worth building).
+SPLIT_MODES = {
+    "int8k_int4v_glob": (rt_int8, rt_int4, "global"),
 }
 
 from transformers import AutoTokenizer                      # noqa: E402
@@ -122,9 +143,15 @@ def window_logits_and_nll(ids, capture_first=False):
 # baseline first, capturing logits for the sanity guard
 results = {}
 base_logits = None
-for name, spec in MODES.items():
-    Gemma4AttentionTC.KV_STORE_HOOK = (None if spec is None
-                                       else make_hook(*spec))
+ALL = list(MODES.items()) + [(n, ("SPLIT",) + s)
+                             for n, s in SPLIT_MODES.items()]
+for name, spec in ALL:
+    if spec is None:
+        Gemma4AttentionTC.KV_STORE_HOOK = None
+    elif spec[0] == "SPLIT":
+        Gemma4AttentionTC.KV_STORE_HOOK = make_split_hook(*spec[1:])
+    else:
+        Gemma4AttentionTC.KV_STORE_HOOK = make_hook(*spec)
     tot_nll, tot_cnt = 0.0, 0
     first_logits = None
     for w in range(N_WINDOWS):
