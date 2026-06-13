@@ -352,6 +352,65 @@ that actually moves the 12K wall for BOTH modes: **quantized KV
 STORAGE** (INT8 → 4-bit bulk + hot set per the Architect's tail law —
 where APA stops being scoring-only and starts extending memory).
 
+### Root-cause: WHY APA runs shorter on Gemma but longer elsewhere (multi-agent investigation, conf 0.88)
+
+The contradiction has TWO layers; a single mechanism explains the
+proximate OOM, three stacked deficits explain the sign flip.
+
+**Proximate cause (the OOM):** Gemma APA decode re-quantizes the
+ENTIRE growing global cache every token — `gemma4_tc.py:401` calls
+`_quantize_keys(kv_cache.ordered())` on the whole `(1,1,S,512)` cache;
+`new_kv = ring_cache` (`:394`) stashes NO kq, so it recomputes from
+scratch each step. `_quantize_keys` (`quant.py:120-127`) materializes
+5-6 simultaneous fp32 `(1,1,S,512)` tensors (kd, kd*kd, unit, rotated,
+centroids, recon). At S=8192 that is ~80-96 MiB transient; the OOM
+trace lands EXACTLY on `recon = matmul(centroids,Rb)*norms`
+(`quant.py:127`), on APA's FIRST decode step (transient, not a leak).
+Standard's competing transient is the ~0.5MB `(1,1,16,cap)` score
+pair — two orders smaller — so standard survives 8K (7641 MiB) where
+APA OOMs.
+
+**Why the SIGN FLIPS (three stacked deficits, none present elsewhere):**
+1. `cache_apa_kq` (incremental decode: quantize only the new key,
+   concat onto cached prefix — `mistral7b_tc.py:418-420,459-463`) is
+   WIRED on the GQA ports, never ported to Gemma. Makes APA's per-step
+   quantize transient O(1) vs Gemma's O(S).
+2. The fused O(L)-memory kernel `apa_selective_attention` — the real
+   source of "APA longer" elsewhere (MiniCPM3: std 3,072 vs APA
+   **32,768**) — is ARCHITECTURALLY FORBIDDEN on Gemma:
+   `kernels.cu TC_APA_MAXD=256`, hard-throws for head_dim>256, Gemma
+   global D=**512**. Gemma can ONLY run the transient-heavy cuBLAS
+   blend fallback.
+3. No INT8 KV storage (`quant_kv_cache=True` elsewhere) + ~6.8GB QAT
+   body on 8GB: standard's own 8K decode high-water is only ~128 MiB,
+   so any tens-of-MB transient is fatal.
+
+**Adversarially RULED OUT:** the 16x MQA blend (de-expansion already
+fixed it; OOM is in `_quantize_keys`, not the blend); head_dim-512 as
+prime cause (MQA makes Gemma's KV×D=512 the SMALLEST of all APA ports —
+if head_dim drove it MiniCPM3's 40×96=3840 would die first; it's a 2x
+multiplier riding the true cause); fixed-overhead-shifts-the-wall (the
+transient is provably O(S·D) by structure); ordered()-copy (globals
+return slice VIEWS, zero copy); resident leak (no kq stashed back).
+
+**Fix + honest scope:** wiring `cache_apa_kq` collapses the decode
+transient ~80-96 MiB → ~16-32 KiB and lets APA CATCH UP to standard's
+8K decode ceiling. It does NOT restore "APA longer" on Gemma: (a) the
+12K APA OOM is in PREFILL, where the incremental lever is inert
+(whole-span quantize), and (b) outrunning standard needs raising
+`TC_APA_MAXD` to admit head_dim 512 into the fused kernel AND/OR INT8/
+4-bit KV STORAGE (the tail-law arc). Decisive test: allocator
+high-water for one S=8192 APA decode step, current path (~80-96 MiB
+spike at quant.py:125-127) vs a one-key incremental patch (~16-32 KiB),
+then re-run the 8K decode ceiling probe with cache_apa_kq wired.
+
+**Open:** an unexplained ~110 MiB of allocator high-water at S=4096
+(derived quantize transient is only ~44 MiB there) — wants a live
+allocator trace to isolate fragmentation vs a near-fixed cuBLAS
+workspace. The cross-model "APA longer" baselines are from the
+MiniCPM3 results doc + code levers, not a freshly measured GQA
+scoreboard this session.
+
 **Job economics at the ready gate: 10/10 validated templates in 16s
 warm** (vs 38s on the Qwen3.5 stack — fewer output tokens per accepted
 template; per-job this is already the fastest stack on the machine).
