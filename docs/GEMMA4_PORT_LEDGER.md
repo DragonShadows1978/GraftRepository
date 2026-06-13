@@ -479,11 +479,24 @@ the two attention reads/save_caches(via ordered)/load_caches.
 WHY V-only INT8 and K bf16: measured int8_v −1.5% (a mild regularizer)
 vs int8_glob +6.2% (the global K score-path is precision-sensitive —
 head_dim 512 with attention scale 1.0, no 1/√d damping). Smoke: 48
-rings uint8+scale, coherent decode, save/load round-trips. Battery
-(parity/state/apa/longctx with QUANT_V) + ceiling probe: running.
-NOTE: the state gate's "lossless bit-identical restore" contract
-becomes "round-trip-idempotent" (V is lossy but the round-trip is
-deterministic) — to be re-baselined honestly, not forced.
+rings uint8+scale, coherent decode, save/load round-trips.
+
+**GATES (GEMMA4_QUANT_V=1): PARITY / APA / LONGCTX PASS; STATE PASS
+as-corrected** — the "lossless bit-identical restore" contract became
+"round-trip-idempotent" (tokens match exactly, bf16-exact logit
+identity gone by design); the gate now demands bit-identity only at
+bf16, token-match at QUANT_V. Re-baselined honestly, not forced.
+
+**MEASURED CEILING (decode probe, qv):** 8K SURVIVES at **7545 MiB —
+64 MiB lighter than bf16-V's 7609 MiB** (the resident saving is real
+and shows up); decode 84 ms/tok (vs 74 bf16 — the dequant-on-read tax,
+recoverable by the registered _v_get read-path opt). **12K still OOMs
+— but in PREFILL (`_quantize_keys` whole-span fp32 transient ~140MB),
+NOT the V cache.** This is the predicted boundary: storage quant bends
+the RESIDENT slope (confirmed — 8K lighter), but the 12K wall is the
+prefill TRANSIENT, which only the fused D=512 kernel removes. The two
+pieces are complementary exactly as designed — storage + fused kernel,
+not storage alone. INT8 V-storage shipped (commit a5c04b9).
 
 CEILING (workflow-verified byte math, corrects the earlier "~32K
 modest" framing): bf16 KV can't even hold trained 32K on 8GB (~25K
