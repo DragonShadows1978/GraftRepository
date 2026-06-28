@@ -1,0 +1,650 @@
+"""ctypes wrapper for the dependency-free GRM C++ host runtime ABI."""
+
+from dataclasses import dataclass
+import ctypes
+import json
+import os
+import numpy as np
+
+
+class _StatsC(ctypes.Structure):
+    _fields_ = [
+        ("nodes", ctypes.c_uint64),
+        ("dirty_nodes", ctypes.c_uint64),
+        ("durable_nodes", ctypes.c_uint64),
+        ("host_payload_bytes", ctypes.c_uint64),
+        ("host_payload_tensors", ctypes.c_uint64),
+        ("route_entries", ctypes.c_uint64),
+    ]
+
+
+class _PayloadStatsC(ctypes.Structure):
+    _fields_ = [
+        ("tensor_count", ctypes.c_uint64),
+        ("payload_bytes", ctypes.c_uint64),
+    ]
+
+
+class _TensorInfoC(ctypes.Structure):
+    _fields_ = [
+        ("rank", ctypes.c_uint64),
+        ("payload_bytes", ctypes.c_uint64),
+    ]
+
+
+class _ArenaSwapPlanC(ctypes.Structure):
+    _fields_ = [
+        ("sink_tokens", ctypes.c_uint64),
+        ("arena_width", ctypes.c_uint64),
+        ("old_mount_tokens", ctypes.c_uint64),
+        ("new_mount_tokens", ctypes.c_uint64),
+        ("old_mount_end", ctypes.c_uint64),
+        ("live_tail_start", ctypes.c_uint64),
+        ("live_tail_tokens", ctypes.c_uint64),
+        ("input_cache_tokens", ctypes.c_uint64),
+        ("output_cache_tokens", ctypes.c_uint64),
+        ("overflow", ctypes.c_int),
+    ]
+
+
+class _ArenaEvictPlanC(ctypes.Structure):
+    _fields_ = [
+        ("sink_tokens", ctypes.c_uint64),
+        ("arena_width", ctypes.c_uint64),
+        ("mount_tokens", ctypes.c_uint64),
+        ("head_tokens", ctypes.c_uint64),
+        ("drop_tokens", ctypes.c_uint64),
+        ("input_cache_tokens", ctypes.c_uint64),
+        ("output_cache_tokens", ctypes.c_uint64),
+        ("underflow", ctypes.c_int),
+    ]
+
+
+@dataclass(frozen=True)
+class NativeStats:
+    nodes: int
+    dirty_nodes: int
+    durable_nodes: int
+    host_payload_bytes: int
+    host_payload_tensors: int
+    route_entries: int
+
+
+@dataclass(frozen=True)
+class PayloadStats:
+    tensor_count: int
+    payload_bytes: int
+
+
+@dataclass(frozen=True)
+class TensorInfo:
+    shape: tuple
+    payload_bytes: int
+    dtype: str
+
+
+@dataclass(frozen=True)
+class ArenaSwapPlan:
+    sink_tokens: int
+    arena_width: int
+    old_mount_tokens: int
+    new_mount_tokens: int
+    old_mount_end: int
+    live_tail_start: int
+    live_tail_tokens: int
+    input_cache_tokens: int
+    output_cache_tokens: int
+    overflow: bool
+
+
+@dataclass(frozen=True)
+class ArenaEvictPlan:
+    sink_tokens: int
+    arena_width: int
+    mount_tokens: int
+    head_tokens: int
+    drop_tokens: int
+    input_cache_tokens: int
+    output_cache_tokens: int
+    underflow: bool
+
+
+def _default_lib_path():
+    return os.environ.get("GRM_RUNTIME_LIB", "libgrm_runtime.so")
+
+
+class NativeGraftStore:
+    supports_multi_route_keys = True
+
+    def __init__(self, lib_path=None, *, model_type="model",
+                 num_layers=0, hidden_dim=0, vals_per_tok_layer=0,
+                 route_layer=0, latent_rank=0, rope_dim=0):
+        self._lib = ctypes.CDLL(lib_path or _default_lib_path())
+        self._bind()
+        self._handle = self._lib.grm_store_create_mla(
+            model_type.encode("utf-8"), int(num_layers), int(hidden_dim),
+            int(vals_per_tok_layer), int(route_layer), int(latent_rank),
+            int(rope_dim))
+        if not self._handle:
+            raise RuntimeError("failed to create native GRM store")
+
+    def _bind(self):
+        lib = self._lib
+        lib.grm_store_create_mla.argtypes = [
+            ctypes.c_char_p, ctypes.c_int, ctypes.c_int, ctypes.c_int,
+            ctypes.c_int, ctypes.c_int, ctypes.c_int]
+        lib.grm_store_create_mla.restype = ctypes.c_void_p
+        lib.grm_store_destroy.argtypes = [ctypes.c_void_p]
+        lib.grm_store_destroy.restype = None
+        lib.grm_store_dialect_id.argtypes = [
+            ctypes.c_void_p, ctypes.c_char_p, ctypes.c_size_t]
+        lib.grm_store_dialect_id.restype = ctypes.c_int
+        lib.grm_store_add_node.argtypes = [
+            ctypes.c_void_p, ctypes.c_char_p, ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint64)]
+        lib.grm_store_add_node.restype = ctypes.c_int
+        lib.grm_store_set_tensor.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
+            ctypes.c_char_p,
+            ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint64]
+        lib.grm_store_set_tensor.restype = ctypes.c_int
+        lib.grm_store_payload_stats.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64, ctypes.POINTER(_PayloadStatsC)]
+        lib.grm_store_payload_stats.restype = ctypes.c_int
+        lib.grm_store_tensor_info.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
+            ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+            ctypes.c_char_p, ctypes.c_size_t,
+            ctypes.POINTER(_TensorInfoC)]
+        lib.grm_store_tensor_info.restype = ctypes.c_int
+        lib.grm_store_read_tensor.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
+            ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint64)]
+        lib.grm_store_read_tensor.restype = ctypes.c_int
+        lib.grm_store_set_metadata_json.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p]
+        lib.grm_store_set_metadata_json.restype = ctypes.c_int
+        self._has_set_active = hasattr(lib, "grm_store_set_active")
+        if self._has_set_active:
+            lib.grm_store_set_active.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64, ctypes.c_int]
+            lib.grm_store_set_active.restype = ctypes.c_int
+        self._has_route_metadata = hasattr(lib, "grm_store_set_route_metadata")
+        if self._has_route_metadata:
+            lib.grm_store_set_route_metadata.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p]
+            lib.grm_store_set_route_metadata.restype = ctypes.c_int
+        lib.grm_store_metadata_json.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
+            ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
+        lib.grm_store_metadata_json.restype = ctypes.c_int
+        lib.grm_store_set_route.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64, ctypes.POINTER(ctypes.c_float),
+            ctypes.c_uint64, ctypes.c_char_p]
+        lib.grm_store_set_route.restype = ctypes.c_int
+        lib.grm_store_set_route_multi.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64, ctypes.POINTER(ctypes.c_float),
+            ctypes.c_uint64, ctypes.c_uint64, ctypes.c_char_p]
+        lib.grm_store_set_route_multi.restype = ctypes.c_int
+        lib.grm_store_route.argtypes = [
+            ctypes.c_void_p, ctypes.POINTER(ctypes.c_float), ctypes.c_uint64,
+            ctypes.c_char_p, ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64),
+            ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64)]
+        lib.grm_store_route.restype = ctypes.c_int
+        self._has_route_filtered = hasattr(lib, "grm_store_route_filtered")
+        if self._has_route_filtered:
+            lib.grm_store_route_filtered.argtypes = [
+                ctypes.c_void_p, ctypes.POINTER(ctypes.c_float),
+                ctypes.c_uint64, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64),
+                ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_route_filtered.restype = ctypes.c_int
+        lib.grm_store_configure_arena.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64, ctypes.c_uint64]
+        lib.grm_store_configure_arena.restype = ctypes.c_int
+        lib.grm_store_plan_swap.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64, ctypes.c_uint64,
+            ctypes.POINTER(_ArenaSwapPlanC)]
+        lib.grm_store_plan_swap.restype = ctypes.c_int
+        lib.grm_store_plan_evict.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64, ctypes.c_uint64,
+            ctypes.POINTER(_ArenaEvictPlanC)]
+        lib.grm_store_plan_evict.restype = ctypes.c_int
+        lib.grm_store_apply_swap_tensor.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64, ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+            ctypes.c_uint64, ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint64), ctypes.POINTER(_ArenaSwapPlanC)]
+        lib.grm_store_apply_swap_tensor.restype = ctypes.c_int
+        lib.grm_store_apply_evict_tensor.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64, ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+            ctypes.c_uint64, ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint64,
+            ctypes.POINTER(ctypes.c_uint64), ctypes.POINTER(_ArenaEvictPlanC)]
+        lib.grm_store_apply_evict_tensor.restype = ctypes.c_int
+        lib.grm_store_commit_mount.argtypes = [
+            ctypes.c_void_p, ctypes.POINTER(ctypes.c_uint64),
+            ctypes.c_uint64, ctypes.c_uint64]
+        lib.grm_store_commit_mount.restype = ctypes.c_int
+        lib.grm_store_save_checkpoint.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+        lib.grm_store_save_checkpoint.restype = ctypes.c_int
+        lib.grm_store_load_checkpoint.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+        lib.grm_store_load_checkpoint.restype = ctypes.c_int
+        lib.grm_store_mark_durable.argtypes = [ctypes.c_void_p, ctypes.c_uint64]
+        lib.grm_store_mark_durable.restype = ctypes.c_int
+        lib.grm_store_evict_device_copy.argtypes = [
+            ctypes.c_void_p, ctypes.c_uint64]
+        lib.grm_store_evict_device_copy.restype = ctypes.c_int
+        lib.grm_store_stats.argtypes = [ctypes.c_void_p, ctypes.POINTER(_StatsC)]
+        lib.grm_store_stats.restype = ctypes.c_int
+        lib.grm_store_last_error.argtypes = [ctypes.c_void_p]
+        lib.grm_store_last_error.restype = ctypes.c_char_p
+
+    def close(self):
+        if getattr(self, "_handle", None):
+            self._lib.grm_store_destroy(self._handle)
+            self._handle = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        self.close()
+
+    def __del__(self):
+        self.close()
+
+    def _check(self, code):
+        if code != 0:
+            err = self._lib.grm_store_last_error(self._handle)
+            raise RuntimeError((err or b"native GRM error").decode("utf-8"))
+
+    def dialect_id(self):
+        buf = ctypes.create_string_buffer(256)
+        self._check(self._lib.grm_store_dialect_id(
+            self._handle, buf, ctypes.sizeof(buf)))
+        return buf.value.decode("utf-8")
+
+    def add_node(self, text, payload, ntok=0):
+        data = bytes(payload)
+        arr = None
+        if data:
+            arr_t = ctypes.c_uint8 * len(data)
+            arr = arr_t.from_buffer_copy(data)
+        out = ctypes.c_uint64()
+        self._check(self._lib.grm_store_add_node(
+            self._handle, text.encode("utf-8"), int(ntok), arr, len(data),
+            ctypes.byref(out)))
+        return int(out.value)
+
+    @staticmethod
+    def _byte_array(data):
+        b = bytes(data)
+        if not b:
+            return None, 0
+        arr_t = ctypes.c_uint8 * len(b)
+        return arr_t.from_buffer_copy(b), len(b)
+
+    @staticmethod
+    def _shape_array(shape):
+        dims = [int(d) for d in shape]
+        if not dims:
+            return None, 0
+        arr_t = ctypes.c_uint64 * len(dims)
+        return arr_t(*dims), len(dims)
+
+    def set_tensor(self, node_id, name, array):
+        arr_np = np.ascontiguousarray(array)
+        shape, rank = self._shape_array(arr_np.shape)
+        data, nbytes = self._byte_array(arr_np.tobytes())
+        self._check(self._lib.grm_store_set_tensor(
+            self._handle, int(node_id), str(name).encode("utf-8"),
+            str(arr_np.dtype).encode("utf-8"), shape, rank, data, nbytes))
+
+    def payload_stats(self, node_id):
+        out = _PayloadStatsC()
+        self._check(self._lib.grm_store_payload_stats(
+            self._handle, int(node_id), ctypes.byref(out)))
+        return PayloadStats(int(out.tensor_count), int(out.payload_bytes))
+
+    def tensor_info(self, node_id, name, max_rank=8):
+        cap = max(0, int(max_rank))
+        shape = None
+        if cap:
+            shape_t = ctypes.c_uint64 * cap
+            shape = shape_t()
+        dtype = ctypes.create_string_buffer(64)
+        out = _TensorInfoC()
+        self._check(self._lib.grm_store_tensor_info(
+            self._handle, int(node_id), str(name).encode("utf-8"),
+            shape, cap, dtype, ctypes.sizeof(dtype), ctypes.byref(out)))
+        n = min(int(out.rank), cap)
+        dims = tuple(int(shape[i]) for i in range(n)) if shape is not None else ()
+        if int(out.rank) > cap:
+            raise RuntimeError("tensor rank exceeded local shape buffer")
+        return TensorInfo(dims, int(out.payload_bytes),
+                          dtype.value.decode("utf-8"))
+
+    def get_tensor(self, node_id, name):
+        info = self.tensor_info(node_id, name)
+        out = None
+        if info.payload_bytes:
+            out_t = ctypes.c_uint8 * info.payload_bytes
+            out = out_t()
+        count = ctypes.c_uint64()
+        self._check(self._lib.grm_store_read_tensor(
+            self._handle, int(node_id), str(name).encode("utf-8"),
+            out, info.payload_bytes, ctypes.byref(count)))
+        data = bytes(out[:int(count.value)]) if out is not None else b""
+        arr = np.frombuffer(data, dtype=np.dtype(info.dtype)).copy()
+        return arr.reshape(info.shape)
+
+    def set_metadata(self, node_id, metadata):
+        metadata = metadata or {}
+        data = json.dumps(metadata, sort_keys=True).encode("utf-8")
+        self._check(self._lib.grm_store_set_metadata_json(
+            self._handle, int(node_id), data))
+        if "active" in metadata:
+            self.set_active(node_id, bool(metadata.get("active", True)))
+        self.set_route_metadata(
+            node_id,
+            kind=metadata.get("kind"),
+            scope=metadata.get("scope"),
+            durability=metadata.get("durability"),
+            mutability=metadata.get("mutability"))
+
+    def set_active(self, node_id, active=True):
+        if not getattr(self, "_has_set_active", False):
+            return
+        self._check(self._lib.grm_store_set_active(
+            self._handle, int(node_id), 1 if active else 0))
+
+    def set_route_metadata(self, node_id, *, kind=None, scope=None,
+                           durability=None, mutability=None):
+        if not getattr(self, "_has_route_metadata", False):
+            return
+        self._check(self._lib.grm_store_set_route_metadata(
+            self._handle, int(node_id),
+            ("" if kind is None else str(kind)).encode("utf-8"),
+            ("" if scope is None else str(scope)).encode("utf-8"),
+            ("" if durability is None else str(durability)).encode("utf-8"),
+            ("" if mutability is None else str(mutability)).encode("utf-8")))
+
+    def metadata(self, node_id):
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_metadata_json(
+            self._handle, int(node_id), None, 0, ctypes.byref(needed)))
+        cap = int(needed.value) + 1
+        buf = ctypes.create_string_buffer(cap)
+        self._check(self._lib.grm_store_metadata_json(
+            self._handle, int(node_id), buf, cap, ctypes.byref(needed)))
+        return json.loads(buf.value.decode("utf-8") or "{}")
+
+    def add_structured_node(self, text, payload, ntok=0):
+        node_id = self.add_node(text, b"", ntok=ntok)
+        for key in sorted(payload):
+            self.set_tensor(node_id, key, payload[key])
+        return node_id
+
+    @staticmethod
+    def _lexical_blob(keys):
+        if not keys:
+            return b""
+        return "\n".join(str(k) for k in keys).encode("utf-8")
+
+    @staticmethod
+    def _filter_blob(values):
+        if values is None:
+            return b""
+        if isinstance(values, str):
+            values = (values,)
+        vals = [str(v) for v in values if v is not None and str(v) != ""]
+        if not vals:
+            return b""
+        return "\n".join(vals).encode("utf-8")
+
+    @staticmethod
+    def _float_array(values):
+        vals = [float(v) for v in values]
+        if not vals:
+            return None, 0
+        arr_t = ctypes.c_float * len(vals)
+        return arr_t(*vals), len(vals)
+
+    def set_route(self, node_id, route_key, lexical_keys=()):
+        arr, n = self._float_array(route_key)
+        self._check(self._lib.grm_store_set_route(
+            self._handle, int(node_id), arr, n,
+            self._lexical_blob(lexical_keys)))
+
+    def set_route_keys(self, node_id, route_keys, lexical_keys=()):
+        keys = np.asarray(route_keys, dtype=np.float32)
+        if keys.ndim == 1:
+            keys = keys.reshape(1, -1)
+        if keys.ndim != 2:
+            raise ValueError("route_keys must be a 1D or 2D float array")
+        flat = np.ascontiguousarray(keys.reshape(-1), dtype=np.float32)
+        arr = None
+        if flat.size:
+            arr_t = ctypes.c_float * int(flat.size)
+            arr = arr_t(*[float(v) for v in flat])
+        self._check(self._lib.grm_store_set_route_multi(
+            self._handle, int(node_id), arr, int(keys.shape[0]),
+            int(keys.shape[1]), self._lexical_blob(lexical_keys)))
+
+    def route(self, query, lexical_keys=(), topk=3, kinds=(), scopes=(),
+              durabilities=(), mutabilities=()):
+        q, n = self._float_array(query)
+        cap = max(0, int(topk))
+        out = None
+        if cap:
+            out_t = ctypes.c_uint64 * cap
+            out = out_t()
+        count = ctypes.c_uint64()
+        filters = (
+            self._filter_blob(kinds), self._filter_blob(scopes),
+            self._filter_blob(durabilities), self._filter_blob(mutabilities))
+        if any(filters):
+            if not getattr(self, "_has_route_filtered", False):
+                raise RuntimeError("native GRM route filters are unavailable")
+            self._check(self._lib.grm_store_route_filtered(
+                self._handle, q, n, self._lexical_blob(lexical_keys),
+                filters[0], filters[1], filters[2], filters[3], cap,
+                out, cap, ctypes.byref(count)))
+        else:
+            self._check(self._lib.grm_store_route(
+                self._handle, q, n, self._lexical_blob(lexical_keys), cap,
+                out, cap, ctypes.byref(count)))
+        return [int(out[i]) for i in range(int(count.value))]
+
+    def configure_arena(self, sink_tokens, arena_width):
+        self._check(self._lib.grm_store_configure_arena(
+            self._handle, int(sink_tokens), int(arena_width)))
+
+    def plan_swap(self, new_mount_tokens, input_cache_tokens):
+        out = _ArenaSwapPlanC()
+        self._check(self._lib.grm_store_plan_swap(
+            self._handle, int(new_mount_tokens), int(input_cache_tokens),
+            ctypes.byref(out)))
+        return ArenaSwapPlan(
+            int(out.sink_tokens), int(out.arena_width),
+            int(out.old_mount_tokens), int(out.new_mount_tokens),
+            int(out.old_mount_end), int(out.live_tail_start),
+            int(out.live_tail_tokens), int(out.input_cache_tokens),
+            int(out.output_cache_tokens), bool(out.overflow))
+
+    def plan_evict(self, drop_tokens, input_cache_tokens):
+        out = _ArenaEvictPlanC()
+        self._check(self._lib.grm_store_plan_evict(
+            self._handle, int(drop_tokens), int(input_cache_tokens),
+            ctypes.byref(out)))
+        return ArenaEvictPlan(
+            int(out.sink_tokens), int(out.arena_width),
+            int(out.mount_tokens), int(out.head_tokens),
+            int(out.drop_tokens), int(out.input_cache_tokens),
+            int(out.output_cache_tokens), bool(out.underflow))
+
+    def apply_swap_tensor(self, old_tensor, mount_tensor, seq_dim,
+                          new_mount_tokens=None, input_cache_tokens=None):
+        old = np.ascontiguousarray(old_tensor)
+        mount = np.ascontiguousarray(mount_tensor)
+        if old.ndim == 0:
+            raise ValueError("swap tensor rank must be nonzero")
+        if mount.ndim != old.ndim:
+            raise ValueError("mount tensor rank must match old tensor rank")
+        if mount.dtype != old.dtype:
+            raise ValueError("mount tensor dtype must match old tensor dtype")
+        seq = int(seq_dim)
+        if seq < 0:
+            seq += old.ndim
+        if seq < 0 or seq >= old.ndim:
+            raise ValueError("seq_dim out of range")
+        if new_mount_tokens is None:
+            new_mount_tokens = int(mount.shape[seq])
+        if input_cache_tokens is None:
+            input_cache_tokens = int(old.shape[seq])
+
+        plan = self.plan_swap(int(new_mount_tokens), int(input_cache_tokens))
+        if plan.overflow:
+            raise RuntimeError("arena mount exceeds configured width")
+        out_shape_py = list(old.shape)
+        out_shape_py[seq] = plan.output_cache_tokens
+        out_elements = int(np.prod(out_shape_py, dtype=np.uint64))
+        out_nbytes = out_elements * old.dtype.itemsize
+
+        old_shape, old_rank = self._shape_array(old.shape)
+        mount_shape, mount_rank = self._shape_array(mount.shape)
+        old_data, old_nbytes = self._byte_array(old.tobytes())
+        mount_data, mount_nbytes = self._byte_array(mount.tobytes())
+        out_shape_t = ctypes.c_uint64 * old.ndim
+        out_shape = out_shape_t()
+        out_payload = None
+        if out_nbytes:
+            out_payload_t = ctypes.c_uint8 * out_nbytes
+            out_payload = out_payload_t()
+        out_len = ctypes.c_uint64()
+        out_plan = _ArenaSwapPlanC()
+        self._check(self._lib.grm_store_apply_swap_tensor(
+            self._handle, int(new_mount_tokens), int(input_cache_tokens),
+            old_shape, old_rank, seq, old.dtype.itemsize,
+            old_data, old_nbytes,
+            mount_shape, mount_rank, mount_data, mount_nbytes,
+            out_shape, old.ndim, out_payload, out_nbytes,
+            ctypes.byref(out_len), ctypes.byref(out_plan)))
+        if int(out_len.value) != out_nbytes:
+            raise RuntimeError("native swap output length mismatch")
+        out_shape_final = tuple(int(out_shape[i]) for i in range(old.ndim))
+        data = bytes(out_payload[:out_nbytes]) if out_payload is not None else b""
+        return np.frombuffer(data, dtype=old.dtype).copy().reshape(out_shape_final)
+
+    def apply_swap_payload(self, old_payload, mount_payload, payload_dims,
+                           new_mount_tokens=None, input_cache_tokens=None):
+        out = {}
+        for key, seq_dim in payload_dims:
+            if key not in old_payload:
+                raise KeyError(f"old payload missing tensor {key!r}")
+            if key not in mount_payload:
+                raise KeyError(f"mount payload missing tensor {key!r}")
+            out[key] = self.apply_swap_tensor(
+                old_payload[key], mount_payload[key], seq_dim,
+                new_mount_tokens=new_mount_tokens,
+                input_cache_tokens=input_cache_tokens)
+        return out
+
+    def apply_evict_tensor(self, old_tensor, seq_dim, drop_tokens,
+                           input_cache_tokens=None):
+        old = np.ascontiguousarray(old_tensor)
+        if old.ndim == 0:
+            raise ValueError("evict tensor rank must be nonzero")
+        seq = int(seq_dim)
+        if seq < 0:
+            seq += old.ndim
+        if seq < 0 or seq >= old.ndim:
+            raise ValueError("seq_dim out of range")
+        if input_cache_tokens is None:
+            input_cache_tokens = int(old.shape[seq])
+
+        plan = self.plan_evict(int(drop_tokens), int(input_cache_tokens))
+        if plan.underflow:
+            raise RuntimeError("evict drop exceeds live tail")
+        out_shape_py = list(old.shape)
+        out_shape_py[seq] = plan.output_cache_tokens
+        out_elements = int(np.prod(out_shape_py, dtype=np.uint64))
+        out_nbytes = out_elements * old.dtype.itemsize
+
+        old_shape, old_rank = self._shape_array(old.shape)
+        old_data, old_nbytes = self._byte_array(old.tobytes())
+        out_shape_t = ctypes.c_uint64 * old.ndim
+        out_shape = out_shape_t()
+        out_payload = None
+        if out_nbytes:
+            out_payload_t = ctypes.c_uint8 * out_nbytes
+            out_payload = out_payload_t()
+        out_len = ctypes.c_uint64()
+        out_plan = _ArenaEvictPlanC()
+        self._check(self._lib.grm_store_apply_evict_tensor(
+            self._handle, int(drop_tokens), int(input_cache_tokens),
+            old_shape, old_rank, seq, old.dtype.itemsize, old_data, old_nbytes,
+            out_shape, old.ndim, out_payload, out_nbytes,
+            ctypes.byref(out_len), ctypes.byref(out_plan)))
+        if int(out_len.value) != out_nbytes:
+            raise RuntimeError("native evict output length mismatch")
+        out_shape_final = tuple(int(out_shape[i]) for i in range(old.ndim))
+        data = bytes(out_payload[:out_nbytes]) if out_payload is not None else b""
+        return np.frombuffer(data, dtype=old.dtype).copy().reshape(out_shape_final)
+
+    def apply_evict_payload(self, old_payload, payload_dims, drop_tokens,
+                            input_cache_tokens=None):
+        out = {}
+        for key, seq_dim in payload_dims:
+            if key not in old_payload:
+                raise KeyError(f"old payload missing tensor {key!r}")
+            out[key] = self.apply_evict_tensor(
+                old_payload[key], seq_dim, drop_tokens,
+                input_cache_tokens=input_cache_tokens)
+        return out
+
+    def commit_mount(self, node_ids, mount_tokens):
+        ids = [int(i) for i in node_ids]
+        arr = None
+        if ids:
+            arr_t = ctypes.c_uint64 * len(ids)
+            arr = arr_t(*ids)
+        self._check(self._lib.grm_store_commit_mount(
+            self._handle, arr, len(ids), int(mount_tokens)))
+
+    def save_checkpoint(self, root):
+        self._check(self._lib.grm_store_save_checkpoint(
+            self._handle, os.fspath(root).encode("utf-8")))
+
+    def load_checkpoint(self, root):
+        self._check(self._lib.grm_store_load_checkpoint(
+            self._handle, os.fspath(root).encode("utf-8")))
+
+    def mark_durable(self, node_id):
+        self._check(self._lib.grm_store_mark_durable(
+            self._handle, int(node_id)))
+
+    def evict_device_copy(self, node_id):
+        self._check(self._lib.grm_store_evict_device_copy(
+            self._handle, int(node_id)))
+
+    def stats(self):
+        out = _StatsC()
+        self._check(self._lib.grm_store_stats(self._handle, ctypes.byref(out)))
+        return NativeStats(out.nodes, out.dirty_nodes, out.durable_nodes,
+                           out.host_payload_bytes, out.host_payload_tensors,
+                           out.route_entries)

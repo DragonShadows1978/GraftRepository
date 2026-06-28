@@ -201,6 +201,59 @@ Memory hierarchy (sleep consolidation, literally):
 6. Stale-doc hygiene: harvest docstring says post-RoPE (it's pre-RoPE);
    multifact test still ships the superstition recipe. Fix before this travels.
 
+### 5a. The memory hierarchy — grafts are a cache, not just disk-vs-VRAM
+
+The cost model correction first, because it's load-bearing: **a mounted graft
+still costs CONTEXT.** It is K/V occupying arena seats — real positions in the
+window, spent exactly like in-context tokens. What a graft saves is not context
+but the **recompute of tokenization + prefill** (paid once at harvest, never
+re-paid per use, unlike RAG which re-tokenizes every retrieval) and the
+**per-token footprint** (the MLA latent is compact). The window is still the
+scarce budget; routing exists precisely so only the *relevant* slice is mounted.
+
+So routing's per-turn cost is not tokens — it is **seek time** (find the graft,
+page its K/V into the device). And seek time, unlike a token cost, lives on a
+**tiered hierarchy you can engineer**, exactly like every fast system on earth:
+
+```
+  VRAM   (L1)  — MOUNTED, active grafts: the slice being reasoned over now.
+                 Scarce, fastest. The arena.
+  RAM    (L2)  — HOT repository: the live conversation's grafts + pinned
+                 always-mounted grafts (alignment / Key-File). Page-in is a
+                 RAM→VRAM bus copy (~µs, tens of GB/s) — effectively no seek.
+  DISK   (L3)  — COLD repository: deep knowledge corpora, old conversations,
+                 folded eras. Vast and cheap; page-in pays real seek, but is
+                 reached rarely.
+```
+
+**The conversation log belongs out of VRAM** — that is the practical headline.
+Every normal model keeps the transcript IN the window (VRAM), so history is a
+growing tax on a fixed budget and the model eventually forgets. GRM harvests
+the chat log to grafts and stores it OUT of the window. The window stays small
+and constant for any conversation length (the ephemeral-boat / infinite-context
+result); history is unbounded because it lives in the repository.
+
+The new insight: **that store does not have to be disk.** Tier it by access
+pattern. The *conversational working set* — recent turns, hit nearly every turn
+(anaphora, follow-ups) — goes in **RAM**, where promotion to VRAM is a bus copy,
+not a disk read. The cold knowledge corpora — hit occasionally — stay on
+**disk**, where the seek is affordable because it is rare. So the common case
+(respond to the live conversation) pays RAM speed; only the rare case (deep
+cold recall) pays disk seek.
+
+This makes the existing pager (LRU over last-mounted, write-back before spill —
+the `_page()` machinery) a proper **three-tier cache controller**: spill VRAM→RAM
+first, RAM→disk only under pressure; promote on mount. The storage tier becomes
+a **property of the graft kind**: conversation → RAM, pinned alignment → RAM
+(never evict), domain corpora → disk. Working sets are small, so the hot
+conversational set fits RAM easily and the per-turn memory cost collapses from
+"disk seek" to "bus copy" for the 95% case.
+
+Stacks with the swarm: many agents share one RAM-resident hot graft pool, one
+shared core in VRAM, cold knowledge on shared disk — a serving-grade memory
+hierarchy, not just a model. (Pager TODO from item 3 above is now scoped: it is
+this three-tier controller.)
+
 ---
 
 ## 6. The failure budget — measure BEFORE building big

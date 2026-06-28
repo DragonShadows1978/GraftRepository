@@ -25,6 +25,7 @@ Position law: live token positions = live_shift + running counter, where
 live_shift = n_sink + arena_width is FIXED for the cache's lifetime (the
 `live_shift` attribute on MLAAttentionTC — decoupled from mount size).
 """
+import gc
 import re
 
 import numpy as np
@@ -69,18 +70,37 @@ class ArenaCache:
         self.node_loader = None         # callable(idx) -> device h; lets
                                         # DESCENT re-mount retired children
                                         # from cold storage (repository disk)
+        self.native_store = None        # optional C++ host runtime mirror
         self.caches = None              # per layer (c_n, k_pe), built on turn 1
         self.pos = 0                    # live tokens processed (position counter)
         self.cur_mounts = []            # graft idxs currently seated
         self.cur_mount_n = 0            # arena seats currently occupied
         self.live_segs = []             # [(graft_idx or None, ntok), ...]
         self.grafts = []                # {h, cent, ntok, text}
+        self.last_route_backend = "python"
+
+    def _clear_transients(self):
+        gc.collect()
+        if hasattr(tc, "empty_cache"):
+            tc.empty_cache()
+
+    def reset_live_cache(self):
+        """Drop the live device cache without touching persisted graft nodes."""
+        self.caches = None
+        self.pos = 0
+        self.cur_mounts = []
+        self.cur_mount_n = 0
+        self.live_segs = []
+        kv_graft.clear_injection(self.m)
+        self._clear_transients()
 
     # ------------------------------------------------------ dialect surface
     # Everything model-specific lives behind these members. The base class
     # IS the MLA dialect (MiniCPM3: latent payload, latent-cosine router);
     # GQAArenaCache at the bottom of this file overrides them for Qwen3.
     PAYLOAD = (("c", 1), ("kpe", 2))    # payload tensors: (key, seq dim)
+    ROPE_KEYS = ("kpe",)
+    ROPE_PAIR_SWAP = False
     VALS_PER_TOK_LAYER = 288            # c 256 + kpe 32 (node VRAM math)
 
     def _harvest(self, ids, layer_filter=None, max_layers=None):
@@ -92,6 +112,8 @@ class ArenaCache:
         pl = self._harvest(self.encode(text), layer_filter={self.route_layer},
                            max_layers=self.route_layer + 1)
         p = pl[self.route_layer]["c"][0].astype(np.float32).mean(0)
+        del pl
+        self._clear_transients()
         return p / (np.linalg.norm(p) + 1e-8)
 
     def _node_key(self, text, h_host=None):
@@ -108,13 +130,109 @@ class ArenaCache:
         must stay in O(1) cosine range or routing law (2) breaks."""
         return float(np.dot(pkey, nkey))
 
-    def _rope_block(self, blk, cs, sn):
+    def _pair_swap_last(self, x):
+        d = x.shape[-1]
+        return x.reshape(list(x.shape[:-1]) + [d // 2, 2]).transpose(
+            -1, -2).reshape(list(x.shape))
+
+    def _rope_tensor(self, x, pos0, inverse=False, pair_swap=False):
+        if hasattr(tc, "rope_apply"):
+            with tc.no_grad():
+                return tc.rope_apply(x, self.m.rope_cos, self.m.rope_sin,
+                                     int(pos0), bool(inverse), bool(pair_swap))
+        if pair_swap:
+            x = self._pair_swap_last(x)
+        L = x.shape[-2]
+        cs = self.m.rope_cos.slice(0, pos0, L)
+        sn = self.m.rope_sin.slice(0, pos0, L)
+        if inverse:
+            sn = sn * -1.0
+        return F.apply_rotary(x, cs, sn)
+
+    def _rope_block_at(self, blk, pos0, inverse=False):
         """Apply rotation slices to the POSITIONAL key component of a
         payload block (MLA: the 32-d shared k_pe; the latent is
         position-free). Direction is the caller's: re-RoPE at mount seats,
         or un-RoPE a cache slice with -sin (rotation composition)."""
-        blk["kpe"] = F.apply_rotary(blk["kpe"], cs, sn)
+        for key in self.ROPE_KEYS:
+            if key in blk:
+                blk[key] = self._rope_tensor(
+                    blk[key], pos0, inverse, self.ROPE_PAIR_SWAP)
         return blk
+
+    def _export_cache_tensor(self, key, tensor, dim, start, n, pos0):
+        if key in self.ROPE_KEYS:
+            if hasattr(tc, "export_rope_rows"):
+                with tc.no_grad():
+                    return tc.export_rope_rows(
+                        tensor, self.m.rope_cos, self.m.rope_sin,
+                        dim, start, n, pos0, True, self.ROPE_PAIR_SWAP)
+            seg = tensor.slice(dim, start, n)
+            return self._rope_tensor(
+                seg, pos0, inverse=True, pair_swap=self.ROPE_PAIR_SWAP)
+        if hasattr(tc, "export_rows"):
+            with tc.no_grad():
+                return tc.export_rows(tensor, dim, start, n)
+        return tensor.slice(dim, start, n)
+
+    def _export_cache_payload(self, cache, n, pos0):
+        if len(self.PAYLOAD) == 2 and hasattr(tc, "export_row_pair"):
+            raw = [(i, key, dim) for i, (key, dim) in enumerate(self.PAYLOAD)
+                   if key not in self.ROPE_KEYS]
+            rope = [(i, key, dim) for i, (key, dim) in enumerate(self.PAYLOAD)
+                    if key in self.ROPE_KEYS]
+            if len(raw) == 1 and len(rope) == 1:
+                ri, rkey, rdim = raw[0]
+                pi, pkey, pdim = rope[0]
+                rt, pt = cache[ri], cache[pi]
+                rstart = rt.shape[rdim] - n
+                pstart = pt.shape[pdim] - n
+                with tc.no_grad():
+                    rseg, pseg = tc.export_row_pair(
+                        rt, pt, self.m.rope_cos, self.m.rope_sin,
+                        rdim, pdim, rstart, pstart, n, pos0, True,
+                        self.ROPE_PAIR_SWAP)
+                return {rkey: rseg, pkey: pseg}
+        seg = {}
+        for ei, (key, dim) in enumerate(self.PAYLOAD):
+            t = cache[ei]
+            S = t.shape[dim]
+            seg[key] = self._export_cache_tensor(
+                key, t, dim, S - n, n, pos0)
+        return seg
+
+    def _paired_export_spec(self):
+        if len(self.PAYLOAD) != 2:
+            return None
+        raw = [(i, key, dim) for i, (key, dim) in enumerate(self.PAYLOAD)
+               if key not in self.ROPE_KEYS]
+        rope = [(i, key, dim) for i, (key, dim) in enumerate(self.PAYLOAD)
+                if key in self.ROPE_KEYS]
+        if len(raw) == 1 and len(rope) == 1:
+            return raw[0], rope[0]
+        return None
+
+    def _export_cache_payloads(self, n, pos0):
+        if not hasattr(tc, "export_row_pairs"):
+            return None
+        spec = self._paired_export_spec()
+        if spec is None:
+            return None
+        (ri, rkey, rdim), (pi, pkey, pdim) = spec
+        raw_ts, rope_ts, raw_starts, rope_starts = [], [], [], []
+        for cache in self.caches:
+            rt, pt = cache[ri], cache[pi]
+            raw_ts.append(rt)
+            rope_ts.append(pt)
+            raw_starts.append(rt.shape[rdim] - n)
+            rope_starts.append(pt.shape[pdim] - n)
+        with tc.no_grad():
+            raw_out, rope_out = tc.export_row_pairs(
+                raw_ts, rope_ts, self.m.rope_cos, self.m.rope_sin,
+                rdim, pdim, raw_starts, rope_starts, n, pos0, True,
+                self.ROPE_PAIR_SWAP)
+        return [{rkey: raw_out[i], pkey: rope_out[i]}
+                for i in range(len(raw_out))]
 
     def _cache_key_of(self, seg):
         """key_from_cache=True exploratory mode (measured 5/6 on MLA:
@@ -187,18 +305,12 @@ class ArenaCache:
         partial forward (layers 0..route_layer, no head) unless
         key_from_cache=True (the measured-5/6 exploratory mode)."""
         p0 = self.live_shift + self.pos - seg_ntok      # span's first seat
-        cseg = self.m.rope_cos.slice(0, p0, seg_ntok)
-        sneg = self.m.rope_sin.slice(0, p0, seg_ntok) * -1.0
-        dev = []
+        dev = self._export_cache_payloads(seg_ntok, p0)
+        if dev is None:
+            dev = [self._export_cache_payload(cache, seg_ntok, p0)
+                   for cache in self.caches]
         cent = None
-        for li, cache in enumerate(self.caches):
-            seg = {}
-            for ei, (key, dim) in enumerate(self.PAYLOAD):
-                t = cache[ei]
-                S = t.shape[dim]
-                seg[key] = t.slice(dim, S - seg_ntok, seg_ntok)
-            seg = self._rope_block(seg, cseg, sneg)     # un-RoPE (-sin)
-            dev.append(seg)
+        for li, seg in enumerate(dev):
             if li == self.route_layer and cent is None:
                 cent = self._cache_key_of(seg)
         if cent is None:
@@ -224,6 +336,10 @@ class ArenaCache:
         cand = [i for i in range(len(self.grafts))
                 if i not in exclude and not self.grafts[i].get("retired")
                 and self.grafts[i].get("kind", "turn") != "recall"]
+        native_order = self._native_route_order(p, qrare, cand)
+        if native_order is not None:
+            return native_order
+        self.last_route_backend = "python"
         base = {i: self._cent_score(p, self.grafts[i]) for i in cand}
         # dialect hook: a raw-score channel (GQA layer-0 |q.k|) rescales
         # per-route into the O(1) band the lexical bonus was calibrated
@@ -252,6 +368,44 @@ class ArenaCache:
         if "rare" not in g:
             g["rare"] = self._rare_tokens(g["text"])
         return len(qrare & g["rare"]) / len(qrare)
+
+    def _native_route_order(self, pkey, qrare, cand):
+        store = getattr(self, "native_store", None)
+        if store is None or not hasattr(store, "route"):
+            return None
+        if (type(self)._key_score is not ArenaCache._key_score
+                or type(self)._normalize_scores is not ArenaCache._normalize_scores):
+            return None
+        if not cand:
+            return []
+        native_to_idx = {}
+        for i in cand:
+            g = self.grafts[i]
+            # Native v1 stores one route key per node. Hierarchical
+            # digest/era nodes use child keys too; require the multi-key
+            # native index before routing them outside Python.
+            if g.get("child_cents") and not getattr(
+                    store, "supports_multi_route_keys", False):
+                return None
+            node_id = g.get("native_node_id")
+            if node_id is None:
+                return None
+            native_to_idx[int(node_id)] = i
+        try:
+            routed_native = store.route(
+                np.asarray(pkey, dtype=np.float32).reshape(-1).tolist(),
+                sorted(qrare), topk=len(self.grafts))
+        except Exception:
+            return None
+        routed = []
+        for node_id in routed_native:
+            idx = native_to_idx.get(int(node_id))
+            if idx is not None:
+                routed.append(idx)
+        if len(routed) != len(cand):
+            return None
+        self.last_route_backend = "native"
+        return routed
 
     # ------------------------------------------------------------ librarian
     # Mounted DIALOGUE turns pull generation into conversation mode — the
@@ -493,9 +647,144 @@ class ArenaCache:
                      else tc.cat([h[key] for h in hs], dim=dim))
                for key, dim in self.PAYLOAD}
         n = blk[self.PAYLOAD[0][0]].shape[self.PAYLOAD[0][1]]
-        blk = self._rope_block(blk, self.m.rope_cos.slice(0, self.n_sink, n),
-                               self.m.rope_sin.slice(0, self.n_sink, n))
+        blk = self._rope_block_at(blk, self.n_sink, inverse=False)
         return blk, n
+
+    def _native_mount_ids(self, picks):
+        ids = []
+        for i in picks:
+            node_id = self.grafts[i].get("native_node_id")
+            if node_id is None:
+                raise RuntimeError(f"graft {i} has no native_node_id")
+            ids.append(int(node_id))
+        return ids
+
+    def _commit_native_mount(self, picks, mount_tokens):
+        store = getattr(self, "native_store", None)
+        if store is None or not hasattr(store, "commit_mount"):
+            return
+        store.commit_mount(self._native_mount_ids(picks), int(mount_tokens))
+
+    def _splice_cache_tensor(self, tensor, insert, dim, head_tokens,
+                             tail_start):
+        if hasattr(tc, "splice_rows"):
+            with tc.no_grad():
+                return tc.splice_rows(tensor, insert, dim, head_tokens,
+                                      tail_start)
+        parts = [tensor.slice(dim, 0, head_tokens), insert]
+        S = tensor.shape[dim]
+        if S > tail_start:
+            parts.append(tensor.slice(dim, tail_start, S - tail_start))
+        return tc.cat(parts, dim=dim)
+
+    def _evict_cache_tensor(self, tensor, dim, head_tokens, drop_tokens):
+        if hasattr(tc, "evict_rows"):
+            with tc.no_grad():
+                try:
+                    return tc.evict_rows(tensor, dim, head_tokens, drop_tokens)
+                except RuntimeError as exc:
+                    raise RuntimeError(
+                        f"evict_rows failed shape={tensor.shape} dim={dim} "
+                        f"head={head_tokens} drop={drop_tokens}") from exc
+        S = tensor.shape[dim]
+        return tc.cat([tensor.slice(dim, 0, head_tokens),
+                       tensor.slice(dim, head_tokens + drop_tokens,
+                                    S - head_tokens - drop_tokens)], dim=dim)
+
+    def _pair_payload_tuple(self, raw_tensor, rope_tensor, spec):
+        (ri, _, _), (pi, _, _) = spec
+        out = [None] * len(self.PAYLOAD)
+        out[ri] = raw_tensor
+        out[pi] = rope_tensor
+        return tuple(out)
+
+    def _graft_pair_blocks(self, picks, spec):
+        (ri, rkey, rdim), (pi, pkey, pdim) = spec
+        raw_blocks, rope_blocks = [], []
+        n_new = None
+        for li in range(len(self.caches)):
+            hs = [self.grafts[i]["h"][li] for i in picks]
+            raw = (hs[0][rkey] if len(hs) == 1
+                   else tc.cat([h[rkey] for h in hs], dim=rdim))
+            rope = (hs[0][pkey] if len(hs) == 1
+                    else tc.cat([h[pkey] for h in hs], dim=pdim))
+            raw_n = raw.shape[rdim]
+            rope_n = rope.shape[pdim]
+            if raw_n != rope_n:
+                raise RuntimeError(
+                    f"graft payload token mismatch: {rkey}={raw_n} "
+                    f"{pkey}={rope_n}")
+            if n_new is None:
+                n_new = raw_n
+            elif raw_n != n_new:
+                raise RuntimeError("graft layer token count mismatch")
+            raw_blocks.append(raw)
+            rope_blocks.append(rope)
+        return raw_blocks, rope_blocks, int(n_new or 0)
+
+    def _swap_cache_payloads(self, picks, head):
+        if not picks:
+            return None
+        if hasattr(tc, "arena_row_pair_transaction"):
+            tx = self._arena_cache_transaction(picks)
+            if tx is not None:
+                return tx
+        if not hasattr(tc, "swap_row_pairs_with_rope"):
+            return None
+        spec = self._paired_export_spec()
+        if spec is None:
+            return None
+        (ri, _, rdim), (pi, _, pdim) = spec
+        raw_blocks, rope_blocks, n_new = self._graft_pair_blocks(picks, spec)
+        raw_caches = [cache[ri] for cache in self.caches]
+        rope_caches = [cache[pi] for cache in self.caches]
+        with tc.no_grad():
+            raw_out, rope_out = tc.swap_row_pairs_with_rope(
+                raw_caches, rope_caches, raw_blocks, rope_blocks,
+                self.m.rope_cos, self.m.rope_sin, rdim, pdim,
+                self.n_sink, head, self.n_sink, self.ROPE_PAIR_SWAP)
+        return ([self._pair_payload_tuple(raw_out[i], rope_out[i], spec)
+                 for i in range(len(raw_out))], n_new)
+
+    def _evict_cache_payloads(self, head, drop_tokens):
+        if (head == self.n_sink and drop_tokens == self.cur_mount_n
+                and hasattr(tc, "arena_row_pair_transaction")):
+            tx = self._arena_cache_transaction([])
+            if tx is not None:
+                return tx[0]
+        if not hasattr(tc, "evict_row_pairs"):
+            return None
+        spec = self._paired_export_spec()
+        if spec is None:
+            return None
+        (ri, _, rdim), (pi, _, pdim) = spec
+        raw_caches = [cache[ri] for cache in self.caches]
+        rope_caches = [cache[pi] for cache in self.caches]
+        with tc.no_grad():
+            raw_out, rope_out = tc.evict_row_pairs(
+                raw_caches, rope_caches, rdim, pdim, head, drop_tokens)
+        return [self._pair_payload_tuple(raw_out[i], rope_out[i], spec)
+                for i in range(len(raw_out))]
+
+    def _arena_cache_transaction(self, picks):
+        if not hasattr(tc, "arena_row_pair_transaction"):
+            return None
+        spec = self._paired_export_spec()
+        if spec is None:
+            return None
+        (ri, _, rdim), (pi, _, pdim) = spec
+        raw_caches = [cache[ri] for cache in self.caches]
+        rope_caches = [cache[pi] for cache in self.caches]
+        raw_blocks, rope_blocks = [], []
+        if picks:
+            raw_blocks, rope_blocks, _ = self._graft_pair_blocks(picks, spec)
+        with tc.no_grad():
+            raw_out, rope_out, n_new = tc.arena_row_pair_transaction(
+                raw_caches, rope_caches, raw_blocks, rope_blocks,
+                self.m.rope_cos, self.m.rope_sin, rdim, pdim, self.n_sink,
+                self.cur_mount_n, self.width, self.ROPE_PAIR_SWAP)
+        return ([self._pair_payload_tuple(raw_out[i], rope_out[i], spec)
+                 for i in range(len(raw_out))], int(n_new))
 
     def swap(self, picks):
         """Replace the arena occupants. Pure cache surgery — live untouched."""
@@ -506,34 +795,44 @@ class ArenaCache:
         n_new = 0
         new_caches = []
         head = self.n_sink + self.cur_mount_n
-        for li, cache in enumerate(self.caches):
-            S = cache[0].shape[self.PAYLOAD[0][1]]
-            blk = None
-            if picks:
-                blk, n_new = self._graft_block(picks, li)
-            new = []
-            for ei, (key, dim) in enumerate(self.PAYLOAD):
-                t = cache[ei]
-                parts = [t.slice(dim, 0, self.n_sink)]
-                if blk is not None:
-                    parts.append(blk[key])
-                if S > head:    # zero-length live tail: nothing to carry
-                    parts.append(t.slice(dim, head, S - head))
-                new.append(tc.cat(parts, dim=dim) if len(parts) > 1
-                           else parts[0])
-            new_caches.append(tuple(new))
+        paired = (self._swap_cache_payloads(picks, head) if picks
+                  else (self._evict_cache_payloads(
+                      self.n_sink, self.cur_mount_n), 0))
+        if paired is not None and paired[0] is not None:
+            new_caches, n_new = paired
+        else:
+            for li, cache in enumerate(self.caches):
+                blk = None
+                if picks:
+                    blk, n_new = self._graft_block(picks, li)
+                new = []
+                for ei, (key, dim) in enumerate(self.PAYLOAD):
+                    t = cache[ei]
+                    if blk is not None:
+                        new.append(self._splice_cache_tensor(
+                            t, blk[key], dim, self.n_sink, head))
+                    else:
+                        new.append(self._evict_cache_tensor(
+                            t, dim, self.n_sink, self.cur_mount_n))
+                new_caches.append(tuple(new))
         self.caches = new_caches
+        self._clear_transients()
         self.cur_mounts = picks
         self.cur_mount_n = n_new
         if n_new > self.width:
             raise ValueError(f"mounts ({n_new}) exceed arena width ({self.width})")
+        self._commit_native_mount(picks, n_new)
 
     def evict(self):
         """Drop live segments beyond the recency window from the cache."""
         if len(self.live_segs) <= self.live_turns or self.caches is None:
             return 0
-        drop = self.live_segs[:-self.live_turns]
-        self.live_segs = self.live_segs[-self.live_turns:]
+        if self.live_turns <= 0:
+            drop = self.live_segs
+            self.live_segs = []
+        else:
+            drop = self.live_segs[:-self.live_turns]
+            self.live_segs = self.live_segs[-self.live_turns:]
         drop_n = sum(n for _, n in drop)
         head = self.n_sink + self.cur_mount_n
         out = []
@@ -541,12 +840,10 @@ class ArenaCache:
             new = []
             for ei, (key, dim) in enumerate(self.PAYLOAD):
                 t = cache[ei]
-                S = t.shape[dim]
-                new.append(tc.cat([t.slice(dim, 0, head),
-                                   t.slice(dim, head + drop_n,
-                                           S - head - drop_n)], dim=dim))
+                new.append(self._evict_cache_tensor(t, dim, head, drop_n))
             out.append(tuple(new))
         self.caches = out
+        self._clear_transients()
         return drop_n
 
     # ------------------------------------------------------------ forward
@@ -754,6 +1051,8 @@ class ArenaCache:
             attempts = ladder[:max_trips + 1]
         elif attempts:
             attempts = [(fit(expand(attempts[0][0], ("era",))), False)]
+        else:
+            attempts = [([], False)]
         best = None
         for trip, (picks, clean) in enumerate(attempts):
             if not picks:
@@ -807,6 +1106,7 @@ class ArenaCache:
             self._set_injection_host(inj)
             self.cur_mounts = picks
             self.cur_mount_n = sum(self.grafts[i]["ntok"] for i in picks)
+            self._commit_native_mount(picks, self.cur_mount_n)
         else:
             self.swap(picks)
         prompt_ids = self.encode(f"User: {user_text}\nAssistant:")
@@ -814,6 +1114,8 @@ class ArenaCache:
         row = self._forward(prompt_ids)
         kv_graft.clear_injection(self.m)     # bootstrap injection fired once
         out = [int(row.argmax())]
+        cached_out = 0
+        stopped = False
         for _ in range(ngen - 1):
             # EARLY STOP: break at the first stop sequence so post-answer
             # tokens never enter the cache. Qwen3 leaks reasoning text
@@ -824,9 +1126,16 @@ class ArenaCache:
             # never emitted post-answer junk, which is why decoding the
             # full ngen was harmless on MLA.
             if any(s in self.decode(out) for s in stops):
+                stopped = True
                 break
             row = self._forward([out[-1]])
+            cached_out += 1
             out.append(int(row.argmax()))
+        if not stopped and not any(s in self.decode(out) for s in stops):
+            # The last predicted token is not in the KV cache until it is fed
+            # once. Commit it so live/deposit segment lengths match reality.
+            self._forward([out[-1]])
+            cached_out += 1
         # the answer tokens are in the cache; record the live segment
         txt = self.decode(out)
         for stop in stops:
@@ -834,11 +1143,12 @@ class ArenaCache:
                 txt = txt.split(stop)[0]
         txt = txt.strip()
         turn_text = f"User: {user_text}\nAssistant: {txt}\n"
+        seg_cache_ntok = seg_start_ntok + cached_out
         gidx = None
         if deposit:
             # cache-deposit span covers prompt + ALL generated tokens (incl.
             # any post-stop tail) — the cache is the source of truth
-            gidx = (self.deposit_from_cache(turn_text, seg_start_ntok + len(out))
+            gidx = (self.deposit_from_cache(turn_text, seg_cache_ntok)
                     if self.cache_deposits else self.deposit(turn_text))
             if picks:
                 # retrieval hygiene: a turn that adds NO identifier tokens
@@ -855,7 +1165,7 @@ class ArenaCache:
                     new_rare -= g["rare"]
                 if not new_rare:
                     self.grafts[gidx]["kind"] = "recall"
-        self.live_segs.append((gidx, seg_start_ntok + len(out)))
+        self.live_segs.append((gidx, seg_cache_ntok))
         evicted = self.evict()
         S = self._cache_len()
         return txt, {"mounts": [i + 1 for i in picks], "resident": S,
@@ -880,6 +1190,7 @@ class GQAArenaCache(ArenaCache):
         node instead of a stacked matrix.
     """
     PAYLOAD = (("k", 2), ("v", 2))
+    ROPE_KEYS = ("k",)
 
     def __init__(self, model, *a, **kw):
         cfg = model.config
@@ -932,8 +1243,8 @@ class GQAArenaCache(ArenaCache):
         mx = max(abs(v) for v in base.values()) + 1e-8
         return {i: v / mx for i, v in base.items()}
 
-    def _rope_block(self, blk, cs, sn):
-        blk["k"] = F.apply_rotary(blk["k"], cs, sn)
+    def _rope_block_at(self, blk, pos0, inverse=False):
+        blk["k"] = self._rope_tensor(blk["k"], pos0, inverse)
         return blk
 
     def _cache_key_of(self, seg):

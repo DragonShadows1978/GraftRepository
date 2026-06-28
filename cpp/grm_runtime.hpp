@@ -1,0 +1,284 @@
+#pragma once
+
+#include <cstdint>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+
+namespace grm {
+
+enum class PayloadKind {
+  MLA,
+  GQA,
+};
+
+struct DialectDescriptor {
+  std::string model_type;
+  int num_layers = 0;
+  int hidden_dim = 0;
+  PayloadKind payload_kind = PayloadKind::MLA;
+  int vals_per_tok_layer = 0;
+  int route_layer = 0;
+  int latent_rank = 0;
+  int rope_dim = 0;
+  int num_kv_heads = 0;
+  int head_dim = 0;
+
+  std::string dialect_id() const;
+};
+
+struct NodeLifecycle {
+  bool host_present = false;
+  bool device_present = false;
+  bool dirty = false;
+  bool durable = false;
+  bool cold_only = false;
+};
+
+struct NodeMetadata {
+  std::string json = "{}";
+  std::string kind = "turn";
+  std::string durability = "session";
+  std::string mutability = "ephemeral";
+  std::string scope = "conversation";
+  std::string write_intent = "observed";
+  double confidence = 1.0;
+  bool active = true;
+  std::vector<std::uint64_t> source_turns;
+  std::vector<std::uint64_t> source_grafts;
+  std::vector<std::uint64_t> supersedes;
+  std::vector<std::uint64_t> superseded_by;
+};
+
+struct HostTensor {
+  std::string name;
+  std::string dtype = "uint8";
+  std::vector<std::uint64_t> shape;
+  std::vector<std::uint8_t> bytes;
+};
+
+struct HostPayload {
+  std::vector<HostTensor> tensors;
+  std::uint64_t bytes() const;
+  std::uint64_t tensor_count() const;
+};
+
+struct ProvenanceRecord {
+  std::uint64_t segment_id = 0;
+  std::uint64_t node_id = 0;
+  std::string segment_type;
+  double created_at = 0.0;
+};
+
+struct HostGraftNode {
+  std::uint64_t node_id = 0;
+  std::string text;
+  std::uint64_t ntok = 0;
+  NodeMetadata metadata;
+  NodeLifecycle lifecycle;
+  HostPayload payload;
+  std::vector<float> route_key;
+  std::vector<std::string> lexical_keys;
+  std::vector<std::uint64_t> sources;
+  std::vector<ProvenanceRecord> provenance;
+};
+
+struct StoreStats {
+  std::uint64_t nodes = 0;
+  std::uint64_t dirty_nodes = 0;
+  std::uint64_t durable_nodes = 0;
+  std::uint64_t host_payload_bytes = 0;
+  std::uint64_t host_payload_tensors = 0;
+  std::uint64_t route_entries = 0;
+};
+
+struct PayloadStats {
+  std::uint64_t tensor_count = 0;
+  std::uint64_t payload_bytes = 0;
+};
+
+struct GraphEdges {
+  std::vector<std::uint64_t> source_turns;
+  std::vector<std::uint64_t> source_grafts;
+  std::vector<std::uint64_t> supersedes;
+  std::vector<std::uint64_t> superseded_by;
+};
+
+struct ArenaSwapPlan {
+  std::uint64_t sink_tokens = 0;
+  std::uint64_t arena_width = 0;
+  std::uint64_t old_mount_tokens = 0;
+  std::uint64_t new_mount_tokens = 0;
+  std::uint64_t old_mount_end = 0;
+  std::uint64_t live_tail_start = 0;
+  std::uint64_t live_tail_tokens = 0;
+  std::uint64_t input_cache_tokens = 0;
+  std::uint64_t output_cache_tokens = 0;
+  bool overflow = false;
+};
+
+struct ArenaEvictPlan {
+  std::uint64_t sink_tokens = 0;
+  std::uint64_t arena_width = 0;
+  std::uint64_t mount_tokens = 0;
+  std::uint64_t head_tokens = 0;
+  std::uint64_t drop_tokens = 0;
+  std::uint64_t input_cache_tokens = 0;
+  std::uint64_t output_cache_tokens = 0;
+  bool underflow = false;
+};
+
+struct TensorSwapResult {
+  ArenaSwapPlan plan;
+  std::vector<std::uint64_t> shape;
+  std::vector<std::uint8_t> bytes;
+};
+
+struct TensorEvictResult {
+  ArenaEvictPlan plan;
+  std::vector<std::uint64_t> shape;
+  std::vector<std::uint8_t> bytes;
+};
+
+class DirtyQueue {
+ public:
+  void mark(std::uint64_t node_id, bool payload, bool metadata);
+  void clear(std::uint64_t node_id);
+  void clear_all();
+  bool empty() const;
+  std::vector<std::uint64_t> node_ids() const;
+
+ private:
+  struct DirtyState {
+    bool payload = false;
+    bool metadata = false;
+  };
+  std::unordered_map<std::uint64_t, DirtyState> dirty_;
+};
+
+class HostGraftStore {
+ public:
+  explicit HostGraftStore(DialectDescriptor dialect);
+
+  std::uint64_t add_node(HostGraftNode node);
+  HostGraftNode* get(std::uint64_t node_id);
+  const HostGraftNode* get(std::uint64_t node_id) const;
+
+  void set_tensor(std::uint64_t node_id, HostTensor tensor);
+  PayloadStats payload_stats(std::uint64_t node_id) const;
+  void set_metadata_json(std::uint64_t node_id, std::string metadata_json);
+  const std::string& metadata_json(std::uint64_t node_id) const;
+  void set_active(std::uint64_t node_id, bool active);
+  bool is_active(std::uint64_t node_id) const;
+  void set_route_metadata(std::uint64_t node_id,
+                          std::string kind,
+                          std::string scope,
+                          std::string durability,
+                          std::string mutability);
+  void set_graph_edges(std::uint64_t node_id, GraphEdges edges);
+  GraphEdges graph_edges(std::uint64_t node_id) const;
+  void mark_dirty(std::uint64_t node_id, bool payload, bool metadata);
+  void mark_durable(std::uint64_t node_id);
+  void evict_device_copy(std::uint64_t node_id);
+  void save_checkpoint(const std::string& root);
+  void load_checkpoint(const std::string& root);
+  StoreStats stats() const;
+
+  const DialectDescriptor& dialect() const { return dialect_; }
+  DirtyQueue& dirty_queue() { return dirty_; }
+
+ private:
+  DialectDescriptor dialect_;
+  DirtyQueue dirty_;
+  std::uint64_t next_id_ = 0;
+  std::unordered_map<std::uint64_t, HostGraftNode> nodes_;
+};
+
+class RouterIndex {
+ public:
+  void upsert(std::uint64_t node_id, std::vector<float> route_key,
+              std::vector<std::string> lexical_keys);
+  void upsert_multi(std::uint64_t node_id,
+                    std::vector<std::vector<float>> route_keys,
+                    std::vector<std::string> lexical_keys);
+  void set_active(std::uint64_t node_id, bool active);
+  void set_route_metadata(std::uint64_t node_id,
+                          std::string kind,
+                          std::string scope,
+                          std::string durability,
+                          std::string mutability);
+  std::vector<std::uint64_t> route(const std::vector<float>& query,
+                                   const std::vector<std::string>& lexical,
+                                   std::size_t topk,
+                                   const std::vector<std::string>& kinds = {},
+                                   const std::vector<std::string>& scopes = {},
+                                   const std::vector<std::string>& durabilities = {},
+                                   const std::vector<std::string>& mutabilities = {}) const;
+  std::size_t size() const { return entries_.size(); }
+
+ private:
+  struct Entry {
+    std::uint64_t node_id = 0;
+    std::vector<std::vector<float>> route_keys;
+    std::vector<std::string> lexical_keys;
+    bool active = true;
+    std::string kind = "turn";
+    std::string scope = "conversation";
+    std::string durability = "session";
+    std::string mutability = "ephemeral";
+  };
+  std::vector<Entry> entries_;
+};
+
+class DurabilityWriter {
+ public:
+  explicit DurabilityWriter(std::string root);
+  void write_checkpoint(const HostGraftStore& store);
+  const std::string& root() const { return root_; }
+
+ private:
+  std::string root_;
+};
+
+class DeviceArena {
+ public:
+  void configure(std::uint64_t sink_tokens, std::uint64_t arena_width);
+  ArenaSwapPlan plan_swap(std::uint64_t new_mount_tokens,
+                          std::uint64_t input_cache_tokens) const;
+  ArenaEvictPlan plan_evict(std::uint64_t drop_tokens,
+                            std::uint64_t input_cache_tokens) const;
+  TensorSwapResult apply_swap_tensor(
+      const std::vector<std::uint64_t>& old_shape,
+      std::uint64_t seq_dim,
+      std::uint64_t elem_size,
+      const std::uint8_t* old_payload,
+      std::uint64_t old_payload_len,
+      const std::vector<std::uint64_t>& mount_shape,
+      const std::uint8_t* mount_payload,
+      std::uint64_t mount_payload_len,
+      std::uint64_t new_mount_tokens,
+      std::uint64_t input_cache_tokens) const;
+  TensorEvictResult apply_evict_tensor(
+      const std::vector<std::uint64_t>& old_shape,
+      std::uint64_t seq_dim,
+      std::uint64_t elem_size,
+      const std::uint8_t* old_payload,
+      std::uint64_t old_payload_len,
+      std::uint64_t drop_tokens,
+      std::uint64_t input_cache_tokens) const;
+  void commit_mount(std::vector<std::uint64_t> node_ids,
+                    std::uint64_t mount_tokens);
+  const std::vector<std::uint64_t>& mounted() const { return mounted_; }
+  std::uint64_t sink_tokens() const { return sink_tokens_; }
+  std::uint64_t arena_width() const { return arena_width_; }
+  std::uint64_t mount_tokens() const { return mount_tokens_; }
+
+ private:
+  std::uint64_t sink_tokens_ = 0;
+  std::uint64_t arena_width_ = 0;
+  std::uint64_t mount_tokens_ = 0;
+  std::vector<std::uint64_t> mounted_;
+};
+
+}  // namespace grm
