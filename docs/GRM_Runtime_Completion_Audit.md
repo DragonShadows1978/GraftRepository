@@ -20,9 +20,18 @@ validation where feasible.
 - WAL:
   lightweight WAL records are written for node upsert, metadata updates,
   review candidates, correction/forget commands, and checkpoints.
-- WAL recovery surface:
-  fresh repositories without a manifest recover text/metadata intent and
-  pending-payload obligations from WAL records.
+- WAL recovery (functional rehydration):
+  fresh repositories without a manifest now REHYDRATE the live repository from
+  WAL, not just a report. `_rehydrate_from_wal()` rebuilds `arena.grafts` with
+  text, kind, metadata, and active state; forgotten nodes recover as retired
+  (inactive). Recovered nodes are text-authoritative but not yet routable: they
+  carry a dialect-width zero centroid (cosine ~0, never wins routing by
+  accident), no `host_payload`, no device tensor, and `payload_pending=True`
+  until re-harvested. `flush_now()` skips the missing-payload write for such
+  nodes (manifest keeps them as `payload_pending`, not falsely durable), and
+  `load()` preserves the pending flag through a manifest round-trip.
+  Validated by `test_wal_recovers_text_metadata_without_manifest` and
+  `test_wal_recovery_keeps_forgotten_nodes_inert`.
 - Metadata/fact semantics:
   nodes carry durability, mutability, scope, write intent, confidence,
   active state, supersession fields, source grafts, and provenance.

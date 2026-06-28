@@ -149,7 +149,9 @@ class GraftRepository:
             self.recovered_wal = self._read_wal()
             self.recovered_nodes = self._recover_wal_summary(
                 self.recovered_wal)
+            self._rehydrate_from_wal(self.recovered_nodes)
             self._sync_lifecycle()
+            self.dirty_nodes.clear()
 
     def close(self):
         if self._own_native_store and self.native_store is not None:
@@ -708,6 +710,67 @@ class GraftRepository:
         self.recovered_reviews = reviews
         return [nodes[k] for k in sorted(nodes)]
 
+    def _wal_cent_width(self):
+        """Routing-centroid width for placeholder cents on recovered nodes.
+
+        Probe the arena's own empty index shape so the placeholder matches the
+        dialect (pack_index falls back to 256 only when there are no grafts)."""
+        try:
+            return int(self.arena.pack_index()["cents"].shape[1])
+        except Exception:
+            return 256
+
+    def _rehydrate_from_wal(self, recovered):
+        """Rebuild a usable (text/metadata) repository from WAL after a crash
+        that left no manifest.
+
+        The WAL is lightweight: it carries text, kind, metadata, active state,
+        and a payload-pending flag, but never the K/V payload or the routing
+        centroid (those only reach NVMe through a manifest checkpoint). So a
+        recovered node is text-authoritative but NOT routable until it is
+        re-harvested: it gets a zero centroid (cosine ~0 against any query, so
+        it never wins routing by accident), no host_payload, no device tensor,
+        and payload_pending=True. The node IS visible to show_memory_about /
+        why_remember and can be re-harvested or re-flushed. Forgotten nodes
+        recover as retired (active=False) so superseded memory stays inert.
+
+        Returns the number of nodes rehydrated."""
+        if not recovered or self.arena.grafts:
+            return 0
+        width = self._wal_cent_width()
+        for n in recovered:
+            retired = not bool(n.get("active", True))
+            meta = dict(n.get("metadata") or {})
+            meta.setdefault("kind", n.get("kind", "turn"))
+            meta["active"] = not retired
+            g = {
+                "kind": n.get("kind", "turn"),
+                "text": n.get("text", ""),
+                "ntok": int(meta.get("ntok", 0) or 0),
+                "sources": list(meta.get("source_grafts", []) or []),
+                "retired": retired,
+                "no_fold": bool(meta.get("no_fold", False)),
+                "tags": list(meta.get("tags", []) or []),
+                "rare": set(),
+                "cent": np.zeros(width, np.float32),
+                "metadata": meta,
+                "provenance": [self._provenance(
+                    "wal_recovery", node_id=n.get("node_id"))],
+                "host_payload": None,
+                "host_present": False,
+                "device_present": False,
+                "dirty": False,
+                "durable": False,
+                "cold_only": False,
+                "payload_pending": bool(n.get("payload_pending", False)),
+                "recovered": True,
+                "h": None,
+            }
+            self._ensure_lifecycle(len(self.arena.grafts), g)
+            self.arena.grafts.append(g)
+        self.review_buffer = list(getattr(self, "recovered_reviews", []))
+        return len(self.arena.grafts)
+
     def _provenance(self, segment_type, node_id=None, **fields):
         sid = getattr(self, "_segment_id", 0)
         self._segment_id = sid + 1
@@ -841,6 +904,7 @@ class GraftRepository:
                 "dirty": bool(g.get("dirty", False)),
                 "durable": bool(g.get("durable", False)),
                 "cold_only": bool(g.get("cold_only", False)),
+                "payload_pending": bool(g.get("payload_pending", False)),
                 "provenance": g.get("provenance", [])}
 
     def flush_async(self):
@@ -887,12 +951,21 @@ class GraftRepository:
                 f = os.path.join(self.path, "nodes", f"{i:04d}.npz")
                 dirty = self.dirty_nodes.get(i, {})
                 needs_payload = (dirty.get("payload") or not g.get("durable"))
+                # A WAL-recovered node is text/metadata authoritative but has no
+                # K/V payload (the cache was never checkpointed). It stays in the
+                # manifest as payload_pending and is NOT marked durable; trying to
+                # snapshot a payload it never had would abort the whole flush.
+                no_payload = (g.get("host_payload") is None
+                              and g.get("h") is None and not g.get("durable"))
+                if needs_payload and g.get("payload_pending") and no_payload:
+                    needs_payload = False
                 if needs_payload:
                     if g.get("host_payload") is None:
                         self._ensure_host_payload(i, g)
                     self._native_sync_node(i)
                     np.savez_compressed(f, **g["host_payload"])
                     g["durable"] = True
+                    g["payload_pending"] = False
                     self._native_mark_durable(i)
                 if "rare" not in g:
                     g["rare"] = ArenaCache._rare_tokens(g["text"])
@@ -944,8 +1017,12 @@ class GraftRepository:
                  "dirty": False,
                  "durable": n.get("durable", True),
                  "saved": n.get("durable", True),
+                 "payload_pending": n.get("payload_pending", False),
+                 "recovered": n.get("payload_pending", False),
                  "h": None}
-            if not n["retired"]:
+            # A payload-pending node (WAL-recovered, never re-harvested) has no
+            # .npz on disk — keep it text-only rather than reading a missing file.
+            if not n["retired"] and not g["payload_pending"]:
                 g["host_payload"] = self._read_payload_file(i)
                 g["h"] = self.arena.unpack_node(g["host_payload"])
             self._ensure_lifecycle(i, g)

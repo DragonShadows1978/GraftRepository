@@ -231,11 +231,55 @@ def test_wal_recovers_text_metadata_without_manifest(tmp_path):
     reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
                                arena_cls=FakeArena, route_layer=3)
 
-    assert reopened.arena.grafts == []
+    # Reporting surface still populated.
     assert reopened.stats()["recovered_wal_records"] > 0
     assert reopened.recovered_nodes[0]["text"] == "DOC crash-only code 44-9000"
     assert reopened.recovered_nodes[0]["kind"] == "doc"
     assert reopened.recovered_nodes[0]["payload_pending"] is True
+
+    # WAL recovery now REHYDRATES the live repository, not just a report.
+    assert len(reopened.arena.grafts) == 1
+    g = reopened.arena.grafts[0]
+    assert g["text"] == "DOC crash-only code 44-9000"
+    assert g["kind"] == "doc"
+    assert g["recovered"] is True
+    assert g["payload_pending"] is True
+    # text-authoritative but not yet routable / durable: no payload, no device
+    # tensor, a zero placeholder centroid, and dialect-correct centroid width.
+    assert g["host_payload"] is None
+    assert g["h"] is None
+    assert g["durable"] is False
+    assert g["host_present"] is False
+    assert g["cent"].shape == (512,)
+    assert not g["cent"].any()
+    # the recovered node is inspectable through the memory-query surface.
+    assert reopened.show_memory_about("44-9000")
+    assert g["metadata"]["active"] is True  # active (not a forgotten node)
+
+
+def test_wal_recovery_keeps_forgotten_nodes_inert(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+    repo.add_document("DOC keep-me code 11-1111", tags=("keep",))
+    repo.add_document("DOC drop-me code 22-2222", tags=("drop",))
+    repo.forget("drop-me")
+    assert not os.path.exists(os.path.join(path, "manifest.json"))
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+
+    # both rehydrated, but the forgotten one is inert (retired / inactive)
+    assert len(reopened.arena.grafts) == 2
+    by_text = {g["text"]: g for g in reopened.arena.grafts}
+    kept = by_text["DOC keep-me code 11-1111"]
+    dropped = by_text["DOC drop-me code 22-2222"]
+    assert kept["metadata"]["active"] is True
+    assert dropped["retired"] is True
+    assert dropped["metadata"]["active"] is False
+    # forgotten memory does not surface as active answer authority
+    assert reopened.show_memory_about("drop-me") == []
+    assert reopened.show_memory_about("keep-me")
 
 
 def test_native_store_mirrors_repository_lifecycle(tmp_path):
