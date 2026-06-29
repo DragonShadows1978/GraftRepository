@@ -125,6 +125,29 @@ def test_native_metadata_active_updates_route_index(tmp_path):
         assert store.route([1.0, 0.0], topk=1) == [n0]
 
 
+def test_native_apply_revision_links_edges_and_retires_routes(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        old0 = store.add_node("old fact zero", b"", ntok=1)
+        old1 = store.add_node("old fact one", b"", ntok=1)
+        new = store.add_node("new fact", b"", ntok=1)
+        store.set_route(old0, [1.0, 0.0], ["fact"])
+        store.set_route(old1, [0.98, 0.1989975], ["fact"])
+        store.set_route(new, [0.95, 0.3122499], ["fact"])
+
+        assert store.route([1.0, 0.0], ["fact"], topk=3) == [
+            old0, old1, new]
+        store.apply_revision(new, [old0, old1])
+
+        assert store.route([1.0, 0.0], ["fact"], topk=3) == [new]
+        assert store.graph_edges(new).supersedes == (old0, old1)
+        assert store.graph_edges(old0).superseded_by == (new,)
+        assert store.graph_edges(old1).superseded_by == (new,)
+
+
 def test_native_route_filters_metadata_fields(tmp_path):
     lib = build_native(tmp_path)
     ckpt = tmp_path / "filter_ckpt"

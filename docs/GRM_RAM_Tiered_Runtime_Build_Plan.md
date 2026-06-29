@@ -37,6 +37,10 @@ kind/scope/durability/mutability fields for native route filtering through
 `grm_store_route_filtered()`. Source turns, source grafts, supersedes, and
 superseded-by edges are also mirrored into structured native state through
 `grm_store_set_graph_edges()` and preserved in `GRMSTORE4` checkpoints.
+`grm_store_apply_revision()` applies the final correction state in native code
+after Python policy decides which nodes are superseded: old nodes become
+inactive, replacement nodes record `supersedes`, and native route activity is
+updated with the revision.
 `ArenaCache.route()` now uses that native route index for native-backed MLA
 candidates, with the C++ lexical score calibrated to Python's fractional
 identifier bonus and multi-key route entries that support digest/era
@@ -78,8 +82,9 @@ flush, reload, routed swaps, and 2/2 greedy read-only recalls using independent
 probe caches. Retaining the previous probe cache between independent DeepSeek
 probes remains a 12GB-card stress mode, not the validated default. The missing
 production pieces are still a cohesive GRM runtime boundary that owns
-memory-command policy, revision policy, CUDA route scanning if needed, and the
-broader trips/paging/open-ended/longer GPU graft regression gates.
+memory-command parsing, conflict/review/extraction policy, CUDA route scanning
+if needed, and the broader trips/paging/open-ended/longer GPU graft regression
+gates.
 
 This plan extends Graft Repository Memory from a Python research harness into a
 RAM-first memory runtime:

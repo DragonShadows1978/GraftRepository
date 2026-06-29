@@ -318,6 +318,34 @@ GraphEdges HostGraftStore::graph_edges(std::uint64_t node_id) const {
   return edges;
 }
 
+void HostGraftStore::apply_revision(std::uint64_t replacement_node_id,
+                                    std::vector<std::uint64_t> supersedes) {
+  auto* replacement = get(replacement_node_id);
+  if (replacement == nullptr) {
+    throw std::out_of_range("unknown replacement GRM node id");
+  }
+  for (const auto old_id : supersedes) {
+    if (get(old_id) == nullptr) {
+      throw std::out_of_range("unknown superseded GRM node id");
+    }
+  }
+
+  replacement->metadata.active = true;
+  replacement->metadata.supersedes = supersedes;
+  mark_dirty(replacement_node_id, false, true);
+
+  for (const auto old_id : supersedes) {
+    auto* old = get(old_id);
+    old->metadata.active = false;
+    if (std::find(old->metadata.superseded_by.begin(),
+                  old->metadata.superseded_by.end(),
+                  replacement_node_id) == old->metadata.superseded_by.end()) {
+      old->metadata.superseded_by.push_back(replacement_node_id);
+    }
+    mark_dirty(old_id, false, true);
+  }
+}
+
 void HostGraftStore::mark_dirty(std::uint64_t node_id, bool payload,
                                 bool metadata) {
   auto* n = get(node_id);
@@ -1330,6 +1358,27 @@ int grm_store_read_graph_edges(grm_store_handle* handle,
         static_cast<uint64_t>(edges.supersedes.size());
     out_counts->superseded_by =
         static_cast<uint64_t>(edges.superseded_by.size());
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_apply_revision(grm_store_handle* handle,
+                             uint64_t replacement_node_id,
+                             const uint64_t* supersedes,
+                             uint64_t supersedes_count) {
+  try {
+    if (handle == nullptr || handle->store == nullptr) {
+      return grm_fail_msg(handle, "invalid apply_revision arguments");
+    }
+    auto superseded = read_u64_array(
+        supersedes, supersedes_count, "supersedes");
+    handle->store->apply_revision(replacement_node_id, superseded);
+    handle->router.set_active(replacement_node_id, true);
+    for (const auto old_id : superseded) {
+      handle->router.set_active(old_id, false);
+    }
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);

@@ -216,6 +216,12 @@ class NativeGraftStore:
                 u64p, ctypes.c_uint64, u64p, ctypes.c_uint64,
                 ctypes.POINTER(_GraphEdgesInfoC)]
             lib.grm_store_read_graph_edges.restype = ctypes.c_int
+        self._has_apply_revision = hasattr(lib, "grm_store_apply_revision")
+        if self._has_apply_revision:
+            lib.grm_store_apply_revision.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64,
+                ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64]
+            lib.grm_store_apply_revision.restype = ctypes.c_int
         lib.grm_store_metadata_json.argtypes = [
             ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
             ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
@@ -482,6 +488,13 @@ class NativeGraftStore:
             tup(sg, counts.source_grafts),
             tup(sp, counts.supersedes),
             tup(sb, counts.superseded_by))
+
+    def apply_revision(self, replacement_node_id, supersedes):
+        if not getattr(self, "_has_apply_revision", False):
+            return
+        arr, n = self._u64_array(supersedes)
+        self._check(self._lib.grm_store_apply_revision(
+            self._handle, int(replacement_node_id), arr, n))
 
     def metadata(self, node_id):
         needed = ctypes.c_uint64()

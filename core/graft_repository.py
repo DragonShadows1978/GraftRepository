@@ -310,6 +310,7 @@ class GraftRepository:
         for i in supersedes:
             self.arena.grafts[i]["metadata"]["superseded_by"] = [idx]
             self._mark_dirty(i, payload=False, metadata=True)
+        self._native_apply_revision(idx, supersedes)
         self._append_wal("MEMORY_CORRECT", query=query, replacement=replacement,
                          supersedes=supersedes, node_id=idx)
         self._mark_mutations(before)
@@ -514,6 +515,15 @@ class GraftRepository:
         if hasattr(self.native_store, "set_active"):
             active = bool(metadata.get("active", not bool(g.get("retired"))))
             self.native_store.set_active(node_id, active)
+
+    def _native_apply_revision(self, replacement_idx, supersedes):
+        if self.native_store is None:
+            return
+        if not hasattr(self.native_store, "apply_revision"):
+            return
+        replacement_id = self._native_sync_node(replacement_idx)
+        superseded_ids = [self._native_sync_node(i) for i in supersedes]
+        self.native_store.apply_revision(replacement_id, superseded_ids)
 
     def _native_sync_node(self, idx):
         if self.native_store is None:

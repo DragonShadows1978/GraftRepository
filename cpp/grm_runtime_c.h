@@ -136,6 +136,10 @@ int grm_store_read_graph_edges(grm_store_handle* handle,
                                uint64_t* out_superseded_by,
                                uint64_t superseded_by_cap,
                                grm_graph_edges_info_c* out_counts);
+int grm_store_apply_revision(grm_store_handle* handle,
+                             uint64_t replacement_node_id,
+                             const uint64_t* supersedes,
+                             uint64_t supersedes_count);
 int grm_store_metadata_json(grm_store_handle* handle,
                             uint64_t node_id,
                             char* out_json,
