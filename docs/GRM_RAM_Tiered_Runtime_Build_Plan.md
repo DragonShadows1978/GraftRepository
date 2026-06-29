@@ -93,13 +93,12 @@ flush, reload, routed swaps, and 2/2 greedy read-only recalls using independent
 probe caches. `tests/deepseek_grm_full_gate.py` passed the deeper DeepSeek
 build/resume gate: five document grafts, eight live turns, a 2 MB graft-device
 budget, budgeted manifest reload, native route backend, RAM page-ins, and 4/4
-open-ended greedy exact-fact recalls after fresh-process resume. Retaining the
-previous probe cache between independent DeepSeek probes remains a 12GB-card
-stress mode, not the validated default. The missing production pieces are still
-a cohesive GRM runtime boundary that owns final command execution,
-model-based extraction policy, CUDA route scanning if needed, retained-cache
-stress, longer high-context needle runs, and the broader model-specific graft
-equivalence matrix.
+open-ended greedy exact-fact recalls after fresh-process resume. The same full
+gate now also passes retained-probe-cache stress (`--keep-probe-cache`) on the
+12GB card. The missing production pieces are still a cohesive GRM runtime
+boundary that owns final command execution, model-based extraction policy, CUDA
+route scanning if needed, longer high-context needle runs, and the broader
+model-specific graft equivalence matrix.
 
 This plan extends Graft Repository Memory from a Python research harness into a
 RAM-first memory runtime:

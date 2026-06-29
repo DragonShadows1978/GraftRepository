@@ -216,7 +216,9 @@ validation where feasible.
   flushes/reloads the RAM/native repository, and in resume mode answers four
   open-ended greedy exact-fact probes through the native route backend while
   exercising RAM page-ins. The gate asserts durable clean state, native mirror
-  consistency, and budgeted reload behavior (`active_device < nodes`).
+  consistency, and budgeted reload behavior (`active_device < nodes`). It now
+  passes both the independent-probe default and retained-probe-cache stress
+  mode on the 12GB card.
 - C++ build:
   `cmake -S cpp -B /tmp/grm_runtime_build && cmake --build /tmp/grm_runtime_build`
 - TensorCUDA cache-surgery gates:
@@ -339,6 +341,20 @@ probe HIT backend=native mounts=[5] | 'H44-2088.'
 stats: nodes=17 active_device=1 device_mb=1 ram_payload_mb=17 dirty_nodes=0 durable_nodes=17 page_ins=4 native.nodes=17 native.dirty_nodes=0 native.durable_nodes=17 native.host_payload_tensors=34 native.route_entries=17
 reload stats: nodes=17 active_device=2 device_mb=1 ram_payload_mb=17 dirty_nodes=0 durable_nodes=17 native.nodes=17 native.dirty_nodes=0 native.durable_nodes=17 native.host_payload_tensors=34 native.route_entries=17
 DEEPSEEK FULL RESUME GATE: PASS
+
+PYTHONPATH=/mnt/ForgeRealm/GraftRepository:/mnt/ForgeRealm/Project-Tensor/tensor_cuda \
+python3 tests/deepseek_grm_full_gate.py \
+  --mode resume \
+  --repo /tmp/deepseek_grm_full_retained \
+  --native-lib /tmp/grm_runtime_build/libgrm_runtime.so \
+  --keep-probe-cache
+probe HIT backend=native mounts=[1] | 'The clearance code for ORION is O17-4821.'
+probe HIT backend=native mounts=[2] | 'The VEGA clearance code is V22-9140.'
+probe HIT backend=native mounts=[3] | 'The launch bay for LYRA is Bay-05.'
+probe HIT backend=native mounts=[5] | 'The exact clearance code for HELIX is H44-2088.'
+stats: nodes=17 active_device=1 device_mb=1 ram_payload_mb=18 dirty_nodes=0 durable_nodes=17 page_ins=4 native.nodes=17 native.dirty_nodes=0 native.durable_nodes=17 native.host_payload_tensors=34 native.route_entries=17
+reload stats: nodes=17 active_device=2 device_mb=2 ram_payload_mb=18 dirty_nodes=0 durable_nodes=17 native.nodes=17 native.dirty_nodes=0 native.durable_nodes=17 native.host_payload_tensors=34 native.route_entries=17
+DEEPSEEK FULL RESUME GATE: PASS
 ```
 
 ## Not Complete
@@ -369,9 +385,9 @@ DEEPSEEK FULL RESUME GATE: PASS
   needle suite and broader model-specific graft equivalence matrix still need
   separate scheduled runs.
 - Retaining the previous read-only probe cache between independent DeepSeek
-  probes (`--keep-probe-cache`) remains a 12GB-card stress mode and can still
-  OOM. The validated recall/resume gate resets the live cache between
-  independent probes while preserving the RAM/native graft repository.
+  probes (`--keep-probe-cache`) now passes for the full DeepSeek-V2-Lite INT4
+  gate on the 12GB card. Longer high-context runs may still hit separate memory
+  limits.
 
 ## Current State
 
@@ -385,8 +401,8 @@ cache-sliced raw/RoPE export primitives with paired and multi-layer paired
 export boundaries, TensorCUDA functional multi-layer arena cache transaction,
 and DeepSeek GRM clean build plus fresh-process resume paths are real and
 tested, including a full paging/open-ended recall gate on DeepSeek-V2-Lite
-INT4. The full production C++/CUDA runtime is not complete until routing policy
-boundaries, metadata/revision policy ownership, model-based extraction policy
-hardening, CUDA route scanning if needed, retained-cache stress, longer needle/
-high-context runs, and the broader model-specific graft equivalence matrix
-pass.
+INT4, including retained-probe-cache stress. The full production C++/CUDA
+runtime is not complete until routing policy boundaries, metadata/revision
+policy ownership, model-based extraction policy hardening, CUDA route scanning
+if needed, longer needle/high-context runs, and the broader model-specific graft
+equivalence matrix pass.
