@@ -888,26 +888,82 @@ class GraftRepository:
     def _recover_wal_summary(self, records):
         nodes = {}
         reviews = []
+
+        def meta_for(node):
+            meta = dict(node.get("metadata") or {})
+            node["metadata"] = meta
+            return meta
+
+        def retire_node(node_id, superseded_by=None):
+            node = nodes.get(int(node_id))
+            if node is None:
+                return
+            meta = meta_for(node)
+            meta["active"] = False
+            if superseded_by is not None:
+                meta["superseded_by"] = [int(superseded_by)]
+            node["active"] = False
+            node["retired"] = True
+
+        def link_revision(replacement_id, supersedes):
+            replacement_id = int(replacement_id)
+            supersedes = [int(i) for i in (supersedes or [])]
+            repl = nodes.get(replacement_id)
+            if repl is not None:
+                meta = meta_for(repl)
+                prior = [int(i) for i in meta.get("supersedes", [])]
+                meta["supersedes"] = list(dict.fromkeys(prior + supersedes))
+                meta["active"] = True
+                repl["active"] = True
+                repl["retired"] = False
+            for old in supersedes:
+                retire_node(old, superseded_by=replacement_id)
+
         for rec in records:
             typ = rec.get("type")
             if typ == "NODE_UPSERT":
                 node_id = int(rec["node_id"])
+                metadata = dict(rec.get("metadata", {}) or {})
+                active = bool(metadata.get("active", True))
                 nodes[node_id] = {
                     "node_id": node_id,
                     "text": rec.get("text", ""),
                     "kind": rec.get("kind", "turn"),
-                    "metadata": rec.get("metadata", {}),
+                    "metadata": metadata,
                     "payload_pending": bool(rec.get("has_payload", False)),
-                    "active": True,
+                    "active": active,
+                    "retired": not active,
+                    "no_fold": bool(metadata.get("no_fold", False)),
                 }
             elif typ == "NODE_META" and int(rec.get("node_id", -1)) in nodes:
-                nodes[int(rec["node_id"])]["metadata"] = rec.get(
-                    "metadata", {})
+                node = nodes[int(rec["node_id"])]
+                metadata = dict(rec.get("metadata", {}) or {})
+                node["metadata"] = metadata
+                state = rec.get("state") or ()
+                if len(state) >= 1:
+                    node["kind"] = state[0]
+                    metadata.setdefault("kind", state[0])
+                if len(state) >= 2:
+                    node["retired"] = bool(state[1])
+                    node["active"] = not bool(state[1])
+                    metadata["active"] = not bool(state[1])
+                if len(state) >= 3:
+                    node["no_fold"] = bool(state[2])
+                    metadata["no_fold"] = bool(state[2])
+                if len(state) >= 4:
+                    node["sources"] = list(state[3])
+                    metadata.setdefault("source_grafts", list(state[3]))
+                if len(state) >= 5:
+                    node["tags"] = list(state[4])
+                    metadata.setdefault("tags", list(state[4]))
             elif typ == "NODE_FORGET":
                 q = rec.get("query", "").lower()
                 for n in nodes.values():
                     if q and q in n.get("text", "").lower():
-                        n["active"] = False
+                        retire_node(n["node_id"])
+            elif typ in ("MEMORY_CORRECT", "MEMORY_EXTRACT_SUPERSEDE"):
+                if "node_id" in rec:
+                    link_revision(rec["node_id"], rec.get("supersedes", ()))
             elif typ == "REVIEW_CANDIDATE":
                 reviews.append({k: v for k, v in rec.items()
                                 if k not in ("lsn", "type", "time")})
@@ -943,18 +999,23 @@ class GraftRepository:
             return 0
         width = self._wal_cent_width()
         for n in recovered:
-            retired = not bool(n.get("active", True))
             meta = dict(n.get("metadata") or {})
+            retired = bool(n.get("retired", not bool(n.get("active", True))))
             meta.setdefault("kind", n.get("kind", "turn"))
             meta["active"] = not retired
+            sources = list(n.get("sources", meta.get("source_grafts", [])) or [])
+            tags = list(n.get("tags", meta.get("tags", [])) or [])
+            no_fold = bool(n.get("no_fold", meta.get("no_fold", False)))
+            if no_fold:
+                meta["no_fold"] = True
             g = {
                 "kind": n.get("kind", "turn"),
                 "text": n.get("text", ""),
                 "ntok": int(meta.get("ntok", 0) or 0),
-                "sources": list(meta.get("source_grafts", []) or []),
+                "sources": sources,
                 "retired": retired,
-                "no_fold": bool(meta.get("no_fold", False)),
-                "tags": list(meta.get("tags", []) or []),
+                "no_fold": no_fold,
+                "tags": tags,
                 "rare": set(),
                 "cent": np.zeros(width, np.float32),
                 "metadata": meta,

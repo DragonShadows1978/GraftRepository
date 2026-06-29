@@ -418,6 +418,75 @@ def test_wal_recovery_keeps_forgotten_nodes_inert(tmp_path):
     assert reopened.show_memory_about("keep-me")
 
 
+def test_wal_recovery_replays_extraction_supersession(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+
+    old = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "GRM hot tier is RAM-first.",
+        "subject": "GRM hot tier",
+        "predicate": "is",
+        "value": "RAM-first",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 0.97,
+    })
+    assert old["action"] == "write_direct"
+
+    new = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "GRM hot tier is RAM-authoritative.",
+        "subject": "GRM hot tier",
+        "predicate": "is",
+        "value": "RAM-authoritative",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "user_asserted",
+        "confidence": 1.0,
+    })
+    assert new["action"] == "supersede_existing"
+    assert not os.path.exists(os.path.join(path, "manifest.json"))
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+
+    old_g = reopened.arena.grafts[old["node_id"]]
+    new_g = reopened.arena.grafts[new["node_id"]]
+    assert old_g["retired"] is True
+    assert old_g["metadata"]["active"] is False
+    assert old_g["metadata"]["superseded_by"] == [new["node_id"]]
+    assert new_g["retired"] is False
+    assert new_g["metadata"]["active"] is True
+    assert new_g["metadata"]["supersedes"] == [old["node_id"]]
+    assert reopened.show_memory_about("RAM-first") == []
+    assert len(reopened.show_memory_about("RAM-authoritative")) == 1
+
+
+def test_wal_recovery_preserves_fold_abort_exemption(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+
+    idx = repo.add_document("DOC fold-abort code 77-7717")
+    before = repo._snapshot_state()
+    repo.arena.grafts[idx]["no_fold"] = True
+    repo._mark_mutations(before)
+    assert not os.path.exists(os.path.join(path, "manifest.json"))
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+
+    assert reopened.arena.grafts[idx]["no_fold"] is True
+    assert reopened.arena.grafts[idx]["metadata"]["no_fold"] is True
+
+
 def test_native_store_mirrors_repository_lifecycle(tmp_path):
     lib = build_native(tmp_path)
     repo_path = tmp_path / "repo"

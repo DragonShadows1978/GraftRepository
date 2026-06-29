@@ -2,16 +2,16 @@
 
 **Status:** Python RAM-first runtime implemented through async durability,
 WAL, explicit memory commands, review buffer, provenance metadata, budgeted
-manifest reload, and a compilable C++ host runtime with an opt-in Python
-mirror plus native explicit memory-command parsing. TensorCUDA now owns the
-focused CUDA cache-surgery, RoPE, cache-span export, and paired raw+positional
-export primitives, including a multi-layer paired export boundary for
-compatible dialects. It also owns a multi-layer raw+positional
-swap/re-seat/evict boundary and a functional cache transaction for compatible
-dialects; the remaining CUDA/runtime work is packaging final command execution,
-model-based extraction policy, revision policy ownership, and runtime
-orchestration into one cohesive GRM runtime plus broader high-context/model-
-matrix GPU regression coverage.
+manifest reload, WAL replay for semantic supersession/fold-abort state, and a
+compilable C++ host runtime with an opt-in Python mirror plus native explicit
+memory-command parsing. TensorCUDA now owns the focused CUDA cache-surgery,
+RoPE, cache-span export, and paired raw+positional export primitives, including
+a multi-layer paired export boundary for compatible dialects. It also owns a
+multi-layer raw+positional swap/re-seat/evict boundary and a functional cache
+transaction for compatible dialects; the remaining CUDA/runtime work is
+packaging final command execution, model-based extraction policy, revision
+policy ownership, and runtime orchestration into one cohesive GRM runtime plus
+broader high-context/model-matrix GPU regression coverage.
 
 **Context:** the GPU may be occupied by GRAPA training, so this document scopes
 the runtime architecture, memory policy, and control surface before code moves.
@@ -51,7 +51,12 @@ conflict/review/extraction decisions in Python until those policies harden.
 `GraftRepository.apply_extraction_candidate(s)` now provides the no-GPU
 extractor interface: classifier-style candidates can be written directly,
 queued for review, ignored, or used to supersede active semantic memory under a
-conservative confidence/conflict policy.
+conservative confidence/conflict policy. WAL-only recovery now replays those
+extractor supersession records, along with explicit correction records, so a
+crash before the next manifest does not resurrect superseded facts as active
+memory. WAL recovery also preserves `no_fold` fold-abort exemptions from
+metadata state records, which keeps rejected librarian windows from looping
+after recovery.
 `ArenaCache.route()` now uses that native route index for native-backed MLA
 candidates, with the C++ lexical score calibrated to Python's fractional
 identifier bonus and multi-key route entries that support digest/era
@@ -105,8 +110,12 @@ matrix.
 boat on DeepSeek-V2-Lite INT4: 50 stored turn grafts, live context cleared
 between turns (`live_tokens=0` at checkpoints), fresh-process reload, native
 routing, RAM page-in, and a turn-1 needle recalled at turn 50. Folding is
-disabled in that gate to isolate raw repository recall; enabling folding hit a
-DeepSeek consolidation OOM around turn 10 and remains separate work.
+disabled by default in that gate to isolate raw repository recall. The same
+gate now completes with `--enable-folding` without the prior DeepSeek
+consolidation OOM, including fresh-process recall; however the current
+DeepSeek digest candidates fail the fidelity bar (`folds_aborted=11`,
+`no_fold=44`) and are correctly rejected, so raw turns remain authoritative
+until DeepSeek-specific digest fidelity is improved.
 
 This plan extends Graft Repository Memory from a Python research harness into a
 RAM-first memory runtime:
