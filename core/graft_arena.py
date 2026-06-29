@@ -1085,6 +1085,11 @@ class ArenaCache:
                                     self.cur_mounts, self.cur_mount_n,
                                     list(self.grafts)))
         # nothing grounded — keep the FIRST attempt's answer and state
+        if best is None:
+            txt, info = self._attempt(user_text, [], ngen, deposit, stops)
+            info["trip"] = 0
+            info["no_mount_fit"] = True
+            return txt, info
         txt, info, st = best
         (self.caches, self.pos, self.live_segs,
          self.cur_mounts, self.cur_mount_n) = st[0], st[1], st[2], st[3], st[4]

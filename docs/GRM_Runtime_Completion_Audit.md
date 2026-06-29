@@ -219,6 +219,14 @@ validation where feasible.
   consistency, and budgeted reload behavior (`active_device < nodes`). It now
   passes both the independent-probe default and retained-probe-cache stress
   mode on the 12GB card.
+- DeepSeek turn-50 ephemeral-boat CUDA gate:
+  `tests/deepseek_grm_turn50_gate.py` uses the original GRM ephemeral boat
+  (`ephemeral=True`, recency as mounts, live context cleared between turns),
+  stores 50 raw turn grafts with an early needle, flushes/reloads, and recalls
+  the turn-1 code from a fresh context through native routing and RAM page-in.
+  Folding is disabled by default in this gate to isolate raw off-context turn
+  recall. Enabling DeepSeek folding/consolidation hit an OOM around turn 10 and
+  remains separate work.
 - C++ build:
   `cmake -S cpp -B /tmp/grm_runtime_build && cmake --build /tmp/grm_runtime_build`
 - TensorCUDA cache-surgery gates:
@@ -355,6 +363,30 @@ probe HIT backend=native mounts=[5] | 'The exact clearance code for HELIX is H44
 stats: nodes=17 active_device=1 device_mb=1 ram_payload_mb=18 dirty_nodes=0 durable_nodes=17 page_ins=4 native.nodes=17 native.dirty_nodes=0 native.durable_nodes=17 native.host_payload_tensors=34 native.route_entries=17
 reload stats: nodes=17 active_device=2 device_mb=2 ram_payload_mb=18 dirty_nodes=0 durable_nodes=17 native.nodes=17 native.dirty_nodes=0 native.durable_nodes=17 native.host_payload_tensors=34 native.route_entries=17
 DEEPSEEK FULL RESUME GATE: PASS
+
+PYTHONPATH=/mnt/ForgeRealm/GraftRepository:/mnt/ForgeRealm/Project-Tensor/tensor_cuda \
+python3 tests/deepseek_grm_turn50_gate.py \
+  --mode build \
+  --repo /tmp/deepseek_grm_turn50_ephemeral_final \
+  --native-lib /tmp/grm_runtime_build/libgrm_runtime.so
+turn 1: nodes=1 active_device=0 live_tokens=0
+turn 10: nodes=10 active_device=1 live_tokens=0
+turn 20: nodes=20 active_device=1 live_tokens=0
+turn 30: nodes=30 active_device=1 live_tokens=0
+turn 40: nodes=40 active_device=1 live_tokens=0
+turn 50: nodes=50 active_device=1 live_tokens=0
+stats: nodes=50 active_device=1 ram_payload_mb=103 dirty_nodes=0 durable_nodes=50 native.nodes=50 native.dirty_nodes=0 native.durable_nodes=50 native.host_payload_tensors=100 native.route_entries=50
+DEEPSEEK TURN50 BUILD: PASS
+
+PYTHONPATH=/mnt/ForgeRealm/GraftRepository:/mnt/ForgeRealm/Project-Tensor/tensor_cuda \
+python3 tests/deepseek_grm_turn50_gate.py \
+  --mode resume \
+  --repo /tmp/deepseek_grm_turn50_ephemeral_final \
+  --native-lib /tmp/grm_runtime_build/libgrm_runtime.so
+turn50 probe HIT backend=native mounts=[1] resident=79 evicted=39 | 'ASTRA-NODE clearance code is T50-7391.'
+stats: nodes=51 active_device=0 ram_payload_mb=105 dirty_nodes=0 durable_nodes=51 page_ins=1 native.nodes=51 native.dirty_nodes=0 native.durable_nodes=51 native.host_payload_tensors=102 native.route_entries=51
+reload stats: nodes=51 active_device=1 ram_payload_mb=105 dirty_nodes=0 durable_nodes=51 native.nodes=51 native.dirty_nodes=0 native.durable_nodes=51 native.host_payload_tensors=102 native.route_entries=51
+DEEPSEEK TURN50 RESUME GATE: PASS
 ```
 
 ## Not Complete
@@ -388,6 +420,9 @@ DEEPSEEK FULL RESUME GATE: PASS
   probes (`--keep-probe-cache`) now passes for the full DeepSeek-V2-Lite INT4
   gate on the 12GB card. Longer high-context runs may still hit separate memory
   limits.
+- DeepSeek raw turn-50 ephemeral-boat recall now passes with folding disabled.
+  DeepSeek librarian folding/consolidation is not yet validated; the first
+  folded build attempt OOMed inside consolidation around turn 10.
 
 ## Current State
 
@@ -401,8 +436,9 @@ cache-sliced raw/RoPE export primitives with paired and multi-layer paired
 export boundaries, TensorCUDA functional multi-layer arena cache transaction,
 and DeepSeek GRM clean build plus fresh-process resume paths are real and
 tested, including a full paging/open-ended recall gate on DeepSeek-V2-Lite
-INT4, including retained-probe-cache stress. The full production C++/CUDA
-runtime is not complete until routing policy boundaries, metadata/revision
-policy ownership, model-based extraction policy hardening, CUDA route scanning
-if needed, longer needle/high-context runs, and the broader model-specific graft
+INT4, including retained-probe-cache stress and raw turn-50 ephemeral-boat
+recall. The full production C++/CUDA runtime is not complete until routing
+policy boundaries, metadata/revision policy ownership, model-based extraction
+policy hardening, DeepSeek-safe librarian consolidation, CUDA route scanning if
+needed, longer needle/high-context runs, and the broader model-specific graft
 equivalence matrix pass.

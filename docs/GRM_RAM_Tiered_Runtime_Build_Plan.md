@@ -97,8 +97,16 @@ open-ended greedy exact-fact recalls after fresh-process resume. The same full
 gate now also passes retained-probe-cache stress (`--keep-probe-cache`) on the
 12GB card. The missing production pieces are still a cohesive GRM runtime
 boundary that owns final command execution, model-based extraction policy, CUDA
-route scanning if needed, longer high-context needle runs, and the broader
-model-specific graft equivalence matrix.
+route scanning if needed, DeepSeek-safe librarian consolidation, longer
+high-context needle runs, and the broader model-specific graft equivalence
+matrix.
+
+`tests/deepseek_grm_turn50_gate.py` now validates the original GRM ephemeral
+boat on DeepSeek-V2-Lite INT4: 50 stored turn grafts, live context cleared
+between turns (`live_tokens=0` at checkpoints), fresh-process reload, native
+routing, RAM page-in, and a turn-1 needle recalled at turn 50. Folding is
+disabled in that gate to isolate raw repository recall; enabling folding hit a
+DeepSeek consolidation OOM around turn 10 and remains separate work.
 
 This plan extends Graft Repository Memory from a Python research harness into a
 RAM-first memory runtime:
