@@ -496,11 +496,24 @@ class DeepSeekMLAArenaCache(ArenaCache):
 
 
 class DeepSeekDenseMLPTC:
+    # Same law as Mistral's SwiGLU_TC: the FFN is position-wise, so sequence
+    # chunks are equivalent while bounding gate/up activation transients during
+    # consolidation prefills.
+    FFN_CHUNK = 2048
+
     def __init__(self):
         self.gate_proj = self.up_proj = self.down_proj = None
 
     def __call__(self, x):
-        return self.down_proj(self.gate_proj(x).silu() * self.up_proj(x))
+        L = x.shape[1] if len(x.shape) == 3 else 1
+        if L <= self.FFN_CHUNK:
+            return self.down_proj(self.gate_proj(x).silu() * self.up_proj(x))
+        outs = []
+        for i in range(0, L, self.FFN_CHUNK):
+            end = min(i + self.FFN_CHUNK, L)
+            xc = x.slice(1, i, end - i)
+            outs.append(self.down_proj(self.gate_proj(xc).silu() * self.up_proj(xc)))
+        return tc.cat(outs, dim=1)
 
 
 class DeepSeekMoETC:

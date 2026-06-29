@@ -541,6 +541,7 @@ class ArenaCache:
         # standalone generation: arm device mounts directly, no live_shift
         for L in self.m.layers:
             L.self_attn.live_shift = None
+        self._clear_transients()
         self._ensure_h(idxs)        # sources may be paged out (cold storage)
         for li, layer in enumerate(self.m.layers):
             att = layer.self_attn
@@ -556,37 +557,44 @@ class ArenaCache:
         try:
             text, best, best_cov = None, None, -1.0
             for prompt in prompts:
+                ids = out = lg = caches = None
                 primer = prompt.rsplit("Assistant:", 1)[1]
-                ids = self.encode(prompt)
-                with tc.no_grad():
-                    lg, caches = self.m(np.array([ids], dtype=np.int64),
-                                        last_token_only=True)
-                pos = len(ids)
-                out = [int(lg.numpy()[0, -1].argmax())]
-                for _ in range(ngen - 1):
+                try:
+                    ids = self.encode(prompt)
                     with tc.no_grad():
-                        lg, caches = self.m(np.array([[out[-1]]], dtype=np.int64),
-                                            kv_caches=caches, position_offset=pos,
+                        lg, caches = self.m(np.array([ids], dtype=np.int64),
                                             last_token_only=True)
-                    pos += 1
-                    out.append(int(lg.numpy()[0, -1].argmax()))
-                t = (primer + " " + self.decode(out)).strip()
-                for stop in ("\nUser:", "User:"):
-                    if stop in t:
-                        t = t.split(stop)[0]
-                t = t.strip()
-                if not self._digest_qc(t, None, forbid_lists=True):
-                    continue
-                cov = self._coverage(t, need)
-                if cov > best_cov:
-                    best, best_cov = t, cov
-                if cov >= self.MIN_FOLD_KEEP:
-                    text = t
-                    break
+                    pos = len(ids)
+                    out = [int(lg.numpy()[0, -1].argmax())]
+                    for _ in range(ngen - 1):
+                        with tc.no_grad():
+                            lg, caches = self.m(
+                                np.array([[out[-1]]], dtype=np.int64),
+                                kv_caches=caches, position_offset=pos,
+                                last_token_only=True)
+                        pos += 1
+                        out.append(int(lg.numpy()[0, -1].argmax()))
+                    t = (primer + " " + self.decode(out)).strip()
+                    for stop in ("\nUser:", "User:"):
+                        if stop in t:
+                            t = t.split(stop)[0]
+                    t = t.strip()
+                    if not self._digest_qc(t, None, forbid_lists=True):
+                        continue
+                    cov = self._coverage(t, need)
+                    if cov > best_cov:
+                        best, best_cov = t, cov
+                    if cov >= self.MIN_FOLD_KEEP:
+                        text = t
+                        break
+                finally:
+                    del ids, out, lg, caches
+                    self._clear_transients()
             if text is None:
                 text = best
         finally:
             kv_graft.clear_injection(self.m)
+            self._clear_transients()
         # FIDELITY GATE: abort the fold if no candidate kept the facts —
         # the caller keeps the sources unfolded (recall > compression).
         # This applies to ERA folds too — tested and REFUTED 2026-06-11:
