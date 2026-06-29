@@ -48,13 +48,17 @@ validation where feasible.
   `remember`, `forget`, `correct/update`, and `flush memory now` are supported.
 - Review buffer:
   uncertain candidates can be recorded and later approved into memory.
-- Conservative extractor candidate interface:
+- Conservative extractor candidate interface and runtime hook:
   `GraftRepository.apply_extraction_candidate(s)` accepts classifier-style
   candidate dictionaries, writes high-confidence non-conflicting candidates,
   sends low-confidence or inferred conflicting claims to the review buffer, and
   lets authoritative user/system assertions supersede active semantic memory
-  with revision metadata. This implements the no-GPU extractor boundary; it is
-  not yet an automatic model-based extractor.
+  with revision metadata. `GraftRepository(..., extractor=...)` now runs an
+  optional extractor on newly completed chat/scripted turns, passes source turn
+  graft ids into that same policy path, and records extractor errors as
+  non-blocking WAL events unless configured to raise. This implements the
+  runtime orchestration boundary; model-specific extraction quality still needs
+  hardening.
 - C++ host runtime scaffold:
   `cpp/` contains `DialectDescriptor`, `HostGraftStore`, `RouterIndex`,
   `DirtyQueue`, `DurabilityWriter`, swap/evict-planning `DeviceArena`, and
@@ -283,7 +287,7 @@ pytest -p no:cacheprovider -q \
   tests/test_grm_runtime_lifecycle.py \
   tests/test_grm_native_runtime.py \
   tests/test_deepseek_grm_hooks_static.py
-50 passed, 2 warnings
+52 passed, 2 warnings
 
 cmake --build /tmp/grm_runtime_build
 Built target grm_runtime
@@ -467,8 +471,8 @@ DEEPSEEK TURN50 RESUME GATE: PASS
   supersession graph edges are now structured native state. Native can apply
   the final revision state once Python decides the correction. The explicit
   memory-command grammar now has a native parse-plan boundary, while conflict
-  policy, review execution, conservative extractor-candidate application, and
-  final command execution live in the Python policy layer.
+  policy, review execution, runtime extractor orchestration, and final command
+  execution live in the Python policy layer.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. The longer high-context
@@ -502,6 +506,6 @@ recall. Folding-enabled DeepSeek turn-50 now validates two-level compression:
 era nodes, fresh-process ASTRA recall still passes, and a retired turn-5 fact
 is recalled through folded memory. The full production C++/CUDA runtime is not
 complete until routing policy boundaries, final command/extraction orchestration
-ownership, model-based extraction policy hardening, longer needle/high-context
-runs, CUDA route scanning if needed, and the broader model-specific graft
-equivalence matrix pass.
+ownership, model-specific extraction policy hardening, longer
+needle/high-context runs, CUDA route scanning if needed, and the broader
+model-specific graft equivalence matrix pass.

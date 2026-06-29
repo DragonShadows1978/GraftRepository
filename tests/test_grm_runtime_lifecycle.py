@@ -347,6 +347,81 @@ def test_extraction_candidate_interface_is_conservative(tmp_path):
         out["node_id"]]
 
 
+def test_runtime_extractor_runs_on_completed_turns(tmp_path):
+    class Extractor:
+        def __init__(self):
+            self.calls = []
+
+        def extract(self, text, **ctx):
+            self.calls.append((text, ctx))
+            return [{
+                "action": "write_direct",
+                "candidate_type": "fact",
+                "text": "Runtime extractor captured code EAST-77.",
+                "subject": "runtime extractor",
+                "predicate": "captured",
+                "value": "EAST-77",
+                "scope": "project",
+                "durability": "project",
+                "mutability": "stable",
+                "write_intent": "observed",
+                "confidence": 0.99,
+            }]
+
+    extractor = Extractor()
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, extractor=extractor)
+
+    repo.add_turn("Please remember code EAST-77", "Recorded EAST-77.")
+
+    assert len(extractor.calls) == 1
+    assert extractor.calls[0][1]["source_grafts"] == [0]
+    assert extractor.calls[0][1]["context"]["event"] == "add_turn"
+    assert repo.last_extraction_results[0]["action"] == "write_direct"
+    rows = repo.show_memory_about("Runtime extractor captured")
+    assert len(rows) == 1
+    meta = rows[0]["metadata"]
+    assert meta["source_grafts"] == [0]
+    assert meta["source_turns"] == [0]
+    assert meta["value"] == "EAST-77"
+
+
+def test_runtime_extractor_review_and_error_policy(tmp_path):
+    class LowConfidenceExtractor:
+        def extract(self, text, **_ctx):
+            return {
+                "action": "write_direct",
+                "candidate_type": "fact",
+                "text": "Maybe extracted weak fact.",
+                "subject": "weak",
+                "predicate": "is",
+                "value": "maybe",
+                "confidence": 0.3,
+            }
+
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "review"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, extractor=LowConfidenceExtractor())
+    repo.add_turn("weak fact", "maybe")
+    assert repo.last_extraction_results[0]["action"] == "review_candidate"
+    assert repo.review_buffer[-1]["metadata"]["source_grafts"] == [0]
+
+    class FailingExtractor:
+        def extract(self, text, **_ctx):
+            raise RuntimeError("extractor offline")
+
+    err_repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "error"),
+                               autosave=False, arena_cls=FakeArena,
+                               route_layer=3, extractor=FailingExtractor())
+    err_repo.add_turn("trigger extractor", "recorded")
+    assert err_repo.last_extraction_error == "extractor offline"
+    assert err_repo.last_extraction_results == [{
+        "action": "extract_error",
+        "error": "extractor offline",
+    }]
+
+
 def test_dirty_node_can_leave_vram_before_disk_flush(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,

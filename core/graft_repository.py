@@ -104,7 +104,9 @@ class GraftRepository:
                  vram_budget_mb=None, librarian_mode="inline",
                  arena_cls=ArenaCache, durability_mode="session_safe",
                  wal_enabled=None, native_store=None, native_lib_path=None,
-                 native_enabled=False, **arena_kw):
+                 native_enabled=False, extractor=None,
+                 extraction_write_threshold=0.95,
+                 extraction_error_policy="record", **arena_kw):
         self.path = path
         self.autosave = autosave
         self.durability_mode = durability_mode
@@ -117,6 +119,11 @@ class GraftRepository:
         self._wal_lsn = 0
         self.review_buffer = []
         self.fold_history = []
+        self.extractor = extractor
+        self.extraction_write_threshold = float(extraction_write_threshold)
+        self.extraction_error_policy = extraction_error_policy
+        self.last_extraction_results = []
+        self.last_extraction_error = None
         # device-byte budget for node tensors; least-recently-MOUNTED saved
         # nodes spill to cold storage above it (node_loader reloads on
         # demand — the descent machinery). None = unbounded.
@@ -170,6 +177,11 @@ class GraftRepository:
     def chat(self, user_text, ngen=64, max_trips=2):
         before = self._snapshot_state()
         ans, info = self.arena.step(user_text, ngen=ngen, max_trips=max_trips)
+        extracted = self._extract_from_new_turns(
+            before, context={"event": "chat", "user_text": user_text,
+                             "assistant_text": ans})
+        if extracted:
+            info["extraction"] = extracted
         self._librarian()
         self._mark_mutations(before)
         if self.autosave:
@@ -182,6 +194,9 @@ class GraftRepository:
         before = self._snapshot_state()
         self.arena.feed(f"User: {user}\nAssistant: {assistant}\n")
         self._set_new_node_provenance(before, "exchange_span")
+        self._extract_from_new_turns(
+            before, context={"event": "add_turn", "user_text": user,
+                             "assistant_text": assistant})
         self._librarian()
         self._mark_mutations(before)
         self._page()
@@ -505,6 +520,51 @@ class GraftRepository:
             source_grafts=source_grafts,
             write_direct_threshold=write_direct_threshold)
                 for c in candidates]
+
+    def _new_turn_grafts(self, before):
+        return [i for i in range(len(before), len(self.arena.grafts))
+                if self.arena.grafts[i].get("kind", "turn") in
+                ("turn", "recall")]
+
+    def _extractor_call(self, text, source_grafts, context):
+        fn = getattr(self.extractor, "extract", self.extractor)
+        return fn(text, repository=self, source_grafts=list(source_grafts),
+                  source_turns=list(source_grafts), context=dict(context or {}))
+
+    def _extract_from_new_turns(self, before, context=None):
+        self.last_extraction_results = []
+        self.last_extraction_error = None
+        if self.extractor is None:
+            return []
+        source_grafts = self._new_turn_grafts(before)
+        if not source_grafts:
+            return []
+        source_text = "\n".join(self.arena.grafts[i]["text"]
+                                for i in source_grafts)
+        try:
+            candidates = self._extractor_call(source_text, source_grafts,
+                                              context or {})
+        except Exception as exc:
+            self.last_extraction_error = str(exc)
+            if self.extraction_error_policy == "raise":
+                raise
+            result = {"action": "extract_error", "error": str(exc)}
+            self.last_extraction_results = [result]
+            self._append_wal("EXTRACTION_ERROR", error=str(exc),
+                             source_grafts=list(source_grafts),
+                             context=dict(context or {}))
+            return self.last_extraction_results
+        if candidates is None:
+            candidates = []
+        elif isinstance(candidates, dict):
+            candidates = [candidates]
+        else:
+            candidates = list(candidates)
+        self.last_extraction_results = self.apply_extraction_candidates(
+            candidates, source_text=source_text,
+            source_turns=source_grafts, source_grafts=source_grafts,
+            write_direct_threshold=self.extraction_write_threshold)
+        return self.last_extraction_results
 
     @staticmethod
     def _normalize_review_item(item, fallback_id):

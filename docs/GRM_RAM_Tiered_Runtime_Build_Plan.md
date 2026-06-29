@@ -11,10 +11,11 @@ multi-layer raw+positional swap/re-seat/evict boundary and a functional cache
 transaction for compatible dialects. Explicit memory-command execution,
 semantic revision application, and review-buffer execution now exist in the
 Python policy layer with native-backed parsing/routing/state mirrors where
-available; the remaining CUDA/runtime work is packaging model-based extraction
-policy, runtime orchestration, and optional CUDA route scanning into one
-cohesive GRM runtime plus broader high-context/model-matrix GPU regression
-coverage.
+available. Completed turn extraction is now an explicit runtime hook whose
+candidates flow through the same conservative write/review/supersession policy;
+the remaining CUDA/runtime work is packaging model-specific extraction policy,
+optional CUDA route scanning, and broader orchestration into one cohesive GRM
+runtime plus high-context/model-matrix GPU regression coverage.
 
 **Context:** the GPU may be occupied by GRAPA training, so this document scopes
 the runtime architecture, memory policy, and control surface before code moves.
@@ -60,6 +61,12 @@ crash before the next manifest does not resurrect superseded facts as active
 memory. WAL recovery also preserves `no_fold` fold-abort exemptions from
 metadata state records, which keeps rejected librarian windows from looping
 after recovery.
+Optional runtime extraction orchestration is now wired into completed chat and
+scripted turn ingestion: `GraftRepository(..., extractor=...)` calls the
+extractor on newly deposited turn/recall grafts, passes `source_grafts` and
+turn text into `apply_extraction_candidate(s)`, records the last extraction
+result/error, and treats extractor failures as non-blocking WAL-recorded events
+unless configured to raise.
 Review-buffer execution now supports approve, reject, edit, and scope-change
 operations. Review item status (`pending`, `approved`, `rejected`) and
 post-manifest review edits are replayed from WAL, so review decisions survive
@@ -118,9 +125,9 @@ by preserving child digest facts verbatim as an index node, then relying on the
 existing era-descent reader path. Fresh-process ASTRA recall passes, and a
 folded-source turn-5 probe recalls `M05-0685` through the folded memory path.
 The missing production pieces are still a cohesive GRM runtime boundary that
-owns final command execution, model-based extraction policy, CUDA route
-scanning if needed, longer high-context needle runs, and the broader
-model-specific graft equivalence matrix.
+owns model-specific extraction quality/policy, CUDA route scanning if needed,
+longer high-context needle runs, and the broader model-specific graft
+equivalence matrix.
 
 `tests/deepseek_grm_turn50_gate.py` now validates the original GRM ephemeral
 boat on DeepSeek-V2-Lite INT4: 50 stored turn grafts, live context cleared
