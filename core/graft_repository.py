@@ -116,6 +116,7 @@ class GraftRepository:
         self._flush_error = None
         self._wal_lsn = 0
         self.review_buffer = []
+        self.fold_history = []
         # device-byte budget for node tensors; least-recently-MOUNTED saved
         # nodes spill to cold storage above it (node_loader reloads on
         # demand — the descent machinery). None = unbounded.
@@ -572,7 +573,7 @@ class GraftRepository:
         turns = [i for i in self._active(("turn",)) if ok(i)]
         if len(turns) >= self.TURNS_HIGH:
             jobs.append(("digest", turns[:self.TURNS_FOLD]))
-        if self.DIGESTS_HIGH:
+        if self.DIGESTS_HIGH and getattr(self.arena, "ENABLE_ERA_FOLDING", True):
             digests = [i for i in self._active(("digest",)) if ok(i)]
             if len(digests) >= self.DIGESTS_HIGH:
                 jobs.append(("era", digests[:self.DIGESTS_FOLD]))
@@ -587,6 +588,17 @@ class GraftRepository:
             return False
         kind, idxs = jobs[0]
         didx, _ = self.arena.consolidate(idxs)
+        fold_event = {
+            "kind": kind,
+            "sources": list(idxs),
+            "accepted": didx is not None,
+            "digest_idx": didx,
+            "result": dict(getattr(self.arena, "last_consolidation_result",
+                                   {})),
+            "attempts": [dict(a) for a in getattr(
+                self.arena, "last_consolidation_attempts", [])],
+        }
+        self.fold_history.append(fold_event)
         if didx is None:
             # fidelity abort: keep these sources unfolded (clean readers and
             # routers), exempt them so the planner moves to another window.
@@ -661,6 +673,14 @@ class GraftRepository:
             chunks.append(np.ascontiguousarray(payload[key]).tobytes())
         return b"".join(chunks)
 
+    def _native_set_payload(self, node_id, payload):
+        if payload is None:
+            return
+        if not hasattr(self.native_store, "set_tensor"):
+            return
+        for key in sorted(payload):
+            self.native_store.set_tensor(node_id, key, payload[key])
+
     def _native_configure_arena(self):
         if self.native_store is None:
             return
@@ -717,18 +737,23 @@ class GraftRepository:
         superseded_ids = [self._native_sync_node(i) for i in supersedes]
         self.native_store.apply_revision(replacement_id, superseded_ids)
 
-    def _native_sync_node(self, idx):
+    def _native_sync_node(self, idx, payload_required=True):
         if self.native_store is None:
             return None
         idx = int(idx)
+        g = self.arena.grafts[idx]
         if idx in self._native_node_ids:
+            node_id = self._native_node_ids[idx]
+            if payload_required and g.get("host_payload") is None:
+                self._ensure_host_payload(idx, g)
+            self._native_set_payload(node_id, g.get("host_payload"))
             self._native_set_route(idx)
             self._native_set_metadata(idx)
-            return self._native_node_ids[idx]
-        g = self.arena.grafts[idx]
-        if g.get("host_payload") is None:
+            return node_id
+        if payload_required and g.get("host_payload") is None:
             self._ensure_host_payload(idx, g)
-        if hasattr(self.native_store, "add_structured_node"):
+        if (g.get("host_payload") is not None
+                and hasattr(self.native_store, "add_structured_node")):
             node_id = self.native_store.add_structured_node(
                 g.get("text", ""), g.get("host_payload"),
                 ntok=g.get("ntok", 0))
@@ -760,11 +785,13 @@ class GraftRepository:
         if self.native_store is None:
             return
         for i, g in enumerate(self.arena.grafts):
-            if g.get("host_payload") is None:
+            if (g.get("host_payload") is None and not g.get("durable")
+                    and not g.get("payload_pending") and not g.get("retired")):
                 continue
-            self._native_sync_node(i)
+            node_id = self._native_sync_node(
+                i, payload_required=g.get("host_payload") is not None)
             if g.get("durable"):
-                self._native_mark_durable(i)
+                self.native_store.mark_durable(node_id)
 
     def native_route(self, query_key, lexical_keys=(), topk=3, kinds=(),
                      scopes=(), durabilities=(), mutabilities=()):

@@ -449,6 +449,43 @@ class ArenaCache:
         "number, and time, and what each one refers to.\n"
         "Assistant: The facts to archive are:",
     )
+    TEXT_SCAFFOLD_CONSOLIDATION = False
+    TEXT_SCAFFOLD_MAX_CHARS = 6000
+    CONSOLIDATE_NGEN = 120
+    ALLOW_HIGH_COVERAGE_LIST_DIGESTS = False
+    ENABLE_ERA_FOLDING = True
+
+    def _source_scaffold(self, source_texts):
+        remaining = int(self.TEXT_SCAFFOLD_MAX_CHARS)
+        parts = []
+        for j, text in enumerate(source_texts, 1):
+            if remaining <= 0:
+                break
+            clean = str(text).strip()
+            clean = re.sub(r"(?m)^(?:User|Assistant):\s*", "", clean)
+            clean = re.sub(r"\s+", " ", clean).strip()
+            if len(clean) > remaining:
+                clean = clean[:remaining].rstrip()
+            parts.append(f"[source {j}]\n{clean}")
+            remaining -= len(clean)
+        return "\n\n".join(parts)
+
+    def _consolidation_prompts(self, deep, source_texts):
+        prompts = self.ERA_PROMPTS if deep else self.DIGEST_PROMPTS
+        if not self.TEXT_SCAFFOLD_CONSOLIDATION:
+            return prompts
+        source_block = self._source_scaffold(source_texts)
+        if not source_block:
+            return prompts
+        out = []
+        for prompt in prompts:
+            head, tail = prompt.rsplit("\nAssistant:", 1)
+            out.append(f"{head}\n\nSource excerpts: use every source below; "
+                       f"write at least one complete archive sentence for "
+                       f"each source, and do not copy role labels.\n"
+                       f"{source_block}\n\n"
+                       f"Assistant:{tail}")
+        return tuple(out)
 
     @staticmethod
     def _rare_tokens(text):
@@ -532,17 +569,20 @@ class ArenaCache:
         have = cls._rare_tokens(text) | cls._caps_tokens(text, False)
         return len(need & have) / len(need)
 
-    def consolidate(self, idxs, ngen=120):
+    def consolidate(self, idxs, ngen=None):
         """Phase-2 seat compression: mount the given grafts, generate ONE
         QC'd digest (E2-validated verbatim-preservation prompt), deposit it
         standalone (clean key + payload), RETIRE the sources from routing.
         The digest node carries its children's centroids for hierarchical
         descent. Returns (digest_idx, digest_text)."""
+        if ngen is None:
+            ngen = int(self.CONSOLIDATE_NGEN)
         # standalone generation: arm device mounts directly, no live_shift
         for L in self.m.layers:
             L.self_attn.live_shift = None
         self._clear_transients()
         self._ensure_h(idxs)        # sources may be paged out (cold storage)
+        srcs = [self.grafts[i]["text"] for i in idxs]
         for li, layer in enumerate(self.m.layers):
             att = layer.self_attn
             hs = [self.grafts[i]["h"][li] for i in idxs]
@@ -550,13 +590,17 @@ class ArenaCache:
                          else tc.cat([h[key] for h in hs], dim=dim))
                    for key, dim in self.PAYLOAD}
             self._set_inject(att, blk)
-        srcs = [self.grafts[i]["text"] for i in idxs]
         deep = any(self.grafts[i].get("kind", "turn") != "turn" for i in idxs)
-        prompts = self.ERA_PROMPTS if deep else self.DIGEST_PROMPTS
+        prompts = self._consolidation_prompts(deep, srcs)
         need = self._fact_set(srcs)
+        self.last_consolidation_attempts = []
+        self.last_consolidation_result = {"accepted": False,
+                                          "best_cov": -1.0,
+                                          "need_count": len(need),
+                                          "hit_count": 0}
         try:
             text, best, best_cov = None, None, -1.0
-            for prompt in prompts:
+            for prompt_idx, prompt in enumerate(prompts):
                 ids = out = lg = caches = None
                 primer = prompt.rsplit("Assistant:", 1)[1]
                 try:
@@ -579,11 +623,31 @@ class ArenaCache:
                         if stop in t:
                             t = t.split(stop)[0]
                     t = t.strip()
-                    if not self._digest_qc(t, None, forbid_lists=True):
-                        continue
                     cov = self._coverage(t, need)
+                    qc = self._digest_qc(t, None, forbid_lists=True)
+                    relaxed_list = False
+                    if (not qc and self.ALLOW_HIGH_COVERAGE_LIST_DIGESTS
+                            and cov >= self.MIN_FOLD_KEEP):
+                        relaxed_list = self._digest_qc(
+                            t, None, forbid_lists=False)
+                        qc = relaxed_list
+                    self.last_consolidation_attempts.append({
+                        "prompt_index": prompt_idx,
+                        "qc": bool(qc),
+                        "relaxed_list": bool(relaxed_list),
+                        "coverage": float(cov),
+                        "need_count": len(need),
+                        "hit_count": int(round(cov * len(need))),
+                        "text": t[:1200],
+                    })
+                    if not qc:
+                        continue
                     if cov > best_cov:
                         best, best_cov = t, cov
+                        self.last_consolidation_result.update({
+                            "best_cov": float(best_cov),
+                            "hit_count": int(round(best_cov * len(need))),
+                        })
                     if cov >= self.MIN_FOLD_KEEP:
                         text = t
                         break
@@ -607,6 +671,7 @@ class ArenaCache:
         # coverage bar keeps such digests directly routable instead.
         if text is None or best_cov < self.MIN_FOLD_KEEP:
             return None, None
+        self.last_consolidation_result["accepted"] = True
         note = f"ARCHIVE NOTE. {text}\n"
         didx = self.deposit(note)
         self.grafts[didx]["kind"] = "digest"

@@ -69,8 +69,10 @@ def parse_args():
     ap.add_argument("--vram-budget-mb", type=float, default=2.0)
     ap.add_argument("--turns", type=int, default=50)
     ap.add_argument("--needle-turn", type=int, default=1)
+    ap.add_argument("--probe-turn", type=int, default=None)
     ap.add_argument("--ngen", type=int, default=48)
     ap.add_argument("--enable-folding", action="store_true")
+    ap.add_argument("--print-fold-diagnostics", action="store_true")
     return ap.parse_args()
 
 
@@ -110,6 +112,22 @@ def needle_turn(i):
     return user, assistant
 
 
+def expected_probe(args):
+    probe_turn = args.needle_turn if args.probe_turn is None else args.probe_turn
+    if not 1 <= probe_turn <= args.turns:
+        raise SystemExit("--probe-turn must be inside --turns")
+    if probe_turn == args.needle_turn:
+        q = (f"After the stored turns, what is the exact {NEEDLE_NAME} "
+             "clearance code?")
+        return probe_turn, q, NEEDLE_CODE
+    topic = TOPICS[(probe_turn - 1) % len(TOPICS)]
+    marker = f"M{probe_turn:02d}-{(probe_turn * 137) % 9000:04d}"
+    person = f"Operator-{chr(65 + ((probe_turn - 1) % 26))}{probe_turn:02d}"
+    q = (f"Which exact marker is owned by {person} for the {topic} "
+         "checkpoint?")
+    return probe_turn, q, marker
+
+
 def clear_live(repo):
     if hasattr(repo.arena, "reset_live_cache"):
         repo.arena.reset_live_cache()
@@ -145,28 +163,48 @@ def populate(repo, args):
                   f"live_tokens={live_tokens(repo)}", flush=True)
 
 
+def print_fold_diagnostics(repo):
+    for j, event in enumerate(getattr(repo, "fold_history", ()), 1):
+        result = event.get("result", {})
+        print(f"fold {j}: kind={event.get('kind')} "
+              f"sources={event.get('sources')} "
+              f"accepted={event.get('accepted')} "
+              f"digest_idx={event.get('digest_idx')} "
+              f"best_cov={result.get('best_cov')} "
+              f"hits={result.get('hit_count')}/{result.get('need_count')}",
+              flush=True)
+        for att in event.get("attempts", ()):
+            text = att.get("text", "").replace("\n", " ")[:260]
+            print(f"  prompt {att.get('prompt_index')}: "
+                  f"qc={att.get('qc')} "
+                  f"relaxed_list={att.get('relaxed_list')} "
+                  f"cov={att.get('coverage')} "
+                  f"hits={att.get('hit_count')}/{att.get('need_count')} "
+                  f"| {text!r}", flush=True)
+
+
 def run_probe(repo, args):
     clear_live(repo)
     if live_tokens(repo) != 0:
         raise SystemExit(f"expected empty live context, got {live_tokens(repo)}")
     start_page_ins = getattr(repo.arena, "page_ins", 0)
-    q = (f"After fifty stored turns, what is the exact {NEEDLE_NAME} "
-         "clearance code?")
+    probe_turn, q, expected = expected_probe(args)
     t0 = time.perf_counter()
     ans, meta = repo.chat(q, ngen=args.ngen, max_trips=2)
     ans_l = ans.lower()
     backend = getattr(repo.arena, "last_route_backend", "unknown")
-    ok = NEEDLE_CODE.lower() in ans_l
-    print(f"turn50 probe {'HIT' if ok else 'MISS'} backend={backend} "
+    ok = expected.lower() in ans_l
+    label = f"turn{args.turns}" if args.probe_turn is None else f"turn{probe_turn}"
+    print(f"{label} probe {'HIT' if ok else 'MISS'} backend={backend} "
           f"mounts={meta['mounts']} resident={meta['resident']} "
           f"evicted={meta['evicted']} active_device={repo.stats()['active_device']} "
           f"{time.perf_counter() - t0:.2f}s | {ans[:180]!r}", flush=True)
     if args.native_lib and backend != "native":
         raise SystemExit(f"expected native route backend, got {backend}")
     if getattr(repo.arena, "page_ins", 0) <= start_page_ins:
-        raise SystemExit("turn-50 gate did not exercise page-in path")
+        raise SystemExit("turn gate did not exercise page-in path")
     if not ok:
-        raise SystemExit("turn-50 needle recall failed")
+        raise SystemExit("turn recall failed")
 
 
 def main():
@@ -189,6 +227,8 @@ def main():
     repo = make_repo(model, tok, args)
     if args.mode in ("both", "build"):
         populate(repo, args)
+        if args.print_fold_diagnostics:
+            print_fold_diagnostics(repo)
     if args.mode in ("both", "resume"):
         run_probe(repo, args)
 

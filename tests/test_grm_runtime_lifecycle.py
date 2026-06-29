@@ -25,6 +25,7 @@ class FakeModel:
 class FakeArena:
     PAYLOAD = (("c", 1), ("kpe", 2))
     VALS_PER_TOK_LAYER = 576
+    ENABLE_ERA_FOLDING = True
 
     def __init__(self, model, encode, decode, route_layer=3, **_):
         self.m = model
@@ -195,6 +196,24 @@ def test_memory_commands_revision_and_review(tmp_path):
     assert why[0]["write_intent"] == "user_asserted"
 
 
+def test_librarian_respects_arena_era_folding_capability(tmp_path):
+    class NoEraArena(FakeArena):
+        ENABLE_ERA_FOLDING = False
+
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=NoEraArena,
+                           route_layer=3)
+    for i in range(6):
+        idx = repo.add_document(f"DIGEST candidate {i} code {i}-0000")
+        repo.arena.grafts[idx]["kind"] = "digest"
+        repo.arena.grafts[idx]["metadata"]["kind"] = "digest"
+
+    repo.TURNS_HIGH = 100
+    repo.DIGESTS_HIGH = 6
+
+    assert repo.fold_pending() == 0
+
+
 def test_native_memory_command_parser_drives_repository_policy(tmp_path):
     lib = build_native(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
@@ -352,6 +371,39 @@ def test_native_load_budget_eviction_keeps_durable_payload_clean(tmp_path):
     assert st["native"]["dirty_nodes"] == 0
     assert st["native"]["durable_nodes"] == 3
     assert st["native"]["host_payload_tensors"] == 3
+    reloaded.close()
+
+
+def test_native_reload_mirrors_retired_cold_nodes_as_metadata_only(tmp_path):
+    lib = build_native(tmp_path)
+    repo_path = tmp_path / "repo"
+    repo = GraftRepository(FakeModel(), enc, dec, str(repo_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+
+    retired = repo.add_document("DOC retired native cold code 12-1200")
+    live = repo.add_document("DOC live native hot code 34-3400")
+    before = repo._snapshot_state()
+    repo.arena.grafts[retired]["retired"] = True
+    repo._mark_mutations(before)
+    repo.flush_now()
+    repo.close()
+
+    reloaded = GraftRepository(FakeModel(), enc, dec, str(repo_path),
+                               autosave=False, arena_cls=FakeArena,
+                               route_layer=3, native_lib_path=lib)
+    st = reloaded.stats()
+
+    assert st["nodes"] == 2
+    assert st["native"]["nodes"] == 2
+    assert st["native"]["durable_nodes"] == 2
+    assert st["native"]["host_payload_tensors"] == 1
+    assert reloaded.arena.grafts[retired]["cold_only"] is True
+    assert reloaded.arena.grafts[retired]["host_payload"] is None
+    assert retired not in reloaded.native_route(
+        [1.0] * 512, lexical_keys=["12-1200"], topk=4)
+    assert live in reloaded.native_route(
+        [1.0] * 512, lexical_keys=["34-3400"], topk=4)
     reloaded.close()
 
 

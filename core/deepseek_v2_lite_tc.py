@@ -493,6 +493,14 @@ class DeepSeekMLAArenaCache(ArenaCache):
     VALS_PER_TOK_LAYER = (DeepSeekV2LiteConfig.kv_lora_rank +
                           DeepSeekV2LiteConfig.qk_rope_head_dim)
     ROPE_PAIR_SWAP = True
+    # Raw graft recall works, but DeepSeek digest generation drops identifiers
+    # when the source is only injected KV. Keep grafts mounted and also include
+    # compact source text in the librarian prompt; the fidelity gate still
+    # rejects any digest that loses facts.
+    TEXT_SCAFFOLD_CONSOLIDATION = True
+    CONSOLIDATE_NGEN = 220
+    ALLOW_HIGH_COVERAGE_LIST_DIGESTS = True
+    ENABLE_ERA_FOLDING = False
 
 
 class DeepSeekDenseMLPTC:
