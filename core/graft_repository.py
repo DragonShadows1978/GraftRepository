@@ -363,12 +363,154 @@ class GraftRepository:
         self._mark_mutations(before)
         return idx
 
+    @staticmethod
+    def _norm_fact_field(value):
+        return str(value).strip().lower() if value is not None else ""
+
+    def _candidate_text(self, candidate, source_text=None):
+        if candidate.get("text"):
+            return str(candidate["text"]).strip()
+        if source_text is not None and candidate.get("text_span"):
+            start, end = candidate["text_span"]
+            return str(source_text)[int(start):int(end)].strip()
+        parts = [candidate.get("subject"), candidate.get("predicate"),
+                 candidate.get("value")]
+        text = " ".join(str(p).strip() for p in parts if p is not None)
+        if text:
+            return text
+        raise ValueError("memory candidate has no text or semantic fields")
+
+    def _candidate_metadata(self, candidate, source_turns=(),
+                            source_grafts=()):
+        keys = ("subject", "predicate", "value", "valid_from", "expires_at")
+        meta = {k: candidate[k] for k in keys if k in candidate}
+        if source_turns or candidate.get("source_turns"):
+            meta["source_turns"] = list(candidate.get("source_turns",
+                                                     source_turns))
+        if source_grafts or candidate.get("source_grafts"):
+            meta["source_grafts"] = list(candidate.get("source_grafts",
+                                                      source_grafts))
+        return meta
+
+    def _candidate_conflicts(self, candidate):
+        subject = self._norm_fact_field(candidate.get("subject"))
+        predicate = self._norm_fact_field(candidate.get("predicate"))
+        value = self._norm_fact_field(candidate.get("value"))
+        if not (subject and predicate and value):
+            return []
+        out = []
+        for i, g in enumerate(self.arena.grafts):
+            meta = g.get("metadata", self._default_metadata(g))
+            if not meta.get("active", True):
+                continue
+            if self._norm_fact_field(meta.get("subject")) != subject:
+                continue
+            if self._norm_fact_field(meta.get("predicate")) != predicate:
+                continue
+            old_value = self._norm_fact_field(meta.get("value"))
+            if old_value and old_value != value:
+                out.append(i)
+        return out
+
+    def _candidate_to_review(self, candidate, text, reason, metadata):
+        return {"action": "review_candidate",
+                "review_id": self.review_candidate(
+                    text,
+                    proposed_kind=candidate.get(
+                        "candidate_type", candidate.get("kind", "fact")),
+                    proposed_scope=candidate.get("scope", "project"),
+                    proposed_durability=candidate.get("durability", "project"),
+                    proposed_mutability=candidate.get("mutability", "stable"),
+                    confidence=float(candidate.get("confidence", 0.5)),
+                    action="review_candidate", reason=reason,
+                    metadata=metadata)}
+
+    def apply_extraction_candidate(self, candidate, source_text=None,
+                                   source_turns=(), source_grafts=(),
+                                   write_direct_threshold=0.95):
+        """Apply one classifier/extractor memory candidate conservatively."""
+        text = self._candidate_text(candidate, source_text=source_text)
+        metadata = self._candidate_metadata(candidate, source_turns,
+                                            source_grafts)
+        action = candidate.get("action", "review_candidate")
+        confidence = float(candidate.get("confidence", 0.5))
+        write_intent = candidate.get("write_intent", "observed")
+        if action in ("ignore", "keep_turn_only"):
+            return {"action": action}
+        if action == "pin":
+            metadata["pinned"] = True
+            action = "write_direct"
+        if action in ("expire",):
+            return self._candidate_to_review(
+                candidate, text, "expire action requires explicit policy",
+                metadata)
+
+        conflicts = self._candidate_conflicts(candidate)
+        authoritative = write_intent in ("user_asserted", "system_asserted")
+        imported = write_intent == "imported"
+        if conflicts and not authoritative:
+            reason = ("conflicts with active memory"
+                      if not imported else
+                      "imported candidate conflicts with active memory")
+            return self._candidate_to_review(candidate, text, reason, metadata)
+        if (action == "write_direct" and confidence < write_direct_threshold
+                and not authoritative):
+            return self._candidate_to_review(
+                candidate, text, "confidence below direct-write threshold",
+                metadata)
+        if action in ("review_candidate", "update_existing",
+                      "supersede_existing") and not (
+                authoritative and conflicts):
+            return self._candidate_to_review(
+                candidate, text, f"{action} requires review", metadata)
+        if action not in ("write_direct", "update_existing",
+                          "supersede_existing"):
+            return self._candidate_to_review(
+                candidate, text, f"unsupported extraction action: {action}",
+                metadata)
+
+        supersedes = conflicts if conflicts else list(
+            candidate.get("supersedes", []))
+        metadata["supersedes"] = list(supersedes)
+        idx = self.remember(
+            text,
+            durability=candidate.get("durability", "project"),
+            mutability=candidate.get("mutability", "stable"),
+            scope=candidate.get("scope", "project"),
+            kind=candidate.get("candidate_type", candidate.get("kind", "fact")),
+            write_intent=write_intent,
+            confidence=confidence,
+            metadata=metadata)
+        for i in supersedes:
+            g = self.arena.grafts[int(i)]
+            meta = g.setdefault("metadata", self._default_metadata(g))
+            meta["active"] = False
+            meta["superseded_by"] = [idx]
+            g["retired"] = True
+            self._mark_dirty(int(i), payload=False, metadata=True)
+        if supersedes:
+            self._native_apply_revision(idx, supersedes)
+            self._append_wal("MEMORY_EXTRACT_SUPERSEDE",
+                             node_id=idx, supersedes=list(supersedes))
+            return {"action": "supersede_existing", "node_id": idx,
+                    "supersedes": list(supersedes)}
+        return {"action": "write_direct", "node_id": idx}
+
+    def apply_extraction_candidates(self, candidates, source_text=None,
+                                    source_turns=(), source_grafts=(),
+                                    write_direct_threshold=0.95):
+        return [self.apply_extraction_candidate(
+            c, source_text=source_text, source_turns=source_turns,
+            source_grafts=source_grafts,
+            write_direct_threshold=write_direct_threshold)
+                for c in candidates]
+
     def review_candidate(self, text, proposed_kind="fact",
                          proposed_scope="project",
                          proposed_durability="project",
                          proposed_mutability="stable",
                          confidence=0.5, action="review_candidate",
-                         reason=""):
+                         reason="", metadata=None):
         item = {"id": len(self.review_buffer), "text": text,
                 "proposed_kind": proposed_kind,
                 "proposed_scope": proposed_scope,
@@ -376,6 +518,8 @@ class GraftRepository:
                 "proposed_mutability": proposed_mutability,
                 "confidence": float(confidence), "action": action,
                 "reason": reason}
+        if metadata:
+            item["metadata"] = dict(metadata)
         self.review_buffer.append(item)
         self._append_wal("REVIEW_CANDIDATE", **item)
         return item["id"]
@@ -386,7 +530,8 @@ class GraftRepository:
                             mutability=item["proposed_mutability"],
                             scope=item["proposed_scope"],
                             kind=item["proposed_kind"],
-                            confidence=item["confidence"])
+                            confidence=item["confidence"],
+                            metadata=item.get("metadata"))
         item["approved_node_id"] = idx
         self._append_wal("REVIEW_APPROVE", review_id=review_id, node_id=idx)
         return idx

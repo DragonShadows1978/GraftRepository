@@ -225,6 +225,60 @@ def test_native_memory_command_parser_drives_repository_policy(tmp_path):
     repo.close()
 
 
+def test_extraction_candidate_interface_is_conservative(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+
+    direct = {
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "GRM hot tier is RAM-first.",
+        "subject": "GRM hot tier",
+        "predicate": "is",
+        "value": "RAM-first",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 0.97,
+    }
+    out = repo.apply_extraction_candidate(direct)
+    assert out["action"] == "write_direct"
+    meta = repo.arena.grafts[out["node_id"]]["metadata"]
+    assert meta["subject"] == "GRM hot tier"
+    assert meta["value"] == "RAM-first"
+    assert meta["write_intent"] == "observed"
+
+    low = dict(direct, text="Low confidence fact", subject="low",
+               predicate="is", value="uncertain", confidence=0.4)
+    review = repo.apply_extraction_candidate(low)
+    assert review["action"] == "review_candidate"
+    assert repo.review_buffer[-1]["reason"] == (
+        "confidence below direct-write threshold")
+    assert repo.review_buffer[-1]["metadata"]["value"] == "uncertain"
+
+    inferred_conflict = dict(direct, text="GRM hot tier is NVMe-first.",
+                             value="NVMe-first", confidence=0.99,
+                             write_intent="inferred")
+    conflict = repo.apply_extraction_candidate(inferred_conflict)
+    assert conflict["action"] == "review_candidate"
+    assert repo.review_buffer[-1]["reason"] == "conflicts with active memory"
+    assert repo.arena.grafts[out["node_id"]]["metadata"]["active"] is True
+
+    user_correction = dict(direct, text="GRM hot tier is GPU-mounted only.",
+                           value="GPU-mounted only",
+                           write_intent="user_asserted",
+                           confidence=1.0)
+    corr = repo.apply_extraction_candidate(user_correction)
+    assert corr["action"] == "supersede_existing"
+    assert corr["supersedes"] == [out["node_id"]]
+    assert repo.arena.grafts[out["node_id"]]["metadata"]["active"] is False
+    assert repo.arena.grafts[out["node_id"]]["retired"] is True
+    assert repo.arena.grafts[corr["node_id"]]["metadata"]["supersedes"] == [
+        out["node_id"]]
+
+
 def test_dirty_node_can_leave_vram_before_disk_flush(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,

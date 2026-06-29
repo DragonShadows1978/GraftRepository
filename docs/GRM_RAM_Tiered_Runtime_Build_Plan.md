@@ -9,7 +9,7 @@ export primitives, including a multi-layer paired export boundary for
 compatible dialects. It also owns a multi-layer raw+positional
 swap/re-seat/evict boundary and a functional cache transaction for compatible
 dialects; the remaining CUDA/runtime work is packaging final command execution,
-conflict/review/extraction policy, revision policy ownership, and runtime
+model-based extraction policy, revision policy ownership, and runtime
 orchestration into one cohesive GRM runtime plus broader high-context/model-
 matrix GPU regression coverage.
 
@@ -48,6 +48,10 @@ command grammar into a JSON operation plan, and native-backed
 `GraftRepository.apply_memory_command()` consumes that plan before applying
 Python policy. This moves the command grammar boundary native while leaving
 conflict/review/extraction decisions in Python until those policies harden.
+`GraftRepository.apply_extraction_candidate(s)` now provides the no-GPU
+extractor interface: classifier-style candidates can be written directly,
+queued for review, ignored, or used to supersede active semantic memory under a
+conservative confidence/conflict policy.
 `ArenaCache.route()` now uses that native route index for native-backed MLA
 candidates, with the C++ lexical score calibrated to Python's fractional
 identifier bonus and multi-key route entries that support digest/era
@@ -93,7 +97,7 @@ open-ended greedy exact-fact recalls after fresh-process resume. Retaining the
 previous probe cache between independent DeepSeek probes remains a 12GB-card
 stress mode, not the validated default. The missing production pieces are still
 a cohesive GRM runtime boundary that owns final command execution,
-conflict/review/extraction policy, CUDA route scanning if needed, retained-cache
+model-based extraction policy, CUDA route scanning if needed, retained-cache
 stress, longer high-context needle runs, and the broader model-specific graft
 equivalence matrix.
 
