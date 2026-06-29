@@ -17,10 +17,12 @@ def test_deepseek_librarian_uses_text_scaffolded_prompts():
     assert ArenaCache.TEXT_SCAFFOLD_CONSOLIDATION is False
     assert ArenaCache.ALLOW_HIGH_COVERAGE_LIST_DIGESTS is False
     assert ArenaCache.ENABLE_ERA_FOLDING is True
+    assert ArenaCache.EXTRACTIVE_ERA_CONSOLIDATION is False
     assert DeepSeekMLAArenaCache.TEXT_SCAFFOLD_CONSOLIDATION is True
     assert DeepSeekMLAArenaCache.CONSOLIDATE_NGEN > ArenaCache.CONSOLIDATE_NGEN
     assert DeepSeekMLAArenaCache.ALLOW_HIGH_COVERAGE_LIST_DIGESTS is True
-    assert DeepSeekMLAArenaCache.ENABLE_ERA_FOLDING is False
+    assert DeepSeekMLAArenaCache.ENABLE_ERA_FOLDING is True
+    assert DeepSeekMLAArenaCache.EXTRACTIVE_ERA_CONSOLIDATION is True
 
     arena = DeepSeekMLAArenaCache.__new__(DeepSeekMLAArenaCache)
     prompt = arena._consolidation_prompts(
@@ -35,6 +37,15 @@ def test_deepseek_librarian_uses_text_scaffolded_prompts():
     assert prompt.count("Assistant:") == 1
     assert "Assistant: Recorded" not in prompt
     assert prompt.rsplit("Assistant:", 1)[1].strip()
+
+    era_text = arena._extractive_era_text((
+        "ARCHIVE NOTE. Project ORION uses code O17-4821.",
+        "ARCHIVE NOTE. Project VEGA uses code V22-9140.",
+    ))
+    assert "O17-4821" in era_text
+    assert "V22-9140" in era_text
+    assert "ARCHIVE NOTE" not in era_text
+    assert "[digest A]" in era_text
 
 
 def test_deepseek_attention_exposes_grm_hook_contract():

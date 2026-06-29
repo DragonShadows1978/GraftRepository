@@ -104,14 +104,16 @@ build/resume gate: five document grafts, eight live turns, a 2 MB graft-device
 budget, budgeted manifest reload, native route backend, RAM page-ins, and 4/4
 open-ended greedy exact-fact recalls after fresh-process resume. The same full
 gate now also passes retained-probe-cache stress (`--keep-probe-cache`) on the
-12GB card. DeepSeek first-gen librarian consolidation now passes the 50-turn
-folding gate with 40 turns retired under 10 digest nodes and a folded-source
-turn-5 recall probe passing through the digest. DeepSeek digest-to-era folding
-is intentionally disabled pending a separate safe-era prompt/memory gate. The
-missing production pieces are still a cohesive GRM runtime boundary that owns
-final command execution, model-based extraction policy, CUDA route scanning if
-needed, DeepSeek-safe era consolidation, longer high-context needle runs, and
-the broader model-specific graft equivalence matrix.
+12GB card. DeepSeek librarian consolidation now passes the 50-turn folding
+gate with 40 turns retired under 10 digest nodes plus two accepted extractive
+era nodes. The extractive era path avoids the prior DeepSeek digest-to-era OOM
+by preserving child digest facts verbatim as an index node, then relying on the
+existing era-descent reader path. Fresh-process ASTRA recall passes, and a
+folded-source turn-5 probe recalls `M05-0685` through the folded memory path.
+The missing production pieces are still a cohesive GRM runtime boundary that
+owns final command execution, model-based extraction policy, CUDA route
+scanning if needed, longer high-context needle runs, and the broader
+model-specific graft equivalence matrix.
 
 `tests/deepseek_grm_turn50_gate.py` now validates the original GRM ephemeral
 boat on DeepSeek-V2-Lite INT4: 50 stored turn grafts, live context cleared
@@ -119,11 +121,13 @@ between turns (`live_tokens=0` at checkpoints), fresh-process reload, native
 routing, RAM page-in, and a turn-1 needle recalled at turn 50. Folding is
 disabled by default in that gate to isolate raw repository recall. The same
 gate now completes with `--enable-folding` without the prior DeepSeek
-consolidation OOM and with actual first-gen compression: 40 raw turns retire
-under 10 digest nodes (`folds_aborted=1`, `no_fold=4`), fresh-process turn-1
+consolidation OOM and with actual compression across both generations: 40 raw
+turns retire under 10 digest nodes, six digest nodes retire under two
+extractive era nodes (`folds_aborted=1`, `no_fold=4`), fresh-process turn-1
 needle recall still passes, and an explicit turn-5 folded-source probe recalls
-`M05-0685` through the digest. DeepSeek era folding remains off until its own
-safe consolidation gate exists.
+`M05-0685` through folded memory. Identifier-bearing probes now suppress
+recency mounts so point reads are not polluted by previous recall turns; the
+anaphora path still uses recency when there is no identifier key.
 
 This plan extends Graft Repository Memory from a Python research harness into a
 RAM-first memory runtime:

@@ -72,9 +72,10 @@ validation where feasible.
   route metadata, active/inactive state, and graph references aligned with the
   Python manifest while preserving the RAM-first cold-storage boundary.
 - Native page-out cleanliness:
-  repository-driven native device-copy eviction now uses an already-synced
-  native node id when available, avoiding redundant route/metadata rewrites
-  and keeping durable native host payloads clean after budgeted reload paging.
+  repository-driven native device-copy eviction now refreshes the native host
+  payload before asking C++ to drop the device copy, which fixes the
+  metadata-only cold-node page-in edge while keeping durable native host
+  payloads clean after budgeted reload paging.
 - Structured native payload tensors:
   the native C++ store now accepts named tensors with shape/dtype metadata,
   reports per-node tensor counts/bytes, and exposes tensor shape plus byte
@@ -237,11 +238,13 @@ validation where feasible.
   the turn-1 code from a fresh context through native routing and RAM page-in.
   Folding is disabled by default in this gate to isolate raw off-context turn
   recall. With `--enable-folding`, DeepSeek now performs first-gen
-  turn-to-digest compression on the same 50-turn workload: 40 raw turns retire
-  under 10 digest nodes, only the first 4-turn window remains `no_fold`, and
-  fresh-process recall passes both for the original turn-1 ASTRA code and for
-  a retired turn-5 source read through its digest. DeepSeek era folding is
-  intentionally disabled until a separate digest-to-era safety gate exists.
+  turn-to-digest compression and extractive digest-to-era compression on the
+  same 50-turn workload: 40 raw turns retire under 10 digest nodes, six digest
+  nodes retire under two era nodes, only the first 4-turn window remains
+  `no_fold`, and fresh-process recall passes both for the original turn-1
+  ASTRA code and for a retired turn-5 source read through folded memory.
+  Identifier-bearing probes suppress recency mounts so previous recall turns
+  cannot pollute point reads; no-identifier anaphora still uses recency.
 - C++ build:
   `cmake -S cpp -B /tmp/grm_runtime_build && cmake --build /tmp/grm_runtime_build`
 - TensorCUDA cache-surgery gates:
@@ -274,7 +277,7 @@ pytest -p no:cacheprovider -q \
   tests/test_grm_runtime_lifecycle.py \
   tests/test_grm_native_runtime.py \
   tests/test_deepseek_grm_hooks_static.py
-48 passed, 2 warnings
+49 passed, 2 warnings
 
 cmake --build /tmp/grm_runtime_build
 Built target grm_runtime
@@ -406,32 +409,35 @@ DEEPSEEK TURN50 RESUME GATE: PASS
 PYTHONPATH=/mnt/ForgeRealm/GraftRepository:/mnt/ForgeRealm/Project-Tensor/tensor_cuda \
 python3 tests/deepseek_grm_turn50_gate.py \
   --mode build \
-  --repo /tmp/deepseek_grm_fold_full_v3 \
+  --repo /tmp/deepseek_grm_era_full_v1 \
   --native-lib /tmp/grm_runtime_build/libgrm_runtime.so \
-  --enable-folding
-turn 50: nodes=60 active_device=1 live_tokens=0
-stats: nodes=60 kinds={'turn': 10, 'retired turn': 40, 'digest': 10} active_device=1 ram_payload_mb=175 dirty_nodes=0 durable_nodes=60 folds_aborted=1 no_fold=4 native.nodes=60 native.dirty_nodes=0 native.durable_nodes=60 native.host_payload_tensors=120 native.route_entries=60
-reload stats: nodes=60 kinds={'turn': 10, 'retired turn': 40, 'digest': 10} active_device=1 ram_payload_mb=92 dirty_nodes=0 durable_nodes=60 cold_nodes=40 native.nodes=60 native.dirty_nodes=0 native.durable_nodes=60 native.host_payload_tensors=40 native.route_entries=60
+  --enable-folding \
+  --print-fold-diagnostics
+turn 50: nodes=62 active_device=1 live_tokens=0
+fold 8: kind=era sources=[12, 17, 22] accepted=True digest_idx=38 best_cov=1.0 hits=55/55
+fold 12: kind=era sources=[27, 32, 37] accepted=True digest_idx=54 best_cov=1.0 hits=54/54
+stats: nodes=62 kinds={'turn': 10, 'retired turn': 40, 'retired digest': 6, 'era': 2, 'digest': 4} active_device=1 ram_payload_mb=217 dirty_nodes=0 durable_nodes=62 folds_aborted=1 no_fold=4 native.nodes=62 native.dirty_nodes=0 native.durable_nodes=62 native.host_payload_tensors=124 native.route_entries=62
+reload stats: nodes=62 kinds={'turn': 10, 'retired turn': 40, 'retired digest': 6, 'era': 2, 'digest': 4} active_device=1 ram_payload_mb=91 dirty_nodes=0 durable_nodes=62 cold_nodes=46 native.nodes=62 native.dirty_nodes=0 native.durable_nodes=62 native.host_payload_tensors=32 native.route_entries=62
 DEEPSEEK TURN50 BUILD: PASS
 
 PYTHONPATH=/mnt/ForgeRealm/GraftRepository:/mnt/ForgeRealm/Project-Tensor/tensor_cuda \
 python3 tests/deepseek_grm_turn50_gate.py \
   --mode resume \
-  --repo /tmp/deepseek_grm_fold_full_v3 \
+  --repo /tmp/deepseek_grm_era_full_v1 \
   --native-lib /tmp/grm_runtime_build/libgrm_runtime.so
-turn50 probe HIT backend=native mounts=[1] resident=79 evicted=39 active_device=0 0.84s | 'ASTRA-NODE clearance code is T50-7391.'
-stats: nodes=61 kinds={'turn': 10, 'retired turn': 40, 'digest': 10, 'recall': 1} active_device=0 ram_payload_mb=94 dirty_nodes=0 durable_nodes=61 page_ins=1 no_fold=4 native.nodes=61 native.dirty_nodes=0 native.durable_nodes=61 native.host_payload_tensors=42 native.route_entries=61
+turn50 probe HIT backend=native mounts=[1] resident=79 evicted=39 active_device=0 0.74s | 'ASTRA-NODE clearance code is T50-7391.'
+stats: nodes=65 kinds={'turn': 10, 'retired turn': 40, 'retired digest': 6, 'era': 2, 'digest': 4, 'recall': 3} active_device=0 ram_payload_mb=95 dirty_nodes=0 durable_nodes=65 page_ins=1 no_fold=4 native.nodes=65 native.dirty_nodes=0 native.durable_nodes=65 native.host_payload_tensors=38 native.route_entries=65
 DEEPSEEK TURN50 RESUME GATE: PASS
 
 PYTHONPATH=/mnt/ForgeRealm/GraftRepository:/mnt/ForgeRealm/Project-Tensor/tensor_cuda \
 python3 tests/deepseek_grm_turn50_gate.py \
   --mode resume \
-  --repo /tmp/deepseek_grm_fold_full_v3 \
+  --repo /tmp/deepseek_grm_era_full_v1 \
   --native-lib /tmp/grm_runtime_build/libgrm_runtime.so \
   --enable-folding \
   --probe-turn 5
-turn5 probe HIT backend=native mounts=[13] resident=229 evicted=36 active_device=0 0.76s | 'The marker is M05-0685.'
-stats: nodes=62 kinds={'turn': 10, 'retired turn': 40, 'digest': 10, 'recall': 2} active_device=0 ram_payload_mb=95 dirty_nodes=0 durable_nodes=62 page_ins=1 no_fold=4 native.nodes=62 native.dirty_nodes=0 native.durable_nodes=62 native.host_payload_tensors=44 native.route_entries=62
+turn5 probe HIT backend=native mounts=[13] resident=229 evicted=36 active_device=0 0.75s | 'The marker is M05-0685.'
+stats: nodes=64 kinds={'turn': 10, 'retired turn': 40, 'retired digest': 6, 'era': 2, 'digest': 4, 'recall': 2} active_device=0 ram_payload_mb=101 dirty_nodes=0 durable_nodes=64 page_ins=1 no_fold=4 native.nodes=64 native.dirty_nodes=0 native.durable_nodes=64 native.host_payload_tensors=38 native.route_entries=64
 DEEPSEEK TURN50 RESUME GATE: PASS
 ```
 
@@ -466,11 +472,11 @@ DEEPSEEK TURN50 RESUME GATE: PASS
   probes (`--keep-probe-cache`) now passes for the full DeepSeek-V2-Lite INT4
   gate on the 12GB card. Longer high-context runs may still hit separate memory
   limits.
-- DeepSeek first-gen turn-to-digest folding now passes the 50-turn
-  ephemeral-boat build/resume gate and a folded-source turn-5 recall probe.
-  DeepSeek digest-to-era folding remains disabled because the first attempt at
-  running era consolidation over long DeepSeek digests OOMed; it needs a
-  separate safe-era prompt/memory gate before re-enabling.
+- DeepSeek turn-to-digest and extractive digest-to-era folding now pass the
+  50-turn ephemeral-boat build/resume gate and a folded-source turn-5 recall
+  probe. The extractive era path is deliberately an index node, not a generated
+  reader digest; broader high-context era stress is still a separate scheduled
+  run.
 
 ## Current State
 
@@ -485,12 +491,11 @@ export boundaries, TensorCUDA functional multi-layer arena cache transaction,
 and DeepSeek GRM clean build plus fresh-process resume paths are real and
 tested, including a full paging/open-ended recall gate on DeepSeek-V2-Lite
 INT4, including retained-probe-cache stress and raw turn-50 ephemeral-boat
-recall. Folding-enabled DeepSeek turn-50 now validates first-gen compression:
-40 turns retire under 10 digest nodes, fresh-process ASTRA recall still passes,
-and a retired turn-5 fact is recalled through its digest. DeepSeek era folding
-is deliberately off until digest-to-era consolidation is made memory-safe and
-fidelity-gated. The full production C++/CUDA runtime is not complete until
-routing policy boundaries, final command/extraction/review execution ownership,
-model-based extraction policy hardening, DeepSeek era-folding safety, CUDA route
-scanning if needed, longer needle/high-context runs, and the broader
+recall. Folding-enabled DeepSeek turn-50 now validates two-level compression:
+40 turns retire under 10 digest nodes, six digests retire under two extractive
+era nodes, fresh-process ASTRA recall still passes, and a retired turn-5 fact
+is recalled through folded memory. The full production C++/CUDA runtime is not
+complete until routing policy boundaries, final command/extraction/review
+execution ownership, model-based extraction policy hardening, longer
+needle/high-context runs, CUDA route scanning if needed, and the broader
 model-specific graft equivalence matrix pass.

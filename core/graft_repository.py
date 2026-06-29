@@ -776,9 +776,9 @@ class GraftRepository:
     def _native_evict_device_copy(self, idx):
         if self.native_store is None:
             return
-        node_id = self._native_node_ids.get(int(idx))
-        if node_id is None:
-            node_id = self._native_sync_node(idx)
+        node_id = self._native_sync_node(idx)
+        if self.arena.grafts[int(idx)].get("durable"):
+            self.native_store.mark_durable(node_id)
         self.native_store.evict_device_copy(node_id)
 
     def _sync_native_full(self):

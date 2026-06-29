@@ -374,6 +374,36 @@ def test_native_load_budget_eviction_keeps_durable_payload_clean(tmp_path):
     reloaded.close()
 
 
+def test_native_eviction_refreshes_stale_metadata_only_node(tmp_path):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib,
+                           vram_budget_mb=0.000001)
+
+    idx = repo.arena.deposit("DOC stale native payload code 88-4400")
+    g = repo.arena.grafts[idx]
+    g["kind"] = "doc"
+    g["tags"] = []
+    g["sources"] = []
+    g["retired"] = False
+    repo._ensure_lifecycle(idx, g)
+
+    node_id = repo.native_store.add_node(g["text"], b"", ntok=g["ntok"])
+    repo._native_node_ids[idx] = node_id
+    g["native_node_id"] = node_id
+    repo._native_set_route(idx)
+    repo._native_set_metadata(idx)
+    assert repo.native_store.payload_stats(node_id).tensor_count == 0
+
+    repo._page()
+
+    assert g["h"] is None
+    assert g["host_payload"]["payload_id"].tolist() == [idx]
+    assert repo.native_store.payload_stats(node_id).tensor_count == 1
+    repo.close()
+
+
 def test_native_reload_mirrors_retired_cold_nodes_as_metadata_only(tmp_path):
     lib = build_native(tmp_path)
     repo_path = tmp_path / "repo"

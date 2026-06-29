@@ -454,6 +454,8 @@ class ArenaCache:
     CONSOLIDATE_NGEN = 120
     ALLOW_HIGH_COVERAGE_LIST_DIGESTS = False
     ENABLE_ERA_FOLDING = True
+    EXTRACTIVE_ERA_CONSOLIDATION = False
+    EXTRACTIVE_ERA_MAX_CHARS = 9000
 
     def _source_scaffold(self, source_texts):
         remaining = int(self.TEXT_SCAFFOLD_MAX_CHARS)
@@ -486,6 +488,29 @@ class ArenaCache:
                        f"{source_block}\n\n"
                        f"Assistant:{tail}")
         return tuple(out)
+
+    def _extractive_era_text(self, source_texts):
+        """Build an index-era from child digest text without model synthesis.
+
+        Era nodes are expanded to children before reading, so their text is a
+        routing/index surface. For dialects where digest-of-digest generation is
+        too memory-heavy, preserve the child digest facts verbatim and harvest
+        this index text under the serving model.
+        """
+        remaining = int(self.EXTRACTIVE_ERA_MAX_CHARS)
+        parts = []
+        for j, text in enumerate(source_texts):
+            if remaining <= 0:
+                break
+            label = chr(ord("A") + (j % 26))
+            clean = str(text).strip()
+            clean = re.sub(r"(?i)\b(?:ARCHIVE NOTE|ERA INDEX)\.\s*", "", clean)
+            clean = re.sub(r"\s+", " ", clean).strip()
+            if len(clean) > remaining:
+                clean = clean[:remaining].rstrip()
+            parts.append(f"[digest {label}] {clean}")
+            remaining -= len(clean)
+        return " ".join(parts)
 
     @staticmethod
     def _rare_tokens(text):
@@ -569,6 +594,29 @@ class ArenaCache:
         have = cls._rare_tokens(text) | cls._caps_tokens(text, False)
         return len(need & have) / len(need)
 
+    def _deposit_consolidation(self, idxs, text, prefix="ARCHIVE NOTE."):
+        note = f"{prefix} {text}\n"
+        didx = self.deposit(note)
+        self.grafts[didx]["kind"] = "digest"
+        self.grafts[didx]["sources"] = list(idxs)
+        # descent keys flatten through generations: an era node (digest of
+        # digests) stays addressable per LEAF topic, and inherits the
+        # sources' lexical keys so identifier queries still find it
+        child = []
+        rare = set(self.grafts[didx].get("rare", set()))
+        for i in idxs:
+            g = self.grafts[i]
+            child.append(g["cent"])
+            child.extend(g.get("child_cents", ()))
+            if "rare" not in g:
+                g["rare"] = self._rare_tokens(g["text"])
+            rare |= g["rare"]
+        self.grafts[didx]["child_cents"] = child
+        self.grafts[didx]["rare"] = rare | self._rare_tokens(note)
+        for i in idxs:
+            self.grafts[i]["retired"] = True
+        return didx, text
+
     def consolidate(self, idxs, ngen=None):
         """Phase-2 seat compression: mount the given grafts, generate ONE
         QC'd digest (E2-validated verbatim-preservation prompt), deposit it
@@ -581,8 +629,42 @@ class ArenaCache:
         for L in self.m.layers:
             L.self_attn.live_shift = None
         self._clear_transients()
-        self._ensure_h(idxs)        # sources may be paged out (cold storage)
         srcs = [self.grafts[i]["text"] for i in idxs]
+        deep = any(self.grafts[i].get("kind", "turn") != "turn" for i in idxs)
+        need = self._fact_set(srcs)
+        self.last_consolidation_attempts = []
+        self.last_consolidation_result = {"accepted": False,
+                                          "best_cov": -1.0,
+                                          "need_count": len(need),
+                                          "hit_count": 0}
+        if deep and self.EXTRACTIVE_ERA_CONSOLIDATION:
+            text = self._extractive_era_text(srcs)
+            cov = self._coverage(text, need)
+            # Extractive eras are index/routing nodes whose children are
+            # expanded before reading. Repetition/list QC is for generated
+            # reader digests; applying it here rejects high-coverage indexes
+            # over naturally repetitive child digest structure.
+            qc = len(text.split()) >= 6
+            self.last_consolidation_attempts.append({
+                "prompt_index": -1,
+                "qc": bool(qc),
+                "relaxed_list": True,
+                "coverage": float(cov),
+                "need_count": len(need),
+                "hit_count": int(round(cov * len(need))),
+                "text": text[:1200],
+            })
+            self.last_consolidation_result.update({
+                "best_cov": float(cov),
+                "hit_count": int(round(cov * len(need))),
+            })
+            if not qc or cov < self.MIN_FOLD_KEEP:
+                return None, None
+            self.last_consolidation_result["accepted"] = True
+            return self._deposit_consolidation(idxs, text,
+                                               prefix="ERA INDEX.")
+
+        self._ensure_h(idxs)        # sources may be paged out (cold storage)
         for li, layer in enumerate(self.m.layers):
             att = layer.self_attn
             hs = [self.grafts[i]["h"][li] for i in idxs]
@@ -590,14 +672,7 @@ class ArenaCache:
                          else tc.cat([h[key] for h in hs], dim=dim))
                    for key, dim in self.PAYLOAD}
             self._set_inject(att, blk)
-        deep = any(self.grafts[i].get("kind", "turn") != "turn" for i in idxs)
         prompts = self._consolidation_prompts(deep, srcs)
-        need = self._fact_set(srcs)
-        self.last_consolidation_attempts = []
-        self.last_consolidation_result = {"accepted": False,
-                                          "best_cov": -1.0,
-                                          "need_count": len(need),
-                                          "hit_count": 0}
         try:
             text, best, best_cov = None, None, -1.0
             for prompt_idx, prompt in enumerate(prompts):
@@ -672,27 +747,7 @@ class ArenaCache:
         if text is None or best_cov < self.MIN_FOLD_KEEP:
             return None, None
         self.last_consolidation_result["accepted"] = True
-        note = f"ARCHIVE NOTE. {text}\n"
-        didx = self.deposit(note)
-        self.grafts[didx]["kind"] = "digest"
-        self.grafts[didx]["sources"] = list(idxs)
-        # descent keys flatten through generations: an era node (digest of
-        # digests) stays addressable per LEAF topic, and inherits the
-        # sources' lexical keys so identifier queries still find it
-        child = []
-        rare = set(self.grafts[didx].get("rare", set()))
-        for i in idxs:
-            g = self.grafts[i]
-            child.append(g["cent"])
-            child.extend(g.get("child_cents", ()))
-            if "rare" not in g:
-                g["rare"] = self._rare_tokens(g["text"])
-            rare |= g["rare"]
-        self.grafts[didx]["child_cents"] = child
-        self.grafts[didx]["rare"] = rare | self._rare_tokens(note)
-        for i in idxs:
-            self.grafts[i]["retired"] = True
-        return didx, text
+        return self._deposit_consolidation(idxs, text)
 
     # ------------------------------------------------------------ cache ops
     def _ensure_h(self, idxs):
@@ -1098,7 +1153,9 @@ class ArenaCache:
             # "relevance" order kept prose digests and dropped the raw fact
             # turns inside budget-bound expansions. A workable version
             # needs a leaf bias — board item, not a one-liner.
-            budget = self.width - sum(self.grafts[i]["ntok"] for i in rec)
+            rec_budget = 0 if qrare else sum(self.grafts[i]["ntok"]
+                                             for i in rec)
+            budget = self.width - rec_budget
             out, used = [], 0
             for i in picks:
                 n = self.grafts[i]["ntok"]
@@ -1141,11 +1198,10 @@ class ArenaCache:
                 # a zero-length live tail (engine slice/cat edge case)
                 self.caches, self.pos, self.live_segs = None, 0, []
                 self.cur_mounts, self.cur_mount_n = [], 0
-            # recency joins topical attempts only: identifier-precise
-            # attempts and clean rooms are point lookups, and the previous
-            # turn IS the echo source (ephemeral corpus gate: wrong-sibling
-            # echoes rode the recency mount through every retry)
-            use_rec = rec and not clean and picks != precise
+            # recency joins topical/anaphora attempts only. Identifier
+            # lookups are point reads even when rank-1 is a folded parent:
+            # previous turns are echo sources that can swamp the mounted fact.
+            use_rec = rec and not qrare and not clean and picks != precise
             mset = sorted(set(rec) | set(picks)) if use_rec else sorted(set(picks))
             txt, info = self._attempt(user_text, mset, ngen, deposit, stops)
             info["trip"] = trip
