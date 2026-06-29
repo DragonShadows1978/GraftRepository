@@ -506,6 +506,59 @@ class GraftRepository:
             write_direct_threshold=write_direct_threshold)
                 for c in candidates]
 
+    @staticmethod
+    def _normalize_review_item(item, fallback_id):
+        out = dict(item)
+        out["id"] = int(out.get("id", fallback_id))
+        out.setdefault("status", "pending")
+        return out
+
+    @classmethod
+    def _apply_review_wal_records(cls, base_reviews, records):
+        reviews = {}
+        for pos, item in enumerate(base_reviews or ()):
+            norm = cls._normalize_review_item(item, pos)
+            reviews[norm["id"]] = norm
+        for rec in records or ():
+            typ = rec.get("type")
+            if typ == "REVIEW_CANDIDATE":
+                item = {k: v for k, v in rec.items()
+                        if k not in ("lsn", "type", "time")}
+                norm = cls._normalize_review_item(item, len(reviews))
+                reviews[norm["id"]] = norm
+            elif typ == "REVIEW_EDIT":
+                rid = int(rec.get("review_id", -1))
+                if rid in reviews:
+                    updates = dict(rec.get("updates", {}) or {})
+                    if updates.get("metadata") is not None:
+                        updates["metadata"] = dict(updates["metadata"])
+                    reviews[rid].update(updates)
+                    reviews[rid]["status"] = "pending"
+                    if rec.get("reason"):
+                        reviews[rid]["edit_reason"] = rec["reason"]
+            elif typ == "REVIEW_APPROVE":
+                rid = int(rec.get("review_id", -1))
+                if rid in reviews:
+                    reviews[rid]["status"] = "approved"
+                    if "node_id" in rec:
+                        reviews[rid]["approved_node_id"] = int(rec["node_id"])
+            elif typ == "REVIEW_REJECT":
+                rid = int(rec.get("review_id", -1))
+                if rid in reviews:
+                    reviews[rid]["status"] = "rejected"
+                    if rec.get("reason"):
+                        reviews[rid]["rejection_reason"] = rec["reason"]
+        return [reviews[k] for k in sorted(reviews)]
+
+    def _review_item(self, review_id):
+        rid = int(review_id)
+        if rid < 0 or rid >= len(self.review_buffer):
+            raise IndexError(f"review item {rid} does not exist")
+        item = self.review_buffer[rid]
+        item.setdefault("id", rid)
+        item.setdefault("status", "pending")
+        return item
+
     def review_candidate(self, text, proposed_kind="fact",
                          proposed_scope="project",
                          proposed_durability="project",
@@ -518,21 +571,79 @@ class GraftRepository:
                 "proposed_durability": proposed_durability,
                 "proposed_mutability": proposed_mutability,
                 "confidence": float(confidence), "action": action,
-                "reason": reason}
+                "reason": reason, "status": "pending"}
         if metadata:
             item["metadata"] = dict(metadata)
         self.review_buffer.append(item)
         self._append_wal("REVIEW_CANDIDATE", **item)
         return item["id"]
 
+    def edit_review(self, review_id, text=None, proposed_kind=None,
+                    proposed_scope=None, proposed_durability=None,
+                    proposed_mutability=None, confidence=None,
+                    metadata=None, reason=""):
+        item = self._review_item(review_id)
+        if item.get("status") == "approved":
+            raise RuntimeError("approved review items cannot be edited")
+        if item.get("status") == "rejected":
+            raise RuntimeError("rejected review items cannot be edited")
+        updates = {}
+        if text is not None:
+            updates["text"] = str(text)
+        for key, val in (
+                ("proposed_kind", proposed_kind),
+                ("proposed_scope", proposed_scope),
+                ("proposed_durability", proposed_durability),
+                ("proposed_mutability", proposed_mutability)):
+            if val is not None:
+                updates[key] = str(val)
+        if confidence is not None:
+            updates["confidence"] = float(confidence)
+        if metadata is not None:
+            merged = dict(item.get("metadata", {}))
+            merged.update(dict(metadata))
+            updates["metadata"] = merged
+        item.update(updates)
+        item["status"] = "pending"
+        if reason:
+            item["edit_reason"] = reason
+        self._append_wal("REVIEW_EDIT", review_id=int(review_id),
+                         updates=updates, reason=reason)
+        return dict(item)
+
+    def change_review_scope(self, review_id, scope, durability=None,
+                            mutability=None):
+        return self.edit_review(
+            review_id,
+            proposed_scope=scope,
+            proposed_durability=durability,
+            proposed_mutability=mutability,
+            reason="scope changed")
+
+    def reject_review(self, review_id, reason=""):
+        item = self._review_item(review_id)
+        if item.get("status") == "approved":
+            raise RuntimeError("approved review items cannot be rejected")
+        item["status"] = "rejected"
+        if reason:
+            item["rejection_reason"] = reason
+        self._append_wal("REVIEW_REJECT", review_id=int(review_id),
+                         reason=reason)
+        return dict(item)
+
     def approve_review(self, review_id):
-        item = self.review_buffer[review_id]
+        item = self._review_item(review_id)
+        if item.get("status") == "rejected":
+            raise RuntimeError("rejected review items cannot be approved")
+        if item.get("status") == "approved" and "approved_node_id" in item:
+            return int(item["approved_node_id"])
         idx = self.remember(item["text"], durability=item["proposed_durability"],
                             mutability=item["proposed_mutability"],
                             scope=item["proposed_scope"],
                             kind=item["proposed_kind"],
                             confidence=item["confidence"],
                             metadata=item.get("metadata"))
+        item["status"] = "approved"
         item["approved_node_id"] = idx
         self._append_wal("REVIEW_APPROVE", review_id=review_id, node_id=idx)
         return idx
@@ -914,7 +1025,6 @@ class GraftRepository:
 
     def _recover_wal_summary(self, records):
         nodes = {}
-        reviews = []
 
         def meta_for(node):
             meta = dict(node.get("metadata") or {})
@@ -991,10 +1101,7 @@ class GraftRepository:
             elif typ in ("MEMORY_CORRECT", "MEMORY_EXTRACT_SUPERSEDE"):
                 if "node_id" in rec:
                     link_revision(rec["node_id"], rec.get("supersedes", ()))
-            elif typ == "REVIEW_CANDIDATE":
-                reviews.append({k: v for k, v in rec.items()
-                                if k not in ("lsn", "type", "time")})
-        self.recovered_reviews = reviews
+        self.recovered_reviews = self._apply_review_wal_records([], records)
         return [nodes[k] for k in sorted(nodes)]
 
     def _wal_cent_width(self):
@@ -1320,10 +1427,11 @@ class GraftRepository:
             self._ensure_lifecycle(i, g)
             self.arena.grafts.append(g)
         self._rebuild_child_keys()
-        self.review_buffer = man.get("review_buffer", [])
         self._wal_lsn = max(int(man.get("wal_lsn", 0)), self._wal_lsn)
         self.recovered_wal = self._read_wal()
         self.recovered_nodes = self._recover_wal_summary(self.recovered_wal)
+        self.review_buffer = self._apply_review_wal_records(
+            man.get("review_buffer", []), self.recovered_wal)
         self.dirty_nodes.clear()
         self._sync_native_full()
         self._page()

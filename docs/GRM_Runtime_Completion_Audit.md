@@ -104,6 +104,12 @@ validation where feasible.
   ignore, flush) into a JSON operation plan. `NativeGraftStore` exposes that
   parser and native-backed `GraftRepository.apply_memory_command()` consumes it
   before applying the Python memory policy.
+- Review-buffer execution:
+  uncertain extraction or malformed correction candidates can now be approved,
+  rejected, edited, or scope-changed through repository APIs. Review items
+  carry explicit `pending` / `approved` / `rejected` status, and WAL replay
+  applies review edits and decisions over both WAL-only recovery and
+  manifest-plus-WAL reload.
 - Native routing/indexing:
   the C ABI now exposes route-key upsert and top-k route lookup through the
   C++ `RouterIndex`; `GraftRepository.native_route()` translates native route
@@ -277,7 +283,7 @@ pytest -p no:cacheprovider -q \
   tests/test_grm_runtime_lifecycle.py \
   tests/test_grm_native_runtime.py \
   tests/test_deepseek_grm_hooks_static.py
-49 passed, 2 warnings
+50 passed, 2 warnings
 
 cmake --build /tmp/grm_runtime_build
 Built target grm_runtime
@@ -461,8 +467,8 @@ DEEPSEEK TURN50 RESUME GATE: PASS
   supersession graph edges are now structured native state. Native can apply
   the final revision state once Python decides the correction. The explicit
   memory-command grammar now has a native parse-plan boundary, while conflict
-  policy, review approval, conservative extractor-candidate application, and
-  final command execution still live in Python.
+  policy, review execution, conservative extractor-candidate application, and
+  final command execution live in the Python policy layer.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. The longer high-context
@@ -495,7 +501,7 @@ recall. Folding-enabled DeepSeek turn-50 now validates two-level compression:
 40 turns retire under 10 digest nodes, six digests retire under two extractive
 era nodes, fresh-process ASTRA recall still passes, and a retired turn-5 fact
 is recalled through folded memory. The full production C++/CUDA runtime is not
-complete until routing policy boundaries, final command/extraction/review
-execution ownership, model-based extraction policy hardening, longer
-needle/high-context runs, CUDA route scanning if needed, and the broader
-model-specific graft equivalence matrix pass.
+complete until routing policy boundaries, final command/extraction orchestration
+ownership, model-based extraction policy hardening, longer needle/high-context
+runs, CUDA route scanning if needed, and the broader model-specific graft
+equivalence matrix pass.

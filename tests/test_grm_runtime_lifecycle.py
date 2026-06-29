@@ -2,6 +2,7 @@ import json
 import os
 
 import numpy as np
+import pytest
 
 from core.graft_repository import GraftRepository
 from core.grm_native import NativeGraftStore
@@ -191,9 +192,57 @@ def test_memory_commands_revision_and_review(tmp_path):
     rid = repo.review_candidate("possible extracted fact", confidence=0.4)
     approved = repo.approve_review(rid)
     assert repo.arena.grafts[approved]["metadata"]["confidence"] == 0.4
+    assert repo.review_buffer[rid]["status"] == "approved"
 
     why = repo.why_remember("authoritative live store")
     assert why[0]["write_intent"] == "user_asserted"
+
+
+def test_review_buffer_edit_reject_and_manifest_wal_replay(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+
+    rid = repo.review_candidate("draft extracted fact", confidence=0.2)
+    rejected = repo.review_candidate("bad extracted fact", confidence=0.1)
+    repo.flush_now()
+
+    edited = repo.edit_review(
+        rid,
+        text="Edited extracted fact 91-2222",
+        proposed_scope="user",
+        proposed_durability="permanent",
+        confidence=0.85,
+        metadata={"subject": "review fact", "value": "91-2222"},
+        reason="user edited candidate")
+    assert edited["status"] == "pending"
+    assert edited["text"] == "Edited extracted fact 91-2222"
+
+    scoped = repo.change_review_scope(rid, "project", durability="project")
+    assert scoped["proposed_scope"] == "project"
+    assert scoped["proposed_durability"] == "project"
+
+    rej = repo.reject_review(rejected, reason="user rejected")
+    assert rej["status"] == "rejected"
+    with pytest.raises(RuntimeError, match="rejected review"):
+        repo.approve_review(rejected)
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+    assert reopened.review_buffer[rid]["text"] == "Edited extracted fact 91-2222"
+    assert reopened.review_buffer[rid]["proposed_scope"] == "project"
+    assert reopened.review_buffer[rid]["metadata"]["value"] == "91-2222"
+    assert reopened.review_buffer[rejected]["status"] == "rejected"
+
+    approved = reopened.approve_review(rid)
+    g = reopened.arena.grafts[approved]
+    assert g["text"] == "Edited extracted fact 91-2222"
+    assert g["metadata"]["scope"] == "project"
+    assert g["metadata"]["durability"] == "project"
+    assert g["metadata"]["subject"] == "review fact"
+    assert reopened.review_buffer[rid]["status"] == "approved"
+    assert reopened.approve_review(rid) == approved
+    assert len(reopened.arena.grafts) == 1
 
 
 def test_librarian_respects_arena_era_folding_capability(tmp_path):

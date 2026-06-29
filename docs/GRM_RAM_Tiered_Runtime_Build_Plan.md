@@ -8,10 +8,13 @@ memory-command parsing. TensorCUDA now owns the focused CUDA cache-surgery,
 RoPE, cache-span export, and paired raw+positional export primitives, including
 a multi-layer paired export boundary for compatible dialects. It also owns a
 multi-layer raw+positional swap/re-seat/evict boundary and a functional cache
-transaction for compatible dialects; the remaining CUDA/runtime work is
-packaging final command execution, model-based extraction policy, revision
-policy ownership, and runtime orchestration into one cohesive GRM runtime plus
-broader high-context/model-matrix GPU regression coverage.
+transaction for compatible dialects. Explicit memory-command execution,
+semantic revision application, and review-buffer execution now exist in the
+Python policy layer with native-backed parsing/routing/state mirrors where
+available; the remaining CUDA/runtime work is packaging model-based extraction
+policy, runtime orchestration, and optional CUDA route scanning into one
+cohesive GRM runtime plus broader high-context/model-matrix GPU regression
+coverage.
 
 **Context:** the GPU may be occupied by GRAPA training, so this document scopes
 the runtime architecture, memory policy, and control surface before code moves.
@@ -57,6 +60,10 @@ crash before the next manifest does not resurrect superseded facts as active
 memory. WAL recovery also preserves `no_fold` fold-abort exemptions from
 metadata state records, which keeps rejected librarian windows from looping
 after recovery.
+Review-buffer execution now supports approve, reject, edit, and scope-change
+operations. Review item status (`pending`, `approved`, `rejected`) and
+post-manifest review edits are replayed from WAL, so review decisions survive
+both WAL-only recovery and manifest-plus-WAL reload.
 Manifest reload now mirrors retired/cold durable nodes into the native store as
 metadata-only placeholders instead of reloading their payload tensors into RAM;
 native node ids, active state, route metadata, and graph references stay aligned
@@ -1038,7 +1045,9 @@ review_candidate
   confidence
 ```
 
-The user can approve, reject, edit, or change scope.
+The user can approve, reject, edit, or change scope. Runtime support exists via
+`approve_review()`, `reject_review()`, `edit_review()`, and
+`change_review_scope()`, with WAL replay of review status and edits.
 
 High-confidence explicit user commands bypass review.
 
