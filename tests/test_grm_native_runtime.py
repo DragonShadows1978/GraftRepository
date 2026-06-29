@@ -125,6 +125,57 @@ def test_native_metadata_active_updates_route_index(tmp_path):
         assert store.route([1.0, 0.0], topk=1) == [n0]
 
 
+def test_native_memory_command_parser(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        assert store.parse_memory_command(
+            "remember permanently: User prefers amber dashboards") == {
+                "action": "remember",
+                "body": "User prefers amber dashboards",
+                "durability": "permanent",
+                "scope": "user",
+                "kind": "fact",
+                "flush_immediately": True,
+            }
+        assert store.parse_memory_command(
+            "this is temporary: staging room is Cedar") == {
+                "action": "remember",
+                "body": "staging room is Cedar",
+                "durability": "volatile",
+                "mutability": "ephemeral",
+                "scope": "session",
+                "kind": "task_state",
+                "flush_immediately": False,
+            }
+        assert store.parse_memory_command("forget: stale marker") == {
+            "action": "forget",
+            "query": "stale marker",
+            "flush_immediately": False,
+        }
+        assert store.parse_memory_command(
+            "correct memory: stale marker => fresh marker") == {
+                "action": "correct",
+                "query": "stale marker",
+                "replacement": "fresh marker",
+                "flush_immediately": False,
+            }
+        assert store.parse_memory_command("update memory: missing arrow") == {
+            "action": "review",
+            "body": "missing arrow",
+            "reason": "correction missing => separator",
+            "flush_immediately": False,
+        }
+        assert store.parse_memory_command("flush memory now") == {
+            "action": "flush",
+            "flush_immediately": False,
+        }
+        with pytest.raises(RuntimeError, match="unknown memory command"):
+            store.parse_memory_command("remember maybe someday")
+
+
 def test_native_apply_revision_links_edges_and_retires_routes(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

@@ -141,6 +141,22 @@ struct TensorEvictResult {
   std::vector<std::uint8_t> bytes;
 };
 
+struct MemoryCommandPlan {
+  std::string action;
+  std::string body;
+  std::string query;
+  std::string replacement;
+  std::string durability;
+  std::string mutability;
+  std::string scope;
+  std::string kind;
+  std::string reason;
+  bool flush_immediately = false;
+};
+
+MemoryCommandPlan parse_memory_command(const std::string& text);
+std::string memory_command_plan_json(const MemoryCommandPlan& plan);
+
 class DirtyQueue {
  public:
   void mark(std::uint64_t node_id, bool payload, bool metadata);

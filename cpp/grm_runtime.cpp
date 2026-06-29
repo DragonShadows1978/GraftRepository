@@ -2,6 +2,7 @@
 #include "grm_runtime_c.h"
 
 #include <algorithm>
+#include <cctype>
 #include <cstring>
 #include <cmath>
 #include <filesystem>
@@ -159,7 +160,169 @@ void require_byte_count(std::uint64_t actual,
   }
 }
 
+std::string trim(std::string s) {
+  const auto first = std::find_if_not(s.begin(), s.end(), [](unsigned char c) {
+    return std::isspace(c) != 0;
+  });
+  const auto last = std::find_if_not(s.rbegin(), s.rend(),
+                                     [](unsigned char c) {
+                                       return std::isspace(c) != 0;
+                                     }).base();
+  if (first >= last) {
+    return "";
+  }
+  return std::string(first, last);
+}
+
+std::string ascii_lower(std::string s) {
+  std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) {
+    return static_cast<char>(std::tolower(c));
+  });
+  return s;
+}
+
+bool starts_with(const std::string& s, const std::string& prefix) {
+  return s.size() >= prefix.size() &&
+         std::equal(prefix.begin(), prefix.end(), s.begin());
+}
+
+std::string json_escape(const std::string& s) {
+  std::ostringstream out;
+  for (const unsigned char c : s) {
+    switch (c) {
+      case '"': out << "\\\""; break;
+      case '\\': out << "\\\\"; break;
+      case '\b': out << "\\b"; break;
+      case '\f': out << "\\f"; break;
+      case '\n': out << "\\n"; break;
+      case '\r': out << "\\r"; break;
+      case '\t': out << "\\t"; break;
+      default:
+        if (c < 0x20) {
+          const char* hex = "0123456789abcdef";
+          out << "\\u00" << hex[(c >> 4) & 0xf] << hex[c & 0xf];
+        } else {
+          out << static_cast<char>(c);
+        }
+    }
+  }
+  return out.str();
+}
+
+void append_json_string_field(std::ostringstream& out,
+                              bool& first,
+                              const char* key,
+                              const std::string& value) {
+  if (value.empty()) {
+    return;
+  }
+  if (!first) {
+    out << ",";
+  }
+  first = false;
+  out << "\"" << key << "\":\"" << json_escape(value) << "\"";
+}
+
 }  // namespace
+
+MemoryCommandPlan parse_memory_command(const std::string& text) {
+  const std::string original = trim(text);
+  const std::string low = ascii_lower(original);
+  struct RememberPrefix {
+    const char* prefix;
+    const char* durability;
+    const char* scope;
+    const char* kind;
+    const char* mutability;
+    bool flush;
+  };
+  const RememberPrefix remember_prefixes[] = {
+      {"remember permanently:", "permanent", "user", "fact", "", true},
+      {"remember this for the project:", "project", "project",
+       "task_state", "", false},
+      {"remember this for this session:", "session", "session",
+       "task_state", "", false},
+      {"this is temporary:", "volatile", "session", "task_state",
+       "ephemeral", false},
+  };
+
+  for (const auto& p : remember_prefixes) {
+    if (starts_with(low, p.prefix)) {
+      MemoryCommandPlan plan;
+      plan.action = "remember";
+      plan.body = trim(original.substr(std::strlen(p.prefix)));
+      plan.durability = p.durability;
+      plan.scope = p.scope;
+      plan.kind = p.kind;
+      plan.mutability = p.mutability;
+      plan.flush_immediately = p.flush;
+      return plan;
+    }
+  }
+
+  if (starts_with(low, "forget:")) {
+    MemoryCommandPlan plan;
+    plan.action = "forget";
+    plan.query = trim(original.substr(std::strlen("forget:")));
+    return plan;
+  }
+
+  if (starts_with(low, "correct memory:") ||
+      starts_with(low, "update memory:")) {
+    const auto colon = original.find(':');
+    const std::string body = colon == std::string::npos
+                                 ? ""
+                                 : trim(original.substr(colon + 1));
+    const auto arrow = body.find("=>");
+    if (arrow == std::string::npos) {
+      MemoryCommandPlan plan;
+      plan.action = "review";
+      plan.body = body;
+      plan.reason = "correction missing => separator";
+      return plan;
+    }
+    MemoryCommandPlan plan;
+    plan.action = "correct";
+    plan.query = trim(body.substr(0, arrow));
+    plan.replacement = trim(body.substr(arrow + 2));
+    return plan;
+  }
+
+  if (starts_with(low, "do not remember this")) {
+    MemoryCommandPlan plan;
+    plan.action = "ignore";
+    return plan;
+  }
+
+  if (starts_with(low, "flush memory now")) {
+    MemoryCommandPlan plan;
+    plan.action = "flush";
+    return plan;
+  }
+
+  throw std::runtime_error("unknown memory command");
+}
+
+std::string memory_command_plan_json(const MemoryCommandPlan& plan) {
+  std::ostringstream out;
+  bool first = true;
+  out << "{";
+  append_json_string_field(out, first, "action", plan.action);
+  append_json_string_field(out, first, "body", plan.body);
+  append_json_string_field(out, first, "query", plan.query);
+  append_json_string_field(out, first, "replacement", plan.replacement);
+  append_json_string_field(out, first, "durability", plan.durability);
+  append_json_string_field(out, first, "mutability", plan.mutability);
+  append_json_string_field(out, first, "scope", plan.scope);
+  append_json_string_field(out, first, "kind", plan.kind);
+  append_json_string_field(out, first, "reason", plan.reason);
+  if (!first) {
+    out << ",";
+  }
+  out << "\"flush_immediately\":"
+      << (plan.flush_immediately ? "true" : "false") << "}";
+  return out.str();
+}
 
 HostGraftStore::HostGraftStore(DialectDescriptor dialect)
     : dialect_(std::move(dialect)) {}
@@ -1402,6 +1565,34 @@ int grm_store_metadata_json(grm_store_handle* handle,
     if (out_json != nullptr && out_cap > 0) {
       const size_t n = std::min(out_cap - 1, s.size());
       std::memcpy(out_json, s.data(), n);
+      out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_parse_memory_command(grm_store_handle* handle,
+                                   const char* text,
+                                   char* out_json,
+                                   size_t out_cap,
+                                   uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || text == nullptr ||
+        out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid parse_memory_command arguments");
+    }
+    if (out_json == nullptr && out_cap > 0) {
+      return grm_fail_msg(handle,
+                          "null command-plan buffer with nonzero capacity");
+    }
+    const auto json = grm::memory_command_plan_json(
+        grm::parse_memory_command(text));
+    *out_len = static_cast<uint64_t>(json.size());
+    if (out_json != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, json.size());
+      std::memcpy(out_json, json.data(), n);
       out_json[n] = '\0';
     }
     return 0;

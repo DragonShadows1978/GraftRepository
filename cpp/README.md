@@ -11,6 +11,7 @@ Implemented here:
 - `DirtyQueue`
 - `DurabilityWriter`
 - `DeviceArena` swap/evict planner and host tensor swap/evict references
+- explicit memory-command parser that returns JSON operation plans
 - dependency-free C ABI in `grm_runtime_c.h`
 
 The CUDA arena is intentionally not implemented in this scaffold yet. The rule

@@ -195,6 +195,36 @@ def test_memory_commands_revision_and_review(tmp_path):
     assert why[0]["write_intent"] == "user_asserted"
 
 
+def test_native_memory_command_parser_drives_repository_policy(tmp_path):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+
+    out = repo.apply_memory_command(
+        "remember permanently: Native parser owns command grammar")
+    assert out["action"] == "remember"
+    g = repo.arena.grafts[out["node_id"]]
+    assert g["metadata"]["durability"] == "permanent"
+    assert g["metadata"]["scope"] == "user"
+    assert g["metadata"]["kind"] == "fact"
+    assert g["durable"] is True
+    assert repo.stats()["native"]["durable_nodes"] == 1
+
+    corr = repo.apply_memory_command(
+        "correct memory: command grammar => native parser command grammar")
+    assert corr["action"] == "correct"
+    active = repo.show_memory_about("native parser command grammar")
+    assert len(active) == 1
+    assert active[0]["metadata"]["supersedes"] == [out["node_id"]]
+
+    review = repo.apply_memory_command("update memory: missing arrow")
+    assert review["action"] == "review"
+    assert repo.review_buffer[-1]["reason"] == (
+        "correction missing => separator")
+    repo.close()
+
+
 def test_dirty_node_can_leave_vram_before_disk_flush(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,

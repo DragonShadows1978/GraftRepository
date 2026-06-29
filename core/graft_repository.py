@@ -227,12 +227,14 @@ class GraftRepository:
         self._page()
         return idx
 
-    def apply_memory_command(self, text):
-        """Parse the explicit chat memory commands from the runtime plan."""
-        low = text.lower().strip()
+    @staticmethod
+    def _parse_memory_command_python(text):
+        original = text.strip()
+        low = original.lower()
         table = (
             ("remember permanently:", dict(durability="permanent",
-                                           scope="user", kind="fact")),
+                                           scope="user", kind="fact",
+                                           flush_immediately=True)),
             ("remember this for the project:", dict(durability="project",
                                                     scope="project",
                                                     kind="task_state")),
@@ -246,27 +248,72 @@ class GraftRepository:
         )
         for prefix, opts in table:
             if low.startswith(prefix):
-                body = text[len(prefix):].strip()
-                idx = self.remember(body, **opts)
-                if opts.get("durability") == "permanent":
-                    self.flush_now()
-                return {"action": "remember", "node_id": idx}
+                out = {"action": "remember",
+                       "body": original[len(prefix):].strip()}
+                out.update(opts)
+                return out
         if low.startswith("forget:"):
             return {"action": "forget",
-                    "count": self.forget(text.split(":", 1)[1].strip())}
+                    "query": original.split(":", 1)[1].strip()}
         if low.startswith(("correct memory:", "update memory:")):
-            body = text.split(":", 1)[1].strip()
+            body = original.split(":", 1)[1].strip()
             if "=>" not in body:
-                self.review_candidate(body, action="review_candidate",
-                                      reason="correction missing => separator")
-                return {"action": "review", "count": len(self.review_buffer)}
+                return {"action": "review", "body": body,
+                        "reason": "correction missing => separator"}
             query, replacement = [p.strip() for p in body.split("=>", 1)]
-            return {"action": "correct",
-                    "node_id": self.correct_memory(query, replacement)}
+            return {"action": "correct", "query": query,
+                    "replacement": replacement}
         if low.startswith("do not remember this"):
-            self._append_wal("DO_NOT_REMEMBER", text=text)
             return {"action": "ignore"}
         if low.startswith("flush memory now"):
+            return {"action": "flush"}
+        raise ValueError(f"unknown memory command: {text!r}")
+
+    def _parse_memory_command(self, text):
+        """Return a structured memory-command plan.
+
+        Native-backed repositories use the C++ parser so command grammar is a
+        stable runtime boundary. Python remains the operation/policy executor.
+        """
+        if self.native_store is not None and hasattr(
+                self.native_store, "parse_memory_command"):
+            try:
+                return self.native_store.parse_memory_command(text)
+            except RuntimeError as exc:
+                if "unavailable" not in str(exc):
+                    raise ValueError(f"unknown memory command: {text!r}") from exc
+        return self._parse_memory_command_python(text)
+
+    def apply_memory_command(self, text):
+        """Apply an explicit chat memory command from the runtime plan."""
+        plan = self._parse_memory_command(text)
+        action = plan.get("action")
+        if action == "remember":
+            opts = {k: plan[k] for k in ("durability", "mutability",
+                                         "scope", "kind")
+                    if plan.get(k)}
+            idx = self.remember(plan.get("body", ""), **opts)
+            if plan.get("flush_immediately"):
+                self.flush_now()
+            return {"action": "remember", "node_id": idx}
+        if action == "forget":
+            return {"action": "forget",
+                    "count": self.forget(plan.get("query", ""))}
+        if action == "correct":
+            return {"action": "correct",
+                    "node_id": self.correct_memory(
+                        plan.get("query", ""), plan.get("replacement", ""))}
+        if action == "review":
+            self.review_candidate(plan.get("body", ""),
+                                  action="review_candidate",
+                                  reason=plan.get(
+                                      "reason",
+                                      "correction missing => separator"))
+            return {"action": "review", "count": len(self.review_buffer)}
+        if action == "ignore":
+            self._append_wal("DO_NOT_REMEMBER", text=text)
+            return {"action": "ignore"}
+        if action == "flush":
             self.flush_now()
             return {"action": "flush"}
         raise ValueError(f"unknown memory command: {text!r}")

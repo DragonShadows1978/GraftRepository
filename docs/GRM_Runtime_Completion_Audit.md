@@ -79,6 +79,12 @@ validation where feasible.
   `grm_store_apply_revision()` / `NativeGraftStore.apply_revision()` retires
   superseded nodes, links the replacement node, and updates native route
   activity in one native operation after Python decides the correction policy.
+- Native memory-command parser boundary:
+  `grm_store_parse_memory_command()` parses the deterministic explicit memory
+  command grammar (`remember`, `forget`, `correct/update`, review fallback,
+  ignore, flush) into a JSON operation plan. `NativeGraftStore` exposes that
+  parser and native-backed `GraftRepository.apply_memory_command()` consumes it
+  before applying the Python memory policy.
 - Native routing/indexing:
   the C ABI now exposes route-key upsert and top-k route lookup through the
   C++ `RouterIndex`; `GraftRepository.native_route()` translates native route
@@ -236,7 +242,7 @@ pytest -p no:cacheprovider -q \
   tests/test_grm_runtime_lifecycle.py \
   tests/test_grm_native_runtime.py \
   tests/test_deepseek_grm_hooks_static.py
-40 passed, 2 warnings
+42 passed, 2 warnings
 
 cmake --build /tmp/grm_runtime_build
 Built target grm_runtime
@@ -346,9 +352,10 @@ DEEPSEEK FULL RESUME GATE: PASS
   lifecycle-aware route indexing with native kind/scope/durability/mutability
   filters. Semantic metadata is persisted natively as JSON, and source/
   supersession graph edges are now structured native state. Native can apply
-  the final revision state once Python decides the correction; memory command
-  parsing, conflict policy, review approval, and extraction policy still live
-  in Python.
+  the final revision state once Python decides the correction. The explicit
+  memory-command grammar now has a native parse-plan boundary, while conflict
+  policy, review approval, extraction policy, and final command execution still
+  live in Python.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. The longer high-context
@@ -364,7 +371,7 @@ DEEPSEEK FULL RESUME GATE: PASS
 The Python RAM-first runtime, opt-in C++ host-store mirror, native host payload,
 metadata, graph-edge checkpointing, native revision application, native route
 index with active-state and kind/scope/durability/mutability filters plus multi-key arena-route
-acceleration, native swap-plan boundary,
+acceleration, native explicit memory-command parser, native swap-plan boundary,
 native host tensor swap/evict references, TensorCUDA fused splice/evict cache
 movement, TensorCUDA fused RoPE re-seat movement, TensorCUDA fused
 cache-sliced raw/RoPE export primitives with paired and multi-layer paired
@@ -372,6 +379,7 @@ export boundaries, TensorCUDA functional multi-layer arena cache transaction,
 and DeepSeek GRM clean build plus fresh-process resume paths are real and
 tested, including a full paging/open-ended recall gate on DeepSeek-V2-Lite
 INT4. The full production C++/CUDA runtime is not complete until routing policy
-boundaries, metadata/revision policy ownership, CUDA route scanning if needed,
-retained-cache stress, longer needle/high-context runs, and the broader
-model-specific graft equivalence matrix pass.
+boundaries, metadata/revision policy ownership, conflict/review/extraction
+policy hardening, CUDA route scanning if needed, retained-cache stress, longer
+needle/high-context runs, and the broader model-specific graft equivalence
+matrix pass.

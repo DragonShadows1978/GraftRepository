@@ -226,6 +226,13 @@ class NativeGraftStore:
             ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
             ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
         lib.grm_store_metadata_json.restype = ctypes.c_int
+        self._has_parse_memory_command = hasattr(
+            lib, "grm_store_parse_memory_command")
+        if self._has_parse_memory_command:
+            lib.grm_store_parse_memory_command.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_parse_memory_command.restype = ctypes.c_int
         lib.grm_store_set_route.argtypes = [
             ctypes.c_void_p, ctypes.c_uint64, ctypes.POINTER(ctypes.c_float),
             ctypes.c_uint64, ctypes.c_char_p]
@@ -504,6 +511,19 @@ class NativeGraftStore:
         buf = ctypes.create_string_buffer(cap)
         self._check(self._lib.grm_store_metadata_json(
             self._handle, int(node_id), buf, cap, ctypes.byref(needed)))
+        return json.loads(buf.value.decode("utf-8") or "{}")
+
+    def parse_memory_command(self, text):
+        if not getattr(self, "_has_parse_memory_command", False):
+            raise RuntimeError("native GRM memory command parser is unavailable")
+        needed = ctypes.c_uint64()
+        data = str(text).encode("utf-8")
+        self._check(self._lib.grm_store_parse_memory_command(
+            self._handle, data, None, 0, ctypes.byref(needed)))
+        cap = int(needed.value) + 1
+        buf = ctypes.create_string_buffer(cap)
+        self._check(self._lib.grm_store_parse_memory_command(
+            self._handle, data, buf, cap, ctypes.byref(needed)))
         return json.loads(buf.value.decode("utf-8") or "{}")
 
     def add_structured_node(self, text, payload, ntok=0):

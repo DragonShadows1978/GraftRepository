@@ -145,6 +145,11 @@ int grm_store_metadata_json(grm_store_handle* handle,
                             char* out_json,
                             size_t out_cap,
                             uint64_t* out_len);
+int grm_store_parse_memory_command(grm_store_handle* handle,
+                                   const char* text,
+                                   char* out_json,
+                                   size_t out_cap,
+                                   uint64_t* out_len);
 int grm_store_set_route(grm_store_handle* handle,
                         uint64_t node_id,
                         const float* route_key,
