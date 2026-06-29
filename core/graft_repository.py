@@ -559,7 +559,9 @@ class GraftRepository:
     def _native_evict_device_copy(self, idx):
         if self.native_store is None:
             return
-        node_id = self._native_sync_node(idx)
+        node_id = self._native_node_ids.get(int(idx))
+        if node_id is None:
+            node_id = self._native_sync_node(idx)
         self.native_store.evict_device_copy(node_id)
 
     def _sync_native_full(self):
@@ -1044,6 +1046,7 @@ class GraftRepository:
         self.recovered_nodes = self._recover_wal_summary(self.recovered_wal)
         self.dirty_nodes.clear()
         self._sync_native_full()
+        self._page()
 
     def _rebuild_child_keys(self):
         """Descent keys rebuild from lineage (recursive: eras reach leaves)."""

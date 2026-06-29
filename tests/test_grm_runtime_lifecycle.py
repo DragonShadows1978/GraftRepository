@@ -219,6 +219,58 @@ def test_dirty_node_can_leave_vram_before_disk_flush(tmp_path):
     assert g["device_present"] is True
 
 
+def test_load_enforces_vram_budget(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+
+    for i in range(4):
+        repo.add_document(f"DOC reload budget code {i}-1234")
+    repo.flush_now()
+    assert repo.stats()["active_device"] == 4
+
+    reloaded = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3,
+                               vram_budget_mb=0.000001)
+    st = reloaded.stats()
+
+    assert st["nodes"] == 4
+    assert st["durable_nodes"] == 4
+    assert st["active_device"] == 0
+    for g in reloaded.arena.grafts:
+        assert g["host_present"] is True
+        assert g["host_payload"] is not None
+        assert g["device_present"] is False
+        assert g["h"] is None
+
+
+def test_native_load_budget_eviction_keeps_durable_payload_clean(tmp_path):
+    lib = build_native(tmp_path)
+    repo_path = tmp_path / "repo"
+    repo = GraftRepository(FakeModel(), enc, dec, str(repo_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+
+    for i in range(3):
+        repo.add_document(f"DOC native reload budget code {i}-5678")
+    repo.flush_now()
+    repo.close()
+
+    reloaded = GraftRepository(FakeModel(), enc, dec, str(repo_path),
+                               autosave=False, arena_cls=FakeArena,
+                               route_layer=3, native_lib_path=lib,
+                               vram_budget_mb=0.000001)
+    st = reloaded.stats()
+
+    assert st["active_device"] == 0
+    assert st["dirty_nodes"] == 0
+    assert st["durable_nodes"] == 3
+    assert st["native"]["dirty_nodes"] == 0
+    assert st["native"]["durable_nodes"] == 3
+    assert st["native"]["host_payload_tensors"] == 3
+    reloaded.close()
+
+
 def test_wal_recovers_text_metadata_without_manifest(tmp_path):
     path = str(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,

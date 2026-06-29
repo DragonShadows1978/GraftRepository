@@ -1,15 +1,16 @@
 # GRM RAM-Tiered Runtime Build Plan
 
 **Status:** Python RAM-first runtime implemented through async durability,
-WAL, explicit memory commands, review buffer, provenance metadata, and a
-compilable C++ host-runtime scaffold with an opt-in Python mirror. TensorCUDA
-now owns the focused CUDA cache-surgery, RoPE, cache-span export, and paired
-raw+positional export primitives, including a multi-layer paired export
-boundary for compatible dialects. It also owns a multi-layer raw+positional
-swap/re-seat/evict boundary and a functional cache transaction for compatible
-dialects; the remaining CUDA/runtime work is packaging memory-command policy,
-revision policy ownership, and runtime orchestration into one cohesive GRM
-runtime plus broader GPU regression coverage.
+WAL, explicit memory commands, review buffer, provenance metadata, budgeted
+manifest reload, and a compilable C++ host runtime with an opt-in Python
+mirror. TensorCUDA now owns the focused CUDA cache-surgery, RoPE, cache-span
+export, and paired raw+positional export primitives, including a multi-layer
+paired export boundary for compatible dialects. It also owns a multi-layer
+raw+positional swap/re-seat/evict boundary and a functional cache transaction
+for compatible dialects; the remaining CUDA/runtime work is packaging
+memory-command policy, revision policy ownership, and runtime orchestration
+into one cohesive GRM runtime plus broader high-context/model-matrix GPU
+regression coverage.
 
 **Context:** the GPU may be occupied by GRAPA training, so this document scopes
 the runtime architecture, memory policy, and control surface before code moves.
@@ -79,12 +80,16 @@ greedy access-code recall, plus repository deposit/flush/reload on CUDA with
 the native mirror. `tests/deepseek_grm_arena_gate.py` passed a clean build and
 fresh-process resume gate: three document grafts, three turn grafts, RAM/native
 flush, reload, routed swaps, and 2/2 greedy read-only recalls using independent
-probe caches. Retaining the previous probe cache between independent DeepSeek
-probes remains a 12GB-card stress mode, not the validated default. The missing
-production pieces are still a cohesive GRM runtime boundary that owns
-memory-command parsing, conflict/review/extraction policy, CUDA route scanning
-if needed, and the broader trips/paging/open-ended/longer GPU graft regression
-gates.
+probe caches. `tests/deepseek_grm_full_gate.py` passed the deeper DeepSeek
+build/resume gate: five document grafts, eight live turns, a 2 MB graft-device
+budget, budgeted manifest reload, native route backend, RAM page-ins, and 4/4
+open-ended greedy exact-fact recalls after fresh-process resume. Retaining the
+previous probe cache between independent DeepSeek probes remains a 12GB-card
+stress mode, not the validated default. The missing production pieces are still
+a cohesive GRM runtime boundary that owns memory-command parsing,
+conflict/review/extraction policy, CUDA route scanning if needed, retained-cache
+stress, longer high-context needle runs, and the broader model-specific graft
+equivalence matrix.
 
 This plan extends Graft Repository Memory from a Python research harness into a
 RAM-first memory runtime:
