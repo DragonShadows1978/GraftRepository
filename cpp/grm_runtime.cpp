@@ -62,7 +62,8 @@ namespace {
 constexpr char kCheckpointMagicV1[] = "GRMSTORE1";
 constexpr char kCheckpointMagicV2[] = "GRMSTORE2";
 constexpr char kCheckpointMagicV3[] = "GRMSTORE3";
-constexpr char kCheckpointMagic[] = "GRMSTORE3";
+constexpr char kCheckpointMagicV4[] = "GRMSTORE4";
+constexpr char kCheckpointMagic[] = "GRMSTORE4";
 
 void write_u64(std::ostream& out, std::uint64_t v) {
   out.write(reinterpret_cast<const char*>(&v), sizeof(v));
@@ -98,6 +99,13 @@ void write_string(std::ostream& out, const std::string& s) {
   }
 }
 
+void write_u64_vector(std::ostream& out, const std::vector<std::uint64_t>& xs) {
+  write_u64(out, static_cast<std::uint64_t>(xs.size()));
+  for (const auto x : xs) {
+    write_u64(out, x);
+  }
+}
+
 std::string read_string(std::istream& in) {
   const auto n = read_u64(in);
   std::string s(static_cast<std::size_t>(n), '\0');
@@ -108,6 +116,16 @@ std::string read_string(std::istream& in) {
     }
   }
   return s;
+}
+
+std::vector<std::uint64_t> read_u64_vector(std::istream& in) {
+  const auto n = read_u64(in);
+  std::vector<std::uint64_t> out;
+  out.reserve(static_cast<std::size_t>(n));
+  for (std::uint64_t i = 0; i < n; ++i) {
+    out.push_back(read_u64(in));
+  }
+  return out;
 }
 
 std::uint64_t checked_mul(std::uint64_t a,
@@ -267,6 +285,39 @@ void HostGraftStore::set_route_metadata(std::uint64_t node_id,
   }
 }
 
+void HostGraftStore::set_graph_edges(std::uint64_t node_id, GraphEdges edges) {
+  auto* n = get(node_id);
+  if (n == nullptr) {
+    throw std::out_of_range("unknown GRM node id");
+  }
+  const bool changed =
+      n->metadata.source_turns != edges.source_turns ||
+      n->metadata.source_grafts != edges.source_grafts ||
+      n->metadata.supersedes != edges.supersedes ||
+      n->metadata.superseded_by != edges.superseded_by;
+  if (!changed) {
+    return;
+  }
+  n->metadata.source_turns = std::move(edges.source_turns);
+  n->metadata.source_grafts = std::move(edges.source_grafts);
+  n->metadata.supersedes = std::move(edges.supersedes);
+  n->metadata.superseded_by = std::move(edges.superseded_by);
+  mark_dirty(node_id, false, true);
+}
+
+GraphEdges HostGraftStore::graph_edges(std::uint64_t node_id) const {
+  const auto* n = get(node_id);
+  if (n == nullptr) {
+    throw std::out_of_range("unknown GRM node id");
+  }
+  GraphEdges edges;
+  edges.source_turns = n->metadata.source_turns;
+  edges.source_grafts = n->metadata.source_grafts;
+  edges.supersedes = n->metadata.supersedes;
+  edges.superseded_by = n->metadata.superseded_by;
+  return edges;
+}
+
 void HostGraftStore::mark_dirty(std::uint64_t node_id, bool payload,
                                 bool metadata) {
   auto* n = get(node_id);
@@ -329,6 +380,10 @@ void HostGraftStore::save_checkpoint(const std::string& root) {
     write_string(out, n.metadata.scope);
     write_string(out, n.metadata.durability);
     write_string(out, n.metadata.mutability);
+    write_u64_vector(out, n.metadata.source_turns);
+    write_u64_vector(out, n.metadata.source_grafts);
+    write_u64_vector(out, n.metadata.supersedes);
+    write_u64_vector(out, n.metadata.superseded_by);
     write_bool(out, n.lifecycle.host_present);
     write_bool(out, n.lifecycle.device_present);
     write_bool(out, false);
@@ -378,7 +433,10 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
       magic_s == std::string(kCheckpointMagicV2, sizeof(kCheckpointMagicV2) - 1);
   const bool checkpoint_v3 =
       magic_s == std::string(kCheckpointMagicV3, sizeof(kCheckpointMagicV3) - 1);
-  if (!in || (!checkpoint_v1 && !checkpoint_v2 && !checkpoint_v3)) {
+  const bool checkpoint_v4 =
+      magic_s == std::string(kCheckpointMagicV4, sizeof(kCheckpointMagicV4) - 1);
+  if (!in || (!checkpoint_v1 && !checkpoint_v2 && !checkpoint_v3 &&
+              !checkpoint_v4)) {
     throw std::runtime_error("invalid native GRM checkpoint magic");
   }
   std::unordered_map<std::uint64_t, HostGraftNode> loaded;
@@ -390,12 +448,20 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
     n.ntok = read_u64(in);
     n.text = read_string(in);
     n.metadata.json = read_string(in);
-    n.metadata.active = (checkpoint_v2 || checkpoint_v3) ? read_bool(in) : true;
-    if (checkpoint_v3) {
+    n.metadata.active =
+        (checkpoint_v2 || checkpoint_v3 || checkpoint_v4) ? read_bool(in)
+                                                          : true;
+    if (checkpoint_v3 || checkpoint_v4) {
       n.metadata.kind = read_string(in);
       n.metadata.scope = read_string(in);
       n.metadata.durability = read_string(in);
       n.metadata.mutability = read_string(in);
+    }
+    if (checkpoint_v4) {
+      n.metadata.source_turns = read_u64_vector(in);
+      n.metadata.source_grafts = read_u64_vector(in);
+      n.metadata.supersedes = read_u64_vector(in);
+      n.metadata.superseded_by = read_u64_vector(in);
     }
     n.lifecycle.host_present = read_bool(in);
     n.lifecycle.device_present = read_bool(in);
@@ -892,6 +958,21 @@ std::vector<std::string> split_lexical_keys(const char* lexical_keys) {
   return out;
 }
 
+std::vector<std::uint64_t> read_u64_array(const uint64_t* xs,
+                                          uint64_t count,
+                                          const char* label) {
+  if (xs == nullptr && count > 0) {
+    throw std::runtime_error(std::string("null ") + label +
+                             " with nonzero count");
+  }
+  std::vector<std::uint64_t> out;
+  out.reserve(static_cast<std::size_t>(count));
+  for (uint64_t i = 0; i < count; ++i) {
+    out.push_back(xs[i]);
+  }
+  return out;
+}
+
 void sync_router_node_state(grm_store_handle* handle, std::uint64_t node_id) {
   const auto* node = handle->store->get(node_id);
   if (node == nullptr) {
@@ -1153,6 +1234,102 @@ int grm_store_set_route_metadata(grm_store_handle* handle,
                                       scope == nullptr ? "" : scope,
                                       durability == nullptr ? "" : durability,
                                       mutability == nullptr ? "" : mutability);
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_set_graph_edges(grm_store_handle* handle,
+                              uint64_t node_id,
+                              const uint64_t* source_turns,
+                              uint64_t source_turn_count,
+                              const uint64_t* source_grafts,
+                              uint64_t source_graft_count,
+                              const uint64_t* supersedes,
+                              uint64_t supersedes_count,
+                              const uint64_t* superseded_by,
+                              uint64_t superseded_by_count) {
+  try {
+    if (handle == nullptr || handle->store == nullptr) {
+      return grm_fail_msg(handle, "invalid set_graph_edges arguments");
+    }
+    grm::GraphEdges edges;
+    edges.source_turns = read_u64_array(
+        source_turns, source_turn_count, "source_turns");
+    edges.source_grafts = read_u64_array(
+        source_grafts, source_graft_count, "source_grafts");
+    edges.supersedes = read_u64_array(
+        supersedes, supersedes_count, "supersedes");
+    edges.superseded_by = read_u64_array(
+        superseded_by, superseded_by_count, "superseded_by");
+    handle->store->set_graph_edges(node_id, std::move(edges));
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_graph_edges_info(grm_store_handle* handle,
+                               uint64_t node_id,
+                               grm_graph_edges_info_c* out) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out == nullptr) {
+      return grm_fail_msg(handle, "invalid graph_edges_info arguments");
+    }
+    const auto edges = handle->store->graph_edges(node_id);
+    out->source_turns = static_cast<uint64_t>(edges.source_turns.size());
+    out->source_grafts = static_cast<uint64_t>(edges.source_grafts.size());
+    out->supersedes = static_cast<uint64_t>(edges.supersedes.size());
+    out->superseded_by = static_cast<uint64_t>(edges.superseded_by.size());
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_read_graph_edges(grm_store_handle* handle,
+                               uint64_t node_id,
+                               uint64_t* out_source_turns,
+                               uint64_t source_turn_cap,
+                               uint64_t* out_source_grafts,
+                               uint64_t source_graft_cap,
+                               uint64_t* out_supersedes,
+                               uint64_t supersedes_cap,
+                               uint64_t* out_superseded_by,
+                               uint64_t superseded_by_cap,
+                               grm_graph_edges_info_c* out_counts) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_counts == nullptr) {
+      return grm_fail_msg(handle, "invalid read_graph_edges arguments");
+    }
+    if ((out_source_turns == nullptr && source_turn_cap > 0) ||
+        (out_source_grafts == nullptr && source_graft_cap > 0) ||
+        (out_supersedes == nullptr && supersedes_cap > 0) ||
+        (out_superseded_by == nullptr && superseded_by_cap > 0)) {
+      return grm_fail_msg(handle, "null graph edge buffer with nonzero capacity");
+    }
+    const auto edges = handle->store->graph_edges(node_id);
+    const auto copy_vec = [](const std::vector<std::uint64_t>& src,
+                             uint64_t* dst, uint64_t cap) {
+      const uint64_t n = std::min<uint64_t>(
+          static_cast<uint64_t>(src.size()), cap);
+      for (uint64_t i = 0; i < n; ++i) {
+        dst[i] = src[static_cast<std::size_t>(i)];
+      }
+    };
+    copy_vec(edges.source_turns, out_source_turns, source_turn_cap);
+    copy_vec(edges.source_grafts, out_source_grafts, source_graft_cap);
+    copy_vec(edges.supersedes, out_supersedes, supersedes_cap);
+    copy_vec(edges.superseded_by, out_superseded_by, superseded_by_cap);
+    out_counts->source_turns =
+        static_cast<uint64_t>(edges.source_turns.size());
+    out_counts->source_grafts =
+        static_cast<uint64_t>(edges.source_grafts.size());
+    out_counts->supersedes =
+        static_cast<uint64_t>(edges.supersedes.size());
+    out_counts->superseded_by =
+        static_cast<uint64_t>(edges.superseded_by.size());
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);

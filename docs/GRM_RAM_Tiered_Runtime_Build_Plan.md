@@ -34,11 +34,13 @@ native route entries carry active/inactive state through
 `grm_store_set_active()`, skip forgotten or superseded nodes during route
 lookup, preserve active state through native checkpoints, and carry
 kind/scope/durability/mutability fields for native route filtering through
-`grm_store_route_filtered()`. `ArenaCache.route()` now uses that native route
-index for native-backed MLA candidates, with the C++ lexical score calibrated
-to Python's fractional identifier bonus and multi-key route entries that
-support digest/era child-centroid routing with the same max-over-keys law as
-Python.
+`grm_store_route_filtered()`. Source turns, source grafts, supersedes, and
+superseded-by edges are also mirrored into structured native state through
+`grm_store_set_graph_edges()` and preserved in `GRMSTORE4` checkpoints.
+`ArenaCache.route()` now uses that native route index for native-backed MLA
+candidates, with the C++ lexical score calibrated to Python's fractional
+identifier bonus and multi-key route entries that support digest/era
+child-centroid routing with the same max-over-keys law as Python.
 `DeviceArena` now owns native host-reference swap and evict contracts for
 replacing `[sink | old mounts | live tail]` with
 `[sink | new mounts | live tail]` and dropping stale live spans while

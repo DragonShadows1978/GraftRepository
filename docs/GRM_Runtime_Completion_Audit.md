@@ -63,6 +63,11 @@ validation where feasible.
   native nodes now store the repository metadata JSON blob, mirror semantic
   metadata from `GraftRepository`, expose it through the C ABI/Python wrapper,
   and preserve it through native checkpoints.
+- Native graph-edge metadata:
+  source turns, source grafts, supersedes, and superseded-by edges are mirrored
+  into structured native state through `grm_store_set_graph_edges()`, exposed
+  through `NativeGraftStore.graph_edges()`, and preserved in `GRMSTORE4`
+  checkpoints.
 - Native routing/indexing:
   the C ABI now exposes route-key upsert and top-k route lookup through the
   C++ `RouterIndex`; `GraftRepository.native_route()` translates native route
@@ -157,6 +162,7 @@ validation where feasible.
   fractional lexical route calibration, multi-key child-centroid route scoring,
   native active/inactive route filtering, active-state checkpoint round-trip,
   native route policy filtering by kind/scope/durability/mutability,
+  structured source/supersession graph-edge readback and checkpoint round-trip,
   `GraftRepository` native route sync, `ArenaCache.route()` native backend use
   and unsupported-store fallback,
   DeviceArena swap/evict plan coverage, and host tensor swap/evict byte
@@ -211,7 +217,7 @@ pytest -p no:cacheprovider -q \
   tests/test_grm_runtime_lifecycle.py \
   tests/test_grm_native_runtime.py \
   tests/test_deepseek_grm_hooks_static.py
-36 passed, 2 warnings
+37 passed, 2 warnings
 
 cmake --build /tmp/grm_runtime_build
 Built target grm_runtime
@@ -285,8 +291,8 @@ DEEPSEEK ARENA RESUME GATE: PASS
   fused RoPE re-seat movement, fused cache-sliced raw/RoPE export movement, and
   the functional multi-layer raw+positional arena cache transaction on the
   Project-Tensor branch. GRM still keeps the broader routing policy,
-  memory-command policy, revision policy, and runtime orchestration in Python rather than in
-  one cohesive C++/CUDA runtime object.
+  memory-command policy, revision policy, and runtime orchestration in Python
+  rather than in one cohesive C++/CUDA runtime object.
 - C++ host route-scan acceleration exists for native-backed MLA arena routes,
   including child-centroid digest/era keys. CUDA/GPU route-scan acceleration is
   not implemented.
@@ -294,9 +300,10 @@ DEEPSEEK ARENA RESUME GATE: PASS
   the C++ store owns mirrored payload lifecycle, tensor boundaries, tensor
   shapes/dtypes, payload byte reconstruction, host payload checkpointing, and
   lifecycle-aware route indexing with native kind/scope/durability/mutability
-  filters. Metadata is persisted natively as JSON, but memory command parsing,
-  revision policy, review approval, and correction semantics still live in
-  Python.
+  filters. Semantic metadata is persisted natively as JSON, and source/
+  supersession graph edges are now structured native state, but memory command
+  parsing, revision policy, review approval, and correction semantics still
+  live in Python.
 - Full multi-turn GPU graft gates have not been rerun after the RAM-first
   runtime changes: descent, trips, paging stress, open-ended recall, and longer
   DeepSeek repository conversations are still pending.
@@ -310,9 +317,9 @@ DEEPSEEK ARENA RESUME GATE: PASS
 
 ## Current State
 
-The Python RAM-first runtime, opt-in C++ host-store mirror, native host payload
-and metadata checkpointing, native route index with active-state and
-kind/scope/durability/mutability filters plus multi-key arena-route
+The Python RAM-first runtime, opt-in C++ host-store mirror, native host payload,
+metadata, and graph-edge checkpointing, native route index with active-state
+and kind/scope/durability/mutability filters plus multi-key arena-route
 acceleration, native swap-plan boundary,
 native host tensor swap/evict references, TensorCUDA fused splice/evict cache
 movement, TensorCUDA fused RoPE re-seat movement, TensorCUDA fused

@@ -32,6 +32,15 @@ class _TensorInfoC(ctypes.Structure):
     ]
 
 
+class _GraphEdgesInfoC(ctypes.Structure):
+    _fields_ = [
+        ("source_turns", ctypes.c_uint64),
+        ("source_grafts", ctypes.c_uint64),
+        ("supersedes", ctypes.c_uint64),
+        ("superseded_by", ctypes.c_uint64),
+    ]
+
+
 class _ArenaSwapPlanC(ctypes.Structure):
     _fields_ = [
         ("sink_tokens", ctypes.c_uint64),
@@ -81,6 +90,14 @@ class TensorInfo:
     shape: tuple
     payload_bytes: int
     dtype: str
+
+
+@dataclass(frozen=True)
+class GraphEdges:
+    source_turns: tuple
+    source_grafts: tuple
+    supersedes: tuple
+    superseded_by: tuple
 
 
 @dataclass(frozen=True)
@@ -178,6 +195,27 @@ class NativeGraftStore:
                 ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
                 ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p]
             lib.grm_store_set_route_metadata.restype = ctypes.c_int
+        self._has_graph_edges = (
+            hasattr(lib, "grm_store_set_graph_edges") and
+            hasattr(lib, "grm_store_graph_edges_info") and
+            hasattr(lib, "grm_store_read_graph_edges"))
+        if self._has_graph_edges:
+            u64p = ctypes.POINTER(ctypes.c_uint64)
+            lib.grm_store_set_graph_edges.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64,
+                u64p, ctypes.c_uint64, u64p, ctypes.c_uint64,
+                u64p, ctypes.c_uint64, u64p, ctypes.c_uint64]
+            lib.grm_store_set_graph_edges.restype = ctypes.c_int
+            lib.grm_store_graph_edges_info.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64,
+                ctypes.POINTER(_GraphEdgesInfoC)]
+            lib.grm_store_graph_edges_info.restype = ctypes.c_int
+            lib.grm_store_read_graph_edges.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64,
+                u64p, ctypes.c_uint64, u64p, ctypes.c_uint64,
+                u64p, ctypes.c_uint64, u64p, ctypes.c_uint64,
+                ctypes.POINTER(_GraphEdgesInfoC)]
+            lib.grm_store_read_graph_edges.restype = ctypes.c_int
         lib.grm_store_metadata_json.argtypes = [
             ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
             ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
@@ -306,6 +344,14 @@ class NativeGraftStore:
         arr_t = ctypes.c_uint64 * len(dims)
         return arr_t(*dims), len(dims)
 
+    @staticmethod
+    def _u64_array(values):
+        vals = [int(v) for v in (values or ())]
+        if not vals:
+            return None, 0
+        arr_t = ctypes.c_uint64 * len(vals)
+        return arr_t(*vals), len(vals)
+
     def set_tensor(self, node_id, name, array):
         arr_np = np.ascontiguousarray(array)
         shape, rank = self._shape_array(arr_np.shape)
@@ -365,6 +411,12 @@ class NativeGraftStore:
             scope=metadata.get("scope"),
             durability=metadata.get("durability"),
             mutability=metadata.get("mutability"))
+        self.set_graph_edges(
+            node_id,
+            source_turns=metadata.get("source_turns", ()),
+            source_grafts=metadata.get("source_grafts", ()),
+            supersedes=metadata.get("supersedes", ()),
+            superseded_by=metadata.get("superseded_by", ()))
 
     def set_active(self, node_id, active=True):
         if not getattr(self, "_has_set_active", False):
@@ -382,6 +434,54 @@ class NativeGraftStore:
             ("" if scope is None else str(scope)).encode("utf-8"),
             ("" if durability is None else str(durability)).encode("utf-8"),
             ("" if mutability is None else str(mutability)).encode("utf-8")))
+
+    def set_graph_edges(self, node_id, *, source_turns=(),
+                        source_grafts=(), supersedes=(),
+                        superseded_by=()):
+        if not getattr(self, "_has_graph_edges", False):
+            return
+        st, st_n = self._u64_array(source_turns)
+        sg, sg_n = self._u64_array(source_grafts)
+        sp, sp_n = self._u64_array(supersedes)
+        sb, sb_n = self._u64_array(superseded_by)
+        self._check(self._lib.grm_store_set_graph_edges(
+            self._handle, int(node_id), st, st_n, sg, sg_n,
+            sp, sp_n, sb, sb_n))
+
+    def graph_edges(self, node_id):
+        if not getattr(self, "_has_graph_edges", False):
+            raise RuntimeError("native GRM graph edges are unavailable")
+        info = _GraphEdgesInfoC()
+        self._check(self._lib.grm_store_graph_edges_info(
+            self._handle, int(node_id), ctypes.byref(info)))
+
+        def alloc(n):
+            if not n:
+                return None
+            arr_t = ctypes.c_uint64 * int(n)
+            return arr_t()
+
+        st = alloc(info.source_turns)
+        sg = alloc(info.source_grafts)
+        sp = alloc(info.supersedes)
+        sb = alloc(info.superseded_by)
+        counts = _GraphEdgesInfoC()
+        self._check(self._lib.grm_store_read_graph_edges(
+            self._handle, int(node_id),
+            st, int(info.source_turns),
+            sg, int(info.source_grafts),
+            sp, int(info.supersedes),
+            sb, int(info.superseded_by),
+            ctypes.byref(counts)))
+
+        def tup(arr, n):
+            return tuple(int(arr[i]) for i in range(int(n))) if arr is not None else ()
+
+        return GraphEdges(
+            tup(st, counts.source_turns),
+            tup(sg, counts.source_grafts),
+            tup(sp, counts.supersedes),
+            tup(sb, counts.superseded_by))
 
     def metadata(self, node_id):
         needed = ctypes.c_uint64()

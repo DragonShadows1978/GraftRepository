@@ -220,6 +220,9 @@ def test_native_metadata_json_round_trips_through_checkpoint(tmp_path):
         "subject": "native metadata",
         "active": True,
         "supersedes": [3, 4],
+        "superseded_by": [9],
+        "source_turns": [1, 2],
+        "source_grafts": [7, 8],
     }
     with NativeGraftStore(
             lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
@@ -228,6 +231,10 @@ def test_native_metadata_json_round_trips_through_checkpoint(tmp_path):
         node_id = store.add_node("metadata graft", b"abc", ntok=1)
         store.set_metadata(node_id, meta)
         assert store.metadata(node_id) == meta
+        assert store.graph_edges(node_id).source_turns == (1, 2)
+        assert store.graph_edges(node_id).source_grafts == (7, 8)
+        assert store.graph_edges(node_id).supersedes == (3, 4)
+        assert store.graph_edges(node_id).superseded_by == (9,)
         store.save_checkpoint(ckpt)
 
     with NativeGraftStore(
@@ -236,6 +243,11 @@ def test_native_metadata_json_round_trips_through_checkpoint(tmp_path):
             latent_rank=512, rope_dim=64) as restored:
         restored.load_checkpoint(ckpt)
         assert restored.metadata(node_id) == meta
+        restored_edges = restored.graph_edges(node_id)
+        assert restored_edges.source_turns == (1, 2)
+        assert restored_edges.source_grafts == (7, 8)
+        assert restored_edges.supersedes == (3, 4)
+        assert restored_edges.superseded_by == (9,)
 
 
 def test_native_checkpoint_round_trips_structured_payloads(tmp_path):

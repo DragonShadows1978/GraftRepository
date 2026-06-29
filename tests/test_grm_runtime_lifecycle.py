@@ -353,6 +353,10 @@ def test_repository_native_route_respects_memory_lifecycle(tmp_path):
                               "Native correction replacement 44-4444")
     assert repo.arena.grafts[old]["metadata"]["active"] is False
     assert repo.arena.grafts[old]["retired"] is True
+    old_native = repo.arena.grafts[old]["native_node_id"]
+    new_native = repo.arena.grafts[new]["native_node_id"]
+    assert repo.native_store.graph_edges(new_native).supersedes == (old,)
+    assert repo.native_store.graph_edges(old_native).superseded_by == (new,)
     routed_old = repo.native_route([1.0] * 512,
                                    lexical_keys=["33-3333"], topk=8)
     assert old not in routed_old
