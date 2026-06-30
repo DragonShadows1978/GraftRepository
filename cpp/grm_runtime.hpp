@@ -266,7 +266,7 @@ class RouterIndex {
 class DurabilityWriter {
  public:
   explicit DurabilityWriter(std::string root);
-  void write_checkpoint(const HostGraftStore& store);
+  void write_checkpoint(HostGraftStore& store);
   const std::string& root() const { return root_; }
 
  private:

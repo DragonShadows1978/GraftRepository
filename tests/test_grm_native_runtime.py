@@ -24,6 +24,87 @@ def build_native(tmp_path):
     return str(lib)
 
 
+def test_cpp_durability_writer_commits_binary_checkpoint(tmp_path):
+    source = tmp_path / "durability_writer_test.cpp"
+    source.write_text(r'''
+#include "grm_runtime.hpp"
+
+#include <filesystem>
+#include <string>
+
+int main(int argc, char** argv) {
+  if (argc != 2) {
+    return 2;
+  }
+  grm::DialectDescriptor dialect;
+  dialect.model_type = "DeepSeekV2Lite_TC";
+  dialect.num_layers = 27;
+  dialect.hidden_dim = 2048;
+  dialect.payload_kind = grm::PayloadKind::MLA;
+  dialect.vals_per_tok_layer = 576;
+  dialect.route_layer = 3;
+  dialect.latent_rank = 512;
+  dialect.rope_dim = 64;
+  dialect.position_law = "rope_partial_mla";
+  dialect.state_kind = "mla_latent_plus_rope";
+
+  grm::HostGraftStore store(dialect);
+  grm::HostGraftNode node;
+  node.text = "native writer checkpoint";
+  node.ntok = 4;
+  node.metadata.kind = "doc";
+  grm::HostTensor tensor;
+  tensor.name = "payload";
+  tensor.dtype = "uint8";
+  tensor.shape = {4};
+  tensor.bytes = {1, 2, 3, 4};
+  node.payload.tensors.push_back(tensor);
+  const auto node_id = store.add_node(node);
+
+  if (store.stats().dirty_nodes != 1) {
+    return 3;
+  }
+  grm::DurabilityWriter writer(argv[1]);
+  writer.write_checkpoint(store);
+
+  const auto root = std::filesystem::path(argv[1]);
+  if (!std::filesystem::exists(root / "grm_store.bin")) {
+    return 4;
+  }
+  if (!std::filesystem::exists(root / "checkpoint.txt")) {
+    return 5;
+  }
+  const auto committed = store.stats();
+  if (committed.dirty_nodes != 0 || committed.durable_nodes != 1) {
+    return 6;
+  }
+
+  grm::HostGraftStore restored(dialect);
+  restored.load_checkpoint(argv[1]);
+  const auto* got = restored.get(node_id);
+  if (got == nullptr || got->text != "native writer checkpoint") {
+    return 7;
+  }
+  if (got->payload.tensor_count() != 1 || got->payload.bytes() != 4) {
+    return 8;
+  }
+  if (std::filesystem::file_size(root / "grm_store.bin") == 0) {
+    return 9;
+  }
+  return 0;
+}
+''')
+    exe = tmp_path / "durability_writer_test"
+    subprocess.run([
+        "g++", "-std=c++17",
+        "-I", f"{ROOT}/cpp",
+        f"{ROOT}/cpp/grm_runtime.cpp",
+        str(source),
+        "-o", str(exe),
+    ], check=True)
+    subprocess.run([str(exe), str(tmp_path / "writer_ckpt")], check=True)
+
+
 def test_native_store_lifecycle_via_ctypes(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

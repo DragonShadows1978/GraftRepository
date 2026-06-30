@@ -2,6 +2,7 @@
 #include "grm_runtime_c.h"
 
 #include <algorithm>
+#include <cerrno>
 #include <cctype>
 #include <cstring>
 #include <cmath>
@@ -11,6 +12,11 @@
 #include <memory>
 #include <stdexcept>
 #include <sstream>
+
+#if defined(__unix__) || defined(__APPLE__)
+#include <fcntl.h>
+#include <unistd.h>
+#endif
 
 namespace grm {
 
@@ -286,6 +292,75 @@ void append_json_string_field(std::ostringstream& out,
   }
   first = false;
   out << "\"" << key << "\":\"" << json_escape(value) << "\"";
+}
+
+void fsync_path(const std::filesystem::path& path) {
+#if defined(__unix__) || defined(__APPLE__)
+  const auto s = path.string();
+  const int fd = ::open(s.c_str(), O_RDONLY);
+  if (fd == -1) {
+    throw std::runtime_error("failed to open for fsync: " + s + ": " +
+                             std::strerror(errno));
+  }
+  if (::fsync(fd) == -1) {
+    const int e = errno;
+    ::close(fd);
+    throw std::runtime_error("failed to fsync: " + s + ": " +
+                             std::strerror(e));
+  }
+  if (::close(fd) == -1) {
+    throw std::runtime_error("failed to close after fsync: " + s + ": " +
+                             std::strerror(errno));
+  }
+#else
+  (void)path;
+#endif
+}
+
+void fsync_directory(const std::filesystem::path& path) {
+#if defined(__unix__) || defined(__APPLE__)
+  const auto s = path.string();
+#ifdef O_DIRECTORY
+  const int fd = ::open(s.c_str(), O_RDONLY | O_DIRECTORY);
+#else
+  const int fd = ::open(s.c_str(), O_RDONLY);
+#endif
+  if (fd == -1) {
+    throw std::runtime_error("failed to open directory for fsync: " + s +
+                             ": " + std::strerror(errno));
+  }
+  if (::fsync(fd) == -1) {
+    const int e = errno;
+    ::close(fd);
+    throw std::runtime_error("failed to fsync directory: " + s + ": " +
+                             std::strerror(e));
+  }
+  if (::close(fd) == -1) {
+    throw std::runtime_error("failed to close directory after fsync: " + s +
+                             ": " + std::strerror(errno));
+  }
+#else
+  (void)path;
+#endif
+}
+
+void atomic_write_text_file(const std::filesystem::path& dst,
+                            const std::string& body) {
+  std::filesystem::create_directories(dst.parent_path());
+  const auto tmp = dst.string() + ".tmp";
+  {
+    std::ofstream out(tmp, std::ios::trunc);
+    if (!out) {
+      throw std::runtime_error("failed to open text checkpoint for write");
+    }
+    out << body;
+    if (!out) {
+      throw std::runtime_error("failed while writing text checkpoint");
+    }
+  }
+  fsync_path(tmp);
+  std::filesystem::rename(tmp, dst);
+  fsync_directory(dst.parent_path());
 }
 
 }  // namespace
@@ -722,60 +797,63 @@ void HostGraftStore::save_checkpoint(const std::string& root) {
   std::filesystem::create_directories(root);
   const auto tmp = root + "/grm_store.bin.tmp";
   const auto dst = root + "/grm_store.bin";
-  std::ofstream out(tmp, std::ios::binary | std::ios::trunc);
-  if (!out) {
-    throw std::runtime_error("failed to open native GRM checkpoint for write");
-  }
-  out.write(kCheckpointMagic, sizeof(kCheckpointMagic) - 1);
-  write_string(out, dialect_.dialect_id());
-  write_string(out, dialect_.position_law);
-  write_string(out, dialect_.state_kind);
-  write_string(out, dialect_.graftability);
-  write_bool(out, dialect_.remountable);
-  write_string(out, dialect_.composition);
-  write_u64(out, static_cast<std::uint64_t>(nodes_.size()));
-  for (const auto id : node_ids()) {
-    const auto& n = nodes_.at(id);
-    write_u64(out, n.node_id);
-    write_u64(out, n.ntok);
-    write_string(out, n.text);
-    write_string(out, n.metadata.json);
-    write_bool(out, n.metadata.active);
-    write_string(out, n.metadata.kind);
-    write_string(out, n.metadata.scope);
-    write_string(out, n.metadata.durability);
-    write_string(out, n.metadata.mutability);
-    write_u64_vector(out, n.metadata.source_turns);
-    write_u64_vector(out, n.metadata.source_grafts);
-    write_u64_vector(out, n.metadata.supersedes);
-    write_u64_vector(out, n.metadata.superseded_by);
-    write_f32_vectors(out, n.route_keys);
-    write_string_vector(out, n.lexical_keys);
-    write_bool(out, n.lifecycle.host_present);
-    write_bool(out, n.lifecycle.device_present);
-    write_bool(out, false);
-    write_bool(out, true);
-    write_bool(out, n.lifecycle.cold_only);
-    write_u64(out, n.payload.tensor_count());
-    for (const auto& t : n.payload.tensors) {
-      write_string(out, t.name);
-      write_string(out, t.dtype);
-      write_u64(out, static_cast<std::uint64_t>(t.shape.size()));
-      for (const auto d : t.shape) {
-        write_u64(out, d);
-      }
-      write_u64(out, static_cast<std::uint64_t>(t.bytes.size()));
-      if (!t.bytes.empty()) {
-        out.write(reinterpret_cast<const char*>(t.bytes.data()),
-                  static_cast<std::streamsize>(t.bytes.size()));
+  {
+    std::ofstream out(tmp, std::ios::binary | std::ios::trunc);
+    if (!out) {
+      throw std::runtime_error("failed to open native GRM checkpoint for write");
+    }
+    out.write(kCheckpointMagic, sizeof(kCheckpointMagic) - 1);
+    write_string(out, dialect_.dialect_id());
+    write_string(out, dialect_.position_law);
+    write_string(out, dialect_.state_kind);
+    write_string(out, dialect_.graftability);
+    write_bool(out, dialect_.remountable);
+    write_string(out, dialect_.composition);
+    write_u64(out, static_cast<std::uint64_t>(nodes_.size()));
+    for (const auto id : node_ids()) {
+      const auto& n = nodes_.at(id);
+      write_u64(out, n.node_id);
+      write_u64(out, n.ntok);
+      write_string(out, n.text);
+      write_string(out, n.metadata.json);
+      write_bool(out, n.metadata.active);
+      write_string(out, n.metadata.kind);
+      write_string(out, n.metadata.scope);
+      write_string(out, n.metadata.durability);
+      write_string(out, n.metadata.mutability);
+      write_u64_vector(out, n.metadata.source_turns);
+      write_u64_vector(out, n.metadata.source_grafts);
+      write_u64_vector(out, n.metadata.supersedes);
+      write_u64_vector(out, n.metadata.superseded_by);
+      write_f32_vectors(out, n.route_keys);
+      write_string_vector(out, n.lexical_keys);
+      write_bool(out, n.lifecycle.host_present);
+      write_bool(out, n.lifecycle.device_present);
+      write_bool(out, false);
+      write_bool(out, true);
+      write_bool(out, n.lifecycle.cold_only);
+      write_u64(out, n.payload.tensor_count());
+      for (const auto& t : n.payload.tensors) {
+        write_string(out, t.name);
+        write_string(out, t.dtype);
+        write_u64(out, static_cast<std::uint64_t>(t.shape.size()));
+        for (const auto d : t.shape) {
+          write_u64(out, d);
+        }
+        write_u64(out, static_cast<std::uint64_t>(t.bytes.size()));
+        if (!t.bytes.empty()) {
+          out.write(reinterpret_cast<const char*>(t.bytes.data()),
+                    static_cast<std::streamsize>(t.bytes.size()));
+        }
       }
     }
+    if (!out) {
+      throw std::runtime_error("failed while writing native GRM checkpoint");
+    }
   }
-  if (!out) {
-    throw std::runtime_error("failed while writing native GRM checkpoint");
-  }
-  out.close();
+  fsync_path(tmp);
   std::filesystem::rename(tmp, dst);
+  fsync_directory(root);
   for (auto& kv : nodes_) {
     auto& n = kv.second;
     n.lifecycle.dirty = false;
@@ -1053,15 +1131,19 @@ std::vector<std::uint64_t> RouterIndex::route(
 
 DurabilityWriter::DurabilityWriter(std::string root) : root_(std::move(root)) {}
 
-void DurabilityWriter::write_checkpoint(const HostGraftStore& store) {
+void DurabilityWriter::write_checkpoint(HostGraftStore& store) {
   std::filesystem::create_directories(root_);
-  std::ofstream out(root_ + "/checkpoint.txt", std::ios::trunc);
+  store.save_checkpoint(root_);
   const auto s = store.stats();
-  out << "dialect " << store.dialect().dialect_id() << "\n";
-  out << "nodes " << s.nodes << "\n";
-  out << "dirty_nodes " << s.dirty_nodes << "\n";
-  out << "durable_nodes " << s.durable_nodes << "\n";
-  out << "host_payload_bytes " << s.host_payload_bytes << "\n";
+  std::ostringstream summary;
+  summary << "dialect " << store.dialect().dialect_id() << "\n";
+  summary << "nodes " << s.nodes << "\n";
+  summary << "dirty_nodes " << s.dirty_nodes << "\n";
+  summary << "durable_nodes " << s.durable_nodes << "\n";
+  summary << "host_payload_bytes " << s.host_payload_bytes << "\n";
+  summary << "host_payload_tensors " << s.host_payload_tensors << "\n";
+  atomic_write_text_file(std::filesystem::path(root_) / "checkpoint.txt",
+                         summary.str());
 }
 
 void DeviceArena::configure(std::uint64_t sink_tokens,

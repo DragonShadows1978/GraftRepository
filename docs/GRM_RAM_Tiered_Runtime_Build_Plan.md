@@ -42,7 +42,7 @@ model-specific bridge re-encodes the graft.
 `GraftRepository(..., native_lib_path=...)` now mirrors payload lifecycle into
 that native host store as reconstructable named tensors with shape/dtype
 metadata, checkpoints those native host payloads to NVMe through a binary C++
-store format with a persisted native dialect id (`GRMSTORE6`), persists
+store format with a persisted native dialect/profile id (`GRMSTORE7`), persists
 semantic metadata JSON through the same native checkpoint path, and supports
 native host-store creation for both MLA and GQA dialect descriptors. It mirrors
 native route keys into the C++ `RouterIndex` and preserves route vectors plus
@@ -353,6 +353,13 @@ Responsibilities:
 The writer must never read CUDA tensors. The hot path must materialize host
 payloads before queueing work. Otherwise "async" durability can accidentally
 synchronize the GPU and poison turn latency.
+
+Current implementation status: `DurabilityWriter::write_checkpoint()` now
+commits through `HostGraftStore::save_checkpoint()`, producing the binary
+`grm_store.bin` checkpoint, fsyncing the checkpoint boundary, marking store
+nodes durable only after publication, and then writing a text checkpoint
+summary. The Python repository still owns the higher-level WAL/manifest
+publication sequence.
 
 ### 2.3 Move To C++/CUDA Or `tensor_cuda`
 
@@ -1205,6 +1212,12 @@ Deliverables:
 - `DirtyQueue`
 - `DurabilityWriter`
 - Python bindings
+
+Current status: `HostGraftStore`, `RouterIndex`, `DirtyQueue`,
+`DurabilityWriter`, and ctypes bindings are implemented for the RAM-authority
+checkpoint/routing path. `MemoryGraph` semantics are represented through
+structured source/supersession edges in the host store rather than a separate
+native graph class.
 
 Validation:
 
