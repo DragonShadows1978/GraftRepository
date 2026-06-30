@@ -611,6 +611,66 @@ def test_extraction_candidate_interface_is_conservative(tmp_path):
         out["node_id"]]
 
 
+def test_extraction_conflicts_respect_temporal_validity(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+
+    def candidate(**updates):
+        base = {
+            "action": "write_direct",
+            "candidate_type": "fact",
+            "text": "GRM route target is RAM.",
+            "subject": "GRM route target",
+            "predicate": "is",
+            "value": "RAM",
+            "scope": "project",
+            "durability": "project",
+            "mutability": "mutable",
+            "write_intent": "observed",
+            "confidence": 0.99,
+        }
+        base.update(updates)
+        return base
+
+    expired = repo.apply_extraction_candidate(candidate(
+        text="GRM route target used to be disk.",
+        value="disk",
+        expires_at="2000-01-01T00:00:00+00:00"))
+    assert expired["action"] == "write_direct"
+
+    current = repo.apply_extraction_candidate(candidate(
+        text="GRM route target is RAM.",
+        value="RAM"))
+    assert current["action"] == "write_direct"
+    assert repo.arena.grafts[expired["node_id"]]["metadata"]["active"] is True
+
+    future = repo.apply_extraction_candidate(candidate(
+        text="GRM route target will be GPU.",
+        value="GPU",
+        valid_from="2999-01-01T00:00:00+00:00"))
+    assert future["action"] == "write_direct"
+
+    conflict = repo.apply_extraction_candidate(candidate(
+        text="GRM route target is NVMe.",
+        value="NVMe"))
+    assert conflict["action"] == "review_candidate"
+    assert repo.review_buffer[-1]["reason"] == "conflicts with active memory"
+
+    malformed = repo.apply_extraction_candidate(candidate(
+        text="GRM temporal guard is strict.",
+        subject="GRM temporal guard",
+        value="strict",
+        valid_from="not-a-date"))
+    assert malformed["action"] == "write_direct"
+
+    guarded = repo.apply_extraction_candidate(candidate(
+        text="GRM temporal guard is lax.",
+        subject="GRM temporal guard",
+        value="lax"))
+    assert guarded["action"] == "review_candidate"
+
+
 def test_runtime_extraction_candidate_autosaves_and_reports(tmp_path):
     path = str(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, path, autosave=True,

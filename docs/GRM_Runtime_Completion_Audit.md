@@ -48,6 +48,8 @@ validation where feasible.
   subject/predicate/value disagreement only blocks or supersedes active memory
   in the same scope, so project/session/user/domain/global facts can coexist
   without cross-scope retirement.
+  `valid_from`/`expires_at` now gate extraction conflicts as current-effective
+  intervals, with malformed timestamps treated conservatively as active.
 - Explicit memory commands:
   `remember`, `forget`, `correct/update`, review fallback, ignore, and
   `flush memory now` are supported. `GRMRuntime.apply_memory_command()` now

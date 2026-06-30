@@ -32,6 +32,7 @@ API:
   repo.save() / repo.stats()
 """
 from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
 import json
 import os
 import threading
@@ -428,6 +429,43 @@ class GraftRepository:
         existing_scope = cls._norm_fact_scope(metadata.get("scope", "project"))
         return candidate_scope == existing_scope
 
+    @staticmethod
+    def _parse_fact_time(value):
+        if value is None or value == "":
+            return None
+        if isinstance(value, (int, float)):
+            return datetime.fromtimestamp(float(value), timezone.utc)
+        text = str(value).strip()
+        if not text:
+            return None
+        if text.endswith("Z"):
+            text = text[:-1] + "+00:00"
+        try:
+            parsed = datetime.fromisoformat(text)
+        except ValueError:
+            return False
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return parsed.astimezone(timezone.utc)
+
+    @classmethod
+    def _fact_effective_now(cls, metadata, now=None):
+        now = now or datetime.now(timezone.utc)
+        valid_from = cls._parse_fact_time(metadata.get("valid_from"))
+        expires_at = cls._parse_fact_time(metadata.get("expires_at"))
+        if valid_from is False or expires_at is False:
+            return True
+        if valid_from is not None and valid_from > now:
+            return False
+        if expires_at is not None and expires_at <= now:
+            return False
+        return True
+
+    @classmethod
+    def _candidate_time_conflicts(cls, candidate, metadata):
+        return (cls._fact_effective_now(candidate)
+                and cls._fact_effective_now(metadata))
+
     def _candidate_text(self, candidate, source_text=None):
         if candidate.get("text"):
             return str(candidate["text"]).strip()
@@ -469,6 +507,8 @@ class GraftRepository:
             if self._norm_fact_field(meta.get("predicate")) != predicate:
                 continue
             if not self._candidate_scope_conflicts(candidate, meta):
+                continue
+            if not self._candidate_time_conflicts(candidate, meta):
                 continue
             old_value = self._norm_fact_field(meta.get("value"))
             if old_value and old_value != value:
