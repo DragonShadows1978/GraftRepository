@@ -189,6 +189,11 @@ class HostGraftStore {
   const HostGraftNode* get(std::uint64_t node_id) const;
 
   void set_tensor(std::uint64_t node_id, HostTensor tensor);
+  HostTensor slice_tensor(std::uint64_t node_id,
+                          const std::string& name,
+                          std::uint64_t axis,
+                          std::uint64_t start,
+                          std::uint64_t length) const;
   PayloadStats payload_stats(std::uint64_t node_id) const;
   void clear_payload(std::uint64_t node_id);
   void set_metadata_json(std::uint64_t node_id, std::string metadata_json);

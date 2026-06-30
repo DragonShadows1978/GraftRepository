@@ -323,7 +323,7 @@ class GraftRepository:
             raise ValueError(f"cannot identify token axis for payload {key!r}")
         return None
 
-    def _slice_host_payload(self, payload, ntok, start, end):
+    def _slice_host_payload(self, payload, ntok, start, end, native_node_id=None):
         out = {}
         for key, value in payload.items():
             arr = np.ascontiguousarray(value)
@@ -331,6 +331,14 @@ class GraftRepository:
             if axis is None:
                 out[key] = np.ascontiguousarray(arr.copy())
                 continue
+            if (native_node_id is not None and self.native_store is not None
+                    and hasattr(self.native_store, "slice_tensor")):
+                try:
+                    out[key] = self.native_store.slice_tensor(
+                        native_node_id, key, axis, start, end - start)
+                    continue
+                except RuntimeError:
+                    pass
             sl = [slice(None)] * arr.ndim
             sl[axis] = slice(start, end)
             out[key] = np.ascontiguousarray(arr[tuple(sl)])
@@ -396,6 +404,9 @@ class GraftRepository:
             retire_parent=retire_parent)
         before = self._snapshot_state()
         self._ensure_host_payload(idx, parent)
+        native_node_id = None
+        if self.native_store is not None:
+            native_node_id = self._native_sync_node(idx)
         parent_meta = parent.setdefault(
             "metadata", self._default_metadata(parent))
         child_kind = kind or parent.get("kind", "doc")
@@ -403,7 +414,8 @@ class GraftRepository:
         for order, (start, end) in enumerate(spans):
             text = self._decode_token_span(parent.get("text", ""), start, end)
             payload = self._slice_host_payload(
-                parent["host_payload"], ntok, start, end)
+                parent["host_payload"], ntok, start, end,
+                native_node_id=native_node_id)
             meta = {
                 "kind": child_kind,
                 "durability": parent_meta.get("durability", "project"),

@@ -271,6 +271,16 @@ class NativeGraftStore:
             ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint64,
             ctypes.POINTER(ctypes.c_uint64)]
         lib.grm_store_read_tensor.restype = ctypes.c_int
+        self._has_slice_tensor = hasattr(lib, "grm_store_slice_tensor")
+        if self._has_slice_tensor:
+            lib.grm_store_slice_tensor.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
+                ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64,
+                ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+                ctypes.c_char_p, ctypes.c_size_t,
+                ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint64,
+                ctypes.POINTER(_TensorInfoC)]
+            lib.grm_store_slice_tensor.restype = ctypes.c_int
         lib.grm_store_set_metadata_json.argtypes = [
             ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p]
         lib.grm_store_set_metadata_json.restype = ctypes.c_int
@@ -508,6 +518,45 @@ class NativeGraftStore:
         data = bytes(out[:int(count.value)]) if out is not None else b""
         arr = np.frombuffer(data, dtype=np.dtype(info.dtype)).copy()
         return arr.reshape(info.shape)
+
+    def slice_tensor(self, node_id, name, axis, start, length, max_rank=8):
+        if not getattr(self, "_has_slice_tensor", False):
+            raise RuntimeError("native GRM slice_tensor is unavailable")
+        info = self.tensor_info(node_id, name, max_rank=max_rank)
+        seq = int(axis)
+        if seq < 0:
+            seq += len(info.shape)
+        if seq < 0 or seq >= len(info.shape):
+            raise ValueError("slice axis out of range")
+        start = int(start)
+        length = int(length)
+        if start < 0 or length < 0:
+            raise ValueError("slice start and length must be nonnegative")
+        out_shape_py = list(info.shape)
+        out_shape_py[seq] = length
+        out_elements = int(np.prod(out_shape_py, dtype=np.uint64))
+        out_nbytes = out_elements * np.dtype(info.dtype).itemsize
+
+        shape_t = ctypes.c_uint64 * len(out_shape_py)
+        shape = shape_t()
+        dtype = ctypes.create_string_buffer(64)
+        out = None
+        if out_nbytes:
+            out_t = ctypes.c_uint8 * out_nbytes
+            out = out_t()
+        result = _TensorInfoC()
+        self._check(self._lib.grm_store_slice_tensor(
+            self._handle, int(node_id), str(name).encode("utf-8"),
+            seq, start, length, shape, len(out_shape_py),
+            dtype, ctypes.sizeof(dtype), out, out_nbytes,
+            ctypes.byref(result)))
+        if int(result.payload_bytes) != out_nbytes:
+            raise RuntimeError("native slice output length mismatch")
+        dims = tuple(int(shape[i]) for i in range(int(result.rank)))
+        data = bytes(out[:out_nbytes]) if out is not None else b""
+        arr = np.frombuffer(
+            data, dtype=np.dtype(dtype.value.decode("utf-8"))).copy()
+        return arr.reshape(dims)
 
     def set_metadata(self, node_id, metadata):
         metadata = metadata or {}

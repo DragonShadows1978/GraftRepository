@@ -443,6 +443,89 @@ void HostGraftStore::set_tensor(std::uint64_t node_id, HostTensor tensor) {
   mark_dirty(node_id, true, true);
 }
 
+HostTensor HostGraftStore::slice_tensor(std::uint64_t node_id,
+                                        const std::string& name,
+                                        std::uint64_t axis,
+                                        std::uint64_t start,
+                                        std::uint64_t length) const {
+  const auto* n = get(node_id);
+  if (n == nullptr) {
+    throw std::out_of_range("unknown GRM node id");
+  }
+  const HostTensor* src = nullptr;
+  for (const auto& t : n->payload.tensors) {
+    if (t.name == name) {
+      src = &t;
+      break;
+    }
+  }
+  if (src == nullptr) {
+    throw std::out_of_range("unknown tensor name");
+  }
+  if (src->shape.empty()) {
+    throw std::runtime_error("slice tensor rank must be nonzero");
+  }
+  if (axis >= src->shape.size()) {
+    throw std::runtime_error("slice axis out of range");
+  }
+  const auto axis_i = static_cast<std::size_t>(axis);
+  if (start > src->shape[axis_i] || length > src->shape[axis_i] - start) {
+    throw std::runtime_error("slice range out of bounds");
+  }
+
+  const auto elements = checked_product(src->shape, 0, src->shape.size(),
+                                        "slice tensor elements");
+  if (elements == 0) {
+    throw std::runtime_error("slice tensor has zero elements");
+  }
+  if (elements > static_cast<std::uint64_t>(
+                     std::numeric_limits<std::size_t>::max())) {
+    throw std::overflow_error("slice tensor exceeds addressable host size");
+  }
+  if (src->bytes.size() % static_cast<std::size_t>(elements) != 0) {
+    throw std::runtime_error("slice tensor byte count is not element-aligned");
+  }
+  const auto elem_size = static_cast<std::uint64_t>(
+      src->bytes.size() / static_cast<std::size_t>(elements));
+  if (elem_size == 0) {
+    throw std::runtime_error("slice tensor element size must be nonzero");
+  }
+
+  const auto outer_elems = checked_product(src->shape, 0, axis_i,
+                                           "slice outer");
+  const auto inner_elems = checked_product(src->shape, axis_i + 1,
+                                           src->shape.size(), "slice inner");
+  const auto row_bytes = checked_mul(inner_elems, elem_size, "slice row");
+  const auto old_stride = checked_mul(src->shape[axis_i], row_bytes,
+                                      "slice old stride");
+  const auto out_stride = checked_mul(length, row_bytes, "slice output stride");
+  const auto copy_bytes = checked_mul(length, row_bytes, "slice copy");
+  const auto out_bytes = checked_mul(outer_elems, out_stride,
+                                     "slice output payload");
+  if (out_bytes > static_cast<std::uint64_t>(
+                      std::numeric_limits<std::size_t>::max())) {
+    throw std::overflow_error("slice output exceeds addressable host size");
+  }
+
+  HostTensor out;
+  out.name = src->name;
+  out.dtype = src->dtype;
+  out.shape = src->shape;
+  out.shape[axis_i] = length;
+  out.bytes.resize(static_cast<std::size_t>(out_bytes));
+  const auto offset_bytes = checked_mul(start, row_bytes, "slice offset");
+  for (std::uint64_t outer = 0; outer < outer_elems; ++outer) {
+    const auto* src_base = src->bytes.data() + static_cast<std::size_t>(
+        checked_mul(outer, old_stride, "slice source base") + offset_bytes);
+    auto* out_base = out.bytes.data() + static_cast<std::size_t>(
+        checked_mul(outer, out_stride, "slice output base"));
+    if (copy_bytes > 0) {
+      std::memcpy(out_base, src_base, static_cast<std::size_t>(copy_bytes));
+    }
+  }
+  return out;
+}
+
 PayloadStats HostGraftStore::payload_stats(std::uint64_t node_id) const {
   const auto* n = get(node_id);
   if (n == nullptr) {
@@ -1626,6 +1709,58 @@ int grm_store_read_tensor(grm_store_handle* handle,
       }
     }
     return grm_fail_msg(handle, "unknown tensor name");
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_slice_tensor(grm_store_handle* handle,
+                           uint64_t node_id,
+                           const char* name,
+                           uint64_t axis,
+                           uint64_t start,
+                           uint64_t length,
+                           uint64_t* out_shape,
+                           uint64_t shape_cap,
+                           char* out_dtype,
+                           size_t dtype_cap,
+                           uint8_t* out_payload,
+                           uint64_t payload_cap,
+                           grm_tensor_info_c* out) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || name == nullptr ||
+        out == nullptr) {
+      return grm_fail_msg(handle, "invalid slice_tensor arguments");
+    }
+    if (out_shape == nullptr && shape_cap > 0) {
+      return grm_fail_msg(handle, "null shape buffer with nonzero capacity");
+    }
+    if (out_payload == nullptr && payload_cap > 0) {
+      return grm_fail_msg(handle, "null payload buffer with nonzero capacity");
+    }
+    auto t = handle->store->slice_tensor(node_id, name, axis, start, length);
+    out->rank = static_cast<uint64_t>(t.shape.size());
+    out->payload_bytes = static_cast<uint64_t>(t.bytes.size());
+    const uint64_t n = std::min<uint64_t>(out->rank, shape_cap);
+    for (uint64_t i = 0; i < n; ++i) {
+      out_shape[i] = t.shape[static_cast<std::size_t>(i)];
+    }
+    if (out_dtype != nullptr && dtype_cap > 0) {
+      const size_t dn = std::min(dtype_cap - 1, t.dtype.size());
+      std::memcpy(out_dtype, t.dtype.data(), dn);
+      out_dtype[dn] = '\0';
+    }
+    const uint64_t bytes = static_cast<uint64_t>(t.bytes.size());
+    if (out_payload == nullptr) {
+      return 0;
+    }
+    if (payload_cap < bytes) {
+      return grm_fail_msg(handle, "slice output buffer too small");
+    }
+    if (bytes > 0) {
+      std::memcpy(out_payload, t.bytes.data(), static_cast<std::size_t>(bytes));
+    }
+    return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
   }

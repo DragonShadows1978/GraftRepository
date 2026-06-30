@@ -85,6 +85,25 @@ def test_native_store_gqa_dialect_via_ctypes(tmp_path):
         assert store.route([0.0, 0.9], ["gqa"], topk=1) == [node_id]
 
 
+def test_native_store_slices_host_tensor_payload(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        tensor = np.arange(2 * 6 * 3, dtype=np.float32).reshape(2, 6, 3)
+        node_id = store.add_structured_node(
+            "slice me", {"latent": tensor}, ntok=6)
+
+        sliced = store.slice_tensor(node_id, "latent", axis=1,
+                                    start=2, length=3)
+
+        assert sliced.shape == (2, 3, 3)
+        np.testing.assert_array_equal(sliced, tensor[:, 2:5, :])
+        with pytest.raises(RuntimeError, match="slice range out of bounds"):
+            store.slice_tensor(node_id, "latent", axis=1, start=5, length=2)
+
+
 def test_native_route_uses_python_fractional_lexical_bonus(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

@@ -345,6 +345,34 @@ def test_cull_graft_slices_payloads_and_preserves_lineage(tmp_path):
     reloaded.close()
 
 
+def test_cull_graft_uses_native_slice_when_available(tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    path = str(tmp_path / "repo")
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeSliceArena, route_layer=3,
+                           native_lib_path=lib)
+    parent = repo.add_document("N1 N2 N3 N4")
+    calls = []
+    original = repo.native_store.slice_tensor
+
+    def traced(node_id, name, axis, start, length):
+        calls.append((int(node_id), name, int(axis), int(start), int(length)))
+        return original(node_id, name, axis, start, length)
+
+    monkeypatch.setattr(repo.native_store, "slice_tensor", traced)
+
+    out = repo.cull_graft(parent, max_tokens=2)
+
+    assert out["children"] == [1, 2]
+    assert calls == [
+        (repo.arena.grafts[parent]["native_node_id"], "tok", 0, 0, 2),
+        (repo.arena.grafts[parent]["native_node_id"], "tok", 0, 2, 2),
+    ]
+    assert repo.arena.grafts[1]["host_payload"]["tok"].tolist() == [0, 1]
+    assert repo.arena.grafts[2]["host_payload"]["tok"].tolist() == [2, 3]
+    repo.close()
+
+
 def test_runtime_cull_graft_autosaves_and_reports(tmp_path):
     path = str(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, path, autosave=True,
