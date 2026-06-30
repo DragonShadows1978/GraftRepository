@@ -66,8 +66,10 @@ validation where feasible.
   `HostGraftStore::source_closure()` and `grm_store_source_closure()` expose
   deterministic recursive source-graft descent with duplicate suppression,
   cycle guards, root inclusion control, and max-depth limiting. This gives the
-  Python policy layer a native graph traversal boundary for folded digest/era
-  source expansion instead of reading edge lists one node at a time.
+  runtime descent path a native graph traversal boundary for folded digest/era
+  mount expansion instead of reading edge lists one node at a time. `ArenaCache`
+  consumes this boundary when native ids map cleanly back to local grafts and
+  falls back to Python `sources` when the native mirror is unavailable or stale.
 - Explicit memory commands:
   `remember`, `forget`, `correct/update`, review fallback, ignore, and
   `flush memory now` are supported. `GRMRuntime.apply_memory_command()` now
@@ -583,7 +585,8 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
 The Python RAM-first runtime, opt-in C++ host-store mirror, native host payload,
 metadata, graph-edge checkpointing, native revision application, native route
 index with active-state and kind/scope/durability/mutability filters for MLA
-and GQA dialect ids plus native recursive source-closure traversal and
+and GQA dialect ids plus runtime-consumed native recursive source-closure
+traversal and
 multi-key MLA arena-route acceleration, native explicit
 memory-command parser, native swap-plan boundary, native host tensor swap/evict
 references, TensorCUDA fused splice/evict cache movement, TensorCUDA fused RoPE

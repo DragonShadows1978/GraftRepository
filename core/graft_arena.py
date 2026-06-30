@@ -1067,6 +1067,76 @@ class ArenaCache:
             return bool(subst) and bool(subst & words)
         return content <= have
 
+    def _native_source_closure_indices(self, picks, max_depth=1,
+                                       include_roots=False):
+        store = getattr(self, "native_store", None)
+        if store is None or not hasattr(store, "source_closure"):
+            return None
+        native_to_idx = {}
+        for idx, g in enumerate(self.grafts):
+            node_id = g.get("native_node_id")
+            if node_id is not None:
+                native_to_idx[int(node_id)] = int(idx)
+        native_ids = []
+        for idx in picks:
+            node_id = self.grafts[int(idx)].get("native_node_id")
+            if node_id is None:
+                return None
+            native_ids.append(int(node_id))
+        try:
+            native_out = store.source_closure(
+                native_ids, max_depth=int(max_depth),
+                include_roots=bool(include_roots))
+        except Exception:
+            return None
+        out, seen = [], set()
+        for node_id in native_out:
+            idx = native_to_idx.get(int(node_id))
+            if idx is None:
+                return None
+            if idx not in seen:
+                out.append(idx)
+                seen.add(idx)
+        return out
+
+    def _descent_source_children(self, idx, qrare=None):
+        qrare = set(qrare or ())
+        srcs = list(self.grafts[int(idx)].get("sources") or [])
+        if not qrare:
+            native = self._native_source_closure_indices(
+                [idx], max_depth=1, include_roots=False)
+            if native is not None and (native or not srcs):
+                return native
+        if qrare:
+            hit = []
+            for src in srcs:
+                g = self.grafts[src]
+                if "rare" not in g:
+                    g["rare"] = self._rare_tokens(g["text"])
+                if qrare & g["rare"]:
+                    hit.append(src)
+            return hit or srcs
+        return srcs
+
+    def _descent_expand(self, picks, kinds, qrare=None):
+        kinds = set(kinds or ())
+        out, seen = [], set()
+        for idx in picks:
+            idx = int(idx)
+            if self.grafts[idx].get("kind") in kinds:
+                children = self._descent_source_children(idx, qrare=qrare)
+                if children:
+                    for child in children:
+                        child = int(child)
+                        if child not in seen:
+                            out.append(child)
+                            seen.add(child)
+                    continue
+            if idx not in seen:
+                out.append(idx)
+                seen.add(idx)
+        return out
+
     def step(self, user_text, ngen=48, deposit=True,
              stops=("\nUser:", "User:", "\nAssistant:", "Assistant:", "\n\n"),
              max_trips=0):
@@ -1123,29 +1193,6 @@ class ArenaCache:
         # width (an unbounded descent over-filled the arena and collided
         # live positions with mount seats — descent diag). Cold-storage
         # children reload via node_loader.
-        def kids(i):
-            srcs = self.grafts[i].get("sources") or []
-            if qrare:
-                hit = []
-                for s in srcs:
-                    g = self.grafts[s]
-                    if "rare" not in g:
-                        g["rare"] = self._rare_tokens(g["text"])
-                    if qrare & g["rare"]:
-                        hit.append(s)
-                return hit or srcs
-            return srcs
-
-        def expand(picks, kinds):
-            out = []
-            for i in picks:
-                if (self.grafts[i].get("kind") in kinds
-                        and self.grafts[i].get("sources")):
-                    out.extend(k for k in kids(i) if k not in out)
-                elif i not in out:
-                    out.append(i)
-            return out
-
         def fit(picks):
             # truncation is EXPANSION-ORDERED, deliberately. Score-ordered
             # truncation was tried and REFUTED (2026-06-11, 6/8): max-over-
@@ -1169,18 +1216,21 @@ class ArenaCache:
         # the deepest mount set. Identifier queries keep precise-first.
         if max_trips >= 1 and attempts:
             head = precise or attempts[0][0]
-            primary = fit(expand(head, ("era",)))
-            deep = fit(expand(primary, ("era", "digest")))
+            primary = fit(self._descent_expand(head, ("era",), qrare=qrare))
+            deep = fit(self._descent_expand(
+                primary, ("era", "digest"), qrare=qrare))
             ladder = [(primary, False)]
             if deep != primary:
                 ladder.append((deep, False))
             ladder.append((deep, True))
             if not precise:
-                ladder += [(fit(expand(a[0], ("era",))), False)
+                ladder += [(fit(self._descent_expand(
+                    a[0], ("era",), qrare=qrare)), False)
                            for a in attempts[1:]]
             attempts = ladder[:max_trips + 1]
         elif attempts:
-            attempts = [(fit(expand(attempts[0][0], ("era",))), False)]
+            attempts = [(fit(self._descent_expand(
+                attempts[0][0], ("era",), qrare=qrare)), False)]
         else:
             attempts = [([], False)]
         best = None

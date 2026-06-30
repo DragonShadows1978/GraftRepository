@@ -890,6 +890,78 @@ def test_arena_route_falls_back_for_child_centroid_without_native_multikey():
     assert arena.last_route_backend == "python"
 
 
+def test_arena_descent_expand_uses_native_source_closure():
+    class ClosureStore:
+        def __init__(self):
+            self.calls = []
+
+        def source_closure(self, node_ids, max_depth=1,
+                           include_roots=False):
+            self.calls.append((tuple(node_ids), int(max_depth),
+                               bool(include_roots)))
+            return (102, 101)
+
+    store = ClosureStore()
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = store
+    arena.grafts = [
+        {"native_node_id": 100, "kind": "era", "sources": [1],
+         "text": "era"},
+        {"native_node_id": 101, "kind": "doc", "sources": [],
+         "text": "python fallback child"},
+        {"native_node_id": 102, "kind": "doc", "sources": [],
+         "text": "native first child"},
+        {"native_node_id": 103, "kind": "doc", "sources": [],
+         "text": "ordinary pick"},
+    ]
+
+    assert arena._descent_expand([0, 3], ("era",), qrare=set()) == [
+        2, 1, 3]
+    assert store.calls == [((100,), 1, False)]
+
+
+def test_arena_descent_expand_falls_back_to_python_sources():
+    class EmptyClosureStore:
+        def __init__(self):
+            self.calls = 0
+
+        def source_closure(self, *_args, **_kwargs):
+            self.calls += 1
+            return ()
+
+    store = EmptyClosureStore()
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = store
+    arena.grafts = [
+        {"native_node_id": 100, "kind": "era", "sources": [1],
+         "text": "era"},
+        {"native_node_id": 101, "kind": "doc", "sources": [],
+         "text": "fallback child"},
+    ]
+
+    assert arena._descent_expand([0], ("era",), qrare=set()) == [1]
+    assert store.calls == 1
+
+
+def test_arena_descent_expand_keeps_identifier_filter_in_python():
+    class UnusedClosureStore:
+        def source_closure(self, *_args, **_kwargs):
+            raise AssertionError("native closure should not handle qrare")
+
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = UnusedClosureStore()
+    arena.grafts = [
+        {"native_node_id": 100, "kind": "era", "sources": [1, 2],
+         "text": "era"},
+        {"native_node_id": 101, "kind": "doc", "sources": [],
+         "text": "target A17"},
+        {"native_node_id": 102, "kind": "doc", "sources": [],
+         "text": "other child"},
+    ]
+
+    assert arena._descent_expand([0], ("era",), qrare={"a17"}) == [1]
+
+
 def test_repository_native_route_sync_includes_child_centroids(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(
