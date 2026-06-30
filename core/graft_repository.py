@@ -1631,6 +1631,61 @@ class GraftRepository:
         os.makedirs(os.path.join(self.path, "nodes"), exist_ok=True)
         os.makedirs(os.path.join(self.path, "wal"), exist_ok=True)
 
+    @staticmethod
+    def _fsync_parent_dir(path):
+        parent = os.path.dirname(os.path.abspath(path))
+        try:
+            fd = os.open(parent, os.O_RDONLY)
+        except OSError:
+            return
+        try:
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+
+    @staticmethod
+    def _durability_tmp_path(path):
+        return f"{path}.tmp.{os.getpid()}.{threading.get_ident()}"
+
+    def _atomic_write_json(self, path, payload, *, indent=None):
+        parent = os.path.dirname(path)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        tmp = self._durability_tmp_path(path)
+        try:
+            with open(tmp, "w") as fh:
+                json.dump(payload, fh, indent=indent)
+                fh.write("\n")
+                fh.flush()
+                os.fsync(fh.fileno())
+            os.replace(tmp, path)
+            self._fsync_parent_dir(path)
+        except Exception:
+            try:
+                os.unlink(tmp)
+            except FileNotFoundError:
+                pass
+            raise
+
+    def _atomic_savez_compressed(self, path, **payload):
+        parent = os.path.dirname(path)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        tmp = self._durability_tmp_path(path)
+        try:
+            with open(tmp, "wb") as fh:
+                np.savez_compressed(fh, **payload)
+                fh.flush()
+                os.fsync(fh.fileno())
+            os.replace(tmp, path)
+            self._fsync_parent_dir(path)
+        except Exception:
+            try:
+                os.unlink(tmp)
+            except FileNotFoundError:
+                pass
+            raise
+
     def _wal_path(self):
         return os.path.join(self.path, "wal", "000001.wal")
 
@@ -1643,6 +1698,9 @@ class GraftRepository:
                "time": time.time(), **fields}
         with open(self._wal_path(), "a") as fh:
             fh.write(json.dumps(rec, sort_keys=True) + "\n")
+            fh.flush()
+            os.fsync(fh.fileno())
+        self._fsync_parent_dir(self._wal_path())
         return self._wal_lsn
 
     def _read_wal(self):
@@ -2018,7 +2076,7 @@ class GraftRepository:
                     if g.get("host_payload") is None:
                         self._ensure_host_payload(i, g)
                     self._native_sync_node(i)
-                    np.savez_compressed(f, **g["host_payload"])
+                    self._atomic_savez_compressed(f, **g["host_payload"])
                     g["durable"] = True
                     g["payload_pending"] = False
                     self._native_mark_durable(i)
@@ -2027,20 +2085,21 @@ class GraftRepository:
                 g["dirty"] = False
                 self._ensure_lifecycle(i, g)
                 nodes.append(self._node_manifest(g))
-            np.savez_compressed(os.path.join(self.path, "index.npz"),
-                                **self.arena.pack_index())
+            self._atomic_savez_compressed(
+                os.path.join(self.path, "index.npz"), **self.arena.pack_index())
             native_checkpoint = self._native_save_checkpoint()
-            with open(os.path.join(self.path, "manifest.json"), "w") as fh:
-                json.dump({"dialect": self.dialect,
-                           "dialect_descriptor": self.dialect_desc.to_json(),
-                           "route_layer": self.arena.route_layer,
-                           "durability_mode": self.durability_mode,
-                           "native_checkpoint": (
-                               "native/grm_store.bin"
-                               if native_checkpoint else None),
-                           "wal_lsn": self._wal_lsn,
-                           "review_buffer": self.review_buffer,
-                           "nodes": nodes}, fh, indent=1)
+            self._atomic_write_json(
+                os.path.join(self.path, "manifest.json"),
+                {"dialect": self.dialect,
+                 "dialect_descriptor": self.dialect_desc.to_json(),
+                 "route_layer": self.arena.route_layer,
+                 "durability_mode": self.durability_mode,
+                 "native_checkpoint": (
+                     "native/grm_store.bin" if native_checkpoint else None),
+                 "wal_lsn": self._wal_lsn,
+                 "review_buffer": self.review_buffer,
+                 "nodes": nodes},
+                indent=1)
             self.dirty_nodes.clear()
             self._append_wal("CHECKPOINT", nodes=len(nodes),
                              manifest="manifest.json")

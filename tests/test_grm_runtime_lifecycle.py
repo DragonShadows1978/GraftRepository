@@ -161,6 +161,15 @@ def dec(ids):
     return " ".join(ids)
 
 
+def temp_artifacts(root):
+    out = []
+    for dirpath, _, names in os.walk(root):
+        for name in names:
+            if ".tmp." in name:
+                out.append(os.path.join(dirpath, name))
+    return sorted(out)
+
+
 def test_dialect_descriptor_uses_deepseek_mla_dimensions(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,
@@ -287,6 +296,49 @@ def test_dirty_flush_and_reload_lifecycle(tmp_path):
     assert reloaded.arena.grafts[0]["host_payload"]["payload_id"].tolist() == [0]
     assert reloaded.arena.grafts[0]["device_present"] is True
     assert reloaded.arena.grafts[0]["h"] == {"id": 0}
+    assert temp_artifacts(path) == []
+
+
+def test_atomic_json_publish_preserves_prior_file_on_failure(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+    target = os.path.join(str(tmp_path), "manifest_probe.json")
+
+    repo._atomic_write_json(target, {"version": 1}, indent=1)
+    with pytest.raises(TypeError):
+        repo._atomic_write_json(target, {"bad": object()}, indent=1)
+
+    with open(target) as fh:
+        assert json.load(fh) == {"version": 1}
+    assert temp_artifacts(str(tmp_path)) == []
+
+
+def test_atomic_npz_publish_preserves_prior_file_on_failure(tmp_path, monkeypatch):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+    target = os.path.join(str(tmp_path), "probe.npz")
+    repo._atomic_savez_compressed(
+        target, payload_id=np.asarray([7], dtype=np.int64))
+
+    original = np.savez_compressed
+
+    def fail_after_write(file, **payload):
+        file.write(b"partial")
+        raise RuntimeError("forced npz publish failure")
+
+    monkeypatch.setattr(
+        "core.graft_repository.np.savez_compressed", fail_after_write)
+    with pytest.raises(RuntimeError, match="forced npz"):
+        repo._atomic_savez_compressed(
+            target, payload_id=np.asarray([8], dtype=np.int64))
+
+    monkeypatch.setattr(
+        "core.graft_repository.np.savez_compressed", original)
+    with np.load(target) as z:
+        assert z["payload_id"].tolist() == [7]
+    assert temp_artifacts(str(tmp_path)) == []
 
 
 def test_cull_graft_slices_payloads_and_preserves_lineage(tmp_path):
