@@ -44,6 +44,10 @@ validation where feasible.
 - Metadata/fact semantics:
   nodes carry durability, mutability, scope, write intent, confidence,
   active state, supersession fields, source grafts, and provenance.
+  Extractor conflict policy treats scope as part of fact identity: a
+  subject/predicate/value disagreement only blocks or supersedes active memory
+  in the same scope, so project/session/user/domain/global facts can coexist
+  without cross-scope retirement.
 - Explicit memory commands:
   `remember`, `forget`, `correct/update`, review fallback, ignore, and
   `flush memory now` are supported. `GRMRuntime.apply_memory_command()` now

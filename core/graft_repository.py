@@ -418,6 +418,16 @@ class GraftRepository:
     def _norm_fact_field(value):
         return str(value).strip().lower() if value is not None else ""
 
+    @classmethod
+    def _norm_fact_scope(cls, value):
+        return cls._norm_fact_field(value) or "project"
+
+    @classmethod
+    def _candidate_scope_conflicts(cls, candidate, metadata):
+        candidate_scope = cls._norm_fact_scope(candidate.get("scope", "project"))
+        existing_scope = cls._norm_fact_scope(metadata.get("scope", "project"))
+        return candidate_scope == existing_scope
+
     def _candidate_text(self, candidate, source_text=None):
         if candidate.get("text"):
             return str(candidate["text"]).strip()
@@ -457,6 +467,8 @@ class GraftRepository:
             if self._norm_fact_field(meta.get("subject")) != subject:
                 continue
             if self._norm_fact_field(meta.get("predicate")) != predicate:
+                continue
+            if not self._candidate_scope_conflicts(candidate, meta):
                 continue
             old_value = self._norm_fact_field(meta.get("value"))
             if old_value and old_value != value:

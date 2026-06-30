@@ -591,6 +591,12 @@ def test_extraction_candidate_interface_is_conservative(tmp_path):
     assert repo.review_buffer[-1]["reason"] == "conflicts with active memory"
     assert repo.arena.grafts[out["node_id"]]["metadata"]["active"] is True
 
+    scoped_fact = dict(direct, text="For the user, GRM hot tier is manual.",
+                       value="manual", scope="user", confidence=0.99)
+    scoped = repo.apply_extraction_candidate(scoped_fact)
+    assert scoped["action"] == "write_direct"
+    assert repo.arena.grafts[scoped["node_id"]]["metadata"]["scope"] == "user"
+
     user_correction = dict(direct, text="GRM hot tier is GPU-mounted only.",
                            value="GPU-mounted only",
                            write_intent="user_asserted",
@@ -599,6 +605,7 @@ def test_extraction_candidate_interface_is_conservative(tmp_path):
     assert corr["action"] == "supersede_existing"
     assert corr["supersedes"] == [out["node_id"]]
     assert repo.arena.grafts[out["node_id"]]["metadata"]["active"] is False
+    assert repo.arena.grafts[scoped["node_id"]]["metadata"]["active"] is True
     assert repo.arena.grafts[out["node_id"]]["retired"] is True
     assert repo.arena.grafts[corr["node_id"]]["metadata"]["supersedes"] == [
         out["node_id"]]
