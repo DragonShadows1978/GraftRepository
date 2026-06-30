@@ -100,9 +100,11 @@ validation where feasible.
   readback through `core/grm_native.py` so Python can reconstruct numpy arrays.
 - Native host-store checkpointing:
   `HostGraftStore` can save/load a dependency-free binary checkpoint containing
-  node ids, text, token counts, lifecycle state, and every structured tensor's
-  name, dtype, shape, and bytes. The C ABI and Python wrapper expose
-  `save_checkpoint()` and `load_checkpoint()`.
+  the native dialect id, node ids, text, token counts, lifecycle state, and
+  every structured tensor's name, dtype, shape, and bytes. The C ABI and Python
+  wrapper expose `save_checkpoint()` and `load_checkpoint()`, and `GRMSTORE5`
+  rejects mismatched native dialect loads while keeping older checkpoints
+  readable.
 - Native semantic metadata persistence:
   native nodes now store the repository metadata JSON blob, mirror semantic
   metadata from `GraftRepository`, expose it through the C ABI/Python wrapper,
@@ -110,7 +112,7 @@ validation where feasible.
 - Native graph-edge metadata:
   source turns, source grafts, supersedes, and superseded-by edges are mirrored
   into structured native state through `grm_store_set_graph_edges()`, exposed
-  through `NativeGraftStore.graph_edges()`, and preserved in `GRMSTORE4`
+  through `NativeGraftStore.graph_edges()`, and preserved in `GRMSTORE4+`
   checkpoints.
 - Native revision operation:
   `grm_store_apply_revision()` / `NativeGraftStore.apply_revision()` retires

@@ -64,7 +64,8 @@ constexpr char kCheckpointMagicV1[] = "GRMSTORE1";
 constexpr char kCheckpointMagicV2[] = "GRMSTORE2";
 constexpr char kCheckpointMagicV3[] = "GRMSTORE3";
 constexpr char kCheckpointMagicV4[] = "GRMSTORE4";
-constexpr char kCheckpointMagic[] = "GRMSTORE4";
+constexpr char kCheckpointMagicV5[] = "GRMSTORE5";
+constexpr char kCheckpointMagic[] = "GRMSTORE5";
 
 void write_u64(std::ostream& out, std::uint64_t v) {
   out.write(reinterpret_cast<const char*>(&v), sizeof(v));
@@ -553,6 +554,7 @@ void HostGraftStore::save_checkpoint(const std::string& root) {
     throw std::runtime_error("failed to open native GRM checkpoint for write");
   }
   out.write(kCheckpointMagic, sizeof(kCheckpointMagic) - 1);
+  write_string(out, dialect_.dialect_id());
   write_u64(out, static_cast<std::uint64_t>(nodes_.size()));
   std::vector<std::uint64_t> ids;
   ids.reserve(nodes_.size());
@@ -626,9 +628,19 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
       magic_s == std::string(kCheckpointMagicV3, sizeof(kCheckpointMagicV3) - 1);
   const bool checkpoint_v4 =
       magic_s == std::string(kCheckpointMagicV4, sizeof(kCheckpointMagicV4) - 1);
+  const bool checkpoint_v5 =
+      magic_s == std::string(kCheckpointMagicV5, sizeof(kCheckpointMagicV5) - 1);
   if (!in || (!checkpoint_v1 && !checkpoint_v2 && !checkpoint_v3 &&
-              !checkpoint_v4)) {
+              !checkpoint_v4 && !checkpoint_v5)) {
     throw std::runtime_error("invalid native GRM checkpoint magic");
+  }
+  if (checkpoint_v5) {
+    const auto saved_dialect = read_string(in);
+    const auto expected_dialect = dialect_.dialect_id();
+    if (saved_dialect != expected_dialect) {
+      throw std::runtime_error("native GRM checkpoint dialect mismatch: " +
+                               saved_dialect + " vs " + expected_dialect);
+    }
   }
   std::unordered_map<std::uint64_t, HostGraftNode> loaded;
   const auto count = read_u64(in);
@@ -640,15 +652,16 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
     n.text = read_string(in);
     n.metadata.json = read_string(in);
     n.metadata.active =
-        (checkpoint_v2 || checkpoint_v3 || checkpoint_v4) ? read_bool(in)
-                                                          : true;
-    if (checkpoint_v3 || checkpoint_v4) {
+        (checkpoint_v2 || checkpoint_v3 || checkpoint_v4 || checkpoint_v5)
+            ? read_bool(in)
+            : true;
+    if (checkpoint_v3 || checkpoint_v4 || checkpoint_v5) {
       n.metadata.kind = read_string(in);
       n.metadata.scope = read_string(in);
       n.metadata.durability = read_string(in);
       n.metadata.mutability = read_string(in);
     }
-    if (checkpoint_v4) {
+    if (checkpoint_v4 || checkpoint_v5) {
       n.metadata.source_turns = read_u64_vector(in);
       n.metadata.source_grafts = read_u64_vector(in);
       n.metadata.supersedes = read_u64_vector(in);

@@ -39,9 +39,10 @@ collapsed into one generic cache family.
 `GraftRepository(..., native_lib_path=...)` now mirrors payload lifecycle into
 that native host store as reconstructable named tensors with shape/dtype
 metadata, checkpoints those native host payloads to NVMe through a binary C++
-store format, persists semantic metadata JSON through the same native
-checkpoint path, and supports native host-store creation for both MLA and GQA
-dialect descriptors. It mirrors native route keys into the C++ `RouterIndex`;
+store format with a persisted native dialect id (`GRMSTORE5`), persists
+semantic metadata JSON through the same native checkpoint path, and supports
+native host-store creation for both MLA and GQA dialect descriptors. It mirrors
+native route keys into the C++ `RouterIndex`;
 native route entries carry active/inactive state through
 `grm_store_set_active()`, skip forgotten or superseded nodes during route
 lookup, preserve active state through native checkpoints, and carry

@@ -378,6 +378,38 @@ def test_native_checkpoint_round_trips_structured_payloads(tmp_path):
                                       payload["kpe"])
 
 
+def test_native_checkpoint_enforces_dialect_wall(tmp_path):
+    lib = build_native(tmp_path)
+    ckpt = tmp_path / "gqa_ckpt"
+    payload = {
+        "k": np.zeros((2, 8, 3, 128), np.float16),
+        "v": np.ones((2, 8, 3, 128), np.float16),
+    }
+    with NativeGraftStore(
+            lib, model_type="Qwen3_TC", num_layers=36,
+            hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
+            payload_kind="gqa", num_kv_heads=8, head_dim=128) as store:
+        node_id = store.add_structured_node("GQA checkpoint graft", payload,
+                                            ntok=3)
+        store.save_checkpoint(ckpt)
+
+    with NativeGraftStore(
+            lib, model_type="Qwen3_TC", num_layers=36,
+            hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
+            payload_kind="gqa", num_kv_heads=8, head_dim=128) as reloaded:
+        reloaded.load_checkpoint(ckpt)
+        assert reloaded.dialect_id() == "Qwen3_TC:36x2560:g8x128"
+        np.testing.assert_array_equal(reloaded.get_tensor(node_id, "v"),
+                                      payload["v"])
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as wrong:
+        with pytest.raises(RuntimeError, match="dialect mismatch"):
+            wrong.load_checkpoint(ckpt)
+
+
 def test_native_device_arena_swap_plan_via_ctypes(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(
