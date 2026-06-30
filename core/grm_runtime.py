@@ -205,6 +205,30 @@ class GRMRuntime:
         self._finish_review_event(before, "approve_review")
         return idx
 
+    def _finish_cull_event(self, before, action):
+        repo = self.repository
+        did_autosave = False
+        if repo.autosave:
+            repo.flush_now()
+            did_autosave = True
+        paged = repo._page()
+        self.last_result = RuntimeResult(
+            event="cull",
+            before_nodes=len(before),
+            after_nodes=len(repo.arena.grafts),
+            new_nodes=self._new_nodes(before),
+            autosaved=did_autosave,
+            paged=int(paged or 0),
+            action=action,
+        )
+
+    def cull_graft(self, idx, **kwargs):
+        repo = self.repository
+        before = repo._snapshot_state()
+        out = repo._cull_graft_direct(idx, **kwargs)
+        self._finish_cull_event(before, out.get("action", "cull_graft"))
+        return out
+
     def _finish_extraction_event(self, before, action, results):
         repo = self.repository
         did_autosave = False

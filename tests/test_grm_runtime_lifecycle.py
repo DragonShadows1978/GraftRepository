@@ -345,6 +345,30 @@ def test_cull_graft_slices_payloads_and_preserves_lineage(tmp_path):
     reloaded.close()
 
 
+def test_runtime_cull_graft_autosaves_and_reports(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=True,
+                           arena_cls=FakeSliceArena, route_layer=3)
+    parent = repo.add_document("R1 R2 R3 R4")
+    repo.flush_now()
+
+    out = repo.cull_graft(parent, max_tokens=2)
+
+    assert out["action"] == "cull_graft"
+    assert out["children"] == [1, 2]
+    assert repo.runtime.last_result.event == "cull"
+    assert repo.runtime.last_result.action == "cull_graft"
+    assert repo.runtime.last_result.autosaved is True
+    assert repo.runtime.last_result.new_nodes == (1, 2)
+    assert repo.stats()["dirty_nodes"] == 0
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeSliceArena, route_layer=3)
+    assert reopened.arena.grafts[parent]["retired"] is True
+    assert reopened.arena.grafts[1]["host_payload"]["tok"].tolist() == [0, 1]
+    assert reopened.arena.grafts[2]["host_payload"]["tok"].tolist() == [2, 3]
+
+
 def test_remember_attaches_semantic_metadata(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,

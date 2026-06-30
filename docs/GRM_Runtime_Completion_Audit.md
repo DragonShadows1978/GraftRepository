@@ -59,8 +59,9 @@ validation where feasible.
   `GraftRepository.cull_graft()` / `split_graft()` can replace a long graft
   with shorter child grafts by slicing RAM-authoritative payload tensors along
   the dialect token axis, preserving source lineage/provenance, mirroring the
-  children into native RAM when enabled, and optionally retiring the parent as
-  cold evidence.
+  children into native RAM when enabled, optionally retiring the parent as cold
+  evidence, and finishing through `GRMRuntime` so autosave publishes the sliced
+  children durably.
 - Explicit memory commands:
   `remember`, `forget`, `correct/update`, review fallback, ignore, and
   `flush memory now` are supported. `GRMRuntime.apply_memory_command()` now
@@ -85,7 +86,8 @@ validation where feasible.
 - Python runtime coordinator boundary:
   `core.grm_runtime.GRMRuntime` now owns the operation sequencing for
   `chat()`, `add_turn()`, `idle()`, review execution, and explicit
-  memory-command execution, plus public extractor-candidate execution:
+  memory-command execution, public graft culling, plus public
+  extractor-candidate execution:
   snapshot, model/arena action, extraction/review policy, librarian folding,
   mutation marking, flush, and paging.
   `GraftRepository` remains the public API and persistence owner, but the

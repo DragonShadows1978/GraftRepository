@@ -370,6 +370,14 @@ class GraftRepository:
     def cull_graft(self, idx, *, max_tokens=None, spans=None,
                    retire_parent=True, kind=None, tags=(),
                    recompute_route=True):
+        return self.runtime.cull_graft(
+            idx, max_tokens=max_tokens, spans=spans,
+            retire_parent=retire_parent, kind=kind, tags=tags,
+            recompute_route=recompute_route)
+
+    def _cull_graft_direct(self, idx, *, max_tokens=None, spans=None,
+                           retire_parent=True, kind=None, tags=(),
+                           recompute_route=True):
         """Split one long graft into shorter child grafts.
 
         Child nodes receive RAM payload slices and lineage back to the parent.
