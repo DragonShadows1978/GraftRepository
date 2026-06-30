@@ -34,12 +34,14 @@ validation where feasible.
   nodes (manifest keeps them as `payload_pending`, not falsely durable), and
   `load()` preserves the pending flag through a manifest round-trip. WAL
   recovery also replays semantic revision records (`MEMORY_CORRECT`,
-  `MEMORY_EXTRACT_SUPERSEDE`) so superseded facts do not resurrect after a
-  crash-before-manifest, and preserves fold-abort `no_fold` exemptions from
-  `NODE_META` state so a rejected librarian window does not loop after
-  recovery. Validated by `test_wal_recovers_text_metadata_without_manifest`,
+  `MEMORY_EXTRACT_SUPERSEDE`, `MEMORY_EXTRACT_EXPIRE`) so superseded or
+  expired facts do not resurrect after a crash-before-manifest, and preserves
+  fold-abort `no_fold` exemptions from `NODE_META` state so a rejected
+  librarian window does not loop after recovery. Validated by
+  `test_wal_recovers_text_metadata_without_manifest`,
   `test_wal_recovery_keeps_forgotten_nodes_inert`,
-  `test_wal_recovery_replays_extraction_supersession`, and
+  `test_wal_recovery_replays_extraction_supersession`,
+  `test_extraction_expire_action_retires_and_recovers_from_wal`, and
   `test_wal_recovery_preserves_fold_abort_exemption`.
 - Metadata/fact semantics:
   nodes carry durability, mutability, scope, write intent, confidence,
@@ -50,6 +52,9 @@ validation where feasible.
   without cross-scope retirement.
   `valid_from`/`expires_at` now gate extraction conflicts as current-effective
   intervals, with malformed timestamps treated conservatively as active.
+  Authoritative extractor `expire` candidates can retire exact active facts by
+  node id or same-scope subject/predicate/value match; inferred or ambiguous
+  expire candidates stay in review.
 - Explicit memory commands:
   `remember`, `forget`, `correct/update`, review fallback, ignore, and
   `flush memory now` are supported. `GRMRuntime.apply_memory_command()` now

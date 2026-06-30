@@ -671,6 +671,62 @@ def test_extraction_conflicts_respect_temporal_validity(tmp_path):
     assert guarded["action"] == "review_candidate"
 
 
+def test_extraction_expire_action_retires_and_recovers_from_wal(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+
+    fact = {
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "GRM stale target is ACTIVE-1.",
+        "subject": "GRM stale target",
+        "predicate": "is",
+        "value": "ACTIVE-1",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "mutable",
+        "write_intent": "observed",
+        "confidence": 0.99,
+    }
+    out = repo.apply_extraction_candidate(fact)
+    assert out["action"] == "write_direct"
+
+    inferred = dict(fact, action="expire",
+                    text="Expire GRM stale target ACTIVE-1.",
+                    write_intent="inferred")
+    review = repo.apply_extraction_candidate(inferred)
+    assert review["action"] == "review_candidate"
+    assert repo.review_buffer[-1]["reason"] == (
+        "expire action requires authoritative intent")
+    assert repo.arena.grafts[out["node_id"]]["metadata"]["active"] is True
+
+    expire = dict(fact, action="expire",
+                  text="Expire GRM stale target ACTIVE-1.",
+                  write_intent="user_asserted",
+                  confidence=1.0)
+    expired = repo.apply_extraction_candidate(expire)
+    assert expired["action"] == "expire"
+    assert expired["expired"] == [out["node_id"]]
+    retired = repo.arena.grafts[out["node_id"]]
+    assert retired["retired"] is True
+    assert retired["metadata"]["active"] is False
+    assert retired["metadata"]["expired_by"] == expire["text"]
+    assert "expired_at" in retired["metadata"]
+    assert repo.show_memory_about("ACTIVE-1") == []
+    assert repo.runtime.last_result.action == "expire"
+    assert repo.runtime.last_result.new_nodes == ()
+    assert not os.path.exists(os.path.join(path, "manifest.json"))
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+    recovered = reopened.arena.grafts[out["node_id"]]
+    assert recovered["retired"] is True
+    assert recovered["metadata"]["active"] is False
+    assert recovered["metadata"]["expired_by"] == expire["text"]
+    assert reopened.show_memory_about("ACTIVE-1") == []
+
+
 def test_runtime_extraction_candidate_autosaves_and_reports(tmp_path):
     path = str(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, path, autosave=True,

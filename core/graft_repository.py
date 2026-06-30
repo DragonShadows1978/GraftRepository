@@ -466,6 +466,78 @@ class GraftRepository:
         return (cls._fact_effective_now(candidate)
                 and cls._fact_effective_now(metadata))
 
+    @staticmethod
+    def _candidate_target_ids(candidate):
+        explicit = (candidate.get("target_node_ids")
+                    or candidate.get("target_node_id")
+                    or candidate.get("targets")
+                    or candidate.get("supersedes")
+                    or ())
+        if isinstance(explicit, (str, int, float)):
+            explicit = (explicit,)
+        out = []
+        for node_id in explicit:
+            try:
+                out.append(int(node_id))
+            except (TypeError, ValueError):
+                continue
+        return out
+
+    def _candidate_expire_targets(self, candidate):
+        explicit = self._candidate_target_ids(candidate)
+        if explicit:
+            out = []
+            for i in explicit:
+                if i < 0 or i >= len(self.arena.grafts):
+                    continue
+                g = self.arena.grafts[i]
+                meta = g.get("metadata", self._default_metadata(g))
+                if meta.get("active", True) and not g.get("retired"):
+                    out.append(i)
+            return list(dict.fromkeys(out))
+
+        subject = self._norm_fact_field(candidate.get("subject"))
+        predicate = self._norm_fact_field(candidate.get("predicate"))
+        value = self._norm_fact_field(candidate.get("value"))
+        if not (subject and predicate and value):
+            return []
+
+        out = []
+        for i, g in enumerate(self.arena.grafts):
+            meta = g.get("metadata", self._default_metadata(g))
+            if not meta.get("active", True) or g.get("retired"):
+                continue
+            if self._norm_fact_field(meta.get("subject")) != subject:
+                continue
+            if self._norm_fact_field(meta.get("predicate")) != predicate:
+                continue
+            if self._norm_fact_field(meta.get("value")) != value:
+                continue
+            if not self._candidate_scope_conflicts(candidate, meta):
+                continue
+            if not self._candidate_time_conflicts(candidate, meta):
+                continue
+            out.append(i)
+        return out
+
+    def _expire_extraction_targets(self, targets, text):
+        expired_at = datetime.now(timezone.utc).isoformat()
+        expired = []
+        for i in targets:
+            g = self.arena.grafts[int(i)]
+            meta = g.setdefault("metadata", self._default_metadata(g))
+            meta["active"] = False
+            meta["expired_at"] = expired_at
+            meta["expired_by"] = text
+            g["retired"] = True
+            self._mark_dirty(int(i), payload=False, metadata=True)
+            expired.append(int(i))
+        if expired:
+            self._append_wal("MEMORY_EXTRACT_EXPIRE",
+                             expired=list(expired), text=text,
+                             expired_at=expired_at)
+        return expired
+
     def _candidate_text(self, candidate, source_text=None):
         if candidate.get("text"):
             return str(candidate["text"]).strip()
@@ -551,13 +623,22 @@ class GraftRepository:
         if action == "pin":
             metadata["pinned"] = True
             action = "write_direct"
+        authoritative = write_intent in ("user_asserted", "system_asserted")
         if action in ("expire",):
-            return self._candidate_to_review(
-                candidate, text, "expire action requires explicit policy",
-                metadata)
+            if not authoritative:
+                return self._candidate_to_review(
+                    candidate, text,
+                    "expire action requires authoritative intent",
+                    metadata)
+            targets = self._candidate_expire_targets(candidate)
+            if not targets:
+                return self._candidate_to_review(
+                    candidate, text, "expire action found no active target",
+                    metadata)
+            expired = self._expire_extraction_targets(targets, text)
+            return {"action": "expire", "expired": expired}
 
         conflicts = self._candidate_conflicts(candidate)
-        authoritative = write_intent in ("user_asserted", "system_asserted")
         imported = write_intent == "imported"
         if conflicts and not authoritative:
             reason = ("conflicts with active memory"
@@ -1267,6 +1348,20 @@ class GraftRepository:
             for old in supersedes:
                 retire_node(old, superseded_by=replacement_id)
 
+        def expire_nodes(node_ids, expired_by="", expired_at=None):
+            for node_id in node_ids or ():
+                node = nodes.get(int(node_id))
+                if node is None:
+                    continue
+                meta = meta_for(node)
+                meta["active"] = False
+                if expired_at:
+                    meta["expired_at"] = expired_at
+                if expired_by:
+                    meta["expired_by"] = expired_by
+                node["active"] = False
+                node["retired"] = True
+
         for rec in records:
             typ = rec.get("type")
             if typ == "NODE_UPSERT":
@@ -1312,6 +1407,10 @@ class GraftRepository:
             elif typ in ("MEMORY_CORRECT", "MEMORY_EXTRACT_SUPERSEDE"):
                 if "node_id" in rec:
                     link_revision(rec["node_id"], rec.get("supersedes", ()))
+            elif typ == "MEMORY_EXTRACT_EXPIRE":
+                expire_nodes(rec.get("expired", ()),
+                             expired_by=rec.get("text", ""),
+                             expired_at=rec.get("expired_at"))
         self.recovered_reviews = self._apply_review_wal_records([], records)
         return [nodes[k] for k in sorted(nodes)]
 
