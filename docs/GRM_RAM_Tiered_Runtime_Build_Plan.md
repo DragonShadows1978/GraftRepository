@@ -83,6 +83,11 @@ crash before the next manifest does not resurrect superseded facts as active
 memory. WAL recovery also preserves `no_fold` fold-abort exemptions from
 metadata state records, which keeps rejected librarian windows from looping
 after recovery.
+Public extractor-candidate execution now finishes through `GRMRuntime`: direct
+calls to `apply_extraction_candidate(s)` autosave when the repository is in
+autosave mode, report an `extraction` runtime event, and page through the same
+runtime boundary as chat-triggered extraction. Turn-triggered extraction still
+runs inside the enclosing chat/add-turn event so it does not double-flush.
 Optional runtime extraction orchestration is now wired into completed chat and
 scripted turn ingestion: `GraftRepository(..., extractor=...)` calls the
 extractor on newly deposited turn/recall grafts, passes `source_grafts` and

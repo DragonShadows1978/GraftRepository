@@ -57,15 +57,20 @@ validation where feasible.
   candidate dictionaries, writes high-confidence non-conflicting candidates,
   sends low-confidence or inferred conflicting claims to the review buffer, and
   lets authoritative user/system assertions supersede active semantic memory
-  with revision metadata. `GraftRepository(..., extractor=...)` now runs an
-  optional extractor on newly completed chat/scripted turns, passes source turn
-  graft ids into that same policy path, and records extractor errors as
-  non-blocking WAL events unless configured to raise.
+  with revision metadata. Public candidate application now finishes through
+  `GRMRuntime`, reports an `extraction` runtime event, and honors autosave
+  durability for direct `apply_extraction_candidate(s)` callers. Turn-triggered
+  extraction remains inside the enclosing chat/add-turn runtime event to avoid
+  double flushing. `GraftRepository(..., extractor=...)` now runs an optional
+  extractor on newly completed chat/scripted turns, passes source turn graft ids
+  into that same policy path, and records extractor errors as non-blocking WAL
+  events unless configured to raise.
 - Python runtime coordinator boundary:
   `core.grm_runtime.GRMRuntime` now owns the operation sequencing for
   `chat()`, `add_turn()`, `idle()`, review execution, and explicit
-  memory-command execution: snapshot, model/arena action, extraction/review
-  policy, librarian folding, mutation marking, flush, and paging.
+  memory-command execution, plus public extractor-candidate execution:
+  snapshot, model/arena action, extraction/review policy, librarian folding,
+  mutation marking, flush, and paging.
   `GraftRepository` remains the public API and persistence owner, but the
   hot-path orchestration is no longer spread across public methods.
 - Graftability/remountability dialect metadata:
@@ -527,8 +532,9 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   as JSON, and source/supersession graph edges are now structured native state.
   Native can apply the final revision state once Python decides the correction.
   The explicit memory-command grammar now has a native parse-plan boundary, and
-  command execution completes behind `GRMRuntime`; conflict and extractor
-  policy still live in the Python repository policy layer.
+  command execution completes behind `GRMRuntime`; public extractor-candidate
+  execution is also runtime-coordinated. Conflict policy and extractor quality
+  still live in the Python repository policy layer.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. Current-head MiniCPM3 MLA

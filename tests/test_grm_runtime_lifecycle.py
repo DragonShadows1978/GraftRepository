@@ -604,6 +604,62 @@ def test_extraction_candidate_interface_is_conservative(tmp_path):
         out["node_id"]]
 
 
+def test_runtime_extraction_candidate_autosaves_and_reports(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=True,
+                           arena_cls=FakeArena, route_layer=3)
+
+    direct = {
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Runtime extraction target is ALPHA-1.",
+        "subject": "runtime extraction target",
+        "predicate": "is",
+        "value": "ALPHA-1",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 0.99,
+    }
+    out = repo.apply_extraction_candidate(direct)
+    assert out["action"] == "write_direct"
+    assert repo.runtime.last_result.event == "extraction"
+    assert repo.runtime.last_result.action == "write_direct"
+    assert repo.runtime.last_result.autosaved is True
+    assert repo.runtime.last_result.new_nodes == (out["node_id"],)
+    assert repo.stats()["dirty_nodes"] == 0
+
+    low = dict(direct, text="Runtime extraction uncertain.",
+               value="uncertain", confidence=0.2)
+    review = repo.apply_extraction_candidate(low)
+    assert review["action"] == "review_candidate"
+    assert repo.runtime.last_result.event == "extraction"
+    assert repo.runtime.last_result.action == "review_candidate"
+    with open(os.path.join(path, "manifest.json")) as fh:
+        man = json.load(fh)
+    assert man["review_buffer"][-1]["reason"] == (
+        "conflicts with active memory")
+
+    correction = dict(direct, text="Runtime extraction target is BETA-2.",
+                      value="BETA-2", write_intent="user_asserted",
+                      confidence=1.0)
+    corr = repo.apply_extraction_candidates([correction])[0]
+    assert corr["action"] == "supersede_existing"
+    assert repo.runtime.last_result.event == "extraction"
+    assert repo.runtime.last_result.action == "supersede_existing"
+    assert repo.runtime.last_result.new_nodes == (corr["node_id"],)
+    assert repo.stats()["dirty_nodes"] == 0
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+    assert reopened.show_memory_about("ALPHA-1") == []
+    rows = reopened.show_memory_about("BETA-2")
+    assert len(rows) == 1
+    assert rows[0]["metadata"]["supersedes"] == [out["node_id"]]
+    assert reopened.review_buffer[-1]["status"] == "pending"
+
+
 def test_runtime_extractor_runs_on_completed_turns(tmp_path):
     class Extractor:
         def __init__(self):

@@ -204,3 +204,38 @@ class GRMRuntime:
         idx = repo._approve_review_direct(review_id)
         self._finish_review_event(before, "approve_review")
         return idx
+
+    def _finish_extraction_event(self, before, action, results):
+        repo = self.repository
+        did_autosave = False
+        if repo.autosave:
+            repo.flush_now()
+            did_autosave = True
+        paged = repo._page()
+        self.last_result = RuntimeResult(
+            event="extraction",
+            before_nodes=len(before),
+            after_nodes=len(repo.arena.grafts),
+            new_nodes=self._new_nodes(before),
+            extraction=tuple(results or ()),
+            autosaved=did_autosave,
+            paged=int(paged or 0),
+            action=action,
+        )
+
+    def apply_extraction_candidate(self, candidate, **kwargs):
+        repo = self.repository
+        before = repo._snapshot_state()
+        out = repo._apply_extraction_candidate_direct(candidate, **kwargs)
+        self._finish_extraction_event(before, out.get("action", ""), (out,))
+        return out
+
+    def apply_extraction_candidates(self, candidates, **kwargs):
+        repo = self.repository
+        before = repo._snapshot_state()
+        out = repo._apply_extraction_candidates_direct(candidates, **kwargs)
+        action = "apply_extraction_candidates"
+        if len(out) == 1:
+            action = out[0].get("action", action)
+        self._finish_extraction_event(before, action, out)
+        return out

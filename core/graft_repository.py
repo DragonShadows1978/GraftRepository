@@ -479,6 +479,14 @@ class GraftRepository:
     def apply_extraction_candidate(self, candidate, source_text=None,
                                    source_turns=(), source_grafts=(),
                                    write_direct_threshold=0.95):
+        return self.runtime.apply_extraction_candidate(
+            candidate, source_text=source_text, source_turns=source_turns,
+            source_grafts=source_grafts,
+            write_direct_threshold=write_direct_threshold)
+
+    def _apply_extraction_candidate_direct(self, candidate, source_text=None,
+                                           source_turns=(), source_grafts=(),
+                                           write_direct_threshold=0.95):
         """Apply one classifier/extractor memory candidate conservatively."""
         text = self._candidate_text(candidate, source_text=source_text)
         metadata = self._candidate_metadata(candidate, source_turns,
@@ -550,7 +558,15 @@ class GraftRepository:
     def apply_extraction_candidates(self, candidates, source_text=None,
                                     source_turns=(), source_grafts=(),
                                     write_direct_threshold=0.95):
-        return [self.apply_extraction_candidate(
+        return self.runtime.apply_extraction_candidates(
+            candidates, source_text=source_text, source_turns=source_turns,
+            source_grafts=source_grafts,
+            write_direct_threshold=write_direct_threshold)
+
+    def _apply_extraction_candidates_direct(self, candidates, source_text=None,
+                                            source_turns=(), source_grafts=(),
+                                            write_direct_threshold=0.95):
+        return [self._apply_extraction_candidate_direct(
             c, source_text=source_text, source_turns=source_turns,
             source_grafts=source_grafts,
             write_direct_threshold=write_direct_threshold)
@@ -595,7 +611,7 @@ class GraftRepository:
             candidates = [candidates]
         else:
             candidates = list(candidates)
-        self.last_extraction_results = self.apply_extraction_candidates(
+        self.last_extraction_results = self._apply_extraction_candidates_direct(
             candidates, source_text=source_text,
             source_turns=source_grafts, source_grafts=source_grafts,
             write_direct_threshold=self.extraction_write_threshold)
