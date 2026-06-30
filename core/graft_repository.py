@@ -1390,6 +1390,14 @@ class GraftRepository:
                     except RuntimeError as exc:
                         if "unavailable" not in str(exc):
                             raise
+        if (hasattr(self.native_store, "dirty_node_ids")
+                and os.path.exists(self._native_checkpoint_file())):
+            try:
+                if not self.native_store.dirty_node_ids():
+                    return True
+            except RuntimeError as exc:
+                if "unavailable" not in str(exc):
+                    raise
         self.native_store.save_checkpoint(self._native_checkpoint_root())
         return True
 

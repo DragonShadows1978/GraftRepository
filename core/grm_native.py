@@ -399,6 +399,12 @@ class NativeGraftStore:
         lib.grm_store_evict_device_copy.argtypes = [
             ctypes.c_void_p, ctypes.c_uint64]
         lib.grm_store_evict_device_copy.restype = ctypes.c_int
+        self._has_dirty_nodes = hasattr(lib, "grm_store_dirty_nodes")
+        if self._has_dirty_nodes:
+            lib.grm_store_dirty_nodes.argtypes = [
+                ctypes.c_void_p, ctypes.POINTER(ctypes.c_uint64),
+                ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_dirty_nodes.restype = ctypes.c_int
         lib.grm_store_stats.argtypes = [ctypes.c_void_p, ctypes.POINTER(_StatsC)]
         lib.grm_store_stats.restype = ctypes.c_int
         lib.grm_store_last_error.argtypes = [ctypes.c_void_p]
@@ -927,6 +933,21 @@ class NativeGraftStore:
     def evict_device_copy(self, node_id):
         self._check(self._lib.grm_store_evict_device_copy(
             self._handle, int(node_id)))
+
+    def dirty_node_ids(self):
+        if not getattr(self, "_has_dirty_nodes", False):
+            raise RuntimeError("native GRM dirty_nodes is unavailable")
+        count = ctypes.c_uint64()
+        self._check(self._lib.grm_store_dirty_nodes(
+            self._handle, None, 0, ctypes.byref(count)))
+        if not int(count.value):
+            return ()
+        out_t = ctypes.c_uint64 * int(count.value)
+        out = out_t()
+        written = ctypes.c_uint64()
+        self._check(self._lib.grm_store_dirty_nodes(
+            self._handle, out, int(count.value), ctypes.byref(written)))
+        return tuple(int(out[i]) for i in range(int(written.value)))
 
     def stats(self):
         out = _StatsC()

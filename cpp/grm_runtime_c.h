@@ -283,6 +283,10 @@ int grm_store_save_checkpoint(grm_store_handle* handle, const char* root);
 int grm_store_load_checkpoint(grm_store_handle* handle, const char* root);
 int grm_store_mark_durable(grm_store_handle* handle, uint64_t node_id);
 int grm_store_evict_device_copy(grm_store_handle* handle, uint64_t node_id);
+int grm_store_dirty_nodes(grm_store_handle* handle,
+                          uint64_t* out_node_ids,
+                          uint64_t out_cap,
+                          uint64_t* out_count);
 int grm_store_stats(grm_store_handle* handle, grm_store_stats_c* out);
 const char* grm_store_last_error(grm_store_handle* handle);
 

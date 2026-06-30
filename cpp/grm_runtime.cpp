@@ -2437,6 +2437,32 @@ int grm_store_evict_device_copy(grm_store_handle* handle, uint64_t node_id) {
   }
 }
 
+int grm_store_dirty_nodes(grm_store_handle* handle,
+                          uint64_t* out_node_ids,
+                          uint64_t out_cap,
+                          uint64_t* out_count) {
+  try {
+    if (handle == nullptr || handle->store == nullptr ||
+        out_count == nullptr) {
+      return grm_fail_msg(handle, "invalid dirty_nodes arguments");
+    }
+    if (out_node_ids == nullptr && out_cap > 0) {
+      return grm_fail_msg(
+          handle, "null dirty_nodes buffer with nonzero capacity");
+    }
+    const auto ids = handle->store->dirty_queue().node_ids();
+    *out_count = static_cast<uint64_t>(ids.size());
+    const auto n = std::min<uint64_t>(
+        static_cast<uint64_t>(ids.size()), out_cap);
+    for (uint64_t i = 0; i < n; ++i) {
+      out_node_ids[i] = ids[static_cast<std::size_t>(i)];
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
 int grm_store_stats(grm_store_handle* handle, grm_store_stats_c* out) {
   try {
     if (handle == nullptr || handle->store == nullptr || out == nullptr) {

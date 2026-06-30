@@ -1492,6 +1492,36 @@ def test_repository_native_mirror_can_checkpoint_payloads(tmp_path):
     repo.close()
 
 
+def test_repository_skips_clean_native_checkpoint_rewrite(tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    repo_path = tmp_path / "repo"
+    repo = GraftRepository(FakeModel(), enc, dec, str(repo_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+    idx = repo.add_document("DOC native clean-checkpoint code 31-3100")
+    repo.flush_now()
+    assert repo.native_store.dirty_node_ids() == ()
+
+    calls = []
+    original = repo.native_store.save_checkpoint
+
+    def traced(root):
+        calls.append(root)
+        return original(root)
+
+    monkeypatch.setattr(repo.native_store, "save_checkpoint", traced)
+    repo.flush_now()
+    assert calls == []
+
+    assert repo.forget("31-3100") == 1
+    assert repo.native_store.dirty_node_ids() == (
+        repo.arena.grafts[idx]["native_node_id"],)
+    repo.flush_now()
+    assert len(calls) == 1
+    assert repo.native_store.dirty_node_ids() == ()
+    repo.close()
+
+
 def test_repository_native_mirror_persists_semantic_metadata(tmp_path):
     lib = build_native(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),

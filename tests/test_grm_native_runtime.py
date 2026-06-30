@@ -436,9 +436,13 @@ def test_native_checkpoint_round_trips_structured_payloads(tmp_path):
             latent_rank=512, rope_dim=64) as store:
         node_id = store.add_structured_node("checkpoint graft", payload, ntok=2)
         assert store.stats().dirty_nodes == 1
+        assert store.dirty_node_ids() == (node_id,)
         store.save_checkpoint(ckpt)
         assert store.stats().dirty_nodes == 0
         assert store.stats().durable_nodes == 1
+        assert store.dirty_node_ids() == ()
+        store.set_metadata(node_id, {"kind": "fact", "active": True})
+        assert store.dirty_node_ids() == (node_id,)
 
     with NativeGraftStore(
             lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
