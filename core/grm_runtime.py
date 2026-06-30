@@ -181,3 +181,41 @@ class GRMRuntime:
                 action="flush")
             return {"action": "flush"}
         raise ValueError(f"unknown memory command: {text!r}")
+
+    def _finish_review_event(self, before, action):
+        repo = self.repository
+        did_autosave = False
+        if repo.autosave:
+            repo.flush_now()
+            did_autosave = True
+        paged = repo._page()
+        self.last_result = RuntimeResult(
+            event="review",
+            before_nodes=len(before),
+            after_nodes=len(repo.arena.grafts),
+            new_nodes=self._new_nodes(before),
+            autosaved=did_autosave,
+            paged=int(paged or 0),
+            action=action,
+        )
+
+    def edit_review(self, review_id, **kwargs):
+        repo = self.repository
+        before = repo._snapshot_state()
+        out = repo._edit_review_direct(review_id, **kwargs)
+        self._finish_review_event(before, "edit_review")
+        return out
+
+    def reject_review(self, review_id, reason=""):
+        repo = self.repository
+        before = repo._snapshot_state()
+        out = repo._reject_review_direct(review_id, reason=reason)
+        self._finish_review_event(before, "reject_review")
+        return out
+
+    def approve_review(self, review_id):
+        repo = self.repository
+        before = repo._snapshot_state()
+        idx = repo._approve_review_direct(review_id)
+        self._finish_review_event(before, "approve_review")
+        return idx

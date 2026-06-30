@@ -85,14 +85,16 @@ turn text into `apply_extraction_candidate(s)`, records the last extraction
 result/error, and treats extractor failures as non-blocking WAL-recorded events
 unless configured to raise.
 `core.grm_runtime.GRMRuntime` now packages the Python hot-path orchestration
-boundary for chat turns, scripted turns, deferred librarian work, and explicit
-memory commands: snapshot, arena/model operation, extraction/review policy,
-librarian folding, mutation marking, flush, and paging. `GraftRepository`
-keeps the public API and persistence surface.
+boundary for chat turns, scripted turns, deferred librarian work, review
+execution, and explicit memory commands: snapshot, arena/model operation,
+extraction/review policy, librarian folding, mutation marking, flush, and
+paging. `GraftRepository` keeps the public API and persistence surface.
 Review-buffer execution now supports approve, reject, edit, and scope-change
 operations. Review item status (`pending`, `approved`, `rejected`) and
 post-manifest review edits are replayed from WAL, so review decisions survive
-both WAL-only recovery and manifest-plus-WAL reload.
+both WAL-only recovery and manifest-plus-WAL reload. Autosave-enabled
+repositories now publish review edits, rejections, and approvals through the
+same runtime/`flush_now()` path as chat turns and explicit memory commands.
 Manifest reload now mirrors retired/cold durable nodes into the native store as
 metadata-only placeholders instead of reloading their payload tensors into RAM;
 native node ids, active state, route metadata, and graph references stay aligned

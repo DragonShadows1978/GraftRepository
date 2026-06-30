@@ -677,6 +677,17 @@ class GraftRepository:
                     proposed_scope=None, proposed_durability=None,
                     proposed_mutability=None, confidence=None,
                     metadata=None, reason=""):
+        return self.runtime.edit_review(
+            review_id, text=text, proposed_kind=proposed_kind,
+            proposed_scope=proposed_scope,
+            proposed_durability=proposed_durability,
+            proposed_mutability=proposed_mutability,
+            confidence=confidence, metadata=metadata, reason=reason)
+
+    def _edit_review_direct(self, review_id, text=None, proposed_kind=None,
+                            proposed_scope=None, proposed_durability=None,
+                            proposed_mutability=None, confidence=None,
+                            metadata=None, reason=""):
         item = self._review_item(review_id)
         if item.get("status") == "approved":
             raise RuntimeError("approved review items cannot be edited")
@@ -716,6 +727,9 @@ class GraftRepository:
             reason="scope changed")
 
     def reject_review(self, review_id, reason=""):
+        return self.runtime.reject_review(review_id, reason=reason)
+
+    def _reject_review_direct(self, review_id, reason=""):
         item = self._review_item(review_id)
         if item.get("status") == "approved":
             raise RuntimeError("approved review items cannot be rejected")
@@ -727,6 +741,9 @@ class GraftRepository:
         return dict(item)
 
     def approve_review(self, review_id):
+        return self.runtime.approve_review(review_id)
+
+    def _approve_review_direct(self, review_id):
         item = self._review_item(review_id)
         if item.get("status") == "rejected":
             raise RuntimeError("rejected review items cannot be approved")

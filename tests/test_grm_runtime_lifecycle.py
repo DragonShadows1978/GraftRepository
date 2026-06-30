@@ -402,6 +402,52 @@ def test_review_buffer_edit_reject_and_manifest_wal_replay(tmp_path):
     assert len(reopened.arena.grafts) == 1
 
 
+def test_runtime_review_execution_autosaves_and_reports(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=True,
+                           arena_cls=FakeArena, route_layer=3)
+
+    rid = repo.review_candidate(
+        "Runtime approved fact 81-8181",
+        confidence=0.7,
+        metadata={"subject": "review runtime", "value": "81-8181"})
+    rejected = repo.review_candidate("Runtime rejected fact", confidence=0.1)
+
+    edited = repo.edit_review(
+        rid,
+        proposed_scope="project",
+        proposed_durability="project",
+        confidence=0.92,
+        reason="ready for approval")
+    assert edited["status"] == "pending"
+    assert repo.runtime.last_result.event == "review"
+    assert repo.runtime.last_result.action == "edit_review"
+    assert repo.runtime.last_result.autosaved is True
+    with open(os.path.join(path, "manifest.json")) as fh:
+        man = json.load(fh)
+    assert man["review_buffer"][rid]["confidence"] == 0.92
+
+    rej = repo.reject_review(rejected, reason="not useful")
+    assert rej["status"] == "rejected"
+    assert repo.runtime.last_result.action == "reject_review"
+    with open(os.path.join(path, "manifest.json")) as fh:
+        man = json.load(fh)
+    assert man["review_buffer"][rejected]["status"] == "rejected"
+
+    approved = repo.approve_review(rid)
+    assert repo.runtime.last_result.action == "approve_review"
+    assert repo.runtime.last_result.new_nodes == (approved,)
+    assert repo.runtime.last_result.autosaved is True
+    assert repo.stats()["dirty_nodes"] == 0
+    rows = repo.show_memory_about("Runtime approved fact")
+    assert rows[0]["node_id"] == approved
+    assert rows[0]["metadata"]["subject"] == "review runtime"
+
+    again = repo.approve_review(rid)
+    assert again == approved
+    assert repo.runtime.last_result.new_nodes == ()
+
+
 def test_librarian_respects_arena_era_folding_capability(tmp_path):
     class NoEraArena(FakeArena):
         ENABLE_ERA_FOLDING = False

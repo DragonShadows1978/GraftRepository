@@ -59,11 +59,11 @@ validation where feasible.
   non-blocking WAL events unless configured to raise.
 - Python runtime coordinator boundary:
   `core.grm_runtime.GRMRuntime` now owns the operation sequencing for
-  `chat()`, `add_turn()`, `idle()`, and explicit memory-command execution:
-  snapshot, model/arena action, extraction/review policy, librarian folding,
-  mutation marking, flush, and paging. `GraftRepository` remains the public API
-  and persistence owner, but the hot-path orchestration is no longer spread
-  across public methods.
+  `chat()`, `add_turn()`, `idle()`, review execution, and explicit
+  memory-command execution: snapshot, model/arena action, extraction/review
+  policy, librarian folding, mutation marking, flush, and paging.
+  `GraftRepository` remains the public API and persistence owner, but the
+  hot-path orchestration is no longer spread across public methods.
 - Graftability/remountability dialect metadata:
   `DialectDescriptor` now persists the model's positional cache law and graft
   semantics: `position_law`, `state_kind`, `graftability`, `remountable`, and
@@ -139,10 +139,11 @@ validation where feasible.
   before applying the Python memory policy.
 - Review-buffer execution:
   uncertain extraction or malformed correction candidates can now be approved,
-  rejected, edited, or scope-changed through repository APIs. Review items
-  carry explicit `pending` / `approved` / `rejected` status, and WAL replay
-  applies review edits and decisions over both WAL-only recovery and
-  manifest-plus-WAL reload.
+  rejected, edited, or scope-changed through repository APIs backed by the
+  `GRMRuntime` review boundary. Review items carry explicit `pending` /
+  `approved` / `rejected` status, autosave-enabled review mutations publish via
+  `flush_now()`, and WAL replay applies review edits and decisions over both
+  WAL-only recovery and manifest-plus-WAL reload.
 - Native routing/indexing:
   the C ABI now exposes route-key upsert and top-k route lookup through the
   C++ `RouterIndex`; `GraftRepository.native_route()` translates native route
@@ -521,8 +522,8 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   as JSON, and source/supersession graph edges are now structured native state.
   Native can apply the final revision state once Python decides the correction.
   The explicit memory-command grammar now has a native parse-plan boundary,
-  while conflict policy, review execution, extractor policy, and final command
-  execution live behind the Python `GRMRuntime`/repository policy layer.
+  while conflict policy, extractor policy, and final command execution live
+  behind the Python `GRMRuntime`/repository policy layer.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. Current-head MiniCPM3 MLA
