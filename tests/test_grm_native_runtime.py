@@ -124,11 +124,38 @@ def test_native_route_skips_inactive_entries(tmp_path):
             hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
             latent_rank=512, rope_dim=64) as restored:
         restored.load_checkpoint(ckpt)
-        restored.set_route(n0, [1.0, 0.0], ["retired"])
-        restored.set_route(n1, [0.95, 0.3122499], ["live"])
+        assert restored.stats().route_entries == 2
         assert restored.route([1.0, 0.0], topk=2) == [n1]
         restored.set_active(n0, True)
         assert restored.route([1.0, 0.0], topk=1) == [n0]
+
+
+def test_native_checkpoint_preserves_route_keys_and_lexical_index(tmp_path):
+    lib = build_native(tmp_path)
+    ckpt = tmp_path / "route_ckpt"
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        multi = store.add_node("multi era route", b"", ntok=1)
+        runner = store.add_node("single runner route", b"", ntok=1)
+        cold = store.add_node("not routed", b"", ntok=1)
+
+        store.set_route_keys(multi, [[1.0, 0.0], [0.0, 1.0]],
+                             ["era-beta", "project"])
+        store.set_route(runner, [0.95, 0.3122499], ["runner"])
+        store.save_checkpoint(ckpt)
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as restored:
+        restored.load_checkpoint(ckpt)
+        assert restored.stats().nodes == 3
+        assert restored.stats().route_entries == 2
+        assert restored.route([0.0, 1.0], topk=1) == [multi]
+        assert restored.route([0.0, 0.1], ["era-beta"], topk=1) == [multi]
+        assert cold not in restored.route([1.0, 0.0], topk=3)
 
 
 def test_native_metadata_active_updates_route_index(tmp_path):
@@ -262,9 +289,7 @@ def test_native_route_filters_metadata_fields(tmp_path):
             hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
             latent_rank=512, rope_dim=64) as restored:
         restored.load_checkpoint(ckpt)
-        restored.set_route(project_fact, [1.0, 0.0], ["same-code"])
-        restored.set_route(user_fact, [0.95, 0.3122499], ["same-code"])
-        restored.set_route(task_state, [0.9, 0.4358899], ["same-code"])
+        assert restored.stats().route_entries == 3
         assert restored.route([1.0, 0.0], ["same-code"], topk=3,
                               kinds=("task_state",),
                               scopes=("project",)) == [task_state]

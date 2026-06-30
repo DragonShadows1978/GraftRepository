@@ -65,7 +65,8 @@ constexpr char kCheckpointMagicV2[] = "GRMSTORE2";
 constexpr char kCheckpointMagicV3[] = "GRMSTORE3";
 constexpr char kCheckpointMagicV4[] = "GRMSTORE4";
 constexpr char kCheckpointMagicV5[] = "GRMSTORE5";
-constexpr char kCheckpointMagic[] = "GRMSTORE5";
+constexpr char kCheckpointMagicV6[] = "GRMSTORE6";
+constexpr char kCheckpointMagic[] = "GRMSTORE6";
 
 void write_u64(std::ostream& out, std::uint64_t v) {
   out.write(reinterpret_cast<const char*>(&v), sizeof(v));
@@ -108,6 +109,30 @@ void write_u64_vector(std::ostream& out, const std::vector<std::uint64_t>& xs) {
   }
 }
 
+void write_f32_vector(std::ostream& out, const std::vector<float>& xs) {
+  write_u64(out, static_cast<std::uint64_t>(xs.size()));
+  if (!xs.empty()) {
+    out.write(reinterpret_cast<const char*>(xs.data()),
+              static_cast<std::streamsize>(xs.size() * sizeof(float)));
+  }
+}
+
+void write_f32_vectors(std::ostream& out,
+                       const std::vector<std::vector<float>>& xs) {
+  write_u64(out, static_cast<std::uint64_t>(xs.size()));
+  for (const auto& x : xs) {
+    write_f32_vector(out, x);
+  }
+}
+
+void write_string_vector(std::ostream& out,
+                         const std::vector<std::string>& xs) {
+  write_u64(out, static_cast<std::uint64_t>(xs.size()));
+  for (const auto& x : xs) {
+    write_string(out, x);
+  }
+}
+
 std::string read_string(std::istream& in) {
   const auto n = read_u64(in);
   std::string s(static_cast<std::size_t>(n), '\0');
@@ -126,6 +151,39 @@ std::vector<std::uint64_t> read_u64_vector(std::istream& in) {
   out.reserve(static_cast<std::size_t>(n));
   for (std::uint64_t i = 0; i < n; ++i) {
     out.push_back(read_u64(in));
+  }
+  return out;
+}
+
+std::vector<float> read_f32_vector(std::istream& in) {
+  const auto n = read_u64(in);
+  std::vector<float> out(static_cast<std::size_t>(n));
+  if (n > 0) {
+    in.read(reinterpret_cast<char*>(out.data()),
+            static_cast<std::streamsize>(n * sizeof(float)));
+    if (!in) {
+      throw std::runtime_error("truncated GRM checkpoint float vector");
+    }
+  }
+  return out;
+}
+
+std::vector<std::vector<float>> read_f32_vectors(std::istream& in) {
+  const auto n = read_u64(in);
+  std::vector<std::vector<float>> out;
+  out.reserve(static_cast<std::size_t>(n));
+  for (std::uint64_t i = 0; i < n; ++i) {
+    out.push_back(read_f32_vector(in));
+  }
+  return out;
+}
+
+std::vector<std::string> read_string_vector(std::istream& in) {
+  const auto n = read_u64(in);
+  std::vector<std::string> out;
+  out.reserve(static_cast<std::size_t>(n));
+  for (std::uint64_t i = 0; i < n; ++i) {
+    out.push_back(read_string(in));
   }
   return out;
 }
@@ -351,6 +409,16 @@ const HostGraftNode* HostGraftStore::get(std::uint64_t node_id) const {
   return it == nodes_.end() ? nullptr : &it->second;
 }
 
+std::vector<std::uint64_t> HostGraftStore::node_ids() const {
+  std::vector<std::uint64_t> ids;
+  ids.reserve(nodes_.size());
+  for (const auto& kv : nodes_) {
+    ids.push_back(kv.first);
+  }
+  std::sort(ids.begin(), ids.end());
+  return ids;
+}
+
 void HostGraftStore::set_tensor(std::uint64_t node_id, HostTensor tensor) {
   auto* n = get(node_id);
   if (n == nullptr) {
@@ -556,13 +624,7 @@ void HostGraftStore::save_checkpoint(const std::string& root) {
   out.write(kCheckpointMagic, sizeof(kCheckpointMagic) - 1);
   write_string(out, dialect_.dialect_id());
   write_u64(out, static_cast<std::uint64_t>(nodes_.size()));
-  std::vector<std::uint64_t> ids;
-  ids.reserve(nodes_.size());
-  for (const auto& kv : nodes_) {
-    ids.push_back(kv.first);
-  }
-  std::sort(ids.begin(), ids.end());
-  for (const auto id : ids) {
+  for (const auto id : node_ids()) {
     const auto& n = nodes_.at(id);
     write_u64(out, n.node_id);
     write_u64(out, n.ntok);
@@ -577,6 +639,8 @@ void HostGraftStore::save_checkpoint(const std::string& root) {
     write_u64_vector(out, n.metadata.source_grafts);
     write_u64_vector(out, n.metadata.supersedes);
     write_u64_vector(out, n.metadata.superseded_by);
+    write_f32_vectors(out, n.route_keys);
+    write_string_vector(out, n.lexical_keys);
     write_bool(out, n.lifecycle.host_present);
     write_bool(out, n.lifecycle.device_present);
     write_bool(out, false);
@@ -630,11 +694,13 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
       magic_s == std::string(kCheckpointMagicV4, sizeof(kCheckpointMagicV4) - 1);
   const bool checkpoint_v5 =
       magic_s == std::string(kCheckpointMagicV5, sizeof(kCheckpointMagicV5) - 1);
+  const bool checkpoint_v6 =
+      magic_s == std::string(kCheckpointMagicV6, sizeof(kCheckpointMagicV6) - 1);
   if (!in || (!checkpoint_v1 && !checkpoint_v2 && !checkpoint_v3 &&
-              !checkpoint_v4 && !checkpoint_v5)) {
+              !checkpoint_v4 && !checkpoint_v5 && !checkpoint_v6)) {
     throw std::runtime_error("invalid native GRM checkpoint magic");
   }
-  if (checkpoint_v5) {
+  if (checkpoint_v5 || checkpoint_v6) {
     const auto saved_dialect = read_string(in);
     const auto expected_dialect = dialect_.dialect_id();
     if (saved_dialect != expected_dialect) {
@@ -652,20 +718,28 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
     n.text = read_string(in);
     n.metadata.json = read_string(in);
     n.metadata.active =
-        (checkpoint_v2 || checkpoint_v3 || checkpoint_v4 || checkpoint_v5)
+        (checkpoint_v2 || checkpoint_v3 || checkpoint_v4 || checkpoint_v5 ||
+         checkpoint_v6)
             ? read_bool(in)
             : true;
-    if (checkpoint_v3 || checkpoint_v4 || checkpoint_v5) {
+    if (checkpoint_v3 || checkpoint_v4 || checkpoint_v5 || checkpoint_v6) {
       n.metadata.kind = read_string(in);
       n.metadata.scope = read_string(in);
       n.metadata.durability = read_string(in);
       n.metadata.mutability = read_string(in);
     }
-    if (checkpoint_v4 || checkpoint_v5) {
+    if (checkpoint_v4 || checkpoint_v5 || checkpoint_v6) {
       n.metadata.source_turns = read_u64_vector(in);
       n.metadata.source_grafts = read_u64_vector(in);
       n.metadata.supersedes = read_u64_vector(in);
       n.metadata.superseded_by = read_u64_vector(in);
+    }
+    if (checkpoint_v6) {
+      n.route_keys = read_f32_vectors(in);
+      n.lexical_keys = read_string_vector(in);
+      if (!n.route_keys.empty()) {
+        n.route_key = n.route_keys.front();
+      }
     }
     n.lifecycle.host_present = read_bool(in);
     n.lifecycle.device_present = read_bool(in);
@@ -1189,6 +1263,25 @@ void sync_router_node_state(grm_store_handle* handle, std::uint64_t node_id) {
                                     node->metadata.mutability);
 }
 
+void rebuild_router_from_store(grm_store_handle* handle) {
+  handle->router = grm::RouterIndex();
+  for (const auto node_id : handle->store->node_ids()) {
+    const auto* node = handle->store->get(node_id);
+    if (node == nullptr) {
+      continue;
+    }
+    if (!node->route_keys.empty()) {
+      handle->router.upsert_multi(node_id, node->route_keys,
+                                  node->lexical_keys);
+    } else if (!node->route_key.empty() || !node->lexical_keys.empty()) {
+      handle->router.upsert(node_id, node->route_key, node->lexical_keys);
+    } else {
+      continue;
+    }
+    sync_router_node_state(handle, node_id);
+  }
+}
+
 }  // namespace
 
 extern "C" {
@@ -1648,7 +1741,8 @@ int grm_store_set_route(grm_store_handle* handle,
     if (handle == nullptr || handle->store == nullptr) {
       return grm_fail_msg(handle, "invalid set_route arguments");
     }
-    if (handle->store->get(node_id) == nullptr) {
+    auto* node = handle->store->get(node_id);
+    if (node == nullptr) {
       return grm_fail_msg(handle, "unknown GRM node id");
     }
     if (route_key == nullptr && route_len > 0) {
@@ -1659,8 +1753,13 @@ int grm_store_set_route(grm_store_handle* handle,
     for (uint64_t i = 0; i < route_len; ++i) {
       key.push_back(route_key[i]);
     }
-    handle->router.upsert(node_id, std::move(key),
-                          split_lexical_keys(lexical_keys));
+    auto lexical = split_lexical_keys(lexical_keys);
+    node->route_key = key;
+    node->route_keys.clear();
+    node->route_keys.push_back(key);
+    node->lexical_keys = lexical;
+    handle->store->mark_dirty(node_id, false, true);
+    handle->router.upsert(node_id, std::move(key), std::move(lexical));
     sync_router_node_state(handle, node_id);
     return 0;
   } catch (const std::exception& exc) {
@@ -1678,7 +1777,8 @@ int grm_store_set_route_multi(grm_store_handle* handle,
     if (handle == nullptr || handle->store == nullptr) {
       return grm_fail_msg(handle, "invalid set_route_multi arguments");
     }
-    if (handle->store->get(node_id) == nullptr) {
+    auto* node = handle->store->get(node_id);
+    if (node == nullptr) {
       return grm_fail_msg(handle, "unknown GRM node id");
     }
     if (route_keys == nullptr && key_count > 0 && route_len > 0) {
@@ -1694,8 +1794,12 @@ int grm_store_set_route_multi(grm_store_handle* handle,
       }
       keys.push_back(std::move(key));
     }
-    handle->router.upsert_multi(node_id, std::move(keys),
-                                split_lexical_keys(lexical_keys));
+    auto lexical = split_lexical_keys(lexical_keys);
+    node->route_keys = keys;
+    node->route_key = keys.empty() ? std::vector<float>() : keys.front();
+    node->lexical_keys = lexical;
+    handle->store->mark_dirty(node_id, false, true);
+    handle->router.upsert_multi(node_id, std::move(keys), std::move(lexical));
     sync_router_node_state(handle, node_id);
     return 0;
   } catch (const std::exception& exc) {
@@ -2043,7 +2147,7 @@ int grm_store_load_checkpoint(grm_store_handle* handle, const char* root) {
       return grm_fail_msg(handle, "invalid load_checkpoint arguments");
     }
     handle->store->load_checkpoint(root);
-    handle->router = grm::RouterIndex();
+    rebuild_router_from_store(handle);
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);

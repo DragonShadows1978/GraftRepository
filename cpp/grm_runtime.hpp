@@ -79,6 +79,7 @@ struct HostGraftNode {
   NodeLifecycle lifecycle;
   HostPayload payload;
   std::vector<float> route_key;
+  std::vector<std::vector<float>> route_keys;
   std::vector<std::string> lexical_keys;
   std::vector<std::uint64_t> sources;
   std::vector<ProvenanceRecord> provenance;
@@ -202,6 +203,7 @@ class HostGraftStore {
   void save_checkpoint(const std::string& root);
   void load_checkpoint(const std::string& root);
   StoreStats stats() const;
+  std::vector<std::uint64_t> node_ids() const;
 
   const DialectDescriptor& dialect() const { return dialect_; }
   DirtyQueue& dirty_queue() { return dirty_; }

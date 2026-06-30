@@ -71,7 +71,9 @@ validation where feasible.
   latent+RoPE payloads; plain GQA records `rope_full_kv`; learned absolute
   position records `same_position_restore`; Qwen3.5-style recurrent hybrids
   record `prefix_restore_only`; and Gemma-style sliding/global KV records
-  window-limited remountability.
+  window-limited remountability. The remount boundary is RoPE: pre-RoPE
+  captures can be re-RoPE'd at injection seats, while fixed absolute-position
+  captures require same-position restore or a model-specific re-encoding path.
 - C++ host runtime scaffold:
   `cpp/` contains `DialectDescriptor`, `HostGraftStore`, `RouterIndex`,
   `DirtyQueue`, `DurabilityWriter`, swap/evict-planning `DeviceArena`, and
@@ -100,11 +102,13 @@ validation where feasible.
   readback through `core/grm_native.py` so Python can reconstruct numpy arrays.
 - Native host-store checkpointing:
   `HostGraftStore` can save/load a dependency-free binary checkpoint containing
-  the native dialect id, node ids, text, token counts, lifecycle state, and
-  every structured tensor's name, dtype, shape, and bytes. The C ABI and Python
-  wrapper expose `save_checkpoint()` and `load_checkpoint()`, and `GRMSTORE5`
+  the native dialect id, node ids, text, token counts, lifecycle state, route
+  vectors, lexical route keys, and every structured tensor's name, dtype, shape,
+  and bytes. The C ABI and Python wrapper expose `save_checkpoint()` and
+  `load_checkpoint()`, and `GRMSTORE6`
   rejects mismatched native dialect loads while keeping older checkpoints
-  readable.
+  readable. Loading a checkpoint rebuilds the native `RouterIndex` directly
+  from stored node route state.
 - Native semantic metadata persistence:
   native nodes now store the repository metadata JSON blob, mirror semantic
   metadata from `GraftRepository`, expose it through the C ABI/Python wrapper,
