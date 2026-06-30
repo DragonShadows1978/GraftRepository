@@ -29,6 +29,7 @@ API:
   repo.chat(user_text) -> answer                        # the hot path
   repo.add_turn(user, assistant)                        # scripted/observed
   repo.add_document(text, tags=...)                     # knowledge ingest
+  repo.cull_graft_sections(idx, max_tokens=...)         # sectioned slicing
   repo.save() / repo.stats()
 """
 from dataclasses import asdict, dataclass
@@ -278,6 +279,136 @@ class GraftRepository:
         self._page()
         return idx
 
+    @staticmethod
+    def _cull_boundary_set(boundary):
+        if boundary is None:
+            return {"blank"}
+        if isinstance(boundary, str):
+            name = boundary.lower()
+            if name in ("paragraph", "paragraphs"):
+                return {"blank"}
+            if name in ("turn", "turns"):
+                return {"blank", "speaker"}
+            if name in ("heading", "headings"):
+                return {"blank", "heading"}
+            if name in ("section", "sections"):
+                return {"blank", "heading", "speaker"}
+            raise ValueError(f"unknown cull boundary strategy {boundary!r}")
+        out = {str(v).lower() for v in boundary}
+        allowed = {"blank", "heading", "speaker"}
+        unknown = out - allowed
+        if unknown:
+            raise ValueError(f"unknown cull boundaries {sorted(unknown)!r}")
+        return out or {"blank"}
+
+    @staticmethod
+    def _is_speaker_boundary(line):
+        if ":" not in line:
+            return False
+        speaker = line.split(":", 1)[0].strip().lower()
+        return speaker in {
+            "user", "assistant", "system", "developer", "tool", "human",
+            "ai",
+        }
+
+    def _section_text_chunks(self, text, boundary="section"):
+        boundaries = self._cull_boundary_set(boundary)
+        chunks = []
+        cur = []
+
+        def flush():
+            if cur:
+                chunk = "\n".join(cur).strip()
+                if chunk:
+                    chunks.append(chunk)
+                cur.clear()
+
+        for raw in str(text).splitlines():
+            line = raw.strip()
+            if not line:
+                if "blank" in boundaries:
+                    flush()
+                continue
+            is_heading = "heading" in boundaries and line.startswith("#")
+            is_speaker = (
+                "speaker" in boundaries and self._is_speaker_boundary(line))
+            if is_heading or is_speaker:
+                flush()
+                cur.append(line)
+                continue
+            cur.append(line)
+        flush()
+        if chunks:
+            return chunks
+        text = str(text).strip()
+        return [text] if text else []
+
+    @staticmethod
+    def _cap_cull_spans(spans, max_tokens=None):
+        if max_tokens is None:
+            return list(spans)
+        max_tokens = int(max_tokens)
+        if max_tokens <= 0:
+            raise ValueError("max_tokens must be positive")
+        out = []
+        for start, end in spans:
+            cursor = int(start)
+            end = int(end)
+            while end - cursor > max_tokens:
+                out.append((cursor, cursor + max_tokens))
+                cursor += max_tokens
+            if end > cursor:
+                out.append((cursor, end))
+        return out
+
+    def _section_cull_spans(self, text, ntok, *, max_tokens=None,
+                            boundary="section"):
+        ntok = int(ntok)
+        if ntok <= 0:
+            return []
+        spans = []
+        cursor = 0
+        for chunk in self._section_text_chunks(text, boundary=boundary):
+            n = len(self.arena.encode(chunk))
+            if n <= 0:
+                continue
+            start = cursor
+            end = min(ntok, cursor + n)
+            if end > start:
+                spans.append((start, end))
+            cursor = end
+            if cursor >= ntok:
+                break
+        if cursor < ntok:
+            spans.append((cursor, ntok))
+        if not spans:
+            spans = [(0, ntok)]
+        return self._cap_cull_spans(spans, max_tokens=max_tokens)
+
+    def plan_cull_sections(self, idx, *, max_tokens=None,
+                           boundary="section"):
+        idx = int(idx)
+        if idx < 0 or idx >= len(self.arena.grafts):
+            raise IndexError("unknown graft id")
+        parent = self.arena.grafts[idx]
+        ntok = int(parent.get("ntok", 0))
+        if ntok <= 0:
+            raise ValueError("cannot cull a graft with no token length")
+        spans = self._section_cull_spans(
+            parent.get("text", ""), ntok, max_tokens=max_tokens,
+            boundary=boundary)
+        return self._normalize_cull_spans(ntok, spans=spans,
+                                          retire_parent=True)
+
+    def cull_graft_sections(self, idx, *, max_tokens=None,
+                            boundary="section", retire_parent=True,
+                            kind=None, tags=(), recompute_route=True):
+        spans = self.plan_cull_sections(
+            idx, max_tokens=max_tokens, boundary=boundary)
+        return self.cull_graft(
+            idx, spans=spans, retire_parent=retire_parent, kind=kind,
+            tags=tags, recompute_route=recompute_route)
+
     def _normalize_cull_spans(self, ntok, max_tokens=None, spans=None,
                               retire_parent=True):
         if spans is None:
@@ -346,9 +477,9 @@ class GraftRepository:
 
     def _decode_token_span(self, text, start, end):
         try:
-            ids = list(self.encode(text))
+            ids = list(self.arena.encode(text))
             if len(ids) >= end:
-                decoded = self.decode(ids[start:end]).strip()
+                decoded = self.arena.decode(ids[start:end]).strip()
                 if decoded:
                     return decoded
         except Exception:

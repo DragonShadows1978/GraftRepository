@@ -373,6 +373,46 @@ def test_cull_graft_uses_native_slice_when_available(tmp_path, monkeypatch):
     repo.close()
 
 
+def test_cull_graft_sections_uses_intentional_boundaries(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeSliceArena,
+                           route_layer=3)
+    parent = repo.add_document(
+        "# Alpha\nA1 A2\n\n"
+        "# Beta\nB1 B2 B3\n"
+        "User: C1 C2\n"
+        "Assistant: D1 D2")
+
+    assert repo.plan_cull_sections(parent) == [
+        (0, 4), (4, 9), (9, 12), (12, 15)]
+
+    out = repo.cull_graft_sections(parent)
+
+    assert out["children"] == [1, 2, 3, 4]
+    assert repo.arena.grafts[parent]["retired"] is True
+    expected_payloads = [
+        [0, 1, 2, 3],
+        [4, 5, 6, 7, 8],
+        [9, 10, 11],
+        [12, 13, 14],
+    ]
+    for child, payload in zip(out["children"], expected_payloads):
+        got = repo.arena.grafts[child]["host_payload"]["tok"].tolist()
+        assert got == payload
+        assert repo.arena.grafts[child]["metadata"]["culled_from"] == parent
+
+
+def test_plan_cull_sections_caps_large_sections(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeSliceArena,
+                           route_layer=3)
+    parent = repo.add_document("P1 P2 P3 P4\n\nQ1 Q2")
+
+    assert repo.plan_cull_sections(
+        parent, boundary="paragraph", max_tokens=2) == [
+            (0, 2), (2, 4), (4, 6)]
+
+
 def test_runtime_cull_graft_autosaves_and_reports(tmp_path):
     path = str(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, path, autosave=True,
