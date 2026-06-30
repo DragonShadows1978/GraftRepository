@@ -187,6 +187,11 @@ class NativeGraftStore:
         lib.grm_store_payload_stats.argtypes = [
             ctypes.c_void_p, ctypes.c_uint64, ctypes.POINTER(_PayloadStatsC)]
         lib.grm_store_payload_stats.restype = ctypes.c_int
+        self._has_clear_payload = hasattr(lib, "grm_store_clear_payload")
+        if self._has_clear_payload:
+            lib.grm_store_clear_payload.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64]
+            lib.grm_store_clear_payload.restype = ctypes.c_int
         lib.grm_store_tensor_info.argtypes = [
             ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
             ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
@@ -786,6 +791,12 @@ class NativeGraftStore:
 
     def mark_durable(self, node_id):
         self._check(self._lib.grm_store_mark_durable(
+            self._handle, int(node_id)))
+
+    def clear_payload(self, node_id):
+        if not getattr(self, "_has_clear_payload", False):
+            raise RuntimeError("native GRM clear_payload is unavailable")
+        self._check(self._lib.grm_store_clear_payload(
             self._handle, int(node_id)))
 
     def evict_device_copy(self, node_id):

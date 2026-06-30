@@ -54,6 +54,12 @@ kind/scope/durability/mutability fields for native route filtering through
 `grm_store_route_filtered()`. Source turns, source grafts, supersedes, and
 superseded-by edges are also mirrored into structured native state through
 `grm_store_set_graph_edges()` and preserved in `GRMSTORE4` checkpoints.
+Repository `flush_now()` now writes `native/grm_store.bin` before the Python
+manifest, records the native checkpoint path plus per-node native ids in
+`manifest.json`, and reloads that native checkpoint on resume when present.
+Retired durable nodes clear native host payloads before checkpointing, leaving
+metadata and route keys in RAM/native state while cold payload bytes live in
+the repository node files.
 `grm_store_apply_revision()` applies the final correction state in native code
 after Python policy decides which nodes are superseded: old nodes become
 inactive, replacement nodes record `supersedes`, and native route activity is

@@ -184,6 +184,7 @@ class HostGraftStore {
 
   void set_tensor(std::uint64_t node_id, HostTensor tensor);
   PayloadStats payload_stats(std::uint64_t node_id) const;
+  void clear_payload(std::uint64_t node_id);
   void set_metadata_json(std::uint64_t node_id, std::string metadata_json);
   const std::string& metadata_json(std::uint64_t node_id) const;
   void set_active(std::uint64_t node_id, bool active);

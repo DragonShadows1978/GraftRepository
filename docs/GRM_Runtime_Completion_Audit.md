@@ -109,6 +109,15 @@ validation where feasible.
   rejects mismatched native dialect loads while keeping older checkpoints
   readable. Loading a checkpoint rebuilds the native `RouterIndex` directly
   from stored node route state.
+- Repository-level native checkpoint integration:
+  `GraftRepository.flush_now()` now checkpoints the native host store to
+  `native/grm_store.bin` before publishing `manifest.json`, stores per-node
+  `native_node_id` values in the manifest, and reloads the native checkpoint
+  on repository resume when present. Metadata-only native mutations are covered
+  by the same flush boundary, so Python durable state no longer leaves native
+  dirty state behind. Retired durable nodes clear native host payload tensors
+  before checkpointing while preserving metadata, graph state, and route keys,
+  so cold payload bytes stay in NVMe node files rather than native RAM.
 - Native semantic metadata persistence:
   native nodes now store the repository metadata JSON blob, mirror semantic
   metadata from `GraftRepository`, expose it through the C ABI/Python wrapper,

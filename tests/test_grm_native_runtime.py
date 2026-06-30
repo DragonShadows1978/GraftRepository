@@ -158,6 +158,35 @@ def test_native_checkpoint_preserves_route_keys_and_lexical_index(tmp_path):
         assert cold not in restored.route([1.0, 0.0], topk=3)
 
 
+def test_native_clear_payload_preserves_metadata_route_checkpoint(tmp_path):
+    lib = build_native(tmp_path)
+    ckpt = tmp_path / "metadata_only_ckpt"
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        node_id = store.add_structured_node(
+            "cold metadata route",
+            {"payload_id": np.array([7], dtype=np.int64)},
+            ntok=1)
+        store.set_route(node_id, [1.0, 0.0], ["cold-route"])
+        store.set_metadata(node_id, {"kind": "doc", "active": True})
+        assert store.payload_stats(node_id).tensor_count == 1
+
+        store.clear_payload(node_id)
+        assert store.payload_stats(node_id).tensor_count == 0
+        store.save_checkpoint(ckpt)
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as restored:
+        restored.load_checkpoint(ckpt)
+        assert restored.payload_stats(node_id).tensor_count == 0
+        assert restored.metadata(node_id)["kind"] == "doc"
+        assert restored.route([1.0, 0.0], ["cold-route"], topk=1) == [node_id]
+
+
 def test_native_metadata_active_updates_route_index(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

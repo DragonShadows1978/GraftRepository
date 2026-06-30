@@ -225,6 +225,7 @@ class GraftRepository:
         self.native_store = native_store
         self._own_native_store = False
         self._native_node_ids = {}
+        self._native_checkpoint_loaded = False
         if self.native_store is None and (native_enabled or native_lib_path):
             self.native_store = self._open_native_store(native_lib_path)
             self._own_native_store = True
@@ -861,6 +862,41 @@ class GraftRepository:
             num_kv_heads=self.dialect_desc.num_kv_heads,
             head_dim=self.dialect_desc.head_dim)
 
+    def _native_checkpoint_root(self):
+        return os.path.join(self.path, "native")
+
+    def _native_checkpoint_file(self):
+        return os.path.join(self._native_checkpoint_root(), "grm_store.bin")
+
+    def _native_save_checkpoint(self):
+        if self.native_store is None:
+            return False
+        if not hasattr(self.native_store, "save_checkpoint"):
+            return False
+        if hasattr(self.native_store, "clear_payload"):
+            for idx, node_id in list(self._native_node_ids.items()):
+                g = self.arena.grafts[int(idx)]
+                if g.get("retired") and g.get("durable"):
+                    try:
+                        self.native_store.clear_payload(node_id)
+                    except RuntimeError as exc:
+                        if "unavailable" not in str(exc):
+                            raise
+        self.native_store.save_checkpoint(self._native_checkpoint_root())
+        return True
+
+    def _native_load_checkpoint(self):
+        self._native_checkpoint_loaded = False
+        if self.native_store is None:
+            return False
+        if not hasattr(self.native_store, "load_checkpoint"):
+            return False
+        if not os.path.exists(self._native_checkpoint_file()):
+            return False
+        self.native_store.load_checkpoint(self._native_checkpoint_root())
+        self._native_checkpoint_loaded = True
+        return True
+
     def _native_payload_blob(self, payload):
         if payload is None:
             return b""
@@ -1389,6 +1425,7 @@ class GraftRepository:
                 "durable": bool(g.get("durable", False)),
                 "cold_only": bool(g.get("cold_only", False)),
                 "payload_pending": bool(g.get("payload_pending", False)),
+                "native_node_id": g.get("native_node_id"),
                 "provenance": g.get("provenance", [])}
 
     def flush_async(self):
@@ -1458,11 +1495,15 @@ class GraftRepository:
                 nodes.append(self._node_manifest(g))
             np.savez_compressed(os.path.join(self.path, "index.npz"),
                                 **self.arena.pack_index())
+            native_checkpoint = self._native_save_checkpoint()
             with open(os.path.join(self.path, "manifest.json"), "w") as fh:
                 json.dump({"dialect": self.dialect,
                            "dialect_descriptor": self.dialect_desc.to_json(),
                            "route_layer": self.arena.route_layer,
                            "durability_mode": self.durability_mode,
+                           "native_checkpoint": (
+                               "native/grm_store.bin"
+                               if native_checkpoint else None),
                            "wal_lsn": self._wal_lsn,
                            "review_buffer": self.review_buffer,
                            "nodes": nodes}, fh, indent=1)
@@ -1488,6 +1529,7 @@ class GraftRepository:
                 f"arena is configured for {self.arena.route_layer}")
         idx = np.load(os.path.join(self.path, "index.npz"))
         self.arena.grafts = []
+        self._native_node_ids = {}
         for i, n in enumerate(man["nodes"]):
             g = {"kind": n["kind"], "text": n["text"], "ntok": n["ntok"],
                  "sources": n["sources"], "retired": n["retired"],
@@ -1504,6 +1546,10 @@ class GraftRepository:
                  "payload_pending": n.get("payload_pending", False),
                  "recovered": n.get("payload_pending", False),
                  "h": None}
+            if n.get("native_node_id") is not None:
+                native_id = int(n["native_node_id"])
+                g["native_node_id"] = native_id
+                self._native_node_ids[int(i)] = native_id
             # A payload-pending node (WAL-recovered, never re-harvested) has no
             # .npz on disk — keep it text-only rather than reading a missing file.
             if not n["retired"] and not g["payload_pending"]:
@@ -1518,7 +1564,13 @@ class GraftRepository:
         self.review_buffer = self._apply_review_wal_records(
             man.get("review_buffer", []), self.recovered_wal)
         self.dirty_nodes.clear()
-        self._sync_native_full()
+        native_loaded = self._native_load_checkpoint()
+        if native_loaded and not self._native_node_ids:
+            for i, g in enumerate(self.arena.grafts):
+                g["native_node_id"] = int(i)
+                self._native_node_ids[int(i)] = int(i)
+        if not native_loaded:
+            self._sync_native_full()
         self._page()
 
     def _rebuild_child_keys(self):
@@ -1603,5 +1655,6 @@ class GraftRepository:
                 "host_payload_bytes": ns.host_payload_bytes,
                 "host_payload_tensors": getattr(ns, "host_payload_tensors", 0),
                 "route_entries": ns.route_entries,
+                "checkpoint_loaded": bool(self._native_checkpoint_loaded),
             }
         return out

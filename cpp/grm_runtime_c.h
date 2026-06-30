@@ -93,6 +93,8 @@ int grm_store_set_tensor(grm_store_handle* handle,
 int grm_store_payload_stats(grm_store_handle* handle,
                             uint64_t node_id,
                             grm_payload_stats_c* out);
+int grm_store_clear_payload(grm_store_handle* handle,
+                            uint64_t node_id);
 int grm_store_tensor_info(grm_store_handle* handle,
                           uint64_t node_id,
                           const char* name,

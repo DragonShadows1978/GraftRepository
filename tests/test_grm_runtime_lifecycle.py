@@ -888,17 +888,38 @@ def test_native_store_mirrors_repository_lifecycle(tmp_path):
     st = repo.stats()
     assert st["native"]["dirty_nodes"] == 0
     assert st["native"]["durable_nodes"] == 2
+    assert os.path.exists(repo_path / "native" / "grm_store.bin")
+    with open(repo_path / "manifest.json") as fh:
+        man = json.load(fh)
+    assert man["native_checkpoint"] == "native/grm_store.bin"
+    assert man["nodes"][idx0]["native_node_id"] == 0
+    assert man["nodes"][idx1]["native_node_id"] == 1
+
+    assert repo.forget("22-1450") == 1
+    assert repo.stats()["native"]["dirty_nodes"] == 1
+    repo.flush_now()
+    st = repo.stats()
+    assert st["native"]["dirty_nodes"] == 0
+    assert st["native"]["durable_nodes"] == 2
+    assert idx0 not in repo.native_route([1.0] * 512,
+                                         lexical_keys=["22-1450"], topk=2)
 
     repo.close()
     reloaded = GraftRepository(FakeModel(), enc, dec, str(repo_path),
                                autosave=False, arena_cls=FakeArena,
                                route_layer=3, native_lib_path=lib)
     st = reloaded.stats()
+    assert st["native"]["checkpoint_loaded"] is True
     assert st["native"]["nodes"] == 2
     assert st["native"]["dirty_nodes"] == 0
     assert st["native"]["durable_nodes"] == 2
     assert st["native"]["route_entries"] == 2
-    assert st["native"]["host_payload_tensors"] == 2
+    assert st["native"]["host_payload_tensors"] == 1
+    assert reloaded.arena.grafts[idx0]["native_node_id"] == 0
+    assert reloaded.arena.grafts[idx1]["native_node_id"] == 1
+    assert idx0 not in reloaded.native_route([1.0] * 512,
+                                             lexical_keys=["22-1450"],
+                                             topk=2)
     assert reloaded.native_route([1.0] * 512, lexical_keys=["77-9999"],
                                  topk=1) == [idx1]
     reloaded.close()

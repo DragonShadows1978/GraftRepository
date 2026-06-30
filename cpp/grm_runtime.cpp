@@ -448,6 +448,22 @@ PayloadStats HostGraftStore::payload_stats(std::uint64_t node_id) const {
   return s;
 }
 
+void HostGraftStore::clear_payload(std::uint64_t node_id) {
+  auto* n = get(node_id);
+  if (n == nullptr) {
+    throw std::out_of_range("unknown GRM node id");
+  }
+  if (n->payload.tensors.empty() && !n->lifecycle.host_present &&
+      !n->lifecycle.device_present) {
+    return;
+  }
+  n->payload.tensors.clear();
+  n->lifecycle.host_present = false;
+  n->lifecycle.device_present = false;
+  n->lifecycle.cold_only = n->lifecycle.durable;
+  mark_dirty(node_id, true, true);
+}
+
 void HostGraftStore::set_metadata_json(std::uint64_t node_id,
                                        std::string metadata_json) {
   auto* n = get(node_id);
@@ -1424,6 +1440,18 @@ int grm_store_payload_stats(grm_store_handle* handle,
     const auto s = handle->store->payload_stats(node_id);
     out->tensor_count = s.tensor_count;
     out->payload_bytes = s.payload_bytes;
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_clear_payload(grm_store_handle* handle, uint64_t node_id) {
+  try {
+    if (handle == nullptr || handle->store == nullptr) {
+      return grm_fail_msg(handle, "invalid clear_payload arguments");
+    }
+    handle->store->clear_payload(node_id);
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
