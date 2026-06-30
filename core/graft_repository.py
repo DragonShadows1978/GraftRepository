@@ -1095,12 +1095,14 @@ class GraftRepository:
         return out
 
     @classmethod
-    def _apply_review_wal_records(cls, base_reviews, records):
+    def _apply_review_wal_records(cls, base_reviews, records, since_lsn=0):
         reviews = {}
         for pos, item in enumerate(base_reviews or ()):
             norm = cls._normalize_review_item(item, pos)
             reviews[norm["id"]] = norm
         for rec in records or ():
+            if int(rec.get("lsn", 0)) <= int(since_lsn):
+                continue
             typ = rec.get("type")
             if typ == "REVIEW_CANDIDATE":
                 item = {k: v for k, v in rec.items()
@@ -2311,7 +2313,8 @@ class GraftRepository:
         self.replayed_wal_nodes = self._apply_manifest_wal_records(
             self.recovered_wal, manifest_wal_lsn)
         self.review_buffer = self._apply_review_wal_records(
-            man.get("review_buffer", []), self.recovered_wal)
+            man.get("review_buffer", []), self.recovered_wal,
+            since_lsn=manifest_wal_lsn)
         self.dirty_nodes.clear()
         native_loaded = self._native_load_checkpoint()
         if native_loaded and not self._native_node_ids:

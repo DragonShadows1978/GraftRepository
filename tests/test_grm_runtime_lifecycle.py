@@ -680,6 +680,33 @@ def test_review_buffer_edit_reject_and_manifest_wal_replay(tmp_path):
     assert len(reopened.arena.grafts) == 1
 
 
+def test_manifest_review_replay_ignores_stale_low_lsn_records(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+    rid = repo.review_candidate("stale review replay candidate 17-1717",
+                                confidence=0.2)
+    repo.flush_now()
+
+    with open(os.path.join(path, "manifest.json")) as fh:
+        man = json.load(fh)
+    stale = {
+        "lsn": man["wal_lsn"],
+        "type": "REVIEW_REJECT",
+        "time": 0,
+        "review_id": rid,
+        "reason": "stale low-lsn replay",
+    }
+    with open(os.path.join(path, "wal", "000001.wal"), "a") as fh:
+        fh.write(json.dumps(stale, sort_keys=True) + "\n")
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+
+    assert reopened.review_buffer[rid]["status"] == "pending"
+    assert "rejection_reason" not in reopened.review_buffer[rid]
+
+
 def test_runtime_review_execution_autosaves_and_reports(tmp_path):
     path = str(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, path, autosave=True,
