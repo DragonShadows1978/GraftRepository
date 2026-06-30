@@ -40,6 +40,7 @@ import time
 import numpy as np
 
 from core.graft_arena import ArenaCache
+from core.grm_runtime import GRMRuntime
 
 
 @dataclass(frozen=True)
@@ -160,6 +161,7 @@ class GraftRepository:
             self._rehydrate_from_wal(self.recovered_nodes)
             self._sync_lifecycle()
             self.dirty_nodes.clear()
+        self.runtime = GRMRuntime(self)
 
     def close(self):
         if self._own_native_store and self.native_store is not None:
@@ -175,31 +177,11 @@ class GraftRepository:
 
     # ----------------------------------------------------------- hot path
     def chat(self, user_text, ngen=64, max_trips=2):
-        before = self._snapshot_state()
-        ans, info = self.arena.step(user_text, ngen=ngen, max_trips=max_trips)
-        extracted = self._extract_from_new_turns(
-            before, context={"event": "chat", "user_text": user_text,
-                             "assistant_text": ans})
-        if extracted:
-            info["extraction"] = extracted
-        self._librarian()
-        self._mark_mutations(before)
-        if self.autosave:
-            self.flush_now()
-        self._page()
-        return ans, info
+        return self.runtime.chat(user_text, ngen=ngen, max_trips=max_trips)
 
     def add_turn(self, user, assistant):
         """Deposit an already-complete turn (scripted or externally run)."""
-        before = self._snapshot_state()
-        self.arena.feed(f"User: {user}\nAssistant: {assistant}\n")
-        self._set_new_node_provenance(before, "exchange_span")
-        self._extract_from_new_turns(
-            before, context={"event": "add_turn", "user_text": user,
-                             "assistant_text": assistant})
-        self._librarian()
-        self._mark_mutations(before)
-        self._page()
+        self.runtime.add_turn(user, assistant)
 
     def add_document(self, text, tags=()):
         before = self._snapshot_state()
@@ -302,37 +284,7 @@ class GraftRepository:
 
     def apply_memory_command(self, text):
         """Apply an explicit chat memory command from the runtime plan."""
-        plan = self._parse_memory_command(text)
-        action = plan.get("action")
-        if action == "remember":
-            opts = {k: plan[k] for k in ("durability", "mutability",
-                                         "scope", "kind")
-                    if plan.get(k)}
-            idx = self.remember(plan.get("body", ""), **opts)
-            if plan.get("flush_immediately"):
-                self.flush_now()
-            return {"action": "remember", "node_id": idx}
-        if action == "forget":
-            return {"action": "forget",
-                    "count": self.forget(plan.get("query", ""))}
-        if action == "correct":
-            return {"action": "correct",
-                    "node_id": self.correct_memory(
-                        plan.get("query", ""), plan.get("replacement", ""))}
-        if action == "review":
-            self.review_candidate(plan.get("body", ""),
-                                  action="review_candidate",
-                                  reason=plan.get(
-                                      "reason",
-                                      "correction missing => separator"))
-            return {"action": "review", "count": len(self.review_buffer)}
-        if action == "ignore":
-            self._append_wal("DO_NOT_REMEMBER", text=text)
-            return {"action": "ignore"}
-        if action == "flush":
-            self.flush_now()
-            return {"action": "flush"}
-        raise ValueError(f"unknown memory command: {text!r}")
+        return self.runtime.apply_memory_command(text)
 
     def forget(self, query):
         q = query.lower()
@@ -784,16 +736,7 @@ class GraftRepository:
     def idle(self, max_jobs=1):
         """Run deferred librarian work; call between turns or when the
         conversation is quiet. Returns folds executed."""
-        before = self._snapshot_state()
-        done = 0
-        while done < max_jobs and self._fold_once():
-            done += 1
-        if done:
-            self._mark_mutations(before)
-            if self.autosave:
-                self.flush_now()
-            self._page()
-        return done
+        return self.runtime.idle(max_jobs=max_jobs)
 
     def _librarian(self):
         if self.librarian_mode == "inline":

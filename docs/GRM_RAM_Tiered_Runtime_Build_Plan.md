@@ -67,6 +67,11 @@ extractor on newly deposited turn/recall grafts, passes `source_grafts` and
 turn text into `apply_extraction_candidate(s)`, records the last extraction
 result/error, and treats extractor failures as non-blocking WAL-recorded events
 unless configured to raise.
+`core.grm_runtime.GRMRuntime` now packages the Python hot-path orchestration
+boundary for chat turns, scripted turns, deferred librarian work, and explicit
+memory commands: snapshot, arena/model operation, extraction/review policy,
+librarian folding, mutation marking, flush, and paging. `GraftRepository`
+keeps the public API and persistence surface.
 Review-buffer execution now supports approve, reject, edit, and scope-change
 operations. Review item status (`pending`, `approved`, `rejected`) and
 post-manifest review edits are replayed from WAL, so review decisions survive
@@ -129,11 +134,11 @@ MiniCPM3-4B INT4 MLA completed the 42-turn infinite-context gate at 8/8 probes
 with max resident 341 seats, 40MB active device memory, and 91MB RAM payload;
 Qwen3-4B BF16 GQA completed the 42-turn descent gate at 8/8 probes with max
 resident 429 seats, 266MB active device memory, 435MB RAM payload, and 13 RAM
-page-ins. The missing production pieces are still a cohesive GRM runtime
-boundary that owns model-specific extraction quality/policy, CUDA route
-scanning if needed, longer high-context needle runs, and a broader
-model-specific graft equivalence matrix beyond DeepSeek, MiniCPM3 MLA, and
-Qwen3 GQA.
+page-ins. The missing production pieces are still deeper C++/CUDA ownership for
+remaining routing/revision policy where it proves useful, model-specific
+extraction quality/policy, CUDA route scanning if needed, longer high-context
+needle runs, and a broader model-specific graft equivalence matrix beyond
+DeepSeek, MiniCPM3 MLA, and Qwen3 GQA.
 
 `tests/deepseek_grm_turn50_gate.py` now validates the original GRM ephemeral
 boat on DeepSeek-V2-Lite INT4: 50 stored turn grafts, live context cleared

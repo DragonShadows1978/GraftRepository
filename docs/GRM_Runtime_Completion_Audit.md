@@ -56,9 +56,14 @@ validation where feasible.
   with revision metadata. `GraftRepository(..., extractor=...)` now runs an
   optional extractor on newly completed chat/scripted turns, passes source turn
   graft ids into that same policy path, and records extractor errors as
-  non-blocking WAL events unless configured to raise. This implements the
-  runtime orchestration boundary; model-specific extraction quality still needs
-  hardening.
+  non-blocking WAL events unless configured to raise.
+- Python runtime coordinator boundary:
+  `core.grm_runtime.GRMRuntime` now owns the operation sequencing for
+  `chat()`, `add_turn()`, `idle()`, and explicit memory-command execution:
+  snapshot, model/arena action, extraction/review policy, librarian folding,
+  mutation marking, flush, and paging. `GraftRepository` remains the public API
+  and persistence owner, but the hot-path orchestration is no longer spread
+  across public methods.
 - C++ host runtime scaffold:
   `cpp/` contains `DialectDescriptor`, `HostGraftStore`, `RouterIndex`,
   `DirtyQueue`, `DurabilityWriter`, swap/evict-planning `DeviceArena`, and
@@ -477,9 +482,10 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   swap and eviction, and TensorCUDA now owns fused CUDA splice/evict movement,
   fused RoPE re-seat movement, fused cache-sliced raw/RoPE export movement, and
   the functional multi-layer raw+positional arena cache transaction on the
-  Project-Tensor branch. GRM still keeps the broader routing policy,
-  memory-command policy, revision policy, and runtime orchestration in Python
-  rather than in one cohesive C++/CUDA runtime object.
+  Project-Tensor branch. GRM now has a Python `GRMRuntime` coordinator for
+  hot-path orchestration, but broader routing policy, memory-command policy,
+  revision policy, and runtime ownership are still Python rather than one
+  cohesive C++/CUDA runtime object.
 - C++ host route-scan acceleration exists for native-backed MLA arena routes,
   including child-centroid digest/era keys. CUDA/GPU route-scan acceleration is
   not implemented.
@@ -491,8 +497,8 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   supersession graph edges are now structured native state. Native can apply
   the final revision state once Python decides the correction. The explicit
   memory-command grammar now has a native parse-plan boundary, while conflict
-  policy, review execution, runtime extractor orchestration, and final command
-  execution live in the Python policy layer.
+  policy, review execution, extractor policy, and final command execution live
+  behind the Python `GRMRuntime`/repository policy layer.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. Current-head MiniCPM3 MLA
@@ -525,8 +531,10 @@ recall. Folding-enabled DeepSeek turn-50 now validates two-level compression:
 40 turns retire under 10 digest nodes, six digests retire under two extractive
 era nodes, fresh-process ASTRA recall still passes, and a retired turn-5 fact
 is recalled through folded memory. Fresh current-head cross-architecture gates
-also pass on MiniCPM3 MLA and Qwen3 GQA. The full production C++/CUDA runtime is not
-complete until routing policy boundaries, final command/extraction orchestration
-ownership, model-specific extraction policy hardening, longer
-needle/high-context runs, CUDA route scanning if needed, and the broader
-model-specific graft equivalence matrix pass.
+also pass on MiniCPM3 MLA and Qwen3 GQA. `GRMRuntime` now packages the Python
+hot-path orchestration boundary and is covered by lifecycle tests plus a live
+DeepSeek smoke gate. The full production C++/CUDA runtime is not complete until
+remaining routing/revision policy ownership moves as needed, model-specific
+extraction policy hardens, longer needle/high-context runs finish, CUDA route
+scanning is implemented if needed, and the broader model-specific graft
+equivalence matrix passes.

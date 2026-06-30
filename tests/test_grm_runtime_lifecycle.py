@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 
 from core.graft_repository import GraftRepository
+from core.grm_runtime import GRMRuntime
 from core.grm_native import NativeGraftStore
 from tests.test_grm_native_runtime import build_native
 
@@ -56,6 +57,11 @@ class FakeArena:
         idx = self.deposit(turn_text)
         self.grafts[idx]["kind"] = "turn"
         self.live_segs.append((idx, self.grafts[idx]["ntok"]))
+
+    def step(self, user_text, ngen=64, max_trips=2):
+        answer = f"Recorded {user_text}"
+        self.feed(f"User: {user_text}\nAssistant: {answer}\n")
+        return answer, {"ngen": ngen, "max_trips": max_trips, "mounts": []}
 
     def pack_node(self, h):
         return {"payload_id": np.asarray([h["id"]], dtype=np.int64)}
@@ -198,6 +204,45 @@ def test_memory_commands_revision_and_review(tmp_path):
     assert why[0]["write_intent"] == "user_asserted"
 
 
+def test_runtime_coordinator_drives_chat_flush_and_extraction(tmp_path):
+    class Extractor:
+        def extract(self, text, **ctx):
+            self.last = (text, ctx)
+            return [{
+                "action": "write_direct",
+                "candidate_type": "fact",
+                "text": "Runtime chat captured code WEST-31.",
+                "subject": "runtime chat",
+                "predicate": "captured",
+                "value": "WEST-31",
+                "scope": "project",
+                "durability": "project",
+                "mutability": "stable",
+                "write_intent": "observed",
+                "confidence": 0.99,
+            }]
+
+    extractor = Extractor()
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=True, arena_cls=FakeArena,
+                           route_layer=3, extractor=extractor)
+
+    ans, info = repo.chat("Please store code WEST-31", ngen=7, max_trips=1)
+
+    assert ans == "Recorded Please store code WEST-31"
+    assert isinstance(repo.runtime, GRMRuntime)
+    assert repo.runtime.last_result.event == "chat"
+    assert repo.runtime.last_result.autosaved is True
+    assert repo.runtime.last_result.before_nodes == 0
+    assert repo.runtime.last_result.after_nodes == 2
+    assert info["extraction"][0]["action"] == "write_direct"
+    assert extractor.last[1]["context"]["event"] == "chat"
+    assert repo.stats()["dirty_nodes"] == 0
+    assert os.path.exists(os.path.join(str(tmp_path), "manifest.json"))
+    extracted_rows = repo.show_memory_about("Runtime chat captured")
+    assert extracted_rows[0]["metadata"]["source_grafts"] == [0]
+
+
 def test_review_buffer_edit_reject_and_manifest_wal_replay(tmp_path):
     path = str(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
@@ -272,6 +317,9 @@ def test_native_memory_command_parser_drives_repository_policy(tmp_path):
     out = repo.apply_memory_command(
         "remember permanently: Native parser owns command grammar")
     assert out["action"] == "remember"
+    assert repo.runtime.last_result.event == "memory_command"
+    assert repo.runtime.last_result.action == "remember"
+    assert repo.runtime.last_result.autosaved is True
     g = repo.arena.grafts[out["node_id"]]
     assert g["metadata"]["durability"] == "permanent"
     assert g["metadata"]["scope"] == "user"
@@ -379,6 +427,8 @@ def test_runtime_extractor_runs_on_completed_turns(tmp_path):
     assert extractor.calls[0][1]["source_grafts"] == [0]
     assert extractor.calls[0][1]["context"]["event"] == "add_turn"
     assert repo.last_extraction_results[0]["action"] == "write_direct"
+    assert repo.runtime.last_result.event == "add_turn"
+    assert repo.runtime.last_result.extraction
     rows = repo.show_memory_about("Runtime extractor captured")
     assert len(rows) == 1
     meta = rows[0]["metadata"]
