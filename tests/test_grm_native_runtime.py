@@ -381,6 +381,41 @@ def test_native_apply_revision_links_edges_and_retires_routes(tmp_path):
         assert store.graph_edges(old1).superseded_by == (new,)
 
 
+def test_native_source_closure_walks_folded_graph(tmp_path):
+    lib = build_native(tmp_path)
+    ckpt = tmp_path / "source_closure_ckpt"
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        leaf0 = store.add_node("leaf zero", b"", ntok=1)
+        leaf1 = store.add_node("leaf one", b"", ntok=1)
+        digest = store.add_node("digest", b"", ntok=2)
+        era = store.add_node("era", b"", ntok=3)
+
+        store.set_graph_edges(digest, source_grafts=(leaf0, leaf1))
+        store.set_graph_edges(era, source_grafts=(digest, leaf1))
+        store.set_graph_edges(leaf0, source_grafts=(era,))
+
+        assert store.source_closure((era,), max_depth=1) == (digest, leaf1)
+        assert store.source_closure((era,), max_depth=3) == (
+            digest, leaf0, leaf1)
+        assert store.source_closure(
+            (era,), max_depth=3, include_roots=True) == (
+                era, digest, leaf0, leaf1)
+        assert store.source_closure((digest, era), max_depth=3) == (
+            leaf0, leaf1)
+        store.save_checkpoint(ckpt)
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as restored:
+        restored.load_checkpoint(ckpt)
+        assert restored.source_closure((era,), max_depth=3) == (
+            digest, leaf0, leaf1)
+
+
 def test_native_route_filters_metadata_fields(tmp_path):
     lib = build_native(tmp_path)
     ckpt = tmp_path / "filter_ckpt"

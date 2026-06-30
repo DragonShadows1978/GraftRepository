@@ -8,8 +8,10 @@
 #include <cmath>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <limits>
 #include <memory>
+#include <set>
 #include <stdexcept>
 #include <sstream>
 
@@ -728,6 +730,61 @@ GraphEdges HostGraftStore::graph_edges(std::uint64_t node_id) const {
   edges.supersedes = n->metadata.supersedes;
   edges.superseded_by = n->metadata.superseded_by;
   return edges;
+}
+
+std::vector<std::uint64_t> HostGraftStore::source_closure(
+    const std::vector<std::uint64_t>& node_ids,
+    std::uint64_t max_depth,
+    bool include_roots) const {
+  std::vector<std::uint64_t> out;
+  std::set<std::uint64_t> seen;
+
+  const auto emit = [&](std::uint64_t node_id) {
+    if (seen.insert(node_id).second) {
+      out.push_back(node_id);
+    }
+  };
+
+  const auto mark_seed = [&](std::uint64_t node_id) {
+    if (include_roots) {
+      emit(node_id);
+    } else {
+      seen.insert(node_id);
+    }
+  };
+
+  std::function<void(std::uint64_t, std::uint64_t)> walk =
+      [&](std::uint64_t node_id, std::uint64_t depth) {
+        const auto* n = get(node_id);
+        if (n == nullptr) {
+          throw std::out_of_range("unknown GRM source node id");
+        }
+        if (depth >= max_depth) {
+          return;
+        }
+        for (const auto child_id : n->metadata.source_grafts) {
+          const auto* child = get(child_id);
+          if (child == nullptr) {
+            throw std::out_of_range("unknown GRM source child id");
+          }
+          if (seen.insert(child_id).second) {
+            out.push_back(child_id);
+            walk(child_id, depth + 1);
+          }
+        }
+      };
+
+  for (const auto node_id : node_ids) {
+    const auto* n = get(node_id);
+    if (n == nullptr) {
+      throw std::out_of_range("unknown GRM node id");
+    }
+    mark_seed(node_id);
+  }
+  for (const auto node_id : node_ids) {
+    walk(node_id, 0);
+  }
+  return out;
 }
 
 void HostGraftStore::apply_revision(std::uint64_t replacement_node_id,
@@ -1993,6 +2050,39 @@ int grm_store_read_graph_edges(grm_store_handle* handle,
         static_cast<uint64_t>(edges.supersedes.size());
     out_counts->superseded_by =
         static_cast<uint64_t>(edges.superseded_by.size());
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_source_closure(grm_store_handle* handle,
+                             const uint64_t* node_ids,
+                             uint64_t node_count,
+                             uint64_t max_depth,
+                             int include_roots,
+                             uint64_t* out_node_ids,
+                             uint64_t out_cap,
+                             uint64_t* out_count) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_count == nullptr) {
+      return grm_fail_msg(handle, "invalid source_closure arguments");
+    }
+    if (node_ids == nullptr && node_count > 0) {
+      return grm_fail_msg(handle, "null source_closure seeds");
+    }
+    if (out_node_ids == nullptr && out_cap > 0) {
+      return grm_fail_msg(handle, "null source_closure output buffer");
+    }
+    const auto seeds = read_u64_array(node_ids, node_count, "source_closure");
+    const auto closure = handle->store->source_closure(
+        seeds, max_depth, include_roots != 0);
+    const uint64_t n = static_cast<uint64_t>(closure.size());
+    const uint64_t copied = std::min<uint64_t>(n, out_cap);
+    for (uint64_t i = 0; i < copied; ++i) {
+      out_node_ids[i] = closure[static_cast<std::size_t>(i)];
+    }
+    *out_count = n;
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);

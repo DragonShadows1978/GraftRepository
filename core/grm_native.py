@@ -316,6 +316,14 @@ class NativeGraftStore:
                 u64p, ctypes.c_uint64, u64p, ctypes.c_uint64,
                 ctypes.POINTER(_GraphEdgesInfoC)]
             lib.grm_store_read_graph_edges.restype = ctypes.c_int
+        self._has_source_closure = hasattr(lib, "grm_store_source_closure")
+        if self._has_source_closure:
+            u64p = ctypes.POINTER(ctypes.c_uint64)
+            lib.grm_store_source_closure.argtypes = [
+                ctypes.c_void_p, u64p, ctypes.c_uint64, ctypes.c_uint64,
+                ctypes.c_int, u64p, ctypes.c_uint64,
+                ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_source_closure.restype = ctypes.c_int
         self._has_apply_revision = hasattr(lib, "grm_store_apply_revision")
         if self._has_apply_revision:
             lib.grm_store_apply_revision.argtypes = [
@@ -648,6 +656,25 @@ class NativeGraftStore:
             tup(sg, counts.source_grafts),
             tup(sp, counts.supersedes),
             tup(sb, counts.superseded_by))
+
+    def source_closure(self, node_ids, max_depth=3, include_roots=False):
+        if not getattr(self, "_has_source_closure", False):
+            raise RuntimeError("native GRM source closure is unavailable")
+        seeds, seed_n = self._u64_array(node_ids)
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_source_closure(
+            self._handle, seeds, seed_n, int(max_depth),
+            1 if include_roots else 0, None, 0, ctypes.byref(needed)))
+        if not needed.value:
+            return ()
+        arr_t = ctypes.c_uint64 * int(needed.value)
+        out = arr_t()
+        got = ctypes.c_uint64()
+        self._check(self._lib.grm_store_source_closure(
+            self._handle, seeds, seed_n, int(max_depth),
+            1 if include_roots else 0, out, int(needed.value),
+            ctypes.byref(got)))
+        return tuple(int(out[i]) for i in range(int(got.value)))
 
     def apply_revision(self, replacement_node_id, supersedes):
         if not getattr(self, "_has_apply_revision", False):

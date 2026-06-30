@@ -53,7 +53,9 @@ lookup, preserve active state through native checkpoints, and carry
 kind/scope/durability/mutability fields for native route filtering through
 `grm_store_route_filtered()`. Source turns, source grafts, supersedes, and
 superseded-by edges are also mirrored into structured native state through
-`grm_store_set_graph_edges()` and preserved in `GRMSTORE4` checkpoints.
+`grm_store_set_graph_edges()` and preserved in native checkpoints; folded
+source descent can query recursive source-graft closure through
+`grm_store_source_closure()`.
 Repository `flush_now()` now writes `native/grm_store.bin` before the Python
 manifest, records the native checkpoint path plus per-node native ids in
 `manifest.json`, and reloads that native checkpoint on resume when present.
