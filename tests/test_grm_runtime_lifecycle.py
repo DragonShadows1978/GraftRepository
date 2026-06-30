@@ -126,6 +126,33 @@ class FakeArena:
         return z["cents"][i].astype(np.float32)
 
 
+class FakeSliceArena(FakeArena):
+    PAYLOAD = (("tok", 0),)
+    VALS_PER_TOK_LAYER = 1
+
+    def deposit(self, text):
+        idx = len(self.grafts)
+        toks = self.encode(text)
+        payload = {"tok": np.arange(len(toks), dtype=np.int64)}
+        self.grafts.append({
+            "h": payload,
+            "cent": self._node_key(text),
+            "ntok": len(toks),
+            "text": text,
+        })
+        return idx
+
+    def pack_node(self, h):
+        return {"tok": np.asarray(h["tok"], dtype=np.int64)}
+
+    def unpack_node(self, z):
+        return {"tok": np.asarray(z["tok"], dtype=np.int64)}
+
+    def _node_key(self, text, h_host=None):
+        return np.full((512,), float(len(self.encode(text))),
+                       dtype=np.float32)
+
+
 def enc(text):
     return text.split()
 
@@ -260,6 +287,62 @@ def test_dirty_flush_and_reload_lifecycle(tmp_path):
     assert reloaded.arena.grafts[0]["host_payload"]["payload_id"].tolist() == [0]
     assert reloaded.arena.grafts[0]["device_present"] is True
     assert reloaded.arena.grafts[0]["h"] == {"id": 0}
+
+
+def test_cull_graft_slices_payloads_and_preserves_lineage(tmp_path):
+    lib = build_native(tmp_path)
+    path = str(tmp_path / "repo")
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeSliceArena, route_layer=3,
+                           native_lib_path=lib)
+    parent = repo.add_document("A1 B2 C3 D4 E5 F6", tags=("long",))
+
+    out = repo.cull_graft(parent, max_tokens=2)
+
+    assert out["action"] == "cull_graft"
+    assert out["parent"] == parent
+    assert out["retired_parent"] is True
+    assert out["children"] == [1, 2, 3]
+    assert repo.arena.grafts[parent]["retired"] is True
+    assert repo.arena.grafts[parent]["metadata"]["active"] is False
+    assert repo.arena.grafts[parent]["metadata"]["culled_into"] == [1, 2, 3]
+
+    expected = [
+        ("A1 B2", [0, 1], 0, 2),
+        ("C3 D4", [2, 3], 2, 4),
+        ("E5 F6", [4, 5], 4, 6),
+    ]
+    for child, (text, payload, start, end) in zip(out["children"], expected):
+        g = repo.arena.grafts[child]
+        assert g["text"] == text
+        assert g["ntok"] == 2
+        assert g["sources"] == [parent]
+        assert g["host_payload"]["tok"].tolist() == payload
+        assert g["h"] is None
+        assert g["metadata"]["source_grafts"] == [parent]
+        assert g["metadata"]["culled_from"] == parent
+        assert g["metadata"]["token_start"] == start
+        assert g["metadata"]["token_end"] == end
+        assert g["metadata"]["supersedes"] == [parent]
+        assert g["provenance"][0]["segment_type"] == "cull_span"
+        native_id = g["native_node_id"]
+        assert repo.native_store.get_tensor(native_id, "tok").tolist() == payload
+
+    repo.flush_now()
+    repo.close()
+
+    reloaded = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeSliceArena, route_layer=3,
+                               native_lib_path=lib)
+    assert reloaded.arena.grafts[parent]["retired"] is True
+    assert reloaded.show_memory_about("A1 B2 C3") == []
+    assert len(reloaded.show_memory_about("A1 B2")) == 1
+    assert reloaded.arena.grafts[1]["host_payload"]["tok"].tolist() == [0, 1]
+    assert reloaded.arena.grafts[2]["host_payload"]["tok"].tolist() == [2, 3]
+    assert reloaded.arena.grafts[3]["host_payload"]["tok"].tolist() == [4, 5]
+    assert reloaded.arena.grafts[1]["metadata"]["source_grafts"] == [parent]
+    assert reloaded.stats()["native"]["nodes"] == 4
+    reloaded.close()
 
 
 def test_remember_attaches_semantic_metadata(tmp_path):

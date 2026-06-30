@@ -55,6 +55,12 @@ validation where feasible.
   Authoritative extractor `expire` candidates can retire exact active facts by
   node id or same-scope subject/predicate/value match; inferred or ambiguous
   expire candidates stay in review.
+- Intentional graft culling:
+  `GraftRepository.cull_graft()` / `split_graft()` can replace a long graft
+  with shorter child grafts by slicing RAM-authoritative payload tensors along
+  the dialect token axis, preserving source lineage/provenance, mirroring the
+  children into native RAM when enabled, and optionally retiring the parent as
+  cold evidence.
 - Explicit memory commands:
   `remember`, `forget`, `correct/update`, review fallback, ignore, and
   `flush memory now` are supported. `GRMRuntime.apply_memory_command()` now

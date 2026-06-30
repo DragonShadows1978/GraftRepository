@@ -278,6 +278,192 @@ class GraftRepository:
         self._page()
         return idx
 
+    def _normalize_cull_spans(self, ntok, max_tokens=None, spans=None,
+                              retire_parent=True):
+        if spans is None:
+            if max_tokens is None:
+                raise ValueError("cull_graft requires max_tokens or spans")
+            max_tokens = int(max_tokens)
+            if max_tokens <= 0:
+                raise ValueError("max_tokens must be positive")
+            spans = [(i, min(i + max_tokens, ntok))
+                     for i in range(0, ntok, max_tokens)]
+        out = []
+        for start, end in spans:
+            start, end = int(start), int(end)
+            if start < 0 or end > ntok or end <= start:
+                raise ValueError(f"invalid cull span {(start, end)} for "
+                                 f"{ntok} tokens")
+            out.append((start, end))
+        if not out:
+            raise ValueError("cull_graft produced no spans")
+        if retire_parent:
+            cursor = 0
+            for start, end in sorted(out):
+                if start != cursor:
+                    raise ValueError("retiring a parent requires cull spans "
+                                     "to cover every token without gaps")
+                cursor = end
+            if cursor != ntok:
+                raise ValueError("retiring a parent requires cull spans to "
+                                 "cover the full graft")
+        return out
+
+    def _payload_token_axis(self, key, arr, ntok):
+        declared = {k: dim for k, dim in getattr(self.arena, "PAYLOAD", ())}
+        candidates = [i for i, n in enumerate(arr.shape) if int(n) == ntok]
+        dim = declared.get(key)
+        if dim in candidates:
+            return dim
+        if dim is not None and dim - 1 in candidates:
+            return dim - 1
+        if len(candidates) == 1:
+            return candidates[0]
+        if dim is not None:
+            raise ValueError(f"cannot identify token axis for payload {key!r}")
+        return None
+
+    def _slice_host_payload(self, payload, ntok, start, end):
+        out = {}
+        for key, value in payload.items():
+            arr = np.ascontiguousarray(value)
+            axis = self._payload_token_axis(key, arr, ntok)
+            if axis is None:
+                out[key] = np.ascontiguousarray(arr.copy())
+                continue
+            sl = [slice(None)] * arr.ndim
+            sl[axis] = slice(start, end)
+            out[key] = np.ascontiguousarray(arr[tuple(sl)])
+        return out
+
+    def _decode_token_span(self, text, start, end):
+        try:
+            ids = list(self.encode(text))
+            if len(ids) >= end:
+                decoded = self.decode(ids[start:end]).strip()
+                if decoded:
+                    return decoded
+        except Exception:
+            pass
+        words = str(text).split()
+        if len(words) >= end:
+            return " ".join(words[start:end])
+        return f"{text} [tokens {start}:{end}]"
+
+    def _cull_child_centroid(self, parent, text, recompute_route):
+        if recompute_route and hasattr(self.arena, "_node_key"):
+            try:
+                return np.asarray(self.arena._node_key(text),
+                                  dtype=np.float32)
+            except Exception:
+                pass
+        return np.asarray(parent.get("cent"), dtype=np.float32).copy()
+
+    @staticmethod
+    def _append_unique(values, extra):
+        out = []
+        for value in list(values or ()) + list(extra or ()):
+            if value not in out:
+                out.append(value)
+        return out
+
+    def cull_graft(self, idx, *, max_tokens=None, spans=None,
+                   retire_parent=True, kind=None, tags=(),
+                   recompute_route=True):
+        """Split one long graft into shorter child grafts.
+
+        Child nodes receive RAM payload slices and lineage back to the parent.
+        By default the parent is retired, leaving it as cold evidence while the
+        shorter children become the active route/mount surfaces.
+        """
+        idx = int(idx)
+        if idx < 0 or idx >= len(self.arena.grafts):
+            raise IndexError("unknown graft id")
+        parent = self.arena.grafts[idx]
+        ntok = int(parent.get("ntok", 0))
+        if ntok <= 0:
+            raise ValueError("cannot cull a graft with no token length")
+        spans = self._normalize_cull_spans(
+            ntok, max_tokens=max_tokens, spans=spans,
+            retire_parent=retire_parent)
+        before = self._snapshot_state()
+        self._ensure_host_payload(idx, parent)
+        parent_meta = parent.setdefault(
+            "metadata", self._default_metadata(parent))
+        child_kind = kind or parent.get("kind", "doc")
+        child_ids = []
+        for order, (start, end) in enumerate(spans):
+            text = self._decode_token_span(parent.get("text", ""), start, end)
+            payload = self._slice_host_payload(
+                parent["host_payload"], ntok, start, end)
+            meta = {
+                "kind": child_kind,
+                "durability": parent_meta.get("durability", "project"),
+                "mutability": parent_meta.get("mutability", "stable"),
+                "scope": parent_meta.get("scope", "project"),
+                "write_intent": parent_meta.get("write_intent", "observed"),
+                "confidence": parent_meta.get("confidence", 1.0),
+                "source_grafts": self._append_unique(
+                    parent_meta.get("source_grafts", ()), (idx,)),
+                "supersedes": [idx] if retire_parent else [],
+                "active": True,
+                "culled_from": idx,
+                "token_start": start,
+                "token_end": end,
+                "cull_index": order,
+                "cull_total": len(spans),
+            }
+            child = {
+                "kind": child_kind,
+                "text": text,
+                "ntok": end - start,
+                "sources": [idx],
+                "retired": False,
+                "no_fold": False,
+                "tags": self._append_unique(parent.get("tags", ()), tags),
+                "rare": self.arena._rare_tokens(text),
+                "cent": self._cull_child_centroid(parent, text,
+                                                  recompute_route),
+                "metadata": meta,
+                "provenance": [self._provenance(
+                    "cull_span", len(self.arena.grafts),
+                    source_graft=idx, token_start=start, token_end=end)],
+                "host_payload": payload,
+                "host_present": True,
+                "device_present": False,
+                "dirty": True,
+                "durable": False,
+                "cold_only": False,
+                "payload_pending": False,
+                "h": None,
+            }
+            child_idx = len(self.arena.grafts)
+            self._ensure_lifecycle(child_idx, child)
+            self.arena.grafts.append(child)
+            self._mark_dirty(child_idx, payload=True, metadata=True)
+            child_ids.append(child_idx)
+
+        parent_meta["culled_into"] = list(child_ids)
+        if retire_parent:
+            parent_meta["active"] = False
+            parent_meta["superseded_by"] = list(child_ids)
+            parent["retired"] = True
+        self._mark_mutations(before)
+        if not retire_parent:
+            self._mark_dirty(idx, payload=False, metadata=True)
+            self._append_wal("NODE_META", node_id=idx,
+                             metadata=parent.get("metadata", {}),
+                             state=list(self._state_tuple(parent)))
+        self._rebuild_child_keys()
+        self._free_retired()
+        self._page()
+        return {"action": "cull_graft", "parent": idx,
+                "children": list(child_ids),
+                "retired_parent": bool(retire_parent)}
+
+    def split_graft(self, *args, **kwargs):
+        return self.cull_graft(*args, **kwargs)
+
     def remember(self, text, durability="project", mutability="stable",
                  scope="project", kind="fact", write_intent="user_asserted",
                  confidence=1.0, tags=(), metadata=None):
