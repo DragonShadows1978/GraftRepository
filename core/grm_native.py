@@ -135,13 +135,25 @@ class NativeGraftStore:
 
     def __init__(self, lib_path=None, *, model_type="model",
                  num_layers=0, hidden_dim=0, vals_per_tok_layer=0,
-                 route_layer=0, latent_rank=0, rope_dim=0):
+                 route_layer=0, payload_kind="mla", latent_rank=0,
+                 rope_dim=0, num_kv_heads=0, head_dim=0):
         self._lib = ctypes.CDLL(lib_path or _default_lib_path())
         self._bind()
-        self._handle = self._lib.grm_store_create_mla(
-            model_type.encode("utf-8"), int(num_layers), int(hidden_dim),
-            int(vals_per_tok_layer), int(route_layer), int(latent_rank),
-            int(rope_dim))
+        payload_kind = str(payload_kind).lower()
+        if payload_kind == "mla":
+            self._handle = self._lib.grm_store_create_mla(
+                model_type.encode("utf-8"), int(num_layers), int(hidden_dim),
+                int(vals_per_tok_layer), int(route_layer), int(latent_rank),
+                int(rope_dim))
+        elif payload_kind == "gqa":
+            if not hasattr(self._lib, "grm_store_create_gqa"):
+                raise RuntimeError("native GRM library lacks GQA store ABI")
+            self._handle = self._lib.grm_store_create_gqa(
+                model_type.encode("utf-8"), int(num_layers), int(hidden_dim),
+                int(vals_per_tok_layer), int(route_layer), int(num_kv_heads),
+                int(head_dim))
+        else:
+            raise ValueError(f"unsupported native GRM payload kind: {payload_kind}")
         if not self._handle:
             raise RuntimeError("failed to create native GRM store")
 
@@ -151,6 +163,11 @@ class NativeGraftStore:
             ctypes.c_char_p, ctypes.c_int, ctypes.c_int, ctypes.c_int,
             ctypes.c_int, ctypes.c_int, ctypes.c_int]
         lib.grm_store_create_mla.restype = ctypes.c_void_p
+        if hasattr(lib, "grm_store_create_gqa"):
+            lib.grm_store_create_gqa.argtypes = [
+                ctypes.c_char_p, ctypes.c_int, ctypes.c_int, ctypes.c_int,
+                ctypes.c_int, ctypes.c_int, ctypes.c_int]
+            lib.grm_store_create_gqa.restype = ctypes.c_void_p
         lib.grm_store_destroy.argtypes = [ctypes.c_void_p]
         lib.grm_store_destroy.restype = None
         lib.grm_store_dialect_id.argtypes = [

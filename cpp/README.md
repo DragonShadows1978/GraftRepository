@@ -12,7 +12,8 @@ Implemented here:
 - `DurabilityWriter`
 - `DeviceArena` swap/evict planner and host tensor swap/evict references
 - explicit memory-command parser that returns JSON operation plans
-- dependency-free C ABI in `grm_runtime_c.h`
+- dependency-free C ABI in `grm_runtime_c.h`, including MLA and GQA
+  host-store creation
 
 The CUDA arena is intentionally not implemented in this scaffold yet. The rule
 is the same as the Python runtime: host RAM payloads are authoritative; device

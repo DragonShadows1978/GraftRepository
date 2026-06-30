@@ -1205,6 +1205,31 @@ grm_store_handle* grm_store_create_mla(const char* model_type,
   }
 }
 
+grm_store_handle* grm_store_create_gqa(const char* model_type,
+                                       int num_layers,
+                                       int hidden_dim,
+                                       int vals_per_tok_layer,
+                                       int route_layer,
+                                       int num_kv_heads,
+                                       int head_dim) {
+  try {
+    auto* handle = new grm_store_handle();
+    grm::DialectDescriptor d;
+    d.model_type = model_type == nullptr ? "" : model_type;
+    d.num_layers = num_layers;
+    d.hidden_dim = hidden_dim;
+    d.payload_kind = grm::PayloadKind::GQA;
+    d.vals_per_tok_layer = vals_per_tok_layer;
+    d.route_layer = route_layer;
+    d.num_kv_heads = num_kv_heads;
+    d.head_dim = head_dim;
+    handle->store = std::make_unique<grm::HostGraftStore>(std::move(d));
+    return handle;
+  } catch (...) {
+    return nullptr;
+  }
+}
+
 void grm_store_destroy(grm_store_handle* handle) { delete handle; }
 
 int grm_store_dialect_id(grm_store_handle* handle, char* out, size_t out_cap) {

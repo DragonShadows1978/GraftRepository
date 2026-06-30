@@ -78,11 +78,12 @@ validation where feasible.
   CMake build.
 - Native Python boundary:
   `cpp/grm_runtime_c.h` exposes a dependency-free C ABI and
-  `core/grm_native.py` drives it with `ctypes`.
+  `core/grm_native.py` drives it with `ctypes`. The host-store creation ABI now
+  supports both MLA and GQA dialect descriptors.
 - Opt-in native host mirror:
   `GraftRepository(..., native_lib_path=...)` mirrors RAM payload bytes into
   `NativeGraftStore`, marks nodes durable on `flush_now()`, and rebuilds the
-  native mirror on manifest reload.
+  native mirror on manifest reload for both MLA and GQA payload families.
 - Native metadata-only cold-node mirror:
   manifest reload now mirrors retired/cold durable nodes into the native store
   without reloading their payload tensors into RAM. This keeps native node ids,
@@ -142,14 +143,13 @@ validation where feasible.
   `NativeGraftStore.route(..., kinds=..., scopes=..., durabilities=...,
   mutabilities=...)` can now filter route candidates in native code while
   preserving the existing unfiltered ABI.
-- Native route-scan arena path:
+- Native MLA route-scan arena path:
   `ArenaCache.route()` now uses the native C++ route index when the native
   mirror is enabled and active MLA candidates have native route entries. The
   C++ lexical score matches Python's fractional identifier bonus, and the
   native index stores multiple route keys per node so digest/era
   child-centroid routing uses the same max-over-keys law as Python. Python
-  fallback remains for unsupported dialect score laws or incomplete native
-  coverage.
+  fallback remains for GQA/raw-key scoring laws or incomplete native coverage.
 - Native DeviceArena swap-plan boundary:
   `DeviceArena` now exposes the cache movement plan for replacing
   `[sink | old mounts | live tail]` with `[sink | new mounts | live tail]`,
@@ -496,17 +496,18 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   cohesive C++/CUDA runtime object.
 - C++ host route-scan acceleration exists for native-backed MLA arena routes,
   including child-centroid digest/era keys. CUDA/GPU route-scan acceleration is
-  not implemented.
+  not implemented, and Qwen3/GQA's raw `|q.k|` scoring law remains a Python
+  route path.
 - Python `GraftRepository` mirrors into `NativeGraftStore` only by opt-in;
   the C++ store owns mirrored payload lifecycle, tensor boundaries, tensor
   shapes/dtypes, payload byte reconstruction, host payload checkpointing, and
   lifecycle-aware route indexing with native kind/scope/durability/mutability
-  filters. Semantic metadata is persisted natively as JSON, and source/
-  supersession graph edges are now structured native state. Native can apply
-  the final revision state once Python decides the correction. The explicit
-  memory-command grammar now has a native parse-plan boundary, while conflict
-  policy, review execution, extractor policy, and final command execution live
-  behind the Python `GRMRuntime`/repository policy layer.
+  filters for MLA and GQA dialect ids. Semantic metadata is persisted natively
+  as JSON, and source/supersession graph edges are now structured native state.
+  Native can apply the final revision state once Python decides the correction.
+  The explicit memory-command grammar now has a native parse-plan boundary,
+  while conflict policy, review execution, extractor policy, and final command
+  execution live behind the Python `GRMRuntime`/repository policy layer.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. Current-head MiniCPM3 MLA
@@ -526,10 +527,11 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
 
 The Python RAM-first runtime, opt-in C++ host-store mirror, native host payload,
 metadata, graph-edge checkpointing, native revision application, native route
-index with active-state and kind/scope/durability/mutability filters plus multi-key arena-route
-acceleration, native explicit memory-command parser, native swap-plan boundary,
-native host tensor swap/evict references, TensorCUDA fused splice/evict cache
-movement, TensorCUDA fused RoPE re-seat movement, TensorCUDA fused
+index with active-state and kind/scope/durability/mutability filters for MLA
+and GQA dialect ids plus multi-key MLA arena-route acceleration, native explicit
+memory-command parser, native swap-plan boundary, native host tensor swap/evict
+references, TensorCUDA fused splice/evict cache movement, TensorCUDA fused RoPE
+re-seat movement, TensorCUDA fused
 cache-sliced raw/RoPE export primitives with paired and multi-layer paired
 export boundaries, TensorCUDA functional multi-layer arena cache transaction,
 and DeepSeek GRM clean build plus fresh-process resume paths are real and

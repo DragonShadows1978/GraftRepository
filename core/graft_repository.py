@@ -848,9 +848,6 @@ class GraftRepository:
         return int(sum(np.asarray(v).nbytes for v in payload.values()))
 
     def _open_native_store(self, lib_path):
-        if self.dialect_desc.payload_kind != "mla":
-            raise RuntimeError("native GRM host store currently exposes only "
-                               "the MLA C ABI")
         from core.grm_native import NativeGraftStore
         return NativeGraftStore(
             lib_path, model_type=self.dialect_desc.model_type,
@@ -858,8 +855,11 @@ class GraftRepository:
             hidden_dim=self.dialect_desc.hidden_dim,
             vals_per_tok_layer=self.dialect_desc.vals_per_tok_layer,
             route_layer=self.dialect_desc.route_layer,
+            payload_kind=self.dialect_desc.payload_kind,
             latent_rank=self.dialect_desc.latent_rank,
-            rope_dim=self.dialect_desc.rope_dim)
+            rope_dim=self.dialect_desc.rope_dim,
+            num_kv_heads=self.dialect_desc.num_kv_heads,
+            head_dim=self.dialect_desc.head_dim)
 
     def _native_payload_blob(self, payload):
         if payload is None:

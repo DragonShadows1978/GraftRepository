@@ -40,7 +40,8 @@ collapsed into one generic cache family.
 that native host store as reconstructable named tensors with shape/dtype
 metadata, checkpoints those native host payloads to NVMe through a binary C++
 store format, persists semantic metadata JSON through the same native
-checkpoint path, and mirrors native route keys into the C++ `RouterIndex`;
+checkpoint path, and supports native host-store creation for both MLA and GQA
+dialect descriptors. It mirrors native route keys into the C++ `RouterIndex`;
 native route entries carry active/inactive state through
 `grm_store_set_active()`, skip forgotten or superseded nodes during route
 lookup, preserve active state through native checkpoints, and carry
@@ -88,7 +89,9 @@ with the Python manifest while cold payloads remain cold.
 `ArenaCache.route()` now uses that native route index for native-backed MLA
 candidates, with the C++ lexical score calibrated to Python's fractional
 identifier bonus and multi-key route entries that support digest/era
-child-centroid routing with the same max-over-keys law as Python.
+child-centroid routing with the same max-over-keys law as Python. GQA native
+host-store mirroring is enabled, while Qwen3's raw `|q.k|` route scoring still
+falls back to Python until that scorer is moved native.
 `DeviceArena` now owns native host-reference swap and evict contracts for
 replacing `[sink | old mounts | live tail]` with
 `[sink | new mounts | live tail]` and dropping stale live spans while

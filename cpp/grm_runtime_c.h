@@ -66,6 +66,13 @@ grm_store_handle* grm_store_create_mla(const char* model_type,
                                        int route_layer,
                                        int latent_rank,
                                        int rope_dim);
+grm_store_handle* grm_store_create_gqa(const char* model_type,
+                                       int num_layers,
+                                       int hidden_dim,
+                                       int vals_per_tok_layer,
+                                       int route_layer,
+                                       int num_kv_heads,
+                                       int head_dim);
 void grm_store_destroy(grm_store_handle* handle);
 
 int grm_store_dialect_id(grm_store_handle* handle, char* out, size_t out_cap);

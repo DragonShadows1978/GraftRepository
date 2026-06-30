@@ -904,6 +904,36 @@ def test_native_store_mirrors_repository_lifecycle(tmp_path):
     reloaded.close()
 
 
+def test_repository_native_store_supports_gqa_dialect(tmp_path):
+    lib = build_native(tmp_path)
+    repo_path = tmp_path / "gqa_repo"
+    repo = GraftRepository(FakeGQAModel(), enc, dec, str(repo_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=0, native_lib_path=lib)
+
+    assert repo.native_store.dialect_id() == "FakeGQAModel:12x1536:g2x128"
+    idx = repo.add_document("DOC native GQA mirror 66-6600")
+    native_id = repo.arena.grafts[idx]["native_node_id"]
+    st = repo.stats()
+
+    assert st["native"]["nodes"] == 1
+    assert st["native"]["route_entries"] == 1
+    assert repo.native_store.payload_stats(native_id).tensor_count == 1
+    assert repo.native_route([1.0] * 512, lexical_keys=["66-6600"],
+                             topk=1) == [idx]
+
+    repo.flush_now()
+    repo.close()
+    reloaded = GraftRepository(FakeGQAModel(), enc, dec, str(repo_path),
+                               autosave=False, arena_cls=FakeArena,
+                               route_layer=0, native_lib_path=lib)
+    assert reloaded.native_store.dialect_id() == "FakeGQAModel:12x1536:g2x128"
+    assert reloaded.stats()["native"]["durable_nodes"] == 1
+    assert reloaded.native_route([1.0] * 512, lexical_keys=["66-6600"],
+                                 topk=1) == [idx]
+    reloaded.close()
+
+
 def test_repository_native_route_respects_memory_lifecycle(tmp_path):
     lib = build_native(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),

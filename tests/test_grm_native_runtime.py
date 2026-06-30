@@ -59,6 +59,27 @@ def test_native_store_lifecycle_via_ctypes(tmp_path):
         store.evict_device_copy(node_id)
 
 
+def test_native_store_gqa_dialect_via_ctypes(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="Qwen3_TC", num_layers=36,
+            hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
+            payload_kind="gqa", num_kv_heads=8, head_dim=128) as store:
+        assert store.dialect_id() == "Qwen3_TC:36x2560:g8x128"
+
+        node_id = store.add_structured_node(
+            "native GQA graft",
+            {"k": np.zeros((2, 8, 3, 128), np.float16),
+             "v": np.ones((2, 8, 3, 128), np.float16)},
+            ntok=3)
+        assert node_id == 0
+        assert store.payload_stats(node_id).tensor_count == 2
+        assert store.tensor_info(node_id, "k").shape == (2, 8, 3, 128)
+
+        store.set_route(node_id, [0.0, 1.0], ["qwen", "gqa"])
+        assert store.route([0.0, 0.9], ["gqa"], topk=1) == [node_id]
+
+
 def test_native_route_uses_python_fractional_lexical_bonus(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(
