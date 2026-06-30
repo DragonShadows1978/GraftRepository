@@ -1817,6 +1817,190 @@ class GraftRepository:
         self.recovered_reviews = self._apply_review_wal_records([], records)
         return [nodes[k] for k in sorted(nodes)]
 
+    def _wal_placeholder_graft(self, n, width):
+        meta = dict(n.get("metadata") or {})
+        retired = bool(n.get("retired", not bool(n.get("active", True))))
+        meta.setdefault("kind", n.get("kind", "turn"))
+        meta["active"] = not retired
+        sources = list(n.get("sources", meta.get("source_grafts", [])) or [])
+        tags = list(n.get("tags", meta.get("tags", [])) or [])
+        no_fold = bool(n.get("no_fold", meta.get("no_fold", False)))
+        if no_fold:
+            meta["no_fold"] = True
+        text = n.get("text", "")
+        return {
+            "kind": n.get("kind", "turn"),
+            "text": text,
+            "ntok": int(meta.get("ntok", 0) or 0),
+            "sources": sources,
+            "retired": retired,
+            "no_fold": no_fold,
+            "tags": tags,
+            "rare": ArenaCache._rare_tokens(text),
+            "cent": np.zeros(width, np.float32),
+            "metadata": meta,
+            "provenance": [self._provenance(
+                "wal_recovery", node_id=n.get("node_id"))],
+            "host_payload": None,
+            "host_present": False,
+            "device_present": False,
+            "dirty": False,
+            "durable": False,
+            "cold_only": False,
+            "payload_pending": bool(n.get("payload_pending", False)),
+            "recovered": True,
+            "h": None,
+        }
+
+    def _apply_wal_metadata_state(self, g, metadata, state):
+        metadata = dict(metadata or {})
+        g["metadata"] = metadata
+        if len(state) >= 1:
+            g["kind"] = state[0]
+            metadata.setdefault("kind", state[0])
+        if len(state) >= 2:
+            g["retired"] = bool(state[1])
+            metadata["active"] = not bool(state[1])
+        if len(state) >= 3:
+            g["no_fold"] = bool(state[2])
+            metadata["no_fold"] = bool(state[2])
+        if len(state) >= 4:
+            g["sources"] = list(state[3])
+            metadata.setdefault("source_grafts", list(state[3]))
+        if len(state) >= 5:
+            g["tags"] = list(state[4])
+            metadata.setdefault("tags", list(state[4]))
+
+    def _apply_manifest_wal_records(self, records, since_lsn):
+        width = self._wal_cent_width()
+        changed = set()
+
+        def meta_for(g):
+            meta = dict(g.get("metadata") or {})
+            g["metadata"] = meta
+            return meta
+
+        def ensure_node(node_id, rec=None):
+            node_id = int(node_id)
+            if node_id < len(self.arena.grafts):
+                return self.arena.grafts[node_id]
+            while len(self.arena.grafts) < node_id:
+                gap_id = len(self.arena.grafts)
+                gap = self._wal_placeholder_graft({
+                    "node_id": gap_id,
+                    "text": "",
+                    "kind": "recovered_gap",
+                    "metadata": {"active": False},
+                    "active": False,
+                    "payload_pending": False,
+                }, width)
+                gap["retired"] = True
+                self._ensure_lifecycle(gap_id, gap)
+                self.arena.grafts.append(gap)
+            payload_pending = bool((rec or {}).get("has_payload", False))
+            g = self._wal_placeholder_graft({
+                "node_id": node_id,
+                "text": (rec or {}).get("text", ""),
+                "kind": (rec or {}).get("kind", "turn"),
+                "metadata": dict((rec or {}).get("metadata", {}) or {}),
+                "payload_pending": payload_pending,
+            }, width)
+            self._ensure_lifecycle(node_id, g)
+            self.arena.grafts.append(g)
+            return g
+
+        def retire_node(node_id, superseded_by=None):
+            node_id = int(node_id)
+            if node_id < 0 or node_id >= len(self.arena.grafts):
+                return
+            g = self.arena.grafts[node_id]
+            meta = meta_for(g)
+            meta["active"] = False
+            if superseded_by is not None:
+                meta["superseded_by"] = [int(superseded_by)]
+            g["retired"] = True
+            changed.add(node_id)
+
+        def link_revision(replacement_id, supersedes):
+            replacement_id = int(replacement_id)
+            if replacement_id < 0 or replacement_id >= len(self.arena.grafts):
+                return
+            supersedes = [int(i) for i in (supersedes or [])]
+            repl = self.arena.grafts[replacement_id]
+            meta = meta_for(repl)
+            prior = [int(i) for i in meta.get("supersedes", [])]
+            meta["supersedes"] = list(dict.fromkeys(prior + supersedes))
+            meta["active"] = True
+            repl["retired"] = False
+            changed.add(replacement_id)
+            for old in supersedes:
+                retire_node(old, superseded_by=replacement_id)
+
+        def expire_nodes(node_ids, expired_by="", expired_at=None):
+            for node_id in node_ids or ():
+                node_id = int(node_id)
+                if node_id < 0 or node_id >= len(self.arena.grafts):
+                    continue
+                g = self.arena.grafts[node_id]
+                meta = meta_for(g)
+                meta["active"] = False
+                if expired_at:
+                    meta["expired_at"] = expired_at
+                if expired_by:
+                    meta["expired_by"] = expired_by
+                g["retired"] = True
+                changed.add(node_id)
+
+        for rec in records:
+            if int(rec.get("lsn", 0)) <= int(since_lsn):
+                continue
+            typ = rec.get("type")
+            if typ == "NODE_UPSERT":
+                node_id = int(rec["node_id"])
+                g = ensure_node(node_id, rec)
+                metadata = dict(rec.get("metadata", {}) or {})
+                active = bool(metadata.get("active", True))
+                g["text"] = rec.get("text", g.get("text", ""))
+                g["kind"] = rec.get("kind", g.get("kind", "turn"))
+                g["metadata"] = metadata
+                g["retired"] = not active
+                g["payload_pending"] = bool(
+                    rec.get("has_payload", g.get("payload_pending", False)))
+                g["recovered"] = True
+                g["rare"] = ArenaCache._rare_tokens(g.get("text", ""))
+                changed.add(node_id)
+            elif typ == "NODE_META":
+                node_id = int(rec.get("node_id", -1))
+                if 0 <= node_id < len(self.arena.grafts):
+                    self._apply_wal_metadata_state(
+                        self.arena.grafts[node_id],
+                        rec.get("metadata", {}),
+                        rec.get("state") or ())
+                    changed.add(node_id)
+            elif typ == "NODE_FORGET":
+                if "node_id" in rec:
+                    retire_node(rec["node_id"])
+                    continue
+                q = rec.get("query", "").lower()
+                for i, g in enumerate(self.arena.grafts):
+                    if q and q in g.get("text", "").lower():
+                        retire_node(i)
+            elif typ in ("MEMORY_CORRECT", "MEMORY_EXTRACT_SUPERSEDE"):
+                if "node_id" in rec:
+                    link_revision(rec["node_id"], rec.get("supersedes", ()))
+            elif typ == "MEMORY_EXTRACT_EXPIRE":
+                expire_nodes(rec.get("expired", ()),
+                             expired_by=rec.get("text", ""),
+                             expired_at=rec.get("expired_at"))
+
+        for node_id in sorted(changed):
+            if 0 <= node_id < len(self.arena.grafts):
+                self._ensure_lifecycle(node_id, self.arena.grafts[node_id])
+        if changed:
+            self._rebuild_child_keys()
+            self._free_retired()
+        return tuple(sorted(changed))
+
     def _wal_cent_width(self):
         """Routing-centroid width for placeholder cents on recovered nodes.
 
@@ -1846,38 +2030,7 @@ class GraftRepository:
             return 0
         width = self._wal_cent_width()
         for n in recovered:
-            meta = dict(n.get("metadata") or {})
-            retired = bool(n.get("retired", not bool(n.get("active", True))))
-            meta.setdefault("kind", n.get("kind", "turn"))
-            meta["active"] = not retired
-            sources = list(n.get("sources", meta.get("source_grafts", [])) or [])
-            tags = list(n.get("tags", meta.get("tags", [])) or [])
-            no_fold = bool(n.get("no_fold", meta.get("no_fold", False)))
-            if no_fold:
-                meta["no_fold"] = True
-            g = {
-                "kind": n.get("kind", "turn"),
-                "text": n.get("text", ""),
-                "ntok": int(meta.get("ntok", 0) or 0),
-                "sources": sources,
-                "retired": retired,
-                "no_fold": no_fold,
-                "tags": tags,
-                "rare": set(),
-                "cent": np.zeros(width, np.float32),
-                "metadata": meta,
-                "provenance": [self._provenance(
-                    "wal_recovery", node_id=n.get("node_id"))],
-                "host_payload": None,
-                "host_present": False,
-                "device_present": False,
-                "dirty": False,
-                "durable": False,
-                "cold_only": False,
-                "payload_pending": bool(n.get("payload_pending", False)),
-                "recovered": True,
-                "h": None,
-            }
+            g = self._wal_placeholder_graft(n, width)
             self._ensure_lifecycle(len(self.arena.grafts), g)
             self.arena.grafts.append(g)
         self.review_buffer = list(getattr(self, "recovered_reviews", []))
@@ -2151,9 +2304,12 @@ class GraftRepository:
             self._ensure_lifecycle(i, g)
             self.arena.grafts.append(g)
         self._rebuild_child_keys()
-        self._wal_lsn = max(int(man.get("wal_lsn", 0)), self._wal_lsn)
+        manifest_wal_lsn = int(man.get("wal_lsn", 0))
+        self._wal_lsn = max(manifest_wal_lsn, self._wal_lsn)
         self.recovered_wal = self._read_wal()
         self.recovered_nodes = self._recover_wal_summary(self.recovered_wal)
+        self.replayed_wal_nodes = self._apply_manifest_wal_records(
+            self.recovered_wal, manifest_wal_lsn)
         self.review_buffer = self._apply_review_wal_records(
             man.get("review_buffer", []), self.recovered_wal)
         self.dirty_nodes.clear()
@@ -2162,6 +2318,11 @@ class GraftRepository:
             for i, g in enumerate(self.arena.grafts):
                 g["native_node_id"] = int(i)
                 self._native_node_ids[int(i)] = int(i)
+        if native_loaded:
+            for i in getattr(self, "replayed_wal_nodes", ()):
+                g = self.arena.grafts[int(i)]
+                self._native_sync_node(
+                    int(i), payload_required=g.get("host_payload") is not None)
         if not native_loaded:
             self._sync_native_full()
         self._page()
@@ -2235,6 +2396,8 @@ class GraftRepository:
                                  if g.get("cold_only")),
                "recovered_wal_records": len(getattr(self, "recovered_wal", [])),
                "recovered_nodes": len(getattr(self, "recovered_nodes", [])),
+               "replayed_wal_nodes": len(getattr(
+                   self, "replayed_wal_nodes", ())),
                "page_ins": getattr(self.arena, "page_ins", 0),
                "folds_aborted": getattr(self, "folds_aborted", 0),
                "no_fold": sum(1 for g in self.arena.grafts

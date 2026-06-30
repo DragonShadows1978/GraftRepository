@@ -1358,6 +1358,85 @@ def test_wal_recovery_preserves_fold_abort_exemption(tmp_path):
     assert reopened.arena.grafts[idx]["metadata"]["no_fold"] is True
 
 
+def test_manifest_load_replays_post_checkpoint_forget(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+    keep = repo.add_document("DOC keep checkpoint code 41-4100")
+    drop = repo.add_document("DOC drop checkpoint code 42-4200")
+    repo.flush_now()
+    assert repo.forget("drop checkpoint") == 1
+
+    with open(os.path.join(path, "manifest.json")) as fh:
+        man = json.load(fh)
+    assert man["nodes"][drop]["metadata"]["active"] is True
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+
+    assert reopened.replayed_wal_nodes == (drop,)
+    assert reopened.stats()["replayed_wal_nodes"] == 1
+    assert reopened.arena.grafts[keep]["metadata"]["active"] is True
+    assert reopened.arena.grafts[drop]["retired"] is True
+    assert reopened.arena.grafts[drop]["metadata"]["active"] is False
+    assert reopened.show_memory_about("42-4200") == []
+    assert len(reopened.show_memory_about("41-4100")) == 1
+
+
+def test_manifest_load_replays_post_checkpoint_correction(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+    old = repo.remember("GRM recovery target is OLD-100.",
+                        kind="fact", scope="project")
+    repo.flush_now()
+    new = repo.correct_memory(
+        "OLD-100", "GRM recovery target is NEW-200.")
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+
+    assert reopened.replayed_wal_nodes == (old, new)
+    old_g = reopened.arena.grafts[old]
+    new_g = reopened.arena.grafts[new]
+    assert old_g["retired"] is True
+    assert old_g["metadata"]["active"] is False
+    assert old_g["metadata"]["superseded_by"] == [new]
+    assert new_g["metadata"]["active"] is True
+    assert new_g["metadata"]["supersedes"] == [old]
+    assert new_g["payload_pending"] is True
+    assert new_g["host_payload"] is None
+    assert new_g["durable"] is False
+    assert reopened.show_memory_about("OLD-100") == []
+    assert len(reopened.show_memory_about("NEW-200")) == 1
+
+
+def test_native_manifest_load_replays_wal_into_route_state(tmp_path):
+    lib = build_native(tmp_path)
+    path = str(tmp_path / "repo")
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3,
+                           native_lib_path=lib)
+    idx = repo.add_document("DOC native post-checkpoint drop 66-6601")
+    repo.flush_now()
+    assert idx in repo.native_route([1.0] * 512,
+                                    lexical_keys=["66-6601"], topk=2)
+    assert repo.forget("66-6601") == 1
+    repo.close()
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3,
+                               native_lib_path=lib)
+
+    assert reopened.replayed_wal_nodes == (idx,)
+    assert reopened.arena.grafts[idx]["metadata"]["active"] is False
+    assert idx not in reopened.native_route([1.0] * 512,
+                                            lexical_keys=["66-6601"], topk=2)
+    assert reopened.native_store.dirty_node_ids() == (
+        reopened.arena.grafts[idx]["native_node_id"],)
+    reopened.close()
+
+
 def test_native_store_mirrors_repository_lifecycle(tmp_path):
     lib = build_native(tmp_path)
     repo_path = tmp_path / "repo"
