@@ -69,6 +69,11 @@ command grammar into a JSON operation plan, and native-backed
 `GraftRepository.apply_memory_command()` consumes that plan before applying
 Python policy. This moves the command grammar boundary native while leaving
 conflict/review/extraction decisions in Python until those policies harden.
+`GRMRuntime.apply_memory_command()` now finishes every explicit command through
+the runtime durability path: autosave-enabled repositories publish remember,
+forget, correct, review-fallback, and ignore decisions through `flush_now()`,
+while `flush memory now` and `flush_immediately` plans still force a flush even
+when autosave is disabled.
 `GraftRepository.apply_extraction_candidate(s)` now provides the no-GPU
 extractor interface: classifier-style candidates can be written directly,
 queued for review, ignored, or used to supersede active semantic memory under a

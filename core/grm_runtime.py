@@ -110,6 +110,23 @@ class GRMRuntime:
         )
         return done
 
+    def _finish_memory_event(self, before, action, *, force_flush=False):
+        repo = self.repository
+        did_flush = False
+        if force_flush or repo.autosave:
+            repo.flush_now()
+            did_flush = True
+        paged = repo._page()
+        self.last_result = RuntimeResult(
+            event="memory_command",
+            before_nodes=len(before),
+            after_nodes=len(repo.arena.grafts),
+            new_nodes=self._new_nodes(before),
+            autosaved=did_flush,
+            paged=int(paged or 0),
+            action=action,
+        )
+
     def apply_memory_command(self, text):
         repo = self.repository
         before = repo._snapshot_state()
@@ -120,36 +137,18 @@ class GRMRuntime:
                                          "scope", "kind")
                     if plan.get(k)}
             idx = repo.remember(plan.get("body", ""), **opts)
-            did_flush = False
-            if plan.get("flush_immediately"):
-                repo.flush_now()
-                did_flush = True
-            self.last_result = RuntimeResult(
-                event="memory_command",
-                before_nodes=len(before),
-                after_nodes=len(repo.arena.grafts),
-                new_nodes=self._new_nodes(before),
-                autosaved=did_flush,
-                action="remember",
-            )
+            self._finish_memory_event(
+                before, "remember",
+                force_flush=bool(plan.get("flush_immediately")))
             return {"action": "remember", "node_id": idx}
         if action == "forget":
             count = repo.forget(plan.get("query", ""))
-            self.last_result = RuntimeResult(
-                event="memory_command",
-                before_nodes=len(before),
-                after_nodes=len(repo.arena.grafts),
-                action="forget")
+            self._finish_memory_event(before, "forget")
             return {"action": "forget", "count": count}
         if action == "correct":
             idx = repo.correct_memory(
                 plan.get("query", ""), plan.get("replacement", ""))
-            self.last_result = RuntimeResult(
-                event="memory_command",
-                before_nodes=len(before),
-                after_nodes=len(repo.arena.grafts),
-                new_nodes=self._new_nodes(before),
-                action="correct")
+            self._finish_memory_event(before, "correct")
             return {"action": "correct", "node_id": idx}
         if action == "review":
             repo.review_candidate(
@@ -157,28 +156,14 @@ class GRMRuntime:
                 action="review_candidate",
                 reason=plan.get("reason",
                                 "correction missing => separator"))
-            self.last_result = RuntimeResult(
-                event="memory_command",
-                before_nodes=len(before),
-                after_nodes=len(repo.arena.grafts),
-                action="review")
+            self._finish_memory_event(before, "review")
             return {"action": "review", "count": len(repo.review_buffer)}
         if action == "ignore":
             repo._append_wal("DO_NOT_REMEMBER", text=text)
-            self.last_result = RuntimeResult(
-                event="memory_command",
-                before_nodes=len(before),
-                after_nodes=len(repo.arena.grafts),
-                action="ignore")
+            self._finish_memory_event(before, "ignore")
             return {"action": "ignore"}
         if action == "flush":
-            repo.flush_now()
-            self.last_result = RuntimeResult(
-                event="memory_command",
-                before_nodes=len(before),
-                after_nodes=len(repo.arena.grafts),
-                autosaved=True,
-                action="flush")
+            self._finish_memory_event(before, "flush", force_flush=True)
             return {"action": "flush"}
         raise ValueError(f"unknown memory command: {text!r}")
 

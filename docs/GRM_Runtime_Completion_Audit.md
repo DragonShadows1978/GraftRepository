@@ -45,7 +45,11 @@ validation where feasible.
   nodes carry durability, mutability, scope, write intent, confidence,
   active state, supersession fields, source grafts, and provenance.
 - Explicit memory commands:
-  `remember`, `forget`, `correct/update`, and `flush memory now` are supported.
+  `remember`, `forget`, `correct/update`, review fallback, ignore, and
+  `flush memory now` are supported. `GRMRuntime.apply_memory_command()` now
+  runs all explicit commands through the runtime finish path, so autosave
+  publishes command mutations durably while `flush_immediately` and explicit
+  flush commands force durability even when autosave is disabled.
 - Review buffer:
   uncertain candidates can be recorded and later approved into memory.
 - Conservative extractor candidate interface and runtime hook:
@@ -136,7 +140,8 @@ validation where feasible.
   command grammar (`remember`, `forget`, `correct/update`, review fallback,
   ignore, flush) into a JSON operation plan. `NativeGraftStore` exposes that
   parser and native-backed `GraftRepository.apply_memory_command()` consumes it
-  before applying the Python memory policy.
+  before applying the Python memory policy. Command execution then completes
+  through `GRMRuntime`, including autosave/forced-flush durability semantics.
 - Review-buffer execution:
   uncertain extraction or malformed correction candidates can now be approved,
   rejected, edited, or scope-changed through repository APIs backed by the
@@ -521,9 +526,9 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   filters for MLA and GQA dialect ids. Semantic metadata is persisted natively
   as JSON, and source/supersession graph edges are now structured native state.
   Native can apply the final revision state once Python decides the correction.
-  The explicit memory-command grammar now has a native parse-plan boundary,
-  while conflict policy, extractor policy, and final command execution live
-  behind the Python `GRMRuntime`/repository policy layer.
+  The explicit memory-command grammar now has a native parse-plan boundary, and
+  command execution completes behind `GRMRuntime`; conflict and extractor
+  policy still live in the Python repository policy layer.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. Current-head MiniCPM3 MLA

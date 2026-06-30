@@ -316,6 +316,57 @@ def test_memory_commands_revision_and_review(tmp_path):
     assert why[0]["write_intent"] == "user_asserted"
 
 
+def test_memory_commands_autosave_all_mutations(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=True,
+                           arena_cls=FakeArena, route_layer=3)
+
+    remembered = repo.apply_memory_command(
+        "remember this for the project: Runtime command autosave target 71-7171")
+    assert remembered["action"] == "remember"
+    assert repo.runtime.last_result.action == "remember"
+    assert repo.runtime.last_result.autosaved is True
+    assert repo.stats()["dirty_nodes"] == 0
+
+    corrected = repo.apply_memory_command(
+        "correct memory: command autosave target => Runtime command autosave replacement 72-7272")
+    assert corrected["action"] == "correct"
+    assert repo.runtime.last_result.action == "correct"
+    assert repo.runtime.last_result.autosaved is True
+    assert repo.runtime.last_result.new_nodes == (corrected["node_id"],)
+    assert repo.stats()["dirty_nodes"] == 0
+
+    review = repo.apply_memory_command(
+        "update memory: runtime fallback missing separator")
+    assert review["action"] == "review"
+    assert repo.runtime.last_result.action == "review"
+    assert repo.runtime.last_result.autosaved is True
+
+    ignored = repo.apply_memory_command("do not remember this transient note")
+    assert ignored["action"] == "ignore"
+    assert repo.runtime.last_result.action == "ignore"
+    assert repo.runtime.last_result.autosaved is True
+
+    forgotten = repo.apply_memory_command("forget: replacement 72-7272")
+    assert forgotten == {"action": "forget", "count": 1}
+    assert repo.runtime.last_result.action == "forget"
+    assert repo.runtime.last_result.autosaved is True
+    assert repo.stats()["dirty_nodes"] == 0
+
+    with open(os.path.join(path, "manifest.json")) as fh:
+        man = json.load(fh)
+    assert man["nodes"][remembered["node_id"]]["retired"] is True
+    assert man["nodes"][corrected["node_id"]]["retired"] is True
+    assert man["review_buffer"][-1]["reason"] == (
+        "correction missing => separator")
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+    assert reopened.show_memory_about("71-7171") == []
+    assert reopened.show_memory_about("72-7272") == []
+    assert reopened.review_buffer[-1]["status"] == "pending"
+
+
 def test_runtime_coordinator_drives_chat_flush_and_extraction(tmp_path):
     class Extractor:
         def extract(self, text, **ctx):
