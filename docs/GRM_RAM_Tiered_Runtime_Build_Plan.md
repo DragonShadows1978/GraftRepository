@@ -124,10 +124,16 @@ era nodes. The extractive era path avoids the prior DeepSeek digest-to-era OOM
 by preserving child digest facts verbatim as an index node, then relying on the
 existing era-descent reader path. Fresh-process ASTRA recall passes, and a
 folded-source turn-5 probe recalls `M05-0685` through the folded memory path.
-The missing production pieces are still a cohesive GRM runtime boundary that
-owns model-specific extraction quality/policy, CUDA route scanning if needed,
-longer high-context needle runs, and the broader model-specific graft
-equivalence matrix.
+Current-head cross-architecture gates now also pass outside DeepSeek:
+MiniCPM3-4B INT4 MLA completed the 42-turn infinite-context gate at 8/8 probes
+with max resident 341 seats, 40MB active device memory, and 91MB RAM payload;
+Qwen3-4B BF16 GQA completed the 42-turn descent gate at 8/8 probes with max
+resident 429 seats, 266MB active device memory, 435MB RAM payload, and 13 RAM
+page-ins. The missing production pieces are still a cohesive GRM runtime
+boundary that owns model-specific extraction quality/policy, CUDA route
+scanning if needed, longer high-context needle runs, and a broader
+model-specific graft equivalence matrix beyond DeepSeek, MiniCPM3 MLA, and
+Qwen3 GQA.
 
 `tests/deepseek_grm_turn50_gate.py` now validates the original GRM ephemeral
 boat on DeepSeek-V2-Lite INT4: 50 stored turn grafts, live context cleared

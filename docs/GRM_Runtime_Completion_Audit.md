@@ -451,6 +451,26 @@ stats: nodes=64 kinds={'turn': 10, 'retired turn': 40, 'retired digest': 6, 'era
 DEEPSEEK TURN50 RESUME GATE: PASS
 ```
 
+Latest cross-architecture GRM gates on current `grm-ram-tiered-runtime` HEAD:
+
+```text
+MiniCPM3 MLA infinite-context gate
+loaded: {'loaded': 'INT4 MLA', 'framework': 'tensor_cuda MiniCPM3-4B'}
+42 turns deposited and consolidated in 52s
+probes: 8/8 HIT
+final: INFINITE: 8/8 | max resident 341 seats | repo 70.3MB |
+  nodes=58 active_device=26 device_mb=40 ram_payload_mb=91
+  folds_aborted=2 no_fold=7
+
+Qwen3-4B GQA descent gate
+loaded: {'loaded': 'bf16', 'framework': 'tensor_cuda bf16 (unquantized, Qwen3-4B)'}
+42 turns deposited and consolidated in 513s
+probes: 8/8 HIT
+final: GQA-DESCENT: 8/8 | max resident 429 |
+  nodes=61 active_device=32 device_mb=266 ram_payload_mb=435 page_ins=13
+  folds_aborted=0 no_fold=0
+```
+
 ## Not Complete
 
 - C++ `DeviceArena` owns the host-reference byte movement for contiguous tensor
@@ -475,9 +495,9 @@ DEEPSEEK TURN50 RESUME GATE: PASS
   execution live in the Python policy layer.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
-  paging/open-ended greedy recall build/resume gates. The longer high-context
-  needle suite and broader model-specific graft equivalence matrix still need
-  separate scheduled runs.
+  paging/open-ended greedy recall build/resume gates. Current-head MiniCPM3 MLA
+  and Qwen3 GQA 42-turn gates also pass, narrowing the matrix gap to longer
+  high-context needles and additional model families.
 - Retaining the previous read-only probe cache between independent DeepSeek
   probes (`--keep-probe-cache`) now passes for the full DeepSeek-V2-Lite INT4
   gate on the 12GB card. Longer high-context runs may still hit separate memory
@@ -504,7 +524,8 @@ INT4, including retained-probe-cache stress and raw turn-50 ephemeral-boat
 recall. Folding-enabled DeepSeek turn-50 now validates two-level compression:
 40 turns retire under 10 digest nodes, six digests retire under two extractive
 era nodes, fresh-process ASTRA recall still passes, and a retired turn-5 fact
-is recalled through folded memory. The full production C++/CUDA runtime is not
+is recalled through folded memory. Fresh current-head cross-architecture gates
+also pass on MiniCPM3 MLA and Qwen3 GQA. The full production C++/CUDA runtime is not
 complete until routing policy boundaries, final command/extraction orchestration
 ownership, model-specific extraction policy hardening, longer
 needle/high-context runs, CUDA route scanning if needed, and the broader
