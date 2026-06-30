@@ -64,6 +64,14 @@ validation where feasible.
   mutation marking, flush, and paging. `GraftRepository` remains the public API
   and persistence owner, but the hot-path orchestration is no longer spread
   across public methods.
+- Graftability/remountability dialect metadata:
+  `DialectDescriptor` now persists the model's positional cache law and graft
+  semantics: `position_law`, `state_kind`, `graftability`, `remountable`, and
+  `composition`. MLA records `rope_partial_mla` with seat-remountable
+  latent+RoPE payloads; plain GQA records `rope_full_kv`; learned absolute
+  position records `same_position_restore`; Qwen3.5-style recurrent hybrids
+  record `prefix_restore_only`; and Gemma-style sliding/global KV records
+  window-limited remountability.
 - C++ host runtime scaffold:
   `cpp/` contains `DialectDescriptor`, `HostGraftStore`, `RouterIndex`,
   `DirtyQueue`, `DurabilityWriter`, swap/evict-planning `DeviceArena`, and
@@ -533,7 +541,9 @@ era nodes, fresh-process ASTRA recall still passes, and a retired turn-5 fact
 is recalled through folded memory. Fresh current-head cross-architecture gates
 also pass on MiniCPM3 MLA and Qwen3 GQA. `GRMRuntime` now packages the Python
 hot-path orchestration boundary and is covered by lifecycle tests plus a live
-DeepSeek smoke gate. The full production C++/CUDA runtime is not complete until
+DeepSeek smoke gate. Dialect manifests now distinguish RoPE-remountable caches,
+absolute-position prefix restore, recurrent hybrid prefix state, and
+window-limited KV. The full production C++/CUDA runtime is not complete until
 remaining routing/revision policy ownership moves as needed, model-specific
 extraction policy hardens, longer needle/high-context runs finish, CUDA route
 scanning is implemented if needed, and the broader model-specific graft

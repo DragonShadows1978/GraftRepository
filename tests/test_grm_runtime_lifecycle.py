@@ -24,6 +24,54 @@ class FakeModel:
         self.layers = [object() for _ in range(self.config.num_layers)]
 
 
+class FakeGQAConfig:
+    num_layers = 12
+    hidden_dim = 1536
+    num_kv_heads = 2
+    head_dim = 128
+
+
+class FakeGQAModel:
+    config = FakeGQAConfig()
+
+    def __init__(self):
+        self.layers = [object() for _ in range(self.config.num_layers)]
+
+
+class FakeAbsoluteConfig(FakeGQAConfig):
+    position_embedding_type = "learned_absolute"
+
+
+class FakeAbsoluteModel(FakeGQAModel):
+    config = FakeAbsoluteConfig()
+
+
+class FakeHybridConfig(FakeGQAConfig):
+    num_layers = 32
+    hidden_dim = 4096
+    num_kv_heads = 4
+    head_dim = 256
+    full_attention_interval = 4
+    conv_kernel = 4
+
+
+class FakeHybridModel(FakeGQAModel):
+    config = FakeHybridConfig()
+
+
+class FakeGemmaStyleConfig(FakeGQAConfig):
+    num_layers = 48
+    hidden_dim = 3840
+    num_kv_heads = 8
+    head_dim = 256
+    sliding_window = 1024
+    num_global_kv_heads = 1
+
+
+class FakeGemmaStyleModel(FakeGQAModel):
+    config = FakeGemmaStyleConfig()
+
+
 class FakeArena:
     PAYLOAD = (("c", 1), ("kpe", 2))
     VALS_PER_TOK_LAYER = 576
@@ -97,6 +145,67 @@ def test_dialect_descriptor_uses_deepseek_mla_dimensions(tmp_path):
     assert repo.dialect_desc.rope_dim == 64
     assert repo.dialect_desc.vals_per_tok_layer == 576
     assert repo.dialect_desc.route_layer == 3
+    assert repo.dialect_desc.position_law == "rope_partial_mla"
+    assert repo.dialect_desc.state_kind == "mla_latent_plus_rope"
+    assert repo.dialect_desc.graftability == "seat_remountable"
+    assert repo.dialect_desc.remountable is True
+    assert repo.dialect_desc.composition == "multi_mount"
+
+
+def test_dialect_descriptor_records_graftability_profiles(tmp_path):
+    gqa = GraftRepository(FakeGQAModel(), enc, dec, str(tmp_path / "gqa"),
+                          autosave=False, arena_cls=FakeArena,
+                          route_layer=0)
+    assert gqa.dialect == "FakeGQAModel:12x1536:g2x128"
+    assert gqa.dialect_desc.payload_kind == "gqa"
+    assert gqa.dialect_desc.position_law == "rope_full_kv"
+    assert gqa.dialect_desc.graftability == "seat_remountable"
+    assert gqa.dialect_desc.remountable is True
+
+    absolute = GraftRepository(
+        FakeAbsoluteModel(), enc, dec, str(tmp_path / "absolute"),
+        autosave=False, arena_cls=FakeArena, route_layer=0)
+    assert absolute.dialect_desc.position_law == "learned_absolute"
+    assert absolute.dialect_desc.graftability == "same_position_restore"
+    assert absolute.dialect_desc.remountable is False
+    assert absolute.dialect_desc.composition == "prefix_restore_only"
+
+    hybrid = GraftRepository(
+        FakeHybridModel(), enc, dec, str(tmp_path / "hybrid"),
+        autosave=False, arena_cls=FakeArena, route_layer=0)
+    assert hybrid.dialect_desc.position_law == (
+        "rope_attention_plus_recurrent_state")
+    assert hybrid.dialect_desc.state_kind == "hybrid_kv_recurrent"
+    assert hybrid.dialect_desc.graftability == "prefix_restore_only"
+    assert hybrid.dialect_desc.remountable is False
+    assert hybrid.dialect_desc.composition == "single_prefix_state"
+
+    gemma = GraftRepository(
+        FakeGemmaStyleModel(), enc, dec, str(tmp_path / "gemma"),
+        autosave=False, arena_cls=FakeArena, route_layer=0)
+    assert gemma.dialect_desc.position_law == "rope_mixed_sliding_global"
+    assert gemma.dialect_desc.state_kind == "mixed_window_kv"
+    assert gemma.dialect_desc.graftability == "window_limited_remountable"
+    assert gemma.dialect_desc.remountable is True
+    assert gemma.dialect_desc.composition == "bounded_window_multi_mount"
+
+
+def test_dialect_descriptor_accepts_arena_graftability_override(tmp_path):
+    class PrefixOnlyArena(FakeArena):
+        POSITION_LAW = "external_absolute"
+        STATE_KIND = "kv"
+        GRAFTABILITY = "same_position_restore"
+        REMOUNTABLE = "false"
+        COMPOSITION = "single_prefix_state"
+
+    repo = GraftRepository(FakeGQAModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=PrefixOnlyArena,
+                           route_layer=0)
+
+    assert repo.dialect_desc.position_law == "external_absolute"
+    assert repo.dialect_desc.graftability == "same_position_restore"
+    assert repo.dialect_desc.remountable is False
+    assert repo.dialect_desc.composition == "single_prefix_state"
 
 
 def test_dirty_flush_and_reload_lifecycle(tmp_path):
@@ -133,6 +242,9 @@ def test_dirty_flush_and_reload_lifecycle(tmp_path):
 
     assert man["dialect"] == "FakeModel:27x2048:r512"
     assert man["dialect_descriptor"]["latent_rank"] == 512
+    assert man["dialect_descriptor"]["position_law"] == "rope_partial_mla"
+    assert man["dialect_descriptor"]["graftability"] == "seat_remountable"
+    assert man["dialect_descriptor"]["remountable"] is True
     assert man["nodes"][0]["host_present"] is True
     assert man["nodes"][0]["durable"] is True
     assert man["nodes"][0]["dirty"] is False

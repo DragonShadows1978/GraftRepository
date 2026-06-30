@@ -31,6 +31,11 @@ review buffer APIs, and provenance persistence. `cpp/` now contains a
 compilable host-runtime scaffold with `HostGraftStore`, `RouterIndex`,
 `DirtyQueue`, `DurabilityWriter`, a swap/evict-planning `DeviceArena`, and a
 dependency-free C ABI exposed to Python through `core/grm_native.py`.
+The descriptor also persists graftability metadata (`position_law`,
+`state_kind`, `graftability`, `remountable`, `composition`) so RoPE
+seat-remountable MLA/GQA caches, learned-absolute same-position restores,
+recurrent hybrid prefix states, and sliding/global window-limited KV are not
+collapsed into one generic cache family.
 `GraftRepository(..., native_lib_path=...)` now mirrors payload lifecycle into
 that native host store as reconstructable named tensors with shape/dtype
 metadata, checkpoints those native host payloads to NVMe through a binary C++

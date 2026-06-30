@@ -57,25 +57,107 @@ class DialectDescriptor:
     rope_dim: int = 0
     num_kv_heads: int = 0
     head_dim: int = 0
+    position_law: str = "rope"
+    state_kind: str = "kv"
+    graftability: str = "seat_remountable"
+    remountable: bool = True
+    composition: str = "multi_mount"
 
     @classmethod
     def from_model(cls, model, arena):
         cfg = model.config
         route_layer = int(getattr(arena, "route_layer", 0))
+        profile = cls._infer_graftability_profile(cfg, arena)
         if hasattr(cfg, "kv_lora_rank"):
             latent_rank = int(cfg.kv_lora_rank)
             rope_dim = int(getattr(cfg, "qk_rope_head_dim", 0))
             vals = latent_rank + rope_dim
             return cls(type(model).__name__, int(cfg.num_layers),
                        int(cfg.hidden_dim), "mla", vals, route_layer,
-                       latent_rank=latent_rank, rope_dim=rope_dim)
+                       latent_rank=latent_rank, rope_dim=rope_dim,
+                       **profile)
         num_kv_heads = int(getattr(cfg, "num_kv_heads", 0))
         head_dim = int(getattr(cfg, "head_dim", 0))
         vals = int(getattr(arena, "VALS_PER_TOK_LAYER",
                            num_kv_heads * head_dim * 2))
         return cls(type(model).__name__, int(cfg.num_layers),
                    int(cfg.hidden_dim), "gqa", vals, route_layer,
-                   num_kv_heads=num_kv_heads, head_dim=head_dim)
+                   num_kv_heads=num_kv_heads, head_dim=head_dim,
+                   **profile)
+
+    @classmethod
+    def _infer_graftability_profile(cls, cfg, arena):
+        explicit = {
+            "position_law": getattr(arena, "POSITION_LAW", None),
+            "state_kind": getattr(arena, "STATE_KIND", None),
+            "graftability": getattr(arena, "GRAFTABILITY", None),
+            "remountable": getattr(arena, "REMOUNTABLE", None),
+            "composition": getattr(arena, "COMPOSITION", None),
+        }
+        if any(v is not None for v in explicit.values()):
+            base = cls._default_profile(cfg)
+            for k, v in explicit.items():
+                if v is not None:
+                    base[k] = cls._as_bool(v) if k == "remountable" else str(v)
+            return base
+        return cls._default_profile(cfg)
+
+    @staticmethod
+    def _as_bool(value):
+        if isinstance(value, str):
+            return value.strip().lower() in ("1", "true", "yes", "on")
+        return bool(value)
+
+    @staticmethod
+    def _default_profile(cfg):
+        if str(getattr(cfg, "position_embedding_type", "")).lower() in (
+                "absolute", "learned_absolute"):
+            return {
+                "position_law": "learned_absolute",
+                "state_kind": "kv",
+                "graftability": "same_position_restore",
+                "remountable": False,
+                "composition": "prefix_restore_only",
+            }
+        if getattr(cfg, "alibi", False) or getattr(cfg, "use_alibi", False):
+            return {
+                "position_law": "relative_bias",
+                "state_kind": "kv",
+                "graftability": "bias_recomputed_remountable",
+                "remountable": True,
+                "composition": "multi_mount",
+            }
+        if hasattr(cfg, "full_attention_interval") and hasattr(cfg, "conv_kernel"):
+            return {
+                "position_law": "rope_attention_plus_recurrent_state",
+                "state_kind": "hybrid_kv_recurrent",
+                "graftability": "prefix_restore_only",
+                "remountable": False,
+                "composition": "single_prefix_state",
+            }
+        if hasattr(cfg, "sliding_window") and hasattr(cfg, "num_global_kv_heads"):
+            return {
+                "position_law": "rope_mixed_sliding_global",
+                "state_kind": "mixed_window_kv",
+                "graftability": "window_limited_remountable",
+                "remountable": True,
+                "composition": "bounded_window_multi_mount",
+            }
+        if hasattr(cfg, "kv_lora_rank"):
+            return {
+                "position_law": "rope_partial_mla",
+                "state_kind": "mla_latent_plus_rope",
+                "graftability": "seat_remountable",
+                "remountable": True,
+                "composition": "multi_mount",
+            }
+        return {
+            "position_law": "rope_full_kv",
+            "state_kind": "kv",
+            "graftability": "seat_remountable",
+            "remountable": True,
+            "composition": "multi_mount",
+        }
 
     @property
     def dialect_id(self):
