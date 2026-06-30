@@ -83,6 +83,9 @@ validation where feasible.
   window-limited remountability. The remount boundary is RoPE: pre-RoPE
   captures can be re-RoPE'd at injection seats, while fixed absolute-position
   captures require same-position restore or a model-specific re-encoding path.
+  Native `GRMSTORE7` checkpoints now persist and enforce the same profile, so
+  same-shape stores with different positional/remount laws cannot load each
+  other's graft payloads.
 - C++ host runtime scaffold:
   `cpp/` contains `DialectDescriptor`, `HostGraftStore`, `RouterIndex`,
   `DirtyQueue`, `DurabilityWriter`, swap/evict-planning `DeviceArena`, and

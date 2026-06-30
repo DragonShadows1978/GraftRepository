@@ -24,8 +24,14 @@ struct DialectDescriptor {
   int rope_dim = 0;
   int num_kv_heads = 0;
   int head_dim = 0;
+  std::string position_law = "rope_full_kv";
+  std::string state_kind = "kv";
+  std::string graftability = "seat_remountable";
+  bool remountable = true;
+  std::string composition = "multi_mount";
 
   std::string dialect_id() const;
+  std::string profile_id() const;
 };
 
 struct NodeLifecycle {

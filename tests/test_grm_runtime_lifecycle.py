@@ -1086,6 +1086,8 @@ def test_repository_native_store_supports_gqa_dialect(tmp_path):
                            route_layer=0, native_lib_path=lib)
 
     assert repo.native_store.dialect_id() == "FakeGQAModel:12x1536:g2x128"
+    assert repo.native_store.dialect_profile() == (
+        "rope_full_kv|kv|seat_remountable|1|multi_mount")
     idx = repo.add_document("DOC native GQA mirror 66-6600")
     native_id = repo.arena.grafts[idx]["native_node_id"]
     st = repo.stats()

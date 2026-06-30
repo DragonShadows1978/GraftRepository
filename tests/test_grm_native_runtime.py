@@ -31,6 +31,9 @@ def test_native_store_lifecycle_via_ctypes(tmp_path):
             hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
             latent_rank=512, rope_dim=64) as store:
         assert store.dialect_id() == "DeepSeekV2Lite_TC:27x2048:r512"
+        assert store.dialect_profile() == (
+            "rope_partial_mla|mla_latent_plus_rope|seat_remountable|1|"
+            "multi_mount")
 
         node_id = store.add_node("native graft", b"abcdef", ntok=2)
         assert node_id == 0
@@ -66,6 +69,8 @@ def test_native_store_gqa_dialect_via_ctypes(tmp_path):
             hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
             payload_kind="gqa", num_kv_heads=8, head_dim=128) as store:
         assert store.dialect_id() == "Qwen3_TC:36x2560:g8x128"
+        assert store.dialect_profile() == (
+            "rope_full_kv|kv|seat_remountable|1|multi_mount")
 
         node_id = store.add_structured_node(
             "native GQA graft",
@@ -455,6 +460,17 @@ def test_native_checkpoint_enforces_dialect_wall(tmp_path):
         assert reloaded.dialect_id() == "Qwen3_TC:36x2560:g8x128"
         np.testing.assert_array_equal(reloaded.get_tensor(node_id, "v"),
                                       payload["v"])
+
+    with NativeGraftStore(
+            lib, model_type="Qwen3_TC", num_layers=36,
+            hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
+            payload_kind="gqa", num_kv_heads=8, head_dim=128,
+            position_law="learned_absolute",
+            graftability="same_position_restore",
+            remountable=False,
+            composition="prefix_restore_only") as wrong_profile:
+        with pytest.raises(RuntimeError, match="graft profile mismatch"):
+            wrong_profile.load_checkpoint(ckpt)
 
     with NativeGraftStore(
             lib, model_type="DeepSeekV2Lite_TC", num_layers=27,

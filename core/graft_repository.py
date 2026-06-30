@@ -893,7 +893,12 @@ class GraftRepository:
             latent_rank=self.dialect_desc.latent_rank,
             rope_dim=self.dialect_desc.rope_dim,
             num_kv_heads=self.dialect_desc.num_kv_heads,
-            head_dim=self.dialect_desc.head_dim)
+            head_dim=self.dialect_desc.head_dim,
+            position_law=self.dialect_desc.position_law,
+            state_kind=self.dialect_desc.state_kind,
+            graftability=self.dialect_desc.graftability,
+            remountable=self.dialect_desc.remountable,
+            composition=self.dialect_desc.composition)
 
     def _native_checkpoint_root(self):
         return os.path.join(self.path, "native")

@@ -66,6 +66,18 @@ grm_store_handle* grm_store_create_mla(const char* model_type,
                                        int route_layer,
                                        int latent_rank,
                                        int rope_dim);
+grm_store_handle* grm_store_create_mla_profile(const char* model_type,
+                                               int num_layers,
+                                               int hidden_dim,
+                                               int vals_per_tok_layer,
+                                               int route_layer,
+                                               int latent_rank,
+                                               int rope_dim,
+                                               const char* position_law,
+                                               const char* state_kind,
+                                               const char* graftability,
+                                               int remountable,
+                                               const char* composition);
 grm_store_handle* grm_store_create_gqa(const char* model_type,
                                        int num_layers,
                                        int hidden_dim,
@@ -73,9 +85,24 @@ grm_store_handle* grm_store_create_gqa(const char* model_type,
                                        int route_layer,
                                        int num_kv_heads,
                                        int head_dim);
+grm_store_handle* grm_store_create_gqa_profile(const char* model_type,
+                                               int num_layers,
+                                               int hidden_dim,
+                                               int vals_per_tok_layer,
+                                               int route_layer,
+                                               int num_kv_heads,
+                                               int head_dim,
+                                               const char* position_law,
+                                               const char* state_kind,
+                                               const char* graftability,
+                                               int remountable,
+                                               const char* composition);
 void grm_store_destroy(grm_store_handle* handle);
 
 int grm_store_dialect_id(grm_store_handle* handle, char* out, size_t out_cap);
+int grm_store_dialect_profile(grm_store_handle* handle,
+                              char* out,
+                              size_t out_cap);
 int grm_store_add_node(grm_store_handle* handle,
                        const char* text,
                        uint64_t ntok,

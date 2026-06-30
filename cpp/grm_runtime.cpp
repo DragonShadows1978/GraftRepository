@@ -24,6 +24,11 @@ std::string DialectDescriptor::dialect_id() const {
          "x" + std::to_string(head_dim);
 }
 
+std::string DialectDescriptor::profile_id() const {
+  return position_law + "|" + state_kind + "|" + graftability + "|" +
+         (remountable ? "1" : "0") + "|" + composition;
+}
+
 std::uint64_t HostPayload::bytes() const {
   std::uint64_t n = 0;
   for (const auto& t : tensors) {
@@ -66,7 +71,8 @@ constexpr char kCheckpointMagicV3[] = "GRMSTORE3";
 constexpr char kCheckpointMagicV4[] = "GRMSTORE4";
 constexpr char kCheckpointMagicV5[] = "GRMSTORE5";
 constexpr char kCheckpointMagicV6[] = "GRMSTORE6";
-constexpr char kCheckpointMagic[] = "GRMSTORE6";
+constexpr char kCheckpointMagicV7[] = "GRMSTORE7";
+constexpr char kCheckpointMagic[] = "GRMSTORE7";
 
 void write_u64(std::ostream& out, std::uint64_t v) {
   out.write(reinterpret_cast<const char*>(&v), sizeof(v));
@@ -639,6 +645,11 @@ void HostGraftStore::save_checkpoint(const std::string& root) {
   }
   out.write(kCheckpointMagic, sizeof(kCheckpointMagic) - 1);
   write_string(out, dialect_.dialect_id());
+  write_string(out, dialect_.position_law);
+  write_string(out, dialect_.state_kind);
+  write_string(out, dialect_.graftability);
+  write_bool(out, dialect_.remountable);
+  write_string(out, dialect_.composition);
   write_u64(out, static_cast<std::uint64_t>(nodes_.size()));
   for (const auto id : node_ids()) {
     const auto& n = nodes_.at(id);
@@ -712,16 +723,32 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
       magic_s == std::string(kCheckpointMagicV5, sizeof(kCheckpointMagicV5) - 1);
   const bool checkpoint_v6 =
       magic_s == std::string(kCheckpointMagicV6, sizeof(kCheckpointMagicV6) - 1);
+  const bool checkpoint_v7 =
+      magic_s == std::string(kCheckpointMagicV7, sizeof(kCheckpointMagicV7) - 1);
   if (!in || (!checkpoint_v1 && !checkpoint_v2 && !checkpoint_v3 &&
-              !checkpoint_v4 && !checkpoint_v5 && !checkpoint_v6)) {
+              !checkpoint_v4 && !checkpoint_v5 && !checkpoint_v6 &&
+              !checkpoint_v7)) {
     throw std::runtime_error("invalid native GRM checkpoint magic");
   }
-  if (checkpoint_v5 || checkpoint_v6) {
+  if (checkpoint_v5 || checkpoint_v6 || checkpoint_v7) {
     const auto saved_dialect = read_string(in);
     const auto expected_dialect = dialect_.dialect_id();
     if (saved_dialect != expected_dialect) {
       throw std::runtime_error("native GRM checkpoint dialect mismatch: " +
                                saved_dialect + " vs " + expected_dialect);
+    }
+  }
+  if (checkpoint_v7) {
+    grm::DialectDescriptor saved = dialect_;
+    saved.position_law = read_string(in);
+    saved.state_kind = read_string(in);
+    saved.graftability = read_string(in);
+    saved.remountable = read_bool(in);
+    saved.composition = read_string(in);
+    if (saved.profile_id() != dialect_.profile_id()) {
+      throw std::runtime_error("native GRM checkpoint graft profile mismatch: " +
+                               saved.profile_id() + " vs " +
+                               dialect_.profile_id());
     }
   }
   std::unordered_map<std::uint64_t, HostGraftNode> loaded;
@@ -735,22 +762,23 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
     n.metadata.json = read_string(in);
     n.metadata.active =
         (checkpoint_v2 || checkpoint_v3 || checkpoint_v4 || checkpoint_v5 ||
-         checkpoint_v6)
+         checkpoint_v6 || checkpoint_v7)
             ? read_bool(in)
             : true;
-    if (checkpoint_v3 || checkpoint_v4 || checkpoint_v5 || checkpoint_v6) {
+    if (checkpoint_v3 || checkpoint_v4 || checkpoint_v5 || checkpoint_v6 ||
+        checkpoint_v7) {
       n.metadata.kind = read_string(in);
       n.metadata.scope = read_string(in);
       n.metadata.durability = read_string(in);
       n.metadata.mutability = read_string(in);
     }
-    if (checkpoint_v4 || checkpoint_v5 || checkpoint_v6) {
+    if (checkpoint_v4 || checkpoint_v5 || checkpoint_v6 || checkpoint_v7) {
       n.metadata.source_turns = read_u64_vector(in);
       n.metadata.source_grafts = read_u64_vector(in);
       n.metadata.supersedes = read_u64_vector(in);
       n.metadata.superseded_by = read_u64_vector(in);
     }
-    if (checkpoint_v6) {
+    if (checkpoint_v6 || checkpoint_v7) {
       n.route_keys = read_f32_vectors(in);
       n.lexical_keys = read_string_vector(in);
       if (!n.route_keys.empty()) {
@@ -1237,6 +1265,10 @@ int grm_fail_msg(grm_store_handle* handle, const char* msg) {
   return -1;
 }
 
+const char* safe_cstr(const char* s, const char* fallback) {
+  return s == nullptr ? fallback : s;
+}
+
 std::vector<std::string> split_lexical_keys(const char* lexical_keys) {
   std::vector<std::string> out;
   if (lexical_keys == nullptr) {
@@ -1302,13 +1334,18 @@ void rebuild_router_from_store(grm_store_handle* handle) {
 
 extern "C" {
 
-grm_store_handle* grm_store_create_mla(const char* model_type,
-                                       int num_layers,
-                                       int hidden_dim,
-                                       int vals_per_tok_layer,
-                                       int route_layer,
-                                       int latent_rank,
-                                       int rope_dim) {
+grm_store_handle* grm_store_create_mla_profile(const char* model_type,
+                                               int num_layers,
+                                               int hidden_dim,
+                                               int vals_per_tok_layer,
+                                               int route_layer,
+                                               int latent_rank,
+                                               int rope_dim,
+                                               const char* position_law,
+                                               const char* state_kind,
+                                               const char* graftability,
+                                               int remountable,
+                                               const char* composition) {
   try {
     auto* handle = new grm_store_handle();
     grm::DialectDescriptor d;
@@ -1320,6 +1357,59 @@ grm_store_handle* grm_store_create_mla(const char* model_type,
     d.route_layer = route_layer;
     d.latent_rank = latent_rank;
     d.rope_dim = rope_dim;
+    d.position_law = safe_cstr(position_law, "rope_partial_mla");
+    d.state_kind = safe_cstr(state_kind, "mla_latent_plus_rope");
+    d.graftability = safe_cstr(graftability, "seat_remountable");
+    d.remountable = remountable != 0;
+    d.composition = safe_cstr(composition, "multi_mount");
+    handle->store = std::make_unique<grm::HostGraftStore>(std::move(d));
+    return handle;
+  } catch (...) {
+    return nullptr;
+  }
+}
+
+grm_store_handle* grm_store_create_mla(const char* model_type,
+                                       int num_layers,
+                                       int hidden_dim,
+                                       int vals_per_tok_layer,
+                                       int route_layer,
+                                       int latent_rank,
+                                       int rope_dim) {
+  return grm_store_create_mla_profile(
+      model_type, num_layers, hidden_dim, vals_per_tok_layer, route_layer,
+      latent_rank, rope_dim, "rope_partial_mla", "mla_latent_plus_rope",
+      "seat_remountable", 1, "multi_mount");
+}
+
+grm_store_handle* grm_store_create_gqa_profile(const char* model_type,
+                                               int num_layers,
+                                               int hidden_dim,
+                                               int vals_per_tok_layer,
+                                               int route_layer,
+                                               int num_kv_heads,
+                                               int head_dim,
+                                               const char* position_law,
+                                               const char* state_kind,
+                                               const char* graftability,
+                                               int remountable,
+                                               const char* composition) {
+  try {
+    auto* handle = new grm_store_handle();
+    grm::DialectDescriptor d;
+    d.model_type = model_type == nullptr ? "" : model_type;
+    d.num_layers = num_layers;
+    d.hidden_dim = hidden_dim;
+    d.payload_kind = grm::PayloadKind::GQA;
+    d.vals_per_tok_layer = vals_per_tok_layer;
+    d.route_layer = route_layer;
+    d.num_kv_heads = num_kv_heads;
+    d.head_dim = head_dim;
+    d.position_law = safe_cstr(position_law, "rope_full_kv");
+    d.state_kind = safe_cstr(state_kind, "kv");
+    d.graftability = safe_cstr(graftability, "seat_remountable");
+    d.remountable = remountable != 0;
+    d.composition = safe_cstr(composition, "multi_mount");
     handle->store = std::make_unique<grm::HostGraftStore>(std::move(d));
     return handle;
   } catch (...) {
@@ -1334,22 +1424,10 @@ grm_store_handle* grm_store_create_gqa(const char* model_type,
                                        int route_layer,
                                        int num_kv_heads,
                                        int head_dim) {
-  try {
-    auto* handle = new grm_store_handle();
-    grm::DialectDescriptor d;
-    d.model_type = model_type == nullptr ? "" : model_type;
-    d.num_layers = num_layers;
-    d.hidden_dim = hidden_dim;
-    d.payload_kind = grm::PayloadKind::GQA;
-    d.vals_per_tok_layer = vals_per_tok_layer;
-    d.route_layer = route_layer;
-    d.num_kv_heads = num_kv_heads;
-    d.head_dim = head_dim;
-    handle->store = std::make_unique<grm::HostGraftStore>(std::move(d));
-    return handle;
-  } catch (...) {
-    return nullptr;
-  }
+  return grm_store_create_gqa_profile(
+      model_type, num_layers, hidden_dim, vals_per_tok_layer, route_layer,
+      num_kv_heads, head_dim, "rope_full_kv", "kv", "seat_remountable", 1,
+      "multi_mount");
 }
 
 void grm_store_destroy(grm_store_handle* handle) { delete handle; }
@@ -1361,6 +1439,24 @@ int grm_store_dialect_id(grm_store_handle* handle, char* out, size_t out_cap) {
       return grm_fail_msg(handle, "invalid dialect_id arguments");
     }
     const auto s = handle->store->dialect().dialect_id();
+    const size_t n = std::min(out_cap - 1, s.size());
+    std::memcpy(out, s.data(), n);
+    out[n] = '\0';
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_dialect_profile(grm_store_handle* handle,
+                              char* out,
+                              size_t out_cap) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out == nullptr ||
+        out_cap == 0) {
+      return grm_fail_msg(handle, "invalid dialect_profile arguments");
+    }
+    const auto s = handle->store->dialect().profile_id();
     const size_t n = std::min(out_cap - 1, s.size());
     std::memcpy(out, s.data(), n);
     out[n] = '\0';

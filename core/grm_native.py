@@ -136,26 +136,75 @@ class NativeGraftStore:
     def __init__(self, lib_path=None, *, model_type="model",
                  num_layers=0, hidden_dim=0, vals_per_tok_layer=0,
                  route_layer=0, payload_kind="mla", latent_rank=0,
-                 rope_dim=0, num_kv_heads=0, head_dim=0):
+                 rope_dim=0, num_kv_heads=0, head_dim=0,
+                 position_law=None, state_kind=None, graftability=None,
+                 remountable=None, composition=None):
         self._lib = ctypes.CDLL(lib_path or _default_lib_path())
         self._bind()
         payload_kind = str(payload_kind).lower()
+        defaults = self._profile_defaults(payload_kind)
+        position_law = position_law or defaults["position_law"]
+        state_kind = state_kind or defaults["state_kind"]
+        graftability = graftability or defaults["graftability"]
+        remountable = (
+            defaults["remountable"] if remountable is None
+            else bool(remountable))
+        composition = composition or defaults["composition"]
+        profile_args = (
+            str(position_law).encode("utf-8"),
+            str(state_kind).encode("utf-8"),
+            str(graftability).encode("utf-8"),
+            int(remountable),
+            str(composition).encode("utf-8"),
+        )
         if payload_kind == "mla":
-            self._handle = self._lib.grm_store_create_mla(
-                model_type.encode("utf-8"), int(num_layers), int(hidden_dim),
-                int(vals_per_tok_layer), int(route_layer), int(latent_rank),
-                int(rope_dim))
+            if hasattr(self._lib, "grm_store_create_mla_profile"):
+                self._handle = self._lib.grm_store_create_mla_profile(
+                    model_type.encode("utf-8"), int(num_layers),
+                    int(hidden_dim), int(vals_per_tok_layer), int(route_layer),
+                    int(latent_rank), int(rope_dim), *profile_args)
+            else:
+                self._handle = self._lib.grm_store_create_mla(
+                    model_type.encode("utf-8"), int(num_layers),
+                    int(hidden_dim), int(vals_per_tok_layer), int(route_layer),
+                    int(latent_rank), int(rope_dim))
         elif payload_kind == "gqa":
             if not hasattr(self._lib, "grm_store_create_gqa"):
                 raise RuntimeError("native GRM library lacks GQA store ABI")
-            self._handle = self._lib.grm_store_create_gqa(
-                model_type.encode("utf-8"), int(num_layers), int(hidden_dim),
-                int(vals_per_tok_layer), int(route_layer), int(num_kv_heads),
-                int(head_dim))
+            if hasattr(self._lib, "grm_store_create_gqa_profile"):
+                self._handle = self._lib.grm_store_create_gqa_profile(
+                    model_type.encode("utf-8"), int(num_layers),
+                    int(hidden_dim), int(vals_per_tok_layer), int(route_layer),
+                    int(num_kv_heads), int(head_dim), *profile_args)
+            else:
+                self._handle = self._lib.grm_store_create_gqa(
+                    model_type.encode("utf-8"), int(num_layers),
+                    int(hidden_dim), int(vals_per_tok_layer), int(route_layer),
+                    int(num_kv_heads), int(head_dim))
         else:
             raise ValueError(f"unsupported native GRM payload kind: {payload_kind}")
         if not self._handle:
             raise RuntimeError("failed to create native GRM store")
+
+    @staticmethod
+    def _profile_defaults(payload_kind):
+        if payload_kind == "mla":
+            return {
+                "position_law": "rope_partial_mla",
+                "state_kind": "mla_latent_plus_rope",
+                "graftability": "seat_remountable",
+                "remountable": True,
+                "composition": "multi_mount",
+            }
+        if payload_kind == "gqa":
+            return {
+                "position_law": "rope_full_kv",
+                "state_kind": "kv",
+                "graftability": "seat_remountable",
+                "remountable": True,
+                "composition": "multi_mount",
+            }
+        raise ValueError(f"unsupported native GRM payload kind: {payload_kind}")
 
     def _bind(self):
         lib = self._lib
@@ -163,16 +212,35 @@ class NativeGraftStore:
             ctypes.c_char_p, ctypes.c_int, ctypes.c_int, ctypes.c_int,
             ctypes.c_int, ctypes.c_int, ctypes.c_int]
         lib.grm_store_create_mla.restype = ctypes.c_void_p
+        if hasattr(lib, "grm_store_create_mla_profile"):
+            lib.grm_store_create_mla_profile.argtypes = [
+                ctypes.c_char_p, ctypes.c_int, ctypes.c_int, ctypes.c_int,
+                ctypes.c_int, ctypes.c_int, ctypes.c_int,
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_int, ctypes.c_char_p]
+            lib.grm_store_create_mla_profile.restype = ctypes.c_void_p
         if hasattr(lib, "grm_store_create_gqa"):
             lib.grm_store_create_gqa.argtypes = [
                 ctypes.c_char_p, ctypes.c_int, ctypes.c_int, ctypes.c_int,
                 ctypes.c_int, ctypes.c_int, ctypes.c_int]
             lib.grm_store_create_gqa.restype = ctypes.c_void_p
+        if hasattr(lib, "grm_store_create_gqa_profile"):
+            lib.grm_store_create_gqa_profile.argtypes = [
+                ctypes.c_char_p, ctypes.c_int, ctypes.c_int, ctypes.c_int,
+                ctypes.c_int, ctypes.c_int, ctypes.c_int,
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_int, ctypes.c_char_p]
+            lib.grm_store_create_gqa_profile.restype = ctypes.c_void_p
         lib.grm_store_destroy.argtypes = [ctypes.c_void_p]
         lib.grm_store_destroy.restype = None
         lib.grm_store_dialect_id.argtypes = [
             ctypes.c_void_p, ctypes.c_char_p, ctypes.c_size_t]
         lib.grm_store_dialect_id.restype = ctypes.c_int
+        self._has_dialect_profile = hasattr(lib, "grm_store_dialect_profile")
+        if self._has_dialect_profile:
+            lib.grm_store_dialect_profile.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p, ctypes.c_size_t]
+            lib.grm_store_dialect_profile.restype = ctypes.c_int
         lib.grm_store_add_node.argtypes = [
             ctypes.c_void_p, ctypes.c_char_p, ctypes.c_uint64,
             ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint64,
@@ -348,6 +416,14 @@ class NativeGraftStore:
     def dialect_id(self):
         buf = ctypes.create_string_buffer(256)
         self._check(self._lib.grm_store_dialect_id(
+            self._handle, buf, ctypes.sizeof(buf)))
+        return buf.value.decode("utf-8")
+
+    def dialect_profile(self):
+        if not self._has_dialect_profile:
+            return None
+        buf = ctypes.create_string_buffer(512)
+        self._check(self._lib.grm_store_dialect_profile(
             self._handle, buf, ctypes.sizeof(buf)))
         return buf.value.decode("utf-8")
 
