@@ -51,6 +51,11 @@ struct NodeMetadata {
   std::string write_intent = "observed";
   double confidence = 1.0;
   bool active = true;
+  std::string subject;
+  std::string predicate;
+  std::string value;
+  std::string valid_from;
+  std::string expires_at;
   std::vector<std::uint64_t> source_turns;
   std::vector<std::uint64_t> source_grafts;
   std::vector<std::uint64_t> supersedes;
@@ -118,6 +123,15 @@ struct GraphEdges {
   std::vector<std::uint64_t> source_grafts;
   std::vector<std::uint64_t> supersedes;
   std::vector<std::uint64_t> superseded_by;
+};
+
+struct FactIdentity {
+  std::string subject;
+  std::string predicate;
+  std::string value;
+  std::string scope = "project";
+  std::string valid_from;
+  std::string expires_at;
 };
 
 struct ArenaSwapPlan {
@@ -224,6 +238,9 @@ class HostGraftStore {
                           std::string scope,
                           std::string durability,
                           std::string mutability);
+  void set_fact_identity(std::uint64_t node_id, FactIdentity identity);
+  std::vector<std::uint64_t> fact_matches(const FactIdentity& identity,
+                                          std::uint64_t value_mode) const;
   void set_graph_edges(std::uint64_t node_id, GraphEdges edges);
   GraphEdges graph_edges(std::uint64_t node_id) const;
   std::vector<std::uint64_t> source_closure(

@@ -1278,6 +1278,70 @@ def test_extraction_reinforcement_maps_native_graph_refs(tmp_path):
     repo.close()
 
 
+def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+    old = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Native conflict target is OLD.",
+        "subject": "Native conflict target",
+        "predicate": "is",
+        "value": "OLD",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 0.99,
+    })
+    original = repo.native_store.fact_matches
+    calls = []
+
+    def traced_fact_matches(**kwargs):
+        calls.append(dict(kwargs))
+        return original(**kwargs)
+
+    monkeypatch.setattr(repo.native_store, "fact_matches", traced_fact_matches)
+    conflict = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Native conflict target is NEW.",
+        "subject": "Native conflict target",
+        "predicate": "is",
+        "value": "NEW",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 0.99,
+    })
+
+    assert conflict["action"] == "review_candidate"
+    assert calls[-1]["value_mode"] == 2
+    assert calls[-1]["subject"] == "Native conflict target"
+
+    duplicate = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Native conflict target remains OLD.",
+        "subject": "Native conflict target",
+        "predicate": "is",
+        "value": "OLD",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 1.0,
+    })
+
+    assert duplicate["action"] == "reinforce_existing"
+    assert duplicate["node_id"] == old["node_id"]
+    assert calls[-1]["value_mode"] == 1
+    repo.close()
+
+
 def test_extraction_explicit_supersede_requires_authority(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,

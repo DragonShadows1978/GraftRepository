@@ -1070,6 +1070,14 @@ class GraftRepository:
         if not (subject and predicate and value):
             return []
 
+        native = self._native_fact_matches(candidate, value_mode=1)
+        if native is not None:
+            return [i for i in native
+                    if self._candidate_time_conflicts(
+                        candidate, self.arena.grafts[i].get(
+                            "metadata", self._default_metadata(
+                                self.arena.grafts[i])))]
+
         out = []
         for i, g in enumerate(self.arena.grafts):
             meta = g.get("metadata", self._default_metadata(g))
@@ -1155,6 +1163,13 @@ class GraftRepository:
         value = self._norm_fact_field(candidate.get("value"))
         if not (subject and predicate and value):
             return []
+        native = self._native_fact_matches(candidate, value_mode=2)
+        if native is not None:
+            return [i for i in native
+                    if self._candidate_time_conflicts(
+                        candidate, self.arena.grafts[i].get(
+                            "metadata", self._default_metadata(
+                                self.arena.grafts[i])))]
         out = []
         for i, g in enumerate(self.arena.grafts):
             meta = g.get("metadata", self._default_metadata(g))
@@ -1181,6 +1196,20 @@ class GraftRepository:
             return []
         valid_from = self._norm_fact_time_value(candidate.get("valid_from"))
         expires_at = self._norm_fact_time_value(candidate.get("expires_at"))
+        native = self._native_fact_matches(candidate, value_mode=1)
+        if native is not None:
+            out = []
+            for i in native:
+                g = self.arena.grafts[i]
+                meta = g.get("metadata", self._default_metadata(g))
+                if g.get("retired"):
+                    continue
+                if self._norm_fact_time_value(meta.get("valid_from")) != valid_from:
+                    continue
+                if self._norm_fact_time_value(meta.get("expires_at")) != expires_at:
+                    continue
+                out.append(i)
+            return out
         out = []
         for i, g in enumerate(self.arena.grafts):
             meta = g.get("metadata", self._default_metadata(g))
@@ -1199,6 +1228,34 @@ class GraftRepository:
             if self._norm_fact_time_value(meta.get("expires_at")) != expires_at:
                 continue
             out.append(i)
+        return out
+
+    def _native_fact_matches(self, candidate, value_mode):
+        if self.native_store is None or not hasattr(
+                self.native_store, "fact_matches"):
+            return None
+        if len(self._native_node_ids) < len(self.arena.grafts):
+            return None
+        try:
+            native_ids = self.native_store.fact_matches(
+                subject=candidate.get("subject"),
+                predicate=candidate.get("predicate"),
+                value=candidate.get("value"),
+                scope=candidate.get("scope", "project"),
+                value_mode=value_mode)
+        except RuntimeError:
+            return None
+        inverse = {
+            int(native_id): int(idx)
+            for idx, native_id in self._native_node_ids.items()
+        }
+        out = []
+        for native_id in native_ids:
+            idx = inverse.get(int(native_id))
+            if idx is None:
+                continue
+            if idx not in out:
+                out.append(idx)
         return out
 
     def _reinforce_extraction_target(self, idx, candidate, metadata,

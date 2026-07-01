@@ -331,6 +331,21 @@ class NativeGraftStore:
                 ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
                 ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p]
             lib.grm_store_set_route_metadata.restype = ctypes.c_int
+        self._has_fact_identity = (
+            hasattr(lib, "grm_store_set_fact_identity") and
+            hasattr(lib, "grm_store_fact_matches"))
+        if self._has_fact_identity:
+            lib.grm_store_set_fact_identity.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_char_p, ctypes.c_char_p]
+            lib.grm_store_set_fact_identity.restype = ctypes.c_int
+            lib.grm_store_fact_matches.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint64,
+                ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+                ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_fact_matches.restype = ctypes.c_int
         self._has_graph_edges = (
             hasattr(lib, "grm_store_set_graph_edges") and
             hasattr(lib, "grm_store_graph_edges_info") and
@@ -650,6 +665,14 @@ class NativeGraftStore:
             source_grafts=metadata.get("source_grafts", ()),
             supersedes=metadata.get("supersedes", ()),
             superseded_by=metadata.get("superseded_by", ()))
+        self.set_fact_identity(
+            node_id,
+            subject=metadata.get("subject"),
+            predicate=metadata.get("predicate"),
+            value=metadata.get("value"),
+            scope=metadata.get("scope"),
+            valid_from=metadata.get("valid_from"),
+            expires_at=metadata.get("expires_at"))
 
     def set_active(self, node_id, active=True):
         if not getattr(self, "_has_set_active", False):
@@ -667,6 +690,46 @@ class NativeGraftStore:
             ("" if scope is None else str(scope)).encode("utf-8"),
             ("" if durability is None else str(durability)).encode("utf-8"),
             ("" if mutability is None else str(mutability)).encode("utf-8")))
+
+    def set_fact_identity(self, node_id, *, subject=None, predicate=None,
+                          value=None, scope=None, valid_from=None,
+                          expires_at=None):
+        if not getattr(self, "_has_fact_identity", False):
+            return
+        self._check(self._lib.grm_store_set_fact_identity(
+            self._handle, int(node_id),
+            ("" if subject is None else str(subject)).encode("utf-8"),
+            ("" if predicate is None else str(predicate)).encode("utf-8"),
+            ("" if value is None else str(value)).encode("utf-8"),
+            ("project" if scope is None else str(scope)).encode("utf-8"),
+            ("" if valid_from is None else str(valid_from)).encode("utf-8"),
+            ("" if expires_at is None else str(expires_at)).encode("utf-8")))
+
+    def fact_matches(self, *, subject=None, predicate=None, value=None,
+                     scope=None, value_mode=0):
+        if not getattr(self, "_has_fact_identity", False):
+            raise RuntimeError("native GRM fact identity scan is unavailable")
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_fact_matches(
+            self._handle,
+            ("" if subject is None else str(subject)).encode("utf-8"),
+            ("" if predicate is None else str(predicate)).encode("utf-8"),
+            ("" if value is None else str(value)).encode("utf-8"),
+            ("project" if scope is None else str(scope)).encode("utf-8"),
+            int(value_mode), None, 0, ctypes.byref(needed)))
+        if not int(needed.value):
+            return ()
+        out_t = ctypes.c_uint64 * int(needed.value)
+        out = out_t()
+        got = ctypes.c_uint64()
+        self._check(self._lib.grm_store_fact_matches(
+            self._handle,
+            ("" if subject is None else str(subject)).encode("utf-8"),
+            ("" if predicate is None else str(predicate)).encode("utf-8"),
+            ("" if value is None else str(value)).encode("utf-8"),
+            ("project" if scope is None else str(scope)).encode("utf-8"),
+            int(value_mode), out, int(needed.value), ctypes.byref(got)))
+        return tuple(int(out[i]) for i in range(int(got.value)))
 
     def set_graph_edges(self, node_id, *, source_turns=(),
                         source_grafts=(), supersedes=(),

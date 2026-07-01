@@ -605,6 +605,11 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   reject fixed/absolute-position stores that claim remountability and require a
   RoPE/rotary/relative position law for remountable graft profiles, so
   non-reseatable cache dialects cannot silently enter the graft mount path.
+  Native host metadata now stores structured fact identity
+  (`subject`/`predicate`/`value`/scope plus temporal strings), persists it in
+  checkpoints, and exposes equal/conflicting active fact-target scans that
+  Python uses for extraction expire/conflict/reinforcement target discovery
+  before applying the final temporal and authority policy.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. Current-head MiniCPM3 MLA

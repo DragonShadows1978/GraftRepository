@@ -106,7 +106,8 @@ constexpr char kCheckpointMagicV4[] = "GRMSTORE4";
 constexpr char kCheckpointMagicV5[] = "GRMSTORE5";
 constexpr char kCheckpointMagicV6[] = "GRMSTORE6";
 constexpr char kCheckpointMagicV7[] = "GRMSTORE7";
-constexpr char kCheckpointMagic[] = "GRMSTORE7";
+constexpr char kCheckpointMagicV8[] = "GRMSTORE8";
+constexpr char kCheckpointMagic[] = "GRMSTORE8";
 
 void write_u64(std::ostream& out, std::uint64_t v) {
   out.write(reinterpret_cast<const char*>(&v), sizeof(v));
@@ -333,6 +334,15 @@ std::string normalize_cull_boundary(const std::string& word) {
     return "heading";
   }
   throw std::runtime_error("unknown cull boundary strategy");
+}
+
+std::string norm_fact_field(const std::string& value) {
+  return ascii_lower(trim(value));
+}
+
+std::string norm_fact_scope(const std::string& value) {
+  const auto out = norm_fact_field(value);
+  return out.empty() ? "project" : out;
 }
 
 std::string json_escape(const std::string& s) {
@@ -968,6 +978,80 @@ void HostGraftStore::set_route_metadata(std::uint64_t node_id,
   }
 }
 
+void HostGraftStore::set_fact_identity(std::uint64_t node_id,
+                                       FactIdentity identity) {
+  auto* n = get(node_id);
+  if (n == nullptr) {
+    throw std::out_of_range("unknown GRM node id");
+  }
+  bool changed = false;
+  if (n->metadata.subject != identity.subject) {
+    n->metadata.subject = std::move(identity.subject);
+    changed = true;
+  }
+  if (n->metadata.predicate != identity.predicate) {
+    n->metadata.predicate = std::move(identity.predicate);
+    changed = true;
+  }
+  if (n->metadata.value != identity.value) {
+    n->metadata.value = std::move(identity.value);
+    changed = true;
+  }
+  if (!identity.scope.empty() && n->metadata.scope != identity.scope) {
+    n->metadata.scope = std::move(identity.scope);
+    changed = true;
+  }
+  if (n->metadata.valid_from != identity.valid_from) {
+    n->metadata.valid_from = std::move(identity.valid_from);
+    changed = true;
+  }
+  if (n->metadata.expires_at != identity.expires_at) {
+    n->metadata.expires_at = std::move(identity.expires_at);
+    changed = true;
+  }
+  if (changed) {
+    mark_dirty(node_id, false, true);
+  }
+}
+
+std::vector<std::uint64_t> HostGraftStore::fact_matches(
+    const FactIdentity& identity,
+    std::uint64_t value_mode) const {
+  const auto subject = norm_fact_field(identity.subject);
+  const auto predicate = norm_fact_field(identity.predicate);
+  const auto value = norm_fact_field(identity.value);
+  const auto scope = norm_fact_scope(identity.scope);
+  std::vector<std::uint64_t> out;
+  if (subject.empty() || predicate.empty()) {
+    return out;
+  }
+  for (const auto id : node_ids()) {
+    const auto& node = nodes_.at(id);
+    const auto& meta = node.metadata;
+    if (!meta.active) {
+      continue;
+    }
+    if (norm_fact_field(meta.subject) != subject) {
+      continue;
+    }
+    if (norm_fact_field(meta.predicate) != predicate) {
+      continue;
+    }
+    if (norm_fact_scope(meta.scope) != scope) {
+      continue;
+    }
+    const auto existing_value = norm_fact_field(meta.value);
+    if (value_mode == 1 && existing_value != value) {
+      continue;
+    }
+    if (value_mode == 2 && (existing_value.empty() || existing_value == value)) {
+      continue;
+    }
+    out.push_back(id);
+  }
+  return out;
+}
+
 void HostGraftStore::set_graph_edges(std::uint64_t node_id, GraphEdges edges) {
   auto* n = get(node_id);
   if (n == nullptr) {
@@ -1147,6 +1231,11 @@ void HostGraftStore::save_checkpoint(const std::string& root) {
       write_string(out, n.metadata.scope);
       write_string(out, n.metadata.durability);
       write_string(out, n.metadata.mutability);
+      write_string(out, n.metadata.subject);
+      write_string(out, n.metadata.predicate);
+      write_string(out, n.metadata.value);
+      write_string(out, n.metadata.valid_from);
+      write_string(out, n.metadata.expires_at);
       write_u64_vector(out, n.metadata.source_turns);
       write_u64_vector(out, n.metadata.source_grafts);
       write_u64_vector(out, n.metadata.supersedes);
@@ -1212,12 +1301,14 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
       magic_s == std::string(kCheckpointMagicV6, sizeof(kCheckpointMagicV6) - 1);
   const bool checkpoint_v7 =
       magic_s == std::string(kCheckpointMagicV7, sizeof(kCheckpointMagicV7) - 1);
+  const bool checkpoint_v8 =
+      magic_s == std::string(kCheckpointMagicV8, sizeof(kCheckpointMagicV8) - 1);
   if (!in || (!checkpoint_v1 && !checkpoint_v2 && !checkpoint_v3 &&
               !checkpoint_v4 && !checkpoint_v5 && !checkpoint_v6 &&
-              !checkpoint_v7)) {
+              !checkpoint_v7 && !checkpoint_v8)) {
     throw std::runtime_error("invalid native GRM checkpoint magic");
   }
-  if (checkpoint_v5 || checkpoint_v6 || checkpoint_v7) {
+  if (checkpoint_v5 || checkpoint_v6 || checkpoint_v7 || checkpoint_v8) {
     const auto saved_dialect = read_string(in);
     const auto expected_dialect = dialect_.dialect_id();
     if (saved_dialect != expected_dialect) {
@@ -1225,7 +1316,7 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
                                saved_dialect + " vs " + expected_dialect);
     }
   }
-  if (checkpoint_v7) {
+  if (checkpoint_v7 || checkpoint_v8) {
     grm::DialectDescriptor saved = dialect_;
     saved.position_law = read_string(in);
     saved.state_kind = read_string(in);
@@ -1249,23 +1340,31 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
     n.metadata.json = read_string(in);
     n.metadata.active =
         (checkpoint_v2 || checkpoint_v3 || checkpoint_v4 || checkpoint_v5 ||
-         checkpoint_v6 || checkpoint_v7)
+         checkpoint_v6 || checkpoint_v7 || checkpoint_v8)
             ? read_bool(in)
             : true;
     if (checkpoint_v3 || checkpoint_v4 || checkpoint_v5 || checkpoint_v6 ||
-        checkpoint_v7) {
+        checkpoint_v7 || checkpoint_v8) {
       n.metadata.kind = read_string(in);
       n.metadata.scope = read_string(in);
       n.metadata.durability = read_string(in);
       n.metadata.mutability = read_string(in);
     }
-    if (checkpoint_v4 || checkpoint_v5 || checkpoint_v6 || checkpoint_v7) {
+    if (checkpoint_v8) {
+      n.metadata.subject = read_string(in);
+      n.metadata.predicate = read_string(in);
+      n.metadata.value = read_string(in);
+      n.metadata.valid_from = read_string(in);
+      n.metadata.expires_at = read_string(in);
+    }
+    if (checkpoint_v4 || checkpoint_v5 || checkpoint_v6 || checkpoint_v7 ||
+        checkpoint_v8) {
       n.metadata.source_turns = read_u64_vector(in);
       n.metadata.source_grafts = read_u64_vector(in);
       n.metadata.supersedes = read_u64_vector(in);
       n.metadata.superseded_by = read_u64_vector(in);
     }
-    if (checkpoint_v6 || checkpoint_v7) {
+    if (checkpoint_v6 || checkpoint_v7 || checkpoint_v8) {
       n.route_keys = read_f32_vectors(in);
       n.lexical_keys = read_string_vector(in);
       if (!n.route_keys.empty()) {
@@ -2384,6 +2483,70 @@ int grm_store_set_route_metadata(grm_store_handle* handle,
                                       scope == nullptr ? "" : scope,
                                       durability == nullptr ? "" : durability,
                                       mutability == nullptr ? "" : mutability);
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_set_fact_identity(grm_store_handle* handle,
+                                uint64_t node_id,
+                                const char* subject,
+                                const char* predicate,
+                                const char* value,
+                                const char* scope,
+                                const char* valid_from,
+                                const char* expires_at) {
+  try {
+    if (handle == nullptr || handle->store == nullptr) {
+      return grm_fail_msg(handle, "invalid set_fact_identity arguments");
+    }
+    grm::FactIdentity identity;
+    identity.subject = safe_cstr(subject, "");
+    identity.predicate = safe_cstr(predicate, "");
+    identity.value = safe_cstr(value, "");
+    identity.scope = safe_cstr(scope, "project");
+    identity.valid_from = safe_cstr(valid_from, "");
+    identity.expires_at = safe_cstr(expires_at, "");
+    handle->store->set_fact_identity(node_id, std::move(identity));
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_fact_matches(grm_store_handle* handle,
+                           const char* subject,
+                           const char* predicate,
+                           const char* value,
+                           const char* scope,
+                           uint64_t value_mode,
+                           uint64_t* out_node_ids,
+                           uint64_t out_cap,
+                           uint64_t* out_count) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_count == nullptr) {
+      return grm_fail_msg(handle, "invalid fact_matches arguments");
+    }
+    if (out_node_ids == nullptr && out_cap > 0) {
+      return grm_fail_msg(handle, "null fact_matches output buffer");
+    }
+    grm::FactIdentity identity;
+    identity.subject = safe_cstr(subject, "");
+    identity.predicate = safe_cstr(predicate, "");
+    identity.value = safe_cstr(value, "");
+    identity.scope = safe_cstr(scope, "project");
+    const auto matches = handle->store->fact_matches(identity, value_mode);
+    if (out_node_ids == nullptr || out_cap == 0) {
+      *out_count = static_cast<uint64_t>(matches.size());
+      return 0;
+    }
+    const auto n = std::min<uint64_t>(
+        static_cast<uint64_t>(matches.size()), out_cap);
+    for (uint64_t i = 0; i < n; ++i) {
+      out_node_ids[i] = matches[static_cast<std::size_t>(i)];
+    }
+    *out_count = n;
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
