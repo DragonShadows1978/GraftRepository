@@ -866,6 +866,18 @@ class GraftRepository:
             out.append(i)
         return out
 
+    def _candidate_supersede_targets(self, candidate):
+        explicit = self._candidate_target_ids(candidate)
+        out = []
+        for i in explicit:
+            if i < 0 or i >= len(self.arena.grafts):
+                continue
+            g = self.arena.grafts[i]
+            meta = g.get("metadata", self._default_metadata(g))
+            if meta.get("active", True) and not g.get("retired"):
+                out.append(i)
+        return list(dict.fromkeys(out))
+
     def _expire_extraction_targets(self, targets, text):
         expired_at = datetime.now(timezone.utc).isoformat()
         expired = []
@@ -1040,6 +1052,18 @@ class GraftRepository:
             expired = self._expire_extraction_targets(targets, text)
             return {"action": "expire", "expired": expired}
 
+        requested_supersedes = self._candidate_supersede_targets(candidate)
+        requested_supersede_ids = self._candidate_target_ids(candidate)
+        if requested_supersede_ids and not requested_supersedes:
+            return self._candidate_to_review(
+                candidate, text, "supersede action found no active target",
+                metadata)
+        if requested_supersedes and not authoritative:
+            return self._candidate_to_review(
+                candidate, text,
+                "supersede action requires authoritative intent",
+                metadata)
+
         conflicts = self._candidate_conflicts(candidate)
         imported = write_intent == "imported"
         if conflicts and not authoritative:
@@ -1063,8 +1087,7 @@ class GraftRepository:
                 candidate, text, f"unsupported extraction action: {action}",
                 metadata)
 
-        supersedes = conflicts if conflicts else list(
-            candidate.get("supersedes", []))
+        supersedes = conflicts if conflicts else list(requested_supersedes)
         if not supersedes:
             equivalent = self._candidate_equivalent_targets(candidate)
             if equivalent:

@@ -997,6 +997,57 @@ def test_extraction_reinforcement_maps_native_graph_refs(tmp_path):
     repo.close()
 
 
+def test_extraction_explicit_supersede_requires_authority(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+
+    old = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "GRM manual target is OLD.",
+        "subject": "GRM manual target",
+        "predicate": "is",
+        "value": "OLD",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 0.99,
+    })
+    assert old["action"] == "write_direct"
+
+    inferred = {
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Unrelated automatic claim wants to retire OLD.",
+        "subject": "unrelated automatic claim",
+        "predicate": "is",
+        "value": "NEW",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 0.99,
+        "supersedes": [old["node_id"]],
+    }
+    review = repo.apply_extraction_candidate(inferred)
+    assert review["action"] == "review_candidate"
+    assert repo.review_buffer[-1]["reason"] == (
+        "supersede action requires authoritative intent")
+    assert len(repo.arena.grafts) == 1
+    assert repo.arena.grafts[old["node_id"]]["metadata"]["active"] is True
+
+    authoritative = dict(inferred, text="User confirms replacement.",
+                         write_intent="user_asserted", confidence=1.0)
+    replaced = repo.apply_extraction_candidate(authoritative)
+
+    assert replaced["action"] == "supersede_existing"
+    assert replaced["supersedes"] == [old["node_id"]]
+    assert repo.arena.grafts[old["node_id"]]["metadata"]["active"] is False
+    assert repo.arena.grafts[old["node_id"]]["retired"] is True
+
+
 def test_extraction_conflicts_respect_temporal_validity(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,

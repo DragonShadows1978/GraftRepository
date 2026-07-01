@@ -88,8 +88,11 @@ validation where feasible.
   with revision metadata. High-confidence duplicate candidates for the same
   active scoped fact now reinforce the existing node instead of creating
   duplicate fact nodes; source links, stronger write intent, max confidence,
-  and reinforcement count are metadata-updated and WAL-recorded. Public
-  candidate application now finishes through `GRMRuntime`, reports an
+  and reinforcement count are metadata-updated and WAL-recorded. Explicit
+  `supersedes`/target ids from extractor candidates now require user/system
+  authoritative intent before retiring an active node; non-authoritative target
+  requests are review candidates. Public candidate application now finishes
+  through `GRMRuntime`, reports an
   `extraction` runtime event, and honors autosave durability for direct
   `apply_extraction_candidate(s)` callers. Turn-triggered extraction remains
   inside the enclosing chat/add-turn runtime event to avoid double flushing.

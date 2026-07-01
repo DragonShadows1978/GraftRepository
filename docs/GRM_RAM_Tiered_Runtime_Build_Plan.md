@@ -1023,6 +1023,8 @@ If a new candidate conflicts with active memory:
 - imported trusted source -> create pending conflict if user memory disagrees
 - inferred candidate -> review buffer
 - assistant-generated claim -> do not supersede without confirmation
+- candidate-provided `supersedes` targets require user/system authoritative
+  intent; non-authoritative extractor targets go to review
 
 If a new candidate matches the same active scoped fact and passes the direct
 write threshold, reinforce the existing memory node rather than creating a
