@@ -1544,24 +1544,44 @@ class GraftRepository:
         for key, value in metadata.items():
             if key not in identity_keys:
                 meta[key] = value
-        meta["confidence"] = max(float(meta.get("confidence", 0.0)),
-                                 float(confidence))
-        rank = {
-            "imported": 0,
-            "inferred": 1,
-            "observed": 2,
-            "system_asserted": 3,
-            "user_asserted": 4,
-        }
+        old_confidence = float(meta.get("confidence", 0.0))
         old_intent = meta.get("write_intent", "observed")
-        if rank.get(write_intent, 0) >= rank.get(old_intent, 0):
-            meta["write_intent"] = write_intent
-        meta["reinforcement_count"] = int(meta.get("reinforcement_count", 0)) + 1
+        old_count = int(meta.get("reinforcement_count", 0))
+        plan = self._native_reinforcement_plan(
+            old_write_intent=old_intent, new_write_intent=write_intent,
+            old_confidence=old_confidence, new_confidence=float(confidence),
+            old_reinforcement_count=old_count)
+        if plan is None:
+            meta["confidence"] = max(old_confidence, float(confidence))
+            rank = {
+                "imported": 0,
+                "inferred": 1,
+                "observed": 2,
+                "system_asserted": 3,
+                "user_asserted": 4,
+            }
+            if rank.get(write_intent, 0) >= rank.get(old_intent, 0):
+                meta["write_intent"] = write_intent
+            meta["reinforcement_count"] = old_count + 1
+        else:
+            meta["confidence"] = float(plan.get("confidence", old_confidence))
+            meta["write_intent"] = plan.get("write_intent", old_intent)
+            meta["reinforcement_count"] = int(
+                plan.get("reinforcement_count", old_count + 1))
         meta["reinforced_at"] = datetime.now(timezone.utc).isoformat()
         self._mark_dirty(idx, payload=False, metadata=True)
         self._append_wal("NODE_META", node_id=idx, metadata=meta,
                          state=list(self._state_tuple(g)))
         return idx
+
+    def _native_reinforcement_plan(self, **kwargs):
+        if self.native_store is None or not hasattr(
+                self.native_store, "plan_reinforcement"):
+            return None
+        try:
+            return self.native_store.plan_reinforcement(**kwargs)
+        except RuntimeError:
+            return None
 
     def _candidate_to_review(self, candidate, text, reason, metadata):
         return {"action": "review_candidate",

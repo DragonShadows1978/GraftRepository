@@ -632,7 +632,10 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   for expire/conflict scans while Python retains fallback behavior. Static extraction
   action/reason selection now has a native side-effect-free policy planner:
   Python supplies target counts, and C++ chooses write/review/supersede/
-  reinforce/expire outcomes before Python performs the mutation. Explicit
+  reinforce/expire outcomes before Python performs the mutation.
+  Duplicate-fact reinforcement metadata merging now also uses
+  `grm_store_plan_reinforcement()` for write-intent rank, confidence, and
+  reinforcement-count decisions before Python records metadata/WAL. Explicit
   extractor target ids for supersede/expire also flow through
   `grm_store_filter_active_nodes()`, so C++ host metadata state performs the
   deterministic active-target filtering before Python applies the remaining

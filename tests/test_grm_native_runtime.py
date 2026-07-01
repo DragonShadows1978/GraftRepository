@@ -610,6 +610,30 @@ def test_native_extraction_policy_planner(tmp_path):
             expire_target_count=1) == {"action": "expire"}
 
 
+def test_native_reinforcement_planner(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        assert store.plan_reinforcement(
+            old_write_intent="observed", new_write_intent="inferred",
+            old_confidence=0.7, new_confidence=0.4,
+            old_reinforcement_count=2) == {
+                "write_intent": "observed",
+                "confidence": 0.7,
+                "reinforcement_count": 3,
+            }
+        assert store.plan_reinforcement(
+            old_write_intent="observed", new_write_intent="user_asserted",
+            old_confidence=0.7, new_confidence=0.95,
+            old_reinforcement_count=0) == {
+                "write_intent": "user_asserted",
+                "confidence": 0.95,
+                "reinforcement_count": 1,
+            }
+
+
 def test_native_cull_span_planner(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

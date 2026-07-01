@@ -434,6 +434,15 @@ class NativeGraftStore:
                 ctypes.c_uint64, ctypes.c_char_p, ctypes.c_size_t,
                 ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_plan_extraction_policy.restype = ctypes.c_int
+        self._has_reinforcement_plan = hasattr(
+            lib, "grm_store_plan_reinforcement")
+        if self._has_reinforcement_plan:
+            lib.grm_store_plan_reinforcement.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_double, ctypes.c_double, ctypes.c_uint64,
+                ctypes.c_char_p, ctypes.c_size_t,
+                ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_plan_reinforcement.restype = ctypes.c_int
         self._has_cull_span_plan = hasattr(lib, "grm_store_plan_cull_spans")
         if self._has_cull_span_plan:
             lib.grm_store_plan_cull_spans.argtypes = [
@@ -957,7 +966,28 @@ class NativeGraftStore:
             str(write_intent).encode("utf-8"), float(confidence),
             float(write_direct_threshold), int(conflict_count),
             int(requested_supersede_count), int(requested_id_count),
-            int(equivalent_count), int(expire_target_count), buf, cap,
+                int(equivalent_count), int(expire_target_count), buf, cap,
+                ctypes.byref(needed)))
+        return json.loads(buf.value.decode("utf-8") or "{}")
+
+    def plan_reinforcement(self, *, old_write_intent, new_write_intent,
+                           old_confidence, new_confidence,
+                           old_reinforcement_count=0):
+        if not getattr(self, "_has_reinforcement_plan", False):
+            raise RuntimeError(
+                "native GRM reinforcement planner is unavailable")
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_plan_reinforcement(
+            self._handle, str(old_write_intent).encode("utf-8"),
+            str(new_write_intent).encode("utf-8"), float(old_confidence),
+            float(new_confidence), int(old_reinforcement_count), None, 0,
+            ctypes.byref(needed)))
+        cap = int(needed.value) + 1
+        buf = ctypes.create_string_buffer(cap)
+        self._check(self._lib.grm_store_plan_reinforcement(
+            self._handle, str(old_write_intent).encode("utf-8"),
+            str(new_write_intent).encode("utf-8"), float(old_confidence),
+            float(new_confidence), int(old_reinforcement_count), buf, cap,
             ctypes.byref(needed)))
         return json.loads(buf.value.decode("utf-8") or "{}")
 

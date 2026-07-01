@@ -217,6 +217,20 @@ ExtractionPolicyPlan plan_extraction_policy(
     std::uint64_t expire_target_count);
 std::string extraction_policy_plan_json(const ExtractionPolicyPlan& plan);
 
+struct ReinforcementPlan {
+  std::string write_intent;
+  double confidence = 0.0;
+  std::uint64_t reinforcement_count = 0;
+};
+
+ReinforcementPlan plan_reinforcement(
+    const std::string& old_write_intent,
+    const std::string& new_write_intent,
+    double old_confidence,
+    double new_confidence,
+    std::uint64_t old_reinforcement_count);
+std::string reinforcement_plan_json(const ReinforcementPlan& plan);
+
 struct CullSpan {
   std::uint64_t start = 0;
   std::uint64_t end = 0;

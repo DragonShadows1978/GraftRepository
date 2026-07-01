@@ -1533,8 +1533,10 @@ def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
     })
     original = repo.native_store.fact_matches
     original_plan = repo.native_store.plan_extraction_policy
+    original_reinforcement = repo.native_store.plan_reinforcement
     calls = []
     plans = []
+    reinforcement_plans = []
 
     def traced_fact_matches(**kwargs):
         calls.append(dict(kwargs))
@@ -1544,9 +1546,15 @@ def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
         plans.append(dict(kwargs))
         return original_plan(**kwargs)
 
+    def traced_reinforcement(**kwargs):
+        reinforcement_plans.append(dict(kwargs))
+        return original_reinforcement(**kwargs)
+
     monkeypatch.setattr(repo.native_store, "fact_matches", traced_fact_matches)
     monkeypatch.setattr(repo.native_store, "plan_extraction_policy",
                         traced_policy_plan)
+    monkeypatch.setattr(repo.native_store, "plan_reinforcement",
+                        traced_reinforcement)
     conflict = repo.apply_extraction_candidate({
         "action": "write_direct",
         "candidate_type": "fact",
@@ -1587,6 +1595,11 @@ def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
     assert calls[-1]["value_mode"] == 1
     assert calls[-1]["temporal_mode"] == 1
     assert plans[-1]["equivalent_count"] == 1
+    assert reinforcement_plans[-1]["old_write_intent"] == "observed"
+    assert reinforcement_plans[-1]["new_write_intent"] == "observed"
+    assert reinforcement_plans[-1]["old_reinforcement_count"] == 0
+    assert repo.arena.grafts[old["node_id"]]["metadata"][
+        "reinforcement_count"] == 1
 
     timed_duplicate = repo.apply_extraction_candidate({
         "action": "write_direct",

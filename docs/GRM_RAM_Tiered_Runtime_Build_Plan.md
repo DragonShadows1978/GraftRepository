@@ -225,6 +225,10 @@ The native runtime also exposes a side-effect-free extraction policy planner for
 the static write/review/supersede/reinforce/expire decisions. Python supplies
 the target counts and executes the actual mutation, but the review reason/action
 selection now has a C++ boundary instead of being only ad hoc repository code.
+Duplicate-fact reinforcement metadata merging also has a native planner:
+`grm_store_plan_reinforcement()` chooses the winning write-intent rank, max
+confidence, and incremented reinforcement count before Python records metadata
+and WAL.
 Explicit extractor target-id validation now also has a native state boundary:
 `grm_store_filter_active_nodes()` deduplicates requested native ids, ignores
 unknown ids, and returns only active targets in request order. Python maps local

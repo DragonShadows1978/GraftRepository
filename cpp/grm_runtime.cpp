@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <fstream>
 #include <functional>
+#include <iomanip>
 #include <limits>
 #include <memory>
 #include <set>
@@ -541,6 +542,36 @@ void append_json_u64_field(std::ostringstream& out,
   }
   first = false;
   out << "\"" << key << "\":" << value;
+}
+
+void append_json_double_field(std::ostringstream& out,
+                              bool& first,
+                              const char* key,
+                              double value) {
+  if (!first) {
+    out << ",";
+  }
+  first = false;
+  out << "\"" << key << "\":" << std::setprecision(17) << value;
+}
+
+int write_intent_rank(const std::string& intent) {
+  if (intent == "imported") {
+    return 0;
+  }
+  if (intent == "inferred") {
+    return 1;
+  }
+  if (intent == "observed") {
+    return 2;
+  }
+  if (intent == "system_asserted") {
+    return 3;
+  }
+  if (intent == "user_asserted") {
+    return 4;
+  }
+  return 0;
 }
 
 void fsync_path(const std::filesystem::path& path) {
@@ -1096,6 +1127,35 @@ std::string extraction_policy_plan_json(const ExtractionPolicyPlan& plan) {
   out << "{";
   append_json_string_field(out, first, "action", plan.action);
   append_json_string_field(out, first, "reason", plan.reason);
+  out << "}";
+  return out.str();
+}
+
+ReinforcementPlan plan_reinforcement(
+    const std::string& old_write_intent,
+    const std::string& new_write_intent,
+    double old_confidence,
+    double new_confidence,
+    std::uint64_t old_reinforcement_count) {
+  ReinforcementPlan plan;
+  plan.write_intent = old_write_intent;
+  if (write_intent_rank(new_write_intent) >=
+      write_intent_rank(old_write_intent)) {
+    plan.write_intent = new_write_intent;
+  }
+  plan.confidence = std::max(old_confidence, new_confidence);
+  plan.reinforcement_count = old_reinforcement_count + 1;
+  return plan;
+}
+
+std::string reinforcement_plan_json(const ReinforcementPlan& plan) {
+  std::ostringstream out;
+  bool first = true;
+  out << "{";
+  append_json_string_field(out, first, "write_intent", plan.write_intent);
+  append_json_double_field(out, first, "confidence", plan.confidence);
+  append_json_u64_field(out, first, "reinforcement_count",
+                        plan.reinforcement_count, true);
   out << "}";
   return out.str();
 }
@@ -3420,6 +3480,41 @@ int grm_store_plan_extraction_policy(grm_store_handle* handle,
             action, write_intent, confidence, write_direct_threshold,
             conflict_count, requested_supersede_count, requested_id_count,
             equivalent_count, expire_target_count));
+    *out_len = static_cast<uint64_t>(json.size());
+    if (out_json != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, json.size());
+      std::memcpy(out_json, json.data(), n);
+      out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_plan_reinforcement(grm_store_handle* handle,
+                                 const char* old_write_intent,
+                                 const char* new_write_intent,
+                                 double old_confidence,
+                                 double new_confidence,
+                                 uint64_t old_reinforcement_count,
+                                 char* out_json,
+                                 size_t out_cap,
+                                 uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr ||
+        old_write_intent == nullptr || new_write_intent == nullptr ||
+        out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid plan_reinforcement arguments");
+    }
+    if (out_json == nullptr && out_cap > 0) {
+      return grm_fail_msg(
+          handle, "null reinforcement plan buffer with nonzero capacity");
+    }
+    const auto json = grm::reinforcement_plan_json(
+        grm::plan_reinforcement(
+            old_write_intent, new_write_intent, old_confidence, new_confidence,
+            old_reinforcement_count));
     *out_len = static_cast<uint64_t>(json.size());
     if (out_json != nullptr && out_cap > 0) {
       const size_t n = std::min(out_cap - 1, json.size());
