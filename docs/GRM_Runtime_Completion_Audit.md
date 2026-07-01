@@ -73,11 +73,12 @@ validation where feasible.
   Repository metadata keeps Python graft ids, but the native graph plane stores
   mapped native node ids; tests now cover intentionally divergent id spaces.
 - Explicit memory commands:
-  `remember`, `forget`, `correct/update`, review fallback, ignore, and
-  `flush memory now` are supported. `GRMRuntime.apply_memory_command()` now
-  runs all explicit commands through the runtime finish path, so autosave
-  publishes command mutations durably while `flush_immediately` and explicit
-  flush commands force durability even when autosave is disabled.
+  `remember`, `forget`, `correct/update`, cull/split graft, review fallback,
+  ignore, and `flush memory now` are supported.
+  `GRMRuntime.apply_memory_command()` now runs all explicit commands through the
+  runtime finish path, so autosave publishes command mutations durably while
+  `flush_immediately` and explicit flush commands force durability even when
+  autosave is disabled.
 - Review buffer:
   uncertain candidates can be recorded and later approved into memory.
 - Conservative extractor candidate interface and runtime hook:
@@ -182,10 +183,11 @@ validation where feasible.
 - Native memory-command parser boundary:
   `grm_store_parse_memory_command()` parses the deterministic explicit memory
   command grammar (`remember`, `forget`, `correct/update`, review fallback,
-  ignore, flush) into a JSON operation plan. `NativeGraftStore` exposes that
-  parser and native-backed `GraftRepository.apply_memory_command()` consumes it
-  before applying the Python memory policy. Command execution then completes
-  through `GRMRuntime`, including autosave/forced-flush durability semantics.
+  ignore, flush, cull/split graft) into a JSON operation plan.
+  `NativeGraftStore` exposes that parser and native-backed
+  `GraftRepository.apply_memory_command()` consumes it before applying the
+  Python memory policy. Command execution then completes through `GRMRuntime`,
+  including autosave/forced-flush durability semantics.
 - Review-buffer execution:
   uncertain extraction or malformed correction candidates can now be approved,
   rejected, edited, or scope-changed through repository APIs backed by the

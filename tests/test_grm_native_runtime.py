@@ -354,6 +354,20 @@ def test_native_memory_command_parser(tmp_path):
             "action": "flush",
             "flush_immediately": False,
         }
+        assert store.parse_memory_command(
+            "cull graft 12 into sections max tokens 128") == {
+                "action": "cull_graft",
+                "boundary": "section",
+                "node_id": 12,
+                "max_tokens": 128,
+                "flush_immediately": False,
+            }
+        assert store.parse_memory_command("split graft 3 max tokens 64") == {
+            "action": "cull_graft",
+            "node_id": 3,
+            "max_tokens": 64,
+            "flush_immediately": False,
+        }
         with pytest.raises(RuntimeError, match="unknown memory command"):
             store.parse_memory_command("remember maybe someday")
 

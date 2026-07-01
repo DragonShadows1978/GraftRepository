@@ -157,7 +157,12 @@ struct MemoryCommandPlan {
   std::string mutability;
   std::string scope;
   std::string kind;
+  std::string boundary;
   std::string reason;
+  std::uint64_t node_id = 0;
+  std::uint64_t max_tokens = 0;
+  bool has_node_id = false;
+  bool has_max_tokens = false;
   bool flush_immediately = false;
 };
 

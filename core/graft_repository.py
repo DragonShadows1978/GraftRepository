@@ -647,9 +647,84 @@ class GraftRepository:
         return idx
 
     @staticmethod
+    def _normalize_cull_command_boundary(name):
+        name = str(name).strip().lower()
+        if name in ("section", "sections"):
+            return "section"
+        if name in ("paragraph", "paragraphs"):
+            return "paragraph"
+        if name in ("turn", "turns"):
+            return "turn"
+        if name in ("heading", "headings"):
+            return "heading"
+        raise ValueError(f"unknown cull boundary strategy {name!r}")
+
+    @staticmethod
+    def _parse_cull_command_python(original, low):
+        words = low.replace(",", " ").replace(":", " ").replace(
+            "=", " ").split()
+        if len(words) < 3 or words[0] not in ("cull", "split"):
+            return None
+        if words[1] != "graft":
+            return None
+        try:
+            node_id = int(words[2])
+        except ValueError as exc:
+            raise ValueError("cull graft requires a numeric graft id") from exc
+        if node_id < 0:
+            raise ValueError("cull graft id must be nonnegative")
+
+        plan = {"action": "cull_graft", "node_id": node_id}
+        cursor = 3
+        while cursor < len(words):
+            word = words[cursor]
+            if word in ("into", "by"):
+                cursor += 1
+                if cursor >= len(words):
+                    raise ValueError("cull graft boundary is missing")
+                plan["boundary"] = GraftRepository._normalize_cull_command_boundary(
+                    words[cursor])
+                cursor += 1
+                continue
+            if word in ("section", "sections", "paragraph", "paragraphs",
+                        "turn", "turns", "heading", "headings"):
+                plan["boundary"] = GraftRepository._normalize_cull_command_boundary(
+                    word)
+                cursor += 1
+                continue
+            if word in ("max", "max_tokens", "max-token", "max-tokens"):
+                if word == "max":
+                    cursor += 1
+                    if cursor < len(words) and words[cursor] in (
+                            "token", "tokens"):
+                        cursor += 1
+                else:
+                    cursor += 1
+                if cursor >= len(words):
+                    raise ValueError("cull graft max tokens is missing")
+                try:
+                    max_tokens = int(words[cursor])
+                except ValueError as exc:
+                    raise ValueError(
+                        "cull graft max tokens must be numeric") from exc
+                if max_tokens <= 0:
+                    raise ValueError("cull graft max tokens must be positive")
+                plan["max_tokens"] = max_tokens
+                cursor += 1
+                continue
+            raise ValueError(f"unknown cull graft option {word!r}")
+        if "boundary" not in plan and "max_tokens" not in plan:
+            raise ValueError(
+                "cull graft requires max tokens or a boundary strategy")
+        return plan
+
+    @staticmethod
     def _parse_memory_command_python(text):
         original = text.strip()
         low = original.lower()
+        cull = GraftRepository._parse_cull_command_python(original, low)
+        if cull is not None:
+            return cull
         table = (
             ("remember permanently:", dict(durability="permanent",
                                            scope="user", kind="fact",

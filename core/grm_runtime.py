@@ -165,6 +165,22 @@ class GRMRuntime:
         if action == "flush":
             self._finish_memory_event(before, "flush", force_flush=True)
             return {"action": "flush"}
+        if action == "cull_graft":
+            node_id = plan.get("node_id")
+            if node_id is None:
+                raise ValueError("cull_graft command requires node_id")
+            kwargs = {}
+            if plan.get("max_tokens") is not None:
+                kwargs["max_tokens"] = int(plan["max_tokens"])
+            boundary = plan.get("boundary")
+            if boundary:
+                spans = repo.plan_cull_sections(
+                    int(node_id), boundary=boundary, **kwargs)
+                kwargs.pop("max_tokens", None)
+                kwargs["spans"] = spans
+            out = repo._cull_graft_direct(int(node_id), **kwargs)
+            self._finish_memory_event(before, "cull_graft")
+            return out
         raise ValueError(f"unknown memory command: {text!r}")
 
     def _finish_review_event(self, before, action):

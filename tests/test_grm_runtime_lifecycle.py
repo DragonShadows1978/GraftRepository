@@ -489,6 +489,42 @@ def test_runtime_cull_graft_autosaves_and_reports(tmp_path):
     assert reopened.arena.grafts[2]["host_payload"]["tok"].tolist() == [2, 3]
 
 
+def test_memory_command_culls_graft_with_token_cap(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeSliceArena,
+                           route_layer=3)
+    parent = repo.add_document("A1 B2 C3 D4")
+
+    out = repo.apply_memory_command("cull graft 0 max tokens 2")
+
+    assert out == {"action": "cull_graft", "parent": parent,
+                   "children": [1, 2], "retired_parent": True}
+    assert repo.runtime.last_result.event == "memory_command"
+    assert repo.runtime.last_result.action == "cull_graft"
+    assert repo.runtime.last_result.new_nodes == (1, 2)
+    assert repo.arena.grafts[parent]["retired"] is True
+    assert repo.arena.grafts[1]["host_payload"]["tok"].tolist() == [0, 1]
+    assert repo.arena.grafts[2]["host_payload"]["tok"].tolist() == [2, 3]
+
+
+def test_native_memory_command_culls_graft_by_sections(tmp_path):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeSliceArena,
+                           route_layer=3, native_lib_path=lib)
+    parent = repo.add_document("# Alpha\nA1 A2\n\n# Beta\nB1 B2")
+
+    out = repo.apply_memory_command("split graft 0 into sections")
+
+    assert out["children"] == [1, 2]
+    assert repo.runtime.last_result.event == "memory_command"
+    assert repo.runtime.last_result.action == "cull_graft"
+    assert repo.arena.grafts[parent]["metadata"]["culled_into"] == [1, 2]
+    assert repo.arena.grafts[1]["host_payload"]["tok"].tolist() == [0, 1, 2, 3]
+    assert repo.arena.grafts[2]["host_payload"]["tok"].tolist() == [4, 5, 6, 7]
+    repo.close()
+
+
 def test_remember_attaches_semantic_metadata(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,

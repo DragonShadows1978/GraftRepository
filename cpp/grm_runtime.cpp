@@ -259,6 +259,56 @@ bool starts_with(const std::string& s, const std::string& prefix) {
          std::equal(prefix.begin(), prefix.end(), s.begin());
 }
 
+std::vector<std::string> command_words(std::string s) {
+  for (char& c : s) {
+    if (c == ',' || c == ':' || c == '=') {
+      c = ' ';
+    }
+  }
+  std::istringstream in(s);
+  std::vector<std::string> out;
+  std::string word;
+  while (in >> word) {
+    out.push_back(word);
+  }
+  return out;
+}
+
+bool parse_u64_word(const std::string& word, std::uint64_t* out) {
+  if (word.empty()) {
+    return false;
+  }
+  std::uint64_t value = 0;
+  for (const unsigned char c : word) {
+    if (std::isdigit(c) == 0) {
+      return false;
+    }
+    const auto digit = static_cast<std::uint64_t>(c - '0');
+    if (value > (std::numeric_limits<std::uint64_t>::max() - digit) / 10) {
+      throw std::overflow_error("integer command field overflows uint64");
+    }
+    value = value * 10 + digit;
+  }
+  *out = value;
+  return true;
+}
+
+std::string normalize_cull_boundary(const std::string& word) {
+  if (word == "section" || word == "sections") {
+    return "section";
+  }
+  if (word == "paragraph" || word == "paragraphs") {
+    return "paragraph";
+  }
+  if (word == "turn" || word == "turns") {
+    return "turn";
+  }
+  if (word == "heading" || word == "headings") {
+    return "heading";
+  }
+  throw std::runtime_error("unknown cull boundary strategy");
+}
+
 std::string json_escape(const std::string& s) {
   std::ostringstream out;
   for (const unsigned char c : s) {
@@ -294,6 +344,21 @@ void append_json_string_field(std::ostringstream& out,
   }
   first = false;
   out << "\"" << key << "\":\"" << json_escape(value) << "\"";
+}
+
+void append_json_u64_field(std::ostringstream& out,
+                           bool& first,
+                           const char* key,
+                           std::uint64_t value,
+                           bool emit) {
+  if (!emit) {
+    return;
+  }
+  if (!first) {
+    out << ",";
+  }
+  first = false;
+  out << "\"" << key << "\":" << value;
 }
 
 void fsync_path(const std::filesystem::path& path) {
@@ -402,6 +467,69 @@ MemoryCommandPlan parse_memory_command(const std::string& text) {
     }
   }
 
+  const auto words = command_words(low);
+  if (words.size() >= 3 &&
+      (words[0] == "cull" || words[0] == "split") &&
+      words[1] == "graft") {
+    MemoryCommandPlan plan;
+    plan.action = "cull_graft";
+    if (!parse_u64_word(words[2], &plan.node_id)) {
+      throw std::runtime_error("cull graft requires a numeric graft id");
+    }
+    plan.has_node_id = true;
+    std::size_t cursor = 3;
+    while (cursor < words.size()) {
+      const auto& word = words[cursor];
+      if (word == "into" || word == "by") {
+        ++cursor;
+        if (cursor >= words.size()) {
+          throw std::runtime_error("cull graft boundary is missing");
+        }
+        plan.boundary = normalize_cull_boundary(words[cursor]);
+        ++cursor;
+        continue;
+      }
+      if (word == "section" || word == "sections" ||
+          word == "paragraph" || word == "paragraphs" ||
+          word == "turn" || word == "turns" ||
+          word == "heading" || word == "headings") {
+        plan.boundary = normalize_cull_boundary(word);
+        ++cursor;
+        continue;
+      }
+      if (word == "max" || word == "max_tokens" ||
+          word == "max-token" || word == "max-tokens") {
+        if (word == "max") {
+          ++cursor;
+          if (cursor < words.size() &&
+              (words[cursor] == "token" || words[cursor] == "tokens")) {
+            ++cursor;
+          }
+        } else {
+          ++cursor;
+        }
+        if (cursor >= words.size()) {
+          throw std::runtime_error("cull graft max tokens is missing");
+        }
+        if (!parse_u64_word(words[cursor], &plan.max_tokens)) {
+          throw std::runtime_error("cull graft max tokens must be numeric");
+        }
+        if (plan.max_tokens == 0) {
+          throw std::runtime_error("cull graft max tokens must be positive");
+        }
+        plan.has_max_tokens = true;
+        ++cursor;
+        continue;
+      }
+      throw std::runtime_error("unknown cull graft option");
+    }
+    if (plan.boundary.empty() && !plan.has_max_tokens) {
+      throw std::runtime_error(
+          "cull graft requires max tokens or a boundary strategy");
+    }
+    return plan;
+  }
+
   if (starts_with(low, "forget:")) {
     MemoryCommandPlan plan;
     plan.action = "forget";
@@ -457,7 +585,11 @@ std::string memory_command_plan_json(const MemoryCommandPlan& plan) {
   append_json_string_field(out, first, "mutability", plan.mutability);
   append_json_string_field(out, first, "scope", plan.scope);
   append_json_string_field(out, first, "kind", plan.kind);
+  append_json_string_field(out, first, "boundary", plan.boundary);
   append_json_string_field(out, first, "reason", plan.reason);
+  append_json_u64_field(out, first, "node_id", plan.node_id, plan.has_node_id);
+  append_json_u64_field(out, first, "max_tokens", plan.max_tokens,
+                        plan.has_max_tokens);
   if (!first) {
     out << ",";
   }
