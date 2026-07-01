@@ -2572,3 +2572,106 @@ def test_repository_attaches_native_store_to_arena(tmp_path):
     assert repo.arena.native_store is repo.native_store
     repo.close()
     assert repo.arena.native_store is None
+
+
+def test_forget_empty_query_matches_nothing(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena, route_layer=3)
+    repo.add_document("DOC keep-a code 11-1111")
+    repo.add_document("DOC keep-b code 22-2222")
+
+    assert repo.forget("") == 0
+    assert repo.forget("   ") == 0
+    assert repo.forget(None) == 0
+    assert not any(g.get("retired") for g in repo.arena.grafts)
+    # a real query still works
+    assert repo.forget("keep-b") == 1
+    assert repo.arena.grafts[1]["retired"] is True
+
+
+def test_update_memory_metadata_empty_query_matches_nothing(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena, route_layer=3)
+    repo.add_document("DOC pin-a code 11-1111")
+    repo.add_document("DOC pin-b code 22-2222")
+
+    assert repo.update_memory_metadata("", {"pinned": True}) == {
+        "count": 0, "node_ids": []}
+    assert repo.update_memory_metadata(None, {"pinned": True}) == {
+        "count": 0, "node_ids": []}
+    assert not any(g.get("metadata", {}).get("pinned")
+                   for g in repo.arena.grafts)
+    assert repo.update_memory_metadata("pin-a", {"pinned": True})["count"] == 1
+
+
+def test_torn_wal_tail_is_dropped_and_repaired_on_reopen(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+    repo.add_document("DOC survives crash 11-1111")
+    repo.add_document("DOC survives crash 22-2222")
+    wal = os.path.join(path, "wal", "000001.wal")
+    with open(wal, "ab") as fh:
+        fh.write(b'{"lsn": 99, "type": "NODE_UP')  # crash mid-append
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+
+    # intact records recovered; the torn tail did not brick the open
+    assert len(reopened.arena.grafts) == 2
+    assert reopened.last_wal_repair is not None
+    assert reopened.last_wal_repair["dropped"].startswith('{"lsn": 99')
+    # the partial line is gone from disk: every remaining line parses,
+    # so a later append cannot concatenate onto torn bytes
+    with open(wal) as fh:
+        for line in fh:
+            json.loads(line)
+    reopened.add_document("DOC after repair 33-3333")
+
+    reopened2 = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                                arena_cls=FakeArena, route_layer=3)
+    assert len(reopened2.arena.grafts) == 3
+    assert reopened2.last_wal_repair is None
+
+
+def test_malformed_wal_record_before_later_records_refuses_open(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+    repo.add_document("DOC one 11-1111")
+    repo.add_document("DOC two 22-2222")
+    wal = os.path.join(path, "wal", "000001.wal")
+    with open(wal) as fh:
+        lines = fh.readlines()
+    lines[0] = '{"lsn": 1, "type": "NODE_UP\n'  # damage mid-file, keep tail
+    with open(wal, "w") as fh:
+        fh.writelines(lines)
+
+    # mid-file damage is corruption, not a torn tail: refuse to guess
+    with pytest.raises(ValueError, match="corrupt WAL"):
+        GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                        arena_cls=FakeArena, route_layer=3)
+
+
+def test_native_checkpoint_captures_nodes_flushed_after_first_checkpoint(
+        tmp_path):
+    lib = build_native(tmp_path)
+    path = str(tmp_path / "repo")
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3,
+                           native_lib_path=lib)
+    repo.add_document("DOC first flush 11-0001")
+    repo.flush_now()
+    repo.add_document("DOC second flush 22-0002")
+    repo.flush_now()
+
+    # grm_store.bin itself must contain the post-first-checkpoint node:
+    # a fresh store loading only the checkpoint sees both nodes (plan
+    # section 6.4 — durable marks trail the checkpoint commit).
+    with NativeGraftStore(
+            lib, model_type="FakeModel", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as probe:
+        probe.load_checkpoint(repo._native_checkpoint_root())
+        assert probe.stats().nodes == 2
+    repo.close()

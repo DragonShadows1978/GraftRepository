@@ -206,6 +206,7 @@ class GraftRepository:
         self._flush_thread = None
         self._flush_error = None
         self._wal_lsn = 0
+        self.last_wal_repair = None
         self.review_buffer = []
         self.fold_history = []
         self.extractor = extractor
@@ -1080,11 +1081,15 @@ class GraftRepository:
         return self.runtime.apply_memory_command(text)
 
     def forget(self, query):
-        q = query.lower()
+        q = str(query or "").strip().lower()
+        if not q:
+            # An empty query would substring-match every node; an ambiguous
+            # command must never retire the whole repository (plan §4.5).
+            return 0
         count = 0
         before = self._snapshot_state()
         for i, g in enumerate(self.arena.grafts):
-            if q and q not in g.get("text", "").lower():
+            if q not in g.get("text", "").lower():
                 continue
             meta = g.setdefault("metadata", self._default_metadata(g))
             if not meta.get("active", True):
@@ -1103,11 +1108,14 @@ class GraftRepository:
         updates = dict(updates or {})
         if not updates:
             return {"count": 0, "node_ids": []}
-        q = str(query).lower()
+        q = str(query or "").strip().lower()
+        if not q:
+            # Same guard as forget(): empty never means "every node".
+            return {"count": 0, "node_ids": []}
         changed = []
         before = self._snapshot_state()
         for i, g in enumerate(self.arena.grafts):
-            if q and q not in g.get("text", "").lower():
+            if q not in g.get("text", "").lower():
                 continue
             meta = g.setdefault("metadata", self._default_metadata(g))
             if not meta.get("active", True) or g.get("retired"):
@@ -2437,12 +2445,39 @@ class GraftRepository:
         if not os.path.exists(p):
             return []
         out = []
-        with open(p) as fh:
-            for line in fh:
-                line = line.strip()
-                if not line:
-                    continue
-                out.append(json.loads(line))
+        torn_offset = None
+        torn_line = None
+        offset = 0
+        with open(p, "rb") as fh:
+            for raw in fh:
+                line = raw.decode("utf-8", errors="replace").strip()
+                if line:
+                    if torn_offset is not None:
+                        raise ValueError(
+                            f"corrupt WAL record at byte {torn_offset} of "
+                            f"{p}: malformed record precedes later records")
+                    try:
+                        rec = json.loads(line)
+                    except ValueError:
+                        rec = None
+                    if isinstance(rec, dict):
+                        out.append(rec)
+                    else:
+                        torn_offset = offset
+                        torn_line = line
+                offset += len(raw)
+        if torn_offset is not None:
+            # A malformed FINAL record is the crash-mid-append artifact
+            # (§6.5: an append commits only once its full line is on disk).
+            # The record never committed; drop it so recovery proceeds and
+            # later appends cannot concatenate onto a partial line.
+            with open(p, "r+b") as fh:
+                fh.truncate(torn_offset)
+                fh.flush()
+                os.fsync(fh.fileno())
+            self._fsync_parent_dir(p)
+            self.last_wal_repair = {"path": p, "offset": torn_offset,
+                                    "dropped": torn_line[:200]}
         if out:
             self._wal_lsn = max(int(r.get("lsn", 0)) for r in out)
         return out
@@ -2955,6 +2990,7 @@ class GraftRepository:
         with self._flush_lock:
             self._sync_lifecycle()
             nodes = []
+            native_flushed = []
             self._ensure_repo_dirs()
             for i, g in enumerate(self.arena.grafts):
                 f = os.path.join(self.path, "nodes", f"{i:04d}.npz")
@@ -2975,7 +3011,7 @@ class GraftRepository:
                     self._atomic_savez_compressed(f, **g["host_payload"])
                     g["durable"] = True
                     g["payload_pending"] = False
-                    self._native_mark_durable(i)
+                    native_flushed.append(i)
                 if "rare" not in g:
                     g["rare"] = ArenaCache._rare_tokens(g["text"])
                 g["dirty"] = False
@@ -2983,7 +3019,14 @@ class GraftRepository:
                 nodes.append(self._node_manifest(g))
             self._atomic_savez_compressed(
                 os.path.join(self.path, "index.npz"), **self.arena.pack_index())
+            # §6.4 write order: durable marks trail the checkpoint commit.
+            # Marking a node durable earlier empties the native dirty set
+            # that _native_save_checkpoint consults, so it would skip the
+            # write and leave grm_store.bin stale behind the manifest.
             native_checkpoint = self._native_save_checkpoint()
+            if not native_checkpoint:
+                for i in native_flushed:
+                    self._native_mark_durable(i)
             self._atomic_write_json(
                 os.path.join(self.path, "manifest.json"),
                 {"dialect": self.dialect,
