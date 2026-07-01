@@ -217,10 +217,10 @@ Native metadata now also carries structured fact identity
 The C++ host store exposes active fact-target scans for equal-value and
 conflicting-value matches; Python consumes that native scan for extraction
 expire/conflict/reinforcement target discovery, then still applies the
-authoritative-intent and temporal-validity policy checks. `grm_store_fact_matches_ex()`
-adds an opt-in exact temporal-field mode so duplicate/reinforcement scans can
-match the correct `valid_from`/`expires_at` identity in native code without
-moving effective-time date arithmetic out of Python.
+authoritative-intent policy checks. `grm_store_fact_matches_ex()` adds opt-in
+exact temporal-field matching for duplicate/reinforcement identity and
+effective-now temporal filtering for expire/conflict target scans, with Python
+retaining fallback behavior when the native mirror is unavailable.
 The native runtime also exposes a side-effect-free extraction policy planner for
 the static write/review/supersede/reinforce/expire decisions. Python supplies
 the target counts and executes the actual mutation, but the review reason/action

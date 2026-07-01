@@ -1335,13 +1335,10 @@ class GraftRepository:
         if not (subject and predicate and value):
             return []
 
-        native = self._native_fact_matches(candidate, value_mode=1)
+        native = self._native_fact_matches(
+            candidate, value_mode=1, temporal_mode=2)
         if native is not None:
-            return [i for i in native
-                    if self._candidate_time_conflicts(
-                        candidate, self.arena.grafts[i].get(
-                            "metadata", self._default_metadata(
-                                self.arena.grafts[i])))]
+            return native
 
         out = []
         for i, g in enumerate(self.arena.grafts):
@@ -1432,13 +1429,10 @@ class GraftRepository:
         value = self._norm_fact_field(candidate.get("value"))
         if not (subject and predicate and value):
             return []
-        native = self._native_fact_matches(candidate, value_mode=2)
+        native = self._native_fact_matches(
+            candidate, value_mode=2, temporal_mode=2)
         if native is not None:
-            return [i for i in native
-                    if self._candidate_time_conflicts(
-                        candidate, self.arena.grafts[i].get(
-                            "metadata", self._default_metadata(
-                                self.arena.grafts[i])))]
+            return native
         out = []
         for i, g in enumerate(self.arena.grafts):
             meta = g.get("metadata", self._default_metadata(g))

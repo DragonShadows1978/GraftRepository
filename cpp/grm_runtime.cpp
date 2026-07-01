@@ -6,6 +6,7 @@
 #include <cctype>
 #include <cstring>
 #include <cmath>
+#include <ctime>
 #include <filesystem>
 #include <fstream>
 #include <functional>
@@ -374,6 +375,120 @@ std::string norm_fact_field(const std::string& value) {
 std::string norm_fact_scope(const std::string& value) {
   const auto out = norm_fact_field(value);
   return out.empty() ? "project" : out;
+}
+
+bool parse_int_span(const std::string& s,
+                    std::size_t pos,
+                    std::size_t len,
+                    int* out) {
+  if (out == nullptr || pos + len > s.size()) {
+    return false;
+  }
+  int value = 0;
+  for (std::size_t i = 0; i < len; ++i) {
+    const unsigned char c = static_cast<unsigned char>(s[pos + i]);
+    if (std::isdigit(c) == 0) {
+      return false;
+    }
+    value = value * 10 + static_cast<int>(c - '0');
+  }
+  *out = value;
+  return true;
+}
+
+long long days_from_civil(int y, unsigned m, unsigned d) {
+  y -= m <= 2;
+  const int era = (y >= 0 ? y : y - 399) / 400;
+  const unsigned yoe = static_cast<unsigned>(y - era * 400);
+  const unsigned mp = static_cast<unsigned>(
+      static_cast<int>(m) + (m > 2 ? -3 : 9));
+  const unsigned doy = (153 * mp + 2) / 5 + d - 1;
+  const unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+  return static_cast<long long>(era) * 146097 +
+         static_cast<long long>(doe) - 719468;
+}
+
+bool parse_fact_time_utc_seconds(const std::string& value, long long* out) {
+  std::string s = trim(value);
+  if (s.empty() || out == nullptr) {
+    return false;
+  }
+  if (s.back() == 'Z' || s.back() == 'z') {
+    s.pop_back();
+    s += "+00:00";
+  }
+  int year = 0;
+  int month = 0;
+  int day = 0;
+  if (s.size() < 10 || s[4] != '-' || s[7] != '-' ||
+      !parse_int_span(s, 0, 4, &year) ||
+      !parse_int_span(s, 5, 2, &month) ||
+      !parse_int_span(s, 8, 2, &day)) {
+    return false;
+  }
+  if (month < 1 || month > 12 || day < 1 || day > 31) {
+    return false;
+  }
+  int hour = 0;
+  int minute = 0;
+  int second = 0;
+  std::size_t pos = 10;
+  if (pos < s.size() && (s[pos] == 'T' || s[pos] == 't' || s[pos] == ' ')) {
+    if (pos + 9 > s.size() ||
+        !parse_int_span(s, pos + 1, 2, &hour) ||
+        s[pos + 3] != ':' ||
+        !parse_int_span(s, pos + 4, 2, &minute) ||
+        s[pos + 6] != ':' ||
+        !parse_int_span(s, pos + 7, 2, &second)) {
+      return false;
+    }
+    pos += 9;
+    while (pos < s.size() && s[pos] != '+' && s[pos] != '-') {
+      ++pos;
+    }
+  }
+  if (hour < 0 || hour > 23 || minute < 0 || minute > 59 ||
+      second < 0 || second > 60) {
+    return false;
+  }
+  int offset_seconds = 0;
+  if (pos < s.size() && (s[pos] == '+' || s[pos] == '-')) {
+    const int sign = s[pos] == '-' ? -1 : 1;
+    int offset_hour = 0;
+    int offset_minute = 0;
+    if (pos + 6 > s.size() || s[pos + 3] != ':' ||
+        !parse_int_span(s, pos + 1, 2, &offset_hour) ||
+        !parse_int_span(s, pos + 4, 2, &offset_minute) ||
+        offset_hour > 23 || offset_minute > 59) {
+      return false;
+    }
+    offset_seconds = sign * (offset_hour * 3600 + offset_minute * 60);
+  }
+  const long long day_seconds =
+      days_from_civil(year, static_cast<unsigned>(month),
+                      static_cast<unsigned>(day)) *
+      86400LL;
+  *out = day_seconds + hour * 3600LL + minute * 60LL + second -
+         offset_seconds;
+  return true;
+}
+
+bool fact_time_effective_at(const std::string& valid_from,
+                            const std::string& expires_at,
+                            long long now_seconds) {
+  long long valid = 0;
+  if (!trim(valid_from).empty() &&
+      parse_fact_time_utc_seconds(valid_from, &valid) &&
+      valid > now_seconds) {
+    return false;
+  }
+  long long expires = 0;
+  if (!trim(expires_at).empty() &&
+      parse_fact_time_utc_seconds(expires_at, &expires) &&
+      expires <= now_seconds) {
+    return false;
+  }
+  return true;
 }
 
 std::string json_escape(const std::string& s) {
@@ -1343,6 +1458,13 @@ std::vector<std::uint64_t> HostGraftStore::fact_matches(
   if (subject.empty() || predicate.empty()) {
     return out;
   }
+  const long long now_seconds =
+      static_cast<long long>(std::time(nullptr));
+  if (temporal_mode == 2 &&
+      !fact_time_effective_at(identity.valid_from, identity.expires_at,
+                              now_seconds)) {
+    return out;
+  }
   for (const auto id : node_ids()) {
     const auto& node = nodes_.at(id);
     const auto& meta = node.metadata;
@@ -1368,6 +1490,11 @@ std::vector<std::uint64_t> HostGraftStore::fact_matches(
     if (temporal_mode == 1 &&
         (meta.valid_from != identity.valid_from ||
          meta.expires_at != identity.expires_at)) {
+      continue;
+    }
+    if (temporal_mode == 2 &&
+        !fact_time_effective_at(meta.valid_from, meta.expires_at,
+                                now_seconds)) {
       continue;
     }
     out.push_back(id);

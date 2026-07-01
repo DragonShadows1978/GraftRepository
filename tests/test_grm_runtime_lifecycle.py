@@ -1563,7 +1563,7 @@ def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
 
     assert conflict["action"] == "review_candidate"
     assert calls[-1]["value_mode"] == 2
-    assert calls[-1]["temporal_mode"] == 0
+    assert calls[-1]["temporal_mode"] == 2
     assert calls[-1]["subject"] == "Native conflict target"
     assert plans[-1]["conflict_count"] == 2
     assert plans[-1]["action"] == "write_direct"
@@ -1881,6 +1881,102 @@ def test_extraction_conflicts_respect_temporal_validity(tmp_path):
         subject="GRM temporal guard",
         value="lax"))
     assert guarded["action"] == "review_candidate"
+
+
+def test_native_fact_scan_applies_temporal_effective_policy(
+        tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+
+    def candidate(**updates):
+        base = {
+            "action": "write_direct",
+            "candidate_type": "fact",
+            "text": "Native temporal target is RAM.",
+            "subject": "Native temporal target",
+            "predicate": "is",
+            "value": "RAM",
+            "scope": "project",
+            "durability": "project",
+            "mutability": "mutable",
+            "write_intent": "observed",
+            "confidence": 0.99,
+        }
+        base.update(updates)
+        return base
+
+    expired = repo.apply_extraction_candidate(candidate(
+        text="Native temporal target used to be disk.",
+        value="disk",
+        expires_at="2000-01-01T00:00:00+00:00"))
+    current = repo.apply_extraction_candidate(candidate(
+        text="Native temporal target is RAM.",
+        value="RAM"))
+    future = repo.apply_extraction_candidate(candidate(
+        text="Native temporal target will be GPU.",
+        value="GPU",
+        valid_from="2999-01-01T00:00:00+00:00"))
+    assert expired["action"] == "write_direct"
+    assert current["action"] == "write_direct"
+    assert future["action"] == "write_direct"
+
+    original_matches = repo.native_store.fact_matches
+    original_plan = repo.native_store.plan_extraction_policy
+    calls = []
+    plans = []
+
+    def traced_matches(**kwargs):
+        calls.append(dict(kwargs))
+        return original_matches(**kwargs)
+
+    def traced_plan(**kwargs):
+        plans.append(dict(kwargs))
+        return original_plan(**kwargs)
+
+    monkeypatch.setattr(repo.native_store, "fact_matches", traced_matches)
+    monkeypatch.setattr(repo.native_store, "plan_extraction_policy",
+                        traced_plan)
+
+    conflict = repo.apply_extraction_candidate(candidate(
+        text="Native temporal target is NVMe.",
+        value="NVMe"))
+
+    assert conflict["action"] == "review_candidate"
+    assert calls[-1]["value_mode"] == 2
+    assert calls[-1]["temporal_mode"] == 2
+    assert plans[-1]["conflict_count"] == 1
+
+    expire = repo.apply_extraction_candidate(candidate(
+        action="expire",
+        text="Expire only the current native temporal target.",
+        value="RAM",
+        write_intent="user_asserted",
+        confidence=1.0))
+
+    assert expire["action"] == "expire"
+    assert expire["expired"] == [current["node_id"]]
+    expire_scans = [c for c in calls if c["value_mode"] == 1]
+    assert expire_scans[-1]["temporal_mode"] == 2
+    assert plans[-1]["expire_target_count"] == 1
+
+    malformed = repo.apply_extraction_candidate(candidate(
+        text="Native temporal guard is strict.",
+        subject="Native temporal guard",
+        value="strict",
+        valid_from="not-a-date"))
+    assert malformed["action"] == "write_direct"
+
+    guarded = repo.apply_extraction_candidate(candidate(
+        text="Native temporal guard is lax.",
+        subject="Native temporal guard",
+        value="lax"))
+
+    assert guarded["action"] == "review_candidate"
+    assert calls[-1]["temporal_mode"] == 2
+    assert plans[-1]["conflict_count"] == 1
+    repo.close()
 
 
 def test_extraction_expire_action_retires_and_recovers_from_wal(tmp_path):

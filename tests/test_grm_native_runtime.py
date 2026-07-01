@@ -921,6 +921,14 @@ def test_native_fact_identity_scan_round_trips_through_checkpoint(tmp_path):
         timed = store.add_node("GRM target is RAM in 2026", b"", ntok=1)
         user = store.add_node("User-scoped target is NVMe", b"", ntok=1)
         inactive = store.add_node("Inactive target is tape", b"", ntok=1)
+        expired_temporal = store.add_node(
+            "GRM temporal target used to be disk", b"", ntok=1)
+        current_temporal = store.add_node(
+            "GRM temporal target is RAM", b"", ntok=1)
+        future_temporal = store.add_node(
+            "GRM temporal target will be GPU", b"", ntok=1)
+        invalid_temporal = store.add_node(
+            "GRM temporal guard is strict", b"", ntok=1)
         store.set_metadata(old, {
             "active": True, "kind": "fact", "scope": "project",
             "subject": "GRM target", "predicate": "is", "value": "disk"})
@@ -938,6 +946,24 @@ def test_native_fact_identity_scan_round_trips_through_checkpoint(tmp_path):
         store.set_metadata(inactive, {
             "active": False, "kind": "fact", "scope": "project",
             "subject": "GRM target", "predicate": "is", "value": "tape"})
+        store.set_metadata(expired_temporal, {
+            "active": True, "kind": "fact", "scope": "project",
+            "subject": "GRM temporal target", "predicate": "is",
+            "value": "disk",
+            "expires_at": "2000-01-01T00:00:00+00:00"})
+        store.set_metadata(current_temporal, {
+            "active": True, "kind": "fact", "scope": "project",
+            "subject": "GRM temporal target", "predicate": "is",
+            "value": "RAM"})
+        store.set_metadata(future_temporal, {
+            "active": True, "kind": "fact", "scope": "project",
+            "subject": "GRM temporal target", "predicate": "is",
+            "value": "GPU",
+            "valid_from": "2999-01-01T00:00:00+00:00"})
+        store.set_metadata(invalid_temporal, {
+            "active": True, "kind": "fact", "scope": "project",
+            "subject": "GRM temporal guard", "predicate": "is",
+            "value": "strict", "valid_from": "not-a-date"})
 
         assert store.fact_matches(
             subject="grm target", predicate="IS", value="ram",
@@ -954,6 +980,21 @@ def test_native_fact_identity_scan_round_trips_through_checkpoint(tmp_path):
         assert store.fact_matches(
             subject="GRM target", predicate="is", value="RAM",
             scope="user", value_mode=2) == (user,)
+        assert store.fact_matches(
+            subject="GRM temporal target", predicate="is", value="NVMe",
+            scope="project", value_mode=2, temporal_mode=2) == (
+                current_temporal,)
+        assert store.fact_matches(
+            subject="GRM temporal target", predicate="is", value="disk",
+            scope="project", value_mode=1, temporal_mode=2) == ()
+        assert store.fact_matches(
+            subject="GRM temporal target", predicate="is", value="RAM",
+            scope="project", value_mode=1, temporal_mode=2) == (
+                current_temporal,)
+        assert store.fact_matches(
+            subject="GRM temporal guard", predicate="is", value="lax",
+            scope="project", value_mode=2, temporal_mode=2) == (
+                invalid_temporal,)
         store.save_checkpoint(ckpt)
 
     with NativeGraftStore(
@@ -970,6 +1011,10 @@ def test_native_fact_identity_scan_round_trips_through_checkpoint(tmp_path):
             valid_from="2026-01-01T00:00:00+00:00",
             expires_at="2027-01-01T00:00:00+00:00",
             temporal_mode=1) == (timed,)
+        assert restored.fact_matches(
+            subject="GRM temporal target", predicate="is", value="NVMe",
+            scope="project", value_mode=2, temporal_mode=2) == (
+                current_temporal,)
         assert restored.fact_matches(
             subject="GRM target", predicate="is", value="RAM",
             scope="project", value_mode=2) == (old,)
