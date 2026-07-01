@@ -530,6 +530,54 @@ MemoryCommandPlan parse_memory_command(const std::string& text) {
     return plan;
   }
 
+  struct MetadataCommandPrefix {
+    const char* prefix;
+    const char* command;
+    const char* key;
+    const char* value;
+  };
+  const MetadataCommandPrefix metadata_prefixes[] = {
+      {"pin memory:", "pin_memory", "pinned", "true"},
+      {"pin this:", "pin_memory", "pinned", "true"},
+      {"unpin memory:", "unpin_memory", "pinned", "false"},
+      {"unpin this:", "unpin_memory", "pinned", "false"},
+      {"mark memory mutable:", "mark_mutable", "mutability", "mutable"},
+      {"mark this as mutable:", "mark_mutable", "mutability", "mutable"},
+      {"mark memory stable:", "mark_stable", "mutability", "stable"},
+      {"mark this as stable:", "mark_stable", "mutability", "stable"},
+      {"mark memory immutable:", "mark_immutable", "mutability", "immutable"},
+      {"mark this as immutable:", "mark_immutable", "mutability", "immutable"},
+  };
+  for (const auto& p : metadata_prefixes) {
+    if (starts_with(low, p.prefix)) {
+      MemoryCommandPlan plan;
+      plan.action = "update_memory_metadata";
+      plan.command = p.command;
+      plan.query = trim(original.substr(std::strlen(p.prefix)));
+      plan.metadata_key = p.key;
+      plan.metadata_value = p.value;
+      return plan;
+    }
+  }
+
+  struct ReadCommandPrefix {
+    const char* prefix;
+    const char* action;
+  };
+  const ReadCommandPrefix read_prefixes[] = {
+      {"show memory about:", "show_memory"},
+      {"why do you remember that:", "why_memory"},
+      {"why do you remember:", "why_memory"},
+  };
+  for (const auto& p : read_prefixes) {
+    if (starts_with(low, p.prefix)) {
+      MemoryCommandPlan plan;
+      plan.action = p.action;
+      plan.query = trim(original.substr(std::strlen(p.prefix)));
+      return plan;
+    }
+  }
+
   if (starts_with(low, "forget:")) {
     MemoryCommandPlan plan;
     plan.action = "forget";
@@ -578,6 +626,7 @@ std::string memory_command_plan_json(const MemoryCommandPlan& plan) {
   bool first = true;
   out << "{";
   append_json_string_field(out, first, "action", plan.action);
+  append_json_string_field(out, first, "command", plan.command);
   append_json_string_field(out, first, "body", plan.body);
   append_json_string_field(out, first, "query", plan.query);
   append_json_string_field(out, first, "replacement", plan.replacement);
@@ -586,6 +635,8 @@ std::string memory_command_plan_json(const MemoryCommandPlan& plan) {
   append_json_string_field(out, first, "scope", plan.scope);
   append_json_string_field(out, first, "kind", plan.kind);
   append_json_string_field(out, first, "boundary", plan.boundary);
+  append_json_string_field(out, first, "metadata_key", plan.metadata_key);
+  append_json_string_field(out, first, "metadata_value", plan.metadata_value);
   append_json_string_field(out, first, "reason", plan.reason);
   append_json_u64_field(out, first, "node_id", plan.node_id, plan.has_node_id);
   append_json_u64_field(out, first, "max_tokens", plan.max_tokens,

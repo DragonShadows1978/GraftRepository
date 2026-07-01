@@ -110,13 +110,14 @@ class GRMRuntime:
         )
         return done
 
-    def _finish_memory_event(self, before, action, *, force_flush=False):
+    def _finish_memory_event(self, before, action, *, force_flush=False,
+                             read_only=False):
         repo = self.repository
         did_flush = False
-        if force_flush or repo.autosave:
+        if not read_only and (force_flush or repo.autosave):
             repo.flush_now()
             did_flush = True
-        paged = repo._page()
+        paged = 0 if read_only else repo._page()
         self.last_result = RuntimeResult(
             event="memory_command",
             before_nodes=len(before),
@@ -181,6 +182,29 @@ class GRMRuntime:
             out = repo._cull_graft_direct(int(node_id), **kwargs)
             self._finish_memory_event(before, "cull_graft")
             return out
+        if action == "update_memory_metadata":
+            updates = dict(plan.get("metadata", {}) or {})
+            key = plan.get("metadata_key")
+            if key:
+                value = plan.get("metadata_value")
+                if value == "true":
+                    value = True
+                elif value == "false":
+                    value = False
+                updates[str(key)] = value
+            out = repo.update_memory_metadata(plan.get("query", ""), updates)
+            label = plan.get("command", "update_memory_metadata")
+            self._finish_memory_event(before, label)
+            out["action"] = label
+            return out
+        if action == "show_memory":
+            rows = repo.show_memory_about(plan.get("query", ""))
+            self._finish_memory_event(before, "show_memory", read_only=True)
+            return {"action": "show_memory", "rows": rows}
+        if action == "why_memory":
+            rows = repo.why_remember(plan.get("query", ""))
+            self._finish_memory_event(before, "why_memory", read_only=True)
+            return {"action": "why_memory", "rows": rows}
         raise ValueError(f"unknown memory command: {text!r}")
 
     def _finish_review_event(self, before, action):

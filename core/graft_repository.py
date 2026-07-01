@@ -719,12 +719,65 @@ class GraftRepository:
         return plan
 
     @staticmethod
+    def _command_body(original, prefix):
+        return original[len(prefix):].strip()
+
+    @staticmethod
+    def _parse_metadata_command_python(original, low):
+        table = (
+            ("pin memory:", "pin_memory", {"pinned": True}),
+            ("pin this:", "pin_memory", {"pinned": True}),
+            ("unpin memory:", "unpin_memory", {"pinned": False}),
+            ("unpin this:", "unpin_memory", {"pinned": False}),
+            ("mark memory mutable:", "mark_mutable",
+             {"mutability": "mutable"}),
+            ("mark this as mutable:", "mark_mutable",
+             {"mutability": "mutable"}),
+            ("mark memory stable:", "mark_stable",
+             {"mutability": "stable"}),
+            ("mark this as stable:", "mark_stable",
+             {"mutability": "stable"}),
+            ("mark memory immutable:", "mark_immutable",
+             {"mutability": "immutable"}),
+            ("mark this as immutable:", "mark_immutable",
+             {"mutability": "immutable"}),
+        )
+        for prefix, command, metadata in table:
+            if low.startswith(prefix):
+                return {"action": "update_memory_metadata",
+                        "command": command,
+                        "query": GraftRepository._command_body(
+                            original, prefix),
+                        "metadata": dict(metadata)}
+        return None
+
+    @staticmethod
+    def _parse_read_memory_command_python(original, low):
+        table = (
+            ("show memory about:", "show_memory"),
+            ("why do you remember that:", "why_memory"),
+            ("why do you remember:", "why_memory"),
+        )
+        for prefix, action in table:
+            if low.startswith(prefix):
+                return {"action": action,
+                        "query": GraftRepository._command_body(
+                            original, prefix)}
+        return None
+
+    @staticmethod
     def _parse_memory_command_python(text):
         original = text.strip()
         low = original.lower()
         cull = GraftRepository._parse_cull_command_python(original, low)
         if cull is not None:
             return cull
+        metadata = GraftRepository._parse_metadata_command_python(original, low)
+        if metadata is not None:
+            return metadata
+        read = GraftRepository._parse_read_memory_command_python(original, low)
+        if read is not None:
+            return read
         table = (
             ("remember permanently:", dict(durability="permanent",
                                            scope="user", kind="fact",
@@ -801,6 +854,28 @@ class GraftRepository:
         if count:
             self._mark_mutations(before)
         return count
+
+    def update_memory_metadata(self, query, updates):
+        updates = dict(updates or {})
+        if not updates:
+            return {"count": 0, "node_ids": []}
+        q = str(query).lower()
+        changed = []
+        before = self._snapshot_state()
+        for i, g in enumerate(self.arena.grafts):
+            if q and q not in g.get("text", "").lower():
+                continue
+            meta = g.setdefault("metadata", self._default_metadata(g))
+            if not meta.get("active", True) or g.get("retired"):
+                continue
+            meta.update(updates)
+            changed.append(i)
+            self._mark_dirty(i, payload=False, metadata=True)
+            self._append_wal("NODE_META", node_id=i, metadata=meta,
+                             state=list(self._state_tuple(g)))
+        if changed:
+            self._mark_mutations(before)
+        return {"count": len(changed), "node_ids": changed}
 
     def correct_memory(self, query, replacement, **metadata):
         supersedes = []
@@ -1488,6 +1563,12 @@ class GraftRepository:
         rows = self.show_memory_about(query)
         return [{"node_id": r["node_id"],
                  "write_intent": r["metadata"].get("write_intent"),
+                 "kind": r["metadata"].get("kind"),
+                 "durability": r["metadata"].get("durability"),
+                 "mutability": r["metadata"].get("mutability"),
+                 "scope": r["metadata"].get("scope"),
+                 "confidence": r["metadata"].get("confidence"),
+                 "pinned": r["metadata"].get("pinned", False),
                  "source_grafts": r["metadata"].get("source_grafts", []),
                  "provenance": self.arena.grafts[r["node_id"]].get(
                      "provenance", [])}

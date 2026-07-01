@@ -630,6 +630,49 @@ def test_memory_commands_autosave_all_mutations(tmp_path):
     assert reopened.review_buffer[-1]["status"] == "pending"
 
 
+def test_memory_control_commands_update_and_read_metadata(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=True,
+                           arena_cls=FakeArena, route_layer=3)
+
+    remembered = repo.apply_memory_command(
+        "remember this for the project: Control target 73-7373")
+    node_id = remembered["node_id"]
+
+    pinned = repo.apply_memory_command("pin memory: Control target")
+    assert pinned == {"count": 1, "node_ids": [node_id],
+                      "action": "pin_memory"}
+    assert repo.runtime.last_result.event == "memory_command"
+    assert repo.runtime.last_result.action == "pin_memory"
+    assert repo.runtime.last_result.autosaved is True
+    assert repo.arena.grafts[node_id]["metadata"]["pinned"] is True
+    assert repo.stats()["dirty_nodes"] == 0
+
+    marked = repo.apply_memory_command("mark memory mutable: Control target")
+    assert marked == {"count": 1, "node_ids": [node_id],
+                      "action": "mark_mutable"}
+    assert repo.arena.grafts[node_id]["metadata"]["mutability"] == "mutable"
+    assert repo.runtime.last_result.autosaved is True
+
+    shown = repo.apply_memory_command("show memory about: Control target")
+    assert shown["action"] == "show_memory"
+    assert shown["rows"][0]["node_id"] == node_id
+    assert repo.runtime.last_result.action == "show_memory"
+    assert repo.runtime.last_result.autosaved is False
+
+    why = repo.apply_memory_command("why do you remember: Control target")
+    assert why["action"] == "why_memory"
+    assert why["rows"][0]["node_id"] == node_id
+    assert why["rows"][0]["mutability"] == "mutable"
+    assert repo.runtime.last_result.autosaved is False
+
+    with open(os.path.join(path, "manifest.json")) as fh:
+        man = json.load(fh)
+    meta = man["nodes"][node_id]["metadata"]
+    assert meta["pinned"] is True
+    assert meta["mutability"] == "mutable"
+
+
 def test_runtime_coordinator_drives_chat_flush_and_extraction(tmp_path):
     class Extractor:
         def extract(self, text, **ctx):
@@ -832,6 +875,11 @@ def test_native_memory_command_parser_drives_repository_policy(tmp_path):
     active = repo.show_memory_about("native parser command grammar")
     assert len(active) == 1
     assert active[0]["metadata"]["supersedes"] == [out["node_id"]]
+
+    pin = repo.apply_memory_command("pin memory: native parser command grammar")
+    assert pin["action"] == "pin_memory"
+    assert pin["node_ids"] == [active[0]["node_id"]]
+    assert repo.arena.grafts[active[0]["node_id"]]["metadata"]["pinned"] is True
 
     review = repo.apply_memory_command("update memory: missing arrow")
     assert review["action"] == "review"

@@ -150,6 +150,7 @@ struct TensorEvictResult {
 
 struct MemoryCommandPlan {
   std::string action;
+  std::string command;
   std::string body;
   std::string query;
   std::string replacement;
@@ -158,6 +159,8 @@ struct MemoryCommandPlan {
   std::string scope;
   std::string kind;
   std::string boundary;
+  std::string metadata_key;
+  std::string metadata_value;
   std::string reason;
   std::uint64_t node_id = 0;
   std::uint64_t max_tokens = 0;

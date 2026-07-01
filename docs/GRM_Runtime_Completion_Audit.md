@@ -74,11 +74,13 @@ validation where feasible.
   mapped native node ids; tests now cover intentionally divergent id spaces.
 - Explicit memory commands:
   `remember`, `forget`, `correct/update`, cull/split graft, review fallback,
-  ignore, and `flush memory now` are supported.
+  ignore, pin/unpin, mutability marking, memory introspection, and
+  `flush memory now` are supported.
   `GRMRuntime.apply_memory_command()` now runs all explicit commands through the
   runtime finish path, so autosave publishes command mutations durably while
   `flush_immediately` and explicit flush commands force durability even when
-  autosave is disabled.
+  autosave is disabled. Read-only show/why commands report through the same
+  runtime result boundary without forcing a flush.
 - Review buffer:
   uncertain candidates can be recorded and later approved into memory. Approval
   of complete semantic fact triples now reuses the extractor write policy with
@@ -187,7 +189,8 @@ validation where feasible.
 - Native memory-command parser boundary:
   `grm_store_parse_memory_command()` parses the deterministic explicit memory
   command grammar (`remember`, `forget`, `correct/update`, review fallback,
-  ignore, flush, cull/split graft) into a JSON operation plan.
+  ignore, flush, cull/split graft, pin/unpin, mutability marking, show/why) into
+  a JSON operation plan.
   `NativeGraftStore` exposes that parser and native-backed
   `GraftRepository.apply_memory_command()` consumes it before applying the
   Python memory policy. Command execution then completes through `GRMRuntime`,

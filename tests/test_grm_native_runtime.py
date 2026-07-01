@@ -368,6 +368,34 @@ def test_native_memory_command_parser(tmp_path):
             "max_tokens": 64,
             "flush_immediately": False,
         }
+        assert store.parse_memory_command("pin memory: live target") == {
+            "action": "update_memory_metadata",
+            "command": "pin_memory",
+            "query": "live target",
+            "metadata_key": "pinned",
+            "metadata_value": "true",
+            "flush_immediately": False,
+        }
+        assert store.parse_memory_command(
+            "mark memory mutable: project state") == {
+                "action": "update_memory_metadata",
+                "command": "mark_mutable",
+                "query": "project state",
+                "metadata_key": "mutability",
+                "metadata_value": "mutable",
+                "flush_immediately": False,
+            }
+        assert store.parse_memory_command("show memory about: live target") == {
+            "action": "show_memory",
+            "query": "live target",
+            "flush_immediately": False,
+        }
+        assert store.parse_memory_command(
+            "why do you remember: live target") == {
+                "action": "why_memory",
+                "query": "live target",
+                "flush_immediately": False,
+            }
         with pytest.raises(RuntimeError, match="unknown memory command"):
             store.parse_memory_command("remember maybe someday")
 

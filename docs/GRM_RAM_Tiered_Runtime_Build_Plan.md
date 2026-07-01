@@ -27,7 +27,8 @@ authoritative in-RAM `host_payload` snapshot for new grafts, a dirty queue,
 `flush_now()` that writes from RAM payloads instead of CUDA tensors,
 thread-backed `flush_async()`/`flush_wait()`, lightweight WAL records, explicit
 memory commands (`remember`, `forget`, `correct/update`, cull/split graft,
-`flush memory now`), review buffer APIs, and provenance persistence. `cpp/` now contains a
+pin/unpin, mutability marking, memory introspection, `flush memory now`), review
+buffer APIs, and provenance persistence. `cpp/` now contains a
 compilable host-runtime scaffold with `HostGraftStore`, `RouterIndex`,
 `DirtyQueue`, `DurabilityWriter`, a swap/evict-planning `DeviceArena`, and a
 dependency-free C ABI exposed to Python through `core/grm_native.py`.
@@ -78,8 +79,10 @@ conflict/review/extraction decisions in Python until those policies harden.
 `GRMRuntime.apply_memory_command()` now finishes every explicit command through
 the runtime durability path: autosave-enabled repositories publish remember,
 forget, correct, review-fallback, ignore, and cull/split-graft decisions through
-`flush_now()`, while `flush memory now` and `flush_immediately` plans still
-force a flush even when autosave is disabled.
+`flush_now()`. Pin/unpin and mutability-marking commands also update active-node
+metadata through the same dirty/WAL/native-metadata path; read-only show/why
+commands set a runtime result without forcing autosave. `flush memory now` and
+`flush_immediately` plans still force a flush even when autosave is disabled.
 `GraftRepository.apply_extraction_candidate(s)` now provides the no-GPU
 extractor interface: classifier-style candidates can be written directly,
 queued for review, ignored, or used to supersede active semantic memory under a
@@ -1057,12 +1060,13 @@ correct memory: ...
 cull graft <id> max tokens <n>
 cull graft <id> into sections max tokens <n>
 split graft <id> into sections
-mark this as mutable
-mark this as stable
-pin this
-unpin this
+mark memory mutable: <query>
+mark memory stable: <query>
+mark memory immutable: <query>
+pin memory: <query>
+unpin memory: <query>
 show memory about: ...
-why do you remember that?
+why do you remember: ...
 flush memory now
 switch to volatile mode
 switch to session-safe mode
