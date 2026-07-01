@@ -83,7 +83,10 @@ validation where feasible.
   runtime result boundary without forcing a flush. Durability mode commands
   switch the repository among volatile/session-safe/project-safe WAL policies;
   checkpointed modes reload from `manifest.json`, and post-checkpoint mode
-  switches replay from `CONFIG` WAL records.
+  switches replay from `CONFIG` WAL records. In project-safe mode, explicit
+  project/permanent `remember` commands force a runtime flush even when
+  repository autosave is disabled, while session-scoped scratch memory still
+  batches.
 - Review buffer:
   uncertain candidates can be recorded and later approved into memory. Approval
   of complete semantic fact triples now reuses the extractor write policy with

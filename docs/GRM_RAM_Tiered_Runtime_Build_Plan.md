@@ -86,7 +86,9 @@ commands set a runtime result without forcing autosave. `flush memory now` and
 Durability mode commands (`switch to volatile/session-safe/project-safe mode`)
 now change the repository `durability_mode`, toggle WAL eligibility for that
 mode, persist the checkpoint mode in `manifest.json`, and replay post-checkpoint
-mode changes from `CONFIG` WAL records.
+mode changes from `CONFIG` WAL records. In `project_safe`, explicit
+project/permanent `remember` commands force the runtime flush path even when
+repository autosave is disabled; session-scoped scratch memory still batches.
 `GraftRepository.apply_extraction_candidate(s)` now provides the no-GPU
 extractor interface: classifier-style candidates can be written directly,
 queued for review, ignored, or used to supersede active semantic memory under a

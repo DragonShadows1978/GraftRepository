@@ -740,6 +740,46 @@ def test_durability_mode_recovers_from_manifest_and_wal(tmp_path):
     assert replayed.stats()["replayed_config_records"] == 1
 
 
+def test_project_safe_forces_explicit_project_memory_flush(tmp_path):
+    session_path = str(tmp_path / "session_safe")
+    session_repo = GraftRepository(FakeModel(), enc, dec, session_path,
+                                   autosave=False, arena_cls=FakeArena,
+                                   route_layer=3,
+                                   durability_mode="session_safe")
+
+    session = session_repo.apply_memory_command(
+        "remember this for the project: Session-safe project memory 83-8383")
+
+    assert session["action"] == "remember"
+    assert session_repo.runtime.last_result.autosaved is False
+    assert session_repo.stats()["dirty_nodes"] == 1
+    assert not os.path.exists(os.path.join(session_path, "manifest.json"))
+
+    project_path = str(tmp_path / "project_safe")
+    project_repo = GraftRepository(FakeModel(), enc, dec, project_path,
+                                   autosave=False, arena_cls=FakeArena,
+                                   route_layer=3,
+                                   durability_mode="project_safe")
+
+    project = project_repo.apply_memory_command(
+        "remember this for the project: Project-safe memory 84-8484")
+
+    assert project["action"] == "remember"
+    assert project_repo.runtime.last_result.autosaved is True
+    assert project_repo.stats()["dirty_nodes"] == 0
+    with open(os.path.join(project_path, "manifest.json")) as fh:
+        man = json.load(fh)
+    assert man["durability_mode"] == "project_safe"
+    assert man["nodes"][project["node_id"]]["text"] == (
+        "Project-safe memory 84-8484")
+
+    session_note = project_repo.apply_memory_command(
+        "remember this for this session: Project-safe session scratch 85-8585")
+    assert session_note["action"] == "remember"
+    assert project_repo.runtime.last_result.autosaved is False
+    assert project_repo.stats()["dirty_nodes"] == 1
+
+
 def test_runtime_coordinator_drives_chat_flush_and_extraction(tmp_path):
     class Extractor:
         def extract(self, text, **ctx):

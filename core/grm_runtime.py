@@ -128,6 +128,14 @@ class GRMRuntime:
             action=action,
         )
 
+    @staticmethod
+    def _mode_forces_remember_flush(repo, plan):
+        if repo.durability_mode != "project_safe":
+            return False
+        durability = plan.get("durability")
+        scope = plan.get("scope")
+        return durability in ("project", "permanent") or scope == "project"
+
     def apply_memory_command(self, text):
         repo = self.repository
         before = repo._snapshot_state()
@@ -138,9 +146,11 @@ class GRMRuntime:
                                          "scope", "kind")
                     if plan.get(k)}
             idx = repo.remember(plan.get("body", ""), **opts)
+            force_flush = (bool(plan.get("flush_immediately"))
+                           or self._mode_forces_remember_flush(repo, plan))
             self._finish_memory_event(
                 before, "remember",
-                force_flush=bool(plan.get("flush_immediately")))
+                force_flush=force_flush)
             return {"action": "remember", "node_id": idx}
         if action == "forget":
             count = repo.forget(plan.get("query", ""))
