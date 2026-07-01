@@ -572,6 +572,32 @@ def test_native_extraction_policy_planner(tmp_path):
             expire_target_count=1) == {"action": "expire"}
 
 
+def test_native_cull_span_planner(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        assert store.plan_cull_spans(ntok=5, max_tokens=2) == {
+            "spans": [(0, 2), (2, 4), (4, 5)],
+            "retire_parent": True,
+        }
+        assert store.plan_cull_spans(
+            ntok=6, spans=[(0, 2), (4, 6)],
+            retire_parent=False) == {
+                "spans": [(0, 2), (4, 6)],
+                "retire_parent": False,
+            }
+        with pytest.raises(RuntimeError, match="cover every token"):
+            store.plan_cull_spans(
+                ntok=6, spans=[(0, 2), (4, 6)],
+                retire_parent=True)
+        with pytest.raises(RuntimeError, match="max_tokens must be positive"):
+            store.plan_cull_spans(ntok=6, max_tokens=0)
+        with pytest.raises(RuntimeError, match="requires max_tokens or spans"):
+            store.plan_cull_spans(ntok=6)
+
+
 def test_native_apply_revision_links_edges_and_retires_routes(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

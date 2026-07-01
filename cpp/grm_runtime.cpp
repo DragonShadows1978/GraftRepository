@@ -832,6 +832,81 @@ std::string extraction_policy_plan_json(const ExtractionPolicyPlan& plan) {
   return out.str();
 }
 
+CullSpanPlan plan_cull_spans(
+    std::uint64_t ntok,
+    bool has_max_tokens,
+    std::uint64_t max_tokens,
+    const std::vector<CullSpan>& spans,
+    bool retire_parent) {
+  if (ntok == 0) {
+    throw std::runtime_error("cannot cull a graft with no token length");
+  }
+  if (has_max_tokens && max_tokens == 0) {
+    throw std::runtime_error("max_tokens must be positive");
+  }
+
+  CullSpanPlan plan;
+  plan.retire_parent = retire_parent;
+  if (spans.empty()) {
+    if (!has_max_tokens) {
+      throw std::runtime_error("cull_graft requires max_tokens or spans");
+    }
+    for (std::uint64_t start = 0; start < ntok; start += max_tokens) {
+      const auto end = std::min(start + max_tokens, ntok);
+      plan.spans.push_back({start, end});
+    }
+  } else {
+    plan.spans = spans;
+  }
+
+  for (const auto& span : plan.spans) {
+    if (span.start >= span.end || span.end > ntok) {
+      throw std::runtime_error("invalid cull span");
+    }
+  }
+  if (plan.spans.empty()) {
+    throw std::runtime_error("cull_graft produced no spans");
+  }
+  if (retire_parent) {
+    std::vector<CullSpan> ordered = plan.spans;
+    std::sort(ordered.begin(), ordered.end(),
+              [](const CullSpan& a, const CullSpan& b) {
+                if (a.start != b.start) {
+                  return a.start < b.start;
+                }
+                return a.end < b.end;
+              });
+    std::uint64_t cursor = 0;
+    for (const auto& span : ordered) {
+      if (span.start != cursor) {
+        throw std::runtime_error(
+            "retiring a parent requires cull spans to cover every token "
+            "without gaps");
+      }
+      cursor = span.end;
+    }
+    if (cursor != ntok) {
+      throw std::runtime_error(
+          "retiring a parent requires cull spans to cover the full graft");
+    }
+  }
+  return plan;
+}
+
+std::string cull_span_plan_json(const CullSpanPlan& plan) {
+  std::ostringstream out;
+  out << "{\"spans\":[";
+  for (std::size_t i = 0; i < plan.spans.size(); ++i) {
+    if (i > 0) {
+      out << ",";
+    }
+    out << "[" << plan.spans[i].start << "," << plan.spans[i].end << "]";
+  }
+  out << "],\"retire_parent\":"
+      << (plan.retire_parent ? "true" : "false") << "}";
+  return out.str();
+}
+
 HostGraftStore::HostGraftStore(DialectDescriptor dialect)
     : dialect_(std::move(dialect)) {
   validate_dialect_profile(dialect_);
@@ -2872,6 +2947,46 @@ int grm_store_plan_extraction_policy(grm_store_handle* handle,
             action, write_intent, confidence, write_direct_threshold,
             conflict_count, requested_supersede_count, requested_id_count,
             equivalent_count, expire_target_count));
+    *out_len = static_cast<uint64_t>(json.size());
+    if (out_json != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, json.size());
+      std::memcpy(out_json, json.data(), n);
+      out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_plan_cull_spans(grm_store_handle* handle,
+                              uint64_t ntok,
+                              uint64_t max_tokens,
+                              int has_max_tokens,
+                              const uint64_t* starts,
+                              const uint64_t* ends,
+                              uint64_t span_count,
+                              int retire_parent,
+                              char* out_json,
+                              size_t out_cap,
+                              uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid plan_cull_spans arguments");
+    }
+    if (out_json == nullptr && out_cap > 0) {
+      return grm_fail_msg(handle, "null cull span buffer with nonzero capacity");
+    }
+    if (span_count > 0 && (starts == nullptr || ends == nullptr)) {
+      return grm_fail_msg(handle, "null cull span arrays with nonzero count");
+    }
+    std::vector<grm::CullSpan> spans;
+    spans.reserve(static_cast<std::size_t>(span_count));
+    for (uint64_t i = 0; i < span_count; ++i) {
+      spans.push_back({starts[i], ends[i]});
+    }
+    const auto json = grm::cull_span_plan_json(grm::plan_cull_spans(
+        ntok, has_max_tokens != 0, max_tokens, spans, retire_parent != 0));
     *out_len = static_cast<uint64_t>(json.size());
     if (out_json != nullptr && out_cap > 0) {
       const size_t n = std::min(out_cap - 1, json.size());

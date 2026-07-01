@@ -76,6 +76,10 @@ command grammar into a JSON operation plan, and native-backed
 `GraftRepository.apply_memory_command()` consumes that plan before applying
 Python policy. This moves the command grammar boundary native while leaving
 conflict/review/extraction decisions in Python until those policies harden.
+`grm_store_plan_cull_spans()` now owns deterministic cull span generation and
+retire-parent full-coverage validation for token-capped and tokenizer-derived
+section culls; Python still discovers semantic/text boundaries, but native code
+chooses the final valid token spans before payload slicing.
 `GRMRuntime.apply_memory_command()` now finishes every explicit command through
 the runtime durability path: autosave-enabled repositories publish remember,
 forget, correct, review-fallback, ignore, and cull/split-graft decisions through

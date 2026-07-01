@@ -61,7 +61,10 @@ validation where feasible.
   the dialect token axis, preserving source lineage/provenance, mirroring the
   children into native RAM when enabled, optionally retiring the parent as cold
   evidence, and finishing through `GRMRuntime` so autosave publishes the sliced
-  children durably.
+  children durably. Native-backed repositories now ask
+  `grm_store_plan_cull_spans()` to generate max-token spans or validate
+  tokenizer-derived section spans and the retire-parent coverage invariant
+  before payload slicing.
 - Native source graph traversal:
   `HostGraftStore::source_closure()` and `grm_store_source_closure()` expose
   deterministic recursive source-graft descent with duplicate suppression,

@@ -459,8 +459,27 @@ class GraftRepository:
             idx, spans=spans, retire_parent=retire_parent, kind=kind,
             tags=tags, recompute_route=recompute_route)
 
+    def _native_cull_span_plan(self, ntok, max_tokens=None, spans=None,
+                               retire_parent=True):
+        if self.native_store is None or not hasattr(
+                self.native_store, "plan_cull_spans"):
+            return None
+        try:
+            plan = self.native_store.plan_cull_spans(
+                ntok=ntok, max_tokens=max_tokens, spans=spans,
+                retire_parent=retire_parent)
+        except RuntimeError:
+            return None
+        return [(int(start), int(end))
+                for start, end in plan.get("spans", ())]
+
     def _normalize_cull_spans(self, ntok, max_tokens=None, spans=None,
                               retire_parent=True):
+        native = self._native_cull_span_plan(
+            ntok, max_tokens=max_tokens, spans=spans,
+            retire_parent=retire_parent)
+        if native is not None:
+            return native
         if spans is None:
             if max_tokens is None:
                 raise ValueError("cull_graft requires max_tokens or spans")

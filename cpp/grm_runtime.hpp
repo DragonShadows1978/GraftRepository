@@ -212,6 +212,24 @@ ExtractionPolicyPlan plan_extraction_policy(
     std::uint64_t expire_target_count);
 std::string extraction_policy_plan_json(const ExtractionPolicyPlan& plan);
 
+struct CullSpan {
+  std::uint64_t start = 0;
+  std::uint64_t end = 0;
+};
+
+struct CullSpanPlan {
+  std::vector<CullSpan> spans;
+  bool retire_parent = true;
+};
+
+CullSpanPlan plan_cull_spans(
+    std::uint64_t ntok,
+    bool has_max_tokens,
+    std::uint64_t max_tokens,
+    const std::vector<CullSpan>& spans,
+    bool retire_parent);
+std::string cull_span_plan_json(const CullSpanPlan& plan);
+
 class DirtyQueue {
  public:
   void mark(std::uint64_t node_id, bool payload, bool metadata);

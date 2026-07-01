@@ -402,6 +402,15 @@ class NativeGraftStore:
                 ctypes.c_uint64, ctypes.c_char_p, ctypes.c_size_t,
                 ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_plan_extraction_policy.restype = ctypes.c_int
+        self._has_cull_span_plan = hasattr(lib, "grm_store_plan_cull_spans")
+        if self._has_cull_span_plan:
+            lib.grm_store_plan_cull_spans.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64, ctypes.c_uint64,
+                ctypes.c_int, ctypes.POINTER(ctypes.c_uint64),
+                ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+                ctypes.c_int, ctypes.c_char_p, ctypes.c_size_t,
+                ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_plan_cull_spans.restype = ctypes.c_int
         lib.grm_store_set_route.argtypes = [
             ctypes.c_void_p, ctypes.c_uint64, ctypes.POINTER(ctypes.c_float),
             ctypes.c_uint64, ctypes.c_char_p]
@@ -864,6 +873,38 @@ class NativeGraftStore:
             int(equivalent_count), int(expire_target_count), buf, cap,
             ctypes.byref(needed)))
         return json.loads(buf.value.decode("utf-8") or "{}")
+
+    def plan_cull_spans(self, *, ntok, max_tokens=None, spans=None,
+                        retire_parent=True):
+        if not getattr(self, "_has_cull_span_plan", False):
+            raise RuntimeError("native GRM cull span planner is unavailable")
+        spans = list(spans or ())
+        if spans:
+            arr_t = ctypes.c_uint64 * len(spans)
+            starts = arr_t(*[int(s) for s, _ in spans])
+            ends = arr_t(*[int(e) for _, e in spans])
+            starts_ptr = starts
+            ends_ptr = ends
+        else:
+            starts = ends = None
+            starts_ptr = ends_ptr = None
+        max_value = 0 if max_tokens is None else int(max_tokens)
+        has_max = 0 if max_tokens is None else 1
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_plan_cull_spans(
+            self._handle, int(ntok), max_value, has_max, starts_ptr, ends_ptr,
+            len(spans), 1 if retire_parent else 0, None, 0,
+            ctypes.byref(needed)))
+        cap = int(needed.value) + 1
+        buf = ctypes.create_string_buffer(cap)
+        self._check(self._lib.grm_store_plan_cull_spans(
+            self._handle, int(ntok), max_value, has_max, starts_ptr, ends_ptr,
+            len(spans), 1 if retire_parent else 0, buf, cap,
+            ctypes.byref(needed)))
+        out = json.loads(buf.value.decode("utf-8") or "{}")
+        out["spans"] = [tuple(int(v) for v in span)
+                        for span in out.get("spans", [])]
+        return out
 
     def add_structured_node(self, text, payload, ntok=0):
         node_id = self.add_node(text, b"", ntok=ntok)

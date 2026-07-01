@@ -405,17 +405,30 @@ def test_cull_graft_uses_native_slice_when_available(tmp_path, monkeypatch):
                            native_lib_path=lib)
     parent = repo.add_document("N1 N2 N3 N4")
     calls = []
+    plans = []
     original = repo.native_store.slice_tensor
+    original_plan = repo.native_store.plan_cull_spans
 
     def traced(node_id, name, axis, start, length):
         calls.append((int(node_id), name, int(axis), int(start), int(length)))
         return original(node_id, name, axis, start, length)
 
+    def traced_plan(**kwargs):
+        plans.append(dict(kwargs))
+        return original_plan(**kwargs)
+
     monkeypatch.setattr(repo.native_store, "slice_tensor", traced)
+    monkeypatch.setattr(repo.native_store, "plan_cull_spans", traced_plan)
 
     out = repo.cull_graft(parent, max_tokens=2)
 
     assert out["children"] == [1, 2]
+    assert plans == [{
+        "ntok": 4,
+        "max_tokens": 2,
+        "spans": None,
+        "retire_parent": True,
+    }]
     assert calls == [
         (repo.arena.grafts[parent]["native_node_id"], "tok", 0, 0, 2),
         (repo.arena.grafts[parent]["native_node_id"], "tok", 0, 2, 2),
@@ -513,10 +526,24 @@ def test_native_memory_command_culls_graft_by_sections(tmp_path):
                            autosave=False, arena_cls=FakeSliceArena,
                            route_layer=3, native_lib_path=lib)
     parent = repo.add_document("# Alpha\nA1 A2\n\n# Beta\nB1 B2")
+    plans = []
+    original_plan = repo.native_store.plan_cull_spans
+
+    def traced_plan(**kwargs):
+        plans.append(dict(kwargs))
+        return original_plan(**kwargs)
+
+    repo.native_store.plan_cull_spans = traced_plan
 
     out = repo.apply_memory_command("split graft 0 into sections")
 
     assert out["children"] == [1, 2]
+    assert plans[-1] == {
+        "ntok": 8,
+        "max_tokens": None,
+        "spans": [(0, 4), (4, 8)],
+        "retire_parent": True,
+    }
     assert repo.runtime.last_result.event == "memory_command"
     assert repo.runtime.last_result.action == "cull_graft"
     assert repo.arena.grafts[parent]["metadata"]["culled_into"] == [1, 2]
