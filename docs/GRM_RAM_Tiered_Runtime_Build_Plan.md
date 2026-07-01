@@ -83,6 +83,10 @@ forget, correct, review-fallback, ignore, and cull/split-graft decisions through
 metadata through the same dirty/WAL/native-metadata path; read-only show/why
 commands set a runtime result without forcing autosave. `flush memory now` and
 `flush_immediately` plans still force a flush even when autosave is disabled.
+Durability mode commands (`switch to volatile/session-safe/project-safe mode`)
+now change the repository `durability_mode`, toggle WAL eligibility for that
+mode, persist the checkpoint mode in `manifest.json`, and replay post-checkpoint
+mode changes from `CONFIG` WAL records.
 `GraftRepository.apply_extraction_candidate(s)` now provides the no-GPU
 extractor interface: classifier-style candidates can be written directly,
 queued for review, ignored, or used to supersede active semantic memory under a
@@ -1069,7 +1073,9 @@ show memory about: ...
 why do you remember: ...
 flush memory now
 switch to volatile mode
+switch to volatile-fast mode
 switch to session-safe mode
+switch to project-safe mode
 ```
 
 ### 8.2 Explicit Command Semantics

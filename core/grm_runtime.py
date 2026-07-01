@@ -205,6 +205,11 @@ class GRMRuntime:
             rows = repo.why_remember(plan.get("query", ""))
             self._finish_memory_event(before, "why_memory", read_only=True)
             return {"action": "why_memory", "rows": rows}
+        if action == "set_durability_mode":
+            out = repo.set_durability_mode(plan.get("durability_mode", ""))
+            self._finish_memory_event(before, "set_durability_mode")
+            out["action"] = "set_durability_mode"
+            return out
         raise ValueError(f"unknown memory command: {text!r}")
 
     def _finish_review_event(self, before, action):

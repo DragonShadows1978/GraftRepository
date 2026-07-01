@@ -578,6 +578,30 @@ MemoryCommandPlan parse_memory_command(const std::string& text) {
     }
   }
 
+  struct ModeCommandPrefix {
+    const char* prefix;
+    const char* mode;
+  };
+  const ModeCommandPrefix mode_prefixes[] = {
+      {"switch to volatile mode", "volatile"},
+      {"switch to volatile-fast mode", "volatile_fast"},
+      {"switch to volatile fast mode", "volatile_fast"},
+      {"switch to session-safe mode", "session_safe"},
+      {"switch to session safe mode", "session_safe"},
+      {"switch to project-safe mode", "project_safe"},
+      {"switch to project safe mode", "project_safe"},
+      {"switch to durable-strict mode", "durable_strict"},
+      {"switch to durable strict mode", "durable_strict"},
+  };
+  for (const auto& p : mode_prefixes) {
+    if (low == p.prefix) {
+      MemoryCommandPlan plan;
+      plan.action = "set_durability_mode";
+      plan.durability_mode = p.mode;
+      return plan;
+    }
+  }
+
   if (starts_with(low, "forget:")) {
     MemoryCommandPlan plan;
     plan.action = "forget";
@@ -631,6 +655,8 @@ std::string memory_command_plan_json(const MemoryCommandPlan& plan) {
   append_json_string_field(out, first, "query", plan.query);
   append_json_string_field(out, first, "replacement", plan.replacement);
   append_json_string_field(out, first, "durability", plan.durability);
+  append_json_string_field(out, first, "durability_mode",
+                           plan.durability_mode);
   append_json_string_field(out, first, "mutability", plan.mutability);
   append_json_string_field(out, first, "scope", plan.scope);
   append_json_string_field(out, first, "kind", plan.kind);

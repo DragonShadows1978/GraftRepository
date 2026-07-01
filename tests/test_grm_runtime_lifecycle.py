@@ -673,6 +673,73 @@ def test_memory_control_commands_update_and_read_metadata(tmp_path):
     assert meta["mutability"] == "mutable"
 
 
+def test_memory_mode_commands_change_wal_behavior(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+    assert repo.durability_mode == "session_safe"
+    assert repo.wal_enabled is True
+
+    volatile = repo.apply_memory_command("switch to volatile mode")
+    assert volatile["action"] == "set_durability_mode"
+    assert volatile["durability_mode"] == "volatile"
+    assert volatile["wal_enabled"] is False
+    assert repo.runtime.last_result.action == "set_durability_mode"
+    assert repo.stats()["wal_enabled"] is False
+
+    with open(os.path.join(path, "wal", "000001.wal")) as fh:
+        records = [json.loads(line) for line in fh if line.strip()]
+    assert records[-1]["type"] == "CONFIG"
+    assert records[-1]["durability_mode"] == "volatile"
+    before = len(records)
+
+    repo.add_document("Volatile-only document 81-8181")
+    with open(os.path.join(path, "wal", "000001.wal")) as fh:
+        records = [json.loads(line) for line in fh if line.strip()]
+    assert len(records) == before
+
+    safe = repo.apply_memory_command("switch to session-safe mode")
+    assert safe["durability_mode"] == "session_safe"
+    assert safe["wal_enabled"] is True
+    repo.add_document("Session-safe document 82-8282")
+    with open(os.path.join(path, "wal", "000001.wal")) as fh:
+        records = [json.loads(line) for line in fh if line.strip()]
+    assert records[-2]["type"] == "CONFIG"
+    assert records[-2]["durability_mode"] == "session_safe"
+    assert records[-1]["type"] == "NODE_UPSERT"
+    assert records[-1]["text"] == "Session-safe document 82-8282"
+
+
+def test_durability_mode_recovers_from_manifest_and_wal(tmp_path):
+    manifest_path = str(tmp_path / "manifest_mode")
+    repo = GraftRepository(FakeModel(), enc, dec, manifest_path,
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+    repo.apply_memory_command("switch to volatile mode")
+    repo.flush_now()
+
+    reopened = GraftRepository(FakeModel(), enc, dec, manifest_path,
+                               autosave=False, arena_cls=FakeArena,
+                               route_layer=3)
+    assert reopened.durability_mode == "volatile"
+    assert reopened.wal_enabled is False
+    assert reopened.stats()["durability_mode"] == "volatile"
+
+    replay_path = str(tmp_path / "wal_mode")
+    repo = GraftRepository(FakeModel(), enc, dec, replay_path,
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+    repo.flush_now()
+    repo.apply_memory_command("switch to project-safe mode")
+
+    replayed = GraftRepository(FakeModel(), enc, dec, replay_path,
+                               autosave=False, arena_cls=FakeArena,
+                               route_layer=3)
+    assert replayed.durability_mode == "project_safe"
+    assert replayed.wal_enabled is True
+    assert replayed.stats()["replayed_config_records"] == 1
+
+
 def test_runtime_coordinator_drives_chat_flush_and_extraction(tmp_path):
     class Extractor:
         def extract(self, text, **ctx):

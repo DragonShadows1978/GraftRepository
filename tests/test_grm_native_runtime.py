@@ -396,6 +396,21 @@ def test_native_memory_command_parser(tmp_path):
                 "query": "live target",
                 "flush_immediately": False,
             }
+        assert store.parse_memory_command("switch to volatile mode") == {
+            "action": "set_durability_mode",
+            "durability_mode": "volatile",
+            "flush_immediately": False,
+        }
+        assert store.parse_memory_command("switch to session-safe mode") == {
+            "action": "set_durability_mode",
+            "durability_mode": "session_safe",
+            "flush_immediately": False,
+        }
+        assert store.parse_memory_command("switch to project safe mode") == {
+            "action": "set_durability_mode",
+            "durability_mode": "project_safe",
+            "flush_immediately": False,
+        }
         with pytest.raises(RuntimeError, match="unknown memory command"):
             store.parse_memory_command("remember maybe someday")
 

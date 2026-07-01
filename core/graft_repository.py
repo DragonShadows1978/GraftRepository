@@ -184,6 +184,8 @@ class GraftRepository:
     # era-folded 42-turn gate from 3/8 to 8/8).
     TURNS_HIGH, TURNS_FOLD = 8, 4
     DIGESTS_HIGH, DIGESTS_FOLD = 6, 3
+    WAL_DURABILITY_MODES = {"session_safe", "project_safe", "durable_strict"}
+    DURABILITY_MODES = WAL_DURABILITY_MODES | {"volatile", "volatile_fast"}
 
     def __init__(self, model, encode, decode, path, autosave=True,
                  vram_budget_mb=None, librarian_mode="inline",
@@ -194,10 +196,11 @@ class GraftRepository:
                  extraction_error_policy="record", **arena_kw):
         self.path = path
         self.autosave = autosave
-        self.durability_mode = durability_mode
-        self.wal_enabled = (durability_mode in ("session_safe", "project_safe",
-                                                "durable_strict")
-                            if wal_enabled is None else bool(wal_enabled))
+        self.durability_mode = self._normalize_durability_mode(durability_mode)
+        self._wal_enabled_override = wal_enabled is not None
+        self.wal_enabled = (
+            self._wal_enabled_for_mode(self.durability_mode)
+            if wal_enabled is None else bool(wal_enabled))
         self._flush_lock = threading.RLock()
         self._flush_thread = None
         self._flush_error = None
@@ -241,6 +244,8 @@ class GraftRepository:
             self.load()
         else:
             self.recovered_wal = self._read_wal()
+            self.replayed_config_lsn = self._apply_config_wal_records(
+                self.recovered_wal)
             self.recovered_nodes = self._recover_wal_summary(
                 self.recovered_wal)
             self._rehydrate_from_wal(self.recovered_nodes)
@@ -253,6 +258,51 @@ class GraftRepository:
             self.native_store.close()
         self.native_store = None
         self.arena.native_store = None
+
+    @classmethod
+    def _normalize_durability_mode(cls, mode):
+        mode = str(mode or "session_safe").strip().lower()
+        mode = mode.replace("-", "_").replace(" ", "_")
+        if mode == "volatile":
+            return "volatile"
+        if mode == "volatile_fast":
+            return "volatile_fast"
+        if mode in cls.DURABILITY_MODES:
+            return mode
+        raise ValueError(f"unknown durability mode {mode!r}")
+
+    @classmethod
+    def _wal_enabled_for_mode(cls, mode):
+        return cls._normalize_durability_mode(mode) in cls.WAL_DURABILITY_MODES
+
+    def _set_durability_mode_fields(self, mode, wal_enabled=None):
+        mode = self._normalize_durability_mode(mode)
+        self.durability_mode = mode
+        if wal_enabled is None:
+            wal_enabled = self._wal_enabled_for_mode(mode)
+        if not self._wal_enabled_override:
+            self.wal_enabled = bool(wal_enabled)
+        return mode
+
+    def set_durability_mode(self, mode):
+        mode = self._normalize_durability_mode(mode)
+        old_mode = self.durability_mode
+        old_wal = bool(self.wal_enabled)
+        new_wal = self._wal_enabled_for_mode(mode)
+        if old_wal:
+            self._append_wal("CONFIG", durability_mode=mode,
+                             wal_enabled=bool(new_wal),
+                             previous_durability_mode=old_mode)
+        self.durability_mode = mode
+        if not self._wal_enabled_override:
+            self.wal_enabled = bool(new_wal)
+        if not old_wal and self.wal_enabled:
+            self._append_wal("CONFIG", durability_mode=mode,
+                             wal_enabled=bool(self.wal_enabled),
+                             previous_durability_mode=old_mode)
+        return {"durability_mode": self.durability_mode,
+                "previous_durability_mode": old_mode,
+                "wal_enabled": bool(self.wal_enabled)}
 
     def __enter__(self):
         return self
@@ -766,6 +816,25 @@ class GraftRepository:
         return None
 
     @staticmethod
+    def _parse_mode_command_python(low):
+        table = (
+            ("switch to volatile mode", "volatile"),
+            ("switch to volatile-fast mode", "volatile_fast"),
+            ("switch to volatile fast mode", "volatile_fast"),
+            ("switch to session-safe mode", "session_safe"),
+            ("switch to session safe mode", "session_safe"),
+            ("switch to project-safe mode", "project_safe"),
+            ("switch to project safe mode", "project_safe"),
+            ("switch to durable-strict mode", "durable_strict"),
+            ("switch to durable strict mode", "durable_strict"),
+        )
+        for prefix, mode in table:
+            if low == prefix:
+                return {"action": "set_durability_mode",
+                        "durability_mode": mode}
+        return None
+
+    @staticmethod
     def _parse_memory_command_python(text):
         original = text.strip()
         low = original.lower()
@@ -778,6 +847,9 @@ class GraftRepository:
         read = GraftRepository._parse_read_memory_command_python(original, low)
         if read is not None:
             return read
+        mode = GraftRepository._parse_mode_command_python(low)
+        if mode is not None:
+            return mode
         table = (
             ("remember permanently:", dict(durability="permanent",
                                            scope="user", kind="fact",
@@ -2053,6 +2125,20 @@ class GraftRepository:
             self._wal_lsn = max(int(r.get("lsn", 0)) for r in out)
         return out
 
+    def _apply_config_wal_records(self, records, since_lsn=0):
+        applied = []
+        for rec in records or ():
+            if int(rec.get("lsn", 0)) <= int(since_lsn):
+                continue
+            if rec.get("type") != "CONFIG":
+                continue
+            if rec.get("durability_mode"):
+                self._set_durability_mode_fields(
+                    rec["durability_mode"],
+                    wal_enabled=rec.get("wal_enabled"))
+                applied.append(int(rec.get("lsn", 0)))
+        return tuple(applied)
+
     def _recover_wal_summary(self, records):
         nodes = {}
 
@@ -2608,6 +2694,8 @@ class GraftRepository:
             raise RuntimeError(
                 f"routing index was built at layer {man['route_layer']}, "
                 f"arena is configured for {self.arena.route_layer}")
+        self._set_durability_mode_fields(
+            man.get("durability_mode", self.durability_mode))
         idx = np.load(os.path.join(self.path, "index.npz"))
         self.arena.grafts = []
         self._native_node_ids = {}
@@ -2642,6 +2730,8 @@ class GraftRepository:
         manifest_wal_lsn = int(man.get("wal_lsn", 0))
         self._wal_lsn = max(manifest_wal_lsn, self._wal_lsn)
         self.recovered_wal = self._read_wal()
+        self.replayed_config_lsn = self._apply_config_wal_records(
+            self.recovered_wal, manifest_wal_lsn)
         self.recovered_nodes = self._recover_wal_summary(self.recovered_wal)
         self.replayed_wal_nodes = self._apply_manifest_wal_records(
             self.recovered_wal, manifest_wal_lsn)
@@ -2721,6 +2811,8 @@ class GraftRepository:
         dev = [g for g in self.arena.grafts if g.get("h") is not None]
         self._sync_lifecycle()
         out = {"nodes": len(self.arena.grafts), "kinds": kinds,
+               "durability_mode": self.durability_mode,
+               "wal_enabled": bool(self.wal_enabled),
                "active_device": len(dev),
                "device_mb": round(sum(self._node_bytes(g) for g in dev) / 1e6),
                "ram_payload_mb": round(sum(self._host_payload_bytes(g)
@@ -2734,6 +2826,8 @@ class GraftRepository:
                "recovered_nodes": len(getattr(self, "recovered_nodes", [])),
                "replayed_wal_nodes": len(getattr(
                    self, "replayed_wal_nodes", ())),
+               "replayed_config_records": len(getattr(
+                   self, "replayed_config_lsn", ())),
                "page_ins": getattr(self.arena, "page_ins", 0),
                "folds_aborted": getattr(self, "folds_aborted", 0),
                "no_fold": sum(1 for g in self.arena.grafts

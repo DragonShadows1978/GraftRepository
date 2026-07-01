@@ -155,6 +155,7 @@ struct MemoryCommandPlan {
   std::string query;
   std::string replacement;
   std::string durability;
+  std::string durability_mode;
   std::string mutability;
   std::string scope;
   std::string kind;
