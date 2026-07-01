@@ -128,6 +128,11 @@ validation where feasible.
   mutation marking, flush, and paging.
   `GraftRepository` remains the public API and persistence owner, but the
   hot-path orchestration is no longer spread across public methods.
+- Selected-section API:
+  `GraftRepository.select_graft_span()` now creates a non-retiring child graft
+  for one intentional token span, preserving sliced RAM/native payloads,
+  source lineage, tags, selected-span metadata, and `selected_span` provenance
+  while keeping the parent graft active.
 - Graftability/remountability dialect metadata:
   `DialectDescriptor` now persists the model's positional cache law and graft
   semantics: `position_law`, `state_kind`, `graftability`, `remountable`, and

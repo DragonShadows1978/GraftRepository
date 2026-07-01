@@ -1261,6 +1261,12 @@ Deliverables:
 - source-linked fact nodes
 - selected-section API
 
+Current status: segment provenance records, source-linked fact nodes, document
+and cull span payload slicing, and the public selected-section API are
+implemented. `GraftRepository.select_graft_span()` creates a non-retiring child
+graft with selected-span provenance and sliced RAM/native payloads. Live
+cache-span harvesting remains owned by the TensorCUDA/arena export gates.
+
 Validation:
 
 - text-only provenance tests

@@ -284,6 +284,13 @@ class GRMRuntime:
         self._finish_cull_event(before, out.get("action", "cull_graft"))
         return out
 
+    def select_graft_span(self, idx, start, end, **kwargs):
+        repo = self.repository
+        before = repo._snapshot_state()
+        out = repo._select_graft_span_direct(idx, start, end, **kwargs)
+        self._finish_cull_event(before, "select_graft_span")
+        return out
+
     def _finish_extraction_event(self, before, action, results):
         repo = self.repository
         did_autosave = False

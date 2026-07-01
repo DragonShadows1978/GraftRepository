@@ -467,6 +467,45 @@ def test_cull_graft_sections_uses_intentional_boundaries(tmp_path):
         assert repo.arena.grafts[child]["metadata"]["culled_from"] == parent
 
 
+def test_select_graft_span_keeps_parent_active_and_records_provenance(tmp_path):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeSliceArena,
+                           route_layer=3, native_lib_path=lib)
+    parent = repo.add_document("S0 S1 S2 S3")
+
+    out = repo.select_graft_span(parent, 1, 3, label="middle pair",
+                                 tags=("selected",))
+
+    assert out["action"] == "select_graft_span"
+    assert out["parent"] == parent
+    assert out["children"] == [1]
+    assert out["child"] == 1
+    assert out["retired_parent"] is False
+    assert repo.runtime.last_result.event == "cull"
+    assert repo.runtime.last_result.action == "select_graft_span"
+    assert repo.arena.grafts[parent].get("retired") is not True
+    assert repo.arena.grafts[parent]["metadata"]["active"] is True
+    assert repo.arena.grafts[parent]["metadata"]["culled_into"] == [1]
+
+    child = repo.arena.grafts[1]
+    assert child["text"] == "S1 S2"
+    assert child["host_payload"]["tok"].tolist() == [1, 2]
+    assert child["metadata"]["selected"] is True
+    assert child["metadata"]["selection_label"] == "middle pair"
+    assert child["metadata"]["culled_from"] == parent
+    assert child["metadata"]["supersedes"] == []
+    assert child["tags"] == ["selected"]
+    assert child["provenance"][0]["segment_type"] == "selected_span"
+    native_id = child["native_node_id"]
+    assert repo.native_store.get_tensor(native_id, "tok").tolist() == [1, 2]
+
+    second = repo.select_graft_span(parent, 0, 1)
+    assert second["child"] == 2
+    assert repo.arena.grafts[parent]["metadata"]["culled_into"] == [1, 2]
+    repo.close()
+
+
 def test_plan_cull_sections_caps_large_sections(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeSliceArena,

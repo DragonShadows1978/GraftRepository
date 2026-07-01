@@ -30,6 +30,7 @@ API:
   repo.add_turn(user, assistant)                        # scripted/observed
   repo.add_document(text, tags=...)                     # knowledge ingest
   repo.cull_graft_sections(idx, max_tokens=...)         # sectioned slicing
+  repo.select_graft_span(idx, start, end)                # one selected section
   repo.save() / repo.stats()
 """
 from dataclasses import asdict, dataclass
@@ -577,15 +578,38 @@ class GraftRepository:
 
     def cull_graft(self, idx, *, max_tokens=None, spans=None,
                    retire_parent=True, kind=None, tags=(),
-                   recompute_route=True):
+                   recompute_route=True, segment_type="cull_span",
+                   extra_metadata=None):
         return self.runtime.cull_graft(
             idx, max_tokens=max_tokens, spans=spans,
             retire_parent=retire_parent, kind=kind, tags=tags,
+            recompute_route=recompute_route, segment_type=segment_type,
+            extra_metadata=extra_metadata)
+
+    def select_graft_span(self, idx, start, end, *, kind=None, tags=(),
+                          label="", recompute_route=True):
+        return self.runtime.select_graft_span(
+            idx, start, end, kind=kind, tags=tags, label=label,
             recompute_route=recompute_route)
+
+    def _select_graft_span_direct(self, idx, start, end, *, kind=None,
+                                  tags=(), label="", recompute_route=True):
+        extra = {"selected": True}
+        if label:
+            extra["selection_label"] = str(label)
+        out = self._cull_graft_direct(
+            idx, spans=[(start, end)], retire_parent=False, kind=kind,
+            tags=tags, recompute_route=recompute_route,
+            segment_type="selected_span", extra_metadata=extra)
+        child = out["children"][0]
+        out["action"] = "select_graft_span"
+        out["child"] = child
+        return out
 
     def _cull_graft_direct(self, idx, *, max_tokens=None, spans=None,
                            retire_parent=True, kind=None, tags=(),
-                           recompute_route=True):
+                           recompute_route=True, segment_type="cull_span",
+                           extra_metadata=None):
         """Split one long graft into shorter child grafts.
 
         Child nodes receive RAM payload slices and lineage back to the parent.
@@ -633,6 +657,8 @@ class GraftRepository:
                 "cull_index": order,
                 "cull_total": len(spans),
             }
+            if extra_metadata:
+                meta.update(dict(extra_metadata))
             child = {
                 "kind": child_kind,
                 "text": text,
@@ -646,7 +672,7 @@ class GraftRepository:
                                                   recompute_route),
                 "metadata": meta,
                 "provenance": [self._provenance(
-                    "cull_span", len(self.arena.grafts),
+                    segment_type, len(self.arena.grafts),
                     source_graft=idx, token_start=start, token_end=end)],
                 "host_payload": payload,
                 "host_present": True,
@@ -663,7 +689,8 @@ class GraftRepository:
             self._mark_dirty(child_idx, payload=True, metadata=True)
             child_ids.append(child_idx)
 
-        parent_meta["culled_into"] = list(child_ids)
+        parent_meta["culled_into"] = self._append_unique(
+            parent_meta.get("culled_into", ()), child_ids)
         if retire_parent:
             parent_meta["active"] = False
             parent_meta["superseded_by"] = list(child_ids)
