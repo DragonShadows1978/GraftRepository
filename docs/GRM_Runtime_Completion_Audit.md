@@ -70,6 +70,8 @@ validation where feasible.
   mount expansion instead of reading edge lists one node at a time. `ArenaCache`
   consumes this boundary when native ids map cleanly back to local grafts and
   falls back to Python `sources` when the native mirror is unavailable or stale.
+  Repository metadata keeps Python graft ids, but the native graph plane stores
+  mapped native node ids; tests now cover intentionally divergent id spaces.
 - Explicit memory commands:
   `remember`, `forget`, `correct/update`, review fallback, ignore, and
   `flush memory now` are supported. `GRMRuntime.apply_memory_command()` now
@@ -83,11 +85,15 @@ validation where feasible.
   candidate dictionaries, writes high-confidence non-conflicting candidates,
   sends low-confidence or inferred conflicting claims to the review buffer, and
   lets authoritative user/system assertions supersede active semantic memory
-  with revision metadata. Public candidate application now finishes through
-  `GRMRuntime`, reports an `extraction` runtime event, and honors autosave
-  durability for direct `apply_extraction_candidate(s)` callers. Turn-triggered
-  extraction remains inside the enclosing chat/add-turn runtime event to avoid
-  double flushing. `GraftRepository(..., extractor=...)` now runs an optional
+  with revision metadata. High-confidence duplicate candidates for the same
+  active scoped fact now reinforce the existing node instead of creating
+  duplicate fact nodes; source links, stronger write intent, max confidence,
+  and reinforcement count are metadata-updated and WAL-recorded. Public
+  candidate application now finishes through `GRMRuntime`, reports an
+  `extraction` runtime event, and honors autosave durability for direct
+  `apply_extraction_candidate(s)` callers. Turn-triggered extraction remains
+  inside the enclosing chat/add-turn runtime event to avoid double flushing.
+  `GraftRepository(..., extractor=...)` now runs an optional
   extractor on newly completed chat/scripted turns, passes source turn graft ids
   into that same policy path, and records extractor errors as non-blocking WAL
   events unless configured to raise.
@@ -559,7 +565,9 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   shapes/dtypes, payload byte reconstruction, host payload checkpointing, and
   lifecycle-aware route indexing with native kind/scope/durability/mutability
   filters for MLA and GQA dialect ids. Semantic metadata is persisted natively
-  as JSON, and source/supersession graph edges are now structured native state.
+  as JSON, and source/supersession graph edges are now structured native state
+  with Python graft references mapped to native node ids at the repository
+  boundary.
   Native can apply the final revision state once Python decides the correction.
   The explicit memory-command grammar now has a native parse-plan boundary, and
   command execution completes behind `GRMRuntime`; public extractor-candidate

@@ -53,11 +53,13 @@ lookup, preserve active state through native checkpoints, and carry
 kind/scope/durability/mutability fields for native route filtering through
 `grm_store_route_filtered()`. Source turns, source grafts, supersedes, and
 superseded-by edges are also mirrored into structured native state through
-`grm_store_set_graph_edges()` and preserved in native checkpoints; folded
-source descent can query recursive source-graft closure through
-`grm_store_source_closure()`, and `ArenaCache` uses that native closure for
-digest/era mount expansion when all returned native ids map back to local
-grafts, falling back to Python `sources` otherwise.
+`grm_store_set_graph_edges()` and preserved in native checkpoints. Python
+metadata retains Python graft ids, while the structured native graph edge plane
+is written with mapped native node ids so native traversal remains correct even
+when those id spaces diverge. Folded source descent can query recursive
+source-graft closure through `grm_store_source_closure()`, and `ArenaCache`
+uses that native closure for digest/era mount expansion when all returned
+native ids map back to local grafts, falling back to Python `sources` otherwise.
 Repository `flush_now()` now writes `native/grm_store.bin` before the Python
 manifest, records the native checkpoint path plus per-node native ids in
 `manifest.json`, and reloads that native checkpoint on resume when present.
@@ -81,11 +83,15 @@ when autosave is disabled.
 `GraftRepository.apply_extraction_candidate(s)` now provides the no-GPU
 extractor interface: classifier-style candidates can be written directly,
 queued for review, ignored, or used to supersede active semantic memory under a
-conservative confidence/conflict policy. WAL-only recovery now replays those
-extractor supersession records, along with explicit correction records, so a
-crash before the next manifest does not resurrect superseded facts as active
-memory. WAL recovery also preserves `no_fold` fold-abort exemptions from
-metadata state records, which keeps rejected librarian windows from looping
+conservative confidence/conflict policy. High-confidence duplicate candidates
+for the same active scoped fact now reinforce the existing node instead of
+creating duplicate fact nodes: source links are merged, confidence is raised,
+and reinforcement metadata is WAL-recorded. WAL-only recovery now replays those
+extractor supersession and metadata records, along with explicit correction
+records, so a crash before the next manifest does not resurrect superseded facts
+as active memory or lose duplicate-fact reinforcement. WAL recovery also
+preserves `no_fold` fold-abort exemptions from metadata state records, which
+keeps rejected librarian windows from looping
 after recovery.
 Public extractor-candidate execution now finishes through `GRMRuntime`: direct
 calls to `apply_extraction_candidate(s)` autosave when the repository is in
@@ -1017,6 +1023,11 @@ If a new candidate conflicts with active memory:
 - imported trusted source -> create pending conflict if user memory disagrees
 - inferred candidate -> review buffer
 - assistant-generated claim -> do not supersede without confirmation
+
+If a new candidate matches the same active scoped fact and passes the direct
+write threshold, reinforce the existing memory node rather than creating a
+duplicate fact. Low-confidence duplicates still go through review before their
+source evidence is trusted.
 
 ---
 

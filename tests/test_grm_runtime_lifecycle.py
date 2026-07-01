@@ -865,6 +865,138 @@ def test_extraction_candidate_interface_is_conservative(tmp_path):
         out["node_id"]]
 
 
+def test_extraction_duplicate_fact_reinforces_existing_node(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path,
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+
+    fact = {
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "GRM duplicate guard is ACTIVE-7.",
+        "subject": "GRM duplicate guard",
+        "predicate": "is",
+        "value": "ACTIVE-7",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 0.97,
+        "source_grafts": [3],
+    }
+    out = repo.apply_extraction_candidate(fact)
+    assert out["action"] == "write_direct"
+
+    duplicate = dict(fact, text="GRM duplicate guard remains ACTIVE-7.",
+                     confidence=0.99, source_grafts=[4],
+                     write_intent="user_asserted")
+    reinforced = repo.apply_extraction_candidate(duplicate)
+
+    assert reinforced == {
+        "action": "reinforce_existing",
+        "node_id": out["node_id"],
+    }
+    assert len(repo.arena.grafts) == 1
+    meta = repo.arena.grafts[out["node_id"]]["metadata"]
+    assert meta["source_grafts"] == [3, 4]
+    assert meta["confidence"] == 0.99
+    assert meta["write_intent"] == "user_asserted"
+    assert meta["reinforcement_count"] == 1
+    assert "reinforced_at" in meta
+    assert repo.runtime.last_result.action == "reinforce_existing"
+    assert repo.runtime.last_result.new_nodes == ()
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path,
+                               autosave=False, arena_cls=FakeArena,
+                               route_layer=3)
+    assert len(reopened.arena.grafts) == 1
+    recovered = reopened.arena.grafts[out["node_id"]]["metadata"]
+    assert recovered["source_grafts"] == [3, 4]
+    assert recovered["confidence"] == 0.99
+    assert recovered["write_intent"] == "user_asserted"
+    assert recovered["reinforcement_count"] == 1
+
+
+def test_low_confidence_duplicate_fact_still_goes_to_review(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+    fact = {
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "GRM review duplicate is SAFE-3.",
+        "subject": "GRM review duplicate",
+        "predicate": "is",
+        "value": "SAFE-3",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 0.99,
+    }
+    out = repo.apply_extraction_candidate(fact)
+    duplicate = dict(fact, text="GRM review duplicate is still SAFE-3.",
+                     confidence=0.2)
+
+    review = repo.apply_extraction_candidate(duplicate)
+
+    assert review["action"] == "review_candidate"
+    assert repo.review_buffer[-1]["reason"] == (
+        "confidence below direct-write threshold")
+    assert len(repo.arena.grafts) == 1
+    assert repo.arena.grafts[out["node_id"]]["metadata"].get(
+        "reinforcement_count") is None
+
+
+def test_extraction_reinforcement_maps_native_graph_refs(tmp_path):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+    stray_native = repo.native_store.add_node("external native node", b"",
+                                             ntok=1)
+    assert stray_native == 0
+
+    source0 = repo.remember("Native extraction source zero 10-0000")
+    source0_native = repo.arena.grafts[source0]["native_node_id"]
+    assert source0 == 0
+    assert source0_native != source0
+
+    fact = {
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Native duplicate guard is READY.",
+        "subject": "Native duplicate guard",
+        "predicate": "is",
+        "value": "READY",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 0.98,
+        "source_grafts": [source0],
+    }
+    out = repo.apply_extraction_candidate(fact)
+    fact_native = repo.arena.grafts[out["node_id"]]["native_node_id"]
+    assert repo.native_store.graph_edges(fact_native).source_grafts == (
+        source0_native,)
+
+    source1 = repo.remember("Native extraction source one 11-1111")
+    source1_native = repo.arena.grafts[source1]["native_node_id"]
+    duplicate = dict(fact, text="Native duplicate guard remains READY.",
+                     source_grafts=[source1], confidence=0.99)
+    reinforced = repo.apply_extraction_candidate(duplicate)
+
+    assert reinforced["action"] == "reinforce_existing"
+    assert reinforced["node_id"] == out["node_id"]
+    assert repo.arena.grafts[out["node_id"]]["metadata"]["source_grafts"] == [
+        source0, source1]
+    assert repo.native_store.graph_edges(fact_native).source_grafts == (
+        source0_native, source1_native)
+    repo.close()
+
+
 def test_extraction_conflicts_respect_temporal_validity(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,

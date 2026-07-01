@@ -786,6 +786,15 @@ class GraftRepository:
         return parsed.astimezone(timezone.utc)
 
     @classmethod
+    def _norm_fact_time_value(cls, value):
+        parsed = cls._parse_fact_time(value)
+        if parsed is None:
+            return None
+        if parsed is False:
+            return ("invalid", str(value).strip())
+        return parsed.isoformat()
+
+    @classmethod
     def _fact_effective_now(cls, metadata, now=None):
         now = now or datetime.now(timezone.utc)
         valid_from = cls._parse_fact_time(metadata.get("valid_from"))
@@ -924,6 +933,62 @@ class GraftRepository:
                 out.append(i)
         return out
 
+    def _candidate_equivalent_targets(self, candidate):
+        subject = self._norm_fact_field(candidate.get("subject"))
+        predicate = self._norm_fact_field(candidate.get("predicate"))
+        value = self._norm_fact_field(candidate.get("value"))
+        if not (subject and predicate and value):
+            return []
+        valid_from = self._norm_fact_time_value(candidate.get("valid_from"))
+        expires_at = self._norm_fact_time_value(candidate.get("expires_at"))
+        out = []
+        for i, g in enumerate(self.arena.grafts):
+            meta = g.get("metadata", self._default_metadata(g))
+            if not meta.get("active", True) or g.get("retired"):
+                continue
+            if self._norm_fact_field(meta.get("subject")) != subject:
+                continue
+            if self._norm_fact_field(meta.get("predicate")) != predicate:
+                continue
+            if self._norm_fact_field(meta.get("value")) != value:
+                continue
+            if not self._candidate_scope_conflicts(candidate, meta):
+                continue
+            if self._norm_fact_time_value(meta.get("valid_from")) != valid_from:
+                continue
+            if self._norm_fact_time_value(meta.get("expires_at")) != expires_at:
+                continue
+            out.append(i)
+        return out
+
+    def _reinforce_extraction_target(self, idx, candidate, metadata,
+                                     confidence, write_intent):
+        idx = int(idx)
+        g = self.arena.grafts[idx]
+        meta = g.setdefault("metadata", self._default_metadata(g))
+        for key in ("source_turns", "source_grafts"):
+            if metadata.get(key):
+                meta[key] = self._append_unique(meta.get(key, ()),
+                                                metadata[key])
+        meta["confidence"] = max(float(meta.get("confidence", 0.0)),
+                                 float(confidence))
+        rank = {
+            "imported": 0,
+            "inferred": 1,
+            "observed": 2,
+            "system_asserted": 3,
+            "user_asserted": 4,
+        }
+        old_intent = meta.get("write_intent", "observed")
+        if rank.get(write_intent, 0) >= rank.get(old_intent, 0):
+            meta["write_intent"] = write_intent
+        meta["reinforcement_count"] = int(meta.get("reinforcement_count", 0)) + 1
+        meta["reinforced_at"] = datetime.now(timezone.utc).isoformat()
+        self._mark_dirty(idx, payload=False, metadata=True)
+        self._append_wal("NODE_META", node_id=idx, metadata=meta,
+                         state=list(self._state_tuple(g)))
+        return idx
+
     def _candidate_to_review(self, candidate, text, reason, metadata):
         return {"action": "review_candidate",
                 "review_id": self.review_candidate(
@@ -1000,6 +1065,13 @@ class GraftRepository:
 
         supersedes = conflicts if conflicts else list(
             candidate.get("supersedes", []))
+        if not supersedes:
+            equivalent = self._candidate_equivalent_targets(candidate)
+            if equivalent:
+                idx = self._reinforce_extraction_target(
+                    equivalent[0], candidate, metadata, confidence,
+                    write_intent)
+                return {"action": "reinforce_existing", "node_id": idx}
         metadata["supersedes"] = list(supersedes)
         idx = self.remember(
             text,
@@ -1464,6 +1536,22 @@ class GraftRepository:
             self.native_store.set_route(
                 node_id, route_keys[0].tolist(), self._native_lexical_keys(g))
 
+    def _native_ref_ids(self, refs):
+        out = []
+        for ref in refs or ():
+            try:
+                idx = int(ref)
+            except (TypeError, ValueError):
+                continue
+            if idx < 0 or idx >= len(self.arena.grafts):
+                continue
+            node_id = self._native_node_ids.get(idx)
+            if node_id is None:
+                node_id = self._native_sync_node(idx, payload_required=False)
+            if node_id is not None and int(node_id) not in out:
+                out.append(int(node_id))
+        return out
+
     def _native_set_metadata(self, idx):
         if self.native_store is None:
             return
@@ -1477,6 +1565,17 @@ class GraftRepository:
         if hasattr(self.native_store, "set_active"):
             active = bool(metadata.get("active", not bool(g.get("retired"))))
             self.native_store.set_active(node_id, active)
+        if hasattr(self.native_store, "set_graph_edges"):
+            self.native_store.set_graph_edges(
+                node_id,
+                source_turns=self._native_ref_ids(
+                    metadata.get("source_turns", ())),
+                source_grafts=self._native_ref_ids(
+                    metadata.get("source_grafts", ())),
+                supersedes=self._native_ref_ids(
+                    metadata.get("supersedes", ())),
+                superseded_by=self._native_ref_ids(
+                    metadata.get("superseded_by", ())))
 
     def _native_apply_revision(self, replacement_idx, supersedes):
         if self.native_store is None:
