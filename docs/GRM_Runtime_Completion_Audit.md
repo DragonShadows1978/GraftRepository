@@ -206,8 +206,8 @@ validation where feasible.
 - Native memory-command parser boundary:
   `grm_store_parse_memory_command()` parses the deterministic explicit memory
   command grammar (`remember`, `forget`, `correct/update`, review fallback,
-  ignore, flush, cull/split graft, pin/unpin, mutability marking, show/why,
-  durability mode switches) into a JSON operation plan.
+  ignore, flush, cull/split graft, selected graft spans, pin/unpin, mutability
+  marking, show/why, durability mode switches) into a JSON operation plan.
   `NativeGraftStore` exposes that parser and native-backed
   `GraftRepository.apply_memory_command()` consumes it before applying the
   Python memory policy. Command execution then completes through `GRMRuntime`,

@@ -536,6 +536,52 @@ MemoryCommandPlan parse_memory_command(const std::string& text) {
   }
 
   const auto words = command_words(low);
+  if (words.size() >= 6 && words[0] == "select" && words[1] == "graft") {
+    MemoryCommandPlan plan;
+    plan.action = "select_graft_span";
+    if (!parse_u64_word(words[2], &plan.node_id)) {
+      throw std::runtime_error("select graft requires a numeric graft id");
+    }
+    plan.has_node_id = true;
+    std::size_t cursor = 3;
+    if (words[cursor] != "span" && words[cursor] != "tokens" &&
+        words[cursor] != "token") {
+      throw std::runtime_error(
+          "select graft requires span <start> <end>");
+    }
+    ++cursor;
+    if (cursor + 1 >= words.size()) {
+      throw std::runtime_error("select graft span requires start and end");
+    }
+    if (!parse_u64_word(words[cursor], &plan.span_start) ||
+        !parse_u64_word(words[cursor + 1], &plan.span_end)) {
+      throw std::runtime_error("select graft span bounds must be numeric");
+    }
+    if (plan.span_end <= plan.span_start) {
+      throw std::runtime_error("select graft span end must be greater than start");
+    }
+    plan.has_span = true;
+    cursor += 2;
+    if (cursor < words.size()) {
+      if (words[cursor] != "label") {
+        throw std::runtime_error("unknown select graft option");
+      }
+      ++cursor;
+      if (cursor >= words.size()) {
+        throw std::runtime_error("select graft label is missing");
+      }
+      std::ostringstream label;
+      for (std::size_t i = cursor; i < words.size(); ++i) {
+        if (i > cursor) {
+          label << " ";
+        }
+        label << words[i];
+      }
+      plan.body = label.str();
+    }
+    return plan;
+  }
+
   if (words.size() >= 3 &&
       (words[0] == "cull" || words[0] == "split") &&
       words[1] == "graft") {
@@ -735,6 +781,10 @@ std::string memory_command_plan_json(const MemoryCommandPlan& plan) {
   append_json_u64_field(out, first, "node_id", plan.node_id, plan.has_node_id);
   append_json_u64_field(out, first, "max_tokens", plan.max_tokens,
                         plan.has_max_tokens);
+  append_json_u64_field(out, first, "span_start", plan.span_start,
+                        plan.has_span);
+  append_json_u64_field(out, first, "span_end", plan.span_end,
+                        plan.has_span);
   if (!first) {
     out << ",";
   }

@@ -485,6 +485,15 @@ def test_native_memory_command_parser(tmp_path):
             "max_tokens": 64,
             "flush_immediately": False,
         }
+        assert store.parse_memory_command(
+            "select graft 4 span 2 7 label key passage") == {
+                "action": "select_graft_span",
+                "body": "key passage",
+                "node_id": 4,
+                "span_start": 2,
+                "span_end": 7,
+                "flush_immediately": False,
+            }
         assert store.parse_memory_command("pin memory: live target") == {
             "action": "update_memory_metadata",
             "command": "pin_memory",

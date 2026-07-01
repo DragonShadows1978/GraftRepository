@@ -1092,6 +1092,7 @@ correct memory: ...
 cull graft <id> max tokens <n>
 cull graft <id> into sections max tokens <n>
 split graft <id> into sections
+select graft <id> span <start> <end> [label <name>]
 mark memory mutable: <query>
 mark memory stable: <query>
 mark memory immutable: <query>

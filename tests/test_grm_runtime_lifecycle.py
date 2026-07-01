@@ -591,6 +591,34 @@ def test_native_memory_command_culls_graft_by_sections(tmp_path):
     repo.close()
 
 
+def test_native_memory_command_selects_graft_span(tmp_path):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeSliceArena,
+                           route_layer=3, native_lib_path=lib)
+    parent = repo.add_document("Q0 Q1 Q2 Q3")
+
+    out = repo.apply_memory_command("select graft 0 span 1 4 label selected tail")
+
+    assert out["action"] == "select_graft_span"
+    assert out["parent"] == parent
+    assert out["child"] == 1
+    assert out["retired_parent"] is False
+    assert repo.runtime.last_result.event == "memory_command"
+    assert repo.runtime.last_result.action == "select_graft_span"
+    assert repo.runtime.last_result.new_nodes == (1,)
+    assert repo.arena.grafts[parent].get("retired") is not True
+    child = repo.arena.grafts[1]
+    assert child["text"] == "Q1 Q2 Q3"
+    assert child["host_payload"]["tok"].tolist() == [1, 2, 3]
+    assert child["metadata"]["selected"] is True
+    assert child["metadata"]["selection_label"] == "selected tail"
+    assert child["provenance"][0]["segment_type"] == "selected_span"
+    assert repo.native_store.get_tensor(
+        child["native_node_id"], "tok").tolist() == [1, 2, 3]
+    repo.close()
+
+
 def test_remember_attaches_semantic_metadata(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,

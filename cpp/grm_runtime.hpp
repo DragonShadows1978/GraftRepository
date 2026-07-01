@@ -187,8 +187,11 @@ struct MemoryCommandPlan {
   std::string reason;
   std::uint64_t node_id = 0;
   std::uint64_t max_tokens = 0;
+  std::uint64_t span_start = 0;
+  std::uint64_t span_end = 0;
   bool has_node_id = false;
   bool has_max_tokens = false;
+  bool has_span = false;
   bool flush_immediately = false;
 };
 

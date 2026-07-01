@@ -192,6 +192,17 @@ class GRMRuntime:
             out = repo._cull_graft_direct(int(node_id), **kwargs)
             self._finish_memory_event(before, "cull_graft")
             return out
+        if action == "select_graft_span":
+            node_id = plan.get("node_id")
+            start = plan.get("span_start")
+            end = plan.get("span_end")
+            if node_id is None or start is None or end is None:
+                raise ValueError(
+                    "select_graft_span command requires node_id/span bounds")
+            out = repo._select_graft_span_direct(
+                int(node_id), int(start), int(end), label=plan.get("body", ""))
+            self._finish_memory_event(before, "select_graft_span")
+            return out
         if action == "update_memory_metadata":
             updates = dict(plan.get("metadata", {}) or {})
             key = plan.get("metadata_key")

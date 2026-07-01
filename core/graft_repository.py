@@ -743,6 +743,41 @@ class GraftRepository:
         return idx
 
     @staticmethod
+    def _parse_select_graft_command_python(original, low):
+        words = low.replace(",", " ").replace(":", " ").replace(
+            "=", " ").split()
+        original_words = original.replace(",", " ").replace(":", " ").replace(
+            "=", " ").split()
+        if len(words) < 6 or words[0] != "select" or words[1] != "graft":
+            return None
+        try:
+            node_id = int(words[2])
+        except ValueError as exc:
+            raise ValueError("select graft requires a numeric graft id") from exc
+        if node_id < 0:
+            raise ValueError("select graft id must be nonnegative")
+        if words[3] not in ("span", "token", "tokens"):
+            raise ValueError("select graft requires span <start> <end>")
+        try:
+            start = int(words[4])
+            end = int(words[5])
+        except ValueError as exc:
+            raise ValueError(
+                "select graft span bounds must be numeric") from exc
+        if start < 0 or end <= start:
+            raise ValueError(
+                "select graft span end must be greater than start")
+        plan = {"action": "select_graft_span", "node_id": node_id,
+                "span_start": start, "span_end": end}
+        if len(words) > 6:
+            if words[6] != "label":
+                raise ValueError(f"unknown select graft option {words[6]!r}")
+            if len(words) == 7:
+                raise ValueError("select graft label is missing")
+            plan["body"] = " ".join(original_words[7:])
+        return plan
+
+    @staticmethod
     def _normalize_cull_command_boundary(name):
         name = str(name).strip().lower()
         if name in ("section", "sections"):
@@ -884,6 +919,10 @@ class GraftRepository:
     def _parse_memory_command_python(text):
         original = text.strip()
         low = original.lower()
+        selected = GraftRepository._parse_select_graft_command_python(
+            original, low)
+        if selected is not None:
+            return selected
         cull = GraftRepository._parse_cull_command_python(original, low)
         if cull is not None:
             return cull
