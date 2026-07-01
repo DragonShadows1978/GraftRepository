@@ -346,6 +346,16 @@ class NativeGraftStore:
                 ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
                 ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_fact_matches.restype = ctypes.c_int
+            self._has_fact_matches_ex = hasattr(
+                lib, "grm_store_fact_matches_ex")
+            if self._has_fact_matches_ex:
+                lib.grm_store_fact_matches_ex.argtypes = [
+                    ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p,
+                    ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                    ctypes.c_char_p, ctypes.c_uint64, ctypes.c_uint64,
+                    ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+                    ctypes.POINTER(ctypes.c_uint64)]
+                lib.grm_store_fact_matches_ex.restype = ctypes.c_int
         self._has_graph_edges = (
             hasattr(lib, "grm_store_set_graph_edges") and
             hasattr(lib, "grm_store_graph_edges_info") and
@@ -725,29 +735,44 @@ class NativeGraftStore:
             ("" if expires_at is None else str(expires_at)).encode("utf-8")))
 
     def fact_matches(self, *, subject=None, predicate=None, value=None,
-                     scope=None, value_mode=0):
+                     scope=None, value_mode=0, valid_from=None,
+                     expires_at=None, temporal_mode=0):
         if not getattr(self, "_has_fact_identity", False):
             raise RuntimeError("native GRM fact identity scan is unavailable")
+        use_ex = (int(temporal_mode) != 0 or valid_from is not None
+                  or expires_at is not None)
+        if use_ex and not getattr(self, "_has_fact_matches_ex", False):
+            raise RuntimeError("native GRM extended fact scan is unavailable")
         needed = ctypes.c_uint64()
-        self._check(self._lib.grm_store_fact_matches(
-            self._handle,
+        args = (
             ("" if subject is None else str(subject)).encode("utf-8"),
             ("" if predicate is None else str(predicate)).encode("utf-8"),
             ("" if value is None else str(value)).encode("utf-8"),
-            ("project" if scope is None else str(scope)).encode("utf-8"),
-            int(value_mode), None, 0, ctypes.byref(needed)))
+            ("project" if scope is None else str(scope)).encode("utf-8"))
+        if use_ex:
+            ex_args = args + (
+                ("" if valid_from is None else str(valid_from)).encode("utf-8"),
+                ("" if expires_at is None else str(expires_at)).encode("utf-8"),
+                int(value_mode), int(temporal_mode))
+            self._check(self._lib.grm_store_fact_matches_ex(
+                self._handle, *ex_args, None, 0, ctypes.byref(needed)))
+        else:
+            self._check(self._lib.grm_store_fact_matches(
+                self._handle, *args, int(value_mode), None, 0,
+                ctypes.byref(needed)))
         if not int(needed.value):
             return ()
         out_t = ctypes.c_uint64 * int(needed.value)
         out = out_t()
         got = ctypes.c_uint64()
-        self._check(self._lib.grm_store_fact_matches(
-            self._handle,
-            ("" if subject is None else str(subject)).encode("utf-8"),
-            ("" if predicate is None else str(predicate)).encode("utf-8"),
-            ("" if value is None else str(value)).encode("utf-8"),
-            ("project" if scope is None else str(scope)).encode("utf-8"),
-            int(value_mode), out, int(needed.value), ctypes.byref(got)))
+        if use_ex:
+            self._check(self._lib.grm_store_fact_matches_ex(
+                self._handle, *ex_args, out, int(needed.value),
+                ctypes.byref(got)))
+        else:
+            self._check(self._lib.grm_store_fact_matches(
+                self._handle, *args, int(value_mode), out, int(needed.value),
+                ctypes.byref(got)))
         return tuple(int(out[i]) for i in range(int(got.value)))
 
     def set_graph_edges(self, node_id, *, source_turns=(),

@@ -797,6 +797,7 @@ def test_native_fact_identity_scan_round_trips_through_checkpoint(tmp_path):
             latent_rank=512, rope_dim=64) as store:
         old = store.add_node("GRM target is disk", b"", ntok=1)
         new = store.add_node("GRM target is RAM", b"", ntok=1)
+        timed = store.add_node("GRM target is RAM in 2026", b"", ntok=1)
         user = store.add_node("User-scoped target is NVMe", b"", ntok=1)
         inactive = store.add_node("Inactive target is tape", b"", ntok=1)
         store.set_metadata(old, {
@@ -805,6 +806,11 @@ def test_native_fact_identity_scan_round_trips_through_checkpoint(tmp_path):
         store.set_metadata(new, {
             "active": True, "kind": "fact", "scope": "project",
             "subject": "GRM target", "predicate": "is", "value": "RAM"})
+        store.set_metadata(timed, {
+            "active": True, "kind": "fact", "scope": "project",
+            "subject": "GRM target", "predicate": "is", "value": "RAM",
+            "valid_from": "2026-01-01T00:00:00+00:00",
+            "expires_at": "2027-01-01T00:00:00+00:00"})
         store.set_metadata(user, {
             "active": True, "kind": "fact", "scope": "user",
             "subject": "GRM target", "predicate": "is", "value": "NVMe"})
@@ -814,7 +820,13 @@ def test_native_fact_identity_scan_round_trips_through_checkpoint(tmp_path):
 
         assert store.fact_matches(
             subject="grm target", predicate="IS", value="ram",
-            scope="project", value_mode=1) == (new,)
+            scope="project", value_mode=1) == (new, timed)
+        assert store.fact_matches(
+            subject="grm target", predicate="IS", value="ram",
+            scope="project", value_mode=1,
+            valid_from="2026-01-01T00:00:00+00:00",
+            expires_at="2027-01-01T00:00:00+00:00",
+            temporal_mode=1) == (timed,)
         assert store.fact_matches(
             subject="GRM target", predicate="is", value="RAM",
             scope="project", value_mode=2) == (old,)
@@ -828,6 +840,15 @@ def test_native_fact_identity_scan_round_trips_through_checkpoint(tmp_path):
             hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
             latent_rank=512, rope_dim=64) as restored:
         restored.load_checkpoint(ckpt)
+        assert restored.fact_matches(
+            subject="GRM target", predicate="is", value="RAM",
+            scope="project", value_mode=1) == (new, timed)
+        assert restored.fact_matches(
+            subject="GRM target", predicate="is", value="RAM",
+            scope="project", value_mode=1,
+            valid_from="2026-01-01T00:00:00+00:00",
+            expires_at="2027-01-01T00:00:00+00:00",
+            temporal_mode=1) == (timed,)
         assert restored.fact_matches(
             subject="GRM target", predicate="is", value="RAM",
             scope="project", value_mode=2) == (old,)

@@ -619,7 +619,10 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   (`subject`/`predicate`/`value`/scope plus temporal strings), persists it in
   checkpoints, and exposes equal/conflicting active fact-target scans that
   Python uses for extraction expire/conflict/reinforcement target discovery
-  before applying the final temporal and authority policy. Static extraction
+  before applying the final temporal and authority policy. The extended native
+  scan can also require exact `valid_from`/`expires_at` field matches for
+  duplicate/reinforcement identity while Python still owns effective-time date
+  arithmetic. Static extraction
   action/reason selection now has a native side-effect-free policy planner:
   Python supplies target counts, and C++ chooses write/review/supersede/
   reinforce/expire outcomes before Python performs the mutation.

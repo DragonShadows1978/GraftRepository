@@ -1235,7 +1235,8 @@ void HostGraftStore::set_fact_identity(std::uint64_t node_id,
 
 std::vector<std::uint64_t> HostGraftStore::fact_matches(
     const FactIdentity& identity,
-    std::uint64_t value_mode) const {
+    std::uint64_t value_mode,
+    std::uint64_t temporal_mode) const {
   const auto subject = norm_fact_field(identity.subject);
   const auto predicate = norm_fact_field(identity.predicate);
   const auto value = norm_fact_field(identity.value);
@@ -1264,6 +1265,11 @@ std::vector<std::uint64_t> HostGraftStore::fact_matches(
       continue;
     }
     if (value_mode == 2 && (existing_value.empty() || existing_value == value)) {
+      continue;
+    }
+    if (temporal_mode == 1 &&
+        (meta.valid_from != identity.valid_from ||
+         meta.expires_at != identity.expires_at)) {
       continue;
     }
     out.push_back(id);
@@ -2756,6 +2762,50 @@ int grm_store_fact_matches(grm_store_handle* handle,
     identity.value = safe_cstr(value, "");
     identity.scope = safe_cstr(scope, "project");
     const auto matches = handle->store->fact_matches(identity, value_mode);
+    if (out_node_ids == nullptr || out_cap == 0) {
+      *out_count = static_cast<uint64_t>(matches.size());
+      return 0;
+    }
+    const auto n = std::min<uint64_t>(
+        static_cast<uint64_t>(matches.size()), out_cap);
+    for (uint64_t i = 0; i < n; ++i) {
+      out_node_ids[i] = matches[static_cast<std::size_t>(i)];
+    }
+    *out_count = n;
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_fact_matches_ex(grm_store_handle* handle,
+                              const char* subject,
+                              const char* predicate,
+                              const char* value,
+                              const char* scope,
+                              const char* valid_from,
+                              const char* expires_at,
+                              uint64_t value_mode,
+                              uint64_t temporal_mode,
+                              uint64_t* out_node_ids,
+                              uint64_t out_cap,
+                              uint64_t* out_count) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_count == nullptr) {
+      return grm_fail_msg(handle, "invalid fact_matches_ex arguments");
+    }
+    if (out_node_ids == nullptr && out_cap > 0) {
+      return grm_fail_msg(handle, "null fact_matches_ex output buffer");
+    }
+    grm::FactIdentity identity;
+    identity.subject = safe_cstr(subject, "");
+    identity.predicate = safe_cstr(predicate, "");
+    identity.value = safe_cstr(value, "");
+    identity.scope = safe_cstr(scope, "project");
+    identity.valid_from = safe_cstr(valid_from, "");
+    identity.expires_at = safe_cstr(expires_at, "");
+    const auto matches = handle->store->fact_matches(
+        identity, value_mode, temporal_mode);
     if (out_node_ids == nullptr || out_cap == 0) {
       *out_count = static_cast<uint64_t>(matches.size());
       return 0;

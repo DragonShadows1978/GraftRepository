@@ -1281,7 +1281,8 @@ class GraftRepository:
             return []
         valid_from = self._norm_fact_time_value(candidate.get("valid_from"))
         expires_at = self._norm_fact_time_value(candidate.get("expires_at"))
-        native = self._native_fact_matches(candidate, value_mode=1)
+        native = self._native_fact_matches(
+            candidate, value_mode=1, temporal_mode=1)
         if native is not None:
             out = []
             for i in native:
@@ -1315,7 +1316,7 @@ class GraftRepository:
             out.append(i)
         return out
 
-    def _native_fact_matches(self, candidate, value_mode):
+    def _native_fact_matches(self, candidate, value_mode, temporal_mode=0):
         if self.native_store is None or not hasattr(
                 self.native_store, "fact_matches"):
             return None
@@ -1327,7 +1328,12 @@ class GraftRepository:
                 predicate=candidate.get("predicate"),
                 value=candidate.get("value"),
                 scope=candidate.get("scope", "project"),
-                value_mode=value_mode)
+                value_mode=value_mode,
+                valid_from=(candidate.get("valid_from")
+                            if temporal_mode else None),
+                expires_at=(candidate.get("expires_at")
+                            if temporal_mode else None),
+                temporal_mode=temporal_mode)
         except RuntimeError:
             return None
         inverse = {

@@ -1415,6 +1415,21 @@ def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
         "write_intent": "observed",
         "confidence": 0.99,
     })
+    timed_old = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Native conflict target is OLD during 2026.",
+        "subject": "Native conflict target",
+        "predicate": "is",
+        "value": "OLD",
+        "scope": "project",
+        "valid_from": "2026-01-01T00:00:00+00:00",
+        "expires_at": "2027-01-01T00:00:00+00:00",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 0.99,
+    })
     original = repo.native_store.fact_matches
     original_plan = repo.native_store.plan_extraction_policy
     calls = []
@@ -1447,8 +1462,9 @@ def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
 
     assert conflict["action"] == "review_candidate"
     assert calls[-1]["value_mode"] == 2
+    assert calls[-1]["temporal_mode"] == 0
     assert calls[-1]["subject"] == "Native conflict target"
-    assert plans[-1]["conflict_count"] == 1
+    assert plans[-1]["conflict_count"] == 2
     assert plans[-1]["action"] == "write_direct"
 
     duplicate = repo.apply_extraction_candidate({
@@ -1468,6 +1484,30 @@ def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
     assert duplicate["action"] == "reinforce_existing"
     assert duplicate["node_id"] == old["node_id"]
     assert calls[-1]["value_mode"] == 1
+    assert calls[-1]["temporal_mode"] == 1
+    assert plans[-1]["equivalent_count"] == 1
+
+    timed_duplicate = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Native conflict target remains OLD during 2026.",
+        "subject": "Native conflict target",
+        "predicate": "is",
+        "value": "OLD",
+        "scope": "project",
+        "valid_from": "2026-01-01T00:00:00+00:00",
+        "expires_at": "2027-01-01T00:00:00+00:00",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 1.0,
+    })
+
+    assert timed_duplicate["action"] == "reinforce_existing"
+    assert timed_duplicate["node_id"] == timed_old["node_id"]
+    assert calls[-1]["value_mode"] == 1
+    assert calls[-1]["temporal_mode"] == 1
+    assert calls[-1]["valid_from"] == "2026-01-01T00:00:00+00:00"
     assert plans[-1]["equivalent_count"] == 1
     repo.close()
 
