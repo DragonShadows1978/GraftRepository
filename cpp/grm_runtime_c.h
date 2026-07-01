@@ -204,6 +204,11 @@ int grm_store_filter_active_nodes(grm_store_handle* handle,
                                   uint64_t* out_node_ids,
                                   uint64_t out_cap,
                                   uint64_t* out_count);
+int grm_store_active_text_matches(grm_store_handle* handle,
+                                  const char* query,
+                                  uint64_t* out_node_ids,
+                                  uint64_t out_cap,
+                                  uint64_t* out_count);
 int grm_store_set_graph_edges(grm_store_handle* handle,
                               uint64_t node_id,
                               const uint64_t* source_turns,

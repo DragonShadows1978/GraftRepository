@@ -81,6 +81,11 @@ Python policy. The native grammar now includes review-buffer execution commands
 scope/durability/mutability changes), moving the explicit review control surface
 through the same command-plan boundary while leaving conflict/review/extraction
 decisions in Python until those policies harden.
+`grm_store_active_text_matches()` now performs active-only, case-insensitive text
+target discovery in the C++ host store for memory commands such as pin, unpin,
+ignore, show, and forget. Python still applies the final mutation, WAL, and
+durability semantics, with the old arena scan retained when the native mirror is
+unavailable or incomplete.
 `grm_store_plan_cull_spans()` now owns deterministic cull span generation and
 retire-parent full-coverage validation for token-capped and tokenizer-derived
 section culls; Python still discovers semantic/text boundaries, but native code
@@ -225,6 +230,9 @@ Explicit extractor target-id validation now also has a native state boundary:
 unknown ids, and returns only active targets in request order. Python maps local
 graft ids through the native mirror and uses that filtered target set before
 supersede/expire policy planning.
+Explicit memory-command text targeting has the same native host-state boundary:
+`grm_store_active_text_matches()` scans stored node text and active metadata in
+native id order, returning only active matches for Python to mutate or display.
 
 `tests/deepseek_grm_turn50_gate.py` now validates the original GRM ephemeral
 boat on DeepSeek-V2-Lite INT4: 50 stored turn grafts, live context cleared

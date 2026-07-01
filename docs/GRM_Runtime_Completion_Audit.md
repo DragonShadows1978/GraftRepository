@@ -636,7 +636,10 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   extractor target ids for supersede/expire also flow through
   `grm_store_filter_active_nodes()`, so C++ host metadata state performs the
   deterministic active-target filtering before Python applies the remaining
-  authority and temporal policy.
+  authority and temporal policy. Explicit memory-command substring targets now
+  flow through `grm_store_active_text_matches()` when the native mirror is
+  complete, so pin/unpin/ignore/show/forget target discovery also reads from the
+  C++ host store before Python applies WAL, mutation, and durability semantics.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. Current-head MiniCPM3 MLA

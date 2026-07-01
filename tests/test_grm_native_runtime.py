@@ -722,6 +722,35 @@ def test_native_active_node_filter_preserves_order_and_dedupes(tmp_path):
                 active1, active0)
 
 
+def test_native_active_text_matches_active_case_insensitive_text(tmp_path):
+    lib = build_native(tmp_path)
+    ckpt = tmp_path / "active_text_ckpt"
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        live0 = store.add_node("Alpha TARGET shard zero", b"", ntok=4)
+        inactive = store.add_node("alpha target shard retired", b"", ntok=4)
+        live1 = store.add_node("Another target shard one", b"", ntok=4)
+        other = store.add_node("unrelated memory", b"", ntok=2)
+        store.set_metadata(live0, {"active": True})
+        store.set_metadata(inactive, {"active": False})
+        store.set_metadata(live1, {"active": True})
+        store.set_metadata(other, {"active": True})
+
+        assert store.active_text_matches("TARGET shard") == (live0, live1)
+        assert store.active_text_matches("  target SHARD  ") == (live0, live1)
+        assert store.active_text_matches("") == ()
+        store.save_checkpoint(ckpt)
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as restored:
+        restored.load_checkpoint(ckpt)
+        assert restored.active_text_matches("target shard") == (live0, live1)
+
+
 def test_native_source_closure_walks_folded_graph(tmp_path):
     lib = build_native(tmp_path)
     ckpt = tmp_path / "source_closure_ckpt"

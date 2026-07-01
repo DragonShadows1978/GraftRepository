@@ -364,6 +364,14 @@ class NativeGraftStore:
                 ctypes.c_void_p, u64p, ctypes.c_uint64, u64p,
                 ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_filter_active_nodes.restype = ctypes.c_int
+        self._has_active_text_matches = hasattr(
+            lib, "grm_store_active_text_matches")
+        if self._has_active_text_matches:
+            lib.grm_store_active_text_matches.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p,
+                ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+                ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_active_text_matches.restype = ctypes.c_int
         self._has_graph_edges = (
             hasattr(lib, "grm_store_set_graph_edges") and
             hasattr(lib, "grm_store_graph_edges_info") and
@@ -805,6 +813,22 @@ class NativeGraftStore:
         self._check(self._lib.grm_store_filter_active_nodes(
             self._handle, requested, requested_n, out, int(needed.value),
             ctypes.byref(got)))
+        return tuple(int(out[i]) for i in range(int(got.value)))
+
+    def active_text_matches(self, query):
+        if not getattr(self, "_has_active_text_matches", False):
+            raise RuntimeError("native GRM active text scan is unavailable")
+        data = str(query or "").encode("utf-8")
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_active_text_matches(
+            self._handle, data, None, 0, ctypes.byref(needed)))
+        if not int(needed.value):
+            return ()
+        out_t = ctypes.c_uint64 * int(needed.value)
+        out = out_t()
+        got = ctypes.c_uint64()
+        self._check(self._lib.grm_store_active_text_matches(
+            self._handle, data, out, int(needed.value), ctypes.byref(got)))
         return tuple(int(out[i]) for i in range(int(got.value)))
 
     def set_graph_edges(self, node_id, *, source_turns=(),

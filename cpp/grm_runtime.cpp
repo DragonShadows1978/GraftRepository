@@ -1395,6 +1395,26 @@ std::vector<std::uint64_t> HostGraftStore::filter_active_nodes(
   return out;
 }
 
+std::vector<std::uint64_t> HostGraftStore::active_text_matches(
+    const std::string& query) const {
+  const auto q = ascii_lower(trim(query));
+  std::vector<std::uint64_t> out;
+  if (q.empty()) {
+    return out;
+  }
+  for (const auto id : node_ids()) {
+    const auto& node = nodes_.at(id);
+    if (!node.metadata.active) {
+      continue;
+    }
+    if (ascii_lower(node.text).find(q) == std::string::npos) {
+      continue;
+    }
+    out.push_back(id);
+  }
+  return out;
+}
+
 void HostGraftStore::set_graph_edges(std::uint64_t node_id, GraphEdges edges) {
   auto* n = get(node_id);
   if (n == nullptr) {
@@ -2984,6 +3004,36 @@ int grm_store_filter_active_nodes(grm_store_handle* handle,
         static_cast<uint64_t>(active.size()), out_cap);
     for (uint64_t i = 0; i < n; ++i) {
       out_node_ids[i] = active[static_cast<std::size_t>(i)];
+    }
+    *out_count = n;
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_active_text_matches(grm_store_handle* handle,
+                                  const char* query,
+                                  uint64_t* out_node_ids,
+                                  uint64_t out_cap,
+                                  uint64_t* out_count) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_count == nullptr) {
+      return grm_fail_msg(handle, "invalid active_text_matches arguments");
+    }
+    if (out_node_ids == nullptr && out_cap > 0) {
+      return grm_fail_msg(handle, "null active_text_matches output buffer");
+    }
+    const auto matches = handle->store->active_text_matches(
+        safe_cstr(query, ""));
+    if (out_node_ids == nullptr || out_cap == 0) {
+      *out_count = static_cast<uint64_t>(matches.size());
+      return 0;
+    }
+    const auto n = std::min<uint64_t>(
+        static_cast<uint64_t>(matches.size()), out_cap);
+    for (uint64_t i = 0; i < n; ++i) {
+      out_node_ids[i] = matches[static_cast<std::size_t>(i)];
     }
     *out_count = n;
     return 0;

@@ -1088,9 +1088,15 @@ class GraftRepository:
             return 0
         count = 0
         before = self._snapshot_state()
-        for i, g in enumerate(self.arena.grafts):
-            if q not in g.get("text", "").lower():
-                continue
+        targets = self._native_active_text_matches(q)
+        if targets is None:
+            targets = []
+            for i, g in enumerate(self.arena.grafts):
+                if q not in g.get("text", "").lower():
+                    continue
+                targets.append(i)
+        for i in targets:
+            g = self.arena.grafts[int(i)]
             meta = g.setdefault("metadata", self._default_metadata(g))
             if not meta.get("active", True):
                 continue
@@ -1114,9 +1120,15 @@ class GraftRepository:
             return {"count": 0, "node_ids": []}
         changed = []
         before = self._snapshot_state()
-        for i, g in enumerate(self.arena.grafts):
-            if q not in g.get("text", "").lower():
-                continue
+        targets = self._native_active_text_matches(q)
+        if targets is None:
+            targets = []
+            for i, g in enumerate(self.arena.grafts):
+                if q not in g.get("text", "").lower():
+                    continue
+                targets.append(i)
+        for i in targets:
+            g = self.arena.grafts[int(i)]
             meta = g.setdefault("metadata", self._default_metadata(g))
             if not meta.get("active", True) or g.get("retired"):
                 continue
@@ -1262,6 +1274,37 @@ class GraftRepository:
             idx = native_to_local.get(int(native_id))
             if idx is not None and idx not in out:
                 out.append(idx)
+        return out
+
+    def _native_active_text_matches(self, query):
+        if self.native_store is None or not hasattr(
+                self.native_store, "active_text_matches"):
+            return None
+        q = str(query or "").strip().lower()
+        if not q:
+            return []
+        if len(self._native_node_ids) < len(self.arena.grafts):
+            return None
+        try:
+            native_ids = self.native_store.active_text_matches(q)
+        except RuntimeError:
+            return None
+        inverse = {
+            int(native_id): int(idx)
+            for idx, native_id in self._native_node_ids.items()
+        }
+        out = []
+        for native_id in native_ids:
+            idx = inverse.get(int(native_id))
+            if idx is None or idx in out:
+                continue
+            g = self.arena.grafts[idx]
+            meta = g.get("metadata", self._default_metadata(g))
+            if g.get("retired") or not meta.get("active", True):
+                continue
+            if q not in g.get("text", "").lower():
+                continue
+            out.append(idx)
         return out
 
     def _candidate_expire_targets(self, candidate):
@@ -1987,13 +2030,17 @@ class GraftRepository:
 
     def show_memory_about(self, query):
         q = query.lower()
+        native = self._native_active_text_matches(q) if q.strip() else None
         out = []
-        for i, g in enumerate(self.arena.grafts):
-            if q in g.get("text", "").lower():
-                meta = g.get("metadata", self._default_metadata(g))
-                if meta.get("active", True):
-                    out.append({"node_id": i, "text": g["text"],
-                                "metadata": meta})
+        candidates = range(len(self.arena.grafts)) if native is None else native
+        for i in candidates:
+            g = self.arena.grafts[int(i)]
+            if native is None and q not in g.get("text", "").lower():
+                continue
+            meta = g.get("metadata", self._default_metadata(g))
+            if meta.get("active", True):
+                out.append({"node_id": i, "text": g["text"],
+                            "metadata": meta})
         return out
 
     def why_remember(self, query):

@@ -1778,6 +1778,51 @@ def test_native_active_filter_guides_explicit_extraction_targets(
     repo.close()
 
 
+def test_native_text_scan_guides_memory_command_targets(tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+    target = repo.remember("Native text target is PERSISTENT marker 44-1001.")
+    other = repo.remember("Native text decoy is unrelated marker 44-1002.")
+    target_native = repo.arena.grafts[target]["native_node_id"]
+    other_native = repo.arena.grafts[other]["native_node_id"]
+
+    original_scan = repo.native_store.active_text_matches
+    calls = []
+
+    def traced_scan(query):
+        calls.append(query)
+        return original_scan(query)
+
+    monkeypatch.setattr(repo.native_store, "active_text_matches", traced_scan)
+
+    pinned = repo.apply_memory_command("pin memory: Native text target")
+    assert pinned["action"] == "pin_memory"
+    assert pinned["count"] == 1
+    assert pinned["node_ids"] == [target]
+    assert calls[-1] == "native text target"
+    assert repo.arena.grafts[target]["metadata"]["pinned"] is True
+    assert repo.arena.grafts[other]["metadata"].get("pinned") is not True
+
+    shown = repo.apply_memory_command("show memory about: Native text target")
+    assert shown["action"] == "show_memory"
+    assert [row["node_id"] for row in shown["rows"]] == [target]
+    assert calls[-1] == "native text target"
+
+    forgotten = repo.apply_memory_command("forget: Native text target")
+    assert forgotten["action"] == "forget"
+    assert forgotten["count"] == 1
+    assert calls[-1] == "native text target"
+    assert repo.arena.grafts[target]["metadata"]["active"] is False
+    assert repo.arena.grafts[other]["metadata"]["active"] is True
+    assert repo.native_store.active_text_matches("Native text target") == ()
+    assert repo.native_store.active_text_matches("Native text decoy") == (
+        other_native,)
+    assert target_native != other_native
+    repo.close()
+
+
 def test_extraction_conflicts_respect_temporal_validity(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,
