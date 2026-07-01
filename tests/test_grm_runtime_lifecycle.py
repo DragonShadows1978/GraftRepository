@@ -985,6 +985,96 @@ def test_low_confidence_duplicate_fact_still_goes_to_review(tmp_path):
         "reinforcement_count") is None
 
 
+def test_approved_duplicate_review_reinforces_existing_fact(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path,
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+    fact = {
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Review duplicate guard is ACTIVE-9.",
+        "subject": "review duplicate guard",
+        "predicate": "is",
+        "value": "ACTIVE-9",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 0.98,
+    }
+    out = repo.apply_extraction_candidate(fact)
+    rid = repo.review_candidate(
+        "Review duplicate guard remains ACTIVE-9.",
+        confidence=0.4,
+        metadata={"subject": "review duplicate guard",
+                  "predicate": "is",
+                  "value": "ACTIVE-9",
+                  "source_grafts": [17],
+                  "review_evidence": "manual approval"})
+
+    approved = repo.approve_review(rid)
+
+    assert approved == out["node_id"]
+    assert repo.review_buffer[rid]["approved_action"] == "reinforce_existing"
+    assert repo.runtime.last_result.action == "approve_review"
+    assert repo.runtime.last_result.new_nodes == ()
+    assert len(repo.arena.grafts) == 1
+    meta = repo.arena.grafts[out["node_id"]]["metadata"]
+    assert meta["source_grafts"] == [17]
+    assert meta["review_evidence"] == "manual approval"
+    assert meta["write_intent"] == "user_asserted"
+    assert meta["reinforcement_count"] == 1
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path,
+                               autosave=False, arena_cls=FakeArena,
+                               route_layer=3)
+    assert len(reopened.arena.grafts) == 1
+    assert reopened.review_buffer[rid]["approved_node_id"] == out["node_id"]
+    assert reopened.review_buffer[rid]["approved_action"] == "reinforce_existing"
+    assert reopened.arena.grafts[out["node_id"]]["metadata"][
+        "reinforcement_count"] == 1
+    assert reopened.arena.grafts[out["node_id"]]["metadata"][
+        "review_evidence"] == "manual approval"
+
+
+def test_approved_conflicting_review_supersedes_existing_fact(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+    old = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Review conflict target is OLD.",
+        "subject": "review conflict target",
+        "predicate": "is",
+        "value": "OLD",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "observed",
+        "confidence": 0.98,
+    })
+    rid = repo.review_candidate(
+        "Review conflict target is NEW.",
+        confidence=0.5,
+        metadata={"subject": "review conflict target",
+                  "predicate": "is",
+                  "value": "NEW"})
+
+    approved = repo.approve_review(rid)
+
+    assert approved != old["node_id"]
+    assert repo.review_buffer[rid]["approved_action"] == "supersede_existing"
+    assert repo.runtime.last_result.new_nodes == (approved,)
+    assert repo.arena.grafts[old["node_id"]]["retired"] is True
+    assert repo.arena.grafts[old["node_id"]]["metadata"]["active"] is False
+    assert repo.arena.grafts[approved]["metadata"]["supersedes"] == [
+        old["node_id"]]
+    assert repo.arena.grafts[approved]["metadata"]["write_intent"] == (
+        "user_asserted")
+
+
 def test_extraction_reinforcement_maps_native_graph_refs(tmp_path):
     lib = build_native(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),

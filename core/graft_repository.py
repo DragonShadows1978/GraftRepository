@@ -986,8 +986,14 @@ class GraftRepository:
 
     def _candidate_metadata(self, candidate, source_turns=(),
                             source_grafts=()):
+        reserved = {"action", "candidate_type", "kind", "text", "scope",
+                    "durability", "mutability", "write_intent", "confidence",
+                    "active", "supersedes", "target_node_id",
+                    "target_node_ids", "targets"}
+        meta = {k: v for k, v in dict(candidate.get("metadata", {}) or {}).items()
+                if k not in reserved}
         keys = ("subject", "predicate", "value", "valid_from", "expires_at")
-        meta = {k: candidate[k] for k in keys if k in candidate}
+        meta.update({k: candidate[k] for k in keys if k in candidate})
         if source_turns or candidate.get("source_turns"):
             meta["source_turns"] = list(candidate.get("source_turns",
                                                      source_turns))
@@ -1057,6 +1063,14 @@ class GraftRepository:
             if metadata.get(key):
                 meta[key] = self._append_unique(meta.get(key, ()),
                                                 metadata[key])
+        identity_keys = {
+            "subject", "predicate", "value", "valid_from", "expires_at",
+            "source_turns", "source_grafts", "supersedes", "superseded_by",
+            "active",
+        }
+        for key, value in metadata.items():
+            if key not in identity_keys:
+                meta[key] = value
         meta["confidence"] = max(float(meta.get("confidence", 0.0)),
                                  float(confidence))
         rank = {
@@ -1295,6 +1309,8 @@ class GraftRepository:
                     reviews[rid]["status"] = "approved"
                     if "node_id" in rec:
                         reviews[rid]["approved_node_id"] = int(rec["node_id"])
+                    if rec.get("approved_action"):
+                        reviews[rid]["approved_action"] = rec["approved_action"]
             elif typ == "REVIEW_REJECT":
                 rid = int(rec.get("review_id", -1))
                 if rid in reviews:
@@ -1401,21 +1417,60 @@ class GraftRepository:
     def approve_review(self, review_id):
         return self.runtime.approve_review(review_id)
 
+    def _review_semantic_candidate(self, item):
+        metadata = dict(item.get("metadata", {}) or {})
+        required = ("subject", "predicate", "value")
+        if not all(metadata.get(k) for k in required):
+            return None
+        candidate = {k: metadata[k] for k in (
+            "subject", "predicate", "value", "valid_from", "expires_at",
+            "source_turns", "source_grafts") if k in metadata}
+        candidate.update({
+            "action": "write_direct",
+            "candidate_type": item.get("proposed_kind", "fact"),
+            "text": item.get("text", ""),
+            "scope": item.get("proposed_scope", "project"),
+            "durability": item.get("proposed_durability", "project"),
+            "mutability": item.get("proposed_mutability", "stable"),
+            "confidence": float(item.get("confidence", 0.5)),
+            "write_intent": "user_asserted",
+            "metadata": metadata,
+        })
+        return candidate
+
     def _approve_review_direct(self, review_id):
         item = self._review_item(review_id)
         if item.get("status") == "rejected":
             raise RuntimeError("rejected review items cannot be approved")
         if item.get("status") == "approved" and "approved_node_id" in item:
             return int(item["approved_node_id"])
-        idx = self.remember(item["text"], durability=item["proposed_durability"],
-                            mutability=item["proposed_mutability"],
-                            scope=item["proposed_scope"],
-                            kind=item["proposed_kind"],
-                            confidence=item["confidence"],
-                            metadata=item.get("metadata"))
+        result = None
+        candidate = self._review_semantic_candidate(item)
+        if candidate is not None:
+            result = self._apply_extraction_candidate_direct(
+                candidate, write_direct_threshold=1.0)
+        if result is not None:
+            if result.get("action") not in (
+                    "write_direct", "reinforce_existing",
+                    "supersede_existing"):
+                raise RuntimeError(
+                    f"approved review produced unsupported action "
+                    f"{result.get('action')!r}")
+            idx = int(result["node_id"])
+            item["approved_action"] = result["action"]
+        else:
+            idx = self.remember(
+                item["text"], durability=item["proposed_durability"],
+                mutability=item["proposed_mutability"],
+                scope=item["proposed_scope"],
+                kind=item["proposed_kind"],
+                confidence=item["confidence"],
+                metadata=item.get("metadata"))
+            item["approved_action"] = "remember"
         item["status"] = "approved"
         item["approved_node_id"] = idx
-        self._append_wal("REVIEW_APPROVE", review_id=review_id, node_id=idx)
+        self._append_wal("REVIEW_APPROVE", review_id=review_id, node_id=idx,
+                         approved_action=item["approved_action"])
         return idx
 
     def show_memory_about(self, query):

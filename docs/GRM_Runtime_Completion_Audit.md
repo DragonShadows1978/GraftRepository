@@ -80,7 +80,11 @@ validation where feasible.
   `flush_immediately` and explicit flush commands force durability even when
   autosave is disabled.
 - Review buffer:
-  uncertain candidates can be recorded and later approved into memory.
+  uncertain candidates can be recorded and later approved into memory. Approval
+  of complete semantic fact triples now reuses the extractor write policy with
+  user authority, so duplicate reviewed facts reinforce existing active memory
+  and same-scope conflicts supersede the old fact instead of creating parallel
+  active nodes.
 - Conservative extractor candidate interface and runtime hook:
   `GraftRepository.apply_extraction_candidate(s)` accepts classifier-style
   candidate dictionaries, writes high-confidence non-conflicting candidates,

@@ -1031,6 +1031,12 @@ write threshold, reinforce the existing memory node rather than creating a
 duplicate fact. Low-confidence duplicates still go through review before their
 source evidence is trusted.
 
+If a reviewed candidate is explicitly approved and carries a complete
+subject/predicate/value fact triple, approval is treated as user-authoritative
+application of the same policy: equivalent facts reinforce the active node,
+while same-scope conflicts supersede the old fact. Lower-structure review notes
+still approve through the plain `remember()` path.
+
 ---
 
 ## 8. User Explicit Control In Chat
