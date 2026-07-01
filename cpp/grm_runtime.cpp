@@ -1142,6 +1142,57 @@ std::string durability_mode_plan_json(const DurabilityModePlan& plan) {
   return out.str();
 }
 
+MetadataUpdatePlan plan_metadata_update(
+    const std::string& command,
+    const std::string& metadata_key,
+    const std::string& metadata_value) {
+  (void)command;
+  MetadataUpdatePlan plan;
+  plan.key = trim(metadata_key);
+  if (plan.key.empty()) {
+    throw std::runtime_error("metadata update requires a key");
+  }
+  const auto value = trim(metadata_value);
+  if (plan.key == "pinned") {
+    const auto low = ascii_lower(value);
+    if (low != "true" && low != "false") {
+      throw std::runtime_error("pinned metadata requires a boolean value");
+    }
+    plan.value_is_bool = true;
+    plan.bool_value = low == "true";
+    return plan;
+  }
+  if (plan.key == "mutability") {
+    const auto low = ascii_lower(value);
+    if (low != "mutable" && low != "stable" && low != "immutable") {
+      throw std::runtime_error("mutability metadata value is invalid");
+    }
+    plan.string_value = low;
+    return plan;
+  }
+  const auto low = ascii_lower(value);
+  if (low == "true" || low == "false") {
+    plan.value_is_bool = true;
+    plan.bool_value = low == "true";
+  } else {
+    plan.string_value = value;
+  }
+  return plan;
+}
+
+std::string metadata_update_plan_json(const MetadataUpdatePlan& plan) {
+  std::ostringstream out;
+  out << "{\"metadata\":{";
+  out << "\"" << json_escape(plan.key) << "\":";
+  if (plan.value_is_bool) {
+    out << (plan.bool_value ? "true" : "false");
+  } else {
+    out << "\"" << json_escape(plan.string_value) << "\"";
+  }
+  out << "}}";
+  return out.str();
+}
+
 ExtractionPolicyPlan plan_extraction_policy(
     const std::string& action,
     const std::string& write_intent,
@@ -3665,6 +3716,39 @@ int grm_store_plan_durability_mode(grm_store_handle* handle,
             current_mode == nullptr ? "" : current_mode,
             old_wal_enabled != 0,
             wal_enabled_override != 0));
+    *out_len = static_cast<uint64_t>(json.size());
+    if (out_json != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, json.size());
+      std::memcpy(out_json, json.data(), n);
+      out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_plan_metadata_update(grm_store_handle* handle,
+                                   const char* command,
+                                   const char* metadata_key,
+                                   const char* metadata_value,
+                                   char* out_json,
+                                   size_t out_cap,
+                                   uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr ||
+        metadata_key == nullptr || out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid plan_metadata_update arguments");
+    }
+    if (out_json == nullptr && out_cap > 0) {
+      return grm_fail_msg(
+          handle, "null metadata update buffer with nonzero capacity");
+    }
+    const auto json = grm::metadata_update_plan_json(
+        grm::plan_metadata_update(
+            command == nullptr ? "" : command,
+            metadata_key,
+            metadata_value == nullptr ? "" : metadata_value));
     *out_len = static_cast<uint64_t>(json.size());
     if (out_json != nullptr && out_cap > 0) {
       const size_t n = std::min(out_cap - 1, json.size());

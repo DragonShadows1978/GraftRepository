@@ -142,6 +142,24 @@ class GRMRuntime:
         scope = plan.get("scope")
         return durability in ("project", "permanent") or scope == "project"
 
+    @staticmethod
+    def _metadata_updates(repo, plan):
+        updates = dict(plan.get("metadata", {}) or {})
+        if hasattr(repo, "_native_metadata_update_plan"):
+            native_plan = repo._native_metadata_update_plan(plan)
+            if native_plan is not None:
+                updates.update(dict(native_plan.get("metadata", {}) or {}))
+                return updates
+        key = plan.get("metadata_key")
+        if key:
+            value = plan.get("metadata_value")
+            if value == "true":
+                value = True
+            elif value == "false":
+                value = False
+            updates[str(key)] = value
+        return updates
+
     def apply_memory_command(self, text):
         repo = self.repository
         before = repo._snapshot_state()
@@ -249,15 +267,7 @@ class GRMRuntime:
             self._finish_memory_event(before, "select_graft_span")
             return out
         if action == "update_memory_metadata":
-            updates = dict(plan.get("metadata", {}) or {})
-            key = plan.get("metadata_key")
-            if key:
-                value = plan.get("metadata_value")
-                if value == "true":
-                    value = True
-                elif value == "false":
-                    value = False
-                updates[str(key)] = value
+            updates = self._metadata_updates(repo, plan)
             out = repo.update_memory_metadata(plan.get("query", ""), updates)
             label = plan.get("command", "update_memory_metadata")
             self._finish_memory_event(before, label)

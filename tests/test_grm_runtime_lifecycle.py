@@ -976,6 +976,45 @@ def test_native_durability_mode_plan_drives_wal_behavior(tmp_path, monkeypatch):
     assert records[-1]["wal_enabled"] is True
 
 
+def test_native_metadata_update_plan_drives_memory_command(tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    path = str(tmp_path / "native_metadata")
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3,
+                           native_enabled=True, native_lib_path=lib)
+    node = repo.apply_memory_command(
+        "remember this for the project: Native metadata target 87-8787")[
+            "node_id"]
+    calls = []
+    original_plan = repo.native_store.plan_metadata_update
+
+    def traced_plan(**kwargs):
+        calls.append(dict(kwargs))
+        return original_plan(**kwargs)
+
+    monkeypatch.setattr(repo.native_store, "plan_metadata_update",
+                        traced_plan)
+
+    pinned = repo.apply_memory_command("pin memory: Native metadata target")
+    assert pinned == {"count": 1, "node_ids": [node], "action": "pin_memory"}
+    assert repo.arena.grafts[node]["metadata"]["pinned"] is True
+    assert calls[-1] == {
+        "command": "pin_memory",
+        "metadata_key": "pinned",
+        "metadata_value": "true",
+    }
+
+    mutable = repo.apply_memory_command(
+        "mark memory mutable: Native metadata target")
+    assert mutable["action"] == "mark_mutable"
+    assert repo.arena.grafts[node]["metadata"]["mutability"] == "mutable"
+    assert calls[-1] == {
+        "command": "mark_mutable",
+        "metadata_key": "mutability",
+        "metadata_value": "mutable",
+    }
+
+
 def test_durability_mode_recovers_from_manifest_and_wal(tmp_path):
     manifest_path = str(tmp_path / "manifest_mode")
     repo = GraftRepository(FakeModel(), enc, dec, manifest_path,

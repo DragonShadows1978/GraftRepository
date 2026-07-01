@@ -704,6 +704,34 @@ def test_native_durability_mode_planner(tmp_path):
                 old_wal_enabled=True)
 
 
+def test_native_metadata_update_planner(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        assert store.plan_metadata_update(
+            command="pin_memory", metadata_key="pinned",
+            metadata_value="true") == {"metadata": {"pinned": True}}
+        assert store.plan_metadata_update(
+            command="unpin_memory", metadata_key="pinned",
+            metadata_value="false") == {"metadata": {"pinned": False}}
+        assert store.plan_metadata_update(
+            command="mark_mutable", metadata_key="mutability",
+            metadata_value="mutable") == {"metadata": {"mutability": "mutable"}}
+        assert store.plan_metadata_update(
+            command="mark_stable", metadata_key="mutability",
+            metadata_value="stable") == {"metadata": {"mutability": "stable"}}
+        with pytest.raises(RuntimeError, match="boolean value"):
+            store.plan_metadata_update(
+                command="pin_memory", metadata_key="pinned",
+                metadata_value="maybe")
+        with pytest.raises(RuntimeError, match="mutability"):
+            store.plan_metadata_update(
+                command="mark_mutable", metadata_key="mutability",
+                metadata_value="temporary")
+
+
 def test_native_review_transition_planner(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

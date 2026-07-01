@@ -274,6 +274,13 @@ int grm_store_plan_durability_mode(grm_store_handle* handle,
                                    char* out_json,
                                    size_t out_cap,
                                    uint64_t* out_len);
+int grm_store_plan_metadata_update(grm_store_handle* handle,
+                                   const char* command,
+                                   const char* metadata_key,
+                                   const char* metadata_value,
+                                   char* out_json,
+                                   size_t out_cap,
+                                   uint64_t* out_len);
 int grm_store_plan_extraction_policy(grm_store_handle* handle,
                                      const char* action,
                                      const char* write_intent,

@@ -227,6 +227,19 @@ DurabilityModePlan plan_durability_mode(
     bool wal_enabled_override);
 std::string durability_mode_plan_json(const DurabilityModePlan& plan);
 
+struct MetadataUpdatePlan {
+  std::string key;
+  std::string string_value;
+  bool bool_value = false;
+  bool value_is_bool = false;
+};
+
+MetadataUpdatePlan plan_metadata_update(
+    const std::string& command,
+    const std::string& metadata_key,
+    const std::string& metadata_value);
+std::string metadata_update_plan_json(const MetadataUpdatePlan& plan);
+
 struct ExtractionPolicyPlan {
   std::string action;
   std::string reason;

@@ -1118,6 +1118,21 @@ class GraftRepository:
         except RuntimeError:
             return None
 
+    def _native_metadata_update_plan(self, plan):
+        if self.native_store is None or not hasattr(
+                self.native_store, "plan_metadata_update"):
+            return None
+        key = plan.get("metadata_key")
+        if not key:
+            return None
+        try:
+            return self.native_store.plan_metadata_update(
+                command=plan.get("command"),
+                metadata_key=key,
+                metadata_value=plan.get("metadata_value"))
+        except RuntimeError:
+            return None
+
     def apply_memory_command(self, text):
         """Apply an explicit chat memory command from the runtime plan."""
         return self.runtime.apply_memory_command(text)
