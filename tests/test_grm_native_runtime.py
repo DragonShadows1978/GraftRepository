@@ -486,9 +486,9 @@ def test_native_memory_command_parser(tmp_path):
             "flush_immediately": False,
         }
         assert store.parse_memory_command(
-            "select graft 4 span 2 7 label key passage") == {
+            "select graft 4 span 2 7 label Key Passage") == {
                 "action": "select_graft_span",
-                "body": "key passage",
+                "body": "Key Passage",
                 "node_id": 4,
                 "span_start": 2,
                 "span_end": 7,

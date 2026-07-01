@@ -320,6 +320,15 @@ bool parse_u64_word(const std::string& word, std::uint64_t* out) {
   return true;
 }
 
+std::string command_suffix_after_label(const std::string& original,
+                                       const std::string& low) {
+  const auto pos = low.find(" label ");
+  if (pos == std::string::npos) {
+    return "";
+  }
+  return trim(original.substr(pos + 7));
+}
+
 std::string normalize_cull_boundary(const std::string& word) {
   if (word == "section" || word == "sections") {
     return "section";
@@ -570,14 +579,10 @@ MemoryCommandPlan parse_memory_command(const std::string& text) {
       if (cursor >= words.size()) {
         throw std::runtime_error("select graft label is missing");
       }
-      std::ostringstream label;
-      for (std::size_t i = cursor; i < words.size(); ++i) {
-        if (i > cursor) {
-          label << " ";
-        }
-        label << words[i];
+      plan.body = command_suffix_after_label(original, low);
+      if (plan.body.empty()) {
+        throw std::runtime_error("select graft label is missing");
       }
-      plan.body = label.str();
     }
     return plan;
   }
