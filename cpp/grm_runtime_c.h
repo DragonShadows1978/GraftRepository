@@ -18,6 +18,14 @@ typedef struct grm_store_stats_c {
   uint64_t route_entries;
 } grm_store_stats_c;
 
+typedef struct grm_dirty_node_c {
+  uint64_t node_id;
+  int payload_dirty;
+  int metadata_dirty;
+  uint64_t payload_bytes;
+  uint64_t durability_priority;
+} grm_dirty_node_c;
+
 typedef struct grm_payload_stats_c {
   uint64_t tensor_count;
   uint64_t payload_bytes;
@@ -295,6 +303,10 @@ int grm_store_dirty_nodes(grm_store_handle* handle,
                           uint64_t* out_node_ids,
                           uint64_t out_cap,
                           uint64_t* out_count);
+int grm_store_dirty_plan(grm_store_handle* handle,
+                         grm_dirty_node_c* out_nodes,
+                         uint64_t out_cap,
+                         uint64_t* out_count);
 int grm_store_stats(grm_store_handle* handle, grm_store_stats_c* out);
 const char* grm_store_last_error(grm_store_handle* handle);
 

@@ -377,8 +377,11 @@ Current implementation status: `DurabilityWriter::write_checkpoint()` now
 commits through `HostGraftStore::save_checkpoint()`, producing the binary
 `grm_store.bin` checkpoint, fsyncing the checkpoint boundary, marking store
 nodes durable only after publication, and then writing a text checkpoint
-summary. The Python repository still owns the higher-level WAL/manifest
-publication sequence.
+summary. `HostGraftStore::dirty_plan()` / `grm_store_dirty_plan()` now expose
+ordered dirty nodes with payload-vs-metadata flags, payload byte counts, and
+durability priority so permanent memories flush before project/session scratch.
+The Python repository still owns the higher-level WAL/manifest publication
+sequence.
 
 ### 2.3 Move To C++/CUDA Or `tensor_cuda`
 

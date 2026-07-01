@@ -633,6 +633,48 @@ def test_native_checkpoint_round_trips_structured_payloads(tmp_path):
                                       payload["kpe"])
 
 
+def test_native_dirty_plan_tracks_payload_metadata_and_priority(tmp_path):
+    lib = build_native(tmp_path)
+    ckpt = tmp_path / "native_dirty_plan_ckpt"
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        meta_only = store.add_node("metadata-only dirty node", b"a", ntok=1)
+        store.save_checkpoint(ckpt)
+        store.set_metadata(meta_only, {
+            "kind": "fact",
+            "durability": "session",
+            "scope": "project",
+            "active": True,
+        })
+
+        project = store.add_node("project dirty node", b"12345", ntok=1)
+        store.set_metadata(project, {
+            "kind": "fact",
+            "durability": "project",
+            "scope": "project",
+            "active": True,
+        })
+        permanent = store.add_node("permanent dirty node", b"xy", ntok=1)
+        store.set_metadata(permanent, {
+            "kind": "fact",
+            "durability": "permanent",
+            "scope": "project",
+            "active": True,
+        })
+
+        assert store.dirty_node_ids() == (meta_only, project, permanent)
+        plan = store.dirty_plan()
+
+        assert [item.node_id for item in plan] == [
+            permanent, project, meta_only]
+        assert [item.durability_priority for item in plan] == [0, 1, 2]
+        assert [item.payload_bytes for item in plan] == [2, 5, 0]
+        assert [item.payload_dirty for item in plan] == [True, True, False]
+        assert [item.metadata_dirty for item in plan] == [True, True, True]
+
+
 def test_native_checkpoint_enforces_dialect_wall(tmp_path):
     lib = build_native(tmp_path)
     ckpt = tmp_path / "gqa_ckpt"

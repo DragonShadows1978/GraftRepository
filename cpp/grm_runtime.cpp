@@ -71,6 +71,32 @@ std::vector<std::uint64_t> DirtyQueue::node_ids() const {
   return ids;
 }
 
+bool DirtyQueue::payload_dirty(std::uint64_t node_id) const {
+  const auto it = dirty_.find(node_id);
+  return it != dirty_.end() && it->second.payload;
+}
+
+bool DirtyQueue::metadata_dirty(std::uint64_t node_id) const {
+  const auto it = dirty_.find(node_id);
+  return it != dirty_.end() && it->second.metadata;
+}
+
+std::uint64_t durability_priority(const std::string& durability) {
+  if (durability == "permanent") {
+    return 0;
+  }
+  if (durability == "project") {
+    return 1;
+  }
+  if (durability == "session") {
+    return 2;
+  }
+  if (durability == "volatile") {
+    return 3;
+  }
+  return 4;
+}
+
 namespace {
 
 constexpr char kCheckpointMagicV1[] = "GRMSTORE1";
@@ -1267,6 +1293,33 @@ StoreStats HostGraftStore::stats() const {
     }
   }
   return s;
+}
+
+std::vector<DirtyNodeInfo> HostGraftStore::dirty_plan() const {
+  std::vector<DirtyNodeInfo> out;
+  for (const auto node_id : dirty_.node_ids()) {
+    const auto* n = get(node_id);
+    if (n == nullptr || !n->lifecycle.dirty) {
+      continue;
+    }
+    DirtyNodeInfo info;
+    info.node_id = node_id;
+    info.payload_dirty = dirty_.payload_dirty(node_id);
+    info.metadata_dirty = dirty_.metadata_dirty(node_id);
+    info.payload_bytes = info.payload_dirty ? n->payload.bytes() : 0;
+    info.durability_priority = durability_priority(n->metadata.durability);
+    out.push_back(info);
+  }
+  std::sort(out.begin(), out.end(), [](const auto& a, const auto& b) {
+    if (a.durability_priority != b.durability_priority) {
+      return a.durability_priority < b.durability_priority;
+    }
+    if (a.payload_dirty != b.payload_dirty) {
+      return a.payload_dirty && !b.payload_dirty;
+    }
+    return a.node_id < b.node_id;
+  });
+  return out;
 }
 
 void RouterIndex::upsert(std::uint64_t node_id, std::vector<float> route_key,
@@ -2837,6 +2890,37 @@ int grm_store_dirty_nodes(grm_store_handle* handle,
         static_cast<uint64_t>(ids.size()), out_cap);
     for (uint64_t i = 0; i < n; ++i) {
       out_node_ids[i] = ids[static_cast<std::size_t>(i)];
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_dirty_plan(grm_store_handle* handle,
+                         grm_dirty_node_c* out_nodes,
+                         uint64_t out_cap,
+                         uint64_t* out_count) {
+  try {
+    if (handle == nullptr || handle->store == nullptr ||
+        out_count == nullptr) {
+      return grm_fail_msg(handle, "invalid dirty_plan arguments");
+    }
+    if (out_nodes == nullptr && out_cap > 0) {
+      return grm_fail_msg(
+          handle, "null dirty_plan buffer with nonzero capacity");
+    }
+    const auto plan = handle->store->dirty_plan();
+    *out_count = static_cast<uint64_t>(plan.size());
+    const auto n = std::min<uint64_t>(
+        static_cast<uint64_t>(plan.size()), out_cap);
+    for (uint64_t i = 0; i < n; ++i) {
+      const auto& item = plan[static_cast<std::size_t>(i)];
+      out_nodes[i].node_id = item.node_id;
+      out_nodes[i].payload_dirty = item.payload_dirty ? 1 : 0;
+      out_nodes[i].metadata_dirty = item.metadata_dirty ? 1 : 0;
+      out_nodes[i].payload_bytes = item.payload_bytes;
+      out_nodes[i].durability_priority = item.durability_priority;
     }
     return 0;
   } catch (const std::exception& exc) {

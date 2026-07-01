@@ -223,6 +223,11 @@ validation where feasible.
   `NativeGraftStore.route(..., kinds=..., scopes=..., durabilities=...,
   mutabilities=...)` can now filter route candidates in native code while
   preserving the existing unfiltered ABI.
+- Native dirty flush planning:
+  `HostGraftStore::dirty_plan()` and `grm_store_dirty_plan()` expose dirty nodes
+  in durability-priority order with payload-vs-metadata flags and dirty payload
+  byte counts, so native durability can flush permanent facts before lower
+  durability scratch.
 - Native MLA route-scan arena path:
   `ArenaCache.route()` now uses the native C++ route index when the native
   mirror is enabled and active MLA candidates have native route entries. The
@@ -582,10 +587,11 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   the C++ store owns mirrored payload lifecycle, tensor boundaries, tensor
   shapes/dtypes, payload byte reconstruction, host payload checkpointing, and
   lifecycle-aware route indexing with native kind/scope/durability/mutability
-  filters for MLA and GQA dialect ids. Semantic metadata is persisted natively
-  as JSON, and source/supersession graph edges are now structured native state
-  with Python graft references mapped to native node ids at the repository
-  boundary.
+  filters for MLA and GQA dialect ids. The native store now also exposes an
+  ordered dirty flush plan with payload-vs-metadata flags, dirty payload bytes,
+  and durability priority. Semantic metadata is persisted natively as JSON, and
+  source/supersession graph edges are now structured native state with Python
+  graft references mapped to native node ids at the repository boundary.
   Native can apply the final revision state once Python decides the correction.
   The explicit memory-command grammar now has a native parse-plan boundary, and
   command execution completes behind `GRMRuntime`; public extractor-candidate
@@ -609,13 +615,13 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
 ## Current State
 
 The Python RAM-first runtime, opt-in C++ host-store mirror, native host payload,
-metadata, graph-edge checkpointing, native revision application, native route
-index with active-state and kind/scope/durability/mutability filters for MLA
-and GQA dialect ids plus runtime-consumed native recursive source-closure
-traversal and
-multi-key MLA arena-route acceleration, native explicit
-memory-command parser, native swap-plan boundary, native host tensor swap/evict
-references, TensorCUDA fused splice/evict cache movement, TensorCUDA fused RoPE
+metadata, graph-edge checkpointing, native dirty flush planning, native revision
+application, native route index with active-state and
+kind/scope/durability/mutability filters for MLA and GQA dialect ids plus
+runtime-consumed native recursive source-closure traversal and multi-key MLA
+arena-route acceleration, native explicit memory-command parser, native
+swap-plan boundary, native host tensor swap/evict references, TensorCUDA fused
+splice/evict cache movement, TensorCUDA fused RoPE
 re-seat movement, TensorCUDA fused
 cache-sliced raw/RoPE export primitives with paired and multi-layer paired
 export boundaries, TensorCUDA functional multi-layer arena cache transaction,

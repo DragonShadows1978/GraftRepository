@@ -100,6 +100,14 @@ struct StoreStats {
   std::uint64_t route_entries = 0;
 };
 
+struct DirtyNodeInfo {
+  std::uint64_t node_id = 0;
+  bool payload_dirty = false;
+  bool metadata_dirty = false;
+  std::uint64_t payload_bytes = 0;
+  std::uint64_t durability_priority = 0;
+};
+
 struct PayloadStats {
   std::uint64_t tensor_count = 0;
   std::uint64_t payload_bytes = 0;
@@ -180,6 +188,8 @@ class DirtyQueue {
   void clear_all();
   bool empty() const;
   std::vector<std::uint64_t> node_ids() const;
+  bool payload_dirty(std::uint64_t node_id) const;
+  bool metadata_dirty(std::uint64_t node_id) const;
 
  private:
   struct DirtyState {
@@ -229,6 +239,7 @@ class HostGraftStore {
   void load_checkpoint(const std::string& root);
   StoreStats stats() const;
   std::vector<std::uint64_t> node_ids() const;
+  std::vector<DirtyNodeInfo> dirty_plan() const;
 
   const DialectDescriptor& dialect() const { return dialect_; }
   DirtyQueue& dirty_queue() { return dirty_; }

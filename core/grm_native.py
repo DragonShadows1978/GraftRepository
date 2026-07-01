@@ -18,6 +18,16 @@ class _StatsC(ctypes.Structure):
     ]
 
 
+class _DirtyNodeC(ctypes.Structure):
+    _fields_ = [
+        ("node_id", ctypes.c_uint64),
+        ("payload_dirty", ctypes.c_int),
+        ("metadata_dirty", ctypes.c_int),
+        ("payload_bytes", ctypes.c_uint64),
+        ("durability_priority", ctypes.c_uint64),
+    ]
+
+
 class _PayloadStatsC(ctypes.Structure):
     _fields_ = [
         ("tensor_count", ctypes.c_uint64),
@@ -77,6 +87,15 @@ class NativeStats:
     host_payload_bytes: int
     host_payload_tensors: int
     route_entries: int
+
+
+@dataclass(frozen=True)
+class DirtyNode:
+    node_id: int
+    payload_dirty: bool
+    metadata_dirty: bool
+    payload_bytes: int
+    durability_priority: int
 
 
 @dataclass(frozen=True)
@@ -413,6 +432,12 @@ class NativeGraftStore:
                 ctypes.c_void_p, ctypes.POINTER(ctypes.c_uint64),
                 ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_dirty_nodes.restype = ctypes.c_int
+        self._has_dirty_plan = hasattr(lib, "grm_store_dirty_plan")
+        if self._has_dirty_plan:
+            lib.grm_store_dirty_plan.argtypes = [
+                ctypes.c_void_p, ctypes.POINTER(_DirtyNodeC),
+                ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_dirty_plan.restype = ctypes.c_int
         lib.grm_store_stats.argtypes = [ctypes.c_void_p, ctypes.POINTER(_StatsC)]
         lib.grm_store_stats.restype = ctypes.c_int
         lib.grm_store_last_error.argtypes = [ctypes.c_void_p]
@@ -975,6 +1000,28 @@ class NativeGraftStore:
         self._check(self._lib.grm_store_dirty_nodes(
             self._handle, out, int(count.value), ctypes.byref(written)))
         return tuple(int(out[i]) for i in range(int(written.value)))
+
+    def dirty_plan(self):
+        if not getattr(self, "_has_dirty_plan", False):
+            raise RuntimeError("native GRM dirty_plan is unavailable")
+        count = ctypes.c_uint64()
+        self._check(self._lib.grm_store_dirty_plan(
+            self._handle, None, 0, ctypes.byref(count)))
+        if not int(count.value):
+            return ()
+        out_t = _DirtyNodeC * int(count.value)
+        out = out_t()
+        written = ctypes.c_uint64()
+        self._check(self._lib.grm_store_dirty_plan(
+            self._handle, out, int(count.value), ctypes.byref(written)))
+        return tuple(
+            DirtyNode(
+                int(out[i].node_id),
+                bool(out[i].payload_dirty),
+                bool(out[i].metadata_dirty),
+                int(out[i].payload_bytes),
+                int(out[i].durability_priority))
+            for i in range(int(written.value)))
 
     def stats(self):
         out = _StatsC()
