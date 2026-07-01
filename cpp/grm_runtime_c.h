@@ -280,6 +280,13 @@ int grm_store_plan_reinforcement(grm_store_handle* handle,
                                  char* out_json,
                                  size_t out_cap,
                                  uint64_t* out_len);
+int grm_store_plan_review_transition(grm_store_handle* handle,
+                                     const char* command,
+                                     const char* status,
+                                     int has_approved_node_id,
+                                     char* out_json,
+                                     size_t out_cap,
+                                     uint64_t* out_len);
 int grm_store_plan_cull_spans(grm_store_handle* handle,
                               uint64_t ntok,
                               uint64_t max_tokens,

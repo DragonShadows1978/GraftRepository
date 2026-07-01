@@ -1159,6 +1159,61 @@ def test_runtime_review_execution_autosaves_and_reports(tmp_path):
     assert repo.runtime.last_result.new_nodes == ()
 
 
+def test_native_review_transition_plan_guides_review_lifecycle(
+        tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+    rid = repo.review_candidate("Native review transition target 91-9100",
+                                confidence=0.7)
+    rejected = repo.review_candidate("Native review rejected item",
+                                     confidence=0.1)
+    original = repo.native_store.plan_review_transition
+    calls = []
+
+    def traced_transition(**kwargs):
+        calls.append(dict(kwargs))
+        return original(**kwargs)
+
+    monkeypatch.setattr(repo.native_store, "plan_review_transition",
+                        traced_transition)
+
+    edited = repo.edit_review(rid, confidence=0.9, reason="native policy")
+    assert edited["status"] == "pending"
+    assert calls[-1] == {
+        "command": "edit_review",
+        "status": "pending",
+        "has_approved_node_id": False,
+    }
+
+    rejected_item = repo.reject_review(rejected, reason="not useful")
+    assert rejected_item["status"] == "rejected"
+    assert calls[-1]["command"] == "reject_review"
+    assert calls[-1]["status"] == "pending"
+    with pytest.raises(RuntimeError, match="rejected review items"):
+        repo.approve_review(rejected)
+    assert calls[-1]["command"] == "approve_review"
+    assert calls[-1]["status"] == "rejected"
+
+    approved = repo.approve_review(rid)
+    assert repo.review_buffer[rid]["status"] == "approved"
+    assert calls[-1]["command"] == "approve_review"
+    assert calls[-1]["status"] == "pending"
+    again = repo.approve_review(rid)
+    assert again == approved
+    assert calls[-1] == {
+        "command": "approve_review",
+        "status": "approved",
+        "has_approved_node_id": True,
+    }
+    with pytest.raises(RuntimeError, match="approved review items"):
+        repo.reject_review(rid)
+    assert calls[-1]["command"] == "reject_review"
+    assert calls[-1]["status"] == "approved"
+    repo.close()
+
+
 def test_librarian_respects_arena_era_folding_capability(tmp_path):
     class NoEraArena(FakeArena):
         ENABLE_ERA_FOLDING = False

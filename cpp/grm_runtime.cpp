@@ -1160,6 +1160,61 @@ std::string reinforcement_plan_json(const ReinforcementPlan& plan) {
   return out.str();
 }
 
+ReviewTransitionPlan plan_review_transition(
+    const std::string& command,
+    const std::string& status,
+    bool has_approved_node_id) {
+  ReviewTransitionPlan plan;
+  const std::string state = status.empty() ? "pending" : status;
+  if (command == "edit_review" || command == "change_review_scope") {
+    if (state == "approved") {
+      plan.action = "error";
+      plan.reason = "approved review items cannot be edited";
+      return plan;
+    }
+    if (state == "rejected") {
+      plan.action = "error";
+      plan.reason = "rejected review items cannot be edited";
+      return plan;
+    }
+    plan.action = command;
+    return plan;
+  }
+  if (command == "reject_review") {
+    if (state == "approved") {
+      plan.action = "error";
+      plan.reason = "approved review items cannot be rejected";
+      return plan;
+    }
+    plan.action = "reject_review";
+    return plan;
+  }
+  if (command == "approve_review") {
+    if (state == "rejected") {
+      plan.action = "error";
+      plan.reason = "rejected review items cannot be approved";
+      return plan;
+    }
+    plan.action = (state == "approved" && has_approved_node_id)
+                      ? "return_existing"
+                      : "approve_review";
+    return plan;
+  }
+  plan.action = "error";
+  plan.reason = "unsupported review transition: " + command;
+  return plan;
+}
+
+std::string review_transition_plan_json(const ReviewTransitionPlan& plan) {
+  std::ostringstream out;
+  bool first = true;
+  out << "{";
+  append_json_string_field(out, first, "action", plan.action);
+  append_json_string_field(out, first, "reason", plan.reason);
+  out << "}";
+  return out.str();
+}
+
 CullSpanPlan plan_cull_spans(
     std::uint64_t ntok,
     bool has_max_tokens,
@@ -3515,6 +3570,37 @@ int grm_store_plan_reinforcement(grm_store_handle* handle,
         grm::plan_reinforcement(
             old_write_intent, new_write_intent, old_confidence, new_confidence,
             old_reinforcement_count));
+    *out_len = static_cast<uint64_t>(json.size());
+    if (out_json != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, json.size());
+      std::memcpy(out_json, json.data(), n);
+      out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_plan_review_transition(grm_store_handle* handle,
+                                     const char* command,
+                                     const char* status,
+                                     int has_approved_node_id,
+                                     char* out_json,
+                                     size_t out_cap,
+                                     uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || command == nullptr ||
+        status == nullptr || out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid plan_review_transition arguments");
+    }
+    if (out_json == nullptr && out_cap > 0) {
+      return grm_fail_msg(
+          handle, "null review transition plan buffer with nonzero capacity");
+    }
+    const auto json = grm::review_transition_plan_json(
+        grm::plan_review_transition(command, status,
+                                    has_approved_node_id != 0));
     *out_len = static_cast<uint64_t>(json.size());
     if (out_json != nullptr && out_cap > 0) {
       const size_t n = std::min(out_cap - 1, json.size());

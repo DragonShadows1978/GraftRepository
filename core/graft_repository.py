@@ -1903,6 +1903,18 @@ class GraftRepository:
         item.setdefault("status", "pending")
         return item
 
+    def _native_review_transition_plan(self, command, status,
+                                       has_approved_node_id=False):
+        if self.native_store is None or not hasattr(
+                self.native_store, "plan_review_transition"):
+            return None
+        try:
+            return self.native_store.plan_review_transition(
+                command=command, status=status,
+                has_approved_node_id=has_approved_node_id)
+        except RuntimeError:
+            return None
+
     def review_candidate(self, text, proposed_kind="fact",
                          proposed_scope="project",
                          proposed_durability="project",
@@ -1938,10 +1950,15 @@ class GraftRepository:
                             proposed_mutability=None, confidence=None,
                             metadata=None, reason=""):
         item = self._review_item(review_id)
-        if item.get("status") == "approved":
-            raise RuntimeError("approved review items cannot be edited")
-        if item.get("status") == "rejected":
-            raise RuntimeError("rejected review items cannot be edited")
+        plan = self._native_review_transition_plan(
+            "edit_review", item.get("status", "pending"))
+        if plan is not None and plan.get("action") == "error":
+            raise RuntimeError(plan.get("reason", "review edit is invalid"))
+        if plan is None:
+            if item.get("status") == "approved":
+                raise RuntimeError("approved review items cannot be edited")
+            if item.get("status") == "rejected":
+                raise RuntimeError("rejected review items cannot be edited")
         updates = {}
         if text is not None:
             updates["text"] = str(text)
@@ -1980,7 +1997,11 @@ class GraftRepository:
 
     def _reject_review_direct(self, review_id, reason=""):
         item = self._review_item(review_id)
-        if item.get("status") == "approved":
+        plan = self._native_review_transition_plan(
+            "reject_review", item.get("status", "pending"))
+        if plan is not None and plan.get("action") == "error":
+            raise RuntimeError(plan.get("reason", "review reject is invalid"))
+        if plan is None and item.get("status") == "approved":
             raise RuntimeError("approved review items cannot be rejected")
         item["status"] = "rejected"
         if reason:
@@ -2015,9 +2036,16 @@ class GraftRepository:
 
     def _approve_review_direct(self, review_id):
         item = self._review_item(review_id)
-        if item.get("status") == "rejected":
+        plan = self._native_review_transition_plan(
+            "approve_review", item.get("status", "pending"),
+            has_approved_node_id="approved_node_id" in item)
+        if plan is not None and plan.get("action") == "error":
+            raise RuntimeError(plan.get("reason", "review approve is invalid"))
+        if plan is None and item.get("status") == "rejected":
             raise RuntimeError("rejected review items cannot be approved")
-        if item.get("status") == "approved" and "approved_node_id" in item:
+        if ((plan is not None and plan.get("action") == "return_existing") or
+                (plan is None and item.get("status") == "approved" and
+                 "approved_node_id" in item)):
             return int(item["approved_node_id"])
         result = None
         candidate = self._review_semantic_candidate(item)

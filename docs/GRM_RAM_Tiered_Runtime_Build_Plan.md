@@ -81,6 +81,10 @@ Python policy. The native grammar now includes review-buffer execution commands
 scope/durability/mutability changes), moving the explicit review control surface
 through the same command-plan boundary while leaving conflict/review/extraction
 decisions in Python until those policies harden.
+`grm_store_plan_review_transition()` now owns deterministic review lifecycle
+validation for edit/change-scope/reject/approve transitions, including approved
+and rejected terminal-state guards plus idempotent repeated approval. Python
+still applies the review mutation and WAL record.
 `grm_store_active_text_matches()` now performs active-only, case-insensitive text
 target discovery in the C++ host store for memory commands such as pin, unpin,
 ignore, show, forget, and correct. Python still applies the final mutation, WAL, and

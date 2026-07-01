@@ -443,6 +443,14 @@ class NativeGraftStore:
                 ctypes.c_char_p, ctypes.c_size_t,
                 ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_plan_reinforcement.restype = ctypes.c_int
+        self._has_review_transition_plan = hasattr(
+            lib, "grm_store_plan_review_transition")
+        if self._has_review_transition_plan:
+            lib.grm_store_plan_review_transition.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_int, ctypes.c_char_p, ctypes.c_size_t,
+                ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_plan_review_transition.restype = ctypes.c_int
         self._has_cull_span_plan = hasattr(lib, "grm_store_plan_cull_spans")
         if self._has_cull_span_plan:
             lib.grm_store_plan_cull_spans.argtypes = [
@@ -988,6 +996,26 @@ class NativeGraftStore:
             self._handle, str(old_write_intent).encode("utf-8"),
             str(new_write_intent).encode("utf-8"), float(old_confidence),
             float(new_confidence), int(old_reinforcement_count), buf, cap,
+            ctypes.byref(needed)))
+        return json.loads(buf.value.decode("utf-8") or "{}")
+
+    def plan_review_transition(self, *, command, status,
+                               has_approved_node_id=False):
+        if not getattr(self, "_has_review_transition_plan", False):
+            raise RuntimeError(
+                "native GRM review transition planner is unavailable")
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_plan_review_transition(
+            self._handle, str(command).encode("utf-8"),
+            str(status or "pending").encode("utf-8"),
+            1 if has_approved_node_id else 0, None, 0,
+            ctypes.byref(needed)))
+        cap = int(needed.value) + 1
+        buf = ctypes.create_string_buffer(cap)
+        self._check(self._lib.grm_store_plan_review_transition(
+            self._handle, str(command).encode("utf-8"),
+            str(status or "pending").encode("utf-8"),
+            1 if has_approved_node_id else 0, buf, cap,
             ctypes.byref(needed)))
         return json.loads(buf.value.decode("utf-8") or "{}")
 

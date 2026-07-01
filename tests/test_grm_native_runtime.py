@@ -634,6 +634,38 @@ def test_native_reinforcement_planner(tmp_path):
             }
 
 
+def test_native_review_transition_planner(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        assert store.plan_review_transition(
+            command="edit_review", status="pending") == {
+                "action": "edit_review"}
+        assert store.plan_review_transition(
+            command="change_review_scope", status="pending") == {
+                "action": "change_review_scope"}
+        assert store.plan_review_transition(
+            command="edit_review", status="approved") == {
+                "action": "error",
+                "reason": "approved review items cannot be edited",
+            }
+        assert store.plan_review_transition(
+            command="reject_review", status="approved") == {
+                "action": "error",
+                "reason": "approved review items cannot be rejected",
+            }
+        assert store.plan_review_transition(
+            command="approve_review", status="rejected") == {
+                "action": "error",
+                "reason": "rejected review items cannot be approved",
+            }
+        assert store.plan_review_transition(
+            command="approve_review", status="approved",
+            has_approved_node_id=True) == {"action": "return_existing"}
+
+
 def test_native_cull_span_planner(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

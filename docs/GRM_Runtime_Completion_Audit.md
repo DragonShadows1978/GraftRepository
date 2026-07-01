@@ -226,7 +226,10 @@ validation where feasible.
   `GRMRuntime` review boundary. Review items carry explicit `pending` /
   `approved` / `rejected` status, autosave-enabled review mutations publish via
   `flush_now()`, and WAL replay applies review edits and decisions over both
-  WAL-only recovery and manifest-plus-WAL reload.
+  WAL-only recovery and manifest-plus-WAL reload. Native
+  `grm_store_plan_review_transition()` now validates review lifecycle
+  transitions for edit/change-scope/reject/approve while Python still applies
+  the mutation and WAL record.
 - Native routing/indexing:
   the C ABI now exposes route-key upsert and top-k route lookup through the
   C++ `RouterIndex`; `GraftRepository.native_route()` translates native route

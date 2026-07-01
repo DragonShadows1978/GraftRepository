@@ -231,6 +231,17 @@ ReinforcementPlan plan_reinforcement(
     std::uint64_t old_reinforcement_count);
 std::string reinforcement_plan_json(const ReinforcementPlan& plan);
 
+struct ReviewTransitionPlan {
+  std::string action;
+  std::string reason;
+};
+
+ReviewTransitionPlan plan_review_transition(
+    const std::string& command,
+    const std::string& status,
+    bool has_approved_node_id);
+std::string review_transition_plan_json(const ReviewTransitionPlan& plan);
+
 struct CullSpan {
   std::uint64_t start = 0;
   std::uint64_t end = 0;
