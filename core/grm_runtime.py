@@ -169,6 +169,46 @@ class GRMRuntime:
                                 "correction missing => separator"))
             self._finish_memory_event(before, "review")
             return {"action": "review", "count": len(repo.review_buffer)}
+        if action == "approve_review":
+            review_id = plan.get("review_id")
+            if review_id is None:
+                raise ValueError("approve_review command requires review_id")
+            idx = repo._approve_review_direct(int(review_id))
+            self._finish_memory_event(before, "approve_review")
+            return {"action": "approve_review", "review_id": int(review_id),
+                    "node_id": idx}
+        if action == "reject_review":
+            review_id = plan.get("review_id")
+            if review_id is None:
+                raise ValueError("reject_review command requires review_id")
+            item = repo._reject_review_direct(
+                int(review_id), reason=plan.get("reason", ""))
+            self._finish_memory_event(before, "reject_review")
+            return {"action": "reject_review", "review_id": int(review_id),
+                    "item": item}
+        if action == "edit_review":
+            review_id = plan.get("review_id")
+            if review_id is None:
+                raise ValueError("edit_review command requires review_id")
+            item = repo._edit_review_direct(
+                int(review_id), text=plan.get("body", ""),
+                reason=plan.get("reason", "memory command edit"))
+            self._finish_memory_event(before, "edit_review")
+            return {"action": "edit_review", "review_id": int(review_id),
+                    "item": item}
+        if action == "change_review_scope":
+            review_id = plan.get("review_id")
+            if review_id is None:
+                raise ValueError(
+                    "change_review_scope command requires review_id")
+            item = repo._edit_review_direct(
+                int(review_id), proposed_scope=plan.get("scope"),
+                proposed_durability=plan.get("durability") or None,
+                proposed_mutability=plan.get("mutability") or None,
+                reason="scope changed")
+            self._finish_memory_event(before, "change_review_scope")
+            return {"action": "change_review_scope",
+                    "review_id": int(review_id), "item": item}
         if action == "ignore":
             repo._append_wal("DO_NOT_REMEMBER", text=text)
             self._finish_memory_event(before, "ignore")

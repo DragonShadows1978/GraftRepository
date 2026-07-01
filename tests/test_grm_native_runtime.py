@@ -467,6 +467,35 @@ def test_native_memory_command_parser(tmp_path):
             "reason": "correction missing => separator",
             "flush_immediately": False,
         }
+        assert store.parse_memory_command("approve review 5") == {
+            "action": "approve_review",
+            "review_id": 5,
+            "flush_immediately": False,
+        }
+        assert store.parse_memory_command(
+            "reject review 6 reason Not reliable enough") == {
+                "action": "reject_review",
+                "reason": "Not reliable enough",
+                "review_id": 6,
+                "flush_immediately": False,
+            }
+        assert store.parse_memory_command(
+            "edit review 7 text Corrected Review Body") == {
+                "action": "edit_review",
+                "body": "Corrected Review Body",
+                "reason": "memory command edit",
+                "review_id": 7,
+                "flush_immediately": False,
+            }
+        assert store.parse_memory_command(
+            "change review 8 scope user durability permanent mutability stable") == {
+                "action": "change_review_scope",
+                "durability": "permanent",
+                "mutability": "stable",
+                "scope": "user",
+                "review_id": 8,
+                "flush_immediately": False,
+            }
         assert store.parse_memory_command("flush memory now") == {
             "action": "flush",
             "flush_immediately": False,

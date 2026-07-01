@@ -320,13 +320,35 @@ bool parse_u64_word(const std::string& word, std::uint64_t* out) {
   return true;
 }
 
+std::string command_suffix_after_keyword(const std::string& original,
+                                         const std::string& low,
+                                         const std::string& keyword) {
+  const std::string needle = " " + keyword;
+  std::size_t pos = low.find(needle);
+  while (pos != std::string::npos) {
+    std::size_t cursor = pos + needle.size();
+    if (cursor >= low.size() || std::isspace(
+            static_cast<unsigned char>(low[cursor])) ||
+        low[cursor] == ':' || low[cursor] == '=' || low[cursor] == ',') {
+      while (cursor < original.size()) {
+        const unsigned char c = static_cast<unsigned char>(original[cursor]);
+        if (std::isspace(c) || original[cursor] == ':' ||
+            original[cursor] == '=' || original[cursor] == ',') {
+          ++cursor;
+          continue;
+        }
+        break;
+      }
+      return trim(original.substr(cursor));
+    }
+    pos = low.find(needle, pos + 1);
+  }
+  return "";
+}
+
 std::string command_suffix_after_label(const std::string& original,
                                        const std::string& low) {
-  const auto pos = low.find(" label ");
-  if (pos == std::string::npos) {
-    return "";
-  }
-  return trim(original.substr(pos + 7));
+  return command_suffix_after_keyword(original, low, "label");
 }
 
 std::string normalize_cull_boundary(const std::string& word) {
@@ -545,6 +567,80 @@ MemoryCommandPlan parse_memory_command(const std::string& text) {
   }
 
   const auto words = command_words(low);
+  if (words.size() >= 3 && words[1] == "review") {
+    MemoryCommandPlan plan;
+    if (!parse_u64_word(words[2], &plan.review_id)) {
+      throw std::runtime_error("review command requires a numeric review id");
+    }
+    plan.has_review_id = true;
+    if (words[0] == "approve") {
+      if (words.size() != 3) {
+        throw std::runtime_error("approve review takes only a review id");
+      }
+      plan.action = "approve_review";
+      return plan;
+    }
+    if (words[0] == "reject") {
+      plan.action = "reject_review";
+      if (words.size() > 3) {
+        if (words[3] != "reason") {
+          throw std::runtime_error("unknown reject review option");
+        }
+        plan.reason = command_suffix_after_keyword(original, low, "reason");
+        if (plan.reason.empty()) {
+          throw std::runtime_error("reject review reason is missing");
+        }
+      }
+      return plan;
+    }
+    if (words[0] == "edit") {
+      if (words.size() < 5 ||
+          (words[3] != "text" && words[3] != "body")) {
+        throw std::runtime_error("edit review requires text <replacement>");
+      }
+      plan.action = "edit_review";
+      plan.body = command_suffix_after_keyword(original, low, words[3]);
+      if (plan.body.empty()) {
+        throw std::runtime_error("edit review text is missing");
+      }
+      plan.reason = "memory command edit";
+      return plan;
+    }
+    if (words[0] == "change") {
+      plan.action = "change_review_scope";
+      std::size_t cursor = 3;
+      if (cursor >= words.size() || words[cursor] != "scope") {
+        throw std::runtime_error("change review requires scope <scope>");
+      }
+      ++cursor;
+      if (cursor >= words.size()) {
+        throw std::runtime_error("change review scope is missing");
+      }
+      plan.scope = words[cursor++];
+      while (cursor < words.size()) {
+        const auto& word = words[cursor++];
+        if (word == "durability") {
+          if (cursor >= words.size()) {
+            throw std::runtime_error(
+                "change review durability is missing");
+          }
+          plan.durability = words[cursor++];
+          continue;
+        }
+        if (word == "mutability") {
+          if (cursor >= words.size()) {
+            throw std::runtime_error(
+                "change review mutability is missing");
+          }
+          plan.mutability = words[cursor++];
+          continue;
+        }
+        throw std::runtime_error("unknown change review option");
+      }
+      return plan;
+    }
+  }
+
   if (words.size() >= 6 && words[0] == "select" && words[1] == "graft") {
     MemoryCommandPlan plan;
     plan.action = "select_graft_span";
@@ -784,6 +880,8 @@ std::string memory_command_plan_json(const MemoryCommandPlan& plan) {
   append_json_string_field(out, first, "metadata_value", plan.metadata_value);
   append_json_string_field(out, first, "reason", plan.reason);
   append_json_u64_field(out, first, "node_id", plan.node_id, plan.has_node_id);
+  append_json_u64_field(out, first, "review_id", plan.review_id,
+                        plan.has_review_id);
   append_json_u64_field(out, first, "max_tokens", plan.max_tokens,
                         plan.has_max_tokens);
   append_json_u64_field(out, first, "span_start", plan.span_start,

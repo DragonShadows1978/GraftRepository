@@ -77,8 +77,8 @@ validation where feasible.
   mapped native node ids; tests now cover intentionally divergent id spaces.
 - Explicit memory commands:
   `remember`, `forget`, `correct/update`, cull/split graft, review fallback,
-  ignore, pin/unpin, mutability marking, memory introspection, and
-  `flush memory now` are supported.
+  review-buffer approve/reject/edit/scope-change, ignore, pin/unpin,
+  mutability marking, memory introspection, and `flush memory now` are supported.
   `GRMRuntime.apply_memory_command()` now runs all explicit commands through the
   runtime finish path, so autosave publishes command mutations durably while
   `flush_immediately` and explicit flush commands force durability even when
@@ -95,7 +95,9 @@ validation where feasible.
   of complete semantic fact triples now reuses the extractor write policy with
   user authority, so duplicate reviewed facts reinforce existing active memory
   and same-scope conflicts supersede the old fact instead of creating parallel
-  active nodes.
+  active nodes. Review-buffer approve/reject/edit/scope-change commands now parse
+  through the native memory-command boundary and execute through
+  `GRMRuntime.apply_memory_command()`, including autosave and reload durability.
 - Conservative extractor candidate interface and runtime hook:
   `GraftRepository.apply_extraction_candidate(s)` accepts classifier-style
   candidate dictionaries, writes high-confidence non-conflicting candidates,
@@ -208,8 +210,9 @@ validation where feasible.
 - Native memory-command parser boundary:
   `grm_store_parse_memory_command()` parses the deterministic explicit memory
   command grammar (`remember`, `forget`, `correct/update`, review fallback,
-  ignore, flush, cull/split graft, selected graft spans, pin/unpin, mutability
-  marking, show/why, durability mode switches) into a JSON operation plan.
+  review-buffer approve/reject/edit/scope-change, ignore, flush, cull/split
+  graft, selected graft spans, pin/unpin, mutability marking, show/why,
+  durability mode switches) into a JSON operation plan.
   `NativeGraftStore` exposes that parser and native-backed
   `GraftRepository.apply_memory_command()` consumes it before applying the
   Python memory policy. Command execution then completes through `GRMRuntime`,

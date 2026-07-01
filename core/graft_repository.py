@@ -854,6 +854,90 @@ class GraftRepository:
         return original[len(prefix):].strip()
 
     @staticmethod
+    def _command_suffix_after_keyword(original, low, keyword):
+        needle = " " + keyword
+        pos = low.find(needle)
+        while pos >= 0:
+            cursor = pos + len(needle)
+            if cursor >= len(low) or low[cursor].isspace() or low[cursor] in ":=,":
+                while cursor < len(original):
+                    if original[cursor].isspace() or original[cursor] in ":=,":
+                        cursor += 1
+                        continue
+                    break
+                return original[cursor:].strip()
+            pos = low.find(needle, pos + 1)
+        return ""
+
+    @staticmethod
+    def _parse_review_command_python(original, low):
+        words = low.replace(",", " ").replace(":", " ").replace(
+            "=", " ").split()
+        if len(words) < 3 or words[1] != "review":
+            return None
+        try:
+            review_id = int(words[2])
+        except ValueError as exc:
+            raise ValueError(
+                "review command requires a numeric review id") from exc
+        if review_id < 0:
+            raise ValueError("review id must be nonnegative")
+        if words[0] == "approve":
+            if len(words) != 3:
+                raise ValueError("approve review takes only a review id")
+            return {"action": "approve_review", "review_id": review_id}
+        if words[0] == "reject":
+            out = {"action": "reject_review", "review_id": review_id}
+            if len(words) > 3:
+                if words[3] != "reason":
+                    raise ValueError(f"unknown reject review option {words[3]!r}")
+                reason = GraftRepository._command_suffix_after_keyword(
+                    original, low, "reason")
+                if not reason:
+                    raise ValueError("reject review reason is missing")
+                out["reason"] = reason
+            return out
+        if words[0] == "edit":
+            if len(words) < 5 or words[3] not in ("text", "body"):
+                raise ValueError("edit review requires text <replacement>")
+            body = GraftRepository._command_suffix_after_keyword(
+                original, low, words[3])
+            if not body:
+                raise ValueError("edit review text is missing")
+            return {"action": "edit_review", "review_id": review_id,
+                    "body": body, "reason": "memory command edit"}
+        if words[0] == "change":
+            cursor = 3
+            if cursor >= len(words) or words[cursor] != "scope":
+                raise ValueError("change review requires scope <scope>")
+            cursor += 1
+            if cursor >= len(words):
+                raise ValueError("change review scope is missing")
+            out = {"action": "change_review_scope",
+                   "review_id": review_id, "scope": words[cursor]}
+            cursor += 1
+            while cursor < len(words):
+                word = words[cursor]
+                cursor += 1
+                if word == "durability":
+                    if cursor >= len(words):
+                        raise ValueError(
+                            "change review durability is missing")
+                    out["durability"] = words[cursor]
+                    cursor += 1
+                    continue
+                if word == "mutability":
+                    if cursor >= len(words):
+                        raise ValueError(
+                            "change review mutability is missing")
+                    out["mutability"] = words[cursor]
+                    cursor += 1
+                    continue
+                raise ValueError(f"unknown change review option {word!r}")
+            return out
+        return None
+
+    @staticmethod
     def _parse_metadata_command_python(original, low):
         table = (
             ("pin memory:", "pin_memory", {"pinned": True}),
@@ -919,6 +1003,9 @@ class GraftRepository:
     def _parse_memory_command_python(text):
         original = text.strip()
         low = original.lower()
+        review = GraftRepository._parse_review_command_python(original, low)
+        if review is not None:
+            return review
         selected = GraftRepository._parse_select_graft_command_python(
             original, low)
         if selected is not None:

@@ -644,6 +644,82 @@ def test_native_memory_command_selects_graft_span(tmp_path):
     reopened.close()
 
 
+def test_native_memory_commands_execute_review_buffer(tmp_path):
+    lib = build_native(tmp_path)
+    path = str(tmp_path / "repo")
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=True,
+                           arena_cls=FakeArena, route_layer=3,
+                           native_lib_path=lib)
+    rid = repo.review_candidate("draft review fact 81-8181", confidence=0.2)
+    rejected = repo.review_candidate("reject review fact 82-8282",
+                                     confidence=0.1)
+
+    edited = repo.apply_memory_command(
+        "edit review 0 text Reviewed command fact 81-8181")
+
+    assert edited["action"] == "edit_review"
+    assert edited["review_id"] == rid
+    assert edited["item"]["text"] == "Reviewed command fact 81-8181"
+    assert edited["item"]["edit_reason"] == "memory command edit"
+    assert repo.runtime.last_result.event == "memory_command"
+    assert repo.runtime.last_result.action == "edit_review"
+    assert repo.runtime.last_result.autosaved is True
+
+    scoped = repo.apply_memory_command(
+        "change review 0 scope user durability permanent mutability stable")
+
+    assert scoped["action"] == "change_review_scope"
+    assert scoped["item"]["proposed_scope"] == "user"
+    assert scoped["item"]["proposed_durability"] == "permanent"
+    assert scoped["item"]["proposed_mutability"] == "stable"
+    assert repo.runtime.last_result.action == "change_review_scope"
+    assert repo.runtime.last_result.autosaved is True
+
+    rejected_out = repo.apply_memory_command(
+        "reject review 1 reason duplicate candidate")
+
+    assert rejected_out["action"] == "reject_review"
+    assert rejected_out["review_id"] == rejected
+    assert rejected_out["item"]["status"] == "rejected"
+    assert rejected_out["item"]["rejection_reason"] == "duplicate candidate"
+    assert repo.runtime.last_result.action == "reject_review"
+    assert repo.runtime.last_result.autosaved is True
+
+    approved = repo.apply_memory_command("approve review 0")
+
+    assert approved["action"] == "approve_review"
+    assert approved["review_id"] == rid
+    node_id = approved["node_id"]
+    assert repo.runtime.last_result.action == "approve_review"
+    assert repo.runtime.last_result.autosaved is True
+    assert repo.runtime.last_result.new_nodes == (node_id,)
+    stats = repo.stats()
+    assert stats["dirty_nodes"] == 0
+    assert stats["native"]["dirty_nodes"] == 0
+    assert repo.review_buffer[rid]["status"] == "approved"
+    assert repo.review_buffer[rid]["approved_node_id"] == node_id
+    g = repo.arena.grafts[node_id]
+    assert g["text"] == "Reviewed command fact 81-8181"
+    assert g["metadata"]["scope"] == "user"
+    assert g["metadata"]["durability"] == "permanent"
+    assert g["metadata"]["mutability"] == "stable"
+    repo.close()
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3,
+                               native_lib_path=lib)
+    assert reopened.review_buffer[rid]["status"] == "approved"
+    assert reopened.review_buffer[rid]["approved_node_id"] == node_id
+    assert reopened.review_buffer[rejected]["status"] == "rejected"
+    assert reopened.review_buffer[rejected]["rejection_reason"] == (
+        "duplicate candidate")
+    rows = reopened.show_memory_about("81-8181")
+    assert len(rows) == 1
+    assert rows[0]["node_id"] == node_id
+    assert rows[0]["metadata"]["scope"] == "user"
+    reopened.close()
+
+
 def test_remember_attaches_semantic_metadata(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,
@@ -696,6 +772,31 @@ def test_memory_commands_revision_and_review(tmp_path):
 
     why = repo.why_remember("authoritative live store")
     assert why[0]["write_intent"] == "user_asserted"
+
+
+def test_memory_commands_execute_review_buffer_python_parser(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+    rid = repo.review_candidate("draft fallback fact 83-8383", confidence=0.3)
+    drop = repo.review_candidate("drop fallback fact 84-8484", confidence=0.1)
+
+    edited = repo.apply_memory_command(
+        "edit review 0 text Fallback approved fact 83-8383")
+    scoped = repo.apply_memory_command(
+        "change review 0 scope project durability project mutability stable")
+    rejected = repo.apply_memory_command("reject review 1 reason stale")
+    approved = repo.apply_memory_command("approve review 0")
+
+    assert edited["item"]["text"] == "Fallback approved fact 83-8383"
+    assert scoped["item"]["proposed_scope"] == "project"
+    assert rejected["review_id"] == drop
+    assert repo.review_buffer[drop]["status"] == "rejected"
+    assert approved["review_id"] == rid
+    assert repo.review_buffer[rid]["status"] == "approved"
+    rows = repo.show_memory_about("83-8383")
+    assert len(rows) == 1
+    assert rows[0]["metadata"]["mutability"] == "stable"
 
 
 def test_memory_commands_autosave_all_mutations(tmp_path):

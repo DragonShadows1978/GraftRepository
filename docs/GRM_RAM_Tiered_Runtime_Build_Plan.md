@@ -74,8 +74,11 @@ updated with the revision.
 `grm_store_parse_memory_command()` now parses the deterministic explicit memory
 command grammar into a JSON operation plan, and native-backed
 `GraftRepository.apply_memory_command()` consumes that plan before applying
-Python policy. This moves the command grammar boundary native while leaving
-conflict/review/extraction decisions in Python until those policies harden.
+Python policy. The native grammar now includes review-buffer execution commands
+(`approve review`, `reject review`, `edit review`, and review
+scope/durability/mutability changes), moving the explicit review control surface
+through the same command-plan boundary while leaving conflict/review/extraction
+decisions in Python until those policies harden.
 `grm_store_plan_cull_spans()` now owns deterministic cull span generation and
 retire-parent full-coverage validation for token-capped and tokenizer-derived
 section culls; Python still discovers semantic/text boundaries, but native code
