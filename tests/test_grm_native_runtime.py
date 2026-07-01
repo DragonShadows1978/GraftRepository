@@ -532,6 +532,46 @@ def test_native_memory_command_parser(tmp_path):
             store.parse_memory_command("remember maybe someday")
 
 
+def test_native_extraction_policy_planner(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        assert store.plan_extraction_policy(
+            action="write_direct", write_intent="observed",
+            confidence=0.4, write_direct_threshold=0.95) == {
+                "action": "review_candidate",
+                "reason": "confidence below direct-write threshold",
+            }
+        assert store.plan_extraction_policy(
+            action="write_direct", write_intent="observed",
+            confidence=0.99, write_direct_threshold=0.95,
+            conflict_count=1) == {
+                "action": "review_candidate",
+                "reason": "conflicts with active memory",
+            }
+        assert store.plan_extraction_policy(
+            action="write_direct", write_intent="user_asserted",
+            confidence=1.0, write_direct_threshold=0.95,
+            conflict_count=1) == {"action": "supersede_existing"}
+        assert store.plan_extraction_policy(
+            action="write_direct", write_intent="observed",
+            confidence=1.0, write_direct_threshold=0.95,
+            equivalent_count=1) == {"action": "reinforce_existing"}
+        assert store.plan_extraction_policy(
+            action="expire", write_intent="inferred",
+            confidence=1.0, write_direct_threshold=0.95,
+            expire_target_count=1) == {
+                "action": "review_candidate",
+                "reason": "expire action requires authoritative intent",
+            }
+        assert store.plan_extraction_policy(
+            action="expire", write_intent="user_asserted",
+            confidence=1.0, write_direct_threshold=0.95,
+            expire_target_count=1) == {"action": "expire"}
+
+
 def test_native_apply_revision_links_edges_and_retires_routes(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

@@ -1297,13 +1297,21 @@ def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
         "confidence": 0.99,
     })
     original = repo.native_store.fact_matches
+    original_plan = repo.native_store.plan_extraction_policy
     calls = []
+    plans = []
 
     def traced_fact_matches(**kwargs):
         calls.append(dict(kwargs))
         return original(**kwargs)
 
+    def traced_policy_plan(**kwargs):
+        plans.append(dict(kwargs))
+        return original_plan(**kwargs)
+
     monkeypatch.setattr(repo.native_store, "fact_matches", traced_fact_matches)
+    monkeypatch.setattr(repo.native_store, "plan_extraction_policy",
+                        traced_policy_plan)
     conflict = repo.apply_extraction_candidate({
         "action": "write_direct",
         "candidate_type": "fact",
@@ -1321,6 +1329,8 @@ def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
     assert conflict["action"] == "review_candidate"
     assert calls[-1]["value_mode"] == 2
     assert calls[-1]["subject"] == "Native conflict target"
+    assert plans[-1]["conflict_count"] == 1
+    assert plans[-1]["action"] == "write_direct"
 
     duplicate = repo.apply_extraction_candidate({
         "action": "write_direct",
@@ -1339,6 +1349,7 @@ def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
     assert duplicate["action"] == "reinforce_existing"
     assert duplicate["node_id"] == old["node_id"]
     assert calls[-1]["value_mode"] == 1
+    assert plans[-1]["equivalent_count"] == 1
     repo.close()
 
 

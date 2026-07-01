@@ -1330,6 +1330,26 @@ class GraftRepository:
             source_grafts=list(source_grafts), context=dict(context or {}))
         return result
 
+    def _native_extraction_policy_plan(
+            self, *, action, write_intent, confidence, write_direct_threshold,
+            conflicts=(), requested_supersedes=(), requested_supersede_ids=(),
+            equivalent=(), expire_targets=()):
+        if self.native_store is None or not hasattr(
+                self.native_store, "plan_extraction_policy"):
+            return None
+        try:
+            return self.native_store.plan_extraction_policy(
+                action=action, write_intent=write_intent,
+                confidence=confidence,
+                write_direct_threshold=write_direct_threshold,
+                conflict_count=len(conflicts),
+                requested_supersede_count=len(requested_supersedes),
+                requested_id_count=len(requested_supersede_ids),
+                equivalent_count=len(equivalent),
+                expire_target_count=len(expire_targets))
+        except RuntimeError:
+            return None
+
     def apply_extraction_candidate(self, candidate, source_text=None,
                                    source_turns=(), source_grafts=(),
                                    write_direct_threshold=0.95):
@@ -1366,59 +1386,89 @@ class GraftRepository:
             metadata["pinned"] = True
             action = "write_direct"
         authoritative = write_intent in ("user_asserted", "system_asserted")
-        if action in ("expire",):
-            if not authoritative:
-                return self._candidate_to_review(
-                    candidate, text,
-                    "expire action requires authoritative intent",
-                    metadata)
-            targets = self._candidate_expire_targets(candidate)
-            if not targets:
-                return self._candidate_to_review(
-                    candidate, text, "expire action found no active target",
-                    metadata)
-            expired = self._expire_extraction_targets(targets, text)
-            return {"action": "expire", "expired": expired}
-
+        expire_targets = (
+            self._candidate_expire_targets(candidate)
+            if action == "expire" else [])
         requested_supersedes = self._candidate_supersede_targets(candidate)
         requested_supersede_ids = self._candidate_target_ids(candidate)
-        if requested_supersede_ids and not requested_supersedes:
-            return self._candidate_to_review(
-                candidate, text, "supersede action found no active target",
-                metadata)
-        if requested_supersedes and not authoritative:
-            return self._candidate_to_review(
-                candidate, text,
-                "supersede action requires authoritative intent",
-                metadata)
-
         conflicts = self._candidate_conflicts(candidate)
-        imported = write_intent == "imported"
-        if conflicts and not authoritative:
-            reason = ("conflicts with active memory"
-                      if not imported else
-                      "imported candidate conflicts with active memory")
-            return self._candidate_to_review(candidate, text, reason, metadata)
-        if (action == "write_direct" and confidence < write_direct_threshold
-                and not authoritative):
-            return self._candidate_to_review(
-                candidate, text, "confidence below direct-write threshold",
-                metadata)
-        if action in ("review_candidate", "update_existing",
-                      "supersede_existing") and not (
-                authoritative and conflicts):
-            return self._candidate_to_review(
-                candidate, text, f"{action} requires review", metadata)
-        if action not in ("write_direct", "update_existing",
-                          "supersede_existing"):
-            return self._candidate_to_review(
-                candidate, text, f"unsupported extraction action: {action}",
-                metadata)
-
-        supersedes = conflicts if conflicts else list(requested_supersedes)
-        if not supersedes:
+        equivalent = []
+        if not conflicts and not requested_supersedes and action != "expire":
             equivalent = self._candidate_equivalent_targets(candidate)
-            if equivalent:
+        native_plan = self._native_extraction_policy_plan(
+            action=action, write_intent=write_intent,
+            confidence=confidence,
+            write_direct_threshold=write_direct_threshold,
+            conflicts=conflicts, requested_supersedes=requested_supersedes,
+            requested_supersede_ids=requested_supersede_ids,
+            equivalent=equivalent, expire_targets=expire_targets)
+        if native_plan is not None:
+            planned = native_plan.get("action", "")
+            if planned == "review_candidate":
+                return self._candidate_to_review(
+                    candidate, text, native_plan.get("reason", ""), metadata)
+            if planned == "expire":
+                expired = self._expire_extraction_targets(expire_targets, text)
+                return {"action": "expire", "expired": expired}
+            if planned == "reinforce_existing":
+                idx = self._reinforce_extraction_target(
+                    equivalent[0], candidate, metadata, confidence,
+                    write_intent)
+                return {"action": "reinforce_existing", "node_id": idx}
+            if planned not in ("write_direct", "supersede_existing"):
+                return self._candidate_to_review(
+                    candidate, text,
+                    f"unsupported native extraction plan: {planned}",
+                    metadata)
+            supersedes = conflicts if conflicts else list(requested_supersedes)
+        else:
+            if action in ("expire",):
+                if not authoritative:
+                    return self._candidate_to_review(
+                        candidate, text,
+                        "expire action requires authoritative intent",
+                        metadata)
+                if not expire_targets:
+                    return self._candidate_to_review(
+                        candidate, text,
+                        "expire action found no active target",
+                        metadata)
+                expired = self._expire_extraction_targets(expire_targets, text)
+                return {"action": "expire", "expired": expired}
+            if requested_supersede_ids and not requested_supersedes:
+                return self._candidate_to_review(
+                    candidate, text, "supersede action found no active target",
+                    metadata)
+            if requested_supersedes and not authoritative:
+                return self._candidate_to_review(
+                    candidate, text,
+                    "supersede action requires authoritative intent",
+                    metadata)
+            imported = write_intent == "imported"
+            if conflicts and not authoritative:
+                reason = ("conflicts with active memory"
+                          if not imported else
+                          "imported candidate conflicts with active memory")
+                return self._candidate_to_review(
+                    candidate, text, reason, metadata)
+            if (action == "write_direct" and confidence < write_direct_threshold
+                    and not authoritative):
+                return self._candidate_to_review(
+                    candidate, text, "confidence below direct-write threshold",
+                    metadata)
+            if action in ("review_candidate", "update_existing",
+                          "supersede_existing") and not (
+                    authoritative and conflicts):
+                return self._candidate_to_review(
+                    candidate, text, f"{action} requires review", metadata)
+            if action not in ("write_direct", "update_existing",
+                              "supersede_existing"):
+                return self._candidate_to_review(
+                    candidate, text,
+                    f"unsupported extraction action: {action}",
+                    metadata)
+            supersedes = conflicts if conflicts else list(requested_supersedes)
+            if not supersedes and equivalent:
                 idx = self._reinforce_extraction_target(
                     equivalent[0], candidate, metadata, confidence,
                     write_intent)

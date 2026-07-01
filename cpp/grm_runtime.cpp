@@ -743,6 +743,95 @@ std::string memory_command_plan_json(const MemoryCommandPlan& plan) {
   return out.str();
 }
 
+ExtractionPolicyPlan plan_extraction_policy(
+    const std::string& action,
+    const std::string& write_intent,
+    double confidence,
+    double write_direct_threshold,
+    std::uint64_t conflict_count,
+    std::uint64_t requested_supersede_count,
+    std::uint64_t requested_id_count,
+    std::uint64_t equivalent_count,
+    std::uint64_t expire_target_count) {
+  ExtractionPolicyPlan plan;
+  const bool authoritative = write_intent == "user_asserted" ||
+                             write_intent == "system_asserted";
+  if (action == "ignore" || action == "keep_turn_only") {
+    plan.action = action;
+    return plan;
+  }
+  if (action == "expire") {
+    if (!authoritative) {
+      plan.action = "review_candidate";
+      plan.reason = "expire action requires authoritative intent";
+      return plan;
+    }
+    if (expire_target_count == 0) {
+      plan.action = "review_candidate";
+      plan.reason = "expire action found no active target";
+      return plan;
+    }
+    plan.action = "expire";
+    return plan;
+  }
+  if (requested_id_count > 0 && requested_supersede_count == 0) {
+    plan.action = "review_candidate";
+    plan.reason = "supersede action found no active target";
+    return plan;
+  }
+  if (requested_supersede_count > 0 && !authoritative) {
+    plan.action = "review_candidate";
+    plan.reason = "supersede action requires authoritative intent";
+    return plan;
+  }
+  if (conflict_count > 0 && !authoritative) {
+    plan.action = "review_candidate";
+    plan.reason = write_intent == "imported"
+                      ? "imported candidate conflicts with active memory"
+                      : "conflicts with active memory";
+    return plan;
+  }
+  if (action == "write_direct" && confidence < write_direct_threshold &&
+      !authoritative) {
+    plan.action = "review_candidate";
+    plan.reason = "confidence below direct-write threshold";
+    return plan;
+  }
+  if ((action == "review_candidate" || action == "update_existing" ||
+       action == "supersede_existing") &&
+      !(authoritative && conflict_count > 0)) {
+    plan.action = "review_candidate";
+    plan.reason = action + " requires review";
+    return plan;
+  }
+  if (action != "write_direct" && action != "update_existing" &&
+      action != "supersede_existing") {
+    plan.action = "review_candidate";
+    plan.reason = "unsupported extraction action: " + action;
+    return plan;
+  }
+  if (conflict_count > 0 || requested_supersede_count > 0) {
+    plan.action = "supersede_existing";
+    return plan;
+  }
+  if (equivalent_count > 0) {
+    plan.action = "reinforce_existing";
+    return plan;
+  }
+  plan.action = "write_direct";
+  return plan;
+}
+
+std::string extraction_policy_plan_json(const ExtractionPolicyPlan& plan) {
+  std::ostringstream out;
+  bool first = true;
+  out << "{";
+  append_json_string_field(out, first, "action", plan.action);
+  append_json_string_field(out, first, "reason", plan.reason);
+  out << "}";
+  return out.str();
+}
+
 HostGraftStore::HostGraftStore(DialectDescriptor dialect)
     : dialect_(std::move(dialect)) {
   validate_dialect_profile(dialect_);
@@ -2744,6 +2833,45 @@ int grm_store_parse_memory_command(grm_store_handle* handle,
     }
     const auto json = grm::memory_command_plan_json(
         grm::parse_memory_command(text));
+    *out_len = static_cast<uint64_t>(json.size());
+    if (out_json != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, json.size());
+      std::memcpy(out_json, json.data(), n);
+      out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_plan_extraction_policy(grm_store_handle* handle,
+                                     const char* action,
+                                     const char* write_intent,
+                                     double confidence,
+                                     double write_direct_threshold,
+                                     uint64_t conflict_count,
+                                     uint64_t requested_supersede_count,
+                                     uint64_t requested_id_count,
+                                     uint64_t equivalent_count,
+                                     uint64_t expire_target_count,
+                                     char* out_json,
+                                     size_t out_cap,
+                                     uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || action == nullptr ||
+        write_intent == nullptr || out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid plan_extraction_policy arguments");
+    }
+    if (out_json == nullptr && out_cap > 0) {
+      return grm_fail_msg(
+          handle, "null extraction policy buffer with nonzero capacity");
+    }
+    const auto json = grm::extraction_policy_plan_json(
+        grm::plan_extraction_policy(
+            action, write_intent, confidence, write_direct_threshold,
+            conflict_count, requested_supersede_count, requested_id_count,
+            equivalent_count, expire_target_count));
     *out_len = static_cast<uint64_t>(json.size());
     if (out_json != nullptr && out_cap > 0) {
       const size_t n = std::min(out_cap - 1, json.size());

@@ -204,6 +204,10 @@ The C++ host store exposes active fact-target scans for equal-value and
 conflicting-value matches; Python consumes that native scan for extraction
 expire/conflict/reinforcement target discovery, then still applies the
 authoritative-intent and temporal-validity policy checks.
+The native runtime also exposes a side-effect-free extraction policy planner for
+the static write/review/supersede/reinforce/expire decisions. Python supplies
+the target counts and executes the actual mutation, but the review reason/action
+selection now has a C++ boundary instead of being only ad hoc repository code.
 
 `tests/deepseek_grm_turn50_gate.py` now validates the original GRM ephemeral
 boat on DeepSeek-V2-Lite INT4: 50 stored turn grafts, live context cleared

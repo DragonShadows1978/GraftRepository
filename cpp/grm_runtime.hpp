@@ -195,6 +195,23 @@ struct MemoryCommandPlan {
 MemoryCommandPlan parse_memory_command(const std::string& text);
 std::string memory_command_plan_json(const MemoryCommandPlan& plan);
 
+struct ExtractionPolicyPlan {
+  std::string action;
+  std::string reason;
+};
+
+ExtractionPolicyPlan plan_extraction_policy(
+    const std::string& action,
+    const std::string& write_intent,
+    double confidence,
+    double write_direct_threshold,
+    std::uint64_t conflict_count,
+    std::uint64_t requested_supersede_count,
+    std::uint64_t requested_id_count,
+    std::uint64_t equivalent_count,
+    std::uint64_t expire_target_count);
+std::string extraction_policy_plan_json(const ExtractionPolicyPlan& plan);
+
 class DirtyQueue {
  public:
   void mark(std::uint64_t node_id, bool payload, bool metadata);

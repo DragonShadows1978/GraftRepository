@@ -392,6 +392,16 @@ class NativeGraftStore:
                 ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p,
                 ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_parse_memory_command.restype = ctypes.c_int
+        self._has_extraction_policy_plan = hasattr(
+            lib, "grm_store_plan_extraction_policy")
+        if self._has_extraction_policy_plan:
+            lib.grm_store_plan_extraction_policy.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_double, ctypes.c_double, ctypes.c_uint64,
+                ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64,
+                ctypes.c_uint64, ctypes.c_char_p, ctypes.c_size_t,
+                ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_plan_extraction_policy.restype = ctypes.c_int
         lib.grm_store_set_route.argtypes = [
             ctypes.c_void_p, ctypes.c_uint64, ctypes.POINTER(ctypes.c_float),
             ctypes.c_uint64, ctypes.c_char_p]
@@ -826,6 +836,33 @@ class NativeGraftStore:
         buf = ctypes.create_string_buffer(cap)
         self._check(self._lib.grm_store_parse_memory_command(
             self._handle, data, buf, cap, ctypes.byref(needed)))
+        return json.loads(buf.value.decode("utf-8") or "{}")
+
+    def plan_extraction_policy(self, *, action, write_intent, confidence,
+                               write_direct_threshold, conflict_count=0,
+                               requested_supersede_count=0,
+                               requested_id_count=0, equivalent_count=0,
+                               expire_target_count=0):
+        if not getattr(self, "_has_extraction_policy_plan", False):
+            raise RuntimeError(
+                "native GRM extraction policy planner is unavailable")
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_plan_extraction_policy(
+            self._handle, str(action).encode("utf-8"),
+            str(write_intent).encode("utf-8"), float(confidence),
+            float(write_direct_threshold), int(conflict_count),
+            int(requested_supersede_count), int(requested_id_count),
+            int(equivalent_count), int(expire_target_count), None, 0,
+            ctypes.byref(needed)))
+        cap = int(needed.value) + 1
+        buf = ctypes.create_string_buffer(cap)
+        self._check(self._lib.grm_store_plan_extraction_policy(
+            self._handle, str(action).encode("utf-8"),
+            str(write_intent).encode("utf-8"), float(confidence),
+            float(write_direct_threshold), int(conflict_count),
+            int(requested_supersede_count), int(requested_id_count),
+            int(equivalent_count), int(expire_target_count), buf, cap,
+            ctypes.byref(needed)))
         return json.loads(buf.value.decode("utf-8") or "{}")
 
     def add_structured_node(self, text, payload, ntok=0):
