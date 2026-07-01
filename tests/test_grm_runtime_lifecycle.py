@@ -999,6 +999,27 @@ def test_project_safe_forces_explicit_project_memory_flush(tmp_path):
     assert project_repo.runtime.last_result.autosaved is False
     assert project_repo.stats()["dirty_nodes"] == 1
 
+    lib = build_native(tmp_path)
+    native_path = str(tmp_path / "native_project_safe")
+    native_repo = GraftRepository(FakeModel(), enc, dec, native_path,
+                                  autosave=False, arena_cls=FakeArena,
+                                  route_layer=3,
+                                  durability_mode="project_safe",
+                                  native_enabled=True,
+                                  native_lib_path=lib)
+
+    native_project = native_repo.apply_memory_command(
+        "remember this for the project: Native project-safe memory 86-8686")
+
+    assert native_project["action"] == "remember"
+    assert native_repo.runtime.last_result.autosaved is True
+    assert native_repo.stats()["dirty_nodes"] == 0
+    with open(os.path.join(native_path, "manifest.json")) as fh:
+        native_man = json.load(fh)
+    assert native_man["durability_mode"] == "project_safe"
+    assert native_man["nodes"][native_project["node_id"]]["text"] == (
+        "Native project-safe memory 86-8686")
+
 
 def test_runtime_coordinator_drives_chat_flush_and_extraction(tmp_path):
     class Extractor:

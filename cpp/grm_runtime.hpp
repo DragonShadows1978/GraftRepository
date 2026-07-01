@@ -200,6 +200,18 @@ struct MemoryCommandPlan {
 MemoryCommandPlan parse_memory_command(const std::string& text);
 std::string memory_command_plan_json(const MemoryCommandPlan& plan);
 
+struct RememberFlushPlan {
+  bool force_flush = false;
+  std::string reason;
+};
+
+RememberFlushPlan plan_remember_flush(
+    const std::string& durability_mode,
+    const std::string& durability,
+    const std::string& scope,
+    bool flush_immediately);
+std::string remember_flush_plan_json(const RememberFlushPlan& plan);
+
 struct ExtractionPolicyPlan {
   std::string action;
   std::string reason;

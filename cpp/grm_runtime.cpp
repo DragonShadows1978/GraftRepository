@@ -555,6 +555,17 @@ void append_json_double_field(std::ostringstream& out,
   out << "\"" << key << "\":" << std::setprecision(17) << value;
 }
 
+void append_json_bool_field(std::ostringstream& out,
+                            bool& first,
+                            const char* key,
+                            bool value) {
+  if (!first) {
+    out << ",";
+  }
+  first = false;
+  out << "\"" << key << "\":" << (value ? "true" : "false");
+}
+
 int write_intent_rank(const std::string& intent) {
   if (intent == "imported") {
     return 0;
@@ -1039,6 +1050,39 @@ std::string memory_command_plan_json(const MemoryCommandPlan& plan) {
   }
   out << "\"flush_immediately\":"
       << (plan.flush_immediately ? "true" : "false") << "}";
+  return out.str();
+}
+
+RememberFlushPlan plan_remember_flush(
+    const std::string& durability_mode,
+    const std::string& durability,
+    const std::string& scope,
+    bool flush_immediately) {
+  RememberFlushPlan plan;
+  if (flush_immediately) {
+    plan.force_flush = true;
+    plan.reason = "command requested immediate flush";
+    return plan;
+  }
+  if (ascii_lower(trim(durability_mode)) != "project_safe") {
+    return plan;
+  }
+  const auto d = ascii_lower(trim(durability));
+  const auto s = ascii_lower(trim(scope));
+  if (d == "project" || d == "permanent" || s == "project") {
+    plan.force_flush = true;
+    plan.reason = "project-safe mode requires project memory flush";
+  }
+  return plan;
+}
+
+std::string remember_flush_plan_json(const RememberFlushPlan& plan) {
+  std::ostringstream out;
+  bool first = true;
+  out << "{";
+  append_json_bool_field(out, first, "force_flush", plan.force_flush);
+  append_json_string_field(out, first, "reason", plan.reason);
+  out << "}";
   return out.str();
 }
 
@@ -3496,6 +3540,40 @@ int grm_store_parse_memory_command(grm_store_handle* handle,
     }
     const auto json = grm::memory_command_plan_json(
         grm::parse_memory_command(text));
+    *out_len = static_cast<uint64_t>(json.size());
+    if (out_json != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, json.size());
+      std::memcpy(out_json, json.data(), n);
+      out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_plan_remember_flush(grm_store_handle* handle,
+                                  const char* durability_mode,
+                                  const char* durability,
+                                  const char* scope,
+                                  int flush_immediately,
+                                  char* out_json,
+                                  size_t out_cap,
+                                  uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid plan_remember_flush arguments");
+    }
+    if (out_json == nullptr && out_cap > 0) {
+      return grm_fail_msg(
+          handle, "null remember flush buffer with nonzero capacity");
+    }
+    const auto json = grm::remember_flush_plan_json(
+        grm::plan_remember_flush(
+            durability_mode == nullptr ? "" : durability_mode,
+            durability == nullptr ? "" : durability,
+            scope == nullptr ? "" : scope,
+            flush_immediately != 0));
     *out_len = static_cast<uint64_t>(json.size());
     if (out_json != nullptr && out_cap > 0) {
       const size_t n = std::min(out_cap - 1, json.size());

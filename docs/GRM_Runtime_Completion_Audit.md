@@ -600,9 +600,9 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   fused RoPE re-seat movement, fused cache-sliced raw/RoPE export movement, and
   the functional multi-layer raw+positional arena cache transaction on the
   Project-Tensor branch. GRM now has a Python `GRMRuntime` coordinator for
-  hot-path orchestration, but broader routing policy, memory-command policy,
-  revision policy, and runtime ownership are still Python rather than one
-  cohesive C++/CUDA runtime object.
+  hot-path orchestration, but broader routing policy, some memory-command
+  execution policy, revision policy, and runtime ownership are still Python
+  rather than one cohesive C++/CUDA runtime object.
 - C++ host route-scan acceleration exists for native-backed MLA arena routes,
   including child-centroid digest/era keys, and for Qwen3/GQA raw `|q.k|` route
   scoring through variable-length native route-key lists. CUDA/GPU route-scan
@@ -638,7 +638,10 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   reinforce/expire outcomes before Python performs the mutation.
   Duplicate-fact reinforcement metadata merging now also uses
   `grm_store_plan_reinforcement()` for write-intent rank, confidence, and
-  reinforcement-count decisions before Python records metadata/WAL. Explicit
+  reinforcement-count decisions before Python records metadata/WAL. Remember
+  command durability flushing now uses `grm_store_plan_remember_flush()`, so
+  the project-safe/project-memory immediate-flush rule is also decided at the
+  native planner boundary before Python performs the checkpoint. Explicit
   extractor target ids for supersede/expire also flow through
   `grm_store_filter_active_nodes()`, so C++ host metadata state performs the
   deterministic active-target filtering before Python applies the remaining
@@ -670,7 +673,8 @@ application, native route index with active-state and
 kind/scope/durability/mutability filters for MLA and GQA dialect ids plus
 runtime-consumed native recursive source-closure traversal, multi-key MLA
 arena-route acceleration, native GQA raw `|q.k|` route acceleration, native
-explicit memory-command parser, native swap-plan boundary, native host tensor
+explicit memory-command parser, native remember-command flush planner, native
+swap-plan boundary, native host tensor
 swap/evict references, TensorCUDA fused
 splice/evict cache movement, TensorCUDA fused RoPE
 re-seat movement, TensorCUDA fused

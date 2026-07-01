@@ -1076,6 +1076,19 @@ class GraftRepository:
                     raise ValueError(f"unknown memory command: {text!r}") from exc
         return self._parse_memory_command_python(text)
 
+    def _native_remember_flush_plan(self, plan):
+        if self.native_store is None or not hasattr(
+                self.native_store, "plan_remember_flush"):
+            return None
+        try:
+            return self.native_store.plan_remember_flush(
+                durability_mode=self.durability_mode,
+                durability=plan.get("durability"),
+                scope=plan.get("scope"),
+                flush_immediately=bool(plan.get("flush_immediately")))
+        except RuntimeError:
+            return None
+
     def apply_memory_command(self, text):
         """Apply an explicit chat memory command from the runtime plan."""
         return self.runtime.apply_memory_command(text)

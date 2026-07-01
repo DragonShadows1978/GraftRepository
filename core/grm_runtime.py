@@ -129,7 +129,13 @@ class GRMRuntime:
         )
 
     @staticmethod
-    def _mode_forces_remember_flush(repo, plan):
+    def _remember_force_flush(repo, plan):
+        if hasattr(repo, "_native_remember_flush_plan"):
+            native_plan = repo._native_remember_flush_plan(plan)
+            if native_plan is not None:
+                return bool(native_plan.get("force_flush"))
+        if bool(plan.get("flush_immediately")):
+            return True
         if repo.durability_mode != "project_safe":
             return False
         durability = plan.get("durability")
@@ -146,8 +152,7 @@ class GRMRuntime:
                                          "scope", "kind")
                     if plan.get(k)}
             idx = repo.remember(plan.get("body", ""), **opts)
-            force_flush = (bool(plan.get("flush_immediately"))
-                           or self._mode_forces_remember_flush(repo, plan))
+            force_flush = self._remember_force_flush(repo, plan)
             self._finish_memory_event(
                 before, "remember",
                 force_flush=force_flush)

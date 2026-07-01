@@ -424,6 +424,14 @@ class NativeGraftStore:
                 ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p,
                 ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_parse_memory_command.restype = ctypes.c_int
+        self._has_remember_flush_plan = hasattr(
+            lib, "grm_store_plan_remember_flush")
+        if self._has_remember_flush_plan:
+            lib.grm_store_plan_remember_flush.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p,
+                ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_plan_remember_flush.restype = ctypes.c_int
         self._has_extraction_policy_plan = hasattr(
             lib, "grm_store_plan_extraction_policy")
         if self._has_extraction_policy_plan:
@@ -949,6 +957,26 @@ class NativeGraftStore:
         buf = ctypes.create_string_buffer(cap)
         self._check(self._lib.grm_store_parse_memory_command(
             self._handle, data, buf, cap, ctypes.byref(needed)))
+        return json.loads(buf.value.decode("utf-8") or "{}")
+
+    def plan_remember_flush(self, *, durability_mode, durability=None,
+                            scope=None, flush_immediately=False):
+        if not getattr(self, "_has_remember_flush_plan", False):
+            raise RuntimeError(
+                "native GRM remember flush planner is unavailable")
+        needed = ctypes.c_uint64()
+        args = (
+            str(durability_mode or "").encode("utf-8"),
+            str(durability or "").encode("utf-8"),
+            str(scope or "").encode("utf-8"),
+            1 if flush_immediately else 0,
+        )
+        self._check(self._lib.grm_store_plan_remember_flush(
+            self._handle, *args, None, 0, ctypes.byref(needed)))
+        cap = int(needed.value) + 1
+        buf = ctypes.create_string_buffer(cap)
+        self._check(self._lib.grm_store_plan_remember_flush(
+            self._handle, *args, buf, cap, ctypes.byref(needed)))
         return json.loads(buf.value.decode("utf-8") or "{}")
 
     def plan_extraction_policy(self, *, action, write_intent, confidence,

@@ -634,6 +634,32 @@ def test_native_reinforcement_planner(tmp_path):
             }
 
 
+def test_native_remember_flush_planner(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        assert store.plan_remember_flush(
+            durability_mode="session_safe", durability="project",
+            scope="project") == {"force_flush": False}
+        assert store.plan_remember_flush(
+            durability_mode="project_safe", durability="session",
+            scope="session") == {"force_flush": False}
+        assert store.plan_remember_flush(
+            durability_mode="project_safe", durability="project",
+            scope="project") == {
+                "force_flush": True,
+                "reason": "project-safe mode requires project memory flush",
+            }
+        assert store.plan_remember_flush(
+            durability_mode="volatile", durability="volatile",
+            scope="session", flush_immediately=True) == {
+                "force_flush": True,
+                "reason": "command requested immediate flush",
+            }
+
+
 def test_native_review_transition_planner(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(
