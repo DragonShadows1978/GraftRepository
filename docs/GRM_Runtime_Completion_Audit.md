@@ -112,7 +112,10 @@ validation where feasible.
   `GraftRepository(..., extractor=...)` now runs an optional
   extractor on newly completed chat/scripted turns, passes source turn graft ids
   into that same policy path, and records extractor errors as non-blocking WAL
-  events unless configured to raise.
+  events unless configured to raise. Malformed candidates inside a mixed
+  extractor batch are isolated per item, WAL-recorded with source graft context,
+  and do not block valid sibling candidates; `extraction_error_policy="raise"`
+  keeps strict pipelines fail-fast.
 - Python runtime coordinator boundary:
   `core.grm_runtime.GRMRuntime` now owns the operation sequencing for
   `chat()`, `add_turn()`, `idle()`, review execution, and explicit

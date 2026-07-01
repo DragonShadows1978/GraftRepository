@@ -1578,6 +1578,61 @@ def test_runtime_extractor_review_and_error_policy(tmp_path):
     }]
 
 
+def test_runtime_extractor_malformed_candidates_are_isolated(tmp_path):
+    class MixedExtractor:
+        def extract(self, text, **_ctx):
+            return [
+                {
+                    "action": "write_direct",
+                    "candidate_type": "fact",
+                    "text": "Extractor batch kept GOOD-42.",
+                    "subject": "extractor batch",
+                    "predicate": "kept",
+                    "value": "GOOD-42",
+                    "confidence": 0.99,
+                },
+                "not a candidate dictionary",
+                {"action": "write_direct", "confidence": "not-a-number"},
+            ]
+
+    path = str(tmp_path / "mixed")
+    repo = GraftRepository(FakeModel(), enc, dec, path,
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, extractor=MixedExtractor())
+
+    repo.add_turn("run mixed extractor", "recorded GOOD-42")
+
+    actions = [r["action"] for r in repo.last_extraction_results]
+    assert actions == ["write_direct", "extract_error", "extract_error"]
+    assert repo.last_extraction_error == (
+        "memory candidate has no text or semantic fields")
+    assert repo.runtime.last_result.event == "add_turn"
+    assert len(repo.runtime.last_result.extraction) == 3
+    facts = [r for r in repo.show_memory_about("GOOD-42")
+             if r["metadata"]["kind"] == "fact"]
+    assert len(facts) == 1
+    with open(os.path.join(path, "wal", "000001.wal")) as fh:
+        records = [json.loads(line) for line in fh if line.strip()]
+    errors = [r for r in records if r["type"] == "EXTRACTION_ERROR"]
+    assert len(errors) == 2
+    assert errors[0]["source_grafts"] == [0]
+    assert "not a candidate dictionary" in errors[0]["candidate"]
+
+
+def test_runtime_extractor_malformed_candidate_raise_policy(tmp_path):
+    class BadCandidateExtractor:
+        def extract(self, text, **_ctx):
+            return "not a candidate dictionary"
+
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, extractor=BadCandidateExtractor(),
+                           extraction_error_policy="raise")
+
+    with pytest.raises(TypeError, match="candidate must be a dictionary"):
+        repo.add_turn("run strict extractor", "recorded")
+
+
 def test_dirty_node_can_leave_vram_before_disk_flush(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,

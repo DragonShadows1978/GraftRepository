@@ -1250,6 +1250,29 @@ class GraftRepository:
                     action="review_candidate", reason=reason,
                     metadata=metadata)}
 
+    @staticmethod
+    def _candidate_sequence(candidates):
+        if candidates is None:
+            return []
+        if isinstance(candidates, dict):
+            return [candidates]
+        if isinstance(candidates, (str, bytes)):
+            return [candidates]
+        try:
+            return list(candidates)
+        except TypeError:
+            return [candidates]
+
+    def _candidate_apply_error(self, candidate, exc, source_grafts=(),
+                               context=None):
+        error = str(exc)
+        self.last_extraction_error = error
+        result = {"action": "extract_error", "error": error}
+        self._append_wal(
+            "EXTRACTION_ERROR", error=error, candidate=repr(candidate),
+            source_grafts=list(source_grafts), context=dict(context or {}))
+        return result
+
     def apply_extraction_candidate(self, candidate, source_text=None,
                                    source_turns=(), source_grafts=(),
                                    write_direct_threshold=0.95):
@@ -1260,14 +1283,26 @@ class GraftRepository:
 
     def _apply_extraction_candidate_direct(self, candidate, source_text=None,
                                            source_turns=(), source_grafts=(),
-                                           write_direct_threshold=0.95):
+                                           write_direct_threshold=0.95,
+                                           context=None):
         """Apply one classifier/extractor memory candidate conservatively."""
-        text = self._candidate_text(candidate, source_text=source_text)
-        metadata = self._candidate_metadata(candidate, source_turns,
-                                            source_grafts)
-        action = candidate.get("action", "review_candidate")
-        confidence = float(candidate.get("confidence", 0.5))
-        write_intent = candidate.get("write_intent", "observed")
+        try:
+            if not isinstance(candidate, dict):
+                raise TypeError(
+                    "extraction candidate must be a dictionary")
+            candidate = dict(candidate)
+            text = self._candidate_text(candidate, source_text=source_text)
+            metadata = self._candidate_metadata(candidate, source_turns,
+                                                source_grafts)
+            action = candidate.get("action", "review_candidate")
+            confidence = float(candidate.get("confidence", 0.5))
+            write_intent = candidate.get("write_intent", "observed")
+        except Exception as exc:
+            if self.extraction_error_policy == "raise":
+                raise
+            return self._candidate_apply_error(
+                candidate, exc, source_grafts=source_grafts,
+                context=context)
         if action in ("ignore", "keep_turn_only"):
             return {"action": action}
         if action == "pin":
@@ -1366,12 +1401,14 @@ class GraftRepository:
 
     def _apply_extraction_candidates_direct(self, candidates, source_text=None,
                                             source_turns=(), source_grafts=(),
-                                            write_direct_threshold=0.95):
+                                            write_direct_threshold=0.95,
+                                            context=None):
         return [self._apply_extraction_candidate_direct(
             c, source_text=source_text, source_turns=source_turns,
             source_grafts=source_grafts,
-            write_direct_threshold=write_direct_threshold)
-                for c in candidates]
+            write_direct_threshold=write_direct_threshold,
+            context=context)
+                for c in self._candidate_sequence(candidates)]
 
     def _new_turn_grafts(self, before):
         return [i for i in range(len(before), len(self.arena.grafts))
@@ -1406,16 +1443,11 @@ class GraftRepository:
                              source_grafts=list(source_grafts),
                              context=dict(context or {}))
             return self.last_extraction_results
-        if candidates is None:
-            candidates = []
-        elif isinstance(candidates, dict):
-            candidates = [candidates]
-        else:
-            candidates = list(candidates)
         self.last_extraction_results = self._apply_extraction_candidates_direct(
             candidates, source_text=source_text,
             source_turns=source_grafts, source_grafts=source_grafts,
-            write_direct_threshold=self.extraction_write_threshold)
+            write_direct_threshold=self.extraction_write_threshold,
+            context=context or {})
         return self.last_extraction_results
 
     @staticmethod

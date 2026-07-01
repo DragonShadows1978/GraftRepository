@@ -112,7 +112,11 @@ scripted turn ingestion: `GraftRepository(..., extractor=...)` calls the
 extractor on newly deposited turn/recall grafts, passes `source_grafts` and
 turn text into `apply_extraction_candidate(s)`, records the last extraction
 result/error, and treats extractor failures as non-blocking WAL-recorded events
-unless configured to raise.
+unless configured to raise. Malformed candidates inside an otherwise valid
+extractor batch are isolated per item, recorded as `EXTRACTION_ERROR` WAL
+events with their source graft context, and do not prevent valid siblings from
+being applied; `extraction_error_policy="raise"` keeps the strict fail-fast
+path for tests and trusted pipelines.
 `core.grm_runtime.GRMRuntime` now packages the Python hot-path orchestration
 boundary for chat turns, scripted turns, deferred librarian work, review
 execution, and explicit memory commands: snapshot, arena/model operation,
