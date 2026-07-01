@@ -132,7 +132,9 @@ validation where feasible.
   `GraftRepository.select_graft_span()` now creates a non-retiring child graft
   for one intentional token span, preserving sliced RAM/native payloads,
   source lineage, tags, selected-span metadata, and `selected_span` provenance
-  while keeping the parent graft active.
+  while keeping the parent graft active. `why_remember()` exposes the selected
+  flag, selection label, source grafts, and provenance so intentional sections
+  remain explainable after autosave and reload.
 - Graftability/remountability dialect metadata:
   `DialectDescriptor` now persists the model's positional cache law and graft
   semantics: `position_law`, `state_kind`, `graftability`, `remountable`, and

@@ -1865,6 +1865,8 @@ class GraftRepository:
                  "scope": r["metadata"].get("scope"),
                  "confidence": r["metadata"].get("confidence"),
                  "pinned": r["metadata"].get("pinned", False),
+                 "selected": r["metadata"].get("selected", False),
+                 "selection_label": r["metadata"].get("selection_label", ""),
                  "source_grafts": r["metadata"].get("source_grafts", []),
                  "provenance": self.arena.grafts[r["node_id"]].get(
                      "provenance", [])}

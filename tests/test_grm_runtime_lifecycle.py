@@ -497,6 +497,12 @@ def test_select_graft_span_keeps_parent_active_and_records_provenance(tmp_path):
     assert child["metadata"]["supersedes"] == []
     assert child["tags"] == ["selected"]
     assert child["provenance"][0]["segment_type"] == "selected_span"
+    why = [row for row in repo.why_remember("S1 S2")
+           if row["node_id"] == out["child"]]
+    assert why[0]["selected"] is True
+    assert why[0]["selection_label"] == "middle pair"
+    assert why[0]["source_grafts"] == [parent]
+    assert why[0]["provenance"][0]["segment_type"] == "selected_span"
     native_id = child["native_node_id"]
     assert repo.native_store.get_tensor(native_id, "tok").tolist() == [1, 2]
 
@@ -593,10 +599,12 @@ def test_native_memory_command_culls_graft_by_sections(tmp_path):
 
 def test_native_memory_command_selects_graft_span(tmp_path):
     lib = build_native(tmp_path)
-    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
-                           autosave=False, arena_cls=FakeSliceArena,
+    path = str(tmp_path / "repo")
+    repo = GraftRepository(FakeModel(), enc, dec, path,
+                           autosave=True, arena_cls=FakeSliceArena,
                            route_layer=3, native_lib_path=lib)
     parent = repo.add_document("Q0 Q1 Q2 Q3")
+    repo.flush_now()
 
     out = repo.apply_memory_command("select graft 0 span 1 4 label selected tail")
 
@@ -606,7 +614,9 @@ def test_native_memory_command_selects_graft_span(tmp_path):
     assert out["retired_parent"] is False
     assert repo.runtime.last_result.event == "memory_command"
     assert repo.runtime.last_result.action == "select_graft_span"
+    assert repo.runtime.last_result.autosaved is True
     assert repo.runtime.last_result.new_nodes == (1,)
+    assert repo.stats()["dirty_nodes"] == 0
     assert repo.arena.grafts[parent].get("retired") is not True
     child = repo.arena.grafts[1]
     assert child["text"] == "Q1 Q2 Q3"
@@ -617,6 +627,21 @@ def test_native_memory_command_selects_graft_span(tmp_path):
     assert repo.native_store.get_tensor(
         child["native_node_id"], "tok").tolist() == [1, 2, 3]
     repo.close()
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path,
+                               autosave=False, arena_cls=FakeSliceArena,
+                               route_layer=3, native_lib_path=lib)
+    rows = reopened.show_memory_about("Q1 Q2 Q3")
+    selected = [row for row in rows if row["metadata"].get("selected")]
+    assert len(selected) == 1
+    assert selected[0]["metadata"]["selected"] is True
+    why = [row for row in reopened.why_remember("Q1 Q2 Q3")
+           if row["node_id"] == selected[0]["node_id"]]
+    assert why[0]["selection_label"] == "selected tail"
+    assert why[0]["provenance"][0]["segment_type"] == "selected_span"
+    assert reopened.arena.grafts[parent].get("retired") is not True
+    assert reopened.arena.grafts[1]["host_payload"]["tok"].tolist() == [1, 2, 3]
+    reopened.close()
 
 
 def test_remember_attaches_semantic_metadata(tmp_path):
