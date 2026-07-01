@@ -356,6 +356,14 @@ class NativeGraftStore:
                     ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
                     ctypes.POINTER(ctypes.c_uint64)]
                 lib.grm_store_fact_matches_ex.restype = ctypes.c_int
+        self._has_filter_active_nodes = hasattr(
+            lib, "grm_store_filter_active_nodes")
+        if self._has_filter_active_nodes:
+            u64p = ctypes.POINTER(ctypes.c_uint64)
+            lib.grm_store_filter_active_nodes.argtypes = [
+                ctypes.c_void_p, u64p, ctypes.c_uint64, u64p,
+                ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_filter_active_nodes.restype = ctypes.c_int
         self._has_graph_edges = (
             hasattr(lib, "grm_store_set_graph_edges") and
             hasattr(lib, "grm_store_graph_edges_info") and
@@ -773,6 +781,24 @@ class NativeGraftStore:
             self._check(self._lib.grm_store_fact_matches(
                 self._handle, *args, int(value_mode), out, int(needed.value),
                 ctypes.byref(got)))
+        return tuple(int(out[i]) for i in range(int(got.value)))
+
+    def filter_active_nodes(self, node_ids):
+        if not getattr(self, "_has_filter_active_nodes", False):
+            raise RuntimeError("native GRM active-node filter is unavailable")
+        requested, requested_n = self._u64_array(node_ids)
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_filter_active_nodes(
+            self._handle, requested, requested_n, None, 0,
+            ctypes.byref(needed)))
+        if not int(needed.value):
+            return ()
+        out_t = ctypes.c_uint64 * int(needed.value)
+        out = out_t()
+        got = ctypes.c_uint64()
+        self._check(self._lib.grm_store_filter_active_nodes(
+            self._handle, requested, requested_n, out, int(needed.value),
+            ctypes.byref(got)))
         return tuple(int(out[i]) for i in range(int(got.value)))
 
     def set_graph_edges(self, node_id, *, source_turns=(),

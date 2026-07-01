@@ -198,6 +198,12 @@ int grm_store_fact_matches_ex(grm_store_handle* handle,
                               uint64_t* out_node_ids,
                               uint64_t out_cap,
                               uint64_t* out_count);
+int grm_store_filter_active_nodes(grm_store_handle* handle,
+                                  const uint64_t* node_ids,
+                                  uint64_t node_count,
+                                  uint64_t* out_node_ids,
+                                  uint64_t out_cap,
+                                  uint64_t* out_count);
 int grm_store_set_graph_edges(grm_store_handle* handle,
                               uint64_t node_id,
                               const uint64_t* source_turns,

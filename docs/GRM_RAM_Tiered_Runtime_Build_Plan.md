@@ -218,6 +218,11 @@ The native runtime also exposes a side-effect-free extraction policy planner for
 the static write/review/supersede/reinforce/expire decisions. Python supplies
 the target counts and executes the actual mutation, but the review reason/action
 selection now has a C++ boundary instead of being only ad hoc repository code.
+Explicit extractor target-id validation now also has a native state boundary:
+`grm_store_filter_active_nodes()` deduplicates requested native ids, ignores
+unknown ids, and returns only active targets in request order. Python maps local
+graft ids through the native mirror and uses that filtered target set before
+supersede/expire policy planning.
 
 `tests/deepseek_grm_turn50_gate.py` now validates the original GRM ephemeral
 boat on DeepSeek-V2-Lite INT4: 50 stored turn grafts, live context cleared

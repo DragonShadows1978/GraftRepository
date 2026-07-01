@@ -282,6 +282,8 @@ class HostGraftStore {
   std::vector<std::uint64_t> fact_matches(const FactIdentity& identity,
                                           std::uint64_t value_mode,
                                           std::uint64_t temporal_mode = 0) const;
+  std::vector<std::uint64_t> filter_active_nodes(
+      const std::vector<std::uint64_t>& node_ids) const;
   void set_graph_edges(std::uint64_t node_id, GraphEdges edges);
   GraphEdges graph_edges(std::uint64_t node_id) const;
   std::vector<std::uint64_t> source_closure(

@@ -659,6 +659,35 @@ def test_native_apply_revision_links_edges_and_retires_routes(tmp_path):
         assert store.graph_edges(old1).superseded_by == (new,)
 
 
+def test_native_active_node_filter_preserves_order_and_dedupes(tmp_path):
+    lib = build_native(tmp_path)
+    ckpt = tmp_path / "active_filter_ckpt"
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        active0 = store.add_node("active zero", b"", ntok=1)
+        inactive = store.add_node("inactive one", b"", ntok=1)
+        active1 = store.add_node("active two", b"", ntok=1)
+        store.set_metadata(active0, {"active": True})
+        store.set_metadata(inactive, {"active": False})
+        store.set_metadata(active1, {"active": True})
+
+        assert store.filter_active_nodes(
+            (active0, inactive, active0, 9999, active1)) == (
+                active0, active1)
+        store.save_checkpoint(ckpt)
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as restored:
+        restored.load_checkpoint(ckpt)
+        assert restored.filter_active_nodes(
+            (inactive, active1, active0, active1)) == (
+                active1, active0)
+
+
 def test_native_source_closure_walks_folded_graph(tmp_path):
     lib = build_native(tmp_path)
     ckpt = tmp_path / "source_closure_ckpt"

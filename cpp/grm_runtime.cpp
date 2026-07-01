@@ -1375,6 +1375,26 @@ std::vector<std::uint64_t> HostGraftStore::fact_matches(
   return out;
 }
 
+std::vector<std::uint64_t> HostGraftStore::filter_active_nodes(
+    const std::vector<std::uint64_t>& node_ids) const {
+  std::vector<std::uint64_t> out;
+  std::set<std::uint64_t> seen;
+  for (const auto node_id : node_ids) {
+    if (!seen.insert(node_id).second) {
+      continue;
+    }
+    const auto* n = get(node_id);
+    if (n == nullptr) {
+      continue;
+    }
+    if (!n->metadata.active) {
+      continue;
+    }
+    out.push_back(node_id);
+  }
+  return out;
+}
+
 void HostGraftStore::set_graph_edges(std::uint64_t node_id, GraphEdges edges) {
   auto* n = get(node_id);
   if (n == nullptr) {
@@ -2912,6 +2932,41 @@ int grm_store_fact_matches_ex(grm_store_handle* handle,
         static_cast<uint64_t>(matches.size()), out_cap);
     for (uint64_t i = 0; i < n; ++i) {
       out_node_ids[i] = matches[static_cast<std::size_t>(i)];
+    }
+    *out_count = n;
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_filter_active_nodes(grm_store_handle* handle,
+                                  const uint64_t* node_ids,
+                                  uint64_t node_count,
+                                  uint64_t* out_node_ids,
+                                  uint64_t out_cap,
+                                  uint64_t* out_count) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_count == nullptr) {
+      return grm_fail_msg(handle, "invalid filter_active_nodes arguments");
+    }
+    if (node_ids == nullptr && node_count > 0) {
+      return grm_fail_msg(handle, "null filter_active_nodes input");
+    }
+    if (out_node_ids == nullptr && out_cap > 0) {
+      return grm_fail_msg(handle, "null filter_active_nodes output buffer");
+    }
+    const auto requested = read_u64_array(
+        node_ids, node_count, "filter_active_nodes");
+    const auto active = handle->store->filter_active_nodes(requested);
+    if (out_node_ids == nullptr || out_cap == 0) {
+      *out_count = static_cast<uint64_t>(active.size());
+      return 0;
+    }
+    const auto n = std::min<uint64_t>(
+        static_cast<uint64_t>(active.size()), out_cap);
+    for (uint64_t i = 0; i < n; ++i) {
+      out_node_ids[i] = active[static_cast<std::size_t>(i)];
     }
     *out_count = n;
     return 0;

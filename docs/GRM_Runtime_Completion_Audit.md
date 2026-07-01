@@ -628,7 +628,11 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   arithmetic. Static extraction
   action/reason selection now has a native side-effect-free policy planner:
   Python supplies target counts, and C++ chooses write/review/supersede/
-  reinforce/expire outcomes before Python performs the mutation.
+  reinforce/expire outcomes before Python performs the mutation. Explicit
+  extractor target ids for supersede/expire also flow through
+  `grm_store_filter_active_nodes()`, so C++ host metadata state performs the
+  deterministic active-target filtering before Python applies the remaining
+  authority and temporal policy.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. Current-head MiniCPM3 MLA

@@ -1664,6 +1664,111 @@ def test_extraction_explicit_supersede_requires_authority(tmp_path):
     assert repo.arena.grafts[old["node_id"]]["retired"] is True
 
 
+def test_native_active_filter_guides_explicit_extraction_targets(
+        tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+    active = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Native explicit active target is OLD.",
+        "subject": "native explicit active target",
+        "predicate": "is",
+        "value": "OLD",
+        "scope": "project",
+        "write_intent": "observed",
+        "confidence": 0.99,
+    })
+    stale = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Native explicit stale target is OLD.",
+        "subject": "native explicit stale target",
+        "predicate": "is",
+        "value": "OLD",
+        "scope": "project",
+        "write_intent": "observed",
+        "confidence": 0.99,
+    })
+    assert repo.forget("stale target") == 1
+
+    original_filter = repo.native_store.filter_active_nodes
+    original_plan = repo.native_store.plan_extraction_policy
+    filter_calls = []
+    plans = []
+
+    def traced_filter(node_ids):
+        filter_calls.append(tuple(node_ids))
+        return original_filter(node_ids)
+
+    def traced_plan(**kwargs):
+        plans.append(dict(kwargs))
+        return original_plan(**kwargs)
+
+    monkeypatch.setattr(repo.native_store, "filter_active_nodes",
+                        traced_filter)
+    monkeypatch.setattr(repo.native_store, "plan_extraction_policy",
+                        traced_plan)
+
+    replaced = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "User replaces only the still-active explicit target.",
+        "subject": "manual replacement note",
+        "predicate": "is",
+        "value": "NEW",
+        "scope": "project",
+        "write_intent": "user_asserted",
+        "confidence": 1.0,
+        "supersedes": [
+            stale["node_id"], active["node_id"], active["node_id"], 9999],
+    })
+
+    active_native = repo.arena.grafts[active["node_id"]]["native_node_id"]
+    stale_native = repo.arena.grafts[stale["node_id"]]["native_node_id"]
+    assert filter_calls[-1] == (stale_native, active_native, active_native)
+    assert plans[-1]["requested_id_count"] == 4
+    assert plans[-1]["requested_supersede_count"] == 1
+    assert replaced["action"] == "supersede_existing"
+    assert replaced["supersedes"] == [active["node_id"]]
+    assert repo.arena.grafts[active["node_id"]]["metadata"]["active"] is False
+    assert repo.arena.grafts[stale["node_id"]]["metadata"]["active"] is False
+
+    expired = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Native explicit expire target is LIVE.",
+        "subject": "native explicit expire target",
+        "predicate": "is",
+        "value": "LIVE",
+        "scope": "project",
+        "write_intent": "observed",
+        "confidence": 0.99,
+    })
+    expire = repo.apply_extraction_candidate({
+        "action": "expire",
+        "candidate_type": "fact",
+        "text": "Expire the explicit live native target.",
+        "subject": "irrelevant expire request",
+        "predicate": "is",
+        "value": "expired",
+        "scope": "project",
+        "write_intent": "user_asserted",
+        "confidence": 1.0,
+        "target_node_ids": [
+            stale["node_id"], expired["node_id"], expired["node_id"], 9999],
+    })
+
+    expired_native = repo.arena.grafts[expired["node_id"]]["native_node_id"]
+    assert filter_calls[-1] == (stale_native, expired_native, expired_native)
+    assert plans[-1]["expire_target_count"] == 1
+    assert expire["action"] == "expire"
+    assert expire["expired"] == [expired["node_id"]]
+    repo.close()
+
+
 def test_extraction_conflicts_respect_temporal_validity(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,

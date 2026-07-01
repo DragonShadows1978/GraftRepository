@@ -1231,9 +1231,45 @@ class GraftRepository:
                 continue
         return out
 
+    def _native_filter_active_targets(self, target_ids):
+        if self.native_store is None or not hasattr(
+                self.native_store, "filter_active_nodes"):
+            return None
+        if len(self._native_node_ids) < len(self.arena.grafts):
+            return None
+        native_to_local = {}
+        requested_native = []
+        for idx in target_ids:
+            try:
+                idx = int(idx)
+            except (TypeError, ValueError):
+                continue
+            if idx < 0 or idx >= len(self.arena.grafts):
+                continue
+            native_id = self._native_node_ids.get(idx)
+            if native_id is None:
+                return None
+            native_id = int(native_id)
+            native_to_local[native_id] = idx
+            requested_native.append(native_id)
+        try:
+            active_native = self.native_store.filter_active_nodes(
+                requested_native)
+        except RuntimeError:
+            return None
+        out = []
+        for native_id in active_native:
+            idx = native_to_local.get(int(native_id))
+            if idx is not None and idx not in out:
+                out.append(idx)
+        return out
+
     def _candidate_expire_targets(self, candidate):
         explicit = self._candidate_target_ids(candidate)
         if explicit:
+            native = self._native_filter_active_targets(explicit)
+            if native is not None:
+                return native
             out = []
             for i in explicit:
                 if i < 0 or i >= len(self.arena.grafts):
@@ -1278,6 +1314,9 @@ class GraftRepository:
 
     def _candidate_supersede_targets(self, candidate):
         explicit = self._candidate_target_ids(candidate)
+        native = self._native_filter_active_targets(explicit)
+        if native is not None:
+            return native
         out = []
         for i in explicit:
             if i < 0 or i >= len(self.arena.grafts):
