@@ -1145,14 +1145,20 @@ class GraftRepository:
         supersedes = []
         q = query.lower()
         before = self._snapshot_state()
-        for i, g in enumerate(self.arena.grafts):
-            if q and q in g.get("text", "").lower():
-                meta = g.setdefault("metadata", self._default_metadata(g))
-                if meta.get("active", True):
-                    meta["active"] = False
-                    g["retired"] = True
-                    supersedes.append(i)
-                    self._mark_dirty(i, payload=False, metadata=True)
+        targets = self._native_active_text_matches(q)
+        if targets is None:
+            targets = []
+            for i, g in enumerate(self.arena.grafts):
+                if q and q in g.get("text", "").lower():
+                    targets.append(i)
+        for i in targets:
+            g = self.arena.grafts[int(i)]
+            meta = g.setdefault("metadata", self._default_metadata(g))
+            if meta.get("active", True):
+                meta["active"] = False
+                g["retired"] = True
+                supersedes.append(i)
+                self._mark_dirty(i, payload=False, metadata=True)
         meta = dict(metadata)
         meta["supersedes"] = supersedes
         idx = self.remember(replacement, metadata=meta,

@@ -83,7 +83,7 @@ through the same command-plan boundary while leaving conflict/review/extraction
 decisions in Python until those policies harden.
 `grm_store_active_text_matches()` now performs active-only, case-insensitive text
 target discovery in the C++ host store for memory commands such as pin, unpin,
-ignore, show, and forget. Python still applies the final mutation, WAL, and
+ignore, show, forget, and correct. Python still applies the final mutation, WAL, and
 durability semantics, with the old arena scan retained when the native mirror is
 unavailable or incomplete.
 `grm_store_plan_cull_spans()` now owns deterministic cull span generation and

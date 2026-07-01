@@ -2579,7 +2579,7 @@ def test_repository_native_store_supports_gqa_dialect(tmp_path):
     reloaded.close()
 
 
-def test_repository_native_route_respects_memory_lifecycle(tmp_path):
+def test_repository_native_route_respects_memory_lifecycle(tmp_path, monkeypatch):
     lib = build_native(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
                            autosave=False, arena_cls=FakeArena,
@@ -2597,8 +2597,17 @@ def test_repository_native_route_respects_memory_lifecycle(tmp_path):
                                      lexical_keys=["22-2222"], topk=4)
 
     old = repo.remember("Native correction target 33-3333")
+    original_scan = repo.native_store.active_text_matches
+    text_scan_calls = []
+
+    def traced_scan(query):
+        text_scan_calls.append(query)
+        return original_scan(query)
+
+    monkeypatch.setattr(repo.native_store, "active_text_matches", traced_scan)
     new = repo.correct_memory("correction target 33-3333",
                               "Native correction replacement 44-4444")
+    assert text_scan_calls[-1] == "correction target 33-3333"
     assert repo.arena.grafts[old]["metadata"]["active"] is False
     assert repo.arena.grafts[old]["retired"] is True
     old_native = repo.arena.grafts[old]["native_node_id"]
