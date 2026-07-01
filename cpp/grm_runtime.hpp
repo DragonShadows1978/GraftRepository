@@ -271,6 +271,18 @@ class RouterIndex {
                                    const std::vector<std::string>& scopes = {},
                                    const std::vector<std::string>& durabilities = {},
                                    const std::vector<std::string>& mutabilities = {}) const;
+  std::vector<std::uint64_t> route_gqa_raw(
+      const std::vector<float>& query,
+      std::uint64_t query_heads,
+      std::uint64_t query_tokens,
+      std::uint64_t head_dim,
+      std::uint64_t kv_heads,
+      const std::vector<std::string>& lexical,
+      std::size_t topk,
+      const std::vector<std::string>& kinds = {},
+      const std::vector<std::string>& scopes = {},
+      const std::vector<std::string>& durabilities = {},
+      const std::vector<std::string>& mutabilities = {}) const;
   std::size_t size() const { return entries_.size(); }
 
  private:

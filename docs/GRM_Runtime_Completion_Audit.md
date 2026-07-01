@@ -228,13 +228,15 @@ validation where feasible.
   in durability-priority order with payload-vs-metadata flags and dirty payload
   byte counts, so native durability can flush permanent facts before lower
   durability scratch.
-- Native MLA route-scan arena path:
+- Native MLA/GQA route-scan arena paths:
   `ArenaCache.route()` now uses the native C++ route index when the native
   mirror is enabled and active MLA candidates have native route entries. The
   C++ lexical score matches Python's fractional identifier bonus, and the
   native index stores multiple route keys per node so digest/era
-  child-centroid routing uses the same max-over-keys law as Python. Python
-  fallback remains for GQA/raw-key scoring laws or incomplete native coverage.
+  child-centroid routing uses the same max-over-keys law as Python. The native
+  route ABI also accepts variable-length route-key lists and `grm_store_route_gqa()`
+  implements Qwen3/GQA raw `|q.k|` scoring with per-route normalization. Python
+  fallback remains for incomplete native coverage.
 - Native DeviceArena swap-plan boundary:
   `DeviceArena` now exposes the cache movement plan for replacing
   `[sink | old mounts | live tail]` with `[sink | new mounts | live tail]`,
@@ -580,9 +582,9 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   revision policy, and runtime ownership are still Python rather than one
   cohesive C++/CUDA runtime object.
 - C++ host route-scan acceleration exists for native-backed MLA arena routes,
-  including child-centroid digest/era keys. CUDA/GPU route-scan acceleration is
-  not implemented, and Qwen3/GQA's raw `|q.k|` scoring law remains a Python
-  route path.
+  including child-centroid digest/era keys, and for Qwen3/GQA raw `|q.k|` route
+  scoring through variable-length native route-key lists. CUDA/GPU route-scan
+  acceleration is not implemented.
 - Python `GraftRepository` mirrors into `NativeGraftStore` only by opt-in;
   the C++ store owns mirrored payload lifecycle, tensor boundaries, tensor
   shapes/dtypes, payload byte reconstruction, host payload checkpointing, and
@@ -618,9 +620,10 @@ The Python RAM-first runtime, opt-in C++ host-store mirror, native host payload,
 metadata, graph-edge checkpointing, native dirty flush planning, native revision
 application, native route index with active-state and
 kind/scope/durability/mutability filters for MLA and GQA dialect ids plus
-runtime-consumed native recursive source-closure traversal and multi-key MLA
-arena-route acceleration, native explicit memory-command parser, native
-swap-plan boundary, native host tensor swap/evict references, TensorCUDA fused
+runtime-consumed native recursive source-closure traversal, multi-key MLA
+arena-route acceleration, native GQA raw `|q.k|` route acceleration, native
+explicit memory-command parser, native swap-plan boundary, native host tensor
+swap/evict references, TensorCUDA fused
 splice/evict cache movement, TensorCUDA fused RoPE
 re-seat movement, TensorCUDA fused
 cache-sliced raw/RoPE export primitives with paired and multi-layer paired

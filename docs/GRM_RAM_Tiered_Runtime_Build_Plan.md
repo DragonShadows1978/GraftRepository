@@ -132,8 +132,8 @@ with the Python manifest while cold payloads remain cold.
 candidates, with the C++ lexical score calibrated to Python's fractional
 identifier bonus and multi-key route entries that support digest/era
 child-centroid routing with the same max-over-keys law as Python. GQA native
-host-store mirroring is enabled, while Qwen3's raw `|q.k|` route scoring still
-falls back to Python until that scorer is moved native.
+host-store mirroring is enabled, and Qwen3-style raw `|q.k|` route scoring now
+runs through the native route index with variable-length route-key lists.
 `DeviceArena` now owns native host-reference swap and evict contracts for
 replacing `[sink | old mounts | live tail]` with
 `[sink | new mounts | live tail]` and dropping stale live spans while

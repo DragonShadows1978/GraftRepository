@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
-from core.graft_arena import ArenaCache
+from core.graft_arena import ArenaCache, GQAArenaCache
 from core.graft_repository import GraftRepository
 from core.grm_native import NativeGraftStore
 
@@ -164,6 +164,42 @@ def test_native_store_gqa_dialect_via_ctypes(tmp_path):
 
         store.set_route(node_id, [0.0, 1.0], ["qwen", "gqa"])
         assert store.route([0.0, 0.9], ["gqa"], topk=1) == [node_id]
+
+
+def test_native_gqa_raw_route_matches_python_law(tmp_path):
+    def raw_score(query, key):
+        h, _, dh = query.shape
+        kk = np.repeat(key, h // key.shape[0], axis=0)
+        sc = np.einsum("hqd,hkd->hqk", query, kk) / np.sqrt(dh)
+        return float(np.abs(sc).max(axis=(1, 2)).mean())
+
+    lib = build_native(tmp_path)
+    q = np.asarray([
+        [[1.0, 0.0], [0.0, 1.0]],
+        [[1.0, 1.0], [1.0, -1.0]],
+    ], dtype=np.float32)
+    weak = np.asarray([[[0.1, 0.0]]], dtype=np.float32)
+    good = np.asarray([[[1.0, 0.0], [0.0, 1.0]]], dtype=np.float32)
+    best = np.asarray([[[1.0, 1.0]]], dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="Qwen3_TC", num_layers=36,
+            hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
+            payload_kind="gqa", num_kv_heads=1, head_dim=2) as store:
+        n_good = store.add_node("good raw GQA route", b"", ntok=1)
+        n_best = store.add_node("best variable raw GQA route", b"", ntok=1)
+        n_lex = store.add_node("lexical raw GQA route", b"", ntok=1)
+        store.set_route_key_list(n_good, [good], [])
+        store.set_route_key_list(n_best, [weak, best], [])
+        store.set_route_key_list(n_lex, [weak], ["a17"])
+
+        scores = {
+            n_good: raw_score(q, good),
+            n_best: max(raw_score(q, weak), raw_score(q, best)),
+        }
+        expected = sorted(scores, key=lambda node_id: -scores[node_id])
+        assert store.route_gqa(q, topk=2) == expected
+        assert store.route_gqa(q, lexical_keys=["a17"], topk=3)[0] == n_lex
 
 
 def test_native_store_slices_host_tensor_payload(tmp_path):
@@ -965,6 +1001,39 @@ def test_arena_route_uses_native_child_centroid_keys(tmp_path):
         arena._probe_key = lambda _text: np.array([0.0, 1.0], np.float32)
 
         assert arena.route("plain probe", exclude=set()) == [0, 1]
+        assert arena.last_route_backend == "native"
+
+
+def test_gqa_arena_route_uses_native_raw_qk_backend(tmp_path):
+    lib = build_native(tmp_path)
+    q = np.asarray([
+        [[1.0, 0.0], [0.0, 1.0]],
+        [[1.0, 1.0], [1.0, -1.0]],
+    ], dtype=np.float32)
+    weak = np.asarray([[[0.1, 0.0]]], dtype=np.float32)
+    good = np.asarray([[[1.0, 1.0]]], dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="Qwen3_TC", num_layers=36,
+            hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
+            payload_kind="gqa", num_kv_heads=1, head_dim=2) as store:
+        n0 = store.add_node("weak GQA route", b"", ntok=1)
+        n1 = store.add_node("good GQA route", b"", ntok=1)
+        store.set_route_key_list(n0, [weak], [])
+        store.set_route_key_list(n1, [good], [])
+
+        arena = GQAArenaCache.__new__(GQAArenaCache)
+        arena.native_store = store
+        arena.last_route_backend = "python"
+        arena.grafts = [
+            {"native_node_id": n0, "cent": weak,
+             "rare": set(), "text": "weak", "kind": "doc"},
+            {"native_node_id": n1, "cent": good,
+             "rare": set(), "text": "good", "kind": "doc"},
+        ]
+        arena._probe_key = lambda _text: q
+
+        assert arena.route("plain probe", exclude=set()) == [1, 0]
         assert arena.last_route_backend == "native"
 
 

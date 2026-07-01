@@ -1835,7 +1835,10 @@ class GraftRepository:
         route_keys = [np.asarray(g["cent"], dtype=np.float32).reshape(-1)]
         for child in g.get("child_cents", ()):
             route_keys.append(np.asarray(child, dtype=np.float32).reshape(-1))
-        if hasattr(self.native_store, "set_route_keys"):
+        if hasattr(self.native_store, "set_route_key_list"):
+            self.native_store.set_route_key_list(
+                node_id, route_keys, self._native_lexical_keys(g))
+        elif hasattr(self.native_store, "set_route_keys"):
             self.native_store.set_route_keys(
                 node_id, np.stack(route_keys), self._native_lexical_keys(g))
         else:

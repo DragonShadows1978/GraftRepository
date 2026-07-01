@@ -1402,6 +1402,74 @@ static float max_cosine(const std::vector<float>& query,
   return have ? best : 0.0F;
 }
 
+static float gqa_raw_score(const std::vector<float>& query,
+                           std::uint64_t query_heads,
+                           std::uint64_t query_tokens,
+                           std::uint64_t head_dim,
+                           const std::vector<float>& key,
+                           std::uint64_t kv_heads) {
+  if (query_heads == 0 || query_tokens == 0 || head_dim == 0 ||
+      kv_heads == 0 || query_heads % kv_heads != 0) {
+    return 0.0F;
+  }
+  const auto query_expected =
+      checked_mul(checked_mul(query_heads, query_tokens, "GQA query"),
+                  head_dim, "GQA query");
+  const auto key_head_width = checked_mul(kv_heads, head_dim, "GQA key");
+  if (query.size() != static_cast<std::size_t>(query_expected) ||
+      key_head_width == 0 || key.size() % key_head_width != 0) {
+    return 0.0F;
+  }
+  const auto key_tokens =
+      static_cast<std::uint64_t>(key.size()) / key_head_width;
+  if (key_tokens == 0) {
+    return 0.0F;
+  }
+
+  const auto repeat = query_heads / kv_heads;
+  const double denom = std::sqrt(static_cast<double>(head_dim));
+  double total = 0.0;
+  for (std::uint64_t h = 0; h < query_heads; ++h) {
+    const auto kh = h / repeat;
+    double best = 0.0;
+    for (std::uint64_t qi = 0; qi < query_tokens; ++qi) {
+      const auto qoff = ((h * query_tokens) + qi) * head_dim;
+      for (std::uint64_t ki = 0; ki < key_tokens; ++ki) {
+        const auto koff = ((kh * key_tokens) + ki) * head_dim;
+        double dot = 0.0;
+        for (std::uint64_t d = 0; d < head_dim; ++d) {
+          dot += static_cast<double>(
+                     query[static_cast<std::size_t>(qoff + d)]) *
+                 static_cast<double>(
+                     key[static_cast<std::size_t>(koff + d)]);
+        }
+        best = std::max(best, std::abs(dot) / denom);
+      }
+    }
+    total += best;
+  }
+  return static_cast<float>(total / static_cast<double>(query_heads));
+}
+
+static float max_gqa_raw_score(const std::vector<float>& query,
+                               std::uint64_t query_heads,
+                               std::uint64_t query_tokens,
+                               std::uint64_t head_dim,
+                               std::uint64_t kv_heads,
+                               const std::vector<std::vector<float>>& keys) {
+  float best = 0.0F;
+  bool have = false;
+  for (const auto& key : keys) {
+    const auto score = gqa_raw_score(
+        query, query_heads, query_tokens, head_dim, key, kv_heads);
+    if (!have || score > best) {
+      best = score;
+      have = true;
+    }
+  }
+  return have ? best : 0.0F;
+}
+
 static bool filter_allows(const std::vector<std::string>& filters,
                           const std::string& value) {
   return filters.empty() ||
@@ -1444,6 +1512,72 @@ std::vector<std::uint64_t> RouterIndex::route(
   std::vector<std::uint64_t> out;
   for (std::size_t i = 0; i < std::min(topk, scored.size()); ++i) {
     out.push_back(scored[i].second);
+  }
+  return out;
+}
+
+std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
+    const std::vector<float>& query,
+    std::uint64_t query_heads,
+    std::uint64_t query_tokens,
+    std::uint64_t head_dim,
+    std::uint64_t kv_heads,
+    const std::vector<std::string>& lexical,
+    std::size_t topk,
+    const std::vector<std::string>& kinds,
+    const std::vector<std::string>& scopes,
+    const std::vector<std::string>& durabilities,
+    const std::vector<std::string>& mutabilities) const {
+  struct Scored {
+    float raw = 0.0F;
+    std::uint64_t node_id = 0;
+    std::size_t lexical_hits = 0;
+  };
+  std::vector<Scored> scored;
+  scored.reserve(entries_.size());
+  float max_abs = 0.0F;
+  for (const auto& e : entries_) {
+    if (!e.active) {
+      continue;
+    }
+    if (!filter_allows(kinds, e.kind) || !filter_allows(scopes, e.scope) ||
+        !filter_allows(durabilities, e.durability) ||
+        !filter_allows(mutabilities, e.mutability)) {
+      continue;
+    }
+    Scored item;
+    item.raw = max_gqa_raw_score(
+        query, query_heads, query_tokens, head_dim, kv_heads, e.route_keys);
+    item.node_id = e.node_id;
+    for (const auto& q : lexical) {
+      if (std::find(e.lexical_keys.begin(), e.lexical_keys.end(), q) !=
+          e.lexical_keys.end()) {
+        ++item.lexical_hits;
+      }
+    }
+    max_abs = std::max(max_abs, std::abs(item.raw));
+    scored.push_back(item);
+  }
+  const float norm = max_abs + 1.0e-8F;
+  std::sort(scored.begin(), scored.end(), [&](const auto& a, const auto& b) {
+    const float alex = lexical.empty()
+        ? 0.0F
+        : static_cast<float>(a.lexical_hits) /
+              static_cast<float>(lexical.size());
+    const float blex = lexical.empty()
+        ? 0.0F
+        : static_cast<float>(b.lexical_hits) /
+              static_cast<float>(lexical.size());
+    const float ascore = (a.raw / norm) + alex;
+    const float bscore = (b.raw / norm) + blex;
+    if (ascore != bscore) {
+      return ascore > bscore;
+    }
+    return a.node_id < b.node_id;
+  });
+  std::vector<std::uint64_t> out;
+  for (std::size_t i = 0; i < std::min(topk, scored.size()); ++i) {
+    out.push_back(scored[i].node_id);
   }
   return out;
 }
@@ -2500,6 +2634,58 @@ int grm_store_set_route_multi(grm_store_handle* handle,
   }
 }
 
+int grm_store_set_route_list(grm_store_handle* handle,
+                             uint64_t node_id,
+                             const float* route_values,
+                             uint64_t value_count,
+                             const uint64_t* route_offsets,
+                             uint64_t key_count,
+                             const char* lexical_keys) {
+  try {
+    if (handle == nullptr || handle->store == nullptr) {
+      return grm_fail_msg(handle, "invalid set_route_list arguments");
+    }
+    auto* node = handle->store->get(node_id);
+    if (node == nullptr) {
+      return grm_fail_msg(handle, "unknown GRM node id");
+    }
+    if (route_values == nullptr && value_count > 0) {
+      return grm_fail_msg(handle, "null route values with nonzero length");
+    }
+    if (route_offsets == nullptr && key_count > 0) {
+      return grm_fail_msg(handle, "null route offsets with nonzero key count");
+    }
+    std::vector<std::vector<float>> keys;
+    keys.reserve(static_cast<std::size_t>(key_count));
+    if (key_count > 0 && route_offsets[0] != 0) {
+      return grm_fail_msg(handle, "route offsets must start at zero");
+    }
+    for (uint64_t k = 0; k < key_count; ++k) {
+      const auto start = route_offsets[k];
+      const auto end = route_offsets[k + 1];
+      if (end < start || end > value_count) {
+        return grm_fail_msg(handle, "invalid route key offsets");
+      }
+      std::vector<float> key;
+      key.reserve(static_cast<std::size_t>(end - start));
+      for (uint64_t i = start; i < end; ++i) {
+        key.push_back(route_values[i]);
+      }
+      keys.push_back(std::move(key));
+    }
+    auto lexical = split_lexical_keys(lexical_keys);
+    node->route_keys = keys;
+    node->route_key = keys.empty() ? std::vector<float>() : keys.front();
+    node->lexical_keys = lexical;
+    handle->store->mark_dirty(node_id, false, true);
+    handle->router.upsert_multi(node_id, std::move(keys), std::move(lexical));
+    sync_router_node_state(handle, node_id);
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
 int grm_store_route(grm_store_handle* handle,
                     const float* query,
                     uint64_t query_len,
@@ -2566,6 +2752,70 @@ int grm_store_route_filtered(grm_store_handle* handle,
     }
     const auto routed = handle->router.route(
         q, split_lexical_keys(lexical_keys), static_cast<std::size_t>(topk),
+        split_lexical_keys(kind_filters), split_lexical_keys(scope_filters),
+        split_lexical_keys(durability_filters),
+        split_lexical_keys(mutability_filters));
+    const uint64_t n = std::min<uint64_t>(
+        static_cast<uint64_t>(routed.size()), out_cap);
+    for (uint64_t i = 0; i < n; ++i) {
+      out_node_ids[i] = routed[static_cast<std::size_t>(i)];
+    }
+    *out_count = n;
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_route_gqa(grm_store_handle* handle,
+                        const float* query,
+                        uint64_t query_heads,
+                        uint64_t query_tokens,
+                        uint64_t head_dim,
+                        const char* lexical_keys,
+                        const char* kind_filters,
+                        const char* scope_filters,
+                        const char* durability_filters,
+                        const char* mutability_filters,
+                        uint64_t topk,
+                        uint64_t* out_node_ids,
+                        uint64_t out_cap,
+                        uint64_t* out_count) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_count == nullptr) {
+      return grm_fail_msg(handle, "invalid route_gqa arguments");
+    }
+    if (handle->store->dialect().payload_kind != grm::PayloadKind::GQA) {
+      return grm_fail_msg(handle, "route_gqa requires a GQA dialect store");
+    }
+    if (head_dim != static_cast<uint64_t>(handle->store->dialect().head_dim)) {
+      return grm_fail_msg(handle, "route_gqa head_dim does not match dialect");
+    }
+    if (query_heads != 0 &&
+        query_tokens > std::numeric_limits<uint64_t>::max() / query_heads) {
+      return grm_fail_msg(handle, "route_gqa query size overflow");
+    }
+    const auto head_tokens = query_heads * query_tokens;
+    if (head_tokens != 0 &&
+        head_dim > std::numeric_limits<uint64_t>::max() / head_tokens) {
+      return grm_fail_msg(handle, "route_gqa query size overflow");
+    }
+    const auto query_len = head_tokens * head_dim;
+    if (query == nullptr && query_len > 0) {
+      return grm_fail_msg(handle, "null GQA query with nonzero length");
+    }
+    if (out_node_ids == nullptr && out_cap > 0) {
+      return grm_fail_msg(handle, "null output buffer with nonzero capacity");
+    }
+    std::vector<float> q;
+    q.reserve(static_cast<std::size_t>(query_len));
+    for (uint64_t i = 0; i < query_len; ++i) {
+      q.push_back(query[i]);
+    }
+    const auto routed = handle->router.route_gqa_raw(
+        q, query_heads, query_tokens, head_dim,
+        static_cast<uint64_t>(handle->store->dialect().num_kv_heads),
+        split_lexical_keys(lexical_keys), static_cast<std::size_t>(topk),
         split_lexical_keys(kind_filters), split_lexical_keys(scope_filters),
         split_lexical_keys(durability_filters),
         split_lexical_keys(mutability_filters));

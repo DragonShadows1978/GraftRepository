@@ -1427,6 +1427,34 @@ class GQAArenaCache(ArenaCache):
         mx = max(abs(v) for v in base.values()) + 1e-8
         return {i: v / mx for i, v in base.items()}
 
+    def _native_route_order(self, pkey, qrare, cand):
+        store = getattr(self, "native_store", None)
+        if store is None or not hasattr(store, "route_gqa"):
+            return None
+        if not cand:
+            return []
+        native_to_idx = {}
+        for i in cand:
+            node_id = self.grafts[i].get("native_node_id")
+            if node_id is None:
+                return None
+            native_to_idx[int(node_id)] = i
+        try:
+            routed_native = store.route_gqa(
+                np.asarray(pkey, dtype=np.float32), sorted(qrare),
+                topk=len(self.grafts))
+        except Exception:
+            return None
+        routed = []
+        for node_id in routed_native:
+            idx = native_to_idx.get(int(node_id))
+            if idx is not None:
+                routed.append(idx)
+        if len(routed) != len(cand):
+            return None
+        self.last_route_backend = "native"
+        return routed
+
     def _rope_block_at(self, blk, pos0, inverse=False):
         blk["k"] = self._rope_tensor(blk["k"], pos0, inverse)
         return blk

@@ -368,6 +368,13 @@ class NativeGraftStore:
             ctypes.c_void_p, ctypes.c_uint64, ctypes.POINTER(ctypes.c_float),
             ctypes.c_uint64, ctypes.c_uint64, ctypes.c_char_p]
         lib.grm_store_set_route_multi.restype = ctypes.c_int
+        self._has_route_list = hasattr(lib, "grm_store_set_route_list")
+        if self._has_route_list:
+            lib.grm_store_set_route_list.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64, ctypes.POINTER(ctypes.c_float),
+                ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64),
+                ctypes.c_uint64, ctypes.c_char_p]
+            lib.grm_store_set_route_list.restype = ctypes.c_int
         lib.grm_store_route.argtypes = [
             ctypes.c_void_p, ctypes.POINTER(ctypes.c_float), ctypes.c_uint64,
             ctypes.c_char_p, ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64),
@@ -382,6 +389,16 @@ class NativeGraftStore:
                 ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64),
                 ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_route_filtered.restype = ctypes.c_int
+        self._has_route_gqa = hasattr(lib, "grm_store_route_gqa")
+        if self._has_route_gqa:
+            lib.grm_store_route_gqa.argtypes = [
+                ctypes.c_void_p, ctypes.POINTER(ctypes.c_float),
+                ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64,
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint64,
+                ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+                ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_route_gqa.restype = ctypes.c_int
         lib.grm_store_configure_arena.argtypes = [
             ctypes.c_void_p, ctypes.c_uint64, ctypes.c_uint64]
         lib.grm_store_configure_arena.restype = ctypes.c_int
@@ -783,6 +800,26 @@ class NativeGraftStore:
             self._handle, int(node_id), arr, int(keys.shape[0]),
             int(keys.shape[1]), self._lexical_blob(lexical_keys)))
 
+    def set_route_key_list(self, node_id, route_keys, lexical_keys=()):
+        if not getattr(self, "_has_route_list", False):
+            raise RuntimeError("native GRM route key lists are unavailable")
+        keys = [np.ascontiguousarray(k, dtype=np.float32).reshape(-1)
+                for k in route_keys]
+        offsets = [0]
+        for key in keys:
+            offsets.append(offsets[-1] + int(key.size))
+        flat = (np.concatenate(keys).astype(np.float32, copy=False)
+                if keys else np.asarray([], dtype=np.float32))
+        values = None
+        if flat.size:
+            values_t = ctypes.c_float * int(flat.size)
+            values = values_t(*[float(v) for v in flat])
+        offsets_t = ctypes.c_uint64 * len(offsets)
+        offsets_arr = offsets_t(*offsets)
+        self._check(self._lib.grm_store_set_route_list(
+            self._handle, int(node_id), values, int(flat.size),
+            offsets_arr, len(keys), self._lexical_blob(lexical_keys)))
+
     def route(self, query, lexical_keys=(), topk=3, kinds=(), scopes=(),
               durabilities=(), mutabilities=()):
         q, n = self._float_array(query)
@@ -806,6 +843,33 @@ class NativeGraftStore:
             self._check(self._lib.grm_store_route(
                 self._handle, q, n, self._lexical_blob(lexical_keys), cap,
                 out, cap, ctypes.byref(count)))
+        return [int(out[i]) for i in range(int(count.value))]
+
+    def route_gqa(self, query, lexical_keys=(), topk=3, kinds=(), scopes=(),
+                  durabilities=(), mutabilities=()):
+        if not getattr(self, "_has_route_gqa", False):
+            raise RuntimeError("native GRM GQA route is unavailable")
+        q_np = np.ascontiguousarray(query, dtype=np.float32)
+        if q_np.ndim != 3:
+            raise ValueError("GQA query must have shape (heads, tokens, dim)")
+        q_heads, q_tokens, head_dim = (int(q_np.shape[0]), int(q_np.shape[1]),
+                                      int(q_np.shape[2]))
+        flat = q_np.reshape(-1)
+        q, _ = self._float_array(flat)
+        cap = max(0, int(topk))
+        out = None
+        if cap:
+            out_t = ctypes.c_uint64 * cap
+            out = out_t()
+        count = ctypes.c_uint64()
+        filters = (
+            self._filter_blob(kinds), self._filter_blob(scopes),
+            self._filter_blob(durabilities), self._filter_blob(mutabilities))
+        self._check(self._lib.grm_store_route_gqa(
+            self._handle, q, q_heads, q_tokens, head_dim,
+            self._lexical_blob(lexical_keys),
+            filters[0], filters[1], filters[2], filters[3], cap,
+            out, cap, ctypes.byref(count)))
         return [int(out[i]) for i in range(int(count.value))]
 
     def configure_arena(self, sink_tokens, arena_width):
