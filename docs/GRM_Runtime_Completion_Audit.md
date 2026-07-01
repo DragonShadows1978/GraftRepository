@@ -207,6 +207,9 @@ validation where feasible.
   `grm_store_apply_revision()` / `NativeGraftStore.apply_revision()` retires
   superseded nodes, links the replacement node, and updates native route
   activity in one native operation after Python decides the correction policy.
+  `grm_store_apply_expire()` / `NativeGraftStore.apply_expire()` now performs
+  the same native active-state and route-retirement step for authoritative
+  expire decisions after Python chooses the targets and records expiry metadata.
 - Native memory-command parser boundary:
   `grm_store_parse_memory_command()` parses the deterministic explicit memory
   command grammar (`remember`, `forget`, `correct/update`, review fallback,
@@ -610,7 +613,8 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   and durability priority. Semantic metadata is persisted natively as JSON, and
   source/supersession graph edges are now structured native state with Python
   graft references mapped to native node ids at the repository boundary.
-  Native can apply the final revision state once Python decides the correction.
+  Native can apply final revision and expire active-state transitions once
+  Python decides the target set.
   The explicit memory-command grammar now has a native parse-plan boundary, and
   command execution completes behind `GRMRuntime`; public extractor-candidate
   execution is also runtime-coordinated. Conflict policy and extractor quality

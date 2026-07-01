@@ -70,7 +70,9 @@ the repository node files.
 `grm_store_apply_revision()` applies the final correction state in native code
 after Python policy decides which nodes are superseded: old nodes become
 inactive, replacement nodes record `supersedes`, and native route activity is
-updated with the revision.
+updated with the revision. `grm_store_apply_expire()` similarly applies the
+final active-state transition for authoritative expire decisions after Python
+selects targets and records expiry reason/timestamp metadata.
 `grm_store_parse_memory_command()` now parses the deterministic explicit memory
 command grammar into a JSON operation plan, and native-backed
 `GraftRepository.apply_memory_command()` consumes that plan before applying

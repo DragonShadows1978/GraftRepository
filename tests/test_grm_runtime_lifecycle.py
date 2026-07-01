@@ -1696,8 +1696,10 @@ def test_native_active_filter_guides_explicit_extraction_targets(
 
     original_filter = repo.native_store.filter_active_nodes
     original_plan = repo.native_store.plan_extraction_policy
+    original_expire = repo.native_store.apply_expire
     filter_calls = []
     plans = []
+    expire_calls = []
 
     def traced_filter(node_ids):
         filter_calls.append(tuple(node_ids))
@@ -1707,10 +1709,15 @@ def test_native_active_filter_guides_explicit_extraction_targets(
         plans.append(dict(kwargs))
         return original_plan(**kwargs)
 
+    def traced_expire(node_ids):
+        expire_calls.append(tuple(node_ids))
+        return original_expire(node_ids)
+
     monkeypatch.setattr(repo.native_store, "filter_active_nodes",
                         traced_filter)
     monkeypatch.setattr(repo.native_store, "plan_extraction_policy",
                         traced_plan)
+    monkeypatch.setattr(repo.native_store, "apply_expire", traced_expire)
 
     replaced = repo.apply_extraction_candidate({
         "action": "write_direct",
@@ -1766,6 +1773,8 @@ def test_native_active_filter_guides_explicit_extraction_targets(
     assert plans[-1]["expire_target_count"] == 1
     assert expire["action"] == "expire"
     assert expire["expired"] == [expired["node_id"]]
+    assert expire_calls[-1] == (expired_native,)
+    assert repo.native_store.filter_active_nodes((expired_native,)) == ()
     repo.close()
 
 

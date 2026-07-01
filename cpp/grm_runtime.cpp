@@ -1511,6 +1511,23 @@ void HostGraftStore::apply_revision(std::uint64_t replacement_node_id,
   }
 }
 
+void HostGraftStore::apply_expire(std::vector<std::uint64_t> node_ids) {
+  for (const auto node_id : node_ids) {
+    if (get(node_id) == nullptr) {
+      throw std::out_of_range("unknown expired GRM node id");
+    }
+  }
+  std::set<std::uint64_t> seen;
+  for (const auto node_id : node_ids) {
+    if (!seen.insert(node_id).second) {
+      continue;
+    }
+    auto* node = get(node_id);
+    node->metadata.active = false;
+    mark_dirty(node_id, false, true);
+  }
+}
+
 void HostGraftStore::mark_dirty(std::uint64_t node_id, bool payload,
                                 bool metadata) {
   auto* n = get(node_id);
@@ -3118,6 +3135,27 @@ int grm_store_apply_revision(grm_store_handle* handle,
     handle->router.set_active(replacement_node_id, true);
     for (const auto old_id : superseded) {
       handle->router.set_active(old_id, false);
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_apply_expire(grm_store_handle* handle,
+                           const uint64_t* node_ids,
+                           uint64_t node_count) {
+  try {
+    if (handle == nullptr || handle->store == nullptr) {
+      return grm_fail_msg(handle, "invalid apply_expire arguments");
+    }
+    auto expired = read_u64_array(node_ids, node_count, "expired");
+    handle->store->apply_expire(expired);
+    std::set<std::uint64_t> seen;
+    for (const auto node_id : expired) {
+      if (seen.insert(node_id).second) {
+        handle->router.set_active(node_id, false);
+      }
     }
     return 0;
   } catch (const std::exception& exc) {

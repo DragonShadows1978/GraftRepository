@@ -659,6 +659,40 @@ def test_native_apply_revision_links_edges_and_retires_routes(tmp_path):
         assert store.graph_edges(old1).superseded_by == (new,)
 
 
+def test_native_apply_expire_retires_routes(tmp_path):
+    lib = build_native(tmp_path)
+    ckpt = tmp_path / "expire_ckpt"
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        stale0 = store.add_node("stale fact zero", b"", ntok=1)
+        stale1 = store.add_node("stale fact one", b"", ntok=1)
+        live = store.add_node("live fact", b"", ntok=1)
+        store.set_metadata(stale0, {"active": True})
+        store.set_metadata(stale1, {"active": True})
+        store.set_metadata(live, {"active": True})
+        store.set_route(stale0, [1.0, 0.0], ["fact"])
+        store.set_route(stale1, [0.98, 0.1989975], ["fact"])
+        store.set_route(live, [0.95, 0.3122499], ["fact"])
+
+        assert store.route([1.0, 0.0], ["fact"], topk=3) == [
+            stale0, stale1, live]
+        store.apply_expire([stale0, stale1, stale0])
+
+        assert store.route([1.0, 0.0], ["fact"], topk=3) == [live]
+        assert store.filter_active_nodes((stale0, stale1, live)) == (live,)
+        store.save_checkpoint(ckpt)
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as restored:
+        restored.load_checkpoint(ckpt)
+        assert restored.filter_active_nodes((stale0, stale1, live)) == (live,)
+        assert restored.route([1.0, 0.0], ["fact"], topk=3) == [live]
+
+
 def test_native_active_node_filter_preserves_order_and_dedupes(tmp_path):
     lib = build_native(tmp_path)
     ckpt = tmp_path / "active_filter_ckpt"

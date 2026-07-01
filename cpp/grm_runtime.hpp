@@ -292,6 +292,7 @@ class HostGraftStore {
       bool include_roots = false) const;
   void apply_revision(std::uint64_t replacement_node_id,
                       std::vector<std::uint64_t> supersedes);
+  void apply_expire(std::vector<std::uint64_t> node_ids);
   void mark_dirty(std::uint64_t node_id, bool payload, bool metadata);
   void mark_durable(std::uint64_t node_id);
   void evict_device_copy(std::uint64_t node_id);

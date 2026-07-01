@@ -1340,6 +1340,7 @@ class GraftRepository:
             self._mark_dirty(int(i), payload=False, metadata=True)
             expired.append(int(i))
         if expired:
+            self._native_apply_expire(expired)
             self._append_wal("MEMORY_EXTRACT_EXPIRE",
                              expired=list(expired), text=text,
                              expired_at=expired_at)
@@ -2260,6 +2261,15 @@ class GraftRepository:
         replacement_id = self._native_sync_node(replacement_idx)
         superseded_ids = [self._native_sync_node(i) for i in supersedes]
         self.native_store.apply_revision(replacement_id, superseded_ids)
+
+    def _native_apply_expire(self, expired):
+        if self.native_store is None:
+            return
+        if not hasattr(self.native_store, "apply_expire"):
+            return
+        expired_ids = [self._native_sync_node(i, payload_required=False)
+                       for i in expired]
+        self.native_store.apply_expire(expired_ids)
 
     def _native_sync_node(self, idx, payload_required=True):
         if self.native_store is None:

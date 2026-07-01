@@ -240,6 +240,9 @@ int grm_store_apply_revision(grm_store_handle* handle,
                              uint64_t replacement_node_id,
                              const uint64_t* supersedes,
                              uint64_t supersedes_count);
+int grm_store_apply_expire(grm_store_handle* handle,
+                           const uint64_t* node_ids,
+                           uint64_t node_count);
 int grm_store_metadata_json(grm_store_handle* handle,
                             uint64_t node_id,
                             char* out_json,

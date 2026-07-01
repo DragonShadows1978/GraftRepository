@@ -399,6 +399,12 @@ class NativeGraftStore:
                 ctypes.c_void_p, ctypes.c_uint64,
                 ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64]
             lib.grm_store_apply_revision.restype = ctypes.c_int
+        self._has_apply_expire = hasattr(lib, "grm_store_apply_expire")
+        if self._has_apply_expire:
+            lib.grm_store_apply_expire.argtypes = [
+                ctypes.c_void_p, ctypes.POINTER(ctypes.c_uint64),
+                ctypes.c_uint64]
+            lib.grm_store_apply_expire.restype = ctypes.c_int
         lib.grm_store_metadata_json.argtypes = [
             ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
             ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
@@ -874,6 +880,12 @@ class NativeGraftStore:
         arr, n = self._u64_array(supersedes)
         self._check(self._lib.grm_store_apply_revision(
             self._handle, int(replacement_node_id), arr, n))
+
+    def apply_expire(self, node_ids):
+        if not getattr(self, "_has_apply_expire", False):
+            return
+        arr, n = self._u64_array(node_ids)
+        self._check(self._lib.grm_store_apply_expire(self._handle, arr, n))
 
     def metadata(self, node_id):
         needed = ctypes.c_uint64()
