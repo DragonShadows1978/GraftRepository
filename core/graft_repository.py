@@ -277,6 +277,34 @@ class GraftRepository:
     def _wal_enabled_for_mode(cls, mode):
         return cls._normalize_durability_mode(mode) in cls.WAL_DURABILITY_MODES
 
+    def _python_durability_mode_plan(self, mode):
+        mode = self._normalize_durability_mode(mode)
+        target_wal = self._wal_enabled_for_mode(mode)
+        final_wal = (
+            bool(self.wal_enabled) if self._wal_enabled_override
+            else target_wal)
+        return {
+            "durability_mode": mode,
+            "target_wal_enabled": bool(target_wal),
+            "final_wal_enabled": bool(final_wal),
+            "append_config_before": bool(self.wal_enabled),
+            "append_config_after": (
+                not bool(self.wal_enabled) and bool(final_wal)),
+        }
+
+    def _native_durability_mode_plan(self, mode):
+        if self.native_store is None or not hasattr(
+                self.native_store, "plan_durability_mode"):
+            return None
+        try:
+            return self.native_store.plan_durability_mode(
+                requested_mode=mode,
+                current_mode=self.durability_mode,
+                old_wal_enabled=bool(self.wal_enabled),
+                wal_enabled_override=bool(self._wal_enabled_override))
+        except RuntimeError:
+            return None
+
     def _set_durability_mode_fields(self, mode, wal_enabled=None):
         mode = self._normalize_durability_mode(mode)
         self.durability_mode = mode
@@ -287,18 +315,19 @@ class GraftRepository:
         return mode
 
     def set_durability_mode(self, mode):
-        mode = self._normalize_durability_mode(mode)
+        plan = self._native_durability_mode_plan(mode)
+        if plan is None:
+            plan = self._python_durability_mode_plan(mode)
+        mode = plan["durability_mode"]
         old_mode = self.durability_mode
-        old_wal = bool(self.wal_enabled)
-        new_wal = self._wal_enabled_for_mode(mode)
-        if old_wal:
+        if plan.get("append_config_before"):
             self._append_wal("CONFIG", durability_mode=mode,
-                             wal_enabled=bool(new_wal),
+                             wal_enabled=bool(plan["target_wal_enabled"]),
                              previous_durability_mode=old_mode)
         self.durability_mode = mode
         if not self._wal_enabled_override:
-            self.wal_enabled = bool(new_wal)
-        if not old_wal and self.wal_enabled:
+            self.wal_enabled = bool(plan["final_wal_enabled"])
+        if plan.get("append_config_after"):
             self._append_wal("CONFIG", durability_mode=mode,
                              wal_enabled=bool(self.wal_enabled),
                              previous_durability_mode=old_mode)

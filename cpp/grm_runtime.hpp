@@ -212,6 +212,21 @@ RememberFlushPlan plan_remember_flush(
     bool flush_immediately);
 std::string remember_flush_plan_json(const RememberFlushPlan& plan);
 
+struct DurabilityModePlan {
+  std::string durability_mode;
+  bool target_wal_enabled = false;
+  bool final_wal_enabled = false;
+  bool append_config_before = false;
+  bool append_config_after = false;
+};
+
+DurabilityModePlan plan_durability_mode(
+    const std::string& requested_mode,
+    const std::string& current_mode,
+    bool old_wal_enabled,
+    bool wal_enabled_override);
+std::string durability_mode_plan_json(const DurabilityModePlan& plan);
+
 struct ExtractionPolicyPlan {
   std::string action;
   std::string reason;

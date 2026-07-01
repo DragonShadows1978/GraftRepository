@@ -432,6 +432,14 @@ class NativeGraftStore:
                 ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p,
                 ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_plan_remember_flush.restype = ctypes.c_int
+        self._has_durability_mode_plan = hasattr(
+            lib, "grm_store_plan_durability_mode")
+        if self._has_durability_mode_plan:
+            lib.grm_store_plan_durability_mode.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_int, ctypes.c_int, ctypes.c_char_p,
+                ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_plan_durability_mode.restype = ctypes.c_int
         self._has_extraction_policy_plan = hasattr(
             lib, "grm_store_plan_extraction_policy")
         if self._has_extraction_policy_plan:
@@ -976,6 +984,26 @@ class NativeGraftStore:
         cap = int(needed.value) + 1
         buf = ctypes.create_string_buffer(cap)
         self._check(self._lib.grm_store_plan_remember_flush(
+            self._handle, *args, buf, cap, ctypes.byref(needed)))
+        return json.loads(buf.value.decode("utf-8") or "{}")
+
+    def plan_durability_mode(self, *, requested_mode, current_mode,
+                             old_wal_enabled, wal_enabled_override=False):
+        if not getattr(self, "_has_durability_mode_plan", False):
+            raise RuntimeError(
+                "native GRM durability mode planner is unavailable")
+        needed = ctypes.c_uint64()
+        args = (
+            str(requested_mode or "").encode("utf-8"),
+            str(current_mode or "").encode("utf-8"),
+            1 if old_wal_enabled else 0,
+            1 if wal_enabled_override else 0,
+        )
+        self._check(self._lib.grm_store_plan_durability_mode(
+            self._handle, *args, None, 0, ctypes.byref(needed)))
+        cap = int(needed.value) + 1
+        buf = ctypes.create_string_buffer(cap)
+        self._check(self._lib.grm_store_plan_durability_mode(
             self._handle, *args, buf, cap, ctypes.byref(needed)))
         return json.loads(buf.value.decode("utf-8") or "{}")
 

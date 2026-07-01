@@ -1086,6 +1086,62 @@ std::string remember_flush_plan_json(const RememberFlushPlan& plan) {
   return out.str();
 }
 
+std::string normalize_durability_mode(std::string mode) {
+  mode = ascii_lower(trim(mode.empty() ? "session_safe" : mode));
+  for (char& c : mode) {
+    if (c == '-' || c == ' ') {
+      c = '_';
+    }
+  }
+  if (mode == "volatile" || mode == "volatile_fast" ||
+      mode == "session_safe" || mode == "project_safe" ||
+      mode == "durable_strict") {
+    return mode;
+  }
+  throw std::runtime_error("unknown durability mode: " + mode);
+}
+
+bool wal_enabled_for_durability_mode(const std::string& mode) {
+  const auto normalized = normalize_durability_mode(mode);
+  return normalized == "session_safe" || normalized == "project_safe" ||
+         normalized == "durable_strict";
+}
+
+DurabilityModePlan plan_durability_mode(
+    const std::string& requested_mode,
+    const std::string& current_mode,
+    bool old_wal_enabled,
+    bool wal_enabled_override) {
+  DurabilityModePlan plan;
+  plan.durability_mode = normalize_durability_mode(requested_mode);
+  (void)normalize_durability_mode(current_mode);
+  plan.target_wal_enabled =
+      wal_enabled_for_durability_mode(plan.durability_mode);
+  plan.final_wal_enabled =
+      wal_enabled_override ? old_wal_enabled : plan.target_wal_enabled;
+  plan.append_config_before = old_wal_enabled;
+  plan.append_config_after = !old_wal_enabled && plan.final_wal_enabled;
+  return plan;
+}
+
+std::string durability_mode_plan_json(const DurabilityModePlan& plan) {
+  std::ostringstream out;
+  bool first = true;
+  out << "{";
+  append_json_string_field(out, first, "durability_mode",
+                           plan.durability_mode);
+  append_json_bool_field(out, first, "target_wal_enabled",
+                         plan.target_wal_enabled);
+  append_json_bool_field(out, first, "final_wal_enabled",
+                         plan.final_wal_enabled);
+  append_json_bool_field(out, first, "append_config_before",
+                         plan.append_config_before);
+  append_json_bool_field(out, first, "append_config_after",
+                         plan.append_config_after);
+  out << "}";
+  return out.str();
+}
+
 ExtractionPolicyPlan plan_extraction_policy(
     const std::string& action,
     const std::string& write_intent,
@@ -3574,6 +3630,41 @@ int grm_store_plan_remember_flush(grm_store_handle* handle,
             durability == nullptr ? "" : durability,
             scope == nullptr ? "" : scope,
             flush_immediately != 0));
+    *out_len = static_cast<uint64_t>(json.size());
+    if (out_json != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, json.size());
+      std::memcpy(out_json, json.data(), n);
+      out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_plan_durability_mode(grm_store_handle* handle,
+                                   const char* requested_mode,
+                                   const char* current_mode,
+                                   int old_wal_enabled,
+                                   int wal_enabled_override,
+                                   char* out_json,
+                                   size_t out_cap,
+                                   uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr ||
+        requested_mode == nullptr || out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid plan_durability_mode arguments");
+    }
+    if (out_json == nullptr && out_cap > 0) {
+      return grm_fail_msg(
+          handle, "null durability mode buffer with nonzero capacity");
+    }
+    const auto json = grm::durability_mode_plan_json(
+        grm::plan_durability_mode(
+            requested_mode,
+            current_mode == nullptr ? "" : current_mode,
+            old_wal_enabled != 0,
+            wal_enabled_override != 0));
     *out_len = static_cast<uint64_t>(json.size());
     if (out_json != nullptr && out_cap > 0) {
       const size_t n = std::min(out_cap - 1, json.size());

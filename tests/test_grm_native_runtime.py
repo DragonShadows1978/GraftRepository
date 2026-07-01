@@ -660,6 +660,50 @@ def test_native_remember_flush_planner(tmp_path):
             }
 
 
+def test_native_durability_mode_planner(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        assert store.plan_durability_mode(
+            requested_mode="volatile",
+            current_mode="session_safe",
+            old_wal_enabled=True) == {
+                "durability_mode": "volatile",
+                "target_wal_enabled": False,
+                "final_wal_enabled": False,
+                "append_config_before": True,
+                "append_config_after": False,
+            }
+        assert store.plan_durability_mode(
+            requested_mode="session safe",
+            current_mode="volatile",
+            old_wal_enabled=False) == {
+                "durability_mode": "session_safe",
+                "target_wal_enabled": True,
+                "final_wal_enabled": True,
+                "append_config_before": False,
+                "append_config_after": True,
+            }
+        assert store.plan_durability_mode(
+            requested_mode="project-safe",
+            current_mode="volatile_fast",
+            old_wal_enabled=False,
+            wal_enabled_override=True) == {
+                "durability_mode": "project_safe",
+                "target_wal_enabled": True,
+                "final_wal_enabled": False,
+                "append_config_before": False,
+                "append_config_after": False,
+            }
+        with pytest.raises(RuntimeError, match="unknown durability mode"):
+            store.plan_durability_mode(
+                requested_mode="made-up",
+                current_mode="session_safe",
+                old_wal_enabled=True)
+
+
 def test_native_review_transition_planner(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

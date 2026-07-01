@@ -930,6 +930,52 @@ def test_memory_mode_commands_change_wal_behavior(tmp_path):
     assert records[-1]["text"] == "Session-safe document 82-8282"
 
 
+def test_native_durability_mode_plan_drives_wal_behavior(tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    path = str(tmp_path / "native_mode")
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3,
+                           native_enabled=True, native_lib_path=lib)
+    calls = []
+    original_plan = repo.native_store.plan_durability_mode
+
+    def traced_plan(**kwargs):
+        calls.append(dict(kwargs))
+        return original_plan(**kwargs)
+
+    monkeypatch.setattr(repo.native_store, "plan_durability_mode",
+                        traced_plan)
+
+    volatile = repo.apply_memory_command("switch to volatile mode")
+    assert volatile["durability_mode"] == "volatile"
+    assert volatile["wal_enabled"] is False
+    assert calls[-1] == {
+        "requested_mode": "volatile",
+        "current_mode": "session_safe",
+        "old_wal_enabled": True,
+        "wal_enabled_override": False,
+    }
+
+    safe = repo.apply_memory_command("switch to project safe mode")
+    assert safe["durability_mode"] == "project_safe"
+    assert safe["wal_enabled"] is True
+    assert calls[-1] == {
+        "requested_mode": "project_safe",
+        "current_mode": "volatile",
+        "old_wal_enabled": False,
+        "wal_enabled_override": False,
+    }
+
+    with open(os.path.join(path, "wal", "000001.wal")) as fh:
+        records = [json.loads(line) for line in fh if line.strip()]
+    assert records[-2]["type"] == "CONFIG"
+    assert records[-2]["durability_mode"] == "volatile"
+    assert records[-2]["wal_enabled"] is False
+    assert records[-1]["type"] == "CONFIG"
+    assert records[-1]["durability_mode"] == "project_safe"
+    assert records[-1]["wal_enabled"] is True
+
+
 def test_durability_mode_recovers_from_manifest_and_wal(tmp_path):
     manifest_path = str(tmp_path / "manifest_mode")
     repo = GraftRepository(FakeModel(), enc, dec, manifest_path,

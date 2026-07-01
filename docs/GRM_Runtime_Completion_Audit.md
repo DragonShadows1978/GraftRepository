@@ -641,7 +641,10 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   reinforcement-count decisions before Python records metadata/WAL. Remember
   command durability flushing now uses `grm_store_plan_remember_flush()`, so
   the project-safe/project-memory immediate-flush rule is also decided at the
-  native planner boundary before Python performs the checkpoint. Explicit
+  native planner boundary before Python performs the checkpoint. Durability mode
+  transitions now use `grm_store_plan_durability_mode()` for mode normalization,
+  target/final WAL state, and pre/post CONFIG write placement before Python
+  mutates repository state. Explicit
   extractor target ids for supersede/expire also flow through
   `grm_store_filter_active_nodes()`, so C++ host metadata state performs the
   deterministic active-target filtering before Python applies the remaining
@@ -674,7 +677,7 @@ kind/scope/durability/mutability filters for MLA and GQA dialect ids plus
 runtime-consumed native recursive source-closure traversal, multi-key MLA
 arena-route acceleration, native GQA raw `|q.k|` route acceleration, native
 explicit memory-command parser, native remember-command flush planner, native
-swap-plan boundary, native host tensor
+durability-mode transition planner, native swap-plan boundary, native host tensor
 swap/evict references, TensorCUDA fused
 splice/evict cache movement, TensorCUDA fused RoPE
 re-seat movement, TensorCUDA fused
