@@ -456,6 +456,38 @@ void atomic_write_text_file(const std::filesystem::path& dst,
   fsync_directory(dst.parent_path());
 }
 
+bool contains_text(const std::string& text, const std::string& needle) {
+  return text.find(needle) != std::string::npos;
+}
+
+bool is_fixed_position_profile(const DialectDescriptor& dialect) {
+  const auto law = ascii_lower(dialect.position_law);
+  const auto graftability = ascii_lower(dialect.graftability);
+  return contains_text(law, "absolute") || contains_text(law, "fixed") ||
+         contains_text(graftability, "absolute") ||
+         contains_text(graftability, "fixed");
+}
+
+bool is_reseatable_position_law(const DialectDescriptor& dialect) {
+  const auto law = ascii_lower(dialect.position_law);
+  return contains_text(law, "rope") || contains_text(law, "rotary") ||
+         contains_text(law, "relative");
+}
+
+void validate_dialect_profile(const DialectDescriptor& dialect) {
+  if (!dialect.remountable) {
+    return;
+  }
+  if (is_fixed_position_profile(dialect)) {
+    throw std::invalid_argument(
+        "fixed-position GRM profiles must set remountable=false");
+  }
+  if (!is_reseatable_position_law(dialect)) {
+    throw std::invalid_argument(
+        "remountable GRM profiles require a RoPE or relative position law");
+  }
+}
+
 }  // namespace
 
 MemoryCommandPlan parse_memory_command(const std::string& text) {
@@ -702,7 +734,9 @@ std::string memory_command_plan_json(const MemoryCommandPlan& plan) {
 }
 
 HostGraftStore::HostGraftStore(DialectDescriptor dialect)
-    : dialect_(std::move(dialect)) {}
+    : dialect_(std::move(dialect)) {
+  validate_dialect_profile(dialect_);
+}
 
 std::uint64_t HostGraftStore::add_node(HostGraftNode node) {
   const std::uint64_t id = next_id_++;

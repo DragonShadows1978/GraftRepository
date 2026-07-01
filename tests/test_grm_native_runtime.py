@@ -105,6 +105,58 @@ int main(int argc, char** argv) {
     subprocess.run([str(exe), str(tmp_path / "writer_ckpt")], check=True)
 
 
+def test_cpp_dialect_profile_rejects_fixed_position_remountable(tmp_path):
+    source = tmp_path / "dialect_profile_test.cpp"
+    source.write_text(r'''
+#include "grm_runtime.hpp"
+
+#include <stdexcept>
+#include <string>
+
+static grm::DialectDescriptor absolute_profile(bool remountable) {
+  grm::DialectDescriptor dialect;
+  dialect.model_type = "AbsoluteKV_TC";
+  dialect.num_layers = 12;
+  dialect.hidden_dim = 768;
+  dialect.payload_kind = grm::PayloadKind::GQA;
+  dialect.vals_per_tok_layer = 384;
+  dialect.route_layer = 0;
+  dialect.num_kv_heads = 4;
+  dialect.head_dim = 64;
+  dialect.position_law = "absolute_learned";
+  dialect.state_kind = "kv";
+  dialect.graftability = "fixed_position";
+  dialect.remountable = remountable;
+  dialect.composition = "single_mount";
+  return dialect;
+}
+
+int main() {
+  try {
+    grm::HostGraftStore bad(absolute_profile(true));
+    return 3;
+  } catch (const std::invalid_argument&) {
+  }
+
+  grm::HostGraftStore ok(absolute_profile(false));
+  if (ok.dialect().profile_id() !=
+      "absolute_learned|kv|fixed_position|0|single_mount") {
+    return 4;
+  }
+  return 0;
+}
+''')
+    exe = tmp_path / "dialect_profile_test"
+    subprocess.run([
+        "g++", "-std=c++17",
+        "-I", f"{ROOT}/cpp",
+        f"{ROOT}/cpp/grm_runtime.cpp",
+        str(source),
+        "-o", str(exe),
+    ], check=True)
+    subprocess.run([str(exe)], check=True)
+
+
 def test_native_store_lifecycle_via_ctypes(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(
@@ -141,6 +193,35 @@ def test_native_store_lifecycle_via_ctypes(tmp_path):
         assert stats.durable_nodes == 1
 
         store.evict_device_copy(node_id)
+
+
+def test_native_profile_requires_reseatable_position_law(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="AbsoluteKV_TC", num_layers=12,
+            hidden_dim=768, vals_per_tok_layer=384, route_layer=0,
+            payload_kind="gqa", num_kv_heads=4, head_dim=64,
+            position_law="absolute_learned", state_kind="kv",
+            graftability="fixed_position", remountable=False,
+            composition="single_mount") as store:
+        assert store.dialect_profile() == (
+            "absolute_learned|kv|fixed_position|0|single_mount")
+
+    with pytest.raises(ValueError, match="fixed-position"):
+        NativeGraftStore(
+            lib, model_type="AbsoluteKV_TC", num_layers=12,
+            hidden_dim=768, vals_per_tok_layer=384, route_layer=0,
+            payload_kind="gqa", num_kv_heads=4, head_dim=64,
+            position_law="absolute_learned", state_kind="kv",
+            graftability="fixed_position", remountable=True)
+
+    with pytest.raises(ValueError, match="RoPE or relative"):
+        NativeGraftStore(
+            lib, model_type="UnknownPos_TC", num_layers=12,
+            hidden_dim=768, vals_per_tok_layer=384, route_layer=0,
+            payload_kind="gqa", num_kv_heads=4, head_dim=64,
+            position_law="learned_bias", state_kind="kv",
+            graftability="seat_remountable", remountable=True)
 
 
 def test_native_store_gqa_dialect_via_ctypes(tmp_path):

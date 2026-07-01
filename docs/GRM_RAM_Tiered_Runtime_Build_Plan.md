@@ -193,6 +193,11 @@ remaining routing/revision policy where it proves useful, model-specific
 extraction quality/policy, CUDA route scanning if needed, longer high-context
 needle runs, and a broader model-specific graft equivalence matrix beyond
 DeepSeek, MiniCPM3 MLA, and Qwen3 GQA.
+Native dialect profiles now enforce the graftability contract at construction:
+profiles that claim `remountable=true` must declare a RoPE/rotary/relative
+position law, while fixed/absolute-position profiles are accepted only when
+marked non-remountable. This prevents a fixed-position cache dialect from being
+silently routed into the seat-remount path.
 
 `tests/deepseek_grm_turn50_gate.py` now validates the original GRM ephemeral
 boat on DeepSeek-V2-Lite INT4: 50 stored turn grafts, live context cleared

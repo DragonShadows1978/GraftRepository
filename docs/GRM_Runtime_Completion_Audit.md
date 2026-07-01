@@ -601,7 +601,10 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   The explicit memory-command grammar now has a native parse-plan boundary, and
   command execution completes behind `GRMRuntime`; public extractor-candidate
   execution is also runtime-coordinated. Conflict policy and extractor quality
-  still live in the Python repository policy layer.
+  still live in the Python repository policy layer. Native dialect profiles now
+  reject fixed/absolute-position stores that claim remountability and require a
+  RoPE/rotary/relative position law for remountable graft profiles, so
+  non-reseatable cache dialects cannot silently enter the graft mount path.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. Current-head MiniCPM3 MLA

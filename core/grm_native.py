@@ -169,6 +169,7 @@ class NativeGraftStore:
             defaults["remountable"] if remountable is None
             else bool(remountable))
         composition = composition or defaults["composition"]
+        self._validate_profile(position_law, graftability, remountable)
         profile_args = (
             str(position_law).encode("utf-8"),
             str(state_kind).encode("utf-8"),
@@ -224,6 +225,22 @@ class NativeGraftStore:
                 "composition": "multi_mount",
             }
         raise ValueError(f"unsupported native GRM payload kind: {payload_kind}")
+
+    @staticmethod
+    def _validate_profile(position_law, graftability, remountable):
+        if not remountable:
+            return
+        law = str(position_law or "").lower()
+        graftability = str(graftability or "").lower()
+        fixed = ("absolute" in law or "fixed" in law or
+                 "absolute" in graftability or "fixed" in graftability)
+        if fixed:
+            raise ValueError(
+                "fixed-position GRM profiles must set remountable=False")
+        if not any(token in law for token in ("rope", "rotary", "relative")):
+            raise ValueError(
+                "remountable GRM profiles require a RoPE or relative "
+                "position law")
 
     def _bind(self):
         lib = self._lib
