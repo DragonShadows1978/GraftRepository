@@ -1,0 +1,2 @@
+/usr/bin/ar qc libgrm_runtime.a CMakeFiles/grm_runtime.dir/grm_runtime.cpp.o
+/usr/bin/ranlib libgrm_runtime.a

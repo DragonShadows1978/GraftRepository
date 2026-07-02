@@ -1,23 +1,21 @@
-"""STORAGE x SCORING ppl: quantized KV STORAGE measured WITH APA r0.10
-scoring engaged on the 8 global layers — the REAL deployed config (the
-shipped K4+V4 path runs APA selective attention, not plain attention).
+"""STORAGE x REFINE-PERCENTILE sweep: does widening the APA refine band
+recover K4+V4's ppl cost?
 
-Companion to gemma4_kv_quant_ppl.py (storage-only, standard scoring).
-Uses the SAME proven mechanism: hook Gemma4AttentionTC.KV_STORE_HOOK so
-every scored token's K/V passes through the quant on EVERY path
-(prefill/decode/chunk). An earlier version of THIS file patched
-KVRing.__init__/append — the dead-patch class (the ring only constructs
-at first decode; scored tokens flow through the prefill/cat path it never
-touches) AND incompatible with the shipped packed buffers. Replaced.
+The single-point r0.10 measurement showed int4_kv_glob (K4+V4) = +12.1%
+vs +5.55% under standard scoring — K-4bit storage starves APA's refine
+path, which at r0.10 leans hard on the top-10% keys being full precision.
+HYPOTHESIS: a WIDER refine band (more keys refined => less reliance on
+any one being pristine) shrinks K4's damage. This sweeps it.
 
-A SANITY GUARD asserts each non-baseline mode perturbs the logits.
+For each refine r in {0.10, 0.15, 0.20, 0.30}, measure ppl for:
+  baseline (bf16 storage), int4_v_glob, int4_kv_glob, int8k_int4v_glob
+Each storage Δ is vs its OWN refine-r baseline (the baseline moves with
+r), so the storage cost is isolated from the scoring change.
 
-  baseline       : bf16 K,V  (APA r0.10 scoring)
-  int4_v_glob    : V 4-bit, global
-  int4_kv_glob   : K AND V 4-bit, global  == THE SHIPPED CONFIG
-  int8_v_glob    : V INT8, global  (the conservative fallback)
+Same proven mechanism as gemma4_kv_quant_apa_ppl.py: hook KV_STORE_HOOK
+(every scored token, every path) + a sanity guard. Real wikitext.
 
-  python3 tests/gemma4_kv_quant_apa_ppl.py
+  python3 tests/gemma4_kv_quant_refine_sweep.py
 """
 import os
 import sys
@@ -33,6 +31,7 @@ from core.mistral7b_tc import (BlockTC, _kv_quant,          # noqa: E402
 
 WINDOW, SCORED, STEP = 2048, 1024, 64
 N_WINDOWS = 6
+REFINES = [0.10, 0.15, 0.20, 0.30]
 
 
 def get_text():
@@ -55,8 +54,6 @@ def rt_int8(x):
 
 
 def rt_int4(x):
-    """group-32 symmetric round-trip (the engine q4_0 grid / bulk floor),
-    bit-identical to the kv_int4_pack/unpack kernels (DIVIDE path)."""
     cdt = BlockTC.COMPUTE_DTYPE
     B, H, S, D = x.shape
     xg = x.float().reshape([B, H, S, D // 32, 32])
@@ -66,25 +63,26 @@ def rt_int4(x):
     return deq.astype(cdt) if cdt != "float32" else deq
 
 
-def make_hook(which, fn):
-    """Global-only quant (the shipped scope): 4-bit V is fatal on sliding."""
+def hook_kv(k_fn, v_fn):
+    """global-only; k_fn/v_fn None to skip that tensor."""
     def hook(k, v, is_global):
         if not is_global:
             return k, v
-        if which in ("k", "kv"):
-            k = fn(k)
-        if which in ("v", "kv"):
-            v = fn(v)
+        if k_fn is not None:
+            k = k_fn(k)
+        if v_fn is not None:
+            v = v_fn(v)
         return k, v
     return hook
 
 
-MODES = {
-    "baseline":     None,
-    "int4_v_glob":  ("v", rt_int4),
-    "int4_kv_glob": ("kv", rt_int4),   # THE SHIPPED CONFIG (K4+V4 global)
-    "int8_v_glob":  ("v", rt_int8),
-}
+# (label, k_fn, v_fn) — None hook => baseline
+CONFIGS = [
+    ("baseline",          None),
+    ("int4_v_glob",       hook_kv(None,    rt_int4)),
+    ("int4_kv_glob",      hook_kv(rt_int4, rt_int4)),   # K4+V4
+    ("int8k_int4v_glob",  hook_kv(rt_int8, rt_int4)),   # K8+V4 (the safer mix)
+]
 
 from transformers import AutoTokenizer                      # noqa: E402
 tok = AutoTokenizer.from_pretrained("/mnt/ForgeRealm/models/gemma-4-12B-it")
@@ -93,17 +91,20 @@ print(f"eval stream: {len(ids_all)} tokens", flush=True)
 
 tc.set_alloc_pooling(True)
 m, info = Gemma4_TC.from_pretrained()
-# engage APA r0.10 on the 8 global layers across the whole scored region —
-# the deployed combination (quantized STORAGE x APA SCORING).
 for L in m.layers:
     if L.mixer.is_global:
         L.mixer.attention_mode = "apa_selective"
-        L.mixer.refine_percentile = 0.10
         L.mixer.apa_min_context = 256
-print(f"loaded: {info} | APA r0.10 engaged on globals", flush=True)
+print(f"loaded: {info}", flush=True)
 
 
-def window_logits_and_nll(ids, capture_first=False):
+def set_refine(r):
+    for L in m.layers:
+        if L.mixer.is_global:
+            L.mixer.refine_percentile = r
+
+
+def window_nll(ids, capture_first=False):
     nll, count, first = 0.0, 0, None
     with tc.no_grad():
         ctx = WINDOW - SCORED
@@ -126,31 +127,42 @@ def window_logits_and_nll(ids, capture_first=False):
     return nll, count, first
 
 
-results = {}
-base_logits = None
-for name, spec in MODES.items():
-    Gemma4AttentionTC.KV_STORE_HOOK = (make_hook(*spec) if spec else None)
-    tot_nll, tot_cnt, first_logits = 0.0, 0, None
+def measure(hook):
+    Gemma4AttentionTC.KV_STORE_HOOK = hook
+    tot_nll, tot_cnt, first = 0.0, 0, None
     for w in range(N_WINDOWS):
         ids = ids_all[w * WINDOW:(w + 1) * WINDOW]
         if len(ids) < WINDOW:
             break
-        nll, cnt, fl = window_logits_and_nll(ids, capture_first=(w == 0))
-        if fl is not None and first_logits is None:
-            first_logits = fl
+        nll, cnt, fl = window_nll(ids, capture_first=(w == 0))
+        if fl is not None and first is None:
+            first = fl
         tot_nll += nll
         tot_cnt += cnt
-    ppl = float(np.exp(tot_nll / tot_cnt))
-    results[name] = ppl
-    if name == "baseline":
-        base_logits = first_logits
-        print(f"{name:13s} ppl {ppl:9.4f}  ({tot_cnt} tok)", flush=True)
-    else:
-        d = float(np.abs(first_logits - base_logits).max())
-        active = "ACTIVE" if d > 1e-4 else "*** NO-OP (patch dead) ***"
-        base = results["baseline"]
-        print(f"{name:13s} ppl {ppl:9.4f}  (+{(ppl / base - 1) * 100:.3f}%) "
-              f"| logit max|d| {d:.3e} [{active}]", flush=True)
+    return float(np.exp(tot_nll / tot_cnt)), first
+
+
+print("\n  refine | " + " | ".join(f"{c[0]:>16s}" for c in CONFIGS), flush=True)
+print("  " + "-" * (9 + 19 * len(CONFIGS)), flush=True)
+grid = {}
+for r in REFINES:
+    set_refine(r)
+    base_ppl, base_logits = measure(None)
+    cells = [f"{base_ppl:8.2f}        "]
+    grid[(r, "baseline")] = base_ppl
+    for label, hook in CONFIGS[1:]:
+        ppl, fl = measure(hook)
+        d = float(np.abs(fl - base_logits).max())
+        tag = "" if d > 1e-4 else "!DEAD"
+        delta = (ppl / base_ppl - 1) * 100
+        grid[(r, label)] = ppl
+        cells.append(f"{ppl:8.2f}(+{delta:5.2f}%){tag}")
+    print(f"  r{r:.2f}  | " + " | ".join(cells), flush=True)
 
 Gemma4AttentionTC.KV_STORE_HOOK = None
+# the headline: does widening refine recover K4+V4?
+print("\n=== K4+V4 cost vs refine band ===", flush=True)
+for r in REFINES:
+    b, kv = grid[(r, "baseline")], grid[(r, "int4_kv_glob")]
+    print(f"  r{r:.2f}: K4+V4 = +{(kv/b-1)*100:.2f}%", flush=True)
 print("DONE", flush=True)

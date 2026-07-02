@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -shared -Wl,-soname,libgrm_runtime.so -o libgrm_runtime.so CMakeFiles/grm_runtime_shared.dir/grm_runtime.cpp.o 

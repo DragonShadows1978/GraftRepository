@@ -12,17 +12,23 @@ Wired into KVRing behind `GEMMA4_QUANT_KV4` (global-only — 4-bit V is fatal
 on the sliding window, +1696%). Config from the bulk-bits law (Gemma qk-norm
 => 4): `int4_kv_glob` (K4+V4) = **+5.55% ppl** (baseline 119.85), survivable.
 
-**MEASURED PAYOFF — decode-to-16K, prefill-512 + sequential decode, 3070 8GB:**
+**MEASURED CEILING LADDER — prefill-512 + sequential decode, 3070 8GB:**
 
 | | bf16 baseline | **K4+V4** |
 |---|---|---|
-| decode ceiling | **OOM at ~14,342** | **16,384 SURVIVED** |
-| peak vram | 7835 → tipped 8192 | **7737 MiB (~455 headroom)** |
+| decode ceiling | **OOM at ~14,342** | **OOM at ~20,146** |
+| context gain | — | **+5,800 tok / +40%** |
 | @13,312 tok | 7835 MiB | 7609 MiB (−226) |
+| @16,384 tok | (dead) | 7767 MiB SURVIVED |
+| @19,456 tok | (dead) | 7767 MiB (cache PLATEAUED) |
 
-bf16 dies before 16K; K4+V4 clears it with headroom and is still climbing
-(24K+ now in range). Lead widens with context (only the GROWING global
-cache is quantized). NO REGRESSION: Qwen3.5 parity PASS, Gemma parity
+bf16 walls at ~14.3K; K4+V4 reaches ~20K — 40% more context on the same
+card. Key finding: past ~16K the q4 cache footprint PLATEAUS (7767 flat
+16K→19K — 4-bit per-token KV growth is negligible). The 20K wall is NOT
+the cache — it's the DECODE ATTENTION TRANSIENT (score/softmax buffers in
+the blend path grow with context). So the next memory lever shifted from
+storage-quant to the fused O(L) decode path. Lever identified, not yet
+pulled. NO REGRESSION: Qwen3.5 parity PASS, Gemma parity
 (q4 off) PASS w/ KV cosines 1.0000; r0.10 refine still −4.1% below standard
 (the APA path untouched). gemma4_decode_ceiling.py is the probe.
 
