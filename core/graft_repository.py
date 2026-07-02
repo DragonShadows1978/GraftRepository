@@ -2234,6 +2234,9 @@ class GraftRepository:
         # strip to match the native scan's normalization, so padded queries
         # answer identically on both paths; blank still lists all active
         q = str(query or "").strip().lower()
+        native_rows = self._native_memory_rows(q) if q else None
+        if native_rows is not None:
+            return native_rows
         native = self._native_active_text_matches(q) if q else None
         out = []
         candidates = range(len(self.arena.grafts)) if native is None else native
@@ -2246,6 +2249,32 @@ class GraftRepository:
                 out.append({"node_id": i, "text": g["text"],
                             "metadata": meta})
         return out
+
+    def _native_memory_rows(self, query):
+        if self.native_store is None or not hasattr(
+                self.native_store, "node_summary"):
+            return None
+        targets = self._native_active_text_matches(query)
+        if targets is None:
+            return None
+        rows = []
+        for idx in targets:
+            native_id = self._native_node_ids.get(int(idx))
+            if native_id is None:
+                return None
+            try:
+                row = self.native_store.node_summary(native_id)
+            except RuntimeError:
+                return None
+            meta = dict(row.get("metadata") or {})
+            if not meta.get("active", True):
+                continue
+            rows.append({
+                "node_id": int(idx),
+                "text": row.get("text", ""),
+                "metadata": meta,
+            })
+        return rows
 
     def why_remember(self, query):
         rows = self.show_memory_about(query)

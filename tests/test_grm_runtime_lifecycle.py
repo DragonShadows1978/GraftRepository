@@ -2149,6 +2149,40 @@ def test_native_text_scan_guides_memory_command_targets(tmp_path, monkeypatch):
     repo.close()
 
 
+def test_native_node_summary_guides_memory_read_rows(tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+    target = repo.remember("Native summary target is marker 55-5501.",
+                           metadata={"subject": "native summary target"})
+    repo.remember("Native summary decoy is marker 55-5502.")
+    target_native = repo.arena.grafts[target]["native_node_id"]
+
+    original_summary = repo.native_store.node_summary
+    calls = []
+
+    def traced_summary(node_id):
+        calls.append(int(node_id))
+        return original_summary(node_id)
+
+    monkeypatch.setattr(repo.native_store, "node_summary", traced_summary)
+
+    rows = repo.show_memory_about("Native summary target")
+    assert calls == [target_native]
+    assert rows == [{
+        "node_id": target,
+        "text": "Native summary target is marker 55-5501.",
+        "metadata": repo.native_store.metadata(target_native),
+    }]
+
+    why = repo.why_remember("Native summary target")
+    assert why[0]["node_id"] == target
+    assert why[0]["write_intent"] == "user_asserted"
+    assert calls[-1] == target_native
+    repo.close()
+
+
 def test_extraction_conflicts_respect_temporal_validity(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,

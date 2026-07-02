@@ -218,12 +218,15 @@ validation where feasible.
   native nodes now store the repository metadata JSON blob, mirror semantic
   metadata from `GraftRepository`, expose it through the C ABI/Python wrapper,
   and preserve it through native checkpoints.
-- Native host text readback:
+- Native host text/read-row readback:
   native nodes now expose their stored text through
   `grm_store_node_text()` / `NativeGraftStore.text()`, so repository-mirrored
   graft text can be read back from the C++ host store after native checkpoint
   reloads instead of only being validated indirectly through Python metadata or
-  payload ids.
+  payload ids. Native nodes also expose text plus metadata summaries through
+  `grm_store_node_summary_json()` / `NativeGraftStore.node_summary()`, and
+  `show_memory_about()` / `why_remember()` materialize read rows from the
+  native store after native target discovery succeeds.
 - Native route removal:
   `grm_store_clear_route()` / `NativeGraftStore.clear_route()` removes a node's
   persistent route keys and in-memory router entry. Repository WAL recovery uses
@@ -713,8 +716,11 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   flow through `grm_store_active_text_matches()` when the native mirror is
   complete, so pin/unpin/ignore/show/forget/correct target discovery also reads
   from the C++ host store before Python applies WAL, mutation, and durability
-  semantics. Cull/split graft parent retirement also applies native revision
-  transitions for each child after Python creates the child payloads.
+  semantics. Show/why read rows then consume
+  `grm_store_node_summary_json()` so returned text and metadata come from
+  native RAM rather than being reassembled from Python graft records. Cull/split
+  graft parent retirement also applies native revision transitions for each
+  child after Python creates the child payloads.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. Current-head MiniCPM3 MLA
@@ -734,7 +740,8 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
 
 The Python RAM-first runtime, opt-in C++ host-store mirror, native host
 payload, metadata, node-text readback, payload-pending WAL mirror, native route
-clearing, graph-edge checkpointing, native dirty flush planning, native
+clearing, node-summary read rows, graph-edge checkpointing, native dirty flush
+planning, native
 revision application, native route index with active-state and
 kind/scope/durability/mutability filters for MLA and GQA dialect ids plus
 runtime-consumed native recursive source-closure traversal, multi-key MLA

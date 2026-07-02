@@ -1194,6 +1194,39 @@ def test_native_node_text_round_trips_through_checkpoint(tmp_path):
         assert restored.text(node_id) == text
 
 
+def test_native_node_summary_round_trips_through_checkpoint(tmp_path):
+    lib = build_native(tmp_path)
+    ckpt = tmp_path / "summary_ckpt"
+    text = "native summary payload 14-1414"
+    meta = {
+        "kind": "fact",
+        "scope": "project",
+        "active": True,
+        "write_intent": "user_asserted",
+    }
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        node_id = store.add_node(text, b"abc", ntok=4)
+        store.set_metadata(node_id, meta)
+        assert store.node_summary(node_id) == {
+            "node_id": node_id,
+            "text": text,
+            "metadata": meta,
+        }
+        store.save_checkpoint(ckpt)
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as restored:
+        restored.load_checkpoint(ckpt)
+        assert restored.node_summary(node_id)["metadata"] == meta
+        assert restored.node_summary(node_id)["text"] == text
+
+
 def test_native_fact_identity_scan_round_trips_through_checkpoint(tmp_path):
     lib = build_native(tmp_path)
     ckpt = tmp_path / "fact_identity_ckpt"

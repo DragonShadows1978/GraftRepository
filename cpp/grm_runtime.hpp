@@ -373,6 +373,7 @@ class HostGraftStore {
   void set_metadata_json(std::uint64_t node_id, std::string metadata_json);
   const std::string& metadata_json(std::uint64_t node_id) const;
   const std::string& text(std::uint64_t node_id) const;
+  std::string node_summary_json(std::uint64_t node_id) const;
   void clear_route(std::uint64_t node_id);
   void set_active(std::uint64_t node_id, bool active);
   bool is_active(std::uint64_t node_id) const;
