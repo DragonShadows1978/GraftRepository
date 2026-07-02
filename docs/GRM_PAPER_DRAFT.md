@@ -5,7 +5,7 @@
 **David Perry** — Independent Researcher (no institutional affiliation)
 `dave@ai-storyforge.com`
 
-*Preprint v1.0 — 2026-07-02. Quantitative claims trace to gated,
+*Preprint v1.0 — 2026-07-02. DOI: 10.5281/zenodo.21138607. Quantitative claims trace to gated,
 registered evaluations in the project's research logs (§7). All reference
 identifiers verified against the arXiv record on 2026-07-02. Text licensed CC BY 4.0; the implementations are separately licensed
 AGPL-3.0 with commercial licensing available.*
@@ -516,7 +516,7 @@ durability gates, and registers pass criteria before runs.
 
 1. Perry, D. *Ghost Geometry: A Precision-Collapse Framework for the
    Collatz Conjecture, and Its Measured Transfer to Transformer
-   Attention.* 2026. Zenodo `[DOI on release]`.
+   Attention.* 2026. Zenodo. doi:10.5281/zenodo.21138525.
 2. Perry, D. *Selective Attention Is All You Need: Adaptive Precision
    Attention.* 2026. Zenodo. doi:10.5281/zenodo.21137970.
 3. Vaswani, A., et al. *Attention Is All You Need.* NeurIPS 2017.
@@ -553,4 +553,4 @@ durability gates, and registers pass criteria before runs.
 ## Suggested Citation
 
 Perry, D. (2026). *Grafted Memory — GRM: A Routed, Tokenless K/V Memory
-Runtime for Frozen Language Models.* Zenodo. `[DOI on release]`
+Runtime for Frozen Language Models.* Zenodo. doi:10.5281/zenodo.21138607
