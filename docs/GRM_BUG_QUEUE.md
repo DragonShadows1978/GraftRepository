@@ -114,11 +114,14 @@ can reinforce confidence/source history without rewriting protected fields
 such as `pinned` or `notes`. Regression:
 `test_low_trust_duplicate_does_not_overwrite_reinforcement_metadata`.
 
-**m12 — (optimization, optional):** the corpus-wide `isascii()` scan in
-`_native_active_text_matches` is O(total text) per command — cache a
-per-repo flag maintained at node-add and checkpoint-load. Native
-`dirty_plan` remains test-only — either consume it in `flush_now` ordering
-or note it as ABI-surface-only in the build plan.
+**m12 — Native text-scan and dirty-plan cleanup.** Fixed 2026-07-02.
+`_native_active_text_matches` now uses a repository-level ASCII corpus flag
+maintained by mutation tracking and checkpoint/WAL load instead of scanning
+all graft texts per command. `flush_now()` now consumes the native dirty
+flush order for payload writes while keeping manifest node order stable.
+Regressions:
+`test_native_text_scan_uses_ascii_cache_not_full_corpus_iteration` and
+`test_flush_now_uses_native_dirty_flush_order_without_reordering_manifest`.
 
 ---
 

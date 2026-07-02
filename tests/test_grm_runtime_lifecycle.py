@@ -2475,6 +2475,25 @@ def test_native_text_scan_guides_memory_command_targets(tmp_path, monkeypatch):
     repo.close()
 
 
+def test_native_text_scan_uses_ascii_cache_not_full_corpus_iteration(
+        tmp_path):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+    target = repo.remember("Native text target is ASCII marker 44-2001.")
+    repo.remember("Native text decoy is ASCII marker 44-2002.")
+
+    class NoIterationList(list):
+        def __iter__(self):
+            raise AssertionError("native text scan iterated full corpus")
+
+    repo.arena.grafts = NoIterationList(repo.arena.grafts)
+
+    assert repo._native_active_text_matches("Native text target") == [target]
+    repo.close()
+
+
 def test_native_node_summary_guides_memory_read_rows(tmp_path, monkeypatch):
     lib = build_native(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
@@ -3635,6 +3654,46 @@ def test_repository_skips_clean_native_checkpoint_rewrite(tmp_path, monkeypatch)
     assert len(calls) == 1
     assert repo.native_store.dirty_node_ids() == ()
     repo.close()
+
+
+def test_flush_now_uses_native_dirty_flush_order_without_reordering_manifest(
+        tmp_path, monkeypatch):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+    texts = [
+        "DOC dirty plan first 11-1000",
+        "DOC dirty plan second 22-2000",
+        "DOC dirty plan third 33-3000",
+    ]
+    for text in texts:
+        repo.add_document(text)
+
+    order_calls = []
+
+    def reversed_flush_order(default_order):
+        order_calls.append(tuple(default_order))
+        return list(reversed(default_order))
+
+    monkeypatch.setattr(repo, "_native_dirty_flush_order",
+                        reversed_flush_order, raising=False)
+    payload_writes = []
+    original_savez = repo._atomic_savez_compressed
+
+    def traced_savez(path, **payload):
+        if os.path.basename(os.path.dirname(path)) == "nodes":
+            payload_writes.append(os.path.basename(path))
+        original_savez(path, **payload)
+
+    monkeypatch.setattr(repo, "_atomic_savez_compressed", traced_savez)
+
+    repo.flush_now()
+
+    assert order_calls == [(0, 1, 2)]
+    assert payload_writes == ["0002.npz", "0001.npz", "0000.npz"]
+    with open(os.path.join(repo.path, "manifest.json")) as fh:
+        manifest = json.load(fh)
+    assert [n["text"] for n in manifest["nodes"]] == texts
 
 
 def test_repository_native_mirror_persists_semantic_metadata(tmp_path):

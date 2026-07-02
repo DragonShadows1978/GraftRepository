@@ -235,6 +235,7 @@ class GraftRepository:
         self._own_native_store = False
         self._native_node_ids = {}
         self._native_checkpoint_loaded = False
+        self._all_graft_text_ascii = True
         env_native_lib = os.environ.get("GRM_RUNTIME_LIB")
         native_requested = (
             native_enabled or native_lib_path
@@ -261,6 +262,7 @@ class GraftRepository:
                 self._adopt_orphan_payloads_for_nodes(
                     n.get("node_id") for n in self.recovered_nodes))
             self._sync_lifecycle()
+            self._rebuild_text_ascii_cache()
             self._sync_native_full()
             self.dirty_nodes.clear()
         self.runtime = GRMRuntime(self)
@@ -1440,6 +1442,15 @@ class GraftRepository:
                 out.append(idx)
         return out
 
+    def _note_graft_text_ascii(self, text):
+        if self._all_graft_text_ascii and not str(text or "").isascii():
+            self._all_graft_text_ascii = False
+
+    def _rebuild_text_ascii_cache(self):
+        self._all_graft_text_ascii = all(
+            str(g.get("text", "") or "").isascii() for g in self.arena.grafts)
+        return self._all_graft_text_ascii
+
     def _native_active_text_matches(self, query):
         if self.native_store is None or not hasattr(
                 self.native_store, "active_text_matches"):
@@ -1453,8 +1464,7 @@ class GraftRepository:
         # bytes only, while Python lower() is Unicode-aware. A non-ASCII
         # query (or corpus) must take the Python scan, or explicit
         # forget/correct commands silently miss ("münchen" vs "MÜNCHEN").
-        if not q.isascii() or any(
-                not g.get("text", "").isascii() for g in self.arena.grafts):
+        if not q.isascii() or not self._all_graft_text_ascii:
             return None
         try:
             native_ids = self.native_store.active_text_matches(q)
@@ -2617,6 +2627,33 @@ class GraftRepository:
         self.native_store.save_checkpoint(self._native_checkpoint_root())
         return True
 
+    def _native_dirty_flush_order(self, default_order):
+        order = [int(i) for i in default_order]
+        if self.native_store is None or not hasattr(
+                self.native_store, "dirty_plan"):
+            return order
+        try:
+            plan = self.native_store.dirty_plan()
+        except RuntimeError:
+            return order
+        order_set = set(order)
+        inverse = {
+            int(native_id): int(idx)
+            for idx, native_id in self._native_node_ids.items()
+        }
+        out = []
+        seen = set()
+        for item in plan:
+            idx = inverse.get(int(item.node_id))
+            if idx is None or idx not in order_set or idx in seen:
+                continue
+            if idx not in self.dirty_nodes:
+                continue
+            out.append(idx)
+            seen.add(idx)
+        out.extend(i for i in order if i not in seen)
+        return out
+
     def _native_load_checkpoint(self):
         self._native_checkpoint_loaded = False
         if self.native_store is None:
@@ -3525,6 +3562,7 @@ class GraftRepository:
     def _mark_mutations(self, before):
         self._sync_lifecycle()
         for i, g in enumerate(self.arena.grafts):
+            self._note_graft_text_ascii(g.get("text", ""))
             if i >= len(before):
                 self._mark_dirty(i, payload=g.get("h") is not None,
                                  metadata=True)
@@ -3613,7 +3651,6 @@ class GraftRepository:
     def flush_now(self):
         with self._flush_lock:
             self._sync_lifecycle()
-            nodes = []
             native_flushed = []
             self._ensure_repo_dirs()
             dirty_snapshot = {
@@ -3625,7 +3662,11 @@ class GraftRepository:
                 manifest="manifest.json")
             if checkpoint_lsn is None:
                 checkpoint_lsn = self._wal_lsn
-            for i, g in enumerate(self.arena.grafts):
+            manifest_nodes = [None] * len(self.arena.grafts)
+            flush_order = self._native_dirty_flush_order(
+                range(len(self.arena.grafts)))
+            for i in flush_order:
+                g = self.arena.grafts[int(i)]
                 f = os.path.join(self.path, "nodes", f"{i:04d}.npz")
                 dirty = self.dirty_nodes.get(i, {})
                 needs_payload = (dirty.get("payload") or not g.get("durable"))
@@ -3649,7 +3690,8 @@ class GraftRepository:
                     g["rare"] = ArenaCache._rare_tokens(g["text"])
                 g["dirty"] = False
                 self._ensure_lifecycle(i, g)
-                nodes.append(self._node_manifest(g))
+                manifest_nodes[i] = self._node_manifest(g)
+            nodes = [n for n in manifest_nodes if n is not None]
             self._atomic_savez_compressed(
                 os.path.join(self.path, "index.npz"), **self.arena.pack_index())
             # §6.4 write order: durable marks trail the checkpoint commit.
@@ -3750,6 +3792,7 @@ class GraftRepository:
         self.review_buffer = self._apply_review_wal_records(
             man.get("review_buffer", []), self.recovered_wal,
             since_lsn=manifest_wal_lsn)
+        self._rebuild_text_ascii_cache()
         self.dirty_nodes.clear()
         native_loaded = self._native_load_checkpoint()
         if native_loaded and not self._native_node_ids:
