@@ -456,6 +456,15 @@ class NativeGraftStore:
                 ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p,
                 ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_plan_remember_flush.restype = ctypes.c_int
+        self._has_runtime_event_plan = hasattr(
+            lib, "grm_store_plan_runtime_event")
+        if self._has_runtime_event_plan:
+            lib.grm_store_plan_runtime_event.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_int, ctypes.c_int, ctypes.c_int,
+                ctypes.c_char_p, ctypes.c_size_t,
+                ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_plan_runtime_event.restype = ctypes.c_int
         self._has_durability_mode_plan = hasattr(
             lib, "grm_store_plan_durability_mode")
         if self._has_durability_mode_plan:
@@ -1081,6 +1090,27 @@ class NativeGraftStore:
         cap = int(needed.value) + 1
         buf = ctypes.create_string_buffer(cap)
         self._check(self._lib.grm_store_plan_remember_flush(
+            self._handle, *args, buf, cap, ctypes.byref(needed)))
+        return json.loads(buf.value.decode("utf-8") or "{}")
+
+    def plan_runtime_event(self, *, event, action, autosave_enabled,
+                           force_flush=False, read_only=False):
+        if not getattr(self, "_has_runtime_event_plan", False):
+            raise RuntimeError(
+                "native GRM runtime event planner is unavailable")
+        needed = ctypes.c_uint64()
+        args = (
+            str(event or "").encode("utf-8"),
+            str(action or "").encode("utf-8"),
+            1 if autosave_enabled else 0,
+            1 if force_flush else 0,
+            1 if read_only else 0,
+        )
+        self._check(self._lib.grm_store_plan_runtime_event(
+            self._handle, *args, None, 0, ctypes.byref(needed)))
+        cap = int(needed.value) + 1
+        buf = ctypes.create_string_buffer(cap)
+        self._check(self._lib.grm_store_plan_runtime_event(
             self._handle, *args, buf, cap, ctypes.byref(needed)))
         return json.loads(buf.value.decode("utf-8") or "{}")
 

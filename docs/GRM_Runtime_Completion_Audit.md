@@ -97,6 +97,13 @@ validation where feasible.
   project/permanent `remember` commands force a runtime flush even when
   repository autosave is disabled, while session-scoped scratch memory still
   batches.
+- Native runtime event finish planner:
+  `grm_store_plan_runtime_event()` / `NativeGraftStore.plan_runtime_event()`
+  now decides the side-effect-free finish policy for runtime events: read-only
+  show/why events skip flush/page, explicit flush events force durability, and
+  autosave-enabled mutating memory/review/cull/extraction/turn events publish
+  through the existing Python IO boundary. `GRMRuntime` consumes this native
+  plan before calling `flush_now()` or `_page()`.
 - Review buffer:
   uncertain candidates can be recorded and later approved into memory. Approval
   of complete semantic fact triples now reuses the extractor write policy with
@@ -677,9 +684,11 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   Native can apply final revision and expire active-state transitions once
   Python decides the target set.
   The explicit memory-command grammar now has a native parse-plan boundary, and
-  command execution completes behind `GRMRuntime`; public extractor-candidate
-  execution is also runtime-coordinated. Conflict policy and extractor quality
-  still live in the Python repository policy layer. Native dialect profiles now
+  command execution completes behind `GRMRuntime`; runtime event finish policy
+  now flows through `grm_store_plan_runtime_event()` before Python performs
+  flush/page side effects. Public extractor-candidate execution is also
+  runtime-coordinated. Conflict policy and extractor quality still live in the
+  Python repository policy layer. Native dialect profiles now
   reject fixed/absolute-position stores that claim remountability and require a
   RoPE/rotary/relative position law for remountable graft profiles, so
   non-reseatable cache dialects cannot silently enter the graft mount path.
@@ -716,6 +725,9 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   Librarian fold scheduling now flows through `grm_store_plan_librarian()`, so
   digest/era thresholds, era enablement, and deferred-mode backpressure are also
   native runtime-plan decisions before Python performs model consolidation.
+  Runtime finish decisions now also flow through
+  `grm_store_plan_runtime_event()`, so read-only/forced-flush/autosave/page
+  policy is a native plan before Python performs IO or paging.
   Explicit
   extractor target ids for supersede/expire also flow through
   `grm_store_filter_active_nodes()`, so C++ host metadata state performs the
@@ -757,8 +769,8 @@ runtime-consumed native recursive source-closure traversal, multi-key MLA
 arena-route acceleration, native GQA raw `|q.k|` route acceleration, native
 explicit memory-command parser, native remember-command flush planner, native
 durability-mode transition planner, native metadata-update planner, native
-memory-mutation planner, native librarian fold planner, native swap-plan
-boundary, native host tensor
+memory-mutation planner, native librarian fold planner, native runtime event
+finish planner, native swap-plan boundary, native host tensor
 swap/evict references, TensorCUDA fused
 splice/evict cache movement, TensorCUDA fused RoPE
 re-seat movement, TensorCUDA fused

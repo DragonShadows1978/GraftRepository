@@ -213,6 +213,21 @@ RememberFlushPlan plan_remember_flush(
     bool flush_immediately);
 std::string remember_flush_plan_json(const RememberFlushPlan& plan);
 
+struct RuntimeEventPlan {
+  bool flush = false;
+  bool page = true;
+  bool read_only = false;
+  std::string reason;
+};
+
+RuntimeEventPlan plan_runtime_event(
+    const std::string& event,
+    const std::string& action,
+    bool autosave_enabled,
+    bool force_flush,
+    bool read_only);
+std::string runtime_event_plan_json(const RuntimeEventPlan& plan);
+
 struct DurabilityModePlan {
   std::string durability_mode;
   bool target_wal_enabled = false;

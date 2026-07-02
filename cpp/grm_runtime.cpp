@@ -1087,6 +1087,50 @@ std::string remember_flush_plan_json(const RememberFlushPlan& plan) {
   return out.str();
 }
 
+RuntimeEventPlan plan_runtime_event(
+    const std::string& event,
+    const std::string& action,
+    bool autosave_enabled,
+    bool force_flush,
+    bool read_only) {
+  RuntimeEventPlan plan;
+  const auto normalized_event = ascii_lower(trim(event));
+  const auto normalized_action = ascii_lower(trim(action));
+  const bool action_read_only =
+      normalized_event == "memory_command" &&
+      (normalized_action == "show_memory" ||
+       normalized_action == "why_memory");
+  if (read_only || action_read_only) {
+    plan.read_only = true;
+    plan.page = false;
+    plan.reason = "read-only runtime event";
+    return plan;
+  }
+  if (force_flush ||
+      (normalized_event == "memory_command" && normalized_action == "flush")) {
+    plan.flush = true;
+    plan.reason = "runtime event requested flush";
+    return plan;
+  }
+  if (autosave_enabled) {
+    plan.flush = true;
+    plan.reason = "autosave enabled";
+  }
+  return plan;
+}
+
+std::string runtime_event_plan_json(const RuntimeEventPlan& plan) {
+  std::ostringstream out;
+  bool first = true;
+  out << "{";
+  append_json_bool_field(out, first, "flush", plan.flush);
+  append_json_bool_field(out, first, "page", plan.page);
+  append_json_bool_field(out, first, "read_only", plan.read_only);
+  append_json_string_field(out, first, "reason", plan.reason);
+  out << "}";
+  return out.str();
+}
+
 std::string normalize_durability_mode(std::string mode) {
   mode = ascii_lower(trim(mode.empty() ? "session_safe" : mode));
   for (char& c : mode) {
@@ -3997,6 +4041,39 @@ int grm_store_plan_remember_flush(grm_store_handle* handle,
             durability == nullptr ? "" : durability,
             scope == nullptr ? "" : scope,
             flush_immediately != 0));
+    *out_len = static_cast<uint64_t>(json.size());
+    if (out_json != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, json.size());
+      std::memcpy(out_json, json.data(), n);
+      out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_plan_runtime_event(grm_store_handle* handle,
+                                 const char* event,
+                                 const char* action,
+                                 int autosave_enabled,
+                                 int force_flush,
+                                 int read_only,
+                                 char* out_json,
+                                 size_t out_cap,
+                                 uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr ||
+        event == nullptr || action == nullptr || out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid plan_runtime_event arguments");
+    }
+    if (out_json == nullptr && out_cap > 0) {
+      return grm_fail_msg(
+          handle, "null runtime event buffer with nonzero capacity");
+    }
+    const auto json = grm::runtime_event_plan_json(
+        grm::plan_runtime_event(event, action, autosave_enabled != 0,
+                                force_flush != 0, read_only != 0));
     *out_len = static_cast<uint64_t>(json.size());
     if (out_json != nullptr && out_cap > 0) {
       const size_t n = std::min(out_cap - 1, json.size());

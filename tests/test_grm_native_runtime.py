@@ -770,6 +770,45 @@ def test_native_remember_flush_planner(tmp_path):
             }
 
 
+def test_native_runtime_event_planner(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        assert store.plan_runtime_event(
+            event="memory_command", action="show_memory",
+            autosave_enabled=True) == {
+                "flush": False,
+                "page": False,
+                "read_only": True,
+                "reason": "read-only runtime event",
+            }
+        assert store.plan_runtime_event(
+            event="memory_command", action="flush",
+            autosave_enabled=False) == {
+                "flush": True,
+                "page": True,
+                "read_only": False,
+                "reason": "runtime event requested flush",
+            }
+        assert store.plan_runtime_event(
+            event="review", action="approve_review",
+            autosave_enabled=True) == {
+                "flush": True,
+                "page": True,
+                "read_only": False,
+                "reason": "autosave enabled",
+            }
+        assert store.plan_runtime_event(
+            event="extraction", action="write_direct",
+            autosave_enabled=False) == {
+                "flush": False,
+                "page": True,
+                "read_only": False,
+            }
+
+
 def test_native_durability_mode_planner(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

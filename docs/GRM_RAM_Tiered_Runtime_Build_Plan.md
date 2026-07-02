@@ -108,8 +108,11 @@ forget, correct, review-fallback, ignore, and cull/split-graft decisions through
 metadata through the same dirty/WAL/native-metadata path; read-only show/why
 commands set a runtime result without forcing autosave, with native-backed why
 rows reading text, metadata, and provenance from the C++ host store when
-available. `flush memory now` and
-`flush_immediately` plans still force a flush even when autosave is disabled.
+available. `grm_store_plan_runtime_event()` now owns the side-effect-free
+finish policy for runtime events, so read-only, forced-flush, autosave, and
+page/no-page decisions are native plans before Python performs `flush_now()` or
+`_page()`. `flush memory now` and `flush_immediately` plans still force a flush
+even when autosave is disabled.
 Durability mode commands (`switch to volatile/session-safe/project-safe mode`)
 now change the repository `durability_mode`, toggle WAL eligibility for that
 mode, persist the checkpoint mode in `manifest.json`, and replay post-checkpoint
@@ -148,7 +151,10 @@ path for tests and trusted pipelines.
 boundary for chat turns, scripted turns, deferred librarian work, review
 execution, and explicit memory commands: snapshot, arena/model operation,
 extraction/review policy, librarian folding, mutation marking, flush, and
-paging. `GraftRepository` keeps the public API and persistence surface.
+paging. Native `grm_store_plan_runtime_event()` now supplies the finish policy
+for read-only, autosave, forced flush, and page/no-page decisions while Python
+keeps the IO/paging side effects. `GraftRepository` keeps the public API and
+persistence surface.
 Review-buffer execution now supports approve, reject, edit, and scope-change
 operations. Review item status (`pending`, `approved`, `rejected`) and
 post-manifest review edits are replayed from WAL, so review decisions survive

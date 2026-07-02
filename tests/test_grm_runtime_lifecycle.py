@@ -941,6 +941,65 @@ def test_memory_control_commands_update_and_read_metadata(tmp_path):
     assert meta["mutability"] == "mutable"
 
 
+def test_native_runtime_event_plan_guides_runtime_finish(
+        tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=True, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+    original_plan = repo.native_store.plan_runtime_event
+    calls = []
+
+    def traced_plan(**kwargs):
+        calls.append(dict(kwargs))
+        return original_plan(**kwargs)
+
+    monkeypatch.setattr(repo.native_store, "plan_runtime_event", traced_plan)
+
+    remembered = repo.apply_memory_command(
+        "remember this for the project: Native runtime finish 66-6600")
+    assert remembered["action"] == "remember"
+    assert calls[-1] == {
+        "event": "memory_command",
+        "action": "remember",
+        "autosave_enabled": True,
+        "force_flush": False,
+        "read_only": False,
+    }
+    assert repo.runtime.last_result.autosaved is True
+
+    shown = repo.apply_memory_command(
+        "show memory about: Native runtime finish")
+    assert shown["action"] == "show_memory"
+    assert calls[-1] == {
+        "event": "memory_command",
+        "action": "show_memory",
+        "autosave_enabled": True,
+        "force_flush": False,
+        "read_only": True,
+    }
+    assert repo.runtime.last_result.autosaved is False
+
+    flushed = repo.apply_memory_command("flush memory now")
+    assert flushed["action"] == "flush"
+    assert calls[-1]["action"] == "flush"
+    assert calls[-1]["force_flush"] is True
+    assert repo.runtime.last_result.autosaved is True
+
+    rid = repo.review_candidate("Native runtime review finish", confidence=0.4)
+    repo.edit_review(rid, confidence=0.8)
+    assert calls[-1] == {
+        "event": "review",
+        "action": "edit_review",
+        "autosave_enabled": True,
+        "force_flush": False,
+        "read_only": False,
+    }
+    assert repo.runtime.last_result.event == "review"
+    assert repo.runtime.last_result.autosaved is True
+    repo.close()
+
+
 def test_memory_mode_commands_change_wal_behavior(tmp_path):
     path = str(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,

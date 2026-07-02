@@ -33,6 +33,30 @@ class GRMRuntime:
         repo = self.repository
         return tuple(range(len(before), len(repo.arena.grafts)))
 
+    def _runtime_event_plan(self, event, action="", *, autosave_enabled=False,
+                            force_flush=False, read_only=False):
+        repo = self.repository
+        native = getattr(repo, "native_store", None)
+        if native is not None and hasattr(native, "plan_runtime_event"):
+            try:
+                return native.plan_runtime_event(
+                    event=event, action=action,
+                    autosave_enabled=bool(autosave_enabled),
+                    force_flush=bool(force_flush),
+                    read_only=bool(read_only))
+            except RuntimeError:
+                pass
+        actual_read_only = bool(read_only) or (
+            event == "memory_command" and action in (
+                "show_memory", "why_memory"))
+        flush = False
+        page = not actual_read_only
+        if not actual_read_only:
+            flush = (bool(force_flush) or
+                     (event == "memory_command" and action == "flush") or
+                     bool(autosave_enabled))
+        return {"flush": flush, "page": page, "read_only": actual_read_only}
+
     def _finish_turn_event(self, event, before, extraction=(), *,
                            autosave=False):
         repo = self.repository
@@ -40,11 +64,13 @@ class GRMRuntime:
         repo._librarian()
         folds = len(getattr(repo, "fold_history", ())) - folds_before
         repo._mark_mutations(before)
+        plan = self._runtime_event_plan(
+            event, autosave_enabled=bool(autosave and repo.autosave))
         did_autosave = False
-        if autosave and repo.autosave:
+        if plan.get("flush"):
             repo.flush_now()
             did_autosave = True
-        paged = repo._page()
+        paged = repo._page() if plan.get("page", True) else 0
         result = RuntimeResult(
             event=event,
             before_nodes=len(before),
@@ -113,11 +139,14 @@ class GRMRuntime:
     def _finish_memory_event(self, before, action, *, force_flush=False,
                              read_only=False):
         repo = self.repository
+        plan = self._runtime_event_plan(
+            "memory_command", action, autosave_enabled=repo.autosave,
+            force_flush=force_flush, read_only=read_only)
         did_flush = False
-        if not read_only and (force_flush or repo.autosave):
+        if plan.get("flush"):
             repo.flush_now()
             did_flush = True
-        paged = 0 if read_only else repo._page()
+        paged = repo._page() if plan.get("page", True) else 0
         self.last_result = RuntimeResult(
             event="memory_command",
             before_nodes=len(before),
@@ -290,11 +319,13 @@ class GRMRuntime:
 
     def _finish_review_event(self, before, action):
         repo = self.repository
+        plan = self._runtime_event_plan(
+            "review", action, autosave_enabled=repo.autosave)
         did_autosave = False
-        if repo.autosave:
+        if plan.get("flush"):
             repo.flush_now()
             did_autosave = True
-        paged = repo._page()
+        paged = repo._page() if plan.get("page", True) else 0
         self.last_result = RuntimeResult(
             event="review",
             before_nodes=len(before),
@@ -328,11 +359,13 @@ class GRMRuntime:
 
     def _finish_cull_event(self, before, action):
         repo = self.repository
+        plan = self._runtime_event_plan(
+            "cull", action, autosave_enabled=repo.autosave)
         did_autosave = False
-        if repo.autosave:
+        if plan.get("flush"):
             repo.flush_now()
             did_autosave = True
-        paged = repo._page()
+        paged = repo._page() if plan.get("page", True) else 0
         self.last_result = RuntimeResult(
             event="cull",
             before_nodes=len(before),
@@ -359,11 +392,13 @@ class GRMRuntime:
 
     def _finish_extraction_event(self, before, action, results):
         repo = self.repository
+        plan = self._runtime_event_plan(
+            "extraction", action, autosave_enabled=repo.autosave)
         did_autosave = False
-        if repo.autosave:
+        if plan.get("flush"):
             repo.flush_now()
             did_autosave = True
-        paged = repo._page()
+        paged = repo._page() if plan.get("page", True) else 0
         self.last_result = RuntimeResult(
             event="extraction",
             before_nodes=len(before),
