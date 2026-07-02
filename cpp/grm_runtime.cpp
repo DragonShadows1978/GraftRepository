@@ -1265,6 +1265,60 @@ std::string memory_mutation_plan_json(const MemoryMutationPlan& plan) {
   return out.str();
 }
 
+LibrarianPlan plan_librarian(
+    std::uint64_t foldable_turn_count,
+    std::uint64_t foldable_digest_count,
+    std::uint64_t turns_high,
+    std::uint64_t turns_fold,
+    std::uint64_t digests_high,
+    std::uint64_t digests_fold,
+    bool era_enabled,
+    bool deferred_backpressure) {
+  LibrarianPlan plan;
+  plan.deferred_backpressure = deferred_backpressure;
+  if (deferred_backpressure) {
+    if (turns_high > 0 && turns_fold > 0 &&
+        foldable_turn_count >= turns_high * 2) {
+      plan.digest_source_count = std::min(turns_fold, foldable_turn_count);
+      plan.pending_jobs = 1;
+      plan.reason = "deferred turn backpressure";
+    } else {
+      plan.reason = "below deferred backpressure threshold";
+    }
+    return plan;
+  }
+  if (turns_high > 0 && turns_fold > 0 &&
+      foldable_turn_count >= turns_high) {
+    plan.digest_source_count = std::min(turns_fold, foldable_turn_count);
+    plan.pending_jobs += 1;
+  }
+  if (era_enabled && digests_high > 0 && digests_fold > 0 &&
+      foldable_digest_count >= digests_high) {
+    plan.era_source_count = std::min(digests_fold, foldable_digest_count);
+    plan.pending_jobs += 1;
+  }
+  if (plan.pending_jobs == 0) {
+    plan.reason = "below fold thresholds";
+  }
+  return plan;
+}
+
+std::string librarian_plan_json(const LibrarianPlan& plan) {
+  std::ostringstream out;
+  bool first = true;
+  out << "{";
+  append_json_u64_field(out, first, "pending_jobs", plan.pending_jobs, true);
+  append_json_u64_field(out, first, "digest_source_count",
+                        plan.digest_source_count, true);
+  append_json_u64_field(out, first, "era_source_count",
+                        plan.era_source_count, true);
+  append_json_bool_field(out, first, "deferred_backpressure",
+                         plan.deferred_backpressure);
+  append_json_string_field(out, first, "reason", plan.reason);
+  out << "}";
+  return out.str();
+}
+
 ExtractionPolicyPlan plan_extraction_policy(
     const std::string& action,
     const std::string& write_intent,
@@ -3910,6 +3964,47 @@ int grm_store_plan_memory_mutation(grm_store_handle* handle,
     const auto json = grm::memory_mutation_plan_json(
         grm::plan_memory_mutation(command, has_query != 0, target_count,
                                   has_replacement != 0));
+    *out_len = static_cast<uint64_t>(json.size());
+    if (out_json != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, json.size());
+      std::memcpy(out_json, json.data(), n);
+      out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_plan_librarian(grm_store_handle* handle,
+                             uint64_t foldable_turn_count,
+                             uint64_t foldable_digest_count,
+                             uint64_t turns_high,
+                             uint64_t turns_fold,
+                             uint64_t digests_high,
+                             uint64_t digests_fold,
+                             int era_enabled,
+                             int deferred_backpressure,
+                             char* out_json,
+                             size_t out_cap,
+                             uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid plan_librarian arguments");
+    }
+    if (out_json == nullptr && out_cap > 0) {
+      return grm_fail_msg(
+          handle, "null librarian plan buffer with nonzero capacity");
+    }
+    const auto json = grm::librarian_plan_json(grm::plan_librarian(
+        foldable_turn_count,
+        foldable_digest_count,
+        turns_high,
+        turns_fold,
+        digests_high,
+        digests_fold,
+        era_enabled != 0,
+        deferred_backpressure != 0));
     *out_len = static_cast<uint64_t>(json.size());
     if (out_json != nullptr && out_cap > 0) {
       const size_t n = std::min(out_cap - 1, json.size());

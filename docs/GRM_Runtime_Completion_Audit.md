@@ -137,6 +137,16 @@ validation where feasible.
   mutation marking, flush, and paging.
   `GraftRepository` remains the public API and persistence owner, but the
   hot-path orchestration is no longer spread across public methods.
+- Native librarian fold planner:
+  `grm_store_plan_librarian()` / `NativeGraftStore.plan_librarian()` now owns
+  the deterministic fold scheduling law: foldable turn/digest counts,
+  digest/era thresholds, era capability, and deferred-mode 2x turn
+  backpressure. Python still chooses concrete source ids and runs model
+  consolidation/QC, but the threshold/backpressure decision is a native
+  side-effect-free runtime plan. Covered by
+  `test_native_librarian_plan_via_ctypes`,
+  `test_native_librarian_plan_guides_fold_scheduler`, and
+  `test_native_librarian_plan_guides_deferred_backpressure`.
 - Selected-section API:
   `GraftRepository.select_graft_span()` now creates a non-retiring child graft
   for one intentional token span, preserving sliced RAM/native payloads,
@@ -692,6 +702,9 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   also flows through `grm_store_plan_memory_mutation()`, so empty-query guards,
   no-target no-ops, replacement-only writes, target expiry, metadata update, and
   revision intent are planned natively before Python mutates/WAL-records state.
+  Librarian fold scheduling now flows through `grm_store_plan_librarian()`, so
+  digest/era thresholds, era enablement, and deferred-mode backpressure are also
+  native runtime-plan decisions before Python performs model consolidation.
   Explicit
   extractor target ids for supersede/expire also flow through
   `grm_store_filter_active_nodes()`, so C++ host metadata state performs the
@@ -728,7 +741,8 @@ runtime-consumed native recursive source-closure traversal, multi-key MLA
 arena-route acceleration, native GQA raw `|q.k|` route acceleration, native
 explicit memory-command parser, native remember-command flush planner, native
 durability-mode transition planner, native metadata-update planner, native
-memory-mutation planner, native swap-plan boundary, native host tensor
+memory-mutation planner, native librarian fold planner, native swap-plan
+boundary, native host tensor
 swap/evict references, TensorCUDA fused
 splice/evict cache movement, TensorCUDA fused RoPE
 re-seat movement, TensorCUDA fused

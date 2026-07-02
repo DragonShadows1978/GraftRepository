@@ -1413,6 +1413,82 @@ def test_librarian_respects_arena_era_folding_capability(tmp_path):
     assert repo.fold_pending() == 0
 
 
+def test_native_librarian_plan_guides_fold_scheduler(tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+    for i in range(8):
+        idx = repo.arena.deposit(f"turn fold candidate {i}")
+        repo.arena.grafts[idx]["kind"] = "turn"
+    for i in range(6):
+        idx = repo.arena.deposit(f"digest fold candidate {i}")
+        repo.arena.grafts[idx]["kind"] = "digest"
+    repo.arena.grafts[0]["no_fold"] = True
+
+    calls = []
+    original_plan = repo.native_store.plan_librarian
+
+    def traced_plan(**kwargs):
+        calls.append(dict(kwargs))
+        return original_plan(**kwargs)
+
+    monkeypatch.setattr(repo.native_store, "plan_librarian", traced_plan)
+
+    assert repo.fold_pending() == 1
+    assert calls[-1] == {
+        "foldable_turn_count": 7,
+        "foldable_digest_count": 6,
+        "turns_high": 8,
+        "turns_fold": 4,
+        "digests_high": 6,
+        "digests_fold": 3,
+        "era_enabled": True,
+        "deferred_backpressure": False,
+    }
+    assert repo._due() == [("era", [8, 9, 10])]
+
+    repo.arena.grafts[0]["no_fold"] = False
+    due = repo._due()
+    assert due == [("digest", [0, 1, 2, 3]), ("era", [8, 9, 10])]
+    assert calls[-1]["foldable_turn_count"] == 8
+
+    repo.close()
+
+
+def test_native_librarian_plan_guides_deferred_backpressure(
+        tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib,
+                           librarian_mode="deferred")
+    for i in range(15):
+        idx = repo.arena.deposit(f"deferred fold candidate {i}")
+        repo.arena.grafts[idx]["kind"] = "turn"
+
+    calls = []
+    original_plan = repo.native_store.plan_librarian
+
+    def traced_plan(**kwargs):
+        calls.append(dict(kwargs))
+        return original_plan(**kwargs)
+
+    monkeypatch.setattr(repo.native_store, "plan_librarian", traced_plan)
+
+    assert repo._librarian_jobs(deferred_backpressure=True) == []
+    assert calls[-1]["deferred_backpressure"] is True
+    assert calls[-1]["foldable_turn_count"] == 15
+
+    idx = repo.arena.deposit("deferred fold candidate 15")
+    repo.arena.grafts[idx]["kind"] = "turn"
+    assert repo._librarian_jobs(deferred_backpressure=True) == [
+        ("digest", [0, 1, 2, 3])]
+    assert calls[-1]["foldable_turn_count"] == 16
+
+    repo.close()
+
+
 def test_native_memory_command_parser_drives_repository_policy(tmp_path):
     lib = build_native(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),

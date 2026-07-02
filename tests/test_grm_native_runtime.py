@@ -262,6 +262,49 @@ def test_native_memory_mutation_plan_via_ctypes(tmp_path):
         assert metadata["update_metadata"] is True
 
 
+def test_native_librarian_plan_via_ctypes(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        plan = store.plan_librarian(
+            foldable_turn_count=8, foldable_digest_count=6,
+            turns_high=8, turns_fold=4,
+            digests_high=6, digests_fold=3,
+            era_enabled=True)
+        assert plan["pending_jobs"] == 2
+        assert plan["digest_source_count"] == 4
+        assert plan["era_source_count"] == 3
+        assert plan["deferred_backpressure"] is False
+
+        disabled = store.plan_librarian(
+            foldable_turn_count=0, foldable_digest_count=6,
+            turns_high=8, turns_fold=4,
+            digests_high=6, digests_fold=3,
+            era_enabled=False)
+        assert disabled["pending_jobs"] == 0
+        assert disabled["era_source_count"] == 0
+
+        below = store.plan_librarian(
+            foldable_turn_count=15, foldable_digest_count=6,
+            turns_high=8, turns_fold=4,
+            digests_high=6, digests_fold=3,
+            era_enabled=True, deferred_backpressure=True)
+        assert below["pending_jobs"] == 0
+        assert below["reason"] == "below deferred backpressure threshold"
+
+        pressure = store.plan_librarian(
+            foldable_turn_count=16, foldable_digest_count=6,
+            turns_high=8, turns_fold=4,
+            digests_high=6, digests_fold=3,
+            era_enabled=True, deferred_backpressure=True)
+        assert pressure["pending_jobs"] == 1
+        assert pressure["digest_source_count"] == 4
+        assert pressure["era_source_count"] == 0
+        assert pressure["reason"] == "deferred turn backpressure"
+
+
 def test_native_profile_requires_reseatable_position_law(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

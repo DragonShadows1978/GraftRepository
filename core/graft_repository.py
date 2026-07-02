@@ -2271,26 +2271,71 @@ class GraftRepository:
                 if not g.get("retired") and i not in live
                 and g.get("kind", "turn") in kinds]
 
-    def _due(self):
-        """Stateless fold plan. Documents are never folded — they are
-        reference material, not history. Fold-exempt nodes (a prior fidelity
-        abort) drop out so the window advances instead of looping."""
+    def _foldable(self, kinds):
         ok = lambda i: not self.arena.grafts[i].get("no_fold")
+        return [i for i in self._active(kinds) if ok(i)]
+
+    def _native_librarian_plan(self, turns, digests, *,
+                               deferred_backpressure=False):
+        if self.native_store is None or not hasattr(
+                self.native_store, "plan_librarian"):
+            return None
+        try:
+            return self.native_store.plan_librarian(
+                foldable_turn_count=len(turns),
+                foldable_digest_count=len(digests),
+                turns_high=self.TURNS_HIGH,
+                turns_fold=self.TURNS_FOLD,
+                digests_high=self.DIGESTS_HIGH,
+                digests_fold=self.DIGESTS_FOLD,
+                era_enabled=getattr(self.arena, "ENABLE_ERA_FOLDING", True),
+                deferred_backpressure=deferred_backpressure)
+        except RuntimeError:
+            return None
+
+    def _fallback_librarian_jobs(self, turns, digests, *,
+                                 deferred_backpressure=False):
         jobs = []
-        turns = [i for i in self._active(("turn",)) if ok(i)]
+        if deferred_backpressure:
+            if len(turns) >= self.TURNS_HIGH * 2:
+                jobs.append(("digest", turns[:self.TURNS_FOLD]))
+            return jobs
         if len(turns) >= self.TURNS_HIGH:
             jobs.append(("digest", turns[:self.TURNS_FOLD]))
         if self.DIGESTS_HIGH and getattr(self.arena, "ENABLE_ERA_FOLDING", True):
-            digests = [i for i in self._active(("digest",)) if ok(i)]
             if len(digests) >= self.DIGESTS_HIGH:
                 jobs.append(("era", digests[:self.DIGESTS_FOLD]))
         return jobs
 
+    def _librarian_jobs(self, *, deferred_backpressure=False):
+        """Stateless fold plan. Documents are never folded — they are
+        reference material, not history. Fold-exempt nodes (a prior fidelity
+        abort) drop out so the window advances instead of looping."""
+        turns = self._foldable(("turn",))
+        digests = self._foldable(("digest",))
+        plan = self._native_librarian_plan(
+            turns, digests, deferred_backpressure=deferred_backpressure)
+        if plan is None:
+            return self._fallback_librarian_jobs(
+                turns, digests,
+                deferred_backpressure=deferred_backpressure)
+        jobs = []
+        digest_n = min(int(plan.get("digest_source_count", 0)), len(turns))
+        era_n = min(int(plan.get("era_source_count", 0)), len(digests))
+        if digest_n:
+            jobs.append(("digest", turns[:digest_n]))
+        if era_n:
+            jobs.append(("era", digests[:era_n]))
+        return jobs
+
+    def _due(self):
+        return self._librarian_jobs()
+
     def fold_pending(self):
         return len(self._due())
 
-    def _fold_once(self):
-        jobs = self._due()
+    def _fold_once(self, jobs=None):
+        jobs = self._due() if jobs is None else jobs
         if not jobs:
             return False
         kind, idxs = jobs[0]
@@ -2332,10 +2377,9 @@ class GraftRepository:
             # ones from a fidelity abort are permanently resident and must
             # NOT re-trigger inline folds that would just abort again — the
             # 9s hot-path spike, measured 2026-06-11).
-            foldable = sum(1 for i in self._active(("turn",))
-                           if not self.arena.grafts[i].get("no_fold"))
-            if foldable >= self.TURNS_HIGH * 2:
-                self._fold_once()
+            jobs = self._librarian_jobs(deferred_backpressure=True)
+            if jobs:
+                self._fold_once(jobs=jobs)
 
     def _node_bytes(self, g):
         # dialect vals/token/layer (MLA: c 256 + kpe 32; GQA: kv heads x

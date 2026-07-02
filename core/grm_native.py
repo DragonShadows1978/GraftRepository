@@ -462,6 +462,15 @@ class NativeGraftStore:
                 ctypes.c_uint64, ctypes.c_int, ctypes.c_char_p,
                 ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_plan_memory_mutation.restype = ctypes.c_int
+        self._has_librarian_plan = hasattr(lib, "grm_store_plan_librarian")
+        if self._has_librarian_plan:
+            lib.grm_store_plan_librarian.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64, ctypes.c_uint64,
+                ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64,
+                ctypes.c_uint64, ctypes.c_int, ctypes.c_int,
+                ctypes.c_char_p, ctypes.c_size_t,
+                ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_plan_librarian.restype = ctypes.c_int
         self._has_extraction_policy_plan = hasattr(
             lib, "grm_store_plan_extraction_policy")
         if self._has_extraction_policy_plan:
@@ -1082,6 +1091,30 @@ class NativeGraftStore:
         cap = int(needed.value) + 1
         buf = ctypes.create_string_buffer(cap)
         self._check(self._lib.grm_store_plan_memory_mutation(
+            self._handle, *args, buf, cap, ctypes.byref(needed)))
+        return json.loads(buf.value.decode("utf-8") or "{}")
+
+    def plan_librarian(self, *, foldable_turn_count, foldable_digest_count,
+                       turns_high, turns_fold, digests_high, digests_fold,
+                       era_enabled=True, deferred_backpressure=False):
+        if not getattr(self, "_has_librarian_plan", False):
+            raise RuntimeError("native GRM librarian planner is unavailable")
+        needed = ctypes.c_uint64()
+        args = (
+            int(foldable_turn_count),
+            int(foldable_digest_count),
+            int(turns_high),
+            int(turns_fold),
+            int(digests_high),
+            int(digests_fold),
+            1 if era_enabled else 0,
+            1 if deferred_backpressure else 0,
+        )
+        self._check(self._lib.grm_store_plan_librarian(
+            self._handle, *args, None, 0, ctypes.byref(needed)))
+        cap = int(needed.value) + 1
+        buf = ctypes.create_string_buffer(cap)
+        self._check(self._lib.grm_store_plan_librarian(
             self._handle, *args, buf, cap, ctypes.byref(needed)))
         return json.loads(buf.value.decode("utf-8") or "{}")
 

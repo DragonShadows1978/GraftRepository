@@ -257,6 +257,25 @@ MemoryMutationPlan plan_memory_mutation(
     bool has_replacement);
 std::string memory_mutation_plan_json(const MemoryMutationPlan& plan);
 
+struct LibrarianPlan {
+  std::uint64_t pending_jobs = 0;
+  std::uint64_t digest_source_count = 0;
+  std::uint64_t era_source_count = 0;
+  bool deferred_backpressure = false;
+  std::string reason;
+};
+
+LibrarianPlan plan_librarian(
+    std::uint64_t foldable_turn_count,
+    std::uint64_t foldable_digest_count,
+    std::uint64_t turns_high,
+    std::uint64_t turns_fold,
+    std::uint64_t digests_high,
+    std::uint64_t digests_fold,
+    bool era_enabled,
+    bool deferred_backpressure);
+std::string librarian_plan_json(const LibrarianPlan& plan);
+
 struct ExtractionPolicyPlan {
   std::string action;
   std::string reason;
