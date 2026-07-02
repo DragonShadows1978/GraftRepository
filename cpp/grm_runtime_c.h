@@ -344,6 +344,8 @@ int grm_store_set_route_list(grm_store_handle* handle,
                              const uint64_t* route_offsets,
                              uint64_t key_count,
                              const char* lexical_keys);
+int grm_store_clear_route(grm_store_handle* handle,
+                          uint64_t node_id);
 int grm_store_route(grm_store_handle* handle,
                     const float* query,
                     uint64_t query_len,

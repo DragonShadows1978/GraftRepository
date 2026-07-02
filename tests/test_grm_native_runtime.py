@@ -195,6 +195,31 @@ def test_native_store_lifecycle_via_ctypes(tmp_path):
         store.evict_device_copy(node_id)
 
 
+def test_native_store_clear_route_removes_persistent_route_entry(tmp_path):
+    lib = build_native(tmp_path)
+    ckpt = tmp_path / "clear_route_ckpt"
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        node_id = store.add_node("route clear target", b"", ntok=3)
+        store.set_route(node_id, [1.0, 0.0], ["clear-me"])
+        assert store.stats().route_entries == 1
+        assert store.route([1.0, 0.0], ["clear-me"], topk=1) == [node_id]
+        store.clear_route(node_id)
+        assert store.stats().route_entries == 0
+        assert store.route([1.0, 0.0], ["clear-me"], topk=1) == []
+        store.save_checkpoint(ckpt)
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as restored:
+        restored.load_checkpoint(ckpt)
+        assert restored.stats().route_entries == 0
+        assert restored.route([1.0, 0.0], ["clear-me"], topk=1) == []
+
+
 def test_native_profile_requires_reseatable_position_law(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

@@ -256,6 +256,7 @@ class GraftRepository:
                 self.recovered_wal)
             self._rehydrate_from_wal(self.recovered_nodes)
             self._sync_lifecycle()
+            self._sync_native_full()
             self.dirty_nodes.clear()
         self.runtime = GRMRuntime(self)
 
@@ -2395,10 +2396,14 @@ class GraftRepository:
         if self.native_store is None:
             return
         g = self.arena.grafts[idx]
-        if "cent" not in g:
-            return
         node_id = self._native_node_ids.get(int(idx))
         if node_id is None:
+            return
+        if g.get("payload_pending") and g.get("host_payload") is None:
+            if hasattr(self.native_store, "clear_route"):
+                self.native_store.clear_route(node_id)
+            return
+        if "cent" not in g:
             return
         route_keys = [np.asarray(g["cent"], dtype=np.float32).reshape(-1)]
         for child in g.get("child_cents", ()):

@@ -505,6 +505,11 @@ class NativeGraftStore:
                 ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64),
                 ctypes.c_uint64, ctypes.c_char_p]
             lib.grm_store_set_route_list.restype = ctypes.c_int
+        self._has_clear_route = hasattr(lib, "grm_store_clear_route")
+        if self._has_clear_route:
+            lib.grm_store_clear_route.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64]
+            lib.grm_store_clear_route.restype = ctypes.c_int
         lib.grm_store_route.argtypes = [
             ctypes.c_void_p, ctypes.POINTER(ctypes.c_float), ctypes.c_uint64,
             ctypes.c_char_p, ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64),
@@ -1223,6 +1228,12 @@ class NativeGraftStore:
         self._check(self._lib.grm_store_set_route_list(
             self._handle, int(node_id), values, int(flat.size),
             offsets_arr, len(keys), self._lexical_blob(lexical_keys)))
+
+    def clear_route(self, node_id):
+        if not getattr(self, "_has_clear_route", False):
+            raise RuntimeError("native GRM route clearing is unavailable")
+        self._check(self._lib.grm_store_clear_route(
+            self._handle, int(node_id)))
 
     def route(self, query, lexical_keys=(), topk=3, kinds=(), scopes=(),
               durabilities=(), mutabilities=()):

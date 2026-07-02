@@ -1633,6 +1633,21 @@ const std::string& HostGraftStore::text(std::uint64_t node_id) const {
   return n->text;
 }
 
+void HostGraftStore::clear_route(std::uint64_t node_id) {
+  auto* n = get(node_id);
+  if (n == nullptr) {
+    throw std::out_of_range("unknown GRM node id");
+  }
+  if (n->route_key.empty() && n->route_keys.empty() &&
+      n->lexical_keys.empty()) {
+    return;
+  }
+  n->route_key.clear();
+  n->route_keys.clear();
+  n->lexical_keys.clear();
+  mark_dirty(node_id, false, true);
+}
+
 void HostGraftStore::set_active(std::uint64_t node_id, bool active) {
   auto* n = get(node_id);
   if (n == nullptr) {
@@ -2254,6 +2269,15 @@ void RouterIndex::upsert_multi(std::uint64_t node_id,
     }
   }
   entries_.push_back({node_id, std::move(route_keys), std::move(lexical_keys)});
+}
+
+void RouterIndex::erase(std::uint64_t node_id) {
+  entries_.erase(
+      std::remove_if(entries_.begin(), entries_.end(),
+                     [node_id](const Entry& e) {
+                       return e.node_id == node_id;
+                     }),
+      entries_.end());
 }
 
 void RouterIndex::set_active(std::uint64_t node_id, bool active) {
@@ -4060,6 +4084,20 @@ int grm_store_set_route_list(grm_store_handle* handle,
     handle->store->mark_dirty(node_id, false, true);
     handle->router.upsert_multi(node_id, std::move(keys), std::move(lexical));
     sync_router_node_state(handle, node_id);
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_clear_route(grm_store_handle* handle,
+                          uint64_t node_id) {
+  try {
+    if (handle == nullptr || handle->store == nullptr) {
+      return grm_fail_msg(handle, "invalid clear_route arguments");
+    }
+    handle->store->clear_route(node_id);
+    handle->router.erase(node_id);
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);

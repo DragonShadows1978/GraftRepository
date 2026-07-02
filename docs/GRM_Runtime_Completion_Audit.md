@@ -30,15 +30,21 @@ validation where feasible.
   (inactive). Recovered nodes are text-authoritative but not yet routable: they
   carry a dialect-width zero centroid (cosine ~0, never wins routing by
   accident), no `host_payload`, no device tensor, and `payload_pending=True`
-  until re-harvested. `flush_now()` skips the missing-payload write for such
-  nodes (manifest keeps them as `payload_pending`, not falsely durable), and
-  `load()` preserves the pending flag through a manifest round-trip. WAL
+  until re-harvested. When a native store is enabled, these payload-pending
+  nodes are mirrored into native RAM for text/metadata authority and native
+  text scans, but their native route entry is explicitly cleared so
+  `native_route()` cannot select them until a real route key/payload exists.
+  `flush_now()` skips the missing-payload write for such nodes (manifest keeps
+  them as `payload_pending`, not falsely durable), and `load()` preserves the
+  pending flag through a manifest round-trip. WAL
   recovery also replays semantic revision records (`MEMORY_CORRECT`,
   `MEMORY_EXTRACT_SUPERSEDE`, `MEMORY_EXTRACT_EXPIRE`) so superseded or
   expired facts do not resurrect after a crash-before-manifest, and preserves
   fold-abort `no_fold` exemptions from `NODE_META` state so a rejected
   librarian window does not loop after recovery. Validated by
   `test_wal_recovers_text_metadata_without_manifest`,
+  `test_native_wal_recovery_mirrors_text_without_route`,
+  `test_native_manifest_load_mirrors_post_checkpoint_pending_without_route`,
   `test_wal_recovery_keeps_forgotten_nodes_inert`,
   `test_wal_recovery_replays_extraction_supersession`,
   `test_extraction_expire_action_retires_and_recovers_from_wal`, and
@@ -208,6 +214,11 @@ validation where feasible.
   graft text can be read back from the C++ host store after native checkpoint
   reloads instead of only being validated indirectly through Python metadata or
   payload ids.
+- Native route removal:
+  `grm_store_clear_route()` / `NativeGraftStore.clear_route()` removes a node's
+  persistent route keys and in-memory router entry. Repository WAL recovery uses
+  this to keep payload-pending text/metadata mirrored natively without making a
+  missing-payload node routable.
 - Native graph-edge metadata:
   source turns, source grafts, supersedes, and superseded-by edges are mirrored
   into structured native state through `grm_store_set_graph_edges()`, exposed
@@ -622,10 +633,13 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   startup;
   the C++ store owns mirrored payload lifecycle, tensor boundaries, tensor
   shapes/dtypes, payload byte reconstruction, host payload checkpointing, and
-  direct node-text readback after checkpoint reload, plus lifecycle-aware route
-  indexing with native kind/scope/durability/mutability filters for MLA and GQA
-  dialect ids. The native store now also exposes an ordered dirty flush plan
-  with payload-vs-metadata flags, dirty payload bytes, and durability priority.
+  direct node-text readback after checkpoint reload. Payload-pending
+  WAL-recovered nodes are mirrored for native text/metadata authority while
+  route entries stay cleared until re-harvest. The native route plane now also
+  supports explicit route removal plus lifecycle-aware route indexing with
+  native kind/scope/durability/mutability filters for MLA and GQA dialect ids.
+  The native store now also exposes an ordered dirty flush plan with
+  payload-vs-metadata flags, dirty payload bytes, and durability priority.
   Semantic metadata is persisted natively as JSON, and source/supersession
   graph edges are now structured native state with Python graft references
   mapped to native node ids at the repository boundary.
@@ -692,9 +706,9 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
 ## Current State
 
 The Python RAM-first runtime, opt-in C++ host-store mirror, native host
-payload, metadata, node-text readback, graph-edge checkpointing, native dirty
-flush planning, native revision application, native route index with
-active-state and
+payload, metadata, node-text readback, payload-pending WAL mirror, native route
+clearing, graph-edge checkpointing, native dirty flush planning, native
+revision application, native route index with active-state and
 kind/scope/durability/mutability filters for MLA and GQA dialect ids plus
 runtime-consumed native recursive source-closure traversal, multi-key MLA
 arena-route acceleration, native GQA raw `|q.k|` route acceleration, native

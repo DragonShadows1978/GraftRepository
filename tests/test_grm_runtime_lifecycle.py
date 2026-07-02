@@ -2589,6 +2589,35 @@ def test_wal_recovers_text_metadata_without_manifest(tmp_path):
     assert g["metadata"]["active"] is True  # active (not a forgotten node)
 
 
+def test_native_wal_recovery_mirrors_text_without_route(tmp_path):
+    lib = build_native(tmp_path)
+    path = str(tmp_path / "repo")
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3,
+                           native_lib_path=lib)
+    repo.add_document("DOC native wal-only code 44-9000", tags=("crash",))
+    assert not os.path.exists(os.path.join(path, "manifest.json"))
+    repo.close()
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3,
+                               native_lib_path=lib)
+    assert len(reopened.arena.grafts) == 1
+    g = reopened.arena.grafts[0]
+    native_id = g["native_node_id"]
+    assert g["payload_pending"] is True
+    assert reopened.native_store.text(native_id) == (
+        "DOC native wal-only code 44-9000")
+    assert reopened.native_store.metadata(native_id)["active"] is True
+    assert reopened.native_store.active_text_matches("44-9000") == (
+        native_id,)
+    assert reopened.stats()["native"]["nodes"] == 1
+    assert reopened.stats()["native"]["route_entries"] == 0
+    assert reopened.native_route([1.0] * 512,
+                                 lexical_keys=["44-9000"], topk=2) == []
+    reopened.close()
+
+
 def test_wal_recovery_keeps_forgotten_nodes_inert(tmp_path):
     path = str(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
@@ -2734,6 +2763,40 @@ def test_manifest_load_replays_post_checkpoint_correction(tmp_path):
     assert new_g["durable"] is False
     assert reopened.show_memory_about("OLD-100") == []
     assert len(reopened.show_memory_about("NEW-200")) == 1
+
+
+def test_native_manifest_load_mirrors_post_checkpoint_pending_without_route(
+        tmp_path):
+    lib = build_native(tmp_path)
+    path = str(tmp_path / "repo")
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3,
+                           native_lib_path=lib)
+    first = repo.add_document("DOC native checkpointed code 11-1100")
+    repo.flush_now()
+    second = repo.add_document("DOC native wal pending code 22-2200")
+    repo.close()
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3,
+                               native_lib_path=lib)
+    assert reopened.replayed_wal_nodes == (second,)
+    second_g = reopened.arena.grafts[second]
+    second_native = second_g["native_node_id"]
+    assert second_g["payload_pending"] is True
+    assert second_g["host_payload"] is None
+    assert reopened.native_store.text(second_native) == (
+        "DOC native wal pending code 22-2200")
+    assert reopened.native_store.active_text_matches("22-2200") == (
+        second_native,)
+    assert reopened.stats()["native"]["nodes"] == 2
+    assert reopened.stats()["native"]["route_entries"] == 1
+    routed = reopened.native_route([1.0] * 512,
+                                   lexical_keys=["22-2200"], topk=2)
+    assert second not in routed
+    assert first in reopened.native_route([1.0] * 512,
+                                          lexical_keys=["11-1100"], topk=2)
+    reopened.close()
 
 
 def test_native_manifest_load_replays_wal_into_route_state(tmp_path):

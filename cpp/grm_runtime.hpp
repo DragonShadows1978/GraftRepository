@@ -337,6 +337,7 @@ class HostGraftStore {
   void set_metadata_json(std::uint64_t node_id, std::string metadata_json);
   const std::string& metadata_json(std::uint64_t node_id) const;
   const std::string& text(std::uint64_t node_id) const;
+  void clear_route(std::uint64_t node_id);
   void set_active(std::uint64_t node_id, bool active);
   bool is_active(std::uint64_t node_id) const;
   void set_route_metadata(std::uint64_t node_id,
@@ -387,6 +388,7 @@ class RouterIndex {
   void upsert_multi(std::uint64_t node_id,
                     std::vector<std::vector<float>> route_keys,
                     std::vector<std::string> lexical_keys);
+  void erase(std::uint64_t node_id);
   void set_active(std::uint64_t node_id, bool active);
   void set_route_metadata(std::uint64_t node_id,
                           std::string kind,
