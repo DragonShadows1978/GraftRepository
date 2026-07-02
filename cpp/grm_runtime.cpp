@@ -1193,6 +1193,78 @@ std::string metadata_update_plan_json(const MetadataUpdatePlan& plan) {
   return out.str();
 }
 
+MemoryMutationPlan plan_memory_mutation(
+    const std::string& command,
+    bool has_query,
+    std::uint64_t target_count,
+    bool has_replacement) {
+  const auto cmd = ascii_lower(trim(command));
+  MemoryMutationPlan plan;
+  plan.target_count = target_count;
+  if (cmd == "forget") {
+    if (!has_query) {
+      plan.action = "no_op";
+      plan.reason = "empty query";
+      return plan;
+    }
+    if (target_count == 0) {
+      plan.action = "no_op";
+      plan.reason = "no active targets";
+      return plan;
+    }
+    plan.action = "expire_targets";
+    plan.apply_expire = true;
+    return plan;
+  }
+  if (cmd == "correct") {
+    if (!has_replacement) {
+      throw std::runtime_error("correction requires replacement");
+    }
+    plan.write_replacement = true;
+    if (!has_query || target_count == 0) {
+      plan.action = "write_replacement";
+      plan.reason = has_query ? "no active supersedes" : "empty query";
+      return plan;
+    }
+    plan.action = "supersede_targets";
+    plan.apply_revision = true;
+    return plan;
+  }
+  if (cmd == "update_metadata" || cmd == "update_memory_metadata") {
+    if (!has_query) {
+      plan.action = "no_op";
+      plan.reason = "empty query";
+      return plan;
+    }
+    if (target_count == 0) {
+      plan.action = "no_op";
+      plan.reason = "no active targets";
+      return plan;
+    }
+    plan.action = "metadata_update";
+    plan.update_metadata = true;
+    return plan;
+  }
+  throw std::runtime_error("unknown memory mutation command: " + command);
+}
+
+std::string memory_mutation_plan_json(const MemoryMutationPlan& plan) {
+  std::ostringstream out;
+  bool first = true;
+  out << "{";
+  append_json_string_field(out, first, "action", plan.action);
+  append_json_string_field(out, first, "reason", plan.reason);
+  append_json_u64_field(out, first, "target_count", plan.target_count, true);
+  append_json_bool_field(out, first, "apply_expire", plan.apply_expire);
+  append_json_bool_field(out, first, "apply_revision", plan.apply_revision);
+  append_json_bool_field(out, first, "write_replacement",
+                         plan.write_replacement);
+  append_json_bool_field(out, first, "update_metadata",
+                         plan.update_metadata);
+  out << "}";
+  return out.str();
+}
+
 ExtractionPolicyPlan plan_extraction_policy(
     const std::string& action,
     const std::string& write_intent,
@@ -3806,6 +3878,38 @@ int grm_store_plan_metadata_update(grm_store_handle* handle,
             command == nullptr ? "" : command,
             metadata_key,
             metadata_value == nullptr ? "" : metadata_value));
+    *out_len = static_cast<uint64_t>(json.size());
+    if (out_json != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, json.size());
+      std::memcpy(out_json, json.data(), n);
+      out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_plan_memory_mutation(grm_store_handle* handle,
+                                   const char* command,
+                                   int has_query,
+                                   uint64_t target_count,
+                                   int has_replacement,
+                                   char* out_json,
+                                   size_t out_cap,
+                                   uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr ||
+        command == nullptr || out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid plan_memory_mutation arguments");
+    }
+    if (out_json == nullptr && out_cap > 0) {
+      return grm_fail_msg(
+          handle, "null memory mutation buffer with nonzero capacity");
+    }
+    const auto json = grm::memory_mutation_plan_json(
+        grm::plan_memory_mutation(command, has_query != 0, target_count,
+                                  has_replacement != 0));
     *out_len = static_cast<uint64_t>(json.size());
     if (out_json != nullptr && out_cap > 0) {
       const size_t n = std::min(out_cap - 1, json.size());

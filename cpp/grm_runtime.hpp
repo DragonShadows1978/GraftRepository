@@ -240,6 +240,23 @@ MetadataUpdatePlan plan_metadata_update(
     const std::string& metadata_value);
 std::string metadata_update_plan_json(const MetadataUpdatePlan& plan);
 
+struct MemoryMutationPlan {
+  std::string action;
+  std::string reason;
+  std::uint64_t target_count = 0;
+  bool apply_expire = false;
+  bool apply_revision = false;
+  bool write_replacement = false;
+  bool update_metadata = false;
+};
+
+MemoryMutationPlan plan_memory_mutation(
+    const std::string& command,
+    bool has_query,
+    std::uint64_t target_count,
+    bool has_replacement);
+std::string memory_mutation_plan_json(const MemoryMutationPlan& plan);
+
 struct ExtractionPolicyPlan {
   std::string action;
   std::string reason;

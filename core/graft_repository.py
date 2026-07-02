@@ -1139,6 +1139,20 @@ class GraftRepository:
         except RuntimeError:
             return None
 
+    def _native_memory_mutation_plan(self, command, *, has_query,
+                                     target_count, has_replacement=False):
+        if self.native_store is None or not hasattr(
+                self.native_store, "plan_memory_mutation"):
+            return None
+        try:
+            return self.native_store.plan_memory_mutation(
+                command=command,
+                has_query=bool(has_query),
+                target_count=int(target_count),
+                has_replacement=bool(has_replacement))
+        except RuntimeError:
+            return None
+
     def apply_memory_command(self, text):
         """Apply an explicit chat memory command from the runtime plan."""
         return self.runtime.apply_memory_command(text)
@@ -1148,8 +1162,9 @@ class GraftRepository:
         if not q:
             # An empty query would substring-match every node; an ambiguous
             # command must never retire the whole repository (plan §4.5).
+            self._native_memory_mutation_plan(
+                "forget", has_query=False, target_count=0)
             return 0
-        count = 0
         before = self._snapshot_state()
         targets = self._native_active_text_matches(q)
         if targets is None:
@@ -1158,19 +1173,27 @@ class GraftRepository:
                 if q not in g.get("text", "").lower():
                     continue
                 targets.append(i)
-        forgotten = []
+        active_targets = []
         for i in targets:
             g = self.arena.grafts[int(i)]
             meta = g.setdefault("metadata", self._default_metadata(g))
-            if not meta.get("active", True):
-                continue
+            if meta.get("active", True):
+                active_targets.append(int(i))
+        mutation_plan = self._native_memory_mutation_plan(
+            "forget", has_query=True, target_count=len(active_targets))
+        if mutation_plan is not None and mutation_plan.get("action") == "no_op":
+            return 0
+        forgotten = []
+        for i in active_targets:
+            g = self.arena.grafts[int(i)]
+            meta = g.setdefault("metadata", self._default_metadata(g))
             meta["active"] = False
             meta["superseded_by"] = []
             g["retired"] = True
-            count += 1
             forgotten.append(int(i))
             self._mark_dirty(i, payload=False, metadata=True)
             self._append_wal("NODE_FORGET", node_id=i, query=query)
+        count = len(forgotten)
         if count:
             self._native_apply_expire(forgotten)
             self._mark_mutations(before)
@@ -1183,6 +1206,8 @@ class GraftRepository:
         q = str(query or "").strip().lower()
         if not q:
             # Same guard as forget(): empty never means "every node".
+            self._native_memory_mutation_plan(
+                "update_metadata", has_query=False, target_count=0)
             return {"count": 0, "node_ids": []}
         changed = []
         before = self._snapshot_state()
@@ -1193,11 +1218,21 @@ class GraftRepository:
                 if q not in g.get("text", "").lower():
                     continue
                 targets.append(i)
+        active_targets = []
         for i in targets:
             g = self.arena.grafts[int(i)]
             meta = g.setdefault("metadata", self._default_metadata(g))
             if not meta.get("active", True) or g.get("retired"):
                 continue
+            active_targets.append(int(i))
+        mutation_plan = self._native_memory_mutation_plan(
+            "update_metadata", has_query=True,
+            target_count=len(active_targets))
+        if mutation_plan is not None and mutation_plan.get("action") == "no_op":
+            return {"count": 0, "node_ids": []}
+        for i in active_targets:
+            g = self.arena.grafts[int(i)]
+            meta = g.setdefault("metadata", self._default_metadata(g))
             meta.update(updates)
             changed.append(i)
             self._mark_dirty(i, payload=False, metadata=True)
@@ -1222,14 +1257,26 @@ class GraftRepository:
             for i, g in enumerate(self.arena.grafts):
                 if q in g.get("text", "").lower():
                     targets.append(i)
+        active_targets = []
         for i in targets:
             g = self.arena.grafts[int(i)]
             meta = g.setdefault("metadata", self._default_metadata(g))
             if meta.get("active", True):
-                meta["active"] = False
-                g["retired"] = True
-                supersedes.append(i)
-                self._mark_dirty(i, payload=False, metadata=True)
+                active_targets.append(int(i))
+        mutation_plan = self._native_memory_mutation_plan(
+            "correct", has_query=bool(q), target_count=len(active_targets),
+            has_replacement=replacement is not None)
+        if (mutation_plan is None
+                or mutation_plan.get("action") == "supersede_targets"):
+            supersedes = list(active_targets)
+        else:
+            supersedes = []
+        for i in supersedes:
+            g = self.arena.grafts[int(i)]
+            meta = g.setdefault("metadata", self._default_metadata(g))
+            meta["active"] = False
+            g["retired"] = True
+            self._mark_dirty(i, payload=False, metadata=True)
         meta = dict(metadata)
         meta["supersedes"] = supersedes
         idx = self.remember(replacement, metadata=meta,
@@ -1237,7 +1284,9 @@ class GraftRepository:
         for i in supersedes:
             self.arena.grafts[i]["metadata"]["superseded_by"] = [idx]
             self._mark_dirty(i, payload=False, metadata=True)
-        self._native_apply_revision(idx, supersedes)
+        if (mutation_plan is None
+                or mutation_plan.get("apply_revision", bool(supersedes))):
+            self._native_apply_revision(idx, supersedes)
         self._append_wal("MEMORY_CORRECT", query=query, replacement=replacement,
                          supersedes=supersedes, node_id=idx)
         self._mark_mutations(before)

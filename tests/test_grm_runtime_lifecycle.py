@@ -1029,6 +1029,67 @@ def test_native_metadata_update_plan_drives_memory_command(tmp_path, monkeypatch
     }
 
 
+def test_native_memory_mutation_plan_guides_text_mutations(
+        tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+    node = repo.remember("Native mutation target 64-6400",
+                         kind="fact", scope="project")
+    calls = []
+    original_plan = repo.native_store.plan_memory_mutation
+
+    def traced_plan(**kwargs):
+        calls.append(dict(kwargs))
+        return original_plan(**kwargs)
+
+    monkeypatch.setattr(repo.native_store, "plan_memory_mutation",
+                        traced_plan)
+
+    assert repo.forget("missing native mutation target") == 0
+    assert calls[-1] == {
+        "command": "forget",
+        "has_query": True,
+        "target_count": 0,
+        "has_replacement": False,
+    }
+
+    updated = repo.update_memory_metadata(
+        "Native mutation target", {"pinned": True})
+    assert updated == {"count": 1, "node_ids": [node]}
+    assert repo.arena.grafts[node]["metadata"]["pinned"] is True
+    assert calls[-1] == {
+        "command": "update_metadata",
+        "has_query": True,
+        "target_count": 1,
+        "has_replacement": False,
+    }
+
+    replacement = repo.correct_memory(
+        "Native mutation target", "Native mutation replacement 64-6401")
+    assert calls[-1] == {
+        "command": "correct",
+        "has_query": True,
+        "target_count": 1,
+        "has_replacement": True,
+    }
+    assert repo.arena.grafts[node]["metadata"]["active"] is False
+    assert repo.arena.grafts[replacement]["metadata"]["supersedes"] == [node]
+    assert repo.native_store.filter_active_nodes((node,)) == ()
+
+    standalone = repo.correct_memory(
+        "", "Native standalone replacement 64-6402")
+    assert calls[-1] == {
+        "command": "correct",
+        "has_query": False,
+        "target_count": 0,
+        "has_replacement": True,
+    }
+    assert repo.arena.grafts[standalone]["metadata"]["supersedes"] == []
+    repo.close()
+
+
 def test_durability_mode_recovers_from_manifest_and_wal(tmp_path):
     manifest_path = str(tmp_path / "manifest_mode")
     repo = GraftRepository(FakeModel(), enc, dec, manifest_path,

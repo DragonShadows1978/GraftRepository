@@ -241,6 +241,16 @@ validation where feasible.
   `GraftRepository.apply_memory_command()` consumes it before applying the
   Python memory policy. Command execution then completes through `GRMRuntime`,
   including autosave/forced-flush durability semantics.
+- Native memory-mutation execution planner:
+  `grm_store_plan_memory_mutation()` / `NativeGraftStore.plan_memory_mutation()`
+  now decides deterministic text-command mutation outcomes for `forget`,
+  `correct`, and metadata-update flows after Python supplies query presence,
+  replacement presence, and active target counts. Empty-query guards,
+  no-target no-ops, replacement-only corrections, target expiry, metadata
+  update, and supersession/revision intent are native side-effect-free decisions
+  before Python applies the mutation and WAL records. Covered by
+  `test_native_memory_mutation_plan_via_ctypes` and
+  `test_native_memory_mutation_plan_guides_text_mutations`.
 - Review-buffer execution:
   uncertain extraction or malformed correction candidates can now be approved,
   rejected, edited, or scope-changed through repository APIs backed by the
@@ -678,7 +688,11 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   mutates repository state. Metadata update commands now use
   `grm_store_plan_metadata_update()` for typed update-map construction, so
   pin/unpin booleans and mutability values are validated natively before Python
-  applies metadata/WAL mutations. Explicit
+  applies metadata/WAL mutations. Forget/correct/metadata-update execution now
+  also flows through `grm_store_plan_memory_mutation()`, so empty-query guards,
+  no-target no-ops, replacement-only writes, target expiry, metadata update, and
+  revision intent are planned natively before Python mutates/WAL-records state.
+  Explicit
   extractor target ids for supersede/expire also flow through
   `grm_store_filter_active_nodes()`, so C++ host metadata state performs the
   deterministic active-target filtering before Python applies the remaining
@@ -714,7 +728,7 @@ runtime-consumed native recursive source-closure traversal, multi-key MLA
 arena-route acceleration, native GQA raw `|q.k|` route acceleration, native
 explicit memory-command parser, native remember-command flush planner, native
 durability-mode transition planner, native metadata-update planner, native
-swap-plan boundary, native host tensor
+memory-mutation planner, native swap-plan boundary, native host tensor
 swap/evict references, TensorCUDA fused
 splice/evict cache movement, TensorCUDA fused RoPE
 re-seat movement, TensorCUDA fused

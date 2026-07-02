@@ -454,6 +454,14 @@ class NativeGraftStore:
                 ctypes.c_char_p, ctypes.c_char_p, ctypes.c_size_t,
                 ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_plan_metadata_update.restype = ctypes.c_int
+        self._has_memory_mutation_plan = hasattr(
+            lib, "grm_store_plan_memory_mutation")
+        if self._has_memory_mutation_plan:
+            lib.grm_store_plan_memory_mutation.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p, ctypes.c_int,
+                ctypes.c_uint64, ctypes.c_int, ctypes.c_char_p,
+                ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_plan_memory_mutation.restype = ctypes.c_int
         self._has_extraction_policy_plan = hasattr(
             lib, "grm_store_plan_extraction_policy")
         if self._has_extraction_policy_plan:
@@ -1054,6 +1062,26 @@ class NativeGraftStore:
         cap = int(needed.value) + 1
         buf = ctypes.create_string_buffer(cap)
         self._check(self._lib.grm_store_plan_metadata_update(
+            self._handle, *args, buf, cap, ctypes.byref(needed)))
+        return json.loads(buf.value.decode("utf-8") or "{}")
+
+    def plan_memory_mutation(self, *, command, has_query, target_count,
+                             has_replacement=False):
+        if not getattr(self, "_has_memory_mutation_plan", False):
+            raise RuntimeError(
+                "native GRM memory mutation planner is unavailable")
+        needed = ctypes.c_uint64()
+        args = (
+            str(command or "").encode("utf-8"),
+            1 if has_query else 0,
+            int(target_count),
+            1 if has_replacement else 0,
+        )
+        self._check(self._lib.grm_store_plan_memory_mutation(
+            self._handle, *args, None, 0, ctypes.byref(needed)))
+        cap = int(needed.value) + 1
+        buf = ctypes.create_string_buffer(cap)
+        self._check(self._lib.grm_store_plan_memory_mutation(
             self._handle, *args, buf, cap, ctypes.byref(needed)))
         return json.loads(buf.value.decode("utf-8") or "{}")
 

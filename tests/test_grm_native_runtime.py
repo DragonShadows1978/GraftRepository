@@ -220,6 +220,48 @@ def test_native_store_clear_route_removes_persistent_route_entry(tmp_path):
         assert restored.route([1.0, 0.0], ["clear-me"], topk=1) == []
 
 
+def test_native_memory_mutation_plan_via_ctypes(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        assert store.plan_memory_mutation(
+            command="forget", has_query=False, target_count=0) == {
+                "action": "no_op",
+                "reason": "empty query",
+                "target_count": 0,
+                "apply_expire": False,
+                "apply_revision": False,
+                "write_replacement": False,
+                "update_metadata": False,
+            }
+        forget = store.plan_memory_mutation(
+            command="forget", has_query=True, target_count=2)
+        assert forget["action"] == "expire_targets"
+        assert forget["apply_expire"] is True
+        assert forget["target_count"] == 2
+
+        correct = store.plan_memory_mutation(
+            command="correct", has_query=True, target_count=1,
+            has_replacement=True)
+        assert correct["action"] == "supersede_targets"
+        assert correct["write_replacement"] is True
+        assert correct["apply_revision"] is True
+
+        standalone = store.plan_memory_mutation(
+            command="correct", has_query=True, target_count=0,
+            has_replacement=True)
+        assert standalone["action"] == "write_replacement"
+        assert standalone["write_replacement"] is True
+        assert standalone["apply_revision"] is False
+
+        metadata = store.plan_memory_mutation(
+            command="update_metadata", has_query=True, target_count=3)
+        assert metadata["action"] == "metadata_update"
+        assert metadata["update_metadata"] is True
+
+
 def test_native_profile_requires_reseatable_position_law(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(
