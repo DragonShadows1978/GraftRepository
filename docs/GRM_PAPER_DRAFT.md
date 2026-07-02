@@ -18,7 +18,10 @@ This paper is the work of an independent researcher without academic
 affiliation, produced with substantial assistance from AI systems (Anthropic's
 Claude models and OpenAI's Codex as implementation, review, and drafting
 collaborators under the author's direction; an autonomous research platform,
-AtlasForge, for experiment execution). The architecture, the hypotheses, the
+AtlasForge, for experiment execution — the AtlasForge platform is itself
+open source (MIT): https://github.com/DragonShadows1978/AI-AtlasForge, PyPI
+`ai-atlasforge`; the specific mission workspaces cited in this program are
+project-local, not part of that repository). The architecture, the hypotheses, the
 acceptance gates — registered before results were seen — and all editorial
 decisions are the author's, and the author accepts full responsibility for the
 content. All experiments ran on consumer hardware (RTX 3070 8 GB, RTX 4070
