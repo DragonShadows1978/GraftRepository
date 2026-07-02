@@ -202,6 +202,12 @@ validation where feasible.
   native nodes now store the repository metadata JSON blob, mirror semantic
   metadata from `GraftRepository`, expose it through the C ABI/Python wrapper,
   and preserve it through native checkpoints.
+- Native host text readback:
+  native nodes now expose their stored text through
+  `grm_store_node_text()` / `NativeGraftStore.text()`, so repository-mirrored
+  graft text can be read back from the C++ host store after native checkpoint
+  reloads instead of only being validated indirectly through Python metadata or
+  payload ids.
 - Native graph-edge metadata:
   source turns, source grafts, supersedes, and superseded-by edges are mirrored
   into structured native state through `grm_store_set_graph_edges()`, exposed
@@ -616,12 +622,13 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   startup;
   the C++ store owns mirrored payload lifecycle, tensor boundaries, tensor
   shapes/dtypes, payload byte reconstruction, host payload checkpointing, and
-  lifecycle-aware route indexing with native kind/scope/durability/mutability
-  filters for MLA and GQA dialect ids. The native store now also exposes an
-  ordered dirty flush plan with payload-vs-metadata flags, dirty payload bytes,
-  and durability priority. Semantic metadata is persisted natively as JSON, and
-  source/supersession graph edges are now structured native state with Python
-  graft references mapped to native node ids at the repository boundary.
+  direct node-text readback after checkpoint reload, plus lifecycle-aware route
+  indexing with native kind/scope/durability/mutability filters for MLA and GQA
+  dialect ids. The native store now also exposes an ordered dirty flush plan
+  with payload-vs-metadata flags, dirty payload bytes, and durability priority.
+  Semantic metadata is persisted natively as JSON, and source/supersession
+  graph edges are now structured native state with Python graft references
+  mapped to native node ids at the repository boundary.
   Native can apply final revision and expire active-state transitions once
   Python decides the target set.
   The explicit memory-command grammar now has a native parse-plan boundary, and
@@ -684,9 +691,10 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
 
 ## Current State
 
-The Python RAM-first runtime, opt-in C++ host-store mirror, native host payload,
-metadata, graph-edge checkpointing, native dirty flush planning, native revision
-application, native route index with active-state and
+The Python RAM-first runtime, opt-in C++ host-store mirror, native host
+payload, metadata, node-text readback, graph-edge checkpointing, native dirty
+flush planning, native revision application, native route index with
+active-state and
 kind/scope/durability/mutability filters for MLA and GQA dialect ids plus
 runtime-consumed native recursive source-closure traversal, multi-key MLA
 arena-route acceleration, native GQA raw `|q.k|` route acceleration, native

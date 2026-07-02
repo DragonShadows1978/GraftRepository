@@ -2952,10 +2952,12 @@ def test_repository_native_mirror_can_checkpoint_payloads(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
                            autosave=False, arena_cls=FakeArena,
                            route_layer=3, native_lib_path=lib)
-    idx = repo.add_document("DOC native checkpoint 18-2048")
+    text = "DOC native checkpoint 18-2048"
+    idx = repo.add_document(text)
     native_id = repo.arena.grafts[idx]["native_node_id"]
     ckpt = tmp_path / "native_ckpt"
 
+    assert repo.native_store.text(native_id) == text
     repo.native_store.save_checkpoint(ckpt)
     with NativeGraftStore(
             lib, model_type="FakeModel", num_layers=27,
@@ -2963,6 +2965,7 @@ def test_repository_native_mirror_can_checkpoint_payloads(tmp_path):
             latent_rank=512, rope_dim=64) as restored:
         restored.load_checkpoint(ckpt)
         assert restored.stats().nodes == 1
+        assert restored.text(native_id) == text
         assert restored.tensor_info(native_id, "payload_id").shape == (1,)
         assert restored.get_tensor(native_id, "payload_id").tolist() == [0]
     repo.close()

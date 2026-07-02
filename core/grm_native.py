@@ -417,6 +417,12 @@ class NativeGraftStore:
             ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
             ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
         lib.grm_store_metadata_json.restype = ctypes.c_int
+        self._has_node_text = hasattr(lib, "grm_store_node_text")
+        if self._has_node_text:
+            lib.grm_store_node_text.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
+                ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_node_text.restype = ctypes.c_int
         self._has_parse_memory_command = hasattr(
             lib, "grm_store_parse_memory_command")
         if self._has_parse_memory_command:
@@ -961,6 +967,18 @@ class NativeGraftStore:
         self._check(self._lib.grm_store_metadata_json(
             self._handle, int(node_id), buf, cap, ctypes.byref(needed)))
         return json.loads(buf.value.decode("utf-8") or "{}")
+
+    def text(self, node_id):
+        if not getattr(self, "_has_node_text", False):
+            raise RuntimeError("native GRM node text accessor is unavailable")
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_node_text(
+            self._handle, int(node_id), None, 0, ctypes.byref(needed)))
+        cap = int(needed.value) + 1
+        buf = ctypes.create_string_buffer(cap)
+        self._check(self._lib.grm_store_node_text(
+            self._handle, int(node_id), buf, cap, ctypes.byref(needed)))
+        return buf.value.decode("utf-8")
 
     def parse_memory_command(self, text):
         if not getattr(self, "_has_parse_memory_command", False):

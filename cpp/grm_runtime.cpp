@@ -1625,6 +1625,14 @@ const std::string& HostGraftStore::metadata_json(std::uint64_t node_id) const {
   return n->metadata.json;
 }
 
+const std::string& HostGraftStore::text(std::uint64_t node_id) const {
+  const auto* n = get(node_id);
+  if (n == nullptr) {
+    throw std::out_of_range("unknown GRM node id");
+  }
+  return n->text;
+}
+
 void HostGraftStore::set_active(std::uint64_t node_id, bool active) {
   auto* n = get(node_id);
   if (n == nullptr) {
@@ -3624,6 +3632,31 @@ int grm_store_metadata_json(grm_store_handle* handle,
       const size_t n = std::min(out_cap - 1, s.size());
       std::memcpy(out_json, s.data(), n);
       out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_node_text(grm_store_handle* handle,
+                        uint64_t node_id,
+                        char* out_text,
+                        size_t out_cap,
+                        uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid node_text arguments");
+    }
+    if (out_text == nullptr && out_cap > 0) {
+      return grm_fail_msg(handle, "null text buffer with nonzero capacity");
+    }
+    const auto& s = handle->store->text(node_id);
+    *out_len = static_cast<uint64_t>(s.size());
+    if (out_text != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, s.size());
+      std::memcpy(out_text, s.data(), n);
+      out_text[n] = '\0';
     }
     return 0;
   } catch (const std::exception& exc) {

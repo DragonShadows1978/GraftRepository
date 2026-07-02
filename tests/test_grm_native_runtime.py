@@ -1063,6 +1063,27 @@ def test_native_metadata_json_round_trips_through_checkpoint(tmp_path):
         assert restored_edges.superseded_by == (9,)
 
 
+def test_native_node_text_round_trips_through_checkpoint(tmp_path):
+    lib = build_native(tmp_path)
+    ckpt = tmp_path / "text_ckpt"
+    text = "native host text payload 13-1313"
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        node_id = store.add_node(text, b"abc", ntok=4)
+        assert store.text(node_id) == text
+        store.save_checkpoint(ckpt)
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as restored:
+        restored.load_checkpoint(ckpt)
+        assert restored.text(node_id) == text
+
+
 def test_native_fact_identity_scan_round_trips_through_checkpoint(tmp_path):
     lib = build_native(tmp_path)
     ckpt = tmp_path / "fact_identity_ckpt"
