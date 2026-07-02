@@ -114,3 +114,17 @@ answer, info = repo.chat("What port does the ingest replacement use?")
   repository resume (6/7 pre-fix), GQA descent 42-turn (5/8 pre-fix);
   cross-model migrate tool + gate written, NEVER RUN.
   (VRAM paging: DONE — LRU write-back pager, 100 docs at 64MB, 20/20.)
+
+
+## License
+
+Copyright (C) 2026 David Perry.
+
+This repository is licensed under the GNU Affero General Public License
+v3.0 — see [LICENSE](LICENSE). Any software derived from this code,
+including software served over a network, must be released under the same
+terms. **Commercial licensing outside the AGPL terms is available** —
+contact `dave@ai-storyforge.com`.
+
+The associated research papers are licensed CC BY 4.0 via their Zenodo
+records.

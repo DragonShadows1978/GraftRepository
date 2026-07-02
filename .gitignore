@@ -3,3 +3,6 @@ __pycache__/
 *.npz
 graft-repo*/
 .DS_Store
+
+# third-party paper PDFs — do not redistribute
+*.pdf
