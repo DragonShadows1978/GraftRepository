@@ -65,7 +65,7 @@ authoritative candidates, in both native-planned and Python-planned policy
 paths. Regression:
 `test_authoritative_extraction_unions_conflicts_and_requested_supersedes`.
 
-**M6 — NaN comparator UB in `RouterIndex::route` (C++).** `std::sort` with
+**M6 — NaN comparator UB in `RouterIndex::route` (C++).**
 Fixed 2026-07-02. Native cosine routing and GQA raw routing now skip
 non-finite per-key scores and drop nodes with no finite score before sorting;
 Python fallback routing applies the same finite-score filter before
@@ -74,15 +74,15 @@ normalization and ranking. Regressions:
 `test_native_gqa_route_drops_non_finite_scores`, and
 `test_arena_python_route_drops_non_finite_scores`.
 
-## Majors
-
 **M7 — Native command parser keyword rebinding (C++).**
-`command_suffix_after_keyword` advances `pos = low.find(needle, pos+1)`
-into free text when the first occurrence fails its delimiter check —
-`edit review 5,text new text goes here` binds the *second* "text" and
-stores a truncated body. *Fix direction:* bind only the first
-grammar-position occurrence; if its delimiter check fails, the parse
-fails — never re-search inside the free-text payload.
+Fixed 2026-07-02. `command_suffix_after_keyword` now binds only a
+whitespace-preceded command keyword token and returns failure on malformed
+token boundaries instead of scanning forward into free-text payloads. The
+valid body `edit review 7 text new text goes here` still preserves the inner
+`text`, while `edit review 5,text new text goes here` now fails. Regression:
+`test_native_memory_command_parser`.
+
+## Majors
 
 **M8 — Section-cull spans drift on real BPE.** `_section_cull_spans` sums
 `len(encode(chunk))` over stripped/rejoined chunks; separators and

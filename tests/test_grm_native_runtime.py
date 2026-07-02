@@ -662,6 +662,11 @@ def test_native_memory_command_parser(tmp_path):
                 "flush_immediately": False,
             }
         assert store.parse_memory_command(
+            "edit review 7 text new text goes here")["body"] == (
+                "new text goes here")
+        with pytest.raises(RuntimeError, match="edit review text is missing"):
+            store.parse_memory_command("edit review 5,text new text goes here")
+        assert store.parse_memory_command(
             "change review 8 scope user durability permanent mutability stable") == {
                 "action": "change_review_scope",
                 "durability": "permanent",

@@ -324,20 +324,31 @@ bool parse_u64_word(const std::string& word, std::uint64_t* out) {
   return true;
 }
 
+bool command_separator(char c) {
+  const unsigned char uc = static_cast<unsigned char>(c);
+  return std::isspace(uc) != 0 || c == ':' || c == '=' || c == ',';
+}
+
 std::string command_suffix_after_keyword(const std::string& original,
                                          const std::string& low,
                                          const std::string& keyword) {
-  const std::string needle = " " + keyword;
-  std::size_t pos = low.find(needle);
+  std::size_t pos = low.find(keyword);
   while (pos != std::string::npos) {
-    std::size_t cursor = pos + needle.size();
-    if (cursor >= low.size() || std::isspace(
-            static_cast<unsigned char>(low[cursor])) ||
-        low[cursor] == ':' || low[cursor] == '=' || low[cursor] == ',') {
+    std::size_t cursor = pos + keyword.size();
+    const bool before_boundary = (
+        pos == 0 || command_separator(low[pos - 1]));
+    const bool after_boundary = (
+        cursor >= low.size() || command_separator(low[cursor]));
+    if (before_boundary) {
+      if (pos > 0 && std::isspace(
+              static_cast<unsigned char>(low[pos - 1])) == 0) {
+        return "";
+      }
+      if (!after_boundary) {
+        return "";
+      }
       while (cursor < original.size()) {
-        const unsigned char c = static_cast<unsigned char>(original[cursor]);
-        if (std::isspace(c) || original[cursor] == ':' ||
-            original[cursor] == '=' || original[cursor] == ',') {
+        if (command_separator(original[cursor])) {
           ++cursor;
           continue;
         }
@@ -345,7 +356,7 @@ std::string command_suffix_after_keyword(const std::string& original,
       }
       return trim(original.substr(cursor));
     }
-    pos = low.find(needle, pos + 1);
+    pos = low.find(keyword, pos + 1);
   }
   return "";
 }
