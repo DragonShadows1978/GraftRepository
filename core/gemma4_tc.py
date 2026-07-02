@@ -33,7 +33,7 @@ import os
 import numpy as np
 
 from core.mistral7b_tc import (BlockTC, LinearTC, QuantLinearTC, RMSNormTC,
-                               _repeat_kv, F, tc)
+                               _repeat_kv, F, tc, _kv_quant, _kv_dequant)
 from core.qwen35_tc import HostEmbedding, _cast
 
 
@@ -154,11 +154,20 @@ class KVRing:
     the roped values), so a wrapped ring needs no reordering — at the
     sliding steady state the ring content IS the window, maskless."""
 
-    __slots__ = ("kb", "vb", "bias", "count", "cap", "ring", "window",
-                 "kqb", "kq_count")
+    # INT8 V-STORAGE (opt-in, default off so nothing regresses). When on,
+    # vb is uint8 + vsb (per-row scale, compute dtype); V quantizes on
+    # write and dequantizes on read (all reads go through _v_get). Measured
+    # int8_v -1.5% ppl — the safe ceiling-bending lever. K stays bf16
+    # (int8_glob +6.2%: the score path is precision-sensitive).
+    QUANT_V = bool(int(os.environ.get("GEMMA4_QUANT_V", "0")))
+
+    __slots__ = ("kb", "vb", "vsb", "bias", "count", "cap", "ring",
+                 "window", "kqb", "kq_count", "qv")
 
     def __init__(self, k, v, ring_cap=None):
         B, KV, S, D = k.shape
+        self.qv = KVRing.QUANT_V        # frozen per-ring at construction
+        self.vsb = None
         # APA quantized-key ring (lazy): kqb mirrors kb position-for-
         # position, quantized once per key and never recomputed (a key's
         # quantization is fixed once roped+written). None until APA first
@@ -175,7 +184,11 @@ class KVRing:
         if self.ring:
             self.cap = min(self.cap, ring_cap)
         self.kb = _zeros(B, KV, self.cap, D)
-        self.vb = _zeros(B, KV, self.cap, D)
+        if self.qv:
+            self.vb = tc.zeros(B, KV, self.cap, D, dtype="uint8")
+            self.vsb = _zeros(B, KV, self.cap, 1)
+        else:
+            self.vb = _zeros(B, KV, self.cap, D)
         bias = np.full((self.cap, 1), -1e4, np.float32)
         bias[:S] = 0.0
         self.bias = _cast(tc.tensor(bias))
@@ -184,8 +197,31 @@ class KVRing:
         # the caller's no_grad)
         with tc.no_grad():
             tc.write_rows(self.kb, k, 0)
-            tc.write_rows(self.vb, v, 0)
+            self._v_put(v, 0)
         self.count = S
+
+    def _v_put(self, v, pos):
+        """Write V rows at `pos` — INT8-quantized if qv, else raw."""
+        if self.qv:
+            q, s = _kv_quant(v)         # (uint8, scale in compute dtype)
+            tc.write_rows(self.vb, q, pos)
+            tc.write_rows(self.vsb, s, pos)
+        else:
+            tc.write_rows(self.vb, v, pos)
+
+    def _v_get(self, lo, n):
+        """Dequantized V slice [lo:lo+n) on dim 2, in compute dtype.
+        uint8 is cast to compute dtype BEFORE slicing — the engine slice
+        op is float-only (and the strided-copy kernel's ld/st<uint8>
+        instantiation segfaults nvcc, so a native uint8 slice is a future
+        engine ticket). The cast is the dequant's first step anyway. The
+        bf16 cast materializes the full cap buffer transiently — wasteful
+        on read but the resident cache stays uint8 (the ceiling win is
+        preserved); read-path optimization is registered as a follow-up."""
+        if self.qv:
+            qd = self.vb.astype(BlockTC.COMPUTE_DTYPE)
+            return (qd.slice(2, lo, n) - 128.0) * self.vsb.slice(2, lo, n)
+        return self.vb.slice(2, lo, n)
 
     @property
     def full(self):
@@ -208,13 +244,19 @@ class KVRing:
             # kqb simultaneously (3x the spike), which OOMed APA at 8K on
             # a near-full card. _grow1 allocates bf16 directly (no fp32
             # device transient from _cast) and drops the old reference.
-            def _grow1(buf):
-                nb = _zeros(B, KV, self.cap, D)
+            def _grow1(buf, dtype=None):
+                nb = (tc.zeros(B, KV, self.cap, buf.shape[3], dtype="uint8")
+                      if dtype == "uint8" else _zeros(B, KV, self.cap,
+                                                      buf.shape[3]))
                 with tc.no_grad():
                     tc.write_rows(nb, buf, 0)
                 return nb
             self.kb = _grow1(self.kb)
-            self.vb = _grow1(self.vb)
+            if self.qv:
+                self.vb = _grow1(self.vb, dtype="uint8")
+                self.vsb = _grow1(self.vsb)
+            else:
+                self.vb = _grow1(self.vb)
             if self.kqb is not None:
                 self.kqb = _grow1(self.kqb)
             tc.empty_cache()       # release the old buffers' device blocks
@@ -225,7 +267,7 @@ class KVRing:
                if self.ring and self.cap == self.window else self.count)
         with tc.no_grad():
             tc.write_rows(self.kb, k1, pos)
-            tc.write_rows(self.vb, v1, pos)
+            self._v_put(v1, pos)
             if not self.full:
                 tc.write_rows(self.bias, zero_row, pos)
         self.count += 1
@@ -270,14 +312,13 @@ class KVRing:
         if self.ring and self.count > self.cap:
             cut = self.count % self.cap
             if cut == 0:
-                return (self.kb.slice(2, 0, self.cap),
-                        self.vb.slice(2, 0, self.cap))
+                return self.kb.slice(2, 0, self.cap), self._v_get(0, self.cap)
             k = tc.cat([self.kb.slice(2, cut, self.cap - cut),
                         self.kb.slice(2, 0, cut)], dim=2)
-            v = tc.cat([self.vb.slice(2, cut, self.cap - cut),
-                        self.vb.slice(2, 0, cut)], dim=2)
+            v = tc.cat([self._v_get(cut, self.cap - cut),
+                        self._v_get(0, cut)], dim=2)
             return k, v
-        return self.kb.slice(2, 0, n), self.vb.slice(2, 0, n)
+        return self.kb.slice(2, 0, n), self._v_get(0, n)
 
 
 def _band_mask(L, S, window, device, dtype):
@@ -339,6 +380,11 @@ def _head_rmsnorm(x, w, eps, B, L, H, D):
 
 
 class Gemma4AttentionTC:
+    # KV-storage quant hook: None = off (zero cost). A callable
+    # fn(k, v, is_global) -> (k, v) round-trips K/V to simulate quantized
+    # STORAGE for the tail-law ppl gate (tests/gemma4_kv_quant_ppl.py).
+    KV_STORE_HOOK = None
+
     def __init__(self, cfg, layer_idx):
         self.cfg = cfg
         self.is_global = Gemma4Config.is_global(layer_idx)
@@ -363,6 +409,12 @@ class Gemma4AttentionTC:
         # short S per the zero-flip gate). Gates force this to 0 to
         # keep the blend machinery itself tested.
         self.apa_min_context = 2048
+        # Above fast_max_seq, switch the APA blend (which materializes
+        # S-sized bulk/rank/recon transients — the prefill OOM driver) to
+        # the FUSED O(L)-memory apa_selective_attention kernel (now
+        # D=512-capable). Mirrors the MLA/GQA dispatch that gave MiniCPM3
+        # 32K at flat residency. 0 = always fused; 1e18 = always blend.
+        self.fast_max_seq = 4096
 
     def __call__(self, x, cos, sin, position_offset=0, kv_cache=None):
         cfg = self.cfg
@@ -402,6 +454,15 @@ class Gemma4AttentionTC:
             q = F.apply_rotary(q, cseg, sseg)
             k = F.apply_rotary(k, cseg, sseg)
 
+        # KV-STORAGE QUANT HOOK (default None = zero cost). Set
+        # Gemma4AttentionTC.KV_STORE_HOOK = fn(k, v, is_global) -> (k, v)
+        # to simulate quantized STORAGE: every scored token's K/V passes
+        # here on EVERY path (prefill / decode / chunk), unlike the
+        # KVRing which only constructs at the first decode step. This is
+        # the correct measurement point for the tail-law ppl gate.
+        if Gemma4AttentionTC.KV_STORE_HOOK is not None:
+            k, v = Gemma4AttentionTC.KV_STORE_HOOK(k, v, self.is_global)
+
         ring_cache = None
         # ---- DECODE (L==1): ring path, zero cache copies ------------
         # In-place append into a KVRing (lazy-converted from the prefill
@@ -435,7 +496,7 @@ class Gemma4AttentionTC:
                 kq = kv_cache.quantized_keys(
                     lambda ks: _quantize_keys(ks, R_t, C_t, B_t))
                 kk = kv_cache.kb.slice(2, 0, kv_cache.count)
-                vv = kv_cache.vb.slice(2, 0, kv_cache.count)
+                vv = kv_cache._v_get(0, kv_cache.count)
                 z_ = _norm_ppf(1.0 - max(0.0, min(1.0,
                                                   self.refine_percentile)))
                 S_a = kv_cache.count
@@ -460,7 +521,9 @@ class Gemma4AttentionTC:
                     p = p.reshape([B, KV, rep, kv_cache.cap])
                 else:
                     p = sc.softmax(-1)
-                attn = tc.matmul(p, kv_cache.vb).reshape([B, L, H * D])
+                vb_full = (kv_cache._v_get(0, kv_cache.cap)
+                           if kv_cache.qv else kv_cache.vb)
+                attn = tc.matmul(p, vb_full).reshape([B, L, H * D])
                 return self.o_proj(_cast(attn)), kv_cache
         else:
             if isinstance(kv_cache, KVRing):
@@ -486,15 +549,41 @@ class Gemma4AttentionTC:
                 from core.mistral7b_tc import _cublas_blend_attention
                 dev = q.device.split(":")[0]
                 R_t, C_t, B_t = _tables(D, self.bulk_bits, KV, True, dev)
-                kq = _quantize_keys(k, R_t, C_t, B_t)
+                # CHUNK the whole-span quantize: _quantize_keys on the
+                # full S materializes ~5 fp32 (B,KV,S,D) tensors (~140MB
+                # at 12K) — the prefill OOM the fused kernel does NOT
+                # touch (it takes pre-quantized kq). Row-independent
+                # (proven bit-exact), so slice-quantize-concat is
+                # identical and caps the transient to O(chunk*D).
+                if S_all > 4096:
+                    parts = []
+                    for s0 in range(0, S_all, 2048):
+                        n = min(2048, S_all - s0)
+                        parts.append(_quantize_keys(
+                            k.slice(2, s0, n), R_t, C_t, B_t))
+                        tc.empty_cache()
+                    kq = tc.cat(parts, dim=2)
+                else:
+                    kq = _quantize_keys(k, R_t, C_t, B_t)
                 z_ = _norm_ppf(1.0 - max(0.0, min(1.0,
                                                   self.refine_percentile)))
-                blk = max(64, min(self.attn_block,
-                                  int(300 * 1024 * 1024 // (H * S_all * 2))))
-                # UNEXPANDED k: the blend's MQA path folds q heads
-                # into rows instead of expanding the cache 16x
-                attn = _cublas_blend_attention(
-                    q, k, kq, v, H // KV, 1.0, float(z_), L > 1, blk)
+                if S_all > self.fast_max_seq:
+                    # FUSED O(L)-memory path: streams keys with online
+                    # softmax, never materializes the S-sized bulk/rank/w
+                    # score matrices the blend allocates (~0.9GB/global-
+                    # layer-chunk — the 12K-prefill OOM driver). D=512 now
+                    # accepted (engine d57b76e); MQA KVH=1 is the kernel's
+                    # best case; bottom-right causal handles S>L.
+                    attn = tc.apa_selective_attention(
+                        q, k, kq, v, 1.0, float(z_), L > 1)
+                else:
+                    blk = max(64, min(self.attn_block,
+                                      int(300 * 1024 * 1024 //
+                                          (H * S_all * 2))))
+                    # UNEXPANDED k: the blend's MQA path folds q heads
+                    # into rows instead of expanding the cache 16x
+                    attn = _cublas_blend_attention(
+                        q, k, kq, v, H // KV, 1.0, float(z_), L > 1, blk)
             else:
                 # MQA prefill de-expansion (KV=1): fold the 16 q-heads
                 # into rows — (B,1,H*L,D) against the UNEXPANDED cache,

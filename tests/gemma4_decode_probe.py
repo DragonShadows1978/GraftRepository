@@ -24,6 +24,13 @@ MODE = sys.argv[1] if len(sys.argv) > 1 else "standard"
 S = int(sys.argv[2]) if len(sys.argv) > 2 else 4096
 N_DECODE = 64
 
+# optional 3rd arg "qv" enables INT8 V-storage in the rings (the ceiling
+# lever) so the probe measures whether the resident saving moves the OOM
+if len(sys.argv) > 3 and sys.argv[3] == "qv":
+    from core.gemma4_tc import KVRing
+    KVRing.QUANT_V = True
+    print("QUANT_V (INT8 V-storage) ENABLED", flush=True)
+
 
 def vram_mb():
     out = subprocess.run(

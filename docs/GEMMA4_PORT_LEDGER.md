@@ -1,5 +1,47 @@
 # Gemma 4 12B Unified — tensor_cuda port ledger
 
+## OVERNIGHT BUILD SUMMARY (2026-06-13) — KV-memory extension, 5 milestones shipped
+
+Goal: extend Gemma's context on 8GB beyond where bf16 walls (~8K). The
+APA was missing the fused O(L) path every other architecture uses; the
+tail-law storage arc was the load-bearing complement. Both built.
+
+| # | Milestone | Commit | Result |
+|---|---|---|---|
+| 1 | engine `write_rows` uint8 | `6b5e9b5` | storage-ring enabler, gated |
+| 2 | INT8 V-storage in KVRing | `a5c04b9` | all gates green; 8K survives 64MB lighter |
+| 3 | asymmetric K8+V4 measured | `a9f8373` | **−3.56% ppl, BEST mode** (anti-additive) |
+| 4 | D=512 fused kernel + bottom-right causal | `d57b76e` | engine 66/66; the causal trap caught proactively |
+| 5 | fused dispatch + chunked prefill quantize | `b267144` | **12K prefill survives at 7805 MiB — wall moved** |
+
+MEASURED CEILINGS (all rungs, one-process-each): **PREFILL** — bf16:
+solid ~10-11K, 12K RAGGED-EDGE (allocator nondeterminism at ~5%
+headroom — survived bare/gate at 7805 MiB, OOM'd in the ladder run),
+16K/20K hard OOM. qv (INT8-V): **12K SOLID at 7802 MiB** (firms up the
+ragged bf16 edge), 16K OOM. So the real prefill ceiling is **~12K**,
+bf16-marginal / qv-solid; INT8-V's ~64MB saving firmed the 12K floor
+but did NOT reach 16K (16K's footprint is well beyond the saving).
+**DECODE** — bf16 8K solid (12K OOMs in prefill), qv 8K at 7545 MiB
+(64MB lighter, ~6ms/tok dequant tax). NET: the stack took Gemma from
+walling at ~8K to a SOLID ~12K (prefill, qv) — a real ~1.5× extension
+toward the trained window, achieved as a managed rising wall, NOT
+MLA-flat (Gemma's full-width cache grows structurally). bf16 alone
+can't hold the trained 32K (~25K wall); these pieces let it climb. ·
+
+DISCIPLINE HELD: every quant test ACTIVE-guarded (no dead patches —
+one was caught: KVRing.append hook was a no-op, +0.000% across 7 modes
+flagged it); the bottom-right causal bug caught BEFORE shipping (vs the
+121→11M blowup it caused once); the −3.56% surprise flagged for
+confirmation not trusted; three fake OOMs correctly traced to
+allocator fragmentation, now fixed in test DESIGN (one-context-per-
+process). Open items: (a) confirm the −3.56% asymmetric; (b) asymmetric
+K8+V4 resident storage as a second opt-in (deepest-context config);
+(c) _v_get read-path opt (full-cap astype wasteful); (d) native uint8
+engine slice (nvcc segfaults on ld/st<uint8> — astype-then-slice
+workaround shipped).
+
+---
+
 **Started:** 2026-06-12 · **Hardware:** RTX 3070 8GB ·
 **Weights:** `/mnt/ForgeRealm/models/gemma-4-12B-it` (bf16, 22.3GB, Apache 2.0)
 **Directive:** straight to APA+GRM — no baseline benchmarking. PyTorch
@@ -462,6 +504,170 @@ not fit 8GB regardless given resident KV. The dramatic ceiling
 extension (APA OUTRUNNING standard) still needs quantized KV STORAGE
 (the tail-law arc) — incremental kq carries +50% resident (the kqb
 ring), so it equals standard's ceiling, doesn't exceed it.
+
+### IMPLEMENTED: INT8 V-storage (the ceiling lever, 2026-06-13 overnight)
+
+Built the measured-safe storage quantization. Engine: `write_rows`
+uint8 path (commit 6b5e9b5 — strided raw copy, dtype-agnostic; the
+slice-uint8 companion was attempted but nvcc SEGFAULTS instantiating
+dimcopy's ld/st<uint8>, so a native uint8 slice is a future ticket).
+Port (KVRing): `QUANT_V` flag (env GEMMA4_QUANT_V, default off) makes
+`vb` uint8 + `vsb` per-row scale; `_v_put` quantizes on write,
+`_v_get` dequantizes on read (astype-then-slice, since the engine
+slice is float-only — resident stays uint8 so the ceiling win holds;
+the read transient is the full cap buffer, registered as a read-path
+optimization follow-up). All sites routed: init/append/_grow1/ordered/
+the two attention reads/save_caches(via ordered)/load_caches.
+WHY V-only INT8 and K bf16: measured int8_v −1.5% (a mild regularizer)
+vs int8_glob +6.2% (the global K score-path is precision-sensitive —
+head_dim 512 with attention scale 1.0, no 1/√d damping). Smoke: 48
+rings uint8+scale, coherent decode, save/load round-trips.
+
+**GATES (GEMMA4_QUANT_V=1): PARITY / APA / LONGCTX PASS; STATE PASS
+as-corrected** — the "lossless bit-identical restore" contract became
+"round-trip-idempotent" (tokens match exactly, bf16-exact logit
+identity gone by design); the gate now demands bit-identity only at
+bf16, token-match at QUANT_V. Re-baselined honestly, not forced.
+
+**MEASURED CEILING (decode probe, qv):** 8K SURVIVES at **7545 MiB —
+64 MiB lighter than bf16-V's 7609 MiB** (the resident saving is real
+and shows up); decode 84 ms/tok (vs 74 bf16 — the dequant-on-read tax,
+recoverable by the registered _v_get read-path opt). **12K still OOMs
+— but in PREFILL (`_quantize_keys` whole-span fp32 transient ~140MB),
+NOT the V cache.** This is the predicted boundary: storage quant bends
+the RESIDENT slope (confirmed — 8K lighter), but the 12K wall is the
+prefill TRANSIENT, which only the fused D=512 kernel removes. The two
+pieces are complementary exactly as designed — storage + fused kernel,
+not storage alone. INT8 V-storage shipped (commit a5c04b9).
+
+CEILING (workflow-verified byte math, corrects the earlier "~32K
+modest" framing): bf16 KV can't even hold trained 32K on 8GB (~25K
+wall); uniform INT8 (12.3KB/tok global vs 24KB bf16, ~2×) reaches
+~38-51K realistic / ~51-65K optimistic — EXCEEDS trained 32K with
+margin. So INT8 is what lets Gemma reach its own designed context.
+Asymmetric (K8+V4+kqb4, ~1.4× further to ~53-92K) was a speculative
+reach gated behind the combined mode — **now MEASURED, and the result
+flips the decision:**
+
+**int8k_int4v_glob (K-INT8 + V-4bit on global) = 115.58 ppl, −3.56%
+vs baseline — the BEST mode in the entire table**, better than either
+component alone (int8_glob +6.2%, int4v_glob +5.1%) AND better than
+int8_v (−1.5%). The combination is ANTI-additive: the two perturbations
+partially cancel into net benefit (a regularizer effect), not compound.
+So asymmetric global K8+V4 is BOTH the best quality AND the bigger
+memory cut (~1.4× past uniform INT8) — genuinely worth building, not
+just survivable. (CAVEAT: a −3.56% "too good" result gets the same
+skepticism as the dead-patch +0.000% — ACTIVE-guard confirms it's real
+and the value is in-band/plausible, but a confirmation run is
+registered before it becomes the shipped default. The current shipped
+default is V-only INT8, conservatively.)
+
+### IMPLEMENTED: fused D=512 APA kernel wired — 12K PREFILL WALL MOVED (2026-06-13 overnight)
+
+The fused O(L)-memory `apa_selective_attention` path, the piece that
+was architecturally missing from Gemma's APA (it ran the memory-heavy
+cuBLAS blend at every context). Engine (commit d57b76e): TC_APA_MAXD
+256→512 + dispatch arm + the BOTTOM-RIGHT causal fix (s_max=(S-L)+i+1,
+was top-left — the 121→11M bug class, caught BEFORE shipping this time;
+regression tests cover non-square S>L + MQA-D512). Port: fast_max_seq
+=4096 switch at the global PREFILL APA site (decode stays on the blend
+— at L=1 the blend transient is ~1MB and the fused kernel loses 30× on
+the 16-block launch), PLUS chunked whole-span `_quantize_keys` (2048-
+row slices, bit-exact, caps the ~140MB fp32 recon transient the fused
+kernel doesn't touch).
+
+**MEASURED: 12K PREFILL NOW SURVIVES at 7805 MiB** (load 6759 + ~1046
+of cache/transients, ~390 MiB headroom) — where the blend OOM'd. The
+prefill wall moved from <12K to ≥12K. Fused≡blend equivalence: top1
+match, max|d| 1.25 (near-tie) at a shared context. NOTE: the gate must
+drain the allocator pool between contexts — running 1024 then 12K in
+one process fragmented the pool and falsely OOMed (the recurring
+one-process-per-context lesson; gate now flushes).
+
+So the complementary picture is now BUILT and MEASURED: incremental-kq
+(decode O(D)) + INT8 V-storage (resident ~2×) + fused kernel (prefill
+transient) together take Gemma from walling at ~8K to **12K prefill +
+deeper decode**, reaching toward its trained window. Asymmetric K8+V4
+storage (measured −3.56%, best mode) is the next resident lever for
+beyond 12K.
+
+### THE MISSING PIECE + the honest MLA-flatness limit (Architect's catch, 2026-06-13)
+
+The Architect sensed Gemma's APA was "missing something" — every other
+architecture saw massive memory gains, Gemma didn't. CONFIRMED in
+source: **Gemma's APA has NO fused-kernel branch.** MLA/GQA dispatch
+(minicpm3_tc.py:231-243, mistral7b_tc.py:432-441) switch to the fused
+O(L)-memory `apa_selective_attention` above fast_max_seq=4096 — that
+fused path is what ran MiniCPM3's 2,048→32,768 climb at ~10MB resident
+drift. Gemma runs `_cublas_blend_attention` at EVERY length (no
+fast_max_seq, no switch) because the fused kernel throws at head_dim>256
+and Gemma globals are 512. The prior "DON'T build D=512" verdict was
+correct ON THE SPEED axis and WRONG on the memory axis.
+
+**Two corrections to the framing (memory-feasibility investigation,
+conf 0.86):**
+1. The fused kernel saves memory at PREFILL, not DECODE (at L=1 the
+   blend transients collapse to ~1MB). The decode 8K wall was already
+   broken by incremental-kq. So the fused kernel is the **12K+ PREFILL
+   ceiling lever**, not the decode fix.
+2. **Gemma CANNOT get MLA-flat residency — it's a HARD architectural
+   difference.** MLA flattened because its cache is a tiny fixed latent
+   (~288 vals/token). Gemma globals are full-width MQA: kb+vb+kqb =
+   24KB/token, growing linearly, ~85× heavier per token, structural
+   (from the trained 512-wide single-head global attention). No kernel
+   flattens it. Honest ceiling: fused kernel converts an early ~8-12K
+   TRANSIENT wall into a later ~24-32K RESIDENT wall (a rising line
+   192→768MB across 8K→32K, NOT MLA's flat shelf); +INT8/4-bit storage
+   bends the slope ~1.5-2.7× shallower (clears 32K with margin). The
+   achievable goal is "reaches the trained 32K window as a managed
+   rising wall," not "memory never walls."
+
+**Build plan: BUILD-WITH-STORAGE.** Piece 1 (transient killer): D=512
+dispatch (TC_APA_MAXD 256→512, launch arm, delete throw) + fast_max_seq
+switch in the Gemma APA branch. TRAP (the same class that's bitten 3×):
+the fused kernel is TOP-LEFT causal (s_max=i+1) while the whole Gemma
+stack is BOTTOM-RIGHT — they agree ONLY at S==L, and Gemma always
+chunks prefill onto a cache (S>L), so a naive wire is the 121→11M-ppl
+bug AGAIN, and the existing kernel test runs only S==L so it passes
+while wrong. Needs a bottom-right/q_offset kernel mode + a NON-SQUARE
+regression test. Piece 2 (the load-bearing half — bends the resident
+slope, the only durable-ceiling lever): INT8/4-bit kb/vb storage in
+KVRing with dequant-on-read, gated by the ppl experiment below.
+
+**KV-STORAGE PPL (tests/gemma4_kv_quant_ppl.py, real wikitext 6×2048).**
+CORRECTION: an earlier version of this entry claimed "INT8 perceptually
+free, +0.000%, bit-identical" — that was a DEAD PATCH (it hooked
+KVRing.append, which only runs at first decode; the scored tokens flow
+through the prefill/cat path it never touched, so all 7 modes returned
+bit-identical ppl — the physical impossibility was the tell). The test
+now hooks `Gemma4AttentionTC.KV_STORE_HOOK` (every scored token's K/V,
+every path) with a NO-OP GUARD asserting each mode actually perturbs the
+logits. Real numbers (all ACTIVE, baseline 119.85):
+
+| mode | ppl | Δ | |
+|---|---|---|---|
+| int8_v | 118.02 | **−1.5%** | best — V-only INT8 safe |
+| int8_slide | 121.51 | +1.4% | safe |
+| int8_kv | 123.11 | +2.7% | borderline |
+| int4v_glob | 125.94 | +5.1% | marginal |
+| int8_glob | 127.25 | +6.2% | marginal |
+| int4v_slide | 2152 | **+1696%** | CATASTROPHIC |
+| int4v_all | 6559 | **+5373%** | CATASTROPHIC |
+
+**FINDINGS, against prediction:** (1) The "scale-free v_norm ⇒ V
+tolerates 4-bit like K" hypothesis is REFUTED — 4-bit V is fine on
+GLOBAL (+5%) but ANNIHILATES SLIDING (+1696%). Same quant, opposite
+outcome by layer class. (2) Likely mechanism: sliding attention sees
+only 1024 keys, so each V carries much higher weight (less softmax
+averaging) — a 4-bit V error on a high-weight value is NOT crushed (the
+un-crushed-hot-value risk the kernel workflow flagged). (3) INT8 is
+GOOD not free: int8_v (V-only) is the sweet spot at −1.5%; INT8 on K
+(int8_glob/kv) costs more (the score path is more precision-sensitive
+than the value path). (4) The tail-law arc's realistic operating point
+is **INT8 V-storage** (or INT8 sliding + INT8 V global), NOT blanket
+4-bit. 4-bit is reserved for the GLOBAL V only, and even there +5% needs
+a serving-quality decision. The 2.7× slope cut from blanket 4-bit is
+OFF THE TABLE; the achievable cut is ~2× (INT8) with a V-only refinement.
 
 ### CAN the fused kernel be fixed for D=512? (kernel-feasibility investigation, conf 0.86)
 
