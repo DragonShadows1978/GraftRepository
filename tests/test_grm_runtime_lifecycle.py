@@ -1732,7 +1732,7 @@ def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
 
     assert conflict["action"] == "review_candidate"
     assert calls[-1]["value_mode"] == 2
-    assert calls[-1]["temporal_mode"] == 2
+    assert calls[-1]["temporal_mode"] == 0
     assert calls[-1]["subject"] == "Native conflict target"
     assert plans[-1]["conflict_count"] == 2
     assert plans[-1]["action"] == "write_direct"
@@ -1754,7 +1754,7 @@ def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
     assert duplicate["action"] == "reinforce_existing"
     assert duplicate["node_id"] == old["node_id"]
     assert calls[-1]["value_mode"] == 1
-    assert calls[-1]["temporal_mode"] == 1
+    assert calls[-1]["temporal_mode"] == 0
     assert plans[-1]["equivalent_count"] == 1
     assert reinforcement_plans[-1]["old_write_intent"] == "observed"
     assert reinforcement_plans[-1]["new_write_intent"] == "observed"
@@ -1781,8 +1781,9 @@ def test_native_fact_scan_guides_extraction_policy(tmp_path, monkeypatch):
     assert timed_duplicate["action"] == "reinforce_existing"
     assert timed_duplicate["node_id"] == timed_old["node_id"]
     assert calls[-1]["value_mode"] == 1
-    assert calls[-1]["temporal_mode"] == 1
-    assert calls[-1]["valid_from"] == "2026-01-01T00:00:00+00:00"
+    assert calls[-1]["temporal_mode"] == 0
+    # time never crosses the ABI: Python filters temporal identity itself
+    assert calls[-1]["valid_from"] is None
     assert plans[-1]["equivalent_count"] == 1
     repo.close()
 
@@ -2119,7 +2120,7 @@ def test_native_fact_scan_applies_temporal_effective_policy(
 
     assert conflict["action"] == "review_candidate"
     assert calls[-1]["value_mode"] == 2
-    assert calls[-1]["temporal_mode"] == 2
+    assert calls[-1]["temporal_mode"] == 0
     assert plans[-1]["conflict_count"] == 1
 
     expire = repo.apply_extraction_candidate(candidate(
@@ -2132,7 +2133,7 @@ def test_native_fact_scan_applies_temporal_effective_policy(
     assert expire["action"] == "expire"
     assert expire["expired"] == [current["node_id"]]
     expire_scans = [c for c in calls if c["value_mode"] == 1]
-    assert expire_scans[-1]["temporal_mode"] == 2
+    assert expire_scans[-1]["temporal_mode"] == 0
     assert plans[-1]["expire_target_count"] == 1
 
     malformed = repo.apply_extraction_candidate(candidate(
@@ -2148,7 +2149,7 @@ def test_native_fact_scan_applies_temporal_effective_policy(
         value="lax"))
 
     assert guarded["action"] == "review_candidate"
-    assert calls[-1]["temporal_mode"] == 2
+    assert calls[-1]["temporal_mode"] == 0
     assert plans[-1]["conflict_count"] == 1
     repo.close()
 
@@ -3123,4 +3124,125 @@ def test_native_checkpoint_captures_nodes_flushed_after_first_checkpoint(
             latent_rank=512, rope_dim=64) as probe:
         probe.load_checkpoint(repo._native_checkpoint_root())
         assert probe.stats().nodes == 2
+    repo.close()
+
+
+def test_native_text_scan_falls_back_for_non_ascii(tmp_path):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+    munich = repo.remember("Meeting notes from MÜNCHEN office 44-1234")
+    berlin = repo.remember("Meeting notes from BERLIN office 55-5678")
+
+    # ASCII-only native case folding cannot match "münchen" to "MÜNCHEN";
+    # the Unicode query must take the Python scan and still succeed.
+    assert repo.forget("münchen") == 1
+    assert repo.arena.grafts[munich]["retired"] is True
+    assert not repo.arena.grafts[berlin].get("retired")
+    repo.close()
+
+
+def test_correct_memory_whitespace_query_supersedes_nothing(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena, route_layer=3)
+    a = repo.remember("Fact alpha 11-1111")
+    b = repo.remember("Fact beta 22-2222")
+
+    # single space: pre-guard this substring-matched EVERY text with a
+    # space in it — the mass-supersede case the guard exists to prevent
+    idx = repo.correct_memory(" ", "Corrected note 33-3333")
+    assert repo.arena.grafts[idx]["metadata"]["supersedes"] == []
+    assert not repo.arena.grafts[a].get("retired")
+    assert not repo.arena.grafts[b].get("retired")
+    idx2 = repo.correct_memory(None, "Another note 44-4444")
+    assert repo.arena.grafts[idx2]["metadata"]["supersedes"] == []
+
+
+def test_native_temporal_policy_stays_python_owned(tmp_path):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+
+    def candidate(**kw):
+        base = {"action": "write_direct", "candidate_type": "fact",
+                "scope": "project", "durability": "project",
+                "mutability": "stable", "write_intent": "observed",
+                "confidence": 0.99}
+        base.update(kw)
+        return base
+
+    # minutes-only ISO time: Python parses it, the C++ parser does not —
+    # an already-expired fact must not raise phantom conflicts natively.
+    expired = repo.apply_extraction_candidate(candidate(
+        text="Temporal parity target was disk.",
+        subject="Temporal parity target", predicate="is", value="disk",
+        expires_at="2000-01-01T00:00"))
+    assert expired["action"] == "write_direct"
+    replacement = repo.apply_extraction_candidate(candidate(
+        text="Temporal parity target is RAM.",
+        subject="Temporal parity target", predicate="is", value="RAM"))
+    assert replacement["action"] == "write_direct"
+
+    # cross-format identity: the same instant written two ways must
+    # reinforce the existing fact, not fork a duplicate node.
+    first = repo.apply_extraction_candidate(candidate(
+        text="Temporal parity window opens June.",
+        subject="Temporal parity window", predicate="opens", value="June",
+        valid_from="2026-06-01"))
+    assert first["action"] == "write_direct"
+    dup = repo.apply_extraction_candidate(candidate(
+        text="Temporal parity window still opens June.",
+        subject="Temporal parity window", predicate="opens", value="June",
+        valid_from="2026-06-01T00:00:00+00:00", confidence=1.0))
+    assert dup["action"] == "reinforce_existing"
+    assert dup["node_id"] == first["node_id"]
+    repo.close()
+
+
+def test_native_fact_scan_falls_back_for_non_ascii_identity(tmp_path):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_lib_path=lib)
+    seeded = repo.apply_extraction_candidate({
+        "action": "write_direct", "candidate_type": "fact",
+        "text": "ZOË works at Acme.",
+        "subject": "ZOË", "predicate": "employer", "value": "Acme",
+        "scope": "project", "durability": "project",
+        "mutability": "stable", "write_intent": "user_asserted",
+        "confidence": 1.0})
+    assert seeded["action"] == "write_direct"
+
+    # Unicode case folding stays in Python: the conflict must be found
+    # with the native store loaded, diverting the low-trust write to review.
+    conflicting = repo.apply_extraction_candidate({
+        "action": "write_direct", "candidate_type": "fact",
+        "text": "Zoë works at Initech.",
+        "subject": "Zoë", "predicate": "employer", "value": "Initech",
+        "scope": "project", "durability": "project",
+        "mutability": "stable", "write_intent": "observed",
+        "confidence": 0.99})
+    assert conflicting["action"] == "review_candidate"
+
+    # stored-side Unicode: U+212A KELVIN sign lowers to ascii "k" only in
+    # Python, so the ASCII-candidate guard alone would miss this conflict —
+    # stored identity fields must force the Python scan too.
+    kelvin = repo.apply_extraction_candidate({
+        "action": "write_direct", "candidate_type": "fact",
+        "text": "\u212aELVIN sensor reads 300.",
+        "subject": "\u212aELVIN sensor", "predicate": "reads",
+        "value": "300", "scope": "project", "durability": "project",
+        "mutability": "stable", "write_intent": "user_asserted",
+        "confidence": 1.0})
+    assert kelvin["action"] == "write_direct"
+    kelvin_conflict = repo.apply_extraction_candidate({
+        "action": "write_direct", "candidate_type": "fact",
+        "text": "kelvin sensor reads 400.",
+        "subject": "kelvin sensor", "predicate": "reads",
+        "value": "400", "scope": "project", "durability": "project",
+        "mutability": "stable", "write_intent": "observed",
+        "confidence": 0.99})
+    assert kelvin_conflict["action"] == "review_candidate"
     repo.close()

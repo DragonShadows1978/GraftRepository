@@ -629,10 +629,14 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   (`subject`/`predicate`/`value`/scope plus temporal strings), persists it in
   checkpoints, and exposes equal/conflicting active fact-target scans that
   Python uses for extraction expire/conflict/reinforcement target discovery
-  before applying the final authority policy. The extended native scan can
-  require exact `valid_from`/`expires_at` field matches for
-  duplicate/reinforcement identity and can apply effective-now temporal filtering
-  for expire/conflict scans while Python retains fallback behavior. Static extraction
+  before applying the final authority and temporal policy. The native temporal
+  modes were withdrawn from the hot path on 2026-07-01: exact identity was raw
+  byte-equality natively, and the stricter C++ ISO parser rejects forms Python
+  `fromisoformat` accepts (times without seconds, numeric epoch), so Python
+  passes `temporal_mode=0` and applies temporal identity/effectiveness itself;
+  non-ASCII queries, corpora, and identity fields on either side likewise fall
+  back to Python's Unicode-aware scans. The ABI keeps the temporal modes for
+  canonical-input callers. Static extraction
   action/reason selection now has a native side-effect-free policy planner:
   Python supplies target counts, and C++ chooses write/review/supersede/
   reinforce/expire outcomes before Python performs the mutation.

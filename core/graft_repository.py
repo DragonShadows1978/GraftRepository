@@ -1203,13 +1203,18 @@ class GraftRepository:
 
     def correct_memory(self, query, replacement, **metadata):
         supersedes = []
-        q = query.lower()
+        q = str(query or "").strip().lower()
         before = self._snapshot_state()
-        targets = self._native_active_text_matches(q)
+        if not q:
+            # Same law as forget(): an empty/whitespace query never means
+            # "every node". The correction is written with no supersedes.
+            targets = []
+        else:
+            targets = self._native_active_text_matches(q)
         if targets is None:
             targets = []
             for i, g in enumerate(self.arena.grafts):
-                if q and q in g.get("text", "").lower():
+                if q in g.get("text", "").lower():
                     targets.append(i)
         for i in targets:
             g = self.arena.grafts[int(i)]
@@ -1351,6 +1356,13 @@ class GraftRepository:
             return []
         if len(self._native_node_ids) < len(self.arena.grafts):
             return None
+        # Case folding never crosses the ABI: the native scan lowers ASCII
+        # bytes only, while Python lower() is Unicode-aware. A non-ASCII
+        # query (or corpus) must take the Python scan, or explicit
+        # forget/correct commands silently miss ("münchen" vs "MÜNCHEN").
+        if not q.isascii() or any(
+                not g.get("text", "").isascii() for g in self.arena.grafts):
+            return None
         try:
             native_ids = self.native_store.active_text_matches(q)
         except RuntimeError:
@@ -1395,10 +1407,18 @@ class GraftRepository:
         if not (subject and predicate and value):
             return []
 
-        native = self._native_fact_matches(
-            candidate, value_mode=1, temporal_mode=2)
+        native = self._native_fact_matches(candidate, value_mode=1)
         if native is not None:
-            return native
+            out = []
+            for i in native:
+                g = self.arena.grafts[i]
+                meta = g.get("metadata", self._default_metadata(g))
+                if g.get("retired"):
+                    continue
+                if not self._candidate_time_conflicts(candidate, meta):
+                    continue
+                out.append(i)
+            return out
 
         out = []
         for i, g in enumerate(self.arena.grafts):
@@ -1489,10 +1509,15 @@ class GraftRepository:
         value = self._norm_fact_field(candidate.get("value"))
         if not (subject and predicate and value):
             return []
-        native = self._native_fact_matches(
-            candidate, value_mode=2, temporal_mode=2)
+        native = self._native_fact_matches(candidate, value_mode=2)
         if native is not None:
-            return native
+            out = []
+            for i in native:
+                g = self.arena.grafts[i]
+                meta = g.get("metadata", self._default_metadata(g))
+                if self._candidate_time_conflicts(candidate, meta):
+                    out.append(i)
+            return out
         out = []
         for i, g in enumerate(self.arena.grafts):
             meta = g.get("metadata", self._default_metadata(g))
@@ -1519,8 +1544,7 @@ class GraftRepository:
             return []
         valid_from = self._norm_fact_time_value(candidate.get("valid_from"))
         expires_at = self._norm_fact_time_value(candidate.get("expires_at"))
-        native = self._native_fact_matches(
-            candidate, value_mode=1, temporal_mode=1)
+        native = self._native_fact_matches(candidate, value_mode=1)
         if native is not None:
             out = []
             for i in native:
@@ -1554,12 +1578,29 @@ class GraftRepository:
             out.append(i)
         return out
 
-    def _native_fact_matches(self, candidate, value_mode, temporal_mode=0):
+    def _native_fact_matches(self, candidate, value_mode):
         if self.native_store is None or not hasattr(
                 self.native_store, "fact_matches"):
             return None
         if len(self._native_node_ids) < len(self.arena.grafts):
             return None
+        # Identity fields cross the ABI only when ASCII on BOTH sides —
+        # C++ folds bytes, Python folds Unicode ("KELVIN" with U+212A
+        # lowers to ascii "kelvin" only in Python). Time never crosses it
+        # at all: exact temporal identity was raw byte-equality natively,
+        # and the native parser rejects ISO forms Python accepts (times
+        # without seconds, numeric epoch), so temporal_mode stays 0 and
+        # the callers apply Python temporal policy to the native results.
+        for key in ("subject", "predicate", "value"):
+            if not str(candidate.get(key) or "").isascii():
+                return None
+        if not str(candidate.get("scope", "project") or "").isascii():
+            return None
+        for g in self.arena.grafts:
+            meta = g.get("metadata") or {}
+            for key in ("subject", "predicate", "value", "scope"):
+                if not str(meta.get(key) or "").isascii():
+                    return None
         try:
             native_ids = self.native_store.fact_matches(
                 subject=candidate.get("subject"),
@@ -1567,11 +1608,9 @@ class GraftRepository:
                 value=candidate.get("value"),
                 scope=candidate.get("scope", "project"),
                 value_mode=value_mode,
-                valid_from=(candidate.get("valid_from")
-                            if temporal_mode else None),
-                expires_at=(candidate.get("expires_at")
-                            if temporal_mode else None),
-                temporal_mode=temporal_mode)
+                valid_from=None,
+                expires_at=None,
+                temporal_mode=0)
         except RuntimeError:
             return None
         inverse = {
@@ -2137,8 +2176,10 @@ class GraftRepository:
         return idx
 
     def show_memory_about(self, query):
-        q = query.lower()
-        native = self._native_active_text_matches(q) if q.strip() else None
+        # strip to match the native scan's normalization, so padded queries
+        # answer identically on both paths; blank still lists all active
+        q = str(query or "").strip().lower()
+        native = self._native_active_text_matches(q) if q else None
         out = []
         candidates = range(len(self.arena.grafts)) if native is None else native
         for i in candidates:

@@ -221,10 +221,17 @@ Native metadata now also carries structured fact identity
 The C++ host store exposes active fact-target scans for equal-value and
 conflicting-value matches; Python consumes that native scan for extraction
 expire/conflict/reinforcement target discovery, then still applies the
-authoritative-intent policy checks. `grm_store_fact_matches_ex()` adds opt-in
-exact temporal-field matching for duplicate/reinforcement identity and
-effective-now temporal filtering for expire/conflict target scans, with Python
-retaining fallback behavior when the native mirror is unavailable.
+authoritative-intent and temporal-validity policy checks. Unicode and time do
+not cross the ABI (rule adopted 2026-07-01 after review found divergence):
+the native scans fold ASCII bytes only while Python folds full Unicode;
+native exact temporal identity was raw byte-equality ("2026-06-01" never
+matched "2026-06-01T00:00:00+00:00"), and the native parser rejects ISO forms
+Python accepts (times without seconds, numeric epoch). Python therefore
+passes `temporal_mode=0`, applies effective-now and temporal-identity checks
+to native scan results itself, and falls back to the Python scan for
+non-ASCII queries, corpora, or identity fields on either side of the
+comparison. `grm_store_fact_matches_ex()` retains the temporal modes at the
+ABI for callers that guarantee canonical inputs.
 The native runtime also exposes a side-effect-free extraction policy planner for
 the static write/review/supersede/reinforce/expire decisions. Python supplies
 the target counts and executes the actual mutation, but the review reason/action
