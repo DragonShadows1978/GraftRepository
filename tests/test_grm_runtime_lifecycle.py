@@ -2857,10 +2857,21 @@ def test_repository_native_route_respects_memory_lifecycle(tmp_path, monkeypatch
 
     stale = repo.remember("Native lifecycle stale 11-1111")
     live = repo.remember("Native lifecycle live 22-2222")
+    stale_native = repo.arena.grafts[stale]["native_node_id"]
     assert stale in repo.native_route([1.0] * 512,
                                       lexical_keys=["11-1111"], topk=4)
 
+    original_expire = repo.native_store.apply_expire
+    expire_calls = []
+
+    def traced_expire(node_ids):
+        expire_calls.append(tuple(node_ids))
+        return original_expire(node_ids)
+
+    monkeypatch.setattr(repo.native_store, "apply_expire", traced_expire)
+
     assert repo.forget("stale 11-1111") == 1
+    assert expire_calls[-1] == (stale_native,)
     routed = repo.native_route([1.0] * 512, lexical_keys=["11-1111"], topk=4)
     assert stale not in routed
     assert live in repo.native_route([1.0] * 512,

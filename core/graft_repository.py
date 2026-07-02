@@ -1152,6 +1152,7 @@ class GraftRepository:
                 if q not in g.get("text", "").lower():
                     continue
                 targets.append(i)
+        forgotten = []
         for i in targets:
             g = self.arena.grafts[int(i)]
             meta = g.setdefault("metadata", self._default_metadata(g))
@@ -1161,9 +1162,11 @@ class GraftRepository:
             meta["superseded_by"] = []
             g["retired"] = True
             count += 1
+            forgotten.append(int(i))
             self._mark_dirty(i, payload=False, metadata=True)
             self._append_wal("NODE_FORGET", node_id=i, query=query)
         if count:
+            self._native_apply_expire(forgotten)
             self._mark_mutations(before)
         return count
 
