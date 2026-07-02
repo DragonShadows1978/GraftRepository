@@ -257,6 +257,9 @@ class GraftRepository:
             self.recovered_nodes = self._recover_wal_summary(
                 self.recovered_wal)
             self._rehydrate_from_wal(self.recovered_nodes)
+            self.recovered_payload_adoptions = (
+                self._adopt_orphan_payloads_for_nodes(
+                    n.get("node_id") for n in self.recovered_nodes))
             self._sync_lifecycle()
             self._sync_native_full()
             self.dirty_nodes.clear()
@@ -2850,11 +2853,24 @@ class GraftRepository:
         """RAM-first loader: host payload -> device, NVMe only as fallback."""
         g = self.arena.grafts[i]
         if g.get("host_payload") is None:
-            g["host_payload"] = self._read_payload_file(i)
+            try:
+                g["host_payload"] = self._read_payload_file(i)
+            except FileNotFoundError:
+                self._mark_payload_missing(i, g)
+                return None
         h = self.arena.unpack_node(g["host_payload"])
         g["h"] = h
         self._ensure_lifecycle(i, g)
         return h
+
+    def _mark_payload_missing(self, i, g):
+        g["host_payload"] = None
+        g["h"] = None
+        g["payload_pending"] = True
+        g["durable"] = False
+        g["saved"] = False
+        g["recovered"] = True
+        self._ensure_lifecycle(i, g)
 
     def _ensure_repo_dirs(self):
         os.makedirs(self.path, exist_ok=True)
@@ -3349,9 +3365,35 @@ class GraftRepository:
             keys = payload.keys()
         return {k: np.ascontiguousarray(payload[k]) for k in keys}
 
+    def _payload_file_path(self, i):
+        return os.path.join(self.path, "nodes", f"{int(i):04d}.npz")
+
     def _read_payload_file(self, i):
-        with np.load(os.path.join(self.path, "nodes", f"{i:04d}.npz")) as z:
+        with np.load(self._payload_file_path(i)) as z:
             return self._payload_to_ram(z)
+
+    def _adopt_orphan_payloads_for_nodes(self, node_ids):
+        adopted = []
+        for node_id in sorted({int(i) for i in node_ids if i is not None}):
+            if node_id < 0 or node_id >= len(self.arena.grafts):
+                continue
+            g = self.arena.grafts[node_id]
+            if g.get("host_payload") is not None:
+                continue
+            if not os.path.exists(self._payload_file_path(node_id)):
+                continue
+            try:
+                payload = self._read_payload_file(node_id)
+            except FileNotFoundError:
+                continue
+            g["host_payload"] = payload
+            g["h"] = self.arena.unpack_node(payload)
+            g["payload_pending"] = False
+            g["durable"] = True
+            g["saved"] = True
+            self._ensure_lifecycle(node_id, g)
+            adopted.append(node_id)
+        return tuple(adopted)
 
     def _ensure_host_payload(self, i, g):
         if g.get("host_payload") is not None:
@@ -3638,8 +3680,11 @@ class GraftRepository:
             # A payload-pending node (WAL-recovered, never re-harvested) has no
             # .npz on disk — keep it text-only rather than reading a missing file.
             if not n["retired"] and not g["payload_pending"]:
-                g["host_payload"] = self._read_payload_file(i)
-                g["h"] = self.arena.unpack_node(g["host_payload"])
+                try:
+                    g["host_payload"] = self._read_payload_file(i)
+                    g["h"] = self.arena.unpack_node(g["host_payload"])
+                except FileNotFoundError:
+                    self._mark_payload_missing(i, g)
             self._ensure_lifecycle(i, g)
             self.arena.grafts.append(g)
         self._rebuild_child_keys()
@@ -3651,6 +3696,8 @@ class GraftRepository:
         self.recovered_nodes = self._recover_wal_summary(self.recovered_wal)
         self.replayed_wal_nodes = self._apply_manifest_wal_records(
             self.recovered_wal, manifest_wal_lsn)
+        self.recovered_payload_adoptions = (
+            self._adopt_orphan_payloads_for_nodes(self.replayed_wal_nodes))
         self.review_buffer = self._apply_review_wal_records(
             man.get("review_buffer", []), self.recovered_wal,
             since_lsn=manifest_wal_lsn)

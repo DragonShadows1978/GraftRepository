@@ -49,16 +49,16 @@ replay honors snapshot state so tags/source/no-fold metadata survive the
 no-manifest crash path. Regression:
 `test_wal_upgrade_snapshots_existing_dirty_nodes`.
 
-## Majors
-
 **M4 — Crash between payload writes and manifest orphans `.npz` files.**
-Per-node `.npz` files are written (and nodes marked `durable=True`) before
-the manifest commit point; a crash in between leaves fsynced payloads no
-recovery path re-adopts, and descent's `_load_node` can hit a raw
-`FileNotFoundError` on `payload_pending` nodes. *Fix direction:* on load,
-scan `nodes/` for orphaned `.npz` matching WAL-known node ids and re-adopt;
-guard `_read_payload_file` with a graceful missing-payload path (degrade to
-text-authoritative + re-harvest flag, never raise through descent).
+Fixed 2026-07-02. WAL recovery now scans WAL-known node ids for orphaned
+`nodes/NNNN.npz` payloads and re-adopts them before native sync, both with
+and without a manifest. Missing payload files now downgrade the graft to
+text-authoritative `payload_pending` recovery state instead of surfacing a
+raw `FileNotFoundError` through descent. Regressions:
+`test_wal_recovery_adopts_orphaned_payload_before_manifest` and
+`test_missing_payload_load_degrades_to_pending`.
+
+## Majors
 
 **M5 — Explicit authoritative supersede targets silently dropped.** In
 `_apply_extraction_candidate_direct`, `supersedes = conflicts if conflicts

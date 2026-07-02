@@ -2970,6 +2970,55 @@ def test_wal_recovers_text_metadata_without_manifest(tmp_path):
     assert g["metadata"]["active"] is True  # active (not a forgotten node)
 
 
+def test_wal_recovery_adopts_orphaned_payload_before_manifest(tmp_path,
+                                                              monkeypatch):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+    idx = repo.add_document("DOC orphan payload code 55-5500")
+    original_write_json = repo._atomic_write_json
+
+    def crash_before_manifest(target, payload, *, indent=None):
+        if os.path.basename(target) == "manifest.json":
+            raise RuntimeError("crash before manifest publish")
+        return original_write_json(target, payload, indent=indent)
+
+    monkeypatch.setattr(repo, "_atomic_write_json", crash_before_manifest)
+    with pytest.raises(RuntimeError, match="crash before manifest"):
+        repo.flush_now()
+
+    assert os.path.exists(os.path.join(path, "nodes", "0000.npz"))
+    assert not os.path.exists(os.path.join(path, "manifest.json"))
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+    g = reopened.arena.grafts[idx]
+
+    assert g["text"] == "DOC orphan payload code 55-5500"
+    assert g["host_payload"]["payload_id"].tolist() == [0]
+    assert g["h"] == {"id": 0}
+    assert g["payload_pending"] is False
+    assert g["durable"] is True
+
+
+def test_missing_payload_load_degrades_to_pending(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+    idx = repo.add_document("DOC missing payload code 66-6600")
+    repo.flush_now()
+
+    os.unlink(os.path.join(path, "nodes", "0000.npz"))
+    g = repo.arena.grafts[idx]
+    g["host_payload"] = None
+    g["h"] = None
+    repo._ensure_lifecycle(idx, g)
+
+    assert repo._load_node(idx) is None
+    assert g["payload_pending"] is True
+    assert g["durable"] is False
+
+
 def test_native_wal_recovery_mirrors_text_without_route(tmp_path):
     lib = build_native(tmp_path)
     path = str(tmp_path / "repo")
