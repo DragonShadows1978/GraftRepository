@@ -1064,7 +1064,7 @@ def test_memory_mode_commands_change_wal_behavior(tmp_path):
     assert records[-1]["durability_mode"] == "volatile"
     before = len(records)
 
-    repo.add_document("Volatile-only document 81-8181")
+    volatile_doc = repo.add_document("Volatile-only document 81-8181")
     with open(os.path.join(path, "wal", "000001.wal")) as fh:
         records = [json.loads(line) for line in fh if line.strip()]
     assert len(records) == before
@@ -1072,11 +1072,14 @@ def test_memory_mode_commands_change_wal_behavior(tmp_path):
     safe = repo.apply_memory_command("switch to session-safe mode")
     assert safe["durability_mode"] == "session_safe"
     assert safe["wal_enabled"] is True
+    assert safe["wal_protected_nodes"] == (volatile_doc,)
     repo.add_document("Session-safe document 82-8282")
     with open(os.path.join(path, "wal", "000001.wal")) as fh:
         records = [json.loads(line) for line in fh if line.strip()]
-    assert records[-2]["type"] == "CONFIG"
-    assert records[-2]["durability_mode"] == "session_safe"
+    assert records[-3]["type"] == "CONFIG"
+    assert records[-3]["durability_mode"] == "session_safe"
+    assert records[-2]["type"] == "NODE_UPSERT"
+    assert records[-2]["text"] == "Volatile-only document 81-8181"
     assert records[-1]["type"] == "NODE_UPSERT"
     assert records[-1]["text"] == "Session-safe document 82-8282"
 
@@ -1257,6 +1260,29 @@ def test_durability_mode_recovers_from_manifest_and_wal(tmp_path):
     assert replayed.stats()["replayed_config_records"] == 1
 
 
+def test_wal_upgrade_snapshots_existing_dirty_nodes(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+    repo.apply_memory_command("switch to volatile mode")
+    volatile_doc = repo.add_document("DOC volatile upgrade code 91-9191",
+                                    tags=("volatile",))
+
+    safe = repo.apply_memory_command("switch to project-safe mode")
+
+    assert safe["durability_mode"] == "project_safe"
+    assert safe["wal_enabled"] is True
+    assert volatile_doc in repo.dirty_nodes
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+    rows = reopened.show_memory_about("91-9191")
+    assert [r["node_id"] for r in rows] == [volatile_doc]
+    g = reopened.arena.grafts[volatile_doc]
+    assert g["payload_pending"] is True
+    assert g["tags"] == ["volatile"]
+
+
 def test_wal_gap_placeholders_can_checkpoint_after_replay(tmp_path):
     path = str(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
@@ -1264,11 +1290,13 @@ def test_wal_gap_placeholders_can_checkpoint_after_replay(tmp_path):
     repo.add_document("DOC checkpointed before volatile gap 10-1000")
     repo.flush_now()
 
-    repo.apply_memory_command("switch to volatile mode")
-    gap_a = repo.add_document("DOC volatile gap A 20-2000")
-    gap_b = repo.add_document("DOC volatile gap B 21-2100")
-    repo.apply_memory_command("switch to project-safe mode")
-    tail = repo.add_document("DOC replay tail after gap 30-3000")
+    gap_a = 1
+    gap_b = 2
+    tail = 3
+    repo._append_wal("NODE_UPSERT", node_id=tail, kind="doc",
+                     text="DOC replay tail after gap 30-3000",
+                     metadata={"kind": "doc", "active": True},
+                     has_payload=True)
 
     reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
                                arena_cls=FakeArena, route_layer=3)

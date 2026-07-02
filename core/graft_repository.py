@@ -327,6 +327,7 @@ class GraftRepository:
             plan = self._python_durability_mode_plan(mode)
         mode = plan["durability_mode"]
         old_mode = self.durability_mode
+        old_wal_enabled = bool(self.wal_enabled)
         if plan.get("append_config_before"):
             self._append_wal("CONFIG", durability_mode=mode,
                              wal_enabled=bool(plan["target_wal_enabled"]),
@@ -338,9 +339,13 @@ class GraftRepository:
             self._append_wal("CONFIG", durability_mode=mode,
                              wal_enabled=bool(self.wal_enabled),
                              previous_durability_mode=old_mode)
+        protected = ()
+        if not old_wal_enabled and self.wal_enabled:
+            protected = self._append_dirty_wal_snapshots()
         return {"durability_mode": self.durability_mode,
                 "previous_durability_mode": old_mode,
-                "wal_enabled": bool(self.wal_enabled)}
+                "wal_enabled": bool(self.wal_enabled),
+                "wal_protected_nodes": protected}
 
     def __enter__(self):
         return self
@@ -3038,7 +3043,7 @@ class GraftRepository:
                 node_id = int(rec["node_id"])
                 metadata = dict(rec.get("metadata", {}) or {})
                 active = bool(metadata.get("active", True))
-                nodes[node_id] = {
+                node = {
                     "node_id": node_id,
                     "text": rec.get("text", ""),
                     "kind": rec.get("kind", "turn"),
@@ -3048,6 +3053,24 @@ class GraftRepository:
                     "retired": not active,
                     "no_fold": bool(metadata.get("no_fold", False)),
                 }
+                state = rec.get("state") or ()
+                if len(state) >= 1:
+                    node["kind"] = state[0]
+                    metadata.setdefault("kind", state[0])
+                if len(state) >= 2:
+                    node["retired"] = bool(state[1])
+                    node["active"] = not bool(state[1])
+                    metadata["active"] = not bool(state[1])
+                if len(state) >= 3:
+                    node["no_fold"] = bool(state[2])
+                    metadata["no_fold"] = bool(state[2])
+                if len(state) >= 4:
+                    node["sources"] = list(state[3])
+                    metadata.setdefault("source_grafts", list(state[3]))
+                if len(state) >= 5:
+                    node["tags"] = list(state[4])
+                    metadata.setdefault("tags", list(state[4]))
+                nodes[node_id] = node
             elif typ == "NODE_META" and int(rec.get("node_id", -1)) in nodes:
                 node = nodes[int(rec["node_id"])]
                 metadata = dict(rec.get("metadata", {}) or {})
@@ -3228,9 +3251,13 @@ class GraftRepository:
                 metadata = dict(rec.get("metadata", {}) or {})
                 active = bool(metadata.get("active", True))
                 g["text"] = rec.get("text", g.get("text", ""))
-                g["kind"] = rec.get("kind", g.get("kind", "turn"))
-                g["metadata"] = metadata
-                g["retired"] = not active
+                state = rec.get("state") or ()
+                if state:
+                    self._apply_wal_metadata_state(g, metadata, state)
+                else:
+                    g["kind"] = rec.get("kind", g.get("kind", "turn"))
+                    g["metadata"] = metadata
+                    g["retired"] = not active
                 g["payload_pending"] = bool(
                     rec.get("has_payload", g.get("payload_pending", False)))
                 g["recovered"] = True
@@ -3424,6 +3451,24 @@ class GraftRepository:
                 self._append_wal("NODE_META", node_id=i,
                                  metadata=g.get("metadata", {}),
                                  state=list(self._state_tuple(g)))
+
+    def _append_dirty_wal_snapshots(self):
+        if not self.wal_enabled or not self.dirty_nodes:
+            return ()
+        self._sync_lifecycle()
+        protected = []
+        for i in sorted(int(k) for k in self.dirty_nodes):
+            if i < 0 or i >= len(self.arena.grafts):
+                continue
+            g = self.arena.grafts[i]
+            self._append_wal("NODE_UPSERT", node_id=i,
+                             kind=g.get("kind", "turn"),
+                             text=g.get("text", ""),
+                             metadata=g.get("metadata", {}),
+                             has_payload=g.get("host_payload") is not None,
+                             state=list(self._state_tuple(g)))
+            protected.append(i)
+        return tuple(protected)
 
     def _node_manifest(self, g):
         return {"kind": g.get("kind", "turn"),

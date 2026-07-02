@@ -41,15 +41,15 @@ them as text-authoritative gaps instead of trying to synthesize nonexistent
 payload tensors. Regression:
 `test_wal_gap_placeholders_can_checkpoint_after_replay`.
 
-## Majors
-
 **M3 — Durability-mode upgrade doesn't protect pre-existing state.**
-`set_durability_mode` (and the native plan path) enables the WAL without
-flushing or WAL-logging nodes that already exist in RAM; a crash after
-upgrade loses everything pre-upgrade while the operator believed
-durable-strict was active. *Fix direction:* on any WAL-off→on transition,
-either force `flush_now()` or append NODE_UPSERT records for all
-non-durable nodes before returning success.
+Fixed 2026-07-02. WAL-off to WAL-on transitions now append `NODE_UPSERT`
+snapshots for all dirty in-RAM nodes immediately after the mode `CONFIG`
+record, while leaving those nodes dirty for the next full checkpoint. WAL
+replay honors snapshot state so tags/source/no-fold metadata survive the
+no-manifest crash path. Regression:
+`test_wal_upgrade_snapshots_existing_dirty_nodes`.
+
+## Majors
 
 **M4 — Crash between payload writes and manifest orphans `.npz` files.**
 Per-node `.npz` files are written (and nodes marked `durable=True`) before
