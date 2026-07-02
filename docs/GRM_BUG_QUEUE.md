@@ -34,15 +34,14 @@ that happen during the async flush remain queued for the next checkpoint.
 Regression:
 `test_async_flush_manifest_lsn_does_not_skip_concurrent_wal`.
 
-## Majors
+**M2 — WAL-replay gap placeholders brick future flushes.** Fixed
+2026-07-02. Manifest-plus-WAL replay now creates missing node-id gaps as
+`payload_pending=True` recovered placeholders, so the next checkpoint treats
+them as text-authoritative gaps instead of trying to synthesize nonexistent
+payload tensors. Regression:
+`test_wal_gap_placeholders_can_checkpoint_after_replay`.
 
-**M2 — WAL-replay gap placeholders brick future flushes.** Gap placeholders
-created during replay get `payload_pending=False`; `flush_now`'s
-missing-payload exemption requires `payload_pending` truthy, so
-`_ensure_host_payload` raises forever after — the repository can never
-checkpoint again. *Fix direction:* create gap placeholders with
-`payload_pending=True` (and a regression test: checkpoint → volatile-mode
-nodes → mode restore → node → crash → reload → `flush_now()` must succeed).
+## Majors
 
 **M3 — Durability-mode upgrade doesn't protect pre-existing state.**
 `set_durability_mode` (and the native plan path) enables the WAL without

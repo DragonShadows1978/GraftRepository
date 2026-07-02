@@ -3159,7 +3159,7 @@ class GraftRepository:
                     "kind": "recovered_gap",
                     "metadata": {"active": False},
                     "active": False,
-                    "payload_pending": False,
+                    "payload_pending": True,
                 }, width)
                 gap["retired"] = True
                 self._ensure_lifecycle(gap_id, gap)

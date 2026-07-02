@@ -1257,6 +1257,33 @@ def test_durability_mode_recovers_from_manifest_and_wal(tmp_path):
     assert replayed.stats()["replayed_config_records"] == 1
 
 
+def test_wal_gap_placeholders_can_checkpoint_after_replay(tmp_path):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+    repo.add_document("DOC checkpointed before volatile gap 10-1000")
+    repo.flush_now()
+
+    repo.apply_memory_command("switch to volatile mode")
+    gap_a = repo.add_document("DOC volatile gap A 20-2000")
+    gap_b = repo.add_document("DOC volatile gap B 21-2100")
+    repo.apply_memory_command("switch to project-safe mode")
+    tail = repo.add_document("DOC replay tail after gap 30-3000")
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+
+    assert reopened.replayed_wal_nodes == (tail,)
+    assert reopened.arena.grafts[gap_a]["kind"] == "recovered_gap"
+    assert reopened.arena.grafts[gap_b]["kind"] == "recovered_gap"
+    assert reopened.arena.grafts[gap_a]["payload_pending"] is True
+    assert reopened.arena.grafts[gap_b]["payload_pending"] is True
+
+    reopened.flush_now()
+    rows = reopened.show_memory_about("30-3000")
+    assert [r["node_id"] for r in rows] == [tail]
+
+
 def test_project_safe_forces_explicit_project_memory_flush(tmp_path):
     session_path = str(tmp_path / "session_safe")
     session_repo = GraftRepository(FakeModel(), enc, dec, session_path,
