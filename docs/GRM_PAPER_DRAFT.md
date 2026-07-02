@@ -55,8 +55,8 @@ revision-instead-of-overwrite semantics, a review buffer for uncertain
 writes, and fidelity-gated consolidation (folds that lose facts must abort).
 A dialect layer makes the same repository semantics run across attention
 architectures — MLA latent caches, GQA, MQA with sliding windows — with a
-*graftability profile* that enforces, at construction time, which cache
-families may be re-seated at all. On consumer GPUs, gated evaluations show:
+*graftability profile* governing which cache families may be re-seated at
+all (validated at construction on the native plane; §2.4). On consumer GPUs, gated evaluations show:
 50-turn conversational recall through routed mounts with the live context
 cleared every turn (DeepSeek-V2-Lite INT4); two-generation consolidation (40
 turns → 10 digests → 2 era nodes) with recall through the folded structure;
@@ -181,11 +181,11 @@ consumer GPU afford the long contexts GRM fills.)
 1. **The graft abstraction**: position-free K/V payloads with text,
    metadata, routing keys, and lineage — memory as the model's own state
    (§2.1–2.3).
-2. **A cross-architecture dialect system** with enforced graftability
+2. **A cross-architecture dialect system** with graftability
    profiles: the same repository semantics on MLA latent caches
    (DeepSeek-V2-Lite, MiniCPM3), GQA (Qwen3-4B), and MQA+sliding-window
    (Gemma-4 12B); fixed/learned-absolute position families are structurally
-   refused re-seating at construction time (§2.4).
+   refused re-seating at construction on the native plane (§2.4).
 3. **A four-plane runtime** — VRAM disposable / RAM authoritative / NVMe
    durable / policy — with an opt-in native (C++) mirror whose boundary
    discipline we state as a design law: *plans cross the ABI; policy does
