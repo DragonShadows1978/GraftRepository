@@ -44,9 +44,10 @@ model-specific bridge re-encodes the graft.
 explicit `GRM_RUNTIME_LIB` environment setting now mirrors payload lifecycle
 into that native host store as reconstructable named tensors with shape/dtype
 metadata, checkpoints those native host payloads to NVMe through a binary C++
-store format with a persisted native dialect/profile id (`GRMSTORE7`), persists
-semantic metadata JSON through the same native checkpoint path, and supports
-native host-store creation for both MLA and GQA dialect descriptors.
+store format with a persisted native dialect/profile id (`GRMSTORE7`) and
+provenance JSON in `GRMSTORE9`, persists semantic metadata JSON through the
+same native checkpoint path, and supports native host-store creation for both
+MLA and GQA dialect descriptors.
 `native_auto=False` keeps a repository Python-only even when `GRM_RUNTIME_LIB`
 is set. It mirrors native route keys into the C++ `RouterIndex` and preserves
 route vectors plus lexical keys through the native checkpoint path;
@@ -56,10 +57,14 @@ lookup, preserve active state through native checkpoints, and carry
 kind/scope/durability/mutability fields for native route filtering through
 `grm_store_route_filtered()`. Source turns, source grafts, supersedes, and
 superseded-by edges are also mirrored into structured native state through
-`grm_store_set_graph_edges()` and preserved in native checkpoints. Python
-metadata retains Python graft ids, while the structured native graph edge plane
-is written with mapped native node ids so native traversal remains correct even
-when those id spaces diverge. Folded source descent can query recursive
+`grm_store_set_graph_edges()` and preserved in native checkpoints. Repository
+provenance is mirrored as native JSON through
+`grm_store_set_provenance_json()`, read back through
+`grm_store_provenance_json()`, and consumed by `why_remember()` when the native
+mirror is complete. Python metadata retains Python graft ids, while the
+structured native graph edge plane is written with mapped native node ids so
+native traversal remains correct even when those id spaces diverge. Folded
+source descent can query recursive
 source-graft closure through `grm_store_source_closure()`, and `ArenaCache`
 uses that native closure for digest/era mount expansion when all returned
 native ids map back to local grafts, falling back to Python `sources` otherwise.
@@ -101,7 +106,9 @@ the runtime durability path: autosave-enabled repositories publish remember,
 forget, correct, review-fallback, ignore, and cull/split-graft decisions through
 `flush_now()`. Pin/unpin and mutability-marking commands also update active-node
 metadata through the same dirty/WAL/native-metadata path; read-only show/why
-commands set a runtime result without forcing autosave. `flush memory now` and
+commands set a runtime result without forcing autosave, with native-backed why
+rows reading text, metadata, and provenance from the C++ host store when
+available. `flush memory now` and
 `flush_immediately` plans still force a flush even when autosave is disabled.
 Durability mode commands (`switch to volatile/session-safe/project-safe mode`)
 now change the repository `durability_mode`, toggle WAL eligibility for that
@@ -1303,8 +1310,10 @@ Deliverables:
 Current status: segment provenance records, source-linked fact nodes, document
 and cull span payload slicing, and the public selected-section API are
 implemented. `GraftRepository.select_graft_span()` creates a non-retiring child
-graft with selected-span provenance and sliced RAM/native payloads. Live
-cache-span harvesting remains owned by the TensorCUDA/arena export gates.
+graft with selected-span provenance and sliced RAM/native payloads; native
+provenance mirroring/checkpointing now preserves those explanation records for
+why-memory reads. Live cache-span harvesting remains owned by the
+TensorCUDA/arena export gates.
 
 Validation:
 

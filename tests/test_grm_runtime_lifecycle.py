@@ -526,6 +526,40 @@ def test_select_graft_span_keeps_parent_active_and_records_provenance(tmp_path):
     repo.close()
 
 
+def test_native_provenance_guides_why_memory_rows(tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeSliceArena,
+                           route_layer=3, native_lib_path=lib)
+    parent = repo.add_document("P0 P1 P2 P3")
+    out = repo.select_graft_span(parent, 1, 3, label="native middle",
+                                 tags=("selected",))
+    child = out["child"]
+    child_native = repo.arena.grafts[child]["native_node_id"]
+    original_provenance = repo.native_store.provenance
+    calls = []
+
+    def traced_provenance(node_id):
+        calls.append(int(node_id))
+        return original_provenance(node_id)
+
+    monkeypatch.setattr(repo.native_store, "provenance", traced_provenance)
+
+    why = repo.why_remember("P1 P2")
+    child_rows = [row for row in why if row["node_id"] == child]
+
+    assert child_native in calls
+    assert child_rows
+    assert child_rows[0]["selected"] is True
+    assert child_rows[0]["selection_label"] == "native middle"
+    assert child_rows[0]["source_grafts"] == [parent]
+    assert child_rows[0]["provenance"][0]["segment_type"] == "selected_span"
+    assert child_rows[0]["provenance"][0]["source_graft"] == parent
+    assert child_rows[0]["provenance"][0]["token_start"] == 1
+    assert child_rows[0]["provenance"][0]["token_end"] == 3
+    repo.close()
+
+
 def test_plan_cull_sections_caps_large_sections(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeSliceArena,

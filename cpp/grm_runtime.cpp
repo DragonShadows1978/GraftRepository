@@ -109,7 +109,8 @@ constexpr char kCheckpointMagicV5[] = "GRMSTORE5";
 constexpr char kCheckpointMagicV6[] = "GRMSTORE6";
 constexpr char kCheckpointMagicV7[] = "GRMSTORE7";
 constexpr char kCheckpointMagicV8[] = "GRMSTORE8";
-constexpr char kCheckpointMagic[] = "GRMSTORE8";
+constexpr char kCheckpointMagicV9[] = "GRMSTORE9";
+constexpr char kCheckpointMagic[] = "GRMSTORE9";
 
 void write_u64(std::ostream& out, std::uint64_t v) {
   out.write(reinterpret_cast<const char*>(&v), sizeof(v));
@@ -1777,6 +1778,32 @@ std::string HostGraftStore::node_summary_json(
   return out.str();
 }
 
+void HostGraftStore::set_provenance_json(
+    std::uint64_t node_id,
+    std::string provenance_json) {
+  auto* n = get(node_id);
+  if (n == nullptr) {
+    throw std::out_of_range("unknown GRM node id");
+  }
+  if (trim(provenance_json).empty()) {
+    provenance_json = "[]";
+  }
+  if (n->provenance_json == provenance_json) {
+    return;
+  }
+  n->provenance_json = std::move(provenance_json);
+  mark_dirty(node_id, false, true);
+}
+
+const std::string& HostGraftStore::provenance_json(
+    std::uint64_t node_id) const {
+  const auto* n = get(node_id);
+  if (n == nullptr) {
+    throw std::out_of_range("unknown GRM node id");
+  }
+  return n->provenance_json;
+}
+
 void HostGraftStore::clear_route(std::uint64_t node_id) {
   auto* n = get(node_id);
   if (n == nullptr) {
@@ -2180,6 +2207,7 @@ void HostGraftStore::save_checkpoint(const std::string& root) {
       write_u64_vector(out, n.metadata.source_grafts);
       write_u64_vector(out, n.metadata.supersedes);
       write_u64_vector(out, n.metadata.superseded_by);
+      write_string(out, n.provenance_json);
       write_f32_vectors(out, n.route_keys);
       write_string_vector(out, n.lexical_keys);
       write_bool(out, n.lifecycle.host_present);
@@ -2243,12 +2271,32 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
       magic_s == std::string(kCheckpointMagicV7, sizeof(kCheckpointMagicV7) - 1);
   const bool checkpoint_v8 =
       magic_s == std::string(kCheckpointMagicV8, sizeof(kCheckpointMagicV8) - 1);
+  const bool checkpoint_v9 =
+      magic_s == std::string(kCheckpointMagicV9, sizeof(kCheckpointMagicV9) - 1);
   if (!in || (!checkpoint_v1 && !checkpoint_v2 && !checkpoint_v3 &&
               !checkpoint_v4 && !checkpoint_v5 && !checkpoint_v6 &&
-              !checkpoint_v7 && !checkpoint_v8)) {
+              !checkpoint_v7 && !checkpoint_v8 && !checkpoint_v9)) {
     throw std::runtime_error("invalid native GRM checkpoint magic");
   }
-  if (checkpoint_v5 || checkpoint_v6 || checkpoint_v7 || checkpoint_v8) {
+  const bool has_active = checkpoint_v2 || checkpoint_v3 || checkpoint_v4 ||
+                          checkpoint_v5 || checkpoint_v6 || checkpoint_v7 ||
+                          checkpoint_v8 || checkpoint_v9;
+  const bool has_route_metadata = checkpoint_v3 || checkpoint_v4 ||
+                                  checkpoint_v5 || checkpoint_v6 ||
+                                  checkpoint_v7 || checkpoint_v8 ||
+                                  checkpoint_v9;
+  const bool has_graph_edges = checkpoint_v4 || checkpoint_v5 ||
+                               checkpoint_v6 || checkpoint_v7 ||
+                               checkpoint_v8 || checkpoint_v9;
+  const bool has_dialect_id = checkpoint_v5 || checkpoint_v6 ||
+                              checkpoint_v7 || checkpoint_v8 ||
+                              checkpoint_v9;
+  const bool has_route_lists = checkpoint_v6 || checkpoint_v7 ||
+                               checkpoint_v8 || checkpoint_v9;
+  const bool has_profile = checkpoint_v7 || checkpoint_v8 || checkpoint_v9;
+  const bool has_fact_identity = checkpoint_v8 || checkpoint_v9;
+  const bool has_provenance = checkpoint_v9;
+  if (has_dialect_id) {
     const auto saved_dialect = read_string(in);
     const auto expected_dialect = dialect_.dialect_id();
     if (saved_dialect != expected_dialect) {
@@ -2256,7 +2304,7 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
                                saved_dialect + " vs " + expected_dialect);
     }
   }
-  if (checkpoint_v7 || checkpoint_v8) {
+  if (has_profile) {
     grm::DialectDescriptor saved = dialect_;
     saved.position_law = read_string(in);
     saved.state_kind = read_string(in);
@@ -2278,33 +2326,33 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
     n.ntok = read_u64(in);
     n.text = read_string(in);
     n.metadata.json = read_string(in);
-    n.metadata.active =
-        (checkpoint_v2 || checkpoint_v3 || checkpoint_v4 || checkpoint_v5 ||
-         checkpoint_v6 || checkpoint_v7 || checkpoint_v8)
-            ? read_bool(in)
-            : true;
-    if (checkpoint_v3 || checkpoint_v4 || checkpoint_v5 || checkpoint_v6 ||
-        checkpoint_v7 || checkpoint_v8) {
+    n.metadata.active = has_active ? read_bool(in) : true;
+    if (has_route_metadata) {
       n.metadata.kind = read_string(in);
       n.metadata.scope = read_string(in);
       n.metadata.durability = read_string(in);
       n.metadata.mutability = read_string(in);
     }
-    if (checkpoint_v8) {
+    if (has_fact_identity) {
       n.metadata.subject = read_string(in);
       n.metadata.predicate = read_string(in);
       n.metadata.value = read_string(in);
       n.metadata.valid_from = read_string(in);
       n.metadata.expires_at = read_string(in);
     }
-    if (checkpoint_v4 || checkpoint_v5 || checkpoint_v6 || checkpoint_v7 ||
-        checkpoint_v8) {
+    if (has_graph_edges) {
       n.metadata.source_turns = read_u64_vector(in);
       n.metadata.source_grafts = read_u64_vector(in);
       n.metadata.supersedes = read_u64_vector(in);
       n.metadata.superseded_by = read_u64_vector(in);
     }
-    if (checkpoint_v6 || checkpoint_v7 || checkpoint_v8) {
+    if (has_provenance) {
+      n.provenance_json = read_string(in);
+      if (trim(n.provenance_json).empty()) {
+        n.provenance_json = "[]";
+      }
+    }
+    if (has_route_lists) {
       n.route_keys = read_f32_vectors(in);
       n.lexical_keys = read_string_vector(in);
       if (!n.route_keys.empty()) {
@@ -3846,6 +3894,47 @@ int grm_store_node_summary_json(grm_store_handle* handle,
                           "null summary buffer with nonzero capacity");
     }
     const auto json = handle->store->node_summary_json(node_id);
+    *out_len = static_cast<uint64_t>(json.size());
+    if (out_json != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, json.size());
+      std::memcpy(out_json, json.data(), n);
+      out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_set_provenance_json(grm_store_handle* handle,
+                                  uint64_t node_id,
+                                  const char* provenance_json) {
+  try {
+    if (handle == nullptr || handle->store == nullptr ||
+        provenance_json == nullptr) {
+      return grm_fail_msg(handle, "invalid set_provenance arguments");
+    }
+    handle->store->set_provenance_json(node_id, provenance_json);
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_provenance_json(grm_store_handle* handle,
+                              uint64_t node_id,
+                              char* out_json,
+                              size_t out_cap,
+                              uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid provenance_json arguments");
+    }
+    if (out_json == nullptr && out_cap > 0) {
+      return grm_fail_msg(handle,
+                          "null provenance buffer with nonzero capacity");
+    }
+    const auto& json = handle->store->provenance_json(node_id);
     *out_len = static_cast<uint64_t>(json.size());
     if (out_json != nullptr && out_cap > 0) {
       const size_t n = std::min(out_cap - 1, json.size());

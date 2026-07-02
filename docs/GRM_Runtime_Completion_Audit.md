@@ -218,6 +218,14 @@ validation where feasible.
   native nodes now store the repository metadata JSON blob, mirror semantic
   metadata from `GraftRepository`, expose it through the C ABI/Python wrapper,
   and preserve it through native checkpoints.
+- Native provenance persistence:
+  native nodes now mirror repository provenance JSON through
+  `grm_store_set_provenance_json()` / `NativeGraftStore.set_provenance()`,
+  expose it through `grm_store_provenance_json()` /
+  `NativeGraftStore.provenance()`, and preserve it in `GRMSTORE9`
+  checkpoints. `why_remember()` consumes native provenance after native target
+  discovery succeeds, so selected/cull span explanation fields are no longer
+  only Python-manifest state.
 - Native host text/read-row readback:
   native nodes now expose their stored text through
   `grm_store_node_text()` / `NativeGraftStore.text()`, so repository-mirrored
@@ -663,9 +671,9 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   native kind/scope/durability/mutability filters for MLA and GQA dialect ids.
   The native store now also exposes an ordered dirty flush plan with
   payload-vs-metadata flags, dirty payload bytes, and durability priority.
-  Semantic metadata is persisted natively as JSON, and source/supersession
-  graph edges are now structured native state with Python graft references
-  mapped to native node ids at the repository boundary.
+  Semantic metadata and provenance are persisted natively as JSON, and
+  source/supersession graph edges are now structured native state with Python
+  graft references mapped to native node ids at the repository boundary.
   Native can apply final revision and expire active-state transitions once
   Python decides the target set.
   The explicit memory-command grammar now has a native parse-plan boundary, and
@@ -718,7 +726,8 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   from the C++ host store before Python applies WAL, mutation, and durability
   semantics. Show/why read rows then consume
   `grm_store_node_summary_json()` so returned text and metadata come from
-  native RAM rather than being reassembled from Python graft records. Cull/split
+  native RAM rather than being reassembled from Python graft records, and
+  why-memory provenance comes from `grm_store_provenance_json()`. Cull/split
   graft parent retirement also applies native revision transitions for each
   child after Python creates the child payloads.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
@@ -740,8 +749,8 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
 
 The Python RAM-first runtime, opt-in C++ host-store mirror, native host
 payload, metadata, node-text readback, payload-pending WAL mirror, native route
-clearing, node-summary read rows, graph-edge checkpointing, native dirty flush
-planning, native
+clearing, node-summary read rows, native provenance readback, graph-edge
+checkpointing, native dirty flush planning, native
 revision application, native route index with active-state and
 kind/scope/durability/mutability filters for MLA and GQA dialect ids plus
 runtime-consumed native recursive source-closure traversal, multi-key MLA

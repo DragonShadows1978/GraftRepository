@@ -87,6 +87,7 @@ struct HostGraftNode {
   std::string text;
   std::uint64_t ntok = 0;
   NodeMetadata metadata;
+  std::string provenance_json = "[]";
   NodeLifecycle lifecycle;
   HostPayload payload;
   std::vector<float> route_key;
@@ -374,6 +375,9 @@ class HostGraftStore {
   const std::string& metadata_json(std::uint64_t node_id) const;
   const std::string& text(std::uint64_t node_id) const;
   std::string node_summary_json(std::uint64_t node_id) const;
+  void set_provenance_json(std::uint64_t node_id,
+                           std::string provenance_json);
+  const std::string& provenance_json(std::uint64_t node_id) const;
   void clear_route(std::uint64_t node_id);
   void set_active(std::uint64_t node_id, bool active);
   bool is_active(std::uint64_t node_id) const;

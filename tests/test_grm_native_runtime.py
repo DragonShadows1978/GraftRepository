@@ -1227,6 +1227,36 @@ def test_native_node_summary_round_trips_through_checkpoint(tmp_path):
         assert restored.node_summary(node_id)["text"] == text
 
 
+def test_native_provenance_round_trips_through_checkpoint(tmp_path):
+    lib = build_native(tmp_path)
+    ckpt = tmp_path / "provenance_ckpt"
+    provenance = [{
+        "segment_id": 7,
+        "node_id": 3,
+        "segment_type": "selected_span",
+        "created_at": 42.5,
+        "source_graft": 1,
+        "token_start": 2,
+        "token_end": 5,
+    }]
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        node_id = store.add_node("native provenance payload", b"abc", ntok=4)
+        store.set_provenance(node_id, provenance)
+        assert store.provenance(node_id) == provenance
+        store.save_checkpoint(ckpt)
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as restored:
+        restored.load_checkpoint(ckpt)
+        assert restored.provenance(node_id) == provenance
+
+
 def test_native_fact_identity_scan_round_trips_through_checkpoint(tmp_path):
     lib = build_native(tmp_path)
     ckpt = tmp_path / "fact_identity_ckpt"

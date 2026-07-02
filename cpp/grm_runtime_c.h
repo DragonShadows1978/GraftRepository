@@ -263,6 +263,14 @@ int grm_store_node_summary_json(grm_store_handle* handle,
                                 char* out_json,
                                 size_t out_cap,
                                 uint64_t* out_len);
+int grm_store_set_provenance_json(grm_store_handle* handle,
+                                  uint64_t node_id,
+                                  const char* provenance_json);
+int grm_store_provenance_json(grm_store_handle* handle,
+                              uint64_t node_id,
+                              char* out_json,
+                              size_t out_cap,
+                              uint64_t* out_len);
 int grm_store_parse_memory_command(grm_store_handle* handle,
                                    const char* text,
                                    char* out_json,

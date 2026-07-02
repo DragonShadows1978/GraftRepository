@@ -2277,6 +2277,10 @@ class GraftRepository:
         return rows
 
     def why_remember(self, query):
+        q = str(query or "").strip().lower()
+        native_rows = self._native_why_rows(q) if q else None
+        if native_rows is not None:
+            return native_rows
         rows = self.show_memory_about(query)
         return [{"node_id": r["node_id"],
                  "write_intent": r["metadata"].get("write_intent"),
@@ -2292,6 +2296,43 @@ class GraftRepository:
                  "provenance": self.arena.grafts[r["node_id"]].get(
                      "provenance", [])}
                 for r in rows]
+
+    def _native_why_rows(self, query):
+        if (self.native_store is None
+                or not hasattr(self.native_store, "node_summary")
+                or not hasattr(self.native_store, "provenance")):
+            return None
+        targets = self._native_active_text_matches(query)
+        if targets is None:
+            return None
+        rows = []
+        for idx in targets:
+            native_id = self._native_node_ids.get(int(idx))
+            if native_id is None:
+                return None
+            try:
+                row = self.native_store.node_summary(native_id)
+                provenance = self.native_store.provenance(native_id)
+            except (RuntimeError, TypeError, ValueError):
+                return None
+            meta = dict(row.get("metadata") or {})
+            if not meta.get("active", True):
+                continue
+            rows.append({
+                "node_id": int(idx),
+                "write_intent": meta.get("write_intent"),
+                "kind": meta.get("kind"),
+                "durability": meta.get("durability"),
+                "mutability": meta.get("mutability"),
+                "scope": meta.get("scope"),
+                "confidence": meta.get("confidence"),
+                "pinned": meta.get("pinned", False),
+                "selected": meta.get("selected", False),
+                "selection_label": meta.get("selection_label", ""),
+                "source_grafts": meta.get("source_grafts", []),
+                "provenance": list(provenance or []),
+            })
+        return rows
 
     # ---------------------------------------------------------- librarian
     def _active(self, kinds):
@@ -2580,6 +2621,9 @@ class GraftRepository:
                     metadata.get("supersedes", ())),
                 superseded_by=self._native_ref_ids(
                     metadata.get("superseded_by", ())))
+        if hasattr(self.native_store, "set_provenance"):
+            self.native_store.set_provenance(
+                node_id, g.get("provenance", []))
 
     def _native_apply_revision(self, replacement_idx, supersedes):
         if self.native_store is None:

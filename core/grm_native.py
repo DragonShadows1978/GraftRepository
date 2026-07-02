@@ -429,6 +429,18 @@ class NativeGraftStore:
                 ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
                 ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
             lib.grm_store_node_summary_json.restype = ctypes.c_int
+        self._has_provenance = hasattr(lib, "grm_store_provenance_json")
+        self._has_set_provenance = hasattr(
+            lib, "grm_store_set_provenance_json")
+        if self._has_set_provenance:
+            lib.grm_store_set_provenance_json.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p]
+            lib.grm_store_set_provenance_json.restype = ctypes.c_int
+        if self._has_provenance:
+            lib.grm_store_provenance_json.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
+                ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_provenance_json.restype = ctypes.c_int
         self._has_parse_memory_command = hasattr(
             lib, "grm_store_parse_memory_command")
         if self._has_parse_memory_command:
@@ -800,6 +812,13 @@ class NativeGraftStore:
             valid_from=metadata.get("valid_from"),
             expires_at=metadata.get("expires_at"))
 
+    def set_provenance(self, node_id, provenance):
+        if not getattr(self, "_has_set_provenance", False):
+            return
+        data = json.dumps(provenance or [], sort_keys=True).encode("utf-8")
+        self._check(self._lib.grm_store_set_provenance_json(
+            self._handle, int(node_id), data))
+
     def set_active(self, node_id, active=True):
         if not getattr(self, "_has_set_active", False):
             return
@@ -1019,6 +1038,18 @@ class NativeGraftStore:
         self._check(self._lib.grm_store_node_summary_json(
             self._handle, int(node_id), buf, cap, ctypes.byref(needed)))
         return json.loads(buf.value.decode("utf-8") or "{}")
+
+    def provenance(self, node_id):
+        if not getattr(self, "_has_provenance", False):
+            raise RuntimeError("native GRM provenance is unavailable")
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_provenance_json(
+            self._handle, int(node_id), None, 0, ctypes.byref(needed)))
+        cap = int(needed.value) + 1
+        buf = ctypes.create_string_buffer(cap)
+        self._check(self._lib.grm_store_provenance_json(
+            self._handle, int(node_id), buf, cap, ctypes.byref(needed)))
+        return json.loads(buf.value.decode("utf-8") or "[]")
 
     def parse_memory_command(self, text):
         if not getattr(self, "_has_parse_memory_command", False):
