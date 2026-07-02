@@ -2877,6 +2877,11 @@ class GraftRepository:
             freed += 1
         return freed
 
+    def _load_can_materialize_device(self, g, used):
+        if self.vram_budget is None:
+            return True
+        return used + self._node_bytes(g) <= self.vram_budget
+
     def _free_retired(self):
         """Retired nodes leave VRAM; disk is their cold storage."""
         for i, g in enumerate(self.arena.grafts):
@@ -3694,6 +3699,7 @@ class GraftRepository:
         idx = np.load(os.path.join(self.path, "index.npz"))
         self.arena.grafts = []
         self._native_node_ids = {}
+        load_device_bytes = 0
         for i, n in enumerate(man["nodes"]):
             g = {"kind": n["kind"], "text": n["text"], "ntok": n["ntok"],
                  "sources": n["sources"], "retired": n["retired"],
@@ -3719,7 +3725,10 @@ class GraftRepository:
             if not n["retired"] and not g["payload_pending"]:
                 try:
                     g["host_payload"] = self._read_payload_file(i)
-                    g["h"] = self.arena.unpack_node(g["host_payload"])
+                    if self._load_can_materialize_device(
+                            g, load_device_bytes):
+                        g["h"] = self.arena.unpack_node(g["host_payload"])
+                        load_device_bytes += self._node_bytes(g)
                 except FileNotFoundError:
                     self._mark_payload_missing(i, g)
             self._ensure_lifecycle(i, g)

@@ -2911,6 +2911,33 @@ def test_load_enforces_vram_budget(tmp_path):
         assert g["h"] is None
 
 
+def test_load_respects_vram_budget_before_device_unpack(tmp_path):
+    class NoLoadMaterializeArena(FakeArena):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.unpack_attempts = 0
+
+        def unpack_node(self, z):
+            self.unpack_attempts += 1
+            raise RuntimeError("load materialized device payload")
+
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+    for i in range(2):
+        repo.add_document(f"DOC peak load budget code {i}-9090")
+    repo.flush_now()
+
+    reloaded = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=NoLoadMaterializeArena,
+                               route_layer=3, vram_budget_mb=0.000001)
+
+    assert reloaded.arena.unpack_attempts == 0
+    assert reloaded.stats()["active_device"] == 0
+    assert all(g["host_payload"] is not None for g in reloaded.arena.grafts)
+    assert all(g["h"] is None for g in reloaded.arena.grafts)
+
+
 def test_native_load_budget_eviction_keeps_durable_payload_clean(tmp_path):
     lib = build_native(tmp_path)
     repo_path = tmp_path / "repo"

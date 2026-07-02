@@ -82,20 +82,21 @@ valid body `edit review 7 text new text goes here` still preserves the inner
 `text`, while `edit review 5,text new text goes here` now fails. Regression:
 `test_native_memory_command_parser`.
 
-**M8 — Section-cull spans drift on real BPE.** `_section_cull_spans` sums
+**M8 — Section-cull spans drift on real BPE.**
 Fixed 2026-07-02. Section cull planning now derives child token edges from
 progressively encoded prefixes of the original text at section boundaries,
 rather than summing stripped/rejoined chunk encodings. Regression:
 `test_plan_cull_sections_uses_original_prefix_token_edges`.
 
+**M9 — `load()` ignores the VRAM budget at peak.**
+Fixed 2026-07-02. Manifest load now restores host payloads first and only
+unpacks device tensors while the running `vram_budget_mb` budget can absorb
+the node, leaving the rest host-only for later mount/page-in. Regression:
+`test_load_respects_vram_budget_before_device_unpack`.
+
 ## Majors
 
-**M9 — `load()` ignores the VRAM budget at peak.** Load unpacks device
-tensors for every non-retired node and only pages afterward — a repository
-larger than free VRAM cannot resume even with `vram_budget_mb` set.
-*Fix direction:* respect the budget during load — defer device
-materialization (host-only restore) and page in on mount, or page
-incrementally as nodes are restored.
+All verified major queue items are fixed.
 
 ## Minors
 
