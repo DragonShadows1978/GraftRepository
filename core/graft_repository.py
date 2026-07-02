@@ -439,6 +439,32 @@ class GraftRepository:
         text = str(text).strip()
         return [text] if text else []
 
+    def _section_prefix_offsets(self, text, boundary="section"):
+        text = str(text)
+        boundaries = self._cull_boundary_set(boundary)
+        offsets = []
+        cur_has_text = False
+        cursor = 0
+        for raw in text.splitlines(keepends=True):
+            line_start = cursor
+            cursor += len(raw)
+            line = raw.strip()
+            if not line:
+                if "blank" in boundaries and cur_has_text:
+                    offsets.append(cursor)
+                    cur_has_text = False
+                continue
+            is_heading = "heading" in boundaries and line.startswith("#")
+            is_speaker = (
+                "speaker" in boundaries and self._is_speaker_boundary(line))
+            if (is_heading or is_speaker) and cur_has_text:
+                offsets.append(line_start)
+                cur_has_text = False
+            cur_has_text = True
+        if cur_has_text:
+            offsets.append(len(text))
+        return offsets or ([len(text)] if text.strip() else [])
+
     @staticmethod
     def _cap_cull_spans(spans, max_tokens=None):
         if max_tokens is None:
@@ -464,12 +490,14 @@ class GraftRepository:
             return []
         spans = []
         cursor = 0
-        for chunk in self._section_text_chunks(text, boundary=boundary):
-            n = len(self.arena.encode(chunk))
-            if n <= 0:
+        original = str(text)
+        for prefix_end in self._section_prefix_offsets(
+                original, boundary=boundary):
+            n = len(self.arena.encode(original[:prefix_end]))
+            if n <= cursor:
                 continue
             start = cursor
-            end = min(ntok, cursor + n)
+            end = min(ntok, n)
             if end > start:
                 spans.append((start, end))
             cursor = end

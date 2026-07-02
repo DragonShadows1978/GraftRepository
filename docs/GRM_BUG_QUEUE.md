@@ -82,15 +82,13 @@ valid body `edit review 7 text new text goes here` still preserves the inner
 `text`, while `edit review 5,text new text goes here` now fails. Regression:
 `test_native_memory_command_parser`.
 
-## Majors
-
 **M8 — Section-cull spans drift on real BPE.** `_section_cull_spans` sums
-`len(encode(chunk))` over stripped/rejoined chunks; separators and
-merge-boundary effects make those counts diverge from the original token
-stream, so child payload slices shift off section boundaries.
-*Fix direction:* derive spans from the ORIGINAL text — encode
-progressively larger prefixes ending at each section boundary and use those
-prefix lengths as span edges.
+Fixed 2026-07-02. Section cull planning now derives child token edges from
+progressively encoded prefixes of the original text at section boundaries,
+rather than summing stripped/rejoined chunk encodings. Regression:
+`test_plan_cull_sections_uses_original_prefix_token_edges`.
+
+## Majors
 
 **M9 — `load()` ignores the VRAM budget at peak.** Load unpacks device
 tensors for every non-retired node and only pages afterward — a repository

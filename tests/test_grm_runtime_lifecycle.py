@@ -615,6 +615,24 @@ def test_plan_cull_sections_caps_large_sections(tmp_path):
             (0, 2), (2, 4), (4, 6)]
 
 
+def test_plan_cull_sections_uses_original_prefix_token_edges(tmp_path):
+    def char_enc(text):
+        return list(str(text))
+
+    def char_dec(ids):
+        return "".join(ids)
+
+    repo = GraftRepository(FakeModel(), char_enc, char_dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeSliceArena,
+                           route_layer=3)
+    parent = repo.add_document("# A\nab\n# B\ncd")
+
+    assert repo.plan_cull_sections(parent, boundary="section") == [
+        (0, len("# A\nab\n")),
+        (len("# A\nab\n"), len("# A\nab\n# B\ncd")),
+    ]
+
+
 def test_runtime_cull_graft_autosaves_and_reports(tmp_path):
     path = str(tmp_path)
     repo = GraftRepository(FakeModel(), enc, dec, path, autosave=True,
