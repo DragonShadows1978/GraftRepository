@@ -1,5 +1,6 @@
 import json
 import os
+import threading
 
 import numpy as np
 import pytest
@@ -297,6 +298,49 @@ def test_dirty_flush_and_reload_lifecycle(tmp_path):
     assert reloaded.arena.grafts[0]["device_present"] is True
     assert reloaded.arena.grafts[0]["h"] == {"id": 0}
     assert temp_artifacts(path) == []
+
+
+def test_async_flush_manifest_lsn_does_not_skip_concurrent_wal(tmp_path,
+                                                               monkeypatch):
+    path = str(tmp_path)
+    repo = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                           arena_cls=FakeArena, route_layer=3)
+    repo.add_document("DOC checkpoint baseline code 10-1000")
+
+    index_written = threading.Event()
+    continue_flush = threading.Event()
+    original_savez = repo._atomic_savez_compressed
+
+    def pause_after_index_write(target, **payload):
+        original_savez(target, **payload)
+        if os.path.basename(target) == "index.npz":
+            index_written.set()
+            assert continue_flush.wait(timeout=5.0)
+
+    monkeypatch.setattr(repo, "_atomic_savez_compressed",
+                        pause_after_index_write)
+
+    repo.flush_async()
+    assert index_written.wait(timeout=5.0)
+    late = repo.add_document("DOC concurrent WAL code 99-9911")
+    continue_flush.set()
+    assert repo.flush_wait(timeout=5.0) is True
+    assert late in repo.dirty_nodes
+
+    with open(os.path.join(path, "manifest.json")) as fh:
+        man = json.load(fh)
+    with open(os.path.join(path, "wal", "000001.wal")) as fh:
+        wal = [json.loads(line) for line in fh]
+    late_lsn = max(r["lsn"] for r in wal
+                   if r.get("type") == "NODE_UPSERT"
+                   and r.get("node_id") == late)
+    assert man["wal_lsn"] < late_lsn
+
+    reopened = GraftRepository(FakeModel(), enc, dec, path, autosave=False,
+                               arena_cls=FakeArena, route_layer=3)
+    assert reopened.replayed_wal_nodes == (late,)
+    rows = reopened.show_memory_about("99-9911")
+    assert [r["node_id"] for r in rows] == [late]
 
 
 def test_atomic_json_publish_preserves_prior_file_on_failure(tmp_path):

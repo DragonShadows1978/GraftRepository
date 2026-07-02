@@ -203,12 +203,14 @@ class GraftRepository:
             self._wal_enabled_for_mode(self.durability_mode)
             if wal_enabled is None else bool(wal_enabled))
         self._flush_lock = threading.RLock()
+        self._wal_lock = threading.RLock()
         self._flush_thread = None
         self._flush_error = None
         self._wal_lsn = 0
         self.last_wal_repair = None
         self.review_buffer = []
         self.fold_history = []
+        self._dirty_generation = 0
         self.extractor = extractor
         self.extraction_write_threshold = float(extraction_write_threshold)
         self.extraction_error_policy = extraction_error_policy
@@ -2915,16 +2917,17 @@ class GraftRepository:
     def _append_wal(self, rec_type, **fields):
         if not self.wal_enabled:
             return None
-        self._ensure_repo_dirs()
-        self._wal_lsn += 1
-        rec = {"lsn": self._wal_lsn, "type": rec_type,
-               "time": time.time(), **fields}
-        with open(self._wal_path(), "a") as fh:
-            fh.write(json.dumps(rec, sort_keys=True) + "\n")
-            fh.flush()
-            os.fsync(fh.fileno())
-        self._fsync_parent_dir(self._wal_path())
-        return self._wal_lsn
+        with self._wal_lock:
+            self._ensure_repo_dirs()
+            self._wal_lsn += 1
+            rec = {"lsn": self._wal_lsn, "type": rec_type,
+                   "time": time.time(), **fields}
+            with open(self._wal_path(), "a") as fh:
+                fh.write(json.dumps(rec, sort_keys=True) + "\n")
+                fh.flush()
+                os.fsync(fh.fileno())
+            self._fsync_parent_dir(self._wal_path())
+            return self._wal_lsn
 
     def _read_wal(self):
         p = self._wal_path()
@@ -3389,11 +3392,14 @@ class GraftRepository:
         if payload:
             self._ensure_host_payload(idx, self.arena.grafts[idx])
             self._native_sync_node(idx)
+        self._dirty_generation += 1
         entry = self.dirty_nodes.setdefault(int(idx),
                                             {"payload": False,
-                                             "metadata": False})
+                                             "metadata": False,
+                                             "generation": 0})
         entry["payload"] = bool(entry["payload"] or payload)
         entry["metadata"] = bool(entry["metadata"] or metadata)
+        entry["generation"] = self._dirty_generation
         g = self.arena.grafts[idx]
         g["dirty"] = True
         g["durable"] = False if payload else bool(g.get("durable", False))
@@ -3478,6 +3484,15 @@ class GraftRepository:
             nodes = []
             native_flushed = []
             self._ensure_repo_dirs()
+            dirty_snapshot = {
+                int(i): int(d.get("generation", 0))
+                for i, d in self.dirty_nodes.items()
+            }
+            checkpoint_lsn = self._append_wal(
+                "CHECKPOINT", nodes=len(self.arena.grafts),
+                manifest="manifest.json")
+            if checkpoint_lsn is None:
+                checkpoint_lsn = self._wal_lsn
             for i, g in enumerate(self.arena.grafts):
                 f = os.path.join(self.path, "nodes", f"{i:04d}.npz")
                 dirty = self.dirty_nodes.get(i, {})
@@ -3521,13 +3536,18 @@ class GraftRepository:
                  "durability_mode": self.durability_mode,
                  "native_checkpoint": (
                      "native/grm_store.bin" if native_checkpoint else None),
-                 "wal_lsn": self._wal_lsn,
+                 "wal_lsn": checkpoint_lsn,
                  "review_buffer": self.review_buffer,
                  "nodes": nodes},
                 indent=1)
-            self.dirty_nodes.clear()
-            self._append_wal("CHECKPOINT", nodes=len(nodes),
-                             manifest="manifest.json")
+            for i, generation in dirty_snapshot.items():
+                current = self.dirty_nodes.get(i)
+                if current is not None and int(
+                        current.get("generation", 0)) == generation:
+                    self.dirty_nodes.pop(i, None)
+            for i in self.dirty_nodes:
+                if 0 <= i < len(self.arena.grafts):
+                    self.arena.grafts[i]["dirty"] = True
 
     def save(self):
         """Compatibility alias for the old persistence entry point."""

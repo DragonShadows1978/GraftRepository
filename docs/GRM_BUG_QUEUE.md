@@ -22,15 +22,19 @@ remaining majors/minors, ordered by severity.
 
 ---
 
-## Majors
+## Fixed from this queue
 
-**M1 — `flush_async` wal_lsn race.** `flush_now`'s manifest write reads live
-`self._wal_lsn` while `_append_wal` can increment it concurrently from the
-main thread (only `_flush_lock` guards the flush side; appends take no
-lock). A record fsynced during the flush window can land at/below the
-published manifest boundary and be skipped on replay — durable-but-dropped.
-*Fix direction:* snapshot the LSN boundary once, under a lock shared with
-`_append_wal`, at the start of the flush; publish the snapshot.
+**M1 — `flush_async` wal_lsn race.** Fixed 2026-07-02. `_append_wal`
+now serializes LSN assignment and fsync under a WAL lock. `flush_now`
+records a checkpoint boundary before the long payload/index/native/manifest
+write phase and publishes that boundary in `manifest.json`; WAL records
+that land during the flush window now replay after the manifest instead of
+being skipped. Dirty cleanup is generation-aware so foreground mutations
+that happen during the async flush remain queued for the next checkpoint.
+Regression:
+`test_async_flush_manifest_lsn_does_not_skip_concurrent_wal`.
+
+## Majors
 
 **M2 — WAL-replay gap placeholders brick future flushes.** Gap placeholders
 created during replay get `payload_pending=False`; `flush_now`'s
