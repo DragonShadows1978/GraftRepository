@@ -100,11 +100,12 @@ All verified major queue items are fixed.
 
 ## Minors
 
-**m10 — C ABI hygiene:** `grm_store_create_*_profile` leaks the handle when
-the store constructor throws (use RAII/unique_ptr before release);
-`grm_store_set_route_list` reads `route_offsets[key_count]` — one past the
-declared count — undocumented; document the +1 contract in
-`grm_runtime_c.h` AND validate, or change the signature.
+**m10 — C ABI hygiene.** Fixed 2026-07-02. Profile constructors now hold
+the C handle in `std::unique_ptr` until `HostGraftStore` construction
+succeeds, and `grm_store_set_route_list` now documents and validates the
+`key_count + 1` offsets contract, including terminal offset equality with
+`value_count`. Regression:
+`test_native_route_list_rejects_terminal_offset_mismatch`.
 
 **m11 — Reinforcement metadata overwrite:** `_reinforce_extraction_target`
 copies all non-identity candidate metadata keys onto the existing node

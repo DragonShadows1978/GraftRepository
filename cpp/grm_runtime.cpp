@@ -3213,7 +3213,7 @@ grm_store_handle* grm_store_create_mla_profile(const char* model_type,
                                                int remountable,
                                                const char* composition) {
   try {
-    auto* handle = new grm_store_handle();
+    auto handle = std::make_unique<grm_store_handle>();
     grm::DialectDescriptor d;
     d.model_type = model_type == nullptr ? "" : model_type;
     d.num_layers = num_layers;
@@ -3229,7 +3229,7 @@ grm_store_handle* grm_store_create_mla_profile(const char* model_type,
     d.remountable = remountable != 0;
     d.composition = safe_cstr(composition, "multi_mount");
     handle->store = std::make_unique<grm::HostGraftStore>(std::move(d));
-    return handle;
+    return handle.release();
   } catch (...) {
     return nullptr;
   }
@@ -3261,7 +3261,7 @@ grm_store_handle* grm_store_create_gqa_profile(const char* model_type,
                                                int remountable,
                                                const char* composition) {
   try {
-    auto* handle = new grm_store_handle();
+    auto handle = std::make_unique<grm_store_handle>();
     grm::DialectDescriptor d;
     d.model_type = model_type == nullptr ? "" : model_type;
     d.num_layers = num_layers;
@@ -3277,7 +3277,7 @@ grm_store_handle* grm_store_create_gqa_profile(const char* model_type,
     d.remountable = remountable != 0;
     d.composition = safe_cstr(composition, "multi_mount");
     handle->store = std::make_unique<grm::HostGraftStore>(std::move(d));
-    return handle;
+    return handle.release();
   } catch (...) {
     return nullptr;
   }
@@ -4591,10 +4591,16 @@ int grm_store_set_route_list(grm_store_handle* handle,
     if (route_offsets == nullptr && key_count > 0) {
       return grm_fail_msg(handle, "null route offsets with nonzero key count");
     }
+    if (key_count == 0 && value_count != 0) {
+      return grm_fail_msg(handle, "route values require route offsets");
+    }
     std::vector<std::vector<float>> keys;
     keys.reserve(static_cast<std::size_t>(key_count));
     if (key_count > 0 && route_offsets[0] != 0) {
       return grm_fail_msg(handle, "route offsets must start at zero");
+    }
+    if (key_count > 0 && route_offsets[key_count] != value_count) {
+      return grm_fail_msg(handle, "route offsets must end at value_count");
     }
     for (uint64_t k = 0; k < key_count; ++k) {
       const auto start = route_offsets[k];

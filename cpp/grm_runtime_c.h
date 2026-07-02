@@ -389,6 +389,8 @@ int grm_store_set_route_multi(grm_store_handle* handle,
                               uint64_t key_count,
                               uint64_t route_len,
                               const char* lexical_keys);
+// route_offsets must contain key_count + 1 entries. The first entry must be
+// zero and the terminal entry route_offsets[key_count] must equal value_count.
 int grm_store_set_route_list(grm_store_handle* handle,
                              uint64_t node_id,
                              const float* route_values,

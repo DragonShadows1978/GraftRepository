@@ -1,3 +1,4 @@
+import ctypes
 import os
 import subprocess
 from types import SimpleNamespace
@@ -455,6 +456,22 @@ def test_native_gqa_route_drops_non_finite_scores(tmp_path):
         store.set_route_key_list(good, [good_key], [])
 
         assert store.route_gqa(q, topk=2) == [good]
+
+
+def test_native_route_list_rejects_terminal_offset_mismatch(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        node_id = store.add_node("bad route offsets", b"", ntok=1)
+        values = (ctypes.c_float * 2)(1.0, 0.0)
+        offsets = (ctypes.c_uint64 * 3)(0, 1, 1)
+
+        rc = store._lib.grm_store_set_route_list(
+            store._handle, int(node_id), values, 2, offsets, 2, b"")
+
+        assert rc != 0
 
 
 def test_native_store_slices_host_tensor_payload(tmp_path):
