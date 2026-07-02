@@ -58,14 +58,14 @@ raw `FileNotFoundError` through descent. Regressions:
 `test_wal_recovery_adopts_orphaned_payload_before_manifest` and
 `test_missing_payload_load_degrades_to_pending`.
 
-## Majors
-
 **M5 — Explicit authoritative supersede targets silently dropped.** In
-`_apply_extraction_candidate_direct`, `supersedes = conflicts if conflicts
-else list(requested_supersedes)` — when an identity conflict coexists with
-explicit user/system-asserted targets, the explicit targets are discarded
-and stay active. *Fix direction:* for authoritative intents, UNION requested
-targets with detected conflicts.
+Fixed 2026-07-02. Extraction supersession now builds an ordered de-duplicated
+union of detected conflicts and explicit requested supersede targets for
+authoritative candidates, in both native-planned and Python-planned policy
+paths. Regression:
+`test_authoritative_extraction_unions_conflicts_and_requested_supersedes`.
+
+## Majors
 
 **M6 — NaN comparator UB in `RouterIndex::route` (C++).** `std::sort` with
 `a.first > b.first` over float scores, no finite check (same in

@@ -2200,6 +2200,57 @@ def test_extraction_explicit_supersede_requires_authority(tmp_path):
     assert repo.arena.grafts[old["node_id"]]["retired"] is True
 
 
+def test_authoritative_extraction_unions_conflicts_and_requested_supersedes(
+        tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+    conflict = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Project status is RED.",
+        "subject": "project status",
+        "predicate": "is",
+        "value": "RED",
+        "scope": "project",
+        "write_intent": "observed",
+        "confidence": 0.99,
+    })
+    explicit = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Manual cleanup target should retire.",
+        "subject": "manual cleanup target",
+        "predicate": "is",
+        "value": "STALE",
+        "scope": "project",
+        "write_intent": "observed",
+        "confidence": 0.99,
+    })
+
+    out = repo.apply_extraction_candidate({
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "Project status is GREEN.",
+        "subject": "project status",
+        "predicate": "is",
+        "value": "GREEN",
+        "scope": "project",
+        "write_intent": "user_asserted",
+        "confidence": 1.0,
+        "supersedes": [explicit["node_id"]],
+    })
+
+    expected = [conflict["node_id"], explicit["node_id"]]
+    assert out["action"] == "supersede_existing"
+    assert out["supersedes"] == expected
+    assert repo.arena.grafts[out["node_id"]]["metadata"]["supersedes"] == (
+        expected)
+    for node_id in expected:
+        assert repo.arena.grafts[node_id]["metadata"]["active"] is False
+        assert repo.arena.grafts[node_id]["retired"] is True
+
+
 def test_native_active_filter_guides_explicit_extraction_targets(
         tmp_path, monkeypatch):
     lib = build_native(tmp_path)

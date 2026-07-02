@@ -1803,6 +1803,13 @@ class GraftRepository:
         except RuntimeError:
             return None
 
+    @staticmethod
+    def _supersede_targets(conflicts, requested_supersedes, authoritative):
+        if authoritative:
+            return list(dict.fromkeys(
+                list(conflicts or ()) + list(requested_supersedes or ())))
+        return list(conflicts or ()) or list(requested_supersedes or ())
+
     def apply_extraction_candidate(self, candidate, source_text=None,
                                    source_turns=(), source_grafts=(),
                                    write_direct_threshold=0.95):
@@ -1873,7 +1880,8 @@ class GraftRepository:
                     candidate, text,
                     f"unsupported native extraction plan: {planned}",
                     metadata)
-            supersedes = conflicts if conflicts else list(requested_supersedes)
+            supersedes = self._supersede_targets(
+                conflicts, requested_supersedes, authoritative)
         else:
             if action in ("expire",):
                 if not authoritative:
@@ -1920,7 +1928,8 @@ class GraftRepository:
                     candidate, text,
                     f"unsupported extraction action: {action}",
                     metadata)
-            supersedes = conflicts if conflicts else list(requested_supersedes)
+            supersedes = self._supersede_targets(
+                conflicts, requested_supersedes, authoritative)
             if not supersedes and equivalent:
                 idx = self._reinforce_extraction_target(
                     equivalent[0], candidate, metadata, confidence,
