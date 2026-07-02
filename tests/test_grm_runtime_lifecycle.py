@@ -406,8 +406,10 @@ def test_cull_graft_uses_native_slice_when_available(tmp_path, monkeypatch):
     parent = repo.add_document("N1 N2 N3 N4")
     calls = []
     plans = []
+    revisions = []
     original = repo.native_store.slice_tensor
     original_plan = repo.native_store.plan_cull_spans
+    original_revision = repo.native_store.apply_revision
 
     def traced(node_id, name, axis, start, length):
         calls.append((int(node_id), name, int(axis), int(start), int(length)))
@@ -417,12 +419,20 @@ def test_cull_graft_uses_native_slice_when_available(tmp_path, monkeypatch):
         plans.append(dict(kwargs))
         return original_plan(**kwargs)
 
+    def traced_revision(replacement_node_id, supersedes):
+        revisions.append((
+            int(replacement_node_id),
+            tuple(int(i) for i in supersedes)))
+        return original_revision(replacement_node_id, supersedes)
+
     monkeypatch.setattr(repo.native_store, "slice_tensor", traced)
     monkeypatch.setattr(repo.native_store, "plan_cull_spans", traced_plan)
+    monkeypatch.setattr(repo.native_store, "apply_revision", traced_revision)
 
     out = repo.cull_graft(parent, max_tokens=2)
 
     assert out["children"] == [1, 2]
+    parent_native = repo.arena.grafts[parent]["native_node_id"]
     assert plans == [{
         "ntok": 4,
         "max_tokens": 2,
@@ -432,6 +442,10 @@ def test_cull_graft_uses_native_slice_when_available(tmp_path, monkeypatch):
     assert calls == [
         (repo.arena.grafts[parent]["native_node_id"], "tok", 0, 0, 2),
         (repo.arena.grafts[parent]["native_node_id"], "tok", 0, 2, 2),
+    ]
+    assert revisions == [
+        (repo.arena.grafts[1]["native_node_id"], (parent_native,)),
+        (repo.arena.grafts[2]["native_node_id"], (parent_native,)),
     ]
     assert repo.arena.grafts[1]["host_payload"]["tok"].tolist() == [0, 1]
     assert repo.arena.grafts[2]["host_payload"]["tok"].tolist() == [2, 3]

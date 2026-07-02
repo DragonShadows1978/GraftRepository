@@ -64,7 +64,8 @@ validation where feasible.
   children durably. Native-backed repositories now ask
   `grm_store_plan_cull_spans()` to generate max-token spans or validate
   tokenizer-derived section spans and the retire-parent coverage invariant
-  before payload slicing.
+  before payload slicing, and retired parent/child supersession is applied
+  through native `apply_revision()` for each child.
 - Native source graph traversal:
   `HostGraftStore::source_closure()` and `grm_store_source_closure()` expose
   deterministic recursive source-graft descent with duplicate suppression,
@@ -659,7 +660,8 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   flow through `grm_store_active_text_matches()` when the native mirror is
   complete, so pin/unpin/ignore/show/forget/correct target discovery also reads
   from the C++ host store before Python applies WAL, mutation, and durability
-  semantics.
+  semantics. Cull/split graft parent retirement also applies native revision
+  transitions for each child after Python creates the child payloads.
 - DeepSeek-specific GRM attention hooks have passed live CUDA parity, greedy
   recall, repository lifecycle smoke, routed build/resume, and full
   paging/open-ended greedy recall build/resume gates. Current-head MiniCPM3 MLA

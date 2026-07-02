@@ -725,6 +725,7 @@ class GraftRepository:
             parent_meta["active"] = False
             parent_meta["superseded_by"] = list(child_ids)
             parent["retired"] = True
+            self._native_apply_cull_revisions(idx, child_ids)
         self._mark_mutations(before)
         if not retire_parent:
             self._mark_dirty(idx, payload=False, metadata=True)
@@ -2457,6 +2458,14 @@ class GraftRepository:
         replacement_id = self._native_sync_node(replacement_idx)
         superseded_ids = [self._native_sync_node(i) for i in supersedes]
         self.native_store.apply_revision(replacement_id, superseded_ids)
+
+    def _native_apply_cull_revisions(self, parent_idx, child_ids):
+        if self.native_store is None:
+            return
+        if not hasattr(self.native_store, "apply_revision"):
+            return
+        for child_idx in child_ids:
+            self._native_apply_revision(child_idx, (parent_idx,))
 
     def _native_apply_expire(self, expired):
         if self.native_store is None:
