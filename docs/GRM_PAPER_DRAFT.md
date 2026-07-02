@@ -5,7 +5,7 @@
 **David Perry** — Independent Researcher (no institutional affiliation)
 `dave@ai-storyforge.com`
 
-*Preprint v0.9-draft — 2026-07-02. Quantitative claims trace to gated,
+*Preprint v1.0 — 2026-07-02. Quantitative claims trace to gated,
 registered evaluations in the project's research logs (§7). All reference
 identifiers verified against the arXiv record on 2026-07-02. Text licensed CC BY 4.0; the implementations are separately licensed
 AGPL-3.0 with commercial licensing available.*
