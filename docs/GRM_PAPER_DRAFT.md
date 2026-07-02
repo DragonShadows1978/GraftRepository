@@ -518,7 +518,7 @@ durability gates, and registers pass criteria before runs.
    Collatz Conjecture, and Its Measured Transfer to Transformer
    Attention.* 2026. Zenodo `[DOI on release]`.
 2. Perry, D. *Selective Attention Is All You Need: Adaptive Precision
-   Attention.* 2026. Zenodo `[DOI on release]`.
+   Attention.* 2026. Zenodo. doi:10.5281/zenodo.21137970.
 3. Vaswani, A., et al. *Attention Is All You Need.* NeurIPS 2017.
    arXiv:1706.03762.
 4. Kwon, W., et al. *Efficient Memory Management for Large Language Model
