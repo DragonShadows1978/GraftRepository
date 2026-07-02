@@ -305,6 +305,38 @@ def test_native_librarian_plan_via_ctypes(tmp_path):
         assert pressure["reason"] == "deferred turn backpressure"
 
 
+def test_native_foldable_nodes_track_kind_active_and_no_fold(tmp_path):
+    lib = build_native(tmp_path)
+    ckpt = tmp_path / "foldable_ckpt"
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        turn0 = store.add_node("foldable turn 0", b"a", ntok=1)
+        turn1 = store.add_node("foldable turn 1", b"b", ntok=1)
+        turn2 = store.add_node("inactive turn 2", b"c", ntok=1)
+        digest = store.add_node("foldable digest 0", b"d", ntok=1)
+        store.set_metadata(turn0, {"kind": "turn", "active": True})
+        store.set_metadata(turn1, {"kind": "turn", "active": True})
+        store.set_metadata(turn2, {"kind": "turn", "active": True})
+        store.set_metadata(digest, {"kind": "digest", "active": True})
+        store.set_no_fold(turn1, True)
+        store.set_active(turn2, False)
+
+        assert store.foldable_nodes("turn") == (turn0,)
+        assert store.foldable_nodes("digest") == (digest,)
+        assert store.foldable_nodes("turn", excluded_node_ids=(turn0,)) == ()
+        store.save_checkpoint(ckpt)
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as restored:
+        restored.load_checkpoint(ckpt)
+        assert restored.foldable_nodes("turn") == (turn0,)
+        assert restored.foldable_nodes("digest") == (digest,)
+
+
 def test_native_profile_requires_reseatable_position_law(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

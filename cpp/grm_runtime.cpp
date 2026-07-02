@@ -110,7 +110,8 @@ constexpr char kCheckpointMagicV6[] = "GRMSTORE6";
 constexpr char kCheckpointMagicV7[] = "GRMSTORE7";
 constexpr char kCheckpointMagicV8[] = "GRMSTORE8";
 constexpr char kCheckpointMagicV9[] = "GRMSTORE9";
-constexpr char kCheckpointMagic[] = "GRMSTORE9";
+constexpr char kCheckpointMagicV10[] = "GRMSTOR10";
+constexpr char kCheckpointMagic[] = "GRMSTOR10";
 
 void write_u64(std::ostream& out, std::uint64_t v) {
   out.write(reinterpret_cast<const char*>(&v), sizeof(v));
@@ -1883,6 +1884,41 @@ bool HostGraftStore::is_active(std::uint64_t node_id) const {
   return n->metadata.active;
 }
 
+void HostGraftStore::set_no_fold(std::uint64_t node_id, bool no_fold) {
+  auto* n = get(node_id);
+  if (n == nullptr) {
+    throw std::out_of_range("unknown GRM node id");
+  }
+  if (n->no_fold == no_fold) {
+    return;
+  }
+  n->no_fold = no_fold;
+  mark_dirty(node_id, false, true);
+}
+
+std::vector<std::uint64_t> HostGraftStore::foldable_nodes(
+    const std::string& kind,
+    const std::vector<std::uint64_t>& excluded_node_ids) const {
+  const auto wanted_kind = trim(kind);
+  std::set<std::uint64_t> excluded(
+      excluded_node_ids.begin(), excluded_node_ids.end());
+  std::vector<std::uint64_t> out;
+  for (const auto node_id : node_ids()) {
+    if (excluded.find(node_id) != excluded.end()) {
+      continue;
+    }
+    const auto& node = nodes_.at(node_id);
+    if (!node.metadata.active || node.no_fold) {
+      continue;
+    }
+    if (!wanted_kind.empty() && node.metadata.kind != wanted_kind) {
+      continue;
+    }
+    out.push_back(node_id);
+  }
+  return out;
+}
+
 void HostGraftStore::set_route_metadata(std::uint64_t node_id,
                                         std::string kind,
                                         std::string scope,
@@ -2252,6 +2288,7 @@ void HostGraftStore::save_checkpoint(const std::string& root) {
       write_u64_vector(out, n.metadata.supersedes);
       write_u64_vector(out, n.metadata.superseded_by);
       write_string(out, n.provenance_json);
+      write_bool(out, n.no_fold);
       write_f32_vectors(out, n.route_keys);
       write_string_vector(out, n.lexical_keys);
       write_bool(out, n.lifecycle.host_present);
@@ -2317,29 +2354,38 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
       magic_s == std::string(kCheckpointMagicV8, sizeof(kCheckpointMagicV8) - 1);
   const bool checkpoint_v9 =
       magic_s == std::string(kCheckpointMagicV9, sizeof(kCheckpointMagicV9) - 1);
+  const bool checkpoint_v10 =
+      magic_s == std::string(kCheckpointMagicV10,
+                             sizeof(kCheckpointMagicV10) - 1);
   if (!in || (!checkpoint_v1 && !checkpoint_v2 && !checkpoint_v3 &&
               !checkpoint_v4 && !checkpoint_v5 && !checkpoint_v6 &&
-              !checkpoint_v7 && !checkpoint_v8 && !checkpoint_v9)) {
+              !checkpoint_v7 && !checkpoint_v8 && !checkpoint_v9 &&
+              !checkpoint_v10)) {
     throw std::runtime_error("invalid native GRM checkpoint magic");
   }
   const bool has_active = checkpoint_v2 || checkpoint_v3 || checkpoint_v4 ||
                           checkpoint_v5 || checkpoint_v6 || checkpoint_v7 ||
-                          checkpoint_v8 || checkpoint_v9;
+                          checkpoint_v8 || checkpoint_v9 || checkpoint_v10;
   const bool has_route_metadata = checkpoint_v3 || checkpoint_v4 ||
                                   checkpoint_v5 || checkpoint_v6 ||
                                   checkpoint_v7 || checkpoint_v8 ||
-                                  checkpoint_v9;
+                                  checkpoint_v9 || checkpoint_v10;
   const bool has_graph_edges = checkpoint_v4 || checkpoint_v5 ||
                                checkpoint_v6 || checkpoint_v7 ||
-                               checkpoint_v8 || checkpoint_v9;
+                               checkpoint_v8 || checkpoint_v9 ||
+                               checkpoint_v10;
   const bool has_dialect_id = checkpoint_v5 || checkpoint_v6 ||
                               checkpoint_v7 || checkpoint_v8 ||
-                              checkpoint_v9;
+                              checkpoint_v9 || checkpoint_v10;
   const bool has_route_lists = checkpoint_v6 || checkpoint_v7 ||
-                               checkpoint_v8 || checkpoint_v9;
-  const bool has_profile = checkpoint_v7 || checkpoint_v8 || checkpoint_v9;
-  const bool has_fact_identity = checkpoint_v8 || checkpoint_v9;
-  const bool has_provenance = checkpoint_v9;
+                               checkpoint_v8 || checkpoint_v9 ||
+                               checkpoint_v10;
+  const bool has_profile = checkpoint_v7 || checkpoint_v8 || checkpoint_v9 ||
+                           checkpoint_v10;
+  const bool has_fact_identity = checkpoint_v8 || checkpoint_v9 ||
+                                 checkpoint_v10;
+  const bool has_provenance = checkpoint_v9 || checkpoint_v10;
+  const bool has_no_fold = checkpoint_v10;
   if (has_dialect_id) {
     const auto saved_dialect = read_string(in);
     const auto expected_dialect = dialect_.dialect_id();
@@ -2395,6 +2441,9 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
       if (trim(n.provenance_json).empty()) {
         n.provenance_json = "[]";
       }
+    }
+    if (has_no_fold) {
+      n.no_fold = read_bool(in);
     }
     if (has_route_lists) {
       n.route_keys = read_f32_vectors(in);
@@ -3500,6 +3549,55 @@ int grm_store_set_active(grm_store_handle* handle,
     const bool is_active = active != 0;
     handle->store->set_active(node_id, is_active);
     handle->router.set_active(node_id, is_active);
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_set_no_fold(grm_store_handle* handle,
+                          uint64_t node_id,
+                          int no_fold) {
+  try {
+    if (handle == nullptr || handle->store == nullptr) {
+      return grm_fail_msg(handle, "invalid set_no_fold arguments");
+    }
+    handle->store->set_no_fold(node_id, no_fold != 0);
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_foldable_nodes(grm_store_handle* handle,
+                             const char* kind,
+                             const uint64_t* excluded_node_ids,
+                             uint64_t excluded_count,
+                             uint64_t* out_node_ids,
+                             uint64_t out_cap,
+                             uint64_t* out_count) {
+  try {
+    if (handle == nullptr || handle->store == nullptr ||
+        kind == nullptr || out_count == nullptr) {
+      return grm_fail_msg(handle, "invalid foldable_nodes arguments");
+    }
+    if (excluded_node_ids == nullptr && excluded_count > 0) {
+      return grm_fail_msg(handle,
+                          "null foldable exclusion list with nonzero count");
+    }
+    if (out_node_ids == nullptr && out_cap > 0) {
+      return grm_fail_msg(handle,
+                          "null foldable output buffer with nonzero capacity");
+    }
+    auto excluded = read_u64_array(
+        excluded_node_ids, excluded_count, "foldable excluded");
+    const auto nodes = handle->store->foldable_nodes(kind, excluded);
+    const auto n = static_cast<uint64_t>(nodes.size());
+    *out_count = n;
+    const auto copied = std::min<uint64_t>(n, out_cap);
+    for (uint64_t i = 0; i < copied; ++i) {
+      out_node_ids[i] = nodes[static_cast<std::size_t>(i)];
+    }
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);

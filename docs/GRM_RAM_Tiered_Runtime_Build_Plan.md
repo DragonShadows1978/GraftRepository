@@ -45,9 +45,10 @@ explicit `GRM_RUNTIME_LIB` environment setting now mirrors payload lifecycle
 into that native host store as reconstructable named tensors with shape/dtype
 metadata, checkpoints those native host payloads to NVMe through a binary C++
 store format with a persisted native dialect/profile id (`GRMSTORE7`) and
-provenance JSON in `GRMSTORE9`, persists semantic metadata JSON through the
-same native checkpoint path, and supports native host-store creation for both
-MLA and GQA dialect descriptors.
+provenance JSON in `GRMSTORE9`; `GRMSTOR10` also persists native fold-exemption
+state for librarian source selection. It persists semantic metadata JSON
+through the same native checkpoint path and supports native host-store creation
+for both MLA and GQA dialect descriptors.
 `native_auto=False` keeps a repository Python-only even when `GRM_RUNTIME_LIB`
 is set. It mirrors native route keys into the C++ `RouterIndex` and preserves
 route vectors plus lexical keys through the native checkpoint path;
@@ -68,6 +69,10 @@ source descent can query recursive
 source-graft closure through `grm_store_source_closure()`, and `ArenaCache`
 uses that native closure for digest/era mount expansion when all returned
 native ids map back to local grafts, falling back to Python `sources` otherwise.
+Librarian source eligibility now queries `grm_store_foldable_nodes()`, so
+active/kind/no-fold filtering for turn/digest fold candidates is native state;
+Python still excludes currently live arena seats before taking the planned fold
+window.
 Repository `flush_now()` now writes `native/grm_store.bin` before the Python
 manifest, records the native checkpoint path plus per-node native ids in
 `manifest.json`, and reloads that native checkpoint on resume when present.

@@ -2342,8 +2342,62 @@ class GraftRepository:
                 and g.get("kind", "turn") in kinds]
 
     def _foldable(self, kinds):
+        native = self._native_foldable(kinds)
+        if native is not None:
+            return native
         ok = lambda i: not self.arena.grafts[i].get("no_fold")
         return [i for i in self._active(kinds) if ok(i)]
+
+    def _native_foldable(self, kinds):
+        if (self.native_store is None
+                or not hasattr(self.native_store, "foldable_nodes")):
+            return None
+        kinds = tuple(kinds or ())
+        if len(kinds) != 1:
+            return None
+        kind = str(kinds[0])
+        live = {int(gi) for gi, _ in self.arena.live_segs
+                if gi is not None}
+        excluded_native = []
+        for idx in live:
+            native_id = self._native_node_ids.get(idx)
+            if native_id is not None:
+                excluded_native.append(int(native_id))
+        for i, g in enumerate(self.arena.grafts):
+            self._ensure_lifecycle(i, g)
+            if g.get("kind", "turn") != kind:
+                continue
+            try:
+                if i not in self._native_node_ids:
+                    payload_required = (g.get("host_payload") is not None
+                                        or g.get("h") is not None)
+                    self._native_sync_node(i, payload_required=payload_required)
+                else:
+                    self._native_set_metadata(i)
+            except RuntimeError:
+                return None
+        inverse = {
+            int(native_id): int(idx)
+            for idx, native_id in self._native_node_ids.items()
+        }
+        try:
+            native_ids = self.native_store.foldable_nodes(
+                kind, excluded_native)
+        except RuntimeError:
+            return None
+        out = []
+        for native_id in native_ids:
+            idx = inverse.get(int(native_id))
+            if idx is None or idx in live:
+                continue
+            g = self.arena.grafts[idx]
+            meta = g.get("metadata", self._default_metadata(g))
+            if g.get("retired") or not meta.get("active", True):
+                continue
+            if g.get("kind", "turn") != kind:
+                continue
+            out.append(idx)
+        return sorted(dict.fromkeys(out))
 
     def _native_librarian_plan(self, turns, digests, *,
                                deferred_backpressure=False):
@@ -2610,6 +2664,9 @@ class GraftRepository:
         if hasattr(self.native_store, "set_active"):
             active = bool(metadata.get("active", not bool(g.get("retired"))))
             self.native_store.set_active(node_id, active)
+        if hasattr(self.native_store, "set_no_fold"):
+            self.native_store.set_no_fold(
+                node_id, bool(g.get("no_fold", metadata.get("no_fold", False))))
         if hasattr(self.native_store, "set_graph_edges"):
             self.native_store.set_graph_edges(
                 node_id,

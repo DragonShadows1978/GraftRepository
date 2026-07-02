@@ -146,11 +146,13 @@ validation where feasible.
   hot-path orchestration is no longer spread across public methods.
 - Native librarian fold planner:
   `grm_store_plan_librarian()` / `NativeGraftStore.plan_librarian()` now owns
-  the deterministic fold scheduling law: foldable turn/digest counts,
-  digest/era thresholds, era capability, and deferred-mode 2x turn
-  backpressure. Python still chooses concrete source ids and runs model
-  consolidation/QC, but the threshold/backpressure decision is a native
-  side-effect-free runtime plan. Covered by
+  the deterministic fold scheduling law: native foldable-node scans own
+  active/kind/no-fold eligibility for turn/digest source candidates, while the
+  planner owns digest/era thresholds, era capability, and deferred-mode 2x turn
+  backpressure. Python still excludes currently live arena seats and runs model
+  consolidation/QC, but source eligibility and threshold/backpressure decisions
+  are native side-effect-free runtime plans. Covered by
+  `test_native_foldable_nodes_track_kind_active_and_no_fold`,
   `test_native_librarian_plan_via_ctypes`,
   `test_native_librarian_plan_guides_fold_scheduler`, and
   `test_native_librarian_plan_guides_deferred_backpressure`.
@@ -722,9 +724,12 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   also flows through `grm_store_plan_memory_mutation()`, so empty-query guards,
   no-target no-ops, replacement-only writes, target expiry, metadata update, and
   revision intent are planned natively before Python mutates/WAL-records state.
-  Librarian fold scheduling now flows through `grm_store_plan_librarian()`, so
-  digest/era thresholds, era enablement, and deferred-mode backpressure are also
-  native runtime-plan decisions before Python performs model consolidation.
+  Librarian fold source eligibility now flows through
+  `grm_store_foldable_nodes()`, including active/kind/no-fold state persisted
+  in `GRMSTOR10`; fold scheduling flows through `grm_store_plan_librarian()`,
+  so digest/era thresholds, era enablement, and deferred-mode backpressure are
+  also native runtime-plan decisions before Python performs model
+  consolidation.
   Runtime finish decisions now also flow through
   `grm_store_plan_runtime_event()`, so read-only/forced-flush/autosave/page
   policy is a native plan before Python performs IO or paging.
@@ -769,8 +774,9 @@ runtime-consumed native recursive source-closure traversal, multi-key MLA
 arena-route acceleration, native GQA raw `|q.k|` route acceleration, native
 explicit memory-command parser, native remember-command flush planner, native
 durability-mode transition planner, native metadata-update planner, native
-memory-mutation planner, native librarian fold planner, native runtime event
-finish planner, native swap-plan boundary, native host tensor
+memory-mutation planner, native librarian foldable-source selection, native
+librarian fold planner, native runtime event finish planner, native swap-plan
+boundary, native host tensor
 swap/evict references, TensorCUDA fused
 splice/evict cache movement, TensorCUDA fused RoPE
 re-seat movement, TensorCUDA fused

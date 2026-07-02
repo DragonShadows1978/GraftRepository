@@ -163,6 +163,16 @@ int grm_store_set_metadata_json(grm_store_handle* handle,
 int grm_store_set_active(grm_store_handle* handle,
                          uint64_t node_id,
                          int active);
+int grm_store_set_no_fold(grm_store_handle* handle,
+                          uint64_t node_id,
+                          int no_fold);
+int grm_store_foldable_nodes(grm_store_handle* handle,
+                             const char* kind,
+                             const uint64_t* excluded_node_ids,
+                             uint64_t excluded_count,
+                             uint64_t* out_node_ids,
+                             uint64_t out_cap,
+                             uint64_t* out_count);
 int grm_store_set_route_metadata(grm_store_handle* handle,
                                  uint64_t node_id,
                                  const char* kind,

@@ -325,6 +325,19 @@ class NativeGraftStore:
             lib.grm_store_set_active.argtypes = [
                 ctypes.c_void_p, ctypes.c_uint64, ctypes.c_int]
             lib.grm_store_set_active.restype = ctypes.c_int
+        self._has_no_fold = hasattr(lib, "grm_store_set_no_fold")
+        if self._has_no_fold:
+            lib.grm_store_set_no_fold.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64, ctypes.c_int]
+            lib.grm_store_set_no_fold.restype = ctypes.c_int
+        self._has_foldable_nodes = hasattr(lib, "grm_store_foldable_nodes")
+        if self._has_foldable_nodes:
+            lib.grm_store_foldable_nodes.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p,
+                ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+                ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
+                ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_foldable_nodes.restype = ctypes.c_int
         self._has_route_metadata = hasattr(lib, "grm_store_set_route_metadata")
         if self._has_route_metadata:
             lib.grm_store_set_route_metadata.argtypes = [
@@ -800,6 +813,8 @@ class NativeGraftStore:
             self._handle, int(node_id), data))
         if "active" in metadata:
             self.set_active(node_id, bool(metadata.get("active", True)))
+        if "no_fold" in metadata:
+            self.set_no_fold(node_id, bool(metadata.get("no_fold", False)))
         self.set_route_metadata(
             node_id,
             kind=metadata.get("kind"),
@@ -833,6 +848,31 @@ class NativeGraftStore:
             return
         self._check(self._lib.grm_store_set_active(
             self._handle, int(node_id), 1 if active else 0))
+
+    def set_no_fold(self, node_id, no_fold=False):
+        if not getattr(self, "_has_no_fold", False):
+            return
+        self._check(self._lib.grm_store_set_no_fold(
+            self._handle, int(node_id), 1 if no_fold else 0))
+
+    def foldable_nodes(self, kind, excluded_node_ids=()):
+        if not getattr(self, "_has_foldable_nodes", False):
+            raise RuntimeError("native GRM foldable node scan is unavailable")
+        excluded, excluded_n = self._u64_array(excluded_node_ids)
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_foldable_nodes(
+            self._handle, str(kind or "").encode("utf-8"),
+            excluded, excluded_n, None, 0, ctypes.byref(needed)))
+        if not int(needed.value):
+            return ()
+        out_t = ctypes.c_uint64 * int(needed.value)
+        out = out_t()
+        got = ctypes.c_uint64()
+        self._check(self._lib.grm_store_foldable_nodes(
+            self._handle, str(kind or "").encode("utf-8"),
+            excluded, excluded_n, out, int(needed.value),
+            ctypes.byref(got)))
+        return tuple(int(out[i]) for i in range(int(got.value)))
 
     def set_route_metadata(self, node_id, *, kind=None, scope=None,
                            durability=None, mutability=None):

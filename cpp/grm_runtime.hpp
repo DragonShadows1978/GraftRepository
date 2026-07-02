@@ -88,6 +88,7 @@ struct HostGraftNode {
   std::uint64_t ntok = 0;
   NodeMetadata metadata;
   std::string provenance_json = "[]";
+  bool no_fold = false;
   NodeLifecycle lifecycle;
   HostPayload payload;
   std::vector<float> route_key;
@@ -396,6 +397,10 @@ class HostGraftStore {
   void clear_route(std::uint64_t node_id);
   void set_active(std::uint64_t node_id, bool active);
   bool is_active(std::uint64_t node_id) const;
+  void set_no_fold(std::uint64_t node_id, bool no_fold);
+  std::vector<std::uint64_t> foldable_nodes(
+      const std::string& kind,
+      const std::vector<std::uint64_t>& excluded_node_ids = {}) const;
   void set_route_metadata(std::uint64_t node_id,
                           std::string kind,
                           std::string scope,

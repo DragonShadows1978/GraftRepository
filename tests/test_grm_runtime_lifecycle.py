@@ -1521,14 +1521,30 @@ def test_native_librarian_plan_guides_fold_scheduler(tmp_path, monkeypatch):
 
     calls = []
     original_plan = repo.native_store.plan_librarian
+    foldable_calls = []
+    original_foldable = repo.native_store.foldable_nodes
 
     def traced_plan(**kwargs):
         calls.append(dict(kwargs))
         return original_plan(**kwargs)
 
+    def traced_foldable(kind, excluded_node_ids=()):
+        out = original_foldable(kind, excluded_node_ids)
+        foldable_calls.append({
+            "kind": kind,
+            "excluded_node_ids": tuple(excluded_node_ids),
+            "node_ids": tuple(out),
+        })
+        return out
+
     monkeypatch.setattr(repo.native_store, "plan_librarian", traced_plan)
+    monkeypatch.setattr(repo.native_store, "foldable_nodes", traced_foldable)
 
     assert repo.fold_pending() == 1
+    assert foldable_calls[0]["kind"] == "turn"
+    assert len(foldable_calls[0]["node_ids"]) == 7
+    assert foldable_calls[1]["kind"] == "digest"
+    assert len(foldable_calls[1]["node_ids"]) == 6
     assert calls[-1] == {
         "foldable_turn_count": 7,
         "foldable_digest_count": 6,
@@ -1544,6 +1560,8 @@ def test_native_librarian_plan_guides_fold_scheduler(tmp_path, monkeypatch):
     repo.arena.grafts[0]["no_fold"] = False
     due = repo._due()
     assert due == [("digest", [0, 1, 2, 3]), ("era", [8, 9, 10])]
+    last_turn_scan = [c for c in foldable_calls if c["kind"] == "turn"][-1]
+    assert len(last_turn_scan["node_ids"]) == 8
     assert calls[-1]["foldable_turn_count"] == 8
 
     repo.close()
