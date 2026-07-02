@@ -340,14 +340,24 @@ class ArenaCache:
         if native_order is not None:
             return native_order
         self.last_route_backend = "python"
-        base = {i: self._cent_score(p, self.grafts[i]) for i in cand}
+        base = {}
+        for i in cand:
+            score = self._cent_score(p, self.grafts[i])
+            if np.isfinite(score):
+                base[i] = score
         # dialect hook: a raw-score channel (GQA layer-0 |q.k|) rescales
         # per-route into the O(1) band the lexical bonus was calibrated
         # against. MLA cosine is already there — identity.
         base = self._normalize_scores(base)
-        cand.sort(key=lambda i: -(base[i]
-                                  + self._lex_bonus(qrare, self.grafts[i])))
-        return cand                               # full ranking, best first
+        scored = []
+        for i in cand:
+            if i not in base:
+                continue
+            score = base[i] + self._lex_bonus(qrare, self.grafts[i])
+            if np.isfinite(score):
+                scored.append((score, i))
+        scored.sort(key=lambda item: -item[0])
+        return [i for _, i in scored]             # full ranking, best first
 
     def _cent_score(self, p, g):
         # hierarchical descent: a digest node answers for its retired

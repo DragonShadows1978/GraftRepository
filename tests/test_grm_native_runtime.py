@@ -220,6 +220,20 @@ def test_native_store_clear_route_removes_persistent_route_entry(tmp_path):
         assert restored.route([1.0, 0.0], ["clear-me"], topk=1) == []
 
 
+def test_native_route_drops_non_finite_scores(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        bad = store.add_node("nan route", b"", ntok=1)
+        good = store.add_node("finite route", b"", ntok=1)
+        store.set_route(bad, [float("nan"), 0.0], [])
+        store.set_route(good, [1.0, 0.0], [])
+
+        assert store.route([1.0, 0.0], topk=2) == [good]
+
+
 def test_native_memory_mutation_plan_via_ctypes(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(
@@ -423,6 +437,24 @@ def test_native_gqa_raw_route_matches_python_law(tmp_path):
         expected = sorted(scores, key=lambda node_id: -scores[node_id])
         assert store.route_gqa(q, topk=2) == expected
         assert store.route_gqa(q, lexical_keys=["a17"], topk=3)[0] == n_lex
+
+
+def test_native_gqa_route_drops_non_finite_scores(tmp_path):
+    lib = build_native(tmp_path)
+    q = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+    bad_key = np.asarray([[[np.nan, 0.0]]], dtype=np.float32)
+    good_key = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="Qwen3_TC", num_layers=36,
+            hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
+            payload_kind="gqa", num_kv_heads=1, head_dim=2) as store:
+        bad = store.add_node("nan raw GQA route", b"", ntok=1)
+        good = store.add_node("finite raw GQA route", b"", ntok=1)
+        store.set_route_key_list(bad, [bad_key], [])
+        store.set_route_key_list(good, [good_key], [])
+
+        assert store.route_gqa(q, topk=2) == [good]
 
 
 def test_native_store_slices_host_tensor_payload(tmp_path):
@@ -1862,6 +1894,22 @@ def test_arena_route_falls_back_for_child_centroid_without_native_multikey():
     arena._probe_key = lambda _text: np.array([0.0, 1.0], np.float32)
 
     assert arena.route("plain probe", exclude=set()) == [0]
+    assert arena.last_route_backend == "python"
+
+
+def test_arena_python_route_drops_non_finite_scores():
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = None
+    arena.last_route_backend = "native"
+    arena.grafts = [
+        {"cent": np.array([np.nan, 0.0], np.float32),
+         "rare": set(), "text": "nan", "kind": "doc"},
+        {"cent": np.array([1.0, 0.0], np.float32),
+         "rare": set(), "text": "finite", "kind": "doc"},
+    ]
+    arena._probe_key = lambda _text: np.array([1.0, 0.0], np.float32)
+
+    assert arena.route("plain probe", exclude=set()) == [1]
     assert arena.last_route_backend == "python"
 
 

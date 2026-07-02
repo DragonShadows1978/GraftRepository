@@ -58,20 +58,23 @@ raw `FileNotFoundError` through descent. Regressions:
 `test_wal_recovery_adopts_orphaned_payload_before_manifest` and
 `test_missing_payload_load_degrades_to_pending`.
 
-**M5 — Explicit authoritative supersede targets silently dropped.** In
+**M5 — Explicit authoritative supersede targets silently dropped.**
 Fixed 2026-07-02. Extraction supersession now builds an ordered de-duplicated
 union of detected conflicts and explicit requested supersede targets for
 authoritative candidates, in both native-planned and Python-planned policy
 paths. Regression:
 `test_authoritative_extraction_unions_conflicts_and_requested_supersedes`.
 
-## Majors
-
 **M6 — NaN comparator UB in `RouterIndex::route` (C++).** `std::sort` with
-`a.first > b.first` over float scores, no finite check (same in
-`route_gqa_raw`). NaN breaks strict weak ordering → UB. *Fix direction:*
-drop non-finite scores before sorting (and mirror the same guard in the
-Python fallback ranking for parity).
+Fixed 2026-07-02. Native cosine routing and GQA raw routing now skip
+non-finite per-key scores and drop nodes with no finite score before sorting;
+Python fallback routing applies the same finite-score filter before
+normalization and ranking. Regressions:
+`test_native_route_drops_non_finite_scores`,
+`test_native_gqa_route_drops_non_finite_scores`, and
+`test_arena_python_route_drops_non_finite_scores`.
+
+## Majors
 
 **M7 — Native command parser keyword rebinding (C++).**
 `command_suffix_after_keyword` advances `pos = low.find(needle, pos+1)`

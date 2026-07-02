@@ -2617,12 +2617,15 @@ static float max_cosine(const std::vector<float>& query,
   bool have = false;
   for (const auto& key : keys) {
     const float score = cosine(query, key);
+    if (!std::isfinite(score)) {
+      continue;
+    }
     if (!have || score > best) {
       best = score;
       have = true;
     }
   }
-  return have ? best : 0.0F;
+  return have ? best : std::numeric_limits<float>::quiet_NaN();
 }
 
 static float gqa_raw_score(const std::vector<float>& query,
@@ -2661,10 +2664,12 @@ static float gqa_raw_score(const std::vector<float>& query,
         const auto koff = ((kh * key_tokens) + ki) * head_dim;
         double dot = 0.0;
         for (std::uint64_t d = 0; d < head_dim; ++d) {
-          dot += static_cast<double>(
-                     query[static_cast<std::size_t>(qoff + d)]) *
-                 static_cast<double>(
-                     key[static_cast<std::size_t>(koff + d)]);
+          const auto qv = query[static_cast<std::size_t>(qoff + d)];
+          const auto kv = key[static_cast<std::size_t>(koff + d)];
+          if (!std::isfinite(qv) || !std::isfinite(kv)) {
+            return std::numeric_limits<float>::quiet_NaN();
+          }
+          dot += static_cast<double>(qv) * static_cast<double>(kv);
         }
         best = std::max(best, std::abs(dot) / denom);
       }
@@ -2685,12 +2690,15 @@ static float max_gqa_raw_score(const std::vector<float>& query,
   for (const auto& key : keys) {
     const auto score = gqa_raw_score(
         query, query_heads, query_tokens, head_dim, key, kv_heads);
+    if (!std::isfinite(score)) {
+      continue;
+    }
     if (!have || score > best) {
       best = score;
       have = true;
     }
   }
-  return have ? best : 0.0F;
+  return have ? best : std::numeric_limits<float>::quiet_NaN();
 }
 
 static bool filter_allows(const std::vector<std::string>& filters,
@@ -2727,6 +2735,9 @@ std::vector<std::uint64_t> RouterIndex::route(
     if (!lexical.empty()) {
       score += static_cast<float>(lexical_hits) /
                static_cast<float>(lexical.size());
+    }
+    if (!std::isfinite(score)) {
+      continue;
     }
     scored.push_back({score, e.node_id});
   }
@@ -2771,6 +2782,9 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
     Scored item;
     item.raw = max_gqa_raw_score(
         query, query_heads, query_tokens, head_dim, kv_heads, e.route_keys);
+    if (!std::isfinite(item.raw)) {
+      continue;
+    }
     item.node_id = e.node_id;
     for (const auto& q : lexical) {
       if (std::find(e.lexical_keys.begin(), e.lexical_keys.end(), q) !=
