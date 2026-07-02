@@ -3038,6 +3038,33 @@ def test_repository_attaches_native_store_to_arena(tmp_path):
     assert repo.arena.native_store is None
 
 
+def test_repository_auto_attaches_native_store_from_env(tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    monkeypatch.setenv("GRM_RUNTIME_LIB", lib)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+
+    assert repo.native_store is not None
+    assert repo.arena.native_store is repo.native_store
+    idx = repo.add_document("DOC env native auto attach 12-1212")
+    assert repo.stats()["native"]["nodes"] == 1
+    assert repo.arena.grafts[idx]["native_node_id"] == 0
+    repo.close()
+    assert repo.arena.native_store is None
+
+
+def test_repository_can_disable_env_native_auto_attach(tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    monkeypatch.setenv("GRM_RUNTIME_LIB", lib)
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path / "repo"),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3, native_auto=False)
+
+    assert repo.native_store is None
+    assert repo.arena.native_store is None
+
+
 def test_forget_empty_query_matches_nothing(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena, route_layer=3)

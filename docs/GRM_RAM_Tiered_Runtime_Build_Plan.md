@@ -40,14 +40,16 @@ collapsed into one generic cache family. The practical split is positional:
 pre-RoPE extractions can be re-RoPE'd into a new seat, while fixed
 learned-absolute extractions are same-position restores unless a
 model-specific bridge re-encodes the graft.
-`GraftRepository(..., native_lib_path=...)` now mirrors payload lifecycle into
-that native host store as reconstructable named tensors with shape/dtype
+`GraftRepository(..., native_lib_path=...)`, `native_enabled=True`, or an
+explicit `GRM_RUNTIME_LIB` environment setting now mirrors payload lifecycle
+into that native host store as reconstructable named tensors with shape/dtype
 metadata, checkpoints those native host payloads to NVMe through a binary C++
 store format with a persisted native dialect/profile id (`GRMSTORE7`), persists
 semantic metadata JSON through the same native checkpoint path, and supports
-native host-store creation for both MLA and GQA dialect descriptors. It mirrors
-native route keys into the C++ `RouterIndex` and preserves route vectors plus
-lexical keys through the native checkpoint path;
+native host-store creation for both MLA and GQA dialect descriptors.
+`native_auto=False` keeps a repository Python-only even when `GRM_RUNTIME_LIB`
+is set. It mirrors native route keys into the C++ `RouterIndex` and preserves
+route vectors plus lexical keys through the native checkpoint path;
 native route entries carry active/inactive state through
 `grm_store_set_active()`, skip forgotten or superseded nodes during route
 lookup, preserve active state through native checkpoints, and carry

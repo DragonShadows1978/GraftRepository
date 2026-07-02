@@ -159,10 +159,13 @@ validation where feasible.
   `cpp/grm_runtime_c.h` exposes a dependency-free C ABI and
   `core/grm_native.py` drives it with `ctypes`. The host-store creation ABI now
   supports both MLA and GQA dialect descriptors.
-- Opt-in native host mirror:
-  `GraftRepository(..., native_lib_path=...)` mirrors RAM payload bytes into
+- Native host mirror:
+  `GraftRepository(..., native_lib_path=...)`, `native_enabled=True`, or an
+  explicit `GRM_RUNTIME_LIB` environment setting mirrors RAM payload bytes into
   `NativeGraftStore`, marks nodes durable on `flush_now()`, and rebuilds the
   native mirror on manifest reload for both MLA and GQA payload families.
+  `native_auto=False` keeps a repository Python-only even when
+  `GRM_RUNTIME_LIB` is set.
 - Native metadata-only cold-node mirror:
   manifest reload now mirrors retired/cold durable nodes into the native store
   without reloading their payload tensors into RAM. This keeps native node ids,
@@ -608,7 +611,9 @@ final: GQA-DESCENT: 8/8 | max resident 429 |
   including child-centroid digest/era keys, and for Qwen3/GQA raw `|q.k|` route
   scoring through variable-length native route-key lists. CUDA/GPU route-scan
   acceleration is not implemented.
-- Python `GraftRepository` mirrors into `NativeGraftStore` only by opt-in;
+- Python `GraftRepository` mirrors into `NativeGraftStore` when native is
+  requested explicitly or when `GRM_RUNTIME_LIB` is set for environment-driven
+  startup;
   the C++ store owns mirrored payload lifecycle, tensor boundaries, tensor
   shapes/dtypes, payload byte reconstruction, host payload checkpointing, and
   lifecycle-aware route indexing with native kind/scope/durability/mutability

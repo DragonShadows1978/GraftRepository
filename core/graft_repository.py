@@ -192,7 +192,7 @@ class GraftRepository:
                  vram_budget_mb=None, librarian_mode="inline",
                  arena_cls=ArenaCache, durability_mode="session_safe",
                  wal_enabled=None, native_store=None, native_lib_path=None,
-                 native_enabled=False, extractor=None,
+                 native_enabled=False, native_auto=True, extractor=None,
                  extraction_write_threshold=0.95,
                  extraction_error_policy="record", **arena_kw):
         self.path = path
@@ -233,7 +233,11 @@ class GraftRepository:
         self._own_native_store = False
         self._native_node_ids = {}
         self._native_checkpoint_loaded = False
-        if self.native_store is None and (native_enabled or native_lib_path):
+        env_native_lib = os.environ.get("GRM_RUNTIME_LIB")
+        native_requested = (
+            native_enabled or native_lib_path
+            or (native_auto and env_native_lib))
+        if self.native_store is None and native_requested:
             self.native_store = self._open_native_store(native_lib_path)
             self._own_native_store = True
         self.arena.native_store = self.native_store
