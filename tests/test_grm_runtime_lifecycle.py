@@ -1869,6 +1869,53 @@ def test_extraction_duplicate_fact_reinforces_existing_node(tmp_path):
     assert recovered["reinforcement_count"] == 1
 
 
+def test_low_trust_duplicate_does_not_overwrite_reinforcement_metadata(tmp_path):
+    repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
+                           autosave=False, arena_cls=FakeArena,
+                           route_layer=3)
+
+    fact = {
+        "action": "write_direct",
+        "candidate_type": "fact",
+        "text": "GRM reinforcement trust guard is ACTIVE-11.",
+        "subject": "GRM reinforcement trust guard",
+        "predicate": "is",
+        "value": "ACTIVE-11",
+        "scope": "project",
+        "durability": "project",
+        "mutability": "stable",
+        "write_intent": "user_asserted",
+        "confidence": 1.0,
+        "metadata": {
+            "pinned": True,
+            "notes": "operator protected note",
+        },
+    }
+    out = repo.apply_extraction_candidate(fact)
+    assert out["action"] == "write_direct"
+
+    duplicate = dict(fact,
+                     text="GRM reinforcement trust guard remains ACTIVE-11.",
+                     write_intent="observed",
+                     confidence=0.99,
+                     metadata={
+                         "pinned": False,
+                         "notes": "low trust rewrite",
+                     })
+
+    reinforced = repo.apply_extraction_candidate(duplicate)
+
+    assert reinforced == {
+        "action": "reinforce_existing",
+        "node_id": out["node_id"],
+    }
+    meta = repo.arena.grafts[out["node_id"]]["metadata"]
+    assert meta["write_intent"] == "user_asserted"
+    assert meta["pinned"] is True
+    assert meta["notes"] == "operator protected note"
+    assert meta["reinforcement_count"] == 1
+
+
 def test_low_confidence_duplicate_fact_still_goes_to_review(tmp_path):
     repo = GraftRepository(FakeModel(), enc, dec, str(tmp_path),
                            autosave=False, arena_cls=FakeArena,

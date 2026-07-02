@@ -1728,31 +1728,34 @@ class GraftRepository:
             if metadata.get(key):
                 meta[key] = self._append_unique(meta.get(key, ()),
                                                 metadata[key])
+        old_confidence = float(meta.get("confidence", 0.0))
+        old_intent = meta.get("write_intent", "observed")
+        old_count = int(meta.get("reinforcement_count", 0))
+        rank = {
+            "imported": 0,
+            "inferred": 1,
+            "observed": 2,
+            "system_asserted": 3,
+            "user_asserted": 4,
+        }
+        candidate_can_write_metadata = (
+            rank.get(write_intent, 0) >= rank.get(old_intent, 0))
         identity_keys = {
             "subject", "predicate", "value", "valid_from", "expires_at",
             "source_turns", "source_grafts", "supersedes", "superseded_by",
             "active",
         }
-        for key, value in metadata.items():
-            if key not in identity_keys:
-                meta[key] = value
-        old_confidence = float(meta.get("confidence", 0.0))
-        old_intent = meta.get("write_intent", "observed")
-        old_count = int(meta.get("reinforcement_count", 0))
+        if candidate_can_write_metadata:
+            for key, value in metadata.items():
+                if key not in identity_keys:
+                    meta[key] = value
         plan = self._native_reinforcement_plan(
             old_write_intent=old_intent, new_write_intent=write_intent,
             old_confidence=old_confidence, new_confidence=float(confidence),
             old_reinforcement_count=old_count)
         if plan is None:
             meta["confidence"] = max(old_confidence, float(confidence))
-            rank = {
-                "imported": 0,
-                "inferred": 1,
-                "observed": 2,
-                "system_asserted": 3,
-                "user_asserted": 4,
-            }
-            if rank.get(write_intent, 0) >= rank.get(old_intent, 0):
+            if candidate_can_write_metadata:
                 meta["write_intent"] = write_intent
             meta["reinforcement_count"] = old_count + 1
         else:

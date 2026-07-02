@@ -107,10 +107,12 @@ succeeds, and `grm_store_set_route_list` now documents and validates the
 `value_count`. Regression:
 `test_native_route_list_rejects_terminal_offset_mismatch`.
 
-**m11 — Reinforcement metadata overwrite:** `_reinforce_extraction_target`
-copies all non-identity candidate metadata keys onto the existing node
-BEFORE the trust-ranked plan runs — a low-trust duplicate can rewrite
-`pinned`/notes. Gate the metadata merge on write-intent rank.
+**m11 — Reinforcement metadata overwrite.** Fixed 2026-07-02.
+`_reinforce_extraction_target` now reads the existing write-intent rank
+before merging non-identity candidate metadata, so lower-trust duplicates
+can reinforce confidence/source history without rewriting protected fields
+such as `pinned` or `notes`. Regression:
+`test_low_trust_duplicate_does_not_overwrite_reinforcement_metadata`.
 
 **m12 — (optimization, optional):** the corpus-wide `isascii()` scan in
 `_native_active_text_matches` is O(total text) per command — cache a
