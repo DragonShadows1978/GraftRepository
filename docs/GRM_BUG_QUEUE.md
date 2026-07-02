@@ -10,7 +10,7 @@ remaining majors/minors, ordered by severity.
    in the working tree at a stopping point.
 2. **Run the non-GPU gate after every fix**: `python3 -m pytest
    tests/test_grm_runtime_lifecycle.py tests/test_grm_native_runtime.py
-   tests/test_deepseek_grm_hooks_static.py -q` — currently **151 passed**.
+   tests/test_deepseek_grm_hooks_static.py -q` — currently **166 passed**.
    A fix that breaks the gate is not a fix.
 3. **Every fix ships a regression test** that fails on the pre-fix code.
 4. **House law: Unicode and time never cross the ABI.** Native code prunes
