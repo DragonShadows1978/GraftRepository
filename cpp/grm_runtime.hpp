@@ -482,6 +482,7 @@ class RouterIndex {
     std::uint64_t node_id = 0;
     std::vector<std::vector<float>> route_keys;
     std::vector<std::string> lexical_keys;
+    std::vector<std::uint64_t> lexical_hashes;
     bool active = true;
     std::string kind = "turn";
     std::string scope = "conversation";
@@ -500,6 +501,7 @@ class RouterIndex {
     std::size_t q4_stride = 0;
     std::vector<std::uint8_t> q4_rows;
     std::vector<float> q4_scales;
+    bool single_row_per_entry = false;
   };
 
   void mark_mla_arena_dirty();
@@ -518,6 +520,10 @@ class RouterIndex {
   float int4_mla_entry_score(
       const std::vector<float>& query,
       std::size_t entry_idx,
+      double qnorm) const;
+  float int4_mla_row_score(
+      const std::vector<float>& query,
+      std::size_t row,
       double qnorm) const;
   std::vector<std::uint64_t> route_scan(
       const std::vector<float>& query,

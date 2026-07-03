@@ -170,6 +170,17 @@ vectorized unpack/dot kernel or a representation that reduces per-query
 decode traffic. Wider fuzz/repo exactness remains required before declaring
 M=16 safe generally.
 
+P3 hot-loop note: the INT4 bulk scorer now has a row-level scorer for the
+single-route-key-per-entry case, decodes nibbles through a lookup table, applies
+the row scale once after the integer-weighted dot, and uses exact-preserving
+lexical hashes as a prefilter before string confirmation. This keeps lexical
+semantics unchanged while avoiding hot-path string scans for almost all
+non-hits. Dim128 OpenMP INT4 M=16 with native-fp32 parity now measures 100k
+p50 7.0211ms and 1M p50 49.6927ms on the harvested route corpus. Finding:
+this is a real drop from the prior 1M M=16 65.3449ms, but E3 is still missed;
+the remaining work needs lower-level vectorized q4 dot or a larger routing
+layout change.
+
 **P4 — GQA key-bank GEMM path.** D4. Gates: parity vs Python GQA
 routing on the Qwen3-4B gate scenarios, latency, 166 floor.
 

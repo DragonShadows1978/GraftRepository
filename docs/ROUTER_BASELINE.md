@@ -114,3 +114,8 @@ The current harvested dim128 corpus matched native fp32 at 100k nodes for every
 M in that sweep, and at 1M nodes for M=16 and M=256. Treat those as measured
 operating points for this corpus; wider fuzz/repo exactness is still required
 before freezing a default M.
+
+After the row-level INT4 scorer and lexical-hash prefilter, the same dim128
+native-fp32 parity shape measured M=16 at 100k p50 7.0211ms and 1M p50
+49.6927ms. This is the current P3 hot-loop checkpoint, still above the E3
+25ms host-side target.
