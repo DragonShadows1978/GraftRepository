@@ -266,6 +266,13 @@ keys. With `--parity-reference batched`, 768 and 1,024 full-bank nodes matched
 two sampled Python queries at 58.5005ms / 73.5912ms p50. These are sampled
 correctness receipts, not exhaustive full-query parity.
 
+P4 qt4 scorer note: native GQA full-bank routing now has a query-token-4 fast
+path for the common capture benchmark shape. It keeps the same per-query-row dot
+accumulation order but reuses each K row across the four query rows before the
+per-head max reduction. Qwen3.5-2B source layer-3 full-bank sampled-parity runs
+now measure 512/768/1,024 nodes at 19.0136ms / 33.8389ms / 36.7363ms p50, all
+matching the batched Python raw q.k reference on two sampled queries.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.

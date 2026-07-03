@@ -3239,6 +3239,10 @@ float RouterIndex::gqa_arena_key_score(
   if (query.size() != static_cast<std::size_t>(query_expected)) {
     return 0.0F;
   }
+  if (query_tokens == 4) {
+    return gqa_arena_key_score_qt4(
+        query, query_heads, head_dim, kv_heads, key_idx);
+  }
   const auto repeat = query_heads / kv_heads;
   const auto key_row_start = gqa_arena_.key_row_offsets[key_idx];
   const auto* rows = gqa_arena_.rows.data();
@@ -3265,6 +3269,56 @@ float RouterIndex::gqa_arena_key_score(
         }
         best = std::max(best, std::abs(dot) * inv_denom);
       }
+    }
+    total += best;
+  }
+  return total / static_cast<float>(query_heads);
+}
+
+float RouterIndex::gqa_arena_key_score_qt4(
+    const std::vector<float>& query,
+    std::uint64_t query_heads,
+    std::uint64_t head_dim,
+    std::uint64_t kv_heads,
+    std::size_t key_idx) const {
+  const auto repeat = query_heads / kv_heads;
+  const auto key_tokens = gqa_arena_.key_tokens[key_idx];
+  const auto key_row_start = gqa_arena_.key_row_offsets[key_idx];
+  const auto* rows = gqa_arena_.rows.data();
+  const float inv_denom =
+      1.0F / std::sqrt(static_cast<float>(head_dim));
+  float total = 0.0F;
+  for (std::uint64_t h = 0; h < query_heads; ++h) {
+    const auto kh = h / repeat;
+    const auto qoff = h * 4 * head_dim;
+    const auto* q0 = query.data() + static_cast<std::size_t>(qoff);
+    const auto* q1 = q0 + static_cast<std::size_t>(head_dim);
+    const auto* q2 = q1 + static_cast<std::size_t>(head_dim);
+    const auto* q3 = q2 + static_cast<std::size_t>(head_dim);
+    float best = 0.0F;
+    for (std::uint64_t ki = 0; ki < key_tokens; ++ki) {
+      const auto row = key_row_start +
+                       static_cast<std::size_t>((kh * key_tokens) + ki);
+      const auto* k = rows + (row * static_cast<std::size_t>(head_dim));
+      float dot0 = 0.0F;
+      float dot1 = 0.0F;
+      float dot2 = 0.0F;
+      float dot3 = 0.0F;
+#if defined(_OPENMP)
+#pragma omp simd reduction(+ : dot0, dot1, dot2, dot3)
+#endif
+      for (std::uint64_t d = 0; d < head_dim; ++d) {
+        const auto idx = static_cast<std::size_t>(d);
+        const float kv = k[idx];
+        dot0 += q0[idx] * kv;
+        dot1 += q1[idx] * kv;
+        dot2 += q2[idx] * kv;
+        dot3 += q3[idx] * kv;
+      }
+      const float row_best = std::max(
+          std::max(std::abs(dot0), std::abs(dot1)),
+          std::max(std::abs(dot2), std::abs(dot3)));
+      best = std::max(best, row_best * inv_denom);
     }
     total += best;
   }

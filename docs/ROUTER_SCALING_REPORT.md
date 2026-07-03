@@ -124,12 +124,15 @@ Qwen3.5-2B real-capture source K-bank probe:
 | captured full 256-token K | 127 | 10.8340 | 12.9397 | 53.8978 | true |
 | captured full 256-token K | 192 | 15.1623 | 16.1852 | 80.1290 | true |
 | captured full 256-token K | 256 | 18.9169 | 21.9172 | 107.5580 | true |
-| captured full 256-token K, native-only | 512 | 39.5778 | 42.3518 | n/a | n/a |
-| captured full 256-token K, sampled parity | 512 | 39.6250 | 43.4202 | n/a | true (1 query) |
-| captured full 256-token K, native-only | 768 | 58.3090 | 63.2833 | n/a | n/a |
-| captured full 256-token K, batched sampled parity | 768 | 58.5005 | 64.6167 | n/a | true (2 queries) |
-| captured full 256-token K, native-only | 1,024 | 76.5800 | 80.9969 | n/a | n/a |
-| captured full 256-token K, batched sampled parity | 1,024 | 73.5912 | 75.1033 | n/a | true (2 queries) |
+| captured full 256-token K, pre-qt4 native-only | 512 | 39.5778 | 42.3518 | n/a | n/a |
+| captured full 256-token K, pre-qt4 sampled parity | 512 | 39.6250 | 43.4202 | n/a | true (1 query) |
+| captured full 256-token K, qt4 sampled parity | 512 | 19.0136 | 21.9898 | n/a | true (2 queries) |
+| captured full 256-token K, pre-qt4 native-only | 768 | 58.3090 | 63.2833 | n/a | n/a |
+| captured full 256-token K, pre-qt4 batched sampled parity | 768 | 58.5005 | 64.6167 | n/a | true (2 queries) |
+| captured full 256-token K, qt4 batched sampled parity | 768 | 33.8389 | 34.8920 | n/a | true (2 queries) |
+| captured full 256-token K, pre-qt4 native-only | 1,024 | 76.5800 | 80.9969 | n/a | n/a |
+| captured full 256-token K, pre-qt4 batched sampled parity | 1,024 | 73.5912 | 75.1033 | n/a | true (2 queries) |
+| captured full 256-token K, qt4 batched sampled parity | 1,024 | 36.7363 | 38.6939 | n/a | true (2 queries) |
 | captured representative 1-token K | 32 | 0.0465 | 0.0473 | 0.6651 | true |
 | captured representative 1-token K | 96 | 0.1172 | 0.1696 | 2.0503 | true |
 
@@ -158,6 +161,10 @@ raw-q.k reference query, and measured `39.6250ms` p50 / `43.4202ms` p95.
 The Python reference also has a batched mode that preserves the scalar law's
 tie order; using that mode, 768 and 1,024 full-bank nodes matched two sampled
 Python queries and measured `58.5005ms` / `73.5912ms` p50.
+The native full-bank scorer now has a query-token-4 fast path that reuses each
+K row across the four query rows while preserving per-row dot accumulation
+order. On the same Qwen3.5-2B source captures, 512/768/1,024 full-bank sampled
+parity points now measure `19.0136ms` / `33.8389ms` / `36.7363ms` p50.
 
 ## Expectations
 
@@ -175,9 +182,10 @@ Python queries and measured `58.5005ms` / `73.5912ms` p50.
   or a larger routing layout change.
 - Increase real-capture GQA sampled-parity coverage, or run exhaustive batched
   parity when claiming full correctness beyond the existing two-query samples.
-- Implement the true GQA GEMM/segment-reduce path or a representative-key
-  compaction policy for full 256-token captured K banks if sub-10ms routing is
-  required past the 96-node real-capture point.
+- Implement a fuller GQA GEMM/segment-reduce layout or representative-key
+  compaction if sub-10ms routing is required past the 96-node real-capture
+  point; the qt4 fast path cuts the 1,024-node full-bank point roughly in half
+  but does not make it sub-10ms.
 - Replace the current C ABI prepare-on-first-route shared-mutex bridge with the
   planned lock-free double-buffer epoch snapshot model if threaded serving
   requires no read-side lock.

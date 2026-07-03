@@ -552,6 +552,12 @@ class RouterIndex {
       std::uint64_t kv_heads,
       bool query_finite,
       std::size_t key_idx) const;
+  float gqa_arena_key_score_qt4(
+      const std::vector<float>& query,
+      std::uint64_t query_heads,
+      std::uint64_t head_dim,
+      std::uint64_t kv_heads,
+      std::size_t key_idx) const;
   float gqa_arena_entry_score(
       const std::vector<float>& query,
       std::uint64_t query_heads,
