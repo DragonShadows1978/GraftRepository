@@ -2010,6 +2010,29 @@ def test_arena_python_route_drops_non_finite_scores():
     assert arena.last_route_backend == "python"
 
 
+def test_arena_python_route_vectorizes_flat_mla_scores():
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = None
+    arena.last_route_backend = "native"
+    arena.grafts = [
+        {"cent": np.array([0.25, 0.9682458], np.float32),
+         "rare": set(), "text": "weak", "kind": "doc"},
+        {"cent": np.array([0.95, 0.3122499], np.float32),
+         "rare": set(), "text": "semantic winner", "kind": "doc"},
+        {"cent": np.array([0.40, 0.9165151], np.float32),
+         "rare": {"a17"}, "text": "lexical", "kind": "doc"},
+    ]
+    arena._probe_key = lambda _text: np.array([1.0, 0.0], np.float32)
+
+    def no_scalar_route(*_args, **_kwargs):
+        raise AssertionError("flat MLA route should use vector scores")
+
+    arena._cent_score = no_scalar_route
+
+    assert arena.route("What about A17?", exclude=set()) == [2, 1, 0]
+    assert arena.last_route_backend == "python"
+
+
 def test_arena_descent_expand_uses_native_source_closure():
     class ClosureStore:
         def __init__(self):

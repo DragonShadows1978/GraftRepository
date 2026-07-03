@@ -340,11 +340,13 @@ class ArenaCache:
         if native_order is not None:
             return native_order
         self.last_route_backend = "python"
-        base = {}
-        for i in cand:
-            score = self._cent_score(p, self.grafts[i])
-            if np.isfinite(score):
-                base[i] = score
+        base = self._vector_route_scores(p, cand)
+        if base is None:
+            base = {}
+            for i in cand:
+                score = self._cent_score(p, self.grafts[i])
+                if np.isfinite(score):
+                    base[i] = score
         # dialect hook: a raw-score channel (GQA layer-0 |q.k|) rescales
         # per-route into the O(1) band the lexical bonus was calibrated
         # against. MLA cosine is already there — identity.
@@ -358,6 +360,31 @@ class ArenaCache:
                 scored.append((score, i))
         scored.sort(key=lambda item: -item[0])
         return [i for _, i in scored]             # full ranking, best first
+
+    def _vector_route_scores(self, p, cand):
+        if (type(self)._key_score is not ArenaCache._key_score
+                or type(self)._normalize_scores is not ArenaCache._normalize_scores):
+            return None
+        rows = []
+        row_ids = []
+        q = np.asarray(p, dtype=np.float32).reshape(-1)
+        for i in cand:
+            g = self.grafts[i]
+            if g.get("child_cents"):
+                return None
+            cent = np.asarray(g["cent"], dtype=np.float32).reshape(-1)
+            if cent.shape != q.shape:
+                return None
+            rows.append(cent)
+            row_ids.append(i)
+        if not rows:
+            return {}
+        scores = np.stack(rows).astype(np.float32, copy=False) @ q
+        return {
+            i: float(score)
+            for i, score in zip(row_ids, scores)
+            if np.isfinite(score)
+        }
 
     def _cent_score(self, p, g):
         # hierarchical descent: a digest node answers for its retired

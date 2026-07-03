@@ -94,6 +94,11 @@ loop with matrix-form scoring (one `C @ q`). Cheap, immediate,
 independent of native work. Gate: identical route results on the 166
 suite; baseline curve re-measured.
 
+P1 implementation note: `ArenaCache.route` now vectorizes the flat MLA
+Python fallback path with one stacked matrix `@` query score. Hierarchical
+child-centroid grafts and dialects that override route scoring still use the
+old scalar path, preserving descent and GQA raw-qk semantics.
+
 **P2 — Native SoA arena + fp32 GEMV scan.** D1 + D3 + OpenMP over row
 blocks. Gate: bit-identical top-k vs old scan on full battery; latency
 curve; 166 floor.
