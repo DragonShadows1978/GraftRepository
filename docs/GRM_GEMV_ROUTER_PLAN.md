@@ -198,6 +198,15 @@ interactive territory and narrowly misses the original <=25ms E3 target. A
 more invasive thread-local heap selection attempt remained parity-green but
 slowed to 29.7308ms p50, so it was rejected.
 
+P3 longer exactness update: the shorter M=64 receipt was not strong enough.
+Re-running the harvested 1M dim128 route with 10 queries found an M=64
+native-fp32 mismatch on query 8 (`[173312, 463984, 963602]` vs
+`[173312, 963602, 463984]`). A longer M sweep over the same query set matched
+native fp32 for M=96/128/256. Current measured safer operating point is
+bounded-staging M=128: 1M nodes, `23.8805ms` p50 / `25.4883ms` p95, 8 measured
+queries after warmup, native-fp32 parity green. This clears the original E3
+target on p50, but the p95 tail still sits just above 25ms.
+
 **P4 — GQA key-bank GEMM path.** D4. Gates: parity vs Python GQA
 routing on Qwen-family GQA scenarios, latency, 166 floor.
 

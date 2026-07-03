@@ -45,11 +45,15 @@ P3 INT4 bulk/refine checkpoints:
 | 1,000,000 | 128 | predecoded q4 | 64 | 37.5690 | 40.2792 | native fp32 | true |
 | 1,000,000 | 128 | predecoded q4 | 128 | 37.8382 | 39.1211 | native fp32 | true |
 | 1,000,000 | 128 | predecoded q4 + bounded candidate staging | 64 | 26.0175 | 27.2486 | native fp32 | true |
+| 1,000,000 | 128 | bounded staging, longer query check | 64 | 23.4215 | 25.9012 | native fp32 | false |
+| 1,000,000 | 128 | bounded staging, longer query check | 96 | 24.7049 | 27.0196 | native fp32 | true |
+| 1,000,000 | 128 | bounded staging, longer query check | 128 | 23.8805 | 25.4883 | native fp32 | true |
+| 1,000,000 | 128 | bounded staging, longer query check | 256 | 26.1488 | 29.1560 | native fp32 | true |
 
-Current measured MLA operating point: predecoded q4, `M=64`, 1M nodes,
-26.0175ms p50 with bounded candidate staging. `M=16` is not acceptable for
-the predecoded checkpoint because it produced one top-3 mismatch on the
-harvested 1M parity run.
+Current measured MLA operating point: bounded-staging predecoded q4, `M=128`,
+1M nodes, 23.8805ms p50 with native-fp32 parity over the longer 10-query
+receipt. `M=64` is no longer considered safe generally: it passed the shorter
+receipt but flipped ranks 2/3 on query 8 of the longer check.
 
 ## INT4 Exactness Sweep
 
@@ -65,12 +69,17 @@ The later predecoded 1M sweep changed the safe operating point:
 | 64 | true | 37.5690 |
 | 128 | true | 37.8382 |
 | 64 + bounded staging | true | 26.0175 |
+| 64 + bounded staging, longer check | false | 23.4215 |
+| 96 + bounded staging, longer check | true | 24.7049 |
+| 128 + bounded staging, longer check | true | 23.8805 |
+| 256 + bounded staging, longer check | true | 26.1488 |
 
 Conclusion: refine count is not the dominant runtime limiter, but too-small
 M can still lose exact top-k after the predecoded q4 bulk approximation. Use
-M=64 with bounded candidate staging for the current harvested-corpus operating
-point. A rejected thread-local heap selection attempt stayed parity-green but
-slowed the same point to 29.7308ms p50, so it was not kept.
+M=128 with bounded candidate staging for the current harvested-corpus operating
+point. This clears E3 on p50 (`23.8805ms`) but not p95 (`25.4883ms`). A rejected
+thread-local heap selection attempt stayed parity-green but slowed the older
+M=64 point to 29.7308ms p50, so it was not kept.
 
 ## GQA Key-Bank Probe
 
@@ -384,12 +393,12 @@ Fresh post-snapshot GQA receipts:
 | --- | --- |
 | E1: fp32 GEMV 10x current native scan at 100k | not proven; no direct P0 100k run |
 | E2: INT4 two-tier 2x over fp32 at 100k | passed on measured points: 22.8177ms -> 6.2995ms |
-| E3: 1M route <= 25ms host-side | narrowly missed; best exact measured point is 26.0175ms |
+| E3: 1M route <= 25ms host-side | passed on p50 with bounded-staging M=128: 23.8805ms p50 / 25.4883ms p95, native-fp32 parity green on the longer check |
 | E4: GQA native path 20x Python fallback at 10k | passed on smoke shape: 27.81x; Qwen3.5-2B representative-key shape is 26.27x; real captured 256-node full K-bank is 5.69x; layers 3/7/11 full-bank 256-node parity is green |
 
 ## Remaining Work
 
-- Treat the 1M dim128 host route as deep-interactive already; if E3 remains
+- Treat the 1M dim128 host route as deep-interactive already; if E3 p95 is
   mandatory, replace the scalar q4 dot with a lower-level vectorized dot kernel
   or a larger routing layout change.
 - Extend exhaustive real-capture GQA parity beyond the current layer-3
