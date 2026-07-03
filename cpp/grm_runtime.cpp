@@ -2,6 +2,7 @@
 #include "grm_runtime_c.h"
 
 #include <algorithm>
+#include <atomic>
 #include <cerrno>
 #include <cctype>
 #include <cstddef>
@@ -3978,7 +3979,8 @@ struct grm_store_handle {
   std::unique_ptr<grm::HostGraftStore> store;
   grm::RouterIndex router;
   std::shared_ptr<const grm::RouterIndex> router_snapshot;
-  std::uint64_t router_epoch = 0;
+  std::atomic<std::uint64_t> router_epoch{0};
+  std::atomic<bool> router_snapshot_dirty{true};
   std::shared_mutex router_mutex;
   bool router_needs_prepare = true;
   grm::DeviceArena arena;
@@ -4050,6 +4052,11 @@ void sync_router_node_state(grm_store_handle* handle, std::uint64_t node_id) {
                                     node->metadata.mutability);
 }
 
+void mark_router_snapshot_dirty(grm_store_handle* handle) {
+  handle->router_needs_prepare = true;
+  handle->router_snapshot_dirty.store(true, std::memory_order_release);
+}
+
 void prepare_router_for_store_dialect(grm_store_handle* handle) {
   const auto& dialect = handle->store->dialect();
   if (dialect.payload_kind == grm::PayloadKind::GQA) {
@@ -4059,25 +4066,36 @@ void prepare_router_for_store_dialect(grm_store_handle* handle) {
   } else {
     handle->router.prepare_mla_route();
   }
-  handle->router_snapshot =
+  std::shared_ptr<const grm::RouterIndex> snapshot =
       std::make_shared<grm::RouterIndex>(handle->router);
-  ++handle->router_epoch;
+  std::atomic_store_explicit(
+      &handle->router_snapshot, snapshot, std::memory_order_release);
+  handle->router_epoch.fetch_add(1, std::memory_order_acq_rel);
   handle->router_needs_prepare = false;
+  handle->router_snapshot_dirty.store(false, std::memory_order_release);
 }
 
 std::shared_ptr<const grm::RouterIndex> prepared_router_snapshot(
     grm_store_handle* handle) {
-  {
-    std::shared_lock<std::shared_mutex> lock(handle->router_mutex);
-    if (!handle->router_needs_prepare && handle->router_snapshot) {
-      return handle->router_snapshot;
+  if (!handle->router_snapshot_dirty.load(std::memory_order_acquire)) {
+    auto snapshot = std::atomic_load_explicit(
+        &handle->router_snapshot, std::memory_order_acquire);
+    if (snapshot) {
+      return snapshot;
     }
   }
   std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
-  if (handle->router_needs_prepare || !handle->router_snapshot) {
+  auto snapshot = std::atomic_load_explicit(
+      &handle->router_snapshot, std::memory_order_acquire);
+  if (handle->router_needs_prepare || !snapshot) {
     prepare_router_for_store_dialect(handle);
+    snapshot = std::atomic_load_explicit(
+        &handle->router_snapshot, std::memory_order_acquire);
   }
-  return handle->router_snapshot;
+  if (!snapshot) {
+    throw std::runtime_error("prepared router snapshot was not published");
+  }
+  return snapshot;
 }
 
 void rebuild_router_from_store(grm_store_handle* handle) {
@@ -4098,7 +4116,7 @@ void rebuild_router_from_store(grm_store_handle* handle) {
     }
     sync_router_node_state(handle, node_id);
   }
-  handle->router_needs_prepare = true;
+  mark_router_snapshot_dirty(handle);
 }
 
 }  // namespace
@@ -4480,7 +4498,7 @@ int grm_store_set_active(grm_store_handle* handle,
     handle->store->set_active(node_id, is_active);
     std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->router.set_active(node_id, is_active);
-    handle->router_needs_prepare = true;
+    mark_router_snapshot_dirty(handle);
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
@@ -4555,7 +4573,7 @@ int grm_store_set_route_metadata(grm_store_handle* handle,
                                       scope == nullptr ? "" : scope,
                                       durability == nullptr ? "" : durability,
                                       mutability == nullptr ? "" : mutability);
-    handle->router_needs_prepare = true;
+    mark_router_snapshot_dirty(handle);
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
@@ -4880,7 +4898,7 @@ int grm_store_apply_revision(grm_store_handle* handle,
     for (const auto old_id : superseded) {
       handle->router.set_active(old_id, false);
     }
-    handle->router_needs_prepare = true;
+    mark_router_snapshot_dirty(handle);
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
@@ -4903,7 +4921,7 @@ int grm_store_apply_expire(grm_store_handle* handle,
         handle->router.set_active(node_id, false);
       }
     }
-    handle->router_needs_prepare = true;
+    mark_router_snapshot_dirty(handle);
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
@@ -5438,7 +5456,7 @@ int grm_store_set_route(grm_store_handle* handle,
     handle->store->mark_dirty(node_id, false, true);
     handle->router.upsert(node_id, std::move(key), std::move(lexical));
     sync_router_node_state(handle, node_id);
-    handle->router_needs_prepare = true;
+    mark_router_snapshot_dirty(handle);
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
@@ -5480,7 +5498,7 @@ int grm_store_set_route_multi(grm_store_handle* handle,
     handle->store->mark_dirty(node_id, false, true);
     handle->router.upsert_multi(node_id, std::move(keys), std::move(lexical));
     sync_router_node_state(handle, node_id);
-    handle->router_needs_prepare = true;
+    mark_router_snapshot_dirty(handle);
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
@@ -5540,7 +5558,7 @@ int grm_store_set_route_list(grm_store_handle* handle,
     handle->store->mark_dirty(node_id, false, true);
     handle->router.upsert_multi(node_id, std::move(keys), std::move(lexical));
     sync_router_node_state(handle, node_id);
-    handle->router_needs_prepare = true;
+    mark_router_snapshot_dirty(handle);
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
@@ -5556,7 +5574,7 @@ int grm_store_clear_route(grm_store_handle* handle,
     std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->store->clear_route(node_id);
     handle->router.erase(node_id);
-    handle->router_needs_prepare = true;
+    mark_router_snapshot_dirty(handle);
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);

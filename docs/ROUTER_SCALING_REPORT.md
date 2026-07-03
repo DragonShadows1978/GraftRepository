@@ -9,9 +9,8 @@ per-node route scan with contiguous host arenas:
 - MLA: fp32 SoA arena plus INT4 bulk/refine route book.
 - GQA: contiguous key-bank arena with segment-style per-entry reduction.
 - Concurrency: route-key mutations mark arenas dirty, the next route prepares
-  once under the writer side of the C ABI shared mutex, and normal prepared
-  route reads use shared locks while the final lock-free epoch design remains
-  open.
+  once under the writer side of the C ABI shared mutex, and clean prepared
+  route reads atomically pin immutable snapshots without a read-side mutex.
 
 All numbers below are from local measurements on harvested repository-derived
 route vectors unless otherwise noted. Missing direct baselines are marked as
@@ -230,12 +229,22 @@ and expire changes. Focused stale-snapshot/concurrency regression:
 `6 passed, 67 deselected`. Full native runtime gate:
 `73 passed, 2 warnings in 174.95s`.
 
+The follow-up atomic fast path removes the read-side shared lock for clean
+prepared snapshots. A dirty atomic bit protects semantics after writer
+mutations: if clean, readers atomically load and pin the immutable snapshot for
+the route call; if dirty or missing, they enter the writer-side prepare path and
+publish a fresh copy. Focused stale-snapshot/concurrency regression:
+`7 passed, 66 deselected`. Full native runtime gate:
+`73 passed, 2 warnings in 177.02s`.
+
 Fresh post-snapshot GQA receipts:
 
 | route shape | nodes | native p50 ms | native p95 ms | parity |
 | --- | ---: | ---: | ---: | --- |
 | Qwen3.5-2B source layer-3 full 256-token K-bank | 512 | 21.8605 | 22.1071 | true, 4/4 batched-reference queries |
 | harvested representative-key GQA | 10000 | 5.9662 | 5.9920 | true, 5/5 batched-reference queries |
+| Qwen3.5-2B source layer-3 full 256-token K-bank, atomic snapshot | 512 | 22.0019 | 23.8365 | true, 4/4 batched-reference queries |
+| harvested representative-key GQA, atomic snapshot | 10000 | 5.9916 | 6.0286 | true, 5/5 batched-reference queries |
 
 ## Expectations
 
@@ -259,6 +268,5 @@ Fresh post-snapshot GQA receipts:
   compaction, grouped repeated-head qt4 scoring, and hand-unrolled repeat-4
   head-ratio scoring, and paired repeated-head scoring were measured and
   rejected.
-- Replace the current short-lock `shared_ptr` snapshot acquisition with the
-  planned lock-free double-buffer epoch model if threaded serving requires no
-  read-side lock.
+- Run TSAN or an equivalent sanitizer race gate before treating the atomic
+  snapshot path as fully concurrency-hardened.

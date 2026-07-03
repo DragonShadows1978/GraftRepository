@@ -353,6 +353,22 @@ four batched-reference queries at `21.8605ms` p50 / `22.1071ms` p95; the
 representative 10k GQA shape matched five batched-reference queries at
 `5.9662ms` p50 / `5.9920ms` p95.
 
+P5 atomic-fast-path note: clean prepared routes no longer take the C ABI
+shared mutex. The handle now carries an atomic dirty flag next to the published
+`shared_ptr<const RouterIndex>`; readers atomically load a clean snapshot and
+pin it for the route call, while dirty or missing snapshots fall back to the
+writer lock and publish a new immutable copy. Writer-side mutation is still
+serialized through the live router lock, so active/filter/revision semantics
+stay linear after the mutation call returns. Gates: focused
+stale-snapshot/concurrency selector passed 7/7; full
+`tests/test_grm_native_runtime.py` passed 73/73. Fresh atomic-fast-path GQA
+receipts: Qwen3.5-2B source layer-3 full-bank 512 nodes matched all four
+batched-reference queries at `22.0019ms` p50 / `23.8365ms` p95; representative
+10k GQA matched five batched-reference queries at `5.9916ms` p50 /
+`6.0286ms` p95. Remaining D5 hardening is TSAN or an equivalent sanitizer race
+gate; the route hot path itself is now read-lock-free for clean prepared
+snapshots.
+
 **P6 — Report.** `ROUTER_SCALING_REPORT.md`: before/after curves at all
 four node counts, both dialects, exactness-gate record, M-sweep table.
 Board update; note for GRM paper v1.1 §5 (routing limitation retired —
