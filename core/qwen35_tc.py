@@ -24,6 +24,7 @@ Both are Markovian -> lossless save/restore (the GRM entry point).
 """
 import gc
 import glob
+import json
 import os
 
 import numpy as np
@@ -37,6 +38,7 @@ class Qwen35Config:
     hidden_dim = 4096
     intermediate_dim = 12288
     num_layers = 32
+    layer_types = None
     full_attention_interval = 4          # attention at i % 4 == 3
     # full attention
     num_heads = 16
@@ -52,10 +54,85 @@ class Qwen35Config:
     conv_kernel = 4
     rms_norm_eps = 1e-6
     eos_token_id = 248044
+    tie_word_embeddings = False
+    model_dir = None
+    repository = None
+    revision = None
 
-    @staticmethod
-    def is_attention(i):
-        return i % 4 == 3
+    def __init__(self, **kwargs):
+        fields = (
+            "vocab_size", "hidden_dim", "intermediate_dim", "num_layers",
+            "layer_types", "full_attention_interval", "num_heads",
+            "num_kv_heads", "head_dim", "rope_theta", "partial_rotary_dim",
+            "n_k_heads", "n_v_heads", "d_k", "d_v", "conv_kernel",
+            "rms_norm_eps", "eos_token_id", "tie_word_embeddings",
+            "model_dir", "repository", "revision")
+        for name in fields:
+            setattr(self, name, kwargs.pop(name, getattr(type(self), name)))
+        if kwargs:
+            unknown = ", ".join(sorted(kwargs))
+            raise TypeError(f"unknown Qwen35Config fields: {unknown}")
+
+    @classmethod
+    def from_model_dir(cls, model_dir):
+        root = os.path.abspath(os.path.expanduser(model_dir))
+        with open(os.path.join(root, "config.json")) as fh:
+            config = json.load(fh)
+        text = dict(config.get("text_config") or config)
+        rope = dict(text.get("rope_parameters") or {})
+        partial = rope.get("partial_rotary_factor", 0.25)
+        parts = root.split(os.sep)
+        repo = revision = None
+        if len(parts) >= 3 and parts[-2] == "snapshots":
+            repo_dir = parts[-3]
+            repo = (repo_dir[len("models--"):].replace("--", "/")
+                    if repo_dir.startswith("models--") else repo_dir)
+            revision = parts[-1]
+        return cls(
+            vocab_size=int(text["vocab_size"]),
+            hidden_dim=int(text["hidden_size"]),
+            intermediate_dim=int(text["intermediate_size"]),
+            num_layers=int(text["num_hidden_layers"]),
+            layer_types=tuple(text.get("layer_types") or ()),
+            full_attention_interval=int(text.get("full_attention_interval", 4)),
+            num_heads=int(text["num_attention_heads"]),
+            num_kv_heads=int(text["num_key_value_heads"]),
+            head_dim=int(text["head_dim"]),
+            rope_theta=float(rope.get("rope_theta", cls.rope_theta)),
+            partial_rotary_dim=int(round(float(text["head_dim"]) *
+                                         float(partial))),
+            n_k_heads=int(text.get("linear_num_key_heads", cls.n_k_heads)),
+            n_v_heads=int(text.get("linear_num_value_heads", cls.n_v_heads)),
+            d_k=int(text.get("linear_key_head_dim", cls.d_k)),
+            d_v=int(text.get("linear_value_head_dim", cls.d_v)),
+            conv_kernel=int(text.get("linear_conv_kernel_dim",
+                                     cls.conv_kernel)),
+            rms_norm_eps=float(text.get("rms_norm_eps", cls.rms_norm_eps)),
+            eos_token_id=int(text.get("eos_token_id", cls.eos_token_id)),
+            tie_word_embeddings=bool(config.get(
+                "tie_word_embeddings", text.get("tie_word_embeddings",
+                                                cls.tie_word_embeddings))),
+            model_dir=root,
+            repository=repo,
+            revision=revision)
+
+    def attention_layer_indices(self):
+        if self.layer_types:
+            return [i for i, kind in enumerate(self.layer_types)
+                    if kind == "full_attention"]
+        return [i for i in range(self.num_layers) if self.is_attention(i)]
+
+    def is_attention(self, i=None):
+        if i is None:
+            # Backward-compatible class-style call:
+            # Qwen35Config.is_attention(layer_idx)
+            i = int(self)
+            return i % Qwen35Config.full_attention_interval == (
+                Qwen35Config.full_attention_interval - 1)
+        if self.layer_types:
+            return self.layer_types[int(i)] == "full_attention"
+        return int(i) % self.full_attention_interval == (
+            self.full_attention_interval - 1)
 
 
 _SNAP_GLOB = ("/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/"
@@ -225,10 +302,12 @@ class Qwen35AttentionTC:
         # APA dials (qk-norm family -> bulk_bits 4 per the measured law).
         # cuBLAS blend path only — the fused kernel's compile-time head_dim
         # templates stop at 128 and this model is 256.
-        self.attention_mode = "standard"
+        self.attention_mode = "apa_selective"
         self.refine_percentile = 0.15
         self.bulk_bits = 4
         self.attn_block = 1024
+        self.inject_kv = None
+        self.graft_seats = 0
 
     def __call__(self, x, cos, sin, position_offset=0, kv_cache=None):
         cfg = self.cfg
@@ -247,13 +326,44 @@ class Qwen35AttentionTC:
         k = k.reshape([B, L, KV, D]).transpose(1, 2)
         v = self.v_proj(x).reshape([B, L, KV, D]).transpose(1, 2)
 
+        if getattr(self, "_capture", False):
+            self._captured = (k.numpy(), v.numpy())
+        if getattr(self, "_capture_q", False):
+            self._captured_q = q.numpy()
+
+        # KV-Graft inject: captured Qwen3.5 attention keys are post-qk-norm,
+        # PRE-RoPE. Re-seat them as a positional prefix and shift live tokens
+        # by the mounted graft width while the graft is resident.
+        inj = getattr(self, "inject_kv", None)
+        kg_pre = None
+        if inj is not None:
+            kg_pre, vg, gscale = inj
+        Sg = getattr(self, "graft_seats", 0)
+        if kg_pre is not None:
+            Sg = int(kg_pre.shape[2])
+        shift = getattr(self, "live_shift", None)
+        if shift is None:
+            shift = Sg
+
         # partial RoPE: rotate dims [0:64], pass [64:256]
-        cseg = cos.slice(0, position_offset, L)
-        sseg = sin.slice(0, position_offset, L)
+        cseg = cos.slice(0, position_offset + shift, L)
+        sseg = sin.slice(0, position_offset + shift, L)
         q = tc.cat([F.apply_rotary(q.slice(3, 0, R), cseg, sseg),
                     q.slice(3, R, D - R)], dim=3)
         k = tc.cat([F.apply_rotary(k.slice(3, 0, R), cseg, sseg),
                     k.slice(3, R, D - R)], dim=3)
+
+        if inj is not None and kv_cache is None:
+            # Prefill-only injection. Cached decode already carries the graft
+            # in kv_cache; only the live-position shift above persists.
+            cg = cos.slice(0, 0, Sg)
+            sg = sin.slice(0, 0, Sg)
+            kg = tc.cat([F.apply_rotary(kg_pre.slice(3, 0, R), cg, sg),
+                         kg_pre.slice(3, R, D - R)], dim=3)
+            if gscale != 1.0:
+                kg = kg * gscale
+            k = tc.cat([kg, k], dim=2)
+            v = tc.cat([vg, v], dim=2)
 
         if kv_cache is not None:
             k = tc.cat([kv_cache[0], k], dim=2)
@@ -292,7 +402,7 @@ class SwiGLUTC:
 
 class Qwen35BlockTC:
     def __init__(self, cfg, layer_idx):
-        self.is_attn = Qwen35Config.is_attention(layer_idx)
+        self.is_attn = cfg.is_attention(layer_idx)
         self.input_layernorm = RMSNormTC(cfg.hidden_dim, cfg.rms_norm_eps)
         self.post_attention_layernorm = RMSNormTC(cfg.hidden_dim,
                                                   cfg.rms_norm_eps)
@@ -337,7 +447,16 @@ class Qwen35_TC:
     def __call__(self, input_ids_np, caches=None, position_offset=0,
                  last_token_only=False, max_layers=None):
         B, L = input_ids_np.shape
-        self.extend_rope(position_offset + L)
+        shift = 0
+        for layer in self.layers:
+            if not getattr(layer, "is_attn", False):
+                continue
+            att = layer.mixer
+            live_shift = getattr(att, "live_shift", None)
+            if live_shift is None:
+                live_shift = getattr(att, "graft_seats", 0)
+            shift = max(shift, int(live_shift or 0))
+        self.extend_rope(position_offset + shift + L)
         h = self.embed_tokens(input_ids_np)
         new_caches = []
         run = self.layers if max_layers is None else self.layers[:max_layers]
@@ -415,7 +534,8 @@ class Qwen35_TC:
                     gf(f"{la}.out_proj.weight")))
                 cw = gf(f"{la}.conv1d.weight").reshape(-1, cfg.conv_kernel)
                 mx.conv_w = [tc.tensor(np.ascontiguousarray(
-                    cw[:, j].reshape(1, 1, -1))) for j in range(4)]
+                    cw[:, j].reshape(1, 1, -1)))
+                    for j in range(cfg.conv_kernel)]
                 mx.neg_A = tc.tensor(np.ascontiguousarray(
                     (-np.exp(gf(f"{la}.A_log"))).reshape(1, 1, -1)))
                 mx.dt_bias = tc.tensor(np.ascontiguousarray(
@@ -430,16 +550,32 @@ class Qwen35_TC:
             Lr.mlp.down_proj = QuantLinearTC(np.ascontiguousarray(
                 gf(f"{mx_g}.down_proj.weight")))
             gc.collect()
-            if progress and i % 4 == 3:
+            if progress and cfg.is_attention(i):
                 print(f"    layer {i + 1}/{cfg.num_layers}", flush=True)
 
         self.norm.weight = tc.tensor(np.ascontiguousarray(
             1.0 + gf(f"{P}.norm.weight")), dtype="float32")
-        self.lm_head = QuantLinearTC(np.ascontiguousarray(
-            gf("lm_head.weight")))
+        if "lm_head.weight" in where:
+            self.lm_head = QuantLinearTC(np.ascontiguousarray(
+                gf("lm_head.weight")))
+        else:
+            self.lm_head = QuantLinearTC(np.ascontiguousarray(
+                self.embed_tokens.weight))
         gc.collect()
-        return {"loaded": "INT4 hybrid", "framework":
-                "tensor_cuda Qwen3.5-9B (24 GDN + 8 attn)"}
+        return {
+            "loaded": "INT4 hybrid",
+            "framework": "tensor_cuda Qwen3.5",
+            "model_dir": os.path.abspath(d),
+            "repository": cfg.repository,
+            "revision": cfg.revision,
+            "layers": cfg.num_layers,
+            "attention_layers": cfg.attention_layer_indices(),
+            "hidden_dim": cfg.hidden_dim,
+            "num_heads": cfg.num_heads,
+            "num_kv_heads": cfg.num_kv_heads,
+            "head_dim": cfg.head_dim,
+            "tie_word_embeddings": cfg.tie_word_embeddings,
+        }
 
     @classmethod
     def from_pretrained(cls, model_dir=None):
@@ -453,8 +589,9 @@ class Qwen35_TC:
         QuantLinearTC.FUSED_DECODE = True
         RMSNormTC.USE_FUSED = True
         with tc.no_grad():
-            m = cls()
-            info = m.load_weights(model_dir)
+            d = model_dir or _snap()
+            m = cls(Qwen35Config.from_model_dir(d))
+            info = m.load_weights(d)
         return m, info
 
 
@@ -482,7 +619,7 @@ def load_caches(path, cfg=None):
     for i in range(cfg.num_layers):
         a = z[f"l{i}_a"]
         b = z[f"l{i}_b"]
-        if Qwen35Config.is_attention(i):
+        if cfg.is_attention(i):
             caches.append((_cast(tc.tensor(a)), _cast(tc.tensor(b))))
         else:
             caches.append((tc.tensor(a), tc.tensor(b)))     # fp32 exact

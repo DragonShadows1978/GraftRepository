@@ -32,6 +32,15 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import tensor_cuda as tc
 
 
+def _attention_module(layer):
+    att = getattr(layer, "self_attn", None)
+    if att is not None:
+        return att
+    if getattr(layer, "is_attn", False):
+        return getattr(layer, "mixer", None)
+    return None
+
+
 # --------------------------------------------------------------------- harvest
 def harvest_kv(model, token_ids, layer_filter=None):
     """Run `token_ids` (1D list/array) through `model` once and capture each
@@ -48,17 +57,18 @@ def harvest_kv(model, token_ids, layer_filter=None):
     # k,v the layer builds (after projection + RoPE) by asking the layer to stash
     # them. To stay non-invasive we set a flag the patched __call__ honors.
     for i, layer in enumerate(model.layers):
-        if layer_filter is None or i in layer_filter:
-            layer.self_attn._capture = True
-            layer.self_attn._captured = None
+        att = _attention_module(layer)
+        if att is not None and (layer_filter is None or i in layer_filter):
+            att._capture = True
+            att._captured = None
 
     ii = np.array([token_ids], dtype=np.int64)
     with tc.no_grad():
         model(ii, last_token_only=True)
 
     for i, layer in enumerate(model.layers):
-        att = layer.self_attn
-        if getattr(att, "_capture", False):
+        att = _attention_module(layer)
+        if att is not None and getattr(att, "_capture", False):
             cap = att._captured
             if cap is not None:
                 captured[i] = {"k": cap[0], "v": cap[1]}
@@ -77,9 +87,10 @@ def harvest_kv_mla(model, token_ids, layer_filter=None, max_layers=None):
     0..route_layer — no head, no logits).
     """
     for i, layer in enumerate(model.layers):
-        if layer_filter is None or i in layer_filter:
-            layer.self_attn._capture = True
-            layer.self_attn._captured = None
+        att = _attention_module(layer)
+        if att is not None and (layer_filter is None or i in layer_filter):
+            att._capture = True
+            att._captured = None
 
     ii = np.array([token_ids], dtype=np.int64)
     with tc.no_grad():
@@ -87,8 +98,8 @@ def harvest_kv_mla(model, token_ids, layer_filter=None, max_layers=None):
 
     captured = [None] * len(model.layers)
     for i, layer in enumerate(model.layers):
-        att = layer.self_attn
-        if getattr(att, "_capture", False):
+        att = _attention_module(layer)
+        if att is not None and getattr(att, "_capture", False):
             cap = att._captured
             if cap is not None:
                 captured[i] = {"c": cap[0], "kpe": cap[1]}
@@ -104,7 +115,9 @@ def set_injection_mla(model, harvested, layers=None):
     """
     sel = set(range(len(model.layers))) if layers is None else set(layers)
     for i, layer in enumerate(model.layers):
-        att = layer.self_attn
+        att = _attention_module(layer)
+        if att is None:
+            continue
         if i in sel and harvested[i] is not None:
             dt = BlockDtype(model)
             c = tc.tensor(np.ascontiguousarray(harvested[i]["c"])).astype(dt)
@@ -139,9 +152,10 @@ def capture_queries(model, token_ids, layer_filter=None):
     Returns a list (per layer) of ndarrays on host, None for filtered layers.
     """
     for i, layer in enumerate(model.layers):
-        if layer_filter is None or i in layer_filter:
-            layer.self_attn._capture_q = True
-            layer.self_attn._captured_q = None
+        att = _attention_module(layer)
+        if att is not None and (layer_filter is None or i in layer_filter):
+            att._capture_q = True
+            att._captured_q = None
 
     ii = np.array([token_ids], dtype=np.int64)
     with tc.no_grad():
@@ -149,12 +163,50 @@ def capture_queries(model, token_ids, layer_filter=None):
 
     out = [None] * len(model.layers)
     for i, layer in enumerate(model.layers):
-        att = layer.self_attn
-        if getattr(att, "_capture_q", False):
+        att = _attention_module(layer)
+        if att is not None and getattr(att, "_capture_q", False):
             out[i] = att._captured_q
             att._capture_q = False
             att._captured_q = None
     return out
+
+
+def harvest_kv_and_queries(model, token_ids, layer_filter=None):
+    """Capture pre-RoPE K/V and pre-RoPE queries in one forward pass.
+
+    Target-side graft translation needs both the native 9B K/V payload and the
+    live 9B queries used for key-fidelity scoring. Capturing them together keeps
+    corpus harvest to one model forward per chunk.
+    """
+    for i, layer in enumerate(model.layers):
+        att = _attention_module(layer)
+        if att is not None and (layer_filter is None or i in layer_filter):
+            att._capture = True
+            att._captured = None
+            att._capture_q = True
+            att._captured_q = None
+
+    ii = np.array([token_ids], dtype=np.int64)
+    with tc.no_grad():
+        model(ii, last_token_only=True)
+
+    captured = [None] * len(model.layers)
+    queries = [None] * len(model.layers)
+    for i, layer in enumerate(model.layers):
+        att = _attention_module(layer)
+        if att is None:
+            continue
+        if getattr(att, "_capture", False):
+            cap = att._captured
+            if cap is not None:
+                captured[i] = {"k": cap[0], "v": cap[1]}
+            att._capture = False
+            att._captured = None
+        if getattr(att, "_capture_q", False):
+            queries[i] = att._captured_q
+            att._capture_q = False
+            att._captured_q = None
+    return captured, queries
 
 
 # --------------------------------------------------------------------- inject
@@ -169,7 +221,9 @@ def set_injection(model, harvested, layers=None, scale=1.0, scale_per_layer=None
     """
     sel = set(range(len(model.layers))) if layers is None else set(layers)
     for i, layer in enumerate(model.layers):
-        att = layer.self_attn
+        att = _attention_module(layer)
+        if att is None:
+            continue
         if i in sel and harvested[i] is not None:
             sc = scale_per_layer.get(i, scale) if scale_per_layer else scale
             kg = tc.tensor(np.ascontiguousarray(harvested[i]["k"])).astype(BlockDtype(model))
@@ -194,9 +248,12 @@ def clear_injection(model, free_seats=True):
     holds live tokens that were RoPE'd at graft-shifted positions.
     """
     for layer in model.layers:
-        layer.self_attn.inject_kv = None
+        att = _attention_module(layer)
+        if att is None:
+            continue
+        att.inject_kv = None
         if free_seats:
-            layer.self_attn.graft_seats = 0
+            att.graft_seats = 0
 
 
 def BlockDtype(model):

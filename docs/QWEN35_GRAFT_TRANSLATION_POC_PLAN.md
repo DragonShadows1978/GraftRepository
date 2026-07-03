@@ -1,6 +1,15 @@
 # Qwen3.5 2B-to-9B Graft Translation PoC Plan
 
-**Status:** implementation plan, no experiments run.
+**Status:** Phase 0 source validation passed for the real 2B/9B pair; Phase 1
+Qwen3.5 config-generalized loader smoke passed for both models; Phase 2
+capture hook/shard smoke plus resumable corpus runner smoke passed; Phase 3/4
+ridge fit and G1/G2 evaluator commands are implemented and smoke-tested on a
+tiny real capture rehearsal; no full corpus capture, real fit, or binding
+evaluation experiments run.
+
+**Completion ledger:** operational completion entries and evidence live in
+`docs/QWEN35_TRANSLATION_IMPLEMENTATION_LEDGER.md`. Update that ledger after
+each completed implementation, capture, fit, eval, or control-baseline step.
 
 This is the execution plan for the attention-only graft translation PoC
 registered in `docs/GRAFT_TRANSLATION_PRIMER.md`.
@@ -39,12 +48,12 @@ Rejected source weights:
 
 Known local state at plan time:
 
+- Qwen3.5-2B unquantized safetensors exist at:
+  `/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc/`
 - Qwen3.5-9B unquantized safetensors exist at:
   `/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a/`
 - `/home/vader/models/Qwen3.5-9B.Q8_0.gguf` exists but is **not valid** for
   this experiment.
-- Qwen3.5-2B unquantized safetensors were not found locally and must be
-  downloaded or supplied before implementation begins.
 
 ## Implementation Phases
 
@@ -62,6 +71,36 @@ Known local state at plan time:
    - safetensors shard list and sizes
 4. Abort if either side is GGUF-only or already quantized.
 
+Implemented validator command:
+
+```bash
+PYTHONPATH=. python3 scripts/qwen35_graft_translate_poc.py validate-weights \
+  --source /path/to/Qwen3.5-2B-safetensors \
+  --target /path/to/Qwen3.5-9B-safetensors \
+  --out /mnt/ForgeRealm/qwen35_graft_translation_poc/weights_manifest.json
+```
+
+Current implementation artifacts:
+
+- `core/qwen35_translation_poc.py` validates HF safetensors directories,
+  rejects GGUF and already-quantized sources, records tokenizer/config hashes,
+  records shard counts and sizes, and aborts on tokenizer mismatch.
+- `scripts/qwen35_graft_translate_poc.py` exposes the validator as a CLI.
+- `tests/test_qwen35_translation_poc.py` is the focused Phase 0 test gate.
+- `/mnt/ForgeRealm/qwen35_graft_translation_poc/weights_manifest.json` records:
+  - source `Qwen/Qwen3.5-2B`
+    revision `15852e8c16360a2fea060d615a32b45270f8a8fc`, 1 safetensors shard,
+    4,548,221,488 bytes, hidden 2048, 24 layers, attention layers
+    `[3, 7, 11, 15, 19, 23]`
+  - target `Qwen/Qwen3.5-9B`
+    revision `c202236235762e1c871ad0ccb60c8ee5ba337b9a`, 4 safetensors shards,
+    19,306,310,880 bytes, hidden 4096, 32 layers, attention layers
+    `[3, 7, 11, 15, 19, 23, 27, 31]`
+  - matching `tokenizer.json` hash
+    `5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42`
+- Ledger entry:
+  `docs/QWEN35_TRANSLATION_IMPLEMENTATION_LEDGER.md`
+
 ### Phase 1: local INT4 parity for both models
 
 1. Generalize `core/qwen35_tc.py` so Qwen3.5 dimensions come from
@@ -76,6 +115,27 @@ Known local state at plan time:
 
 Phase 1 exit criterion: both models load from unquantized safetensors,
 quantize locally, and pass their own engine/reference sanity gates.
+
+Current Phase 1 implementation status:
+
+- `core/qwen35_tc.py` now reads Qwen3.5 text dimensions from `config.json`
+  instead of assuming the 9B constants, including hidden width, layer count,
+  attention head/KV-head count, DeltaNet dimensions, RoPE dimensions, attention
+  layer indices, repository, revision, and tied/untied output-head mode.
+- 2B INT4 GPU smoke passed from the real safetensors:
+  - logits shape `(1, 1, 248320)`
+  - cache count `24`
+  - layer-0 DeltaNet cache `(1, 3, 6144)` and `(1, 16, 128, 128)`
+  - first attention cache at layer 3: K/V `(1, 2, 3, 256)`
+- 9B INT4 GPU smoke passed from the real safetensors after the same loader
+  refactor:
+  - logits shape `(1, 1, 248320)`
+  - cache count `32`
+  - layer-0 DeltaNet cache `(1, 3, 8192)` and `(1, 32, 128, 128)`
+  - first attention cache at layer 3: K/V `(1, 4, 3, 256)`
+- Still required before Phase 1 is complete: HF/reference teacher-forced parity,
+  margin-based top-1 accounting, attention cache checks across all attention
+  layers, and state save/restore smoke per model.
 
 ### Phase 2: attention capture
 
@@ -104,6 +164,45 @@ Shard format:
 - one shard per corpus chunk or small batch
 - no GPU-resident state required after each shard is written
 
+Current Phase 2 implementation status:
+
+- `core/qwen35_tc.py` exposes Qwen3.5 attention capture hooks compatible with
+  `kv_graft.harvest_kv()` and `kv_graft.capture_queries()`:
+  - `_capture` records post-qk-norm, pre-RoPE K and V.
+  - `_capture_q` records post-qk-norm, pre-RoPE queries.
+- `core/kv_graft.py` now finds attention modules either at `layer.self_attn`
+  or at Qwen3.5 hybrid `layer.mixer` for full-attention layers.
+- `core/qwen35_translation_poc.py` can write capture shards with token ids,
+  layer ids, K/V arrays, and optional target-side query arrays.
+- `scripts/qwen35_graft_translate_poc.py capture-smoke` writes real smoke
+  shards from the local INT4 model loaders.
+- `scripts/qwen35_graft_translate_poc.py plan-corpus` writes a document-level
+  train/held-out corpus plan with token ids frozen into `corpus_plan.json`.
+- `scripts/qwen35_graft_translate_poc.py capture-corpus` runs resumable,
+  single-role sequential capture from `corpus_plan.json`; existing complete
+  shards are skipped, and `capture_manifest.json` is refreshed after each
+  batch.
+- Real first-layer smoke artifacts exist at:
+  - `/mnt/ForgeRealm/qwen35_graft_translation_poc/capture_smoke/source_docsmoke_chunk000000.npz`
+    with layer-3 source K/V shapes `(1, 2, 4, 256)`
+  - `/mnt/ForgeRealm/qwen35_graft_translation_poc/capture_smoke/target_docsmoke_chunk000000.npz`
+    with layer-3 target K/V shapes `(1, 4, 4, 256)` and query shape
+    `(1, 16, 4, 256)`
+- Tiny CLI rehearsal passed from `/tmp/qwen35_translation_tiny_corpus`:
+  - `plan-corpus` wrote a 2-document, 2-chunk, 49-token plan.
+  - `capture-corpus --role source --max-chunks 1` wrote one source shard.
+  - `capture-corpus --role target --max-chunks 1` wrote one target shard with
+    queries.
+  - rerunning source with `--max-chunks 1` skipped one existing shard and
+    completed the second source chunk, proving resume-forward behavior.
+- Operational runbook for Claude/cron:
+  `docs/QWEN35_TRANSLATION_CORPUS_RUNBOOK.md`
+- Operational completion ledger:
+  `docs/QWEN35_TRANSLATION_IMPLEMENTATION_LEDGER.md`
+- Still required before Phase 2 is complete: select the real document corpus,
+  run all-attention-layer source and target capture over enough train/held-out
+  tokens, and produce the final corpus-scale `capture_manifest.json`.
+
 ### Phase 3: translator fitting
 
 Fit maps from 2B attention space into 9B attention space.
@@ -130,6 +229,22 @@ Baselines:
 - K-only map
 - V-only map
 
+Current Phase 3 implementation status:
+
+- `scripts/qwen35_graft_translate_poc.py fit-translator` streams paired
+  source/target capture shards and fits full-width ridge maps for K and V.
+- Maps are saved as `translator_l{source}_to_l{target}_{k,v}.npz`, with
+  separate `weight` and `bias` arrays.
+- `translator_manifest.json` records the fractional attention-layer alignment
+  and artifact shapes.
+- `fit_metrics.json` records train-token counts, MSE, R², and mean row cosine.
+- Tiny real capture rehearsal passed on one paired layer-3 shard:
+  - K artifact shape `512 -> 1024`
+  - V artifact shape `512 -> 1024`
+  - smoke fit R² was effectively 1.0 on the tiny same-shard rehearsal
+- Still required before the first real corpus fit: fill and freeze the numeric
+  R1 thresholds below.
+
 ### Phase 4: evaluation gates
 
 Run held-out evaluation in this order:
@@ -154,6 +269,22 @@ Success claims:
 - If G3 passes: attention-plane memory portability is real for this pair.
 - No result here proves full Qwen3.5 hybrid-state portability.
 
+Current Phase 4 implementation status:
+
+- `scripts/qwen35_graft_translate_poc.py eval-translator` evaluates fitted
+  translators on paired held-out capture shards.
+- Implemented metrics:
+  - G1 key recall@k against native 9B query-to-key top-k sets
+  - shuffled-key recall baseline
+  - G2 value-output MSE/cosine under native 9B attention weights
+- Tiny real capture rehearsal passed:
+  - `key_recall_at_8 = 1.0`
+  - `shuffled_key_recall_at_8 = 0.20703125`
+  - `value_output_cosine = 0.999999999999926`
+- Still required for complete Phase 4: G0 identity path, wrong-layer/K-only/V-only
+  negative controls, full held-out corpus evaluation, 2B-native and 9B-native
+  binding baselines, and G3 binding probes.
+
 ## Artifacts
 
 Translator output directory:
@@ -164,6 +295,7 @@ Required outputs:
 
 - `weights_manifest.json`
 - `capture_manifest.json`
+- `corpus_plan.json`
 - `translator_manifest.json`
 - `fit_metrics.json`
 - `eval_metrics.json`
@@ -214,15 +346,26 @@ all close holes a hostile reader (or a misleading result) would exploit.
 **R1 — Register NUMBERS for every gate before any fitting.** The gates
 currently say "better than shuffled" / "closer than controls" — beating a
 shuffled baseline is a floor, not a pass. Required pre-registered
-thresholds (fill in the blanks and freeze them in this doc before
-Phase 3):
-- G0 identity: max abs Δlogit ≤ ___ (bf16-noise scale, same style as the
-  dialect surface gates).
-- G1 key fidelity: recall@16 of 9B-native top-16 attention targets ≥ ___%
-  AND ≥ ___× the shuffled baseline, per layer band (early/mid/late).
-- G2 value fidelity: attention-output cosine ≥ ___ / MSE ≤ ___ vs
-  9B-native, same banding.
-- G3 binding: ≥ ___ of ≥32 probes with positive gold-minus-decoy margin.
+thresholds — **FROZEN 2026-07-02 (Fable proposed, David ratified). No
+edits after the first real corpus fit:**
+- G0 identity (runs BEFORE any fitting — translator-independent): 9B→9B
+  capture→re-inject path: max abs Δlogit ≤ 2e-3 AND top-1 flip rate
+  ≤ 0.1%. G0's measured values double as the INT4-noise floor for
+  interpreting all downstream gates.
+- G1 key fidelity: recall@16 of 9B-native top-16 attention targets
+  ≥ 60% averaged, AND ≥ 3× the shuffled baseline in EVERY layer band
+  (with only 6 source attention layers, bands = pairs in ordinal order).
+- G2 value fidelity: attention-output cosine ≥ 0.90 per band, AND MSE
+  ≤ 25% of the wrong-layer baseline's MSE.
+- G3 binding: ≥ 14 of 32 probes with positive gold-minus-decoy margin.
+  RATIONALE: gold-vs-3-decoys chance = 25% = 8/32; 14/32 is binomial
+  p < 0.05 against chance. Results of 9-13/32 are reported as "signal,
+  not significant" — door ajar, not open. The 2B-native ceiling (R2)
+  is reported alongside G3 regardless of outcome.
+- Fit protocol (frozen with the gates): ≥ 2M paired tokens for the fit;
+  held-out split at DOCUMENT level, 10%; ridge lambda 1e-4 as planned
+  (a lambda sweep, if any, uses train-split diagnostics only — never
+  held-out gate data).
 
 **R2 — Add the two missing baselines that make G3 interpretable.**
 (a) **2B-native ceiling:** run the same binding probes on the 2B itself.
