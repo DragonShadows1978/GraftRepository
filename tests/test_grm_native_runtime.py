@@ -1,6 +1,7 @@
 import ctypes
 import os
 import subprocess
+import threading
 from types import SimpleNamespace
 
 import numpy as np
@@ -1482,6 +1483,59 @@ def test_native_mla_int4_single_row_fast_path_matches_fp32_route(
         monkeypatch.setenv("GRM_ROUTER_INT4", "1")
         monkeypatch.setenv("GRM_ROUTER_INT4_REFINE_M", str(count))
         assert store.route(query, lexical, topk=8) == fp32
+
+
+def test_native_router_serializes_concurrent_route_updates(tmp_path):
+    lib = build_native(tmp_path)
+    dim = 16
+    count = 64
+    query = np.zeros(dim, dtype=np.float32)
+    query[0] = 1.0
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        for i in range(count):
+            key = np.zeros(dim, dtype=np.float32)
+            key[i % dim] = 1.0
+            node_id = store.add_node(f"concurrent route {i}", b"", ntok=1)
+            store.set_route(node_id, key, (f"node-{i}",))
+
+        errors = []
+        start = threading.Event()
+
+        def reader():
+            start.wait()
+            try:
+                for _ in range(150):
+                    routed = store.route(query, ("node-3",), topk=8)
+                    if any(node_id < 0 or node_id >= count for node_id in routed):
+                        errors.append(("bad-route", routed))
+            except Exception as exc:  # pragma: no cover - thread diagnostic
+                errors.append(("reader", repr(exc)))
+
+        def writer():
+            start.wait()
+            try:
+                for step in range(200):
+                    node_id = step % count
+                    key = np.zeros(dim, dtype=np.float32)
+                    key[(node_id + step + 1) % dim] = 1.0
+                    store.set_route(node_id, key, (f"node-{node_id}",))
+            except Exception as exc:  # pragma: no cover - thread diagnostic
+                errors.append(("writer", repr(exc)))
+
+        threads = [threading.Thread(target=reader) for _ in range(3)]
+        threads.append(threading.Thread(target=writer))
+        for thread in threads:
+            thread.start()
+        start.set()
+        for thread in threads:
+            thread.join(timeout=10.0)
+            assert not thread.is_alive()
+
+        assert errors == []
 
 
 def test_native_store_structured_payload_tensors_via_ctypes(tmp_path):

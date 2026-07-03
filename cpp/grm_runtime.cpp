@@ -14,7 +14,9 @@
 #include <iomanip>
 #include <limits>
 #include <memory>
+#include <mutex>
 #include <set>
+#include <shared_mutex>
 #include <stdexcept>
 #include <sstream>
 
@@ -3825,6 +3827,7 @@ void DeviceArena::commit_mount(std::vector<std::uint64_t> node_ids,
 struct grm_store_handle {
   std::unique_ptr<grm::HostGraftStore> store;
   grm::RouterIndex router;
+  std::shared_mutex router_mutex;
   grm::DeviceArena arena;
   std::string last_error;
 };
@@ -3892,6 +3895,7 @@ void sync_router_node_state(grm_store_handle* handle, std::uint64_t node_id) {
 }
 
 void rebuild_router_from_store(grm_store_handle* handle) {
+  std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
   handle->router = grm::RouterIndex();
   for (const auto node_id : handle->store->node_ids()) {
     const auto* node = handle->store->get(node_id);
@@ -4287,6 +4291,7 @@ int grm_store_set_active(grm_store_handle* handle,
     }
     const bool is_active = active != 0;
     handle->store->set_active(node_id, is_active);
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->router.set_active(node_id, is_active);
     return 0;
   } catch (const std::exception& exc) {
@@ -4357,6 +4362,7 @@ int grm_store_set_route_metadata(grm_store_handle* handle,
                                       scope == nullptr ? "" : scope,
                                       durability == nullptr ? "" : durability,
                                       mutability == nullptr ? "" : mutability);
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->router.set_route_metadata(node_id, kind == nullptr ? "" : kind,
                                       scope == nullptr ? "" : scope,
                                       durability == nullptr ? "" : durability,
@@ -4680,6 +4686,7 @@ int grm_store_apply_revision(grm_store_handle* handle,
     auto superseded = read_u64_array(
         supersedes, supersedes_count, "supersedes");
     handle->store->apply_revision(replacement_node_id, superseded);
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->router.set_active(replacement_node_id, true);
     for (const auto old_id : superseded) {
       handle->router.set_active(old_id, false);
@@ -4700,6 +4707,7 @@ int grm_store_apply_expire(grm_store_handle* handle,
     auto expired = read_u64_array(node_ids, node_count, "expired");
     handle->store->apply_expire(expired);
     std::set<std::uint64_t> seen;
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     for (const auto node_id : expired) {
       if (seen.insert(node_id).second) {
         handle->router.set_active(node_id, false);
@@ -5236,6 +5244,7 @@ int grm_store_set_route(grm_store_handle* handle,
     node->route_keys.push_back(key);
     node->lexical_keys = lexical;
     handle->store->mark_dirty(node_id, false, true);
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->router.upsert(node_id, std::move(key), std::move(lexical));
     sync_router_node_state(handle, node_id);
     return 0;
@@ -5276,6 +5285,7 @@ int grm_store_set_route_multi(grm_store_handle* handle,
     node->route_key = keys.empty() ? std::vector<float>() : keys.front();
     node->lexical_keys = lexical;
     handle->store->mark_dirty(node_id, false, true);
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->router.upsert_multi(node_id, std::move(keys), std::move(lexical));
     sync_router_node_state(handle, node_id);
     return 0;
@@ -5334,6 +5344,7 @@ int grm_store_set_route_list(grm_store_handle* handle,
     node->route_key = keys.empty() ? std::vector<float>() : keys.front();
     node->lexical_keys = lexical;
     handle->store->mark_dirty(node_id, false, true);
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->router.upsert_multi(node_id, std::move(keys), std::move(lexical));
     sync_router_node_state(handle, node_id);
     return 0;
@@ -5349,6 +5360,7 @@ int grm_store_clear_route(grm_store_handle* handle,
       return grm_fail_msg(handle, "invalid clear_route arguments");
     }
     handle->store->clear_route(node_id);
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->router.erase(node_id);
     return 0;
   } catch (const std::exception& exc) {
@@ -5379,6 +5391,7 @@ int grm_store_route(grm_store_handle* handle,
     for (uint64_t i = 0; i < query_len; ++i) {
       q.push_back(query[i]);
     }
+    std::shared_lock<std::shared_mutex> lock(handle->router_mutex);
     const auto routed = handle->router.route(
         q, split_lexical_keys(lexical_keys), static_cast<std::size_t>(topk));
     const uint64_t n = std::min<uint64_t>(
@@ -5420,6 +5433,7 @@ int grm_store_route_filtered(grm_store_handle* handle,
     for (uint64_t i = 0; i < query_len; ++i) {
       q.push_back(query[i]);
     }
+    std::shared_lock<std::shared_mutex> lock(handle->router_mutex);
     const auto routed = handle->router.route(
         q, split_lexical_keys(lexical_keys), static_cast<std::size_t>(topk),
         split_lexical_keys(kind_filters), split_lexical_keys(scope_filters),
@@ -5482,6 +5496,7 @@ int grm_store_route_gqa(grm_store_handle* handle,
     for (uint64_t i = 0; i < query_len; ++i) {
       q.push_back(query[i]);
     }
+    std::shared_lock<std::shared_mutex> lock(handle->router_mutex);
     const auto routed = handle->router.route_gqa_raw(
         q, query_heads, query_tokens, head_dim,
         static_cast<uint64_t>(handle->store->dialect().num_kv_heads),
@@ -5859,6 +5874,7 @@ int grm_store_stats(grm_store_handle* handle, grm_store_stats_c* out) {
     out->durable_nodes = s.durable_nodes;
     out->host_payload_bytes = s.host_payload_bytes;
     out->host_payload_tensors = s.host_payload_tensors;
+    std::shared_lock<std::shared_mutex> lock(handle->router_mutex);
     out->route_entries = handle->router.size();
     return 0;
   } catch (const std::exception& exc) {

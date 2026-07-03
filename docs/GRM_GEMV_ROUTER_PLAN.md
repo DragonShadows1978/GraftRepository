@@ -208,6 +208,16 @@ smoke shape; broader Qwen3-4B gate scenarios and the final P6 curve remain.
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.
 
+P5 first-slice note: the C ABI handle now wraps `RouterIndex` with a
+`std::shared_mutex`. Route reads take the shared side; route-key updates,
+metadata active/filter changes, expiry/revision state changes, clears, and
+checkpoint router rebuilds take the writer side. This serializes access to the
+lazy MLA/GQA arenas and prevents torn reads during current threaded callers.
+Regression `test_native_router_serializes_concurrent_route_updates` runs three
+reader threads against a writer thread that rewrites route keys. This is not
+yet the final lock-free double-buffer epoch design from D5, but it lands the
+first no-torn-read gate on the current C ABI surface.
+
 **P6 — Report.** `ROUTER_SCALING_REPORT.md`: before/after curves at all
 four node counts, both dialects, exactness-gate record, M-sweep table.
 Board update; note for GRM paper v1.1 §5 (routing limitation retired —
