@@ -13,6 +13,7 @@ import argparse
 import ctypes
 import json
 import math
+import os
 from pathlib import Path
 import sys
 import tempfile
@@ -57,6 +58,21 @@ PRESETS = {
         "head_dim": 256,
     },
 }
+
+GQA_RUNTIME_FLAG_NAMES = (
+    "GRM_ROUTER_GQA_SEGMENT",
+    "GRM_ROUTER_GQA_FUSED_SEGMENT",
+    "GRM_ROUTER_GQA_KEYBANK_SEGMENT",
+    "GRM_ROUTER_GQA_ROWBLOCK",
+    "GRM_ROUTER_GQA_QT4_UNROLL8",
+    "GRM_ROUTER_GQA_TRANSPOSED",
+    "GRM_ROUTER_GQA_BLAS",
+    "GRM_BLAS_LIB",
+)
+
+
+def gqa_runtime_flags() -> dict[str, str | None]:
+    return {name: os.environ.get(name) for name in GQA_RUNTIME_FLAG_NAMES}
 
 
 def _normalize_last_dim(x: np.ndarray) -> np.ndarray:
@@ -624,6 +640,7 @@ def progress_record(
     compact_stats: dict,
     route_stats: dict,
     query_stats: dict,
+    runtime_flags: dict,
 ) -> dict:
     return {
         "schema": "grm-gqa-router-benchmark-progress-v1",
@@ -632,6 +649,7 @@ def progress_record(
         "route_source": route_source,
         "openmp": bool(openmp),
         "native_only": bool(native_only),
+        "runtime_flags": runtime_flags,
         "completed": int(completed),
         "total": int(total),
         "compact": compact_stats,
@@ -689,6 +707,7 @@ def write_markdown(result: dict, path: Path) -> None:
         f"- key_tokens: {result['shape']['key_tokens']}",
         f"- keys_per_node: {result['shape']['keys_per_node']}",
         f"- route_source: `{result['route_source']}`",
+        f"- runtime_flags: `{json.dumps(result.get('runtime_flags', {}), sort_keys=True)}`",
         "",
         "## Results",
         "",
@@ -847,6 +866,7 @@ def main(argv: list[str]) -> int:
         route_source = "harvested"
 
     results = []
+    runtime_flags = gqa_runtime_flags()
     if args.progress_out is not None:
         args.progress_out.parent.mkdir(parents=True, exist_ok=True)
         args.progress_out.write_text("", encoding="utf-8")
@@ -913,6 +933,7 @@ def main(argv: list[str]) -> int:
                     },
                     route_stats=route_stats,
                     query_stats=query_stats,
+                    runtime_flags=runtime_flags,
                 )
                 if args.progress_out is not None:
                     append_progress(args.progress_out, record)
@@ -927,6 +948,7 @@ def main(argv: list[str]) -> int:
         "route_source": route_source,
         "openmp": bool(args.openmp),
         "native_only": bool(args.native_only),
+        "runtime_flags": runtime_flags,
         "harvest": {
             "route": route_stats,
             "query": query_stats,

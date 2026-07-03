@@ -132,6 +132,7 @@ def test_gqa_router_benchmark_smoke_cli_writes_json_and_markdown(tmp_path):
     data = json.loads(out.read_text())
     assert data["schema"] == "grm-gqa-router-benchmark-v1"
     assert data["shape"]["query_heads"] == 4
+    assert "GRM_ROUTER_GQA_ROWBLOCK" in data["runtime_flags"]
     assert [row["nodes"] for row in data["results"]] == [32, 96]
     assert all(row["parity"] for row in data["results"])
     assert "GRM GQA Router Benchmark" in md.read_text()
@@ -142,6 +143,8 @@ def test_gqa_router_benchmark_smoke_cli_writes_json_and_markdown(tmp_path):
     assert all(row["schema"] == "grm-gqa-router-benchmark-progress-v1"
                for row in progress_rows)
     assert all(row["compact"]["enabled"] is False for row in progress_rows)
+    assert all("GRM_ROUTER_GQA_ROWBLOCK" in row["runtime_flags"]
+               for row in progress_rows)
 
 
 def test_gqa_router_benchmark_smoke_cli_reads_capture_shards(tmp_path):
@@ -182,6 +185,53 @@ def test_gqa_router_benchmark_smoke_cli_reads_capture_shards(tmp_path):
     assert [row["nodes"] for row in data["results"]] == [2, 4]
     assert all(row["parity"] for row in data["results"])
     assert all(not row["lexical"] for row in data["results"])
+
+
+def test_gqa_layer_sweep_cli_records_runtime_flags(tmp_path):
+    captures = tmp_path / "captures"
+    captures.mkdir()
+    rng = np.random.default_rng(86420)
+    for i in range(3):
+        l3 = rng.normal(size=(1, 2, 4, 256)).astype(np.float16)
+        l7 = rng.normal(size=(1, 2, 4, 256)).astype(np.float16)
+        np.savez_compressed(captures / f"source_doc{i:02d}_chunk000000.npz",
+                            l3_k=l3, l7_k=l7)
+
+    out = tmp_path / "gqa_layer_sweep.json"
+    md = tmp_path / "gqa_layer_sweep.md"
+    subprocess.run([
+        "python3",
+        "scripts/grm_gqa_layer_sweep.py",
+        "--capture-dir",
+        str(captures),
+        "--layers",
+        "3",
+        "7",
+        "--capture-limit",
+        "3",
+        "--node-counts",
+        "2",
+        "--queries",
+        "3",
+        "--warmup",
+        "1",
+        "--query-tokens",
+        "2",
+        "--topk",
+        "2",
+        "--out",
+        str(out),
+        "--markdown-out",
+        str(md),
+    ], cwd=baseline.ROOT, check=True)
+
+    data = json.loads(out.read_text())
+    assert data["schema"] == "grm-gqa-layer-sweep-v1"
+    assert "GRM_ROUTER_GQA_ROWBLOCK" in data["runtime_flags"]
+    assert [row["capture_layer"] for row in data["results"]] == [3, 7]
+    assert all(row["nodes"] == 2 for row in data["results"])
+    assert all(row["parity"] for row in data["results"])
+    assert "runtime_flags" in md.read_text()
 
 
 def test_gqa_batched_python_reference_matches_scalar_route_law():

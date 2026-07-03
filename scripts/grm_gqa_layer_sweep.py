@@ -44,6 +44,7 @@ def write_markdown(result: dict, path: Path) -> None:
         f"- topk: {result['topk']}",
         f"- openmp: {str(result['openmp']).lower()}",
         f"- native_only: {str(result['native_only']).lower()}",
+        f"- runtime_flags: `{json.dumps(result.get('runtime_flags', {}), sort_keys=True)}`",
         "",
         "## Results",
         "",
@@ -189,6 +190,7 @@ def main(argv: list[str]) -> int:
         "parity_sample_queries": int(args.parity_sample_queries),
         "parity_reference": args.parity_reference,
         "lexical": bool(args.use_lexical),
+        "runtime_flags": bench.gqa_runtime_flags(),
         "capture_stats": layer_stats,
         "results": all_results,
     }

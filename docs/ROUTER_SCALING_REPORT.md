@@ -374,6 +374,12 @@ lexical-off, exhaustive batched-reference check to upper source layers:
 The 256-node full-bank source-layer parity receipt now spans layers
 3/7/11/15/19/23.
 
+GQA benchmark receipts now include a `runtime_flags` block in JSON, Markdown,
+and progress JSONL output. It records the active `GRM_ROUTER_GQA_*` switches and
+`GRM_BLAS_LIB`, so future full-bank attention-state numbers identify whether
+they used default key-bank segment scoring, row-block, fused segment,
+transposed, unroll8, or BLAS paths.
+
 ## Prepared Router Snapshots
 
 The C ABI router now publishes prepared MLA/GQA state as an immutable

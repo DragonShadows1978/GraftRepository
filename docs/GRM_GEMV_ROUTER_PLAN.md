@@ -366,6 +366,11 @@ All were parity-green: layer 15 measured `9.8055ms` p50 / `10.4419ms` p95,
 layer 19 measured `12.0103ms` p50 / `13.2083ms` p95, and layer 23 measured
 `12.1050ms` p50 / `16.2180ms` p95. The 256-node full-bank evidence now spans
 source layers 3/7/11/15/19/23.
+Receipt hygiene note: GQA benchmark and layer-sweep JSON/Markdown now record
+the active `GRM_ROUTER_GQA_*` runtime flags and `GRM_BLAS_LIB`. This makes
+future attention-state route receipts auditable: row-block, fused segment,
+transposed, unroll8, BLAS, and forced key-bank paths are visible in the result
+artifact instead of inferred from command history.
 
 P4 fused-single-key experiment: `route_gqa_raw` now has an opt-in fused
 single-key segment path behind `GRM_ROUTER_GQA_FUSED_SEGMENT=1`. It skips the
