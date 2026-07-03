@@ -120,3 +120,8 @@ native-fp32 parity shape measured M=16 at 100k p50 7.0211ms and 1M p50
 49.6927ms. This is the current P3 hot-loop checkpoint, still above the E3
 25ms host-side target. After precomputing the q4 row normalization scale, the
 same shape measured 100k p50 6.2995ms and 1M p50 43.4791ms.
+
+With the host predecoded q4-value cache, 1M M=16 was not exact on the harvested
+corpus. M=32/64/128 all matched native fp32; measured p50s were
+39.6265/37.5690/37.8382ms. Use M=64 as the current measured P3 operating point
+for this corpus.

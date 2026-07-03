@@ -2,7 +2,6 @@
 #include "grm_runtime_c.h"
 
 #include <algorithm>
-#include <array>
 #include <cerrno>
 #include <cctype>
 #include <cstdlib>
@@ -2631,10 +2630,6 @@ static std::uint8_t pack_i4(std::int8_t value) {
   return static_cast<std::uint8_t>(value) & 0x0F;
 }
 
-static constexpr std::array<std::int8_t, 16> kI4Decode = {
-    0, 1, 2, 3, 4, 5, 6, 7,
-    -8, -7, -6, -5, -4, -3, -2, -1};
-
 void RouterIndex::upsert(std::uint64_t node_id, std::vector<float> route_key,
                          std::vector<std::string> lexical_keys) {
   std::vector<std::vector<float>> keys;
@@ -2983,6 +2978,7 @@ void RouterIndex::rebuild_mla_arena() const {
   arena.entry_row_offsets.reserve(entries_.size() + 1);
   arena.q4_stride = (arena.dim + 1) / 2;
   arena.q4_rows.reserve(row_count * arena.q4_stride);
+  arena.q4_values.reserve(row_count * arena.dim);
   arena.q4_scales.reserve(row_count);
   arena.q4_norm_scales.reserve(row_count);
   for (std::size_t entry_idx = 0; entry_idx < entries_.size(); ++entry_idx) {
@@ -3018,6 +3014,10 @@ void RouterIndex::rebuild_mla_arena() const {
           q1 = static_cast<std::int8_t>(std::max(
               -7.0F, std::min(7.0F, std::round(key[d + 1] / scale))));
         }
+        arena.q4_values.push_back(q0);
+        if (d + 1 < arena.dim) {
+          arena.q4_values.push_back(q1);
+        }
         arena.q4_rows.push_back(
             static_cast<std::uint8_t>(pack_i4(q0) | (pack_i4(q1) << 4)));
       }
@@ -3029,7 +3029,9 @@ void RouterIndex::rebuild_mla_arena() const {
                    arena.q4_scales.size() == arena.norms.size() &&
                    arena.q4_norm_scales.size() == arena.norms.size() &&
                    arena.q4_rows.size() ==
-                       arena.norms.size() * arena.q4_stride;
+                       arena.norms.size() * arena.q4_stride &&
+                   arena.q4_values.size() ==
+                       arena.norms.size() * arena.dim;
   mla_arena_ = std::move(arena);
   mla_arena_dirty_ = false;
 }
@@ -3119,21 +3121,16 @@ float RouterIndex::int4_mla_row_score(
     std::size_t row,
     double qnorm_inv) const {
   const auto dim = mla_arena_.dim;
-  const auto pairs = dim / 2;
-  const auto packed_base = row * mla_arena_.q4_stride;
-  const auto* packed = mla_arena_.q4_rows.data() + packed_base;
+  const auto value_base = row * dim;
+  const auto* values = mla_arena_.q4_values.data() + value_base;
   const auto* q = query.data();
   float dot_i4 = 0.0F;
-  for (std::size_t b = 0; b < pairs; ++b) {
-    const auto byte = packed[b];
-    const auto d = b * 2;
-    dot_i4 += q[d] * static_cast<float>(kI4Decode[byte & 0x0F]);
-    dot_i4 += q[d + 1] *
-              static_cast<float>(kI4Decode[(byte >> 4) & 0x0F]);
-  }
-  if ((dim & 1U) != 0) {
-    const auto byte = packed[pairs];
-    dot_i4 += q[dim - 1] * static_cast<float>(kI4Decode[byte & 0x0F]);
+#if defined(_OPENMP)
+#pragma omp simd reduction(+ : dot_i4)
+#endif
+  for (std::int64_t d = 0; d < static_cast<std::int64_t>(dim); ++d) {
+    const auto idx = static_cast<std::size_t>(d);
+    dot_i4 += q[idx] * static_cast<float>(values[idx]);
   }
   return dot_i4 * mla_arena_.q4_norm_scales[row] *
          static_cast<float>(qnorm_inv);

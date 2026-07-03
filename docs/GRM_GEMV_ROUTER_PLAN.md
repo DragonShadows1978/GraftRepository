@@ -183,6 +183,13 @@ single query inverse norm in the bulk scorer; the same parity shape now measures
 prior 1M M=16 65.3449ms, but E3 is still missed; the remaining work needs
 lower-level vectorized q4 dot or a larger routing layout change.
 
+P3 predecode note: the host INT4 arena now keeps a decoded int8 q4-value cache
+beside the packed q4 rows. This preserves the quantized values but trades host
+RAM for a simpler bulk dot loop. On the harvested 1M dim128 parity run, M=16
+was faster but not exact (one top-3 mismatch). M=32/64/128 matched native fp32;
+their p50s were 39.6265/37.5690/37.8382ms. Current measured operating point:
+predecoded q4, M=64, 1M p50 37.5690ms. E3 is still not met.
+
 **P4 — GQA key-bank GEMM path.** D4. Gates: parity vs Python GQA
 routing on the Qwen3-4B gate scenarios, latency, 166 floor.
 

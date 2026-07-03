@@ -501,6 +501,7 @@ class RouterIndex {
     bool q4_valid = false;
     std::size_t q4_stride = 0;
     std::vector<std::uint8_t> q4_rows;
+    std::vector<std::int8_t> q4_values;
     std::vector<float> q4_scales;
     std::vector<float> q4_norm_scales;
     bool single_row_per_entry = false;
