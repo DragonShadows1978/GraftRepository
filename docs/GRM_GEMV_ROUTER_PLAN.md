@@ -260,9 +260,11 @@ P4 sampled-parity note: native-only GQA benchmark runs can now use
 Python raw q.k reference without including Python in route timing. The first
 real-capture sampled check loaded 595 usable Qwen3.5-2B source shards and
 matched one sampled Python query at 512 full-bank nodes, measuring 39.6250ms
-p50 / 43.4202ms p95. This closes the first correctness receipt above 256 nodes;
-768/1,024 still need sampled or batched parity receipts before being treated as
-more than native scaling points.
+p50 / 43.4202ms p95. The benchmark also has a batched Python reference mode
+that preserves the scalar law's tie order on capture-style float16-derived
+keys. With `--parity-reference batched`, 768 and 1,024 full-bank nodes matched
+two sampled Python queries at 58.5005ms / 73.5912ms p50. These are sampled
+correctness receipts, not exhaustive full-query parity.
 
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),

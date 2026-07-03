@@ -127,7 +127,9 @@ Qwen3.5-2B real-capture source K-bank probe:
 | captured full 256-token K, native-only | 512 | 39.5778 | 42.3518 | n/a | n/a |
 | captured full 256-token K, sampled parity | 512 | 39.6250 | 43.4202 | n/a | true (1 query) |
 | captured full 256-token K, native-only | 768 | 58.3090 | 63.2833 | n/a | n/a |
+| captured full 256-token K, batched sampled parity | 768 | 58.5005 | 64.6167 | n/a | true (2 queries) |
 | captured full 256-token K, native-only | 1,024 | 76.5800 | 80.9969 | n/a | n/a |
+| captured full 256-token K, batched sampled parity | 1,024 | 73.5912 | 75.1033 | n/a | true (2 queries) |
 | captured representative 1-token K | 32 | 0.0465 | 0.0473 | 0.6651 | true |
 | captured representative 1-token K | 96 | 0.1172 | 0.1696 | 2.0503 | true |
 
@@ -153,6 +155,9 @@ reference timing dominates at that scale. Native-only capture runs can now add
 `--parity-sample-queries`; the first sampled-parity 512-node full-bank check
 loaded 595 usable Qwen3.5-2B source shards, matched one deterministic Python
 raw-q.k reference query, and measured `39.6250ms` p50 / `43.4202ms` p95.
+The Python reference also has a batched mode that preserves the scalar law's
+tie order; using that mode, 768 and 1,024 full-bank nodes matched two sampled
+Python queries and measured `58.5005ms` / `73.5912ms` p50.
 
 ## Expectations
 
@@ -168,9 +173,8 @@ raw-q.k reference query, and measured `39.6250ms` p50 / `43.4202ms` p95.
 - Treat the 1M dim128 host route as deep-interactive already; if E3 remains
   mandatory, replace the scalar q4 dot with a lower-level vectorized dot kernel
   or a larger routing layout change.
-- Extend sampled parity to the 768/1,024-node real-capture GQA points, or add a
-  batched Python reference so larger curves can be fully parity-checked without
-  dominating native route timing.
+- Increase real-capture GQA sampled-parity coverage, or run exhaustive batched
+  parity when claiming full correctness beyond the existing two-query samples.
 - Implement the true GQA GEMM/segment-reduce path or a representative-key
   compaction policy for full 256-token captured K banks if sub-10ms routing is
   required past the 96-node real-capture point.

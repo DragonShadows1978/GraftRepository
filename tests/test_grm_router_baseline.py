@@ -4,6 +4,7 @@ import subprocess
 import numpy as np
 
 from scripts import grm_router_baseline as baseline
+from scripts import grm_gqa_router_benchmark as gqa_benchmark
 
 
 def test_hashed_centroid_is_deterministic_and_normalized():
@@ -182,6 +183,41 @@ def test_gqa_router_benchmark_smoke_cli_reads_capture_shards(tmp_path):
     assert all(not row["lexical"] for row in data["results"])
 
 
+def test_gqa_batched_python_reference_matches_scalar_route_law():
+    rng = np.random.default_rng(97531)
+    routes = rng.normal(size=(24, 2, 2, 5, 16)).astype(np.float32)
+    queries = rng.normal(size=(4, 4, 3, 16)).astype(np.float32)
+    routes = gqa_benchmark._normalize_last_dim(routes)
+    queries = gqa_benchmark._normalize_last_dim(queries)
+
+    for i, query in enumerate(queries):
+        lexical = baseline.lexical_keys_for_query(i, routes.shape[0])
+        scalar = gqa_benchmark.python_gqa_route_scan(
+            routes, query, lexical, topk=7)
+        batched = gqa_benchmark.python_gqa_route_batched(
+            routes, query, lexical, topk=7)
+        assert batched == scalar
+
+
+def test_gqa_batched_python_reference_preserves_capture_tie_order():
+    rng = np.random.default_rng(112233)
+    routes = rng.normal(size=(96, 1, 2, 32, 16)).astype(np.float16)
+    routes = gqa_benchmark._normalize_last_dim(routes.astype(np.float32))
+    queries = gqa_benchmark.make_capture_queries(
+        routes,
+        query_count=4,
+        query_heads=4,
+        query_tokens=4,
+    )
+
+    for i, query in enumerate(queries):
+        scalar = gqa_benchmark.python_gqa_route_scan(
+            routes, query, (), topk=12)
+        batched = gqa_benchmark.python_gqa_route_batched(
+            routes, query, (), topk=12)
+        assert batched == scalar
+
+
 def test_gqa_router_benchmark_native_only_supports_sampled_parity(tmp_path):
     captures = tmp_path / "captures"
     captures.mkdir()
@@ -221,6 +257,51 @@ def test_gqa_router_benchmark_native_only_supports_sampled_parity(tmp_path):
     assert data["native_only"] is True
     assert row["parity"] is True
     assert row["parity_reference"] == "python_gqa_raw_sampled"
+    assert row["parity_sampled"] is True
+    assert row["parity_queries"] == 2
+    assert row["python_route_ms_p50"] is None
+
+
+def test_gqa_router_benchmark_native_only_supports_batched_sampled_parity(tmp_path):
+    captures = tmp_path / "captures"
+    captures.mkdir()
+    rng = np.random.default_rng(86420)
+    for i in range(6):
+        key = rng.normal(size=(1, 1, 4, 16)).astype(np.float16)
+        np.savez_compressed(captures / f"source_doc{i:02d}_chunk000000.npz",
+                            l3_k=key)
+
+    out = tmp_path / "gqa_capture_batched_sampled_parity.json"
+    subprocess.run([
+        "python3",
+        "scripts/grm_gqa_router_benchmark.py",
+        "--smoke",
+        "--capture-dir",
+        str(captures),
+        "--capture-layer",
+        "3",
+        "--capture-limit",
+        "6",
+        "--node-counts",
+        "6",
+        "--queries",
+        "4",
+        "--warmup",
+        "1",
+        "--native-only",
+        "--parity-sample-queries",
+        "2",
+        "--parity-reference",
+        "batched",
+        "--no-lexical",
+        "--out",
+        str(out),
+    ], cwd=baseline.ROOT, check=True)
+
+    data = json.loads(out.read_text())
+    row = data["results"][0]
+    assert row["parity"] is True
+    assert row["parity_reference"] == "python_gqa_raw_batched_sampled"
     assert row["parity_sampled"] is True
     assert row["parity_queries"] == 2
     assert row["python_route_ms_p50"] is None

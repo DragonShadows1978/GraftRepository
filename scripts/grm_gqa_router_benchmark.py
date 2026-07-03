@@ -217,6 +217,89 @@ def python_gqa_route_scan(
     return [node_id for _, node_id in scored[:topk]]
 
 
+def batched_gqa_raw_scores(
+    routes: np.ndarray,
+    query: np.ndarray,
+    *,
+    node_chunk: int = 128,
+) -> np.ndarray:
+    routes = np.asarray(routes, dtype=np.float32)
+    query = np.asarray(query, dtype=np.float32)
+    if routes.ndim != 5 or query.ndim != 3:
+        raise ValueError("routes must be 5D and query must be 3D")
+    node_count, _, kv_heads, _, head_dim = routes.shape
+    query_heads, query_tokens, query_dim = query.shape
+    if (
+        node_count == 0 or kv_heads == 0 or query_heads == 0
+        or query_tokens == 0 or head_dim == 0 or query_dim != head_dim
+        or query_heads % kv_heads != 0
+    ):
+        return np.zeros((node_count,), dtype=np.float32)
+    repeat = query_heads // kv_heads
+    grouped_query = query.reshape(kv_heads, repeat, query_tokens, head_dim)
+    inv_denom = np.float32(1.0 / math.sqrt(head_dim))
+    raw = np.full((node_count,), np.nan, dtype=np.float32)
+    node_chunk = max(1, int(node_chunk))
+    for start in range(0, node_count, node_chunk):
+        chunk = routes[start:start + node_chunk]
+        # Match scalar gqa_raw_score tie ordering; optimized einsum shifts
+        # capture-derived 0.0625 score groups by a few ulps.
+        scores = np.einsum(
+            "grqd,nkgtd->nkgrqt",
+            grouped_query,
+            chunk,
+            optimize=False,
+        ) * inv_denom
+        key_scores = np.abs(scores).max(axis=(4, 5)).mean(axis=(2, 3))
+        raw[start:start + chunk.shape[0]] = key_scores.max(axis=1)
+    return raw
+
+
+def python_gqa_route_batched(
+    routes: np.ndarray,
+    query: np.ndarray,
+    lexical: tuple[str, ...],
+    topk: int,
+) -> list[int]:
+    raw_scores = batched_gqa_raw_scores(routes, query)
+    rows: list[tuple[float, int, int]] = []
+    finite = np.isfinite(raw_scores)
+    max_abs = float(np.max(np.abs(raw_scores[finite]))) if np.any(finite) else 0.0
+    for node_id, raw in enumerate(raw_scores):
+        if not math.isfinite(float(raw)):
+            continue
+        node_keys = baseline.lexical_keys_for_node(node_id)
+        hits = sum(1 for q in lexical if q in node_keys)
+        rows.append((float(raw), node_id, hits))
+    norm = max_abs + 1.0e-8
+    scored: list[tuple[float, int]] = []
+    for raw, node_id, hits in rows:
+        lex = 0.0 if not lexical else hits / len(lexical)
+        scored.append(((raw / norm) + lex, node_id))
+    scored.sort(key=lambda item: (-item[0], item[1]))
+    return [node_id for _, node_id in scored[:topk]]
+
+
+def python_gqa_reference_route(
+    routes: np.ndarray,
+    query: np.ndarray,
+    lexical: tuple[str, ...],
+    topk: int,
+    mode: str,
+) -> list[int]:
+    if mode == "batched":
+        return python_gqa_route_batched(routes, query, lexical, topk)
+    if mode == "scalar":
+        return python_gqa_route_scan(routes, query, lexical, topk)
+    raise ValueError(f"unknown parity reference mode: {mode}")
+
+
+def python_gqa_reference_label(mode: str, sampled: bool) -> str:
+    if mode == "batched":
+        return "python_gqa_raw_batched_sampled" if sampled else "python_gqa_raw_batched"
+    return "python_gqa_raw_sampled" if sampled else "python_gqa_raw"
+
+
 def sample_query_indices(query_count: int, sample_count: int) -> list[int]:
     if query_count <= 0 or sample_count <= 0:
         return []
@@ -391,6 +474,7 @@ def benchmark_count(
     native_only: bool,
     use_lexical: bool,
     parity_sample_queries: int,
+    parity_reference_mode: str,
 ) -> dict:
     py_ns: list[int] = []
     native_ns: list[int] = []
@@ -411,28 +495,33 @@ def benchmark_count(
         native.add_routes(routes)
         build_ms = (time.perf_counter_ns() - build_t0) / 1.0e6
         if not native_only:
-            parity_reference = "python_gqa_raw"
+            parity_reference = python_gqa_reference_label(
+                parity_reference_mode, sampled=False)
             for i, query in enumerate(queries):
                 lexical = (baseline.lexical_keys_for_query(i, routes.shape[0])
                            if use_lexical else ())
-                py = python_gqa_route_scan(routes, query, lexical, topk)
+                py = python_gqa_reference_route(
+                    routes, query, lexical, topk, parity_reference_mode)
                 got = native.route(query, lexical, topk)
                 if got != py:
                     mismatches.append({"query": i, "python": py, "native": got})
         elif parity_sample_queries > 0:
-            parity_reference = "python_gqa_raw_sampled"
+            parity_reference = python_gqa_reference_label(
+                parity_reference_mode, sampled=True)
             sampled_indices = sample_query_indices(len(queries), parity_sample_queries)
         for i, query in enumerate(queries):
             lexical = (baseline.lexical_keys_for_query(i, routes.shape[0])
                        if use_lexical else ())
             if i < warmup:
                 if not native_only:
-                    python_gqa_route_scan(routes, query, lexical, topk)
+                    python_gqa_reference_route(
+                        routes, query, lexical, topk, parity_reference_mode)
                 native.route(query, lexical, topk)
                 continue
             if not native_only:
                 t0 = time.perf_counter_ns()
-                python_gqa_route_scan(routes, query, lexical, topk)
+                python_gqa_reference_route(
+                    routes, query, lexical, topk, parity_reference_mode)
                 py_ns.append(time.perf_counter_ns() - t0)
             t0 = time.perf_counter_ns()
             native.route(query, lexical, topk)
@@ -441,7 +530,8 @@ def benchmark_count(
             query = queries[i]
             lexical = (baseline.lexical_keys_for_query(i, routes.shape[0])
                        if use_lexical else ())
-            py = python_gqa_route_scan(routes, query, lexical, topk)
+            py = python_gqa_reference_route(
+                routes, query, lexical, topk, parity_reference_mode)
             got = native.route(query, lexical, topk)
             if got != py:
                 mismatches.append({"query": i, "python": py, "native": got})
@@ -589,6 +679,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--parity-sample-queries", type=int, default=0,
                    help=("for native-only runs, verify this many deterministic "
                          "queries against the Python raw q.k reference"))
+    p.add_argument("--parity-reference", choices=("scalar", "batched"),
+                   default="scalar",
+                   help="Python reference implementation used for parity checks")
     p.add_argument("--no-lexical", action="store_true")
     p.add_argument("--capture-dir", type=Path,
                    help="read Qwen capture shard K banks from this directory")
@@ -717,6 +810,7 @@ def main(argv: list[str]) -> int:
                 native_only=args.native_only,
                 use_lexical=not args.no_lexical,
                 parity_sample_queries=args.parity_sample_queries,
+                parity_reference_mode=args.parity_reference,
             )
             results.append(row)
             if args.progress_out is not None or args.progress:
