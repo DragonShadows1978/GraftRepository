@@ -476,6 +476,8 @@ class RouterIndex {
       const std::vector<std::string>& durabilities = {},
       const std::vector<std::string>& mutabilities = {}) const;
   std::size_t size() const { return entries_.size(); }
+  void prepare_mla_route() const;
+  void prepare_gqa_route(std::uint64_t kv_heads, std::uint64_t head_dim) const;
 
  private:
   struct Entry {

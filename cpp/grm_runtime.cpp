@@ -3103,6 +3103,16 @@ void RouterIndex::rebuild_gqa_arena(
   gqa_arena_dirty_ = false;
 }
 
+void RouterIndex::prepare_mla_route() const {
+  rebuild_mla_arena();
+}
+
+void RouterIndex::prepare_gqa_route(
+    std::uint64_t kv_heads,
+    std::uint64_t head_dim) const {
+  rebuild_gqa_arena(kv_heads, head_dim);
+}
+
 std::vector<std::uint64_t> RouterIndex::route_scan(
     const std::vector<float>& query, const std::vector<std::string>& lexical,
     std::size_t topk, const std::vector<std::string>& kinds,
@@ -3867,6 +3877,7 @@ struct grm_store_handle {
   std::unique_ptr<grm::HostGraftStore> store;
   grm::RouterIndex router;
   std::shared_mutex router_mutex;
+  bool router_needs_prepare = false;
   grm::DeviceArena arena;
   std::mutex error_mutex;
   std::string last_error;
@@ -3936,6 +3947,18 @@ void sync_router_node_state(grm_store_handle* handle, std::uint64_t node_id) {
                                     node->metadata.mutability);
 }
 
+void prepare_router_for_store_dialect(grm_store_handle* handle) {
+  const auto& dialect = handle->store->dialect();
+  if (dialect.payload_kind == grm::PayloadKind::GQA) {
+    handle->router.prepare_gqa_route(
+        static_cast<std::uint64_t>(dialect.num_kv_heads),
+        static_cast<std::uint64_t>(dialect.head_dim));
+  } else {
+    handle->router.prepare_mla_route();
+  }
+  handle->router_needs_prepare = false;
+}
+
 void rebuild_router_from_store(grm_store_handle* handle) {
   std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
   handle->router = grm::RouterIndex();
@@ -3954,6 +3977,7 @@ void rebuild_router_from_store(grm_store_handle* handle) {
     }
     sync_router_node_state(handle, node_id);
   }
+  handle->router_needs_prepare = true;
 }
 
 }  // namespace
@@ -5289,6 +5313,7 @@ int grm_store_set_route(grm_store_handle* handle,
     handle->store->mark_dirty(node_id, false, true);
     handle->router.upsert(node_id, std::move(key), std::move(lexical));
     sync_router_node_state(handle, node_id);
+    handle->router_needs_prepare = true;
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
@@ -5330,6 +5355,7 @@ int grm_store_set_route_multi(grm_store_handle* handle,
     handle->store->mark_dirty(node_id, false, true);
     handle->router.upsert_multi(node_id, std::move(keys), std::move(lexical));
     sync_router_node_state(handle, node_id);
+    handle->router_needs_prepare = true;
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
@@ -5389,6 +5415,7 @@ int grm_store_set_route_list(grm_store_handle* handle,
     handle->store->mark_dirty(node_id, false, true);
     handle->router.upsert_multi(node_id, std::move(keys), std::move(lexical));
     sync_router_node_state(handle, node_id);
+    handle->router_needs_prepare = true;
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
@@ -5404,6 +5431,7 @@ int grm_store_clear_route(grm_store_handle* handle,
     std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->store->clear_route(node_id);
     handle->router.erase(node_id);
+    handle->router_needs_prepare = true;
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
@@ -5433,16 +5461,30 @@ int grm_store_route(grm_store_handle* handle,
     for (uint64_t i = 0; i < query_len; ++i) {
       q.push_back(query[i]);
     }
-    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
-    const auto routed = handle->router.route(
-        q, split_lexical_keys(lexical_keys), static_cast<std::size_t>(topk));
-    const uint64_t n = std::min<uint64_t>(
-        static_cast<uint64_t>(routed.size()), out_cap);
-    for (uint64_t i = 0; i < n; ++i) {
-      out_node_ids[i] = routed[static_cast<std::size_t>(i)];
+    const auto route_once = [&]() {
+      const auto routed = handle->router.route(
+          q, split_lexical_keys(lexical_keys), static_cast<std::size_t>(topk));
+      const uint64_t n = std::min<uint64_t>(
+          static_cast<uint64_t>(routed.size()), out_cap);
+      for (uint64_t i = 0; i < n; ++i) {
+        out_node_ids[i] = routed[static_cast<std::size_t>(i)];
+      }
+      *out_count = n;
+      return 0;
+    };
+    const bool shared_read_ok =
+        handle->store->dialect().payload_kind != grm::PayloadKind::GQA;
+    if (shared_read_ok) {
+      std::shared_lock<std::shared_mutex> lock(handle->router_mutex);
+      if (!handle->router_needs_prepare) {
+        return route_once();
+      }
     }
-    *out_count = n;
-    return 0;
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
+    if (handle->router_needs_prepare) {
+      prepare_router_for_store_dialect(handle);
+    }
+    return route_once();
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
   }
@@ -5475,19 +5517,33 @@ int grm_store_route_filtered(grm_store_handle* handle,
     for (uint64_t i = 0; i < query_len; ++i) {
       q.push_back(query[i]);
     }
-    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
-    const auto routed = handle->router.route(
-        q, split_lexical_keys(lexical_keys), static_cast<std::size_t>(topk),
-        split_lexical_keys(kind_filters), split_lexical_keys(scope_filters),
-        split_lexical_keys(durability_filters),
-        split_lexical_keys(mutability_filters));
-    const uint64_t n = std::min<uint64_t>(
-        static_cast<uint64_t>(routed.size()), out_cap);
-    for (uint64_t i = 0; i < n; ++i) {
-      out_node_ids[i] = routed[static_cast<std::size_t>(i)];
+    const auto route_once = [&]() {
+      const auto routed = handle->router.route(
+          q, split_lexical_keys(lexical_keys), static_cast<std::size_t>(topk),
+          split_lexical_keys(kind_filters), split_lexical_keys(scope_filters),
+          split_lexical_keys(durability_filters),
+          split_lexical_keys(mutability_filters));
+      const uint64_t n = std::min<uint64_t>(
+          static_cast<uint64_t>(routed.size()), out_cap);
+      for (uint64_t i = 0; i < n; ++i) {
+        out_node_ids[i] = routed[static_cast<std::size_t>(i)];
+      }
+      *out_count = n;
+      return 0;
+    };
+    const bool shared_read_ok =
+        handle->store->dialect().payload_kind != grm::PayloadKind::GQA;
+    if (shared_read_ok) {
+      std::shared_lock<std::shared_mutex> lock(handle->router_mutex);
+      if (!handle->router_needs_prepare) {
+        return route_once();
+      }
     }
-    *out_count = n;
-    return 0;
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
+    if (handle->router_needs_prepare) {
+      prepare_router_for_store_dialect(handle);
+    }
+    return route_once();
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
   }
@@ -5538,21 +5594,33 @@ int grm_store_route_gqa(grm_store_handle* handle,
     for (uint64_t i = 0; i < query_len; ++i) {
       q.push_back(query[i]);
     }
-    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
-    const auto routed = handle->router.route_gqa_raw(
-        q, query_heads, query_tokens, head_dim,
-        static_cast<uint64_t>(handle->store->dialect().num_kv_heads),
-        split_lexical_keys(lexical_keys), static_cast<std::size_t>(topk),
-        split_lexical_keys(kind_filters), split_lexical_keys(scope_filters),
-        split_lexical_keys(durability_filters),
-        split_lexical_keys(mutability_filters));
-    const uint64_t n = std::min<uint64_t>(
-        static_cast<uint64_t>(routed.size()), out_cap);
-    for (uint64_t i = 0; i < n; ++i) {
-      out_node_ids[i] = routed[static_cast<std::size_t>(i)];
+    const auto route_once = [&]() {
+      const auto routed = handle->router.route_gqa_raw(
+          q, query_heads, query_tokens, head_dim,
+          static_cast<uint64_t>(handle->store->dialect().num_kv_heads),
+          split_lexical_keys(lexical_keys), static_cast<std::size_t>(topk),
+          split_lexical_keys(kind_filters), split_lexical_keys(scope_filters),
+          split_lexical_keys(durability_filters),
+          split_lexical_keys(mutability_filters));
+      const uint64_t n = std::min<uint64_t>(
+          static_cast<uint64_t>(routed.size()), out_cap);
+      for (uint64_t i = 0; i < n; ++i) {
+        out_node_ids[i] = routed[static_cast<std::size_t>(i)];
+      }
+      *out_count = n;
+      return 0;
+    };
+    {
+      std::shared_lock<std::shared_mutex> lock(handle->router_mutex);
+      if (!handle->router_needs_prepare) {
+        return route_once();
+      }
     }
-    *out_count = n;
-    return 0;
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
+    if (handle->router_needs_prepare) {
+      prepare_router_for_store_dialect(handle);
+    }
+    return route_once();
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
   }

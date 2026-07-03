@@ -254,13 +254,17 @@ true GEMM/segment-reduce layout or representative-key compaction.
 P5 first-slice note: the C ABI handle now wraps `RouterIndex` with a
 `std::shared_mutex`. Route-key updates, metadata active/filter changes,
 expiry/revision state changes, clears, and checkpoint router rebuilds take the
-writer side. Current C ABI route calls also take the writer side because MLA/GQA
-arena rebuilds are still lazy and mutate router-owned caches. This serializes
-access to the lazy arenas and prevents torn reads during current threaded
-callers. Regression `test_native_router_serializes_concurrent_route_updates`
-runs three reader threads against a writer thread that rewrites route keys. This
-is not yet the final lock-free double-buffer epoch design from D5, but it lands
-the first no-torn-read gate on the current C ABI surface.
+writer side. Route-key mutations now mark the router arena as needing
+preparation instead of rebuilding on every insert. The first route after a
+mutation prepares the MLA/GQA arena once under the writer lock; subsequent
+prepared route reads use the shared side. Generic MLA-style `route` calls on
+GQA stores stay on the writer side because that mixed path can still lazily
+build an MLA arena over GQA route keys. Regression
+`test_native_router_serializes_concurrent_route_updates` runs three reader
+threads against a writer thread that rewrites route keys. This is not yet the
+final lock-free double-buffer epoch design from D5, but it lands the first
+no-torn-read gate on the current C ABI surface while restoring shared read
+concurrency for the normal prepared route paths.
 
 **P6 — Report.** `ROUTER_SCALING_REPORT.md`: before/after curves at all
 four node counts, both dialects, exactness-gate record, M-sweep table.

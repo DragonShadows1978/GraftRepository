@@ -8,8 +8,10 @@ per-node route scan with contiguous host arenas:
 
 - MLA: fp32 SoA arena plus INT4 bulk/refine route book.
 - GQA: contiguous key-bank arena with segment-style per-entry reduction.
-- Concurrency: C ABI route/read calls now serialize `RouterIndex` access with
-  a shared mutex while the final lock-free epoch design remains open.
+- Concurrency: route-key mutations mark arenas dirty, the next route prepares
+  once under the writer side of the C ABI shared mutex, and normal prepared
+  route reads use shared locks while the final lock-free epoch design remains
+  open.
 
 All numbers below are from local measurements on harvested repository-derived
 route vectors unless otherwise noted. Missing direct baselines are marked as
@@ -159,7 +161,7 @@ green. A larger real-capture run loaded 298 usable source shards and measured
 - Implement the true GQA GEMM/segment-reduce path or a representative-key
   compaction policy for full 256-token captured K banks if sub-10ms routing is
   required past the 96-node real-capture point.
-- Replace the current C ABI shared-mutex guard with the planned lock-free
-  double-buffer epoch snapshot model if threaded serving requires no read-side
-  lock.
+- Replace the current C ABI prepare-on-first-route shared-mutex bridge with the
+  planned lock-free double-buffer epoch snapshot model if threaded serving
+  requires no read-side lock.
 - Update the AI research board / paper note with the final measured status.
