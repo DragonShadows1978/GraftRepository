@@ -283,6 +283,9 @@ score-plus-node-id tie order. A harvested representative 10k-node run measured
 5.9959ms p50 with exhaustive five-query parity, and a 512-node Qwen3.5-2B source
 full-bank run matched all four generated batched-reference queries at 19.1065ms
 p50 / 23.3995ms p95.
+The full-bank exhaustive receipt now extends to 768 and 1,024 source-capture
+nodes: 768 matched all four batched-reference queries at 26.0228ms p50 /
+29.5759ms p95, and 1,024 matched all four at 33.9970ms p50 / 39.3356ms p95.
 
 P4 representative-compaction note: the GQA benchmark can now route compacted
 capture banks (`--compact-route-tokens`, `--compact-route-mode`) while checking

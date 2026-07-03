@@ -133,9 +133,11 @@ Qwen3.5-2B real-capture source K-bank probe:
 | captured full 256-token K, pre-qt4 native-only | 768 | 58.3090 | 63.2833 | n/a | n/a |
 | captured full 256-token K, pre-qt4 batched sampled parity | 768 | 58.5005 | 64.6167 | n/a | true (2 queries) |
 | captured full 256-token K, qt4 batched sampled parity | 768 | 33.8389 | 34.8920 | n/a | true (2 queries) |
+| captured full 256-token K, qt4 bounded top-k exhaustive parity | 768 | 26.0228 | 29.5759 | n/a | true (4 queries) |
 | captured full 256-token K, pre-qt4 native-only | 1,024 | 76.5800 | 80.9969 | n/a | n/a |
 | captured full 256-token K, pre-qt4 batched sampled parity | 1,024 | 73.5912 | 75.1033 | n/a | true (2 queries) |
 | captured full 256-token K, qt4 batched sampled parity | 1,024 | 36.7363 | 38.6939 | n/a | true (2 queries) |
+| captured full 256-token K, qt4 bounded top-k exhaustive parity | 1,024 | 33.9970 | 39.3356 | n/a | true (4 queries) |
 | captured representative 1-token K | 32 | 0.0465 | 0.0473 | 0.6651 | true |
 | captured representative 1-token K | 96 | 0.1172 | 0.1696 | 2.0503 | true |
 | captured stride-16 K vs full K reference | 1,024 | 6.9564 | 7.9222 | n/a | false |
@@ -183,6 +185,9 @@ score-plus-node-id tie order. The harvested representative 10k-node GQA point
 measured `5.9959ms` p50 with exhaustive five-query parity, and the 512-node
 full-bank Qwen3.5-2B capture point matched all four generated batched-reference
 queries at `19.1065ms` p50 / `23.3995ms` p95.
+The same exhaustive full-bank check now extends to 768 and 1,024 nodes: 768
+matched all four batched-reference queries at `26.0228ms` p50 / `29.5759ms`
+p95, and 1,024 matched all four at `33.9970ms` p50 / `39.3356ms` p95.
 The benchmark can now route compact representative-token capture banks while
 checking parity against the original full-bank reference. Simple stride
 compaction is not safe on this capture set: 16/32/64/128-token stride banks at
@@ -215,9 +220,9 @@ time was measured next. It also preserved parity, but regressed the fresh
 - Treat the 1M dim128 host route as deep-interactive already; if E3 remains
   mandatory, replace the scalar q4 dot with a lower-level vectorized dot kernel
   or a larger routing layout change.
-- Extend exhaustive real-capture GQA parity beyond the current 512-node,
-  four-query batched-reference receipt before claiming broader full-bank
-  correctness.
+- Extend exhaustive real-capture GQA parity beyond the current 1,024-node,
+  four-query batched-reference receipt and across more layers before claiming
+  broader full-bank correctness.
 - Implement a fuller GQA GEMM/segment-reduce layout if sub-10ms routing is
   required past the 96-node real-capture point; simple stride representative-key
   compaction, grouped repeated-head qt4 scoring, and hand-unrolled repeat-4
