@@ -3224,7 +3224,8 @@ float RouterIndex::gqa_arena_key_score(
     std::uint64_t head_dim,
     std::uint64_t kv_heads,
     bool query_finite,
-    std::size_t key_idx) const {
+    std::size_t key_idx,
+    bool use_qt4_dot_unroll8) const {
   if (query_heads == 0 || query_tokens == 0 || head_dim == 0 ||
       kv_heads == 0 || query_heads % kv_heads != 0 ||
       key_idx >= gqa_arena_.key_tokens.size()) {
@@ -3244,6 +3245,10 @@ float RouterIndex::gqa_arena_key_score(
     return 0.0F;
   }
   if (query_tokens == 4) {
+    if (use_qt4_dot_unroll8) {
+      return gqa_arena_key_score_qt4_unroll8(
+          query, query_heads, head_dim, kv_heads, key_idx);
+    }
     return gqa_arena_key_score_qt4(
         query, query_heads, head_dim, kv_heads, key_idx);
   }
@@ -3329,6 +3334,104 @@ float RouterIndex::gqa_arena_key_score_qt4(
   return total / static_cast<float>(query_heads);
 }
 
+float RouterIndex::gqa_arena_key_score_qt4_unroll8(
+    const std::vector<float>& query,
+    std::uint64_t query_heads,
+    std::uint64_t head_dim,
+    std::uint64_t kv_heads,
+    std::size_t key_idx) const {
+  const auto repeat = query_heads / kv_heads;
+  const auto key_tokens = gqa_arena_.key_tokens[key_idx];
+  const auto key_row_start = gqa_arena_.key_row_offsets[key_idx];
+  const auto* rows = gqa_arena_.rows.data();
+  const float inv_denom =
+      1.0F / std::sqrt(static_cast<float>(head_dim));
+  float total = 0.0F;
+  for (std::uint64_t h = 0; h < query_heads; ++h) {
+    const auto kh = h / repeat;
+    const auto qoff = h * 4 * head_dim;
+    const auto* q0 = query.data() + static_cast<std::size_t>(qoff);
+    const auto* q1 = q0 + static_cast<std::size_t>(head_dim);
+    const auto* q2 = q1 + static_cast<std::size_t>(head_dim);
+    const auto* q3 = q2 + static_cast<std::size_t>(head_dim);
+    float best = 0.0F;
+    for (std::uint64_t ki = 0; ki < key_tokens; ++ki) {
+      const auto row = key_row_start +
+                       static_cast<std::size_t>((kh * key_tokens) + ki);
+      const auto* k = rows + (row * static_cast<std::size_t>(head_dim));
+      float dot0 = 0.0F;
+      float dot1 = 0.0F;
+      float dot2 = 0.0F;
+      float dot3 = 0.0F;
+      std::uint64_t d = 0;
+      for (; d + 7 < head_dim; d += 8) {
+        const auto i0 = static_cast<std::size_t>(d);
+        const auto i1 = i0 + 1;
+        const auto i2 = i0 + 2;
+        const auto i3 = i0 + 3;
+        const auto i4 = i0 + 4;
+        const auto i5 = i0 + 5;
+        const auto i6 = i0 + 6;
+        const auto i7 = i0 + 7;
+        float kv = k[i0];
+        dot0 += q0[i0] * kv;
+        dot1 += q1[i0] * kv;
+        dot2 += q2[i0] * kv;
+        dot3 += q3[i0] * kv;
+        kv = k[i1];
+        dot0 += q0[i1] * kv;
+        dot1 += q1[i1] * kv;
+        dot2 += q2[i1] * kv;
+        dot3 += q3[i1] * kv;
+        kv = k[i2];
+        dot0 += q0[i2] * kv;
+        dot1 += q1[i2] * kv;
+        dot2 += q2[i2] * kv;
+        dot3 += q3[i2] * kv;
+        kv = k[i3];
+        dot0 += q0[i3] * kv;
+        dot1 += q1[i3] * kv;
+        dot2 += q2[i3] * kv;
+        dot3 += q3[i3] * kv;
+        kv = k[i4];
+        dot0 += q0[i4] * kv;
+        dot1 += q1[i4] * kv;
+        dot2 += q2[i4] * kv;
+        dot3 += q3[i4] * kv;
+        kv = k[i5];
+        dot0 += q0[i5] * kv;
+        dot1 += q1[i5] * kv;
+        dot2 += q2[i5] * kv;
+        dot3 += q3[i5] * kv;
+        kv = k[i6];
+        dot0 += q0[i6] * kv;
+        dot1 += q1[i6] * kv;
+        dot2 += q2[i6] * kv;
+        dot3 += q3[i6] * kv;
+        kv = k[i7];
+        dot0 += q0[i7] * kv;
+        dot1 += q1[i7] * kv;
+        dot2 += q2[i7] * kv;
+        dot3 += q3[i7] * kv;
+      }
+      for (; d < head_dim; ++d) {
+        const auto idx = static_cast<std::size_t>(d);
+        const float kv = k[idx];
+        dot0 += q0[idx] * kv;
+        dot1 += q1[idx] * kv;
+        dot2 += q2[idx] * kv;
+        dot3 += q3[idx] * kv;
+      }
+      const float row_best = std::max(
+          std::max(std::abs(dot0), std::abs(dot1)),
+          std::max(std::abs(dot2), std::abs(dot3)));
+      best = std::max(best, row_best * inv_denom);
+    }
+    total += best;
+  }
+  return total / static_cast<float>(query_heads);
+}
+
 float RouterIndex::gqa_arena_entry_score(
     const std::vector<float>& query,
     std::uint64_t query_heads,
@@ -3336,7 +3439,8 @@ float RouterIndex::gqa_arena_entry_score(
     std::uint64_t head_dim,
     std::uint64_t kv_heads,
     bool query_finite,
-    std::size_t entry_idx) const {
+    std::size_t entry_idx,
+    bool use_qt4_dot_unroll8) const {
   const auto key_start = gqa_arena_.entry_key_offsets[entry_idx];
   const auto key_end = gqa_arena_.entry_key_offsets[entry_idx + 1];
   float entry_best = 0.0F;
@@ -3344,7 +3448,7 @@ float RouterIndex::gqa_arena_entry_score(
   for (std::size_t key_idx = key_start; key_idx < key_end; ++key_idx) {
     const auto score = gqa_arena_key_score(
         query, query_heads, query_tokens, head_dim, kv_heads, query_finite,
-        key_idx);
+        key_idx, use_qt4_dot_unroll8);
     if (!std::isfinite(score)) {
       continue;
     }
@@ -3590,6 +3694,8 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
   const bool want_rowblock_segment =
       env_truthy("GRM_ROUTER_GQA_ROWBLOCK") &&
       !env_truthy("GRM_ROUTER_GQA_KEYBANK_SEGMENT");
+  const bool use_qt4_dot_unroll8 =
+      env_truthy("GRM_ROUTER_GQA_QT4_UNROLL8");
   std::uint64_t max_key_tokens = 1;
   std::size_t max_keys_per_entry = 0;
   if (use_arena) {
@@ -3743,7 +3849,7 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
       }
       const auto score = gqa_arena_key_score(
           query, query_heads, query_tokens, head_dim, kv_heads, query_finite,
-          key_start);
+          key_start, use_qt4_dot_unroll8);
       if (!std::isfinite(score)) {
         continue;
       }
@@ -3772,7 +3878,7 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
       const auto key_idx = static_cast<std::size_t>(key_i);
       key_scores[key_idx] = gqa_arena_key_score(
           query, query_heads, query_tokens, head_dim, kv_heads, query_finite,
-          key_idx);
+          key_idx, use_qt4_dot_unroll8);
     }
     for (std::size_t entry_idx = 0; entry_idx < entry_count; ++entry_idx) {
       const auto& e = entries_[entry_idx];
@@ -3818,7 +3924,7 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
       const auto raw = use_arena
           ? gqa_arena_entry_score(
                 query, query_heads, query_tokens, head_dim, kv_heads,
-                query_finite, entry_idx)
+                query_finite, entry_idx, use_qt4_dot_unroll8)
           : max_gqa_raw_score(
                 query, query_heads, query_tokens, head_dim, kv_heads,
                 e.route_keys);

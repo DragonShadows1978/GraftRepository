@@ -261,6 +261,15 @@ The row-block guard now also computes `max_keys_per_entry` when
 single-key-only path. The focused multi-key segment regression runs with
 row-block requested and still matches the Python raw-q.k law.
 
+`GRM_ROUTER_GQA_QT4_UNROLL8=1` enables a manual unroll-8 variant of the
+query-token-4 key dot kernel. It is parity-green but rejected for runtime default
+use: the Qwen3.5-2B source layer-3 full-bank 512-node receipt measured
+`53.2750ms` p50 / `56.3159ms` p95 with 6/6 batched-reference parity, far slower
+than the kept qt4 scorer. On the Qwen3-4B preset representative-key fixture, the
+same flag stayed flat at 512 nodes (`5.9949ms` p50 / `6.0773ms` p95, 6/6
+exhaustive batched-reference parity), but that was harvested fixture data rather
+than 4B live capture shards.
+
 ## GQA Capture Layer Sweep
 
 `scripts/grm_gqa_layer_sweep.py` wraps the existing GQA benchmark internals and
@@ -369,3 +378,5 @@ Fresh post-snapshot GQA receipts:
   query-head row-block scorer improves the 512-node p50 but does not yet win the
   768/1,024-node full-bank curve, so the remaining kernel work should target a
   lower-level GEMM/BLAS-style layout rather than this temporary head-score table.
+  The manual `GRM_ROUTER_GQA_QT4_UNROLL8` dot-kernel experiment was also
+  parity-green but much slower, so further work should avoid scalar hand-unrolls.

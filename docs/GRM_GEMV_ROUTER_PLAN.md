@@ -373,6 +373,18 @@ multi-key entries cannot accidentally enter the single-key row-block path; the
 focused multi-key segment test runs with `GRM_ROUTER_GQA_ROWBLOCK=1` and still
 matches the Python raw-q.k law.
 
+P4 dot-kernel experiment: `GRM_ROUTER_GQA_QT4_UNROLL8=1` enables a manual
+query-token-4 dot unroll inside the prepared GQA key scorer. It preserves the
+raw-q.k law in focused parity, but it is rejected for runtime default use: on
+the Qwen3.5-2B source layer-3 full-bank 512-node receipt it measured
+`53.2750ms` p50 / `56.3159ms` p95 with 6/6 batched-reference parity, much slower
+than the kept qt4 scorer. A follow-up Qwen3-4B preset representative-key check
+was parity-green and flat at 512 nodes (`5.9949ms` p50 / `6.0773ms` p95 with
+6/6 exhaustive batched-reference parity), but that run used harvested fixture
+data, not 4B live capture shards. This confirms the next useful kernel work
+should be a true compiler/BLAS-friendly row layout or external GEMM call, not
+hand-unrolling the scalar inner loop.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.
