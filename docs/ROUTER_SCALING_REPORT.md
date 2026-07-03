@@ -281,6 +281,22 @@ default (`5.9983ms` p50 / `5.9991ms` p95), but that fixture uses one-token keys
 and is not 4B live capture-shard evidence. The duplicate transposed bank is only
 built when the flag is enabled.
 
+`GRM_ENABLE_CBLAS` + `GRM_ROUTER_GQA_BLAS=1` adds a true CBLAS `sgemm` segment
+experiment for query-token-4 GQA banks. Benchmark helpers expose `--blas`, which
+links `${GRM_BLAS_LIB:-/lib/x86_64-linux-gnu/libblas.so.3}` because this host has
+the runtime library but not the `libblas.so` development symlink. The path is
+parity-green and compile/runtime gated, but generic BLAS is rejected for default
+use:
+
+| shape | nodes | default p50 | BLAS p50 | parity |
+| --- | ---: | ---: | ---: | --- |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | 512 | 20.9562 | 833.7949 | true, 6/6 batched-reference queries |
+| Qwen3-4B preset representative-key fixture | 512 | 5.9956 | 6.3741 | true, 6/6 batched-reference queries |
+
+The receipt proves the GEMM/segment-reduce API shape but not a useful backend on
+this machine. Future work should use an in-tree packed kernel, a real optimized
+CPU BLAS receipt, or GPU/cuBLAS rather than defaulting generic `libblas.so.3`.
+
 ## GQA Capture Layer Sweep
 
 `scripts/grm_gqa_layer_sweep.py` wraps the existing GQA benchmark internals and
@@ -395,3 +411,7 @@ Fresh post-snapshot GQA receipts:
   2B full-bank capture shape, so it stays diagnostic-only; the next useful slice
   is still a lower-level GEMM/BLAS layout rather than a duplicate host layout
   walked by scalar C++ loops.
+  A compile/runtime-gated CBLAS `sgemm` segment scorer now exists and passes
+  parity, but generic system BLAS regressed the 512-node 2B full-bank receipt to
+  `833.7949ms` p50, so it is rejected for default use. The seam is useful; the
+  backend is not.

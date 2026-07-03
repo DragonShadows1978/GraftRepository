@@ -763,6 +763,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
                    help="write one JSONL checkpoint row after each node count")
     p.add_argument("--progress", action="store_true",
                    help="print one-line progress updates to stderr")
+    p.add_argument("--blas", action="store_true",
+                   help="compile native runtime with CBLAS support")
     p.add_argument("--smoke", action="store_true")
     return p.parse_args(argv)
 
@@ -849,7 +851,8 @@ def main(argv: list[str]) -> int:
         args.progress_out.parent.mkdir(parents=True, exist_ok=True)
         args.progress_out.write_text("", encoding="utf-8")
     with tempfile.TemporaryDirectory(prefix="grm_gqa_router_") as td:
-        lib = baseline.build_native_lib(Path(td), cxx=args.cxx, openmp=args.openmp)
+        lib = baseline.build_native_lib(
+            Path(td), cxx=args.cxx, openmp=args.openmp, blas=args.blas)
         for idx, node_count in enumerate(args.node_counts, start=1):
             if capture_routes is not None:
                 if node_count > capture_routes.shape[0]:

@@ -15,7 +15,7 @@ from core.grm_native import NativeGraftStore
 ROOT = "/mnt/ForgeRealm/GraftRepository"
 
 
-def build_native(tmp_path, extra_cxxflags=()):
+def build_native(tmp_path, extra_cxxflags=(), extra_ldflags=()):
     suffix = "default" if not extra_cxxflags else "_".join(
         flag.strip("-").replace("=", "_") for flag in extra_cxxflags)
     lib = tmp_path / f"libgrm_runtime_{suffix}.so"
@@ -25,6 +25,7 @@ def build_native(tmp_path, extra_cxxflags=()):
         "-I", f"{ROOT}/cpp",
         f"{ROOT}/cpp/grm_runtime.cpp",
         "-o", str(lib),
+        *extra_ldflags,
     ], check=True)
     return str(lib)
 
@@ -622,7 +623,7 @@ def test_native_gqa_rowblock_segment_matches_python_law(tmp_path, monkeypatch):
         assert store.route_gqa(q, topk=3) == expected
 
 
-@pytest.mark.parametrize("mode", ["default", "unroll8", "transposed"])
+@pytest.mark.parametrize("mode", ["default", "unroll8", "transposed", "blas"])
 def test_native_gqa_qt4_even_repeat_route_matches_python_law(
         tmp_path, monkeypatch, mode):
     def raw_score(query, key):
@@ -631,11 +632,21 @@ def test_native_gqa_qt4_even_repeat_route_matches_python_law(
         sc = np.einsum("hqd,hkd->hqk", query, kk) / np.sqrt(dh)
         return float(np.abs(sc).max(axis=(1, 2)).mean())
 
+    extra_cxxflags = ()
+    extra_ldflags = ()
     if mode == "unroll8":
         monkeypatch.setenv("GRM_ROUTER_GQA_QT4_UNROLL8", "1")
     elif mode == "transposed":
         monkeypatch.setenv("GRM_ROUTER_GQA_TRANSPOSED", "1")
-    lib = build_native(tmp_path)
+    elif mode == "blas":
+        monkeypatch.setenv("GRM_ROUTER_GQA_SEGMENT", "1")
+        monkeypatch.setenv("GRM_ROUTER_GQA_BLAS", "1")
+        extra_cxxflags = ("-DGRM_ENABLE_CBLAS",)
+        extra_ldflags = (
+            os.environ.get("GRM_BLAS_LIB", "/lib/x86_64-linux-gnu/libblas.so.3"),
+        )
+    lib = build_native(
+        tmp_path, extra_cxxflags=extra_cxxflags, extra_ldflags=extra_ldflags)
     q = np.asarray([
         [[1.0, 0.0, 0.0], [0.5, 0.5, 0.0], [0.0, 1.0, 0.0], [0.0, 0.5, 0.5]],
         [[0.0, 1.0, 0.0], [0.0, 0.5, 0.5], [1.0, 0.0, 0.0], [0.5, 0.5, 0.0]],

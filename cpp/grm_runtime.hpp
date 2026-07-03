@@ -518,7 +518,12 @@ class RouterIndex {
     std::vector<std::size_t> key_row_offsets;
     std::vector<std::size_t> key_transposed_offsets;
     std::vector<float> transposed_rows;
+    std::vector<std::size_t> key_blas_offsets;
+    std::vector<float> blas_rows;
     std::vector<std::size_t> entry_key_offsets;
+    std::uint64_t blas_token_count = 0;
+    bool transposed_built = false;
+    bool blas_built = false;
   };
 
   void mark_mla_arena_dirty();
@@ -574,6 +579,13 @@ class RouterIndex {
       std::uint64_t head_dim,
       std::uint64_t kv_heads,
       std::size_t key_idx) const;
+  bool gqa_arena_key_scores_blas_qt4(
+      const std::vector<float>& query,
+      std::uint64_t query_heads,
+      std::uint64_t head_dim,
+      std::uint64_t kv_heads,
+      bool query_finite,
+      std::vector<float>& key_scores) const;
   float gqa_arena_entry_score(
       const std::vector<float>& query,
       std::uint64_t query_heads,

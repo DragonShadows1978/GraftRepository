@@ -397,6 +397,21 @@ representative-key fixture stayed effectively flat (`5.9930ms` p50 /
 p95), but that fixture has one-token keys and is not 4B live capture-shard
 evidence. Disabled runs do not build the duplicate transposed bank.
 
+P4 CBLAS GEMM experiment: the native runtime can now be compiled with
+`GRM_ENABLE_CBLAS` and the benchmark helper exposes `--blas`, linking
+`${GRM_BLAS_LIB:-/lib/x86_64-linux-gnu/libblas.so.3}`. At runtime
+`GRM_ROUTER_GQA_BLAS=1` builds an opt-in per-KV-head prepared key matrix and
+uses CBLAS `sgemm` for the query-token-4 GQA segment scorer before reducing the
+GEMM result back to graft/key segments. The path is parity-green but rejected
+for default use on this host's generic BLAS: Qwen3.5-2B source layer-3 full-bank
+512 nodes measured `833.7949ms` p50 / `847.2152ms` p95 with 6/6
+batched-reference parity, versus default `20.9562ms` p50 / `21.3305ms` p95.
+The Qwen3-4B representative-key fixture also regressed mildly (`6.3741ms` p50 /
+`6.3879ms` p95 versus default `5.9956ms` p50 / `6.0177ms` p95). The result is
+still useful: the API seam for a true GEMM-backed segment scorer exists, but
+generic system BLAS is the wrong backend; future work should target an in-tree
+packed kernel, OpenBLAS/MKL receipt, or GPU/cuBLAS path before defaulting.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.

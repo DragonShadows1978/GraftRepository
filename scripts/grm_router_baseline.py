@@ -209,9 +209,19 @@ def python_route_scan(
     return [node_id for _, node_id in scored[:topk]]
 
 
-def build_native_lib(out_dir: Path, *, cxx: str, openmp: bool = False) -> Path:
+def build_native_lib(
+    out_dir: Path,
+    *,
+    cxx: str,
+    openmp: bool = False,
+    blas: bool = False,
+) -> Path:
     lib = out_dir / "libgrm_runtime.so"
     extra = ["-fopenmp"] if openmp else []
+    if blas:
+        extra.append("-DGRM_ENABLE_CBLAS")
+    ldflags = [os.environ.get(
+        "GRM_BLAS_LIB", "/lib/x86_64-linux-gnu/libblas.so.3")] if blas else []
     subprocess.run(
         [
             cxx,
@@ -225,6 +235,7 @@ def build_native_lib(out_dir: Path, *, cxx: str, openmp: bool = False) -> Path:
             str(ROOT / "cpp" / "grm_runtime.cpp"),
             "-o",
             str(lib),
+            *ldflags,
         ],
         check=True,
     )
@@ -505,6 +516,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--cxx", default=os.environ.get("CXX", "g++"))
     p.add_argument("--openmp", action="store_true",
                    help="compile the native benchmark library with -fopenmp")
+    p.add_argument("--blas", action="store_true",
+                   help="compile the native benchmark library with CBLAS support")
     p.add_argument("--native-only", action="store_true",
                    help="skip Python reference parity/timing for large curves")
     p.add_argument("--native-fp32-parity", action="store_true",
@@ -546,7 +559,8 @@ def main(argv: list[str]) -> int:
     with tempfile.TemporaryDirectory(prefix="grm_router_baseline_") as td:
         try:
             lib_path = args.lib or build_native_lib(
-                Path(td), cxx=args.cxx, openmp=bool(args.openmp))
+                Path(td), cxx=args.cxx, openmp=bool(args.openmp),
+                blas=bool(args.blas))
             results = []
             for refine_m in refine_values:
                 if args.int4:
