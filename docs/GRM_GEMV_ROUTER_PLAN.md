@@ -212,6 +212,16 @@ dim16 smoke probe (`query_shape=(4,4,16)`, `key_shape=(1,4,16)`, `-O3
 6.0020ms versus Python 166.9182ms, a 27.81x speedup. This clears E4 for that
 smoke shape; broader Qwen3-4B gate scenarios and the final P6 curve remain.
 
+P4 Qwen3.5-2B shape note: `scripts/grm_gqa_router_benchmark.py` now measures
+native GQA routing on Qwen-shaped harvested route banks. The default preset is
+the Qwen3.5-2B source-attention geometry (`8q/2kv/head_dim256`). Representative
+1-token route keys with 4-token probes measured 1k p50 2.4416ms and 10k p50
+8.6680ms, parity-green against the Python raw q.k law; Python p50 at 10k was
+227.7100ms, a 26.27x speedup. The live Qwen3.5-2B translation corpus was
+inspected read-only: source shards expose K banks shaped `(1,2,256,256)` for
+layers 3/7/11/15/19/23. Next real-graft stress should copy those K banks into a
+fixture and add checkpointed/progress output before attempting 25k+ GQA curves.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.
@@ -234,9 +244,9 @@ with measured numbers, not projections).
 P6 first report note: `docs/ROUTER_SCALING_REPORT.md` now records the current
 measured MLA and GQA router state: P0 native/Python baselines, P2 fp32 arena
 large points, P3 INT4 M-sweeps and current M=64 operating point, P4 GQA
-key-bank smoke, expectation pass/miss status, and remaining work. The report is
-intentionally explicit that E3 is still missed and that broader Qwen3-4B GQA
-curves remain.
+key-bank smoke plus Qwen3.5-2B representative-key curve, expectation pass/miss
+status, and remaining work. The report is intentionally explicit that E3 is
+still narrowly missed and that larger real-graft GQA curves remain.
 
 **Deferred (registered, not scheduled):** CUDA route path (only if host
 curves fail interactive targets at 1M — host INT4 GEMV at 1M×512 is

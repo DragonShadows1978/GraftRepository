@@ -109,3 +109,25 @@ def test_router_baseline_smoke_cli_sweeps_refine_m(tmp_path):
     data = json.loads(out.read_text())
     assert [row["refine_m"] for row in data["results"]] == [32, 32, 128, 128]
     assert all(row["mode"] == "int4" for row in data["results"])
+
+
+def test_gqa_router_benchmark_smoke_cli_writes_json_and_markdown(tmp_path):
+    out = tmp_path / "gqa_benchmark.json"
+    md = tmp_path / "gqa_benchmark.md"
+
+    subprocess.run([
+        "python3",
+        "scripts/grm_gqa_router_benchmark.py",
+        "--smoke",
+        "--out",
+        str(out),
+        "--markdown-out",
+        str(md),
+    ], cwd=baseline.ROOT, check=True)
+
+    data = json.loads(out.read_text())
+    assert data["schema"] == "grm-gqa-router-benchmark-v1"
+    assert data["shape"]["query_heads"] == 4
+    assert [row["nodes"] for row in data["results"]] == [32, 96]
+    assert all(row["parity"] for row in data["results"])
+    assert "GRM GQA Router Benchmark" in md.read_text()
