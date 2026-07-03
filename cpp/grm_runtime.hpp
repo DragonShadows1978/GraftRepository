@@ -496,11 +496,13 @@ class RouterIndex {
     std::size_t dim = 0;
     std::vector<float> rows;
     std::vector<float> norms;
+    std::vector<float> inv_norms;
     std::vector<std::size_t> entry_row_offsets;
     bool q4_valid = false;
     std::size_t q4_stride = 0;
     std::vector<std::uint8_t> q4_rows;
     std::vector<float> q4_scales;
+    std::vector<float> q4_norm_scales;
     bool single_row_per_entry = false;
   };
 
@@ -520,11 +522,11 @@ class RouterIndex {
   float int4_mla_entry_score(
       const std::vector<float>& query,
       std::size_t entry_idx,
-      double qnorm) const;
+      double qnorm_inv) const;
   float int4_mla_row_score(
       const std::vector<float>& query,
       std::size_t row,
-      double qnorm) const;
+      double qnorm_inv) const;
   std::vector<std::uint64_t> route_scan(
       const std::vector<float>& query,
       const std::vector<std::string>& lexical,

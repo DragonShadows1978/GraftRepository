@@ -2979,10 +2979,12 @@ void RouterIndex::rebuild_mla_arena() const {
   arena.single_row_per_entry = row_count == entries_.size();
   arena.rows.reserve(row_count * arena.dim);
   arena.norms.reserve(row_count);
+  arena.inv_norms.reserve(row_count);
   arena.entry_row_offsets.reserve(entries_.size() + 1);
   arena.q4_stride = (arena.dim + 1) / 2;
   arena.q4_rows.reserve(row_count * arena.q4_stride);
   arena.q4_scales.reserve(row_count);
+  arena.q4_norm_scales.reserve(row_count);
   for (std::size_t entry_idx = 0; entry_idx < entries_.size(); ++entry_idx) {
     arena.entry_row_offsets.push_back(arena.norms.size());
     const auto& e = entries_[entry_idx];
@@ -3001,9 +3003,13 @@ void RouterIndex::rebuild_mla_arena() const {
         norm_sq += static_cast<double>(v) * static_cast<double>(v);
         max_abs = std::max(max_abs, std::abs(v));
       }
-      arena.norms.push_back(static_cast<float>(std::sqrt(norm_sq)));
+      const float norm = static_cast<float>(std::sqrt(norm_sq));
+      const float inv_norm = norm > 0.0F ? 1.0F / norm : 0.0F;
+      arena.norms.push_back(norm);
+      arena.inv_norms.push_back(inv_norm);
       const float scale = max_abs > 0.0F ? max_abs / 7.0F : 1.0F;
       arena.q4_scales.push_back(scale);
+      arena.q4_norm_scales.push_back(scale * inv_norm);
       for (std::size_t d = 0; d < arena.dim; d += 2) {
         const auto q0 = static_cast<std::int8_t>(std::max(
             -7.0F, std::min(7.0F, std::round(key[d] / scale))));
@@ -3021,6 +3027,7 @@ void RouterIndex::rebuild_mla_arena() const {
   arena.valid = !arena.rows.empty();
   arena.q4_valid = arena.valid &&
                    arena.q4_scales.size() == arena.norms.size() &&
+                   arena.q4_norm_scales.size() == arena.norms.size() &&
                    arena.q4_rows.size() ==
                        arena.norms.size() * arena.q4_stride;
   mla_arena_ = std::move(arena);
@@ -3089,13 +3096,13 @@ float RouterIndex::exact_mla_entry_score(
 float RouterIndex::int4_mla_entry_score(
     const std::vector<float>& query,
     std::size_t entry_idx,
-    double qnorm) const {
+    double qnorm_inv) const {
   const auto row_start = mla_arena_.entry_row_offsets[entry_idx];
   const auto row_end = mla_arena_.entry_row_offsets[entry_idx + 1];
   float entry_best = 0.0F;
   bool entry_have = false;
   for (std::size_t row = row_start; row < row_end; ++row) {
-    const float score = int4_mla_row_score(query, row, qnorm);
+    const float score = int4_mla_row_score(query, row, qnorm_inv);
     if (!std::isfinite(score)) {
       continue;
     }
@@ -3110,30 +3117,26 @@ float RouterIndex::int4_mla_entry_score(
 float RouterIndex::int4_mla_row_score(
     const std::vector<float>& query,
     std::size_t row,
-    double qnorm) const {
+    double qnorm_inv) const {
   const auto dim = mla_arena_.dim;
   const auto pairs = dim / 2;
   const auto packed_base = row * mla_arena_.q4_stride;
   const auto* packed = mla_arena_.q4_rows.data() + packed_base;
   const auto* q = query.data();
-  double dot_i4 = 0.0;
+  float dot_i4 = 0.0F;
   for (std::size_t b = 0; b < pairs; ++b) {
     const auto byte = packed[b];
     const auto d = b * 2;
-    dot_i4 += static_cast<double>(q[d]) *
-              static_cast<double>(kI4Decode[byte & 0x0F]);
-    dot_i4 += static_cast<double>(q[d + 1]) *
-              static_cast<double>(kI4Decode[(byte >> 4) & 0x0F]);
+    dot_i4 += q[d] * static_cast<float>(kI4Decode[byte & 0x0F]);
+    dot_i4 += q[d + 1] *
+              static_cast<float>(kI4Decode[(byte >> 4) & 0x0F]);
   }
   if ((dim & 1U) != 0) {
     const auto byte = packed[pairs];
-    dot_i4 += static_cast<double>(q[dim - 1]) *
-              static_cast<double>(kI4Decode[byte & 0x0F]);
+    dot_i4 += q[dim - 1] * static_cast<float>(kI4Decode[byte & 0x0F]);
   }
-  const double scale = static_cast<double>(mla_arena_.q4_scales[row]);
-  const double denom =
-      (qnorm * static_cast<double>(mla_arena_.norms[row])) + 1.0e-8;
-  return static_cast<float>((dot_i4 * scale) / denom);
+  return dot_i4 * mla_arena_.q4_norm_scales[row] *
+         static_cast<float>(qnorm_inv);
 }
 
 std::vector<std::uint64_t> RouterIndex::route_mla_arena(
@@ -3216,6 +3219,7 @@ std::vector<std::uint64_t> RouterIndex::route_mla_int4(
     qnorm_sq += static_cast<double>(v) * static_cast<double>(v);
   }
   const auto qnorm = std::sqrt(qnorm_sq);
+  const auto qnorm_inv = 1.0 / (qnorm + 1.0e-8);
   const auto entry_count = entries_.size();
   const auto query_lex_hashes = lexical_hashes(lexical);
   std::vector<float> bulk_scores(entry_count, 0.0F);
@@ -3233,8 +3237,8 @@ std::vector<std::uint64_t> RouterIndex::route_mla_int4(
       continue;
     }
     float score = mla_arena_.single_row_per_entry
-                      ? int4_mla_row_score(query, entry_idx, qnorm)
-                      : int4_mla_entry_score(query, entry_idx, qnorm);
+                      ? int4_mla_row_score(query, entry_idx, qnorm_inv)
+                      : int4_mla_entry_score(query, entry_idx, qnorm_inv);
     score += lexical_bonus(
         lexical, query_lex_hashes, e.lexical_keys, e.lexical_hashes);
     if (!std::isfinite(score)) {

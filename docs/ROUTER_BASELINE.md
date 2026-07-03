@@ -118,4 +118,5 @@ before freezing a default M.
 After the row-level INT4 scorer and lexical-hash prefilter, the same dim128
 native-fp32 parity shape measured M=16 at 100k p50 7.0211ms and 1M p50
 49.6927ms. This is the current P3 hot-loop checkpoint, still above the E3
-25ms host-side target.
+25ms host-side target. After precomputing the q4 row normalization scale, the
+same shape measured 100k p50 6.2995ms and 1M p50 43.4791ms.
