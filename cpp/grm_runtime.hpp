@@ -487,6 +487,7 @@ class RouterIndex {
     std::string scope = "conversation";
     std::string durability = "session";
     std::string mutability = "ephemeral";
+    std::uint64_t filter_bits = 0;
   };
   struct MlaArena {
     bool valid = false;

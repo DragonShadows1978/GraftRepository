@@ -119,6 +119,11 @@ entry-block parallelism without races. The harness can compile with
 overhead. Thresholded OpenMP smoke: 1k p50 0.1806ms, 10k p50 2.8027ms, 50k
 p50 13.0213ms, all parity green.
 
+P2 filter note: route entries now carry known-value bitmasks for
+kind/scope/durability/mutability. Known filter values use bit checks in the
+packed route path; unknown metadata or unknown filter values fall back to the
+previous exact string comparison, preserving arbitrary metadata semantics.
+
 **P3 — INT4 books + two-tier refine.** D2. Gates: exactness gate (match
 fp32 top-k, M-sweep documented), latency curve, 166 floor.
 

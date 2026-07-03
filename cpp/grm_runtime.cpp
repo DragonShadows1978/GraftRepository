@@ -2547,6 +2547,58 @@ std::vector<DirtyNodeInfo> HostGraftStore::dirty_plan() const {
   return out;
 }
 
+constexpr int kKindFilterShift = 0;
+constexpr int kScopeFilterShift = 16;
+constexpr int kDurabilityFilterShift = 32;
+constexpr int kMutabilityFilterShift = 48;
+
+static std::uint64_t route_filter_bit(int shift, int offset) {
+  return std::uint64_t{1} << (shift + offset);
+}
+
+static std::uint64_t known_route_filter_bit(
+    int shift, const std::string& value) {
+  if (shift == kKindFilterShift) {
+    if (value == "turn") return route_filter_bit(shift, 0);
+    if (value == "doc") return route_filter_bit(shift, 1);
+    if (value == "digest") return route_filter_bit(shift, 2);
+    if (value == "era") return route_filter_bit(shift, 3);
+    if (value == "fact") return route_filter_bit(shift, 4);
+    if (value == "task_state") return route_filter_bit(shift, 5);
+    if (value == "recall") return route_filter_bit(shift, 6);
+    if (value == "cull_span") return route_filter_bit(shift, 7);
+  } else if (shift == kScopeFilterShift) {
+    if (value == "conversation") return route_filter_bit(shift, 0);
+    if (value == "project") return route_filter_bit(shift, 1);
+    if (value == "user") return route_filter_bit(shift, 2);
+    if (value == "task") return route_filter_bit(shift, 3);
+    if (value == "global") return route_filter_bit(shift, 4);
+    if (value == "session") return route_filter_bit(shift, 5);
+  } else if (shift == kDurabilityFilterShift) {
+    if (value == "volatile") return route_filter_bit(shift, 0);
+    if (value == "session") return route_filter_bit(shift, 1);
+    if (value == "project") return route_filter_bit(shift, 2);
+    if (value == "permanent") return route_filter_bit(shift, 3);
+  } else if (shift == kMutabilityFilterShift) {
+    if (value == "ephemeral") return route_filter_bit(shift, 0);
+    if (value == "stable") return route_filter_bit(shift, 1);
+    if (value == "mutable") return route_filter_bit(shift, 2);
+    if (value == "immutable") return route_filter_bit(shift, 3);
+  }
+  return 0;
+}
+
+static std::uint64_t route_filter_bits(
+    const std::string& kind,
+    const std::string& scope,
+    const std::string& durability,
+    const std::string& mutability) {
+  return known_route_filter_bit(kKindFilterShift, kind) |
+         known_route_filter_bit(kScopeFilterShift, scope) |
+         known_route_filter_bit(kDurabilityFilterShift, durability) |
+         known_route_filter_bit(kMutabilityFilterShift, mutability);
+}
+
 void RouterIndex::upsert(std::uint64_t node_id, std::vector<float> route_key,
                          std::vector<std::string> lexical_keys) {
   std::vector<std::vector<float>> keys;
@@ -2566,6 +2618,9 @@ void RouterIndex::upsert_multi(std::uint64_t node_id,
     }
   }
   entries_.push_back({node_id, std::move(route_keys), std::move(lexical_keys)});
+  auto& e = entries_.back();
+  e.filter_bits = route_filter_bits(
+      e.kind, e.scope, e.durability, e.mutability);
   mark_mla_arena_dirty();
 }
 
@@ -2606,6 +2661,8 @@ void RouterIndex::set_route_metadata(std::uint64_t node_id,
       if (!mutability.empty()) {
         e.mutability = mutability;
       }
+      e.filter_bits = route_filter_bits(
+          e.kind, e.scope, e.durability, e.mutability);
     }
   }
 }
@@ -2721,16 +2778,52 @@ static bool filter_allows(const std::vector<std::string>& filters,
          std::find(filters.begin(), filters.end(), value) != filters.end();
 }
 
+static bool filter_mask_all_known(const std::vector<std::string>& filters,
+                                  int shift,
+                                  std::uint64_t* out) {
+  std::uint64_t mask = 0;
+  for (const auto& value : filters) {
+    const auto bit = known_route_filter_bit(shift, value);
+    if (bit == 0) {
+      return false;
+    }
+    mask |= bit;
+  }
+  *out = mask;
+  return true;
+}
+
+static bool filter_allows_bits(const std::vector<std::string>& filters,
+                               const std::string& value,
+                               std::uint64_t entry_bits,
+                               int shift) {
+  if (filters.empty()) {
+    return true;
+  }
+  std::uint64_t mask = 0;
+  if (filter_mask_all_known(filters, shift, &mask)) {
+    return (entry_bits & mask) != 0;
+  }
+  return filter_allows(filters, value);
+}
+
 bool RouterIndex::entry_allowed(
     const Entry& e,
     const std::vector<std::string>& kinds,
     const std::vector<std::string>& scopes,
     const std::vector<std::string>& durabilities,
     const std::vector<std::string>& mutabilities) const {
-  return e.active && filter_allows(kinds, e.kind) &&
-         filter_allows(scopes, e.scope) &&
-         filter_allows(durabilities, e.durability) &&
-         filter_allows(mutabilities, e.mutability);
+  return e.active &&
+         filter_allows_bits(
+             kinds, e.kind, e.filter_bits, kKindFilterShift) &&
+         filter_allows_bits(
+             scopes, e.scope, e.filter_bits, kScopeFilterShift) &&
+         filter_allows_bits(
+             durabilities, e.durability, e.filter_bits,
+             kDurabilityFilterShift) &&
+         filter_allows_bits(
+             mutabilities, e.mutability, e.filter_bits,
+             kMutabilityFilterShift);
 }
 
 static std::size_t lexical_hit_count(

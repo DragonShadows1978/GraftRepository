@@ -1226,6 +1226,33 @@ def test_native_route_filters_metadata_fields(tmp_path):
                               scopes=("project",)) == [task_state]
 
 
+def test_native_route_filter_bitmasks_fall_back_for_unknown_values(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        custom = store.add_node("custom metadata route", b"", ntok=1)
+        known = store.add_node("known metadata route", b"", ntok=1)
+        store.set_metadata(custom, {
+            "active": True, "kind": "research_note",
+            "scope": "lab", "durability": "archive",
+            "mutability": "append_only"})
+        store.set_metadata(known, {
+            "active": True, "kind": "fact", "scope": "project",
+            "durability": "project", "mutability": "stable"})
+        store.set_route(custom, [1.0, 0.0], ["same-code"])
+        store.set_route(known, [0.95, 0.3122499], ["same-code"])
+
+        assert store.route([1.0, 0.0], ["same-code"], topk=3,
+                           kinds=("fact",)) == [known]
+        assert store.route([1.0, 0.0], ["same-code"], topk=3,
+                           kinds=("research_note",),
+                           scopes=("lab",),
+                           durabilities=("archive",),
+                           mutabilities=("append_only",)) == [custom]
+
+
 def test_native_mla_gemv_arena_matches_reference_scan(tmp_path):
     lib = build_native(tmp_path)
     rng = np.random.default_rng(1234)
