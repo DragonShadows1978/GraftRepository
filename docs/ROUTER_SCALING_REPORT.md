@@ -252,6 +252,17 @@ publish a fresh copy. Focused stale-snapshot/concurrency regression:
 `7 passed, 66 deselected`. Full native runtime gate:
 `73 passed, 2 warnings in 177.02s`.
 
+A standalone sanitizer race gate now covers the atomic snapshot handoff:
+`scripts/grm_router_tsan_gate.py` compiles `cpp/grm_runtime.cpp` with
+`-fsanitize=thread` and stresses concurrent `route_gqa` readers against route,
+active, metadata, revision, and expire writer mutations. On this host GCC TSAN
+first reports `ThreadSanitizer: unexpected memory mapping`; the script retries
+with `setarch x86_64 -R`, and the gate passed at 48 nodes, 1,200 writer
+iterations, and 4 reader threads. This harness uses tiny Qwen3.5_TC-shaped route
+data for race coverage only; it does not load Qwen3.5-2B or Qwen3-4B weights and
+is not a routing-performance benchmark. Post-gate validation: focused native
+router selector passed 5/5 and router baseline passed 15/15.
+
 Fresh post-snapshot GQA receipts:
 
 | route shape | nodes | native p50 ms | native p95 ms | parity |
@@ -285,5 +296,3 @@ Fresh post-snapshot GQA receipts:
   compaction, grouped repeated-head qt4 scoring, hand-unrolled repeat-4
   head-ratio scoring, and paired repeated-head scoring were measured and
   rejected.
-- Run TSAN or an equivalent sanitizer race gate before treating the atomic
-  snapshot path as fully concurrency-hardened.

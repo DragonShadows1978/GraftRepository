@@ -380,9 +380,16 @@ stale-snapshot/concurrency selector passed 7/7; full
 receipts: Qwen3.5-2B source layer-3 full-bank 512 nodes matched all four
 batched-reference queries at `22.0019ms` p50 / `23.8365ms` p95; representative
 10k GQA matched five batched-reference queries at `5.9916ms` p50 /
-`6.0286ms` p95. Remaining D5 hardening is TSAN or an equivalent sanitizer race
-gate; the route hot path itself is now read-lock-free for clean prepared
-snapshots.
+`6.0286ms` p95. D5 sanitizer hardening now has a standalone TSAN stress gate:
+`scripts/grm_router_tsan_gate.py` compiles `cpp/grm_runtime.cpp` with
+`-fsanitize=thread` and stresses concurrent `route_gqa` readers against route,
+active, metadata, revision, and expire writers. On this host GCC TSAN first
+hits an ASLR mapping issue, the script retries with `setarch x86_64 -R`, and
+the gate passed at 48 nodes, 1,200 writer iterations, and 4 reader threads.
+Post-gate validation: focused native router selector passed 5/5 and router
+baseline passed 15/15. The route hot path itself is now read-lock-free for clean
+prepared snapshots. The TSAN harness uses tiny Qwen3.5_TC-shaped data for race
+coverage; it is not a Qwen3-4B or Qwen3.5-2B performance benchmark.
 
 **P6 — Report.** `ROUTER_SCALING_REPORT.md`: before/after curves at all
 four node counts, both dialects, exactness-gate record, M-sweep table.
