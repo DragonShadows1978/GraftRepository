@@ -333,6 +333,16 @@ parity-green but slightly slower (`6.0345ms` p50), so it is not the default for
 single-token key banks. Full native runtime now passes 74/74 and the router
 baseline harness passes 15/15.
 
+P4/P6 layer-sweep note: `scripts/grm_gqa_layer_sweep.py` now runs the existing
+native GQA benchmark across real Qwen3.5 capture layers with one native C ABI
+build. First receipt: Qwen3.5-2B source captures, layers 3/7/11, full 256-token
+K-banks, 256 nodes, query shape `(8,4,256)`, lexical off, OpenMP, native-only
+timing, and exhaustive six-query batched-reference parity. Results were
+parity-green on all three layers: layer 3 `11.5599ms` p50 / `11.8116ms` p95,
+layer 7 `11.9944ms` p50 / `12.7472ms` p95, and layer 11 `12.0086ms` p50 /
+`12.0181ms` p95. This extends real-capture full-bank evidence across layers
+without moving or modifying the translation corpus artifacts.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.
@@ -399,9 +409,10 @@ with measured numbers, not projections).
 P6 first report note: `docs/ROUTER_SCALING_REPORT.md` now records the current
 measured MLA and GQA router state: P0 native/Python baselines, P2 fp32 arena
 large points, P3 INT4 M-sweeps and current M=64 operating point, P4 GQA
-key-bank smoke plus Qwen3.5-2B representative-key curve, expectation pass/miss
-status, and remaining work. The report is intentionally explicit that E3 is
-still narrowly missed and that larger real-graft GQA curves remain.
+key-bank smoke plus Qwen3.5-2B representative-key curve, Qwen3.5-2B source
+capture layer sweep, expectation pass/miss status, and remaining work. The
+report is intentionally explicit that E3 is still narrowly missed and that
+larger real-graft GQA curves remain.
 
 **Deferred (registered, not scheduled):** CUDA route path (only if host
 curves fail interactive targets at 1M — host INT4 GEMV at 1M×512 is

@@ -7,7 +7,8 @@ This report records measured router scaling after replacing the original
 per-node route scan with contiguous host arenas:
 
 - MLA: fp32 SoA arena plus INT4 bulk/refine route book.
-- GQA: contiguous key-bank arena with segment-style per-entry reduction.
+- GQA: contiguous key-bank arena with segment-style per-entry reduction and
+  real-capture layer-sweep coverage.
 - Concurrency: route-key mutations mark arenas dirty, the next route prepares
   once under the writer side of the C ABI shared mutex, and clean prepared
   route reads atomically pin immutable snapshots without a read-side mutex.
@@ -226,6 +227,41 @@ native runtime passed 74/74, and the router baseline harness passed 15/15.
 | harvested representative-key GQA, auto per-entry | 10000 | 5.9844 | 6.0227 | true, 5/5 batched-reference queries |
 | harvested representative-key GQA, forced segment | 10000 | 6.0345 | 7.7158 | true, 5/5 batched-reference queries |
 
+## GQA Capture Layer Sweep
+
+`scripts/grm_gqa_layer_sweep.py` wraps the existing GQA benchmark internals and
+builds the native C ABI library once before sweeping real Qwen3.5 capture
+layers. The first receipt used Qwen3.5-2B source captures, full 256-token
+K-banks, query shape `(8,4,256)`, `topk=5`, OpenMP, lexical off, native-only
+timing, and exhaustive six-query batched-reference parity.
+
+Command:
+
+```bash
+PYTHONPATH=. PYTHONDONTWRITEBYTECODE=1 \
+  python3 scripts/grm_gqa_layer_sweep.py \
+  --capture-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/captures \
+  --capture-role source \
+  --capture-limit 0 \
+  --layers 3 7 11 \
+  --node-counts 256 \
+  --queries 6 \
+  --warmup 2 \
+  --query-tokens 4 \
+  --topk 5 \
+  --openmp \
+  --parity-reference batched \
+  --out /tmp/grm_gqa_layer_sweep_3_7_11_256.json \
+  --markdown-out /tmp/grm_gqa_layer_sweep_3_7_11_256.md \
+  --progress
+```
+
+| layer | nodes | usable shards | native p50 ms | native p95 ms | parity |
+| ---: | ---: | ---: | ---: | ---: | --- |
+| 3 | 256 | 9,635 | 11.5599 | 11.8116 | true, 6/6 batched-reference queries |
+| 7 | 256 | 9,635 | 11.9944 | 12.7472 | true, 6/6 batched-reference queries |
+| 11 | 256 | 9,635 | 12.0086 | 12.0181 | true, 6/6 batched-reference queries |
+
 ## Prepared Router Snapshots
 
 The C ABI router now publishes prepared MLA/GQA state as an immutable
@@ -279,16 +315,16 @@ Fresh post-snapshot GQA receipts:
 | E1: fp32 GEMV 10x current native scan at 100k | not proven; no direct P0 100k run |
 | E2: INT4 two-tier 2x over fp32 at 100k | passed on measured points: 22.8177ms -> 6.2995ms |
 | E3: 1M route <= 25ms host-side | narrowly missed; best exact measured point is 26.0175ms |
-| E4: GQA native path 20x Python fallback at 10k | passed on smoke shape: 27.81x; Qwen3.5-2B representative-key shape is 26.27x; real captured 256-node full K-bank is 5.69x |
+| E4: GQA native path 20x Python fallback at 10k | passed on smoke shape: 27.81x; Qwen3.5-2B representative-key shape is 26.27x; real captured 256-node full K-bank is 5.69x; layers 3/7/11 full-bank 256-node parity is green |
 
 ## Remaining Work
 
 - Treat the 1M dim128 host route as deep-interactive already; if E3 remains
   mandatory, replace the scalar q4 dot with a lower-level vectorized dot kernel
   or a larger routing layout change.
-- Extend exhaustive real-capture GQA parity beyond the current 1,024-node,
-  four-query batched-reference receipt and across more layers before claiming
-  broader full-bank correctness.
+- Extend exhaustive real-capture GQA parity beyond the current layer-3
+  1,024-node, four-query batched-reference receipt and the 256-node layer 3/7/11
+  sweep before claiming broader full-bank correctness across all capture layers.
 - Implement a fuller GQA GEMM/segment-reduce layout if sub-10ms routing is
   required past larger full-bank real-capture points; the current segment
   reduce is a key-score-bank pass and improves 512-node full-bank routing, but
