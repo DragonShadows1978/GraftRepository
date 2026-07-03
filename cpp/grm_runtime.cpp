@@ -22,6 +22,10 @@
 #include <stdexcept>
 #include <sstream>
 
+#if defined(__x86_64__) || defined(__i386__)
+#include <immintrin.h>
+#endif
+
 #if defined(__unix__) || defined(__APPLE__)
 #include <fcntl.h>
 #include <unistd.h>
@@ -54,6 +58,68 @@ constexpr int kCblasNoTrans = 111;
 constexpr int kCblasTrans = 112;
 #else
 constexpr bool kCblasAvailable = false;
+#endif
+
+struct Dot4Scores {
+  float dot0 = 0.0F;
+  float dot1 = 0.0F;
+  float dot2 = 0.0F;
+  float dot3 = 0.0F;
+};
+
+#if defined(__x86_64__) || defined(__i386__)
+static bool cpu_has_avx2() {
+#if defined(__GNUC__) || defined(__clang__)
+  return __builtin_cpu_supports("avx2");
+#else
+  return false;
+#endif
+}
+
+__attribute__((target("avx2")))
+static Dot4Scores dot4_f32_avx2(
+    const float* q0,
+    const float* q1,
+    const float* q2,
+    const float* q3,
+    const float* k,
+    std::size_t dim) {
+  __m256 acc0 = _mm256_setzero_ps();
+  __m256 acc1 = _mm256_setzero_ps();
+  __m256 acc2 = _mm256_setzero_ps();
+  __m256 acc3 = _mm256_setzero_ps();
+  std::size_t d = 0;
+  for (; d + 7 < dim; d += 8) {
+    const __m256 kv = _mm256_loadu_ps(k + d);
+    acc0 = _mm256_add_ps(acc0, _mm256_mul_ps(_mm256_loadu_ps(q0 + d), kv));
+    acc1 = _mm256_add_ps(acc1, _mm256_mul_ps(_mm256_loadu_ps(q1 + d), kv));
+    acc2 = _mm256_add_ps(acc2, _mm256_mul_ps(_mm256_loadu_ps(q2 + d), kv));
+    acc3 = _mm256_add_ps(acc3, _mm256_mul_ps(_mm256_loadu_ps(q3 + d), kv));
+  }
+  alignas(32) float tmp0[8];
+  alignas(32) float tmp1[8];
+  alignas(32) float tmp2[8];
+  alignas(32) float tmp3[8];
+  _mm256_store_ps(tmp0, acc0);
+  _mm256_store_ps(tmp1, acc1);
+  _mm256_store_ps(tmp2, acc2);
+  _mm256_store_ps(tmp3, acc3);
+  Dot4Scores out;
+  for (std::size_t i = 0; i < 8; ++i) {
+    out.dot0 += tmp0[i];
+    out.dot1 += tmp1[i];
+    out.dot2 += tmp2[i];
+    out.dot3 += tmp3[i];
+  }
+  for (; d < dim; ++d) {
+    const float kv = k[d];
+    out.dot0 += q0[d] * kv;
+    out.dot1 += q1[d] * kv;
+    out.dot2 += q2[d] * kv;
+    out.dot3 += q3[d] * kv;
+  }
+  return out;
+}
 #endif
 
 std::string DialectDescriptor::dialect_id() const {
@@ -3319,7 +3385,8 @@ float RouterIndex::gqa_arena_key_score(
     bool query_finite,
     std::size_t key_idx,
     bool use_qt4_transposed,
-    bool use_qt4_dot_unroll8) const {
+    bool use_qt4_dot_unroll8,
+    bool use_qt4_avx2) const {
   if (query_heads == 0 || query_tokens == 0 || head_dim == 0 ||
       kv_heads == 0 || query_heads % kv_heads != 0 ||
       key_idx >= gqa_arena_.key_tokens.size()) {
@@ -3351,7 +3418,7 @@ float RouterIndex::gqa_arena_key_score(
           query, query_heads, head_dim, kv_heads, key_idx);
     }
     return gqa_arena_key_score_qt4(
-        query, query_heads, head_dim, kv_heads, key_idx);
+        query, query_heads, head_dim, kv_heads, key_idx, use_qt4_avx2);
   }
   const auto repeat = query_heads / kv_heads;
   const auto key_row_start = gqa_arena_.key_row_offsets[key_idx];
@@ -3390,7 +3457,8 @@ float RouterIndex::gqa_arena_key_score_qt4(
     std::uint64_t query_heads,
     std::uint64_t head_dim,
     std::uint64_t kv_heads,
-    std::size_t key_idx) const {
+    std::size_t key_idx,
+    bool use_qt4_avx2) const {
   const auto repeat = query_heads / kv_heads;
   const auto key_tokens = gqa_arena_.key_tokens[key_idx];
   const auto key_row_start = gqa_arena_.key_row_offsets[key_idx];
@@ -3414,17 +3482,30 @@ float RouterIndex::gqa_arena_key_score_qt4(
       float dot1 = 0.0F;
       float dot2 = 0.0F;
       float dot3 = 0.0F;
+#if defined(__x86_64__) || defined(__i386__)
+      if (use_qt4_avx2 && head_dim >= 8) {
+        const auto dots = dot4_f32_avx2(
+            q0, q1, q2, q3, k, static_cast<std::size_t>(head_dim));
+        dot0 = dots.dot0;
+        dot1 = dots.dot1;
+        dot2 = dots.dot2;
+        dot3 = dots.dot3;
+      } else {
+#endif
 #if defined(_OPENMP)
 #pragma omp simd reduction(+ : dot0, dot1, dot2, dot3)
 #endif
-      for (std::uint64_t d = 0; d < head_dim; ++d) {
-        const auto idx = static_cast<std::size_t>(d);
-        const float kv = k[idx];
-        dot0 += q0[idx] * kv;
-        dot1 += q1[idx] * kv;
-        dot2 += q2[idx] * kv;
-        dot3 += q3[idx] * kv;
+        for (std::uint64_t d = 0; d < head_dim; ++d) {
+          const auto idx = static_cast<std::size_t>(d);
+          const float kv = k[idx];
+          dot0 += q0[idx] * kv;
+          dot1 += q1[idx] * kv;
+          dot2 += q2[idx] * kv;
+          dot3 += q3[idx] * kv;
+        }
+#if defined(__x86_64__) || defined(__i386__)
       }
+#endif
       const float row_best = std::max(
           std::max(std::abs(dot0), std::abs(dot1)),
           std::max(std::abs(dot2), std::abs(dot3)));
@@ -3725,7 +3806,8 @@ float RouterIndex::gqa_arena_entry_score(
     bool query_finite,
     std::size_t entry_idx,
     bool use_qt4_transposed,
-    bool use_qt4_dot_unroll8) const {
+    bool use_qt4_dot_unroll8,
+    bool use_qt4_avx2) const {
   const auto key_start = gqa_arena_.entry_key_offsets[entry_idx];
   const auto key_end = gqa_arena_.entry_key_offsets[entry_idx + 1];
   float entry_best = 0.0F;
@@ -3733,7 +3815,7 @@ float RouterIndex::gqa_arena_entry_score(
   for (std::size_t key_idx = key_start; key_idx < key_end; ++key_idx) {
     const auto score = gqa_arena_key_score(
         query, query_heads, query_tokens, head_dim, kv_heads, query_finite,
-        key_idx, use_qt4_transposed, use_qt4_dot_unroll8);
+        key_idx, use_qt4_transposed, use_qt4_dot_unroll8, use_qt4_avx2);
     if (!std::isfinite(score)) {
       continue;
     }
@@ -3990,6 +4072,10 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
       env_truthy("GRM_ROUTER_GQA_TRANSPOSED");
   const bool use_qt4_dot_unroll8 =
       env_truthy("GRM_ROUTER_GQA_QT4_UNROLL8");
+  bool use_qt4_avx2 = false;
+#if defined(__x86_64__) || defined(__i386__)
+  use_qt4_avx2 = env_truthy("GRM_ROUTER_GQA_AVX2") && cpu_has_avx2();
+#endif
   const bool use_blas_segment =
       kCblasAvailable && env_truthy("GRM_ROUTER_GQA_BLAS");
   std::uint64_t max_key_tokens = 1;
@@ -4145,7 +4231,7 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
       }
       const auto score = gqa_arena_key_score(
           query, query_heads, query_tokens, head_dim, kv_heads, query_finite,
-          key_start, use_qt4_transposed, use_qt4_dot_unroll8);
+          key_start, use_qt4_transposed, use_qt4_dot_unroll8, use_qt4_avx2);
       if (!std::isfinite(score)) {
         continue;
       }
@@ -4179,7 +4265,7 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
         const auto key_idx = static_cast<std::size_t>(key_i);
         key_scores[key_idx] = gqa_arena_key_score(
             query, query_heads, query_tokens, head_dim, kv_heads, query_finite,
-            key_idx, use_qt4_transposed, use_qt4_dot_unroll8);
+            key_idx, use_qt4_transposed, use_qt4_dot_unroll8, use_qt4_avx2);
       }
     }
     for (std::size_t entry_idx = 0; entry_idx < entry_count; ++entry_idx) {
@@ -4227,7 +4313,7 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
           ? gqa_arena_entry_score(
                 query, query_heads, query_tokens, head_dim, kv_heads,
                 query_finite, entry_idx, use_qt4_transposed,
-                use_qt4_dot_unroll8)
+                use_qt4_dot_unroll8, use_qt4_avx2)
           : max_gqa_raw_score(
                 query, query_heads, query_tokens, head_dim, kv_heads,
                 e.route_keys);

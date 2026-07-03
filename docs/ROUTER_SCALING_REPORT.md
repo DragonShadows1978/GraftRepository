@@ -300,6 +300,21 @@ same flag stayed flat at 512 nodes (`5.9949ms` p50 / `6.0773ms` p95, 6/6
 exhaustive batched-reference parity), but that was harvested fixture data rather
 than 4B live capture shards.
 
+`GRM_ROUTER_GQA_AVX2=1` enables an opt-in AVX2 dot4 kernel for the
+query-token-4 prepared GQA scorer on AVX2-capable hosts. The default path is
+unchanged and unsupported hosts fall back automatically. Focused native parity
+passes with AVX2 included in the qt4 mode matrix. Qwen3.5-2B source layer-3
+full-bank captures, lexical off, OpenMP, exhaustive 8-query batched parity:
+
+| shape | nodes | native p50 ms | native p95 ms | parity |
+| --- | ---: | ---: | ---: | --- |
+| AVX2 dot4, full 256-token K-bank | 500 | 15.8914 | 17.6990 | true, 8/8 batched-reference queries |
+| AVX2 dot4, full 256-token K-bank | 1,000 | 28.9156 | 31.0866 | true, 8/8 batched-reference queries |
+
+This is the first in-tree lower-level full-bank dot kernel with a clear capture
+win, but it remains opt-in until broader layer/model receipts clear the
+accumulation-order risk.
+
 `GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
 routes query-token-4 GQA keys over that layout. It is parity-green but rejected
 for runtime default use on the hard full-bank capture shape: Qwen3.5-2B source

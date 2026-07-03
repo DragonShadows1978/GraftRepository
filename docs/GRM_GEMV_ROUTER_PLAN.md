@@ -430,6 +430,19 @@ data, not 4B live capture shards. This confirms the next useful kernel work
 should be a true compiler/BLAS-friendly row layout or external GEMM call, not
 hand-unrolling the scalar inner loop.
 
+P4 AVX2 dot-kernel note: `GRM_ROUTER_GQA_AVX2=1` now enables an opt-in AVX2
+dot4 kernel for the query-token-4 GQA key scorer when the host CPU reports AVX2
+support. The default scalar/SIMD-pragmas path remains unchanged, and unsupported
+hosts fall back automatically. Focused native GQA parity passed with the AVX2
+mode included in the qt4 mode matrix. On Qwen3.5-2B source layer-3 full
+256-token K-bank captures, lexical off, OpenMP, exhaustive 8-query batched
+parity: 500 nodes measured `15.8914ms` p50 / `17.6990ms` p95, and 1,000 nodes
+measured `28.9156ms` p50 / `31.0866ms` p95. Both were parity-green and the
+benchmark receipt records `GRM_ROUTER_GQA_AVX2=1`. This is the first
+lower-level in-tree dot kernel with a real full-bank win, but it stays opt-in
+until broader layer/model receipts prove the accumulation-order change is safe
+enough to default.
+
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The
 path preserves the raw-q.k law in focused parity and exhaustive benchmark
