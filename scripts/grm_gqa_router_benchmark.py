@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Benchmark native GRM GQA raw q.k routing on harvested route banks.
+"""Benchmark native GRM GQA raw q.k routing.
 
-The input banks are deterministic feature-hash vectors from real repository
-source/doc lines, reshaped into GQA key/query tensors. This gives a reproducible
-Qwen-shaped route stress without requiring a live model or touching generated
-translation graft artifacts.
+By default the input banks are deterministic feature-hash vectors from real
+repository source/doc lines, reshaped into GQA key/query tensors. The benchmark
+can also read Qwen3.5 capture shards in-place and route their stored K banks
+without moving or modifying generated graft artifacts.
 """
 
 from __future__ import annotations
@@ -92,6 +92,94 @@ def make_gqa_queries(
     flat = baseline.make_route_matrix(bank, query_count)
     shaped = flat.reshape(query_count, query_heads, query_tokens, head_dim)
     return _normalize_last_dim(shaped)
+
+
+def _capture_paths(capture_dir: Path, role: str, limit: int) -> list[Path]:
+    paths = sorted(capture_dir.glob(f"{role}_*.npz"))
+    return paths[:limit] if limit > 0 else paths
+
+
+def load_capture_routes(
+    capture_dir: Path,
+    *,
+    role: str,
+    layer: int,
+    limit: int,
+    token_limit: int,
+    kv_heads: int,
+    head_dim: int,
+) -> tuple[np.ndarray, dict]:
+    routes: list[np.ndarray] = []
+    used: list[str] = []
+    skipped_shape = 0
+    target_tokens: int | None = None
+    key_name = f"l{int(layer)}_k"
+    for path in _capture_paths(capture_dir, role, limit):
+        with np.load(path, allow_pickle=False) as shard:
+            if key_name not in shard:
+                continue
+            arr = np.asarray(shard[key_name], dtype=np.float32)
+        if arr.ndim != 4 or arr.shape[0] != 1:
+            continue
+        key = arr[0]
+        if key.shape[0] != kv_heads or key.shape[2] != head_dim:
+            raise RuntimeError(
+                f"{path} {key_name} shape {key.shape} does not match "
+                f"kv_heads={kv_heads}, head_dim={head_dim}")
+        if token_limit > 0:
+            if key.shape[1] < token_limit:
+                skipped_shape += 1
+                continue
+            key = key[:, :token_limit, :]
+        elif target_tokens is None:
+            target_tokens = int(key.shape[1])
+        elif key.shape[1] != target_tokens:
+            skipped_shape += 1
+            continue
+        if key.shape[1] == 0:
+            continue
+        routes.append(_normalize_last_dim(key)[None, :, :, :])
+        used.append(str(path))
+    if not routes:
+        raise RuntimeError(
+            f"no {role} capture K banks for layer {layer} in {capture_dir}")
+    stacked = np.stack(routes).astype(np.float32, copy=False)
+    stats = {
+        "capture_dir": str(capture_dir),
+        "role": role,
+        "layer": int(layer),
+        "shards": len(used),
+        "key_name": key_name,
+        "key_tokens": int(stacked.shape[3]),
+        "kv_heads": int(stacked.shape[2]),
+        "head_dim": int(stacked.shape[4]),
+        "skipped_shape": int(skipped_shape),
+        "first_shards": used[:5],
+    }
+    return stacked, stats
+
+
+def make_capture_queries(
+    routes: np.ndarray,
+    *,
+    query_count: int,
+    query_heads: int,
+    query_tokens: int,
+) -> np.ndarray:
+    kv_heads = int(routes.shape[2])
+    key_tokens = int(routes.shape[3])
+    if query_heads % kv_heads != 0:
+        raise RuntimeError(
+            f"query_heads={query_heads} must be divisible by kv_heads={kv_heads}")
+    out: list[np.ndarray] = []
+    repeat = query_heads // kv_heads
+    for i in range(query_count):
+        key = routes[(i * 37 + 11) % routes.shape[0], 0]
+        start = (i * 17) % max(1, key_tokens)
+        idx = (np.arange(query_tokens) + start) % key_tokens
+        q = np.repeat(key[:, idx, :], repeat, axis=0)
+        out.append(q)
+    return _normalize_last_dim(np.stack(out))
 
 
 def gqa_raw_score(query: np.ndarray, key: np.ndarray) -> float:
@@ -286,6 +374,7 @@ def benchmark_count(
     topk: int,
     warmup: int,
     native_only: bool,
+    use_lexical: bool,
 ) -> dict:
     py_ns: list[int] = []
     native_ns: list[int] = []
@@ -305,13 +394,15 @@ def benchmark_count(
         build_ms = (time.perf_counter_ns() - build_t0) / 1.0e6
         if not native_only:
             for i, query in enumerate(queries):
-                lexical = baseline.lexical_keys_for_query(i, routes.shape[0])
+                lexical = (baseline.lexical_keys_for_query(i, routes.shape[0])
+                           if use_lexical else ())
                 py = python_gqa_route_scan(routes, query, lexical, topk)
                 got = native.route(query, lexical, topk)
                 if got != py:
                     mismatches.append({"query": i, "python": py, "native": got})
         for i, query in enumerate(queries):
-            lexical = baseline.lexical_keys_for_query(i, routes.shape[0])
+            lexical = (baseline.lexical_keys_for_query(i, routes.shape[0])
+                       if use_lexical else ())
             if i < warmup:
                 if not native_only:
                     python_gqa_route_scan(routes, query, lexical, topk)
@@ -341,6 +432,7 @@ def benchmark_count(
         "python_route_ms_p95": None if native_only else baseline._p95_ms(py_ns),
         "parity": None if native_only else not mismatches,
         "parity_reference": None if native_only else "python_gqa_raw",
+        "lexical": bool(use_lexical),
         "mismatches": mismatches[:5],
     }
 
@@ -360,6 +452,7 @@ def write_markdown(result: dict, path: Path) -> None:
         f"- query_tokens: {result['shape']['query_tokens']}",
         f"- key_tokens: {result['shape']['key_tokens']}",
         f"- keys_per_node: {result['shape']['keys_per_node']}",
+        f"- route_source: `{result['route_source']}`",
         "",
         "## Results",
         "",
@@ -388,7 +481,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source-root", type=Path, default=ROOT)
     p.add_argument("--preset", choices=sorted(PRESETS), default="qwen35-2b-attn")
-    p.add_argument("--node-counts", nargs="+", type=int, default=[1000, 10000])
+    p.add_argument("--node-counts", nargs="+", type=int)
     p.add_argument("--queries", type=int, default=8)
     p.add_argument("--warmup", type=int, default=2)
     p.add_argument("--topk", type=int, default=5)
@@ -401,6 +494,14 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--cxx", default="g++")
     p.add_argument("--openmp", action="store_true")
     p.add_argument("--native-only", action="store_true")
+    p.add_argument("--no-lexical", action="store_true")
+    p.add_argument("--capture-dir", type=Path,
+                   help="read Qwen capture shard K banks from this directory")
+    p.add_argument("--capture-role", default="source")
+    p.add_argument("--capture-layer", type=int, default=3)
+    p.add_argument("--capture-limit", type=int, default=128)
+    p.add_argument("--capture-token-limit", type=int, default=0,
+                   help="limit K tokens per captured shard; 0 keeps all tokens")
     p.add_argument("--out", type=Path,
                    default=Path("/tmp/grm_gqa_router_benchmark.json"))
     p.add_argument("--markdown-out", type=Path)
@@ -421,7 +522,8 @@ def main(argv: list[str]) -> int:
             "kv_heads": 1,
             "head_dim": 16,
         })
-        args.node_counts = [32, 96]
+        if args.node_counts is None:
+            args.node_counts = [32, 96]
         args.queries = min(args.queries, 6)
         args.warmup = min(args.warmup, 1)
         args.query_tokens = min(args.query_tokens, 2)
@@ -434,34 +536,74 @@ def main(argv: list[str]) -> int:
     if args.key_tokens <= 0 or args.query_tokens <= 0 or args.keys_per_node <= 0:
         raise SystemExit("token and key counts must be positive")
 
-    route_dim = preset["kv_heads"] * args.key_tokens * preset["head_dim"]
-    query_dim = preset["query_heads"] * args.query_tokens * preset["head_dim"]
-    route_bank, route_stats = baseline.harvest_centroid_bank(
-        args.source_root, dim=route_dim, max_vectors=args.max_vectors,
-        max_files=args.max_files)
-    query_bank, query_stats = baseline.harvest_centroid_bank(
-        args.source_root, dim=query_dim, max_vectors=args.max_vectors,
-        max_files=args.max_files)
-    queries = make_gqa_queries(
-        query_bank,
-        query_count=args.queries,
-        query_heads=preset["query_heads"],
-        query_tokens=args.query_tokens,
-        head_dim=preset["head_dim"],
-    )
+    capture_routes = None
+    capture_stats = None
+    if args.capture_dir is not None:
+        capture_routes, capture_stats = load_capture_routes(
+            args.capture_dir,
+            role=args.capture_role,
+            layer=args.capture_layer,
+            limit=args.capture_limit,
+            token_limit=args.capture_token_limit,
+            kv_heads=preset["kv_heads"],
+            head_dim=preset["head_dim"],
+        )
+        if args.node_counts is None:
+            args.node_counts = [
+                min(32, capture_routes.shape[0]),
+                min(96, capture_routes.shape[0]),
+            ]
+        queries = make_capture_queries(
+            capture_routes,
+            query_count=args.queries,
+            query_heads=preset["query_heads"],
+            query_tokens=args.query_tokens,
+        )
+        route_stats = capture_stats
+        query_stats = {
+            "source": "capture_key_derived",
+            "query_count": int(queries.shape[0]),
+        }
+        route_source = "capture"
+    else:
+        if args.node_counts is None:
+            args.node_counts = [1000, 10000]
+        route_dim = preset["kv_heads"] * args.key_tokens * preset["head_dim"]
+        query_dim = preset["query_heads"] * args.query_tokens * preset["head_dim"]
+        route_bank, route_stats = baseline.harvest_centroid_bank(
+            args.source_root, dim=route_dim, max_vectors=args.max_vectors,
+            max_files=args.max_files)
+        query_bank, query_stats = baseline.harvest_centroid_bank(
+            args.source_root, dim=query_dim, max_vectors=args.max_vectors,
+            max_files=args.max_files)
+        queries = make_gqa_queries(
+            query_bank,
+            query_count=args.queries,
+            query_heads=preset["query_heads"],
+            query_tokens=args.query_tokens,
+            head_dim=preset["head_dim"],
+        )
+        route_source = "harvested"
 
     results = []
     with tempfile.TemporaryDirectory(prefix="grm_gqa_router_") as td:
         lib = baseline.build_native_lib(Path(td), cxx=args.cxx, openmp=args.openmp)
         for node_count in args.node_counts:
-            routes = make_gqa_routes(
-                route_bank,
-                node_count=node_count,
-                keys_per_node=args.keys_per_node,
-                kv_heads=preset["kv_heads"],
-                key_tokens=args.key_tokens,
-                head_dim=preset["head_dim"],
-            )
+            if capture_routes is not None:
+                if node_count > capture_routes.shape[0]:
+                    raise SystemExit(
+                        f"node count {node_count} exceeds loaded captures "
+                        f"{capture_routes.shape[0]}")
+                routes = capture_routes[:node_count]
+            else:
+                routes = make_gqa_routes(
+                    route_bank,
+                    node_count=node_count,
+                    keys_per_node=args.keys_per_node,
+                    kv_heads=preset["kv_heads"],
+                    key_tokens=args.key_tokens,
+                    head_dim=preset["head_dim"],
+                )
             results.append(benchmark_count(
                 routes=routes,
                 queries=queries,
@@ -471,12 +613,15 @@ def main(argv: list[str]) -> int:
                 topk=args.topk,
                 warmup=args.warmup,
                 native_only=args.native_only,
+                use_lexical=not args.no_lexical,
             ))
 
+    shape_row = results[0] if results else {}
     out = {
         "schema": "grm-gqa-router-benchmark-v1",
         "repo": str(ROOT),
         "preset": args.preset,
+        "route_source": route_source,
         "openmp": bool(args.openmp),
         "native_only": bool(args.native_only),
         "harvest": {
@@ -484,12 +629,12 @@ def main(argv: list[str]) -> int:
             "query": query_stats,
         },
         "shape": {
-            "query_heads": int(preset["query_heads"]),
-            "kv_heads": int(preset["kv_heads"]),
-            "head_dim": int(preset["head_dim"]),
-            "query_tokens": int(args.query_tokens),
-            "key_tokens": int(args.key_tokens),
-            "keys_per_node": int(args.keys_per_node),
+            "query_heads": int(shape_row.get("query_heads", preset["query_heads"])),
+            "kv_heads": int(shape_row.get("kv_heads", preset["kv_heads"])),
+            "head_dim": int(shape_row.get("head_dim", preset["head_dim"])),
+            "query_tokens": int(shape_row.get("query_tokens", args.query_tokens)),
+            "key_tokens": int(shape_row.get("key_tokens", args.key_tokens)),
+            "keys_per_node": int(shape_row.get("keys_per_node", args.keys_per_node)),
         },
         "results": results,
     }

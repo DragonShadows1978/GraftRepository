@@ -199,7 +199,7 @@ more invasive thread-local heap selection attempt remained parity-green but
 slowed to 29.7308ms p50, so it was rejected.
 
 **P4 — GQA key-bank GEMM path.** D4. Gates: parity vs Python GQA
-routing on the Qwen3-4B gate scenarios, latency, 166 floor.
+routing on Qwen-family GQA scenarios, latency, 166 floor.
 
 P4 first-slice note: native GQA routing now builds a lazy contiguous key-bank
 arena keyed by `(kv_heads, head_dim)`, with entry-to-key and key-to-row offsets.
@@ -207,10 +207,10 @@ arena keyed by `(kv_heads, head_dim)`, with entry-to-key and key-to-row offsets.
 to the old scan semantics otherwise. It also parallelizes entry scoring under
 OpenMP and hoists query/key finiteness checks out of the inner dot loop while
 preserving the M6 law: non-finite key/query scores are dropped. A 10k-node
-dim16 smoke probe (`query_shape=(4,4,16)`, `key_shape=(1,4,16)`, `-O3
+dim16 synthetic smoke probe (`query_shape=(4,4,16)`, `key_shape=(1,4,16)`, `-O3
 -fopenmp`) matched the Python/NumPy raw-score top-k and measured native p50
 6.0020ms versus Python 166.9182ms, a 27.81x speedup. This clears E4 for that
-smoke shape; broader Qwen3-4B gate scenarios and the final P6 curve remain.
+smoke shape; broader Qwen-family scenarios and the final P6 curve remain.
 
 P4 Qwen3.5-2B shape note: `scripts/grm_gqa_router_benchmark.py` now measures
 native GQA routing on Qwen-shaped harvested route banks. The default preset is
@@ -219,22 +219,35 @@ the Qwen3.5-2B source-attention geometry (`8q/2kv/head_dim256`). Representative
 8.6680ms, parity-green against the Python raw q.k law; Python p50 at 10k was
 227.7100ms, a 26.27x speedup. The live Qwen3.5-2B translation corpus was
 inspected read-only: source shards expose K banks shaped `(1,2,256,256)` for
-layers 3/7/11/15/19/23. Next real-graft stress should copy those K banks into a
-fixture and add checkpointed/progress output before attempting 25k+ GQA curves.
+layers 3/7/11/15/19/23.
+
+P4 real-capture note: the GQA benchmark can now read capture shards in-place
+(`--capture-dir`, `--capture-role`, `--capture-layer`) without moving or
+deleting generated artifacts. On Qwen3.5-2B source layer 3, full 256-token K
+banks first showed a useful failure: 96 nodes measured 56.1185ms native p50 vs
+40.9139ms Python p50 because native OpenMP gating only looked at entry count.
+`route_gqa_raw` now uses workload-aware gating based on
+`entries * query_heads * query_tokens * key_tokens`; the same 96-node full-bank
+point improved to 16.6903ms p50, and 127 nodes measured 23.0640ms p50, parity
+green. Representative 1-token K from the same captured shards remains much
+faster: 96 nodes, 0.1172ms p50, parity green. Finding: captured full-bank GQA
+is now usable at small N, but larger N still needs the true GEMM/segment-reduce
+layout or explicit representative-key compaction.
 
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.
 
 P5 first-slice note: the C ABI handle now wraps `RouterIndex` with a
-`std::shared_mutex`. Route reads take the shared side; route-key updates,
-metadata active/filter changes, expiry/revision state changes, clears, and
-checkpoint router rebuilds take the writer side. This serializes access to the
-lazy MLA/GQA arenas and prevents torn reads during current threaded callers.
-Regression `test_native_router_serializes_concurrent_route_updates` runs three
-reader threads against a writer thread that rewrites route keys. This is not
-yet the final lock-free double-buffer epoch design from D5, but it lands the
-first no-torn-read gate on the current C ABI surface.
+`std::shared_mutex`. Route-key updates, metadata active/filter changes,
+expiry/revision state changes, clears, and checkpoint router rebuilds take the
+writer side. Current C ABI route calls also take the writer side because MLA/GQA
+arena rebuilds are still lazy and mutate router-owned caches. This serializes
+access to the lazy arenas and prevents torn reads during current threaded
+callers. Regression `test_native_router_serializes_concurrent_route_updates`
+runs three reader threads against a writer thread that rewrites route keys. This
+is not yet the final lock-free double-buffer epoch design from D5, but it lands
+the first no-torn-read gate on the current C ABI surface.
 
 **P6 — Report.** `ROUTER_SCALING_REPORT.md`: before/after curves at all
 four node counts, both dialects, exactness-gate record, M-sweep table.

@@ -86,8 +86,8 @@ arena and OpenMP entry scoring. Smoke probe:
 | native GQA key-bank | 6.0020 | true |
 | Python/NumPy reference | 166.9182 | true |
 
-Measured speedup: 27.81x on this smoke shape. Broader Qwen3-4B gate scenarios
-still need a full P6 curve.
+Measured speedup: 27.81x on this smoke shape. Broader non-capture GQA gate
+scenarios still need a full P6 curve.
 
 Qwen3.5-2B attention-shaped representative-key probe:
 
@@ -103,12 +103,33 @@ Qwen3.5-2B attention-shaped representative-key probe:
 | 1,000 | 2.4416 | 2.5654 | 22.0276 | true |
 | 10,000 | 8.6680 | 9.0765 | 227.7100 | true |
 
-This curve uses the Qwen3.5-2B source attention geometry, not Qwen3-4B. The
-live translation-corpus source shards were inspected read-only and expose layer
-K tensors shaped `(1, 2, 256, 256)`, so the next real-graft stress can copy
-those K banks into a benchmark fixture. Larger one-shot native-only attempts at
-25k+ were stopped before producing results because C ABI population and timing
-need checkpointed/progress output for that heavier GQA shape.
+This curve uses the Qwen3.5-2B source attention geometry, not Qwen3-4B.
+
+Qwen3.5-2B real-capture source K-bank probe:
+
+- source: `/mnt/ForgeRealm/qwen35_graft_translation_poc/captures`
+- role/layer/key: source, layer 3, `l3_k`
+- full K-bank shape: `(2, 256, 256)` per route node
+- representative K-bank shape: `(2, 1, 256)` per route node
+- query source: deterministic probes derived from captured K banks
+- lexical channel: off
+- build flags: `-O3 -fopenmp`
+
+| route keys | nodes | native p50 ms | native p95 ms | Python p50 ms | parity |
+| --- | ---: | ---: | ---: | ---: | :---: |
+| captured full 256-token K | 32 | 6.5388 | 7.2731 | 14.4281 | true |
+| captured full 256-token K | 96 | 16.6903 | 19.0134 | 41.8944 | true |
+| captured full 256-token K | 127 | 23.0640 | 23.4164 | 58.6998 | true |
+| captured representative 1-token K | 32 | 0.0465 | 0.0473 | 0.6651 | true |
+| captured representative 1-token K | 96 | 0.1172 | 0.1696 | 2.0503 | true |
+
+The live translation-corpus source shards were inspected and read in-place only;
+no generated graft/capture files were moved or deleted. Full-bank routing first
+measured slower than NumPy at 96 nodes (`56.1185ms` native p50 vs `40.9139ms`
+Python p50) because the native GQA OpenMP threshold keyed only on entry count.
+The runtime now uses a workload-aware GQA threshold based on
+`entries * query_heads * query_tokens * key_tokens`, improving the same 96-node
+full-bank point to `16.6903ms` p50 while preserving parity.
 
 ## Expectations
 
@@ -117,17 +138,18 @@ need checkpointed/progress output for that heavier GQA shape.
 | E1: fp32 GEMV 10x current native scan at 100k | not proven; no direct P0 100k run |
 | E2: INT4 two-tier 2x over fp32 at 100k | passed on measured points: 22.8177ms -> 6.2995ms |
 | E3: 1M route <= 25ms host-side | narrowly missed; best exact measured point is 26.0175ms |
-| E4: GQA native path 20x Python fallback at 10k | passed on smoke shape: 27.81x; Qwen3.5-2B representative-key shape is 26.27x |
+| E4: GQA native path 20x Python fallback at 10k | passed on smoke shape: 27.81x; Qwen3.5-2B representative-key shape is 26.27x; real captured 127-node full K-bank is 2.54x |
 
 ## Remaining Work
 
 - Treat the 1M dim128 host route as deep-interactive already; if E3 remains
   mandatory, replace the scalar q4 dot with a lower-level vectorized dot kernel
   or a larger routing layout change.
-- Run larger GQA curves with checkpointed/progress output so C ABI population
-  overhead does not hide route timing.
-- Use copied, read-only K banks from the Qwen3.5-2B translation graft corpus
-  for larger real-graft router stress.
+- Run larger real-capture GQA curves with checkpointed/progress output so C ABI
+  population overhead does not hide route timing.
+- Implement the true GQA GEMM/segment-reduce path or a representative-key
+  compaction policy for full 256-token captured K banks if sub-10ms routing is
+  required at larger node counts.
 - Replace the current C ABI shared-mutex guard with the planned lock-free
   double-buffer epoch snapshot model if threaded serving requires no read-side
   lock.

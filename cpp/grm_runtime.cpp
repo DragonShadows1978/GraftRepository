@@ -3511,9 +3511,20 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
   std::vector<float> raw_scores(entry_count, 0.0F);
   std::vector<std::size_t> lexical_hits(entry_count, 0);
   std::vector<unsigned char> have(entry_count, 0);
-  constexpr std::size_t kOpenMpGqaRouteThreshold = 2048;
+  std::uint64_t max_key_tokens = 1;
+  if (use_arena) {
+    for (const auto n : gqa_arena_.key_tokens) {
+      max_key_tokens = std::max(max_key_tokens, n);
+    }
+  }
+  const double gqa_route_work =
+      static_cast<double>(entry_count) *
+      static_cast<double>(std::max<std::uint64_t>(1, query_heads)) *
+      static_cast<double>(std::max<std::uint64_t>(1, query_tokens)) *
+      static_cast<double>(max_key_tokens);
+  constexpr double kOpenMpGqaRouteWorkThreshold = 32768.0;
 #if defined(_OPENMP)
-#pragma omp parallel for schedule(static) if(entry_count >= kOpenMpGqaRouteThreshold)
+#pragma omp parallel for schedule(static) if(gqa_route_work >= kOpenMpGqaRouteWorkThreshold)
 #endif
   for (std::int64_t entry_i = 0;
        entry_i < static_cast<std::int64_t>(entry_count);
@@ -3856,6 +3867,7 @@ struct grm_store_handle {
   grm::RouterIndex router;
   std::shared_mutex router_mutex;
   grm::DeviceArena arena;
+  std::mutex error_mutex;
   std::string last_error;
 };
 
@@ -3863,6 +3875,7 @@ namespace {
 
 int grm_fail(grm_store_handle* handle, const std::exception& exc) {
   if (handle != nullptr) {
+    std::lock_guard<std::mutex> lock(handle->error_mutex);
     handle->last_error = exc.what();
   }
   return -1;
@@ -3870,6 +3883,7 @@ int grm_fail(grm_store_handle* handle, const std::exception& exc) {
 
 int grm_fail_msg(grm_store_handle* handle, const char* msg) {
   if (handle != nullptr) {
+    std::lock_guard<std::mutex> lock(handle->error_mutex);
     handle->last_error = msg;
   }
   return -1;
@@ -5253,10 +5267,6 @@ int grm_store_set_route(grm_store_handle* handle,
     if (handle == nullptr || handle->store == nullptr) {
       return grm_fail_msg(handle, "invalid set_route arguments");
     }
-    auto* node = handle->store->get(node_id);
-    if (node == nullptr) {
-      return grm_fail_msg(handle, "unknown GRM node id");
-    }
     if (route_key == nullptr && route_len > 0) {
       return grm_fail_msg(handle, "null route key with nonzero length");
     }
@@ -5266,12 +5276,16 @@ int grm_store_set_route(grm_store_handle* handle,
       key.push_back(route_key[i]);
     }
     auto lexical = split_lexical_keys(lexical_keys);
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
+    auto* node = handle->store->get(node_id);
+    if (node == nullptr) {
+      return grm_fail_msg(handle, "unknown GRM node id");
+    }
     node->route_key = key;
     node->route_keys.clear();
     node->route_keys.push_back(key);
     node->lexical_keys = lexical;
     handle->store->mark_dirty(node_id, false, true);
-    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->router.upsert(node_id, std::move(key), std::move(lexical));
     sync_router_node_state(handle, node_id);
     return 0;
@@ -5290,10 +5304,6 @@ int grm_store_set_route_multi(grm_store_handle* handle,
     if (handle == nullptr || handle->store == nullptr) {
       return grm_fail_msg(handle, "invalid set_route_multi arguments");
     }
-    auto* node = handle->store->get(node_id);
-    if (node == nullptr) {
-      return grm_fail_msg(handle, "unknown GRM node id");
-    }
     if (route_keys == nullptr && key_count > 0 && route_len > 0) {
       return grm_fail_msg(handle, "null route keys with nonzero shape");
     }
@@ -5308,11 +5318,15 @@ int grm_store_set_route_multi(grm_store_handle* handle,
       keys.push_back(std::move(key));
     }
     auto lexical = split_lexical_keys(lexical_keys);
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
+    auto* node = handle->store->get(node_id);
+    if (node == nullptr) {
+      return grm_fail_msg(handle, "unknown GRM node id");
+    }
     node->route_keys = keys;
     node->route_key = keys.empty() ? std::vector<float>() : keys.front();
     node->lexical_keys = lexical;
     handle->store->mark_dirty(node_id, false, true);
-    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->router.upsert_multi(node_id, std::move(keys), std::move(lexical));
     sync_router_node_state(handle, node_id);
     return 0;
@@ -5331,10 +5345,6 @@ int grm_store_set_route_list(grm_store_handle* handle,
   try {
     if (handle == nullptr || handle->store == nullptr) {
       return grm_fail_msg(handle, "invalid set_route_list arguments");
-    }
-    auto* node = handle->store->get(node_id);
-    if (node == nullptr) {
-      return grm_fail_msg(handle, "unknown GRM node id");
     }
     if (route_values == nullptr && value_count > 0) {
       return grm_fail_msg(handle, "null route values with nonzero length");
@@ -5367,11 +5377,15 @@ int grm_store_set_route_list(grm_store_handle* handle,
       keys.push_back(std::move(key));
     }
     auto lexical = split_lexical_keys(lexical_keys);
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
+    auto* node = handle->store->get(node_id);
+    if (node == nullptr) {
+      return grm_fail_msg(handle, "unknown GRM node id");
+    }
     node->route_keys = keys;
     node->route_key = keys.empty() ? std::vector<float>() : keys.front();
     node->lexical_keys = lexical;
     handle->store->mark_dirty(node_id, false, true);
-    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->router.upsert_multi(node_id, std::move(keys), std::move(lexical));
     sync_router_node_state(handle, node_id);
     return 0;
@@ -5386,8 +5400,8 @@ int grm_store_clear_route(grm_store_handle* handle,
     if (handle == nullptr || handle->store == nullptr) {
       return grm_fail_msg(handle, "invalid clear_route arguments");
     }
-    handle->store->clear_route(node_id);
     std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
+    handle->store->clear_route(node_id);
     handle->router.erase(node_id);
     return 0;
   } catch (const std::exception& exc) {
@@ -5418,7 +5432,7 @@ int grm_store_route(grm_store_handle* handle,
     for (uint64_t i = 0; i < query_len; ++i) {
       q.push_back(query[i]);
     }
-    std::shared_lock<std::shared_mutex> lock(handle->router_mutex);
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     const auto routed = handle->router.route(
         q, split_lexical_keys(lexical_keys), static_cast<std::size_t>(topk));
     const uint64_t n = std::min<uint64_t>(
@@ -5460,7 +5474,7 @@ int grm_store_route_filtered(grm_store_handle* handle,
     for (uint64_t i = 0; i < query_len; ++i) {
       q.push_back(query[i]);
     }
-    std::shared_lock<std::shared_mutex> lock(handle->router_mutex);
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     const auto routed = handle->router.route(
         q, split_lexical_keys(lexical_keys), static_cast<std::size_t>(topk),
         split_lexical_keys(kind_filters), split_lexical_keys(scope_filters),
@@ -5523,7 +5537,7 @@ int grm_store_route_gqa(grm_store_handle* handle,
     for (uint64_t i = 0; i < query_len; ++i) {
       q.push_back(query[i]);
     }
-    std::shared_lock<std::shared_mutex> lock(handle->router_mutex);
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     const auto routed = handle->router.route_gqa_raw(
         q, query_heads, query_tokens, head_dim,
         static_cast<uint64_t>(handle->store->dialect().num_kv_heads),
@@ -5913,7 +5927,10 @@ const char* grm_store_last_error(grm_store_handle* handle) {
   if (handle == nullptr) {
     return "invalid GRM store handle";
   }
-  return handle->last_error.c_str();
+  thread_local std::string last_error_copy;
+  std::lock_guard<std::mutex> lock(handle->error_mutex);
+  last_error_copy = handle->last_error;
+  return last_error_copy.c_str();
 }
 
 }  // extern "C"

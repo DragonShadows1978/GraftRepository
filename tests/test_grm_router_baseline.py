@@ -131,3 +131,43 @@ def test_gqa_router_benchmark_smoke_cli_writes_json_and_markdown(tmp_path):
     assert [row["nodes"] for row in data["results"]] == [32, 96]
     assert all(row["parity"] for row in data["results"])
     assert "GRM GQA Router Benchmark" in md.read_text()
+
+
+def test_gqa_router_benchmark_smoke_cli_reads_capture_shards(tmp_path):
+    captures = tmp_path / "captures"
+    captures.mkdir()
+    rng = np.random.default_rng(13579)
+    for i in range(4):
+        key = rng.normal(size=(1, 1, 4, 16)).astype(np.float16)
+        np.savez_compressed(captures / f"source_doc{i:02d}_chunk000000.npz",
+                            l3_k=key)
+
+    out = tmp_path / "gqa_capture.json"
+    subprocess.run([
+        "python3",
+        "scripts/grm_gqa_router_benchmark.py",
+        "--smoke",
+        "--capture-dir",
+        str(captures),
+        "--capture-layer",
+        "3",
+        "--capture-limit",
+        "4",
+        "--node-counts",
+        "2",
+        "4",
+        "--queries",
+        "3",
+        "--warmup",
+        "1",
+        "--no-lexical",
+        "--out",
+        str(out),
+    ], cwd=baseline.ROOT, check=True)
+
+    data = json.loads(out.read_text())
+    assert data["route_source"] == "capture"
+    assert data["harvest"]["route"]["shards"] == 4
+    assert [row["nodes"] for row in data["results"]] == [2, 4]
+    assert all(row["parity"] for row in data["results"])
+    assert all(not row["lexical"] for row in data["results"])
