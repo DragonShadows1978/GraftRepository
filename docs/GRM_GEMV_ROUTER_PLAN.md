@@ -373,6 +373,22 @@ default key-score-bank confirmation measured `21.2234ms` p50 / `23.2118ms` p95
 and an immediate key-score-bank comparison in the same shape measured
 `17.7144ms` p50 / `19.4015ms` p95. The fused branch remains a tested diagnostic,
 not the default runtime path.
+Follow-up current-corpus remeasure kept that decision: at 500 current usable
+source-layer-3 full-bank nodes, default measured `21.5515ms` p50 / `22.9931ms`
+p95 while fused measured `19.9545ms` p50 / `21.8666ms` p95, both exhaustive
+8/8 batched-reference parity green. At 1,000 nodes, default measured
+`36.3616ms` p50 / `38.1237ms` p95 while fused regressed to `39.0891ms` p50 /
+`41.7008ms` p95, again parity green. Finding: direct single-key writes help the
+smaller point but do not scale well enough to become the default heuristic.
+
+P4 GQA no-filter branch rejection: a GQA analogue of the MLA no-filter
+active-only fast path was tested and reverted. It preserved exhaustive parity,
+but the 500-node current full-bank point regressed from `21.5515ms` p50 to
+`23.3020ms` p50 and `22.6285ms` p50 on repeat, while the 1,000-node point only
+nudged from `36.3616ms` p50 / `38.1237ms` p95 to `36.1555ms` p50 / `37.4190ms`
+p95. The mixed result is not worth a runtime branch; leave the existing
+metadata helper in the GQA loops until a lower-level scorer changes the cost
+profile.
 
 P4 row-block experiment: `route_gqa_raw` now also has an opt-in query-head
 row-block scorer behind `GRM_ROUTER_GQA_ROWBLOCK=1` for single-key, query-token-4

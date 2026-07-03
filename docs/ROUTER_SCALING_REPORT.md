@@ -256,6 +256,19 @@ default confirmation; `17.7144ms` p50 / `19.4015ms` p95 in an immediate forced
 key-score-bank comparison), so fused single-key remains opt-in rather than a
 runtime default.
 
+Current-corpus default/fused remeasure keeps fused opt-in: at 500 current
+usable source-layer-3 full-bank nodes, default measured 21.5515ms p50 /
+22.9931ms p95 and fused measured 19.9545ms p50 / 21.8666ms p95. At 1,000
+nodes, default measured 36.3616ms p50 / 38.1237ms p95 and fused regressed to
+39.0891ms p50 / 41.7008ms p95. All four rows preserved exhaustive 8/8
+batched-reference parity.
+
+A GQA no-filter active-only branch was also tested and reverted. It preserved
+parity, but the 500-node full-bank point regressed to 23.3020ms p50 and
+22.6285ms p50 on repeat. The 1,000-node point moved only slightly, from
+36.3616ms p50 / 38.1237ms p95 to 36.1555ms p50 / 37.4190ms p95. The mixed
+result is recorded as a rejected micro-optimization.
+
 `GRM_ROUTER_GQA_ROWBLOCK=1` enables a second non-default experiment: a
 query-head row-block scorer for single-key, query-token-4 GQA banks. It computes
 per `(entry, query_head)` blocks into a temporary head-score table and then
