@@ -318,6 +318,21 @@ query heads at a time also preserved parity, but regressed a fresh 512-node
 Qwen3.5-2B source full-bank run from 19.8082ms p50 to 22.3257ms p50. It was
 removed; the kept runtime remains the prior qt4 full-bank scorer.
 
+P4 segment-reduce note: `route_gqa_raw` now has a key-bank segment-reduce
+layout. It scores each prepared GQA key independently, stores a key-score bank,
+then reduces key ranges back to entries before the existing top-k selection.
+The path can be forced with `GRM_ROUTER_GQA_SEGMENT=1` and is selected
+automatically when the prepared bank has at least 32 K tokens per key. Focused
+GQA selectors passed 6/6. Measured default receipts after the heuristic:
+Qwen3.5-2B source layer-3 full-bank 512 nodes matched all four batched-reference
+queries at `20.4251ms` p50 / `21.3550ms` p95, improving over the atomic
+snapshot pre-segment receipt (`22.0019ms` p50). Representative-key 10k stayed
+on the per-entry scorer and matched five batched-reference queries at
+`5.9844ms` p50 / `6.0227ms` p95. Forced segment on representative 10k was
+parity-green but slightly slower (`6.0345ms` p50), so it is not the default for
+single-token key banks. Full native runtime now passes 74/74 and the router
+baseline harness passes 15/15.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.

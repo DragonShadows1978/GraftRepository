@@ -211,6 +211,21 @@ A paired repeated-head scorer that reused each K row across two query heads at a
 time was measured next. It also preserved parity, but regressed the fresh
 512-node p50 from `19.8082ms` to `22.3257ms`, so no C++ scorer change was kept.
 
+The GQA route path now includes an automatic segment-reduce scorer for larger
+prepared key banks. The scorer computes one raw score per prepared key, stores a
+key-score bank, and reduces each entry's key segment before the existing top-k
+selection. It is forced by `GRM_ROUTER_GQA_SEGMENT=1` and selected
+automatically when `max_key_tokens >= 32`; smaller representative-key banks stay
+on the per-entry scorer because the extra key-score buffer is not helpful there.
+Focused GQA selectors, including the forced segment path, passed 6/6. Full
+native runtime passed 74/74, and the router baseline harness passed 15/15.
+
+| route shape | nodes | native p50 ms | native p95 ms | parity |
+| --- | ---: | ---: | ---: | --- |
+| Qwen3.5-2B source layer-3 full 256-token K-bank, auto segment | 512 | 20.4251 | 21.3550 | true, 4/4 batched-reference queries |
+| harvested representative-key GQA, auto per-entry | 10000 | 5.9844 | 6.0227 | true, 5/5 batched-reference queries |
+| harvested representative-key GQA, forced segment | 10000 | 6.0345 | 7.7158 | true, 5/5 batched-reference queries |
+
 ## Prepared Router Snapshots
 
 The C ABI router now publishes prepared MLA/GQA state as an immutable
@@ -264,8 +279,10 @@ Fresh post-snapshot GQA receipts:
   four-query batched-reference receipt and across more layers before claiming
   broader full-bank correctness.
 - Implement a fuller GQA GEMM/segment-reduce layout if sub-10ms routing is
-  required past the 96-node real-capture point; simple stride representative-key
-  compaction, grouped repeated-head qt4 scoring, and hand-unrolled repeat-4
+  required past larger full-bank real-capture points; the current segment
+  reduce is a key-score-bank pass and improves 512-node full-bank routing, but
+  it is not a BLAS/GEMM-backed row-block kernel. Simple stride representative-key
+  compaction, grouped repeated-head qt4 scoring, hand-unrolled repeat-4
   head-ratio scoring, and paired repeated-head scoring were measured and
   rejected.
 - Run TSAN or an equivalent sanitizer race gate before treating the atomic

@@ -3596,33 +3596,87 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
       static_cast<double>(std::max<std::uint64_t>(1, query_tokens)) *
       static_cast<double>(max_key_tokens);
   constexpr double kOpenMpGqaRouteWorkThreshold = 32768.0;
+  const bool use_segment_reduce =
+      use_arena &&
+      (max_key_tokens >= 32 || env_truthy("GRM_ROUTER_GQA_SEGMENT"));
+  if (use_segment_reduce) {
+    const auto key_count = gqa_arena_.key_tokens.size();
+    std::vector<float> key_scores(
+        key_count, std::numeric_limits<float>::quiet_NaN());
+    const double gqa_key_work =
+        static_cast<double>(key_count) *
+        static_cast<double>(std::max<std::uint64_t>(1, query_heads)) *
+        static_cast<double>(std::max<std::uint64_t>(1, query_tokens)) *
+        static_cast<double>(max_key_tokens);
+#if defined(_OPENMP)
+#pragma omp parallel for schedule(static) if(gqa_key_work >= kOpenMpGqaRouteWorkThreshold)
+#endif
+    for (std::int64_t key_i = 0;
+         key_i < static_cast<std::int64_t>(key_count);
+         ++key_i) {
+      const auto key_idx = static_cast<std::size_t>(key_i);
+      key_scores[key_idx] = gqa_arena_key_score(
+          query, query_heads, query_tokens, head_dim, kv_heads, query_finite,
+          key_idx);
+    }
+    for (std::size_t entry_idx = 0; entry_idx < entry_count; ++entry_idx) {
+      const auto& e = entries_[entry_idx];
+      if (!entry_allowed(e, kinds, scopes, durabilities, mutabilities)) {
+        continue;
+      }
+      const auto key_start = gqa_arena_.entry_key_offsets[entry_idx];
+      const auto key_end = gqa_arena_.entry_key_offsets[entry_idx + 1];
+      float entry_best = 0.0F;
+      bool entry_have = false;
+      for (std::size_t key_idx = key_start; key_idx < key_end; ++key_idx) {
+        const auto score = key_scores[key_idx];
+        if (!std::isfinite(score)) {
+          continue;
+        }
+        if (!entry_have || score > entry_best) {
+          entry_best = score;
+          entry_have = true;
+        }
+      }
+      if (!entry_have) {
+        continue;
+      }
+      raw_scores[entry_idx] = entry_best;
+      if (!lexical.empty()) {
+        lexical_hits[entry_idx] = lexical_hit_count(
+            lexical, query_lex_hashes, e.lexical_keys, e.lexical_hashes);
+      }
+      have[entry_idx] = 1;
+    }
+  } else {
 #if defined(_OPENMP)
 #pragma omp parallel for schedule(static) if(gqa_route_work >= kOpenMpGqaRouteWorkThreshold)
 #endif
-  for (std::int64_t entry_i = 0;
-       entry_i < static_cast<std::int64_t>(entry_count);
-       ++entry_i) {
-    const auto entry_idx = static_cast<std::size_t>(entry_i);
-    const auto& e = entries_[entry_idx];
-    if (!entry_allowed(e, kinds, scopes, durabilities, mutabilities)) {
-      continue;
+    for (std::int64_t entry_i = 0;
+         entry_i < static_cast<std::int64_t>(entry_count);
+         ++entry_i) {
+      const auto entry_idx = static_cast<std::size_t>(entry_i);
+      const auto& e = entries_[entry_idx];
+      if (!entry_allowed(e, kinds, scopes, durabilities, mutabilities)) {
+        continue;
+      }
+      const auto raw = use_arena
+          ? gqa_arena_entry_score(
+                query, query_heads, query_tokens, head_dim, kv_heads,
+                query_finite, entry_idx)
+          : max_gqa_raw_score(
+                query, query_heads, query_tokens, head_dim, kv_heads,
+                e.route_keys);
+      if (!std::isfinite(raw)) {
+        continue;
+      }
+      raw_scores[entry_idx] = raw;
+      if (!lexical.empty()) {
+        lexical_hits[entry_idx] = lexical_hit_count(
+            lexical, query_lex_hashes, e.lexical_keys, e.lexical_hashes);
+      }
+      have[entry_idx] = 1;
     }
-    const auto raw = use_arena
-        ? gqa_arena_entry_score(
-              query, query_heads, query_tokens, head_dim, kv_heads,
-              query_finite, entry_idx)
-        : max_gqa_raw_score(
-              query, query_heads, query_tokens, head_dim, kv_heads,
-              e.route_keys);
-    if (!std::isfinite(raw)) {
-      continue;
-    }
-    raw_scores[entry_idx] = raw;
-    if (!lexical.empty()) {
-      lexical_hits[entry_idx] = lexical_hit_count(
-          lexical, query_lex_hashes, e.lexical_keys, e.lexical_hashes);
-    }
-    have[entry_idx] = 1;
   }
   if (lexical.empty()) {
     std::vector<std::pair<float, std::uint64_t>> scored_raw;
