@@ -343,6 +343,19 @@ layer 7 `11.9944ms` p50 / `12.7472ms` p95, and layer 11 `12.0086ms` p50 /
 `12.0181ms` p95. This extends real-capture full-bank evidence across layers
 without moving or modifying the translation corpus artifacts.
 
+P4 fused-single-key experiment: `route_gqa_raw` now has an opt-in fused
+single-key segment path behind `GRM_ROUTER_GQA_FUSED_SEGMENT=1`. It skips the
+temporary key-score bank and writes the entry score directly when every route
+entry has at most one prepared GQA key; `GRM_ROUTER_GQA_KEYBANK_SEGMENT=1`
+forces the prior key-score-bank reducer. The focused single-key segment gate
+passes against the Python raw-q.k law, but local Qwen3.5-2B layer-3 full-bank
+512-node measurements did not show a decisive default win: fused measured
+`20.9334ms` p50 / `21.1485ms` p95 with 6/6 batched-reference parity, while the
+default key-score-bank confirmation measured `21.2234ms` p50 / `23.2118ms` p95
+and an immediate key-score-bank comparison in the same shape measured
+`17.7144ms` p50 / `19.4015ms` p95. The fused branch remains a tested diagnostic,
+not the default runtime path.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.

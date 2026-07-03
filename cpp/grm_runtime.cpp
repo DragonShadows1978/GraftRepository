@@ -3584,10 +3584,21 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
   std::vector<float> raw_scores(entry_count, 0.0F);
   std::vector<std::size_t> lexical_hits(entry_count, 0);
   std::vector<unsigned char> have(entry_count, 0);
+  const bool want_fused_single_key_segment =
+      env_truthy("GRM_ROUTER_GQA_FUSED_SEGMENT") &&
+      !env_truthy("GRM_ROUTER_GQA_KEYBANK_SEGMENT");
   std::uint64_t max_key_tokens = 1;
+  std::size_t max_keys_per_entry = 0;
   if (use_arena) {
     for (const auto n : gqa_arena_.key_tokens) {
       max_key_tokens = std::max(max_key_tokens, n);
+    }
+    if (want_fused_single_key_segment) {
+      for (std::size_t entry_idx = 0; entry_idx < entry_count; ++entry_idx) {
+        const auto key_start = gqa_arena_.entry_key_offsets[entry_idx];
+        const auto key_end = gqa_arena_.entry_key_offsets[entry_idx + 1];
+        max_keys_per_entry = std::max(max_keys_per_entry, key_end - key_start);
+      }
     }
   }
   const double gqa_route_work =
@@ -3599,7 +3610,40 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
   const bool use_segment_reduce =
       use_arena &&
       (max_key_tokens >= 32 || env_truthy("GRM_ROUTER_GQA_SEGMENT"));
-  if (use_segment_reduce) {
+  const bool use_fused_single_key_segment =
+      use_segment_reduce && want_fused_single_key_segment &&
+      max_keys_per_entry <= 1;
+  if (use_fused_single_key_segment) {
+#if defined(_OPENMP)
+#pragma omp parallel for schedule(static) if(gqa_route_work >= kOpenMpGqaRouteWorkThreshold)
+#endif
+    for (std::int64_t entry_i = 0;
+         entry_i < static_cast<std::int64_t>(entry_count);
+         ++entry_i) {
+      const auto entry_idx = static_cast<std::size_t>(entry_i);
+      const auto& e = entries_[entry_idx];
+      if (!entry_allowed(e, kinds, scopes, durabilities, mutabilities)) {
+        continue;
+      }
+      const auto key_start = gqa_arena_.entry_key_offsets[entry_idx];
+      const auto key_end = gqa_arena_.entry_key_offsets[entry_idx + 1];
+      if (key_start == key_end) {
+        continue;
+      }
+      const auto score = gqa_arena_key_score(
+          query, query_heads, query_tokens, head_dim, kv_heads, query_finite,
+          key_start);
+      if (!std::isfinite(score)) {
+        continue;
+      }
+      raw_scores[entry_idx] = score;
+      if (!lexical.empty()) {
+        lexical_hits[entry_idx] = lexical_hit_count(
+            lexical, query_lex_hashes, e.lexical_keys, e.lexical_hashes);
+      }
+      have[entry_idx] = 1;
+    }
+  } else if (use_segment_reduce) {
     const auto key_count = gqa_arena_.key_tokens.size();
     std::vector<float> key_scores(
         key_count, std::numeric_limits<float>::quiet_NaN());

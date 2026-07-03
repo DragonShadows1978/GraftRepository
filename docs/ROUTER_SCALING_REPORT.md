@@ -227,6 +227,18 @@ native runtime passed 74/74, and the router baseline harness passed 15/15.
 | harvested representative-key GQA, auto per-entry | 10000 | 5.9844 | 6.0227 | true, 5/5 batched-reference queries |
 | harvested representative-key GQA, forced segment | 10000 | 6.0345 | 7.7158 | true, 5/5 batched-reference queries |
 
+The runtime also has a tested but non-default fused single-key segment path:
+`GRM_ROUTER_GQA_FUSED_SEGMENT=1` writes entry scores directly when every entry
+has at most one GQA route key, avoiding the temporary key-score bank and serial
+entry reduction. `GRM_ROUTER_GQA_KEYBANK_SEGMENT=1` forces the prior reducer for
+comparison. On the Qwen3.5-2B source layer-3 full-bank 512-node case, fused
+single-key segment measured `20.9334ms` p50 / `21.1485ms` p95 with exhaustive
+6/6 batched-reference parity. The default key-score-bank path stayed parity
+green and was not decisively slower (`21.2234ms` p50 / `23.2118ms` p95 in the
+default confirmation; `17.7144ms` p50 / `19.4015ms` p95 in an immediate forced
+key-score-bank comparison), so fused single-key remains opt-in rather than a
+runtime default.
+
 ## GQA Capture Layer Sweep
 
 `scripts/grm_gqa_layer_sweep.py` wraps the existing GQA benchmark internals and
@@ -330,5 +342,5 @@ Fresh post-snapshot GQA receipts:
   reduce is a key-score-bank pass and improves 512-node full-bank routing, but
   it is not a BLAS/GEMM-backed row-block kernel. Simple stride representative-key
   compaction, grouped repeated-head qt4 scoring, hand-unrolled repeat-4
-  head-ratio scoring, and paired repeated-head scoring were measured and
-  rejected.
+  head-ratio scoring, paired repeated-head scoring, and fused single-key segment
+  defaulting were measured and rejected for runtime default use.
