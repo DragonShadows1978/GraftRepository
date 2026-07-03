@@ -96,5 +96,21 @@ python3 scripts/grm_router_baseline.py \
   --out /tmp/grm_router_int4_large.json
 ```
 
-Use non-`native-only` runs at smaller node counts for parity checks, and sweep
-`--refine-m` before treating a latency point as an exactness-safe result.
+Use non-`native-only` runs at smaller node counts for Python parity checks.
+For large native-only exactness sweeps, compare INT4 directly against the same
+native arena with INT4 disabled:
+
+```bash
+python3 scripts/grm_router_baseline.py \
+  --openmp --native-only --native-fp32-parity --int4 \
+  --sweep-refine-m 16 32 64 128 256 512 1024 2048 4096 \
+  --node-counts 100000 --queries 8 --warmup 2 --dim 128 \
+  --max-vectors 4096 --max-files 384 \
+  --out /tmp/grm_router_int4_sweep_100k.json \
+  --markdown-out /tmp/grm_router_int4_sweep_100k.md
+```
+
+The current harvested dim128 corpus matched native fp32 at 100k nodes for every
+M in that sweep, and at 1M nodes for M=16 and M=256. Treat those as measured
+operating points for this corpus; wider fuzz/repo exactness is still required
+before freezing a default M.

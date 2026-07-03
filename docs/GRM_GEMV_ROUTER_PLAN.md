@@ -154,6 +154,22 @@ OpenMP M=4096 remeasure: 100k p50 11.9751ms, 1M p50 67.0890ms. This is a
 real improvement, but still not enough for E3 without a more vectorized
 unpack/dot kernel and/or a lower exactness-safe refine M.
 
+P3 exactness-sweep note: the baseline harness now supports
+`--native-fp32-parity` so large native-only INT4 runs can compare against the
+same native arena with INT4 temporarily disabled instead of against the slow
+Python scan. It also supports `--sweep-refine-m` for one command M sweeps.
+On the harvested dim128 route corpus, 100k-node OpenMP INT4 matched native
+fp32 for M=16/32/64/128/256/512/1024/2048/4096. The small-M 100k p50 timings
+were 8.9106/10.1181/9.0655/9.0242/11.3754ms for M=16/32/64/128/256; the
+large-M timings were 8.9430/10.6026/11.8228/9.0604/12.3436ms for
+M=256/512/1024/2048/4096. At 1M nodes, M=16 remained exact on the same sampled
+queries and measured 65.3449ms p50; M=256 also remained exact and measured
+67.6768ms p50. Finding: refine count is not the current 1M limiter. The
+bulk all-row INT4 scan dominates, so the next useful P3 work is a more
+vectorized unpack/dot kernel or a representation that reduces per-query
+decode traffic. Wider fuzz/repo exactness remains required before declaring
+M=16 safe generally.
+
 **P4 — GQA key-bank GEMM path.** D4. Gates: parity vs Python GQA
 routing on the Qwen3-4B gate scenarios, latency, 166 floor.
 

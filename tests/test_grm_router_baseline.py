@@ -65,3 +65,47 @@ def test_router_baseline_smoke_cli_supports_int4_refine_all(tmp_path):
     data = json.loads(out.read_text())
     assert [row["nodes"] for row in data["results"]] == [32, 96]
     assert all(row["parity"] for row in data["results"])
+
+
+def test_router_baseline_smoke_cli_supports_native_fp32_parity(tmp_path):
+    out = tmp_path / "baseline_native_fp32.json"
+
+    subprocess.run([
+        "python3",
+        "scripts/grm_router_baseline.py",
+        "--smoke",
+        "--native-only",
+        "--native-fp32-parity",
+        "--int4",
+        "--refine-m",
+        "128",
+        "--out",
+        str(out),
+    ], cwd=baseline.ROOT, check=True)
+
+    data = json.loads(out.read_text())
+    assert all(row["parity"] for row in data["results"])
+    assert {row["parity_reference"] for row in data["results"]} == {
+        "native_fp32"}
+
+
+def test_router_baseline_smoke_cli_sweeps_refine_m(tmp_path):
+    out = tmp_path / "baseline_sweep.json"
+
+    subprocess.run([
+        "python3",
+        "scripts/grm_router_baseline.py",
+        "--smoke",
+        "--native-only",
+        "--native-fp32-parity",
+        "--int4",
+        "--sweep-refine-m",
+        "32",
+        "128",
+        "--out",
+        str(out),
+    ], cwd=baseline.ROOT, check=True)
+
+    data = json.loads(out.read_text())
+    assert [row["refine_m"] for row in data["results"]] == [32, 32, 128, 128]
+    assert all(row["mode"] == "int4" for row in data["results"])

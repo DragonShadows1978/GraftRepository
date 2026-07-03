@@ -10,6 +10,7 @@ then repeated deterministically to larger node counts.
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import ctypes
 import hashlib
 import json
@@ -347,6 +348,24 @@ def _p95_ms(values_ns: list[int]) -> float:
     return statistics.quantiles(values_ns, n=20, method="inclusive")[18] / 1.0e6
 
 
+@contextmanager
+def _temporary_env(values: dict[str, str | None]):
+    old = {key: os.environ.get(key) for key in values}
+    try:
+        for key, value in values.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        yield
+    finally:
+        for key, value in old.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+
+
 def benchmark_count(
     *,
     routes: np.ndarray,
@@ -355,6 +374,7 @@ def benchmark_count(
     topk: int,
     warmup: int,
     native_only: bool = False,
+    native_fp32_parity: bool = False,
 ) -> dict:
     py_ns: list[int] = []
     native_ns: list[int] = []
@@ -370,6 +390,21 @@ def benchmark_count(
                 got = native.route(query, lexical, topk)
                 if got != py:
                     mismatches.append({"query": i, "python": py, "native": got})
+        if native_fp32_parity:
+            active_env = {
+                "GRM_ROUTER_INT4": os.environ.get("GRM_ROUTER_INT4"),
+                "GRM_ROUTER_INT4_REFINE_M": os.environ.get(
+                    "GRM_ROUTER_INT4_REFINE_M"),
+            }
+            for i, query in enumerate(queries):
+                lexical = lexical_keys_for_query(i, routes.shape[0])
+                with _temporary_env({"GRM_ROUTER_INT4": None}):
+                    fp32 = native.route(query, lexical, topk)
+                with _temporary_env(active_env):
+                    got = native.route(query, lexical, topk)
+                if got != fp32:
+                    mismatches.append({
+                        "query": i, "fp32": fp32, "native": got})
         for i, query in enumerate(queries):
             lexical = lexical_keys_for_query(i, routes.shape[0])
             if i < warmup:
@@ -394,7 +429,11 @@ def benchmark_count(
         "native_route_ms_p95": _p95_ms(native_ns),
         "python_route_ms_p50": None if native_only else _median_ms(py_ns),
         "python_route_ms_p95": None if native_only else _p95_ms(py_ns),
-        "parity": None if native_only else not mismatches,
+        "parity": (not mismatches) if (not native_only or native_fp32_parity)
+                  else None,
+        "parity_reference": (
+            "native_fp32" if native_fp32_parity
+            else ("python_scan" if not native_only else None)),
         "mismatches": mismatches[:5],
     }
 
@@ -416,16 +455,20 @@ def write_markdown(result: dict, path: Path) -> None:
         "",
         "## Results",
         "",
-        "| nodes | dim | parity | native p50 ms | native p95 ms | python p50 ms | python p95 ms | native build ms |",
-        "| ---: | ---: | :---: | ---: | ---: | ---: | ---: | ---: |",
+        "| nodes | dim | refine_m | parity | native p50 ms | native p95 ms | python p50 ms | python p95 ms | native build ms |",
+        "| ---: | ---: | ---: | :---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for row in result["results"]:
         py50 = row["python_route_ms_p50"]
         py95 = row["python_route_ms_p95"]
         py50_s = f"{py50:.4f}" if py50 is not None else "n/a"
         py95_s = f"{py95:.4f}" if py95 is not None else "n/a"
+        refine_s = (
+            str(row["refine_m"]) if row.get("refine_m") is not None
+            else "n/a")
         lines.append(
-            f"| {row['nodes']} | {row['dim']} | {row['parity']} | "
+            f"| {row['nodes']} | {row['dim']} | {refine_s} | "
+            f"{row['parity']} | "
             f"{row['native_route_ms_p50']:.4f} | "
             f"{row['native_route_ms_p95']:.4f} | "
             f"{py50_s} | "
@@ -464,10 +507,14 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
                    help="compile the native benchmark library with -fopenmp")
     p.add_argument("--native-only", action="store_true",
                    help="skip Python reference parity/timing for large curves")
+    p.add_argument("--native-fp32-parity", action="store_true",
+                   help="compare active native route mode against fp32 native")
     p.add_argument("--int4", action="store_true",
                    help="enable GRM_ROUTER_INT4 two-tier native route path")
     p.add_argument("--refine-m", type=int,
                    help="set GRM_ROUTER_INT4_REFINE_M for INT4 refine sweep")
+    p.add_argument("--sweep-refine-m", nargs="+", type=int,
+                   help="run one result row for each listed INT4 refine M")
     p.add_argument("--out", type=Path, default=Path("/tmp/grm_router_baseline.json"))
     p.add_argument("--markdown-out", type=Path)
     p.add_argument("--smoke", action="store_true",
@@ -495,25 +542,39 @@ def main(argv: list[str]) -> int:
     queries = make_queries(bank, args.queries)
     old_int4 = os.environ.get("GRM_ROUTER_INT4")
     old_refine = os.environ.get("GRM_ROUTER_INT4_REFINE_M")
-    if args.int4:
-        os.environ["GRM_ROUTER_INT4"] = "1"
-    if args.refine_m is not None:
-        os.environ["GRM_ROUTER_INT4_REFINE_M"] = str(int(args.refine_m))
+    refine_values = args.sweep_refine_m or [args.refine_m]
     with tempfile.TemporaryDirectory(prefix="grm_router_baseline_") as td:
         try:
             lib_path = args.lib or build_native_lib(
                 Path(td), cxx=args.cxx, openmp=bool(args.openmp))
             results = []
-            for node_count in args.node_counts:
-                routes = make_route_matrix(bank, int(node_count))
-                results.append(benchmark_count(
-                    routes=routes,
-                    queries=queries,
-                    lib_path=lib_path,
-                    topk=args.topk,
-                    warmup=args.warmup,
-                    native_only=bool(args.native_only),
-                ))
+            for refine_m in refine_values:
+                if args.int4:
+                    os.environ["GRM_ROUTER_INT4"] = "1"
+                elif old_int4 is None:
+                    os.environ.pop("GRM_ROUTER_INT4", None)
+                else:
+                    os.environ["GRM_ROUTER_INT4"] = old_int4
+                if refine_m is not None:
+                    os.environ["GRM_ROUTER_INT4_REFINE_M"] = str(int(refine_m))
+                elif old_refine is None:
+                    os.environ.pop("GRM_ROUTER_INT4_REFINE_M", None)
+                else:
+                    os.environ["GRM_ROUTER_INT4_REFINE_M"] = old_refine
+                for node_count in args.node_counts:
+                    routes = make_route_matrix(bank, int(node_count))
+                    row = benchmark_count(
+                        routes=routes,
+                        queries=queries,
+                        lib_path=lib_path,
+                        topk=args.topk,
+                        warmup=args.warmup,
+                        native_only=bool(args.native_only),
+                        native_fp32_parity=bool(args.native_fp32_parity),
+                    )
+                    row["refine_m"] = int(refine_m) if refine_m is not None else None
+                    row["mode"] = "int4" if args.int4 else "fp32"
+                    results.append(row)
         finally:
             if old_int4 is None:
                 os.environ.pop("GRM_ROUTER_INT4", None)
