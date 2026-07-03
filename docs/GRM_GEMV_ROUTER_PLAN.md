@@ -135,6 +135,19 @@ needed for the 1M interactive target.
 **P3 — INT4 books + two-tier refine.** D2. Gates: exactness gate (match
 fp32 top-k, M-sweep documented), latency curve, 166 floor.
 
+P3 implementation note: the MLA packed arena now builds a signed INT4
+centroid book (`GRM_ROUTER_INT4=1`) with per-row scales and packed nibbles.
+Routing bulk-scores all eligible entries through the INT4 book, keeps
+`GRM_ROUTER_INT4_REFINE_M` candidates (default 4096), and performs final
+ranking only after fp32 rescoring those candidates. Exactness is proven only
+when the refine set covers all candidates; M=4096 was exact on the 1k/10k
+harness run and remains a measured operating point, not a proof for all 1M
+repos. Dim128 native-only OpenMP M=4096 curve: 100k p50 12.8097ms, 250k p50
+27.7697ms, 1M p50 76.4786ms. Finding: INT4 gives >2x over fp32 at 250k/1M,
+but the current scalar CPU nibble-unpack path still misses E3's 25ms at 1M.
+Next P3 work is exactness sweep plus faster unpack/dot kernels or lower-M
+policy if exactness holds.
+
 **P4 — GQA key-bank GEMM path.** D4. Gates: parity vs Python GQA
 routing on the Qwen3-4B gate scenarios, latency, 166 floor.
 

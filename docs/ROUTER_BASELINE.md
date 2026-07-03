@@ -85,3 +85,16 @@ python3 scripts/grm_router_baseline.py \
 
 `native-only` marks parity as `null`; use it for latency curves only, not
 exactness gates.
+
+For the P3 INT4 bulk/refine path:
+
+```bash
+python3 scripts/grm_router_baseline.py \
+  --openmp --native-only --int4 --refine-m 4096 \
+  --node-counts 100000 250000 1000000 \
+  --queries 8 --warmup 2 --dim 128 \
+  --out /tmp/grm_router_int4_large.json
+```
+
+Use non-`native-only` runs at smaller node counts for parity checks, and sweep
+`--refine-m` before treating a latency point as an exactness-safe result.

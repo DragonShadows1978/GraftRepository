@@ -1404,6 +1404,38 @@ def test_native_mla_gemv_arena_openmp_matches_reference_scan(tmp_path):
         assert store.route(query, qlex, topk=10) == expected
 
 
+def test_native_mla_int4_refine_all_matches_fp32_route(tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    rng = np.random.default_rng(9012)
+    dim = 24
+    count = 96
+    query = rng.normal(size=dim).astype(np.float32)
+    query /= np.linalg.norm(query)
+
+    def normed(v):
+        v = np.asarray(v, dtype=np.float32)
+        return v / np.linalg.norm(v)
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        for i in range(count):
+            base = normed(rng.normal(size=dim))
+            keys = [base]
+            if i % 11 == 0:
+                keys.append(normed((0.4 * base) + (0.6 * query)))
+            node_id = store.add_node(f"int4 refine all route {i}", b"", ntok=1)
+            store.set_route_key_list(
+                node_id, keys, (f"node-{i}", f"bucket-{i % 13}"))
+
+        lexical = ("node-42", "bucket-7")
+        fp32 = store.route(query, lexical, topk=12)
+        monkeypatch.setenv("GRM_ROUTER_INT4", "1")
+        monkeypatch.setenv("GRM_ROUTER_INT4_REFINE_M", str(count))
+        assert store.route(query, lexical, topk=12) == fp32
+
+
 def test_native_store_structured_payload_tensors_via_ctypes(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

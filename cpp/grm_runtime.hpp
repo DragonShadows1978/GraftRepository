@@ -496,6 +496,10 @@ class RouterIndex {
     std::vector<float> rows;
     std::vector<float> norms;
     std::vector<std::size_t> entry_row_offsets;
+    bool q4_valid = false;
+    std::size_t q4_stride = 0;
+    std::vector<std::uint8_t> q4_rows;
+    std::vector<float> q4_scales;
   };
 
   void mark_mla_arena_dirty();
@@ -507,6 +511,14 @@ class RouterIndex {
       const std::vector<std::string>& scopes,
       const std::vector<std::string>& durabilities,
       const std::vector<std::string>& mutabilities) const;
+  float exact_mla_entry_score(
+      const std::vector<float>& query,
+      std::size_t entry_idx,
+      double qnorm) const;
+  float int4_mla_entry_score(
+      const std::vector<float>& query,
+      std::size_t entry_idx,
+      double qnorm) const;
   std::vector<std::uint64_t> route_scan(
       const std::vector<float>& query,
       const std::vector<std::string>& lexical,
@@ -516,6 +528,14 @@ class RouterIndex {
       const std::vector<std::string>& durabilities,
       const std::vector<std::string>& mutabilities) const;
   std::vector<std::uint64_t> route_mla_arena(
+      const std::vector<float>& query,
+      const std::vector<std::string>& lexical,
+      std::size_t topk,
+      const std::vector<std::string>& kinds,
+      const std::vector<std::string>& scopes,
+      const std::vector<std::string>& durabilities,
+      const std::vector<std::string>& mutabilities) const;
+  std::vector<std::uint64_t> route_mla_int4(
       const std::vector<float>& query,
       const std::vector<std::string>& lexical,
       std::size_t topk,

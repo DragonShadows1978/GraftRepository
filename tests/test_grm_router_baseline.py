@@ -46,3 +46,22 @@ def test_router_baseline_smoke_cli_writes_json_and_markdown(tmp_path):
     assert [row["nodes"] for row in data["results"]] == [32, 96]
     assert all(row["parity"] for row in data["results"])
     assert "GRM Router Baseline" in md.read_text()
+
+
+def test_router_baseline_smoke_cli_supports_int4_refine_all(tmp_path):
+    out = tmp_path / "baseline_int4.json"
+
+    subprocess.run([
+        "python3",
+        "scripts/grm_router_baseline.py",
+        "--smoke",
+        "--int4",
+        "--refine-m",
+        "128",
+        "--out",
+        str(out),
+    ], cwd=baseline.ROOT, check=True)
+
+    data = json.loads(out.read_text())
+    assert [row["nodes"] for row in data["results"]] == [32, 96]
+    assert all(row["parity"] for row in data["results"])

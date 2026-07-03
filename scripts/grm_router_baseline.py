@@ -464,6 +464,10 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
                    help="compile the native benchmark library with -fopenmp")
     p.add_argument("--native-only", action="store_true",
                    help="skip Python reference parity/timing for large curves")
+    p.add_argument("--int4", action="store_true",
+                   help="enable GRM_ROUTER_INT4 two-tier native route path")
+    p.add_argument("--refine-m", type=int,
+                   help="set GRM_ROUTER_INT4_REFINE_M for INT4 refine sweep")
     p.add_argument("--out", type=Path, default=Path("/tmp/grm_router_baseline.json"))
     p.add_argument("--markdown-out", type=Path)
     p.add_argument("--smoke", action="store_true",
@@ -489,20 +493,36 @@ def main(argv: list[str]) -> int:
         max_files=args.max_files,
     )
     queries = make_queries(bank, args.queries)
+    old_int4 = os.environ.get("GRM_ROUTER_INT4")
+    old_refine = os.environ.get("GRM_ROUTER_INT4_REFINE_M")
+    if args.int4:
+        os.environ["GRM_ROUTER_INT4"] = "1"
+    if args.refine_m is not None:
+        os.environ["GRM_ROUTER_INT4_REFINE_M"] = str(int(args.refine_m))
     with tempfile.TemporaryDirectory(prefix="grm_router_baseline_") as td:
-        lib_path = args.lib or build_native_lib(
-            Path(td), cxx=args.cxx, openmp=bool(args.openmp))
-        results = []
-        for node_count in args.node_counts:
-            routes = make_route_matrix(bank, int(node_count))
-            results.append(benchmark_count(
-                routes=routes,
-                queries=queries,
-                lib_path=lib_path,
-                topk=args.topk,
-                warmup=args.warmup,
-                native_only=bool(args.native_only),
-            ))
+        try:
+            lib_path = args.lib or build_native_lib(
+                Path(td), cxx=args.cxx, openmp=bool(args.openmp))
+            results = []
+            for node_count in args.node_counts:
+                routes = make_route_matrix(bank, int(node_count))
+                results.append(benchmark_count(
+                    routes=routes,
+                    queries=queries,
+                    lib_path=lib_path,
+                    topk=args.topk,
+                    warmup=args.warmup,
+                    native_only=bool(args.native_only),
+                ))
+        finally:
+            if old_int4 is None:
+                os.environ.pop("GRM_ROUTER_INT4", None)
+            else:
+                os.environ["GRM_ROUTER_INT4"] = old_int4
+            if old_refine is None:
+                os.environ.pop("GRM_ROUTER_INT4_REFINE_M", None)
+            else:
+                os.environ["GRM_ROUTER_INT4_REFINE_M"] = old_refine
     output = {
         "schema": "grm-router-baseline-v1",
         "repo": str(ROOT),
