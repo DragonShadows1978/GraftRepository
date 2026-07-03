@@ -311,8 +311,17 @@ full-bank captures, lexical off, OpenMP, exhaustive 8-query batched parity:
 | AVX2 dot4, full 256-token K-bank | 500 | 15.8914 | 17.6990 | true, 8/8 batched-reference queries |
 | AVX2 dot4, full 256-token K-bank | 1,000 | 28.9156 | 31.0866 | true, 8/8 batched-reference queries |
 
+Follow-up layer sweep with the same AVX2 flag over Qwen3.5-2B source full-bank
+captures at layers 3/7/11/15/19/23, 256 nodes, lexical off, OpenMP, exhaustive
+6-query batched parity:
+
+| layers | nodes | native p50 range ms | native p95 max ms | parity |
+| --- | ---: | ---: | ---: | --- |
+| 3/7/11/15/19/23 | 256 | 11.2017-12.9526 | 15.4401 | true, 6/6 batched-reference queries on every layer |
+
 This is the first in-tree lower-level full-bank dot kernel with a clear capture
-win, but it remains opt-in until broader layer/model receipts clear the
+win. The six-layer 256-node receipt clears the first broader-layer probe, but
+it remains opt-in until larger all-layer or second-model receipts clear the
 accumulation-order risk.
 
 `GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
@@ -457,8 +466,9 @@ Fresh post-snapshot GQA receipts:
   or a larger routing layout change. The no-filter active fast path helps on
   same-corpus reruns but does not close the p95 gate.
 - Extend exhaustive real-capture GQA parity beyond the current layer-3
-  1,024-node, four-query batched-reference receipt and the 256-node layer 3/7/11
-  sweep before claiming broader full-bank correctness across all capture layers.
+  1,024-node, four-query batched-reference receipt and the AVX2 256-node
+  six-layer sweep before claiming broader full-bank correctness at larger
+  all-layer node counts or across another model/capture family.
 - Implement a fuller GQA GEMM/segment-reduce layout if sub-10ms routing is
   required past larger full-bank real-capture points; the current segment
   reduce is a key-score-bank pass and improves 512-node full-bank routing, but

@@ -441,7 +441,12 @@ measured `28.9156ms` p50 / `31.0866ms` p95. Both were parity-green and the
 benchmark receipt records `GRM_ROUTER_GQA_AVX2=1`. This is the first
 lower-level in-tree dot kernel with a real full-bank win, but it stays opt-in
 until broader layer/model receipts prove the accumulation-order change is safe
-enough to default.
+enough to default. Follow-up layer sweep: with `GRM_ROUTER_GQA_AVX2=1`,
+Qwen3.5-2B source full-bank captures at layers 3/7/11/15/19/23, 256 nodes,
+lexical off, OpenMP, exhaustive 6-query batched parity, all passed. Each layer
+loaded 509 usable shards (`skipped_shape=3`); p50 ranged `11.2017ms` to
+`12.9526ms`, p95 maxed at `15.4401ms`, and the sweep receipt records the AVX2
+runtime flag.
 
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The
