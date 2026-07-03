@@ -516,6 +516,7 @@ def benchmark_count(
     warmup: int,
     native_only: bool,
     use_lexical: bool,
+    parity_all_queries: bool,
     parity_sample_queries: int,
     parity_reference_mode: str,
 ) -> dict:
@@ -549,6 +550,10 @@ def benchmark_count(
                 got = native.route(query, lexical, topk)
                 if got != py:
                     mismatches.append({"query": i, "python": py, "native": got})
+        elif parity_all_queries:
+            parity_reference = python_gqa_reference_label(
+                parity_reference_mode, sampled=False)
+            sampled_indices = list(range(len(queries)))
         elif parity_sample_queries > 0:
             parity_reference = python_gqa_reference_label(
                 parity_reference_mode, sampled=True)
@@ -597,9 +602,11 @@ def benchmark_count(
         "python_route_ms_p95": None if native_only else baseline._p95_ms(py_ns),
         "parity": None if parity_reference is None else not mismatches,
         "parity_reference": parity_reference,
-        "parity_sampled": bool(native_only and sampled_indices),
+        "parity_sampled": bool(native_only and sampled_indices and
+                               not parity_all_queries),
+        "parity_exhaustive": bool(native_only and parity_all_queries),
         "parity_queries": int(len(sampled_indices) if sampled_indices else (
-            len(queries) if parity_reference == "python_gqa_raw" else 0)),
+            len(queries) if parity_reference is not None else 0)),
         "lexical": bool(use_lexical),
         "mismatches": mismatches[:5],
     }
@@ -726,6 +733,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--parity-sample-queries", type=int, default=0,
                    help=("for native-only runs, verify this many deterministic "
                          "queries against the Python raw q.k reference"))
+    p.add_argument("--parity-all-queries", action="store_true",
+                   help=("for native-only runs, verify every generated query "
+                         "against the Python raw q.k reference"))
     p.add_argument("--parity-reference", choices=("scalar", "batched"),
                    default="scalar",
                    help="Python reference implementation used for parity checks")
@@ -878,6 +888,7 @@ def main(argv: list[str]) -> int:
                 warmup=args.warmup,
                 native_only=args.native_only,
                 use_lexical=not args.no_lexical,
+                parity_all_queries=args.parity_all_queries,
                 parity_sample_queries=args.parity_sample_queries,
                 parity_reference_mode=args.parity_reference,
             )

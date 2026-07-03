@@ -371,3 +371,48 @@ def test_gqa_router_benchmark_native_only_supports_batched_sampled_parity(tmp_pa
     assert row["parity_sampled"] is True
     assert row["parity_queries"] == 2
     assert row["python_route_ms_p50"] is None
+
+
+def test_gqa_router_benchmark_native_only_supports_exhaustive_parity(tmp_path):
+    captures = tmp_path / "captures"
+    captures.mkdir()
+    rng = np.random.default_rng(97531)
+    for i in range(6):
+        key = rng.normal(size=(1, 1, 4, 16)).astype(np.float16)
+        np.savez_compressed(captures / f"source_doc{i:02d}_chunk000000.npz",
+                            l3_k=key)
+
+    out = tmp_path / "gqa_capture_exhaustive_parity.json"
+    subprocess.run([
+        "python3",
+        "scripts/grm_gqa_router_benchmark.py",
+        "--smoke",
+        "--capture-dir",
+        str(captures),
+        "--capture-layer",
+        "3",
+        "--capture-limit",
+        "6",
+        "--node-counts",
+        "6",
+        "--queries",
+        "4",
+        "--warmup",
+        "1",
+        "--native-only",
+        "--parity-all-queries",
+        "--parity-reference",
+        "batched",
+        "--no-lexical",
+        "--out",
+        str(out),
+    ], cwd=baseline.ROOT, check=True)
+
+    data = json.loads(out.read_text())
+    row = data["results"][0]
+    assert row["parity"] is True
+    assert row["parity_reference"] == "python_gqa_raw_batched"
+    assert row["parity_sampled"] is False
+    assert row["parity_exhaustive"] is True
+    assert row["parity_queries"] == 4
+    assert row["python_route_ms_p50"] is None

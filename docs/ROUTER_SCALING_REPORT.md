@@ -127,6 +127,7 @@ Qwen3.5-2B real-capture source K-bank probe:
 | captured full 256-token K, pre-qt4 native-only | 512 | 39.5778 | 42.3518 | n/a | n/a |
 | captured full 256-token K, pre-qt4 sampled parity | 512 | 39.6250 | 43.4202 | n/a | true (1 query) |
 | captured full 256-token K, qt4 sampled parity | 512 | 19.0136 | 21.9898 | n/a | true (2 queries) |
+| captured full 256-token K, qt4 exhaustive parity | 512 | 20.4087 | 21.8582 | n/a | true (4 queries) |
 | captured full 256-token K, pre-qt4 native-only | 768 | 58.3090 | 63.2833 | n/a | n/a |
 | captured full 256-token K, pre-qt4 batched sampled parity | 768 | 58.5005 | 64.6167 | n/a | true (2 queries) |
 | captured full 256-token K, qt4 batched sampled parity | 768 | 33.8389 | 34.8920 | n/a | true (2 queries) |
@@ -169,6 +170,11 @@ The native full-bank scorer now has a query-token-4 fast path that reuses each
 K row across the four query rows while preserving per-row dot accumulation
 order. On the same Qwen3.5-2B source captures, 512/768/1,024 full-bank sampled
 parity points now measure `19.0136ms` / `33.8389ms` / `36.7363ms` p50.
+Native-only capture runs now also support `--parity-all-queries`, which runs the
+Python raw-q.k reference for every generated query without timing Python in the
+route curve. A 512-node full-bank Qwen3.5-2B source check matched all four
+generated batched-reference queries and measured `20.4087ms` p50 /
+`21.8582ms` p95.
 The benchmark can now route compact representative-token capture banks while
 checking parity against the original full-bank reference. Simple stride
 compaction is not safe on this capture set: 16/32/64/128-token stride banks at
@@ -183,6 +189,9 @@ A hand-unrolled repeat-4 head-ratio scorer (`8q/2kv`, not a 4B model run) was
 measured next. It also preserved sampled parity, but regressed 512 nodes to
 `23.1079ms` and only matched the 1,024-node point within noise (`36.6391ms`),
 so it was removed rather than kept behind a flag.
+A paired repeated-head scorer that reused each K row across two query heads at a
+time was measured next. It also preserved parity, but regressed the fresh
+512-node p50 from `19.8082ms` to `22.3257ms`, so no C++ scorer change was kept.
 
 ## Expectations
 
@@ -198,12 +207,14 @@ so it was removed rather than kept behind a flag.
 - Treat the 1M dim128 host route as deep-interactive already; if E3 remains
   mandatory, replace the scalar q4 dot with a lower-level vectorized dot kernel
   or a larger routing layout change.
-- Increase real-capture GQA sampled-parity coverage, or run exhaustive batched
-  parity when claiming full correctness beyond the existing two-query samples.
+- Extend exhaustive real-capture GQA parity beyond the current 512-node,
+  four-query batched-reference receipt before claiming broader full-bank
+  correctness.
 - Implement a fuller GQA GEMM/segment-reduce layout if sub-10ms routing is
   required past the 96-node real-capture point; simple stride representative-key
   compaction, grouped repeated-head qt4 scoring, and hand-unrolled repeat-4
-  head-ratio scoring were measured and rejected.
+  head-ratio scoring, and paired repeated-head scoring were measured and
+  rejected.
 - Replace the current C ABI prepare-on-first-route shared-mutex bridge with the
   planned lock-free double-buffer epoch snapshot model if threaded serving
   requires no read-side lock.

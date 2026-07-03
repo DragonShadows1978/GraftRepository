@@ -463,6 +463,46 @@ def test_native_gqa_raw_route_matches_python_law(tmp_path):
         assert store.route_gqa(q, lexical_keys=["a17"], topk=3)[0] == n_lex
 
 
+def test_native_gqa_qt4_even_repeat_route_matches_python_law(tmp_path):
+    def raw_score(query, key):
+        h, _, dh = query.shape
+        kk = np.repeat(key, h // key.shape[0], axis=0)
+        sc = np.einsum("hqd,hkd->hqk", query, kk) / np.sqrt(dh)
+        return float(np.abs(sc).max(axis=(1, 2)).mean())
+
+    lib = build_native(tmp_path)
+    q = np.asarray([
+        [[1.0, 0.0, 0.0], [0.5, 0.5, 0.0], [0.0, 1.0, 0.0], [0.0, 0.5, 0.5]],
+        [[0.0, 1.0, 0.0], [0.0, 0.5, 0.5], [1.0, 0.0, 0.0], [0.5, 0.5, 0.0]],
+        [[0.0, 0.0, 1.0], [0.5, 0.0, 0.5], [0.0, 1.0, 0.0], [0.0, 0.5, 0.5]],
+        [[1.0, 1.0, 0.0], [0.5, 0.0, 0.5], [0.0, 0.0, 1.0], [0.5, 0.5, 0.0]],
+    ], dtype=np.float32)
+    weak = np.asarray([
+        [[0.1, 0.0, 0.0], [0.0, 0.1, 0.0]],
+        [[0.0, 0.0, 0.1], [0.1, 0.0, 0.0]],
+    ], dtype=np.float32)
+    good = np.asarray([
+        [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]],
+        [[0.0, 0.0, 1.0], [1.0, 1.0, 0.0]],
+    ], dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="Qwen3.5_TC", num_layers=24,
+            hidden_dim=2048, vals_per_tok_layer=1024, route_layer=3,
+            payload_kind="gqa", num_kv_heads=2, head_dim=3) as store:
+        n_weak = store.add_node("weak qt4 GQA route", b"", ntok=1)
+        n_good = store.add_node("good qt4 GQA route", b"", ntok=1)
+        store.set_route_key_list(n_weak, [weak], [])
+        store.set_route_key_list(n_good, [good], [])
+
+        scores = {
+            n_weak: raw_score(q, weak),
+            n_good: raw_score(q, good),
+        }
+        expected = sorted(scores, key=lambda node_id: -scores[node_id])
+        assert store.route_gqa(q, topk=2) == expected
+
+
 def test_native_gqa_route_drops_non_finite_scores(tmp_path):
     lib = build_native(tmp_path)
     q = np.asarray([[[1.0, 0.0]]], dtype=np.float32)

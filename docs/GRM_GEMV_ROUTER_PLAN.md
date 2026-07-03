@@ -272,6 +272,11 @@ accumulation order but reuses each K row across the four query rows before the
 per-head max reduction. Qwen3.5-2B source layer-3 full-bank sampled-parity runs
 now measure 512/768/1,024 nodes at 19.0136ms / 33.8389ms / 36.7363ms p50, all
 matching the batched Python raw q.k reference on two sampled queries.
+`scripts/grm_gqa_router_benchmark.py` now also supports
+`--parity-all-queries` for native-only runs, producing explicit exhaustive
+parity receipts without timing Python in the route curve. A 512-node Qwen3.5-2B
+source layer-3 full-bank run matched all four generated batched-reference
+queries and measured 20.4087ms p50 / 21.8582ms p95.
 
 P4 representative-compaction note: the GQA benchmark can now route compacted
 capture banks (`--compact-route-tokens`, `--compact-route-mode`) while checking
@@ -293,6 +298,11 @@ parity, but regressed 512 nodes to 23.1079ms p50 and only matched the
 1,024-node point within noise at 36.6391ms p50. This is the `8q/2kv` head
 repeat ratio on Qwen3.5-2B source captures, not a 4B model run. It was removed
 rather than kept behind a flag.
+
+P4 paired-head rejection: a scorer that reused each K row across two repeated
+query heads at a time also preserved parity, but regressed a fresh 512-node
+Qwen3.5-2B source full-bank run from 19.8082ms p50 to 22.3257ms p50. It was
+removed; the kept runtime remains the prior qt4 full-bank scorer.
 
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
