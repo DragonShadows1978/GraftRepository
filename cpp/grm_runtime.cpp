@@ -2635,13 +2635,6 @@ static std::int8_t unpack_i4(std::uint8_t nibble) {
   return static_cast<std::int8_t>(nibble);
 }
 
-static std::uint8_t q4_nibble(const std::vector<std::uint8_t>& packed,
-                              std::size_t base,
-                              std::size_t d) {
-  const auto byte = packed[base + (d / 2)];
-  return (d % 2 == 0) ? (byte & 0x0F) : ((byte >> 4) & 0x0F);
-}
-
 void RouterIndex::upsert(std::uint64_t node_id, std::vector<float> route_key,
                          std::vector<std::string> lexical_keys) {
   std::vector<std::vector<float>> keys;
@@ -3053,10 +3046,17 @@ float RouterIndex::int4_mla_entry_score(
     const auto packed_base = row * mla_arena_.q4_stride;
     const auto scale = static_cast<double>(mla_arena_.q4_scales[row]);
     double dot = 0.0;
-    for (std::size_t d = 0; d < dim; ++d) {
-      const auto qv = unpack_i4(q4_nibble(mla_arena_.q4_rows, packed_base, d));
+    for (std::size_t b = 0; b < mla_arena_.q4_stride; ++b) {
+      const auto byte = mla_arena_.q4_rows[packed_base + b];
+      const auto d = b * 2;
+      const auto q0 = unpack_i4(byte & 0x0F);
       dot += static_cast<double>(query[d]) *
-             (static_cast<double>(qv) * scale);
+             (static_cast<double>(q0) * scale);
+      if (d + 1 < dim) {
+        const auto q1 = unpack_i4((byte >> 4) & 0x0F);
+        dot += static_cast<double>(query[d + 1]) *
+               (static_cast<double>(q1) * scale);
+      }
     }
     const float score = static_cast<float>(
         dot / ((qnorm * static_cast<double>(mla_arena_.norms[row])) + 1.0e-8));

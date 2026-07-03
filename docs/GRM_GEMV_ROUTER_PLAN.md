@@ -148,6 +148,12 @@ but the current scalar CPU nibble-unpack path still misses E3's 25ms at 1M.
 Next P3 work is exactness sweep plus faster unpack/dot kernels or lower-M
 policy if exactness holds.
 
+P3 byte-unpack note: the INT4 scorer now unpacks two signed nibbles per byte
+inside the dot loop instead of using a helper per dimension. Dim128 native-only
+OpenMP M=4096 remeasure: 100k p50 11.9751ms, 1M p50 67.0890ms. This is a
+real improvement, but still not enough for E3 without a more vectorized
+unpack/dot kernel and/or a lower exactness-safe refine M.
+
 **P4 — GQA key-bank GEMM path.** D4. Gates: parity vs Python GQA
 routing on the Qwen3-4B gate scenarios, latency, 166 floor.
 
