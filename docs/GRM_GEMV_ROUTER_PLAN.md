@@ -124,6 +124,14 @@ kind/scope/durability/mutability. Known filter values use bit checks in the
 packed route path; unknown metadata or unknown filter values fall back to the
 previous exact string comparison, preserving arbitrary metadata semantics.
 
+P2 scale note: `RouterIndex` now maintains a node_id → entry index map, so
+large native route-index population is O(N) instead of linear-search O(N²).
+Native-only OpenMP dim128 curve after the map: 100k p50 22.8177ms, 250k p50
+57.8062ms, 1M p50 211.3071ms. These large points skip Python reference parity
+(`parity=null`) because the Python scan is the bottleneck at this scale.
+Finding: fp32 host scan alone is not enough for E3; P3 INT4/two-tier refine is
+needed for the 1M interactive target.
+
 **P3 — INT4 books + two-tier refine.** D2. Gates: exactness gate (match
 fp32 top-k, M-sweep documented), latency curve, 166 floor.
 

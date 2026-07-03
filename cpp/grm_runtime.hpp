@@ -499,6 +499,7 @@ class RouterIndex {
   };
 
   void mark_mla_arena_dirty();
+  void rebuild_entry_map();
   void rebuild_mla_arena() const;
   bool entry_allowed(
       const Entry& entry,
@@ -524,6 +525,7 @@ class RouterIndex {
       const std::vector<std::string>& mutabilities) const;
 
   std::vector<Entry> entries_;
+  std::unordered_map<std::uint64_t, std::size_t> entry_by_node_;
   mutable MlaArena mla_arena_;
   mutable bool mla_arena_dirty_ = true;
 };

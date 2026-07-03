@@ -2609,36 +2609,36 @@ void RouterIndex::upsert(std::uint64_t node_id, std::vector<float> route_key,
 void RouterIndex::upsert_multi(std::uint64_t node_id,
                                std::vector<std::vector<float>> route_keys,
                                std::vector<std::string> lexical_keys) {
-  for (auto& e : entries_) {
-    if (e.node_id == node_id) {
-      e.route_keys = std::move(route_keys);
-      e.lexical_keys = std::move(lexical_keys);
-      mark_mla_arena_dirty();
-      return;
-    }
+  const auto existing = entry_by_node_.find(node_id);
+  if (existing != entry_by_node_.end()) {
+    auto& e = entries_[existing->second];
+    e.route_keys = std::move(route_keys);
+    e.lexical_keys = std::move(lexical_keys);
+    mark_mla_arena_dirty();
+    return;
   }
   entries_.push_back({node_id, std::move(route_keys), std::move(lexical_keys)});
   auto& e = entries_.back();
   e.filter_bits = route_filter_bits(
       e.kind, e.scope, e.durability, e.mutability);
+  entry_by_node_[node_id] = entries_.size() - 1;
   mark_mla_arena_dirty();
 }
 
 void RouterIndex::erase(std::uint64_t node_id) {
-  entries_.erase(
-      std::remove_if(entries_.begin(), entries_.end(),
-                     [node_id](const Entry& e) {
-                       return e.node_id == node_id;
-                     }),
-      entries_.end());
+  const auto it = entry_by_node_.find(node_id);
+  if (it == entry_by_node_.end()) {
+    return;
+  }
+  entries_.erase(entries_.begin() + static_cast<std::ptrdiff_t>(it->second));
+  rebuild_entry_map();
   mark_mla_arena_dirty();
 }
 
 void RouterIndex::set_active(std::uint64_t node_id, bool active) {
-  for (auto& e : entries_) {
-    if (e.node_id == node_id) {
-      e.active = active;
-    }
+  const auto it = entry_by_node_.find(node_id);
+  if (it != entry_by_node_.end()) {
+    entries_[it->second].active = active;
   }
 }
 
@@ -2647,24 +2647,25 @@ void RouterIndex::set_route_metadata(std::uint64_t node_id,
                                      std::string scope,
                                      std::string durability,
                                      std::string mutability) {
-  for (auto& e : entries_) {
-    if (e.node_id == node_id) {
-      if (!kind.empty()) {
-        e.kind = kind;
-      }
-      if (!scope.empty()) {
-        e.scope = scope;
-      }
-      if (!durability.empty()) {
-        e.durability = durability;
-      }
-      if (!mutability.empty()) {
-        e.mutability = mutability;
-      }
-      e.filter_bits = route_filter_bits(
-          e.kind, e.scope, e.durability, e.mutability);
-    }
+  const auto it = entry_by_node_.find(node_id);
+  if (it == entry_by_node_.end()) {
+    return;
   }
+  auto& e = entries_[it->second];
+  if (!kind.empty()) {
+    e.kind = kind;
+  }
+  if (!scope.empty()) {
+    e.scope = scope;
+  }
+  if (!durability.empty()) {
+    e.durability = durability;
+  }
+  if (!mutability.empty()) {
+    e.mutability = mutability;
+  }
+  e.filter_bits = route_filter_bits(
+      e.kind, e.scope, e.durability, e.mutability);
 }
 
 static float cosine(const std::vector<float>& a, const std::vector<float>& b) {
@@ -2853,6 +2854,14 @@ static float lexical_bonus(
 void RouterIndex::mark_mla_arena_dirty() {
   mla_arena_dirty_ = true;
   mla_arena_.valid = false;
+}
+
+void RouterIndex::rebuild_entry_map() {
+  entry_by_node_.clear();
+  entry_by_node_.reserve(entries_.size());
+  for (std::size_t i = 0; i < entries_.size(); ++i) {
+    entry_by_node_[entries_[i].node_id] = i;
+  }
 }
 
 void RouterIndex::rebuild_mla_arena() const {

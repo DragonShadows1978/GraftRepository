@@ -72,3 +72,16 @@ python3 scripts/grm_router_baseline.py \
 If the 1M point exceeds available host RAM with the current vector-backed
 native store, record that as the P0 result. That failure is itself part of the
 case for the SoA arena in P2.
+
+For P2+ native-only scaling where the Python reference scan would dominate:
+
+```bash
+python3 scripts/grm_router_baseline.py \
+  --openmp --native-only \
+  --node-counts 100000 250000 1000000 \
+  --queries 8 --warmup 2 --dim 128 \
+  --out /tmp/grm_router_p2_native_large.json
+```
+
+`native-only` marks parity as `null`; use it for latency curves only, not
+exactness gates.

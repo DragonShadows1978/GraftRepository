@@ -334,10 +334,14 @@ class NativeRouter:
 
 
 def _median_ms(values_ns: list[int]) -> float:
+    if not values_ns:
+        return float("nan")
     return statistics.median(values_ns) / 1.0e6
 
 
 def _p95_ms(values_ns: list[int]) -> float:
+    if not values_ns:
+        return float("nan")
     if len(values_ns) < 2:
         return values_ns[0] / 1.0e6
     return statistics.quantiles(values_ns, n=20, method="inclusive")[18] / 1.0e6
@@ -350,6 +354,7 @@ def benchmark_count(
     lib_path: Path,
     topk: int,
     warmup: int,
+    native_only: bool = False,
 ) -> dict:
     py_ns: list[int] = []
     native_ns: list[int] = []
@@ -358,21 +363,24 @@ def benchmark_count(
         build_t0 = time.perf_counter_ns()
         native.add_routes(routes)
         build_ms = (time.perf_counter_ns() - build_t0) / 1.0e6
-        for i, query in enumerate(queries):
-            lexical = lexical_keys_for_query(i, routes.shape[0])
-            py = python_route_scan(routes, query, lexical, topk)
-            got = native.route(query, lexical, topk)
-            if got != py:
-                mismatches.append({"query": i, "python": py, "native": got})
+        if not native_only:
+            for i, query in enumerate(queries):
+                lexical = lexical_keys_for_query(i, routes.shape[0])
+                py = python_route_scan(routes, query, lexical, topk)
+                got = native.route(query, lexical, topk)
+                if got != py:
+                    mismatches.append({"query": i, "python": py, "native": got})
         for i, query in enumerate(queries):
             lexical = lexical_keys_for_query(i, routes.shape[0])
             if i < warmup:
-                python_route_scan(routes, query, lexical, topk)
+                if not native_only:
+                    python_route_scan(routes, query, lexical, topk)
                 native.route(query, lexical, topk)
                 continue
-            t0 = time.perf_counter_ns()
-            python_route_scan(routes, query, lexical, topk)
-            py_ns.append(time.perf_counter_ns() - t0)
+            if not native_only:
+                t0 = time.perf_counter_ns()
+                python_route_scan(routes, query, lexical, topk)
+                py_ns.append(time.perf_counter_ns() - t0)
             t0 = time.perf_counter_ns()
             native.route(query, lexical, topk)
             native_ns.append(time.perf_counter_ns() - t0)
@@ -384,9 +392,9 @@ def benchmark_count(
         "native_build_ms": build_ms,
         "native_route_ms_p50": _median_ms(native_ns),
         "native_route_ms_p95": _p95_ms(native_ns),
-        "python_route_ms_p50": _median_ms(py_ns),
-        "python_route_ms_p95": _p95_ms(py_ns),
-        "parity": not mismatches,
+        "python_route_ms_p50": None if native_only else _median_ms(py_ns),
+        "python_route_ms_p95": None if native_only else _p95_ms(py_ns),
+        "parity": None if native_only else not mismatches,
         "mismatches": mismatches[:5],
     }
 
@@ -412,12 +420,16 @@ def write_markdown(result: dict, path: Path) -> None:
         "| ---: | ---: | :---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for row in result["results"]:
+        py50 = row["python_route_ms_p50"]
+        py95 = row["python_route_ms_p95"]
+        py50_s = f"{py50:.4f}" if py50 is not None else "n/a"
+        py95_s = f"{py95:.4f}" if py95 is not None else "n/a"
         lines.append(
             f"| {row['nodes']} | {row['dim']} | {row['parity']} | "
             f"{row['native_route_ms_p50']:.4f} | "
             f"{row['native_route_ms_p95']:.4f} | "
-            f"{row['python_route_ms_p50']:.4f} | "
-            f"{row['python_route_ms_p95']:.4f} | "
+            f"{py50_s} | "
+            f"{py95_s} | "
             f"{row['native_build_ms']:.2f} |"
         )
     lines.extend([
@@ -450,6 +462,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--cxx", default=os.environ.get("CXX", "g++"))
     p.add_argument("--openmp", action="store_true",
                    help="compile the native benchmark library with -fopenmp")
+    p.add_argument("--native-only", action="store_true",
+                   help="skip Python reference parity/timing for large curves")
     p.add_argument("--out", type=Path, default=Path("/tmp/grm_router_baseline.json"))
     p.add_argument("--markdown-out", type=Path)
     p.add_argument("--smoke", action="store_true",
@@ -487,6 +501,7 @@ def main(argv: list[str]) -> int:
                 lib_path=lib_path,
                 topk=args.topk,
                 warmup=args.warmup,
+                native_only=bool(args.native_only),
             ))
     output = {
         "schema": "grm-router-baseline-v1",

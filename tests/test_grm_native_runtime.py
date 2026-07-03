@@ -224,6 +224,25 @@ def test_native_store_clear_route_removes_persistent_route_entry(tmp_path):
         assert restored.route([1.0, 0.0], ["clear-me"], topk=1) == []
 
 
+def test_native_route_upsert_replaces_existing_entry(tmp_path):
+    lib = build_native(tmp_path)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        node_id = store.add_node("replace route", b"", ntok=1)
+        old_runner = store.add_node("old lexical runner", b"", ntok=1)
+        store.set_route(node_id, [1.0, 0.0], ["old"])
+        store.set_route(old_runner, [0.1, 0.9949874], ["old"])
+        assert store.stats().route_entries == 2
+        assert store.route([1.0, 0.0], ["old"], topk=1) == [node_id]
+
+        store.set_route(node_id, [0.0, 1.0], ["new"])
+        assert store.stats().route_entries == 2
+        assert store.route([1.0, 0.0], ["old"], topk=1) == [old_runner]
+        assert store.route([0.0, 1.0], ["new"], topk=1) == [node_id]
+
+
 def test_native_route_drops_non_finite_scores(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(
