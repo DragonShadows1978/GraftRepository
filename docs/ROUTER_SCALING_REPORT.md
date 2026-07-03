@@ -239,6 +239,24 @@ default confirmation; `17.7144ms` p50 / `19.4015ms` p95 in an immediate forced
 key-score-bank comparison), so fused single-key remains opt-in rather than a
 runtime default.
 
+`GRM_ROUTER_GQA_ROWBLOCK=1` enables a second non-default experiment: a
+query-head row-block scorer for single-key, query-token-4 GQA banks. It computes
+per `(entry, query_head)` blocks into a temporary head-score table and then
+reduces heads back to entry raw scores. This is closer to the requested
+GEMM/segment-reduce shape than the single-key shortcut, but the first
+real-capture result is mixed. On Qwen3.5-2B source layer-3 full-bank captures:
+
+| mode | nodes | native p50 ms | native p95 ms | parity |
+| --- | ---: | ---: | ---: | --- |
+| default key-score-bank segment | 512 | 20.3634 | 21.7664 | true, 6/6 batched-reference queries |
+| row-block opt-in | 512 | 18.4712 | 21.5356 | true, 6/6 batched-reference queries |
+| row-block opt-in | 768 | 27.8408 | 33.6079 | true, 6/6 batched-reference queries |
+| row-block opt-in | 1,024 | 34.5670 | 36.3997 | true, 6/6 batched-reference queries |
+
+The 512-node point improved p50, but the 768/1,024 points did not beat the
+existing bounded top-k full-bank receipts. Row-block therefore remains an
+opt-in measured candidate rather than the default runtime path.
+
 ## GQA Capture Layer Sweep
 
 `scripts/grm_gqa_layer_sweep.py` wraps the existing GQA benchmark internals and
@@ -343,4 +361,7 @@ Fresh post-snapshot GQA receipts:
   it is not a BLAS/GEMM-backed row-block kernel. Simple stride representative-key
   compaction, grouped repeated-head qt4 scoring, hand-unrolled repeat-4
   head-ratio scoring, paired repeated-head scoring, and fused single-key segment
-  defaulting were measured and rejected for runtime default use.
+  defaulting were measured and rejected for runtime default use. The opt-in
+  query-head row-block scorer improves the 512-node p50 but does not yet win the
+  768/1,024-node full-bank curve, so the remaining kernel work should target a
+  lower-level GEMM/BLAS-style layout rather than this temporary head-score table.

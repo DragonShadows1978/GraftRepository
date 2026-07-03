@@ -3587,6 +3587,9 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
   const bool want_fused_single_key_segment =
       env_truthy("GRM_ROUTER_GQA_FUSED_SEGMENT") &&
       !env_truthy("GRM_ROUTER_GQA_KEYBANK_SEGMENT");
+  const bool want_rowblock_segment =
+      env_truthy("GRM_ROUTER_GQA_ROWBLOCK") &&
+      !env_truthy("GRM_ROUTER_GQA_KEYBANK_SEGMENT");
   std::uint64_t max_key_tokens = 1;
   std::size_t max_keys_per_entry = 0;
   if (use_arena) {
@@ -3613,7 +3616,115 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
   const bool use_fused_single_key_segment =
       use_segment_reduce && want_fused_single_key_segment &&
       max_keys_per_entry <= 1;
-  if (use_fused_single_key_segment) {
+  const auto query_expected = use_arena
+      ? checked_mul(checked_mul(query_heads, query_tokens, "GQA rowblock query"),
+                    head_dim, "GQA rowblock query")
+      : 0;
+  const bool use_rowblock_segment =
+      use_segment_reduce && want_rowblock_segment && max_keys_per_entry <= 1 &&
+      query_finite && query_tokens == 4 && query_heads > 0 && kv_heads > 0 &&
+      query_heads % kv_heads == 0 &&
+      query.size() == static_cast<std::size_t>(query_expected);
+  if (use_rowblock_segment) {
+    const auto repeat = query_heads / kv_heads;
+    const float inv_denom =
+        1.0F / std::sqrt(static_cast<float>(head_dim));
+    const auto rowblock_pair_count = static_cast<std::size_t>(
+        checked_mul(entry_count, static_cast<std::size_t>(query_heads),
+                    "GQA rowblock head scores"));
+    std::vector<float> head_scores(
+        rowblock_pair_count,
+        std::numeric_limits<float>::quiet_NaN());
+    const double gqa_head_work =
+        static_cast<double>(entry_count) *
+        static_cast<double>(std::max<std::uint64_t>(1, query_heads)) *
+        static_cast<double>(std::max<std::uint64_t>(1, max_key_tokens));
+#if defined(_OPENMP)
+#pragma omp parallel for schedule(static) if(gqa_head_work >= kOpenMpGqaRouteWorkThreshold)
+#endif
+    for (std::int64_t pair_i = 0;
+         pair_i < static_cast<std::int64_t>(rowblock_pair_count);
+         ++pair_i) {
+      const auto pair_idx = static_cast<std::size_t>(pair_i);
+      const auto entry_idx = pair_idx / static_cast<std::size_t>(query_heads);
+      const auto h = static_cast<std::uint64_t>(
+          pair_idx % static_cast<std::size_t>(query_heads));
+      const auto& e = entries_[entry_idx];
+      if (!entry_allowed(e, kinds, scopes, durabilities, mutabilities)) {
+        continue;
+      }
+      const auto key_start = gqa_arena_.entry_key_offsets[entry_idx];
+      const auto key_end = gqa_arena_.entry_key_offsets[entry_idx + 1];
+      if (key_start == key_end || gqa_arena_.key_finite[key_start] == 0) {
+        continue;
+      }
+      const auto kh = h / repeat;
+      const auto key_tokens = gqa_arena_.key_tokens[key_start];
+      const auto key_row_start = gqa_arena_.key_row_offsets[key_start];
+      const auto* rows = gqa_arena_.rows.data();
+      const auto qoff = h * 4 * head_dim;
+      const auto* q0 = query.data() + static_cast<std::size_t>(qoff);
+      const auto* q1 = q0 + static_cast<std::size_t>(head_dim);
+      const auto* q2 = q1 + static_cast<std::size_t>(head_dim);
+      const auto* q3 = q2 + static_cast<std::size_t>(head_dim);
+      float best = 0.0F;
+      for (std::uint64_t ki = 0; ki < key_tokens; ++ki) {
+        const auto row = key_row_start +
+                         static_cast<std::size_t>((kh * key_tokens) + ki);
+        const auto* k = rows + (row * static_cast<std::size_t>(head_dim));
+        float dot0 = 0.0F;
+        float dot1 = 0.0F;
+        float dot2 = 0.0F;
+        float dot3 = 0.0F;
+#if defined(_OPENMP)
+#pragma omp simd reduction(+ : dot0, dot1, dot2, dot3)
+#endif
+        for (std::uint64_t d = 0; d < head_dim; ++d) {
+          const auto idx = static_cast<std::size_t>(d);
+          const float kv = k[idx];
+          dot0 += q0[idx] * kv;
+          dot1 += q1[idx] * kv;
+          dot2 += q2[idx] * kv;
+          dot3 += q3[idx] * kv;
+        }
+        const float row_best = std::max(
+            std::max(std::abs(dot0), std::abs(dot1)),
+            std::max(std::abs(dot2), std::abs(dot3)));
+        best = std::max(best, row_best * inv_denom);
+      }
+      head_scores[pair_idx] = best;
+    }
+#if defined(_OPENMP)
+#pragma omp parallel for schedule(static) if(entry_count >= kOpenMpGqaRouteWorkThreshold)
+#endif
+    for (std::int64_t entry_i = 0;
+         entry_i < static_cast<std::int64_t>(entry_count);
+         ++entry_i) {
+      const auto entry_idx = static_cast<std::size_t>(entry_i);
+      float total = 0.0F;
+      bool entry_have = true;
+      for (std::uint64_t h = 0; h < query_heads; ++h) {
+        const auto score = head_scores[
+            (entry_idx * static_cast<std::size_t>(query_heads)) +
+            static_cast<std::size_t>(h)];
+        if (!std::isfinite(score)) {
+          entry_have = false;
+          break;
+        }
+        total += score;
+      }
+      if (!entry_have) {
+        continue;
+      }
+      raw_scores[entry_idx] = total / static_cast<float>(query_heads);
+      if (!lexical.empty()) {
+        const auto& e = entries_[entry_idx];
+        lexical_hits[entry_idx] = lexical_hit_count(
+            lexical, query_lex_hashes, e.lexical_keys, e.lexical_hashes);
+      }
+      have[entry_idx] = 1;
+    }
+  } else if (use_fused_single_key_segment) {
 #if defined(_OPENMP)
 #pragma omp parallel for schedule(static) if(gqa_route_work >= kOpenMpGqaRouteWorkThreshold)
 #endif

@@ -568,6 +568,59 @@ def test_native_gqa_single_key_segment_matches_python_law(tmp_path, monkeypatch)
         assert store.route_gqa(q, topk=3) == expected
 
 
+def test_native_gqa_rowblock_segment_matches_python_law(tmp_path, monkeypatch):
+    def raw_score(query, key):
+        h, _, dh = query.shape
+        kk = np.repeat(key, h // key.shape[0], axis=0)
+        sc = np.einsum("hqd,hkd->hqk", query, kk) / np.sqrt(dh)
+        return float(np.abs(sc).max(axis=(1, 2)).mean())
+
+    monkeypatch.setenv("GRM_ROUTER_GQA_SEGMENT", "1")
+    monkeypatch.setenv("GRM_ROUTER_GQA_ROWBLOCK", "1")
+    lib = build_native(tmp_path, extra_cxxflags=("-fopenmp",))
+    q = np.asarray([
+        [[1.0, 0.0, 0.0], [0.5, 0.5, 0.0],
+         [0.0, 1.0, 0.0], [0.0, 0.5, 0.5]],
+        [[0.0, 1.0, 0.0], [0.0, 0.5, 0.5],
+         [1.0, 0.0, 0.0], [0.5, 0.5, 0.0]],
+        [[0.0, 0.0, 1.0], [0.5, 0.0, 0.5],
+         [0.0, 1.0, 0.0], [0.0, 0.5, 0.5]],
+        [[1.0, 1.0, 0.0], [0.5, 0.0, 0.5],
+         [0.0, 0.0, 1.0], [0.5, 0.5, 0.0]],
+    ], dtype=np.float32)
+    weak = np.asarray([
+        [[0.1, 0.0, 0.0], [0.0, 0.1, 0.0]],
+        [[0.0, 0.0, 0.1], [0.1, 0.0, 0.0]],
+    ], dtype=np.float32)
+    good = np.asarray([
+        [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]],
+        [[0.0, 0.0, 1.0], [1.0, 1.0, 0.0]],
+    ], dtype=np.float32)
+    best = np.asarray([
+        [[1.0, 1.0, 0.0], [0.0, 1.0, 1.0]],
+        [[0.0, 0.0, 1.0], [1.0, 0.0, 1.0]],
+    ], dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="Qwen3.5_TC", num_layers=24,
+            hidden_dim=2048, vals_per_tok_layer=1024, route_layer=3,
+            payload_kind="gqa", num_kv_heads=2, head_dim=3) as store:
+        n_weak = store.add_node("weak rowblock GQA route", b"", ntok=1)
+        n_good = store.add_node("good rowblock GQA route", b"", ntok=1)
+        n_best = store.add_node("best rowblock GQA route", b"", ntok=1)
+        store.set_route_key_list(n_weak, [weak], [])
+        store.set_route_key_list(n_good, [good], [])
+        store.set_route_key_list(n_best, [best], [])
+
+        scores = {
+            n_weak: raw_score(q, weak),
+            n_good: raw_score(q, good),
+            n_best: raw_score(q, best),
+        }
+        expected = sorted(scores, key=lambda node_id: -scores[node_id])
+        assert store.route_gqa(q, topk=3) == expected
+
+
 def test_native_gqa_qt4_even_repeat_route_matches_python_law(tmp_path):
     def raw_score(query, key):
         h, _, dh = query.shape

@@ -356,6 +356,19 @@ and an immediate key-score-bank comparison in the same shape measured
 `17.7144ms` p50 / `19.4015ms` p95. The fused branch remains a tested diagnostic,
 not the default runtime path.
 
+P4 row-block experiment: `route_gqa_raw` now also has an opt-in query-head
+row-block scorer behind `GRM_ROUTER_GQA_ROWBLOCK=1` for single-key, query-token-4
+GQA banks. It computes `(entry, query_head)` blocks into a per-head score table
+before reducing heads back to raw entry scores, preserving the same Python
+raw-q.k law and tie order. Focused row-block parity passes. On Qwen3.5-2B source
+layer-3 full-bank captures it measured 512 nodes at `18.4712ms` p50 /
+`21.5356ms` p95 with 6/6 batched-reference parity, versus current default
+`20.3634ms` p50 / `21.7664ms` p95 in the same code state. Larger points were
+not default-worthy: 768 nodes measured `27.8408ms` p50 / `33.6079ms` p95 and
+1,024 nodes measured `34.5670ms` p50 / `36.3997ms` p95, both parity-green but
+not better than the existing bounded top-k full-bank receipts. The branch stays
+opt-in while the default remains the key-score-bank segment reducer.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.
