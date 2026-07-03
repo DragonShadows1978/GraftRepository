@@ -622,17 +622,19 @@ def test_native_gqa_rowblock_segment_matches_python_law(tmp_path, monkeypatch):
         assert store.route_gqa(q, topk=3) == expected
 
 
-@pytest.mark.parametrize("unroll8", [False, True])
+@pytest.mark.parametrize("mode", ["default", "unroll8", "transposed"])
 def test_native_gqa_qt4_even_repeat_route_matches_python_law(
-        tmp_path, monkeypatch, unroll8):
+        tmp_path, monkeypatch, mode):
     def raw_score(query, key):
         h, _, dh = query.shape
         kk = np.repeat(key, h // key.shape[0], axis=0)
         sc = np.einsum("hqd,hkd->hqk", query, kk) / np.sqrt(dh)
         return float(np.abs(sc).max(axis=(1, 2)).mean())
 
-    if unroll8:
+    if mode == "unroll8":
         monkeypatch.setenv("GRM_ROUTER_GQA_QT4_UNROLL8", "1")
+    elif mode == "transposed":
+        monkeypatch.setenv("GRM_ROUTER_GQA_TRANSPOSED", "1")
     lib = build_native(tmp_path)
     q = np.asarray([
         [[1.0, 0.0, 0.0], [0.5, 0.5, 0.0], [0.0, 1.0, 0.0], [0.0, 0.5, 0.5]],

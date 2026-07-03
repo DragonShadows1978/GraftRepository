@@ -270,6 +270,17 @@ same flag stayed flat at 512 nodes (`5.9949ms` p50 / `6.0773ms` p95, 6/6
 exhaustive batched-reference parity), but that was harvested fixture data rather
 than 4B live capture shards.
 
+`GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
+routes query-token-4 GQA keys over that layout. It is parity-green but rejected
+for runtime default use on the hard full-bank capture shape: Qwen3.5-2B source
+layer-3 full-bank 512 nodes measured `26.3718ms` p50 / `28.2460ms` p95 with 6/6
+batched-reference parity, slower than the final-code default `19.7473ms` p50 /
+`23.7554ms` p95. On the Qwen3-4B preset representative-key fixture, transposed
+was effectively flat (`5.9930ms` p50 / `5.9973ms` p95, 6/6 parity) against
+default (`5.9983ms` p50 / `5.9991ms` p95), but that fixture uses one-token keys
+and is not 4B live capture-shard evidence. The duplicate transposed bank is only
+built when the flag is enabled.
+
 ## GQA Capture Layer Sweep
 
 `scripts/grm_gqa_layer_sweep.py` wraps the existing GQA benchmark internals and
@@ -380,3 +391,7 @@ Fresh post-snapshot GQA receipts:
   lower-level GEMM/BLAS-style layout rather than this temporary head-score table.
   The manual `GRM_ROUTER_GQA_QT4_UNROLL8` dot-kernel experiment was also
   parity-green but much slower, so further work should avoid scalar hand-unrolls.
+  The opt-in transposed key-bank experiment was parity-green but slower on the
+  2B full-bank capture shape, so it stays diagnostic-only; the next useful slice
+  is still a lower-level GEMM/BLAS layout rather than a duplicate host layout
+  walked by scalar C++ loops.

@@ -516,6 +516,8 @@ class RouterIndex {
     std::vector<std::uint64_t> key_tokens;
     std::vector<unsigned char> key_finite;
     std::vector<std::size_t> key_row_offsets;
+    std::vector<std::size_t> key_transposed_offsets;
+    std::vector<float> transposed_rows;
     std::vector<std::size_t> entry_key_offsets;
   };
 
@@ -552,8 +554,15 @@ class RouterIndex {
       std::uint64_t kv_heads,
       bool query_finite,
       std::size_t key_idx,
+      bool use_qt4_transposed = false,
       bool use_qt4_dot_unroll8 = false) const;
   float gqa_arena_key_score_qt4(
+      const std::vector<float>& query,
+      std::uint64_t query_heads,
+      std::uint64_t head_dim,
+      std::uint64_t kv_heads,
+      std::size_t key_idx) const;
+  float gqa_arena_key_score_qt4_transposed(
       const std::vector<float>& query,
       std::uint64_t query_heads,
       std::uint64_t head_dim,
@@ -573,6 +582,7 @@ class RouterIndex {
       std::uint64_t kv_heads,
       bool query_finite,
       std::size_t entry_idx,
+      bool use_qt4_transposed = false,
       bool use_qt4_dot_unroll8 = false) const;
   std::vector<std::uint64_t> route_scan(
       const std::vector<float>& query,

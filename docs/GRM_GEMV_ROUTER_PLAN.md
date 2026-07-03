@@ -385,6 +385,18 @@ data, not 4B live capture shards. This confirms the next useful kernel work
 should be a true compiler/BLAS-friendly row layout or external GEMM call, not
 hand-unrolling the scalar inner loop.
 
+P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
+transposed prepared GQA key bank and routes query-token-4 keys through it. The
+path preserves the raw-q.k law in focused parity and exhaustive benchmark
+parity, but it is rejected for default use on the hard full-bank capture shape:
+Qwen3.5-2B source layer-3 full-bank 512 nodes measured `26.3718ms` p50 /
+`28.2460ms` p95 with 6/6 batched-reference parity, while the final-code default
+measured `19.7473ms` p50 / `23.7554ms` p95. The Qwen3-4B preset
+representative-key fixture stayed effectively flat (`5.9930ms` p50 /
+`5.9973ms` p95 with 6/6 parity versus default `5.9983ms` p50 / `5.9991ms`
+p95), but that fixture has one-token keys and is not 4B live capture-shard
+evidence. Disabled runs do not build the duplicate transposed bank.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.
