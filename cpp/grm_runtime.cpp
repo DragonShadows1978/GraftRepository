@@ -2790,8 +2790,9 @@ void RouterIndex::rebuild_mla_arena() const {
   }
   arena.rows.reserve(row_count * arena.dim);
   arena.norms.reserve(row_count);
-  arena.entry_for_row.reserve(row_count);
+  arena.entry_row_offsets.reserve(entries_.size() + 1);
   for (std::size_t entry_idx = 0; entry_idx < entries_.size(); ++entry_idx) {
+    arena.entry_row_offsets.push_back(arena.norms.size());
     const auto& e = entries_[entry_idx];
     for (const auto& key : e.route_keys) {
       if (key.size() != arena.dim) {
@@ -2807,9 +2808,9 @@ void RouterIndex::rebuild_mla_arena() const {
         norm_sq += static_cast<double>(v) * static_cast<double>(v);
       }
       arena.norms.push_back(static_cast<float>(std::sqrt(norm_sq)));
-      arena.entry_for_row.push_back(entry_idx);
     }
   }
+  arena.entry_row_offsets.push_back(arena.norms.size());
   arena.valid = !arena.rows.empty();
   mla_arena_ = std::move(arena);
   mla_arena_dirty_ = false;
@@ -2864,24 +2865,41 @@ std::vector<std::uint64_t> RouterIndex::route_mla_arena(
   std::vector<unsigned char> have(entries_.size(), 0);
   const auto dim = mla_arena_.dim;
   const auto* rows = mla_arena_.rows.data();
-  for (std::size_t row = 0; row < mla_arena_.entry_for_row.size(); ++row) {
-    const auto entry_idx = mla_arena_.entry_for_row[row];
+  const auto entry_count = entries_.size();
+  constexpr std::size_t kOpenMpRouteThreshold = 32768;
+#if defined(_OPENMP)
+#pragma omp parallel for schedule(static) if(entry_count >= kOpenMpRouteThreshold)
+#endif
+  for (std::int64_t entry_i = 0;
+       entry_i < static_cast<std::int64_t>(entry_count);
+       ++entry_i) {
+    const auto entry_idx = static_cast<std::size_t>(entry_i);
     const auto& e = entries_[entry_idx];
     if (!entry_allowed(e, kinds, scopes, durabilities, mutabilities)) {
       continue;
     }
-    const auto* base = rows + (row * dim);
-    double dot = 0.0;
-    for (std::size_t d = 0; d < dim; ++d) {
-      dot += static_cast<double>(query[d]) * static_cast<double>(base[d]);
+    const auto row_start = mla_arena_.entry_row_offsets[entry_idx];
+    const auto row_end = mla_arena_.entry_row_offsets[entry_idx + 1];
+    float entry_best = 0.0F;
+    bool entry_have = false;
+    for (std::size_t row = row_start; row < row_end; ++row) {
+      const auto* base = rows + (row * dim);
+      double dot = 0.0;
+      for (std::size_t d = 0; d < dim; ++d) {
+        dot += static_cast<double>(query[d]) * static_cast<double>(base[d]);
+      }
+      const float score = static_cast<float>(
+          dot / ((qnorm * static_cast<double>(mla_arena_.norms[row])) + 1.0e-8));
+      if (!std::isfinite(score)) {
+        continue;
+      }
+      if (!entry_have || score > entry_best) {
+        entry_best = score;
+        entry_have = true;
+      }
     }
-    const float score = static_cast<float>(
-        dot / ((qnorm * static_cast<double>(mla_arena_.norms[row])) + 1.0e-8));
-    if (!std::isfinite(score)) {
-      continue;
-    }
-    if (have[entry_idx] == 0 || score > best[entry_idx]) {
-      best[entry_idx] = score;
+    if (entry_have) {
+      best[entry_idx] = entry_best;
       have[entry_idx] = 1;
     }
   }

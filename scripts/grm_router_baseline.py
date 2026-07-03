@@ -208,8 +208,9 @@ def python_route_scan(
     return [node_id for _, node_id in scored[:topk]]
 
 
-def build_native_lib(out_dir: Path, *, cxx: str) -> Path:
+def build_native_lib(out_dir: Path, *, cxx: str, openmp: bool = False) -> Path:
     lib = out_dir / "libgrm_runtime.so"
+    extra = ["-fopenmp"] if openmp else []
     subprocess.run(
         [
             cxx,
@@ -217,6 +218,7 @@ def build_native_lib(out_dir: Path, *, cxx: str) -> Path:
             "-O3",
             "-shared",
             "-fPIC",
+            *extra,
             "-I",
             str(ROOT / "cpp"),
             str(ROOT / "cpp" / "grm_runtime.cpp"),
@@ -446,6 +448,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--max-files", type=int, default=512)
     p.add_argument("--lib", type=Path)
     p.add_argument("--cxx", default=os.environ.get("CXX", "g++"))
+    p.add_argument("--openmp", action="store_true",
+                   help="compile the native benchmark library with -fopenmp")
     p.add_argument("--out", type=Path, default=Path("/tmp/grm_router_baseline.json"))
     p.add_argument("--markdown-out", type=Path)
     p.add_argument("--smoke", action="store_true",
@@ -472,7 +476,8 @@ def main(argv: list[str]) -> int:
     )
     queries = make_queries(bank, args.queries)
     with tempfile.TemporaryDirectory(prefix="grm_router_baseline_") as td:
-        lib_path = args.lib or build_native_lib(Path(td), cxx=args.cxx)
+        lib_path = args.lib or build_native_lib(
+            Path(td), cxx=args.cxx, openmp=bool(args.openmp))
         results = []
         for node_count in args.node_counts:
             routes = make_route_matrix(bank, int(node_count))

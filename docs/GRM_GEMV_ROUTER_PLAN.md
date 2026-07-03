@@ -112,6 +112,13 @@ fall back to the original scan semantics. First smoke curve against the P0
 the final P2 gate: filters are still applied per entry, and OpenMP row-block
 parallelism plus full 100k/1M curves remain.
 
+P2 row-block note: the packed arena now carries per-entry row offsets, so
+multi-key nodes score deterministically by entry and can use optional OpenMP
+entry-block parallelism without races. The harness can compile with
+`--openmp`; the parallel threshold is 32768 entries to avoid 10k-scale thread
+overhead. Thresholded OpenMP smoke: 1k p50 0.1806ms, 10k p50 2.8027ms, 50k
+p50 13.0213ms, all parity green.
+
 **P3 — INT4 books + two-tier refine.** D2. Gates: exactness gate (match
 fp32 top-k, M-sweep documented), latency curve, 166 floor.
 

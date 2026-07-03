@@ -14,10 +14,13 @@ from core.grm_native import NativeGraftStore
 ROOT = "/mnt/ForgeRealm/GraftRepository"
 
 
-def build_native(tmp_path):
-    lib = tmp_path / "libgrm_runtime.so"
+def build_native(tmp_path, extra_cxxflags=()):
+    suffix = "default" if not extra_cxxflags else "_".join(
+        flag.strip("-").replace("=", "_") for flag in extra_cxxflags)
+    lib = tmp_path / f"libgrm_runtime_{suffix}.so"
     subprocess.run([
         "g++", "-std=c++17", "-shared", "-fPIC",
+        *extra_cxxflags,
         "-I", f"{ROOT}/cpp",
         f"{ROOT}/cpp/grm_runtime.cpp",
         "-o", str(lib),
@@ -1296,6 +1299,63 @@ def test_native_mla_gemv_arena_matches_reference_scan(tmp_path):
 
         assert store.route(query, qlex, topk=8,
                            kinds=kinds, scopes=scopes) == expected
+
+
+def test_native_mla_gemv_arena_openmp_matches_reference_scan(tmp_path):
+    lib = build_native(tmp_path, extra_cxxflags=("-fopenmp",))
+    rng = np.random.default_rng(5678)
+    dim = 16
+    count = 1200
+    query = rng.normal(size=dim).astype(np.float32)
+    query /= np.linalg.norm(query)
+    route_keys = []
+    lexical = []
+
+    def normed(v):
+        v = np.asarray(v, dtype=np.float32)
+        return v / np.linalg.norm(v)
+
+    def cosine(q, k):
+        dot = 0.0
+        qnorm = 0.0
+        knorm = 0.0
+        for qv, kv in zip(q, k):
+            qf = float(qv)
+            kf = float(kv)
+            dot += qf * kf
+            qnorm += qf * qf
+            knorm += kf * kf
+        return dot / ((np.sqrt(qnorm) * np.sqrt(knorm)) + 1.0e-8)
+
+    for i in range(count):
+        base = normed(rng.normal(size=dim))
+        keys = [base]
+        if i % 19 == 0:
+            keys.append(normed((0.5 * base) + (0.5 * query)))
+        route_keys.append(keys)
+        lexical.append((f"node-{i}", f"bucket-{i % 23}"))
+
+    qlex = ("node-731", "bucket-6")
+    scored = []
+    for i, keys in enumerate(route_keys):
+        score = max(cosine(query, key) for key in keys)
+        hits = sum(1 for q in qlex if q in lexical[i])
+        score += hits / len(qlex)
+        if np.isfinite(score):
+            scored.append((score, i))
+    scored.sort(key=lambda item: -item[0])
+    expected = [node_id for _, node_id in scored[:10]]
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        for i, keys in enumerate(route_keys):
+            node_id = store.add_node(f"openmp arena route {i}", b"", ntok=1)
+            assert node_id == i
+            store.set_route_key_list(node_id, keys, lexical[i])
+
+        assert store.route(query, qlex, topk=10) == expected
 
 
 def test_native_store_structured_payload_tensors_via_ctypes(tmp_path):

@@ -494,7 +494,7 @@ class RouterIndex {
     std::size_t dim = 0;
     std::vector<float> rows;
     std::vector<float> norms;
-    std::vector<std::size_t> entry_for_row;
+    std::vector<std::size_t> entry_row_offsets;
   };
 
   void mark_mla_arena_dirty();
