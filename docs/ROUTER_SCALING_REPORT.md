@@ -104,6 +104,7 @@ Qwen3.5-2B attention-shaped representative-key probe:
 | ---: | ---: | ---: | ---: | :---: |
 | 1,000 | 2.4416 | 2.5654 | 22.0276 | true |
 | 10,000 | 8.6680 | 9.0765 | 227.7100 | true |
+| 10,000, bounded top-k selection | 5.9959 | 5.9989 | n/a | true (5 queries) |
 
 This curve uses the Qwen3.5-2B source attention geometry, not Qwen3-4B.
 
@@ -128,6 +129,7 @@ Qwen3.5-2B real-capture source K-bank probe:
 | captured full 256-token K, pre-qt4 sampled parity | 512 | 39.6250 | 43.4202 | n/a | true (1 query) |
 | captured full 256-token K, qt4 sampled parity | 512 | 19.0136 | 21.9898 | n/a | true (2 queries) |
 | captured full 256-token K, qt4 exhaustive parity | 512 | 20.4087 | 21.8582 | n/a | true (4 queries) |
+| captured full 256-token K, qt4 bounded top-k exhaustive parity | 512 | 19.1065 | 23.3995 | n/a | true (4 queries) |
 | captured full 256-token K, pre-qt4 native-only | 768 | 58.3090 | 63.2833 | n/a | n/a |
 | captured full 256-token K, pre-qt4 batched sampled parity | 768 | 58.5005 | 64.6167 | n/a | true (2 queries) |
 | captured full 256-token K, qt4 batched sampled parity | 768 | 33.8389 | 34.8920 | n/a | true (2 queries) |
@@ -175,6 +177,12 @@ Python raw-q.k reference for every generated query without timing Python in the
 route curve. A 512-node full-bank Qwen3.5-2B source check matched all four
 generated batched-reference queries and measured `20.4087ms` p50 /
 `21.8582ms` p95.
+Native GQA result selection now uses bounded top-k partial sorting when `topk`
+is smaller than the scored candidate set, while preserving the existing
+score-plus-node-id tie order. The harvested representative 10k-node GQA point
+measured `5.9959ms` p50 with exhaustive five-query parity, and the 512-node
+full-bank Qwen3.5-2B capture point matched all four generated batched-reference
+queries at `19.1065ms` p50 / `23.3995ms` p95.
 The benchmark can now route compact representative-token capture banks while
 checking parity against the original full-bank reference. Simple stride
 compaction is not safe on this capture set: 16/32/64/128-token stride banks at

@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cerrno>
 #include <cctype>
+#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
@@ -3626,7 +3627,7 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
     scored.push_back({raw, entries_[entry_idx].node_id, lexical_hits[entry_idx]});
   }
   const float norm = max_abs + 1.0e-8F;
-  std::sort(scored.begin(), scored.end(), [&](const auto& a, const auto& b) {
+  const auto gqa_better = [&](const auto& a, const auto& b) {
     const float alex = lexical.empty()
         ? 0.0F
         : static_cast<float>(a.lexical_hits) /
@@ -3641,9 +3642,17 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
       return ascore > bscore;
     }
     return a.node_id < b.node_id;
-  });
+  };
+  const auto out_count = std::min(topk, scored.size());
+  if (out_count < scored.size()) {
+    std::partial_sort(
+        scored.begin(), scored.begin() + static_cast<std::ptrdiff_t>(out_count),
+        scored.end(), gqa_better);
+  } else {
+    std::sort(scored.begin(), scored.end(), gqa_better);
+  }
   std::vector<std::uint64_t> out;
-  for (std::size_t i = 0; i < std::min(topk, scored.size()); ++i) {
+  for (std::size_t i = 0; i < out_count; ++i) {
     out.push_back(scored[i].node_id);
   }
   return out;

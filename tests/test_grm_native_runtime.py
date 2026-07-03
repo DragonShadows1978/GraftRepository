@@ -503,6 +503,24 @@ def test_native_gqa_qt4_even_repeat_route_matches_python_law(tmp_path):
         assert store.route_gqa(q, topk=2) == expected
 
 
+def test_native_gqa_topk_selection_preserves_tie_order(tmp_path):
+    lib = build_native(tmp_path)
+    q = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+    key = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="Qwen3_TC", num_layers=36,
+            hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
+            payload_kind="gqa", num_kv_heads=1, head_dim=2) as store:
+        node_ids = []
+        for i in range(16):
+            node_id = store.add_node(f"tie GQA route {i}", b"", ntok=1)
+            store.set_route_key_list(node_id, [key], [])
+            node_ids.append(node_id)
+
+        assert store.route_gqa(q, topk=5) == node_ids[:5]
+
+
 def test_native_gqa_route_drops_non_finite_scores(tmp_path):
     lib = build_native(tmp_path)
     q = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
