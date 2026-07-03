@@ -3120,7 +3120,9 @@ std::vector<std::uint64_t> RouterIndex::route_scan(
     const std::vector<std::string>& scopes,
     const std::vector<std::string>& durabilities,
     const std::vector<std::string>& mutabilities) const {
-  const auto query_lex_hashes = lexical_hashes(lexical);
+  const auto query_lex_hashes = lexical.empty()
+      ? std::vector<std::uint64_t>{}
+      : lexical_hashes(lexical);
   std::vector<std::pair<float, std::uint64_t>> scored;
   scored.reserve(entries_.size());
   for (const auto& e : entries_) {
@@ -3393,7 +3395,9 @@ std::vector<std::uint64_t> RouterIndex::route_mla_arena(
   }
 
   std::vector<std::pair<float, std::uint64_t>> scored;
-  const auto query_lex_hashes = lexical_hashes(lexical);
+  const auto query_lex_hashes = lexical.empty()
+      ? std::vector<std::uint64_t>{}
+      : lexical_hashes(lexical);
   scored.reserve(entries_.size());
   for (std::size_t entry_idx = 0; entry_idx < entries_.size(); ++entry_idx) {
     if (have[entry_idx] == 0) {
@@ -3560,7 +3564,9 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
     std::uint64_t node_id = 0;
     std::size_t lexical_hits = 0;
   };
-  const auto query_lex_hashes = lexical_hashes(lexical);
+  const auto query_lex_hashes = lexical.empty()
+      ? std::vector<std::uint64_t>{}
+      : lexical_hashes(lexical);
   rebuild_gqa_arena(kv_heads, head_dim);
   const bool use_arena = gqa_arena_.valid &&
                          gqa_arena_.kv_heads == kv_heads &&
@@ -3611,9 +3617,41 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
       continue;
     }
     raw_scores[entry_idx] = raw;
-    lexical_hits[entry_idx] = lexical_hit_count(
-        lexical, query_lex_hashes, e.lexical_keys, e.lexical_hashes);
+    if (!lexical.empty()) {
+      lexical_hits[entry_idx] = lexical_hit_count(
+          lexical, query_lex_hashes, e.lexical_keys, e.lexical_hashes);
+    }
     have[entry_idx] = 1;
+  }
+  if (lexical.empty()) {
+    std::vector<std::pair<float, std::uint64_t>> scored_raw;
+    scored_raw.reserve(entries_.size());
+    for (std::size_t entry_idx = 0; entry_idx < entry_count; ++entry_idx) {
+      if (have[entry_idx] == 0) {
+        continue;
+      }
+      scored_raw.push_back({raw_scores[entry_idx], entries_[entry_idx].node_id});
+    }
+    const auto raw_better = [](const auto& a, const auto& b) {
+      if (a.first != b.first) {
+        return a.first > b.first;
+      }
+      return a.second < b.second;
+    };
+    const auto out_count = std::min(topk, scored_raw.size());
+    if (out_count < scored_raw.size()) {
+      std::partial_sort(
+          scored_raw.begin(),
+          scored_raw.begin() + static_cast<std::ptrdiff_t>(out_count),
+          scored_raw.end(), raw_better);
+    } else {
+      std::sort(scored_raw.begin(), scored_raw.end(), raw_better);
+    }
+    std::vector<std::uint64_t> out;
+    for (std::size_t i = 0; i < out_count; ++i) {
+      out.push_back(scored_raw[i].second);
+    }
+    return out;
   }
   std::vector<Scored> scored;
   scored.reserve(entries_.size());

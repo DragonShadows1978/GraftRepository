@@ -188,6 +188,12 @@ queries at `19.1065ms` p50 / `23.3995ms` p95.
 The same exhaustive full-bank check now extends to 768 and 1,024 nodes: 768
 matched all four batched-reference queries at `26.0228ms` p50 / `29.5759ms`
 p95, and 1,024 matched all four at `33.9970ms` p50 / `39.3356ms` p95.
+The no-lexical hot path now skips empty lexical hashing, lexical hit counting,
+and score normalization; it ranks raw GQA scores directly because normalization
+is monotonic when lexical bonus is absent. This is a small cleanup, not a new
+scorer: representative 10k measured `5.9905ms` p50 with exhaustive five-query
+parity, and 512 full-bank measured `19.3370ms` p50 / `22.8915ms` p95 with all
+four batched-reference queries matched.
 The benchmark can now route compact representative-token capture banks while
 checking parity against the original full-bank reference. Simple stride
 compaction is not safe on this capture set: 16/32/64/128-token stride banks at

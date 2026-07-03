@@ -286,6 +286,11 @@ p50 / 23.3995ms p95.
 The full-bank exhaustive receipt now extends to 768 and 1,024 source-capture
 nodes: 768 matched all four batched-reference queries at 26.0228ms p50 /
 29.5759ms p95, and 1,024 matched all four at 33.9970ms p50 / 39.3356ms p95.
+The no-lexical native route path now skips empty lexical hashing/hit counting
+and ranks raw GQA scores directly before top-k selection. It is a measured
+cleanup rather than a new scorer: representative 10k measured 5.9905ms p50 with
+exhaustive five-query parity, and 512 full-bank measured 19.3370ms p50 /
+22.8915ms p95 with all four batched-reference queries matched.
 
 P4 representative-compaction note: the GQA benchmark can now route compacted
 capture banks (`--compact-route-tokens`, `--compact-route-mode`) while checking
