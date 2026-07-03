@@ -362,6 +362,18 @@ PYTHONPATH=. PYTHONDONTWRITEBYTECODE=1 \
 | 7 | 256 | 9,635 | 11.9944 | 12.7472 | true, 6/6 batched-reference queries |
 | 11 | 256 | 9,635 | 12.0086 | 12.0181 | true, 6/6 batched-reference queries |
 
+Follow-up sweep with `--capture-limit 512` extended the same full-bank,
+lexical-off, exhaustive batched-reference check to upper source layers:
+
+| layer | nodes | usable shards | native p50 ms | native p95 ms | parity |
+| ---: | ---: | ---: | ---: | ---: | --- |
+| 15 | 256 | 509 | 9.8055 | 10.4419 | true, 6/6 batched-reference queries |
+| 19 | 256 | 509 | 12.0103 | 13.2083 | true, 6/6 batched-reference queries |
+| 23 | 256 | 509 | 12.1050 | 16.2180 | true, 6/6 batched-reference queries |
+
+The 256-node full-bank source-layer parity receipt now spans layers
+3/7/11/15/19/23.
+
 ## Prepared Router Snapshots
 
 The C ABI router now publishes prepared MLA/GQA state as an immutable

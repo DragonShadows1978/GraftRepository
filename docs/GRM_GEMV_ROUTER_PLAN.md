@@ -360,6 +360,12 @@ parity-green on all three layers: layer 3 `11.5599ms` p50 / `11.8116ms` p95,
 layer 7 `11.9944ms` p50 / `12.7472ms` p95, and layer 11 `12.0086ms` p50 /
 `12.0181ms` p95. This extends real-capture full-bank evidence across layers
 without moving or modifying the translation corpus artifacts.
+Follow-up layer coverage extended the same 256-node full-bank exhaustive
+batched-reference check to source layers 15/19/23 with `--capture-limit 512`.
+All were parity-green: layer 15 measured `9.8055ms` p50 / `10.4419ms` p95,
+layer 19 measured `12.0103ms` p50 / `13.2083ms` p95, and layer 23 measured
+`12.1050ms` p50 / `16.2180ms` p95. The 256-node full-bank evidence now spans
+source layers 3/7/11/15/19/23.
 
 P4 fused-single-key experiment: `route_gqa_raw` now has an opt-in fused
 single-key segment path behind `GRM_ROUTER_GQA_FUSED_SEGMENT=1`. It skips the
