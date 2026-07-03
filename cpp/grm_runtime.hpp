@@ -506,10 +506,24 @@ class RouterIndex {
     std::vector<float> q4_norm_scales;
     bool single_row_per_entry = false;
   };
+  struct GqaArena {
+    bool valid = false;
+    std::uint64_t kv_heads = 0;
+    std::uint64_t head_dim = 0;
+    std::vector<float> rows;
+    std::vector<std::uint64_t> key_tokens;
+    std::vector<unsigned char> key_finite;
+    std::vector<std::size_t> key_row_offsets;
+    std::vector<std::size_t> entry_key_offsets;
+  };
 
   void mark_mla_arena_dirty();
+  void mark_gqa_arena_dirty();
   void rebuild_entry_map();
   void rebuild_mla_arena() const;
+  void rebuild_gqa_arena(
+      std::uint64_t kv_heads,
+      std::uint64_t head_dim) const;
   bool entry_allowed(
       const Entry& entry,
       const std::vector<std::string>& kinds,
@@ -528,6 +542,22 @@ class RouterIndex {
       const std::vector<float>& query,
       std::size_t row,
       double qnorm_inv) const;
+  float gqa_arena_key_score(
+      const std::vector<float>& query,
+      std::uint64_t query_heads,
+      std::uint64_t query_tokens,
+      std::uint64_t head_dim,
+      std::uint64_t kv_heads,
+      bool query_finite,
+      std::size_t key_idx) const;
+  float gqa_arena_entry_score(
+      const std::vector<float>& query,
+      std::uint64_t query_heads,
+      std::uint64_t query_tokens,
+      std::uint64_t head_dim,
+      std::uint64_t kv_heads,
+      bool query_finite,
+      std::size_t entry_idx) const;
   std::vector<std::uint64_t> route_scan(
       const std::vector<float>& query,
       const std::vector<std::string>& lexical,
@@ -556,7 +586,9 @@ class RouterIndex {
   std::vector<Entry> entries_;
   std::unordered_map<std::uint64_t, std::size_t> entry_by_node_;
   mutable MlaArena mla_arena_;
+  mutable GqaArena gqa_arena_;
   mutable bool mla_arena_dirty_ = true;
+  mutable bool gqa_arena_dirty_ = true;
 };
 
 class DurabilityWriter {

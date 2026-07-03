@@ -125,3 +125,10 @@ With the host predecoded q4-value cache, 1M M=16 was not exact on the harvested
 corpus. M=32/64/128 all matched native fp32; measured p50s were
 39.6265/37.5690/37.8382ms. Use M=64 as the current measured P3 operating point
 for this corpus.
+
+## GQA Key-Bank Probe
+
+P4's first native GQA key-bank slice was checked with a 10k-node smoke probe:
+`query_shape=(4,4,16)`, `key_shape=(1,4,16)`, top-k 5, `-O3 -fopenmp`.
+Native matched the Python/NumPy raw-score top-k and measured p50 6.0020ms
+versus Python 166.9182ms, or 27.81x faster for that shape.

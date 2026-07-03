@@ -193,6 +193,17 @@ predecoded q4, M=64, 1M p50 37.5690ms. E3 is still not met.
 **P4 — GQA key-bank GEMM path.** D4. Gates: parity vs Python GQA
 routing on the Qwen3-4B gate scenarios, latency, 166 floor.
 
+P4 first-slice note: native GQA routing now builds a lazy contiguous key-bank
+arena keyed by `(kv_heads, head_dim)`, with entry-to-key and key-to-row offsets.
+`route_gqa_raw` scores through this arena when shapes are valid and falls back
+to the old scan semantics otherwise. It also parallelizes entry scoring under
+OpenMP and hoists query/key finiteness checks out of the inner dot loop while
+preserving the M6 law: non-finite key/query scores are dropped. A 10k-node
+dim16 smoke probe (`query_shape=(4,4,16)`, `key_shape=(1,4,16)`, `-O3
+-fopenmp`) matched the Python/NumPy raw-score top-k and measured native p50
+6.0020ms versus Python 166.9182ms, a 27.81x speedup. This clears E4 for that
+smoke shape; broader Qwen3-4B gate scenarios and the final P6 curve remain.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.

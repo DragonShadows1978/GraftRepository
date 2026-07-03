@@ -480,6 +480,28 @@ def test_native_gqa_route_drops_non_finite_scores(tmp_path):
         assert store.route_gqa(q, topk=2) == [good]
 
 
+def test_native_gqa_key_bank_rebuilds_after_route_update(tmp_path):
+    lib = build_native(tmp_path)
+    q = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+    weak = np.asarray([[[0.0, 1.0]]], dtype=np.float32)
+    good = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+    better = np.asarray([[[2.0, 0.0]]], dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="Qwen3_TC", num_layers=36,
+            hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
+            payload_kind="gqa", num_kv_heads=1, head_dim=2) as store:
+        n0 = store.add_node("stale GQA arena route", b"", ntok=1)
+        n1 = store.add_node("fresh GQA arena route", b"", ntok=1)
+        store.set_route_key_list(n0, [weak], [])
+        store.set_route_key_list(n1, [good], [])
+
+        assert store.route_gqa(q, topk=2) == [n1, n0]
+
+        store.set_route_key_list(n0, [better], [])
+        assert store.route_gqa(q, topk=2) == [n0, n1]
+
+
 def test_native_route_list_rejects_terminal_offset_mismatch(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

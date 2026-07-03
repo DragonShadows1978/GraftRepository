@@ -2647,6 +2647,7 @@ void RouterIndex::upsert_multi(std::uint64_t node_id,
     e.lexical_keys = std::move(lexical_keys);
     e.lexical_hashes = lexical_hashes(e.lexical_keys);
     mark_mla_arena_dirty();
+    mark_gqa_arena_dirty();
     return;
   }
   Entry entry;
@@ -2660,6 +2661,7 @@ void RouterIndex::upsert_multi(std::uint64_t node_id,
       e.kind, e.scope, e.durability, e.mutability);
   entry_by_node_[node_id] = entries_.size() - 1;
   mark_mla_arena_dirty();
+  mark_gqa_arena_dirty();
 }
 
 void RouterIndex::erase(std::uint64_t node_id) {
@@ -2670,6 +2672,7 @@ void RouterIndex::erase(std::uint64_t node_id) {
   entries_.erase(entries_.begin() + static_cast<std::ptrdiff_t>(it->second));
   rebuild_entry_map();
   mark_mla_arena_dirty();
+  mark_gqa_arena_dirty();
 }
 
 void RouterIndex::set_active(std::uint64_t node_id, bool active) {
@@ -2937,6 +2940,11 @@ void RouterIndex::mark_mla_arena_dirty() {
   mla_arena_.valid = false;
 }
 
+void RouterIndex::mark_gqa_arena_dirty() {
+  gqa_arena_dirty_ = true;
+  gqa_arena_.valid = false;
+}
+
 void RouterIndex::rebuild_entry_map() {
   entry_by_node_.clear();
   entry_by_node_.reserve(entries_.size());
@@ -3034,6 +3042,63 @@ void RouterIndex::rebuild_mla_arena() const {
                        arena.norms.size() * arena.dim;
   mla_arena_ = std::move(arena);
   mla_arena_dirty_ = false;
+}
+
+void RouterIndex::rebuild_gqa_arena(
+    std::uint64_t kv_heads,
+    std::uint64_t head_dim) const {
+  if (!gqa_arena_dirty_ && gqa_arena_.kv_heads == kv_heads &&
+      gqa_arena_.head_dim == head_dim) {
+    return;
+  }
+  GqaArena arena;
+  arena.kv_heads = kv_heads;
+  arena.head_dim = head_dim;
+  if (kv_heads == 0 || head_dim == 0) {
+    gqa_arena_ = std::move(arena);
+    gqa_arena_dirty_ = false;
+    return;
+  }
+  const auto key_head_width = checked_mul(kv_heads, head_dim, "GQA arena key");
+  arena.entry_key_offsets.reserve(entries_.size() + 1);
+  for (const auto& e : entries_) {
+    arena.entry_key_offsets.push_back(arena.key_tokens.size());
+    for (const auto& key : e.route_keys) {
+      if (key.size() % key_head_width != 0) {
+        arena.valid = false;
+        gqa_arena_ = std::move(arena);
+        gqa_arena_dirty_ = false;
+        return;
+      }
+      const auto key_tokens =
+          static_cast<std::uint64_t>(key.size()) / key_head_width;
+      const auto row_count = checked_mul(kv_heads, key_tokens, "GQA arena rows");
+      arena.key_row_offsets.push_back(arena.rows.size() /
+                                      static_cast<std::size_t>(head_dim));
+      arena.key_tokens.push_back(key_tokens);
+      bool key_finite = true;
+      arena.rows.reserve(arena.rows.size() + key.size());
+      for (const auto v : key) {
+        key_finite = key_finite && std::isfinite(v);
+        arena.rows.push_back(v);
+      }
+      arena.key_finite.push_back(key_finite ? 1 : 0);
+      if (row_count == 0 && !key.empty()) {
+        arena.valid = false;
+        gqa_arena_ = std::move(arena);
+        gqa_arena_dirty_ = false;
+        return;
+      }
+    }
+  }
+  arena.entry_key_offsets.push_back(arena.key_tokens.size());
+  arena.key_row_offsets.push_back(arena.rows.size() /
+                                  static_cast<std::size_t>(head_dim));
+  arena.valid = !arena.key_tokens.empty() &&
+                arena.key_finite.size() == arena.key_tokens.size() &&
+                arena.key_row_offsets.size() == arena.key_tokens.size() + 1;
+  gqa_arena_ = std::move(arena);
+  gqa_arena_dirty_ = false;
 }
 
 std::vector<std::uint64_t> RouterIndex::route_scan(
@@ -3134,6 +3199,90 @@ float RouterIndex::int4_mla_row_score(
   }
   return dot_i4 * mla_arena_.q4_norm_scales[row] *
          static_cast<float>(qnorm_inv);
+}
+
+float RouterIndex::gqa_arena_key_score(
+    const std::vector<float>& query,
+    std::uint64_t query_heads,
+    std::uint64_t query_tokens,
+    std::uint64_t head_dim,
+    std::uint64_t kv_heads,
+    bool query_finite,
+    std::size_t key_idx) const {
+  if (query_heads == 0 || query_tokens == 0 || head_dim == 0 ||
+      kv_heads == 0 || query_heads % kv_heads != 0 ||
+      key_idx >= gqa_arena_.key_tokens.size()) {
+    return 0.0F;
+  }
+  const auto key_tokens = gqa_arena_.key_tokens[key_idx];
+  if (key_tokens == 0) {
+    return 0.0F;
+  }
+  if (!query_finite || gqa_arena_.key_finite[key_idx] == 0) {
+    return std::numeric_limits<float>::quiet_NaN();
+  }
+  const auto query_expected =
+      checked_mul(checked_mul(query_heads, query_tokens, "GQA arena query"),
+                  head_dim, "GQA arena query");
+  if (query.size() != static_cast<std::size_t>(query_expected)) {
+    return 0.0F;
+  }
+  const auto repeat = query_heads / kv_heads;
+  const auto key_row_start = gqa_arena_.key_row_offsets[key_idx];
+  const auto* rows = gqa_arena_.rows.data();
+  const double denom = std::sqrt(static_cast<double>(head_dim));
+  double total = 0.0;
+  for (std::uint64_t h = 0; h < query_heads; ++h) {
+    const auto kh = h / repeat;
+    double best = 0.0;
+    for (std::uint64_t qi = 0; qi < query_tokens; ++qi) {
+      const auto qoff = ((h * query_tokens) + qi) * head_dim;
+      const auto* q = query.data() + static_cast<std::size_t>(qoff);
+      for (std::uint64_t ki = 0; ki < key_tokens; ++ki) {
+        const auto row = key_row_start +
+                         static_cast<std::size_t>((kh * key_tokens) + ki);
+        const auto* k = rows + (row * static_cast<std::size_t>(head_dim));
+        double dot = 0.0;
+#if defined(_OPENMP)
+#pragma omp simd reduction(+ : dot)
+#endif
+        for (std::uint64_t d = 0; d < head_dim; ++d) {
+          dot += static_cast<double>(q[static_cast<std::size_t>(d)]) *
+                 static_cast<double>(k[static_cast<std::size_t>(d)]);
+        }
+        best = std::max(best, std::abs(dot) / denom);
+      }
+    }
+    total += best;
+  }
+  return static_cast<float>(total / static_cast<double>(query_heads));
+}
+
+float RouterIndex::gqa_arena_entry_score(
+    const std::vector<float>& query,
+    std::uint64_t query_heads,
+    std::uint64_t query_tokens,
+    std::uint64_t head_dim,
+    std::uint64_t kv_heads,
+    bool query_finite,
+    std::size_t entry_idx) const {
+  const auto key_start = gqa_arena_.entry_key_offsets[entry_idx];
+  const auto key_end = gqa_arena_.entry_key_offsets[entry_idx + 1];
+  float entry_best = 0.0F;
+  bool entry_have = false;
+  for (std::size_t key_idx = key_start; key_idx < key_end; ++key_idx) {
+    const auto score = gqa_arena_key_score(
+        query, query_heads, query_tokens, head_dim, kv_heads, query_finite,
+        key_idx);
+    if (!std::isfinite(score)) {
+      continue;
+    }
+    if (!entry_have || score > entry_best) {
+      entry_best = score;
+      entry_have = true;
+    }
+  }
+  return entry_have ? entry_best : std::numeric_limits<float>::quiet_NaN();
 }
 
 std::vector<std::uint64_t> RouterIndex::route_mla_arena(
@@ -3316,30 +3465,60 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
     std::uint64_t node_id = 0;
     std::size_t lexical_hits = 0;
   };
+  const auto query_lex_hashes = lexical_hashes(lexical);
+  rebuild_gqa_arena(kv_heads, head_dim);
+  const bool use_arena = gqa_arena_.valid &&
+                         gqa_arena_.kv_heads == kv_heads &&
+                         gqa_arena_.head_dim == head_dim &&
+                         gqa_arena_.entry_key_offsets.size() ==
+                             entries_.size() + 1;
+  bool query_finite = true;
+  if (use_arena) {
+    for (const auto v : query) {
+      query_finite = query_finite && std::isfinite(v);
+    }
+  }
+  const auto entry_count = entries_.size();
+  std::vector<float> raw_scores(entry_count, 0.0F);
+  std::vector<std::size_t> lexical_hits(entry_count, 0);
+  std::vector<unsigned char> have(entry_count, 0);
+  constexpr std::size_t kOpenMpGqaRouteThreshold = 2048;
+#if defined(_OPENMP)
+#pragma omp parallel for schedule(static) if(entry_count >= kOpenMpGqaRouteThreshold)
+#endif
+  for (std::int64_t entry_i = 0;
+       entry_i < static_cast<std::int64_t>(entry_count);
+       ++entry_i) {
+    const auto entry_idx = static_cast<std::size_t>(entry_i);
+    const auto& e = entries_[entry_idx];
+    if (!entry_allowed(e, kinds, scopes, durabilities, mutabilities)) {
+      continue;
+    }
+    const auto raw = use_arena
+        ? gqa_arena_entry_score(
+              query, query_heads, query_tokens, head_dim, kv_heads,
+              query_finite, entry_idx)
+        : max_gqa_raw_score(
+              query, query_heads, query_tokens, head_dim, kv_heads,
+              e.route_keys);
+    if (!std::isfinite(raw)) {
+      continue;
+    }
+    raw_scores[entry_idx] = raw;
+    lexical_hits[entry_idx] = lexical_hit_count(
+        lexical, query_lex_hashes, e.lexical_keys, e.lexical_hashes);
+    have[entry_idx] = 1;
+  }
   std::vector<Scored> scored;
   scored.reserve(entries_.size());
   float max_abs = 0.0F;
-  const auto query_lex_hashes = lexical_hashes(lexical);
-  for (const auto& e : entries_) {
-    if (!e.active) {
+  for (std::size_t entry_idx = 0; entry_idx < entry_count; ++entry_idx) {
+    if (have[entry_idx] == 0) {
       continue;
     }
-    if (!filter_allows(kinds, e.kind) || !filter_allows(scopes, e.scope) ||
-        !filter_allows(durabilities, e.durability) ||
-        !filter_allows(mutabilities, e.mutability)) {
-      continue;
-    }
-    Scored item;
-    item.raw = max_gqa_raw_score(
-        query, query_heads, query_tokens, head_dim, kv_heads, e.route_keys);
-    if (!std::isfinite(item.raw)) {
-      continue;
-    }
-    item.node_id = e.node_id;
-    item.lexical_hits = lexical_hit_count(
-        lexical, query_lex_hashes, e.lexical_keys, e.lexical_hashes);
-    max_abs = std::max(max_abs, std::abs(item.raw));
-    scored.push_back(item);
+    const auto raw = raw_scores[entry_idx];
+    max_abs = std::max(max_abs, std::abs(raw));
+    scored.push_back({raw, entries_[entry_idx].node_id, lexical_hits[entry_idx]});
   }
   const float norm = max_abs + 1.0e-8F;
   std::sort(scored.begin(), scored.end(), [&](const auto& a, const auto& b) {
