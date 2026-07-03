@@ -488,7 +488,43 @@ class RouterIndex {
     std::string durability = "session";
     std::string mutability = "ephemeral";
   };
+  struct MlaArena {
+    bool valid = false;
+    bool uniform_dim = true;
+    std::size_t dim = 0;
+    std::vector<float> rows;
+    std::vector<float> norms;
+    std::vector<std::size_t> entry_for_row;
+  };
+
+  void mark_mla_arena_dirty();
+  void rebuild_mla_arena() const;
+  bool entry_allowed(
+      const Entry& entry,
+      const std::vector<std::string>& kinds,
+      const std::vector<std::string>& scopes,
+      const std::vector<std::string>& durabilities,
+      const std::vector<std::string>& mutabilities) const;
+  std::vector<std::uint64_t> route_scan(
+      const std::vector<float>& query,
+      const std::vector<std::string>& lexical,
+      std::size_t topk,
+      const std::vector<std::string>& kinds,
+      const std::vector<std::string>& scopes,
+      const std::vector<std::string>& durabilities,
+      const std::vector<std::string>& mutabilities) const;
+  std::vector<std::uint64_t> route_mla_arena(
+      const std::vector<float>& query,
+      const std::vector<std::string>& lexical,
+      std::size_t topk,
+      const std::vector<std::string>& kinds,
+      const std::vector<std::string>& scopes,
+      const std::vector<std::string>& durabilities,
+      const std::vector<std::string>& mutabilities) const;
+
   std::vector<Entry> entries_;
+  mutable MlaArena mla_arena_;
+  mutable bool mla_arena_dirty_ = true;
 };
 
 class DurabilityWriter {

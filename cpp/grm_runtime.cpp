@@ -2561,10 +2561,12 @@ void RouterIndex::upsert_multi(std::uint64_t node_id,
     if (e.node_id == node_id) {
       e.route_keys = std::move(route_keys);
       e.lexical_keys = std::move(lexical_keys);
+      mark_mla_arena_dirty();
       return;
     }
   }
   entries_.push_back({node_id, std::move(route_keys), std::move(lexical_keys)});
+  mark_mla_arena_dirty();
 }
 
 void RouterIndex::erase(std::uint64_t node_id) {
@@ -2574,6 +2576,7 @@ void RouterIndex::erase(std::uint64_t node_id) {
                        return e.node_id == node_id;
                      }),
       entries_.end());
+  mark_mla_arena_dirty();
 }
 
 void RouterIndex::set_active(std::uint64_t node_id, bool active) {
@@ -2718,7 +2721,101 @@ static bool filter_allows(const std::vector<std::string>& filters,
          std::find(filters.begin(), filters.end(), value) != filters.end();
 }
 
-std::vector<std::uint64_t> RouterIndex::route(
+bool RouterIndex::entry_allowed(
+    const Entry& e,
+    const std::vector<std::string>& kinds,
+    const std::vector<std::string>& scopes,
+    const std::vector<std::string>& durabilities,
+    const std::vector<std::string>& mutabilities) const {
+  return e.active && filter_allows(kinds, e.kind) &&
+         filter_allows(scopes, e.scope) &&
+         filter_allows(durabilities, e.durability) &&
+         filter_allows(mutabilities, e.mutability);
+}
+
+static std::size_t lexical_hit_count(
+    const std::vector<std::string>& query_lexical,
+    const std::vector<std::string>& entry_lexical) {
+  std::size_t hits = 0;
+  for (const auto& q : query_lexical) {
+    if (std::find(entry_lexical.begin(), entry_lexical.end(), q) !=
+        entry_lexical.end()) {
+      ++hits;
+    }
+  }
+  return hits;
+}
+
+static float lexical_bonus(
+    const std::vector<std::string>& query_lexical,
+    const std::vector<std::string>& entry_lexical) {
+  if (query_lexical.empty()) {
+    return 0.0F;
+  }
+  return static_cast<float>(
+      lexical_hit_count(query_lexical, entry_lexical)) /
+      static_cast<float>(query_lexical.size());
+}
+
+void RouterIndex::mark_mla_arena_dirty() {
+  mla_arena_dirty_ = true;
+  mla_arena_.valid = false;
+}
+
+void RouterIndex::rebuild_mla_arena() const {
+  if (!mla_arena_dirty_) {
+    return;
+  }
+  MlaArena arena;
+  std::size_t row_count = 0;
+  for (const auto& e : entries_) {
+    row_count += e.route_keys.size();
+    for (const auto& key : e.route_keys) {
+      if (key.empty()) {
+        arena.uniform_dim = false;
+        continue;
+      }
+      if (arena.dim == 0) {
+        arena.dim = key.size();
+      } else if (arena.dim != key.size()) {
+        arena.uniform_dim = false;
+      }
+    }
+  }
+  if (row_count == 0 || arena.dim == 0 || !arena.uniform_dim) {
+    arena.valid = false;
+    mla_arena_ = std::move(arena);
+    mla_arena_dirty_ = false;
+    return;
+  }
+  arena.rows.reserve(row_count * arena.dim);
+  arena.norms.reserve(row_count);
+  arena.entry_for_row.reserve(row_count);
+  for (std::size_t entry_idx = 0; entry_idx < entries_.size(); ++entry_idx) {
+    const auto& e = entries_[entry_idx];
+    for (const auto& key : e.route_keys) {
+      if (key.size() != arena.dim) {
+        arena.uniform_dim = false;
+        arena.valid = false;
+        mla_arena_ = std::move(arena);
+        mla_arena_dirty_ = false;
+        return;
+      }
+      double norm_sq = 0.0;
+      for (const auto v : key) {
+        arena.rows.push_back(v);
+        norm_sq += static_cast<double>(v) * static_cast<double>(v);
+      }
+      arena.norms.push_back(static_cast<float>(std::sqrt(norm_sq)));
+      arena.entry_for_row.push_back(entry_idx);
+    }
+  }
+  arena.valid = !arena.rows.empty();
+  mla_arena_ = std::move(arena);
+  mla_arena_dirty_ = false;
+}
+
+std::vector<std::uint64_t> RouterIndex::route_scan(
     const std::vector<float>& query, const std::vector<std::string>& lexical,
     std::size_t topk, const std::vector<std::string>& kinds,
     const std::vector<std::string>& scopes,
@@ -2727,26 +2824,11 @@ std::vector<std::uint64_t> RouterIndex::route(
   std::vector<std::pair<float, std::uint64_t>> scored;
   scored.reserve(entries_.size());
   for (const auto& e : entries_) {
-    if (!e.active) {
-      continue;
-    }
-    if (!filter_allows(kinds, e.kind) || !filter_allows(scopes, e.scope) ||
-        !filter_allows(durabilities, e.durability) ||
-        !filter_allows(mutabilities, e.mutability)) {
+    if (!entry_allowed(e, kinds, scopes, durabilities, mutabilities)) {
       continue;
     }
     float score = max_cosine(query, e.route_keys);
-    std::size_t lexical_hits = 0;
-    for (const auto& q : lexical) {
-      if (std::find(e.lexical_keys.begin(), e.lexical_keys.end(), q) !=
-          e.lexical_keys.end()) {
-        ++lexical_hits;
-      }
-    }
-    if (!lexical.empty()) {
-      score += static_cast<float>(lexical_hits) /
-               static_cast<float>(lexical.size());
-    }
+    score += lexical_bonus(lexical, e.lexical_keys);
     if (!std::isfinite(score)) {
       continue;
     }
@@ -2759,6 +2841,81 @@ std::vector<std::uint64_t> RouterIndex::route(
     out.push_back(scored[i].second);
   }
   return out;
+}
+
+std::vector<std::uint64_t> RouterIndex::route_mla_arena(
+    const std::vector<float>& query, const std::vector<std::string>& lexical,
+    std::size_t topk, const std::vector<std::string>& kinds,
+    const std::vector<std::string>& scopes,
+    const std::vector<std::string>& durabilities,
+    const std::vector<std::string>& mutabilities) const {
+  rebuild_mla_arena();
+  if (!mla_arena_.valid || mla_arena_.dim == 0 ||
+      query.size() != mla_arena_.dim) {
+    return route_scan(
+        query, lexical, topk, kinds, scopes, durabilities, mutabilities);
+  }
+  double qnorm_sq = 0.0;
+  for (const auto v : query) {
+    qnorm_sq += static_cast<double>(v) * static_cast<double>(v);
+  }
+  const auto qnorm = std::sqrt(qnorm_sq);
+  std::vector<float> best(entries_.size(), 0.0F);
+  std::vector<unsigned char> have(entries_.size(), 0);
+  const auto dim = mla_arena_.dim;
+  const auto* rows = mla_arena_.rows.data();
+  for (std::size_t row = 0; row < mla_arena_.entry_for_row.size(); ++row) {
+    const auto entry_idx = mla_arena_.entry_for_row[row];
+    const auto& e = entries_[entry_idx];
+    if (!entry_allowed(e, kinds, scopes, durabilities, mutabilities)) {
+      continue;
+    }
+    const auto* base = rows + (row * dim);
+    double dot = 0.0;
+    for (std::size_t d = 0; d < dim; ++d) {
+      dot += static_cast<double>(query[d]) * static_cast<double>(base[d]);
+    }
+    const float score = static_cast<float>(
+        dot / ((qnorm * static_cast<double>(mla_arena_.norms[row])) + 1.0e-8));
+    if (!std::isfinite(score)) {
+      continue;
+    }
+    if (have[entry_idx] == 0 || score > best[entry_idx]) {
+      best[entry_idx] = score;
+      have[entry_idx] = 1;
+    }
+  }
+
+  std::vector<std::pair<float, std::uint64_t>> scored;
+  scored.reserve(entries_.size());
+  for (std::size_t entry_idx = 0; entry_idx < entries_.size(); ++entry_idx) {
+    if (have[entry_idx] == 0) {
+      continue;
+    }
+    const auto& e = entries_[entry_idx];
+    float score = best[entry_idx] + lexical_bonus(lexical, e.lexical_keys);
+    if (!std::isfinite(score)) {
+      continue;
+    }
+    scored.push_back({score, e.node_id});
+  }
+  std::sort(scored.begin(), scored.end(),
+            [](const auto& a, const auto& b) { return a.first > b.first; });
+  std::vector<std::uint64_t> out;
+  for (std::size_t i = 0; i < std::min(topk, scored.size()); ++i) {
+    out.push_back(scored[i].second);
+  }
+  return out;
+}
+
+std::vector<std::uint64_t> RouterIndex::route(
+    const std::vector<float>& query, const std::vector<std::string>& lexical,
+    std::size_t topk, const std::vector<std::string>& kinds,
+    const std::vector<std::string>& scopes,
+    const std::vector<std::string>& durabilities,
+    const std::vector<std::string>& mutabilities) const {
+  return route_mla_arena(
+      query, lexical, topk, kinds, scopes, durabilities, mutabilities);
 }
 
 std::vector<std::uint64_t> RouterIndex::route_gqa_raw(

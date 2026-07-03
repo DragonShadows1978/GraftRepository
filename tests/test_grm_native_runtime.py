@@ -1223,6 +1223,81 @@ def test_native_route_filters_metadata_fields(tmp_path):
                               scopes=("project",)) == [task_state]
 
 
+def test_native_mla_gemv_arena_matches_reference_scan(tmp_path):
+    lib = build_native(tmp_path)
+    rng = np.random.default_rng(1234)
+    dim = 32
+    count = 257
+    query = rng.normal(size=dim).astype(np.float32)
+    query /= np.linalg.norm(query)
+    route_keys = []
+    metadata = []
+    lexical = []
+
+    def normed(v):
+        v = np.asarray(v, dtype=np.float32)
+        return v / np.linalg.norm(v)
+
+    def cosine(q, k):
+        dot = 0.0
+        qnorm = 0.0
+        knorm = 0.0
+        for qv, kv in zip(q, k):
+            qf = float(qv)
+            kf = float(kv)
+            dot += qf * kf
+            qnorm += qf * qf
+            knorm += kf * kf
+        return dot / ((np.sqrt(qnorm) * np.sqrt(knorm)) + 1.0e-8)
+
+    for i in range(count):
+        base = normed(rng.normal(size=dim))
+        keys = [base]
+        if i % 7 == 0:
+            keys.append(normed((0.65 * base) + (0.35 * query)))
+        route_keys.append(keys)
+        metadata.append({
+            "active": i % 37 != 0,
+            "kind": "task_state" if i % 9 == 0 else "fact",
+            "scope": "user" if i % 5 == 0 else "project",
+            "durability": "session" if i % 11 == 0 else "project",
+            "mutability": "ephemeral" if i % 13 == 0 else "stable",
+        })
+        lexical.append((f"node-{i}", f"bucket-{i % 17}"))
+
+    qlex = ("node-73", "bucket-5")
+    kinds = ("fact",)
+    scopes = ("project", "user")
+
+    scored = []
+    for i, keys in enumerate(route_keys):
+        meta = metadata[i]
+        if not meta["active"] or meta["kind"] not in kinds:
+            continue
+        if meta["scope"] not in scopes:
+            continue
+        score = max(cosine(query, key) for key in keys)
+        hits = sum(1 for q in qlex if q in lexical[i])
+        score += hits / len(qlex)
+        if np.isfinite(score):
+            scored.append((score, i))
+    scored.sort(key=lambda item: -item[0])
+    expected = [node_id for _, node_id in scored[:8]]
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        for i, keys in enumerate(route_keys):
+            node_id = store.add_node(f"arena route {i}", b"", ntok=1)
+            assert node_id == i
+            store.set_metadata(node_id, metadata[i])
+            store.set_route_key_list(node_id, keys, lexical[i])
+
+        assert store.route(query, qlex, topk=8,
+                           kinds=kinds, scopes=scopes) == expected
+
+
 def test_native_store_structured_payload_tensors_via_ctypes(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(

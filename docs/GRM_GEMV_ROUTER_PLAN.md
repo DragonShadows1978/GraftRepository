@@ -98,6 +98,15 @@ suite; baseline curve re-measured.
 blocks. Gate: bit-identical top-k vs old scan on full battery; latency
 curve; 166 floor.
 
+P2 implementation note: native MLA route now has a lazy contiguous fp32
+route-key arena behind the existing C ABI. Uniform-dimension MLA route keys
+score through packed rows with precomputed row norms; dimension-mismatch cases
+fall back to the original scan semantics. First smoke curve against the P0
+1k/10k harness: 1k native p50 0.4985ms → 0.1792ms; 10k native p50
+4.0865ms → 2.8098ms, parity green. This is the first packed scan slice, not
+the final P2 gate: filters are still applied per entry, and OpenMP row-block
+parallelism plus full 100k/1M curves remain.
+
 **P3 — INT4 books + two-tier refine.** D2. Gates: exactness gate (match
 fp32 top-k, M-sweep documented), latency curve, 166 floor.
 
