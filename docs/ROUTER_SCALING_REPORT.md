@@ -124,6 +124,9 @@ Qwen3.5-2B real-capture source K-bank probe:
 | captured full 256-token K | 127 | 10.8340 | 12.9397 | 53.8978 | true |
 | captured full 256-token K | 192 | 15.1623 | 16.1852 | 80.1290 | true |
 | captured full 256-token K | 256 | 18.9169 | 21.9172 | 107.5580 | true |
+| captured full 256-token K, native-only | 512 | 39.5778 | 42.3518 | n/a | n/a |
+| captured full 256-token K, native-only | 768 | 58.3090 | 63.2833 | n/a | n/a |
+| captured full 256-token K, native-only | 1,024 | 76.5800 | 80.9969 | n/a | n/a |
 | captured representative 1-token K | 32 | 0.0465 | 0.0473 | 0.6651 | true |
 | captured representative 1-token K | 96 | 0.1172 | 0.1696 | 2.0503 | true |
 
@@ -141,6 +144,11 @@ matching the float32 benchmark tensors instead of promoting every multiply to
 `double`; it improves the 127-node full-bank p50 to `10.8340ms` with parity
 green. A larger real-capture run loaded 298 usable source shards and measured
 192/256 full-bank nodes at `15.1623ms` / `18.9169ms` p50, still parity-green.
+The benchmark now supports `--progress-out` JSONL checkpoints and `--progress`
+stderr updates; a native-only 1,165-usable-shard run extended the full-bank
+curve to 512/768/1,024 nodes at `39.5778ms` / `58.3090ms` / `76.5800ms` p50.
+Those larger points are native-only (`parity=null`) because Python full-bank
+reference timing dominates at that scale.
 
 ## Expectations
 
@@ -156,8 +164,8 @@ green. A larger real-capture run loaded 298 usable source shards and measured
 - Treat the 1M dim128 host route as deep-interactive already; if E3 remains
   mandatory, replace the scalar q4 dot with a lower-level vectorized dot kernel
   or a larger routing layout change.
-- Extend real-capture GQA curves beyond 256 nodes with checkpointed/progress
-  output so C ABI population overhead does not hide route timing.
+- Add a sampled or batched parity strategy for real-capture GQA curves beyond
+  256 nodes; native-only checkpointed progress now covers 512-1,024 nodes.
 - Implement the true GQA GEMM/segment-reduce path or a representative-key
   compaction policy for full 256-token captured K banks if sub-10ms routing is
   required past the 96-node real-capture point.

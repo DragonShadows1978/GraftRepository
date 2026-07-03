@@ -247,6 +247,14 @@ real-capture run loaded 298 usable source shards and measured 192/256 nodes at
 15.1623ms / 18.9169ms p50, still parity-green. Larger-N GQA still needs the
 true GEMM/segment-reduce layout or representative-key compaction.
 
+P4 progress/checkpoint note: `scripts/grm_gqa_router_benchmark.py` now supports
+`--progress-out` JSONL checkpoints and `--progress` stderr updates after each
+node-count result. A native-only real-capture run loaded 1,165 usable Qwen3.5-2B
+source shards and extended the exact full-bank curve to 512/768/1,024 nodes at
+39.5778ms / 58.3090ms / 76.5800ms p50. These larger points are marked
+`parity=null`; they are useful native scaling receipts, not a replacement for a
+sampled or batched parity strategy beyond 256 nodes.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.

@@ -437,6 +437,65 @@ def benchmark_count(
     }
 
 
+def progress_record(
+    *,
+    result: dict,
+    completed: int,
+    total: int,
+    preset_name: str,
+    route_source: str,
+    openmp: bool,
+    native_only: bool,
+    route_stats: dict,
+    query_stats: dict,
+) -> dict:
+    return {
+        "schema": "grm-gqa-router-benchmark-progress-v1",
+        "repo": str(ROOT),
+        "preset": preset_name,
+        "route_source": route_source,
+        "openmp": bool(openmp),
+        "native_only": bool(native_only),
+        "completed": int(completed),
+        "total": int(total),
+        "harvest": {
+            "route": route_stats,
+            "query": query_stats,
+        },
+        "shape": {
+            "query_heads": int(result["query_heads"]),
+            "kv_heads": int(result["kv_heads"]),
+            "head_dim": int(result["head_dim"]),
+            "query_tokens": int(result["query_tokens"]),
+            "key_tokens": int(result["key_tokens"]),
+            "keys_per_node": int(result["keys_per_node"]),
+        },
+        "result": result,
+    }
+
+
+def append_progress(path: Path, record: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(record, sort_keys=True) + "\n")
+        fh.flush()
+
+
+def print_progress(record: dict) -> None:
+    row = record["result"]
+    parity = "n/a" if row["parity"] is None else str(row["parity"]).lower()
+    print(
+        "[grm_gqa] "
+        f"{record['completed']}/{record['total']} "
+        f"nodes={row['nodes']} "
+        f"native_p50_ms={row['native_route_ms_p50']:.4f} "
+        f"python_p50_ms={row['python_route_ms_p50']} "
+        f"parity={parity}",
+        file=sys.stderr,
+        flush=True,
+    )
+
+
 def write_markdown(result: dict, path: Path) -> None:
     lines = [
         "# GRM GQA Router Benchmark",
@@ -505,6 +564,10 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--out", type=Path,
                    default=Path("/tmp/grm_gqa_router_benchmark.json"))
     p.add_argument("--markdown-out", type=Path)
+    p.add_argument("--progress-out", type=Path,
+                   help="write one JSONL checkpoint row after each node count")
+    p.add_argument("--progress", action="store_true",
+                   help="print one-line progress updates to stderr")
     p.add_argument("--smoke", action="store_true")
     return p.parse_args(argv)
 
@@ -586,9 +649,12 @@ def main(argv: list[str]) -> int:
         route_source = "harvested"
 
     results = []
+    if args.progress_out is not None:
+        args.progress_out.parent.mkdir(parents=True, exist_ok=True)
+        args.progress_out.write_text("", encoding="utf-8")
     with tempfile.TemporaryDirectory(prefix="grm_gqa_router_") as td:
         lib = baseline.build_native_lib(Path(td), cxx=args.cxx, openmp=args.openmp)
-        for node_count in args.node_counts:
+        for idx, node_count in enumerate(args.node_counts, start=1):
             if capture_routes is not None:
                 if node_count > capture_routes.shape[0]:
                     raise SystemExit(
@@ -604,7 +670,7 @@ def main(argv: list[str]) -> int:
                     key_tokens=args.key_tokens,
                     head_dim=preset["head_dim"],
                 )
-            results.append(benchmark_count(
+            row = benchmark_count(
                 routes=routes,
                 queries=queries,
                 lib_path=lib,
@@ -614,7 +680,24 @@ def main(argv: list[str]) -> int:
                 warmup=args.warmup,
                 native_only=args.native_only,
                 use_lexical=not args.no_lexical,
-            ))
+            )
+            results.append(row)
+            if args.progress_out is not None or args.progress:
+                record = progress_record(
+                    result=row,
+                    completed=idx,
+                    total=len(args.node_counts),
+                    preset_name=args.preset,
+                    route_source=route_source,
+                    openmp=args.openmp,
+                    native_only=args.native_only,
+                    route_stats=route_stats,
+                    query_stats=query_stats,
+                )
+                if args.progress_out is not None:
+                    append_progress(args.progress_out, record)
+                if args.progress:
+                    print_progress(record)
 
     shape_row = results[0] if results else {}
     out = {

@@ -114,6 +114,7 @@ def test_router_baseline_smoke_cli_sweeps_refine_m(tmp_path):
 def test_gqa_router_benchmark_smoke_cli_writes_json_and_markdown(tmp_path):
     out = tmp_path / "gqa_benchmark.json"
     md = tmp_path / "gqa_benchmark.md"
+    progress = tmp_path / "gqa_progress.jsonl"
 
     subprocess.run([
         "python3",
@@ -123,6 +124,8 @@ def test_gqa_router_benchmark_smoke_cli_writes_json_and_markdown(tmp_path):
         str(out),
         "--markdown-out",
         str(md),
+        "--progress-out",
+        str(progress),
     ], cwd=baseline.ROOT, check=True)
 
     data = json.loads(out.read_text())
@@ -131,6 +134,12 @@ def test_gqa_router_benchmark_smoke_cli_writes_json_and_markdown(tmp_path):
     assert [row["nodes"] for row in data["results"]] == [32, 96]
     assert all(row["parity"] for row in data["results"])
     assert "GRM GQA Router Benchmark" in md.read_text()
+    progress_rows = [
+        json.loads(line) for line in progress.read_text().splitlines()]
+    assert [row["result"]["nodes"] for row in progress_rows] == [32, 96]
+    assert [row["completed"] for row in progress_rows] == [1, 2]
+    assert all(row["schema"] == "grm-gqa-router-benchmark-progress-v1"
+               for row in progress_rows)
 
 
 def test_gqa_router_benchmark_smoke_cli_reads_capture_shards(tmp_path):
