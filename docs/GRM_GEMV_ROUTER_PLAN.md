@@ -234,6 +234,19 @@ faster: 96 nodes, 0.1172ms p50, parity green. Finding: captured full-bank GQA
 is now usable at small N, but larger N still needs the true GEMM/segment-reduce
 layout or explicit representative-key compaction.
 
+P4 full-bank hot-loop note: a tiled scorer that accumulated all query rows for
+one KV head against each K row was measured and rejected; it stayed
+parity-green but regressed the 127-node full-bank p50 to 29.2260ms. The kept
+change leaves the existing segment loop order intact but accumulates arena q.k
+dots in `float` instead of promoting every multiply to `double`, matching the
+float32 benchmark tensors. On the same Qwen3.5-2B source layer-3 full 256-token
+K-bank probe, 32/96/127 nodes now measure 4.4014ms / 9.5322ms / 10.8340ms p50,
+parity-green against the Python raw q.k law. This puts exact full-bank routing
+under 10ms through 96 captured nodes and within reach at 127. A larger
+real-capture run loaded 298 usable source shards and measured 192/256 nodes at
+15.1623ms / 18.9169ms p50, still parity-green. Larger-N GQA still needs the
+true GEMM/segment-reduce layout or representative-key compaction.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.

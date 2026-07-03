@@ -117,9 +117,11 @@ Qwen3.5-2B real-capture source K-bank probe:
 
 | route keys | nodes | native p50 ms | native p95 ms | Python p50 ms | parity |
 | --- | ---: | ---: | ---: | ---: | :---: |
-| captured full 256-token K | 32 | 6.5388 | 7.2731 | 14.4281 | true |
-| captured full 256-token K | 96 | 16.6903 | 19.0134 | 41.8944 | true |
-| captured full 256-token K | 127 | 23.0640 | 23.4164 | 58.6998 | true |
+| captured full 256-token K | 32 | 4.4014 | 4.9848 | 14.7914 | true |
+| captured full 256-token K | 96 | 9.5322 | 14.4400 | 42.2292 | true |
+| captured full 256-token K | 127 | 10.8340 | 12.9397 | 53.8978 | true |
+| captured full 256-token K | 192 | 15.1623 | 16.1852 | 80.1290 | true |
+| captured full 256-token K | 256 | 18.9169 | 21.9172 | 107.5580 | true |
 | captured representative 1-token K | 32 | 0.0465 | 0.0473 | 0.6651 | true |
 | captured representative 1-token K | 96 | 0.1172 | 0.1696 | 2.0503 | true |
 
@@ -129,7 +131,14 @@ measured slower than NumPy at 96 nodes (`56.1185ms` native p50 vs `40.9139ms`
 Python p50) because the native GQA OpenMP threshold keyed only on entry count.
 The runtime now uses a workload-aware GQA threshold based on
 `entries * query_heads * query_tokens * key_tokens`, improving the same 96-node
-full-bank point to `16.6903ms` p50 while preserving parity.
+full-bank point to `16.6903ms` p50 while preserving parity. A tiled scorer that
+computed all query rows for a KV head against one K row was tested next and
+rejected: it stayed parity-green but regressed the 127-node full-bank p50 to
+`29.2260ms`. The kept hot-loop change accumulates arena q.k dots in `float`,
+matching the float32 benchmark tensors instead of promoting every multiply to
+`double`; it improves the 127-node full-bank p50 to `10.8340ms` with parity
+green. A larger real-capture run loaded 298 usable source shards and measured
+192/256 full-bank nodes at `15.1623ms` / `18.9169ms` p50, still parity-green.
 
 ## Expectations
 
@@ -138,18 +147,18 @@ full-bank point to `16.6903ms` p50 while preserving parity.
 | E1: fp32 GEMV 10x current native scan at 100k | not proven; no direct P0 100k run |
 | E2: INT4 two-tier 2x over fp32 at 100k | passed on measured points: 22.8177ms -> 6.2995ms |
 | E3: 1M route <= 25ms host-side | narrowly missed; best exact measured point is 26.0175ms |
-| E4: GQA native path 20x Python fallback at 10k | passed on smoke shape: 27.81x; Qwen3.5-2B representative-key shape is 26.27x; real captured 127-node full K-bank is 2.54x |
+| E4: GQA native path 20x Python fallback at 10k | passed on smoke shape: 27.81x; Qwen3.5-2B representative-key shape is 26.27x; real captured 256-node full K-bank is 5.69x |
 
 ## Remaining Work
 
 - Treat the 1M dim128 host route as deep-interactive already; if E3 remains
   mandatory, replace the scalar q4 dot with a lower-level vectorized dot kernel
   or a larger routing layout change.
-- Run larger real-capture GQA curves with checkpointed/progress output so C ABI
-  population overhead does not hide route timing.
+- Extend real-capture GQA curves beyond 256 nodes with checkpointed/progress
+  output so C ABI population overhead does not hide route timing.
 - Implement the true GQA GEMM/segment-reduce path or a representative-key
   compaction policy for full 256-token captured K banks if sub-10ms routing is
-  required at larger node counts.
+  required past the 96-node real-capture point.
 - Replace the current C ABI shared-mutex guard with the planned lock-free
   double-buffer epoch snapshot model if threaded serving requires no read-side
   lock.

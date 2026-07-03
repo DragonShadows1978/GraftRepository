@@ -3232,11 +3232,12 @@ float RouterIndex::gqa_arena_key_score(
   const auto repeat = query_heads / kv_heads;
   const auto key_row_start = gqa_arena_.key_row_offsets[key_idx];
   const auto* rows = gqa_arena_.rows.data();
-  const double denom = std::sqrt(static_cast<double>(head_dim));
-  double total = 0.0;
+  const float inv_denom =
+      1.0F / std::sqrt(static_cast<float>(head_dim));
+  float total = 0.0F;
   for (std::uint64_t h = 0; h < query_heads; ++h) {
     const auto kh = h / repeat;
-    double best = 0.0;
+    float best = 0.0F;
     for (std::uint64_t qi = 0; qi < query_tokens; ++qi) {
       const auto qoff = ((h * query_tokens) + qi) * head_dim;
       const auto* q = query.data() + static_cast<std::size_t>(qoff);
@@ -3244,20 +3245,20 @@ float RouterIndex::gqa_arena_key_score(
         const auto row = key_row_start +
                          static_cast<std::size_t>((kh * key_tokens) + ki);
         const auto* k = rows + (row * static_cast<std::size_t>(head_dim));
-        double dot = 0.0;
+        float dot = 0.0F;
 #if defined(_OPENMP)
 #pragma omp simd reduction(+ : dot)
 #endif
         for (std::uint64_t d = 0; d < head_dim; ++d) {
-          dot += static_cast<double>(q[static_cast<std::size_t>(d)]) *
-                 static_cast<double>(k[static_cast<std::size_t>(d)]);
+          dot += q[static_cast<std::size_t>(d)] *
+                 k[static_cast<std::size_t>(d)];
         }
-        best = std::max(best, std::abs(dot) / denom);
+        best = std::max(best, std::abs(dot) * inv_denom);
       }
     }
     total += best;
   }
-  return static_cast<float>(total / static_cast<double>(query_heads));
+  return total / static_cast<float>(query_heads);
 }
 
 float RouterIndex::gqa_arena_entry_score(
