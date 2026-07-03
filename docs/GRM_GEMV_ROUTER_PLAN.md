@@ -223,6 +223,13 @@ four node counts, both dialects, exactness-gate record, M-sweep table.
 Board update; note for GRM paper v1.1 §5 (routing limitation retired —
 with measured numbers, not projections).
 
+P6 first report note: `docs/ROUTER_SCALING_REPORT.md` now records the current
+measured MLA and GQA router state: P0 native/Python baselines, P2 fp32 arena
+large points, P3 INT4 M-sweeps and current M=64 operating point, P4 GQA
+key-bank smoke, expectation pass/miss status, and remaining work. The report is
+intentionally explicit that E3 is still missed and that broader Qwen3-4B GQA
+curves remain.
+
 **Deferred (registered, not scheduled):** CUDA route path (only if host
 curves fail interactive targets at 1M — host INT4 GEMV at 1M×512 is
 ~130MB traffic, expected well under 20ms; measure first); ANN/IVF
