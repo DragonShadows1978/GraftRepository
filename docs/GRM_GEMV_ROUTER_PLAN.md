@@ -207,6 +207,15 @@ bounded-staging M=128: 1M nodes, `23.8805ms` p50 / `25.4883ms` p95, 8 measured
 queries after warmup, native-fp32 parity green. This clears the original E3
 target on p50, but the p95 tail still sits just above 25ms.
 
+P3 no-filter fast-path note: MLA INT4 now skips the full metadata filter helper
+when a route call has no kind/scope/durability/mutability filters; inactive
+entries are still checked directly. On the current 8192-row harvested q10
+shape (`--max-files 32`, M=128), the pre-change baseline measured `27.0773ms`
+p50 / `33.4480ms` p95 with native-fp32 parity. The active-only no-filter path
+measured `24.9673ms` p50 / `29.1474ms` p95 on the same shape, also parity
+green. Finding: this is worth keeping as a narrow hot-path win, but it does
+not close the p95 gate; the tail still needs a lower-level q4 dot/layout fix.
+
 **P4 — GQA key-bank GEMM path.** D4. Gates: parity vs Python GQA
 routing on Qwen-family GQA scenarios, latency, 166 floor.
 

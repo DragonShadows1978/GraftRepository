@@ -49,6 +49,8 @@ P3 INT4 bulk/refine checkpoints:
 | 1,000,000 | 128 | bounded staging, longer query check | 96 | 24.7049 | 27.0196 | native fp32 | true |
 | 1,000,000 | 128 | bounded staging, longer query check | 128 | 23.8805 | 25.4883 | native fp32 | true |
 | 1,000,000 | 128 | bounded staging, longer query check | 256 | 26.1488 | 29.1560 | native fp32 | true |
+| 1,000,000 | 128 | bounded staging, current corpus rerun | 128 | 27.0773 | 33.4480 | native fp32 | true |
+| 1,000,000 | 128 | no-filter active fast path, current corpus | 128 | 24.9673 | 29.1474 | native fp32 | true |
 
 Current measured MLA operating point: bounded-staging predecoded q4, `M=128`,
 1M nodes, 23.8805ms p50 with native-fp32 parity over the longer 10-query
@@ -80,6 +82,12 @@ M=128 with bounded candidate staging for the current harvested-corpus operating
 point. This clears E3 on p50 (`23.8805ms`) but not p95 (`25.4883ms`). A rejected
 thread-local heap selection attempt stayed parity-green but slowed the older
 M=64 point to 29.7308ms p50, so it was not kept.
+
+The later no-filter active fast path is a same-corpus hot-path comparison, not
+a replacement for the older operating-point receipt. On the current q10
+8192-row harvested corpus, M=128 improved from 27.0773ms p50 / 33.4480ms p95
+to 24.9673ms p50 / 29.1474ms p95 while preserving native-fp32 parity. The tail
+is still above 25ms.
 
 ## GQA Key-Bank Probe
 
@@ -400,7 +408,8 @@ Fresh post-snapshot GQA receipts:
 
 - Treat the 1M dim128 host route as deep-interactive already; if E3 p95 is
   mandatory, replace the scalar q4 dot with a lower-level vectorized dot kernel
-  or a larger routing layout change.
+  or a larger routing layout change. The no-filter active fast path helps on
+  same-corpus reruns but does not close the p95 gate.
 - Extend exhaustive real-capture GQA parity beyond the current layer-3
   1,024-node, four-query batched-reference receipt and the 256-node layer 3/7/11
   sweep before claiming broader full-bank correctness across all capture layers.

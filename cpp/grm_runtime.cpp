@@ -3830,6 +3830,9 @@ std::vector<std::uint64_t> RouterIndex::route_mla_int4(
   const auto qnorm_inv = 1.0 / (qnorm + 1.0e-8);
   const auto entry_count = entries_.size();
   const auto query_lex_hashes = lexical_hashes(lexical);
+  const bool has_route_filters = !kinds.empty() || !scopes.empty() ||
+                                 !durabilities.empty() ||
+                                 !mutabilities.empty();
   std::vector<float> bulk_scores(entry_count, 0.0F);
   std::vector<unsigned char> bulk_have(entry_count, 0);
   constexpr std::size_t kOpenMpRouteThreshold = 32768;
@@ -3841,7 +3844,11 @@ std::vector<std::uint64_t> RouterIndex::route_mla_int4(
        ++entry_i) {
     const auto entry_idx = static_cast<std::size_t>(entry_i);
     const auto& e = entries_[entry_idx];
-    if (!entry_allowed(e, kinds, scopes, durabilities, mutabilities)) {
+    if (has_route_filters) {
+      if (!entry_allowed(e, kinds, scopes, durabilities, mutabilities)) {
+        continue;
+      }
+    } else if (!e.active) {
       continue;
     }
     float score = mla_arena_.single_row_per_entry
