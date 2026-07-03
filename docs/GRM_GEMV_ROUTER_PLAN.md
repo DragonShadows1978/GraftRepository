@@ -287,6 +287,13 @@ across repeated query heads preserved sampled parity but was slower than the
 kept qt4 scorer: 512 nodes regressed to 20.3603ms p50 and 1,024 nodes regressed
 to 38.2764ms p50. It was removed rather than kept behind a flag.
 
+P4 repeat-4 head-ratio unroll rejection: a hand-unrolled repeat-4 qt4 scorer
+for the Qwen-family `query_heads / kv_heads == 4` shape also preserved sampled
+parity, but regressed 512 nodes to 23.1079ms p50 and only matched the
+1,024-node point within noise at 36.6391ms p50. This is the `8q/2kv` head
+repeat ratio on Qwen3.5-2B source captures, not a 4B model run. It was removed
+rather than kept behind a flag.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.

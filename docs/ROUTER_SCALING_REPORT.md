@@ -179,6 +179,10 @@ A grouped qt4 scorer that tried to reuse each K row across repeated query heads
 was also measured and rejected. It preserved sampled parity, but regressed the
 512-node p50 to `20.3603ms` and the 1,024-node p50 to `38.2764ms`, both slower
 than the kept qt4 full-bank scorer.
+A hand-unrolled repeat-4 head-ratio scorer (`8q/2kv`, not a 4B model run) was
+measured next. It also preserved sampled parity, but regressed 512 nodes to
+`23.1079ms` and only matched the 1,024-node point within noise (`36.6391ms`),
+so it was removed rather than kept behind a flag.
 
 ## Expectations
 
@@ -198,7 +202,8 @@ than the kept qt4 full-bank scorer.
   parity when claiming full correctness beyond the existing two-query samples.
 - Implement a fuller GQA GEMM/segment-reduce layout if sub-10ms routing is
   required past the 96-node real-capture point; simple stride representative-key
-  compaction and grouped repeated-head qt4 scoring were measured and rejected.
+  compaction, grouped repeated-head qt4 scoring, and hand-unrolled repeat-4
+  head-ratio scoring were measured and rejected.
 - Replace the current C ABI prepare-on-first-route shared-mutex bridge with the
   planned lock-free double-buffer epoch snapshot model if threaded serving
   requires no read-side lock.
