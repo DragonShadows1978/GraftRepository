@@ -256,6 +256,10 @@ real-capture result is mixed. On Qwen3.5-2B source layer-3 full-bank captures:
 The 512-node point improved p50, but the 768/1,024 points did not beat the
 existing bounded top-k full-bank receipts. Row-block therefore remains an
 opt-in measured candidate rather than the default runtime path.
+The row-block guard now also computes `max_keys_per_entry` when
+`GRM_ROUTER_GQA_ROWBLOCK=1`, preventing multi-key routes from entering this
+single-key-only path. The focused multi-key segment regression runs with
+row-block requested and still matches the Python raw-q.k law.
 
 ## GQA Capture Layer Sweep
 

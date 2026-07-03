@@ -3596,7 +3596,7 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
     for (const auto n : gqa_arena_.key_tokens) {
       max_key_tokens = std::max(max_key_tokens, n);
     }
-    if (want_fused_single_key_segment) {
+    if (want_fused_single_key_segment || want_rowblock_segment) {
       for (std::size_t entry_idx = 0; entry_idx < entry_count; ++entry_idx) {
         const auto key_start = gqa_arena_.entry_key_offsets[entry_idx];
         const auto key_end = gqa_arena_.entry_key_offsets[entry_idx + 1];

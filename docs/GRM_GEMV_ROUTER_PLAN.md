@@ -367,7 +367,11 @@ layer-3 full-bank captures it measured 512 nodes at `18.4712ms` p50 /
 not default-worthy: 768 nodes measured `27.8408ms` p50 / `33.6079ms` p95 and
 1,024 nodes measured `34.5670ms` p50 / `36.3997ms` p95, both parity-green but
 not better than the existing bounded top-k full-bank receipts. The branch stays
-opt-in while the default remains the key-score-bank segment reducer.
+opt-in while the default remains the key-score-bank segment reducer. Follow-up
+guard hardening now computes `max_keys_per_entry` for row-block requests too, so
+multi-key entries cannot accidentally enter the single-key row-block path; the
+focused multi-key segment test runs with `GRM_ROUTER_GQA_ROWBLOCK=1` and still
+matches the Python raw-q.k law.
 
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),

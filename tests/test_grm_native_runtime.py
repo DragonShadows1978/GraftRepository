@@ -471,6 +471,7 @@ def test_native_gqa_segment_reduce_matches_python_law(tmp_path, monkeypatch):
         return float(np.abs(sc).max(axis=(1, 2)).mean())
 
     monkeypatch.setenv("GRM_ROUTER_GQA_SEGMENT", "1")
+    monkeypatch.setenv("GRM_ROUTER_GQA_ROWBLOCK", "1")
     lib = build_native(tmp_path, extra_cxxflags=("-fopenmp",))
     q = np.asarray([
         [[1.0, 0.0, 0.0], [0.5, 0.5, 0.0],
