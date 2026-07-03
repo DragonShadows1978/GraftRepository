@@ -42,10 +42,12 @@ P3 INT4 bulk/refine checkpoints:
 | 1,000,000 | 128 | predecoded q4 | 32 | 39.6265 | 41.7902 | native fp32 | true |
 | 1,000,000 | 128 | predecoded q4 | 64 | 37.5690 | 40.2792 | native fp32 | true |
 | 1,000,000 | 128 | predecoded q4 | 128 | 37.8382 | 39.1211 | native fp32 | true |
+| 1,000,000 | 128 | predecoded q4 + bounded candidate staging | 64 | 26.0175 | 27.2486 | native fp32 | true |
 
 Current measured MLA operating point: predecoded q4, `M=64`, 1M nodes,
-37.5690ms p50. `M=16` is not acceptable for that predecoded checkpoint because
-it produced one top-3 mismatch on the harvested 1M parity run.
+26.0175ms p50 with bounded candidate staging. `M=16` is not acceptable for
+the predecoded checkpoint because it produced one top-3 mismatch on the
+harvested 1M parity run.
 
 ## INT4 Exactness Sweep
 
@@ -60,10 +62,13 @@ The later predecoded 1M sweep changed the safe operating point:
 | 32 | true | 39.6265 |
 | 64 | true | 37.5690 |
 | 128 | true | 37.8382 |
+| 64 + bounded staging | true | 26.0175 |
 
 Conclusion: refine count is not the dominant runtime limiter, but too-small
 M can still lose exact top-k after the predecoded q4 bulk approximation. Use
-M=64 for the current harvested-corpus operating point.
+M=64 with bounded candidate staging for the current harvested-corpus operating
+point. A rejected thread-local heap selection attempt stayed parity-green but
+slowed the same point to 29.7308ms p50, so it was not kept.
 
 ## GQA Key-Bank Probe
 
@@ -90,13 +95,14 @@ still need a full P6 curve.
 | --- | --- |
 | E1: fp32 GEMV 10x current native scan at 100k | not proven; no direct P0 100k run |
 | E2: INT4 two-tier 2x over fp32 at 100k | passed on measured points: 22.8177ms -> 6.2995ms |
-| E3: 1M route <= 25ms host-side | missed; best exact measured point is 37.5690ms |
+| E3: 1M route <= 25ms host-side | narrowly missed; best exact measured point is 26.0175ms |
 | E4: GQA native path 20x Python fallback at 10k | passed on smoke shape: 27.81x |
 
 ## Remaining Work
 
-- Replace the current scalar q4 dot with a lower-level vectorized dot kernel or
-  a larger routing layout change if E3 remains mandatory.
+- Treat the 1M dim128 host route as deep-interactive already; if E3 remains
+  mandatory, replace the scalar q4 dot with a lower-level vectorized dot kernel
+  or a larger routing layout change.
 - Run broader GQA curves on Qwen3-4B-shaped route banks.
 - Use copied, read-only samples from the Qwen3.5-2B translation graft corpus
   for larger real-graft router stress once that corpus finishes generating.

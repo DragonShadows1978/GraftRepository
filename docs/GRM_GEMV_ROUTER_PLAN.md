@@ -190,6 +190,14 @@ was faster but not exact (one top-3 mismatch). M=32/64/128 matched native fp32;
 their p50s were 39.6265/37.5690/37.8382ms. Current measured operating point:
 predecoded q4, M=64, 1M p50 37.5690ms. E3 is still not met.
 
+P3 bounded-staging note: INT4 route now avoids materializing every eligible
+candidate before refine when `M < N`; it keeps a bounded top-M heap after the
+parallel bulk score pass. The same harvested 1M dim128 M=64 parity run now
+measures 26.0175ms p50 / 27.2486ms p95 against native fp32. This is deep
+interactive territory and narrowly misses the original <=25ms E3 target. A
+more invasive thread-local heap selection attempt remained parity-green but
+slowed to 29.7308ms p50, so it was rejected.
+
 **P4 — GQA key-bank GEMM path.** D4. Gates: parity vs Python GQA
 routing on the Qwen3-4B gate scenarios, latency, 166 floor.
 
