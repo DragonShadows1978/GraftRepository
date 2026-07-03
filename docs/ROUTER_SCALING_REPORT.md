@@ -175,6 +175,10 @@ compaction is not safe on this capture set: 16/32/64/128-token stride banks at
 1,024 nodes all failed the two-query full-bank sampled-parity check. The
 16-token case is sub-10ms (`6.9564ms`) but changes top-k; 128 tokens is still
 wrong and slower than the qt4 full-bank path.
+A grouped qt4 scorer that tried to reuse each K row across repeated query heads
+was also measured and rejected. It preserved sampled parity, but regressed the
+512-node p50 to `20.3603ms` and the 1,024-node p50 to `38.2764ms`, both slower
+than the kept qt4 full-bank scorer.
 
 ## Expectations
 
@@ -194,7 +198,7 @@ wrong and slower than the qt4 full-bank path.
   parity when claiming full correctness beyond the existing two-query samples.
 - Implement a fuller GQA GEMM/segment-reduce layout if sub-10ms routing is
   required past the 96-node real-capture point; simple stride representative-key
-  compaction was measured and rejected against the full-bank reference.
+  compaction and grouped repeated-head qt4 scoring were measured and rejected.
 - Replace the current C ABI prepare-on-first-route shared-mutex bridge with the
   planned lock-free double-buffer epoch snapshot model if threaded serving
   requires no read-side lock.

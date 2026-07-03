@@ -282,6 +282,11 @@ failed full-bank sampled parity for 16/32/64/128 representative tokens. The
 and slower than the qt4 full-bank path. Simple geometric representative-key
 selection is rejected for runtime defaults.
 
+P4 grouped-scorer rejection: an opt-in grouped qt4 scorer that reused each K row
+across repeated query heads preserved sampled parity but was slower than the
+kept qt4 scorer: 512 nodes regressed to 20.3603ms p50 and 1,024 nodes regressed
+to 38.2764ms p50. It was removed rather than kept behind a flag.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.
