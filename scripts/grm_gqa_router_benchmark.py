@@ -217,6 +217,21 @@ def python_gqa_route_scan(
     return [node_id for _, node_id in scored[:topk]]
 
 
+def sample_query_indices(query_count: int, sample_count: int) -> list[int]:
+    if query_count <= 0 or sample_count <= 0:
+        return []
+    sample_count = min(query_count, sample_count)
+    if sample_count == query_count:
+        return list(range(query_count))
+    if sample_count == 1:
+        return [0]
+    last = query_count - 1
+    return [
+        int(round((i * last) / (sample_count - 1)))
+        for i in range(sample_count)
+    ]
+
+
 class NativeGqaRouter:
     def __init__(
         self,
@@ -375,10 +390,13 @@ def benchmark_count(
     warmup: int,
     native_only: bool,
     use_lexical: bool,
+    parity_sample_queries: int,
 ) -> dict:
     py_ns: list[int] = []
     native_ns: list[int] = []
     mismatches: list[dict] = []
+    sampled_indices: list[int] = []
+    parity_reference = None
     with NativeGqaRouter(
         lib_path,
         model_type=preset["model_type"],
@@ -393,6 +411,7 @@ def benchmark_count(
         native.add_routes(routes)
         build_ms = (time.perf_counter_ns() - build_t0) / 1.0e6
         if not native_only:
+            parity_reference = "python_gqa_raw"
             for i, query in enumerate(queries):
                 lexical = (baseline.lexical_keys_for_query(i, routes.shape[0])
                            if use_lexical else ())
@@ -400,6 +419,9 @@ def benchmark_count(
                 got = native.route(query, lexical, topk)
                 if got != py:
                     mismatches.append({"query": i, "python": py, "native": got})
+        elif parity_sample_queries > 0:
+            parity_reference = "python_gqa_raw_sampled"
+            sampled_indices = sample_query_indices(len(queries), parity_sample_queries)
         for i, query in enumerate(queries):
             lexical = (baseline.lexical_keys_for_query(i, routes.shape[0])
                        if use_lexical else ())
@@ -415,6 +437,14 @@ def benchmark_count(
             t0 = time.perf_counter_ns()
             native.route(query, lexical, topk)
             native_ns.append(time.perf_counter_ns() - t0)
+        for i in sampled_indices:
+            query = queries[i]
+            lexical = (baseline.lexical_keys_for_query(i, routes.shape[0])
+                       if use_lexical else ())
+            py = python_gqa_route_scan(routes, query, lexical, topk)
+            got = native.route(query, lexical, topk)
+            if got != py:
+                mismatches.append({"query": i, "python": py, "native": got})
     return {
         "nodes": int(routes.shape[0]),
         "keys_per_node": int(routes.shape[1]),
@@ -430,8 +460,11 @@ def benchmark_count(
         "native_route_ms_p95": baseline._p95_ms(native_ns),
         "python_route_ms_p50": None if native_only else baseline._median_ms(py_ns),
         "python_route_ms_p95": None if native_only else baseline._p95_ms(py_ns),
-        "parity": None if native_only else not mismatches,
-        "parity_reference": None if native_only else "python_gqa_raw",
+        "parity": None if parity_reference is None else not mismatches,
+        "parity_reference": parity_reference,
+        "parity_sampled": bool(native_only and sampled_indices),
+        "parity_queries": int(len(sampled_indices) if sampled_indices else (
+            len(queries) if parity_reference == "python_gqa_raw" else 0)),
         "lexical": bool(use_lexical),
         "mismatches": mismatches[:5],
     }
@@ -553,6 +586,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--cxx", default="g++")
     p.add_argument("--openmp", action="store_true")
     p.add_argument("--native-only", action="store_true")
+    p.add_argument("--parity-sample-queries", type=int, default=0,
+                   help=("for native-only runs, verify this many deterministic "
+                         "queries against the Python raw q.k reference"))
     p.add_argument("--no-lexical", action="store_true")
     p.add_argument("--capture-dir", type=Path,
                    help="read Qwen capture shard K banks from this directory")
@@ -680,6 +716,7 @@ def main(argv: list[str]) -> int:
                 warmup=args.warmup,
                 native_only=args.native_only,
                 use_lexical=not args.no_lexical,
+                parity_sample_queries=args.parity_sample_queries,
             )
             results.append(row)
             if args.progress_out is not None or args.progress:

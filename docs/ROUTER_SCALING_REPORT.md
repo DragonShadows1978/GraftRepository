@@ -125,6 +125,7 @@ Qwen3.5-2B real-capture source K-bank probe:
 | captured full 256-token K | 192 | 15.1623 | 16.1852 | 80.1290 | true |
 | captured full 256-token K | 256 | 18.9169 | 21.9172 | 107.5580 | true |
 | captured full 256-token K, native-only | 512 | 39.5778 | 42.3518 | n/a | n/a |
+| captured full 256-token K, sampled parity | 512 | 39.6250 | 43.4202 | n/a | true (1 query) |
 | captured full 256-token K, native-only | 768 | 58.3090 | 63.2833 | n/a | n/a |
 | captured full 256-token K, native-only | 1,024 | 76.5800 | 80.9969 | n/a | n/a |
 | captured representative 1-token K | 32 | 0.0465 | 0.0473 | 0.6651 | true |
@@ -148,7 +149,10 @@ The benchmark now supports `--progress-out` JSONL checkpoints and `--progress`
 stderr updates; a native-only 1,165-usable-shard run extended the full-bank
 curve to 512/768/1,024 nodes at `39.5778ms` / `58.3090ms` / `76.5800ms` p50.
 Those larger points are native-only (`parity=null`) because Python full-bank
-reference timing dominates at that scale.
+reference timing dominates at that scale. Native-only capture runs can now add
+`--parity-sample-queries`; the first sampled-parity 512-node full-bank check
+loaded 595 usable Qwen3.5-2B source shards, matched one deterministic Python
+raw-q.k reference query, and measured `39.6250ms` p50 / `43.4202ms` p95.
 
 ## Expectations
 
@@ -164,8 +168,9 @@ reference timing dominates at that scale.
 - Treat the 1M dim128 host route as deep-interactive already; if E3 remains
   mandatory, replace the scalar q4 dot with a lower-level vectorized dot kernel
   or a larger routing layout change.
-- Add a sampled or batched parity strategy for real-capture GQA curves beyond
-  256 nodes; native-only checkpointed progress now covers 512-1,024 nodes.
+- Extend sampled parity to the 768/1,024-node real-capture GQA points, or add a
+  batched Python reference so larger curves can be fully parity-checked without
+  dominating native route timing.
 - Implement the true GQA GEMM/segment-reduce path or a representative-key
   compaction policy for full 256-token captured K banks if sub-10ms routing is
   required past the 96-node real-capture point.

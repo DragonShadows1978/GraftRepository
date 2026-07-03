@@ -255,6 +255,15 @@ source shards and extended the exact full-bank curve to 512/768/1,024 nodes at
 `parity=null`; they are useful native scaling receipts, not a replacement for a
 sampled or batched parity strategy beyond 256 nodes.
 
+P4 sampled-parity note: native-only GQA benchmark runs can now use
+`--parity-sample-queries` to check deterministic query samples against the
+Python raw q.k reference without including Python in route timing. The first
+real-capture sampled check loaded 595 usable Qwen3.5-2B source shards and
+matched one sampled Python query at 512 full-bank nodes, measuring 39.6250ms
+p50 / 43.4202ms p95. This closes the first correctness receipt above 256 nodes;
+768/1,024 still need sampled or batched parity receipts before being treated as
+more than native scaling points.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.
