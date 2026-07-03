@@ -212,6 +212,31 @@ A paired repeated-head scorer that reused each K row across two query heads at a
 time was measured next. It also preserved parity, but regressed the fresh
 512-node p50 from `19.8082ms` to `22.3257ms`, so no C++ scorer change was kept.
 
+## Prepared Router Snapshots
+
+The C ABI router now publishes prepared MLA/GQA state as an immutable
+`std::shared_ptr<const RouterIndex>` snapshot. Route-key, active-state,
+route-metadata, revision, expire, clear, and checkpoint rebuild mutations update
+the live router under the writer lock and dirty the prepared snapshot. The next
+prepared route rebuilds the dialect arena once and publishes the copy; prepared
+MLA/non-GQA routes and raw GQA `route_gqa` calls then score from that snapshot
+outside the mutex. Generic MLA-style `route` calls on GQA stores remain on the
+writer-lock path because they can still lazily build an MLA arena over GQA
+route keys.
+
+The first full native test run caught stale snapshots on active/filter-only
+mutations. Dirty marks were added for active-state, route-metadata, revision,
+and expire changes. Focused stale-snapshot/concurrency regression:
+`6 passed, 67 deselected`. Full native runtime gate:
+`73 passed, 2 warnings in 174.95s`.
+
+Fresh post-snapshot GQA receipts:
+
+| route shape | nodes | native p50 ms | native p95 ms | parity |
+| --- | ---: | ---: | ---: | --- |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | 512 | 21.8605 | 22.1071 | true, 4/4 batched-reference queries |
+| harvested representative-key GQA | 10000 | 5.9662 | 5.9920 | true, 5/5 batched-reference queries |
+
 ## Expectations
 
 | expectation | result |
@@ -234,7 +259,6 @@ time was measured next. It also preserved parity, but regressed the fresh
   compaction, grouped repeated-head qt4 scoring, and hand-unrolled repeat-4
   head-ratio scoring, and paired repeated-head scoring were measured and
   rejected.
-- Replace the current C ABI prepare-on-first-route shared-mutex bridge with the
-  planned lock-free double-buffer epoch snapshot model if threaded serving
-  requires no read-side lock.
-- Update the AI research board / paper note with the final measured status.
+- Replace the current short-lock `shared_ptr` snapshot acquisition with the
+  planned lock-free double-buffer epoch model if threaded serving requires no
+  read-side lock.

@@ -337,6 +337,22 @@ final lock-free double-buffer epoch design from D5, but it lands the first
 no-torn-read gate on the current C ABI surface while restoring shared read
 concurrency for the normal prepared route paths.
 
+P5 prepared-snapshot note: prepared MLA/GQA router state is now published as a
+`std::shared_ptr<const RouterIndex>` snapshot. Writers mutate the live router
+under the writer lock and mark the snapshot dirty; the next prepared route
+rebuilds the dialect arena once and publishes an immutable copy. Non-GQA
+prepared routes and raw GQA `route_gqa` calls copy the snapshot pointer and run
+the expensive scoring path outside the mutex. Generic MLA-style `route` calls
+on GQA stores remain on the writer-lock path because they can still lazily build
+an MLA arena over GQA route keys. A stale-snapshot regression was caught and
+fixed by dirtying snapshots on active-state, route-metadata, revision, and
+expire mutations. Gates: the focused stale-snapshot/concurrency selector passed
+6/6; full `tests/test_grm_native_runtime.py` passed 73/73. Fresh native-only
+snapshot receipts: Qwen3.5-2B source layer-3 full-bank 512 nodes matched all
+four batched-reference queries at `21.8605ms` p50 / `22.1071ms` p95; the
+representative 10k GQA shape matched five batched-reference queries at
+`5.9662ms` p50 / `5.9920ms` p95.
+
 **P6 — Report.** `ROUTER_SCALING_REPORT.md`: before/after curves at all
 four node counts, both dialects, exactness-gate record, M-sweep table.
 Board update; note for GRM paper v1.1 §5 (routing limitation retired —

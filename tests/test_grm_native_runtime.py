@@ -1596,6 +1596,63 @@ def test_native_router_serializes_concurrent_route_updates(tmp_path):
         assert errors == []
 
 
+def test_native_gqa_router_snapshots_concurrent_route_updates(tmp_path):
+    lib = build_native(tmp_path)
+    count = 32
+    q = np.asarray([
+        [[1.0, 0.0], [0.5, 0.5]],
+        [[0.0, 1.0], [0.5, -0.5]],
+    ], dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="Qwen3_TC", num_layers=36,
+            hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
+            payload_kind="gqa", num_kv_heads=1, head_dim=2) as store:
+        for i in range(count):
+            key = np.asarray([[[1.0 if i % 2 == 0 else 0.0,
+                                0.0 if i % 2 == 0 else 1.0]]],
+                             dtype=np.float32)
+            node_id = store.add_node(f"concurrent GQA route {i}", b"", ntok=1)
+            store.set_route_key_list(node_id, [key], [f"gqa-{i}"])
+
+        errors = []
+        start = threading.Event()
+
+        def reader():
+            start.wait()
+            try:
+                for _ in range(120):
+                    routed = store.route_gqa(q, topk=8)
+                    if any(node_id < 0 or node_id >= count for node_id in routed):
+                        errors.append(("bad-gqa-route", routed))
+            except Exception as exc:  # pragma: no cover - thread diagnostic
+                errors.append(("reader", repr(exc)))
+
+        def writer():
+            start.wait()
+            try:
+                for step in range(160):
+                    node_id = step % count
+                    if step % 2 == 0:
+                        key = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+                    else:
+                        key = np.asarray([[[0.0, 1.0]]], dtype=np.float32)
+                    store.set_route_key_list(node_id, [key], [f"gqa-{node_id}"])
+            except Exception as exc:  # pragma: no cover - thread diagnostic
+                errors.append(("writer", repr(exc)))
+
+        threads = [threading.Thread(target=reader) for _ in range(3)]
+        threads.append(threading.Thread(target=writer))
+        for thread in threads:
+            thread.start()
+        start.set()
+        for thread in threads:
+            thread.join(timeout=10.0)
+            assert not thread.is_alive()
+
+        assert errors == []
+
+
 def test_native_store_structured_payload_tensors_via_ctypes(tmp_path):
     lib = build_native(tmp_path)
     with NativeGraftStore(
