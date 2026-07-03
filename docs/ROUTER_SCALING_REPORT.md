@@ -319,11 +319,14 @@ captures at layers 3/7/11/15/19/23, lexical off, OpenMP, exhaustive
 | --- | ---: | ---: | ---: | --- |
 | 3/7/11/15/19/23 | 256 | 11.2017-12.9526 | 15.4401 | true, 6/6 batched-reference queries on every layer |
 | 3/7/11/15/19/23 | 512 | 17.3686-19.8722 | 28.6108 | true, 6/6 batched-reference queries on every layer |
+| 3/7/11/15/19/23 | 1,024 | 23.0302-30.1175 | 32.3673 | true, 4/4 batched-reference queries on every layer |
 
 This is the first in-tree lower-level full-bank dot kernel with a clear capture
-win. The six-layer 256/512-node receipts clear the first broader-layer probes,
-but it remains opt-in until 1,024-node all-layer or second-model receipts clear
-the accumulation-order risk.
+win. The six-layer 256/512/1,024-node receipts clear the first same-model
+broader-layer correctness probes, but AVX2 remains opt-in: the 1,024-node sweep
+misses the 25ms p50 latency line on layers 7/11/15/19/23, and a second-model
+receipt is still needed before treating the accumulation-order change as broadly
+safe.
 
 `GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
 routes query-token-4 GQA keys over that layout. It is parity-green but rejected
@@ -466,10 +469,10 @@ Fresh post-snapshot GQA receipts:
   mandatory, replace the scalar q4 dot with a lower-level vectorized dot kernel
   or a larger routing layout change. The no-filter active fast path helps on
   same-corpus reruns but does not close the p95 gate.
-- Extend exhaustive real-capture GQA parity beyond the current layer-3
-  1,024-node, four-query batched-reference receipt and the AVX2 256/512-node
-  six-layer sweeps before claiming broader full-bank correctness at 1,024
-  all-layer nodes or across another model/capture family.
+- Extend exhaustive real-capture GQA parity beyond Qwen3.5-2B before claiming
+  broader full-bank correctness across another model/capture family. The AVX2
+  1,024-node six-layer sweep is correctness-green on Qwen3.5-2B, but misses the
+  25ms p50 line on five of six layers.
 - Implement a fuller GQA GEMM/segment-reduce layout if sub-10ms routing is
   required past larger full-bank real-capture points; the current segment
   reduce is a key-score-bank pass and improves 512-node full-bank routing, but

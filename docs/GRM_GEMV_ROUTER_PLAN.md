@@ -447,7 +447,12 @@ OpenMP, exhaustive 6-query batched parity, all passed. At 256 nodes, each layer
 loaded 509 usable shards (`skipped_shape=3`), p50 ranged `11.2017ms` to
 `12.9526ms`, and p95 maxed at `15.4401ms`. At 512 nodes, each layer loaded 747
 usable shards (`skipped_shape=21`), p50 ranged `17.3686ms` to `19.8722ms`, and
-p95 maxed at `28.6108ms`. Both sweep receipts record the AVX2 runtime flag.
+p95 maxed at `28.6108ms`. At 1,024 nodes, each layer loaded 1,165 usable
+shards (`skipped_shape=35`) and all layers remained parity-green, but p50
+ranged `23.0302ms` to `30.1175ms` and p95 maxed at `32.3673ms`; only layer 3
+cleared 25ms p50. The sweep receipts record the AVX2 runtime flag, and the
+1,024-node result keeps AVX2 opt-in: correctness generalizes across the captured
+layers, but latency still needs a lower-level GEMM/layout step.
 
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The
