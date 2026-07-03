@@ -182,6 +182,48 @@ def make_capture_queries(
     return _normalize_last_dim(np.stack(out))
 
 
+def compact_capture_routes(
+    routes: np.ndarray,
+    *,
+    token_count: int,
+    mode: str,
+) -> tuple[np.ndarray, dict]:
+    if token_count <= 0:
+        return routes, {
+            "enabled": False,
+            "mode": "none",
+            "token_count": int(routes.shape[3]),
+            "indices": [],
+        }
+    if routes.ndim != 5:
+        raise ValueError("capture routes must have shape (nodes, keys, kv, tokens, dim)")
+    key_tokens = int(routes.shape[3])
+    keep = min(int(token_count), key_tokens)
+    if keep == key_tokens:
+        idx = np.arange(key_tokens, dtype=np.int64)
+    elif mode == "prefix":
+        idx = np.arange(keep, dtype=np.int64)
+    elif mode == "tail":
+        idx = np.arange(key_tokens - keep, key_tokens, dtype=np.int64)
+    elif mode == "stride":
+        idx = np.rint(np.linspace(0, key_tokens - 1, keep)).astype(np.int64)
+    else:
+        raise ValueError(f"unknown representative mode: {mode}")
+    idx = np.unique(idx)
+    if idx.size < keep:
+        missing = [i for i in range(key_tokens) if i not in set(idx.tolist())]
+        idx = np.asarray(list(idx) + missing[:keep - idx.size], dtype=np.int64)
+        idx.sort()
+    compact = np.ascontiguousarray(routes[:, :, :, idx, :])
+    return compact, {
+        "enabled": True,
+        "mode": mode,
+        "token_count": int(compact.shape[3]),
+        "source_token_count": key_tokens,
+        "indices": [int(i) for i in idx.tolist()],
+    }
+
+
 def gqa_raw_score(query: np.ndarray, key: np.ndarray) -> float:
     query_heads, _, head_dim = query.shape
     kv_heads = key.shape[0]
@@ -465,6 +507,7 @@ class NativeGqaRouter:
 def benchmark_count(
     *,
     routes: np.ndarray,
+    parity_routes: np.ndarray | None,
     queries: np.ndarray,
     lib_path: Path,
     preset: dict,
@@ -476,6 +519,7 @@ def benchmark_count(
     parity_sample_queries: int,
     parity_reference_mode: str,
 ) -> dict:
+    reference_routes = routes if parity_routes is None else parity_routes
     py_ns: list[int] = []
     native_ns: list[int] = []
     mismatches: list[dict] = []
@@ -501,7 +545,7 @@ def benchmark_count(
                 lexical = (baseline.lexical_keys_for_query(i, routes.shape[0])
                            if use_lexical else ())
                 py = python_gqa_reference_route(
-                    routes, query, lexical, topk, parity_reference_mode)
+                    reference_routes, query, lexical, topk, parity_reference_mode)
                 got = native.route(query, lexical, topk)
                 if got != py:
                     mismatches.append({"query": i, "python": py, "native": got})
@@ -515,13 +559,13 @@ def benchmark_count(
             if i < warmup:
                 if not native_only:
                     python_gqa_reference_route(
-                        routes, query, lexical, topk, parity_reference_mode)
+                        reference_routes, query, lexical, topk, parity_reference_mode)
                 native.route(query, lexical, topk)
                 continue
             if not native_only:
                 t0 = time.perf_counter_ns()
                 python_gqa_reference_route(
-                    routes, query, lexical, topk, parity_reference_mode)
+                    reference_routes, query, lexical, topk, parity_reference_mode)
                 py_ns.append(time.perf_counter_ns() - t0)
             t0 = time.perf_counter_ns()
             native.route(query, lexical, topk)
@@ -531,7 +575,7 @@ def benchmark_count(
             lexical = (baseline.lexical_keys_for_query(i, routes.shape[0])
                        if use_lexical else ())
             py = python_gqa_reference_route(
-                routes, query, lexical, topk, parity_reference_mode)
+                reference_routes, query, lexical, topk, parity_reference_mode)
             got = native.route(query, lexical, topk)
             if got != py:
                 mismatches.append({"query": i, "python": py, "native": got})
@@ -540,6 +584,7 @@ def benchmark_count(
         "keys_per_node": int(routes.shape[1]),
         "kv_heads": int(routes.shape[2]),
         "key_tokens": int(routes.shape[3]),
+        "parity_key_tokens": int(reference_routes.shape[3]),
         "query_heads": int(queries.shape[1]),
         "query_tokens": int(queries.shape[2]),
         "head_dim": int(routes.shape[4]),
@@ -569,6 +614,7 @@ def progress_record(
     route_source: str,
     openmp: bool,
     native_only: bool,
+    compact_stats: dict,
     route_stats: dict,
     query_stats: dict,
 ) -> dict:
@@ -581,6 +627,7 @@ def progress_record(
         "native_only": bool(native_only),
         "completed": int(completed),
         "total": int(total),
+        "compact": compact_stats,
         "harvest": {
             "route": route_stats,
             "query": query_stats,
@@ -690,6 +737,15 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--capture-limit", type=int, default=128)
     p.add_argument("--capture-token-limit", type=int, default=0,
                    help="limit K tokens per captured shard; 0 keeps all tokens")
+    p.add_argument("--compact-route-tokens", type=int, default=0,
+                   help=("route with this many representative K tokens per "
+                         "captured shard; 0 keeps the full captured K bank"))
+    p.add_argument("--compact-route-mode", choices=("prefix", "tail", "stride"),
+                   default="stride",
+                   help="representative token selection mode for compacted captures")
+    p.add_argument("--compact-parity-full", action="store_true",
+                   help=("when compacting capture routes, compare native compact "
+                         "routes against the original full capture K-bank reference"))
     p.add_argument("--out", type=Path,
                    default=Path("/tmp/grm_gqa_router_benchmark.json"))
     p.add_argument("--markdown-out", type=Path)
@@ -729,6 +785,7 @@ def main(argv: list[str]) -> int:
         raise SystemExit("token and key counts must be positive")
 
     capture_routes = None
+    compact_stats = None
     capture_stats = None
     if args.capture_dir is not None:
         capture_routes, capture_stats = load_capture_routes(
@@ -789,7 +846,17 @@ def main(argv: list[str]) -> int:
                     raise SystemExit(
                         f"node count {node_count} exceeds loaded captures "
                         f"{capture_routes.shape[0]}")
-                routes = capture_routes[:node_count]
+                full_routes = capture_routes[:node_count]
+                routes, compact_stats = compact_capture_routes(
+                    full_routes,
+                    token_count=args.compact_route_tokens,
+                    mode=args.compact_route_mode,
+                )
+                parity_routes = (
+                    full_routes
+                    if args.compact_parity_full and compact_stats["enabled"]
+                    else None
+                )
             else:
                 routes = make_gqa_routes(
                     route_bank,
@@ -799,8 +866,10 @@ def main(argv: list[str]) -> int:
                     key_tokens=args.key_tokens,
                     head_dim=preset["head_dim"],
                 )
+                parity_routes = None
             row = benchmark_count(
                 routes=routes,
+                parity_routes=parity_routes,
                 queries=queries,
                 lib_path=lib,
                 preset=preset,
@@ -822,6 +891,12 @@ def main(argv: list[str]) -> int:
                     route_source=route_source,
                     openmp=args.openmp,
                     native_only=args.native_only,
+                    compact_stats=compact_stats or {
+                        "enabled": False,
+                        "mode": "none",
+                        "token_count": int(row["key_tokens"]),
+                        "indices": [],
+                    },
                     route_stats=route_stats,
                     query_stats=query_stats,
                 )
@@ -849,6 +924,12 @@ def main(argv: list[str]) -> int:
             "query_tokens": int(shape_row.get("query_tokens", args.query_tokens)),
             "key_tokens": int(shape_row.get("key_tokens", args.key_tokens)),
             "keys_per_node": int(shape_row.get("keys_per_node", args.keys_per_node)),
+        },
+        "compact": compact_stats or {
+            "enabled": False,
+            "mode": "none",
+            "token_count": int(shape_row.get("key_tokens", args.key_tokens)),
+            "indices": [],
         },
         "results": results,
     }

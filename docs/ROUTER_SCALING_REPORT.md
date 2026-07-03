@@ -135,6 +135,10 @@ Qwen3.5-2B real-capture source K-bank probe:
 | captured full 256-token K, qt4 batched sampled parity | 1,024 | 36.7363 | 38.6939 | n/a | true (2 queries) |
 | captured representative 1-token K | 32 | 0.0465 | 0.0473 | 0.6651 | true |
 | captured representative 1-token K | 96 | 0.1172 | 0.1696 | 2.0503 | true |
+| captured stride-16 K vs full K reference | 1,024 | 6.9564 | 7.9222 | n/a | false |
+| captured stride-32 K vs full K reference | 1,024 | 16.5056 | 23.0100 | n/a | false |
+| captured stride-64 K vs full K reference | 1,024 | 19.3099 | 25.0374 | n/a | false |
+| captured stride-128 K vs full K reference | 1,024 | 37.7707 | 45.3476 | n/a | false |
 
 The live translation-corpus source shards were inspected and read in-place only;
 no generated graft/capture files were moved or deleted. Full-bank routing first
@@ -165,6 +169,12 @@ The native full-bank scorer now has a query-token-4 fast path that reuses each
 K row across the four query rows while preserving per-row dot accumulation
 order. On the same Qwen3.5-2B source captures, 512/768/1,024 full-bank sampled
 parity points now measure `19.0136ms` / `33.8389ms` / `36.7363ms` p50.
+The benchmark can now route compact representative-token capture banks while
+checking parity against the original full-bank reference. Simple stride
+compaction is not safe on this capture set: 16/32/64/128-token stride banks at
+1,024 nodes all failed the two-query full-bank sampled-parity check. The
+16-token case is sub-10ms (`6.9564ms`) but changes top-k; 128 tokens is still
+wrong and slower than the qt4 full-bank path.
 
 ## Expectations
 
@@ -182,10 +192,9 @@ parity points now measure `19.0136ms` / `33.8389ms` / `36.7363ms` p50.
   or a larger routing layout change.
 - Increase real-capture GQA sampled-parity coverage, or run exhaustive batched
   parity when claiming full correctness beyond the existing two-query samples.
-- Implement a fuller GQA GEMM/segment-reduce layout or representative-key
-  compaction if sub-10ms routing is required past the 96-node real-capture
-  point; the qt4 fast path cuts the 1,024-node full-bank point roughly in half
-  but does not make it sub-10ms.
+- Implement a fuller GQA GEMM/segment-reduce layout if sub-10ms routing is
+  required past the 96-node real-capture point; simple stride representative-key
+  compaction was measured and rejected against the full-bank reference.
 - Replace the current C ABI prepare-on-first-route shared-mutex bridge with the
   planned lock-free double-buffer epoch snapshot model if threaded serving
   requires no read-side lock.

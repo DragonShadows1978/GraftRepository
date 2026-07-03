@@ -141,6 +141,7 @@ def test_gqa_router_benchmark_smoke_cli_writes_json_and_markdown(tmp_path):
     assert [row["completed"] for row in progress_rows] == [1, 2]
     assert all(row["schema"] == "grm-gqa-router-benchmark-progress-v1"
                for row in progress_rows)
+    assert all(row["compact"]["enabled"] is False for row in progress_rows)
 
 
 def test_gqa_router_benchmark_smoke_cli_reads_capture_shards(tmp_path):
@@ -218,6 +219,19 @@ def test_gqa_batched_python_reference_preserves_capture_tie_order():
         assert batched == scalar
 
 
+def test_gqa_capture_compaction_selects_representative_tokens():
+    routes = np.arange(2 * 1 * 1 * 6 * 3, dtype=np.float32).reshape(
+        2, 1, 1, 6, 3)
+
+    compact, stats = gqa_benchmark.compact_capture_routes(
+        routes, token_count=3, mode="stride")
+
+    assert compact.shape == (2, 1, 1, 3, 3)
+    assert stats["enabled"] is True
+    assert stats["indices"] == [0, 2, 5]
+    np.testing.assert_array_equal(compact, routes[:, :, :, [0, 2, 5], :])
+
+
 def test_gqa_router_benchmark_native_only_supports_sampled_parity(tmp_path):
     captures = tmp_path / "captures"
     captures.mkdir()
@@ -260,6 +274,58 @@ def test_gqa_router_benchmark_native_only_supports_sampled_parity(tmp_path):
     assert row["parity_sampled"] is True
     assert row["parity_queries"] == 2
     assert row["python_route_ms_p50"] is None
+
+
+def test_gqa_router_benchmark_compact_routes_can_check_full_parity(tmp_path):
+    captures = tmp_path / "captures"
+    captures.mkdir()
+    rng = np.random.default_rng(31415)
+    for i in range(6):
+        base = rng.normal(size=(1, 1, 1, 16)).astype(np.float16)
+        key = np.repeat(base, repeats=4, axis=2)
+        np.savez_compressed(captures / f"source_doc{i:02d}_chunk000000.npz",
+                            l3_k=key)
+
+    out = tmp_path / "gqa_capture_compact_full_parity.json"
+    subprocess.run([
+        "python3",
+        "scripts/grm_gqa_router_benchmark.py",
+        "--smoke",
+        "--capture-dir",
+        str(captures),
+        "--capture-layer",
+        "3",
+        "--capture-limit",
+        "6",
+        "--node-counts",
+        "6",
+        "--queries",
+        "4",
+        "--warmup",
+        "1",
+        "--native-only",
+        "--parity-sample-queries",
+        "2",
+        "--parity-reference",
+        "batched",
+        "--compact-route-tokens",
+        "1",
+        "--compact-route-mode",
+        "prefix",
+        "--compact-parity-full",
+        "--no-lexical",
+        "--out",
+        str(out),
+    ], cwd=baseline.ROOT, check=True)
+
+    data = json.loads(out.read_text())
+    row = data["results"][0]
+    assert data["compact"]["enabled"] is True
+    assert data["compact"]["token_count"] == 1
+    assert row["key_tokens"] == 1
+    assert row["parity_key_tokens"] == 4
+    assert row["parity"] is True
+    assert row["parity_reference"] == "python_gqa_raw_batched_sampled"
 
 
 def test_gqa_router_benchmark_native_only_supports_batched_sampled_parity(tmp_path):

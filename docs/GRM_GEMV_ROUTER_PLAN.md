@@ -273,6 +273,15 @@ per-head max reduction. Qwen3.5-2B source layer-3 full-bank sampled-parity runs
 now measure 512/768/1,024 nodes at 19.0136ms / 33.8389ms / 36.7363ms p50, all
 matching the batched Python raw q.k reference on two sampled queries.
 
+P4 representative-compaction note: the GQA benchmark can now route compacted
+capture banks (`--compact-route-tokens`, `--compact-route-mode`) while checking
+against the original full-bank Python reference (`--compact-parity-full`). On
+Qwen3.5-2B source layer-3 captures, simple stride compaction at 1,024 nodes
+failed full-bank sampled parity for 16/32/64/128 representative tokens. The
+16-token route was fast (`6.9564ms` p50) but wrong; 128 tokens was still wrong
+and slower than the qt4 full-bank path. Simple geometric representative-key
+selection is rejected for runtime defaults.
+
 **P5 — Epoch snapshots + stress.** D5. Gates: race harness (writer churn
 @ 1k mutations/s against concurrent routes; TSAN clean; no torn top-k),
 166 floor.
