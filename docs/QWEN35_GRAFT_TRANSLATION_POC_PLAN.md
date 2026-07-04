@@ -2,10 +2,13 @@
 
 **Status:** Phase 0 source validation passed for the real 2B/9B pair; Phase 1
 Qwen3.5 config-generalized loader smoke passed for both models; Phase 2
-capture hook/shard smoke plus resumable corpus runner smoke passed; Phase 3/4
-ridge fit and G1/G2 evaluator commands are implemented and smoke-tested on a
-tiny real capture rehearsal; no full corpus capture, real fit, or binding
-evaluation experiments run.
+capture hook/shard smoke plus resumable corpus/pipeline runners passed, and
+the real source capture is complete. The real target capture is still running:
+latest refreshed status is target `8552 / 9861` chunks, with `1,944,308`
+paired train tokens and `239,415` paired held-out tokens. Phase 3/4 ridge fit,
+negative-control fit, G0/G1/G2 evaluator, and G3 binding harness commands are
+implemented and smoke-tested. The final real fit/gate ladder waits for target
+capture completion and the frozen `>= 2M` paired train-token gate.
 
 **Completion ledger:** operational completion entries and evidence live in
 `docs/QWEN35_TRANSLATION_IMPLEMENTATION_LEDGER.md`. Update that ledger after
@@ -199,9 +202,12 @@ Current Phase 2 implementation status:
   `docs/QWEN35_TRANSLATION_CORPUS_RUNBOOK.md`
 - Operational completion ledger:
   `docs/QWEN35_TRANSLATION_IMPLEMENTATION_LEDGER.md`
-- Still required before Phase 2 is complete: select the real document corpus,
-  run all-attention-layer source and target capture over enough train/held-out
-  tokens, and produce the final corpus-scale `capture_manifest.json`.
+- Real corpus plan is frozen, source capture is complete, and target capture is
+  in progress under the pipeline runner. `capture_manifest.json` and
+  `pipeline_status.json` now record paired source/target progress so preview
+  work can be separated from final gate artifacts.
+- Still required before Phase 2 is complete: finish all-attention-layer target
+  capture and produce the final corpus-scale `capture_manifest.json`.
 
 ### Phase 3: translator fitting
 
@@ -242,8 +248,11 @@ Current Phase 3 implementation status:
   - K artifact shape `512 -> 1024`
   - V artifact shape `512 -> 1024`
   - smoke fit R² was effectively 1.0 on the tiny same-shard rehearsal
-- Still required before the first real corpus fit: fill and freeze the numeric
-  R1 thresholds below.
+- Wrong-layer, shuffled-docs, K-only, and V-only fit controls are implemented.
+- R1 thresholds are frozen below. The first final real fit waits for target
+  capture completion and at least `2M` paired train tokens. Partial preview
+  fits must use separate output directories and must not populate the final
+  `translator/` path.
 
 ### Phase 4: evaluation gates
 
@@ -281,9 +290,15 @@ Current Phase 4 implementation status:
   - `key_recall_at_8 = 1.0`
   - `shuffled_key_recall_at_8 = 0.20703125`
   - `value_output_cosine = 0.999999999999926`
-- Still required for complete Phase 4: G0 identity path, wrong-layer/K-only/V-only
-  negative controls, full held-out corpus evaluation, 2B-native and 9B-native
-  binding baselines, and G3 binding probes.
+- G0 capture identity, live G0 logit smoke, wrong-layer value/key controls,
+  K-only/V-only controls, deterministic G3 binding probes, and G3 binding
+  evaluation modes are implemented.
+- G0 capture identity now uses a structural exact-identity path instead of
+  recomputing target attention against itself, making the final post-capture
+  gate linear in shard count.
+- Still required for complete Phase 4: run the final G0/G1/G2/G3 gate ladder
+  on completed target capture and final translator artifacts, including
+  2B-native and 9B-native binding baselines.
 
 ## Artifacts
 

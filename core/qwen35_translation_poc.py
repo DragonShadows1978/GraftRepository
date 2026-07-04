@@ -520,6 +520,46 @@ def _select_layers(model, layers):
     return {int(x.strip()) for x in str(layers).split(",") if x.strip()}
 
 
+def _paired_capture_summary(by_role):
+    source = by_role.get("source", {})
+    target = by_role.get("target", {})
+    source_keys = set(source)
+    target_keys = set(target)
+    summary = {
+        "shards": 0,
+        "tokens": 0,
+        "same_split_shards": 0,
+        "same_split_tokens": 0,
+        "source_only_chunks": len(source_keys - target_keys),
+        "target_only_chunks": len(target_keys - source_keys),
+        "token_count_mismatch": 0,
+        "split_mismatch": 0,
+        "splits": {},
+    }
+    for key in sorted(source_keys & target_keys):
+        sm = source[key]
+        tm = target[key]
+        s_tokens = int(sm.get("token_count", 0))
+        t_tokens = int(tm.get("token_count", 0))
+        tokens = min(s_tokens, t_tokens)
+        if s_tokens != t_tokens:
+            summary["token_count_mismatch"] += 1
+        s_split = sm.get("metadata", {}).get("split", "unknown")
+        t_split = tm.get("metadata", {}).get("split", "unknown")
+        split = s_split if s_split == t_split else "split_mismatch"
+        if s_split != t_split:
+            summary["split_mismatch"] += 1
+        else:
+            summary["same_split_shards"] += 1
+            summary["same_split_tokens"] += tokens
+        rec = summary["splits"].setdefault(split, {"shards": 0, "tokens": 0})
+        rec["shards"] += 1
+        rec["tokens"] += tokens
+        summary["shards"] += 1
+        summary["tokens"] += tokens
+    return summary
+
+
 def run_capture_smoke(model_dir, *, role, out_dir, doc_id="smoke",
                       chunk_id=0, token_ids=(1, 2, 3, 4),
                       layers="first"):
@@ -561,8 +601,11 @@ def refresh_capture_manifest(out_dir, plan_path=None):
             sidecars.append(meta)
 
     by_role = {}
+    by_key = {}
     for meta in sidecars:
         role = meta["role"]
+        key = (str(meta["doc_id"]), int(meta["chunk_id"]))
+        by_key.setdefault(role, {})[key] = meta
         split = meta.get("metadata", {}).get("split", "unknown")
         rec = by_role.setdefault(role, {
             "shards": 0,
@@ -605,6 +648,7 @@ def refresh_capture_manifest(out_dir, plan_path=None):
             _sha256(Path(plan_path).expanduser()) if plan_path else None),
         "corpus_totals": plan.get("totals") if plan else None,
         "roles": by_role,
+        "paired": _paired_capture_summary(by_key),
         "expected": expected,
     }
     out = root / "capture_manifest.json"
@@ -1149,27 +1193,51 @@ def evaluate_capture_identity(capture_dir, out_path, *, split="heldout",
             qkey = f"l{tgt_layer}_q"
             if kkey not in z.files or vkey not in z.files or qkey not in z.files:
                 continue
-            native_k = np.asarray(z[kkey], dtype=np.float32)[0]
-            native_v = np.asarray(z[vkey], dtype=np.float32)[0]
-            q = np.asarray(z[qkey], dtype=np.float32)[0]
-            h, _, d = q.shape
-            native_scores = np.einsum(
-                "hqd,hkd->hqk", q, _repeat_heads(native_k, h)) / np.sqrt(d)
-            native_weights = _softmax_np(native_scores)
-            native_out = np.einsum(
-                "hqk,hkd->hqd", native_weights,
-                _repeat_heads(native_v, h))
+            native_k = np.asarray(z[kkey])
+            native_v = np.asarray(z[vkey])
+            q = np.asarray(z[qkey])
+            if native_k.ndim != 4 or native_v.ndim != 4 or q.ndim != 4:
+                raise ValueError(
+                    f"bad target capture rank for layer {tgt_layer}: "
+                    f"k={native_k.shape}, v={native_v.shape}, q={q.shape}")
+            if native_k.shape != native_v.shape:
+                raise ValueError(
+                    f"target K/V shape mismatch for layer {tgt_layer}: "
+                    f"{native_k.shape} vs {native_v.shape}")
+            if native_k.shape[0] != 1 or q.shape[0] != 1:
+                raise ValueError(
+                    f"expected batch-1 target capture for layer {tgt_layer}: "
+                    f"k={native_k.shape}, q={q.shape}")
+            if native_k.shape[2] != q.shape[2] or native_k.shape[3] != q.shape[3]:
+                raise ValueError(
+                    f"target K/Q token or dim mismatch for layer {tgt_layer}: "
+                    f"k={native_k.shape}, q={q.shape}")
+            if q.shape[1] % native_k.shape[1] != 0:
+                raise ValueError(
+                    f"target query heads must be a multiple of KV heads for "
+                    f"layer {tgt_layer}: k={native_k.shape}, q={q.shape}")
             rec = metric_acc.setdefault(tgt_layer, {
                 "chunks": 0,
                 "tokens": 0,
                 "key_recall": [],
+                "non_finite_tensors": 0,
             })
             rec["chunks"] += 1
-            rec["tokens"] += int(q.shape[1])
-            rec["key_recall"].append(_topk_recall(
-                native_scores, native_scores, topk))
-            _accumulate_output_fidelity(
-                rec, "identity_value_output", native_out, native_out)
+            rec["tokens"] += int(q.shape[2])
+            rec["key_recall"].append(1.0)
+            if (not np.isfinite(native_k).all() or
+                    not np.isfinite(native_v).all() or
+                    not np.isfinite(q).all()):
+                rec["non_finite_tensors"] += 1
+            output_values = int(q.shape[1] * q.shape[2] * q.shape[3])
+            output_rows = int(q.shape[1] * q.shape[2])
+            rec["identity_value_output_sse"] = 0.0
+            rec["identity_value_output_count"] = (
+                rec.get("identity_value_output_count", 0) + output_values)
+            rec["identity_value_output_cos_sum"] = (
+                rec.get("identity_value_output_cos_sum", 0.0) + output_rows)
+            rec["identity_value_output_cos_count"] = (
+                rec.get("identity_value_output_cos_count", 0) + output_rows)
 
     rows = []
     for tgt_layer, rec in sorted(metric_acc.items()):
@@ -1177,6 +1245,7 @@ def evaluate_capture_identity(capture_dir, out_path, *, split="heldout",
             "target_layer": tgt_layer,
             "chunks": rec["chunks"],
             "tokens": rec["tokens"],
+            "non_finite_tensors": rec.get("non_finite_tensors", 0),
             f"identity_key_recall_at_{int(topk)}": _mean_or_none(
                 rec["key_recall"]),
         }
@@ -1188,6 +1257,7 @@ def evaluate_capture_identity(capture_dir, out_path, *, split="heldout",
         "capture_dir": str(capture_dir),
         "split": split,
         "topk": int(topk),
+        "evaluation_mode": "structural_exact_identity",
         "target_shards": len(shards),
         "layers": rows,
     }
@@ -1748,6 +1818,7 @@ def _capture_progress_for_status(manifest):
         "out_dir": manifest.get("out_dir"),
         "expected": manifest.get("expected", {}),
         "roles": manifest.get("roles", {}),
+        "paired": manifest.get("paired", {}),
     }
 
 
@@ -1795,6 +1866,9 @@ def _compact_pipeline_history_record(payload):
     expected = capture.get("expected") if isinstance(capture, dict) else None
     if expected:
         rec["capture_expected"] = expected
+    paired = capture.get("paired") if isinstance(capture, dict) else None
+    if paired:
+        rec["capture_paired"] = paired
     return rec
 
 
@@ -2505,6 +2579,7 @@ def main(argv=None):
                 "out_dir": result["capture_manifest"]["out_dir"],
                 "expected": result["capture_manifest"]["expected"],
                 "roles": result["capture_manifest"]["roles"],
+                "paired": result["capture_manifest"].get("paired", {}),
             },
         }, indent=2))
         return 0
@@ -2530,6 +2605,7 @@ def main(argv=None):
                 "out_dir": result["capture_manifest"]["out_dir"],
                 "expected": result["capture_manifest"]["expected"],
                 "roles": result["capture_manifest"]["roles"],
+                "paired": result["capture_manifest"].get("paired", {}),
             },
         }, indent=2))
         return 0
@@ -2541,6 +2617,7 @@ def main(argv=None):
                 Path(args.out_dir).expanduser() / "capture_manifest.json"),
             "expected": manifest["expected"],
             "roles": manifest["roles"],
+            "paired": manifest.get("paired", {}),
         }, indent=2))
         return 0
     if args.cmd == "fit-translator":

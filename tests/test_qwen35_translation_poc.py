@@ -278,6 +278,30 @@ def test_refresh_capture_manifest_reports_expected_completion(tmp_path):
     assert manifest["expected"]["target"]["remaining_chunks"] == 1
     assert manifest["expected"]["target"]["next_missing_chunk"] == 0
     assert manifest["expected"]["target"]["complete"] is False
+    assert manifest["paired"]["shards"] == 0
+    assert manifest["paired"]["source_only_chunks"] == 1
+
+    queries = [None] * 4
+    queries[3] = np.zeros((1, 4, 4, 8), dtype=np.float32)
+    write_capture_shard(
+        out_dir,
+        role="target",
+        doc_id="doc1",
+        chunk_id=0,
+        token_ids=[1, 2, 3, 4],
+        captured=captured,
+        queries=queries,
+        metadata={"split": "train"},
+    )
+    manifest = refresh_capture_manifest(out_dir, plan_path)
+
+    assert manifest["paired"]["shards"] == 1
+    assert manifest["paired"]["tokens"] == 4
+    assert manifest["paired"]["same_split_shards"] == 1
+    assert manifest["paired"]["same_split_tokens"] == 4
+    assert manifest["paired"]["splits"]["train"]["tokens"] == 4
+    assert manifest["paired"]["source_only_chunks"] == 0
+    assert manifest["paired"]["target_only_chunks"] == 0
 
 
 def test_choose_next_capture_role_prefers_source_then_target_then_done():
@@ -565,6 +589,7 @@ def test_pipeline_status_reports_next_stage_without_running_models(
     assert result["stage"] == "g0-capture-identity"
     assert result["capture_manifest"]["expected"]["source"]["complete"] is True
     assert result["capture_manifest"]["expected"]["target"]["complete"] is True
+    assert result["capture_manifest"]["paired"]["same_split_shards"] == 1
     assert result["artifacts"]["g0_capture_identity"]["ready"] is False
 
 
@@ -764,9 +789,11 @@ def test_fit_ridge_translator_writes_artifacts_from_paired_shards(tmp_path):
     )
     assert identity["schema"] == (
         "qwen35_graft_translation_g0_capture_identity_v1")
+    assert identity["evaluation_mode"] == "structural_exact_identity"
     assert identity["layers"][0]["identity_key_recall_at_2"] == 1.0
     assert identity["layers"][0]["identity_value_output_mse"] == 0.0
     assert identity["layers"][0]["identity_value_output_cosine"] > 0.99
+    assert identity["layers"][0]["non_finite_tensors"] == 0
 
 
 def test_qwen35_attention_exposes_grm_injection_contract():

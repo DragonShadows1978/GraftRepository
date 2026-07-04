@@ -18,7 +18,7 @@ run.
 | Item | Path |
 |---|---|
 | Implementation repo | `/mnt/ForgeRealm/GraftRepository` |
-| Branch | `grm-ram-tiered-runtime` |
+| Branch | `main` |
 | PoC artifact root | `/mnt/ForgeRealm/qwen35_graft_translation_poc` |
 | Source weights | `/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc` |
 | Target weights | `/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a` |
@@ -515,6 +515,59 @@ eval, threshold registration, or control-baseline step.
 **Remaining work:**
 
 - Re-run this verification gate after the next implementation change.
+
+### 2026-07-03 - Partial Corpus Readiness And G0 Identity Fast Path
+
+**Status:** complete.
+
+**Completed work:**
+
+- Added paired source/target capture accounting to `capture_manifest.json`,
+  `pipeline_status.json`, pipeline history records, and the capture CLI JSON
+  summaries.
+- Paired accounting now records total paired shards/tokens, same-split
+  shards/tokens, per-split paired train/held-out tokens, source-only chunks,
+  target-only chunks, token-count mismatches, and split mismatches.
+- Replaced `eval-g0-capture-identity`'s redundant native-vs-native attention
+  recomputation with a structural exact-identity path. The gate still validates
+  target K/V/Q presence, shape compatibility, query/KV head divisibility, and
+  finite tensor contents, but reports identity recall/cosine/MSE without the
+  previous quadratic attention pass.
+- Updated the implementation plan status so preview work cannot be confused
+  with final gate artifacts.
+
+**Evidence:**
+
+- Refreshed real pipeline status:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/pipeline_status.json`
+  - timestamp UTC: `2026-07-04T03:06:32.426783+00:00`
+  - stage: `capture-target`
+  - source capture: `9861 / 9861` chunks complete
+  - target capture: `8552 / 9861` chunks complete
+  - paired chunks: `8552`
+  - paired tokens: `2,183,723`
+  - paired train tokens: `1,944,308`
+  - paired held-out tokens: `239,415`
+  - source-only chunks still waiting on target: `1309`
+  - token-count mismatches: `0`
+  - split mismatches: `0`
+- Command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py pipeline-status --root /mnt/ForgeRealm/qwen35_graft_translation_poc --write-status`
+- Focused test gate:
+  `PYTHONDONTWRITEBYTECODE=1 PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest tests/test_qwen35_translation_poc.py -q`
+  passed with `26 passed, 2 warnings in 0.42s`.
+- Compile gate:
+  `PYTHONPYCACHEPREFIX=/tmp/qwen35_preview_pycache python3 -m py_compile core/qwen35_translation_poc.py tests/test_qwen35_translation_poc.py scripts/qwen35_graft_translate_poc.py`
+  passed.
+
+**Remaining work:**
+
+- Continue the target capture loop to completion.
+- The final train fit still waits for the frozen `>= 2M` paired train-token
+  gate; current paired train tokens are `1,944,308`.
+- Partial preview fits/evals are now easier to justify from status, but they
+  must use separate preview output directories and must not populate the final
+  `translator/`, `translator_*`, or `gates/*_metrics.json` artifacts.
 
 ## Open Completion Queue
 

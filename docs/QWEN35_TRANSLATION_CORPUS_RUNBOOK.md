@@ -108,16 +108,23 @@ The corpus phase is ready for fitting when both are true:
 - `expected.target.complete == true`
 
 The status output also reports `remaining_chunks` and `next_missing_chunk` for
-each role.
+each role. It also reports `paired`, which is the current source/target overlap
+that fit/eval commands can use. The final registered train fit still waits for
+both captures to complete and for the frozen `>= 2M` paired train-token gate.
+Partial preview fits are allowed only in separate preview output directories;
+do not write partial artifacts to `$POC/translator`, `$POC/translator_*`, or
+`$POC/gates/*_metrics.json`.
 
-Current frozen-plan status:
+Current frozen-plan status refreshed on 2026-07-04 UTC:
 
-- source completed chunks: `1`
-- source remaining chunks: `9860`
-- target completed chunks: `1`
-- target remaining chunks: `9860`
-- `capture_manifest.json` sha256:
-  `32ba880b3db89a9ae5b0d0bc8b891a533704cbae7202feac65c4ab21f195b11b`
+- source completed chunks: `9861 / 9861`
+- target completed chunks: `8552 / 9861`
+- paired chunks: `8552`
+- paired train tokens: `1,944,308`
+- paired held-out tokens: `239,415`
+- source-only chunks still waiting on target: `1309`
+- token-count mismatches: `0`
+- split mismatches: `0`
 
 ## 5. Run G0 Capture Identity
 
@@ -150,7 +157,9 @@ recording the real G0 result.
 ## 6. Fit The Translator
 
 Before the first real fit, confirm the frozen numeric R1 gate thresholds in
-`docs/QWEN35_GRAFT_TRANSLATION_POC_PLAN.md` are still unchanged.
+`docs/QWEN35_GRAFT_TRANSLATION_POC_PLAN.md` are still unchanged. Also confirm
+`pipeline_status.json` reports at least `2,000,000` paired train tokens and a
+complete target capture before writing the final `$POC/translator` artifact.
 
 ```bash
 PYTHONPATH=. python3 scripts/qwen35_graft_translate_poc.py fit-translator \
@@ -281,12 +290,12 @@ tail -n 20 "$POC/pipeline_history.jsonl"
 
 Current real-root status:
 
-- `pipeline_status.json` sha256:
-  `8e4b81f172570ef5c777933c504000346e59141d998368607eeaf7560092f162`
-- next stage: `capture-source`
-- source completed chunks: `1 / 9861`
-- target completed chunks: `1 / 9861`
-- next missing chunk: `1`
+- next stage: `capture-target`
+- source completed chunks: `9861 / 9861`
+- target completed chunks: `8552 / 9861`
+- next missing target chunk: `8552`
+- paired train tokens: `1,944,308`
+- paired held-out tokens: `239,415`
 - `pipeline_history.jsonl` is created by the first real `pipeline-next`
   invocation; it is not created by passive `pipeline-status` inspection.
 
