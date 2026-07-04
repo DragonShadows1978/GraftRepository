@@ -72,6 +72,15 @@ struct Dot4PairScores {
   Dot4Scores second;
 };
 
+static bool score_node_better(
+    const std::pair<float, std::uint64_t>& a,
+    const std::pair<float, std::uint64_t>& b) {
+  if (a.first != b.first) {
+    return a.first > b.first;
+  }
+  return a.second < b.second;
+}
+
 #if defined(__x86_64__) || defined(__i386__)
 static bool cpu_has_avx2() {
 #if defined(__GNUC__) || defined(__clang__)
@@ -3498,8 +3507,7 @@ std::vector<std::uint64_t> RouterIndex::route_scan(
     }
     scored.push_back({score, e.node_id});
   }
-  std::sort(scored.begin(), scored.end(),
-            [](const auto& a, const auto& b) { return a.first > b.first; });
+  std::sort(scored.begin(), scored.end(), score_node_better);
   std::vector<std::uint64_t> out;
   for (std::size_t i = 0; i < std::min(topk, scored.size()); ++i) {
     out.push_back(scored[i].second);
@@ -4344,8 +4352,7 @@ std::vector<std::uint64_t> RouterIndex::route_mla_arena(
     }
     scored.push_back({score, e.node_id});
   }
-  std::sort(scored.begin(), scored.end(),
-            [](const auto& a, const auto& b) { return a.first > b.first; });
+  std::sort(scored.begin(), scored.end(), score_node_better);
   std::vector<std::uint64_t> out;
   for (std::size_t i = 0; i < std::min(topk, scored.size()); ++i) {
     out.push_back(scored[i].second);
@@ -4408,24 +4415,25 @@ std::vector<std::uint64_t> RouterIndex::route_mla_int4(
 
   const auto requested_m = std::max(
       topk, env_size_or("GRM_ROUTER_INT4_REFINE_M", 4096));
-  const auto candidate_better = [](const auto& a, const auto& b) {
-    if (a.first != b.first) {
-      return a.first > b.first;
-    }
-    return a.second < b.second;
+  struct MlaRouteCandidate {
+    float score = 0.0F;
+    std::size_t entry_idx = 0;
+    std::uint64_t node_id = 0;
   };
-  const auto worst_candidate_first = [](const auto& a, const auto& b) {
-    if (a.first != b.first) {
-      return a.first > b.first;
+  const auto candidate_better = [](const MlaRouteCandidate& a,
+                                   const MlaRouteCandidate& b) {
+    if (a.score != b.score) {
+      return a.score > b.score;
     }
-    return a.second < b.second;
+    return a.node_id < b.node_id;
   };
-  std::vector<std::pair<float, std::size_t>> candidates;
+  const auto worst_candidate_first = candidate_better;
+  std::vector<MlaRouteCandidate> candidates;
   if (requested_m >= entry_count) {
     candidates.reserve(entry_count);
     for (std::size_t i = 0; i < entry_count; ++i) {
       if (bulk_have[i] != 0) {
-        candidates.push_back({bulk_scores[i], i});
+        candidates.push_back({bulk_scores[i], i, entries_[i].node_id});
       }
     }
   } else {
@@ -4434,7 +4442,8 @@ std::vector<std::uint64_t> RouterIndex::route_mla_int4(
       if (bulk_have[i] == 0) {
         continue;
       }
-      const std::pair<float, std::size_t> candidate{bulk_scores[i], i};
+      const MlaRouteCandidate candidate{
+          bulk_scores[i], i, entries_[i].node_id};
       if (candidates.size() < requested_m) {
         candidates.push_back(candidate);
         std::push_heap(
@@ -4454,7 +4463,7 @@ std::vector<std::uint64_t> RouterIndex::route_mla_int4(
   std::vector<std::pair<float, std::uint64_t>> scored;
   scored.reserve(candidates.size());
   for (const auto& cand : candidates) {
-    const auto entry_idx = cand.second;
+    const auto entry_idx = cand.entry_idx;
     const auto& e = entries_[entry_idx];
     float score = exact_mla_entry_score(query, entry_idx, qnorm);
     score += lexical_bonus(
@@ -4464,8 +4473,7 @@ std::vector<std::uint64_t> RouterIndex::route_mla_int4(
     }
     scored.push_back({score, e.node_id});
   }
-  std::sort(scored.begin(), scored.end(),
-            [](const auto& a, const auto& b) { return a.first > b.first; });
+  std::sort(scored.begin(), scored.end(), score_node_better);
   std::vector<std::uint64_t> out;
   for (std::size_t i = 0; i < std::min(topk, scored.size()); ++i) {
     out.push_back(scored[i].second);

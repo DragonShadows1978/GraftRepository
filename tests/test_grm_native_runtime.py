@@ -1769,6 +1769,41 @@ def test_native_mla_int4_refine_all_matches_fp32_route(tmp_path, monkeypatch):
         assert store.route(query, lexical, topk=12) == fp32
 
 
+def test_native_mla_tied_scores_use_node_id_order(tmp_path, monkeypatch):
+    lib = build_native(tmp_path)
+    query = np.asarray([1.0, 0.0, 0.0, 0.0], dtype=np.float32)
+    expected = [0, 1, 2]
+
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        for i in range(8):
+            assert store.add_node(f"tied route {i}", b"", ntok=1) == i
+        for node_id in reversed(range(8)):
+            store.set_route(node_id, query, [])
+
+        assert store.route(query, topk=3) == expected
+        monkeypatch.setenv("GRM_ROUTER_INT4", "1")
+        monkeypatch.setenv("GRM_ROUTER_INT4_REFINE_M", "3")
+        assert store.route(query, topk=3) == expected
+
+    monkeypatch.delenv("GRM_ROUTER_INT4", raising=False)
+    monkeypatch.delenv("GRM_ROUTER_INT4_REFINE_M", raising=False)
+    with NativeGraftStore(
+            lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+            latent_rank=512, rope_dim=64) as store:
+        for i in range(8):
+            assert store.add_node(f"tied scan route {i}", b"", ntok=1) == i
+        for node_id in reversed(range(8)):
+            key = query if node_id != 7 else np.asarray(
+                [1.0, 0.0, 0.0], dtype=np.float32)
+            store.set_route(node_id, key, [])
+
+        assert store.route(query, topk=3) == expected
+
+
 def test_native_mla_int4_single_row_fast_path_matches_fp32_route(
         tmp_path, monkeypatch):
     lib = build_native(tmp_path)
