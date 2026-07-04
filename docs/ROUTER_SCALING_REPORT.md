@@ -381,6 +381,22 @@ The first short 1,024-node `gpu_topk` run was parity-green but noisy at
 receipt. Remaining CUDA work is now the persistent GPU K arena and runtime C ABI
 integration; probe-scope GPU top-k is closed for `topk <= 16`.
 
+The next probe slice creates a device-resident K arena once and routes against
+that packed bank (`arena_mode=persistent_gpu_k`). Setup wall below is just arena
+creation/H2D/K-pack/cuBLAS setup, not `nvcc` compile or capture loading. Route
+wall includes query H2D, temporary per-route scratch allocation, GPU compute, and
+top-k ID copy. These receipts were run sequentially on the card.
+
+| CUDA/cuBLAS probe shape | arena mode | nodes | device route ms/query | setup wall ms | route wall ms | total wall ms | parity |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | persistent_gpu_k | 32 | 0.0911 | 126.4656 | 50.8418 | 177.3074 | true, 2/2 queries |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | persistent_gpu_k | 512 | 0.8520 | 156.7580 | 55.7224 | 212.4804 | true, 6/6 queries |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | persistent_gpu_k | 1,024 | 1.4048 | 183.2137 | 61.6378 | 244.8516 | true, 8/8 queries |
+
+The K bank is now persistent at probe scope; remaining CUDA work is runtime C ABI
+integration and persistent per-route scratch/query buffers so route wall stops
+paying allocation cost.
+
 `GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
 routes query-token-4 GQA keys over that layout. It is parity-green but rejected
 for runtime default use on the hard full-bank capture shape: Qwen3.5-2B source
@@ -547,8 +563,9 @@ Fresh post-snapshot GQA receipts:
   reuse without a tighter schedule is not enough.
   The standalone CUDA/cuBLAS probe is parity-green and reaches `1.4769ms` per
   query at 1,024 full-bank nodes after K is resident; its GPU-top-k follow-up
-  returns only node IDs and measures `1.5427ms` at the same 1,024-node shape. The
-  next useful CUDA work is persistent GPU arena/runtime integration rather than
+  returns only node IDs and measures `1.5427ms`, and the persistent-K arena probe
+  measures `1.4048ms` at the same 1,024-node shape. The next useful CUDA work is
+  runtime C ABI integration and persistent route scratch buffers rather than
   more CPU scorer variants.
   The opt-in transposed key-bank experiment was parity-green but slower on the
   2B full-bank capture shape, so it stays diagnostic-only; the next useful slice

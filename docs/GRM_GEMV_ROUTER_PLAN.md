@@ -502,6 +502,17 @@ longer six-measured-query average. The next implementation slice is now the
 persistent GPU K arena plus runtime integration; GPU top-k itself is proven at
 probe scope for `topk <= 16`.
 
+P4 persistent CUDA K-arena note: the probe now exposes create/route/destroy
+entrypoints and keeps the packed full K bank device-resident across route calls
+(`arena_mode=persistent_gpu_k`). The old one-shot C entrypoint remains as a
+compatibility wrapper. Sequential Qwen3.5-2B source layer-3 full-bank receipts
+with GPU top-k stayed parity-green: 32 nodes measured `0.0911ms` per query with
+`126.4656ms` setup / `50.8418ms` route wall, 512 nodes measured `0.8520ms` with
+`156.7580ms` setup / `55.7224ms` route wall, and 1,024 nodes measured
+`1.4048ms` with `183.2137ms` setup / `61.6378ms` route wall. Remaining CUDA work
+is runtime C ABI integration plus persistent per-route scratch/query buffers;
+the probe no longer rebuilds or recopies the K arena on each route.
+
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The
 path preserves the raw-q.k law in focused parity and exhaustive benchmark
