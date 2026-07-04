@@ -337,11 +337,14 @@ Qwen3.5-2B source layer-3 full-bank shape:
 | AVX2 + `GRM_ROUTER_GQA_FMA=1` | 1,024 | 28.2471 | 29.0913 | true, 4/4 batched-reference queries |
 | `GRM_ROUTER_GQA_BANKED=1` bounded bank-transposed token-block scorer | 512 | 38.4846 | 41.0115 | true, 6/6 batched-reference queries |
 | `GRM_ROUTER_GQA_BANKED=1` bounded bank-transposed token-block scorer | 1,024 | 70.2254 | 72.5537 | true, 4/4 batched-reference queries |
+| `GRM_ROUTER_GQA_PAIR2_AVX2=1` paired-repeat AVX2 microkernel | 512 | 23.9675 | 25.8050 | true, 6/6 batched-reference queries |
+| `GRM_ROUTER_GQA_PAIR2_AVX2=1` paired-repeat AVX2 microkernel | 1,024 | 29.1954 | 29.5725 | true, 4/4 batched-reference queries |
 
 FMA stays diagnostic because it does not clear the 1,024-node line. The banked
 token-block scorer is a clear latency rejection despite parity: it adds a
 GEMV-shaped host layout, but the scratch-heavy token-block walk loses badly to
-the row-major AVX2 dot path.
+the row-major AVX2 dot path. The paired-repeat AVX2 microkernel also loses,
+which rules out simple repeated-head K-row reuse as the missing optimization.
 
 `GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
 routes query-token-4 GQA keys over that layout. It is parity-green but rejected
@@ -504,6 +507,9 @@ Fresh post-snapshot GQA receipts:
   also measured: FMA is not a 1,024-node win, and the banked scorer regresses to
   `70.2254ms` p50 at 1,024 nodes. A true packed microkernel or GPU/cuBLAS path is
   still the useful next layout, not another host scratch-buffer transpose.
+  The paired-repeat AVX2 microkernel reduces K-row streams across repeated query
+  heads but still regresses (`29.1954ms` p50 at 1,024 nodes), so repeated-head
+  reuse without a tighter schedule is not enough.
   The opt-in transposed key-bank experiment was parity-green but slower on the
   2B full-bank capture shape, so it stays diagnostic-only; the next useful slice
   is still a lower-level GEMM/BLAS layout rather than a duplicate host layout

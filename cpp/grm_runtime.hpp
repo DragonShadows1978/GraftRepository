@@ -565,6 +565,7 @@ class RouterIndex {
       std::size_t key_idx,
       bool use_qt4_transposed = false,
       bool use_qt4_dot_unroll8 = false,
+      bool use_qt4_pair2_avx2 = false,
       bool use_qt4_avx2 = false) const;
   float gqa_arena_key_score_qt4(
       const std::vector<float>& query,
@@ -580,6 +581,12 @@ class RouterIndex {
       std::uint64_t kv_heads,
       std::size_t key_idx) const;
   float gqa_arena_key_score_qt4_unroll8(
+      const std::vector<float>& query,
+      std::uint64_t query_heads,
+      std::uint64_t head_dim,
+      std::uint64_t kv_heads,
+      std::size_t key_idx) const;
+  float gqa_arena_key_score_qt4_pair2_avx2(
       const std::vector<float>& query,
       std::uint64_t query_heads,
       std::uint64_t head_dim,
@@ -609,6 +616,7 @@ class RouterIndex {
       std::size_t entry_idx,
       bool use_qt4_transposed = false,
       bool use_qt4_dot_unroll8 = false,
+      bool use_qt4_pair2_avx2 = false,
       bool use_qt4_avx2 = false) const;
   std::vector<std::uint64_t> route_scan(
       const std::vector<float>& query,

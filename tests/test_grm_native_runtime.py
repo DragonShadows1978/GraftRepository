@@ -624,7 +624,9 @@ def test_native_gqa_rowblock_segment_matches_python_law(tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "mode", ["default", "avx2", "fma", "banked", "unroll8", "transposed", "blas"])
+    "mode", [
+        "default", "avx2", "fma", "pair2", "banked", "unroll8",
+        "transposed", "blas"])
 def test_native_gqa_qt4_even_repeat_route_matches_python_law(
         tmp_path, monkeypatch, mode):
     def raw_score(query, key):
@@ -640,6 +642,8 @@ def test_native_gqa_qt4_even_repeat_route_matches_python_law(
     elif mode == "fma":
         monkeypatch.setenv("GRM_ROUTER_GQA_AVX2", "1")
         monkeypatch.setenv("GRM_ROUTER_GQA_FMA", "1")
+    elif mode == "pair2":
+        monkeypatch.setenv("GRM_ROUTER_GQA_PAIR2_AVX2", "1")
     elif mode == "banked":
         monkeypatch.setenv("GRM_ROUTER_GQA_BANKED", "1")
     elif mode == "unroll8":

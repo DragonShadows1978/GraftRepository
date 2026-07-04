@@ -467,6 +467,17 @@ and 1,024 nodes measured `70.2254ms` p50 / `72.5537ms` p95. This rules out the
 simple host transposed-token layout; the next useful layout has to be a true
 packed microkernel/GPU path rather than scratch-heavy token-block GEMV.
 
+P4 paired-repeat AVX2 microkernel experiment: `GRM_ROUTER_GQA_PAIR2_AVX2=1`
+enables an opt-in repeat-4 scorer for Qwen-style `8q/2kv` full-bank routes. It
+computes two repeated query heads against the same K row in one AVX2 helper,
+halving K-row streams versus the plain per-query-head AVX2 dot4 path. Focused
+native GQA parity includes the mode, and Qwen3.5-2B source layer-3 full-bank
+captures stayed parity-green. Runtime rejected it: 512 nodes measured
+`23.9675ms` p50 / `25.8050ms` p95, and 1,024 nodes measured `29.1954ms` p50 /
+`29.5725ms` p95. The result says repeated-head K reuse alone is not enough on
+this CPU; the next meaningful step is GPU/cuBLAS or a tighter hand-packed kernel
+that improves arithmetic scheduling as well as memory traffic.
+
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The
 path preserves the raw-q.k law in focused parity and exhaustive benchmark
