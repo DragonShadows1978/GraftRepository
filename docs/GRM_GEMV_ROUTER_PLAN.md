@@ -543,8 +543,11 @@ coverage verifies `route_gqa_cuda()` fails closed without that explicit bank. A
 native-wrapper CUDA smoke built the normal `libgrm_runtime.so`, added 32 GQA
 nodes, attached the Qwen3.5-2B source layer-3 full-bank route bank, and matched
 the batched Python law for top-5: `[11, 31, 4, 15, 29]`, with `0.1056ms` per
-query and `0.2266ms` reused route wall. Remaining work is policy-level
-snapshot/mutation invalidation for automatic CUDA attachment in serving code.
+query and `0.2266ms` reused route wall. Route-key, active-state,
+route-metadata, revision, expire, and clear-route mutations now close any
+attached CUDA bank so stale explicit GPU route state fails closed; CPU-only
+regressions cover route-key and eligibility invalidation. Remaining runtime work
+is automatic CUDA bank reattachment/promotion policy in serving code.
 
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The

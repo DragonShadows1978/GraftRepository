@@ -430,8 +430,12 @@ checks that CUDA routing fails closed until a bank is explicitly configured. A
 native-wrapper CUDA smoke built the standard `libgrm_runtime.so`, added 32 GQA
 nodes, attached the Qwen3.5-2B source layer-3 full-bank route bank, and matched
 the batched Python top-5 `[11, 31, 4, 15, 29]`; measured `0.1056ms` per query and
-`0.2266ms` reused route wall. Remaining runtime work is snapshot/mutation policy
-for automatic attachment/invalidation, not the core CUDA route mechanics.
+`0.2266ms` reused route wall. Route-key, active-state, route-metadata, revision,
+expire, and clear-route mutations now close any attached CUDA bank so explicit
+GPU route state fails closed after native route/eligibility changes. CPU-only
+regressions cover route-key and eligibility invalidation. Remaining runtime work
+is automatic CUDA bank reattachment/promotion policy, not the core CUDA route
+mechanics.
 
 `GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
 routes query-token-4 GQA keys over that layout. It is parity-green but rejected
@@ -603,8 +607,9 @@ Fresh post-snapshot GQA receipts:
   measures `1.4048ms` at the same 1,024-node shape. Persistent route scratch
   buffers bring the reused route wall to `12.6367ms` at 1,024 nodes. The CUDA
   sidecar wrapper now maps row top-k back to GRM node IDs, and `NativeGraftStore`
-  exposes an explicit CUDA bank attachment path. The next useful CUDA work is
-  automatic snapshot/mutation invalidation policy rather than more CPU scorer
+  exposes an explicit CUDA bank attachment path. Explicit attachments now close
+  on route-key and eligibility mutations, so the next useful CUDA work is
+  automatic bank reattachment/promotion policy rather than more CPU scorer
   variants.
   The opt-in transposed key-bank experiment was parity-green but slower on the
   2B full-bank capture shape, so it stays diagnostic-only; the next useful slice

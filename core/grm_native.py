@@ -854,6 +854,7 @@ class NativeGraftStore:
             return
         self._check(self._lib.grm_store_set_active(
             self._handle, int(node_id), 1 if active else 0))
+        self.clear_cuda_gqa_route_bank()
 
     def set_no_fold(self, node_id, no_fold=False):
         if not getattr(self, "_has_no_fold", False):
@@ -890,6 +891,7 @@ class NativeGraftStore:
             ("" if scope is None else str(scope)).encode("utf-8"),
             ("" if durability is None else str(durability)).encode("utf-8"),
             ("" if mutability is None else str(mutability)).encode("utf-8")))
+        self.clear_cuda_gqa_route_bank()
 
     def set_fact_identity(self, node_id, *, subject=None, predicate=None,
                           value=None, scope=None, valid_from=None,
@@ -1053,12 +1055,14 @@ class NativeGraftStore:
         arr, n = self._u64_array(supersedes)
         self._check(self._lib.grm_store_apply_revision(
             self._handle, int(replacement_node_id), arr, n))
+        self.clear_cuda_gqa_route_bank()
 
     def apply_expire(self, node_ids):
         if not getattr(self, "_has_apply_expire", False):
             return
         arr, n = self._u64_array(node_ids)
         self._check(self._lib.grm_store_apply_expire(self._handle, arr, n))
+        self.clear_cuda_gqa_route_bank()
 
     def metadata(self, node_id):
         needed = ctypes.c_uint64()
@@ -1379,6 +1383,7 @@ class NativeGraftStore:
         self._check(self._lib.grm_store_set_route(
             self._handle, int(node_id), arr, n,
             self._lexical_blob(lexical_keys)))
+        self.clear_cuda_gqa_route_bank()
 
     def set_route_keys(self, node_id, route_keys, lexical_keys=()):
         keys = np.asarray(route_keys, dtype=np.float32)
@@ -1394,6 +1399,7 @@ class NativeGraftStore:
         self._check(self._lib.grm_store_set_route_multi(
             self._handle, int(node_id), arr, int(keys.shape[0]),
             int(keys.shape[1]), self._lexical_blob(lexical_keys)))
+        self.clear_cuda_gqa_route_bank()
 
     def set_route_key_list(self, node_id, route_keys, lexical_keys=()):
         if not getattr(self, "_has_route_list", False):
@@ -1414,12 +1420,14 @@ class NativeGraftStore:
         self._check(self._lib.grm_store_set_route_list(
             self._handle, int(node_id), values, int(flat.size),
             offsets_arr, len(keys), self._lexical_blob(lexical_keys)))
+        self.clear_cuda_gqa_route_bank()
 
     def clear_route(self, node_id):
         if not getattr(self, "_has_clear_route", False):
             raise RuntimeError("native GRM route clearing is unavailable")
         self._check(self._lib.grm_store_clear_route(
             self._handle, int(node_id)))
+        self.clear_cuda_gqa_route_bank()
 
     def route(self, query, lexical_keys=(), topk=3, kinds=(), scopes=(),
               durabilities=(), mutabilities=()):

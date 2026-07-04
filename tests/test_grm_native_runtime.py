@@ -476,6 +476,58 @@ def test_native_gqa_cuda_route_requires_explicit_bank(tmp_path):
             store.route_gqa_cuda(q, topk=1)
 
 
+class _DummyCudaRouteBank:
+    def __init__(self):
+        self.closed = False
+
+    def close(self):
+        self.closed = True
+
+    def route_topk(self, *_args, **_kwargs):
+        raise AssertionError("stale CUDA route bank was used")
+
+
+def test_native_gqa_route_mutation_clears_cuda_bank(tmp_path):
+    lib = build_native(tmp_path)
+    q = np.zeros((1, 1, 2), dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="Qwen3_TC", num_layers=36,
+            hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
+            payload_kind="gqa", num_kv_heads=1, head_dim=2) as store:
+        node_id = store.add_node("cuda route stale", b"", ntok=1)
+        dummy = _DummyCudaRouteBank()
+        store._cuda_gqa_bank = dummy
+
+        store.set_route_key_list(
+            node_id, [np.zeros((1, 1, 2), dtype=np.float32)])
+
+        assert dummy.closed
+        assert store._cuda_gqa_bank is None
+        with pytest.raises(RuntimeError, match="route bank is not configured"):
+            store.route_gqa_cuda(q, topk=1)
+
+
+def test_native_gqa_eligibility_mutation_clears_cuda_bank(tmp_path):
+    lib = build_native(tmp_path)
+    q = np.zeros((1, 1, 2), dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="Qwen3_TC", num_layers=36,
+            hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
+            payload_kind="gqa", num_kv_heads=1, head_dim=2) as store:
+        node_id = store.add_node("cuda eligibility stale", b"", ntok=1)
+        dummy = _DummyCudaRouteBank()
+        store._cuda_gqa_bank = dummy
+
+        store.set_active(node_id, False)
+
+        assert dummy.closed
+        assert store._cuda_gqa_bank is None
+        with pytest.raises(RuntimeError, match="route bank is not configured"):
+            store.route_gqa_cuda(q, topk=1)
+
+
 def test_native_gqa_segment_reduce_matches_python_law(tmp_path, monkeypatch):
     def raw_score(query, key):
         h, _, dh = query.shape
