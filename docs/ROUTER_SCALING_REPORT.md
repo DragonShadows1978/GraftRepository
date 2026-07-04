@@ -433,9 +433,16 @@ the batched Python top-5 `[11, 31, 4, 15, 29]`; measured `0.1056ms` per query an
 `0.2266ms` reused route wall. Route-key, active-state, route-metadata, revision,
 expire, and clear-route mutations now close any attached CUDA bank so explicit
 GPU route state fails closed after native route/eligibility changes. CPU-only
-regressions cover route-key and eligibility invalidation. Remaining runtime work
-is automatic CUDA bank reattachment/promotion policy, not the core CUDA route
-mechanics.
+regressions cover route-key and eligibility invalidation.
+
+The first automatic policy slice is opt-in behind `GRM_GQA_CUDA_ROUTE=1`.
+`ArenaCache.route()` now accepts an optional `limit`, and turn execution uses it
+to request only the mount-window ranking it needs. `GQAArenaCache` can reattach a
+dense same-shape, single-key CUDA bank from native node IDs and route through
+`route_gqa_cuda()` for non-lexical limited routes. It falls back to CPU native
+routing for lexical queries, mixed shapes, digest/child route keys, missing CUDA,
+CUDA errors, or incomplete top-k after live/excluded rows. This does not replace
+full-rank `arena.route()` calls: the CUDA sidecar remains a `topk <= 16` path.
 
 `GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
 routes query-token-4 GQA keys over that layout. It is parity-green but rejected
@@ -608,9 +615,11 @@ Fresh post-snapshot GQA receipts:
   buffers bring the reused route wall to `12.6367ms` at 1,024 nodes. The CUDA
   sidecar wrapper now maps row top-k back to GRM node IDs, and `NativeGraftStore`
   exposes an explicit CUDA bank attachment path. Explicit attachments now close
-  on route-key and eligibility mutations, so the next useful CUDA work is
-  automatic bank reattachment/promotion policy rather than more CPU scorer
-  variants.
+  on route-key and eligibility mutations. The arena bridge now has an opt-in
+  `GRM_GQA_CUDA_ROUTE=1` limited-route policy for same-shape non-lexical GQA
+  banks, so the next useful CUDA work is live GPU validation of that bridge plus
+  a larger-top-k/full-rank route contract if CUDA should replace `arena.route()`
+  generally.
   The opt-in transposed key-bank experiment was parity-green but slower on the
   2B full-bank capture shape, so it stays diagnostic-only; the next useful slice
   is still a lower-level GEMM/BLAS layout rather than a duplicate host layout

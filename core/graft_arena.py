@@ -26,6 +26,7 @@ live_shift = n_sink + arena_width is FIXED for the cache's lifetime (the
 `live_shift` attribute on MLAAttentionTC — decoupled from mount size).
 """
 import gc
+import os
 import re
 
 import numpy as np
@@ -319,8 +320,11 @@ class ArenaCache:
                             "ntok": seg_ntok, "text": text})
         return len(self.grafts) - 1
 
-    def route(self, bare_text, exclude):
+    def route(self, bare_text, exclude, limit=None):
         if not self.grafts:
+            return []
+        route_limit = None if limit is None else max(0, int(limit))
+        if route_limit == 0:
             return []
         p = self._probe_key(bare_text)
 
@@ -336,7 +340,8 @@ class ArenaCache:
         cand = [i for i in range(len(self.grafts))
                 if i not in exclude and not self.grafts[i].get("retired")
                 and self.grafts[i].get("kind", "turn") != "recall"]
-        native_order = self._native_route_order(p, qrare, cand)
+        native_order = self._native_route_order(
+            p, qrare, cand, limit=route_limit)
         if native_order is not None:
             return native_order
         self.last_route_backend = "python"
@@ -359,7 +364,10 @@ class ArenaCache:
             if np.isfinite(score):
                 scored.append((score, i))
         scored.sort(key=lambda item: -item[0])
-        return [i for _, i in scored]             # full ranking, best first
+        ranking = [i for _, i in scored]          # best first
+        if route_limit is not None:
+            return ranking[:route_limit]
+        return ranking
 
     def _vector_route_scores(self, p, cand):
         if (type(self)._key_score is not ArenaCache._key_score
@@ -406,7 +414,7 @@ class ArenaCache:
             g["rare"] = self._rare_tokens(g["text"])
         return len(qrare & g["rare"]) / len(qrare)
 
-    def _native_route_order(self, pkey, qrare, cand):
+    def _native_route_order(self, pkey, qrare, cand, limit=None):
         store = getattr(self, "native_store", None)
         if store is None or not hasattr(store, "route"):
             return None
@@ -442,6 +450,8 @@ class ArenaCache:
         if len(routed) != len(cand):
             return None
         self.last_route_backend = "native"
+        if limit is not None:
+            return routed[:max(0, int(limit))]
         return routed
 
     # ------------------------------------------------------------ librarian
@@ -1196,7 +1206,8 @@ class ArenaCache:
             rec = turns[-self.recency_mounts:] if self.recency_mounts else []
         # exclude turns already present (live window / recency mounts)
         live_idx = {g for g, _ in self.live_segs if g is not None} | set(rec)
-        ranking = self.route(user_text, exclude=live_idx)
+        route_limit = max(1, (int(max_trips) + 1) * int(self.topk))
+        ranking = self.route(user_text, exclude=live_idx, limit=route_limit)
         snap = (self.caches, self.pos, list(self.live_segs),
                 self.cur_mounts, self.cur_mount_n, len(self.grafts))
         # PRECISE-MOUNT policy (corpus-100 lesson): an identifier query is a
@@ -1464,12 +1475,111 @@ class GQAArenaCache(ArenaCache):
         mx = max(abs(v) for v in base.values()) + 1e-8
         return {i: v / mx for i, v in base.items()}
 
-    def _native_route_order(self, pkey, qrare, cand):
+    def _cuda_route_enabled(self):
+        return os.environ.get("GRM_GQA_CUDA_ROUTE", "").lower() in (
+            "1", "true", "yes", "on")
+
+    def _cuda_route_bank_inputs(self):
+        rows = []
+        node_ids = []
+        shape = None
+        for g in self.grafts:
+            if g.get("retired") or g.get("kind", "turn") == "recall":
+                continue
+            node_id = g.get("native_node_id")
+            if node_id is None or g.get("child_cents"):
+                return None
+            if "cent" not in g:
+                return None
+            key = np.asarray(g.get("cent"), dtype=np.float32)
+            if key.ndim != 3:
+                return None
+            if shape is None:
+                shape = key.shape
+            elif key.shape != shape:
+                return None
+            rows.append(key)
+            node_ids.append(int(node_id))
+        if not rows:
+            return None
+        return (
+            np.ascontiguousarray(np.stack(rows), dtype=np.float32),
+            np.asarray(node_ids, dtype=np.uint64),
+        )
+
+    def _ensure_cuda_route_bank(self, store):
+        if getattr(self, "_cuda_gqa_route_unavailable", False):
+            return False
+        if getattr(store, "_cuda_gqa_bank", None) is not None:
+            return True
+        if not hasattr(store, "configure_cuda_gqa_route_bank"):
+            return False
+        bank_inputs = self._cuda_route_bank_inputs()
+        if bank_inputs is None:
+            return False
+        route_bank, node_ids = bank_inputs
+        try:
+            store.configure_cuda_gqa_route_bank(route_bank, node_ids)
+        except Exception:
+            self._cuda_gqa_route_unavailable = True
+            return False
+        return True
+
+    def _cuda_route_order(self, pkey, cand, limit):
+        if limit is None:
+            return None
+        store = getattr(self, "native_store", None)
+        if store is None or not hasattr(store, "route_gqa_cuda"):
+            return None
+        if not self._cuda_route_enabled():
+            return None
+        if not self._ensure_cuda_route_bank(store):
+            return None
+        native_to_idx = {
+            int(self.grafts[i]["native_node_id"]): int(i)
+            for i in cand
+            if self.grafts[i].get("native_node_id") is not None
+        }
+        if len(native_to_idx) != len(cand):
+            return None
+        bank_inputs = self._cuda_route_bank_inputs()
+        if bank_inputs is None:
+            return None
+        bank_size = int(bank_inputs[1].shape[0])
+        want = min(max(0, int(limit)), len(cand))
+        if want <= 0:
+            return []
+        excluded = max(0, bank_size - len(cand))
+        topk = min(16, bank_size, want + excluded)
+        if topk < want:
+            return None
+        try:
+            routed_native = store.route_gqa_cuda(
+                np.asarray(pkey, dtype=np.float32), topk=topk)
+        except Exception:
+            return None
+        routed = []
+        for node_id in routed_native:
+            idx = native_to_idx.get(int(node_id))
+            if idx is not None:
+                routed.append(idx)
+            if len(routed) >= want:
+                break
+        if len(routed) < want:
+            return None
+        self.last_route_backend = "cuda"
+        return routed
+
+    def _native_route_order(self, pkey, qrare, cand, limit=None):
         store = getattr(self, "native_store", None)
         if store is None or not hasattr(store, "route_gqa"):
             return None
         if not cand:
             return []
+        if not qrare:
+            cuda_order = self._cuda_route_order(pkey, cand, limit)
+            if cuda_order is not None:
+                return cuda_order
         native_to_idx = {}
         for i in cand:
             node_id = self.grafts[i].get("native_node_id")
@@ -1490,6 +1600,8 @@ class GQAArenaCache(ArenaCache):
         if len(routed) != len(cand):
             return None
         self.last_route_backend = "native"
+        if limit is not None:
+            return routed[:max(0, int(limit))]
         return routed
 
     def _rope_block_at(self, blk, pos0, inverse=False):

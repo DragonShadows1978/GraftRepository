@@ -2580,6 +2580,82 @@ def test_gqa_arena_route_uses_native_raw_qk_backend(tmp_path):
         assert arena.last_route_backend == "native"
 
 
+def test_gqa_arena_uses_opt_in_cuda_route_bank(monkeypatch):
+    class CudaStore:
+        def __init__(self):
+            self.configured = None
+            self.cuda_calls = []
+            self._cuda_gqa_bank = None
+
+        def configure_cuda_gqa_route_bank(self, route_bank, node_ids):
+            self.configured = (
+                np.asarray(route_bank).copy(),
+                np.asarray(node_ids, dtype=np.uint64).copy(),
+            )
+            self._cuda_gqa_bank = object()
+
+        def route_gqa_cuda(self, query, *, topk=3, **_kwargs):
+            self.cuda_calls.append((np.asarray(query).shape, int(topk)))
+            return [102, 101][:int(topk)]
+
+        def route_gqa(self, *_args, **_kwargs):
+            raise AssertionError("CPU GQA route should not run")
+
+    monkeypatch.setenv("GRM_GQA_CUDA_ROUTE", "1")
+    q = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+    weak = np.asarray([[[0.1, 0.0]]], dtype=np.float32)
+    good = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+
+    arena = GQAArenaCache.__new__(GQAArenaCache)
+    arena.native_store = CudaStore()
+    arena.last_route_backend = "python"
+    arena.grafts = [
+        {"native_node_id": 101, "cent": weak,
+         "rare": set(), "text": "weak", "kind": "doc"},
+        {"native_node_id": 102, "cent": good,
+         "rare": set(), "text": "good", "kind": "doc"},
+    ]
+    arena._probe_key = lambda _text: q
+
+    assert arena.route("plain probe", exclude=set(), limit=2) == [1, 0]
+    assert arena.last_route_backend == "cuda"
+    bank, node_ids = arena.native_store.configured
+    assert bank.shape == (2, 1, 1, 2)
+    assert node_ids.tolist() == [101, 102]
+    assert arena.native_store.cuda_calls == [((1, 1, 2), 2)]
+
+
+def test_gqa_arena_skips_cuda_route_for_lexical_queries(monkeypatch):
+    class LexicalStore:
+        def configure_cuda_gqa_route_bank(self, *_args, **_kwargs):
+            raise AssertionError("lexical route should not attach CUDA bank")
+
+        def route_gqa_cuda(self, *_args, **_kwargs):
+            raise AssertionError("lexical route should not use CUDA")
+
+        def route_gqa(self, *_args, **_kwargs):
+            return [201, 202]
+
+    monkeypatch.setenv("GRM_GQA_CUDA_ROUTE", "1")
+    q = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+    weak = np.asarray([[[0.1, 0.0]]], dtype=np.float32)
+    good = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+
+    arena = GQAArenaCache.__new__(GQAArenaCache)
+    arena.native_store = LexicalStore()
+    arena.last_route_backend = "python"
+    arena.grafts = [
+        {"native_node_id": 201, "cent": weak,
+         "rare": {"a17"}, "text": "A17 weak", "kind": "doc"},
+        {"native_node_id": 202, "cent": good,
+         "rare": set(), "text": "good", "kind": "doc"},
+    ]
+    arena._probe_key = lambda _text: q
+
+    assert arena.route("What about A17?", exclude=set(), limit=2) == [0, 1]
+    assert arena.last_route_backend == "native"
+
+
 def test_arena_route_falls_back_for_child_centroid_without_native_multikey():
     class SingleKeyStore:
         supports_multi_route_keys = False

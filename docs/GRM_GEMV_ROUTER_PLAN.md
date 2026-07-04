@@ -546,8 +546,19 @@ the batched Python law for top-5: `[11, 31, 4, 15, 29]`, with `0.1056ms` per
 query and `0.2266ms` reused route wall. Route-key, active-state,
 route-metadata, revision, expire, and clear-route mutations now close any
 attached CUDA bank so stale explicit GPU route state fails closed; CPU-only
-regressions cover route-key and eligibility invalidation. Remaining runtime work
-is automatic CUDA bank reattachment/promotion policy in serving code.
+regressions cover route-key and eligibility invalidation.
+
+P4 opt-in CUDA routing policy note: `ArenaCache.route()` now accepts an optional
+`limit` so turn execution can ask for only the mount-window ranking it actually
+uses instead of forcing a full repository order. `GQAArenaCache` uses that
+contract to try `route_gqa_cuda()` when `GRM_GQA_CUDA_ROUTE=1`, the query has no
+lexical exact-match keys, and the repository can build a dense same-shape,
+single-key GQA bank from native node IDs. Mixed shapes, child-centroid/digest
+keys, lexical queries, missing CUDA, incomplete top-k after excludes, or CUDA
+errors fall back to the existing CPU native route. CPU-only regressions cover
+the CUDA auto-attachment path and the lexical fallback path; the CUDA top-k cap
+still limits this path to the step/mount-window contract rather than replacing
+full-rank `arena.route()` calls.
 
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The
