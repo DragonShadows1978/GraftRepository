@@ -393,9 +393,23 @@ top-k ID copy. These receipts were run sequentially on the card.
 | Qwen3.5-2B source layer-3 full 256-token K-bank | persistent_gpu_k | 512 | 0.8520 | 156.7580 | 55.7224 | 212.4804 | true, 6/6 queries |
 | Qwen3.5-2B source layer-3 full 256-token K-bank | persistent_gpu_k | 1,024 | 1.4048 | 183.2137 | 61.6378 | 244.8516 | true, 8/8 queries |
 
-The K bank is now persistent at probe scope; remaining CUDA work is runtime C ABI
-integration and persistent per-route scratch/query buffers so route wall stops
-paying allocation cost.
+The K bank is now persistent at probe scope. This table still pays first-route
+scratch/query allocation in route wall, so the next measurement isolates steady
+state after those buffers are resident too.
+
+The next probe slice moves query/scratch buffers into the same arena handle.
+`--route-repeats 2` routes the same query batch twice and reports the final
+reused-scratch route. The first route in each run still proves the grow path; the
+second route is the steady-state path once K and scratch buffers are resident.
+
+| CUDA/cuBLAS probe shape | scratch mode | nodes | device route ms/query | first route wall ms | reused route wall ms | total wall ms | parity |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | persistent_route_buffers | 32 | 0.0901 | 53.1184 | 0.2558 | 113.7815 | true, 2/2 queries |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | persistent_route_buffers | 512 | 0.8530 | 28.4105 | 5.0754 | 143.9279 | true, 6/6 queries |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | persistent_route_buffers | 1,024 | 1.5713 | 61.1452 | 12.6367 | 192.8147 | true, 8/8 queries |
+
+At probe scope, the CUDA path now has persistent K, persistent route scratch, and
+GPU top-k. Remaining CUDA work is the runtime C ABI integration.
 
 `GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
 routes query-token-4 GQA keys over that layout. It is parity-green but rejected
@@ -564,9 +578,10 @@ Fresh post-snapshot GQA receipts:
   The standalone CUDA/cuBLAS probe is parity-green and reaches `1.4769ms` per
   query at 1,024 full-bank nodes after K is resident; its GPU-top-k follow-up
   returns only node IDs and measures `1.5427ms`, and the persistent-K arena probe
-  measures `1.4048ms` at the same 1,024-node shape. The next useful CUDA work is
-  runtime C ABI integration and persistent route scratch buffers rather than
-  more CPU scorer variants.
+  measures `1.4048ms` at the same 1,024-node shape. Persistent route scratch
+  buffers bring the reused route wall to `12.6367ms` at 1,024 nodes. The next
+  useful CUDA work is runtime C ABI integration rather than more CPU scorer
+  variants.
   The opt-in transposed key-bank experiment was parity-green but slower on the
   2B full-bank capture shape, so it stays diagnostic-only; the next useful slice
   is still a lower-level GEMM/BLAS layout rather than a duplicate host layout

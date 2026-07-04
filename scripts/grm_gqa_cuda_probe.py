@@ -223,6 +223,16 @@ struct GqaDeviceArena {
   int threads = 256;
   int grid = 256;
   float* d_k_cols = nullptr;
+  float* d_queries = nullptr;
+  float* d_q_col = nullptr;
+  float* d_scores = nullptr;
+  float* d_route = nullptr;
+  uint64_t* d_topk = nullptr;
+  size_t query_values_cap = 0;
+  size_t q_col_values_cap = 0;
+  size_t score_values_cap = 0;
+  size_t route_values_cap = 0;
+  size_t topk_values_cap = 0;
   cublasHandle_t handle = nullptr;
   cudaEvent_t start = nullptr;
   cudaEvent_t stop = nullptr;
@@ -236,7 +246,52 @@ static void destroy_device_arena(GqaDeviceArena* arena) {
   if (arena->start) cudaEventDestroy(arena->start);
   if (arena->stop) cudaEventDestroy(arena->stop);
   if (arena->d_k_cols) cudaFree(arena->d_k_cols);
+  if (arena->d_queries) cudaFree(arena->d_queries);
+  if (arena->d_q_col) cudaFree(arena->d_q_col);
+  if (arena->d_scores) cudaFree(arena->d_scores);
+  if (arena->d_route) cudaFree(arena->d_route);
+  if (arena->d_topk) cudaFree(arena->d_topk);
   delete arena;
+}
+
+static int reserve_float_buffer(float** ptr, size_t* capacity, size_t values) {
+  if (values <= *capacity) {
+    return 0;
+  }
+  if (*ptr) {
+    const int rc = cuda_code(cudaFree(*ptr));
+    *ptr = nullptr;
+    *capacity = 0;
+    if (rc != 0) {
+      return rc;
+    }
+  }
+  const int rc = cuda_code(
+      cudaMalloc(reinterpret_cast<void**>(ptr), values * sizeof(float)));
+  if (rc == 0) {
+    *capacity = values;
+  }
+  return rc;
+}
+
+static int reserve_uint64_buffer(uint64_t** ptr, size_t* capacity, size_t values) {
+  if (values <= *capacity) {
+    return 0;
+  }
+  if (*ptr) {
+    const int rc = cuda_code(cudaFree(*ptr));
+    *ptr = nullptr;
+    *capacity = 0;
+    if (rc != 0) {
+      return rc;
+    }
+  }
+  const int rc = cuda_code(
+      cudaMalloc(reinterpret_cast<void**>(ptr), values * sizeof(uint64_t)));
+  if (rc == 0) {
+    *capacity = values;
+  }
+  return rc;
 }
 
 extern "C" int grm_gqa_cuda_arena_create(
@@ -341,25 +396,24 @@ extern "C" int grm_gqa_cuda_arena_route(
   const float beta = 0.0f;
   const float inv_sqrt_dim = 1.0f / sqrtf(static_cast<float>(arena->head_dim));
 
-  float* d_queries = nullptr;
-  float* d_q_col = nullptr;
-  float* d_scores = nullptr;
-  float* d_route = nullptr;
-  uint64_t* d_topk = nullptr;
-
-  int rc = cuda_code(cudaMalloc(&d_queries, query_values * sizeof(float)));
+  int rc = reserve_float_buffer(
+      &arena->d_queries, &arena->query_values_cap, query_values);
   if (rc != 0) goto cleanup;
-  rc = cuda_code(cudaMalloc(&d_q_col, q_col_values * sizeof(float)));
+  rc = reserve_float_buffer(
+      &arena->d_q_col, &arena->q_col_values_cap, q_col_values);
   if (rc != 0) goto cleanup;
-  rc = cuda_code(cudaMalloc(&d_scores, score_values * sizeof(float)));
+  rc = reserve_float_buffer(
+      &arena->d_scores, &arena->score_values_cap, score_values);
   if (rc != 0) goto cleanup;
-  rc = cuda_code(cudaMalloc(&d_route, route_values * sizeof(float)));
+  rc = reserve_float_buffer(
+      &arena->d_route, &arena->route_values_cap, route_values);
   if (rc != 0) goto cleanup;
-  rc = cuda_code(cudaMalloc(&d_topk, static_cast<size_t>(query_count) * topk *
-                                      sizeof(uint64_t)));
+  rc = reserve_uint64_buffer(
+      &arena->d_topk, &arena->topk_values_cap,
+      static_cast<size_t>(query_count) * topk);
   if (rc != 0) goto cleanup;
   rc = cuda_code(cudaMemcpy(
-      d_queries,
+      arena->d_queries,
       queries_host,
       query_values * sizeof(float),
       cudaMemcpyHostToDevice));
@@ -370,11 +424,11 @@ extern "C" int grm_gqa_cuda_arena_route(
       rc = cuda_code(cudaEventRecord(arena->start, 0));
       if (rc != 0) goto cleanup;
     }
-    zero_kernel<<<grid, threads>>>(d_route, arena->nodes);
+    zero_kernel<<<grid, threads>>>(arena->d_route, arena->nodes);
     for (int kh = 0; kh < arena->kv_heads; ++kh) {
       pack_q_col_kernel<<<grid, threads>>>(
-          d_queries, d_q_col, qi, query_heads, query_tokens, arena->head_dim,
-          arena->kv_heads, kh);
+          arena->d_queries, arena->d_q_col, qi, query_heads, query_tokens,
+          arena->head_dim, arena->kv_heads, kh);
       rc = cuda_code(cudaGetLastError());
       if (rc != 0) goto cleanup;
       const float* k_col =
@@ -390,23 +444,24 @@ extern "C" int grm_gqa_cuda_arena_route(
           &alpha,
           k_col,
           arena->head_dim,
-          d_q_col,
+          arena->d_q_col,
           arena->head_dim,
           &beta,
-          d_scores,
+          arena->d_scores,
           matrix_rows));
       if (rc != 0) goto cleanup;
       reduce_scores_kernel<<<arena->nodes * repeat, threads, threads * sizeof(float)>>>(
-          d_scores, d_route, arena->nodes, arena->key_tokens, repeat,
+          arena->d_scores, arena->d_route, arena->nodes, arena->key_tokens, repeat,
           query_tokens, matrix_rows, inv_sqrt_dim);
       rc = cuda_code(cudaGetLastError());
       if (rc != 0) goto cleanup;
     }
-    normalize_kernel<<<grid, threads>>>(d_route, arena->nodes, query_heads);
+    normalize_kernel<<<grid, threads>>>(arena->d_route, arena->nodes, query_heads);
     rc = cuda_code(cudaGetLastError());
     if (rc != 0) goto cleanup;
     topk_kernel<<<1, threads, threads * 16 * (sizeof(float) + sizeof(uint64_t))>>>(
-        d_route, d_topk + static_cast<size_t>(qi) * topk, arena->nodes, topk);
+        arena->d_route, arena->d_topk + static_cast<size_t>(qi) * topk,
+        arena->nodes, topk);
     rc = cuda_code(cudaGetLastError());
     if (rc != 0) goto cleanup;
   }
@@ -418,16 +473,11 @@ extern "C" int grm_gqa_cuda_arena_route(
   if (rc != 0) goto cleanup;
   rc = cuda_code(cudaMemcpy(
       out_topk_host,
-      d_topk,
+      arena->d_topk,
       static_cast<size_t>(query_count) * topk * sizeof(uint64_t),
       cudaMemcpyDeviceToHost));
 
 cleanup:
-  if (d_queries) cudaFree(d_queries);
-  if (d_q_col) cudaFree(d_q_col);
-  if (d_scores) cudaFree(d_scores);
-  if (d_route) cudaFree(d_route);
-  if (d_topk) cudaFree(d_topk);
   return rc;
 }
 
@@ -676,6 +726,8 @@ def write_markdown(result: dict, path: Path) -> None:
         f"- query_tokens: {result['shape']['query_tokens']}",
         f"- output_mode: `{result['output_mode']}`",
         f"- arena_mode: `{result['arena_mode']}`",
+        f"- scratch_mode: `{result['scratch_mode']}`",
+        f"- route_repeats: {result['route_repeats']}",
         f"- parity: {str(result['parity']).lower()}",
         f"- device measured p50 ms: {result['device_route_ms_p50']:.4f}",
         f"- device measured p95 ms: {result['device_route_ms_p95']:.4f}",
@@ -699,6 +751,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--warmup", type=int, default=2)
     p.add_argument("--query-tokens", type=int, default=4)
     p.add_argument("--topk", type=int, default=5)
+    p.add_argument("--route-repeats", type=int, default=1,
+                   help="Route the same queries repeatedly after arena setup; "
+                        "the final repeat is reported as the reused-scratch run.")
     p.add_argument("--nvcc", default="nvcc")
     p.add_argument("--keep-build", type=Path)
     p.add_argument("--out", type=Path, default=Path("/tmp/grm_gqa_cuda_probe.json"))
@@ -751,16 +806,25 @@ def main(argv: list[str]) -> int:
         probe = CudaProbe(lib)
         arena = probe.create_arena(routes)
         setup_wall_ms = arena.setup_wall_ms
-        topk_ids, device_ms, route_wall_ms = arena.route_topk(
-            queries,
-            warmup=args.warmup,
-            topk=args.topk,
-        )
+        route_repeats = max(1, args.route_repeats)
+        route_walls: list[float] = []
+        device_times: list[float] = []
+        topk_ids = None
+        for _ in range(route_repeats):
+            topk_ids, device_ms, route_wall_ms = arena.route_topk(
+                queries,
+                warmup=args.warmup,
+                topk=args.topk,
+            )
+            route_walls.append(float(route_wall_ms))
+            device_times.append(float(device_ms))
     finally:
         if arena is not None:
             arena.close()
         if build_parent is not None:
             build_parent.cleanup()
+    if topk_ids is None:
+        raise RuntimeError("CUDA route did not run")
 
     measured = max(1, query_count - args.warmup)
     per_query_ms = [device_ms / measured for _ in range(measured)]
@@ -786,14 +850,20 @@ def main(argv: list[str]) -> int:
         "warmup": int(args.warmup),
         "queries": int(query_count),
         "measured_queries": int(measured),
+        "route_repeats": int(max(1, args.route_repeats)),
+        "device_route_ms_runs": device_times,
         "device_route_ms_total": float(device_ms),
         "device_route_ms_p50": float(np.median(per_query_ms)),
         "device_route_ms_p95": float(np.percentile(per_query_ms, 95)),
         "wall_ms": float(route_wall_ms),
         "route_wall_ms": float(route_wall_ms),
+        "route_wall_ms_first": float(route_walls[0]),
+        "route_wall_ms_min": float(np.min(route_walls)),
+        "route_wall_ms_runs": route_walls,
         "setup_wall_ms": float(setup_wall_ms),
         "total_wall_ms": float(setup_wall_ms + route_wall_ms),
         "arena_mode": "persistent_gpu_k",
+        "scratch_mode": "persistent_route_buffers",
         "parity": not mismatches,
         "mismatches": mismatches[:5],
         "capture": capture_stats,

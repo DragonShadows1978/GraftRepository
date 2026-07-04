@@ -509,9 +509,20 @@ compatibility wrapper. Sequential Qwen3.5-2B source layer-3 full-bank receipts
 with GPU top-k stayed parity-green: 32 nodes measured `0.0911ms` per query with
 `126.4656ms` setup / `50.8418ms` route wall, 512 nodes measured `0.8520ms` with
 `156.7580ms` setup / `55.7224ms` route wall, and 1,024 nodes measured
-`1.4048ms` with `183.2137ms` setup / `61.6378ms` route wall. Remaining CUDA work
-is runtime C ABI integration plus persistent per-route scratch/query buffers;
-the probe no longer rebuilds or recopies the K arena on each route.
+`1.4048ms` with `183.2137ms` setup / `61.6378ms` route wall. Those route-wall
+numbers still include first-route scratch allocation; the probe no longer
+rebuilds or recopies the K arena on each route.
+
+P4 persistent CUDA scratch note: route scratch/query buffers now belong to the
+same `GqaDeviceArena` handle and grow only when query/top-k shape increases
+(`scratch_mode=persistent_route_buffers`). The CLI can repeat the same route
+against one arena and reports the final reused-scratch run. Sequential
+Qwen3.5-2B source layer-3 full-bank receipts stayed parity-green: 32 nodes
+measured `0.0901ms` per query with reused route wall `0.2558ms`, 512 nodes
+measured `0.8530ms` with reused route wall `5.0754ms`, and 1,024 nodes measured
+`1.5713ms` with reused route wall `12.6367ms`. Remaining CUDA work is runtime C
+ABI integration; at probe scope, K arena, route scratch, and GPU top-k are now
+persistent.
 
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The
