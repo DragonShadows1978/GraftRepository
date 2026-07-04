@@ -76,6 +76,14 @@ static bool cpu_has_avx2() {
 #endif
 }
 
+static bool cpu_has_fma() {
+#if defined(__GNUC__) || defined(__clang__)
+  return __builtin_cpu_supports("fma");
+#else
+  return false;
+#endif
+}
+
 __attribute__((target("avx2")))
 static Dot4Scores dot4_f32_avx2(
     const float* q0,
@@ -95,6 +103,51 @@ static Dot4Scores dot4_f32_avx2(
     acc1 = _mm256_add_ps(acc1, _mm256_mul_ps(_mm256_loadu_ps(q1 + d), kv));
     acc2 = _mm256_add_ps(acc2, _mm256_mul_ps(_mm256_loadu_ps(q2 + d), kv));
     acc3 = _mm256_add_ps(acc3, _mm256_mul_ps(_mm256_loadu_ps(q3 + d), kv));
+  }
+  alignas(32) float tmp0[8];
+  alignas(32) float tmp1[8];
+  alignas(32) float tmp2[8];
+  alignas(32) float tmp3[8];
+  _mm256_store_ps(tmp0, acc0);
+  _mm256_store_ps(tmp1, acc1);
+  _mm256_store_ps(tmp2, acc2);
+  _mm256_store_ps(tmp3, acc3);
+  Dot4Scores out;
+  for (std::size_t i = 0; i < 8; ++i) {
+    out.dot0 += tmp0[i];
+    out.dot1 += tmp1[i];
+    out.dot2 += tmp2[i];
+    out.dot3 += tmp3[i];
+  }
+  for (; d < dim; ++d) {
+    const float kv = k[d];
+    out.dot0 += q0[d] * kv;
+    out.dot1 += q1[d] * kv;
+    out.dot2 += q2[d] * kv;
+    out.dot3 += q3[d] * kv;
+  }
+  return out;
+}
+
+__attribute__((target("avx2,fma")))
+static Dot4Scores dot4_f32_avx2_fma(
+    const float* q0,
+    const float* q1,
+    const float* q2,
+    const float* q3,
+    const float* k,
+    std::size_t dim) {
+  __m256 acc0 = _mm256_setzero_ps();
+  __m256 acc1 = _mm256_setzero_ps();
+  __m256 acc2 = _mm256_setzero_ps();
+  __m256 acc3 = _mm256_setzero_ps();
+  std::size_t d = 0;
+  for (; d + 7 < dim; d += 8) {
+    const __m256 kv = _mm256_loadu_ps(k + d);
+    acc0 = _mm256_fmadd_ps(_mm256_loadu_ps(q0 + d), kv, acc0);
+    acc1 = _mm256_fmadd_ps(_mm256_loadu_ps(q1 + d), kv, acc1);
+    acc2 = _mm256_fmadd_ps(_mm256_loadu_ps(q2 + d), kv, acc2);
+    acc3 = _mm256_fmadd_ps(_mm256_loadu_ps(q3 + d), kv, acc3);
   }
   alignas(32) float tmp0[8];
   alignas(32) float tmp1[8];
@@ -3147,10 +3200,12 @@ void RouterIndex::rebuild_gqa_arena(
   const bool want_transposed = env_truthy("GRM_ROUTER_GQA_TRANSPOSED");
   const bool want_blas =
       kCblasAvailable && env_truthy("GRM_ROUTER_GQA_BLAS");
+  const bool want_banked = env_truthy("GRM_ROUTER_GQA_BANKED");
   if (!gqa_arena_dirty_ && gqa_arena_.kv_heads == kv_heads &&
       gqa_arena_.head_dim == head_dim &&
       (!want_transposed || gqa_arena_.transposed_built) &&
-      (!want_blas || gqa_arena_.blas_built)) {
+      (!want_blas || gqa_arena_.blas_built) &&
+      (!want_banked || gqa_arena_.banked_built)) {
     return;
   }
   GqaArena arena;
@@ -3163,11 +3218,17 @@ void RouterIndex::rebuild_gqa_arena(
   }
   const bool build_transposed = want_transposed;
   const bool build_blas = want_blas;
+  const bool build_banked = want_banked;
   const auto key_head_width = checked_mul(kv_heads, head_dim, "GQA arena key");
   std::vector<std::vector<float>> blas_heads;
+  std::vector<std::vector<float>> banked_heads;
   std::uint64_t blas_token_count = 0;
+  std::uint64_t bank_token_count = 0;
   if (build_blas) {
     blas_heads.resize(static_cast<std::size_t>(kv_heads));
+  }
+  if (build_banked) {
+    banked_heads.resize(static_cast<std::size_t>(kv_heads));
   }
   arena.entry_key_offsets.reserve(entries_.size() + 1);
   for (const auto& e : entries_) {
@@ -3191,6 +3252,11 @@ void RouterIndex::rebuild_gqa_arena(
         arena.key_blas_offsets.push_back(
             static_cast<std::size_t>(blas_token_count));
         blas_token_count += key_tokens;
+      }
+      if (build_banked) {
+        arena.bank_token_offsets.push_back(
+            static_cast<std::size_t>(bank_token_count));
+        bank_token_count += key_tokens;
       }
       arena.key_tokens.push_back(key_tokens);
       bool key_finite = true;
@@ -3226,6 +3292,21 @@ void RouterIndex::rebuild_gqa_arena(
           }
         }
       }
+      if (build_banked) {
+        for (std::uint64_t kh = 0; kh < kv_heads; ++kh) {
+          auto& head_rows = banked_heads[static_cast<std::size_t>(kh)];
+          head_rows.reserve(head_rows.size() +
+                            static_cast<std::size_t>(key_tokens * head_dim));
+          for (std::uint64_t ki = 0; ki < key_tokens; ++ki) {
+            const auto src = static_cast<std::size_t>(
+                ((kh * key_tokens + ki) * head_dim));
+            head_rows.insert(
+                head_rows.end(),
+                key.begin() + static_cast<std::ptrdiff_t>(src),
+                key.begin() + static_cast<std::ptrdiff_t>(src + head_dim));
+          }
+        }
+      }
       arena.key_finite.push_back(key_finite ? 1 : 0);
       if (row_count == 0 && !key.empty()) {
         arena.valid = false;
@@ -3247,8 +3328,41 @@ void RouterIndex::rebuild_gqa_arena(
                              head_rows.end());
     }
   }
+  if (build_banked) {
+    arena.bank_token_offsets.push_back(static_cast<std::size_t>(bank_token_count));
+    arena.bank_token_count = bank_token_count;
+    const auto token_count = static_cast<std::size_t>(bank_token_count);
+    const auto dim = static_cast<std::size_t>(head_dim);
+    const auto kh_count = static_cast<std::size_t>(kv_heads);
+    const auto per_head_values = static_cast<std::size_t>(
+        checked_mul(bank_token_count, head_dim, "GQA banked rows"));
+    const auto banked_values = static_cast<std::size_t>(
+        checked_mul(
+            checked_mul(kv_heads, head_dim, "GQA banked rows"),
+            bank_token_count, "GQA banked rows"));
+    arena.banked_transposed_rows.assign(banked_values, 0.0F);
+    for (std::uint64_t kh = 0; kh < kv_heads; ++kh) {
+      const auto kh_idx = static_cast<std::size_t>(kh);
+      const auto& head_rows = banked_heads[kh_idx];
+      if (head_rows.size() != per_head_values) {
+        arena.valid = false;
+        gqa_arena_ = std::move(arena);
+        gqa_arena_dirty_ = false;
+        return;
+      }
+      const auto kh_base = kh_idx * dim * token_count;
+      for (std::size_t token = 0; token < token_count; ++token) {
+        const auto src_base = token * dim;
+        for (std::size_t d = 0; d < dim; ++d) {
+          arena.banked_transposed_rows[kh_base + (d * token_count) + token] =
+              head_rows[src_base + d];
+        }
+      }
+    }
+  }
   arena.transposed_built = build_transposed;
   arena.blas_built = build_blas;
+  arena.banked_built = build_banked;
   arena.valid = !arena.key_tokens.empty() &&
                 arena.key_finite.size() == arena.key_tokens.size() &&
                 arena.key_row_offsets.size() == arena.key_tokens.size() + 1 &&
@@ -3259,7 +3373,16 @@ void RouterIndex::rebuild_gqa_arena(
                 (!build_blas ||
                  (arena.key_blas_offsets.size() ==
                       arena.key_tokens.size() + 1 &&
-                  arena.blas_rows.size() == arena.rows.size()));
+                  arena.blas_rows.size() == arena.rows.size())) &&
+                (!build_banked ||
+                 (arena.bank_token_offsets.size() ==
+                      arena.key_tokens.size() + 1 &&
+                  arena.banked_transposed_rows.size() ==
+                      static_cast<std::size_t>(
+                          checked_mul(
+                              checked_mul(kv_heads, head_dim,
+                                          "GQA banked valid"),
+                              bank_token_count, "GQA banked valid"))));
   gqa_arena_ = std::move(arena);
   gqa_arena_dirty_ = false;
 }
@@ -3465,6 +3588,10 @@ float RouterIndex::gqa_arena_key_score_qt4(
   const auto* rows = gqa_arena_.rows.data();
   const float inv_denom =
       1.0F / std::sqrt(static_cast<float>(head_dim));
+#if defined(__x86_64__) || defined(__i386__)
+  const bool use_qt4_fma =
+      use_qt4_avx2 && env_truthy("GRM_ROUTER_GQA_FMA") && cpu_has_fma();
+#endif
   float total = 0.0F;
   for (std::uint64_t h = 0; h < query_heads; ++h) {
     const auto kh = h / repeat;
@@ -3484,8 +3611,11 @@ float RouterIndex::gqa_arena_key_score_qt4(
       float dot3 = 0.0F;
 #if defined(__x86_64__) || defined(__i386__)
       if (use_qt4_avx2 && head_dim >= 8) {
-        const auto dots = dot4_f32_avx2(
-            q0, q1, q2, q3, k, static_cast<std::size_t>(head_dim));
+        const auto dots = use_qt4_fma
+            ? dot4_f32_avx2_fma(
+                  q0, q1, q2, q3, k, static_cast<std::size_t>(head_dim))
+            : dot4_f32_avx2(
+                  q0, q1, q2, q3, k, static_cast<std::size_t>(head_dim));
         dot0 = dots.dot0;
         dot1 = dots.dot1;
         dot2 = dots.dot2;
@@ -3797,6 +3927,165 @@ bool RouterIndex::gqa_arena_key_scores_blas_qt4(
 #endif
 }
 
+bool RouterIndex::gqa_arena_key_scores_banked_qt4(
+    const std::vector<float>& query,
+    std::uint64_t query_heads,
+    std::uint64_t head_dim,
+    std::uint64_t kv_heads,
+    bool query_finite,
+    std::vector<float>& key_scores) const {
+  if (!query_finite || !gqa_arena_.banked_built ||
+      gqa_arena_.bank_token_count == 0 || query_heads == 0 ||
+      kv_heads == 0 || head_dim == 0 || query_heads % kv_heads != 0 ||
+      key_scores.size() != gqa_arena_.key_tokens.size() ||
+      gqa_arena_.bank_token_offsets.size() !=
+          gqa_arena_.key_tokens.size() + 1) {
+    return false;
+  }
+  constexpr std::uint64_t kQueryTokens = 4;
+  const auto query_expected =
+      checked_mul(checked_mul(query_heads, kQueryTokens, "GQA banked query"),
+                  head_dim, "GQA banked query");
+  if (query.size() != static_cast<std::size_t>(query_expected)) {
+    return false;
+  }
+  const auto repeat = query_heads / kv_heads;
+  const auto key_count = gqa_arena_.key_tokens.size();
+  const auto token_count = static_cast<std::size_t>(gqa_arena_.bank_token_count);
+  const auto dim = static_cast<std::size_t>(head_dim);
+  const auto expected_rows = static_cast<std::size_t>(
+      checked_mul(
+          checked_mul(kv_heads, head_dim, "GQA banked scorer"),
+          gqa_arena_.bank_token_count, "GQA banked scorer"));
+  if (gqa_arena_.banked_transposed_rows.size() != expected_rows) {
+    return false;
+  }
+
+  std::vector<float> head_scores(
+      static_cast<std::size_t>(query_heads) * key_count,
+      std::numeric_limits<float>::quiet_NaN());
+  const float inv_denom =
+      1.0F / std::sqrt(static_cast<float>(head_dim));
+  constexpr std::size_t kBlockTokens = 16384;
+  const double bank_work =
+      static_cast<double>(std::max<std::uint64_t>(1, query_heads)) *
+      static_cast<double>(std::max<std::size_t>(1, token_count)) *
+      static_cast<double>(std::max<std::uint64_t>(1, head_dim));
+
+#if defined(_OPENMP)
+#pragma omp parallel for schedule(static) if(bank_work >= 32768.0)
+#endif
+  for (std::int64_t h_i = 0; h_i < static_cast<std::int64_t>(query_heads);
+       ++h_i) {
+    const auto h = static_cast<std::uint64_t>(h_i);
+    const auto kh = h / repeat;
+    const auto kh_base =
+        static_cast<std::size_t>(kh) * dim * token_count;
+    const auto qoff = h * kQueryTokens * head_dim;
+    const auto* q0 = query.data() + static_cast<std::size_t>(qoff);
+    const auto* q1 = q0 + dim;
+    const auto* q2 = q1 + dim;
+    const auto* q3 = q2 + dim;
+    std::vector<float> best_by_key(
+        key_count, std::numeric_limits<float>::quiet_NaN());
+    std::vector<float> dot0;
+    std::vector<float> dot1;
+    std::vector<float> dot2;
+    std::vector<float> dot3;
+    dot0.reserve(kBlockTokens);
+    dot1.reserve(kBlockTokens);
+    dot2.reserve(kBlockTokens);
+    dot3.reserve(kBlockTokens);
+
+    for (std::size_t block_start = 0; block_start < token_count;
+         block_start += kBlockTokens) {
+      const auto block_end = std::min(token_count, block_start + kBlockTokens);
+      const auto width = block_end - block_start;
+      dot0.assign(width, 0.0F);
+      dot1.assign(width, 0.0F);
+      dot2.assign(width, 0.0F);
+      dot3.assign(width, 0.0F);
+      for (std::size_t d = 0; d < dim; ++d) {
+        const auto* k = gqa_arena_.banked_transposed_rows.data() +
+                        kh_base + (d * token_count) + block_start;
+        const float qv0 = q0[d];
+        const float qv1 = q1[d];
+        const float qv2 = q2[d];
+        const float qv3 = q3[d];
+#if defined(_OPENMP)
+#pragma omp simd
+#endif
+        for (std::int64_t ti = 0; ti < static_cast<std::int64_t>(width);
+             ++ti) {
+          const auto idx = static_cast<std::size_t>(ti);
+          const float kv = k[idx];
+          dot0[idx] += qv0 * kv;
+          dot1[idx] += qv1 * kv;
+          dot2[idx] += qv2 * kv;
+          dot3[idx] += qv3 * kv;
+        }
+      }
+
+      for (std::size_t key_idx = 0; key_idx < key_count; ++key_idx) {
+        if (gqa_arena_.key_finite[key_idx] == 0) {
+          continue;
+        }
+        const auto key_start = gqa_arena_.bank_token_offsets[key_idx];
+        const auto key_end = gqa_arena_.bank_token_offsets[key_idx + 1];
+        if (key_end <= block_start || key_start >= block_end) {
+          continue;
+        }
+        const auto local_start =
+            std::max(key_start, block_start) - block_start;
+        const auto local_end = std::min(key_end, block_end) - block_start;
+        float block_best = 0.0F;
+        for (std::size_t ti = local_start; ti < local_end; ++ti) {
+          const float row_best = std::max(
+              std::max(std::abs(dot0[ti]), std::abs(dot1[ti])),
+              std::max(std::abs(dot2[ti]), std::abs(dot3[ti])));
+          block_best = std::max(block_best, row_best);
+        }
+        auto& best = best_by_key[key_idx];
+        if (!std::isfinite(best) || block_best > best) {
+          best = block_best;
+        }
+      }
+    }
+
+    auto* out = head_scores.data() +
+                (static_cast<std::size_t>(h) * key_count);
+    for (std::size_t key_idx = 0; key_idx < key_count; ++key_idx) {
+      if (std::isfinite(best_by_key[key_idx])) {
+        out[key_idx] = best_by_key[key_idx] * inv_denom;
+      }
+    }
+  }
+
+  for (std::size_t key_idx = 0; key_idx < key_count; ++key_idx) {
+    if (gqa_arena_.key_finite[key_idx] == 0 ||
+        gqa_arena_.bank_token_offsets[key_idx] >=
+            gqa_arena_.bank_token_offsets[key_idx + 1]) {
+      key_scores[key_idx] = std::numeric_limits<float>::quiet_NaN();
+      continue;
+    }
+    float total = 0.0F;
+    bool have_all_heads = true;
+    for (std::uint64_t h = 0; h < query_heads; ++h) {
+      const auto score = head_scores[
+          (static_cast<std::size_t>(h) * key_count) + key_idx];
+      if (!std::isfinite(score)) {
+        have_all_heads = false;
+        break;
+      }
+      total += score;
+    }
+    key_scores[key_idx] = have_all_heads
+        ? total / static_cast<float>(query_heads)
+        : std::numeric_limits<float>::quiet_NaN();
+  }
+  return true;
+}
+
 float RouterIndex::gqa_arena_entry_score(
     const std::vector<float>& query,
     std::uint64_t query_heads,
@@ -4078,6 +4367,7 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
 #endif
   const bool use_blas_segment =
       kCblasAvailable && env_truthy("GRM_ROUTER_GQA_BLAS");
+  const bool use_banked_segment = env_truthy("GRM_ROUTER_GQA_BANKED");
   std::uint64_t max_key_tokens = 1;
   std::size_t max_keys_per_entry = 0;
   if (use_arena) {
@@ -4250,12 +4540,16 @@ std::vector<std::uint64_t> RouterIndex::route_gqa_raw(
         use_blas_segment && query_tokens == 4 &&
         gqa_arena_key_scores_blas_qt4(
             query, query_heads, head_dim, kv_heads, query_finite, key_scores);
+    const bool scored_with_banked =
+        !scored_with_blas && use_banked_segment && query_tokens == 4 &&
+        gqa_arena_key_scores_banked_qt4(
+            query, query_heads, head_dim, kv_heads, query_finite, key_scores);
     const double gqa_key_work =
         static_cast<double>(key_count) *
         static_cast<double>(std::max<std::uint64_t>(1, query_heads)) *
         static_cast<double>(std::max<std::uint64_t>(1, query_tokens)) *
         static_cast<double>(max_key_tokens);
-    if (!scored_with_blas) {
+    if (!scored_with_blas && !scored_with_banked) {
 #if defined(_OPENMP)
 #pragma omp parallel for schedule(static) if(gqa_key_work >= kOpenMpGqaRouteWorkThreshold)
 #endif

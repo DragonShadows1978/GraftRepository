@@ -454,6 +454,19 @@ cleared 25ms p50. The sweep receipts record the AVX2 runtime flag, and the
 1,024-node result keeps AVX2 opt-in: correctness generalizes across the captured
 layers, but latency still needs a lower-level GEMM/layout step.
 
+P4 FMA/banked-scorer experiments: `GRM_ROUTER_GQA_FMA=1` enables an opt-in FMA
+variant inside the AVX2 dot4 scorer; it requires `GRM_ROUTER_GQA_AVX2=1` and
+host FMA support. Focused native GQA parity now includes the FMA mode. On
+Qwen3.5-2B source layer-3 full-bank captures, FMA was parity-green but not a
+1,024-node win: 512 nodes measured `16.4792ms` p50 / `18.8750ms` p95, while
+1,024 nodes measured `28.2471ms` p50 / `29.0913ms` p95. It stays diagnostic
+only. `GRM_ROUTER_GQA_BANKED=1` builds a bounded bank-transposed token-block
+scorer for query-token-4 GQA banks. It also preserves parity, but is rejected
+for runtime default use: 512 nodes measured `38.4846ms` p50 / `41.0115ms` p95,
+and 1,024 nodes measured `70.2254ms` p50 / `72.5537ms` p95. This rules out the
+simple host transposed-token layout; the next useful layout has to be a true
+packed microkernel/GPU path rather than scratch-heavy token-block GEMV.
+
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The
 path preserves the raw-q.k law in focused parity and exhaustive benchmark

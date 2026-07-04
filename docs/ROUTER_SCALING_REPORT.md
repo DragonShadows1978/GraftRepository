@@ -328,6 +328,21 @@ misses the 25ms p50 latency line on layers 7/11/15/19/23, and a second-model
 receipt is still needed before treating the accumulation-order change as broadly
 safe.
 
+Two follow-up opt-in scorer experiments were measured against the same
+Qwen3.5-2B source layer-3 full-bank shape:
+
+| scorer | nodes | native p50 ms | native p95 ms | parity |
+| --- | ---: | ---: | ---: | --- |
+| AVX2 + `GRM_ROUTER_GQA_FMA=1` | 512 | 16.4792 | 18.8750 | true, 6/6 batched-reference queries |
+| AVX2 + `GRM_ROUTER_GQA_FMA=1` | 1,024 | 28.2471 | 29.0913 | true, 4/4 batched-reference queries |
+| `GRM_ROUTER_GQA_BANKED=1` bounded bank-transposed token-block scorer | 512 | 38.4846 | 41.0115 | true, 6/6 batched-reference queries |
+| `GRM_ROUTER_GQA_BANKED=1` bounded bank-transposed token-block scorer | 1,024 | 70.2254 | 72.5537 | true, 4/4 batched-reference queries |
+
+FMA stays diagnostic because it does not clear the 1,024-node line. The banked
+token-block scorer is a clear latency rejection despite parity: it adds a
+GEMV-shaped host layout, but the scratch-heavy token-block walk loses badly to
+the row-major AVX2 dot path.
+
 `GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
 routes query-token-4 GQA keys over that layout. It is parity-green but rejected
 for runtime default use on the hard full-bank capture shape: Qwen3.5-2B source
@@ -485,6 +500,10 @@ Fresh post-snapshot GQA receipts:
   lower-level GEMM/BLAS-style layout rather than this temporary head-score table.
   The manual `GRM_ROUTER_GQA_QT4_UNROLL8` dot-kernel experiment was also
   parity-green but much slower, so further work should avoid scalar hand-unrolls.
+  The opt-in FMA dot path and bounded bank-transposed token-block scorer are now
+  also measured: FMA is not a 1,024-node win, and the banked scorer regresses to
+  `70.2254ms` p50 at 1,024 nodes. A true packed microkernel or GPU/cuBLAS path is
+  still the useful next layout, not another host scratch-buffer transpose.
   The opt-in transposed key-bank experiment was parity-green but slower on the
   2B full-bank capture shape, so it stays diagnostic-only; the next useful slice
   is still a lower-level GEMM/BLAS layout rather than a duplicate host layout
