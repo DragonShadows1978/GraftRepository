@@ -13,11 +13,13 @@ frozen max-abs-delta threshold while preserving top-1. The final train
 translator fit completed over `2,245,444` paired train tokens and wrote 12
 full-width K/V maps. The wrong-layer control fit completed over the same train
 split. The shuffled-docs control fit also completed and collapsed R² near zero,
-as expected for the document-pair floor. K-only control fit completed. The next
-unfinished pipeline stage is binding evaluation, followed by final write-up.
-Held-out G1/G2 evaluation completed on all `1006` held-out shards after fixing
-the evaluator hot path; G1 passed the frozen average/3x-shuffled gate and G2
-passed the frozen cosine/MSE gate.
+as expected for the document-pair floor. K-only control fit completed. Held-out
+G1/G2 evaluation completed on all `1006` held-out shards after fixing the
+evaluator hot path; G1 passed the frozen average/3x-shuffled gate and G2 passed
+the frozen cosine/MSE gate. G3 binding evaluation completed with native
+baselines; translated mode passed at `25 / 32` positive margins. Pipeline
+status is `complete`. Final write-up:
+`docs/QWEN35_TRANSLATION_FINAL_WRITEUP.md`.
 
 **Completion ledger:** operational completion entries and evidence live in
 `docs/QWEN35_TRANSLATION_IMPLEMENTATION_LEDGER.md`. Update that ledger after
@@ -408,8 +410,24 @@ Current Phase 4 implementation status:
   - frozen G2 gate status: pass by every band cosine `>= 0.90` and MSE
     `<= 25%` of wrong-layer baseline
 - Still required for complete Phase 4: run the final G0/G1/G2/G3 gate ladder
-  stage after G1/G2: G3 binding evaluation including 2B-native and 9B-native
-  binding baselines.
+- G3 binding evaluation completed:
+  - artifact:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_metrics.json`
+  - probe count: `32`
+  - amnesia: `20 / 32` positive margins, mean margin
+    `0.7479729879753355`, min margin `-2.897013226382356`
+  - source-native ceiling: `32 / 32` positive margins, mean margin
+    `19.93564477957448`, min margin `15.442655127356694`
+  - target-native ceiling: `32 / 32` positive margins, mean margin
+    `18.62211288181452`, min margin `15.489111058558944`
+  - translated: `25 / 32` positive margins, mean margin
+    `1.3904626497223576`, min margin `-2.2494257231745074`
+  - frozen G3 translated-mode gate status: pass by `25 / 32 >= 14 / 32`
+  - interpretation caveat: amnesia floor is high at `20 / 32`, so the final
+    write-up claims qualified binding-transfer signal under this harness, not
+    full hybrid-state portability.
+- Final write-up completed:
+  `docs/QWEN35_TRANSLATION_FINAL_WRITEUP.md`.
 
 ## Artifacts
 

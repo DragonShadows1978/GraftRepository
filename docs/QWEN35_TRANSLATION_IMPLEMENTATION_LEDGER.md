@@ -1018,10 +1018,70 @@ eval, threshold registration, or control-baseline step.
   evaluation.
 - Produce the final write-up with the surviving claim level.
 
+### 2026-07-04 - G3 Binding Evaluation And Final Write-Up
+
+**Status:** complete.
+
+**Completed work:**
+
+- Ran the registered G3 binding evaluation with all default modes:
+  `amnesia`, `source-native`, `target-native`, and `translated`.
+- Confirmed the binding stage includes the required 2B-native and 9B-native
+  baselines.
+- Refreshed pipeline status after binding evaluation; the pipeline reports
+  `complete`.
+- Wrote final claim summary to
+  `docs/QWEN35_TRANSLATION_FINAL_WRITEUP.md`.
+- Updated `docs/QWEN35_GRAFT_TRANSLATION_POC_PLAN.md` with the binding result
+  and final write-up pointer.
+
+**Evidence:**
+
+- Pipeline command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py pipeline-next --root /mnt/ForgeRealm/qwen35_graft_translation_poc --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --layers all --source-max-chunks 64 --target-max-chunks 16 --ridge-lambda 1e-4 --topk 16 --binding-max-probes 32`
+- Binding artifact:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_metrics.json`
+  - sha256:
+    `0d72858222abb8a2a23a0079fec087e0e6c53f8f29c009dfc80a820f47ae954f`
+  - schema: `qwen35_graft_translation_binding_eval_v1`
+  - probe count: `32`
+  - rows: `128`
+- Binding summaries:
+  - amnesia: `20 / 32` positive margins, mean margin
+    `0.7479729879753355`, min margin `-2.897013226382356`, frozen pass
+    `true`
+  - source-native: `32 / 32` positive margins, mean margin
+    `19.93564477957448`, min margin `15.442655127356694`, frozen pass
+    `true`
+  - target-native: `32 / 32` positive margins, mean margin
+    `18.62211288181452`, min margin `15.489111058558944`, frozen pass
+    `true`
+  - translated: `25 / 32` positive margins, mean margin
+    `1.3904626497223576`, min margin `-2.2494257231745074`, frozen pass
+    `true`
+- Refreshed pipeline status:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/pipeline_status.json`
+  - sha256:
+    `f4d0cbfe03fced8aec3c634a81a670be20e15edb36d0d31c8aa4709b8c7931af`
+  - status: `complete`
+  - stage: `complete`
+  - skipped stages: `[]`
+  - binding eval ready: `true`
+- Final write-up:
+  `docs/QWEN35_TRANSLATION_FINAL_WRITEUP.md`
+  - surviving claim: qualified `binding transfer`
+  - caveats recorded: live G0 strict max-delta failure and high amnesia floor
+    at `20 / 32`
+
+**Remaining work:**
+
+- None for the registered Qwen3.5 Translation PoC gate ladder.
+- Follow-up research should tighten the binding probe floor and investigate the
+  live G0 logit max-delta failure before claiming full live GRM portability.
+
 ## Open Completion Queue
 
 These items are not complete and must stay visible until closed:
 
-1. Run 2B-native and 9B-native binding baselines.
-2. Run G3 binding probe eval on the completed real translator.
-3. Produce the final write-up with the surviving claim level.
+No open implementation items remain for the registered Qwen3.5 Translation PoC
+gate ladder.
