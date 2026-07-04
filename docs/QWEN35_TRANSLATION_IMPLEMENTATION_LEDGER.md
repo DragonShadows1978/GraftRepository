@@ -919,11 +919,109 @@ eval, threshold registration, or control-baseline step.
 - Run held-out G1/G2 evaluation and G3 binding evaluation.
 - Produce the final write-up with the surviving claim level.
 
+### 2026-07-04 - G1/G2 Held-Out Evaluation
+
+**Status:** complete.
+
+**Completed work:**
+
+- Started the full held-out `eval-translator` gate and found the evaluator was
+  operationally too slow and blind: the first interrupted run spent over an
+  hour in the Python-set top-k recall path, and the next interrupted run exposed
+  the value-output `np.einsum` path as the next hot spot.
+- Replaced `_topk_recall` row-wise Python set intersections with vectorized
+  top-k membership comparison.
+- Replaced repeated attention-score/value-output `np.einsum` calls with batched
+  `np.matmul` helpers.
+- Added `eval_metrics_progress.json` sidecar writes so the full held-out gate
+  reports progress every 25 shards and marks completion.
+- Added regression coverage for the vectorized top-k recall semantics and the
+  progress sidecar completion contract.
+- Ran the full held-out G1/G2 evaluator on all `1006` paired held-out shards.
+- Updated `docs/QWEN35_GRAFT_TRANSLATION_POC_PLAN.md` with the G1/G2 result
+  and threshold interpretation.
+
+**Evidence:**
+
+- Focused test command:
+  `PYTHONDONTWRITEBYTECODE=1 PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest tests/test_qwen35_translation_poc.py -q`
+  - result: `27 passed, 2 warnings in 0.40s`
+- Pipeline command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py pipeline-next --root /mnt/ForgeRealm/qwen35_graft_translation_poc --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --layers all --source-max-chunks 64 --target-max-chunks 16 --ridge-lambda 1e-4 --topk 16 --binding-max-probes 32`
+- Eval artifact:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator/eval_metrics.json`
+  - sha256:
+    `c42847747374bb28b5b033d2a203d91dd6e14cef03f572eca5a0ff54541bfa9a`
+  - schema: `qwen35_graft_translation_eval_metrics_v1`
+  - split: `heldout`
+  - top-k: `16`
+  - paired held-out shards: `1006`
+  - layer-pairs: `6`
+  - held-out tokens per layer-pair: `254,556`
+- Progress artifact:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator/eval_metrics_progress.json`
+  - sha256:
+    `b7d243c10e63cc28cf1b43270e0cc42a0896a81bb16b3bf78280694a55ac9d7a`
+  - status: `complete`
+  - completed shards: `1006 / 1006`
+- Refreshed pipeline status:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/pipeline_status.json`
+  - sha256:
+    `5aa9dfc2a9ec55572830677070a7e9ea906399a1828bd0615552fca06179bcc4`
+  - status: `pending`
+  - stage: `eval-binding-probes`
+  - eval translator ready: `true`
+  - binding probes ready: `true`
+  - binding eval ready: `false`
+- Per-layer G1/G2 metrics:
+  - `3->3`: key recall@16 `0.5634406672489058`, shuffled
+    `0.052714496918280486`, wrong-key `0.06567855121608031`, value cosine
+    `0.9541536472807478`, value MSE `0.01571993042051494`,
+    wrong-layer MSE `0.3295104098855734`, MSE ratio `0.0477069310980915`
+  - `7->7`: key recall@16 `0.6377201221386092`, shuffled
+    `0.04790550240723258`, wrong-key `0.06800959603190003`, value cosine
+    `0.935210640322044`, value MSE `0.035995265382280754`,
+    wrong-layer MSE `0.4463914653554896`, MSE ratio `0.08063609673544152`
+  - `11->15`: key recall@16 `0.6049831578131571`, shuffled
+    `0.047558302250840366`, wrong-key `0.07770246176812656`, value cosine
+    `0.9117545860854634`, value MSE `0.0651071400924639`,
+    wrong-layer MSE `0.5137107300754095`, MSE ratio `0.12673891410231317`
+  - `15->19`: key recall@16 `0.6509739943947752`, shuffled
+    `0.049727652567451604`, wrong-key `0.064330061446846`, value cosine
+    `0.9094160406409361`, value MSE `0.11563002535071353`,
+    wrong-layer MSE `0.7987326071678881`, MSE ratio `0.1447668773166899`
+  - `19->27`: key recall@16 `0.6795158410372619`, shuffled
+    `0.05091407734735717`, wrong-key `0.0572976236001304`, value cosine
+    `0.980642178117937`, value MSE `0.15128897849147033`,
+    wrong-layer MSE `8.979997710147344`, MSE ratio `0.016847329295030296`
+  - `23->31`: key recall@16 `0.6904513192234587`, shuffled
+    `0.05274420215654368`, wrong-key `0.07433895868766034`, value cosine
+    `0.9932101022103578`, value MSE `0.2426036897488896`,
+    wrong-layer MSE `20.320128113361747`, MSE ratio
+    `0.01193908268665701`
+- Frozen gate interpretation:
+  - G1 key recall@16 average: `0.637847516976028`
+  - minimum key/shuffled ratio: `10.688533519012191`
+  - G1 status: pass by average recall `>= 0.60` and every band `>= 3x`
+    shuffled. The first band is below `0.60` individually, but the frozen gate
+    used average recall plus per-band 3x shuffled.
+  - G2 value-output cosine range: `0.9094160406409361` to
+    `0.9932101022103578`
+  - G2 translated/wrong-layer MSE ratio range: `0.01193908268665701` to
+    `0.1447668773166899`
+  - G2 status: pass by every band cosine `>= 0.90` and every band MSE
+    `<= 25%` of wrong-layer baseline.
+
+**Remaining work:**
+
+- Run 2B-native and 9B-native binding baselines plus translated G3 binding
+  evaluation.
+- Produce the final write-up with the surviving claim level.
+
 ## Open Completion Queue
 
 These items are not complete and must stay visible until closed:
 
-1. Run G1/G2 held-out evaluation with controls.
-2. Run 2B-native and 9B-native binding baselines.
-3. Run G3 binding probe eval on the completed real translator.
-4. Produce the final write-up with the surviving claim level.
+1. Run 2B-native and 9B-native binding baselines.
+2. Run G3 binding probe eval on the completed real translator.
+3. Produce the final write-up with the surviving claim level.

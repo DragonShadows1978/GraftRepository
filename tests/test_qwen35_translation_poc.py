@@ -762,6 +762,12 @@ def test_fit_ridge_translator_writes_artifacts_from_paired_shards(tmp_path):
     )
     assert eval_metrics["schema"] == "qwen35_graft_translation_eval_metrics_v1"
     assert Path(tmp_path / "translator" / "eval_metrics.json").is_file()
+    progress = json.loads(
+        Path(tmp_path / "translator" / "eval_metrics_progress.json").read_text()
+    )
+    assert progress["schema"] == "qwen35_graft_translation_eval_progress_v1"
+    assert progress["status"] == "complete"
+    assert progress["completed_shards"] == progress["paired_shards"]
     assert eval_metrics["layers"][0]["key_recall_at_2"] > 0.99
     assert eval_metrics["layers"][0]["wrong_layer"] == 11
     assert eval_metrics["layers"][0]["wrong_layer_key_recall_at_2"] is not None
@@ -794,6 +800,25 @@ def test_fit_ridge_translator_writes_artifacts_from_paired_shards(tmp_path):
     assert identity["layers"][0]["identity_value_output_mse"] == 0.0
     assert identity["layers"][0]["identity_value_output_cosine"] > 0.99
     assert identity["layers"][0]["non_finite_tensors"] == 0
+
+
+def test_topk_recall_matches_set_intersection_reference():
+    rng = np.random.default_rng(1234)
+    scores_a = rng.normal(size=(3, 4, 9)).astype(np.float32)
+    scores_b = rng.normal(size=(3, 4, 9)).astype(np.float32)
+
+    got = poc._topk_recall(scores_a, scores_b, 4)
+
+    ia = np.argpartition(scores_a, -4, axis=-1)[..., -4:]
+    ib = np.argpartition(scores_b, -4, axis=-1)[..., -4:]
+    hits = 0
+    rows = 0
+    for a, b in zip(ia.reshape(-1, 4), ib.reshape(-1, 4)):
+        hits += len(set(a.tolist()) & set(b.tolist()))
+        rows += 1
+    expected = hits / float(rows * 4)
+
+    assert got == expected
 
 
 def test_qwen35_attention_exposes_grm_injection_contract():

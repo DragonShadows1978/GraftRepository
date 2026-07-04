@@ -963,18 +963,26 @@ def _softmax_np(scores):
     return e / (e.sum(axis=-1, keepdims=True) + 1e-12)
 
 
+def _attention_scores_np(q, kv):
+    kv_heads = _repeat_heads(kv, q.shape[0])
+    return np.matmul(q, np.swapaxes(kv_heads, -1, -2)) / np.sqrt(q.shape[-1])
+
+
+def _attention_output_np(weights, v, heads):
+    return np.matmul(weights, _repeat_heads(v, heads))
+
+
 def _topk_recall(scores_a, scores_b, k):
     k = min(int(k), scores_a.shape[-1], scores_b.shape[-1])
     if k <= 0:
         return 0.0
     ia = np.argpartition(scores_a, -k, axis=-1)[..., -k:]
     ib = np.argpartition(scores_b, -k, axis=-1)[..., -k:]
-    hits = 0
-    rows = 0
-    for a, b in zip(ia.reshape(-1, k), ib.reshape(-1, k)):
-        hits += len(set(a.tolist()) & set(b.tolist()))
-        rows += 1
-    return hits / float(max(rows * k, 1))
+    a_rows = ia.reshape(-1, k)
+    b_rows = ib.reshape(-1, k)
+    hits = (a_rows[:, :, None] == b_rows[:, None, :]).any(axis=2).sum()
+    rows = a_rows.shape[0]
+    return float(hits) / float(max(rows * k, 1))
 
 
 def _mean_or_none(values):
@@ -1013,6 +1021,8 @@ def evaluate_translator(capture_dir, translator_dir, out_path, *,
                         split="heldout", topk=16):
     """Evaluate G1/G2 plus cheap negative controls on paired shards."""
     capture_dir = Path(capture_dir).expanduser()
+    out = Path(out_path).expanduser()
+    progress_out = out.with_name(f"{out.stem}_progress.json")
     manifest, artifacts = _load_translator(translator_dir)
     sidecars = _load_capture_sidecars(capture_dir)
     pairs = []
@@ -1028,8 +1038,30 @@ def evaluate_translator(capture_dir, translator_dir, out_path, *,
     if not pairs:
         raise ValueError(f"no paired source/target capture shards for split={split!r}")
 
+    def write_progress(done, *, status="running"):
+        progress_out.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "schema": "qwen35_graft_translation_eval_progress_v1",
+            "status": status,
+            "updated_utc": _utc_now(),
+            "capture_dir": str(capture_dir),
+            "translator_dir": str(Path(translator_dir).expanduser()),
+            "out": str(out),
+            "split": split,
+            "topk": int(topk),
+            "paired_shards": len(pairs),
+            "completed_shards": int(done),
+            "remaining_shards": int(max(len(pairs) - done, 0)),
+        }
+        tmp = progress_out.with_suffix(f"{progress_out.suffix}.tmp")
+        with open(tmp, "w") as fh:
+            json.dump(payload, fh, indent=2)
+            fh.write("\n")
+        tmp.replace(progress_out)
+
+    write_progress(0)
     metric_acc = {}
-    for _, sm, tm in pairs:
+    for pair_idx, (_, sm, tm) in enumerate(pairs, start=1):
         sz = np.load(sm["npz"])
         tz = np.load(tm["npz"])
         if sz["token_ids"].tolist() != tz["token_ids"].tolist():
@@ -1060,14 +1092,10 @@ def evaluate_translator(capture_dir, translator_dir, out_path, *,
             pred_k = _unflatten_like(pred_k, tz[tkey]).astype(np.float32)[0]
             native_k = np.asarray(tz[tkey], dtype=np.float32)[0]
             q = np.asarray(tz[qkey], dtype=np.float32)[0]
-            h, _, d = q.shape
-            native_scores = np.einsum(
-                "hqd,hkd->hqk", q, _repeat_heads(native_k, h)) / np.sqrt(d)
-            pred_scores = np.einsum(
-                "hqd,hkd->hqk", q, _repeat_heads(pred_k, h)) / np.sqrt(d)
-            shuffled_scores = np.einsum(
-                "hqd,hkd->hqk", q,
-                _repeat_heads(pred_k[:, ::-1, :], h)) / np.sqrt(d)
+            h = q.shape[0]
+            native_scores = _attention_scores_np(q, native_k)
+            pred_scores = _attention_scores_np(q, pred_k)
+            shuffled_scores = _attention_scores_np(q, pred_k[:, ::-1, :])
             native_weights = _softmax_np(native_scores)
             pred_weights = _softmax_np(pred_scores)
 
@@ -1088,9 +1116,7 @@ def evaluate_translator(capture_dir, translator_dir, out_path, *,
             if wrong_layer is not None:
                 wrong_k = np.asarray(tz[f"l{wrong_layer}_k"],
                                      dtype=np.float32)[0]
-                wrong_scores = np.einsum(
-                    "hqd,hkd->hqk", q,
-                    _repeat_heads(wrong_k, h)) / np.sqrt(d)
+                wrong_scores = _attention_scores_np(q, wrong_k)
                 rec["wrong_layer_key_recall"].append(_topk_recall(
                     native_scores, wrong_scores, topk))
 
@@ -1102,18 +1128,10 @@ def evaluate_translator(capture_dir, translator_dir, out_path, *,
                 pred_v = _unflatten_like(
                     pred_v, tz[tvkey]).astype(np.float32)[0]
                 native_v = np.asarray(tz[tvkey], dtype=np.float32)[0]
-                native_out = np.einsum(
-                    "hqk,hkd->hqd", native_weights,
-                    _repeat_heads(native_v, h))
-                v_only_out = np.einsum(
-                    "hqk,hkd->hqd", native_weights,
-                    _repeat_heads(pred_v, h))
-                k_only_out = np.einsum(
-                    "hqk,hkd->hqd", pred_weights,
-                    _repeat_heads(native_v, h))
-                kv_out = np.einsum(
-                    "hqk,hkd->hqd", pred_weights,
-                    _repeat_heads(pred_v, h))
+                native_out = _attention_output_np(native_weights, native_v, h)
+                v_only_out = _attention_output_np(native_weights, pred_v, h)
+                k_only_out = _attention_output_np(pred_weights, native_v, h)
+                kv_out = _attention_output_np(pred_weights, pred_v, h)
                 _accumulate_output_fidelity(
                     rec, "v_only_value_output", v_only_out, native_out)
                 _accumulate_output_fidelity(
@@ -1125,12 +1143,13 @@ def evaluate_translator(capture_dir, translator_dir, out_path, *,
                 if wrong_layer is not None:
                     wrong_v = np.asarray(tz[f"l{wrong_layer}_v"],
                                          dtype=np.float32)[0]
-                    wrong_v_out = np.einsum(
-                        "hqk,hkd->hqd", native_weights,
-                        _repeat_heads(wrong_v, h))
+                    wrong_v_out = _attention_output_np(
+                        native_weights, wrong_v, h)
                     _accumulate_output_fidelity(
                         rec, "wrong_layer_value_output",
                         wrong_v_out, native_out)
+        if pair_idx == len(pairs) or pair_idx % 25 == 0:
+            write_progress(pair_idx)
 
     rows = []
     for (src_layer, tgt_layer), rec in sorted(metric_acc.items()):
@@ -1163,11 +1182,11 @@ def evaluate_translator(capture_dir, translator_dir, out_path, *,
         "paired_shards": len(pairs),
         "layers": rows,
     }
-    out = Path(out_path).expanduser()
     out.parent.mkdir(parents=True, exist_ok=True)
     with open(out, "w") as fh:
         json.dump(eval_metrics, fh, indent=2)
         fh.write("\n")
+    write_progress(len(pairs), status="complete")
     return eval_metrics
 
 

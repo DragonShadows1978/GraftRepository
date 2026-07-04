@@ -14,8 +14,10 @@ translator fit completed over `2,245,444` paired train tokens and wrote 12
 full-width K/V maps. The wrong-layer control fit completed over the same train
 split. The shuffled-docs control fit also completed and collapsed R² near zero,
 as expected for the document-pair floor. K-only control fit completed. The next
-unfinished pipeline stage is held-out G1/G2 evaluation, followed by binding
-eval and write-up.
+unfinished pipeline stage is binding evaluation, followed by final write-up.
+Held-out G1/G2 evaluation completed on all `1006` held-out shards after fixing
+the evaluator hot path; G1 passed the frozen average/3x-shuffled gate and G2
+passed the frozen cosine/MSE gate.
 
 **Completion ledger:** operational completion entries and evidence live in
 `docs/QWEN35_TRANSLATION_IMPLEMENTATION_LEDGER.md`. Update that ledger after
@@ -382,9 +384,32 @@ Current Phase 4 implementation status:
   - `passes_r1_g0_threshold = false`
   - this is a threshold failure against the frozen `2e-3` max-abs-delta bar,
     even though top-1 was stable.
+- Full held-out G1/G2 translator evaluation completed:
+  - artifact:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator/eval_metrics.json`
+  - progress artifact:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator/eval_metrics_progress.json`
+  - paired held-out shards: `1006`
+  - held-out tokens per layer-pair: `254,556`
+  - layer-pairs: `3->3`, `7->7`, `11->15`, `15->19`, `19->27`,
+    `23->31`
+  - G1 key recall@16 range: `0.5634406672489058` to
+    `0.6904513192234587`
+  - G1 average key recall@16: `0.637847516976028`
+  - shuffled key recall@16 range: `0.047558302250840366` to
+    `0.05274420215654368`
+  - minimum key/shuffled ratio: `10.688533519012191`
+  - G2 value-output cosine range: `0.9094160406409361` to
+    `0.9932101022103578`
+  - G2 translated/wrong-layer MSE ratio range: `0.01193908268665701` to
+    `0.1447668773166899`
+  - frozen G1 gate status: pass by average recall `>= 0.60` and every band
+    `>= 3x` shuffled
+  - frozen G2 gate status: pass by every band cosine `>= 0.90` and MSE
+    `<= 25%` of wrong-layer baseline
 - Still required for complete Phase 4: run the final G0/G1/G2/G3 gate ladder
-  stages after G0: final translator fit, controls, held-out G1/G2 evaluation,
-  and G3 binding evaluation including 2B-native and 9B-native binding baselines.
+  stage after G1/G2: G3 binding evaluation including 2B-native and 9B-native
+  binding baselines.
 
 ## Artifacts
 
