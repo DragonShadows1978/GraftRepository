@@ -7,8 +7,15 @@ segment-reduce (GQA raw) — with an APA-shaped two-tier precision scheme
 Target: "hundreds of memories" → 100k–1M nodes at interactive latency,
 on host CPU, with the paper's §5 routing limitation retired in v1.1.
 
-**Status: IN PROGRESS. Translation PoC worktree is committed; P0 baseline
-harness has started.**
+**Status: IMPLEMENTATION CLOSED on local `main`.** P0-P6
+shipped with measured MLA/GQA routing receipts, INT4 bulk/refine host routing,
+prepared epoch snapshots, opt-in CUDA GQA route attachment, and the
+`GRM_GQA_CUDA_ROUTE=1` limited-route arena bridge. Final non-GPU closure gate:
+`PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest
+tests/test_grm_router_baseline.py tests/test_grm_native_runtime.py -q` passed
+`109 passed, 2 warnings in 344.94s` on 2026-07-03. Live CUDA bridge validation
+is the only unrun receipt in this environment because the sandbox cannot see
+the NVIDIA device nodes.
 
 **House laws in force:** measure, don't model (baseline curve BEFORE any
 optimization); commit-per-phase; gate-per-phase (166-test floor); every
@@ -19,15 +26,15 @@ native (lexical prefilter remains Python/ASCII-flag plane).
 
 ---
 
-## 0. Current state (verify in Phase 0, don't trust this summary)
+## 0. Original state (verified in Phase 0)
 
 - Native `RouterIndex::route` (MLA centroid cosine) and `route_gqa_raw`
-  iterate per node; Python fallback plane mirrors it (post-M6: both drop
-  non-finite). CUDA route-scan does not exist (board-confirmed).
-- Node adds/retires/folds mutate the index while routes may be issued —
-  currently serialized by the Python layer's call discipline, not by
-  design (the M1 race family, one plane over).
-- Route filters (kind/scope/durability/mutability) applied per node
+  iterated per node; Python fallback plane mirrored it (post-M6: both drop
+  non-finite). CUDA route-scan did not exist at the start of the work order.
+- Node adds/retires/folds mutated the index while routes might be issued,
+  serialized by the Python layer's call discipline rather than by an explicit
+  snapshot design.
+- Route filters (kind/scope/durability/mutability) were applied per node
   during the scan.
 
 ## 1. Design
@@ -650,18 +657,21 @@ four node counts, both dialects, exactness-gate record, M-sweep table.
 Board update; note for GRM paper v1.1 §5 (routing limitation retired —
 with measured numbers, not projections).
 
-P6 first report note: `docs/ROUTER_SCALING_REPORT.md` now records the current
-measured MLA and GQA router state: P0 native/Python baselines, P2 fp32 arena
-large points, P3 INT4 M-sweeps and current M=64 operating point, P4 GQA
-key-bank smoke plus Qwen3.5-2B representative-key curve, Qwen3.5-2B source
-capture layer sweep, expectation pass/miss status, and remaining work. The
-report is intentionally explicit that E3 is still narrowly missed and that
-larger real-graft GQA curves remain.
+P6 report note: `docs/ROUTER_SCALING_REPORT.md` records the measured MLA and
+GQA router state: P0 native/Python baselines, P2 fp32 arena large points, P3
+INT4 M-sweeps and bounded-staging operating point, P4 GQA key-bank and
+real-capture curves, CUDA/cuBLAS probe receipts, runtime CUDA sidecar/bridge
+status, P5 snapshot gates, expectation pass/miss status, and follow-up work.
+The report is intentionally explicit about misses: host E3 clears p50 but not
+p95, generic BLAS is rejected, and simple representative-key compaction is not
+correct on the measured capture set.
 
-**Deferred (registered, not scheduled):** CUDA route path (only if host
-curves fail interactive targets at 1M — host INT4 GEMV at 1M×512 is
-~130MB traffic, expected well under 20ms; measure first); ANN/IVF
-structures (only relevant past ~10M nodes; out of scope).
+**Deferred / future work:** ANN/IVF structures are only relevant past roughly
+10M nodes and remain out of scope. CUDA is no longer merely deferred: probe,
+sidecar, explicit native attachment, invalidation, and opt-in arena policy are
+implemented. The remaining CUDA item is live bridge validation on a process
+with actual NVIDIA device access, plus a larger-top-k/full-rank route contract
+only if CUDA should replace general `arena.route()` calls.
 
 ## 3. Registered expectations (freeze before P2)
 

@@ -1,7 +1,6 @@
 # GRM Router Scaling Report
 
-Status: GEMV-router implementation checkpoint on branch
-`grm-ram-tiered-runtime`.
+Status: GEMV-router implementation closure on local `main`.
 
 This report records measured router scaling after replacing the original
 per-node route scan with contiguous host arenas:
@@ -12,6 +11,18 @@ per-node route scan with contiguous host arenas:
 - Concurrency: route-key mutations mark arenas dirty, the next route prepares
   once under the writer side of the C ABI shared mutex, and clean prepared
   route reads atomically pin immutable snapshots without a read-side mutex.
+
+Closure gate on 2026-07-03:
+
+```bash
+PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest \
+  tests/test_grm_router_baseline.py tests/test_grm_native_runtime.py -q
+```
+
+Result: `109 passed, 2 warnings in 344.94s`. Live CUDA bridge validation is not
+included in this receipt because this sandbox cannot see the NVIDIA device
+nodes; the CUDA bridge smoke and policy regressions are covered by non-GPU
+tests, and the CUDA live script is committed for a device-visible run.
 
 All numbers below are from local measurements on harvested repository-derived
 route vectors unless otherwise noted. Missing direct baselines are marked as
@@ -579,7 +590,7 @@ Fresh post-snapshot GQA receipts:
 | E3: 1M route <= 25ms host-side | passed on p50 with bounded-staging M=128: 23.8805ms p50 / 25.4883ms p95, native-fp32 parity green on the longer check |
 | E4: GQA native path 20x Python fallback at 10k | passed on smoke shape: 27.81x; Qwen3.5-2B representative-key shape is 26.27x; real captured 256-node full K-bank is 5.69x; layers 3/7/11 full-bank 256-node parity is green |
 
-## Remaining Work
+## Follow-Up Work
 
 - Treat the 1M dim128 host route as deep-interactive already; if E3 p95 is
   mandatory, replace the scalar q4 dot with a lower-level vectorized dot kernel
@@ -617,9 +628,10 @@ Fresh post-snapshot GQA receipts:
   exposes an explicit CUDA bank attachment path. Explicit attachments now close
   on route-key and eligibility mutations. The arena bridge now has an opt-in
   `GRM_GQA_CUDA_ROUTE=1` limited-route policy for same-shape non-lexical GQA
-  banks, so the next useful CUDA work is live GPU validation of that bridge plus
-  a larger-top-k/full-rank route contract if CUDA should replace `arena.route()`
-  generally.
+  banks. The implementation work order is closed at the opt-in bridge boundary;
+  the next CUDA item is live GPU validation of that bridge in a device-visible
+  process, plus a larger-top-k/full-rank route contract if CUDA should replace
+  `arena.route()` generally.
   The opt-in transposed key-bank experiment was parity-green but slower on the
   2B full-bank capture shape, so it stays diagnostic-only; the next useful slice
   is still a lower-level GEMM/BLAS layout rather than a duplicate host layout
