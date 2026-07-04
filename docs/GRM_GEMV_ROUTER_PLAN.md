@@ -478,6 +478,19 @@ captures stayed parity-green. Runtime rejected it: 512 nodes measured
 this CPU; the next meaningful step is GPU/cuBLAS or a tighter hand-packed kernel
 that improves arithmetic scheduling as well as memory traffic.
 
+P4 CUDA/cuBLAS probe: `scripts/grm_gqa_cuda_probe.py` now compiles a temporary
+CUDA shared library with `nvcc`, pre-packs full captured K banks into
+device-resident column-major matrices, runs two `cublasSgemm` calls per query
+for the Qwen3.5-2B `8q/2kv` shape, and reduces raw GQA scores on GPU before
+checking top-k parity against the existing batched Python law. This is a probe
+and not yet wired into the runtime C ABI: one-shot wall time includes allocation,
+H2D copy, and K packing. Device-resident route timing is the relevant runtime
+target. Qwen3.5-2B source layer-3 full-bank captures were parity-green:
+32 nodes measured `0.0580ms` per query, 512 nodes measured `0.9544ms`, and
+1,024 nodes measured `1.4769ms`. The 1,024-node one-shot wall was `262.7543ms`,
+so the next implementation slice is to make the GPU K arena persistent and
+return top-k without copying full score vectors back to host.
+
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The
 path preserves the raw-q.k law in focused parity and exhaustive benchmark

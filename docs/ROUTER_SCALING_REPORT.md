@@ -346,6 +346,25 @@ GEMV-shaped host layout, but the scratch-heavy token-block walk loses badly to
 the row-major AVX2 dot path. The paired-repeat AVX2 microkernel also loses,
 which rules out simple repeated-head K-row reuse as the missing optimization.
 
+`scripts/grm_gqa_cuda_probe.py` adds the first CUDA/cuBLAS route probe. It keeps
+the runtime C ABI untouched, compiles a temporary CUDA shared library with
+`nvcc`, pre-packs full captured K banks into device-resident column-major
+matrices, runs two `cublasSgemm` calls per query for the Qwen3.5-2B `8q/2kv`
+shape, reduces raw GQA scores on GPU, and checks top-k parity against the batched
+Python reference. Device route timing excludes one-shot allocation/H2D/K-pack
+setup; wall time records that setup cost.
+
+| CUDA/cuBLAS probe shape | nodes | device route ms/query | one-shot wall ms | parity |
+| --- | ---: | ---: | ---: | --- |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | 32 | 0.0580 | 341.6160 | true, 2/2 queries |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | 512 | 0.9544 | 222.4073 | true, 6/6 queries |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | 1,024 | 1.4769 | 262.7543 | true, 4/4 queries |
+
+This is the first path that decisively beats the host route-time target at
+1,024 full-bank nodes. It is not yet a drop-in runtime path: the next slice is a
+persistent GPU K arena plus GPU top-k so every route does not copy full score
+vectors back to host.
+
 `GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
 routes query-token-4 GQA keys over that layout. It is parity-green but rejected
 for runtime default use on the hard full-bank capture shape: Qwen3.5-2B source
@@ -510,6 +529,9 @@ Fresh post-snapshot GQA receipts:
   The paired-repeat AVX2 microkernel reduces K-row streams across repeated query
   heads but still regresses (`29.1954ms` p50 at 1,024 nodes), so repeated-head
   reuse without a tighter schedule is not enough.
+  The standalone CUDA/cuBLAS probe is parity-green and reaches `1.4769ms` per
+  query at 1,024 full-bank nodes after K is resident, so the next useful work is
+  persistent GPU arena/top-k integration rather than more CPU scorer variants.
   The opt-in transposed key-bank experiment was parity-green but slower on the
   2B full-bank capture shape, so it stays diagnostic-only; the next useful slice
   is still a lower-level GEMM/BLAS layout rather than a duplicate host layout

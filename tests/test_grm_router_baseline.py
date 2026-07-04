@@ -147,6 +147,16 @@ def test_gqa_router_benchmark_smoke_cli_writes_json_and_markdown(tmp_path):
                for row in progress_rows)
 
 
+def test_gqa_cuda_probe_help_cli_smoke():
+    result = subprocess.run([
+        "python3",
+        "scripts/grm_gqa_cuda_probe.py",
+        "--help",
+    ], cwd=baseline.ROOT, check=True, capture_output=True, text=True)
+
+    assert "CUDA/cuBLAS GQA raw q.k router" in result.stdout
+
+
 def test_gqa_router_benchmark_smoke_cli_reads_capture_shards(tmp_path):
     captures = tmp_path / "captures"
     captures.mkdir()
