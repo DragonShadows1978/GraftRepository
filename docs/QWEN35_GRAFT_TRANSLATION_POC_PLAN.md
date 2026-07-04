@@ -2,13 +2,20 @@
 
 **Status:** Phase 0 source validation passed for the real 2B/9B pair; Phase 1
 Qwen3.5 config-generalized loader smoke passed for both models; Phase 2
-capture hook/shard smoke plus resumable corpus/pipeline runners passed, and
-the real source capture is complete. The real target capture is still running:
-latest refreshed status is target `8552 / 9861` chunks, with `1,944,308`
-paired train tokens and `239,415` paired held-out tokens. Phase 3/4 ridge fit,
+capture hook/shard smoke plus resumable corpus/pipeline runners passed, and the
+real source and target captures are complete: `9861 / 9861` chunks per side,
+`2,245,444` paired train tokens, and `254,556` paired held-out tokens. The
+frozen `>= 2M` paired train-token fit gate is satisfied. Phase 3/4 ridge fit,
 negative-control fit, G0/G1/G2 evaluator, and G3 binding harness commands are
-implemented and smoke-tested. The final real fit/gate ladder waits for target
-capture completion and the frozen `>= 2M` paired train-token gate.
+implemented and smoke-tested. Full held-out G0 capture identity passed on the
+completed target capture. Live G0 logit identity smoke completed but failed the
+frozen max-abs-delta threshold while preserving top-1. The final train
+translator fit completed over `2,245,444` paired train tokens and wrote 12
+full-width K/V maps. The wrong-layer control fit completed over the same train
+split. The shuffled-docs control fit also completed and collapsed R² near zero,
+as expected for the document-pair floor. K-only control fit completed. The next
+unfinished pipeline stage is held-out G1/G2 evaluation, followed by binding
+eval and write-up.
 
 **Completion ledger:** operational completion entries and evidence live in
 `docs/QWEN35_TRANSLATION_IMPLEMENTATION_LEDGER.md`. Update that ledger after
@@ -202,12 +209,18 @@ Current Phase 2 implementation status:
   `docs/QWEN35_TRANSLATION_CORPUS_RUNBOOK.md`
 - Operational completion ledger:
   `docs/QWEN35_TRANSLATION_IMPLEMENTATION_LEDGER.md`
-- Real corpus plan is frozen, source capture is complete, and target capture is
-  in progress under the pipeline runner. `capture_manifest.json` and
-  `pipeline_status.json` now record paired source/target progress so preview
-  work can be separated from final gate artifacts.
-- Still required before Phase 2 is complete: finish all-attention-layer target
-  capture and produce the final corpus-scale `capture_manifest.json`.
+- Real corpus plan is frozen. Source and target captures are complete under the
+  pipeline runner. `capture_manifest.json` and `pipeline_status.json` record
+  paired source/target progress so preview work can be separated from final gate
+  artifacts.
+- Final corpus-scale `capture_manifest.json` records:
+  - source: `9861 / 9861` chunks, `2,500,000` tokens
+  - target: `9861 / 9861` chunks, `2,500,000` tokens
+  - paired train tokens: `2,245,444`
+  - paired held-out tokens: `254,556`
+  - token-count mismatches: `0`
+  - split mismatches: `0`
+- Phase 2 complete as of the 2026-07-04 refreshed status.
 
 ### Phase 3: translator fitting
 
@@ -244,15 +257,71 @@ Current Phase 3 implementation status:
 - `translator_manifest.json` records the fractional attention-layer alignment
   and artifact shapes.
 - `fit_metrics.json` records train-token counts, MSE, R², and mean row cosine.
+- Final real train fit completed:
+  - output dir: `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator`
+  - paired train shards: `8855`
+  - train tokens per map: `2,245,444`
+  - artifacts: `12`
+  - shapes: `512 -> 1024` for each K/V map
+  - layer alignment: `3->3`, `7->7`, `11->15`, `15->19`, `19->27`,
+    `23->31`
+  - K mean-row cosine range: `0.853317589093372` to `0.9101047250483691`
+  - V mean-row cosine range: `0.7531574545045864` to `0.9686707426624085`
+  - K R² range: `0.5398957487107319` to `0.7053624018146802`
+  - V R² range: `0.4294227661704709` to `0.6218307136019108`
 - Tiny real capture rehearsal passed on one paired layer-3 shard:
   - K artifact shape `512 -> 1024`
   - V artifact shape `512 -> 1024`
   - smoke fit R² was effectively 1.0 on the tiny same-shard rehearsal
 - Wrong-layer, shuffled-docs, K-only, and V-only fit controls are implemented.
+- Final wrong-layer control fit completed:
+  - output dir:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_wrong_layer`
+  - paired train shards: `8855`
+  - train tokens per map: `2,245,444`
+  - artifacts: `12`
+  - layer alignment: `3->7`, `7->11`, `11->19`, `15->23`, `19->31`,
+    `23->3`
+  - K mean-row cosine range: `0.8434169991108665` to
+    `0.9043375200116528`
+  - V mean-row cosine range: `0.6954730362469482` to
+    `0.9663842353437266`
+  - K R² range: `0.4668783736232488` to `0.6723707570628195`
+  - V R² range: `0.32655635155106133` to `0.542841570424957`
+- Final shuffled-docs control fit completed:
+  - output dir:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_shuffled_docs`
+  - paired train shards: `8855`
+  - train tokens per map: `2,224,578`
+  - artifacts: `12`
+  - K mean-row cosine range: `0.624824523027121` to
+    `0.724112890090573`
+  - V mean-row cosine range: `0.3790888737004818` to
+    `0.9293803757763192`
+  - K R² range: `0.02217365607069377` to `0.04097642162002901`
+  - V R² range: `0.00634158323804046` to `0.042071547620968874`
+- Final K-only control fit completed:
+  - output dir:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_k_only`
+  - paired train shards: `8855`
+  - train tokens per map: `2,245,444`
+  - artifacts: `6`
+  - K mean-row cosine range: `0.853317589093372` to
+    `0.9101047250483691`
+  - K R² range: `0.5398957487107319` to `0.7053624018146802`
+- Final V-only control fit completed:
+  - output dir:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_v_only`
+  - paired train shards: `8855`
+  - train tokens per map: `2,245,444`
+  - artifacts: `6`
+  - V mean-row cosine range: `0.7531574545045864` to
+    `0.9686707426624085`
+  - V R² range: `0.4294227661704709` to `0.6218307136019108`
 - R1 thresholds are frozen below. The first final real fit waits for target
-  capture completion and at least `2M` paired train tokens. Partial preview
-  fits must use separate output directories and must not populate the final
-  `translator/` path.
+  capture completion and at least `2M` paired train tokens. The final real fit
+  now satisfies that gate. Partial preview fits must use separate output
+  directories and must not populate the final `translator/` path.
 
 ### Phase 4: evaluation gates
 
@@ -296,9 +365,26 @@ Current Phase 4 implementation status:
 - G0 capture identity now uses a structural exact-identity path instead of
   recomputing target attention against itself, making the final post-capture
   gate linear in shard count.
+- Full held-out G0 capture identity passed on the completed target capture:
+  - artifact:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/g0_capture_identity_metrics.json`
+  - target shards: `1006`
+  - held-out tokens per layer: `254,556`
+  - every target attention layer reported `identity_key_recall_at_16 = 1.0`
+  - every target attention layer reported `identity_value_output_mse = 0.0`
+  - non-finite tensors: `0`
+- Live G0 logit identity smoke completed on a held-out span:
+  - artifact:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/g0_logit_identity_smoke.json`
+  - `max_abs_delta = 0.1875`
+  - `mean_abs_delta = 0.019217236981522855`
+  - `top1_flip_rate = 0.0`
+  - `passes_r1_g0_threshold = false`
+  - this is a threshold failure against the frozen `2e-3` max-abs-delta bar,
+    even though top-1 was stable.
 - Still required for complete Phase 4: run the final G0/G1/G2/G3 gate ladder
-  on completed target capture and final translator artifacts, including
-  2B-native and 9B-native binding baselines.
+  stages after G0: final translator fit, controls, held-out G1/G2 evaluation,
+  and G3 binding evaluation including 2B-native and 9B-native binding baselines.
 
 ## Artifacts
 

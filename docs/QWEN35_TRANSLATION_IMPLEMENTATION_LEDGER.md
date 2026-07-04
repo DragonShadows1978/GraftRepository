@@ -569,15 +569,361 @@ eval, threshold registration, or control-baseline step.
   must use separate preview output directories and must not populate the final
   `translator/`, `translator_*`, or `gates/*_metrics.json` artifacts.
 
+### 2026-07-04 - Full Corpus Capture And G0 Capture Identity
+
+**Status:** complete.
+
+**Completed work:**
+
+- Refreshed the real pipeline status after the overnight capture run finished.
+- Confirmed both source and target captures are complete on the frozen corpus.
+- Confirmed the frozen `>= 2M` paired train-token fit gate is satisfied.
+- Ran the full held-out G0 capture identity stage on the completed target
+  capture.
+- Updated `docs/QWEN35_GRAFT_TRANSLATION_POC_PLAN.md` so Phase 2 and the G0
+  capture-identity gate reflect the current artifact state.
+
+**Evidence:**
+
+- Refreshed status command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py pipeline-status --root /mnt/ForgeRealm/qwen35_graft_translation_poc --write-status`
+- Pipeline status:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/pipeline_status.json`
+  - sha256:
+    `c2afb8df95bfd6c2d389b673b8050ddc49742f3f2e62c25a54a58792c896cc03`
+  - timestamp UTC: `2026-07-04T15:28:31.205294+00:00`
+  - status: `pending`
+  - stage: `g0-logit-smoke`
+  - source capture: `9861 / 9861` chunks complete
+  - target capture: `9861 / 9861` chunks complete
+  - paired chunks: `9861`
+  - paired tokens: `2,500,000`
+  - paired train tokens: `2,245,444`
+  - paired held-out tokens: `254,556`
+  - source-only chunks: `0`
+  - target-only chunks: `0`
+  - token-count mismatches: `0`
+  - split mismatches: `0`
+- Full held-out G0 capture identity artifact:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/g0_capture_identity_metrics.json`
+  - sha256:
+    `5643509b8baa8a81e5bf13e66149a2841fc37413a0c4b42424632b3a7a56cf3e`
+  - target shards: `1006`
+  - held-out tokens per layer: `254,556`
+  - all target attention layers reported
+    `identity_key_recall_at_16 = 1.0`
+  - all target attention layers reported
+    `identity_value_output_mse = 0.0`
+  - all target attention layers reported
+    `identity_value_output_cosine = 1.0`
+  - non-finite tensors: `0`
+- Pipeline history appended the `g0-capture-identity` success row with the same
+  output hash.
+
+**Remaining work:**
+
+- Run live G0 logit identity smoke.
+- Run the final train fit and registered fit controls.
+- Run held-out G1/G2 evaluation and G3 binding evaluation.
+- Produce the final write-up with the surviving claim level.
+
+### 2026-07-04 - Live G0 Logit Identity Smoke
+
+**Status:** complete with threshold failure.
+
+**Completed work:**
+
+- Ran the live 9B capture/reinject logit identity smoke on the first eligible
+  held-out span selected by the pipeline.
+- Confirmed the stage writes a valid metrics artifact and advances the pipeline
+  to the final train translator fit.
+- Checked the live injection path for the obvious RoPE offset failure mode. The
+  Qwen3.5 attention path applies the mounted graft-seat shift while the graft is
+  resident, so this result is recorded as the observed live G0 noise-floor
+  result, not as a confirmed offset bug.
+- Updated `docs/QWEN35_GRAFT_TRANSLATION_POC_PLAN.md` with the live G0 result.
+
+**Evidence:**
+
+- Pipeline command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py pipeline-next --root /mnt/ForgeRealm/qwen35_graft_translation_poc --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --layers all --source-max-chunks 64 --target-max-chunks 16 --ridge-lambda 1e-4 --topk 16 --binding-max-probes 32`
+- Artifact:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/g0_logit_identity_smoke.json`
+  - sha256:
+    `0d82724b9be61082d8a349f0edbd1b4b7c8d5c97b1a420ff00a2c871d1da0942`
+  - held-out span: document `f0c0d0313f5423aa`, chunk `1989`
+  - prefix tokens: `64`
+  - probe tokens: `8`
+  - max abs delta: `0.1875`
+  - mean abs delta: `0.019217236981522855`
+  - top-1 flips: `0`
+  - top-1 flip rate: `0.0`
+  - frozen thresholds: max abs delta `0.002`, top-1 flip rate `0.001`
+  - `passes_r1_g0_threshold = false`
+- Refreshed pipeline status:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/pipeline_status.json`
+  - sha256:
+    `0ef0a868a3f446a60dfd4698d23689ec1952e772881e5ed0cbe5d5cdf461a054`
+  - status: `pending`
+  - stage: `fit-translator`
+
+**Remaining work:**
+
+- Treat downstream fit/eval metrics as still useful, but interpret them with
+  the failed live G0 max-abs-delta floor in the final write-up.
+- Run the final train fit and registered fit controls.
+- Run held-out G1/G2 evaluation and G3 binding evaluation.
+- Produce the final write-up with the surviving claim level.
+
+### 2026-07-04 - Final Train Translator Fit
+
+**Status:** complete.
+
+**Completed work:**
+
+- Ran the registered normal train translator fit on the completed paired train
+  capture.
+- Produced full-width K and V ridge maps for all six source attention layers.
+- Wrote final translator artifacts under the reserved production
+  `translator/` path.
+- Refreshed pipeline status; the next stage is the wrong-layer control fit.
+- Updated `docs/QWEN35_GRAFT_TRANSLATION_POC_PLAN.md` with the real fit
+  metrics summary.
+
+**Evidence:**
+
+- Pipeline command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py pipeline-next --root /mnt/ForgeRealm/qwen35_graft_translation_poc --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --layers all --source-max-chunks 64 --target-max-chunks 16 --ridge-lambda 1e-4 --topk 16 --binding-max-probes 32`
+- Output directory:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator`
+- Translator manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator/translator_manifest.json`
+  - sha256:
+    `3c1ce5dd49b5a2cc8b3fbe5b13cf7b1c1505473228001bca7bb1791c3de667f4`
+  - paired train shards: `8855`
+  - artifacts: `12`
+  - ridge lambda: `1e-4`
+  - layer alignment: `3->3`, `7->7`, `11->15`, `15->19`, `19->27`,
+    `23->31`
+  - map shape for every artifact: `512 -> 1024`
+- Fit metrics:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator/fit_metrics.json`
+  - sha256:
+    `0ceddf1c44446a1f8a6e84f18a0410d317f4fe3eb22d1c799ecc5b4558dfddbd`
+  - train tokens per map: `2,245,444`
+  - K mean-row cosine range: `0.853317589093372` to
+    `0.9101047250483691`
+  - V mean-row cosine range: `0.7531574545045864` to
+    `0.9686707426624085`
+  - K R² range: `0.5398957487107319` to `0.7053624018146802`
+  - V R² range: `0.4294227661704709` to `0.6218307136019108`
+- Pipeline status after refresh:
+  - status: `pending`
+  - stage: `fit-control-wrong-layer`
+
+**Remaining work:**
+
+- Run the registered negative-control fits.
+- Run held-out G1/G2 evaluation and G3 binding evaluation.
+- Produce the final write-up with the surviving claim level.
+
+### 2026-07-04 - Wrong-Layer Control Fit
+
+**Status:** complete.
+
+**Completed work:**
+
+- Ran the registered wrong-layer negative-control fit on the completed paired
+  train capture.
+- Produced full-width K and V ridge maps for all six shifted source-target
+  layer pairs.
+- Wrote control artifacts under `translator_wrong_layer/`.
+- Updated `docs/QWEN35_GRAFT_TRANSLATION_POC_PLAN.md` with the wrong-layer
+  control metrics summary.
+
+**Evidence:**
+
+- Pipeline command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py pipeline-next --root /mnt/ForgeRealm/qwen35_graft_translation_poc --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --layers all --source-max-chunks 64 --target-max-chunks 16 --ridge-lambda 1e-4 --topk 16 --binding-max-probes 32`
+- Output directory:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_wrong_layer`
+- Translator manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_wrong_layer/translator_manifest.json`
+  - sha256:
+    `06cb6ea4ad6bc1e3821a761ac66083168a524883f2aa0ebbe19167649371f782`
+  - paired train shards: `8855`
+  - artifacts: `12`
+  - ridge lambda: `1e-4`
+  - control: `wrong-layer`
+  - layer alignment: `3->7`, `7->11`, `11->19`, `15->23`, `19->31`,
+    `23->3`
+  - map shape for every artifact: `512 -> 1024`
+- Fit metrics:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_wrong_layer/fit_metrics.json`
+  - sha256:
+    `0cc871b64721660a637fd7339272080adb7531a42534b6c9b57850f242c7ccb3`
+  - train tokens per map: `2,245,444`
+  - K mean-row cosine range: `0.8434169991108665` to
+    `0.9043375200116528`
+  - V mean-row cosine range: `0.6954730362469482` to
+    `0.9663842353437266`
+  - K R² range: `0.4668783736232488` to `0.6723707570628195`
+  - V R² range: `0.32655635155106133` to `0.542841570424957`
+- Pipeline history appended `fit-control-wrong-layer` success at
+  `2026-07-04T17:10:00.862740+00:00`.
+
+**Remaining work:**
+
+- Run the shuffled-docs, K-only, and V-only control fits.
+- Run held-out G1/G2 evaluation and G3 binding evaluation.
+- Produce the final write-up with the surviving claim level.
+
+### 2026-07-04 - Shuffled-Docs Control Fit
+
+**Status:** complete.
+
+**Completed work:**
+
+- Ran the registered shuffled-docs negative-control fit on the completed paired
+  train capture.
+- Produced full-width K and V ridge maps for all six normal layer-aligned pairs
+  while shifting target documents out of correspondence with source documents.
+- Wrote control artifacts under `translator_shuffled_docs/`.
+- Updated `docs/QWEN35_GRAFT_TRANSLATION_POC_PLAN.md` with the shuffled-docs
+  control metrics summary.
+
+**Evidence:**
+
+- Pipeline command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py pipeline-next --root /mnt/ForgeRealm/qwen35_graft_translation_poc --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --layers all --source-max-chunks 64 --target-max-chunks 16 --ridge-lambda 1e-4 --topk 16 --binding-max-probes 32`
+- Output directory:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_shuffled_docs`
+- Translator manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_shuffled_docs/translator_manifest.json`
+  - sha256:
+    `8dba1aea9ae1c6aa1bd364cbb707a44282344af705d17bac26d2ae7a1fa68533`
+  - paired train shards: `8855`
+  - artifacts: `12`
+  - ridge lambda: `1e-4`
+  - control: `shuffled-docs`
+  - layer alignment: `3->3`, `7->7`, `11->15`, `15->19`, `19->27`,
+    `23->31`
+  - map shape for every artifact: `512 -> 1024`
+- Fit metrics:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_shuffled_docs/fit_metrics.json`
+  - sha256:
+    `bdd62b4e8519fdc53d2215d9027afc80874aa1827da9fc092cf135cee3a02228`
+  - train tokens per map: `2,224,578`
+  - K mean-row cosine range: `0.624824523027121` to
+    `0.724112890090573`
+  - V mean-row cosine range: `0.3790888737004818` to
+    `0.9293803757763192`
+  - K R² range: `0.02217365607069377` to `0.04097642162002901`
+  - V R² range: `0.00634158323804046` to `0.042071547620968874`
+- Pipeline history appended `fit-control-shuffled-docs` success at
+  `2026-07-04T19:14:38.926439+00:00`.
+
+**Remaining work:**
+
+- Run the K-only and V-only control fits.
+- Run held-out G1/G2 evaluation and G3 binding evaluation.
+- Produce the final write-up with the surviving claim level.
+
+### 2026-07-04 - K-Only Control Fit
+
+**Status:** complete.
+
+**Completed work:**
+
+- Ran the registered K-only control fit on the completed paired train capture.
+- Produced full-width K ridge maps for all six normal layer-aligned pairs.
+- Wrote control artifacts under `translator_k_only/`.
+- Updated `docs/QWEN35_GRAFT_TRANSLATION_POC_PLAN.md` with the K-only control
+  metrics summary.
+
+**Evidence:**
+
+- Pipeline command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py pipeline-next --root /mnt/ForgeRealm/qwen35_graft_translation_poc --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --layers all --source-max-chunks 64 --target-max-chunks 16 --ridge-lambda 1e-4 --topk 16 --binding-max-probes 32`
+- Output directory:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_k_only`
+- Translator manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_k_only/translator_manifest.json`
+  - sha256:
+    `4d3bfbd91eb4b3c252af0ef53c72283ecb6ec222fb16034fdbe05d4ee3fc1b5f`
+  - paired train shards: `8855`
+  - artifacts: `6`
+  - ridge lambda: `1e-4`
+  - kinds: `k`
+  - layer alignment: `3->3`, `7->7`, `11->15`, `15->19`, `19->27`,
+    `23->31`
+  - map shape for every artifact: `512 -> 1024`
+- Fit metrics:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_k_only/fit_metrics.json`
+  - sha256:
+    `6c17e4c353af7e8b7574774358b22bb051faa3eb4de531575fad8c77d95f8e36`
+  - train tokens per map: `2,245,444`
+  - K mean-row cosine range: `0.853317589093372` to
+    `0.9101047250483691`
+  - K R² range: `0.5398957487107319` to `0.7053624018146802`
+- Pipeline history appended `fit-control-k-only` success at
+  `2026-07-04T19:43:10.581128+00:00`.
+
+**Remaining work:**
+
+- Run the V-only control fit.
+- Run held-out G1/G2 evaluation and G3 binding evaluation.
+- Produce the final write-up with the surviving claim level.
+
+### 2026-07-04 - V-Only Control Fit
+
+**Status:** complete.
+
+**Completed work:**
+
+- Ran the registered V-only control fit on the completed paired train capture.
+- Produced full-width V ridge maps for all six normal layer-aligned pairs.
+- Wrote control artifacts under `translator_v_only/`.
+- Updated `docs/QWEN35_GRAFT_TRANSLATION_POC_PLAN.md` with the V-only control
+  metrics summary.
+
+**Evidence:**
+
+- Pipeline command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py pipeline-next --root /mnt/ForgeRealm/qwen35_graft_translation_poc --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --layers all --source-max-chunks 64 --target-max-chunks 16 --ridge-lambda 1e-4 --topk 16 --binding-max-probes 32`
+- Output directory:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_v_only`
+- Translator manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_v_only/translator_manifest.json`
+  - sha256:
+    `8e49a7bf0306e268762a0bb43758c141025891764c77152551eb528d8ca727e7`
+  - paired train shards: `8855`
+  - artifacts: `6`
+  - ridge lambda: `1e-4`
+  - kinds: `v`
+  - layer alignment: `3->3`, `7->7`, `11->15`, `15->19`, `19->27`,
+    `23->31`
+  - map shape for every artifact: `512 -> 1024`
+- Fit metrics:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_v_only/fit_metrics.json`
+  - sha256:
+    `c7a38d85b965c74e222e7379676cfbbab287b6bc6f4dd53c1f6dfa27ef02ec76`
+  - train tokens per map: `2,245,444`
+  - V mean-row cosine range: `0.7531574545045864` to
+    `0.9686707426624085`
+  - V R² range: `0.4294227661704709` to `0.6218307136019108`
+- Pipeline history appended `fit-control-v-only` success.
+
+**Remaining work:**
+
+- Run held-out G1/G2 evaluation and G3 binding evaluation.
+- Produce the final write-up with the surviving claim level.
+
 ## Open Completion Queue
 
 These items are not complete and must stay visible until closed:
 
-1. Run full source capture.
-2. Run full target capture.
-3. Run the real train fit.
-4. Run G0 capture identity and live G0 logit identity smoke.
-5. Run G1/G2 held-out evaluation with controls.
-6. Run 2B-native and 9B-native binding baselines.
-7. Run G3 binding probe eval on the completed real translator.
-8. Produce the final write-up with the surviving claim level.
+1. Run G1/G2 held-out evaluation with controls.
+2. Run 2B-native and 9B-native binding baselines.
+3. Run G3 binding probe eval on the completed real translator.
+4. Produce the final write-up with the surviving claim level.
