@@ -524,6 +524,17 @@ measured `0.8530ms` with reused route wall `5.0754ms`, and 1,024 nodes measured
 ABI integration; at probe scope, K arena, route scratch, and GPU top-k are now
 persistent.
 
+P4 CUDA sidecar note: `core/grm_cuda_router.py` now exposes an optional
+runtime-facing CUDA sidecar wrapper without changing the dependency-free CPU
+router default. `CudaGQARouteSidecar` builds or loads the CUDA shared library,
+`CudaGQARouteBank` owns a device-resident route bank and maps CUDA row top-k back
+to GRM node IDs, and validation is covered by non-GPU tests. A direct sidecar
+smoke over 32 Qwen3.5-2B source layer-3 full-bank nodes with node IDs remapped to
+`1000..1031` matched the batched Python law 2/2, measuring `0.0809ms` per query
+and `0.2835ms` reused route wall. Remaining work is wiring this sidecar under a
+native/router snapshot policy or adding an explicit nvcc-enabled runtime build
+mode; the existing CPU C ABI remains unchanged.
+
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The
 path preserves the raw-q.k law in focused parity and exhaustive benchmark

@@ -2,7 +2,13 @@ import json
 import subprocess
 
 import numpy as np
+import pytest
 
+from core.grm_cuda_router import (
+    CudaGQARouteSidecar,
+    CudaRouterUnavailable,
+    validate_gqa_route_bank,
+)
 from scripts import grm_router_baseline as baseline
 from scripts import grm_gqa_router_benchmark as gqa_benchmark
 
@@ -155,6 +161,31 @@ def test_gqa_cuda_probe_help_cli_smoke():
     ], cwd=baseline.ROOT, check=True, capture_output=True, text=True)
 
     assert "CUDA/cuBLAS GQA raw q.k router" in result.stdout
+
+
+def test_cuda_gqa_route_bank_validation_defaults_dense_node_ids():
+    keys = np.zeros((3, 2, 4, 8), dtype=np.float16)
+
+    keys_np, node_ids = validate_gqa_route_bank(keys)
+
+    assert keys_np.dtype == np.float32
+    assert keys_np.flags.c_contiguous
+    np.testing.assert_array_equal(node_ids, np.asarray([0, 1, 2], dtype=np.uint64))
+
+
+def test_cuda_gqa_route_bank_validation_checks_node_id_count():
+    keys = np.zeros((3, 2, 4, 8), dtype=np.float32)
+
+    with pytest.raises(ValueError, match="node_ids length"):
+        validate_gqa_route_bank(keys, np.asarray([10, 11], dtype=np.uint64))
+
+
+def test_cuda_gqa_sidecar_missing_nvcc_reports_unavailable(tmp_path):
+    with pytest.raises(CudaRouterUnavailable, match="nvcc not found"):
+        CudaGQARouteSidecar.build(
+            tmp_path / "cuda-build",
+            nvcc="/definitely/missing/nvcc",
+        )
 
 
 def test_gqa_router_benchmark_smoke_cli_reads_capture_shards(tmp_path):

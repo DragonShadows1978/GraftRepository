@@ -411,6 +411,17 @@ second route is the steady-state path once K and scratch buffers are resident.
 At probe scope, the CUDA path now has persistent K, persistent route scratch, and
 GPU top-k. Remaining CUDA work is the runtime C ABI integration.
 
+`core/grm_cuda_router.py` adds the first runtime-facing CUDA sidecar wrapper. It
+does not change `NativeGraftStore.route_gqa()` or the dependency-free C++ router
+default. The wrapper builds or loads the CUDA shared library, validates dense GQA
+route banks, owns a persistent CUDA arena, and maps CUDA row IDs back to caller
+provided GRM node IDs. A direct sidecar smoke over 32 Qwen3.5-2B source layer-3
+full-bank nodes remapped rows to node IDs `1000..1031`; CUDA matched the batched
+Python law 2/2, measuring `0.0809ms` per query and `0.2835ms` reused route wall.
+The remaining integration choice is whether the native snapshot layer calls this
+sidecar explicitly or grows an nvcc-enabled build mode; either way, the existing
+CPU C ABI remains the fallback.
+
 `GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
 routes query-token-4 GQA keys over that layout. It is parity-green but rejected
 for runtime default use on the hard full-bank capture shape: Qwen3.5-2B source
@@ -579,9 +590,10 @@ Fresh post-snapshot GQA receipts:
   query at 1,024 full-bank nodes after K is resident; its GPU-top-k follow-up
   returns only node IDs and measures `1.5427ms`, and the persistent-K arena probe
   measures `1.4048ms` at the same 1,024-node shape. Persistent route scratch
-  buffers bring the reused route wall to `12.6367ms` at 1,024 nodes. The next
-  useful CUDA work is runtime C ABI integration rather than more CPU scorer
-  variants.
+  buffers bring the reused route wall to `12.6367ms` at 1,024 nodes. The CUDA
+  sidecar wrapper now maps row top-k back to GRM node IDs, so the next useful
+  CUDA work is choosing and implementing the runtime attachment policy rather
+  than more CPU scorer variants.
   The opt-in transposed key-bank experiment was parity-green but slower on the
   2B full-bank capture shape, so it stays diagnostic-only; the next useful slice
   is still a lower-level GEMM/BLAS layout rather than a duplicate host layout
