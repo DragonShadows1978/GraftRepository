@@ -365,6 +365,22 @@ This is the first path that decisively beats the host route-time target at
 persistent GPU K arena plus GPU top-k so every route does not copy full score
 vectors back to host.
 
+The follow-up `gpu_topk` probe moves top-k selection onto the device and returns
+only winning node IDs to host. It is still standalone and still includes
+one-shot allocation/H2D/K-pack in wall time, but the timed route loop no longer
+copies the full route-score vector.
+
+| CUDA/cuBLAS probe shape | output mode | nodes | device route ms/query | one-shot wall ms | parity |
+| --- | --- | ---: | ---: | ---: | --- |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | gpu_topk | 32 | 0.0819 | 247.1354 | true, 2/2 queries |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | gpu_topk | 512 | 0.8348 | 220.7773 | true, 6/6 queries |
+| Qwen3.5-2B source layer-3 full 256-token K-bank | gpu_topk | 1,024 | 1.5427 | 227.9287 | true, 8/8 queries |
+
+The first short 1,024-node `gpu_topk` run was parity-green but noisy at
+`2.3217ms` per query, so the table records the longer six-measured-query
+receipt. Remaining CUDA work is now the persistent GPU K arena and runtime C ABI
+integration; probe-scope GPU top-k is closed for `topk <= 16`.
+
 `GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
 routes query-token-4 GQA keys over that layout. It is parity-green but rejected
 for runtime default use on the hard full-bank capture shape: Qwen3.5-2B source
@@ -530,8 +546,10 @@ Fresh post-snapshot GQA receipts:
   heads but still regresses (`29.1954ms` p50 at 1,024 nodes), so repeated-head
   reuse without a tighter schedule is not enough.
   The standalone CUDA/cuBLAS probe is parity-green and reaches `1.4769ms` per
-  query at 1,024 full-bank nodes after K is resident, so the next useful work is
-  persistent GPU arena/top-k integration rather than more CPU scorer variants.
+  query at 1,024 full-bank nodes after K is resident; its GPU-top-k follow-up
+  returns only node IDs and measures `1.5427ms` at the same 1,024-node shape. The
+  next useful CUDA work is persistent GPU arena/runtime integration rather than
+  more CPU scorer variants.
   The opt-in transposed key-bank experiment was parity-green but slower on the
   2B full-bank capture shape, so it stays diagnostic-only; the next useful slice
   is still a lower-level GEMM/BLAS layout rather than a duplicate host layout

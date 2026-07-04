@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import ctypes
 import json
-import math
 from pathlib import Path
 import shutil
 import subprocess
@@ -142,6 +141,79 @@ __global__ void normalize_kernel(float* __restrict__ route, int nodes, int query
   }
 }
 
+__device__ bool better_score(float lhs_score, uint64_t lhs_id,
+                             float rhs_score, uint64_t rhs_id) {
+  return lhs_score > rhs_score ||
+         (lhs_score == rhs_score && lhs_id < rhs_id);
+}
+
+__device__ void insert_topk(float score, uint64_t node_id,
+                            float* scores, uint64_t* ids, int topk) {
+  if (topk <= 0 || !isfinite(score)) {
+    return;
+  }
+  if (!better_score(score, node_id, scores[topk - 1], ids[topk - 1])) {
+    return;
+  }
+  int pos = topk - 1;
+  while (pos > 0 && better_score(score, node_id, scores[pos - 1], ids[pos - 1])) {
+    scores[pos] = scores[pos - 1];
+    ids[pos] = ids[pos - 1];
+    --pos;
+  }
+  scores[pos] = score;
+  ids[pos] = node_id;
+}
+
+__global__ void topk_kernel(
+    const float* __restrict__ route,
+    uint64_t* __restrict__ topk_ids,
+    int nodes,
+    int topk) {
+  constexpr int kMaxTopK = 16;
+  extern __shared__ unsigned char scratch_raw[];
+  float* shared_scores = reinterpret_cast<float*>(scratch_raw);
+  uint64_t* shared_ids = reinterpret_cast<uint64_t*>(
+      shared_scores + blockDim.x * kMaxTopK);
+  float local_scores[kMaxTopK];
+  uint64_t local_ids[kMaxTopK];
+  if (topk > kMaxTopK) {
+    return;
+  }
+  for (int i = 0; i < kMaxTopK; ++i) {
+    local_scores[i] = -INFINITY;
+    local_ids[i] = UINT64_MAX;
+  }
+  for (int node = threadIdx.x; node < nodes; node += blockDim.x) {
+    insert_topk(route[node], static_cast<uint64_t>(node),
+                local_scores, local_ids, topk);
+  }
+  const int base = threadIdx.x * kMaxTopK;
+  for (int i = 0; i < kMaxTopK; ++i) {
+    shared_scores[base + i] = local_scores[i];
+    shared_ids[base + i] = local_ids[i];
+  }
+  __syncthreads();
+  if (threadIdx.x == 0) {
+    float best_scores[kMaxTopK];
+    uint64_t best_ids[kMaxTopK];
+    for (int i = 0; i < kMaxTopK; ++i) {
+      best_scores[i] = -INFINITY;
+      best_ids[i] = UINT64_MAX;
+    }
+    for (int t = 0; t < blockDim.x; ++t) {
+      const int t_base = t * kMaxTopK;
+      for (int i = 0; i < topk; ++i) {
+        insert_topk(shared_scores[t_base + i], shared_ids[t_base + i],
+                    best_scores, best_ids, topk);
+      }
+    }
+    for (int i = 0; i < topk; ++i) {
+      topk_ids[i] = best_ids[i];
+    }
+  }
+}
+
 extern "C" int grm_gqa_cublas_route(
     const float* keys_host,
     const float* queries_host,
@@ -153,12 +225,14 @@ extern "C" int grm_gqa_cublas_route(
     int query_tokens,
     int head_dim,
     int warmup,
-    float* out_scores_host,
+    int topk,
+    uint64_t* out_topk_host,
     float* elapsed_ms_host) {
-  if (!keys_host || !queries_host || !out_scores_host || !elapsed_ms_host ||
+  if (!keys_host || !queries_host || !out_topk_host || !elapsed_ms_host ||
       nodes <= 0 || kv_heads <= 0 || key_tokens <= 0 || query_count <= 0 ||
       query_heads <= 0 || query_tokens <= 0 || head_dim <= 0 ||
-      query_heads % kv_heads != 0 || warmup < 0 || warmup >= query_count) {
+      query_heads % kv_heads != 0 || warmup < 0 || warmup >= query_count ||
+      topk <= 0 || topk > 16) {
     return -1;
   }
 
@@ -186,6 +260,7 @@ extern "C" int grm_gqa_cublas_route(
   float* d_q_col = nullptr;
   float* d_scores = nullptr;
   float* d_route = nullptr;
+  uint64_t* d_topk = nullptr;
   cudaEvent_t start = nullptr;
   cudaEvent_t stop = nullptr;
   cublasHandle_t handle = nullptr;
@@ -202,6 +277,9 @@ extern "C" int grm_gqa_cublas_route(
   rc = cuda_code(cudaMalloc(&d_scores, score_values * sizeof(float)));
   if (rc != 0) goto cleanup;
   rc = cuda_code(cudaMalloc(&d_route, route_values * sizeof(float)));
+  if (rc != 0) goto cleanup;
+  rc = cuda_code(cudaMalloc(&d_topk, static_cast<size_t>(query_count) * topk *
+                                      sizeof(uint64_t)));
   if (rc != 0) goto cleanup;
   rc = cuda_code(cudaMemcpy(
       d_keys, keys_host, key_values * sizeof(float), cudaMemcpyHostToDevice));
@@ -272,11 +350,9 @@ extern "C" int grm_gqa_cublas_route(
     normalize_kernel<<<grid, threads>>>(d_route, nodes, query_heads);
     rc = cuda_code(cudaGetLastError());
     if (rc != 0) goto cleanup;
-    rc = cuda_code(cudaMemcpy(
-        out_scores_host + static_cast<size_t>(qi) * nodes,
-        d_route,
-        route_values * sizeof(float),
-        cudaMemcpyDeviceToHost));
+    topk_kernel<<<1, threads, threads * 16 * (sizeof(float) + sizeof(uint64_t))>>>(
+        d_route, d_topk + static_cast<size_t>(qi) * topk, nodes, topk);
+    rc = cuda_code(cudaGetLastError());
     if (rc != 0) goto cleanup;
   }
   rc = cuda_code(cudaEventRecord(stop, 0));
@@ -284,6 +360,12 @@ extern "C" int grm_gqa_cublas_route(
   rc = cuda_code(cudaEventSynchronize(stop));
   if (rc != 0) goto cleanup;
   rc = cuda_code(cudaEventElapsedTime(elapsed_ms_host, start, stop));
+  if (rc != 0) goto cleanup;
+  rc = cuda_code(cudaMemcpy(
+      out_topk_host,
+      d_topk,
+      static_cast<size_t>(query_count) * topk * sizeof(uint64_t),
+      cudaMemcpyDeviceToHost));
 
 cleanup:
   if (handle) cublasDestroy(handle);
@@ -295,6 +377,7 @@ cleanup:
   if (d_q_col) cudaFree(d_q_col);
   if (d_scores) cudaFree(d_scores);
   if (d_route) cudaFree(d_route);
+  if (d_topk) cudaFree(d_topk);
   return rc;
 }
 """
@@ -336,17 +419,19 @@ class CudaProbe:
             ctypes.c_int,
             ctypes.c_int,
             ctypes.c_int,
-            ctypes.POINTER(ctypes.c_float),
+            ctypes.c_int,
+            ctypes.POINTER(ctypes.c_uint64),
             ctypes.POINTER(ctypes.c_float),
         ]
         self.lib.grm_gqa_cublas_route.restype = ctypes.c_int
 
-    def route_scores(
+    def route_topk(
         self,
         keys: np.ndarray,
         queries: np.ndarray,
         *,
         warmup: int,
+        topk: int,
     ) -> tuple[np.ndarray, float, float]:
         keys = np.ascontiguousarray(keys, dtype=np.float32)
         queries = np.ascontiguousarray(queries, dtype=np.float32)
@@ -354,7 +439,7 @@ class CudaProbe:
         query_count, query_heads, query_tokens, query_dim = queries.shape
         if query_dim != head_dim:
             raise ValueError("query head_dim does not match keys")
-        out = np.empty((query_count, nodes), dtype=np.float32)
+        out = np.empty((query_count, topk), dtype=np.uint64)
         elapsed = ctypes.c_float(0.0)
         t0 = time.perf_counter_ns()
         rc = self.lib.grm_gqa_cublas_route(
@@ -368,23 +453,14 @@ class CudaProbe:
             query_tokens,
             head_dim,
             warmup,
-            out.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+            topk,
+            out.ctypes.data_as(ctypes.POINTER(ctypes.c_uint64)),
             ctypes.byref(elapsed),
         )
         wall_ms = (time.perf_counter_ns() - t0) / 1.0e6
         if rc != 0:
             raise RuntimeError(f"CUDA/cuBLAS probe failed with code {rc}")
         return out, float(elapsed.value), wall_ms
-
-
-def route_topk(scores: np.ndarray, topk: int) -> list[int]:
-    rows = [
-        (float(score), int(node_id))
-        for node_id, score in enumerate(scores)
-        if math.isfinite(float(score))
-    ]
-    rows.sort(key=lambda item: (-item[0], item[1]))
-    return [node_id for _score, node_id in rows[:topk]]
 
 
 def write_markdown(result: dict, path: Path) -> None:
@@ -399,6 +475,7 @@ def write_markdown(result: dict, path: Path) -> None:
         f"- layer: {result['capture']['layer']}",
         f"- key_tokens: {result['shape']['key_tokens']}",
         f"- query_tokens: {result['shape']['query_tokens']}",
+        f"- output_mode: `{result['output_mode']}`",
         f"- parity: {str(result['parity']).lower()}",
         f"- device measured p50 ms: {result['device_route_ms_p50']:.4f}",
         f"- device measured p95 ms: {result['device_route_ms_p95']:.4f}",
@@ -468,10 +545,11 @@ def main(argv: list[str]) -> int:
     try:
         lib = build_probe(build_dir, nvcc)
         probe = CudaProbe(lib)
-        scores, device_ms, wall_ms = probe.route_scores(
+        topk_ids, device_ms, wall_ms = probe.route_topk(
             routes,
             queries,
             warmup=args.warmup,
+            topk=args.topk,
         )
     finally:
         if build_parent is not None:
@@ -488,11 +566,12 @@ def main(argv: list[str]) -> int:
             args.topk,
             "batched",
         )
-        got = route_topk(scores[i], args.topk)
+        got = [int(x) for x in topk_ids[i].tolist()]
         if got != expected:
             mismatches.append({"query": i, "python": expected, "cuda": got})
     result = {
         "schema": "grm-gqa-cuda-cublas-probe-v1",
+        "output_mode": "gpu_topk",
         "repo": str(ROOT),
         "preset": args.preset,
         "nodes": int(routes.shape[0]),

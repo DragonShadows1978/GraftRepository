@@ -491,6 +491,17 @@ target. Qwen3.5-2B source layer-3 full-bank captures were parity-green:
 so the next implementation slice is to make the GPU K arena persistent and
 return top-k without copying full score vectors back to host.
 
+P4 CUDA GPU-top-k note: the CUDA probe now performs top-k selection on device
+and returns only the winning node IDs to host (`output_mode=gpu_topk`), removing
+the full route-score copy from the measured route loop. This remains a
+standalone probe and not a runtime C ABI path. Qwen3.5-2B source layer-3
+full-bank captures stayed parity-green: 32 nodes measured `0.0819ms` per query,
+512 nodes measured `0.8348ms`, and a longer 1,024-node run measured `1.5427ms`.
+One short 1,024-node run measured `2.3217ms`, so the kept receipt uses the
+longer six-measured-query average. The next implementation slice is now the
+persistent GPU K arena plus runtime integration; GPU top-k itself is proven at
+probe scope for `topk <= 16`.
+
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The
 path preserves the raw-q.k law in focused parity and exhaustive benchmark
