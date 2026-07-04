@@ -163,6 +163,17 @@ def test_gqa_cuda_probe_help_cli_smoke():
     assert "CUDA/cuBLAS GQA raw q.k router" in result.stdout
 
 
+def test_gqa_cuda_bridge_smoke_help_cli_smoke():
+    result = subprocess.run([
+        "python3",
+        "scripts/grm_gqa_cuda_bridge_smoke.py",
+        "--help",
+    ], cwd=baseline.ROOT, check=True, capture_output=True, text=True)
+
+    assert "CUDA route bridge" in result.stdout
+    assert "--route-repeats" in result.stdout
+
+
 def test_cuda_gqa_route_bank_validation_defaults_dense_node_ids():
     keys = np.zeros((3, 2, 4, 8), dtype=np.float16)
 
