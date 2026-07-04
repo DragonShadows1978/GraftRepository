@@ -422,6 +422,17 @@ The remaining integration choice is whether the native snapshot layer calls this
 sidecar explicitly or grows an nvcc-enabled build mode; either way, the existing
 CPU C ABI remains the fallback.
 
+`NativeGraftStore` now exposes that explicit attachment path:
+`configure_cuda_gqa_route_bank()` attaches a dense CUDA GQA route bank and
+`route_gqa_cuda()` routes through it. The normal `route_gqa()` method is
+unchanged and still uses the dependency-free CPU C ABI. A CPU-only regression
+checks that CUDA routing fails closed until a bank is explicitly configured. A
+native-wrapper CUDA smoke built the standard `libgrm_runtime.so`, added 32 GQA
+nodes, attached the Qwen3.5-2B source layer-3 full-bank route bank, and matched
+the batched Python top-5 `[11, 31, 4, 15, 29]`; measured `0.1056ms` per query and
+`0.2266ms` reused route wall. Remaining runtime work is snapshot/mutation policy
+for automatic attachment/invalidation, not the core CUDA route mechanics.
+
 `GRM_ROUTER_GQA_TRANSPOSED=1` builds a duplicate transposed prepared key bank and
 routes query-token-4 GQA keys over that layout. It is parity-green but rejected
 for runtime default use on the hard full-bank capture shape: Qwen3.5-2B source
@@ -591,9 +602,10 @@ Fresh post-snapshot GQA receipts:
   returns only node IDs and measures `1.5427ms`, and the persistent-K arena probe
   measures `1.4048ms` at the same 1,024-node shape. Persistent route scratch
   buffers bring the reused route wall to `12.6367ms` at 1,024 nodes. The CUDA
-  sidecar wrapper now maps row top-k back to GRM node IDs, so the next useful
-  CUDA work is choosing and implementing the runtime attachment policy rather
-  than more CPU scorer variants.
+  sidecar wrapper now maps row top-k back to GRM node IDs, and `NativeGraftStore`
+  exposes an explicit CUDA bank attachment path. The next useful CUDA work is
+  automatic snapshot/mutation invalidation policy rather than more CPU scorer
+  variants.
   The opt-in transposed key-bank experiment was parity-green but slower on the
   2B full-bank capture shape, so it stays diagnostic-only; the next useful slice
   is still a lower-level GEMM/BLAS layout rather than a duplicate host layout

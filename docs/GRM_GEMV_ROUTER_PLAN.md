@@ -535,6 +535,17 @@ and `0.2835ms` reused route wall. Remaining work is wiring this sidecar under a
 native/router snapshot policy or adding an explicit nvcc-enabled runtime build
 mode; the existing CPU C ABI remains unchanged.
 
+P4 native CUDA attachment note: `NativeGraftStore` now has an explicit
+`configure_cuda_gqa_route_bank()` / `route_gqa_cuda()` path. The default
+`route_gqa()` C ABI remains CPU and dependency-free; CUDA is only used after a
+caller attaches a dense GQA route bank and node-id mapping. CPU-only regression
+coverage verifies `route_gqa_cuda()` fails closed without that explicit bank. A
+native-wrapper CUDA smoke built the normal `libgrm_runtime.so`, added 32 GQA
+nodes, attached the Qwen3.5-2B source layer-3 full-bank route bank, and matched
+the batched Python law for top-5: `[11, 31, 4, 15, 29]`, with `0.1056ms` per
+query and `0.2266ms` reused route wall. Remaining work is policy-level
+snapshot/mutation invalidation for automatic CUDA attachment in serving code.
+
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The
 path preserves the raw-q.k law in focused parity and exhaustive benchmark

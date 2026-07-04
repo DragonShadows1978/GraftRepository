@@ -464,6 +464,18 @@ def test_native_gqa_raw_route_matches_python_law(tmp_path):
         assert store.route_gqa(q, lexical_keys=["a17"], topk=3)[0] == n_lex
 
 
+def test_native_gqa_cuda_route_requires_explicit_bank(tmp_path):
+    lib = build_native(tmp_path)
+    q = np.zeros((1, 1, 2), dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="Qwen3_TC", num_layers=36,
+            hidden_dim=2560, vals_per_tok_layer=2048, route_layer=0,
+            payload_kind="gqa", num_kv_heads=1, head_dim=2) as store:
+        with pytest.raises(RuntimeError, match="route bank is not configured"):
+            store.route_gqa_cuda(q, topk=1)
+
+
 def test_native_gqa_segment_reduce_matches_python_law(tmp_path, monkeypatch):
     def raw_score(query, key):
         h, _, dh = query.shape

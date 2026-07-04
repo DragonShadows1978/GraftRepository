@@ -161,6 +161,11 @@ class NativeGraftStore:
         self._lib = ctypes.CDLL(lib_path or _default_lib_path())
         self._bind()
         payload_kind = str(payload_kind).lower()
+        self._payload_kind = payload_kind
+        self._num_kv_heads = int(num_kv_heads)
+        self._head_dim = int(head_dim)
+        self._cuda_gqa_sidecar = None
+        self._cuda_gqa_bank = None
         defaults = self._profile_defaults(payload_kind)
         position_law = position_law or defaults["position_law"]
         state_kind = state_kind or defaults["state_kind"]
@@ -653,6 +658,7 @@ class NativeGraftStore:
         lib.grm_store_last_error.restype = ctypes.c_char_p
 
     def close(self):
+        self.clear_cuda_gqa_route_bank()
         if getattr(self, "_handle", None):
             self._lib.grm_store_destroy(self._handle)
             self._handle = None
@@ -1466,6 +1472,64 @@ class NativeGraftStore:
             filters[0], filters[1], filters[2], filters[3], cap,
             out, cap, ctypes.byref(count)))
         return [int(out[i]) for i in range(int(count.value))]
+
+    def configure_cuda_gqa_route_bank(self, route_bank, node_ids=None, *,
+                                      sidecar=None, build_dir=None,
+                                      nvcc="nvcc"):
+        """Attach an explicit CUDA GQA route bank.
+
+        The default `route_gqa()` path remains the dependency-free CPU C ABI.
+        CUDA routing is opt-in through `route_gqa_cuda()` and is intended for
+        dense same-shape GQA route banks without lexical/filter policy.
+        """
+        if self._payload_kind != "gqa":
+            raise RuntimeError("CUDA GQA routing requires a GQA native store")
+        self.clear_cuda_gqa_route_bank()
+        from core.grm_cuda_router import CudaGQARouteSidecar
+
+        owns_sidecar = sidecar is None
+        if sidecar is None:
+            sidecar = CudaGQARouteSidecar.build(build_dir=build_dir, nvcc=nvcc)
+        try:
+            bank = sidecar.create_bank(route_bank, node_ids)
+        except Exception:
+            if owns_sidecar:
+                sidecar.close()
+            raise
+        self._cuda_gqa_sidecar = sidecar if owns_sidecar else None
+        self._cuda_gqa_bank = bank
+        return bank
+
+    def clear_cuda_gqa_route_bank(self):
+        if getattr(self, "_cuda_gqa_bank", None) is not None:
+            self._cuda_gqa_bank.close()
+            self._cuda_gqa_bank = None
+        if getattr(self, "_cuda_gqa_sidecar", None) is not None:
+            self._cuda_gqa_sidecar.close()
+            self._cuda_gqa_sidecar = None
+
+    def route_gqa_cuda(self, query, *, topk=3, warmup=0, route_repeats=1,
+                       return_receipt=False):
+        if self._payload_kind != "gqa":
+            raise RuntimeError("CUDA GQA routing requires a GQA native store")
+        if self._cuda_gqa_bank is None:
+            raise RuntimeError("CUDA GQA route bank is not configured")
+        q_np = np.ascontiguousarray(query, dtype=np.float32)
+        single = q_np.ndim == 3
+        if q_np.ndim not in (3, 4):
+            raise ValueError(
+                "GQA CUDA query must have shape (heads, tokens, dim) or "
+                "(queries, heads, tokens, dim)")
+        mapped, receipt = self._cuda_gqa_bank.route_topk(
+            q_np, topk=int(topk), warmup=int(warmup),
+            route_repeats=int(route_repeats))
+        if single:
+            result = [int(x) for x in mapped[0].tolist()]
+        else:
+            result = [[int(x) for x in row] for row in mapped.tolist()]
+        if return_receipt:
+            return result, receipt
+        return result
 
     def configure_arena(self, sink_tokens, arena_width):
         self._check(self._lib.grm_store_configure_arena(
