@@ -244,6 +244,32 @@ Exit gate:
 - The winner must improve translated positive margins and/or mean margin
   without worsening G1/G2.
 
+Current R4.1 protocol:
+
+- Scope: ridge-only sweep using the existing paired capture corpus.
+- No probe changes, no corpus recapture, no architecture changes.
+- Frozen V2 probe set:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json`
+- Baseline translator:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator`
+  - ridge lambda: `1e-4`
+  - V2 translated result: `40 / 64`, mean margin `0.41503181978418846`
+- New ridge candidates:
+  - `1e-5`
+  - `3e-5`
+  - `3e-4`
+  - `1e-3`
+- Output directories:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_ridge_<lambda>`
+- Required per candidate:
+  - `fit-translator` on train split,
+  - `eval-translator` on held-out split with `topk=16`,
+  - `eval-binding-probes` on frozen V2 with `modes=translated`.
+- Selection rule:
+  - prefer higher translated positive margins,
+  - break ties by translated mean margin,
+  - reject candidates that materially worsen held-out G1/G2 against baseline.
+
 ## Phase R5: Live G0 Repair
 
 Investigate live capture/reseat numerical mismatch separately from translator

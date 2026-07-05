@@ -297,3 +297,49 @@ Translation reliability track.
 
 - Start R4 translator tuning against the frozen V2 probe set.
 - Keep R5 live G0 repair separate from translator quality.
+
+### 2026-07-05 - R4.1 Ridge Sweep Protocol Registered
+
+**Status:** complete.
+
+**Completed work:**
+
+- Registered the first translator-tuning protocol before running new
+  candidates.
+- Froze R4.1 scope to a ridge-only sweep over the existing paired capture
+  corpus.
+- Confirmed no corpus recapture, probe changes, or architecture changes are in
+  scope for R4.1.
+
+**Protocol:**
+
+- Frozen probe set:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json`
+  - sha256:
+    `4cc97ff2d230692e8c0b21bc265bd63132605d16147c5b5623c4ba224728f4a5`
+- Baseline translator:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator`
+  - ridge lambda: `1e-4`
+  - V2 translated result: `40 / 64`, mean margin `0.41503181978418846`
+- New ridge candidates:
+  - `1e-5`
+  - `3e-5`
+  - `3e-4`
+  - `1e-3`
+- Candidate output pattern:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_ridge_<lambda>`
+- Required commands per candidate:
+  - `fit-translator`
+  - `eval-translator --split heldout --topk 16`
+  - `eval-binding-probes --modes translated` against frozen V2
+
+**Selection rule:**
+
+- Prefer higher translated positive margins.
+- Break ties by translated mean margin.
+- Reject candidates that materially worsen held-out G1/G2 against baseline.
+
+**Remaining work:**
+
+- Run R4.1 ridge candidates.
+- Summarize the winner and commit the result.
