@@ -355,6 +355,45 @@ Current R4.2 status:
 - Next tuning move should be either more paired corpus or an objective-level
   translator upgrade. Layer omission by itself is too blunt.
 
+Current R4.3 protocol:
+
+- Scope: expand paired capture corpus from the completed `2.5M` token baseline
+  to a `5M` token train/heldout cap, then refit the same ridge translator.
+- No probe changes and no translator architecture changes.
+- Keep the `2.5M` baseline artifacts intact; write separate R4.3 artifacts:
+  - corpus plan:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/corpus_plan_5m.json`
+  - captures:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/captures_5m`
+  - translator:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_corpus_5m`
+  - gates:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_corpus_5m.json`
+- Corpus sources remain the same as the baseline:
+  - `/mnt/ForgeRealm/scribe_mint_v1/manifest.jsonl`
+  - `/mnt/ForgeRealm/HumanBaselineCorpus/stories`
+- Actual generated plan total from those sources is `3,408,241` tokens, not
+  `5M`, because the source set is exhausted under the current filters.
+- Reuse existing overlapping captures only if shard identity is exact under
+  the new plan. Do not copy or relabel mismatched shards.
+- Overlap seed status:
+  - exact reusable old chunks: `9860`
+  - mismatched overlap chunks: `1`
+  - new-only chunks: `3959`
+  - hardlinked files: `39440`
+  - remaining capture work after seed: `3960` source chunks and `3960` target
+    chunks.
+- Exit gate:
+  - source and target captures complete for the `5M` plan,
+  - `translator_corpus_5m` fit on train split,
+  - held-out G1/G2 recorded,
+  - frozen V2 translated binding recorded.
+- Selection rule:
+  - prefer higher translated positive margins over the `2.5M` baseline
+    `40 / 64`,
+  - break ties by translated mean margin,
+  - reject if held-out G1/G2 materially regress.
+
 ## Phase R5: Live G0 Repair
 
 Investigate live capture/reseat numerical mismatch separately from translator
@@ -374,6 +413,5 @@ Exit gate:
 
 ## Open Queue
 
-1. Register and run R4.3: more paired corpus or objective-level translator
-   tuning against the frozen V2 probe set.
+1. Run R4.3 5M corpus expansion and evaluate against the frozen V2 probe set.
 2. Run R5 live G0 repair in parallel only when GPU/runtime time is available.

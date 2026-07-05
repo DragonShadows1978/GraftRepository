@@ -708,3 +708,122 @@ Translation reliability track.
 - Commit and push the R4.2 implementation/results checkpoint.
 - Register R4.3 after inspecting whether more corpus is already available or
   needs capture work.
+
+### 2026-07-05 - R4.3 5M Corpus Protocol Registered
+
+**Status:** complete.
+
+**Completed work:**
+
+- Inspected the current corpus/capture state.
+- Confirmed the baseline capture corpus is complete but capped at `2.5M`
+  tokens:
+  - source: `9861` shards, `2500000` tokens
+  - target: `9861` shards, `2500000` tokens
+  - train: `8855` paired shards, `2245444` tokens
+  - heldout: `1006` paired shards, `254556` tokens
+- Registered R4.3 as a `5M` paired-corpus expansion with separate artifacts
+  from the baseline.
+
+**Protocol:**
+
+- Baseline corpus plan:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/corpus_plan.json`
+  - max total tokens: `2500000`
+  - command line recorded in plan:
+    `scripts/qwen35_graft_translate_poc.py plan-corpus --model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --corpus /mnt/ForgeRealm/scribe_mint_v1/manifest.jsonl --corpus /mnt/ForgeRealm/HumanBaselineCorpus/stories --out /mnt/ForgeRealm/qwen35_graft_translation_poc/corpus_plan.json --chunk-tokens 256 --heldout-fraction 0.10 --seed qwen35-translation-poc-0 --max-total-tokens 2500000 --min-doc-tokens 64 --source-label scribe-mint-plus-humanbaseline-v1`
+- R4.3 corpus plan:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/corpus_plan_5m.json`
+  - max total tokens: `5000000`
+  - same corpus paths, chunk size, split fraction, seed, min-doc token floor,
+    and source label as baseline.
+- R4.3 capture directory:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/captures_5m`
+- R4.3 translator directory:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_corpus_5m`
+- Frozen V2 binding output:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_corpus_5m.json`
+
+**Rules:**
+
+- Do not mutate the completed baseline `2.5M` capture plan/artifacts.
+- Reuse old shards in `captures_5m` only when source/target shard identity is
+  exact under the new plan.
+- Use the same frozen V2 probe set as R2/R3/R4.1/R4.2.
+
+**Remaining work:**
+
+- Generate `corpus_plan_5m.json`.
+- Determine exact overlap with the baseline plan.
+- Seed `captures_5m` from exact overlap if possible.
+- Capture missing source/target shards.
+- Fit and gate `translator_corpus_5m`.
+
+### 2026-07-05 - R4.3 Corpus Plan And Capture Seed
+
+**Status:** complete.
+
+**Completed work:**
+
+- Generated the R4.3 `5M`-cap corpus plan.
+- Determined that the registered source set contains `3,408,241` usable tokens
+  under the current filters, so R4.3 is a `2.5M` to `3.41M` expansion unless a
+  later protocol adds new corpus sources.
+- Compared the baseline `2.5M` plan and R4.3 plan for exact chunk overlap.
+- Hardlinked exact-overlap source/target `.npz` and sidecar `.json` files into
+  `captures_5m`.
+- Refreshed the R4.3 capture manifest.
+
+**Commands:**
+
+- Corpus plan:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py plan-corpus --model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --corpus /mnt/ForgeRealm/scribe_mint_v1/manifest.jsonl --corpus /mnt/ForgeRealm/HumanBaselineCorpus/stories --out /mnt/ForgeRealm/qwen35_graft_translation_poc/corpus_plan_5m.json --chunk-tokens 256 --heldout-fraction 0.10 --seed qwen35-translation-poc-0 --max-total-tokens 5000000 --min-doc-tokens 64 --source-label scribe-mint-plus-humanbaseline-v1`
+- Capture manifest refresh:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py capture-status --plan /mnt/ForgeRealm/qwen35_graft_translation_poc/corpus_plan_5m.json --out-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/captures_5m`
+
+**Artifacts:**
+
+- R4.3 corpus plan:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/corpus_plan_5m.json`
+  - sha256:
+    `8cf20f167796742dca730271f0912e776c22b67beb0a5c26a40f6d582cb48a83`
+  - documents: `1292`
+  - chunks: `13820`
+  - total tokens: `3408241`
+  - train tokens: `3067954`
+  - heldout tokens: `340287`
+- Overlap seed summary:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/captures_5m_seed_overlap.json`
+  - sha256:
+    `38be2419533d21c36f44eb4cf6daf4e57fe57c07db771cb368d65b6348418418`
+  - exact reusable chunks: `9860`
+  - mismatched overlap chunks: `1`
+  - new-only chunks: `3959`
+  - hardlinked files: `39440`
+  - missing old file count: `0`
+  - mismatch: `doc_id=60ca70dec690f631`, `chunk_id=9860`,
+    old token count `37`, new token count `256`
+- R4.3 capture manifest after seed:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/captures_5m/capture_manifest.json`
+  - sha256:
+    `89afe6d924df2c7db4170995f5141be039baf93641f7241d5871c7dc92f24928`
+  - source completed: `9860 / 13820`
+  - target completed: `9860 / 13820`
+  - remaining source chunks: `3960`
+  - remaining target chunks: `3960`
+  - paired shards: `9860`
+  - paired tokens: `2499963`
+
+**Interpretation:**
+
+- The same registered source set cannot supply a full `5M` tokens after
+  filtering; it supplies `3.41M`.
+- Exact hardlink reuse avoided recapturing nearly all of the baseline corpus.
+- The remaining R4.3 work is approximately `908278` additional tokens per role
+  plus the one corrected overlap chunk.
+
+**Remaining work:**
+
+- Capture the remaining R4.3 source chunks.
+- Capture the remaining R4.3 target chunks.
+- Fit and gate `translator_corpus_5m`.
