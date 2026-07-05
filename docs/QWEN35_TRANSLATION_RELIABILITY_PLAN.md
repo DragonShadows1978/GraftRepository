@@ -1,0 +1,208 @@
+# Qwen3.5 Translation Reliability Plan
+
+**Status:** registered 2026-07-04. This is the follow-up plan after the
+completed Qwen3.5 2B-to-9B Translation PoC.
+
+**House rules for this track:**
+
+- Register protocol changes before running new gates.
+- Keep a completion ledger from day one:
+  `docs/QWEN35_TRANSLATION_RELIABILITY_LEDGER.md`.
+- Update the ledger after every completed implementation, eval, artifact, or
+  analysis step.
+- Record commands, artifact paths, and hashes for every result-bearing run.
+- Commit per completed phase or stable implementation checkpoint.
+- Do not treat partial or toy gates as full evidence.
+
+## Starting Point
+
+The original PoC completed and survived as **qualified binding transfer**:
+
+- G1 passed: average key recall@16 `0.637847516976028`, minimum
+  key/shuffled ratio `10.688533519012191`.
+- G2 passed: value-output cosine range `0.9094160406409361` to
+  `0.9932101022103578`, translated/wrong-layer MSE ratio max
+  `0.1447668773166899`.
+- G3 translated passed: `25 / 32` positive margins.
+- Source-native and target-native ceilings were both `32 / 32`.
+
+The weaknesses to fix are:
+
+- Live G0 logit identity failed the strict max-delta threshold:
+  `0.1875` vs `0.002`, though top-1 flip rate stayed `0.0`.
+- The G3 amnesia floor was high at `20 / 32`, so the probe set is not a clean
+  no-memory floor.
+- Translated mode missed `7 / 32` probes and had a low mean margin
+  (`1.3904626497223576`) compared with native ceilings.
+
+## Objective
+
+Make Qwen3.5 2B-to-9B graft translation more reliable and more defensible by:
+
+1. tightening the binding probe floor,
+2. diagnosing translated misses,
+3. rerunning binding under a harder registered probe set,
+4. improving translator training only after the harness is clean enough to
+   distinguish translator failure from test leakage.
+
+## Phase R0: Baseline Miss And Floor Analysis
+
+Analyze the existing `binding_eval_metrics.json` without changing the model or
+translator.
+
+Required outputs:
+
+- Per-probe table for all modes with:
+  - probe id
+  - gold candidate
+  - best decoy
+  - gold-minus-best-decoy margin
+  - success/failure
+  - token lengths for fact, query, gold, and decoys
+  - whether amnesia and translated agree
+- Summary of:
+  - translated misses
+  - amnesia successes
+  - probes where translated beats amnesia
+  - probes where amnesia beats translated
+
+Exit gate:
+
+- Analysis artifact exists under
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/`.
+- Ledger records command, hash, and the actionable failure pattern.
+
+## Phase R1: Binding Probe V2 Generator
+
+Add a stricter binding probe generator that reduces prior/prompt leakage.
+
+Design requirements:
+
+- Opaque facts only: invented names and random code-like values.
+- Matched decoys:
+  - same token-count bucket as gold when possible
+  - same surface class as gold
+  - no semantic hints
+- Multiple query templates per binding.
+- Deterministic seed and manifest metadata.
+- Schema version distinct from V1, likely
+  `qwen35_graft_translation_binding_probes_v2`.
+- Keep V1 generator/evaluator compatibility intact.
+
+Initial V2 probe shape:
+
+- `32` bindings.
+- `2` query templates per binding.
+- Evaluation can either flatten to `64` probe rows or keep grouped rows with
+  per-binding aggregation. The first implementation should flatten to preserve
+  the existing evaluator path.
+
+Exit gate:
+
+- Unit tests prove deterministic output, schema, decoy count, and no duplicate
+  gold/decoy values.
+- Probe artifact is written under
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json`.
+
+## Phase R2: Amnesia Floor Gate
+
+Run V2 in amnesia mode before interpreting translated transfer.
+
+Frozen floor thresholds:
+
+- `<= 12 / 32` positive margins for one-query-per-binding mode, or
+- `<= 24 / 64` positive margins for flattened two-query mode.
+
+If amnesia remains above the floor:
+
+- Do not tune translator yet.
+- Revise probe generator with harder values/decoys and record the failure.
+
+Exit gate:
+
+- Amnesia floor artifact exists.
+- Ledger states whether V2 is clean enough for translated evaluation.
+
+## Phase R3: V2 Full Binding Gate
+
+Run V2 across:
+
+- `amnesia`
+- `source-native`
+- `target-native`
+- `translated`
+
+Frozen translated pass thresholds:
+
+- Source-native and target-native should stay at or near ceiling:
+  `>= 28 / 32` or `>= 56 / 64`.
+- Translated must beat amnesia by at least `+8` positive margins and pass the
+  original binomial-style threshold:
+  - `>= 14 / 32`, or
+  - `>= 28 / 64` for flattened two-query mode.
+- Report mean margin and min margin for every mode.
+
+Exit gate:
+
+- V2 full binding artifact exists.
+- Claim level is updated:
+  - no clean transfer,
+  - geometry only,
+  - binding transfer signal,
+  - stronger binding transfer.
+
+## Phase R4: Translator Reliability Tuning
+
+Only start after R2/R3 prove the probe floor is clean enough.
+
+Candidate interventions, in order:
+
+1. Layer selection policy:
+   - test all layers,
+   - skip weak early layer,
+   - weight layers by held-out G1/G2 quality.
+2. Ridge sweep using train-split diagnostics only:
+   - `1e-5`, `3e-5`, `1e-4`, `3e-4`, `1e-3`.
+3. More paired corpus:
+   - `5M` tokens,
+   - `10M` tokens.
+4. Residual translator:
+   - ridge baseline plus small low-rank residual,
+   - do not approach "rerun the model" capacity.
+5. Objective upgrade:
+   - K score/top-k preservation loss,
+   - V attention-output reconstruction loss.
+
+Exit gate:
+
+- Every intervention reports G1/G2 and V2 G3 against the same frozen V2 probe
+  set.
+- The winner must improve translated positive margins and/or mean margin
+  without worsening G1/G2.
+
+## Phase R5: Live G0 Repair
+
+Investigate live capture/reseat numerical mismatch separately from translator
+quality.
+
+Work items:
+
+- Compare static capture identity vs live logit identity layer-by-layer.
+- Check mount offset, RoPE seat, dtype, cache update path, and logits after
+  each mounted layer subset.
+- Add a debug artifact that records max/mean logit delta per layer subset.
+
+Exit gate:
+
+- Live G0 max abs delta approaches the frozen floor or the remaining delta is
+  explained and registered as the runtime noise floor.
+
+## Open Queue
+
+1. Implement R0 miss/floor analysis CLI.
+2. Run R0 on the existing V1 binding artifact.
+3. Implement R1 V2 probe generator and tests.
+4. Run R2 V2 amnesia floor gate.
+5. Run R3 V2 full binding gate if floor is clean.
+6. Start R4 translator tuning only after V2 is clean enough.
+7. Run R5 live G0 repair in parallel only when GPU/runtime time is available.
