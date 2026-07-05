@@ -1,6 +1,7 @@
 # Qwen3.5 Translation Reliability Plan
 
-**Status:** R2 V2 amnesia floor gate complete. R3 full V2 binding gate is next.
+**Status:** R3 full V2 binding gate complete. R4 translator reliability tuning
+is next.
 
 **House rules for this track:**
 
@@ -189,6 +190,31 @@ Exit gate:
   - binding transfer signal,
   - stronger binding transfer.
 
+Current status:
+
+- Complete.
+- Artifact:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_full.json`
+- sha256:
+  `e8157316292e88ab872144354e5f54ee68b409c81d7334f4a190b13d1b9a2df7`
+- Analysis artifact:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_full_analysis.json`
+- analysis sha256:
+  `123543a4377c3c8068b17215b47f97707904b074bcc4634549777c0990f3ba23`
+- Mode summary:
+  - amnesia: `9 / 64`, mean margin `-2.255242589061309`, min margin
+    `-6.48096410594205`
+  - source-native: `64 / 64`, mean margin `38.7234434921245`, min margin
+    `31.493913498901925`
+  - target-native: `64 / 64`, mean margin `34.43096542845171`, min margin
+    `29.44889459450494`
+  - translated: `40 / 64`, mean margin `0.41503181978418846`, min margin
+    `-5.668900343599823`
+- Decision: V2 establishes a stronger binding transfer signal. Translated
+  exceeds the frozen `>= 28 / 64` pass threshold and beats amnesia by `+31`
+  positive margins, but the `24 / 64` translated misses make R4 tuning
+  worthwhile before stronger reliability claims.
+
 ## Phase R4: Translator Reliability Tuning
 
 Only start after R2/R3 prove the probe floor is clean enough.
@@ -237,6 +263,5 @@ Exit gate:
 
 ## Open Queue
 
-1. Run R3 V2 full binding gate.
-2. Start R4 translator tuning only after V2 is clean enough.
-3. Run R5 live G0 repair in parallel only when GPU/runtime time is available.
+1. Start R4 translator tuning against the frozen V2 probe set.
+2. Run R5 live G0 repair in parallel only when GPU/runtime time is available.

@@ -225,3 +225,75 @@ Translation reliability track.
 
 - Run R3 V2 full binding gate.
 - Start R4 translator tuning only after the R3 result is known.
+
+### 2026-07-05 - R3 V2 Full Binding Gate
+
+**Status:** complete.
+
+**Completed work:**
+
+- Ran the frozen V2 probe set across `amnesia`, `source-native`,
+  `target-native`, and `translated`.
+- Ran `analyze-binding-eval` on the full V2 result to capture translated
+  misses and translated-vs-amnesia margin comparisons.
+- Updated `docs/QWEN35_TRANSLATION_RELIABILITY_PLAN.md` with the R3 result and
+  moved the open queue to R4 translator tuning.
+
+**Evidence:**
+
+- R3 command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-probes --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_full.json --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator --modes amnesia,source-native,target-native,translated --max-probes 64 --layers all`
+- R3 artifact:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_full.json`
+  - sha256:
+    `e8157316292e88ab872144354e5f54ee68b409c81d7334f4a190b13d1b9a2df7`
+  - schema: `qwen35_graft_translation_binding_eval_v1`
+  - probe count: `64`
+- R3 analysis command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py analyze-binding-eval --binding-eval /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_full.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_full_analysis.json`
+- R3 analysis artifact:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_full_analysis.json`
+  - sha256:
+    `123543a4377c3c8068b17215b47f97707904b074bcc4634549777c0990f3ba23`
+  - schema: `qwen35_graft_translation_binding_analysis_v1`
+
+**Mode summary:**
+
+- amnesia: `9 / 64` positive margins, mean margin
+  `-2.255242589061309`, min margin `-6.48096410594205`
+- source-native: `64 / 64` positive margins, mean margin
+  `38.7234434921245`, min margin `31.493913498901925`
+- target-native: `64 / 64` positive margins, mean margin
+  `34.43096542845171`, min margin `29.44889459450494`
+- translated: `40 / 64` positive margins, mean margin
+  `0.41503181978418846`, min margin `-5.668900343599823`
+
+**R3 analysis:**
+
+- translated misses: `24 / 64`
+  - `bind-v2-002-q0`, `bind-v2-002-q1`, `bind-v2-005-q0`,
+    `bind-v2-005-q1`, `bind-v2-007-q1`, `bind-v2-012-q0`,
+    `bind-v2-012-q1`, `bind-v2-013-q1`, `bind-v2-015-q0`,
+    `bind-v2-016-q0`, `bind-v2-017-q0`, `bind-v2-017-q1`,
+    `bind-v2-019-q0`, `bind-v2-020-q0`, `bind-v2-020-q1`,
+    `bind-v2-022-q0`, `bind-v2-023-q0`, `bind-v2-023-q1`,
+    `bind-v2-026-q0`, `bind-v2-027-q0`, `bind-v2-027-q1`,
+    `bind-v2-029-q1`, `bind-v2-030-q1`, `bind-v2-031-q0`
+- amnesia successes: `9 / 64`
+- translated beats amnesia by margin: `63 / 64`
+- amnesia beats translated by margin: `1 / 64`
+  - `bind-v2-027-q0`
+
+**Interpretation:**
+
+- R3 passes the frozen full-gate thresholds:
+  source-native and target-native both reached `64 / 64`, translated exceeded
+  `>= 28 / 64`, and translated beat amnesia by `+31` positive margins.
+- Claim level: stronger binding transfer signal, but not yet high-reliability
+  transfer. The translated mean margin is shallow and misses `24 / 64`, so R4
+  should tune the translator against the frozen V2 set.
+
+**Remaining work:**
+
+- Start R4 translator tuning against the frozen V2 probe set.
+- Keep R5 live G0 repair separate from translator quality.
