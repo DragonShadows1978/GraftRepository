@@ -863,3 +863,124 @@ Translation reliability track.
 - Fit `translator_corpus_5m` with:
   `fit-translator --backend cupy --skip-fit-metrics`.
 - Run held-out G1/G2 and frozen V2 translated binding gates.
+
+### 2026-07-05 - R4.3 Expanded Corpus Result
+
+**Status:** complete.
+
+**Completed work:**
+
+- Completed the expanded R4.3 source and target captures.
+- Refreshed `captures_5m/capture_manifest.json`.
+- Fit `translator_corpus_5m` on the expanded train split with CuPy.
+- Ran full held-out G1/G2 on the expanded held-out split.
+- Ran frozen V2 translated binding eval with the same `64` probe set used by
+  R2/R3/R4.1/R4.2.
+- Wrote standard binding analysis for the R4.3 result.
+
+**Commands:**
+
+- Capture status refresh:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py capture-status --plan /mnt/ForgeRealm/qwen35_graft_translation_poc/corpus_plan_5m.json --out-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/captures_5m`
+- Expanded translator fit:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py fit-translator --capture-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/captures_5m --out-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_corpus_5m --ridge-lambda 1e-4 --split train --backend cupy --skip-fit-metrics`
+- Held-out G1/G2:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-translator --capture-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/captures_5m --translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_corpus_5m --out /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_corpus_5m/eval_metrics.json --split heldout --topk 16`
+- Frozen V2 translated binding:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-probes --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_corpus_5m.json --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_corpus_5m --modes translated --max-probes 64 --layers all`
+- Binding analysis:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py analyze-binding-eval --binding-eval /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_corpus_5m.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_corpus_5m_analysis.json`
+
+**Artifacts:**
+
+- Final R4.3 capture manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/captures_5m/capture_manifest.json`
+  - sha256:
+    `d6bdf848e6bd6e6102f5721e4a5c5d5b1aaf50b8f51817c2788dddc8ae41e322`
+  - source completed: `13820 / 13820`
+  - target completed: `13820 / 13820`
+  - paired shards: `13820`
+  - paired tokens: `3408241`
+  - train shards/tokens: `12437` / `3067954`
+  - heldout shards/tokens: `1383` / `340287`
+- Expanded translator manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_corpus_5m/translator_manifest.json`
+  - sha256:
+    `2e0545b85b70adddfc3dd0d179afff95d31b49fcbee0d854b1508419bdf0c695`
+  - ridge lambda: `1e-4`
+  - backend: `cupy`
+  - fit metrics computed: `false`
+  - artifacts: `12` K/V maps
+- Fit metrics placeholder:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_corpus_5m/fit_metrics.json`
+  - sha256:
+    `a33308723cba317818e6c098760cb9d2d8a869791bdc67de92f2d82563425466`
+- Held-out eval:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_corpus_5m/eval_metrics.json`
+  - sha256:
+    `d30f25aa6f5f0df68cfb808f75b6bb48509b7b3741d4f98bd70d30824138a5b2`
+- Frozen V2 translated binding:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_corpus_5m.json`
+  - sha256:
+    `715314f98052e6c67c4b3514f52878e4554e7f209e4096eea8e05ea5c7c5af8a`
+- Binding analysis:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_corpus_5m_analysis.json`
+  - sha256:
+    `dd63cbbd05652a1d36082d35e5d5bcfe4c43886b9d2537e13d4480e9c16e8c2e`
+
+**Held-out G1/G2 summary:**
+
+- Held-out shards/tokens: `1383` / `340287`
+- `topk`: `16`
+- Layer pair metrics:
+  - `3->3`: key recall `0.549860`, value cosine `0.942787`,
+    translated-attention value cosine `0.923171`
+  - `7->7`: key recall `0.626114`, value cosine `0.924213`,
+    translated-attention value cosine `0.857340`
+  - `11->15`: key recall `0.601962`, value cosine `0.903771`,
+    translated-attention value cosine `0.813809`
+  - `15->19`: key recall `0.648478`, value cosine `0.897412`,
+    translated-attention value cosine `0.829533`
+  - `19->27`: key recall `0.664061`, value cosine `0.975242`,
+    translated-attention value cosine `0.964310`
+  - `23->31`: key recall `0.675311`, value cosine `0.990907`,
+    translated-attention value cosine `0.988757`
+- Shuffled-key controls stayed near `0.054` to `0.060`.
+- Wrong-layer key controls stayed near `0.066` to `0.083`.
+
+**Frozen V2 binding result:**
+
+- Baseline `2.5M` translator:
+  - translated positive margins: `40 / 64`
+  - mean margin: `0.41503181978418846`
+  - min margin: `-5.668900343599823`
+- R4.3 expanded translator:
+  - translated positive margins: `44 / 64`
+  - mean margin: `0.9933952155426934`
+  - min margin: `-5.17769603113414`
+  - passed R1 G3 threshold: `true`
+- Probe delta versus baseline translated rows:
+  - gained: `5`
+    - `bind-v2-007-q1`
+    - `bind-v2-020-q0`
+    - `bind-v2-020-q1`
+    - `bind-v2-029-q1`
+    - `bind-v2-030-q1`
+  - lost: `1`
+    - `bind-v2-026-q1`
+- Worst R4.3 translated margins:
+  - `bind-v2-027-q0`: `-5.177696`
+  - `bind-v2-017-q1`: `-4.897090`
+  - `bind-v2-027-q1`: `-4.538573`
+  - `bind-v2-023-q0`: `-4.215084`
+  - `bind-v2-026-q0`: `-3.881516`
+
+**Decision:**
+
+- R4.3 succeeds under the registered selection rule.
+- More paired corpus improved the frozen V2 translated gate from `40 / 64` to
+  `44 / 64` and raised mean translated margin by about `+0.578`.
+- The result is not a full reliability closeout: `20 / 64` translated probes
+  still miss, and the worst miss remains large. The next reliability move
+  should be objective-level translator work or targeted hard-negative
+  training, not another simple ridge-lambda or layer-drop sweep.

@@ -355,44 +355,30 @@ Current R4.2 status:
 - Next tuning move should be either more paired corpus or an objective-level
   translator upgrade. Layer omission by itself is too blunt.
 
-Current R4.3 protocol:
+Current R4.3 status:
 
-- Scope: expand paired capture corpus from the completed `2.5M` token baseline
-  to a `5M` token train/heldout cap, then refit the same ridge translator.
-- No probe changes and no translator architecture changes.
-- Keep the `2.5M` baseline artifacts intact; write separate R4.3 artifacts:
-  - corpus plan:
-    `/mnt/ForgeRealm/qwen35_graft_translation_poc/corpus_plan_5m.json`
-  - captures:
-    `/mnt/ForgeRealm/qwen35_graft_translation_poc/captures_5m`
-  - translator:
-    `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_corpus_5m`
-  - gates:
-    `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_corpus_5m.json`
-- Corpus sources remain the same as the baseline:
-  - `/mnt/ForgeRealm/scribe_mint_v1/manifest.jsonl`
-  - `/mnt/ForgeRealm/HumanBaselineCorpus/stories`
-- Actual generated plan total from those sources is `3,408,241` tokens, not
-  `5M`, because the source set is exhausted under the current filters.
-- Reuse existing overlapping captures only if shard identity is exact under
-  the new plan. Do not copy or relabel mismatched shards.
-- Overlap seed status:
-  - exact reusable old chunks: `9860`
-  - mismatched overlap chunks: `1`
-  - new-only chunks: `3959`
-  - hardlinked files: `39440`
-  - remaining capture work after seed: `3960` source chunks and `3960` target
-    chunks.
-- Exit gate:
-  - source and target captures complete for the `5M` plan,
-  - `translator_corpus_5m` fit on train split,
-  - held-out G1/G2 recorded,
-  - frozen V2 translated binding recorded.
-- Selection rule:
-  - prefer higher translated positive margins over the `2.5M` baseline
-    `40 / 64`,
-  - break ties by translated mean margin,
-  - reject if held-out G1/G2 materially regress.
+- Complete.
+- Expanded capture closed at `3,408,241` paired tokens because the source set
+  was exhausted under the current filters.
+- Final capture:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/captures_5m`
+  - source completed: `13820 / 13820`
+  - target completed: `13820 / 13820`
+  - train shards/tokens: `12437` / `3067954`
+  - heldout shards/tokens: `1383` / `340287`
+- Translator:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_corpus_5m`
+  - ridge lambda: `1e-4`
+  - backend: `cupy`
+  - artifacts: `12` K/V maps
+- Frozen V2 translated binding result:
+  - baseline `2.5M`: `40 / 64`, mean margin `0.41503181978418846`
+  - R4.3 expanded corpus: `44 / 64`, mean margin
+    `0.9933952155426934`
+  - R4.3 gained `5` previously failing probes and lost `1` prior success.
+- Decision: R4.3 succeeds under the registered selection rule, but it does not
+  close reliability. The remaining `20 / 64` misses point at objective-level
+  translator training or targeted hard-negative training as the next move.
 
 ## Phase R5: Live G0 Repair
 
@@ -413,5 +399,7 @@ Exit gate:
 
 ## Open Queue
 
-1. Run R4.3 5M corpus expansion and evaluate against the frozen V2 probe set.
+1. Design the next reliability refinement around objective-level translator
+   training or targeted hard-negative training for the remaining frozen V2
+   translated misses.
 2. Run R5 live G0 repair in parallel only when GPU/runtime time is available.
