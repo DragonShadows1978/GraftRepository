@@ -1,7 +1,6 @@
 # Qwen3.5 Translation Reliability Plan
 
-**Status:** R1 binding-probe V2 generator complete. R2 amnesia floor gate is
-next.
+**Status:** R2 V2 amnesia floor gate complete. R3 full V2 binding gate is next.
 
 **House rules for this track:**
 
@@ -149,6 +148,19 @@ Exit gate:
 - Amnesia floor artifact exists.
 - Ledger states whether V2 is clean enough for translated evaluation.
 
+Current status:
+
+- Complete.
+- Artifact:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_amnesia.json`
+- sha256:
+  `c96291f61a0001680f2c65fce9d0703e020187cf907da73b015c4278dc838234`
+- Result: amnesia positive margins `9 / 64`, mean margin
+  `-2.255242589061309`, min margin `-6.48096410594205`.
+- Decision: V2 passes the frozen flattened floor threshold of `<= 24 / 64`,
+  so R3 can run translated/source/target binding evaluation against the frozen
+  V2 set.
+
 ## Phase R3: V2 Full Binding Gate
 
 Run V2 across:
@@ -225,7 +237,6 @@ Exit gate:
 
 ## Open Queue
 
-1. Run R2 V2 amnesia floor gate.
-2. Run R3 V2 full binding gate if floor is clean.
-3. Start R4 translator tuning only after V2 is clean enough.
-4. Run R5 live G0 repair in parallel only when GPU/runtime time is available.
+1. Run R3 V2 full binding gate.
+2. Start R4 translator tuning only after V2 is clean enough.
+3. Run R5 live G0 repair in parallel only when GPU/runtime time is available.

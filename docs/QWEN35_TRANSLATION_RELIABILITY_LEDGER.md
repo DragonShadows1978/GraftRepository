@@ -180,3 +180,48 @@ Translation reliability track.
 
 - Run R2 V2 amnesia floor gate.
 - Run R3 V2 full binding gate if the floor is clean.
+
+### 2026-07-04 - R2 V2 Amnesia Floor Gate
+
+**Status:** complete.
+
+**Completed work:**
+
+- Ran the frozen V2 probe set in amnesia-only mode.
+- Confirmed the V2 floor is clean enough for full translated evaluation.
+- Updated `docs/QWEN35_TRANSLATION_RELIABILITY_PLAN.md` with the R2 result and
+  moved the open queue to R3.
+
+**Evidence:**
+
+- R2 command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-probes --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_amnesia.json --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --modes amnesia --max-probes 64 --layers all`
+- R2 artifact:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_amnesia.json`
+  - sha256:
+    `c96291f61a0001680f2c65fce9d0703e020187cf907da73b015c4278dc838234`
+  - schema: `qwen35_graft_translation_binding_eval_v1`
+  - probe set:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json`
+  - mode: `amnesia`
+  - probe count: `64`
+  - positive margins: `9 / 64`
+  - mean margin: `-2.255242589061309`
+  - min margin: `-6.48096410594205`
+- Amnesia positive probe IDs:
+  `bind-v2-000-q1`, `bind-v2-001-q0`, `bind-v2-003-q0`,
+  `bind-v2-009-q0`, `bind-v2-010-q1`, `bind-v2-018-q0`,
+  `bind-v2-024-q0`, `bind-v2-024-q1`, `bind-v2-025-q0`
+
+**Interpretation:**
+
+- V2 passes the frozen flattened floor threshold of `<= 24 / 64`.
+- The old V1 floor problem is materially improved: V1 amnesia was `20 / 32`,
+  while V2 amnesia is `9 / 64`.
+- R3 can now test source-native, target-native, and translated on the same
+  frozen V2 set.
+
+**Remaining work:**
+
+- Run R3 V2 full binding gate.
+- Start R4 translator tuning only after the R3 result is known.
