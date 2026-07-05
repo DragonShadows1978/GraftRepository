@@ -306,6 +306,55 @@ Current R4.1 status:
   more paired corpus, or a translator objective that directly preserves K
   score/top-k and V attention-output behavior.
 
+Current R4.2 protocol:
+
+- Scope: layer-policy sweep using the existing `1e-4` baseline translator.
+- No probe changes, no corpus recapture, no ridge refit, no objective changes.
+- Frozen V2 probe set:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json`
+- Baseline translator:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator`
+  - V2 translated result: `40 / 64`, mean margin `0.41503181978418846`
+- Candidate layer policies:
+  - `drop_l3`: remove source `3` to target `3`
+  - `drop_l11_l15`: remove source `11` to target `15`
+  - `strong4`: keep `7->7`, `15->19`, `19->27`, `23->31`
+  - `late3`: keep `15->19`, `19->27`, `23->31`
+- Candidate output directories:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_layer_<policy>`
+- Required per candidate:
+  - write a filtered translator manifest from the frozen baseline translator,
+  - run `eval-binding-probes` on frozen V2 with `modes=translated`,
+  - compare gained/lost probes against baseline translated rows.
+- Selection rule:
+  - prefer higher translated positive margins,
+  - break ties by translated mean margin,
+  - reject candidates that only trade away baseline successes without
+    recovering baseline misses.
+
+Current R4.2 status:
+
+- Complete.
+- Added reproducible filtered-translator manifest tooling:
+  `filter-translator-layers`.
+- Frozen V2 translated binding results:
+  - baseline `1e-4`: `40 / 64`, mean `0.41503181978418846`, min
+    `-5.668900343599823`
+  - `drop_l3`: `38 / 64`, mean `0.35193815798529215`, min
+    `-5.564677949742489`
+  - `drop_l11_l15`: `38 / 64`, mean `0.4061522761956001`, min
+    `-5.4681166409774065`
+  - `strong4`: `36 / 64`, mean `0.32240649378745834`, min
+    `-5.3586791078400395`
+  - `late3`: `36 / 64`, mean `0.3056605327202693`, min
+    `-5.266425911516741`
+- Decision: simple layer filtering does not improve aggregate reliability.
+  `drop_l3`, `strong4`, and `late3` recovered a small number of baseline
+  misses, but all policies lost more baseline successes than they gained.
+  Keep the original all-layer `1e-4` translator as the R4.2 winner.
+- Next tuning move should be either more paired corpus or an objective-level
+  translator upgrade. Layer omission by itself is too blunt.
+
 ## Phase R5: Live G0 Repair
 
 Investigate live capture/reseat numerical mismatch separately from translator
@@ -325,6 +374,6 @@ Exit gate:
 
 ## Open Queue
 
-1. Start R4.2 with layer policy or objective-level tuning against the frozen V2
-   probe set.
+1. Register and run R4.3: more paired corpus or objective-level translator
+   tuning against the frozen V2 probe set.
 2. Run R5 live G0 repair in parallel only when GPU/runtime time is available.

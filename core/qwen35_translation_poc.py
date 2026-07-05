@@ -1182,6 +1182,104 @@ def _load_translator(translator_dir):
     return manifest, artifacts
 
 
+def _parse_layer_pair_spec(spec):
+    pairs = set()
+    for raw in str(spec or "").split(","):
+        raw = raw.strip()
+        if not raw:
+            continue
+        if "->" in raw:
+            left, right = raw.split("->", 1)
+        elif ":" in raw:
+            left, right = raw.split(":", 1)
+        else:
+            raise ValueError(
+                "layer pairs must use 'source:target' or 'source->target'")
+        pairs.add((int(left.strip()), int(right.strip())))
+    return pairs
+
+
+def filter_translator_layers(translator_dir, out_dir, *, policy_name,
+                             keep_pairs=None, drop_pairs=None):
+    """Write a translator manifest filtered to selected source/target pairs."""
+    keep = _parse_layer_pair_spec(keep_pairs)
+    drop = _parse_layer_pair_spec(drop_pairs)
+    if bool(keep) == bool(drop):
+        raise ValueError("pass exactly one of keep_pairs or drop_pairs")
+
+    translator_dir = Path(translator_dir).expanduser()
+    out_dir = Path(out_dir).expanduser()
+    manifest = _load_json(translator_dir / "translator_manifest.json")
+    artifacts = list(manifest.get("artifacts", []))
+    if not artifacts:
+        raise ValueError("translator manifest has no artifacts")
+
+    all_pairs = sorted({
+        (int(art["source_layer"]), int(art["target_layer"]))
+        for art in artifacts
+    })
+    selected = keep if keep else set(all_pairs) - drop
+    unknown = sorted(selected - set(all_pairs))
+    if unknown:
+        raise ValueError(f"unknown translator layer pairs: {unknown!r}")
+
+    kept_artifacts = [
+        dict(art)
+        for art in artifacts
+        if (int(art["source_layer"]), int(art["target_layer"])) in selected
+    ]
+    kept_pairs = sorted({
+        (int(art["source_layer"]), int(art["target_layer"]))
+        for art in kept_artifacts
+    })
+    if not kept_pairs:
+        raise ValueError("layer policy would keep no translator artifacts")
+    kinds_by_pair = {}
+    for art in kept_artifacts:
+        key = (int(art["source_layer"]), int(art["target_layer"]))
+        kinds_by_pair.setdefault(key, set()).add(str(art["kind"]))
+    incomplete = sorted(
+        pair for pair, kinds in kinds_by_pair.items()
+        if not {"k", "v"}.issubset(kinds)
+    )
+    if incomplete:
+        raise ValueError(
+            f"layer policy produced incomplete K/V pairs: {incomplete!r}")
+
+    out_manifest = dict(manifest)
+    out_manifest["parent_translator_dir"] = str(translator_dir)
+    out_manifest["layer_policy_name"] = str(policy_name)
+    out_manifest["layer_policy_generated_utc"] = _utc_now()
+    out_manifest["layer_policy"] = {
+        "mode": "keep" if keep else "drop",
+        "requested_pairs": [
+            {"source_layer": int(src), "target_layer": int(tgt)}
+            for src, tgt in sorted(keep or drop)
+        ],
+        "kept_pairs": [
+            {"source_layer": int(src), "target_layer": int(tgt)}
+            for src, tgt in kept_pairs
+        ],
+        "dropped_pairs": [
+            {"source_layer": int(src), "target_layer": int(tgt)}
+            for src, tgt in sorted(set(all_pairs) - set(kept_pairs))
+        ],
+    }
+    out_manifest["layer_alignment"] = [
+        {"source_layer": int(src), "target_layer": int(tgt)}
+        for src, tgt in kept_pairs
+    ]
+    out_manifest["artifacts"] = kept_artifacts
+    out_manifest["artifact_count"] = len(kept_artifacts)
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / "translator_manifest.json"
+    with open(out_path, "w") as fh:
+        json.dump(out_manifest, fh, indent=2)
+        fh.write("\n")
+    return out_manifest
+
+
 def _unflatten_like(flat, template):
     template = np.asarray(template)
     _, heads, tokens, dim = template.shape
@@ -3162,6 +3260,18 @@ def main(argv=None):
     fs.add_argument("--skip-fit-metrics", action="store_true",
                     help="write translators after solve without the train "
                          "fit-metrics rescan")
+    fl = sub.add_parser(
+        "filter-translator-layers",
+        help="write a translator manifest with selected layer pairs")
+    fl.add_argument("--translator-dir", required=True,
+                    help="source translator directory")
+    fl.add_argument("--out-dir", required=True,
+                    help="output filtered translator directory")
+    fl.add_argument("--policy-name", required=True)
+    fl.add_argument("--keep-pairs", default=None,
+                    help="comma-separated source:target pairs to keep")
+    fl.add_argument("--drop-pairs", default=None,
+                    help="comma-separated source:target pairs to drop")
     ev = sub.add_parser(
         "eval-translator",
         help="evaluate fitted translators on paired held-out capture shards")
@@ -3465,6 +3575,24 @@ def main(argv=None):
                 item["translator_manifest"]
                 for item in result["results"]
             ],
+        }, indent=2))
+        return 0
+    if args.cmd == "filter-translator-layers":
+        manifest = filter_translator_layers(
+            args.translator_dir,
+            args.out_dir,
+            policy_name=args.policy_name,
+            keep_pairs=args.keep_pairs,
+            drop_pairs=args.drop_pairs,
+        )
+        print(json.dumps({
+            "status": "ok",
+            "out": str(
+                Path(args.out_dir).expanduser() / "translator_manifest.json"),
+            "policy_name": manifest["layer_policy_name"],
+            "artifact_count": manifest["artifact_count"],
+            "kept_pairs": manifest["layer_policy"]["kept_pairs"],
+            "dropped_pairs": manifest["layer_policy"]["dropped_pairs"],
         }, indent=2))
         return 0
     if args.cmd == "eval-translator":

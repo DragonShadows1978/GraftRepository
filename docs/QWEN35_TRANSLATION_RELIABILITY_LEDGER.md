@@ -539,3 +539,172 @@ Translation reliability track.
 
 - Commit and push the R4.1 implementation/results checkpoint.
 - Start R4.2 only after selecting the next registered intervention.
+
+### 2026-07-05 - R4.2 Layer Policy Protocol Registered
+
+**Status:** complete.
+
+**Completed work:**
+
+- Registered the second translator-tuning protocol before running new gates.
+- Froze R4.2 scope to layer-policy filtering over the existing `1e-4`
+  baseline translator.
+- Confirmed no corpus recapture, ridge refit, objective change, or probe change
+  is in scope for R4.2.
+
+**Protocol:**
+
+- Frozen probe set:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json`
+  - sha256:
+    `4cc97ff2d230692e8c0b21bc265bd63132605d16147c5b5623c4ba224728f4a5`
+- Baseline translator:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator`
+  - ridge lambda: `1e-4`
+  - V2 translated result: `40 / 64`, mean margin
+    `0.41503181978418846`
+- Candidate layer policies:
+  - `drop_l3`: remove source `3` to target `3`
+  - `drop_l11_l15`: remove source `11` to target `15`
+  - `strong4`: keep `7->7`, `15->19`, `19->27`, `23->31`
+  - `late3`: keep `15->19`, `19->27`, `23->31`
+- Candidate output pattern:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_layer_<policy>`
+- Required commands per candidate:
+  - write filtered translator from the baseline translator,
+  - `eval-binding-probes --modes translated` against frozen V2,
+  - compare gained/lost probes against baseline translated rows.
+
+**Selection rule:**
+
+- Prefer higher translated positive margins.
+- Break ties by translated mean margin.
+- Reject candidates that only lose baseline successes without recovering
+  baseline misses.
+
+**Remaining work:**
+
+- Implement reproducible translator layer filtering.
+- Run R4.2 candidates.
+- Summarize the winner and commit the result.
+
+### 2026-07-05 - R4.2 Layer Policy Implementation And Results
+
+**Status:** complete.
+
+**Completed work:**
+
+- Added `filter-translator-layers` CLI.
+- Added `filter_translator_layers` helper and unit coverage.
+- Wrote four filtered translator manifests from the frozen `1e-4` baseline.
+- Ran the frozen V2 translated binding gate for each R4.2 candidate.
+
+**Implementation evidence:**
+
+- Focused test command:
+  `PYTHONDONTWRITEBYTECODE=1 PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest tests/test_qwen35_translation_poc.py -q`
+  - result: `33 passed, 2 warnings in 0.40s`
+
+**Filtered translator commands:**
+
+- `drop_l3`:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py filter-translator-layers --translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator --out-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_layer_drop_l3 --policy-name drop_l3 --drop-pairs 3:3`
+- `drop_l11_l15`:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py filter-translator-layers --translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator --out-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_layer_drop_l11_l15 --policy-name drop_l11_l15 --drop-pairs 11:15`
+- `strong4`:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py filter-translator-layers --translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator --out-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_layer_strong4 --policy-name strong4 --keep-pairs 7:7,15:19,19:27,23:31`
+- `late3`:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py filter-translator-layers --translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator --out-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_layer_late3 --policy-name late3 --keep-pairs 15:19,19:27,23:31`
+
+**Filtered translator manifest hashes:**
+
+- `translator_layer_drop_l3/translator_manifest.json`
+  - sha256:
+    `7ee72e037fc5ee66a04f3d1e7052c8b350fa0e6001fd5b2e1c7b3f3217b7496e`
+- `translator_layer_drop_l11_l15/translator_manifest.json`
+  - sha256:
+    `79ad506273f150390e1080490976e599b962d61467ee81be2153ab729d79acde`
+- `translator_layer_strong4/translator_manifest.json`
+  - sha256:
+    `5b7492d8f33712a62e5fd356d1abaee1b6f16294baf7b8037a5cb647b8f90e50`
+- `translator_layer_late3/translator_manifest.json`
+  - sha256:
+    `dd84baab9875d9344d3c1ec76d2ca91fdec9bf6b29a02e0a0cf9c8c504a5ec51`
+
+**Frozen V2 translated binding commands:**
+
+- `drop_l3`:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-probes --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_layer_drop_l3.json --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_layer_drop_l3 --modes translated --max-probes 64 --layers all`
+- `drop_l11_l15`: same command with
+  `--out .../binding_eval_v2_translated_layer_drop_l11_l15.json` and
+  `--translator-dir .../translator_layer_drop_l11_l15`
+- `strong4`: same command with
+  `--out .../binding_eval_v2_translated_layer_strong4.json` and
+  `--translator-dir .../translator_layer_strong4`
+- `late3`: same command with
+  `--out .../binding_eval_v2_translated_layer_late3.json` and
+  `--translator-dir .../translator_layer_late3`
+
+**Frozen V2 translated binding hashes:**
+
+- `gates/binding_eval_v2_translated_layer_drop_l3.json`
+  - sha256:
+    `82a3c64a51b4ab7053c3d28755fe4a02b6c47b16ecb8ad31b2c6e0c476731409`
+- `gates/binding_eval_v2_translated_layer_drop_l11_l15.json`
+  - sha256:
+    `e5eaa686fa4b19c3cc3e7ef37411953a79d67836ad115036e4e7bcb97ee83147`
+- `gates/binding_eval_v2_translated_layer_strong4.json`
+  - sha256:
+    `016110e64aa7dcaac4cd91d3d4c47bc33cd7a73e051343a3eb750618ef1b4f44`
+- `gates/binding_eval_v2_translated_layer_late3.json`
+  - sha256:
+    `2acae59503f64233e80aa4f1bcd42a8dad7c467bcaac19b6af9cc0a51c865b1d`
+
+**Frozen V2 translated binding summary:**
+
+- Baseline `1e-4`: `40 / 64`, mean margin `0.41503181978418846`,
+  min margin `-5.668900343599823`
+- `drop_l3`: `38 / 64`, mean margin `0.35193815798529215`,
+  min margin `-5.564677949742489`
+- `drop_l11_l15`: `38 / 64`, mean margin `0.4061522761956001`,
+  min margin `-5.4681166409774065`
+- `strong4`: `36 / 64`, mean margin `0.32240649378745834`,
+  min margin `-5.3586791078400395`
+- `late3`: `36 / 64`, mean margin `0.3056605327202693`,
+  min margin `-5.266425911516741`
+
+**Per-probe comparison against baseline:**
+
+- `drop_l3`: gained `3`, lost `5`
+  - gained: `bind-v2-002-q1`, `bind-v2-022-q0`, `bind-v2-030-q1`
+  - lost: `bind-v2-003-q1`, `bind-v2-008-q0`,
+    `bind-v2-015-q1`, `bind-v2-021-q1`, `bind-v2-030-q0`
+- `drop_l11_l15`: gained `0`, lost `2`
+  - lost: `bind-v2-021-q1`, `bind-v2-026-q1`
+- `strong4`: gained `2`, lost `6`
+  - gained: `bind-v2-007-q1`, `bind-v2-022-q0`
+  - lost: `bind-v2-003-q1`, `bind-v2-008-q0`,
+    `bind-v2-015-q1`, `bind-v2-021-q1`, `bind-v2-025-q1`,
+    `bind-v2-030-q0`
+- `late3`: gained `2`, lost `6`
+  - gained: `bind-v2-007-q1`, `bind-v2-022-q0`
+  - lost: `bind-v2-003-q1`, `bind-v2-008-q0`,
+    `bind-v2-015-q1`, `bind-v2-021-q1`, `bind-v2-026-q1`,
+    `bind-v2-030-q0`
+
+**Interpretation:**
+
+- Simple layer filtering does not improve aggregate Qwen3.5 2B-to-9B graft
+  translation reliability.
+- Some layer policies recover individual baseline misses, so layer contribution
+  is real, but omission is too blunt: every tested policy loses more baseline
+  successes than it gains.
+- The all-layer `1e-4` baseline remains the R4.2 winner.
+- Next R4 work should use more paired corpus or objective-level tuning rather
+  than layer omission.
+
+**Remaining work:**
+
+- Commit and push the R4.2 implementation/results checkpoint.
+- Register R4.3 after inspecting whether more corpus is already available or
+  needs capture work.

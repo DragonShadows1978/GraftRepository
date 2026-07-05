@@ -17,6 +17,7 @@ from core.qwen35_translation_poc import (
     evaluate_capture_identity,
     evaluate_translator,
     evaluate_translator_sweep,
+    filter_translator_layers,
     fit_ridge_translator,
     fit_ridge_translator_sweep,
     inspect_pipeline_status,
@@ -933,6 +934,83 @@ def test_fit_ridge_translator_sweep_can_skip_fit_metrics(tmp_path):
     assert metrics["layers"][0]["mse"] is None
     assert Path(manifest["artifacts"][0]["path"]).is_file()
     assert Path(manifest["fit_metrics"]).is_file()
+
+
+def test_filter_translator_layers_writes_reproducible_manifest(tmp_path):
+    root = tmp_path / "translator"
+    root.mkdir()
+    artifacts = []
+    for src, tgt in ((3, 3), (7, 7)):
+        for kind in ("k", "v"):
+            path = root / f"translator_l{src}_to_l{tgt}_{kind}.npz"
+            np.savez(path, weight=np.eye(2, dtype=np.float32),
+                     bias=np.zeros(2, dtype=np.float32),
+                     source_layer=np.array([src], np.int64),
+                     target_layer=np.array([tgt], np.int64),
+                     kind=np.array([kind]))
+            artifacts.append({
+                "source_layer": src,
+                "target_layer": tgt,
+                "kind": kind,
+                "path": str(path),
+                "input_dim": 2,
+                "output_dim": 2,
+                "train_tokens": 4,
+            })
+    manifest = {
+        "schema": "qwen35_graft_translation_translator_v1",
+        "capture_dir": str(tmp_path / "captures"),
+        "ridge_lambda": 1e-4,
+        "split": "train",
+        "control": "normal",
+        "kinds": ["k", "v"],
+        "paired_shards": 1,
+        "layer_alignment": [
+            {"source_layer": 3, "target_layer": 3},
+            {"source_layer": 7, "target_layer": 7},
+        ],
+        "artifacts": artifacts,
+        "fit_metrics": str(root / "fit_metrics.json"),
+    }
+    (root / "translator_manifest.json").write_text(
+        json.dumps(manifest, indent=2) + "\n")
+
+    filtered = filter_translator_layers(
+        root,
+        tmp_path / "translator_drop_l3",
+        policy_name="drop_l3",
+        drop_pairs="3:3",
+    )
+
+    assert filtered["layer_policy_name"] == "drop_l3"
+    assert filtered["parent_translator_dir"] == str(root)
+    assert filtered["layer_alignment"] == [
+        {"source_layer": 7, "target_layer": 7}]
+    assert filtered["artifact_count"] == 2
+    assert filtered["layer_policy"]["dropped_pairs"] == [
+        {"source_layer": 3, "target_layer": 3}]
+    assert (tmp_path / "translator_drop_l3" /
+            "translator_manifest.json").is_file()
+    loaded_manifest, loaded_artifacts = poc._load_translator(
+        tmp_path / "translator_drop_l3")
+    assert loaded_manifest["layer_policy_name"] == "drop_l3"
+    assert sorted(loaded_artifacts) == [(7, 7, "k"), (7, 7, "v")]
+
+    kept = filter_translator_layers(
+        root,
+        tmp_path / "translator_keep_l3",
+        policy_name="keep_l3",
+        keep_pairs="3->3",
+    )
+    assert kept["layer_policy"]["kept_pairs"] == [
+        {"source_layer": 3, "target_layer": 3}]
+
+    with pytest.raises(ValueError, match="exactly one"):
+        filter_translator_layers(root, tmp_path / "bad", policy_name="bad")
+    with pytest.raises(ValueError, match="unknown"):
+        filter_translator_layers(
+            root, tmp_path / "bad_unknown", policy_name="bad",
+            keep_pairs="11:15")
 
 
 def test_topk_recall_matches_set_intersection_reference():
