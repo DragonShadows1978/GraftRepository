@@ -19,11 +19,13 @@ from core.qwen35_translation_poc import (
     fit_ridge_translator,
     inspect_pipeline_status,
     make_binding_probe_set,
+    make_binding_probe_set_v2,
     refresh_capture_manifest,
     run_pipeline_next,
     validate_unquantized_source,
     validate_weight_pair,
     write_binding_probe_set,
+    write_binding_probe_set_v2,
     write_capture_shard,
     write_weight_manifest,
     _candidate_scores_from_logprobs,
@@ -909,6 +911,60 @@ def test_make_binding_probe_set_is_deterministic_and_serializable(tmp_path):
     assert first["gold"] not in first["decoys"]
     assert first["entity"] in first["fact"]
     assert first["entity"] in first["question"]
+
+
+def test_make_binding_probe_set_v2_is_flattened_and_opaque(tmp_path):
+    probes_a = make_binding_probe_set_v2(count=4, seed="unit", templates=2)
+    probes_b = make_binding_probe_set_v2(count=4, seed="unit", templates=2)
+    out = tmp_path / "binding_probes_v2.json"
+    saved = write_binding_probe_set_v2(
+        out,
+        count=4,
+        seed="unit",
+        templates=2,
+    )
+
+    assert probes_a == probes_b == saved
+    assert out.is_file()
+    loaded = json.loads(out.read_text())
+    assert loaded["schema"] == "qwen35_graft_translation_binding_probes_v2"
+    assert loaded["binding_count"] == 4
+    assert loaded["templates_per_binding"] == 2
+    assert loaded["count"] == 8
+    assert loaded["flattened"] is True
+    assert loaded["surface_class"] == "opaque-code-3x3"
+
+    rows = loaded["probes"]
+    assert [row["id"] for row in rows[:2]] == [
+        "bind-v2-000-q0",
+        "bind-v2-000-q1",
+    ]
+    first, second = rows[:2]
+    assert first["binding_id"] == second["binding_id"]
+    assert first["fact"] == second["fact"]
+    assert first["gold"] == second["gold"]
+    assert first["decoys"] == second["decoys"]
+    assert first["question"] != second["question"]
+    assert first["query_template"] == 0
+    assert second["query_template"] == 1
+    assert first["handle"] in first["fact"]
+    assert first["handle"] in first["question"]
+
+    binding_gold = {}
+    all_codes = set()
+    for row in rows:
+        assert row["gold"].startswith(" ")
+        assert len(row["decoys"]) == 3
+        assert row["gold"] not in row["decoys"]
+        assert row["surface_class"] == "opaque-code-3x3"
+        codes = [row["gold"].strip(), *[d.strip() for d in row["decoys"]]]
+        assert all(len(code) == len(codes[0]) for code in codes)
+        assert all(code.count("-") == 2 for code in codes)
+        binding_gold.setdefault(row["binding_id"], row["gold"])
+        assert binding_gold[row["binding_id"]] == row["gold"]
+        if row["query_template"] == 0:
+            assert not (set(codes) & all_codes)
+            all_codes.update(codes)
 
 
 def test_candidate_scores_compute_gold_minus_best_decoy():

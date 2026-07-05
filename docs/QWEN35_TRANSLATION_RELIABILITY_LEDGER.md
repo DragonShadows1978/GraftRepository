@@ -138,3 +138,45 @@ Translation reliability track.
 
 - Implement R1 V2 probe generator and tests.
 - Run R2 V2 amnesia floor gate.
+
+### 2026-07-04 - R1 Binding Probe V2 Generator
+
+**Status:** complete.
+
+**Completed work:**
+
+- Added `make_binding_probe_set_v2` and `write_binding_probe_set_v2`.
+- Added `--version v2` and `--templates` support to `make-binding-probes`.
+- Kept V1 generation and existing evaluator compatibility intact.
+- Added unit coverage for deterministic flattened V2 output, schema metadata,
+  two query templates per binding, opaque code format, matched decoy count, and
+  no duplicate candidate codes across bindings.
+- Wrote the registered V2 probe artifact under the existing PoC gate directory.
+
+**Evidence:**
+
+- Focused test command:
+  `PYTHONDONTWRITEBYTECODE=1 PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest tests/test_qwen35_translation_poc.py -q`
+  - result: `29 passed, 2 warnings in 0.44s`
+- R1 artifact command:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py make-binding-probes --version v2 --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json --count 32 --templates 2`
+- R1 artifact:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json`
+  - sha256:
+    `4cc97ff2d230692e8c0b21bc265bd63132605d16147c5b5623c4ba224728f4a5`
+  - schema: `qwen35_graft_translation_binding_probes_v2`
+  - binding count: `32`
+  - templates per binding: `2`
+  - flattened probe rows: `64`
+  - seed: `qwen35-binding-v2`
+
+**Interpretation:**
+
+- R2 can now run against a frozen V2 probe set.
+- The next decision point is whether amnesia stays under the frozen flattened
+  floor threshold of `<= 24 / 64` positive margins.
+
+**Remaining work:**
+
+- Run R2 V2 amnesia floor gate.
+- Run R3 V2 full binding gate if the floor is clean.

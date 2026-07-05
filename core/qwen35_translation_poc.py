@@ -1338,8 +1338,92 @@ def make_binding_probe_set(count=32, *, seed="qwen35-binding-v1"):
     }
 
 
+_BINDING_V2_QUERY_TEMPLATES = (
+    "Lookup record {handle}. Stored value:\nAnswer:",
+    "For handle {handle}, return the stored value.\nAnswer:",
+)
+
+
+def _binding_v2_code(rng):
+    alphabet = np.array(list("abcdefghjkmnpqrstuvwxyz23456789"))
+    parts = []
+    for _ in range(3):
+        chars = rng.choice(alphabet, size=3, replace=True)
+        parts.append("".join(str(c) for c in chars))
+    return "-".join(parts)
+
+
+def make_binding_probe_set_v2(count=32, *, seed="qwen35-binding-v2",
+                              templates=2):
+    """Create opaque, flattened planted-fact probes for a harder G3 floor."""
+    rng = np.random.default_rng(
+        int.from_bytes(hashlib.sha256(str(seed).encode()).digest()[:8], "big"))
+    templates = int(templates)
+    if templates <= 0 or templates > len(_BINDING_V2_QUERY_TEMPLATES):
+        raise ValueError(
+            f"templates must be between 1 and "
+            f"{len(_BINDING_V2_QUERY_TEMPLATES)}")
+    probes = []
+    used_codes = set()
+    for binding_idx in range(int(count)):
+        handle = f"h{binding_idx:02d}-{_binding_v2_code(rng)}"
+        gold = _binding_v2_code(rng)
+        while gold in used_codes:
+            gold = _binding_v2_code(rng)
+        used_codes.add(gold)
+        decoys = []
+        while len(decoys) < 3:
+            decoy = _binding_v2_code(rng)
+            if decoy != gold and decoy not in used_codes:
+                decoys.append(decoy)
+                used_codes.add(decoy)
+        fact = (
+            f"OPAQUE BINDING: handle {handle} stores value {gold}. "
+            f"Only handle {handle} stores this value."
+        )
+        for template_idx, template in enumerate(
+                _BINDING_V2_QUERY_TEMPLATES[:templates]):
+            probes.append({
+                "id": f"bind-v2-{binding_idx:03d}-q{template_idx}",
+                "binding_id": f"bind-v2-{binding_idx:03d}",
+                "query_template": template_idx,
+                "handle": handle,
+                "entity": handle,
+                "fact": fact,
+                "question": template.format(handle=handle),
+                "gold": f" {gold}",
+                "decoys": [f" {d}" for d in decoys],
+                "surface_class": "opaque-code-3x3",
+            })
+    return {
+        "schema": "qwen35_graft_translation_binding_probes_v2",
+        "seed": str(seed),
+        "binding_count": int(count),
+        "templates_per_binding": templates,
+        "count": len(probes),
+        "flattened": True,
+        "surface_class": "opaque-code-3x3",
+        "probes": probes,
+    }
+
+
 def write_binding_probe_set(out_path, *, count=32, seed="qwen35-binding-v1"):
     probes = make_binding_probe_set(count=count, seed=seed)
+    out = Path(out_path).expanduser()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w") as fh:
+        json.dump(probes, fh, indent=2)
+        fh.write("\n")
+    return probes
+
+
+def write_binding_probe_set_v2(out_path, *, count=32,
+                               seed="qwen35-binding-v2", templates=2):
+    probes = make_binding_probe_set_v2(
+        count=count,
+        seed=seed,
+        templates=templates,
+    )
     out = Path(out_path).expanduser()
     out.parent.mkdir(parents=True, exist_ok=True)
     with open(out, "w") as fh:
@@ -2596,6 +2680,9 @@ def main(argv=None):
                     help="output binding_probes.json")
     bp.add_argument("--count", type=int, default=32)
     bp.add_argument("--seed", default="qwen35-binding-v1")
+    bp.add_argument("--version", default="v1", choices=("v1", "v2"))
+    bp.add_argument("--templates", type=int, default=2,
+                    help="V2 query templates per binding")
     be = sub.add_parser(
         "eval-binding-probes",
         help="evaluate G3 binding probes with native and translated grafts")
@@ -2871,14 +2958,26 @@ def main(argv=None):
         }, indent=2))
         return 0
     if args.cmd == "make-binding-probes":
-        probes = write_binding_probe_set(
-            args.out,
-            count=args.count,
-            seed=args.seed,
-        )
+        if args.version == "v2":
+            seed = (
+                args.seed if args.seed != "qwen35-binding-v1"
+                else "qwen35-binding-v2")
+            probes = write_binding_probe_set_v2(
+                args.out,
+                count=args.count,
+                seed=seed,
+                templates=args.templates,
+            )
+        else:
+            probes = write_binding_probe_set(
+                args.out,
+                count=args.count,
+                seed=args.seed,
+            )
         print(json.dumps({
             "status": "ok",
             "out": str(Path(args.out).expanduser()),
+            "schema": probes["schema"],
             "count": probes["count"],
             "seed": probes["seed"],
         }, indent=2))
