@@ -268,8 +268,12 @@ next interval.
 Preferred full pipeline loop:
 
 ```bash
-flock -n /tmp/qwen35_translation_pipeline.lock bash -lc 'cd /mnt/ForgeRealm/GraftRepository && PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py pipeline-next --root /mnt/ForgeRealm/qwen35_graft_translation_poc --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --layers all --source-max-chunks 64 --target-max-chunks 16 --ridge-lambda 1e-4 --topk 16 --binding-max-probes 32'
+flock -n /tmp/qwen35_translation_pipeline.lock bash -lc 'cd /mnt/ForgeRealm/GraftRepository && PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py pipeline-next --root /mnt/ForgeRealm/qwen35_graft_translation_poc --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --layers all --source-max-chunks 64 --target-max-chunks 16 --ridge-lambda 1e-4 --topk 16 --binding-max-probes 32 --skip-fit-metrics'
 ```
+
+For larger corpus runs, `--skip-fit-metrics` avoids a second full train-shard
+read after solving the translator. Use held-out G1/G2 and binding gates as the
+selection metrics.
 
 The current `pipeline-next` stage can be inspected with:
 

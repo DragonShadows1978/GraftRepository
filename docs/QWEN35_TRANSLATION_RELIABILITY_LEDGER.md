@@ -838,6 +838,9 @@ Translation reliability track.
   path.
 - Exposed `--skip-fit-metrics` on the `fit-translator` CLI, matching the
   existing sweep fast path.
+- Wired the same skip policy through `pipeline-next` and recorded it in the
+  pipeline stage status.
+- Updated the corpus runbook cron command to include `--skip-fit-metrics`.
 - Added focused coverage for the single-fit skip path.
 
 **Reason:**

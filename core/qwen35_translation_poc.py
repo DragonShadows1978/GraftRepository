@@ -2767,7 +2767,8 @@ def _pipeline_result(status_path, *, stage, status="ok", history_path=None,
 
 
 def _run_pipeline_fit(capture_dir, out_dir, *, ridge_lambda, split,
-                      control="normal", kinds="both"):
+                      control="normal", kinds="both",
+                      compute_fit_metrics=True):
     return fit_ridge_translator(
         capture_dir,
         out_dir,
@@ -2775,6 +2776,7 @@ def _run_pipeline_fit(capture_dir, out_dir, *, ridge_lambda, split,
         split=split,
         control=control,
         kinds=kinds,
+        compute_fit_metrics=compute_fit_metrics,
     )
 
 
@@ -2938,7 +2940,7 @@ def run_pipeline_next(*, root, plan, source_model_dir, target_model_dir,
                           "translated"),
                       live_g0_prefix_tokens=64, live_g0_probe_tokens=8,
                       skip_live_g0=False, skip_binding_eval=False,
-                      resume=True, compress=True):
+                      skip_fit_metrics=False, resume=True, compress=True):
     """Run one bounded missing step of the full Qwen3.5 translation PoC.
 
     This is the cron/Claude handoff entry point. It never runs overlapping
@@ -3043,12 +3045,15 @@ def run_pipeline_next(*, root, plan, source_model_dir, target_model_dir,
             translator_dir,
             ridge_lambda=ridge_lambda,
             split="train",
+            compute_fit_metrics=not skip_fit_metrics,
         )
         return emit(
             stage="fit-translator",
             out=str(translator_dir),
             paired_shards=result["translator_manifest"]["paired_shards"],
             artifacts=len(result["translator_manifest"]["artifacts"]),
+            fit_metrics_computed=(
+                result["translator_manifest"].get("fit_metrics_computed")),
             capture_manifest=capture_status,
         )
 
@@ -3063,12 +3068,15 @@ def run_pipeline_next(*, root, plan, source_model_dir, target_model_dir,
             split="train",
             control=opts["control"],
             kinds=opts["kinds"],
+            compute_fit_metrics=not skip_fit_metrics,
         )
         return emit(
             stage=stage,
             out=str(out_dir),
             paired_shards=result["translator_manifest"]["paired_shards"],
             artifacts=len(result["translator_manifest"]["artifacts"]),
+            fit_metrics_computed=(
+                result["translator_manifest"].get("fit_metrics_computed")),
             capture_manifest=capture_status,
         )
 
@@ -3399,6 +3407,9 @@ def main(argv=None):
                     help="do not run the live G0 GPU smoke")
     pn.add_argument("--skip-binding-eval", action="store_true",
                     help="stop after binding probe generation")
+    pn.add_argument("--skip-fit-metrics", action="store_true",
+                    help="write translators without the train fit-metrics "
+                         "rescan")
     pn.add_argument("--no-resume", action="store_true",
                     help="overwrite/recompute capture shards")
     pn.add_argument("--no-compress", action="store_true",
@@ -3779,6 +3790,7 @@ def main(argv=None):
             live_g0_probe_tokens=args.live_g0_probe_tokens,
             skip_live_g0=args.skip_live_g0,
             skip_binding_eval=args.skip_binding_eval,
+            skip_fit_metrics=args.skip_fit_metrics,
             resume=not args.no_resume,
             compress=not args.no_compress,
         )

@@ -495,8 +495,11 @@ def test_pipeline_next_fits_translator_after_g0_when_live_g0_skipped(
         "schema": "qwen35_graft_translation_g0_capture_identity_v1",
     }))
 
+    seen = {}
+
     def fake_fit(capture_dir, out_dir, *, ridge_lambda, split,
-                 control="normal", kinds="both"):
+                 control="normal", kinds="both", compute_fit_metrics=True):
+        seen["compute_fit_metrics"] = compute_fit_metrics
         out = Path(out_dir)
         out.mkdir(parents=True, exist_ok=True)
         manifest = {
@@ -505,6 +508,7 @@ def test_pipeline_next_fits_translator_after_g0_when_live_g0_skipped(
             "kinds": ["k", "v"] if kinds == "both" else [kinds],
             "paired_shards": 1,
             "artifacts": [],
+            "fit_metrics_computed": compute_fit_metrics,
         }
         (out / "translator_manifest.json").write_text(json.dumps(manifest))
         return {"translator_manifest": manifest, "fit_metrics": {}}
@@ -518,9 +522,12 @@ def test_pipeline_next_fits_translator_after_g0_when_live_g0_skipped(
         target_model_dir="/target",
         skip_live_g0=True,
         skip_binding_eval=True,
+        skip_fit_metrics=True,
     )
 
     assert result["stage"] == "fit-translator"
+    assert result["fit_metrics_computed"] is False
+    assert seen["compute_fit_metrics"] is False
     assert (root / "translator" / "translator_manifest.json").is_file()
 
 
