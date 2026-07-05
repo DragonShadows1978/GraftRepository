@@ -1104,7 +1104,7 @@ def _write_ridge_translator_solutions(state, specs, *, compute_fit_metrics=True)
 
 def fit_ridge_translator(capture_dir, out_dir, *, ridge_lambda=1e-4,
                          split="train", control="normal", kinds=("k", "v"),
-                         backend="cpu"):
+                         backend="cpu", compute_fit_metrics=True):
     """Fit full-width per-layer ridge maps from source K/V into target K/V."""
     state = _accumulate_ridge_translator(
         capture_dir,
@@ -1116,6 +1116,7 @@ def fit_ridge_translator(capture_dir, out_dir, *, ridge_lambda=1e-4,
     return _write_ridge_translator_solutions(
         state,
         [(float(ridge_lambda), Path(out_dir).expanduser())],
+        compute_fit_metrics=compute_fit_metrics,
     )[0]
 
 
@@ -3237,6 +3238,9 @@ def main(argv=None):
     ft.add_argument("--backend", default="cpu",
                     choices=("cpu", "auto", "cupy", "cuda", "gpu", "numpy"),
                     help="ridge math backend; default preserves CPU behavior")
+    ft.add_argument("--skip-fit-metrics", action="store_true",
+                    help="write translator after solve without the train "
+                         "fit-metrics rescan")
     fs = sub.add_parser(
         "fit-translator-sweep",
         help="fit several ridge translators from one shared accumulation pass")
@@ -3543,6 +3547,7 @@ def main(argv=None):
             control=args.control,
             kinds=args.kinds,
             backend=args.backend,
+            compute_fit_metrics=not args.skip_fit_metrics,
         )
         print(json.dumps({
             "status": "ok",

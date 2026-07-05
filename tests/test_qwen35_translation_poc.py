@@ -812,6 +812,57 @@ def test_fit_ridge_translator_writes_artifacts_from_paired_shards(tmp_path):
     assert identity["layers"][0]["non_finite_tensors"] == 0
 
 
+def test_fit_ridge_translator_can_skip_fit_metrics(tmp_path):
+    out_dir = tmp_path / "captures"
+    x = np.array([
+        [[[[1.0, 0.0], [0.0, 1.0], [1.0, 1.0], [2.0, 1.0]]]]
+    ], dtype=np.float32).reshape(1, 1, 4, 2)
+    y = np.concatenate([2.0 * x, -1.0 * x], axis=1)
+    captured_source = [None] * 12
+    captured_target = [None] * 12
+    captured_source[3] = {"k": x, "v": x}
+    captured_target[7] = {"k": y, "v": y}
+    write_capture_shard(
+        out_dir,
+        role="source",
+        doc_id="doc-fit-fast",
+        chunk_id=0,
+        token_ids=[1, 2, 3, 4],
+        captured=captured_source,
+        metadata={"split": "train"},
+        compress=False,
+    )
+    write_capture_shard(
+        out_dir,
+        role="target",
+        doc_id="doc-fit-fast",
+        chunk_id=0,
+        token_ids=[1, 2, 3, 4],
+        captured=captured_target,
+        metadata={"split": "train"},
+        compress=False,
+    )
+
+    result = fit_ridge_translator(
+        out_dir,
+        tmp_path / "translator_fast",
+        ridge_lambda=1e-8,
+        split="train",
+        kinds="k",
+        compute_fit_metrics=False,
+    )
+
+    manifest = result["translator_manifest"]
+    metrics = result["fit_metrics"]
+    assert manifest["fit_metrics_computed"] is False
+    assert metrics["fit_metrics_computed"] is False
+    assert metrics["layers"][0]["mse"] is None
+    assert metrics["layers"][0]["r2"] is None
+    assert metrics["layers"][0]["mean_row_cosine"] is None
+    assert Path(manifest["artifacts"][0]["path"]).is_file()
+    assert Path(manifest["fit_metrics"]).is_file()
+
+
 def test_fit_ridge_translator_sweep_reuses_one_accumulation(tmp_path):
     out_dir = tmp_path / "captures"
     x = np.array([

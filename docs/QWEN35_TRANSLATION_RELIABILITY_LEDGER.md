@@ -827,3 +827,36 @@ Translation reliability track.
 - Capture the remaining R4.3 source chunks.
 - Capture the remaining R4.3 target chunks.
 - Fit and gate `translator_corpus_5m`.
+
+### 2026-07-05 - R4.3 Fast Single-Fit Path
+
+**Status:** complete.
+
+**Completed work:**
+
+- Added `compute_fit_metrics` support to the single `fit_ridge_translator`
+  path.
+- Exposed `--skip-fit-metrics` on the `fit-translator` CLI, matching the
+  existing sweep fast path.
+- Added focused coverage for the single-fit skip path.
+
+**Reason:**
+
+- The expanded `3.41M` token corpus is large enough that re-reading all train
+  capture shards just to compute train-set fit metrics adds a second expensive
+  decompression pass.
+- R4.3's real selection gates are held-out G1/G2 plus frozen V2 binding
+  probes, so the translator can be written immediately after solving and still
+  keep explicit null train metrics in `fit_metrics.json`.
+
+**Validation:**
+
+- `PYTHONPATH=. PYTEST_ADDOPTS='-p no:cacheprovider' pytest -q tests/test_qwen35_translation_poc.py -q`
+  - result: `34 passed`
+
+**Remaining work:**
+
+- Finish target capture for `captures_5m`.
+- Fit `translator_corpus_5m` with:
+  `fit-translator --backend cupy --skip-fit-metrics`.
+- Run held-out G1/G2 and frozen V2 translated binding gates.
