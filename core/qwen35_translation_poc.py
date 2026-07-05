@@ -1590,6 +1590,157 @@ def evaluate_binding_probes(probes_path, out_path, *, source_model_dir=None,
     return metrics
 
 
+def _binding_probe_lengths(probe, tokenizer=None):
+    fields = {
+        "fact": probe.get("fact", ""),
+        "question": probe.get("question", ""),
+        "gold": probe.get("gold", ""),
+    }
+    for idx, decoy in enumerate(probe.get("decoys", [])):
+        fields[f"decoy_{idx}"] = decoy
+    lengths = {
+        name: {"chars": len(str(text))}
+        for name, text in fields.items()
+    }
+    if tokenizer is not None:
+        for name, text in fields.items():
+            lengths[name]["tokens"] = len(_as_int_list(
+                _encode_text(tokenizer, str(text))))
+    return lengths
+
+
+def analyze_binding_eval(binding_eval_path, out_path, *, probes_path=None,
+                         tokenizer_dir=None):
+    """Join binding eval rows back to probes and summarize floor/miss patterns."""
+    binding_eval_path = Path(binding_eval_path).expanduser()
+    metrics = _load_json(binding_eval_path)
+    if metrics.get("schema") != "qwen35_graft_translation_binding_eval_v1":
+        raise ValueError(
+            f"expected qwen35_graft_translation_binding_eval_v1, got "
+            f"{metrics.get('schema')!r}")
+    probes_path = Path(
+        probes_path or metrics.get("probes_path") or "").expanduser()
+    if not str(probes_path):
+        raise ValueError("probes_path is required")
+    probe_spec = _load_json(probes_path)
+    probes = {p["id"]: p for p in probe_spec.get("probes", [])}
+    rows_by_probe = {}
+    for row in metrics.get("rows", []):
+        rows_by_probe.setdefault(row["probe_id"], {})[row["mode"]] = row
+
+    tokenizer = None
+    tokenizer_source = None
+    if tokenizer_dir is None:
+        source_model = metrics.get("source_model") or {}
+        tokenizer_dir = source_model.get("model_dir")
+    if tokenizer_dir:
+        try:
+            tokenizer = load_hf_tokenizer(tokenizer_dir)
+            tokenizer_source = str(Path(tokenizer_dir).expanduser())
+        except Exception as exc:  # pragma: no cover - defensive artifact note.
+            tokenizer_source = f"unavailable: {exc}"
+
+    per_probe = []
+    translated_misses = []
+    amnesia_successes = []
+    translated_beats_amnesia = []
+    amnesia_beats_translated = []
+    mode_success = {}
+    for probe_id in sorted(probes):
+        probe = probes[probe_id]
+        modes = rows_by_probe.get(probe_id, {})
+        mode_records = {}
+        for mode, row in sorted(modes.items()):
+            decoy_scores = row.get("candidate_scores", {}).get("decoys", [])
+            best_idx = None
+            best_decoy = None
+            if decoy_scores:
+                best_idx = int(np.argmax(np.asarray(decoy_scores)))
+                decoys = list(probe.get("decoys", []))
+                if best_idx < len(decoys):
+                    best_decoy = decoys[best_idx]
+            mode_records[mode] = {
+                "gold_score": row["gold_score"],
+                "best_decoy_score": row["best_decoy_score"],
+                "gold_minus_best_decoy": row["gold_minus_best_decoy"],
+                "success": bool(row["success"]),
+                "best_decoy_index": best_idx,
+                "best_decoy": best_decoy,
+            }
+            rec = mode_success.setdefault(mode, {
+                "probes": 0,
+                "positive_margins": 0,
+                "mean_margin_values": [],
+                "min_margin": None,
+            })
+            rec["probes"] += 1
+            rec["positive_margins"] += int(bool(row["success"]))
+            margin = float(row["gold_minus_best_decoy"])
+            rec["mean_margin_values"].append(margin)
+            rec["min_margin"] = (
+                margin if rec["min_margin"] is None
+                else min(rec["min_margin"], margin))
+
+        amnesia = mode_records.get("amnesia")
+        translated = mode_records.get("translated")
+        if translated is not None and not translated["success"]:
+            translated_misses.append(probe_id)
+        if amnesia is not None and amnesia["success"]:
+            amnesia_successes.append(probe_id)
+        if amnesia is not None and translated is not None:
+            if (translated["gold_minus_best_decoy"] >
+                    amnesia["gold_minus_best_decoy"]):
+                translated_beats_amnesia.append(probe_id)
+            elif (amnesia["gold_minus_best_decoy"] >
+                  translated["gold_minus_best_decoy"]):
+                amnesia_beats_translated.append(probe_id)
+
+        per_probe.append({
+            "probe_id": probe_id,
+            "entity": probe.get("entity"),
+            "fact": probe.get("fact"),
+            "question": probe.get("question"),
+            "gold": probe.get("gold"),
+            "decoys": list(probe.get("decoys", [])),
+            "lengths": _binding_probe_lengths(probe, tokenizer),
+            "modes": mode_records,
+        })
+
+    mode_summary = []
+    for mode, rec in sorted(mode_success.items()):
+        margins = rec.pop("mean_margin_values")
+        mode_summary.append({
+            "mode": mode,
+            "probes": rec["probes"],
+            "positive_margins": rec["positive_margins"],
+            "mean_margin": float(np.mean(margins)) if margins else None,
+            "min_margin": rec["min_margin"],
+        })
+
+    analysis = {
+        "schema": "qwen35_graft_translation_binding_analysis_v1",
+        "binding_eval_path": str(binding_eval_path),
+        "binding_eval_sha256": _sha256(binding_eval_path),
+        "probes_path": str(probes_path),
+        "probes_sha256": _sha256(probes_path),
+        "tokenizer_source": tokenizer_source,
+        "probe_count": len(probes),
+        "modes": list(metrics.get("modes", [])),
+        "mode_summary": mode_summary,
+        "translated_misses": translated_misses,
+        "amnesia_successes": amnesia_successes,
+        "translated_beats_amnesia": translated_beats_amnesia,
+        "amnesia_beats_translated": amnesia_beats_translated,
+        "per_probe": per_probe,
+    }
+    out = Path(out_path).expanduser()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w") as fh:
+        json.dump(analysis, fh, indent=2)
+        fh.write("\n")
+    return analysis
+
+
 def _tensor_to_numpy(t):
     try:
         return t.float().numpy()
@@ -2461,6 +2612,17 @@ def main(argv=None):
     be.add_argument("--max-probes", type=int, default=0)
     be.add_argument("--layers", default="all",
                     help="'all', 'first', or comma-separated layer ids")
+    ba = sub.add_parser(
+        "analyze-binding-eval",
+        help="summarize binding eval misses, floor behavior, and best decoys")
+    ba.add_argument("--binding-eval", required=True,
+                    help="binding_eval_metrics.json")
+    ba.add_argument("--out", required=True,
+                    help="output binding analysis json")
+    ba.add_argument("--probes", default=None,
+                    help="defaults to probes_path recorded in binding eval")
+    ba.add_argument("--tokenizer-dir", default=None,
+                    help="optional tokenizer/model dir for token lengths")
     pn = sub.add_parser(
         "pipeline-next",
         help="run one next missing PoC stage for cron/Claude orchestration")
@@ -2738,6 +2900,25 @@ def main(argv=None):
             "out": str(Path(args.out).expanduser()),
             "probe_count": metrics["probe_count"],
             "summaries": metrics["summaries"],
+        }, indent=2))
+        return 0
+    if args.cmd == "analyze-binding-eval":
+        analysis = analyze_binding_eval(
+            args.binding_eval,
+            args.out,
+            probes_path=args.probes,
+            tokenizer_dir=args.tokenizer_dir,
+        )
+        print(json.dumps({
+            "status": "ok",
+            "out": str(Path(args.out).expanduser()),
+            "probe_count": analysis["probe_count"],
+            "translated_misses": len(analysis["translated_misses"]),
+            "amnesia_successes": len(analysis["amnesia_successes"]),
+            "translated_beats_amnesia": len(
+                analysis["translated_beats_amnesia"]),
+            "amnesia_beats_translated": len(
+                analysis["amnesia_beats_translated"]),
         }, indent=2))
         return 0
     if args.cmd == "pipeline-next":

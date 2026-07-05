@@ -1,7 +1,7 @@
 # Qwen3.5 Translation Reliability Plan
 
-**Status:** registered 2026-07-04. This is the follow-up plan after the
-completed Qwen3.5 2B-to-9B Translation PoC.
+**Status:** R0 baseline miss/floor analysis complete. R1 binding-probe V2
+generator is next.
 
 **House rules for this track:**
 
@@ -71,6 +71,19 @@ Exit gate:
 - Analysis artifact exists under
   `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/`.
 - Ledger records command, hash, and the actionable failure pattern.
+
+Current status:
+
+- Complete.
+- Artifact:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_analysis_v1.json`
+- Translated misses: `7 / 32`
+- Amnesia successes: `20 / 32`
+- Translated beats amnesia by margin on `28 / 32` probes.
+- Amnesia beats translated by margin on `4 / 32` probes.
+- Actionable pattern: V1 is not a clean floor, but translated usually improves
+  margin over amnesia. R1 should reduce prompt/entity leakage and make decoys
+  more tightly matched.
 
 ## Phase R1: Binding Probe V2 Generator
 
@@ -199,10 +212,8 @@ Exit gate:
 
 ## Open Queue
 
-1. Implement R0 miss/floor analysis CLI.
-2. Run R0 on the existing V1 binding artifact.
-3. Implement R1 V2 probe generator and tests.
-4. Run R2 V2 amnesia floor gate.
-5. Run R3 V2 full binding gate if floor is clean.
-6. Start R4 translator tuning only after V2 is clean enough.
-7. Run R5 live G0 repair in parallel only when GPU/runtime time is available.
+1. Implement R1 V2 probe generator and tests.
+2. Run R2 V2 amnesia floor gate.
+3. Run R3 V2 full binding gate if floor is clean.
+4. Start R4 translator tuning only after V2 is clean enough.
+5. Run R5 live G0 repair in parallel only when GPU/runtime time is available.

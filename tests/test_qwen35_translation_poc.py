@@ -11,6 +11,7 @@ import pytest
 import core.qwen35_translation_poc as poc
 from core.qwen35_translation_poc import (
     SourceValidationError,
+    analyze_binding_eval,
     build_corpus_plan,
     choose_next_capture_role,
     evaluate_capture_identity,
@@ -925,6 +926,82 @@ def test_candidate_scores_compute_gold_minus_best_decoy():
     assert row["success"] is True
     assert row["best_decoy_score"] == -2.0
     assert row["gold_minus_best_decoy"] == 1.0
+
+
+def test_analyze_binding_eval_summarizes_floor_and_misses(tmp_path):
+    probes = {
+        "schema": "qwen35_graft_translation_binding_probes_v1",
+        "seed": "unit",
+        "count": 2,
+        "probes": [
+            {
+                "id": "bind-000",
+                "entity": "Aster",
+                "fact": "Project Aster has code AS-1111.",
+                "question": "What code belongs to Project Aster?\nAnswer:",
+                "gold": " AS-1111",
+                "decoys": [" BE-2222", " CI-3333", " DO-4444"],
+            },
+            {
+                "id": "bind-001",
+                "entity": "Beryl",
+                "fact": "Project Beryl has code BE-5555.",
+                "question": "What code belongs to Project Beryl?\nAnswer:",
+                "gold": " BE-5555",
+                "decoys": [" AS-6666", " CI-7777", " DO-8888"],
+            },
+        ],
+    }
+    probes_path = tmp_path / "binding_probes.json"
+    probes_path.write_text(json.dumps(probes))
+    rows = []
+    for probe_id, amnesia_margin, translated_margin in (
+            ("bind-000", 0.25, 1.5),
+            ("bind-001", 2.0, -0.5),
+    ):
+        for mode, margin in (
+                ("amnesia", amnesia_margin),
+                ("translated", translated_margin)):
+            rows.append({
+                "probe_id": probe_id,
+                "mode": mode,
+                "gold_score": margin,
+                "best_decoy_score": 0.0,
+                "gold_minus_best_decoy": margin,
+                "success": margin > 0,
+                "candidate_scores": {
+                    "gold": margin,
+                    "decoys": [-1.0, 0.0, -2.0],
+                },
+            })
+    binding_eval = {
+        "schema": "qwen35_graft_translation_binding_eval_v1",
+        "probes_path": str(probes_path),
+        "source_model": None,
+        "target_model": None,
+        "translator_dir": None,
+        "modes": ["amnesia", "translated"],
+        "probe_count": 2,
+        "summaries": [],
+        "rows": rows,
+    }
+    binding_path = tmp_path / "binding_eval_metrics.json"
+    binding_path.write_text(json.dumps(binding_eval))
+
+    analysis = analyze_binding_eval(
+        binding_path,
+        tmp_path / "binding_eval_analysis.json",
+    )
+
+    assert analysis["schema"] == "qwen35_graft_translation_binding_analysis_v1"
+    assert analysis["probe_count"] == 2
+    assert analysis["translated_misses"] == ["bind-001"]
+    assert analysis["amnesia_successes"] == ["bind-000", "bind-001"]
+    assert analysis["translated_beats_amnesia"] == ["bind-000"]
+    assert analysis["amnesia_beats_translated"] == ["bind-001"]
+    assert analysis["per_probe"][0]["modes"]["translated"]["best_decoy"] == (
+        " CI-3333")
+    assert analysis["per_probe"][0]["lengths"]["gold"]["chars"] == 8
 
 
 def test_translate_harvested_capture_applies_artifacts_to_target_shape(tmp_path):
