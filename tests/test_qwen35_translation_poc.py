@@ -16,7 +16,9 @@ from core.qwen35_translation_poc import (
     choose_next_capture_role,
     evaluate_capture_identity,
     evaluate_translator,
+    evaluate_translator_sweep,
     fit_ridge_translator,
+    fit_ridge_translator_sweep,
     inspect_pipeline_status,
     make_binding_probe_set,
     make_binding_probe_set_v2,
@@ -710,6 +712,8 @@ def test_fit_ridge_translator_writes_artifacts_from_paired_shards(tmp_path):
     manifest = result["translator_manifest"]
     metrics = result["fit_metrics"]
     assert manifest["schema"] == "qwen35_graft_translation_translator_v1"
+    assert manifest["backend_requested"] == "cpu"
+    assert manifest["compute_backend"] == "cpu"
     assert manifest["layer_alignment"] == [
         {"source_layer": 3, "target_layer": 7}]
     assert len(manifest["artifacts"]) == 2
@@ -718,6 +722,8 @@ def test_fit_ridge_translator_writes_artifacts_from_paired_shards(tmp_path):
     assert all(Path(a["path"]).is_file() for a in manifest["artifacts"])
     assert manifest["control"] == "normal"
     assert manifest["kinds"] == ["k", "v"]
+    assert metrics["backend_requested"] == "cpu"
+    assert metrics["compute_backend"] == "cpu"
     assert len(metrics["layers"]) == 2
     assert all(row["r2"] > 0.99 for row in metrics["layers"])
 
@@ -805,6 +811,130 @@ def test_fit_ridge_translator_writes_artifacts_from_paired_shards(tmp_path):
     assert identity["layers"][0]["non_finite_tensors"] == 0
 
 
+def test_fit_ridge_translator_sweep_reuses_one_accumulation(tmp_path):
+    out_dir = tmp_path / "captures"
+    x = np.array([
+        [[[[1.0, 0.0], [0.0, 1.0], [1.0, 1.0], [2.0, 1.0]]]]
+    ], dtype=np.float32).reshape(1, 1, 4, 2)
+    y = np.concatenate([2.0 * x, -1.0 * x], axis=1)
+    captured_source = [None] * 12
+    captured_target = [None] * 12
+    queries_target = [None] * 12
+    captured_source[3] = {"k": x, "v": x}
+    captured_target[7] = {"k": y, "v": y}
+    queries_target[7] = y
+    write_capture_shard(
+        out_dir,
+        role="source",
+        doc_id="doc-sweep",
+        chunk_id=0,
+        token_ids=[1, 2, 3, 4],
+        captured=captured_source,
+        metadata={"split": "train"},
+        compress=False,
+    )
+    write_capture_shard(
+        out_dir,
+        role="target",
+        doc_id="doc-sweep",
+        chunk_id=0,
+        token_ids=[1, 2, 3, 4],
+        captured=captured_target,
+        queries=queries_target,
+        metadata={"split": "train"},
+        compress=False,
+    )
+
+    result = fit_ridge_translator_sweep(
+        out_dir,
+        tmp_path,
+        ridge_lambdas=("1e-8", "1e-4"),
+        out_prefix="sweep",
+        split="train",
+        kinds="k",
+    )
+
+    assert result["schema"] == "qwen35_graft_translation_ridge_sweep_v1"
+    assert result["compute_backend"] == "cpu"
+    assert result["fit_metrics_computed"] is True
+    assert result["ridge_lambdas"] == [1e-8, 1e-4]
+    assert len(result["results"]) == 2
+    for item in result["results"]:
+        manifest = item["translator_manifest"]
+        assert manifest["compute_backend"] == "cpu"
+        assert manifest["kinds"] == ["k"]
+        assert Path(manifest["fit_metrics"]).is_file()
+        assert Path(manifest["artifacts"][0]["path"]).is_file()
+    assert (tmp_path / "sweep_1e-8" / "translator_manifest.json").is_file()
+    assert (tmp_path / "sweep_1e-4" / "translator_manifest.json").is_file()
+
+    eval_result = evaluate_translator_sweep(
+        out_dir,
+        [tmp_path / "sweep_1e-8", tmp_path / "sweep_1e-4"],
+        split="train",
+        topk=2,
+    )
+    assert eval_result["schema"] == "qwen35_graft_translation_eval_sweep_v1"
+    assert eval_result["paired_shards"] == 1
+    assert Path(eval_result["progress"]).is_file()
+    for item in eval_result["results"]:
+        assert Path(item["out"]).is_file()
+        assert item["eval_metrics"]["schema"] == (
+            "qwen35_graft_translation_eval_metrics_v1")
+        assert item["eval_metrics"]["layers"][0]["key_recall_at_2"] > 0.99
+
+
+def test_fit_ridge_translator_sweep_can_skip_fit_metrics(tmp_path):
+    out_dir = tmp_path / "captures"
+    x = np.array([
+        [[[[1.0, 0.0], [0.0, 1.0], [1.0, 1.0], [2.0, 1.0]]]]
+    ], dtype=np.float32).reshape(1, 1, 4, 2)
+    y = np.concatenate([2.0 * x, -1.0 * x], axis=1)
+    captured_source = [None] * 12
+    captured_target = [None] * 12
+    captured_source[3] = {"k": x, "v": x}
+    captured_target[7] = {"k": y, "v": y}
+    write_capture_shard(
+        out_dir,
+        role="source",
+        doc_id="doc-sweep-fast",
+        chunk_id=0,
+        token_ids=[1, 2, 3, 4],
+        captured=captured_source,
+        metadata={"split": "train"},
+        compress=False,
+    )
+    write_capture_shard(
+        out_dir,
+        role="target",
+        doc_id="doc-sweep-fast",
+        chunk_id=0,
+        token_ids=[1, 2, 3, 4],
+        captured=captured_target,
+        metadata={"split": "train"},
+        compress=False,
+    )
+
+    result = fit_ridge_translator_sweep(
+        out_dir,
+        tmp_path,
+        ridge_lambdas=("1e-8",),
+        out_prefix="fast",
+        split="train",
+        kinds="k",
+        compute_fit_metrics=False,
+    )
+
+    manifest = result["results"][0]["translator_manifest"]
+    metrics = result["results"][0]["fit_metrics"]
+    assert result["fit_metrics_computed"] is False
+    assert manifest["fit_metrics_computed"] is False
+    assert metrics["fit_metrics_computed"] is False
+    assert metrics["layers"][0]["mse"] is None
+    assert Path(manifest["artifacts"][0]["path"]).is_file()
+    assert Path(manifest["fit_metrics"]).is_file()
+
+
 def test_topk_recall_matches_set_intersection_reference():
     rng = np.random.default_rng(1234)
     scores_a = rng.normal(size=(3, 4, 9)).astype(np.float32)
@@ -822,6 +952,13 @@ def test_topk_recall_matches_set_intersection_reference():
     expected = hits / float(rows * 4)
 
     assert got == expected
+
+
+def test_ridge_backend_resolution_accepts_cpu_aliases():
+    assert poc._resolve_ridge_backend("cpu") == ("cpu", None)
+    assert poc._resolve_ridge_backend("numpy") == ("cpu", None)
+    with pytest.raises(ValueError, match="backend must be"):
+        poc._resolve_ridge_backend("fortran")
 
 
 def test_qwen35_attention_exposes_grm_injection_contract():

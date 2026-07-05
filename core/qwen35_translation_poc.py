@@ -722,8 +722,79 @@ def _flatten_heads_tokens(arr):
     return np.ascontiguousarray(arr[0].transpose(1, 0, 2).reshape(arr.shape[2], -1))
 
 
-def _solve_ridge(accum, ridge_lambda):
+def _resolve_ridge_backend(backend):
+    backend = str(backend or "cpu").lower()
+    aliases = {"cuda": "cupy", "gpu": "cupy", "numpy": "cpu"}
+    backend = aliases.get(backend, backend)
+    if backend == "cpu":
+        return "cpu", None
+    if backend not in ("auto", "cupy"):
+        raise ValueError(
+            "backend must be 'cpu', 'auto', 'cupy', 'cuda', or 'gpu'")
+    try:
+        import cupy as cp
+        if cp.cuda.runtime.getDeviceCount() <= 0:
+            raise RuntimeError("no CUDA devices visible to CuPy")
+        cp.cuda.Device(0).use()
+        return "cupy", cp
+    except Exception:
+        if backend == "auto":
+            return "cpu", None
+        raise
+
+
+def _new_ridge_accum(input_dim, output_dim, *, backend, cp=None):
+    if backend == "cupy":
+        return {
+            "a": cp.zeros((input_dim, input_dim), dtype=cp.float64),
+            "b": cp.zeros((input_dim, output_dim), dtype=cp.float64),
+            "n": 0,
+            "y_sum": cp.zeros(output_dim, dtype=cp.float64),
+            "y_sq_sum": 0.0,
+        }
+    return {
+        "a": np.zeros((input_dim, input_dim), np.float64),
+        "b": np.zeros((input_dim, output_dim), np.float64),
+        "n": 0,
+        "y_sum": np.zeros(output_dim, np.float64),
+        "y_sq_sum": 0.0,
+    }
+
+
+def _accumulate_ridge_stats(rec, x1, y, *, backend, cp=None):
+    if backend == "cupy":
+        x1g = cp.asarray(x1, dtype=cp.float64)
+        yg = cp.asarray(y, dtype=cp.float64)
+        rec["a"] += x1g.T @ x1g
+        rec["b"] += x1g.T @ yg
+        rec["n"] += x1.shape[0]
+        rec["y_sum"] += yg.sum(axis=0)
+        rec["y_sq_sum"] += float(cp.sum(yg * yg).get())
+        return
+    x1d = x1.astype(np.float64)
+    yd = y.astype(np.float64)
+    rec["a"] += x1d.T @ x1d
+    rec["b"] += x1d.T @ yd
+    rec["n"] += x1.shape[0]
+    rec["y_sum"] += yd.sum(axis=0)
+    rec["y_sq_sum"] += float((yd ** 2).sum())
+
+
+def _solve_ridge(accum, ridge_lambda, *, backend="cpu", cp=None):
     dim = accum["a"].shape[0]
+    if backend == "cupy":
+        reg = cp.eye(dim, dtype=cp.float64) * float(ridge_lambda)
+        reg[-1, -1] = 0.0
+        lhs = accum["a"] + reg
+        try:
+            return cp.asnumpy(cp.linalg.solve(lhs, accum["b"]))
+        except Exception:
+            lhs = cp.asnumpy(lhs)
+            rhs = cp.asnumpy(accum["b"])
+            try:
+                return np.linalg.solve(lhs, rhs)
+            except np.linalg.LinAlgError:
+                return np.linalg.lstsq(lhs, rhs, rcond=None)[0]
     reg = np.eye(dim, dtype=np.float64) * float(ridge_lambda)
     reg[-1, -1] = 0.0
     lhs = accum["a"] + reg
@@ -733,17 +804,48 @@ def _solve_ridge(accum, ridge_lambda):
         return np.linalg.lstsq(lhs, accum["b"], rcond=None)[0]
 
 
-def fit_ridge_translator(capture_dir, out_dir, *, ridge_lambda=1e-4,
-                         split="train", control="normal", kinds=("k", "v")):
-    """Fit full-width per-layer ridge maps from source K/V into target K/V."""
+def _ridge_y_sum(rec, *, backend, cp=None):
+    if backend == "cupy":
+        return cp.asnumpy(rec["y_sum"])
+    return rec["y_sum"]
+
+
+def _accumulate_prediction_metrics(m, x, y, weight, bias, *, backend, cp=None):
+    if backend == "cupy":
+        xg = cp.asarray(x, dtype=cp.float32)
+        yg = cp.asarray(y, dtype=cp.float32)
+        wg = cp.asarray(weight, dtype=cp.float32)
+        bg = cp.asarray(bias, dtype=cp.float32)
+        pred = xg @ wg + bg
+        diff = pred - yg
+        m["sse"] += float(cp.sum(diff.astype(cp.float64) ** 2).get())
+        denom = (
+            cp.linalg.norm(pred, axis=1) *
+            cp.linalg.norm(yg, axis=1) + 1e-12)
+        m["cosine_sum"] += float(
+            cp.sum(cp.sum(pred * yg, axis=1) / denom).get())
+        m["cosine_count"] += int(y.shape[0])
+        return
+    pred = x @ weight + bias
+    diff = pred - y
+    m["sse"] += float((diff.astype(np.float64) ** 2).sum())
+    denom = (np.linalg.norm(pred, axis=1) *
+             np.linalg.norm(y, axis=1) + 1e-12)
+    m["cosine_sum"] += float(((pred * y).sum(axis=1) / denom).sum())
+    m["cosine_count"] += int(y.shape[0])
+
+
+def _accumulate_ridge_translator(capture_dir, *, split="train",
+                                 control="normal", kinds=("k", "v"),
+                                 backend="cpu"):
+    requested_backend = str(backend or "cpu").lower()
+    backend, cp = _resolve_ridge_backend(requested_backend)
     control = str(control)
     if control not in ("normal", "wrong-layer", "shuffled-docs"):
         raise ValueError(
             "control must be 'normal', 'wrong-layer', or 'shuffled-docs'")
     kinds = _fit_kinds(kinds)
     capture_dir = Path(capture_dir).expanduser()
-    out_dir = Path(out_dir).expanduser()
-    out_dir.mkdir(parents=True, exist_ok=True)
     sidecars = _load_capture_sidecars(capture_dir)
     source = sidecars.get("source", {})
     target = sidecars.get("target", {})
@@ -773,160 +875,295 @@ def fit_ridge_translator(capture_dir, out_dir, *, ridge_lambda=1e-4,
 
     accum = {}
     for _, sm, tm in pairs:
-        sz = np.load(sm["npz"])
-        tz = np.load(tm["npz"])
-        if (control != "shuffled-docs" and
-                sz["token_ids"].tolist() != tz["token_ids"].tolist()):
-            raise ValueError(
-                f"token mismatch for paired shard {sm['doc_id']}:{sm['chunk_id']}")
-        for src_layer, tgt_layer in layer_map.items():
-            for kind in kinds:
-                skey = f"l{src_layer}_{kind}"
-                tkey = f"l{tgt_layer}_{kind}"
-                if skey not in sz.files or tkey not in tz.files:
-                    continue
-                x = _flatten_heads_tokens(sz[skey])
-                y = _flatten_heads_tokens(tz[tkey])
-                if x.shape[0] != y.shape[0]:
-                    if control != "shuffled-docs":
-                        raise ValueError(
-                            f"token count mismatch for {skey}->{tkey}: {x.shape} vs {y.shape}")
-                    n = min(x.shape[0], y.shape[0])
-                    x = x[:n]
-                    y = y[:n]
-                x1 = np.concatenate(
-                    [x, np.ones((x.shape[0], 1), dtype=np.float32)], axis=1)
-                key = (src_layer, tgt_layer, kind)
-                rec = accum.get(key)
-                if rec is None:
-                    rec = {
-                        "a": np.zeros((x1.shape[1], x1.shape[1]), np.float64),
-                        "b": np.zeros((x1.shape[1], y.shape[1]), np.float64),
-                        "n": 0,
-                        "y_sum": np.zeros(y.shape[1], np.float64),
-                        "y_sq_sum": 0.0,
-                    }
-                    accum[key] = rec
-                rec["a"] += x1.T.astype(np.float64) @ x1.astype(np.float64)
-                rec["b"] += x1.T.astype(np.float64) @ y.astype(np.float64)
-                rec["n"] += x.shape[0]
-                rec["y_sum"] += y.astype(np.float64).sum(axis=0)
-                rec["y_sq_sum"] += float((y.astype(np.float64) ** 2).sum())
+        with np.load(sm["npz"]) as sz, np.load(tm["npz"]) as tz:
+            if (control != "shuffled-docs" and
+                    sz["token_ids"].tolist() != tz["token_ids"].tolist()):
+                raise ValueError(
+                    f"token mismatch for paired shard "
+                    f"{sm['doc_id']}:{sm['chunk_id']}")
+            for src_layer, tgt_layer in layer_map.items():
+                for kind in kinds:
+                    skey = f"l{src_layer}_{kind}"
+                    tkey = f"l{tgt_layer}_{kind}"
+                    if skey not in sz.files or tkey not in tz.files:
+                        continue
+                    x = _flatten_heads_tokens(sz[skey])
+                    y = _flatten_heads_tokens(tz[tkey])
+                    if x.shape[0] != y.shape[0]:
+                        if control != "shuffled-docs":
+                            raise ValueError(
+                                f"token count mismatch for {skey}->{tkey}: "
+                                f"{x.shape} vs {y.shape}")
+                        n = min(x.shape[0], y.shape[0])
+                        x = x[:n]
+                        y = y[:n]
+                    x1 = np.concatenate(
+                        [x, np.ones((x.shape[0], 1), dtype=np.float32)],
+                        axis=1)
+                    key = (src_layer, tgt_layer, kind)
+                    rec = accum.get(key)
+                    if rec is None:
+                        rec = _new_ridge_accum(
+                            x1.shape[1],
+                            y.shape[1],
+                            backend=backend,
+                            cp=cp,
+                        )
+                        accum[key] = rec
+                    _accumulate_ridge_stats(
+                        rec, x1, y, backend=backend, cp=cp)
 
     if not accum:
         raise ValueError("no overlapping source/target layer tensors were found")
+    return {
+        "capture_dir": capture_dir,
+        "split": split,
+        "control": control,
+        "kinds": kinds,
+        "requested_backend": requested_backend,
+        "backend": backend,
+        "cp": cp,
+        "pairs": pairs,
+        "layer_map": layer_map,
+        "accum": accum,
+    }
 
-    solved = {}
-    artifacts = []
-    for key, rec in sorted(accum.items()):
-        w_aug = _solve_ridge(rec, ridge_lambda)
-        src_layer, tgt_layer, kind = key
-        weight = w_aug[:-1].astype(np.float32)
-        bias = w_aug[-1].astype(np.float32)
-        name = f"translator_l{src_layer}_to_l{tgt_layer}_{kind}.npz"
-        path = out_dir / name
-        np.savez(path, weight=weight, bias=bias,
-                 source_layer=np.array([src_layer], np.int64),
-                 target_layer=np.array([tgt_layer], np.int64),
-                 kind=np.array([kind]))
-        solved[key] = {"weight": weight, "bias": bias, "path": str(path)}
-        artifacts.append({
-            "source_layer": src_layer,
-            "target_layer": tgt_layer,
-            "kind": kind,
-            "path": str(path),
-            "input_dim": int(weight.shape[0]),
-            "output_dim": int(weight.shape[1]),
-            "train_tokens": int(rec["n"]),
+
+def _write_ridge_translator_solutions(state, specs, *, compute_fit_metrics=True):
+    capture_dir = state["capture_dir"]
+    split = state["split"]
+    control = state["control"]
+    kinds = state["kinds"]
+    requested_backend = state["requested_backend"]
+    backend = state["backend"]
+    cp = state["cp"]
+    pairs = state["pairs"]
+    layer_map = state["layer_map"]
+    accum = state["accum"]
+
+    work = []
+    for ridge_lambda, out_dir in specs:
+        out_dir = Path(out_dir).expanduser()
+        out_dir.mkdir(parents=True, exist_ok=True)
+        solved = {}
+        artifacts = []
+        metrics = {}
+        for key, rec in sorted(accum.items()):
+            w_aug = _solve_ridge(
+                rec, ridge_lambda, backend=backend, cp=cp)
+            src_layer, tgt_layer, kind = key
+            weight = w_aug[:-1].astype(np.float32)
+            bias = w_aug[-1].astype(np.float32)
+            name = f"translator_l{src_layer}_to_l{tgt_layer}_{kind}.npz"
+            path = out_dir / name
+            np.savez(path, weight=weight, bias=bias,
+                     source_layer=np.array([src_layer], np.int64),
+                     target_layer=np.array([tgt_layer], np.int64),
+                     kind=np.array([kind]))
+            solved[key] = {
+                "weight": weight,
+                "bias": bias,
+                "path": str(path),
+            }
+            artifacts.append({
+                "source_layer": src_layer,
+                "target_layer": tgt_layer,
+                "kind": kind,
+                "path": str(path),
+                "input_dim": int(weight.shape[0]),
+                "output_dim": int(weight.shape[1]),
+                "train_tokens": int(rec["n"]),
+            })
+            if compute_fit_metrics:
+                y_sum = _ridge_y_sum(rec, backend=backend, cp=cp)
+                metrics[key] = {
+                    "sse": 0.0,
+                    "cosine_sum": 0.0,
+                    "cosine_count": 0,
+                    "n": int(rec["n"]),
+                    "sst": float(
+                        rec["y_sq_sum"] - (y_sum @ y_sum) / max(rec["n"], 1)),
+                }
+        work.append({
+            "ridge_lambda": float(ridge_lambda),
+            "out_dir": out_dir,
+            "solved": solved,
+            "artifacts": artifacts,
+            "metrics": metrics,
         })
 
-    metrics = {}
-    for key, rec in accum.items():
-        metrics[key] = {
-            "sse": 0.0,
-            "cosine_sum": 0.0,
-            "cosine_count": 0,
-            "n": int(rec["n"]),
-            "sst": float(rec["y_sq_sum"] - (rec["y_sum"] @ rec["y_sum"]) / max(rec["n"], 1)),
-        }
+    if compute_fit_metrics:
+        for _, sm, tm in pairs:
+            with np.load(sm["npz"]) as sz, np.load(tm["npz"]) as tz:
+                for src_layer, tgt_layer in layer_map.items():
+                    for kind in kinds:
+                        key = (src_layer, tgt_layer, kind)
+                        skey = f"l{src_layer}_{kind}"
+                        tkey = f"l{tgt_layer}_{kind}"
+                        if skey not in sz.files or tkey not in tz.files:
+                            continue
+                        x = _flatten_heads_tokens(sz[skey])
+                        y = _flatten_heads_tokens(tz[tkey])
+                        if x.shape[0] != y.shape[0]:
+                            n = min(x.shape[0], y.shape[0])
+                            x = x[:n]
+                            y = y[:n]
+                        for item in work:
+                            if key not in item["solved"]:
+                                continue
+                            m = item["metrics"][key]
+                            solved = item["solved"][key]
+                            _accumulate_prediction_metrics(
+                                m,
+                                x,
+                                y,
+                                solved["weight"],
+                                solved["bias"],
+                                backend=backend,
+                                cp=cp,
+                            )
 
-    for _, sm, tm in pairs:
-        sz = np.load(sm["npz"])
-        tz = np.load(tm["npz"])
-        for src_layer, tgt_layer in layer_map.items():
-            for kind in kinds:
-                key = (src_layer, tgt_layer, kind)
-                if key not in solved:
+    results = []
+    for item in work:
+        metric_rows = []
+        if compute_fit_metrics:
+            for key, m in sorted(item["metrics"].items()):
+                src_layer, tgt_layer, kind = key
+                n_vals = max(m["n"], 1)
+                row = {
+                    "source_layer": src_layer,
+                    "target_layer": tgt_layer,
+                    "kind": kind,
+                    "train_tokens": int(m["n"]),
+                    "mse": float(m["sse"] / n_vals),
+                    "r2": float(1.0 - m["sse"] / max(m["sst"], 1e-12)),
+                    "mean_row_cosine": float(
+                        m["cosine_sum"] / max(m["cosine_count"], 1)),
+                }
+                metric_rows.append(row)
+        else:
+            for key, rec in sorted(accum.items()):
+                if key not in item["solved"]:
                     continue
-                skey = f"l{src_layer}_{kind}"
-                tkey = f"l{tgt_layer}_{kind}"
-                if skey not in sz.files or tkey not in tz.files:
-                    continue
-                x = _flatten_heads_tokens(sz[skey])
-                y = _flatten_heads_tokens(tz[tkey])
-                if x.shape[0] != y.shape[0]:
-                    n = min(x.shape[0], y.shape[0])
-                    x = x[:n]
-                    y = y[:n]
-                pred = x @ solved[key]["weight"] + solved[key]["bias"]
-                diff = pred - y
-                m = metrics[key]
-                m["sse"] += float((diff.astype(np.float64) ** 2).sum())
-                denom = (np.linalg.norm(pred, axis=1) *
-                         np.linalg.norm(y, axis=1) + 1e-12)
-                m["cosine_sum"] += float(((pred * y).sum(axis=1) / denom).sum())
-                m["cosine_count"] += int(y.shape[0])
+                src_layer, tgt_layer, kind = key
+                metric_rows.append({
+                    "source_layer": src_layer,
+                    "target_layer": tgt_layer,
+                    "kind": kind,
+                    "train_tokens": int(rec["n"]),
+                    "mse": None,
+                    "r2": None,
+                    "mean_row_cosine": None,
+                })
 
-    metric_rows = []
-    for key, m in sorted(metrics.items()):
-        src_layer, tgt_layer, kind = key
-        n_vals = max(m["n"], 1)
-        row = {
-            "source_layer": src_layer,
-            "target_layer": tgt_layer,
-            "kind": kind,
-            "train_tokens": int(m["n"]),
-            "mse": float(m["sse"] / n_vals),
-            "r2": float(1.0 - m["sse"] / max(m["sst"], 1e-12)),
-            "mean_row_cosine": float(
-                m["cosine_sum"] / max(m["cosine_count"], 1)),
+        out_dir = item["out_dir"]
+        ridge_lambda = item["ridge_lambda"]
+        fit_metrics = {
+            "schema": "qwen35_graft_translation_fit_metrics_v1",
+            "capture_dir": str(capture_dir),
+            "ridge_lambda": float(ridge_lambda),
+            "split": split,
+            "control": control,
+            "kinds": list(kinds),
+            "backend_requested": requested_backend,
+            "compute_backend": backend,
+            "fit_metrics_computed": bool(compute_fit_metrics),
+            "paired_shards": len(pairs),
+            "layers": metric_rows,
         }
-        metric_rows.append(row)
+        translator_manifest = {
+            "schema": "qwen35_graft_translation_translator_v1",
+            "capture_dir": str(capture_dir),
+            "ridge_lambda": float(ridge_lambda),
+            "split": split,
+            "control": control,
+            "kinds": list(kinds),
+            "backend_requested": requested_backend,
+            "compute_backend": backend,
+            "fit_metrics_computed": bool(compute_fit_metrics),
+            "paired_shards": len(pairs),
+            "layer_alignment": [
+                {"source_layer": int(k), "target_layer": int(v)}
+                for k, v in sorted(layer_map.items())
+            ],
+            "artifacts": item["artifacts"],
+            "fit_metrics": str(out_dir / "fit_metrics.json"),
+        }
+        with open(out_dir / "fit_metrics.json", "w") as fh:
+            json.dump(fit_metrics, fh, indent=2)
+            fh.write("\n")
+        with open(out_dir / "translator_manifest.json", "w") as fh:
+            json.dump(translator_manifest, fh, indent=2)
+            fh.write("\n")
+        results.append({
+            "translator_manifest": translator_manifest,
+            "fit_metrics": fit_metrics,
+        })
+    return results
 
-    fit_metrics = {
-        "schema": "qwen35_graft_translation_fit_metrics_v1",
-        "capture_dir": str(capture_dir),
-        "ridge_lambda": float(ridge_lambda),
-        "split": split,
-        "control": control,
-        "kinds": list(kinds),
-        "paired_shards": len(pairs),
-        "layers": metric_rows,
-    }
-    translator_manifest = {
-        "schema": "qwen35_graft_translation_translator_v1",
-        "capture_dir": str(capture_dir),
-        "ridge_lambda": float(ridge_lambda),
-        "split": split,
-        "control": control,
-        "kinds": list(kinds),
-        "paired_shards": len(pairs),
-        "layer_alignment": [
-            {"source_layer": int(k), "target_layer": int(v)}
-            for k, v in sorted(layer_map.items())
-        ],
-        "artifacts": artifacts,
-        "fit_metrics": str(out_dir / "fit_metrics.json"),
-    }
-    with open(out_dir / "fit_metrics.json", "w") as fh:
-        json.dump(fit_metrics, fh, indent=2)
-        fh.write("\n")
-    with open(out_dir / "translator_manifest.json", "w") as fh:
-        json.dump(translator_manifest, fh, indent=2)
-        fh.write("\n")
+
+def fit_ridge_translator(capture_dir, out_dir, *, ridge_lambda=1e-4,
+                         split="train", control="normal", kinds=("k", "v"),
+                         backend="cpu"):
+    """Fit full-width per-layer ridge maps from source K/V into target K/V."""
+    state = _accumulate_ridge_translator(
+        capture_dir,
+        split=split,
+        control=control,
+        kinds=kinds,
+        backend=backend,
+    )
+    return _write_ridge_translator_solutions(
+        state,
+        [(float(ridge_lambda), Path(out_dir).expanduser())],
+    )[0]
+
+
+def _ridge_lambda_slug(value):
+    text = str(value).strip().lower()
+    text = text.replace("+", "")
+    text = text.replace("e-0", "e-").replace("e0", "e")
+    return text.replace(".", "p")
+
+
+def fit_ridge_translator_sweep(capture_dir, out_root, *, ridge_lambdas,
+                               out_prefix="translator_ridge", split="train",
+                               control="normal", kinds=("k", "v"),
+                               backend="cpu", compute_fit_metrics=True):
+    labels = [str(x) for x in ridge_lambdas]
+    lambdas = [float(x) for x in labels]
+    if not lambdas:
+        raise ValueError("ridge_lambdas must not be empty")
+    out_root = Path(out_root).expanduser()
+    state = _accumulate_ridge_translator(
+        capture_dir,
+        split=split,
+        control=control,
+        kinds=kinds,
+        backend=backend,
+    )
+    specs = [
+        (lam, out_root / f"{out_prefix}_{_ridge_lambda_slug(label)}")
+        for lam, label in zip(lambdas, labels)
+    ]
+    results = _write_ridge_translator_solutions(
+        state,
+        specs,
+        compute_fit_metrics=compute_fit_metrics,
+    )
     return {
-        "translator_manifest": translator_manifest,
-        "fit_metrics": fit_metrics,
+        "schema": "qwen35_graft_translation_ridge_sweep_v1",
+        "capture_dir": str(Path(capture_dir).expanduser()),
+        "out_root": str(out_root),
+        "out_prefix": out_prefix,
+        "ridge_lambdas": lambdas,
+        "split": state["split"],
+        "control": state["control"],
+        "kinds": list(state["kinds"]),
+        "backend_requested": state["requested_backend"],
+        "compute_backend": state["backend"],
+        "fit_metrics_computed": bool(compute_fit_metrics),
+        "results": results,
     }
 
 
@@ -1018,7 +1255,7 @@ def _finish_output_fidelity(row, rec, prefix, *, alias=None):
 
 
 def evaluate_translator(capture_dir, translator_dir, out_path, *,
-                        split="heldout", topk=16):
+                        split="heldout", topk=16, max_pairs=0):
     """Evaluate G1/G2 plus cheap negative controls on paired shards."""
     capture_dir = Path(capture_dir).expanduser()
     out = Path(out_path).expanduser()
@@ -1035,6 +1272,9 @@ def evaluate_translator(capture_dir, translator_dir, out_path, *,
                     tm.get("metadata", {}).get("split") != split):
                 continue
         pairs.append((key, sm, tm))
+    max_pairs = int(max_pairs or 0)
+    if max_pairs > 0:
+        pairs = pairs[:max_pairs]
     if not pairs:
         raise ValueError(f"no paired source/target capture shards for split={split!r}")
 
@@ -1049,6 +1289,7 @@ def evaluate_translator(capture_dir, translator_dir, out_path, *,
             "out": str(out),
             "split": split,
             "topk": int(topk),
+            "max_pairs": max_pairs,
             "paired_shards": len(pairs),
             "completed_shards": int(done),
             "remaining_shards": int(max(len(pairs) - done, 0)),
@@ -1179,6 +1420,7 @@ def evaluate_translator(capture_dir, translator_dir, out_path, *,
         "translator_manifest": manifest,
         "split": split,
         "topk": int(topk),
+        "max_pairs": max_pairs,
         "paired_shards": len(pairs),
         "layers": rows,
     }
@@ -1188,6 +1430,257 @@ def evaluate_translator(capture_dir, translator_dir, out_path, *,
         fh.write("\n")
     write_progress(len(pairs), status="complete")
     return eval_metrics
+
+
+def evaluate_translator_sweep(capture_dir, translator_dirs, *, out_name=None,
+                              out_paths=None, progress_out=None,
+                              split="heldout", topk=16, max_pairs=0):
+    """Evaluate several translators while sharing one paired-capture pass."""
+    capture_dir = Path(capture_dir).expanduser()
+    translator_dirs = [Path(p).expanduser() for p in translator_dirs]
+    if not translator_dirs:
+        raise ValueError("translator_dirs must not be empty")
+    if out_paths is not None and out_name is not None:
+        raise ValueError("pass either out_name or out_paths, not both")
+    if out_paths is None:
+        out_name = out_name or "eval_metrics.json"
+        out_paths = [td / out_name for td in translator_dirs]
+    out_paths = [Path(p).expanduser() for p in out_paths]
+    if len(out_paths) != len(translator_dirs):
+        raise ValueError("out_paths must match translator_dirs length")
+
+    loaded = []
+    for translator_dir, out_path in zip(translator_dirs, out_paths):
+        manifest, artifacts = _load_translator(translator_dir)
+        loaded.append({
+            "translator_dir": translator_dir,
+            "out": out_path,
+            "manifest": manifest,
+            "artifacts": artifacts,
+            "metric_acc": {},
+        })
+
+    sidecars = _load_capture_sidecars(capture_dir)
+    pairs = []
+    for key in sorted(set(sidecars.get("source", {})) &
+                      set(sidecars.get("target", {}))):
+        sm = sidecars["source"][key]
+        tm = sidecars["target"][key]
+        if split != "all":
+            if (sm.get("metadata", {}).get("split") != split or
+                    tm.get("metadata", {}).get("split") != split):
+                continue
+        pairs.append((key, sm, tm))
+    max_pairs = int(max_pairs or 0)
+    if max_pairs > 0:
+        pairs = pairs[:max_pairs]
+    if not pairs:
+        raise ValueError(f"no paired source/target capture shards for split={split!r}")
+
+    eval_keys = sorted({
+        key
+        for item in loaded
+        for key in item["artifacts"]
+        if key[2] == "k"
+    })
+    if not eval_keys:
+        raise ValueError("no key translators found in translator_dirs")
+
+    if progress_out is None:
+        progress_out = out_paths[0].with_name("eval_translator_sweep_progress.json")
+    progress_out = Path(progress_out).expanduser()
+
+    def write_progress(done, *, status="running"):
+        progress_out.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "schema": "qwen35_graft_translation_eval_sweep_progress_v1",
+            "status": status,
+            "updated_utc": _utc_now(),
+            "capture_dir": str(capture_dir),
+            "translator_dirs": [str(item["translator_dir"]) for item in loaded],
+            "out_paths": [str(item["out"]) for item in loaded],
+            "split": split,
+            "topk": int(topk),
+            "max_pairs": max_pairs,
+            "paired_shards": len(pairs),
+            "completed_shards": int(done),
+            "remaining_shards": int(max(len(pairs) - done, 0)),
+        }
+        tmp = progress_out.with_suffix(f"{progress_out.suffix}.tmp")
+        with open(tmp, "w") as fh:
+            json.dump(payload, fh, indent=2)
+            fh.write("\n")
+        tmp.replace(progress_out)
+
+    write_progress(0)
+    for pair_idx, (_, sm, tm) in enumerate(pairs, start=1):
+        with np.load(sm["npz"]) as sz, np.load(tm["npz"]) as tz:
+            if sz["token_ids"].tolist() != tz["token_ids"].tolist():
+                raise ValueError(
+                    "token mismatch for paired shard "
+                    f"{sm['doc_id']}:{sm['chunk_id']}")
+            target_layers = [
+                layer for layer in _capture_layers(tm)
+                if f"l{layer}_k" in tz.files and f"l{layer}_v" in tz.files
+            ]
+            for src_layer, tgt_layer, kind in eval_keys:
+                skey = f"l{src_layer}_k"
+                tkey = f"l{tgt_layer}_k"
+                qkey = f"l{tgt_layer}_q"
+                svkey = f"l{src_layer}_v"
+                tvkey = f"l{tgt_layer}_v"
+                if (skey not in sz.files or tkey not in tz.files or
+                        qkey not in tz.files):
+                    continue
+                wrong_layer = next(
+                    (layer for layer in target_layers if layer != tgt_layer),
+                    None)
+                src_k = _flatten_heads_tokens(sz[skey])
+                native_k = np.asarray(tz[tkey], dtype=np.float32)[0]
+                q = np.asarray(tz[qkey], dtype=np.float32)[0]
+                h = q.shape[0]
+                native_scores = _attention_scores_np(q, native_k)
+                native_weights = _softmax_np(native_scores)
+                wrong_scores = None
+                wrong_v_out = None
+                if wrong_layer is not None:
+                    wrong_k = np.asarray(tz[f"l{wrong_layer}_k"],
+                                         dtype=np.float32)[0]
+                    wrong_scores = _attention_scores_np(q, wrong_k)
+
+                native_v = None
+                native_out = None
+                if tvkey in tz.files:
+                    native_v = np.asarray(tz[tvkey], dtype=np.float32)[0]
+                    native_out = _attention_output_np(
+                        native_weights, native_v, h)
+                    if wrong_layer is not None:
+                        wrong_v = np.asarray(tz[f"l{wrong_layer}_v"],
+                                             dtype=np.float32)[0]
+                        wrong_v_out = _attention_output_np(
+                            native_weights, wrong_v, h)
+
+                for item in loaded:
+                    artifacts = item["artifacts"]
+                    key = (src_layer, tgt_layer, kind)
+                    if key not in artifacts:
+                        continue
+                    k_art = artifacts[key]
+                    pred_k = src_k @ k_art["weight"] + k_art["bias"]
+                    pred_k = _unflatten_like(
+                        pred_k, tz[tkey]).astype(np.float32)[0]
+                    pred_scores = _attention_scores_np(q, pred_k)
+                    shuffled_scores = _attention_scores_np(
+                        q, pred_k[:, ::-1, :])
+                    pred_weights = _softmax_np(pred_scores)
+
+                    rec = item["metric_acc"].setdefault(
+                        (src_layer, tgt_layer), {
+                            "chunks": 0,
+                            "tokens": 0,
+                            "key_recall": [],
+                            "shuffled_key_recall": [],
+                            "wrong_layer_key_recall": [],
+                            "wrong_layer": wrong_layer,
+                        })
+                    rec["chunks"] += 1
+                    rec["tokens"] += int(q.shape[1])
+                    rec["key_recall"].append(_topk_recall(
+                        native_scores, pred_scores, topk))
+                    rec["shuffled_key_recall"].append(_topk_recall(
+                        native_scores, shuffled_scores, topk))
+                    if wrong_scores is not None:
+                        rec["wrong_layer_key_recall"].append(_topk_recall(
+                            native_scores, wrong_scores, topk))
+
+                    v_art_key = (src_layer, tgt_layer, "v")
+                    if (v_art_key in artifacts and svkey in sz.files and
+                            native_v is not None and native_out is not None):
+                        src_v = _flatten_heads_tokens(sz[svkey])
+                        v_art = artifacts[v_art_key]
+                        pred_v = src_v @ v_art["weight"] + v_art["bias"]
+                        pred_v = _unflatten_like(
+                            pred_v, tz[tvkey]).astype(np.float32)[0]
+                        v_only_out = _attention_output_np(
+                            native_weights, pred_v, h)
+                        k_only_out = _attention_output_np(
+                            pred_weights, native_v, h)
+                        kv_out = _attention_output_np(
+                            pred_weights, pred_v, h)
+                        _accumulate_output_fidelity(
+                            rec, "v_only_value_output",
+                            v_only_out, native_out)
+                        _accumulate_output_fidelity(
+                            rec, "k_only_native_value_output",
+                            k_only_out, native_out)
+                        _accumulate_output_fidelity(
+                            rec, "translated_attention_value_output",
+                            kv_out, native_out)
+                        if wrong_v_out is not None:
+                            _accumulate_output_fidelity(
+                                rec, "wrong_layer_value_output",
+                                wrong_v_out, native_out)
+        if pair_idx == len(pairs) or pair_idx % 25 == 0:
+            write_progress(pair_idx)
+
+    results = []
+    for item in loaded:
+        rows = []
+        for (src_layer, tgt_layer), rec in sorted(item["metric_acc"].items()):
+            row = {
+                "source_layer": src_layer,
+                "target_layer": tgt_layer,
+                "wrong_layer": rec.get("wrong_layer"),
+                "chunks": rec["chunks"],
+                "tokens": rec["tokens"],
+                f"key_recall_at_{int(topk)}": _mean_or_none(
+                    rec["key_recall"]),
+                f"shuffled_key_recall_at_{int(topk)}": _mean_or_none(
+                    rec["shuffled_key_recall"]),
+                f"wrong_layer_key_recall_at_{int(topk)}": _mean_or_none(
+                    rec["wrong_layer_key_recall"]),
+            }
+            _finish_output_fidelity(
+                row, rec, "v_only_value_output", alias="value_output")
+            _finish_output_fidelity(row, rec, "v_only_value_output")
+            _finish_output_fidelity(row, rec, "k_only_native_value_output")
+            _finish_output_fidelity(
+                row, rec, "translated_attention_value_output")
+            _finish_output_fidelity(row, rec, "wrong_layer_value_output")
+            rows.append(row)
+
+        eval_metrics = {
+            "schema": "qwen35_graft_translation_eval_metrics_v1",
+            "capture_dir": str(capture_dir),
+            "translator_manifest": item["manifest"],
+            "split": split,
+            "topk": int(topk),
+            "max_pairs": max_pairs,
+            "paired_shards": len(pairs),
+            "layers": rows,
+            "sweep_progress": str(progress_out),
+        }
+        item["out"].parent.mkdir(parents=True, exist_ok=True)
+        with open(item["out"], "w") as fh:
+            json.dump(eval_metrics, fh, indent=2)
+            fh.write("\n")
+        results.append({
+            "translator_dir": str(item["translator_dir"]),
+            "out": str(item["out"]),
+            "eval_metrics": eval_metrics,
+        })
+
+    write_progress(len(pairs), status="complete")
+    return {
+        "schema": "qwen35_graft_translation_eval_sweep_v1",
+        "capture_dir": str(capture_dir),
+        "split": split,
+        "topk": int(topk),
+        "max_pairs": max_pairs,
+        "paired_shards": len(pairs),
+        "progress": str(progress_out),
+        "results": results,
+    }
 
 
 def evaluate_capture_identity(capture_dir, out_path, *, split="heldout",
@@ -2643,6 +3136,32 @@ def main(argv=None):
                     help="fit the normal translator or a negative control")
     ft.add_argument("--kinds", default="both",
                     help="'both', 'k', 'v', or 'k,v'")
+    ft.add_argument("--backend", default="cpu",
+                    choices=("cpu", "auto", "cupy", "cuda", "gpu", "numpy"),
+                    help="ridge math backend; default preserves CPU behavior")
+    fs = sub.add_parser(
+        "fit-translator-sweep",
+        help="fit several ridge translators from one shared accumulation pass")
+    fs.add_argument("--capture-dir", required=True,
+                    help="directory containing source/target capture shards")
+    fs.add_argument("--out-root", required=True,
+                    help="root directory for per-lambda translator dirs")
+    fs.add_argument("--out-prefix", default="translator_ridge")
+    fs.add_argument("--ridge-lambdas", required=True,
+                    help="comma-separated ridge lambdas")
+    fs.add_argument("--split", default="train",
+                    choices=("train", "heldout", "all"))
+    fs.add_argument("--control", default="normal",
+                    choices=("normal", "wrong-layer", "shuffled-docs"),
+                    help="fit the normal translator or a negative control")
+    fs.add_argument("--kinds", default="both",
+                    help="'both', 'k', 'v', or 'k,v'")
+    fs.add_argument("--backend", default="cpu",
+                    choices=("cpu", "auto", "cupy", "cuda", "gpu", "numpy"),
+                    help="ridge math backend; default preserves CPU behavior")
+    fs.add_argument("--skip-fit-metrics", action="store_true",
+                    help="write translators after solve without the train "
+                         "fit-metrics rescan")
     ev = sub.add_parser(
         "eval-translator",
         help="evaluate fitted translators on paired held-out capture shards")
@@ -2652,6 +3171,23 @@ def main(argv=None):
     ev.add_argument("--split", default="heldout",
                     choices=("train", "heldout", "all"))
     ev.add_argument("--topk", type=int, default=16)
+    ev.add_argument("--max-pairs", type=int, default=0,
+                    help="optional bounded diagnostic shard count")
+    es = sub.add_parser(
+        "eval-translator-sweep",
+        help="evaluate several fitted translators in one paired-capture pass")
+    es.add_argument("--capture-dir", required=True)
+    es.add_argument("--translator-dirs", required=True,
+                    help="comma-separated translator directories")
+    es.add_argument("--out-name", default="eval_metrics.json",
+                    help="file name written inside each translator dir")
+    es.add_argument("--progress-out", default=None,
+                    help="optional shared progress JSON path")
+    es.add_argument("--split", default="heldout",
+                    choices=("train", "heldout", "all"))
+    es.add_argument("--topk", type=int, default=16)
+    es.add_argument("--max-pairs", type=int, default=0,
+                    help="optional bounded diagnostic shard count")
     gi = sub.add_parser(
         "eval-g0-capture-identity",
         help="evaluate target capture identity floor for G0 attention gates")
@@ -2896,11 +3432,39 @@ def main(argv=None):
             split=args.split,
             control=args.control,
             kinds=args.kinds,
+            backend=args.backend,
         )
         print(json.dumps({
             "status": "ok",
             "translator_manifest": result["translator_manifest"],
             "fit_metrics": result["fit_metrics"],
+        }, indent=2))
+        return 0
+    if args.cmd == "fit-translator-sweep":
+        lambdas = [x.strip() for x in args.ridge_lambdas.split(",")
+                   if x.strip()]
+        result = fit_ridge_translator_sweep(
+            args.capture_dir,
+            args.out_root,
+            ridge_lambdas=lambdas,
+            out_prefix=args.out_prefix,
+            split=args.split,
+            control=args.control,
+            kinds=args.kinds,
+            backend=args.backend,
+            compute_fit_metrics=not args.skip_fit_metrics,
+        )
+        print(json.dumps({
+            "status": "ok",
+            "schema": result["schema"],
+            "out_root": result["out_root"],
+            "ridge_lambdas": result["ridge_lambdas"],
+            "compute_backend": result["compute_backend"],
+            "fit_metrics_computed": result["fit_metrics_computed"],
+            "results": [
+                item["translator_manifest"]
+                for item in result["results"]
+            ],
         }, indent=2))
         return 0
     if args.cmd == "eval-translator":
@@ -2910,12 +3474,46 @@ def main(argv=None):
             args.out,
             split=args.split,
             topk=args.topk,
+            max_pairs=args.max_pairs,
         )
         print(json.dumps({
             "status": "ok",
             "out": str(Path(args.out).expanduser()),
+            "max_pairs": metrics["max_pairs"],
             "paired_shards": metrics["paired_shards"],
             "layers": metrics["layers"],
+        }, indent=2))
+        return 0
+    if args.cmd == "eval-translator-sweep":
+        translator_dirs = [
+            x.strip() for x in args.translator_dirs.split(",") if x.strip()
+        ]
+        result = evaluate_translator_sweep(
+            args.capture_dir,
+            translator_dirs,
+            out_name=args.out_name,
+            progress_out=args.progress_out,
+            split=args.split,
+            topk=args.topk,
+            max_pairs=args.max_pairs,
+        )
+        print(json.dumps({
+            "status": "ok",
+            "schema": result["schema"],
+            "capture_dir": result["capture_dir"],
+            "split": result["split"],
+            "topk": result["topk"],
+            "max_pairs": result["max_pairs"],
+            "paired_shards": result["paired_shards"],
+            "progress": result["progress"],
+            "results": [
+                {
+                    "translator_dir": item["translator_dir"],
+                    "out": item["out"],
+                    "layers": len(item["eval_metrics"]["layers"]),
+                }
+                for item in result["results"]
+            ],
         }, indent=2))
         return 0
     if args.cmd == "eval-g0-capture-identity":

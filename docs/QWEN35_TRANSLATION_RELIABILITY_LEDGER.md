@@ -343,3 +343,199 @@ Translation reliability track.
 
 - Run R4.1 ridge candidates.
 - Summarize the winner and commit the result.
+
+### 2026-07-05 - R4.1 Ridge Sweep Implementation And Results
+
+**Status:** complete.
+
+**Completed work:**
+
+- Added CUDA/CuPy-capable ridge accumulation/solve support.
+- Added `fit-translator-sweep` so multiple ridge lambdas share one capture
+  accumulation pass.
+- Added `--skip-fit-metrics` so candidate translators can be written without
+  the expensive train-fit metrics rescan. The real R4 metrics are held-out
+  geometry plus frozen V2 binding.
+- Added `eval-translator-sweep` so several translator directories can share one
+  held-out capture pass.
+- Added `--max-pairs` for explicitly bounded held-out diagnostics.
+- Ran the R4.1 ridge sweep candidates and the frozen V2 translated binding
+  gate for each candidate.
+
+**Implementation evidence:**
+
+- Focused test command:
+  `PYTHONDONTWRITEBYTECODE=1 PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest tests/test_qwen35_translation_poc.py -q`
+  - result after sweep/eval changes: `32 passed, 2 warnings in 0.38s`
+- Syntax check note:
+  `python3 -m py_compile ...` was not useful in this environment because
+  `core/__pycache__` is read-only; the focused pytest import/execute path is
+  the validation used for this checkpoint.
+
+**CUDA/backend findings:**
+
+- CuPy import/device smoke succeeded:
+  - `cupy 14.0.1`
+  - `device_count 1`
+  - matrix multiply succeeded.
+- Naive CPU single-lambda fit was interrupted after roughly `28` minutes while
+  still accumulating; host CPU was about `1100%`.
+- CuPy single-lambda fit was interrupted after roughly `12` minutes; GPU
+  allocation was about `328 MiB`, utilization was light, and the trace showed
+  the bottleneck in compressed `.npz` reads/decompression.
+- CuPy multi-lambda sweep without `--skip-fit-metrics` completed weight writes
+  but stalled in the second metrics pass over compressed captures.
+- Conclusion: CUDA math works, but the compressed capture format is the current
+  limiter. The next speed fix is uncompressed/mmap capture shards or a
+  Rust/C++/CUDA streaming path that avoids Python zip decompression.
+
+**Ridge sweep command:**
+
+- `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py fit-translator-sweep --capture-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/captures --out-root /mnt/ForgeRealm/qwen35_graft_translation_poc --out-prefix translator_ridge --ridge-lambdas 1e-5,3e-5,3e-4,1e-3 --split train --backend cupy --skip-fit-metrics`
+  - status: complete
+  - schema: `qwen35_graft_translation_ridge_sweep_v1`
+  - compute backend: `cupy`
+  - fit metrics computed: `false`
+  - paired shards: `8855`
+  - train tokens per layer/kind: `2245444`
+
+**Ridge artifact hashes:**
+
+- `translator_ridge_1e-5/translator_manifest.json`
+  - sha256:
+    `f8c6ea3714e0fde9b836786731d79b85d84ceb3be8396c8ee38e2520f748549d`
+- `translator_ridge_1e-5/fit_metrics.json`
+  - sha256:
+    `3d51cae8f807f11f2f721327822ee3d047b26bc2f75b0dc3ad5e94a3bd9faaea`
+- `translator_ridge_3e-5/translator_manifest.json`
+  - sha256:
+    `56ba707d70f55c7b73626fdfe43503c061bfc4fead939205a8a857125292da80`
+- `translator_ridge_3e-5/fit_metrics.json`
+  - sha256:
+    `beb831c45a7d60ca306b59abcf12415800e55071e34a8e9b120530af40f88e13`
+- `translator_ridge_3e-4/translator_manifest.json`
+  - sha256:
+    `5693a0e1fa2c3c036f7d2d382794c90b9d464b4979421513fc96a8dc69256d4b`
+- `translator_ridge_3e-4/fit_metrics.json`
+  - sha256:
+    `42fbbd10be320149d7733b9888df0d67934a145aefab8440033f86f436319146`
+- `translator_ridge_1e-3/translator_manifest.json`
+  - sha256:
+    `405e89c76d2e0d5c594e9415c03beb503c77ae993090815ddb9c4519c4ecaecb`
+- `translator_ridge_1e-3/fit_metrics.json`
+  - sha256:
+    `a8fd0155933ae328c6cdcc60f04d722b0cb2246eb6a882588061836e74fd1bcc`
+
+**Held-out diagnostic command:**
+
+- Full held-out sweep was interrupted after `50 / 1006` shards because it
+  projected to roughly `100+` minutes. The recorded held-out geometry result is
+  therefore an explicitly bounded diagnostic:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-translator-sweep --capture-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/captures --translator-dirs /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_ridge_1e-5,/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_ridge_3e-5,/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_ridge_3e-4,/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_ridge_1e-3 --out-name eval_metrics_heldout_128.json --progress-out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/ridge_eval_sweep_heldout_128_progress.json --split heldout --topk 16 --max-pairs 128`
+  - status: complete
+  - paired shards: `128`
+  - layers per candidate: `6`
+
+**Held-out diagnostic hashes:**
+
+- `translator_ridge_1e-5/eval_metrics_heldout_128.json`
+  - sha256:
+    `29dd9ae98232433e171f7fa74fc8ee4a2fbdfbc8832fba1e83e1b721f9b05203`
+- `translator_ridge_3e-5/eval_metrics_heldout_128.json`
+  - sha256:
+    `d74c819835e8ce0a2793b76b22531fc22354d045cd44bb9f4f24ccd8ebbaeb0b`
+- `translator_ridge_3e-4/eval_metrics_heldout_128.json`
+  - sha256:
+    `8b3334577ae2fb49351f751fdec3bfe37b6fe852028d2fdd9650fc75bcd94d54`
+- `translator_ridge_1e-3/eval_metrics_heldout_128.json`
+  - sha256:
+    `cbb76bdd525f3c81860536eb390ebf2be2c0efc9f40b69c85ff5d08309f11975`
+- `gates/ridge_eval_sweep_heldout_128_progress.json`
+  - sha256:
+    `dcaa3b009e6704b8332028bf21d22f5653832fb6abbb3c6a646975dfd129f452`
+
+**Held-out diagnostic summary:**
+
+- `1e-5`: mean key recall@16 `0.6367017381462475`,
+  translated-output cosine `0.9044831601116691`, translated-output MSE
+  `0.17619949460165593`
+- `3e-5`: mean key recall@16 `0.6367017182780326`,
+  translated-output cosine `0.9044831600217935`, translated-output MSE
+  `0.17619949465473603`
+- `3e-4`: mean key recall@16 `0.6367016586733878`,
+  translated-output cosine `0.9044831606176721`, translated-output MSE
+  `0.17619949546122562`
+- `1e-3`: mean key recall@16 `0.636701770047325`,
+  translated-output cosine `0.904483160559194`, translated-output MSE
+  `0.17619949885449604`
+
+**Frozen V2 translated binding commands:**
+
+- `1e-5`:
+  `PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-probes --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_ridge_1e-5.json --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_ridge_1e-5 --modes translated --max-probes 64 --layers all`
+- `3e-5`: same command with
+  `--out .../binding_eval_v2_translated_ridge_3e-5.json` and
+  `--translator-dir .../translator_ridge_3e-5`
+- `3e-4`: same command with
+  `--out .../binding_eval_v2_translated_ridge_3e-4.json` and
+  `--translator-dir .../translator_ridge_3e-4`
+- `1e-3`: same command with
+  `--out .../binding_eval_v2_translated_ridge_1e-3.json` and
+  `--translator-dir .../translator_ridge_1e-3`
+
+**Frozen V2 translated binding hashes:**
+
+- `gates/binding_eval_v2_translated_ridge_1e-5.json`
+  - sha256:
+    `880ebb5dcdc8e7b4ef846ccca1e7eb1df25d22a5499bdf26c463bca8afabb828`
+- `gates/binding_eval_v2_translated_ridge_3e-5.json`
+  - sha256:
+    `d2e06e548f8698283daa246ec6276092a71da6935b03826a430ced0c989f8009`
+- `gates/binding_eval_v2_translated_ridge_3e-4.json`
+  - sha256:
+    `dd757aa0d85a5ab4a703fd190ba1673a96ddc03dc43ef918f5c88b0a1bf7eac7`
+- `gates/binding_eval_v2_translated_ridge_1e-3.json`
+  - sha256:
+    `d8f8022fd57ec9d8c46f8da8ef30dc68a754a479881e7878816b9dc947748833`
+
+**Frozen V2 translated binding summary:**
+
+- Baseline `1e-4`: `40 / 64`, mean margin `0.41503181978418846`,
+  min margin `-5.668900343599823`
+- `1e-5`: `38 / 64`, mean margin `0.4035796222422129`,
+  min margin `-5.658042730095097`
+- `3e-5`: `36 / 64`, mean margin `0.4045612544007525`,
+  min margin `-5.607635710753115`
+- `3e-4`: `39 / 64`, mean margin `0.42209077022321806`,
+  min margin `-5.747188284219789`
+- `1e-3`: `38 / 64`, mean margin `0.4057173672102292`,
+  min margin `-5.668216921540541`
+
+**Per-probe comparison against baseline:**
+
+- `1e-5`: gained `0`, lost `2`
+  - lost: `bind-v2-021-q1`, `bind-v2-025-q1`
+- `3e-5`: gained `0`, lost `4`
+  - lost: `bind-v2-008-q0`, `bind-v2-015-q1`,
+    `bind-v2-021-q1`, `bind-v2-026-q1`
+- `3e-4`: gained `0`, lost `1`
+  - lost: `bind-v2-026-q1`
+- `1e-3`: gained `0`, lost `2`
+  - lost: `bind-v2-021-q1`, `bind-v2-026-q1`
+
+**Interpretation:**
+
+- Scalar ridge lambda tuning does not improve Qwen3.5 2B-to-9B graft
+  translation reliability on the frozen V2 binding gate.
+- The original `1e-4` translator remains the R4.1 winner because it has the
+  best positive-margin count and no tested ridge candidate recovered a baseline
+  miss.
+- `3e-4` has a slightly higher mean margin but worse success count and a lower
+  min margin, so it is not a better operating point.
+- Next R4 work should move to layer policy, more paired corpus, or an objective
+  tied directly to K score/top-k and V attention-output preservation.
+
+**Remaining work:**
+
+- Commit and push the R4.1 implementation/results checkpoint.
+- Start R4.2 only after selecting the next registered intervention.

@@ -270,6 +270,42 @@ Current R4.1 protocol:
   - break ties by translated mean margin,
   - reject candidates that materially worsen held-out G1/G2 against baseline.
 
+Current R4.1 status:
+
+- Complete.
+- Added shared ridge fitting and shared held-out evaluation commands so the
+  capture corpus is scanned once per sweep rather than once per candidate.
+- CUDA/CuPy did accelerate the ridge math path, but the current compressed
+  `.npz` capture format is the practical limiter. The GPU remained lightly
+  used during fit accumulation because Python/zip decompression starved it.
+- Full held-out G1/G2 for all four lambdas projected to roughly `100+`
+  minutes, so the recorded held-out geometry result is an explicitly bounded
+  `128`-pair diagnostic, not a full held-out gate.
+- Bounded held-out diagnostic:
+  - output name: `eval_metrics_heldout_128.json`
+  - progress artifact:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/ridge_eval_sweep_heldout_128_progress.json`
+  - all four lambdas were effectively tied:
+    mean key recall@16 about `0.6367017`, translated-output cosine about
+    `0.90448316`, translated-output MSE about `0.17619949`.
+- Frozen V2 translated binding results:
+  - baseline `1e-4`: `40 / 64`, mean `0.41503181978418846`, min
+    `-5.668900343599823`
+  - `1e-5`: `38 / 64`, mean `0.4035796222422129`, min
+    `-5.658042730095097`
+  - `3e-5`: `36 / 64`, mean `0.4045612544007525`, min
+    `-5.607635710753115`
+  - `3e-4`: `39 / 64`, mean `0.42209077022321806`, min
+    `-5.747188284219789`
+  - `1e-3`: `38 / 64`, mean `0.4057173672102292`, min
+    `-5.668216921540541`
+- Decision: ridge lambda tuning does not improve reliability on this corpus.
+  No new candidate recovered a baseline miss; candidates only lost baseline
+  successes. Keep the original `1e-4` translator as the R4.1 winner.
+- Next tuning move should not be scalar ridge lambda. Prefer layer policy,
+  more paired corpus, or a translator objective that directly preserves K
+  score/top-k and V attention-output behavior.
+
 ## Phase R5: Live G0 Repair
 
 Investigate live capture/reseat numerical mismatch separately from translator
@@ -289,5 +325,6 @@ Exit gate:
 
 ## Open Queue
 
-1. Start R4 translator tuning against the frozen V2 probe set.
+1. Start R4.2 with layer policy or objective-level tuning against the frozen V2
+   probe set.
 2. Run R5 live G0 repair in parallel only when GPU/runtime time is available.
