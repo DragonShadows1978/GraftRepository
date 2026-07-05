@@ -1,7 +1,8 @@
 # Qwen3.5 Translation Reliability Plan
 
-**Status:** R3 full V2 binding gate complete. R4 translator reliability tuning
-is next.
+**Status:** R4.4 layer-routing reliability sweep complete. Best global
+translated policy is `drop_l3_to_l3` at `46 / 64`; objective-level translator
+work is next.
 
 **House rules for this track:**
 
@@ -380,6 +381,31 @@ Current R4.3 status:
   close reliability. The remaining `20 / 64` misses point at objective-level
   translator training or targeted hard-negative training as the next move.
 
+Current R4.4 status:
+
+- Complete.
+- Added reproducible layer-sweep tooling:
+  - `make-translator-layer-sweep`
+  - `eval-binding-translator-sweep`
+  - `analyze-binding-translator-sweep`
+- Added batched gold/decoy scoring for binding probes. For grafted batches,
+  the translated K/V graft is repeated to match the candidate batch size.
+- Candidate set:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r44_layer_sweep/layer_sweep_manifest.json`
+  - candidates: `13`
+  - policies: parent `all`, six single-layer translators, six leave-one-out
+    translators
+- Frozen V2 translated binding result:
+  - R4.3 all-layer baseline: `44 / 64`, mean margin
+    `0.9933952155426934`
+  - R4.4 best global: `drop_l3_to_l3`, `46 / 64`, mean margin
+    `0.935202663147657`
+  - R4.4 diagnostic per-probe oracle: `48 / 64`, mean margin
+    `1.325906873199195`
+- Decision: layer routing gives real but limited headroom. Dropping the first
+  layer pair is the best tested global policy, but the remaining misses still
+  require an objective-level translator or targeted hard-negative training.
+
 ## Phase R5: Live G0 Repair
 
 Investigate live capture/reseat numerical mismatch separately from translator
@@ -399,7 +425,6 @@ Exit gate:
 
 ## Open Queue
 
-1. Design the next reliability refinement around objective-level translator
-   training or targeted hard-negative training for the remaining frozen V2
-   translated misses.
+1. Design R4.5 around objective-level translator training or targeted
+   hard-negative training for the remaining frozen V2 translated misses.
 2. Run R5 live G0 repair in parallel only when GPU/runtime time is available.

@@ -21,8 +21,10 @@ from core.qwen35_translation_poc import (
     fit_ridge_translator,
     fit_ridge_translator_sweep,
     inspect_pipeline_status,
+    make_translator_layer_sweep,
     make_binding_probe_set,
     make_binding_probe_set_v2,
+    analyze_binding_translator_sweep,
     refresh_capture_manifest,
     run_pipeline_next,
     validate_unquantized_source,
@@ -1071,6 +1073,71 @@ def test_filter_translator_layers_writes_reproducible_manifest(tmp_path):
             keep_pairs="11:15")
 
 
+def test_make_translator_layer_sweep_writes_single_and_drop_candidates(
+        tmp_path):
+    root = tmp_path / "translator"
+    root.mkdir()
+    artifacts = []
+    for src, tgt in ((3, 3), (7, 7), (11, 15)):
+        for kind in ("k", "v"):
+            path = root / f"translator_l{src}_to_l{tgt}_{kind}.npz"
+            np.savez(path, weight=np.eye(2, dtype=np.float32),
+                     bias=np.zeros(2, dtype=np.float32),
+                     source_layer=np.array([src], np.int64),
+                     target_layer=np.array([tgt], np.int64),
+                     kind=np.array([kind]))
+            artifacts.append({
+                "source_layer": src,
+                "target_layer": tgt,
+                "kind": kind,
+                "path": str(path),
+                "input_dim": 2,
+                "output_dim": 2,
+                "train_tokens": 4,
+            })
+    (root / "translator_manifest.json").write_text(json.dumps({
+        "schema": "qwen35_graft_translation_translator_v1",
+        "capture_dir": str(tmp_path / "captures"),
+        "ridge_lambda": 1e-4,
+        "split": "train",
+        "control": "normal",
+        "kinds": ["k", "v"],
+        "paired_shards": 1,
+        "layer_alignment": [
+            {"source_layer": 3, "target_layer": 3},
+            {"source_layer": 7, "target_layer": 7},
+            {"source_layer": 11, "target_layer": 15},
+        ],
+        "artifacts": artifacts,
+        "fit_metrics": str(root / "fit_metrics.json"),
+    }))
+
+    sweep = make_translator_layer_sweep(
+        root,
+        tmp_path / "r44_layer_sweep",
+        policy_set="single,drop",
+    )
+
+    assert sweep["schema"] == (
+        "qwen35_graft_translation_layer_sweep_manifest_v1")
+    assert sweep["candidate_count"] == 7
+    assert [c["label"] for c in sweep["candidates"]] == [
+        "all",
+        "single_l3_to_l3",
+        "single_l7_to_l7",
+        "single_l11_to_l15",
+        "drop_l3_to_l3",
+        "drop_l7_to_l7",
+        "drop_l11_to_l15",
+    ]
+    assert Path(sweep["manifest_path"]).is_file()
+    single = tmp_path / "r44_layer_sweep" / "single_l3_to_l3"
+    assert (single / "translator_manifest.json").is_file()
+    loaded_manifest, loaded_artifacts = poc._load_translator(single)
+    assert loaded_manifest["layer_policy_name"] == "single_l3_to_l3"
+    assert sorted(loaded_artifacts) == [(3, 3, "k"), (3, 3, "v")]
+
+
 def test_topk_recall_matches_set_intersection_reference():
     rng = np.random.default_rng(1234)
     scores_a = rng.normal(size=(3, 4, 9)).astype(np.float32)
@@ -1331,6 +1398,86 @@ def test_analyze_binding_eval_summarizes_floor_and_misses(tmp_path):
     assert analysis["per_probe"][0]["modes"]["translated"]["best_decoy"] == (
         " CI-3333")
     assert analysis["per_probe"][0]["lengths"]["gold"]["chars"] == 8
+
+
+def test_analyze_binding_translator_sweep_reports_global_and_oracle(
+        tmp_path):
+    rows = []
+    for probe_id, all_margin, single_margin in (
+            ("bind-000", 1.0, -0.5),
+            ("bind-001", -1.0, 2.0),
+            ("bind-002", -0.25, -0.1),
+    ):
+        for label, margin in (("all", all_margin),
+                              ("single_l7_to_l7", single_margin)):
+            rows.append({
+                "probe_id": probe_id,
+                "mode": "translated",
+                "translator_label": label,
+                "translator_dir": f"/tmp/{label}",
+                "gold_score": margin,
+                "best_decoy_score": 0.0,
+                "gold_minus_best_decoy": margin,
+                "success": margin > 0,
+                "candidate_scores": {
+                    "gold": margin,
+                    "decoys": [-1.0, 0.0, -2.0],
+                },
+            })
+    sweep_eval = {
+        "schema": "qwen35_graft_translation_binding_translator_sweep_v1",
+        "probes_path": "/tmp/probes.json",
+        "candidate_count": 2,
+        "probe_count": 3,
+        "summaries": [],
+        "rows": rows,
+    }
+    sweep_path = tmp_path / "sweep_eval.json"
+    sweep_path.write_text(json.dumps(sweep_eval))
+
+    baseline = {
+        "schema": "qwen35_graft_translation_binding_eval_v1",
+        "modes": ["translated"],
+        "rows": [
+            {
+                "probe_id": "bind-000",
+                "mode": "translated",
+                "gold_minus_best_decoy": 1.0,
+                "success": True,
+            },
+            {
+                "probe_id": "bind-001",
+                "mode": "translated",
+                "gold_minus_best_decoy": -1.0,
+                "success": False,
+            },
+            {
+                "probe_id": "bind-002",
+                "mode": "translated",
+                "gold_minus_best_decoy": -0.25,
+                "success": False,
+            },
+        ],
+    }
+    baseline_path = tmp_path / "baseline.json"
+    baseline_path.write_text(json.dumps(baseline))
+
+    analysis = analyze_binding_translator_sweep(
+        sweep_path,
+        tmp_path / "sweep_analysis.json",
+        baseline_eval_path=baseline_path,
+    )
+
+    assert analysis["schema"] == (
+        "qwen35_graft_translation_binding_translator_sweep_analysis_v1")
+    assert analysis["baseline_summary"]["positive_margins"] == 1
+    assert analysis["best_global"]["translator_label"] == "single_l7_to_l7"
+    assert analysis["best_global"]["positive_margins"] == 1
+    assert analysis["oracle"]["positive_margins"] == 2
+    assert analysis["oracle"]["recovered_baseline_misses"] == ["bind-001"]
+    assert analysis["oracle"]["lost_baseline_successes"] == []
+    assert analysis["oracle_per_probe"][1]["best_translator_label"] == (
+        "single_l7_to_l7")
 
 
 def test_translate_harvested_capture_applies_artifacts_to_target_shape(tmp_path):

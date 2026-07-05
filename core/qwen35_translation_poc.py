@@ -1200,6 +1200,21 @@ def _parse_layer_pair_spec(spec):
     return pairs
 
 
+def _format_layer_pair(src, tgt):
+    return f"{int(src)}:{int(tgt)}"
+
+
+def _layer_pair_slug(src, tgt):
+    return f"l{int(src)}_to_l{int(tgt)}"
+
+
+def _translator_layer_pairs(manifest):
+    return sorted({
+        (int(art["source_layer"]), int(art["target_layer"]))
+        for art in manifest.get("artifacts", [])
+    })
+
+
 def filter_translator_layers(translator_dir, out_dir, *, policy_name,
                              keep_pairs=None, drop_pairs=None):
     """Write a translator manifest filtered to selected source/target pairs."""
@@ -1279,6 +1294,98 @@ def filter_translator_layers(translator_dir, out_dir, *, policy_name,
         json.dump(out_manifest, fh, indent=2)
         fh.write("\n")
     return out_manifest
+
+
+def make_translator_layer_sweep(translator_dir, out_root, *,
+                                policy_set="single,drop",
+                                include_parent=True,
+                                manifest_name="layer_sweep_manifest.json"):
+    """Write filtered translator manifests for a registered layer sweep."""
+    translator_dir = Path(translator_dir).expanduser()
+    out_root = Path(out_root).expanduser()
+    manifest = _load_json(translator_dir / "translator_manifest.json")
+    all_pairs = _translator_layer_pairs(manifest)
+    if not all_pairs:
+        raise ValueError("translator manifest has no layer pairs")
+
+    policies = {
+        x.strip().lower() for x in str(policy_set).split(",") if x.strip()
+    }
+    if not policies:
+        raise ValueError("policy_set must not be empty")
+    unknown = policies - {"single", "drop", "prefix", "suffix"}
+    if unknown:
+        raise ValueError(f"unknown layer sweep policies: {sorted(unknown)!r}")
+
+    out_root.mkdir(parents=True, exist_ok=True)
+    candidates = []
+    if include_parent:
+        candidates.append({
+            "label": "all",
+            "translator_dir": str(translator_dir),
+            "policy": {
+                "mode": "parent",
+                "kept_pairs": [
+                    {"source_layer": src, "target_layer": tgt}
+                    for src, tgt in all_pairs
+                ],
+                "dropped_pairs": [],
+            },
+        })
+
+    def add_candidate(label, keep_pairs):
+        keep_pairs = sorted((int(src), int(tgt)) for src, tgt in keep_pairs)
+        out_dir = out_root / label
+        filtered = filter_translator_layers(
+            translator_dir,
+            out_dir,
+            policy_name=label,
+            keep_pairs=",".join(_format_layer_pair(src, tgt)
+                                for src, tgt in keep_pairs),
+        )
+        candidates.append({
+            "label": label,
+            "translator_dir": str(out_dir),
+            "policy": filtered["layer_policy"],
+        })
+
+    if "single" in policies:
+        for src, tgt in all_pairs:
+            add_candidate(f"single_{_layer_pair_slug(src, tgt)}", [(src, tgt)])
+    if "drop" in policies and len(all_pairs) > 1:
+        for src, tgt in all_pairs:
+            keep = [p for p in all_pairs if p != (src, tgt)]
+            add_candidate(f"drop_{_layer_pair_slug(src, tgt)}", keep)
+    if "prefix" in policies and len(all_pairs) > 2:
+        for n in range(2, len(all_pairs)):
+            label = f"prefix_{n}"
+            add_candidate(label, all_pairs[:n])
+    if "suffix" in policies and len(all_pairs) > 2:
+        for n in range(2, len(all_pairs)):
+            label = f"suffix_{n}"
+            add_candidate(label, all_pairs[-n:])
+
+    sweep = {
+        "schema": "qwen35_graft_translation_layer_sweep_manifest_v1",
+        "parent_translator_dir": str(translator_dir),
+        "parent_translator_manifest_sha256": _sha256(
+            translator_dir / "translator_manifest.json"),
+        "out_root": str(out_root),
+        "policy_set": sorted(policies),
+        "include_parent": bool(include_parent),
+        "layer_pairs": [
+            {"source_layer": src, "target_layer": tgt}
+            for src, tgt in all_pairs
+        ],
+        "candidate_count": len(candidates),
+        "candidates": candidates,
+    }
+    out_path = out_root / manifest_name
+    with open(out_path, "w") as fh:
+        json.dump(sweep, fh, indent=2)
+        fh.write("\n")
+    sweep["manifest_path"] = str(out_path)
+    return sweep
 
 
 def _unflatten_like(flat, template):
@@ -2042,34 +2149,70 @@ def _candidate_scores_from_logprobs(candidate_logprobs, gold, decoys):
 
 def _score_candidate_logprob(model, tokenizer, prompt, candidate,
                              graft=None, layers=None):
+    scores = _score_candidate_logprobs(
+        model, tokenizer, prompt, [candidate], graft=graft, layers=layers)
+    return scores[candidate]
+
+
+def _repeat_graft_batch(graft, batch_size):
+    if graft is None or int(batch_size) == 1:
+        return graft
+    repeated = []
+    for rec in graft:
+        if rec is None:
+            repeated.append(None)
+            continue
+        repeated.append({
+            kind: np.repeat(np.asarray(value), int(batch_size), axis=0)
+            for kind, value in rec.items()
+        })
+    return repeated
+
+
+def _score_candidate_logprobs(model, tokenizer, prompt, candidates,
+                              graft=None, layers=None):
     sys.path.insert(0, "/mnt/ForgeRealm/Project-Tensor/tensor_cuda")
     import tensor_cuda as tc
     from core import kv_graft
 
     prompt_ids = _as_int_list(_encode_text(tokenizer, prompt))
-    cand_ids = _as_int_list(_encode_text(tokenizer, candidate))
     if not prompt_ids:
         raise ValueError("binding probe prompt tokenized to zero tokens")
-    if not cand_ids:
-        raise ValueError("binding candidate tokenized to zero tokens")
-    input_ids = prompt_ids + cand_ids[:-1]
-    if graft is not None:
-        kv_graft.set_injection(model, graft, layers=layers)
-    try:
-        with tc.no_grad():
-            logits, _ = model(np.asarray([input_ids], dtype=np.int64),
-                              last_token_only=False)
-        arr = logits.float().numpy()[0]
-    finally:
-        if graft is not None:
-            kv_graft.clear_injection(model)
+    encoded = []
+    for candidate in candidates:
+        cand_ids = _as_int_list(_encode_text(tokenizer, candidate))
+        if not cand_ids:
+            raise ValueError("binding candidate tokenized to zero tokens")
+        encoded.append((candidate, cand_ids, prompt_ids + cand_ids[:-1]))
 
-    start = len(prompt_ids) - 1
-    score = 0.0
-    for offset, tok in enumerate(cand_ids):
-        row = arr[start + offset]
-        score += float(row[tok]) - _logsumexp_np(row)
-    return score
+    groups = {}
+    for item in encoded:
+        groups.setdefault(len(item[2]), []).append(item)
+
+    scores = {}
+    with tc.no_grad():
+        for group in groups.values():
+            batch = np.asarray([item[2] for item in group], dtype=np.int64)
+            if graft is not None:
+                kv_graft.set_injection(
+                    model,
+                    _repeat_graft_batch(graft, len(group)),
+                    layers=layers,
+                )
+            try:
+                logits, _ = model(batch, last_token_only=False)
+                arr = logits.float().numpy()
+            finally:
+                if graft is not None:
+                    kv_graft.clear_injection(model)
+            start = len(prompt_ids) - 1
+            for row_idx, (candidate, cand_ids, _) in enumerate(group):
+                score = 0.0
+                for offset, tok in enumerate(cand_ids):
+                    row = arr[row_idx, start + offset]
+                    score += float(row[tok]) - _logsumexp_np(row)
+                scores[candidate] = score
+    return scores
 
 
 def _score_probe_candidates(model, tokenizer, probe, *, graft=None,
@@ -2078,17 +2221,14 @@ def _score_probe_candidates(model, tokenizer, probe, *, graft=None,
     if fact_in_context:
         prompt = f"{probe['fact']}\n\n{prompt}"
     candidates = [probe["gold"]] + list(probe.get("decoys", []))
-    scores = {
-        candidate: _score_candidate_logprob(
-            model, tokenizer, prompt, candidate, graft=graft, layers=layers)
-        for candidate in candidates
-    }
+    scores = _score_candidate_logprobs(
+        model, tokenizer, prompt, candidates, graft=graft, layers=layers)
     return _candidate_scores_from_logprobs(
         scores, probe["gold"], list(probe.get("decoys", [])))
 
 
-def _translate_harvested_capture(source_capture, translator_dir, target_cfg):
-    _, artifacts = _load_translator(translator_dir)
+def _translate_harvested_capture_with_artifacts(source_capture, artifacts,
+                                                target_cfg):
     out = [None] * int(target_cfg.num_layers)
     grouped = {}
     for src_layer, tgt_layer, kind in artifacts:
@@ -2118,6 +2258,12 @@ def _translate_harvested_capture(source_capture, translator_dir, target_cfg):
     return out
 
 
+def _translate_harvested_capture(source_capture, translator_dir, target_cfg):
+    _, artifacts = _load_translator(translator_dir)
+    return _translate_harvested_capture_with_artifacts(
+        source_capture, artifacts, target_cfg)
+
+
 def _binding_summary(rows, mode):
     selected = [r for r in rows if r["mode"] == mode]
     margins = [r["gold_minus_best_decoy"] for r in selected]
@@ -2132,6 +2278,200 @@ def _binding_summary(rows, mode):
         "passes_r1_g3_threshold": (
             None if threshold is None else successes >= threshold),
     }
+
+
+def _load_translator_sweep_candidates(*, translator_dirs=None, labels=None,
+                                      sweep_manifest=None):
+    candidates = []
+    if sweep_manifest:
+        spec = _load_json(Path(sweep_manifest).expanduser())
+        if spec.get("schema") != (
+                "qwen35_graft_translation_layer_sweep_manifest_v1"):
+            raise ValueError(
+                "sweep_manifest must use "
+                "qwen35_graft_translation_layer_sweep_manifest_v1")
+        for cand in spec.get("candidates", []):
+            candidates.append({
+                "label": str(cand["label"]),
+                "translator_dir": str(Path(cand["translator_dir"]).expanduser()),
+                "policy": cand.get("policy"),
+            })
+    if translator_dirs:
+        dirs = (
+            [x.strip() for x in translator_dirs.split(",") if x.strip()]
+            if isinstance(translator_dirs, str)
+            else [str(x) for x in translator_dirs]
+        )
+        label_list = None
+        if labels:
+            label_list = (
+                [x.strip() for x in labels.split(",") if x.strip()]
+                if isinstance(labels, str)
+                else [str(x) for x in labels]
+            )
+            if len(label_list) != len(dirs):
+                raise ValueError("translator labels must match dirs")
+        for idx, dirname in enumerate(dirs):
+            label = label_list[idx] if label_list else Path(dirname).name
+            candidates.append({
+                "label": label,
+                "translator_dir": str(Path(dirname).expanduser()),
+                "policy": None,
+            })
+    if not candidates:
+        raise ValueError(
+            "provide translator_dirs, sweep_manifest, or both")
+    labels_seen = set()
+    for cand in candidates:
+        if cand["label"] in labels_seen:
+            raise ValueError(f"duplicate translator label: {cand['label']}")
+        labels_seen.add(cand["label"])
+    return candidates
+
+
+def _binding_translator_summary(rows, label):
+    selected = [r for r in rows if r["translator_label"] == label]
+    margins = [r["gold_minus_best_decoy"] for r in selected]
+    successes = sum(1 for r in selected if r["success"])
+    threshold = 14 if len(selected) >= 32 else None
+    return {
+        "translator_label": label,
+        "probes": len(selected),
+        "positive_margins": successes,
+        "mean_margin": float(np.mean(margins)) if margins else None,
+        "min_margin": float(np.min(margins)) if margins else None,
+        "passes_r1_g3_threshold": (
+            None if threshold is None else successes >= threshold),
+    }
+
+
+def evaluate_binding_translator_sweep(
+        probes_path, out_path, *, source_model_dir, target_model_dir,
+        translator_dirs=None, translator_labels=None, sweep_manifest=None,
+        max_probes=0, layers="all"):
+    """Evaluate many translated-graft candidates with one source/target load."""
+    sys.path.insert(0, "/mnt/ForgeRealm/Project-Tensor/tensor_cuda")
+    from core.qwen35_tc import Qwen35_TC
+    from core import kv_graft
+
+    candidates = _load_translator_sweep_candidates(
+        translator_dirs=translator_dirs,
+        labels=translator_labels,
+        sweep_manifest=sweep_manifest,
+    )
+    loaded_translators = []
+    for cand in candidates:
+        manifest, artifacts = _load_translator(cand["translator_dir"])
+        loaded_translators.append({
+            **cand,
+            "translator_manifest": manifest,
+            "translator_manifest_sha256": _sha256(
+                Path(cand["translator_dir"]) / "translator_manifest.json"),
+            "artifacts": artifacts,
+        })
+
+    spec = _load_json(Path(probes_path).expanduser())
+    probes = list(spec.get("probes", []))
+    if max_probes:
+        probes = probes[:int(max_probes)]
+
+    out = Path(out_path).expanduser()
+    progress_out = out.with_name(f"{out.stem}_progress.json")
+
+    def write_progress(done, *, status="running"):
+        progress_out.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "schema": (
+                "qwen35_graft_translation_binding_translator_sweep_"
+                "progress_v1"),
+            "status": status,
+            "updated_utc": _utc_now(),
+            "probes_path": str(Path(probes_path).expanduser()),
+            "out": str(out),
+            "candidate_count": len(loaded_translators),
+            "probe_count": len(probes),
+            "completed_probes": int(done),
+            "remaining_probes": int(max(len(probes) - done, 0)),
+        }
+        tmp = progress_out.with_suffix(f"{progress_out.suffix}.tmp")
+        with open(tmp, "w") as fh:
+            json.dump(payload, fh, indent=2)
+            fh.write("\n")
+        tmp.replace(progress_out)
+
+    rows = []
+    source_captures = {}
+    tokenizer = load_hf_tokenizer(source_model_dir)
+    source_model, source_info = Qwen35_TC.from_pretrained(source_model_dir)
+    source_layers = _select_layers(source_model, layers)
+    try:
+        for probe in probes:
+            fact_ids = _as_int_list(_encode_text(tokenizer, probe["fact"]))
+            source_captures[probe["id"]] = kv_graft.harvest_kv(
+                source_model, fact_ids, layer_filter=source_layers)
+    finally:
+        del source_model
+        gc.collect()
+
+    target_model, target_info = Qwen35_TC.from_pretrained(target_model_dir)
+    target_layers = _select_layers(target_model, layers)
+    try:
+        write_progress(0)
+        for probe_idx, probe in enumerate(probes, start=1):
+            source_cap = source_captures[probe["id"]]
+            for item in loaded_translators:
+                graft = _translate_harvested_capture_with_artifacts(
+                    source_cap, item["artifacts"], target_model.config)
+                scored = _score_probe_candidates(
+                    target_model, tokenizer, probe, graft=graft,
+                    layers=target_layers)
+                rows.append({
+                    "probe_id": probe["id"],
+                    "mode": "translated",
+                    "translator_label": item["label"],
+                    "translator_dir": item["translator_dir"],
+                    **scored,
+                })
+            write_progress(probe_idx)
+    finally:
+        kv_graft.clear_injection(target_model)
+        del target_model
+        gc.collect()
+
+    summaries = [
+        _binding_translator_summary(rows, item["label"])
+        for item in loaded_translators
+    ]
+    metrics = {
+        "schema": "qwen35_graft_translation_binding_translator_sweep_v1",
+        "probes_path": str(Path(probes_path).expanduser()),
+        "source_model": source_info,
+        "target_model": target_info,
+        "layers": layers,
+        "sweep_manifest": (
+            str(Path(sweep_manifest).expanduser()) if sweep_manifest else None),
+        "candidate_count": len(loaded_translators),
+        "probe_count": len(probes),
+        "candidates": [
+            {
+                "label": item["label"],
+                "translator_dir": item["translator_dir"],
+                "translator_manifest_sha256": (
+                    item["translator_manifest_sha256"]),
+                "policy": item.get("policy"),
+            }
+            for item in loaded_translators
+        ],
+        "summaries": summaries,
+        "rows": rows,
+        "progress": str(progress_out),
+    }
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w") as fh:
+        json.dump(metrics, fh, indent=2)
+        fh.write("\n")
+    write_progress(len(probes), status="complete")
+    return metrics
 
 
 def evaluate_binding_probes(probes_path, out_path, *, source_model_dir=None,
@@ -2408,6 +2748,172 @@ def analyze_binding_eval(binding_eval_path, out_path, *, probes_path=None,
         "translated_beats_amnesia": translated_beats_amnesia,
         "amnesia_beats_translated": amnesia_beats_translated,
         "per_probe": per_probe,
+    }
+    out = Path(out_path).expanduser()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w") as fh:
+        json.dump(analysis, fh, indent=2)
+        fh.write("\n")
+    return analysis
+
+
+def _baseline_rows_by_probe(baseline_eval_path, *, mode="translated"):
+    if not baseline_eval_path:
+        return {}
+    metrics = _load_json(Path(baseline_eval_path).expanduser())
+    if metrics.get("schema") == "qwen35_graft_translation_binding_eval_v1":
+        return {
+            row["probe_id"]: row
+            for row in metrics.get("rows", [])
+            if row.get("mode") == mode
+        }
+    if metrics.get("schema") == (
+            "qwen35_graft_translation_binding_translator_sweep_v1"):
+        return {
+            row["probe_id"]: row
+            for row in metrics.get("rows", [])
+            if row.get("translator_label") == mode
+        }
+    raise ValueError(f"unsupported baseline eval schema: {metrics.get('schema')}")
+
+
+def analyze_binding_translator_sweep(
+        sweep_eval_path, out_path, *, baseline_eval_path=None,
+        baseline_mode="translated"):
+    """Summarize global and diagnostic-oracle outcomes for a translator sweep."""
+    sweep_eval_path = Path(sweep_eval_path).expanduser()
+    metrics = _load_json(sweep_eval_path)
+    if metrics.get("schema") != (
+            "qwen35_graft_translation_binding_translator_sweep_v1"):
+        raise ValueError(
+            "expected qwen35_graft_translation_binding_translator_sweep_v1")
+
+    rows_by_probe = {}
+    rows_by_label = {}
+    for row in metrics.get("rows", []):
+        label = row["translator_label"]
+        rows_by_probe.setdefault(row["probe_id"], {})[label] = row
+        rows_by_label.setdefault(label, []).append(row)
+
+    summaries = []
+    for label, rows in sorted(rows_by_label.items()):
+        margins = [float(r["gold_minus_best_decoy"]) for r in rows]
+        summaries.append({
+            "translator_label": label,
+            "probes": len(rows),
+            "positive_margins": sum(1 for r in rows if r["success"]),
+            "mean_margin": float(np.mean(margins)) if margins else None,
+            "min_margin": float(np.min(margins)) if margins else None,
+        })
+    summaries.sort(
+        key=lambda r: (
+            int(r["positive_margins"]),
+            float(r["mean_margin"] if r["mean_margin"] is not None else -1e30),
+            float(r["min_margin"] if r["min_margin"] is not None else -1e30),
+        ),
+        reverse=True,
+    )
+    best_global = summaries[0] if summaries else None
+
+    baseline_rows = _baseline_rows_by_probe(
+        baseline_eval_path, mode=baseline_mode)
+    baseline_successes = sum(
+        1 for row in baseline_rows.values() if row.get("success"))
+    baseline_margins = [
+        float(row["gold_minus_best_decoy"])
+        for row in baseline_rows.values()
+    ]
+
+    oracle_rows = []
+    for probe_id, by_label in sorted(rows_by_probe.items()):
+        ranked = sorted(
+            by_label.items(),
+            key=lambda kv: float(kv[1]["gold_minus_best_decoy"]),
+            reverse=True,
+        )
+        label, row = ranked[0]
+        baseline = baseline_rows.get(probe_id)
+        oracle_rows.append({
+            "probe_id": probe_id,
+            "best_translator_label": label,
+            "gold_minus_best_decoy": row["gold_minus_best_decoy"],
+            "success": bool(row["success"]),
+            "baseline_success": (
+                None if baseline is None else bool(baseline["success"])),
+            "baseline_margin": (
+                None if baseline is None
+                else float(baseline["gold_minus_best_decoy"])),
+            "margin_delta_vs_baseline": (
+                None if baseline is None
+                else float(row["gold_minus_best_decoy"]) -
+                float(baseline["gold_minus_best_decoy"])),
+        })
+    oracle_margins = [
+        float(row["gold_minus_best_decoy"]) for row in oracle_rows
+    ]
+    oracle_successes = sum(1 for row in oracle_rows if row["success"])
+    oracle_summary = {
+        "probes": len(oracle_rows),
+        "positive_margins": oracle_successes,
+        "mean_margin": (
+            float(np.mean(oracle_margins)) if oracle_margins else None),
+        "min_margin": (
+            float(np.min(oracle_margins)) if oracle_margins else None),
+        "recovered_baseline_misses": [
+            row["probe_id"] for row in oracle_rows
+            if row["baseline_success"] is False and row["success"]
+        ],
+        "lost_baseline_successes": [
+            row["probe_id"] for row in oracle_rows
+            if row["baseline_success"] is True and not row["success"]
+        ],
+    }
+
+    best_label = best_global["translator_label"] if best_global else None
+    best_rows = {
+        row["probe_id"]: row for row in rows_by_label.get(best_label, [])
+    } if best_label else {}
+    best_global_delta = {
+        "recovered_baseline_misses": [],
+        "lost_baseline_successes": [],
+    }
+    for probe_id, row in sorted(best_rows.items()):
+        baseline = baseline_rows.get(probe_id)
+        if baseline is None:
+            continue
+        if not baseline["success"] and row["success"]:
+            best_global_delta["recovered_baseline_misses"].append(probe_id)
+        if baseline["success"] and not row["success"]:
+            best_global_delta["lost_baseline_successes"].append(probe_id)
+
+    analysis = {
+        "schema": "qwen35_graft_translation_binding_translator_sweep_analysis_v1",
+        "sweep_eval_path": str(sweep_eval_path),
+        "sweep_eval_sha256": _sha256(sweep_eval_path),
+        "baseline_eval_path": (
+            str(Path(baseline_eval_path).expanduser())
+            if baseline_eval_path else None),
+        "baseline_eval_sha256": (
+            _sha256(Path(baseline_eval_path).expanduser())
+            if baseline_eval_path else None),
+        "baseline_mode": baseline_mode,
+        "candidate_count": int(metrics.get("candidate_count", 0)),
+        "probe_count": int(metrics.get("probe_count", 0)),
+        "baseline_summary": {
+            "probes": len(baseline_rows),
+            "positive_margins": baseline_successes,
+            "mean_margin": (
+                float(np.mean(baseline_margins))
+                if baseline_margins else None),
+            "min_margin": (
+                float(np.min(baseline_margins))
+                if baseline_margins else None),
+        },
+        "best_global": best_global,
+        "best_global_delta_vs_baseline": best_global_delta,
+        "oracle": oracle_summary,
+        "translator_summaries": summaries,
+        "oracle_per_probe": oracle_rows,
     }
     out = Path(out_path).expanduser()
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -3284,6 +3790,17 @@ def main(argv=None):
                     help="comma-separated source:target pairs to keep")
     fl.add_argument("--drop-pairs", default=None,
                     help="comma-separated source:target pairs to drop")
+    ms = sub.add_parser(
+        "make-translator-layer-sweep",
+        help="write filtered translator manifests for layer-sweep candidates")
+    ms.add_argument("--translator-dir", required=True,
+                    help="parent translator directory")
+    ms.add_argument("--out-root", required=True,
+                    help="output directory for sweep manifests")
+    ms.add_argument("--policy-set", default="single,drop",
+                    help="comma-separated policies: single,drop,prefix,suffix")
+    ms.add_argument("--no-include-parent", action="store_true",
+                    help="omit the unfiltered parent translator candidate")
     ev = sub.add_parser(
         "eval-translator",
         help="evaluate fitted translators on paired held-out capture shards")
@@ -3357,6 +3874,22 @@ def main(argv=None):
     be.add_argument("--max-probes", type=int, default=0)
     be.add_argument("--layers", default="all",
                     help="'all', 'first', or comma-separated layer ids")
+    bs = sub.add_parser(
+        "eval-binding-translator-sweep",
+        help="evaluate many translated-graft candidates with one model load")
+    bs.add_argument("--probes", required=True, help="binding probes json")
+    bs.add_argument("--out", required=True, help="output sweep eval json")
+    bs.add_argument("--source-model-dir", required=True)
+    bs.add_argument("--target-model-dir", required=True)
+    bs.add_argument("--translator-dirs", default=None,
+                    help="comma-separated translator dirs")
+    bs.add_argument("--translator-labels", default=None,
+                    help="comma-separated labels matching translator dirs")
+    bs.add_argument("--sweep-manifest", default=None,
+                    help="layer_sweep_manifest.json")
+    bs.add_argument("--max-probes", type=int, default=0)
+    bs.add_argument("--layers", default="all",
+                    help="'all', 'first', or comma-separated layer ids")
     ba = sub.add_parser(
         "analyze-binding-eval",
         help="summarize binding eval misses, floor behavior, and best decoys")
@@ -3368,6 +3901,16 @@ def main(argv=None):
                     help="defaults to probes_path recorded in binding eval")
     ba.add_argument("--tokenizer-dir", default=None,
                     help="optional tokenizer/model dir for token lengths")
+    bsa = sub.add_parser(
+        "analyze-binding-translator-sweep",
+        help="summarize global and oracle layer-sweep outcomes")
+    bsa.add_argument("--sweep-eval", required=True,
+                     help="binding translator sweep eval json")
+    bsa.add_argument("--out", required=True, help="output analysis json")
+    bsa.add_argument("--baseline-eval", default=None,
+                     help="optional baseline binding eval json")
+    bsa.add_argument("--baseline-mode", default="translated",
+                     help="baseline eval mode or sweep label")
     pn = sub.add_parser(
         "pipeline-next",
         help="run one next missing PoC stage for cron/Claude orchestration")
@@ -3611,6 +4154,21 @@ def main(argv=None):
             "dropped_pairs": manifest["layer_policy"]["dropped_pairs"],
         }, indent=2))
         return 0
+    if args.cmd == "make-translator-layer-sweep":
+        sweep = make_translator_layer_sweep(
+            args.translator_dir,
+            args.out_root,
+            policy_set=args.policy_set,
+            include_parent=not args.no_include_parent,
+        )
+        print(json.dumps({
+            "status": "ok",
+            "out": sweep["manifest_path"],
+            "candidate_count": sweep["candidate_count"],
+            "policy_set": sweep["policy_set"],
+            "labels": [c["label"] for c in sweep["candidates"]],
+        }, indent=2))
+        return 0
     if args.cmd == "eval-translator":
         metrics = evaluate_translator(
             args.capture_dir,
@@ -3743,6 +4301,26 @@ def main(argv=None):
             "summaries": metrics["summaries"],
         }, indent=2))
         return 0
+    if args.cmd == "eval-binding-translator-sweep":
+        metrics = evaluate_binding_translator_sweep(
+            args.probes,
+            args.out,
+            source_model_dir=args.source_model_dir,
+            target_model_dir=args.target_model_dir,
+            translator_dirs=args.translator_dirs,
+            translator_labels=args.translator_labels,
+            sweep_manifest=args.sweep_manifest,
+            max_probes=args.max_probes,
+            layers=args.layers,
+        )
+        print(json.dumps({
+            "status": "ok",
+            "out": str(Path(args.out).expanduser()),
+            "candidate_count": metrics["candidate_count"],
+            "probe_count": metrics["probe_count"],
+            "summaries": metrics["summaries"],
+        }, indent=2))
+        return 0
     if args.cmd == "analyze-binding-eval":
         analysis = analyze_binding_eval(
             args.binding_eval,
@@ -3760,6 +4338,23 @@ def main(argv=None):
                 analysis["translated_beats_amnesia"]),
             "amnesia_beats_translated": len(
                 analysis["amnesia_beats_translated"]),
+        }, indent=2))
+        return 0
+    if args.cmd == "analyze-binding-translator-sweep":
+        analysis = analyze_binding_translator_sweep(
+            args.sweep_eval,
+            args.out,
+            baseline_eval_path=args.baseline_eval,
+            baseline_mode=args.baseline_mode,
+        )
+        print(json.dumps({
+            "status": "ok",
+            "out": str(Path(args.out).expanduser()),
+            "candidate_count": analysis["candidate_count"],
+            "probe_count": analysis["probe_count"],
+            "baseline_summary": analysis["baseline_summary"],
+            "best_global": analysis["best_global"],
+            "oracle": analysis["oracle"],
         }, indent=2))
         return 0
     if args.cmd == "pipeline-next":

@@ -984,3 +984,103 @@ Translation reliability track.
   still miss, and the worst miss remains large. The next reliability move
   should be objective-level translator work or targeted hard-negative
   training, not another simple ridge-lambda or layer-drop sweep.
+
+### 2026-07-05 - R4.4 Layer-Routing Reliability Sweep
+
+**Status:** complete.
+
+**Completed work:**
+
+- Added reproducible layer-sweep translator generation.
+- Added a single-load translated binding sweep so many translator policies can
+  be evaluated without reloading the source and target models per candidate.
+- Added sweep analysis for best global candidate and diagnostic per-probe
+  oracle headroom.
+- Added batched gold/decoy scoring for binding probes. The first batched graft
+  smoke found that injected K/V must match the candidate batch dimension; the
+  scorer now repeats graft K/V to the batch size before injection.
+- Ran the R4.4 frozen V2 translated sweep over `13` candidates.
+
+**Commands:**
+
+- Candidate manifest:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py make-translator-layer-sweep --translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_corpus_5m --out-root /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r44_layer_sweep --policy-set single,drop`
+- Batched graft smoke:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-translator-sweep --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r44_layer_sweep_smoke1.json --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --sweep-manifest /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r44_layer_sweep/layer_sweep_manifest.json --max-probes 1 --layers all`
+- Full frozen V2 translated sweep:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-translator-sweep --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r44_layer_sweep.json --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --sweep-manifest /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r44_layer_sweep/layer_sweep_manifest.json --max-probes 64 --layers all`
+- Sweep analysis:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py analyze-binding-translator-sweep --sweep-eval /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r44_layer_sweep.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r44_layer_sweep_analysis.json --baseline-eval /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_corpus_5m.json --baseline-mode translated`
+
+**Artifacts:**
+
+- Layer-sweep manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r44_layer_sweep/layer_sweep_manifest.json`
+  - sha256:
+    `fea8396a03a911cebdf20f85018834b69c239ab1aade79c886650f95234b16f7`
+  - candidates: `13`
+- Batched graft smoke:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r44_layer_sweep_smoke1.json`
+  - sha256:
+    `c2410dd7e34c5a986f75644bf6fca96e2b25e44c1a0415e38c4ca1e02653369b`
+- Full frozen V2 translated sweep:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r44_layer_sweep.json`
+  - sha256:
+    `266fe6e6356d98ede61de46cc86265eeb74a1ffdda4135c62a9204366f8a50f9`
+- Sweep analysis:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r44_layer_sweep_analysis.json`
+  - sha256:
+    `a2c61c8262a9fd0ed59ab043d47909d699dda9dc5696595fa8db743f312c8c9d`
+
+**Frozen V2 sweep result:**
+
+- Baseline R4.3 all-layer translator:
+  - translated positive margins: `44 / 64`
+  - mean margin: `0.9933952155426934`
+  - min margin: `-5.17769603113414`
+- R4.4 best global policy:
+  - label: `drop_l3_to_l3`
+  - translated positive margins: `46 / 64`
+  - mean margin: `0.935202663147657`
+  - min margin: `-5.034212940581227`
+  - recovered baseline misses:
+    - `bind-v2-002-q1`
+    - `bind-v2-019-q0`
+    - `bind-v2-022-q0`
+    - `bind-v2-026-q1`
+  - lost baseline successes:
+    - `bind-v2-015-q1`
+    - `bind-v2-020-q0`
+- R4.4 diagnostic per-probe oracle:
+  - translated positive margins: `48 / 64`
+  - mean margin: `1.325906873199195`
+  - min margin: `-4.7021774107105685`
+  - recovered baseline misses:
+    - `bind-v2-002-q1`
+    - `bind-v2-019-q0`
+    - `bind-v2-022-q0`
+    - `bind-v2-026-q1`
+  - lost baseline successes: none
+
+**Candidate summary:**
+
+- `drop_l3_to_l3`: `46 / 64`, mean `0.935202663147657`
+- `all`: `44 / 64`, mean `0.9910396910810025`
+- `drop_l11_to_l15`: `43 / 64`, mean `0.8955000220062264`
+- `drop_l15_to_l19`: `43 / 64`, mean `0.5356284425485713`
+- `drop_l7_to_l7`: `42 / 64`, mean `0.8305776682911941`
+- `drop_l23_to_l31`: `35 / 64`, mean `0.12560981401349092`
+- `single_l19_to_l27`: `26 / 64`, mean `-0.552651599648001`
+- `drop_l19_to_l27`: `26 / 64`, mean `-0.7571128109603488`
+- `single_l23_to_l31`: `19 / 64`, mean `-1.359216958668099`
+- all other single-layer candidates stayed at or below `11 / 64`.
+
+**Decision:**
+
+- R4.4 improves the best global frozen V2 translated score from `44 / 64` to
+  `46 / 64` by dropping the first `3->3` layer pair.
+- Layer routing has real but limited headroom. The diagnostic oracle reaches
+  only `48 / 64`, so even perfect per-probe routing over this candidate family
+  does not close reliability.
+- The next reliability move should be R4.5 objective-level translator training
+  or targeted hard-negative training against the remaining failure pattern.
