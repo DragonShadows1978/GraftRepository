@@ -362,8 +362,36 @@ GPU cleanup result:
 - GPU returned to baseline:
   `NVIDIA GeForce RTX 4070 SUPER, 275, 12282, 35`
 
+Action: Downloaded the full pinned HF safetensors snapshot for loader work.
+
+Download command:
+- `python3 - <<'PY' ... snapshot_download(repo_id='openai/gpt-oss-20b', revision='6cee5e81ee83917806bbde320786a8fb61efebee', allow_patterns=[...])`
+
+Download result:
+- Completed successfully.
+- Wall time from progress display: about `4:45`.
+- Snapshot path:
+  `/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee`
+
+Shard verification:
+
+| Shard | Tensors | Bytes |
+| --- | ---: | ---: |
+| `model-00000-of-00002.safetensors` | 196 | 4,792,272,488 |
+| `model-00001-of-00002.safetensors` | 197 | 4,798,702,184 |
+| `model-00002-of-00002.safetensors` | 66 | 4,170,342,232 |
+
+Verification commands:
+- Opened each shard with `safetensors.safe_open`.
+- Confirmed total tensor count across shards remains `459`.
+- Confirmed HF snapshot entries are symlinks to cache blobs.
+
+Disk state after download:
+- `/home/vader` had `542G` available.
+- GPT-OSS HF cache directory reported `26G`, which includes blobs plus cached
+  snapshot metadata/symlinks.
+
 Pending:
-- Download or locate the full HF safetensors if TensorCUDA loader work proceeds.
 - Build the one-layer Phase 3A loader on top of the scaffold.
 - Add packed MXFP4 expert math before making any viable 12GB operating-point
   claim.

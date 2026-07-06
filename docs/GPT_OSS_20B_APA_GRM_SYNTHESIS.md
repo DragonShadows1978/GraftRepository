@@ -97,3 +97,8 @@ quantized-linear bias must be cast to the output dtype at call time.
 This still is not a model loader. It is the math base the loader needs. The next
 gate is a one-layer loader/smoke using the full HF safetensors, followed by the
 packed MXFP4 expert kernel work required for a real 12GB operating point.
+
+The full pinned HF safetensors snapshot is now local as well. That matters
+because the Ollama model proved official runtime behavior, but it is not the
+source layout the TensorCUDA loader consumes. The next gate can now read real
+GPT-OSS tensors directly from the pinned HF shards.
