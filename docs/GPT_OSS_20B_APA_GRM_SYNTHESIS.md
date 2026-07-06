@@ -43,3 +43,31 @@ memory, and output sanity before any custom kernels are written.
 Current recommendation: proceed cautiously. GPT-OSS-20B has the right macro
 shape for APA/GRM and may be more interesting than a dense 20B-30B model, but
 only if the MXFP4 expert path can stay packed end to end.
+
+The Phase 0 local snapshot moved this from source-estimate territory to pinned
+metadata. The exact HF revision under test is
+`6cee5e81ee83917806bbde320786a8fb61efebee`. The installed stack can render the
+Harmony-style tokenizer template through Transformers, even though the separate
+`openai-harmony` package is not installed. The local artifact also confirmed
+the payload split: about 9.46 GiB of expert U8/MXFP4 tensors and about 3.36 GiB
+of BF16 non-expert tensors.
+
+The Phase 1 Ollama smoke is useful but narrow. `gpt-oss:20b` pulled
+successfully and produced a short correct answer on the 4070 Super when run
+with `think:false`: `The capital of France is Paris.` The cold load peaked at
+11,392 MiB from a 275 MiB baseline, so the official runtime can fit a short
+prompt without OOM.
+
+That should not be over-read. Ollama reported the resident model as a 20% CPU /
+80% GPU split with a 4096 context, so this is not evidence that a fully GPU
+resident 131k operating point exists. The first cold prompt also showed why the
+Harmony/reasoning controls matter: with the default medium reasoning behavior
+and only 64 generated tokens, the visible answer truncated at `The capital`.
+With `think:false` and a larger cap, the answer completed normally.
+
+The next design conclusion is unchanged, but now it is supported by a load
+receipt: stock official runtime is barely inside the 12GB card for a short
+prompt only because it can split work between CPU and GPU. The TensorCUDA path
+still needs to preserve packed MXFP4 experts, compress or otherwise manage the
+BF16 non-expert body, and attach APA only after a standard-attention sanity
+path exists.
