@@ -905,3 +905,62 @@ Pending:
 - Add a short greedy decode loop using KV cache or repeated streamed forwards.
 - Add Harmony-formatted prompt tests.
 - Only then attach APA/GRM and run real context/recall tests.
+
+Action: Added and ran streamed-path next-token PPL smoke.
+
+Script change:
+- `scripts/gpt_oss20b_stream_forward_smoke.py` now accepts `--score-ppl`.
+- In PPL mode:
+  - tokenized prompt is capped by `--max-tokens`
+  - inputs are all tokens except the final token
+  - targets are the next-token shift
+  - full streamed forward runs over the input tokens
+  - quantized TensorCUDA lm_head scores every input position
+  - mean NLL and PPL are computed on CPU from the logits
+
+Compile check:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_stream_forward_smoke.py`
+- Result: passed.
+
+PPL smoke command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --prompt 'The capital of France is Paris.' --max-tokens 8 --expert-mode resident_packed_mxfp4 --top-k 8 --score-ppl`
+
+PPL smoke artifact:
+- `artifacts/gpt_oss_20b/stream_forward_20260706_193416.json`
+
+PPL smoke result:
+- `status = ok`
+- `completed_layers = 24`
+- `input_ids_shape = [1, 6]`
+- full tokenized ids:
+  `[[976, 9029, 328, 10128, 382, 12650, 13]]`
+- scored target texts:
+  `[" capital", " of", " France", " is", " Paris", "."]`
+- `token_count = 6`
+- `mean_nll = 2.9856215566`
+- `ppl = 19.7988044911`
+- `wall_seconds = 18.556`
+- `gpu_before_lm_head = 485 MiB`
+- `gpu_after = 803 MiB`
+- post-run GPU returned to baseline:
+  `NVIDIA GeForce RTX 4070 SUPER, 275, 12282`
+
+Final-position top tokens from the PPL run:
+- rank 0: token `3692`, text `."`, logit `15.875`
+- rank 1: token `14396`, text `."\n`, logit `15.375`
+- rank 2: token `13`, text `.`, logit `15.1875`
+- rank 3: token `6635`, text `."\n\n`, logit `14.5625`
+- rank 4: token `364`, text `.\n\n`, logit `14.4375`
+
+Interpretation:
+- This is the first streamed-path PPL-style receipt.
+- It is a tiny six-target smoke, not a benchmark and not comparable to standard
+  corpus PPL.
+- The result is still useful because it proves the full streamed path can score
+  multiple shifted targets through all 24 layers and the lm_head.
+
+Pending:
+- Run a real fixed corpus PPL suite with enough tokens to compare settings.
+- Add a short greedy decode loop.
+- Add Harmony-formatted prompt tests.
+- Then attach APA/GRM and run real context/recall tests.

@@ -51,6 +51,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-layers", type=int, default=None)
     parser.add_argument("--top-k", type=int, default=8)
     parser.add_argument(
+        "--score-ppl",
+        action="store_true",
+        help="score next-token NLL/PPL over the tokenized prompt instead of only last-token top-k",
+    )
+    parser.add_argument(
         "--expert-mode",
         choices=("resident_packed_mxfp4", "packed_mxfp4", "dequant"),
         default="resident_packed_mxfp4",
@@ -114,6 +119,7 @@ def main() -> int:
         "max_layers": args.max_layers,
         "expert_mode": args.expert_mode,
         "skip_lm_head": bool(args.skip_lm_head),
+        "score_ppl": bool(args.score_ppl),
         "note": (
             "streamed full-stack forward smoke; quantized TensorCUDA lm_head; "
             "not PPL, not generation quality, not APA/GRM evidence"
@@ -133,8 +139,16 @@ def main() -> int:
         cfg = GptOss20BConfig.from_model_dir(model_dir)
         where = build_safetensors_map(model_dir)
         tokenizer = AutoTokenizer.from_pretrained(str(model_dir))
-        ids = tokenizer(args.prompt, return_tensors="np").input_ids.astype(np.int64)
-        ids = ids[:, : max(1, int(args.max_tokens))]
+        full_ids = tokenizer(args.prompt, return_tensors="np").input_ids.astype(np.int64)
+        if args.score_ppl:
+            full_ids = full_ids[:, : max(2, int(args.max_tokens))]
+            if full_ids.shape[1] < 2:
+                raise ValueError("score_ppl requires at least two tokens")
+            ids = full_ids[:, :-1]
+            targets = full_ids[:, 1:]
+        else:
+            ids = full_ids[:, : max(1, int(args.max_tokens))]
+            targets = None
         n_layers = cfg.num_layers if args.max_layers is None else min(args.max_layers, cfg.num_layers)
 
         with tc.no_grad():
@@ -144,7 +158,9 @@ def main() -> int:
             payload.update(
                 {
                     "status": "running_layers",
+                    "full_input_ids": full_ids.tolist(),
                     "input_ids": ids.tolist(),
+                    "target_ids": None if targets is None else targets.tolist(),
                     "input_ids_shape": list(ids.shape),
                     "hidden_shape_initial": tensor_shape(h),
                     "resolved_layers": int(n_layers),
@@ -220,10 +236,13 @@ def main() -> int:
                 load_tensor_np(where, "lm_head.weight"),
                 group_size=cfg.group_size,
             )
-            logits = lm_head(last).reshape([cfg.vocab_size])
-            vals, idx = logits.float().topk(int(args.top_k), True)
-            vals_np = vals.numpy().astype(np.float32)
-            idx_np = idx.numpy().astype(np.int64)
+            head_input = h if args.score_ppl else last
+            logits = lm_head(head_input)
+            logits_2d = logits.float().numpy().astype(np.float32, copy=False).reshape(
+                [-1, cfg.vocab_size]
+            )
+            idx_np = np.argsort(-logits_2d[-1])[: int(args.top_k)].astype(np.int64)
+            vals_np = logits_2d[-1, idx_np].astype(np.float32)
             top_tokens = []
             for rank, (tok, val) in enumerate(zip(idx_np.tolist(), vals_np.tolist())):
                 top_tokens.append(
@@ -234,12 +253,29 @@ def main() -> int:
                         "text": tokenizer.decode([int(tok)]),
                     }
                 )
+            ppl_payload = None
+            if args.score_ppl:
+                target_flat = targets.reshape(-1)
+                nlls = []
+                for row, target in zip(logits_2d, target_flat):
+                    mx = float(row.max())
+                    lse = mx + float(np.log(np.exp(row - mx).sum()))
+                    nlls.append(lse - float(row[int(target)]))
+                mean_nll = float(np.mean(nlls))
+                ppl_payload = {
+                    "token_count": int(len(nlls)),
+                    "mean_nll": mean_nll,
+                    "ppl": float(np.exp(mean_nll)),
+                    "target_ids": target_flat.astype(int).tolist(),
+                    "target_text": [tokenizer.decode([int(t)]) for t in target_flat],
+                }
             tc.synchronize()
 
         payload.update(
             {
                 "status": "ok",
                 "top_tokens": top_tokens,
+                "ppl": ppl_payload,
                 "wall_seconds": time.perf_counter() - started,
                 "gpu_after": nvidia_smi(),
             }

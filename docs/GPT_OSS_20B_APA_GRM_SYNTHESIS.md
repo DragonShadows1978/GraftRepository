@@ -196,3 +196,11 @@ APA/GRM evidence.
 The project has therefore crossed from one-layer math receipts into a complete
 streamed forward receipt. The next meaningful gates are PPL, a short greedy
 decode loop, Harmony-formatted prompting, and then APA/GRM context/recall tests.
+
+A tiny PPL-style smoke now exists on the streamed path as well. On
+`The capital of France is Paris.`, capped to seven tokens and scored as six
+next-token targets, the streamed TensorCUDA path reported mean NLL
+`2.9856` and PPL `19.80`. That number should not be treated as a benchmark; the
+sample is far too small and the path uses the local quantized lm_head. The value
+is useful only as a receipt that shifted-target scoring works through all 24
+layers and the output projection.
