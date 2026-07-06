@@ -161,13 +161,32 @@ class KVRing:
     # (int8_glob +6.2%: the score path is precision-sensitive).
     QUANT_V = bool(int(os.environ.get("GEMMA4_QUANT_V", "0")))
 
-    __slots__ = ("kb", "vb", "vsb", "bias", "count", "cap", "ring",
-                 "window", "kqb", "kq_count", "qv")
+    # K4+V4 RESIDENT STORAGE (opt-in, default off). The bulk-bits law classes
+    # Gemma (qk-norm) at 4-bit; measured int4k_int4v_glob = +5.55% ppl (real
+    # wikitext, baseline 119.85) — survivable on BOTH halves, every non-Qwen
+    # arch's operating point. When on (global layers only — 4-bit V is FATAL
+    # on the sliding window, +1696%), kb AND vb are stored D-grouped 4-bit
+    # packed (uint8 (B,KV,cap,D/2) + per-group scales (B,KV,cap,D/32)) via the
+    # tc.kv_int4_pack/unpack kernels — the REAL resident memory win (~4x on
+    # both halves), not a round-trip that stays bf16. All reads route through
+    # _k_get/_v_get. Sliding rings stay bf16 regardless of this flag.
+    QUANT_KV4 = bool(int(os.environ.get("GEMMA4_QUANT_KV4", "0")))
+    KV4_GROUP = 32
+
+    __slots__ = ("kb", "vb", "vsb", "ksb", "bias", "count", "cap", "ring",
+                 "window", "kqb", "kq_count", "qv", "q4")
 
     def __init__(self, k, v, ring_cap=None):
         B, KV, S, D = k.shape
-        self.qv = KVRing.QUANT_V        # frozen per-ring at construction
+        # K4+V4 is global-only (ring_cap is None for globals); 4-bit on the
+        # sliding window is fatal, so a ring NEVER uses q4 even if the flag
+        # is set. Frozen per-ring at construction.
+        self.q4 = KVRing.QUANT_KV4 and ring_cap is None
+        # qv (INT8 V) and q4 (4-bit K+V) are mutually exclusive storage
+        # schemes; q4 wins when both are requested on a global layer.
+        self.qv = KVRing.QUANT_V and not self.q4
         self.vsb = None
+        self.ksb = None
         # APA quantized-key ring (lazy): kqb mirrors kb position-for-
         # position, quantized once per key and never recomputed (a key's
         # quantization is fixed once roped+written). None until APA first
@@ -183,12 +202,21 @@ class KVRing:
         self.cap = _grow_cap(S + 1)
         if self.ring:
             self.cap = min(self.cap, ring_cap)
-        self.kb = _zeros(B, KV, self.cap, D)
-        if self.qv:
-            self.vb = tc.zeros(B, KV, self.cap, D, dtype="uint8")
-            self.vsb = _zeros(B, KV, self.cap, 1)
+        if self.q4:
+            # packed kb/vb: (B,KV,cap,D/2) uint8 + per-group scales
+            # (B,KV,cap,G). K AND V both 4-bit (the law's config).
+            G = D // KVRing.KV4_GROUP
+            self.kb = tc.zeros(B, KV, self.cap, D // 2, dtype="uint8")
+            self.ksb = _zeros(B, KV, self.cap, G)
+            self.vb = tc.zeros(B, KV, self.cap, D // 2, dtype="uint8")
+            self.vsb = _zeros(B, KV, self.cap, G)
         else:
-            self.vb = _zeros(B, KV, self.cap, D)
+            self.kb = _zeros(B, KV, self.cap, D)
+            if self.qv:
+                self.vb = tc.zeros(B, KV, self.cap, D, dtype="uint8")
+                self.vsb = _zeros(B, KV, self.cap, 1)
+            else:
+                self.vb = _zeros(B, KV, self.cap, D)
         bias = np.full((self.cap, 1), -1e4, np.float32)
         bias[:S] = 0.0
         self.bias = _cast(tc.tensor(bias))
@@ -196,13 +224,36 @@ class KVRing:
         # so construction works from any scope (load_caches runs outside
         # the caller's no_grad)
         with tc.no_grad():
-            tc.write_rows(self.kb, k, 0)
+            self._k_put(k, 0)
             self._v_put(v, 0)
         self.count = S
 
+    def _k_put(self, k, pos):
+        """Write K rows at `pos` — 4-bit packed if q4, else raw bf16."""
+        if self.q4:
+            pk, ks = tc.kv_int4_pack(k, KVRing.KV4_GROUP)
+            tc.write_rows(self.kb, pk, pos)
+            tc.write_rows(self.ksb, ks, pos)
+        else:
+            tc.write_rows(self.kb, k, pos)
+
+    def _k_get(self, lo, n):
+        """Dequantized K slice [lo:lo+n) on dim 2, compute dtype. With q4
+        the kv_int4_unpack kernel reads ONLY rows [lo,lo+n) from the packed
+        buffer — no full-cap transient (unlike _v_get's INT8 astype). Raw
+        bf16 path is a plain slice."""
+        if self.q4:
+            return tc.kv_int4_unpack(self.kb, self.ksb, KVRing.KV4_GROUP,
+                                     lo, n, BlockTC.COMPUTE_DTYPE)
+        return self.kb.slice(2, lo, n)
+
     def _v_put(self, v, pos):
-        """Write V rows at `pos` — INT8-quantized if qv, else raw."""
-        if self.qv:
+        """Write V rows at `pos` — 4-bit packed if q4, INT8 if qv, else raw."""
+        if self.q4:
+            pv, vs = tc.kv_int4_pack(v, KVRing.KV4_GROUP)
+            tc.write_rows(self.vb, pv, pos)
+            tc.write_rows(self.vsb, vs, pos)
+        elif self.qv:
             q, s = _kv_quant(v)         # (uint8, scale in compute dtype)
             tc.write_rows(self.vb, q, pos)
             tc.write_rows(self.vsb, s, pos)
@@ -211,13 +262,15 @@ class KVRing:
 
     def _v_get(self, lo, n):
         """Dequantized V slice [lo:lo+n) on dim 2, in compute dtype.
-        uint8 is cast to compute dtype BEFORE slicing — the engine slice
-        op is float-only (and the strided-copy kernel's ld/st<uint8>
-        instantiation segfaults nvcc, so a native uint8 slice is a future
-        engine ticket). The cast is the dequant's first step anyway. The
-        bf16 cast materializes the full cap buffer transiently — wasteful
-        on read but the resident cache stays uint8 (the ceiling win is
-        preserved); read-path optimization is registered as a follow-up."""
+        q4: kv_int4_unpack reads only the [lo,lo+n) rows (no transient).
+        qv (INT8): uint8 is cast to compute dtype BEFORE slicing — the
+        engine slice op is float-only (and the strided-copy kernel's
+        ld/st<uint8> instantiation segfaults nvcc), so the bf16 cast
+        materializes the full cap buffer transiently. The 4-bit path avoids
+        that by slicing inside the dequant kernel."""
+        if self.q4:
+            return tc.kv_int4_unpack(self.vb, self.vsb, KVRing.KV4_GROUP,
+                                     lo, n, BlockTC.COMPUTE_DTYPE)
         if self.qv:
             qd = self.vb.astype(BlockTC.COMPUTE_DTYPE)
             return (qd.slice(2, lo, n) - 128.0) * self.vsb.slice(2, lo, n)
@@ -251,12 +304,20 @@ class KVRing:
                 with tc.no_grad():
                     tc.write_rows(nb, buf, 0)
                 return nb
-            self.kb = _grow1(self.kb)
-            if self.qv:
+            if self.q4:
+                # kb/vb are packed uint8 (D/2 wide); ksb/vsb are the scale
+                # buffers (G wide). Grow all four.
+                self.kb = _grow1(self.kb, dtype="uint8")
+                self.ksb = _grow1(self.ksb)
                 self.vb = _grow1(self.vb, dtype="uint8")
                 self.vsb = _grow1(self.vsb)
             else:
-                self.vb = _grow1(self.vb)
+                self.kb = _grow1(self.kb)
+                if self.qv:
+                    self.vb = _grow1(self.vb, dtype="uint8")
+                    self.vsb = _grow1(self.vsb)
+                else:
+                    self.vb = _grow1(self.vb)
             if self.kqb is not None:
                 self.kqb = _grow1(self.kqb)
             tc.empty_cache()       # release the old buffers' device blocks
@@ -266,7 +327,7 @@ class KVRing:
         pos = (self.count % self.cap
                if self.ring and self.cap == self.window else self.count)
         with tc.no_grad():
-            tc.write_rows(self.kb, k1, pos)
+            self._k_put(k1, pos)
             self._v_put(v1, pos)
             if not self.full:
                 tc.write_rows(self.bias, zero_row, pos)
@@ -283,7 +344,12 @@ class KVRing:
         new = self.count - self.kq_count
         if new > 0:
             if self.kqb is None:
-                B, KV, _, D = self.kb.shape
+                B, KV = self.kb.shape[0], self.kb.shape[1]
+                # under q4 kb is packed (D/2 wide); the true D comes from the
+                # scale-group count (G * group). kqb holds full-D quantized
+                # keys (the scoring path), so allocate at full D.
+                D = (self.ksb.shape[3] * KVRing.KV4_GROUP if self.q4
+                     else self.kb.shape[3])
                 self.kqb = _zeros(B, KV, self.cap, D)
             # CHUNK the quantize: the first call (cold start) quantizes
             # the whole prefill span, recreating the ~80-96MB O(S*D)
@@ -292,11 +358,12 @@ class KVRing:
             # bit-exact), so quantizing in CHUNK-row slices and writing
             # each into kqb is identical and caps the transient to
             # O(CHUNK*D). Steady-state decode (new==1) takes one pass.
+            # _k_get dequantizes the packed K slice under q4 (raw slice else).
             CHUNK = 512
             with tc.no_grad():
                 for s0 in range(self.kq_count, self.count, CHUNK):
                     n = min(CHUNK, self.count - s0)
-                    kq_s = quantize_fn(self.kb.slice(2, s0, n))
+                    kq_s = quantize_fn(self._k_get(s0, n))
                     tc.write_rows(self.kqb, kq_s, s0)
                     if new > CHUNK:
                         tc.empty_cache()
@@ -310,6 +377,9 @@ class KVRing:
         Attention itself never needs this (permutation-invariant)."""
         n = min(self.count, self.cap)
         if self.ring and self.count > self.cap:
+            # ring path is sliding-only; q4 is global-only, so kb here is
+            # always raw bf16 (a wrapped packed buffer would need paired
+            # scale unrolling — not reachable).
             cut = self.count % self.cap
             if cut == 0:
                 return self.kb.slice(2, 0, self.cap), self._v_get(0, self.cap)
@@ -318,7 +388,8 @@ class KVRing:
             v = tc.cat([self._v_get(cut, self.cap - cut),
                         self._v_get(0, cut)], dim=2)
             return k, v
-        return self.kb.slice(2, 0, n), self._v_get(0, n)
+        # _k_get dequantizes under q4 (globals never wrap); raw slice else.
+        return self._k_get(0, n), self._v_get(0, n)
 
 
 def _band_mask(L, S, window, device, dtype):
@@ -495,7 +566,7 @@ class Gemma4AttentionTC:
                 R_t, C_t, B_t = _tables(D, self.bulk_bits, KV, True, dev)
                 kq = kv_cache.quantized_keys(
                     lambda ks: _quantize_keys(ks, R_t, C_t, B_t))
-                kk = kv_cache.kb.slice(2, 0, kv_cache.count)
+                kk = kv_cache._k_get(0, kv_cache.count)   # dequant under q4
                 vv = kv_cache._v_get(0, kv_cache.count)
                 z_ = _norm_ppf(1.0 - max(0.0, min(1.0,
                                                   self.refine_percentile)))
@@ -509,7 +580,12 @@ class Gemma4AttentionTC:
             else:
                 rep = H // KV
                 qg = q.reshape([B, KV, rep, D])
-                sc = tc.matmul(qg, kv_cache.kb, alpha=1.0, trans_b=True)
+                # full-cap K (invalid rows bias-masked below). Under q4 kb is
+                # packed -> dequant the whole cap (non-APA only runs at small
+                # global context, apa_min_context, so this is cheap).
+                kb_full = (kv_cache._k_get(0, kv_cache.cap)
+                           if kv_cache.q4 else kv_cache.kb)
+                sc = tc.matmul(qg, kb_full, alpha=1.0, trans_b=True)
                 if not kv_cache.full:
                     sc = sc + kv_cache.bias.reshape([1, 1, 1, kv_cache.cap])
                 # fused single-kernel softmax (at L==1 causal == full
@@ -522,7 +598,7 @@ class Gemma4AttentionTC:
                 else:
                     p = sc.softmax(-1)
                 vb_full = (kv_cache._v_get(0, kv_cache.cap)
-                           if kv_cache.qv else kv_cache.vb)
+                           if (kv_cache.qv or kv_cache.q4) else kv_cache.vb)
                 attn = tc.matmul(p, vb_full).reshape([B, L, H * D])
                 return self.o_proj(_cast(attn)), kv_cache
         else:
