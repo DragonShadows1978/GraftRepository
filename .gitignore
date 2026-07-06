@@ -6,3 +6,7 @@ graft-repo*/
 
 # third-party paper PDFs — do not redistribute
 *.pdf
+
+# local investigation/artifact payloads
+inv_*/
+GRM_Stack.zip
