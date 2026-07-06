@@ -1,9 +1,9 @@
 # Qwen3.5 Translation Reliability Plan
 
-**Status:** R4.8 confidence-router PoC complete. The router infrastructure is
-implemented and tested, but the first confidence-delta feature does not improve
-holdout positive count. `s0p5_kv` remains the frozen-safe default; `s0p6875_kv`
-remains the holdout-tuned secondary candidate.
+**Status:** R4.9 document graft recall gate complete. The real end-to-end
+document test fails for the current 2B-to-9B translated graft path: target
+context and target-native graft controls answer correctly, but translated
+grafts do not recall the document facts.
 
 **House rules for this track:**
 
@@ -595,6 +595,41 @@ Current R4.8 confidence-router status:
     should use graft/probe features or a validation-trained policy, not answer
     confidence alone.
 
+Current R4.9 document recall status:
+
+- Complete.
+- Added `scripts/qwen35_document_graft_recall_gate.py`.
+- Gate shape:
+  - run a 121-token synthetic text document through Qwen3.5-2B,
+  - harvest source attention graft,
+  - translate it into Qwen3.5-9B graft space,
+  - withhold document text from the translated-graft prompt,
+  - ask four greedy exact-answer recall questions,
+  - compare against amnesia, target-context, target-native all-layer graft,
+    and target-native matched-layer graft controls.
+- `s0p6875_kv` translated result:
+  - amnesia: `0 / 4`
+  - target-context: `4 / 4`
+  - target-native all-layer graft: `4 / 4`
+  - translated graft: `0 / 4`
+- `s0p5_kv` translated result with matched-layer diagnostic:
+  - amnesia: `0 / 4`
+  - target-context: `4 / 4`
+  - target-native all-layer graft: `4 / 4`
+  - target-native matched to translated layers `[7, 15, 19, 27, 31]`: `1 / 4`
+  - translated graft: `0 / 4`
+- Decision:
+  - Current 2B-to-9B translated grafts are not usable for open-ended document
+    recall.
+  - The target-native all-layer control proves the graft injection/generation
+    path can answer from K/V grafts.
+  - The matched-layer target-native failure shows the current translated layer
+    subset is itself insufficient for robust document recall, before numeric
+    translation error is considered.
+  - The next work should move from binding-score optimization to live recall
+    repair: all attention-layer coverage or a layer-subset policy proven by
+    target-native matched-layer recall, then translated recall.
+
 ## Phase R5: Live G0 Repair
 
 Investigate live capture/reseat numerical mismatch separately from translator
@@ -614,13 +649,10 @@ Exit gate:
 
 ## Open Queue
 
-1. Add richer router features that do not require gold labels at inference:
-   graft norms, residual-delta norms, source/target layer agreement, or
-   pre-query attention statistics.
-2. Alternatively, create a small validation probe set specifically for router
-   training, then hold out both frozen V2 and the existing fresh holdout for
-   final evaluation.
-3. Run a deeper live/open-generation reliability gate using both the
-   conservative default and any routed policy before making production-grade
-   claims.
+1. Repair the layer coverage problem. Before translating again, prove which
+   target-native layer subset can pass the document recall gate.
+2. Fit or synthesize all required 2B-to-9B attention-layer translators for the
+   passing layer subset, then rerun the document recall gate.
+3. Keep the binding scorer as a secondary diagnostic only; the primary gate is
+   now open-ended graft-only document recall.
 4. Run R5 live G0 repair in parallel only when GPU/runtime time is available.

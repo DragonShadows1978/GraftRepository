@@ -1613,3 +1613,101 @@ Translation reliability track.
 - Confidence delta is not the right feature for recovering the holdout misses.
   The next router should use graft/probe features or a dedicated validation
   set rather than answer confidence alone.
+
+### 2026-07-06 - R4.9 Document Graft Recall Gate
+
+**Status:** complete.
+
+**Completed work:**
+
+- Added `scripts/qwen35_document_graft_recall_gate.py`.
+- The gate captures a real text document through Qwen3.5-2B, translates the
+  harvested attention graft to Qwen3.5-9B space, withholds the document from
+  the prompt, and asks Qwen3.5-9B greedy exact-answer questions.
+- Added controls in the same run:
+  - amnesia / no graft,
+  - target-context / document text in prompt,
+  - target-native all-layer graft,
+  - target-native graft restricted to the translated graft's target layers.
+- Ran the gate against `s0p6875_kv` and `s0p5_kv`.
+
+**Commands:**
+
+- Syntax check:
+  ```bash
+  python3 - <<'PY'
+import ast
+from pathlib import Path
+ast.parse(Path('scripts/qwen35_document_graft_recall_gate.py').read_text())
+print('syntax ok')
+PY
+  ```
+- Holdout-tuned translated graft:
+  `PYTHONDONTWRITEBYTECODE=1 python3 scripts/qwen35_document_graft_recall_gate.py`
+- Conservative translated graft:
+  `PYTHONDONTWRITEBYTECODE=1 python3 scripts/qwen35_document_graft_recall_gate.py --translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep/translator_r47_residual_s0p5_kv --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/document_recall_r49_translated_s0p5.json`
+- Conservative translated graft with matched-layer target-native diagnostic:
+  `PYTHONDONTWRITEBYTECODE=1 python3 scripts/qwen35_document_graft_recall_gate.py --translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep/translator_r47_residual_s0p5_kv --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/document_recall_r49_translated_s0p5_matched_layers.json`
+
+**Artifacts:**
+
+- `s0p6875_kv` document recall:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/document_recall_r49_translated_s0p6875.json`
+  - sha256:
+    `c5f3b1a36827ab37613545db22ec305aa895b58eabc4f895c3e1e44718ed6645`
+- `s0p5_kv` document recall:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/document_recall_r49_translated_s0p5.json`
+  - sha256:
+    `83ae472851c1a8712078b25d7a5c5b3ee7ab74f2dea39b56e9ef6ce26d960332`
+- `s0p5_kv` document recall with matched-layer diagnostic:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/document_recall_r49_translated_s0p5_matched_layers.json`
+  - sha256:
+    `b3bd55b294e6ebf539c4fd2c6260b9e3e35f1ea59270a8c0e8c3bd2adcb1b2cd`
+
+**Gate document:**
+
+- 121 source/target tokens.
+- Four private handle-to-code facts.
+- Four greedy exact-answer recall questions.
+- The document text is withheld from the amnesia, translated, target-native,
+  and target-native-matched prompts.
+
+**Results:**
+
+- `s0p6875_kv`:
+  - amnesia: `0 / 4`
+  - target-context: `4 / 4`
+  - target-native all-layer graft: `4 / 4`
+  - translated graft: `0 / 4`
+- `s0p5_kv`:
+  - amnesia: `0 / 4`
+  - target-context: `4 / 4`
+  - target-native all-layer graft: `4 / 4`
+  - translated graft: `0 / 4`
+- `s0p5_kv` with matched-layer diagnostic:
+  - amnesia: `0 / 4`
+  - target-context: `4 / 4`
+  - target-native all-layer graft: `4 / 4`
+  - target-native matched to translated layers `[7, 15, 19, 27, 31]`: `1 / 4`
+  - translated graft: `0 / 4`
+
+**Translated output samples:**
+
+- `s0p6875_kv` generated corrupted strings such as
+  `Hem E D h e r e e d v/gd WAO c c h E e g YA W E kbdk-1 ymu`.
+- `s0p5_kv` generated unrelated short strings such as
+  `Ephemero-MetricMentale`, `Omicron`, `Oisah`, and `Ook`.
+
+**Decision:**
+
+- The current 2B-to-9B translated graft path fails the real document recall
+  gate.
+- This is not a prompt or target model inability issue:
+  - amnesia fails,
+  - target-context succeeds,
+  - target-native all-layer graft succeeds.
+- The matched-layer target-native result shows that the translated layer subset
+  is already insufficient for reliable document recall. Numeric translation
+  quality may also be bad, but layer coverage must be fixed first.
+- Binding-score improvements are no longer enough evidence. The primary gate
+  for this project is now graft-only open-ended document recall.
