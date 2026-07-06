@@ -526,3 +526,162 @@ class GptOssAttentionBlockTC:
         normed = normed.half() if dt == "float16" else normed.astype(dt)
         attn, kv = self.self_attn(normed, cos, sin, position_offset, kv_cache)
         return x + attn, kv
+
+
+class GptOssMoEDiagnosticTC:
+    """Selected-expert GPT-OSS MoE diagnostic.
+
+    This class is deliberately not the final memory-viable expert path. It uses
+    the real GPT-OSS router and exact MXFP4 dequantization, but only for the
+    routed experts of the requested token batch. The packed MXFP4 kernel remains
+    the required production route.
+    """
+
+    def __init__(self, cfg: GptOss20BConfig, layer_idx: int):
+        self.cfg = cfg
+        self.layer_idx = int(layer_idx)
+        self.router_weight = None
+        self.router_bias = None
+        self.gate_up_blocks = None
+        self.gate_up_scales = None
+        self.gate_up_bias = None
+        self.down_blocks = None
+        self.down_scales = None
+        self.down_bias = None
+
+    @classmethod
+    def from_safetensors(
+        cls,
+        cfg: GptOss20BConfig,
+        where: dict[str, str],
+        layer_idx: int,
+    ) -> "GptOssMoEDiagnosticTC":
+        obj = cls(cfg, layer_idx)
+        p = f"model.layers.{layer_idx}.mlp"
+        obj.router_weight = tc.tensor(
+            load_tensor_np(where, f"{p}.router.weight"), dtype="float32"
+        )
+        obj.router_bias = tc.tensor(
+            load_tensor_np(where, f"{p}.router.bias"), dtype="float32"
+        )
+        ep = f"{p}.experts"
+        obj.gate_up_blocks = load_tensor_np(
+            where, f"{ep}.gate_up_proj_blocks", dtype=np.uint8
+        )
+        obj.gate_up_scales = load_tensor_np(
+            where, f"{ep}.gate_up_proj_scales", dtype=np.uint8
+        )
+        obj.gate_up_bias = load_tensor_np(where, f"{ep}.gate_up_proj_bias")
+        obj.down_blocks = load_tensor_np(where, f"{ep}.down_proj_blocks", dtype=np.uint8)
+        obj.down_scales = load_tensor_np(where, f"{ep}.down_proj_scales", dtype=np.uint8)
+        obj.down_bias = load_tensor_np(where, f"{ep}.down_proj_bias")
+        return obj
+
+    def _route(self, x_flat):
+        logits = tc.matmul(x_flat.float(), self.router_weight, trans_b=True)
+        bias = (
+            self.router_bias
+            if self.router_bias.dtype == logits.dtype
+            else self.router_bias.astype(logits.dtype)
+        )
+        topv, topi = (logits + bias).topk(self.cfg.num_experts_per_tok, True)
+        return topv.softmax(-1), topi
+
+    def _selected_expert(self, expert_idx: int):
+        e = int(expert_idx)
+        gate_w = mxfp4_dequantize_blocks_np(
+            self.gate_up_blocks[e : e + 1],
+            self.gate_up_scales[e : e + 1],
+        )[0]
+        down_w = mxfp4_dequantize_blocks_np(
+            self.down_blocks[e : e + 1],
+            self.down_scales[e : e + 1],
+        )[0]
+        return (
+            gate_w,
+            np.ascontiguousarray(self.gate_up_bias[e].astype(np.float32, copy=False)),
+            down_w,
+            np.ascontiguousarray(self.down_bias[e].astype(np.float32, copy=False)),
+        )
+
+    @staticmethod
+    def _bias_add(y, bias_np: np.ndarray):
+        bias = tc.tensor(bias_np, dtype="float32")
+        bias = bias if bias.dtype == y.dtype else bias.astype(y.dtype)
+        return y + bias
+
+    def __call__(self, x):
+        B, L, H = x.shape
+        x_flat = x.reshape([B * L, H])
+        topw, topi = self._route(x_flat)
+        topw_np = topw.numpy().astype(np.float32)
+        topi_np = topi.numpy().astype(np.int64)
+
+        dt = BlockTC.COMPUTE_DTYPE
+        routed = []
+        for t in range(B * L):
+            xt = x_flat.slice(0, t, 1)
+            acc = None
+            for slot in range(self.cfg.num_experts_per_tok):
+                e = int(topi_np[t, slot])
+                w = float(topw_np[t, slot])
+                gate_w, gate_b, down_w, down_b = self._selected_expert(e)
+                gate_tc = tc.tensor(np.ascontiguousarray(gate_w), dtype="float32").astype(dt)
+                gate_up = self._bias_add(tc.matmul(xt, gate_tc), gate_b)
+                act = gpt_oss_expert_activation_tc(gate_up)
+                down_tc = tc.tensor(np.ascontiguousarray(down_w), dtype="float32").astype(dt)
+                y = self._bias_add(tc.matmul(act, down_tc), down_b) * w
+                acc = y if acc is None else acc + y
+                del gate_w, gate_b, down_w, down_b, gate_tc, gate_up, act, down_tc, y
+                if hasattr(tc, "empty_cache"):
+                    tc.empty_cache()
+            routed.append(acc)
+        out = tc.cat(routed, dim=0).reshape([B, L, H])
+        route_info = {
+            "top_indices": topi_np.tolist(),
+            "top_weights": topw_np.tolist(),
+            "unique_experts": sorted({int(x) for x in topi_np.reshape(-1)}),
+        }
+        return out, route_info
+
+
+class GptOssDiagnosticBlockTC:
+    """One GPT-OSS decoder block with attention plus selected-expert MoE."""
+
+    def __init__(self, cfg: GptOss20BConfig, layer_idx: int):
+        self.cfg = cfg
+        self.layer_idx = int(layer_idx)
+        self.input_layernorm = RMSNormTC(cfg.hidden_dim, cfg.rms_norm_eps)
+        self.post_attention_layernorm = RMSNormTC(cfg.hidden_dim, cfg.rms_norm_eps)
+        self.self_attn = GptOssAttentionTC(cfg, layer_idx)
+        self.mlp = GptOssMoEDiagnosticTC(cfg, layer_idx)
+
+    @classmethod
+    def from_safetensors(
+        cls,
+        cfg: GptOss20BConfig,
+        where: dict[str, str],
+        layer_idx: int,
+    ) -> "GptOssDiagnosticBlockTC":
+        obj = cls(cfg, layer_idx)
+        p = f"model.layers.{layer_idx}"
+        obj.input_layernorm.weight = tc.tensor(
+            load_tensor_np(where, f"{p}.input_layernorm.weight"), dtype="float32"
+        )
+        obj.post_attention_layernorm.weight = tc.tensor(
+            load_tensor_np(where, f"{p}.post_attention_layernorm.weight"), dtype="float32"
+        )
+        obj.self_attn = GptOssAttentionTC.from_safetensors(cfg, where, layer_idx)
+        obj.mlp = GptOssMoEDiagnosticTC.from_safetensors(cfg, where, layer_idx)
+        return obj
+
+    def __call__(self, x, cos, sin, position_offset: int = 0, kv_cache=None):
+        dt = BlockTC.COMPUTE_DTYPE
+        normed = self.input_layernorm(x)
+        normed = normed.half() if dt == "float16" else normed.astype(dt)
+        attn, kv = self.self_attn(normed, cos, sin, position_offset, kv_cache)
+        h = x + attn
+        mlp_in = self.post_attention_layernorm(h)
+        mlp_in = mlp_in.half() if dt == "float16" else mlp_in.astype(dt)
+        mlp_out, route_info = self.mlp(mlp_in)
+        return h + mlp_out, kv, route_info

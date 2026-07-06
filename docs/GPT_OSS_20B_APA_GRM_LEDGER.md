@@ -460,3 +460,102 @@ Pending:
 - Build the GPT-OSS MoE diagnostic path on top of the attention scaffold.
 - Add packed MXFP4 expert math before making any viable 12GB operating-point
   claim.
+
+Action: Added and ran the selected-expert GPT-OSS MoE diagnostic smoke.
+
+Files changed:
+- `core/gpt_oss20b_tc.py`
+- `scripts/gpt_oss20b_moe_diag_smoke.py`
+
+Implemented diagnostic pieces:
+- real GPT-OSS BF16 router load from HF safetensors
+- router top-4 selection using raw logits, followed by softmax over selected
+  top-4 values only
+- one-layer post-attention RMSNorm load
+- selected-expert exact MXFP4 dequantization for `gate_up_proj` and
+  `down_proj`
+- GPT-OSS clipped gate/up expert activation on TensorCUDA tensors
+- attention plus selected-expert MoE diagnostic block
+- artifacted one-token smoke harness
+
+Important limitation:
+- This is not the final memory-viable MoE path. It dequantizes only selected
+  experts for the tiny diagnostic token batch. The real operating point still
+  requires packed MXFP4 expert GEMV/GEMM.
+
+First MoE diagnostic command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_moe_diag_smoke.py --layer 0 --max-tokens 1`
+
+First MoE diagnostic artifact:
+- `artifacts/gpt_oss_20b/moe_diag_smoke_20260706_190333.json`
+
+First MoE diagnostic result:
+- Failed with `RuntimeError: matmul dtype mismatch`
+- Failure point: router matmul in `GptOssMoEDiagnosticTC._route()`
+- Cause: diagnostic code promoted the hidden state to FP32 for routing while
+  the router weight had been cast to BF16.
+- Fix: keep diagnostic router weight and bias in FP32. The router is small, and
+  this also keeps routing numerics conservative for the diagnostic path.
+
+Compile/test checks after the fix:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile core/gpt_oss20b_tc.py scripts/gpt_oss20b_moe_diag_smoke.py`
+- `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_scaffold.py -q`
+- Result: `7 passed, 2 warnings in 0.51s`
+
+Layer 0 MoE diagnostic command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_moe_diag_smoke.py --layer 0 --max-tokens 1`
+
+Layer 0 MoE diagnostic artifact:
+- `artifacts/gpt_oss_20b/moe_diag_smoke_20260706_190408.json`
+
+Layer 0 MoE diagnostic result:
+- `status = ok`
+- `layer_type = sliding_attention`
+- `input_ids_shape = [1, 1]`
+- `hidden_shape = [1, 1, 2880]`
+- `output_shape = [1, 1, 2880]`
+- `kv_shapes = [[1, 8, 1, 64], [1, 8, 1, 64]]`
+- `unique_experts = [13, 17, 21, 29]`
+- `top_indices = [[13, 21, 17, 29]]`
+- `top_weights = [[0.4329625666, 0.3586286008, 0.1111120209, 0.0972967297]]`
+- `wall_seconds = 3.458`
+- GPU before: `NVIDIA GeForce RTX 4070 SUPER, 275, 12282, 37`
+- GPU after inside script: `NVIDIA GeForce RTX 4070 SUPER, 497, 12282, 7`
+
+Layer 1 MoE diagnostic command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_moe_diag_smoke.py --layer 1 --max-tokens 1`
+
+Layer 1 MoE diagnostic artifact:
+- `artifacts/gpt_oss_20b/moe_diag_smoke_20260706_190431.json`
+
+Layer 1 MoE diagnostic result:
+- `status = ok`
+- `layer_type = full_attention`
+- `input_ids_shape = [1, 1]`
+- `hidden_shape = [1, 1, 2880]`
+- `output_shape = [1, 1, 2880]`
+- `kv_shapes = [[1, 8, 1, 64], [1, 8, 1, 64]]`
+- `unique_experts = [12, 15, 25, 26]`
+- `top_indices = [[12, 26, 15, 25]]`
+- `top_weights = [[0.3335072100, 0.2424832731, 0.2141666114, 0.2098428458]]`
+- `wall_seconds = 3.526`
+- GPU before: `NVIDIA GeForce RTX 4070 SUPER, 275, 12282, 35`
+- GPU after inside script: `NVIDIA GeForce RTX 4070 SUPER, 497, 12282, 7`
+
+Post-run GPU state:
+- `NVIDIA GeForce RTX 4070 SUPER, 275, 12282, 0`
+
+Interpretation:
+- The TensorCUDA GPT-OSS path now has real HF-safetensor receipts through
+  embedding, YARN RoPE, sink-aware attention, post-attention norm, router, and
+  selected-expert MoE for both sliding and full attention layer families.
+- This is still not a full model loader, not PPL, not generation, and not a
+  claim that the exact-dequant MoE path is viable at full context or full layer
+  count.
+
+Pending:
+- Implement packed MXFP4 expert GEMV/GEMM so GPT-OSS experts can stay packed
+  end to end.
+- Add lm_head/output path and then run short behavior/PPL checks.
+- Only after the standard path is validated, attach APA/GRM and run the real
+  context/recall tests.

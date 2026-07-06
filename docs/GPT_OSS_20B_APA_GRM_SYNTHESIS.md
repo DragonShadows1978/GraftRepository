@@ -113,3 +113,24 @@ or model-behavior evidence.
 That moves the hard problem exactly where expected: GPT-OSS MoE. The next step
 is selected-expert exact dequant as a diagnostic bridge, then native packed
 MXFP4 expert math for the viable path.
+
+The selected-expert MoE diagnostic bridge now passes for both layer families.
+The first run usefully failed at the router boundary with a TensorCUDA dtype
+mismatch: the hidden state was promoted to FP32 while the router weight had been
+cast to BF16. Keeping the small diagnostic router in FP32 fixed the issue and
+keeps route selection numerically conservative.
+
+After that fix, one-token real-tensor smokes passed for layer 0
+(`sliding_attention`) and layer 1 (`full_attention`). Each smoke runs
+row-sliced embedding, YARN RoPE, sink-aware attention, post-attention norm, the
+real router, and exact MXFP4 dequantization of only the selected experts. Layer
+0 routed through experts `[13, 17, 21, 29]`; layer 1 routed through
+`[12, 15, 25, 26]`. Both produced `[1, 1, 2880]` outputs and returned the GPU to
+the 275 MiB baseline after process exit.
+
+This closes the diagnostic MoE correctness bridge, but not the production
+route. The exact-dequant path is intentionally tiny and token-limited. The next
+hard requirement is native packed MXFP4 expert GEMV/GEMM; without that, GPT-OSS
+cannot keep its expert body packed end to end on a 12GB card. Only after that
+standard path exists should lm_head behavior, PPL, APA, GRM, and real context
+extension tests be trusted.
