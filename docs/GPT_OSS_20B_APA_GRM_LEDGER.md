@@ -964,3 +964,55 @@ Pending:
 - Add a short greedy decode loop.
 - Add Harmony-formatted prompt tests.
 - Then attach APA/GRM and run real context/recall tests.
+
+Action: Added and ran a short streamed greedy decode smoke.
+
+File added:
+- `scripts/gpt_oss20b_stream_greedy_smoke.py`
+
+Method:
+- The harness calls `scripts/gpt_oss20b_stream_forward_smoke.py` once per
+  generated token.
+- It appends the rank-0 decoded token text to the prompt after each step.
+- It does not use KV cache.
+- It is intentionally slow and receipt-oriented.
+
+Compile check:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_stream_greedy_smoke.py`
+- Result: passed.
+
+Greedy smoke command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_greedy_smoke.py --prompt 'The capital of France is' --steps 2 --max-tokens 16 --top-k 8 --expert-mode resident_packed_mxfp4`
+
+Greedy smoke artifact:
+- `artifacts/gpt_oss_20b/stream_greedy_20260706_193701.json`
+
+Greedy smoke result:
+- `status = ok`
+- `wall_seconds = 46.849`
+- step 0:
+  - child artifact:
+    `artifacts/gpt_oss_20b/stream_greedy_20260706_193701_steps/step_00.json`
+  - top token: token `12650`, text ` Paris`, logit `15.875`
+  - step wall: `24.628s`
+- step 1:
+  - child artifact:
+    `artifacts/gpt_oss_20b/stream_greedy_20260706_193701_steps/step_01.json`
+  - top token: token `3692`, text `."`, logit `15.875`
+  - step wall: `22.220s`
+- final text:
+  `The capital of France is Paris."`
+- post-run GPU returned to baseline:
+  `NVIDIA GeForce RTX 4070 SUPER, 275, 12282`
+
+Interpretation:
+- The streamed TensorCUDA path can be driven in a greedy loop.
+- The first generated token is the expected factual continuation, ` Paris`.
+- The second token includes an extra quote, so this is not polished generation
+  behavior.
+- This still does not use KV cache and does not prove interactive decode speed.
+
+Pending:
+- Add Harmony-formatted prompt tests.
+- Add KV-cache/reuse decode instead of repeated full streamed forwards.
+- Run real PPL and recall/context tests after APA/GRM attachment.

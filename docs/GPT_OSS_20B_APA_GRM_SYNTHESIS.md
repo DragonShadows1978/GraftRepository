@@ -204,3 +204,10 @@ next-token targets, the streamed TensorCUDA path reported mean NLL
 sample is far too small and the path uses the local quantized lm_head. The value
 is useful only as a receipt that shifted-target scoring works through all 24
 layers and the output projection.
+
+A repeated-forward greedy smoke also works. Starting from
+`The capital of France is`, the first generated token was ` Paris`, and the
+second was `."`, producing `The capital of France is Paris."`. The important
+part is not generation polish; it is that the streamed TensorCUDA path can now
+be driven in a greedy loop. It is still slow because each token reruns the full
+streamed forward and does not reuse KV cache.
