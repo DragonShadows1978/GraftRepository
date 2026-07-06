@@ -26,6 +26,8 @@ from core.qwen35_translation_poc import (
     make_binding_probe_set,
     make_binding_probe_set_v2,
     analyze_binding_translator_sweep,
+    evaluate_binding_translator_router,
+    fit_binding_translator_router,
     make_binding_hard_negative_plan,
     refresh_capture_manifest,
     run_pipeline_next,
@@ -1593,6 +1595,94 @@ def test_analyze_binding_translator_sweep_reports_global_and_oracle(
     assert analysis["oracle"]["lost_baseline_successes"] == []
     assert analysis["oracle_per_probe"][1]["best_translator_label"] == (
         "single_l7_to_l7")
+
+
+def test_binding_translator_router_fits_and_applies_confidence_policy(
+        tmp_path):
+    def row(probe_id, label, margin):
+        return {
+            "probe_id": probe_id,
+            "mode": "translated",
+            "translator_label": label,
+            "translator_dir": f"/tmp/{label}",
+            "gold_score": float(margin),
+            "best_decoy_score": 0.0,
+            "gold_minus_best_decoy": float(margin),
+            "success": margin > 0,
+            "candidate_scores": {
+                "gold": float(margin),
+                "decoys": [0.0, -1.0, -2.0],
+            },
+        }
+
+    train_rows = [
+        row("bind-000", "base", 2.0),
+        row("bind-000", "wide", 0.5),
+        row("bind-001", "base", -0.5),
+        row("bind-001", "wide", 1.2),
+        row("bind-002", "base", 2.0),
+        row("bind-002", "wide", -0.25),
+    ]
+    train = {
+        "schema": "qwen35_graft_translation_binding_translator_sweep_v1",
+        "probes_path": "/tmp/probes.json",
+        "candidate_count": 2,
+        "probe_count": 3,
+        "candidates": [{"label": "base"}, {"label": "wide"}],
+        "summaries": [],
+        "rows": train_rows,
+    }
+    train_path = tmp_path / "train_sweep.json"
+    train_path.write_text(json.dumps(train))
+
+    router = fit_binding_translator_router(
+        train_path,
+        tmp_path / "router.json",
+        candidate_labels="base,wide",
+        default_label="base",
+        router_label="confidence_router",
+    )
+
+    assert router["schema"] == "qwen35_graft_translation_binding_router_v1"
+    assert router["policy"]["secondary_label"] == "wide"
+    assert router["train_summary"]["positive_margins"] == 3
+    assert router["train_summary"]["selected_counts"] == {
+        "base": 2,
+        "wide": 1,
+    }
+    assert router["oracle_summary"]["positive_margins"] == 3
+
+    holdout_rows = [
+        row("hold-000", "base", -0.4),
+        row("hold-000", "wide", 0.8),
+        row("hold-001", "base", 1.5),
+        row("hold-001", "wide", -0.2),
+    ]
+    holdout = {
+        **train,
+        "probe_count": 2,
+        "rows": holdout_rows,
+    }
+    holdout_path = tmp_path / "holdout_sweep.json"
+    holdout_path.write_text(json.dumps(holdout))
+
+    routed = evaluate_binding_translator_router(
+        holdout_path,
+        tmp_path / "router.json",
+        tmp_path / "routed_eval.json",
+    )
+
+    assert routed["schema"] == (
+        "qwen35_graft_translation_binding_router_eval_v1")
+    assert routed["summary"]["positive_margins"] == 2
+    assert routed["summary"]["selected_counts"] == {
+        "base": 1,
+        "wide": 1,
+    }
+    assert routed["fixed_summaries"]["base"]["positive_margins"] == 1
+    assert routed["rows"][0]["selected_translator_label"] == "wide"
+    assert Path(tmp_path / "router.json").is_file()
+    assert Path(tmp_path / "routed_eval.json").is_file()
 
 
 def test_make_binding_hard_negative_plan_records_selected_misses(tmp_path):

@@ -3239,6 +3239,338 @@ def analyze_binding_translator_sweep(
     return analysis
 
 
+def _parse_csv_values(values, *, name):
+    if isinstance(values, (str, Path)):
+        out = [x.strip() for x in str(values).split(",") if x.strip()]
+    else:
+        out = [str(x).strip() for x in values if str(x).strip()]
+    if not out:
+        raise ValueError(f"{name} must not be empty")
+    return out
+
+
+def _answer_confidence_margin(row):
+    scores = [float(row["candidate_scores"]["gold"])]
+    scores.extend(float(x) for x in row["candidate_scores"].get("decoys", []))
+    scores.sort(reverse=True)
+    if len(scores) < 2:
+        return 0.0
+    return float(scores[0] - scores[1])
+
+
+def _load_router_sweep_rows(sweep_eval_paths, candidate_labels):
+    paths = _parse_csv_values(sweep_eval_paths, name="sweep_eval_paths")
+    labels = _parse_csv_values(candidate_labels, name="candidate_labels")
+    wanted = set(labels)
+    rows = {}
+    candidates = {}
+    probe_count = None
+    probes_path = None
+    source_model = None
+    target_model = None
+    for raw_path in paths:
+        path = Path(raw_path).expanduser()
+        metrics = _load_json(path)
+        if metrics.get("schema") != (
+                "qwen35_graft_translation_binding_translator_sweep_v1"):
+            raise ValueError(
+                "expected qwen35_graft_translation_binding_translator_sweep_v1")
+        if probe_count is None:
+            probe_count = int(metrics.get("probe_count", 0))
+            probes_path = metrics.get("probes_path")
+            source_model = metrics.get("source_model")
+            target_model = metrics.get("target_model")
+        elif int(metrics.get("probe_count", 0)) != probe_count:
+            raise ValueError("all sweep evals must use the same probe count")
+        for cand in metrics.get("candidates", []):
+            label = cand.get("label")
+            if label in wanted and label not in candidates:
+                candidates[label] = cand
+        for row in metrics.get("rows", []):
+            label = row.get("translator_label")
+            if label not in wanted:
+                continue
+            key = (row["probe_id"], label)
+            if key in rows:
+                raise ValueError(
+                    f"duplicate row for probe/label: {row['probe_id']} {label}")
+            rows[key] = row
+
+    probe_ids = sorted({probe_id for probe_id, _ in rows})
+    by_probe = {}
+    missing = []
+    for probe_id in probe_ids:
+        rec = {}
+        for label in labels:
+            row = rows.get((probe_id, label))
+            if row is None:
+                missing.append((probe_id, label))
+                continue
+            rec[label] = row
+        if rec:
+            by_probe[probe_id] = rec
+    if missing:
+        probe_id, label = missing[0]
+        raise ValueError(
+            f"missing router candidate row for {probe_id} label {label}")
+    if not by_probe:
+        raise ValueError("no router candidate rows found")
+    return {
+        "paths": [str(Path(p).expanduser()) for p in paths],
+        "labels": labels,
+        "probe_count": len(by_probe),
+        "probes_path": probes_path,
+        "source_model": source_model,
+        "target_model": target_model,
+        "candidates": [
+            candidates.get(label, {"label": label}) for label in labels
+        ],
+        "by_probe": by_probe,
+    }
+
+
+def _summarize_selected_router_rows(selected):
+    margins = [float(item["row"]["gold_minus_best_decoy"])
+               for item in selected]
+    return {
+        "probes": len(selected),
+        "positive_margins": sum(
+            1 for item in selected if item["row"]["success"]),
+        "mean_margin": float(np.mean(margins)) if margins else None,
+        "min_margin": float(np.min(margins)) if margins else None,
+        "selected_counts": {
+            label: sum(1 for item in selected
+                       if item["selected_label"] == label)
+            for label in sorted({item["selected_label"] for item in selected})
+        },
+    }
+
+
+def _select_router_rows(by_probe, labels, choose_label):
+    selected = []
+    for probe_id in sorted(by_probe):
+        rows = by_probe[probe_id]
+        label = choose_label(probe_id, rows)
+        if label not in rows:
+            raise ValueError(f"router selected missing label {label!r}")
+        row = rows[label]
+        selected.append({
+            "probe_id": probe_id,
+            "selected_label": label,
+            "row": row,
+            "candidate_features": {
+                cand_label: {
+                    "answer_confidence_margin": _answer_confidence_margin(
+                        cand_row),
+                    "gold_minus_best_decoy": float(
+                        cand_row["gold_minus_best_decoy"]),
+                    "success": bool(cand_row["success"]),
+                }
+                for cand_label, cand_row in sorted(rows.items())
+                if cand_label in labels
+            },
+        })
+    return selected
+
+
+def _router_eval_rows(selected, router_label):
+    rows = []
+    for item in selected:
+        row = item["row"]
+        rows.append({
+            "probe_id": item["probe_id"],
+            "mode": "translated-router",
+            "router_label": router_label,
+            "selected_translator_label": item["selected_label"],
+            "selected_translator_dir": row.get("translator_dir"),
+            "selected_answer_confidence_margin": _answer_confidence_margin(row),
+            "candidate_features": item["candidate_features"],
+            "gold_score": row["gold_score"],
+            "best_decoy_score": row["best_decoy_score"],
+            "gold_minus_best_decoy": row["gold_minus_best_decoy"],
+            "success": bool(row["success"]),
+            "candidate_scores": row.get("candidate_scores"),
+        })
+    return rows
+
+
+def fit_binding_translator_router(
+        train_sweep_eval_paths, out_path, *, candidate_labels,
+        default_label, secondary_labels=None, router_label="router"):
+    """Fit a small confidence-threshold router from existing sweep rows."""
+    loaded = _load_router_sweep_rows(train_sweep_eval_paths, candidate_labels)
+    labels = loaded["labels"]
+    if default_label not in labels:
+        raise ValueError("default_label must be in candidate_labels")
+    if secondary_labels is None:
+        secondary_labels = [label for label in labels if label != default_label]
+    else:
+        secondary_labels = _parse_csv_values(
+            secondary_labels, name="secondary_labels")
+    for label in secondary_labels:
+        if label not in labels or label == default_label:
+            raise ValueError(
+                "secondary_labels must be non-default candidate labels")
+
+    fixed_summaries = {}
+    for label in labels:
+        fixed = _select_router_rows(
+            loaded["by_probe"], labels, lambda _pid, _rows, label=label: label)
+        fixed_summaries[label] = _summarize_selected_router_rows(fixed)
+
+    oracle = _select_router_rows(
+        loaded["by_probe"],
+        labels,
+        lambda _pid, rows: max(
+            labels,
+            key=lambda label: float(rows[label]["gold_minus_best_decoy"])),
+    )
+    oracle_summary = _summarize_selected_router_rows(oracle)
+
+    searched = []
+    for secondary in secondary_labels:
+        deltas = sorted({
+            _answer_confidence_margin(rows[secondary]) -
+            _answer_confidence_margin(rows[default_label])
+            for rows in loaded["by_probe"].values()
+        })
+        thresholds = [deltas[0] - 1e-6]
+        thresholds.extend((a + b) / 2.0 for a, b in zip(deltas, deltas[1:]))
+        thresholds.append(deltas[-1] + 1e-6)
+        for threshold in thresholds:
+            selected = _select_router_rows(
+                loaded["by_probe"],
+                labels,
+                lambda _pid, rows, secondary=secondary, threshold=threshold: (
+                    secondary if (
+                        _answer_confidence_margin(rows[secondary]) -
+                        _answer_confidence_margin(rows[default_label])
+                    ) >= threshold else default_label
+                ),
+            )
+            summary = _summarize_selected_router_rows(selected)
+            searched.append({
+                "policy": {
+                    "type": "threshold_confidence_delta",
+                    "feature": (
+                        "answer_confidence_margin(secondary) - "
+                        "answer_confidence_margin(default)"),
+                    "default_label": default_label,
+                    "secondary_label": secondary,
+                    "threshold": float(threshold),
+                },
+                "summary": summary,
+            })
+    searched.sort(
+        key=lambda item: (
+            int(item["summary"]["positive_margins"]),
+            float(item["summary"]["mean_margin"]),
+            float(item["summary"]["min_margin"]),
+            -int(item["summary"]["selected_counts"].get(
+                item["policy"]["secondary_label"], 0)),
+        ),
+        reverse=True,
+    )
+    best = searched[0]
+    selected = _select_router_rows(
+        loaded["by_probe"],
+        labels,
+        lambda _pid, rows: (
+            best["policy"]["secondary_label"] if (
+                _answer_confidence_margin(
+                    rows[best["policy"]["secondary_label"]]) -
+                _answer_confidence_margin(rows[default_label])
+            ) >= best["policy"]["threshold"] else default_label
+        ),
+    )
+    manifest = {
+        "schema": "qwen35_graft_translation_binding_router_v1",
+        "generated_utc": _utc_now(),
+        "router_label": router_label,
+        "train_sweep_eval_paths": loaded["paths"],
+        "train_sweep_eval_sha256": [
+            _sha256(Path(path)) for path in loaded["paths"]
+        ],
+        "candidate_labels": labels,
+        "default_label": default_label,
+        "policy": best["policy"],
+        "train_summary": _summarize_selected_router_rows(selected),
+        "fixed_summaries": fixed_summaries,
+        "oracle_summary": oracle_summary,
+        "searched_policy_count": len(searched),
+        "top_searched_policies": searched[:10],
+    }
+    out = Path(out_path).expanduser()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w") as fh:
+        json.dump(manifest, fh, indent=2)
+        fh.write("\n")
+    manifest["manifest_path"] = str(out)
+    return manifest
+
+
+def evaluate_binding_translator_router(sweep_eval_paths, router_path, out_path):
+    """Apply a fitted binding translator router to existing sweep rows."""
+    router_path = Path(router_path).expanduser()
+    router = _load_json(router_path)
+    if router.get("schema") != "qwen35_graft_translation_binding_router_v1":
+        raise ValueError("expected qwen35_graft_translation_binding_router_v1")
+    labels = list(router["candidate_labels"])
+    loaded = _load_router_sweep_rows(sweep_eval_paths, labels)
+    policy = router["policy"]
+    if policy.get("type") != "threshold_confidence_delta":
+        raise ValueError(f"unsupported router policy: {policy.get('type')}")
+    default_label = policy["default_label"]
+    secondary_label = policy["secondary_label"]
+    threshold = float(policy["threshold"])
+    selected = _select_router_rows(
+        loaded["by_probe"],
+        labels,
+        lambda _pid, rows: (
+            secondary_label if (
+                _answer_confidence_margin(rows[secondary_label]) -
+                _answer_confidence_margin(rows[default_label])
+            ) >= threshold else default_label
+        ),
+    )
+    rows = _router_eval_rows(selected, router.get("router_label", "router"))
+    fixed_summaries = {}
+    for label in labels:
+        fixed = _select_router_rows(
+            loaded["by_probe"], labels, lambda _pid, _rows, label=label: label)
+        fixed_summaries[label] = _summarize_selected_router_rows(fixed)
+    oracle = _select_router_rows(
+        loaded["by_probe"],
+        labels,
+        lambda _pid, rows: max(
+            labels,
+            key=lambda label: float(rows[label]["gold_minus_best_decoy"])),
+    )
+    metrics = {
+        "schema": "qwen35_graft_translation_binding_router_eval_v1",
+        "router_path": str(router_path),
+        "router_sha256": _sha256(router_path),
+        "sweep_eval_paths": loaded["paths"],
+        "sweep_eval_sha256": [_sha256(Path(path)) for path in loaded["paths"]],
+        "probes_path": loaded["probes_path"],
+        "source_model": loaded["source_model"],
+        "target_model": loaded["target_model"],
+        "candidate_labels": labels,
+        "router_policy": policy,
+        "probe_count": loaded["probe_count"],
+        "summary": _summarize_selected_router_rows(selected),
+        "fixed_summaries": fixed_summaries,
+        "oracle_summary": _summarize_selected_router_rows(oracle),
+        "rows": rows,
+    }
+    out = Path(out_path).expanduser()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w") as fh:
+        json.dump(metrics, fh, indent=2)
+        fh.write("\n")
+    return metrics
+
+
 def _best_translator_summary(rows_by_label):
     summaries = []
     for label, rows in sorted(rows_by_label.items()):
@@ -4465,6 +4797,29 @@ def main(argv=None):
                      help="optional baseline binding eval json")
     bsa.add_argument("--baseline-mode", default="translated",
                      help="baseline eval mode or sweep label")
+    brf = sub.add_parser(
+        "fit-binding-translator-router",
+        help="fit a CPU-only router from completed binding sweep rows")
+    brf.add_argument("--train-sweep-evals", required=True,
+                     help="comma-separated binding translator sweep eval jsons")
+    brf.add_argument("--out", required=True,
+                     help="output router manifest json")
+    brf.add_argument("--candidate-labels", required=True,
+                     help="comma-separated candidate labels to route over")
+    brf.add_argument("--default-label", required=True,
+                     help="conservative fallback candidate label")
+    brf.add_argument("--secondary-labels", default=None,
+                     help="optional comma-separated non-default labels")
+    brf.add_argument("--router-label", default="router")
+    bre = sub.add_parser(
+        "eval-binding-translator-router",
+        help="apply a fitted CPU-only router to completed sweep rows")
+    bre.add_argument("--sweep-evals", required=True,
+                     help="comma-separated binding translator sweep eval jsons")
+    bre.add_argument("--router", required=True,
+                     help="router manifest json")
+    bre.add_argument("--out", required=True,
+                     help="output routed eval json")
     hn = sub.add_parser(
         "make-binding-hard-negative-plan",
         help="write hard-negative objectives from an existing sweep eval")
@@ -4946,6 +5301,37 @@ def main(argv=None):
             "baseline_summary": analysis["baseline_summary"],
             "best_global": analysis["best_global"],
             "oracle": analysis["oracle"],
+        }, indent=2))
+        return 0
+    if args.cmd == "fit-binding-translator-router":
+        router = fit_binding_translator_router(
+            args.train_sweep_evals,
+            args.out,
+            candidate_labels=args.candidate_labels,
+            default_label=args.default_label,
+            secondary_labels=args.secondary_labels,
+            router_label=args.router_label,
+        )
+        print(json.dumps({
+            "status": "ok",
+            "out": str(Path(args.out).expanduser()),
+            "policy": router["policy"],
+            "train_summary": router["train_summary"],
+            "oracle_summary": router["oracle_summary"],
+        }, indent=2))
+        return 0
+    if args.cmd == "eval-binding-translator-router":
+        metrics = evaluate_binding_translator_router(
+            args.sweep_evals,
+            args.router,
+            args.out,
+        )
+        print(json.dumps({
+            "status": "ok",
+            "out": str(Path(args.out).expanduser()),
+            "summary": metrics["summary"],
+            "oracle_summary": metrics["oracle_summary"],
+            "fixed_summaries": metrics["fixed_summaries"],
         }, indent=2))
         return 0
     if args.cmd == "make-binding-hard-negative-plan":

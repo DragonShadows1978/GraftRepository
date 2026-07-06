@@ -1516,3 +1516,100 @@ Translation reliability track.
   while creating deeper misses.
 - The next refinement should be a minimal learned gate/router over
   `s0p5_kv`, `s0p625_kv`, and `s0p6875_kv`.
+
+### 2026-07-06 - R4.8 Confidence Router PoC
+
+**Status:** complete.
+
+**Completed work:**
+
+- Added CPU-only binding translator router tooling:
+  `fit_binding_translator_router` and
+  `evaluate_binding_translator_router`.
+- Added CLI commands:
+  `fit-binding-translator-router` and
+  `eval-binding-translator-router`.
+- Added unit coverage for fitting and applying a threshold confidence router.
+- Fit the router on frozen V2 rows using candidates:
+  `s0p5_kv`, `s0p625_kv`, and `s0p6875_kv`.
+- Evaluated the frozen-trained router on frozen V2 and fresh holdout rows
+  without loading models again.
+
+**Commands:**
+
+- Fit frozen-trained confidence router:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py fit-binding-translator-router --train-sweep-evals /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r47_residual_fine_kv_sweep.json,/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r47_residual_micro_kv_sweep.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_router_r48_confidence_frozen.json --candidate-labels s0p5_kv,s0p625_kv,s0p6875_kv --default-label s0p5_kv --router-label r48_confidence_delta`
+- Evaluate on frozen V2:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-translator-router --sweep-evals /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r47_residual_fine_kv_sweep.json,/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r47_residual_micro_kv_sweep.json --router /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_router_r48_confidence_frozen.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r48_router_confidence.json`
+- Evaluate on fresh holdout:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-translator-router --sweep-evals /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r47_residual_fine_kv_sweep.json,/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r47_residual_micro_kv_sweep.json --router /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_router_r48_confidence_frozen.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r48_router_confidence.json`
+- Focused tests:
+  `PYTHONDONTWRITEBYTECODE=1 PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest tests/test_qwen35_translation_poc.py -q`
+  - result: `39 passed, 2 warnings in 0.49s`
+
+**Artifacts:**
+
+- Router manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_router_r48_confidence_frozen.json`
+  - sha256:
+    `6aec8a4c765c637713580c03c796ee6753397c57150c45117fa4565e1702bd50`
+- Frozen routed eval:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r48_router_confidence.json`
+  - sha256:
+    `112360ff883ca95f9de94e346cfba992a50f846ab7474f937e20653d3810da17`
+- Holdout routed eval:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r48_router_confidence.json`
+  - sha256:
+    `2b4f40edd90646844737bc6b6491eb5d4dc2206da50c7107ee8a670df89b329b`
+
+**Learned policy:**
+
+- Type: `threshold_confidence_delta`
+- Default: `s0p5_kv`
+- Secondary: `s0p6875_kv`
+- Feature:
+  `answer_confidence_margin(secondary) - answer_confidence_margin(default)`
+- Threshold: `1.745307008358857`
+
+**Frozen V2 result:**
+
+- Router:
+  - `63 / 64`
+  - mean margin `8.741608369652813`
+  - min margin `-0.9922356751544044`
+  - selected counts: `s0p5_kv` `34`, `s0p6875_kv` `30`
+  - gained vs fixed `s0p5_kv`: none
+  - lost vs fixed `s0p5_kv`: none
+- Fixed candidates:
+  - `s0p5_kv`: `63 / 64`, mean `5.931814594442409`
+  - `s0p625_kv`: `62 / 64`, mean `7.610320836733261`
+  - `s0p6875_kv`: `62 / 64`, mean `8.457185386698411`
+- Oracle over candidates:
+  - `63 / 64`
+  - mean margin `8.984925204801616`
+
+**Fresh holdout result:**
+
+- Router:
+  - `58 / 64`
+  - mean margin `5.319909304476845`
+  - min margin `-3.777912148347035`
+  - selected counts: `s0p5_kv` `56`, `s0p6875_kv` `8`
+  - gained vs fixed `s0p5_kv`: none
+  - lost vs fixed `s0p5_kv`: none
+- Fixed candidates:
+  - `s0p5_kv`: `58 / 64`, mean `5.003952600746849`
+  - `s0p625_kv`: `59 / 64`, mean `5.281574454660446`
+  - `s0p6875_kv`: `60 / 64`, mean `5.165943132279072`
+- Oracle over candidates:
+  - `60 / 64`
+  - mean margin `5.7285912171238795`
+
+**Decision:**
+
+- Router infrastructure is now implemented and tested.
+- The first confidence-delta policy preserves frozen reliability and raises
+  mean margin, but it does not improve holdout positive count.
+- Confidence delta is not the right feature for recovering the holdout misses.
+  The next router should use graft/probe features or a dedicated validation
+  set rather than answer confidence alone.

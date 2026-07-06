@@ -1,9 +1,9 @@
 # Qwen3.5 Translation Reliability Plan
 
-**Status:** R4.7 fine residual-scale sweep complete. `s0p5_kv` remains the
-frozen-safe default at frozen V2 `63 / 64`; `s0p6875_kv` is the current
-holdout-tuned candidate at fresh holdout `60 / 64`. No new corpus is required
-for the next step.
+**Status:** R4.8 confidence-router PoC complete. The router infrastructure is
+implemented and tested, but the first confidence-delta feature does not improve
+holdout positive count. `s0p5_kv` remains the frozen-safe default; `s0p6875_kv`
+remains the holdout-tuned secondary candidate.
 
 **House rules for this track:**
 
@@ -554,6 +554,47 @@ Current R4.7 fine residual-scale status:
     refinement should be learned routing/gating over residual candidates, not
     more blind scale growth.
 
+Current R4.8 confidence-router status:
+
+- Complete.
+- Added CPU-only router tooling:
+  - `fit-binding-translator-router`
+  - `eval-binding-translator-router`
+- Router candidates:
+  - `s0p5_kv`
+  - `s0p625_kv`
+  - `s0p6875_kv`
+- Router policy:
+  - train on frozen V2 sweep rows,
+  - default to `s0p5_kv`,
+  - switch to a secondary candidate when
+    `answer_confidence_margin(secondary) -
+    answer_confidence_margin(default) >= threshold`.
+- Learned policy:
+  - secondary: `s0p6875_kv`
+  - threshold: `1.745307008358857`
+- Frozen V2 router result:
+  - routed: `63 / 64`, mean margin `8.741608369652813`, min margin
+    `-0.9922356751544044`
+  - selected counts: `s0p5_kv` `34`, `s0p6875_kv` `30`
+  - fixed `s0p5_kv`: `63 / 64`, mean margin `5.931814594442409`
+  - oracle over candidates: `63 / 64`, mean margin `8.984925204801616`
+- Fresh holdout router result:
+  - routed: `58 / 64`, mean margin `5.319909304476845`, min margin
+    `-3.777912148347035`
+  - selected counts: `s0p5_kv` `56`, `s0p6875_kv` `8`
+  - fixed `s0p5_kv`: `58 / 64`, mean margin `5.003952600746849`
+  - fixed `s0p625_kv`: `59 / 64`, mean margin `5.281574454660446`
+  - fixed `s0p6875_kv`: `60 / 64`, mean margin `5.165943132279072`
+  - oracle over candidates: `60 / 64`, mean margin `5.7285912171238795`
+- Decision:
+  - The first learned confidence router preserves frozen reliability and raises
+    frozen/holdout mean margin, but it does not recover holdout misses versus
+    the `s0p5_kv` default.
+  - The simple confidence-delta feature is not sufficient. The next router
+    should use graft/probe features or a validation-trained policy, not answer
+    confidence alone.
+
 ## Phase R5: Live G0 Repair
 
 Investigate live capture/reseat numerical mismatch separately from translator
@@ -573,10 +614,12 @@ Exit gate:
 
 ## Open Queue
 
-1. Implement a minimal learned gate/router over `s0p5_kv` and `s0p6875_kv`,
-   with `s0p625_kv` as an optional intermediate candidate.
-2. Validate the router against frozen V2 and fresh holdout before adding any
-   new broad corpus.
+1. Add richer router features that do not require gold labels at inference:
+   graft norms, residual-delta norms, source/target layer agreement, or
+   pre-query attention statistics.
+2. Alternatively, create a small validation probe set specifically for router
+   training, then hold out both frozen V2 and the existing fresh holdout for
+   final evaluation.
 3. Run a deeper live/open-generation reliability gate using both the
    conservative default and any routed policy before making production-grade
    claims.
