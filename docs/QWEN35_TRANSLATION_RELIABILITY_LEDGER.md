@@ -1155,3 +1155,216 @@ Translation reliability track.
   `binding_hard_negative_plan_r45_drop_l3.json`.
 - Run that fit with CUDA/CuPy, then gate it against frozen V2 before deciding
   whether any additional corpus is worth generating.
+
+### 2026-07-05 - R4.5 Residual-Focus Translator Result
+
+**Status:** complete.
+
+**Completed work:**
+
+- Captured the hard-negative focus set from the R4.5 plan.
+- Fit a scaled K+V residual correction on top of
+  `translator_r45_selected_drop_l3`.
+- Evaluated the residual translator against both the frozen V2 probe set and a
+  fresh V2 holdout probe set.
+- Registered the pre-RoPE translator pivot in
+  `docs/OPEN_QUESTION_pre_rope_translation.md`.
+
+**Important command note:**
+
+- The historical R4.5 residual fit command was not present in the tracked
+  ledger before this entry. The artifact manifests preserve the executable
+  parameters: base translator, focus capture, residual scale `0.25`, ridge
+  lambda `1e-4`, split `train`, backend `cupy`, and refined kinds `k,v`.
+- The current committed CLI equivalent is
+  `fit-translator-residual-sweep` with one residual scale and `kind-specs both`.
+
+**Artifacts:**
+
+- Hard-negative focus plan:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/corpus_plan_r45_hard_negative.json`
+  - sha256:
+    `996dac49170a5c8c9b72e7404c5e3507447c9fc84978caf80511b91cf2713d23`
+- Hard-negative focus capture manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/captures_r45_hard_negative/capture_manifest.json`
+  - sha256:
+    `4595d1ed4cfd3765b1cc510a7886bd41dc73fddafb2000bc19a0e0ad67e79219`
+  - paired train shards/tokens: `18` / `814`
+- Residual translator manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r45_residual_focus_s025/translator_manifest.json`
+  - sha256:
+    `990ae4b2c8dda62e22d09da66b7fae0cad5025ff04c8d8e623a18209d40b0004`
+- Residual fit metrics:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r45_residual_focus_s025/fit_metrics.json`
+  - sha256:
+    `d379c527cf1b66ed7568e3acfbeec05c615439dd9547bb1b46a724a6455e13db`
+- Frozen V2 residual gate:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r45_residual_focus_s025.json`
+  - sha256:
+    `a1abfb88c271f11d169d412d248f4908d8495710dc83a28e138c78ee0c581682`
+- Fresh holdout V2 probe set:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2_holdout_r45.json`
+  - sha256:
+    `c15bfa392a8f5b2a32ca0870d04b803215a91056121354e93a1364bcf0f8ed1c`
+- Fresh holdout baseline-vs-residual sweep:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r45_translator_sweep_baseline_vs_residual_s025.json`
+  - sha256:
+    `d7b7322e05b23514da8edfd64c9f917f92ff913c10f6215fab23f62962055f3e`
+
+**Result:**
+
+- Frozen V2:
+  - selected drop-l3 baseline: `46 / 64`, mean margin
+    `0.935202663147657`
+  - residual `s0.25` K+V: `53 / 64`, mean margin
+    `2.9803028386585195`, min margin `-3.0140718657008208`
+- Fresh holdout:
+  - selected drop-l3 baseline: `39 / 64`, mean margin
+    `0.9628342859065595`, min margin `-5.031213117271335`
+  - residual `s0.25` K+V: `54 / 64`, mean margin
+    `2.98475187406485`, min margin `-5.2945312158358675`
+
+**Decision:**
+
+- R4.5 succeeds. The improvement survives a fresh holdout, so the hard-negative
+  residual path is not just memorizing the frozen V2 probe set.
+- The next registered move is R4.6: sweep residual scale and K/V split without
+  changing probes or adding broad corpus.
+
+### 2026-07-05 - R4.6 Residual Scale And K/V Split Sweep
+
+**Status:** complete.
+
+**Completed work:**
+
+- Added reusable residual-sweep tooling:
+  `fit_residual_focus_translator_sweep`.
+- Added the `fit-translator-residual-sweep` CLI.
+- Updated binding translator sweep loading to accept residual sweep manifests.
+- Added unit coverage for residual sweep manifest writing and loading.
+- Evaluated residual scales `0.125`, `0.25`, and `0.5` across `k`, `v`, and
+  `both`.
+- Ran frozen V2 and fresh holdout analysis.
+
+**Commands:**
+
+- Residual sweep fit:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py fit-translator-residual-sweep --base-translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r45_selected_drop_l3 --focus-capture-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/captures_r45_hard_negative --out-root /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r46_residual_sweep --residual-scales 0.125,0.25,0.5 --kind-specs k,v,both --ridge-lambda 1e-4 --split train --backend cupy --out-prefix translator_r46_residual`
+- Frozen V2 sweep:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-translator-sweep --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r46_residual_sweep.json --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --sweep-manifest /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r46_residual_sweep/residual_sweep_manifest.json --max-probes 64 --layers all`
+- Frozen V2 analysis:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py analyze-binding-translator-sweep --sweep-eval /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r46_residual_sweep.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r46_residual_sweep_analysis.json --baseline-eval /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r45_residual_focus_s025.json --baseline-mode translated`
+- Fresh holdout comparison:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-translator-sweep --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2_holdout_r45.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r46_selected_vs_residuals.json --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --translator-dirs /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r45_selected_drop_l3,/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r45_residual_focus_s025,/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r46_residual_sweep/translator_r46_residual_s0p5_kv --translator-labels selected_drop_l3,s0p25_kv,s0p5_kv --max-probes 64 --layers all`
+- Fresh holdout analysis:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py analyze-binding-translator-sweep --sweep-eval /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r46_selected_vs_residuals.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r46_selected_vs_residuals_analysis.json --baseline-eval /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r45_translator_sweep_baseline_vs_residual_s025.json --baseline-mode residual_s025`
+- Focused tests:
+  `PYTHONDONTWRITEBYTECODE=1 PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest tests/test_qwen35_translation_poc.py -q`
+  - result: `38 passed, 2 warnings in 0.62s`
+
+**Artifacts:**
+
+- Residual sweep manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r46_residual_sweep/residual_sweep_manifest.json`
+  - sha256:
+    `8b89e95907cd13c3cb1c536fe14dc7624fcad117b848a5034e2ae56b9eaa7908`
+  - candidates: `9`
+- Frozen V2 sweep:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r46_residual_sweep.json`
+  - sha256:
+    `476b39ddad7eefe6e6c9d7ec04f39cd4872f285a55ecebeea176deca6e0c3dd5`
+- Frozen V2 sweep progress:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r46_residual_sweep_progress.json`
+  - sha256:
+    `fc9a4ec8becd9d5677a3da99b86befc00458ebab0d2bf0e382f5ebddff561ae6`
+- Frozen V2 analysis:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r46_residual_sweep_analysis.json`
+  - sha256:
+    `6b2cb3fb85c363d8433b7adf3637f0b2383500be58bf797fc17dd56a626b2687`
+- Fresh holdout comparison:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r46_selected_vs_residuals.json`
+  - sha256:
+    `a69b9573242b3b68fe26a048ced9fe1b61af0eae0d9d63cfd5b0c7ea90dcd5a4`
+- Fresh holdout comparison progress:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r46_selected_vs_residuals_progress.json`
+  - sha256:
+    `c559054013b2501a918de70b9f10a109fa6f2a3f3555c0e83f8f6cce585e730c`
+- Fresh holdout analysis:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r46_selected_vs_residuals_analysis.json`
+  - sha256:
+    `d818c45791298cf11c30f49df1d406ee24d96cc0fbfdb9e76b2cc529e0edb2ed`
+- Best translator manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r46_residual_sweep/translator_r46_residual_s0p5_kv/translator_manifest.json`
+  - sha256:
+    `a3498ae6f33848af768f2567d9ea79910a5a072363337d8ed62dbffa22bdd472`
+- Best translator fit metrics:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r46_residual_sweep/translator_r46_residual_s0p5_kv/fit_metrics.json`
+  - sha256:
+    `0f20f12464f76c5899801d851b4284dea9322ae33d1bbaa346683b0ada61eeda`
+
+**Frozen V2 candidate summary:**
+
+- `s0p5_kv`: `63 / 64`, mean `5.931814594442409`, min
+  `-0.9922356751544044`
+- `s0p5_k`: `58 / 64`, mean `4.130273350212388`, min
+  `-1.589611260130738`
+- `s0p25_kv`: `53 / 64`, mean `2.9803028386585195`, min
+  `-3.0140718657008208`
+- `s0p25_k`: `52 / 64`, mean `2.2703819437258215`, min
+  `-3.8833103731120175`
+- `s0p5_v`: `51 / 64`, mean `1.8453519269352137`, min
+  `-4.120541152957578`
+- `s0p125_kv`: `51 / 64`, mean `1.7731796093533432`, min
+  `-4.223391565569628`
+- `s0p125_k`: `50 / 64`, mean `1.4715822302756854`, min
+  `-4.541886145687968`
+- `s0p25_v`: `50 / 64`, mean `1.4256042516129641`, min
+  `-4.542604960188839`
+- `s0p125_v`: `49 / 64`, mean `1.1834521084035763`, min
+  `-4.98400389863199`
+
+**Fresh holdout result:**
+
+- `selected_drop_l3`: `39 / 64`, mean `0.9628342859065595`, min
+  `-5.031213117271335`
+- `s0p25_kv`: `54 / 64`, mean `2.98475187406485`, min
+  `-5.2945312158358675`
+- `s0p5_kv`: `58 / 64`, mean `5.003952600746849`, min
+  `-3.777912148347035`
+
+**Gained/lost analysis:**
+
+- Frozen V2 best global `s0p5_kv` versus R4.5 `s0p25_kv`:
+  - recovered baseline misses:
+    - `bind-v2-005-q0`
+    - `bind-v2-005-q1`
+    - `bind-v2-012-q0`
+    - `bind-v2-015-q0`
+    - `bind-v2-017-q1`
+    - `bind-v2-023-q0`
+    - `bind-v2-023-q1`
+    - `bind-v2-026-q0`
+    - `bind-v2-027-q0`
+    - `bind-v2-027-q1`
+    - `bind-v2-031-q0`
+  - lost baseline successes:
+    - `bind-v2-011-q0`
+  - diagnostic oracle over all residual candidates: `64 / 64`, no lost
+    baseline successes.
+- Fresh holdout `s0p5_kv` versus `s0p25_kv`:
+  - recovered baseline misses:
+    - `bind-v2-004-q0`
+    - `bind-v2-004-q1`
+    - `bind-v2-012-q1`
+    - `bind-v2-019-q0`
+  - lost baseline successes: none
+
+**Decision:**
+
+- R4.6 succeeds and becomes the active best translator path.
+- K correction is load-bearing: K-only at scale `0.5` reached `58 / 64`
+  frozen, while V-only at scale `0.5` reached only `51 / 64`.
+- K+V still wins globally: `s0p5_kv` reaches `63 / 64` frozen and `58 / 64`
+  fresh holdout.
+- The next reliability work should analyze remaining misses and learned gating
+  before generating more broad corpus.

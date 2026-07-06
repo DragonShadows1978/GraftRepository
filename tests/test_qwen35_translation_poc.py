@@ -20,6 +20,7 @@ from core.qwen35_translation_poc import (
     filter_translator_layers,
     fit_ridge_translator,
     fit_ridge_translator_sweep,
+    fit_residual_focus_translator_sweep,
     inspect_pipeline_status,
     make_translator_layer_sweep,
     make_binding_probe_set,
@@ -995,6 +996,119 @@ def test_fit_ridge_translator_sweep_can_skip_fit_metrics(tmp_path):
     assert metrics["layers"][0]["mse"] is None
     assert Path(manifest["artifacts"][0]["path"]).is_file()
     assert Path(manifest["fit_metrics"]).is_file()
+
+
+def test_fit_residual_focus_translator_sweep_writes_eval_manifest(tmp_path):
+    base_capture = tmp_path / "base_captures"
+    focus_capture = tmp_path / "focus_captures"
+    x = np.array([
+        [[[[1.0, 0.0], [0.0, 1.0], [1.0, 1.0], [2.0, 1.0]]]]
+    ], dtype=np.float32).reshape(1, 1, 4, 2)
+    xv = x + 1.0
+
+    base_source = [None] * 12
+    base_target = [None] * 12
+    base_source[3] = {"k": x, "v": xv}
+    base_target[7] = {"k": 2.0 * x, "v": 2.0 * xv}
+    write_capture_shard(
+        base_capture,
+        role="source",
+        doc_id="doc-base",
+        chunk_id=0,
+        token_ids=[1, 2, 3, 4],
+        captured=base_source,
+        metadata={"split": "train"},
+        compress=False,
+    )
+    write_capture_shard(
+        base_capture,
+        role="target",
+        doc_id="doc-base",
+        chunk_id=0,
+        token_ids=[1, 2, 3, 4],
+        captured=base_target,
+        metadata={"split": "train"},
+        compress=False,
+    )
+    fit_ridge_translator(
+        base_capture,
+        tmp_path / "base_translator",
+        ridge_lambda=1e-8,
+        split="train",
+    )
+
+    focus_source = [None] * 12
+    focus_target = [None] * 12
+    focus_source[3] = {"k": x, "v": xv}
+    focus_target[7] = {"k": 3.0 * x, "v": 4.0 * xv}
+    write_capture_shard(
+        focus_capture,
+        role="source",
+        doc_id="doc-focus",
+        chunk_id=0,
+        token_ids=[1, 2, 3, 4],
+        captured=focus_source,
+        metadata={"split": "train"},
+        compress=False,
+    )
+    write_capture_shard(
+        focus_capture,
+        role="target",
+        doc_id="doc-focus",
+        chunk_id=0,
+        token_ids=[1, 2, 3, 4],
+        captured=focus_target,
+        metadata={"split": "train"},
+        compress=False,
+    )
+
+    result = fit_residual_focus_translator_sweep(
+        tmp_path / "base_translator",
+        focus_capture,
+        tmp_path / "residual_sweep",
+        residual_scales="0.25,0.5",
+        kind_specs="k,v,both",
+        ridge_lambda=1e-8,
+        split="train",
+        out_prefix="residual",
+    )
+
+    assert result["schema"] == (
+        "qwen35_graft_translation_residual_sweep_manifest_v1")
+    assert result["candidate_count"] == 6
+    assert [c["label"] for c in result["candidates"]] == [
+        "s0p25_k",
+        "s0p25_v",
+        "s0p25_kv",
+        "s0p5_k",
+        "s0p5_v",
+        "s0p5_kv",
+    ]
+    manifest_path = tmp_path / "residual_sweep" / "residual_sweep_manifest.json"
+    assert manifest_path.is_file()
+    loaded = poc._load_translator_sweep_candidates(
+        sweep_manifest=manifest_path)
+    assert [c["label"] for c in loaded] == [
+        "s0p25_k",
+        "s0p25_v",
+        "s0p25_kv",
+        "s0p5_k",
+        "s0p5_v",
+        "s0p5_kv",
+    ]
+    k_only = json.loads(
+        (tmp_path / "residual_sweep" / "residual_s0p5_k" /
+         "translator_manifest.json").read_text())
+    refined = {
+        art["kind"]: art["residual_refined"]
+        for art in k_only["artifacts"]
+    }
+    assert refined == {"k": True, "v": False}
+    kv = json.loads(
+        (tmp_path / "residual_sweep" / "residual_s0p5_kv" /
+         "fit_metrics.json").read_text())
+    assert kv["schema"] == "qwen35_graft_translation_residual_fit_metrics_v1"
+    assert len(kv["layers"]) == 2
 
 
 def test_filter_translator_layers_writes_reproducible_manifest(tmp_path):

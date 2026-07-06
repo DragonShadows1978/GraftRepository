@@ -1,8 +1,8 @@
 # Qwen3.5 Translation Reliability Plan
 
-**Status:** R4.5 hard-negative prep complete. No new corpus is required yet;
-the next full translator fit should use CUDA/CuPy against existing captures and
-the frozen hard-negative plan.
+**Status:** R4.6 pre-RoPE residual/KV split sweep complete. The current best
+translator is `s0p5_kv`: frozen V2 `63 / 64` and fresh holdout `58 / 64`.
+No new corpus is required for the next step.
 
 **House rules for this track:**
 
@@ -429,6 +429,82 @@ Current R4.5 prep status:
   quality, not capture volume. Use CUDA/CuPy for the next fit/eval because the
   full existing capture set is large enough that CPU training would waste time.
 
+Current R4.5 residual-focus status:
+
+- Complete.
+- Focus capture:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/captures_r45_hard_negative`
+  - paired train shards/tokens: `18` / `814`
+- Focus plan:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/corpus_plan_r45_hard_negative.json`
+- Base translator:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r45_selected_drop_l3`
+- Residual translator:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r45_residual_focus_s025`
+  - residual scale: `0.25`
+  - ridge lambda: `1e-4`
+  - refined kinds: `k,v`
+  - backend: `cupy`
+  - artifact count: `10`
+- Frozen V2 result:
+  - selected drop-l3 baseline: `46 / 64`, mean margin
+    `0.935202663147657`
+  - residual `s0.25` K+V: `53 / 64`, mean margin
+    `2.9803028386585195`, min margin `-3.0140718657008208`
+- Fresh holdout result:
+  - selected drop-l3 baseline: `39 / 64`, mean margin
+    `0.9628342859065595`, min margin `-5.031213117271335`
+  - residual `s0.25` K+V: `54 / 64`, mean margin
+    `2.98475187406485`, min margin `-5.2945312158358675`
+- Decision: hard-negative residual training is not overfitting to the frozen
+  set. It improves the fresh holdout by `+15` positives over selected drop-l3.
+
+Current R4.6 residual/KV split sweep status:
+
+- Complete.
+- Protocol:
+  - Same pre-RoPE capture plane as production grafts.
+  - No probe changes.
+  - No post-RoPE target or loss.
+  - No new broad corpus capture.
+  - Frozen probe:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json`
+  - Fresh holdout:
+    `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2_holdout_r45.json`
+  - Candidate residual scales: `0.125`, `0.25`, `0.5`
+  - Candidate kind specs: `k`, `v`, `both`
+- Residual sweep manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r46_residual_sweep/residual_sweep_manifest.json`
+  - candidates: `9`
+  - labels: `s0p125_k`, `s0p125_v`, `s0p125_kv`, `s0p25_k`,
+    `s0p25_v`, `s0p25_kv`, `s0p5_k`, `s0p5_v`, `s0p5_kv`
+- Frozen V2 result:
+  - prior best `s0p25_kv`: `53 / 64`, mean margin
+    `2.9803028386585195`
+  - new best `s0p5_kv`: `63 / 64`, mean margin
+    `5.931814594442409`, min margin `-0.9922356751544044`
+  - diagnostic oracle over the 9 candidates: `64 / 64`, mean margin
+    `6.135559159773022`, min margin `1.78372954010959`
+  - best global recovered `11` prior frozen misses and lost `1` prior frozen
+    success (`bind-v2-011-q0`)
+- Fresh holdout result:
+  - selected drop-l3 baseline: `39 / 64`, mean margin
+    `0.9628342859065595`
+  - prior best `s0p25_kv`: `54 / 64`, mean margin
+    `2.98475187406485`
+  - new best `s0p5_kv`: `58 / 64`, mean margin
+    `5.003952600746849`, min margin `-3.777912148347035`
+  - `s0p5_kv` recovered `4` prior holdout misses and lost no prior holdout
+    successes versus `s0p25_kv`.
+- Split result:
+  - `s0p5_k`: frozen `58 / 64`, mean margin `4.130273350212388`
+  - `s0p5_v`: frozen `51 / 64`, mean margin `1.8453519269352137`
+  - `s0p5_kv`: frozen `63 / 64`, mean margin `5.931814594442409`
+- Decision: K correction is load-bearing, V-only is weaker, and K+V wins.
+  The pre-RoPE residual pivot is the active path. The next work should focus
+  on learned gating, remaining miss analysis, or deeper live/open-generation
+  reliability tests before generating more broad corpus.
+
 ## Phase R5: Live G0 Repair
 
 Investigate live capture/reseat numerical mismatch separately from translator
@@ -448,9 +524,11 @@ Exit gate:
 
 ## Open Queue
 
-1. Implement R4.5 objective-level or hard-negative translator training against
-   the existing captures and
-   `binding_hard_negative_plan_r45_drop_l3.json`.
-2. Run the R4.5 fit with CUDA/CuPy, then gate it against frozen V2 before
-   considering any additional corpus.
-3. Run R5 live G0 repair in parallel only when GPU/runtime time is available.
+1. Analyze the remaining `s0p5_kv` misses on the fresh holdout and frozen V2
+   set, including whether frozen-only `bind-v2-011-q0` needs a learned gate or
+   a candidate-specific fallback.
+2. If the miss analysis supports it, implement learned per-probe/per-graft
+   gating over the residual candidates instead of increasing broad corpus.
+3. Run a deeper live/open-generation reliability gate using the current
+   `s0p5_kv` translator before making production-grade claims.
+4. Run R5 live G0 repair in parallel only when GPU/runtime time is available.

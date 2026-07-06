@@ -1127,6 +1127,40 @@ def _ridge_lambda_slug(value):
     return text.replace(".", "p")
 
 
+def _parse_float_csv(values, *, name):
+    if isinstance(values, str):
+        raw = [x.strip() for x in values.split(",") if x.strip()]
+    else:
+        raw = [str(x).strip() for x in values if str(x).strip()]
+    if not raw:
+        raise ValueError(f"{name} must not be empty")
+    return [float(x) for x in raw]
+
+
+def _residual_kind_specs(kind_specs):
+    if isinstance(kind_specs, str):
+        raw = [x.strip().lower() for x in kind_specs.split(",") if x.strip()]
+    else:
+        raw = [str(x).strip().lower() for x in kind_specs if str(x).strip()]
+    if not raw:
+        raise ValueError("kind_specs must not be empty")
+    specs = []
+    seen = set()
+    for item in raw:
+        canonical = "both" if item in ("both", "k,v", "v,k") else item
+        kinds = _fit_kinds(canonical)
+        label = "kv" if kinds == ("k", "v") else "".join(kinds)
+        if canonical in seen:
+            continue
+        seen.add(canonical)
+        specs.append({
+            "spec": canonical,
+            "label": label,
+            "kinds": kinds,
+        })
+    return specs
+
+
 def fit_ridge_translator_sweep(capture_dir, out_root, *, ridge_lambdas,
                                out_prefix="translator_ridge", split="train",
                                control="normal", kinds=("k", "v"),
@@ -1166,6 +1200,286 @@ def fit_ridge_translator_sweep(capture_dir, out_root, *, ridge_lambdas,
         "fit_metrics_computed": bool(compute_fit_metrics),
         "results": results,
     }
+
+
+def fit_residual_focus_translator_sweep(
+        base_translator_dir, focus_capture_dir, out_root, *,
+        residual_scales, kind_specs=("both",), ridge_lambda=1e-4,
+        split="train", backend="cpu", out_prefix="translator_residual"):
+    """Fit scaled residual corrections on a focused capture set.
+
+    The written candidates are ordinary translator directories. Unrefined
+    K/V artifacts are copied from the base translator, while refined artifacts
+    add a scaled ridge fit of target minus base prediction.
+    """
+    scales = _parse_float_csv(residual_scales, name="residual_scales")
+    specs = _residual_kind_specs(kind_specs)
+    base_dir = Path(base_translator_dir).expanduser()
+    focus_dir = Path(focus_capture_dir).expanduser()
+    out_root = Path(out_root).expanduser()
+    out_root.mkdir(parents=True, exist_ok=True)
+
+    base_manifest, base_artifacts = _load_translator(base_dir)
+    requested_backend = str(backend or "cpu").lower()
+    backend, cp = _resolve_ridge_backend(requested_backend)
+    sidecars = _load_capture_sidecars(focus_dir)
+    pairs = []
+    for key in sorted(set(sidecars.get("source", {})) &
+                      set(sidecars.get("target", {}))):
+        sm = sidecars["source"][key]
+        tm = sidecars["target"][key]
+        if split != "all":
+            if (sm.get("metadata", {}).get("split") != split or
+                    tm.get("metadata", {}).get("split") != split):
+                continue
+        pairs.append((key, sm, tm))
+    if not pairs:
+        raise ValueError(
+            f"no paired source/target focus shards for split={split!r}")
+
+    refine_kinds = sorted({kind for spec in specs for kind in spec["kinds"]})
+    refine_keys = {
+        key for key in base_artifacts
+        if key[2] in refine_kinds
+    }
+    if not refine_keys:
+        raise ValueError("base translator has no artifacts for kind_specs")
+
+    accum = {}
+    base_residual_sse = {}
+    for _, sm, tm in pairs:
+        with np.load(sm["npz"]) as sz, np.load(tm["npz"]) as tz:
+            if sz["token_ids"].tolist() != tz["token_ids"].tolist():
+                raise ValueError(
+                    f"token mismatch for focus shard "
+                    f"{sm['doc_id']}:{sm['chunk_id']}")
+            for key in sorted(refine_keys):
+                src_layer, tgt_layer, kind = key
+                skey = f"l{src_layer}_{kind}"
+                tkey = f"l{tgt_layer}_{kind}"
+                if skey not in sz.files or tkey not in tz.files:
+                    continue
+                x = _flatten_heads_tokens(sz[skey])
+                y = _flatten_heads_tokens(tz[tkey])
+                if x.shape[0] != y.shape[0]:
+                    raise ValueError(
+                        f"token count mismatch for {skey}->{tkey}: "
+                        f"{x.shape} vs {y.shape}")
+                art = base_artifacts[key]
+                base_pred = x @ art["weight"] + art["bias"]
+                residual = y - base_pred
+                x1 = np.concatenate(
+                    [x, np.ones((x.shape[0], 1), dtype=np.float32)],
+                    axis=1)
+                rec = accum.get(key)
+                if rec is None:
+                    rec = _new_ridge_accum(
+                        x1.shape[1],
+                        residual.shape[1],
+                        backend=backend,
+                        cp=cp,
+                    )
+                    accum[key] = rec
+                    base_residual_sse[key] = 0.0
+                base_residual_sse[key] += float(
+                    (residual.astype(np.float64) ** 2).sum())
+                _accumulate_ridge_stats(
+                    rec, x1, residual, backend=backend, cp=cp)
+    if not accum:
+        raise ValueError("no focus residual tensors were found")
+
+    solved = {}
+    for key, rec in sorted(accum.items()):
+        w_aug = _solve_ridge(rec, ridge_lambda, backend=backend, cp=cp)
+        solved[key] = {
+            "weight": w_aug[:-1].astype(np.float32),
+            "bias": w_aug[-1].astype(np.float32),
+        }
+
+    base_layer_alignment = [
+        dict(item) for item in base_manifest.get("layer_alignment", [])
+    ]
+    base_artifact_meta = {
+        (int(art["source_layer"]), int(art["target_layer"]), art["kind"]): art
+        for art in base_manifest.get("artifacts", [])
+    }
+    candidates = []
+    results = []
+    base_hash = _sha256(base_dir / "translator_manifest.json")
+    for scale in scales:
+        scale_slug = _ridge_lambda_slug(scale)
+        for spec in specs:
+            label = f"s{scale_slug}_{spec['label']}"
+            out_dir = out_root / f"{out_prefix}_{label}"
+            out_dir.mkdir(parents=True, exist_ok=True)
+            candidate_kinds = set(spec["kinds"])
+            artifacts = []
+            metric_rows = []
+            for key in sorted(base_artifacts):
+                src_layer, tgt_layer, kind = key
+                base_art = base_artifacts[key]
+                parent_meta = base_artifact_meta.get(key, {})
+                refined = kind in candidate_kinds and key in solved
+                if refined:
+                    weight = (
+                        base_art["weight"] +
+                        float(scale) * solved[key]["weight"]
+                    ).astype(np.float32)
+                    bias = (
+                        base_art["bias"] +
+                        float(scale) * solved[key]["bias"]
+                    ).astype(np.float32)
+                else:
+                    weight = base_art["weight"].astype(np.float32)
+                    bias = base_art["bias"].astype(np.float32)
+                name = f"translator_l{src_layer}_to_l{tgt_layer}_{kind}.npz"
+                path = out_dir / name
+                np.savez(path, weight=weight, bias=bias,
+                         source_layer=np.array([src_layer], np.int64),
+                         target_layer=np.array([tgt_layer], np.int64),
+                         kind=np.array([kind]))
+                art = {
+                    "source_layer": src_layer,
+                    "target_layer": tgt_layer,
+                    "kind": kind,
+                    "path": str(path),
+                    "input_dim": int(weight.shape[0]),
+                    "output_dim": int(weight.shape[1]),
+                    "train_tokens": int(parent_meta.get(
+                        "train_tokens", accum.get(key, {}).get("n", 0))),
+                    "residual_refined": bool(refined),
+                    "parent_artifact": parent_meta.get(
+                        "path", base_art["artifact"].get("path")),
+                }
+                if refined:
+                    rec = accum[key]
+                    focus_tokens = int(rec["n"])
+                    art["residual_focus_tokens"] = focus_tokens
+                    art["residual_weighted_focus_tokens"] = (
+                        float(focus_tokens))
+                    delta_w = float(scale) * solved[key]["weight"]
+                    delta_b = float(scale) * solved[key]["bias"]
+                    base_norm = float(np.linalg.norm(base_art["weight"]))
+                    metric_rows.append({
+                        "source_layer": src_layer,
+                        "target_layer": tgt_layer,
+                        "kind": kind,
+                        "focus_tokens": focus_tokens,
+                        "weighted_focus_tokens": float(focus_tokens),
+                        "base_residual_mse": float(
+                            base_residual_sse[key] / max(focus_tokens, 1)),
+                        "delta_weight_l2": float(np.linalg.norm(delta_w)),
+                        "base_weight_l2": base_norm,
+                        "relative_delta_weight_l2": float(
+                            np.linalg.norm(delta_w) /
+                            max(base_norm, 1e-12)),
+                        "delta_bias_l2": float(np.linalg.norm(delta_b)),
+                    })
+                artifacts.append(art)
+
+            fit_metrics = {
+                "schema": "qwen35_graft_translation_residual_fit_metrics_v1",
+                "base_translator_dir": str(base_dir),
+                "base_translator_manifest_sha256": base_hash,
+                "focus_capture_dir": str(focus_dir),
+                "ridge_lambda": float(ridge_lambda),
+                "residual_scale": float(scale),
+                "split": split,
+                "backend_requested": requested_backend,
+                "compute_backend": backend,
+                "paired_shards": len(pairs),
+                "layers": sorted(
+                    metric_rows,
+                    key=lambda r: (
+                        r["source_layer"], r["target_layer"], r["kind"]),
+                ),
+            }
+            manifest = {
+                **base_manifest,
+                "fit_metrics": str(out_dir / "fit_metrics.json"),
+                "artifacts": artifacts,
+                "residual_refinement": {
+                    "schema": (
+                        "qwen35_graft_translation_residual_refinement_v1"),
+                    "generated_utc": _utc_now(),
+                    "focus_capture_dir": str(focus_dir),
+                    "ridge_lambda": float(ridge_lambda),
+                    "residual_scale": float(scale),
+                    "split": split,
+                    "refined_kinds": list(spec["kinds"]),
+                    "backend_requested": requested_backend,
+                    "compute_backend": backend,
+                    "paired_shards": len(pairs),
+                    "refined_artifact_count": len(metric_rows),
+                },
+                "layer_alignment": base_layer_alignment,
+            }
+            with open(out_dir / "fit_metrics.json", "w") as fh:
+                json.dump(fit_metrics, fh, indent=2)
+                fh.write("\n")
+            with open(out_dir / "translator_manifest.json", "w") as fh:
+                json.dump(manifest, fh, indent=2)
+                fh.write("\n")
+            progress = {
+                "schema": (
+                    "qwen35_graft_translation_residual_fit_progress_v1"),
+                "status": "complete",
+                "updated_utc": _utc_now(),
+                "base_translator_dir": str(base_dir),
+                "focus_capture_dir": str(focus_dir),
+                "translator_dir": str(out_dir),
+                "paired_shards": len(pairs),
+                "residual_scale": float(scale),
+                "kind_spec": spec["spec"],
+            }
+            with open(out_dir / "fit_progress.json", "w") as fh:
+                json.dump(progress, fh, indent=2)
+                fh.write("\n")
+            manifest_path = out_dir / "translator_manifest.json"
+            candidate = {
+                "label": label,
+                "translator_dir": str(out_dir),
+                "translator_manifest_sha256": _sha256(manifest_path),
+                "residual_scale": float(scale),
+                "kind_spec": spec["spec"],
+                "kinds": list(spec["kinds"]),
+                "policy": {
+                    "type": "residual_focus",
+                    "base_translator_dir": str(base_dir),
+                    "focus_capture_dir": str(focus_dir),
+                    "residual_scale": float(scale),
+                    "kinds": list(spec["kinds"]),
+                },
+                "artifact_count": len(artifacts),
+            }
+            candidates.append(candidate)
+            results.append({
+                "translator_manifest": manifest,
+                "fit_metrics": fit_metrics,
+            })
+
+    sweep = {
+        "schema": "qwen35_graft_translation_residual_sweep_manifest_v1",
+        "generated_utc": _utc_now(),
+        "base_translator_dir": str(base_dir),
+        "focus_capture_dir": str(focus_dir),
+        "out_root": str(out_root),
+        "out_prefix": out_prefix,
+        "ridge_lambda": float(ridge_lambda),
+        "residual_scales": scales,
+        "kind_specs": [spec["spec"] for spec in specs],
+        "split": split,
+        "backend_requested": requested_backend,
+        "candidate_count": len(candidates),
+        "candidates": candidates,
+    }
+    manifest_path = out_root / "residual_sweep_manifest.json"
+    with open(manifest_path, "w") as fh:
+        json.dump(sweep, fh, indent=2)
+        fh.write("\n")
+    sweep["manifest_path"] = str(manifest_path)
+    sweep["results"] = results
+    return sweep
 
 
 def _load_translator(translator_dir):
@@ -2285,11 +2599,13 @@ def _load_translator_sweep_candidates(*, translator_dirs=None, labels=None,
     candidates = []
     if sweep_manifest:
         spec = _load_json(Path(sweep_manifest).expanduser())
-        if spec.get("schema") != (
-                "qwen35_graft_translation_layer_sweep_manifest_v1"):
+        allowed = {
+            "qwen35_graft_translation_layer_sweep_manifest_v1",
+            "qwen35_graft_translation_residual_sweep_manifest_v1",
+        }
+        if spec.get("schema") not in allowed:
             raise ValueError(
-                "sweep_manifest must use "
-                "qwen35_graft_translation_layer_sweep_manifest_v1")
+                "sweep_manifest must use a supported translator sweep schema")
         for cand in spec.get("candidates", []):
             candidates.append({
                 "label": str(cand["label"]),
@@ -3996,6 +4312,26 @@ def main(argv=None):
     fs.add_argument("--skip-fit-metrics", action="store_true",
                     help="write translators after solve without the train "
                          "fit-metrics rescan")
+    fr = sub.add_parser(
+        "fit-translator-residual-sweep",
+        help="fit scaled residual corrections against a focused capture set")
+    fr.add_argument("--base-translator-dir", required=True,
+                    help="base translator directory to refine")
+    fr.add_argument("--focus-capture-dir", required=True,
+                    help="capture directory containing focus source/target shards")
+    fr.add_argument("--out-root", required=True,
+                    help="root directory for residual translator candidates")
+    fr.add_argument("--out-prefix", default="translator_residual")
+    fr.add_argument("--residual-scales", required=True,
+                    help="comma-separated residual scales")
+    fr.add_argument("--kind-specs", default="both",
+                    help="comma-separated specs: k,v,both")
+    fr.add_argument("--ridge-lambda", type=float, default=1e-4)
+    fr.add_argument("--split", default="train",
+                    choices=("train", "heldout", "all"))
+    fr.add_argument("--backend", default="cpu",
+                    choices=("cpu", "auto", "cupy", "cuda", "gpu", "numpy"),
+                    help="ridge math backend; default preserves CPU behavior")
     fl = sub.add_parser(
         "filter-translator-layers",
         help="write a translator manifest with selected layer pairs")
@@ -4369,6 +4705,26 @@ def main(argv=None):
                 item["translator_manifest"]
                 for item in result["results"]
             ],
+        }, indent=2))
+        return 0
+    if args.cmd == "fit-translator-residual-sweep":
+        result = fit_residual_focus_translator_sweep(
+            args.base_translator_dir,
+            args.focus_capture_dir,
+            args.out_root,
+            residual_scales=args.residual_scales,
+            kind_specs=args.kind_specs,
+            ridge_lambda=args.ridge_lambda,
+            split=args.split,
+            backend=args.backend,
+            out_prefix=args.out_prefix,
+        )
+        print(json.dumps({
+            "status": "ok",
+            "schema": result["schema"],
+            "out": result["manifest_path"],
+            "candidate_count": result["candidate_count"],
+            "labels": [c["label"] for c in result["candidates"]],
         }, indent=2))
         return 0
     if args.cmd == "filter-translator-layers":
