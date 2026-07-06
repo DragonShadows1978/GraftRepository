@@ -1,8 +1,9 @@
 # Qwen3.5 Translation Reliability Plan
 
-**Status:** R4.6 pre-RoPE residual/KV split sweep complete. The current best
-translator is `s0p5_kv`: frozen V2 `63 / 64` and fresh holdout `58 / 64`.
-No new corpus is required for the next step.
+**Status:** R4.7 fine residual-scale sweep complete. `s0p5_kv` remains the
+frozen-safe default at frozen V2 `63 / 64`; `s0p6875_kv` is the current
+holdout-tuned candidate at fresh holdout `60 / 64`. No new corpus is required
+for the next step.
 
 **House rules for this track:**
 
@@ -505,6 +506,54 @@ Current R4.6 residual/KV split sweep status:
   on learned gating, remaining miss analysis, or deeper live/open-generation
   reliability tests before generating more broad corpus.
 
+Current R4.7 fine residual-scale status:
+
+- Complete.
+- Protocol:
+  - Keep the R4.6 base, hard-negative focus capture, and pre-RoPE target
+    plane unchanged.
+  - Do not generate new broad corpus.
+  - First fit fine scales `0.375`, `0.5`, `0.625`, `0.75`, and `0.875` across
+    K/V split candidates.
+  - Abort the full 15-candidate frozen binding eval after `5 / 64` probes
+    because candidate scoring was too expensive for the immediate question.
+  - Use result-bearing K+V-only fine and micro sweeps.
+- Fine K+V sweep:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep`
+  - K+V scales: `0.375`, `0.5`, `0.625`, `0.75`, `0.875`
+- Micro K+V sweep:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_micro_sweep`
+  - K+V scales: `0.6875`, `0.71875`
+- Frozen V2 result:
+  - `s0p5_kv`: `63 / 64`, mean margin `5.931814594442409`, min margin
+    `-0.9922356751544044`
+  - `s0p625_kv`: `62 / 64`, mean margin `7.610320836733261`, min margin
+    `-3.597667722569625`
+  - `s0p6875_kv`: `62 / 64`, mean margin `8.457185386698411`, min margin
+    `-5.453743171778854`
+  - `s0p75_kv`: `60 / 64`, mean margin `9.10674637797445`, min margin
+    `-7.48717160149144`
+- Fresh holdout result:
+  - `s0p5_kv`: `58 / 64`, mean margin `5.003952600746849`, min margin
+    `-3.777912148347035`
+  - `s0p625_kv`: `59 / 64`, mean margin `5.281574454660446`, min margin
+    `-2.6199292050993606`
+  - `s0p6875_kv`: `60 / 64`, mean margin `5.165943132279072`, min margin
+    `-2.0714553694315327`
+  - `s0p75_kv`: `60 / 64`, mean margin `4.996703390102546`, min margin
+    `-2.0782226450213415`
+- Gained/lost versus R4.6 `s0p5_kv`:
+  - `s0p6875_kv` recovers holdout `bind-v2-016-q0` and
+    `bind-v2-016-q1` with no holdout losses.
+  - `s0p6875_kv` loses frozen `bind-v2-011-q1` and recovers no frozen
+    misses.
+- Decision:
+  - Keep `s0p5_kv` as the conservative/frozen-safe default.
+  - Register `s0p6875_kv` as the holdout-tuned secondary candidate.
+  - The fact that different scales dominate different probes means the next
+    refinement should be learned routing/gating over residual candidates, not
+    more blind scale growth.
+
 ## Phase R5: Live G0 Repair
 
 Investigate live capture/reseat numerical mismatch separately from translator
@@ -524,11 +573,11 @@ Exit gate:
 
 ## Open Queue
 
-1. Analyze the remaining `s0p5_kv` misses on the fresh holdout and frozen V2
-   set, including whether frozen-only `bind-v2-011-q0` needs a learned gate or
-   a candidate-specific fallback.
-2. If the miss analysis supports it, implement learned per-probe/per-graft
-   gating over the residual candidates instead of increasing broad corpus.
-3. Run a deeper live/open-generation reliability gate using the current
-   `s0p5_kv` translator before making production-grade claims.
+1. Implement a minimal learned gate/router over `s0p5_kv` and `s0p6875_kv`,
+   with `s0p625_kv` as an optional intermediate candidate.
+2. Validate the router against frozen V2 and fresh holdout before adding any
+   new broad corpus.
+3. Run a deeper live/open-generation reliability gate using both the
+   conservative default and any routed policy before making production-grade
+   claims.
 4. Run R5 live G0 repair in parallel only when GPU/runtime time is available.

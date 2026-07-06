@@ -1368,3 +1368,151 @@ Translation reliability track.
   fresh holdout.
 - The next reliability work should analyze remaining misses and learned gating
   before generating more broad corpus.
+
+### 2026-07-05 - R4.7 Fine Residual-Scale Refinement
+
+**Status:** complete.
+
+**Completed work:**
+
+- Fit a finer residual scale sweep around the R4.6 winner.
+- Aborted the full 15-candidate frozen binding eval after `5 / 64` probes
+  because candidate scoring was too expensive for the immediate scale question.
+- Narrowed the result-bearing eval to K+V candidates, since R4.6 already showed
+  K+V was the operating point and V-only was weak.
+- Ran a micro K+V sweep between `0.625` and `0.75`.
+- Marked the aborted full-sweep progress artifact as `aborted` to avoid future
+  confusion.
+
+**Commands:**
+
+- Fine residual sweep fit:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py fit-translator-residual-sweep --base-translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r45_selected_drop_l3 --focus-capture-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/captures_r45_hard_negative --out-root /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep --residual-scales 0.375,0.5,0.625,0.75,0.875 --kind-specs k,v,both --ridge-lambda 1e-4 --split train --backend cupy --out-prefix translator_r47_residual`
+- Fine K+V frozen sweep:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-translator-sweep --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r47_residual_fine_kv_sweep.json --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --translator-dirs /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep/translator_r47_residual_s0p375_kv,/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep/translator_r47_residual_s0p5_kv,/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep/translator_r47_residual_s0p625_kv,/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep/translator_r47_residual_s0p75_kv,/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep/translator_r47_residual_s0p875_kv --translator-labels s0p375_kv,s0p5_kv,s0p625_kv,s0p75_kv,s0p875_kv --max-probes 64 --layers all`
+- Fine K+V holdout sweep:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-translator-sweep --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2_holdout_r45.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r47_residual_fine_kv_sweep.json --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --translator-dirs /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep/translator_r47_residual_s0p375_kv,/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep/translator_r47_residual_s0p5_kv,/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep/translator_r47_residual_s0p625_kv,/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep/translator_r47_residual_s0p75_kv,/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep/translator_r47_residual_s0p875_kv --translator-labels s0p375_kv,s0p5_kv,s0p625_kv,s0p75_kv,s0p875_kv --max-probes 64 --layers all`
+- Micro residual sweep fit:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py fit-translator-residual-sweep --base-translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r45_selected_drop_l3 --focus-capture-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/captures_r45_hard_negative --out-root /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_micro_sweep --residual-scales 0.6875,0.71875 --kind-specs both --ridge-lambda 1e-4 --split train --backend cupy --out-prefix translator_r47_micro`
+- Micro K+V frozen sweep:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-translator-sweep --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r47_residual_micro_kv_sweep.json --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --sweep-manifest /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_micro_sweep/residual_sweep_manifest.json --max-probes 64 --layers all`
+- Micro K+V holdout sweep:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py eval-binding-translator-sweep --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2_holdout_r45.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r47_residual_micro_kv_sweep.json --source-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc --target-model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --sweep-manifest /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_micro_sweep/residual_sweep_manifest.json --max-probes 64 --layers all`
+- Analysis commands:
+  `analyze-binding-translator-sweep` was run for each fine and micro frozen
+  and holdout result, using R4.6 `s0p5_kv` as baseline.
+
+**Artifacts:**
+
+- Fine residual sweep manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_fine_sweep/residual_sweep_manifest.json`
+  - sha256:
+    `b996f28abdba982f3c3f7a9052a8e8c5a0ea97a90dbe2edbe8252d2479f76c01`
+- Aborted full 15-candidate frozen progress:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r47_residual_fine_sweep_progress.json`
+  - sha256:
+    `42df2f227e91d428cf33d984fc2b45df14c034ef144fc7240cae07c0aa35f601`
+  - final status: `aborted`
+- Fine K+V frozen result:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r47_residual_fine_kv_sweep.json`
+  - sha256:
+    `61831ea5100073ef2fcb9f6f1cda8540d39e8d575b8904fb7a42c621ac3969a4`
+- Fine K+V frozen analysis:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r47_residual_fine_kv_sweep_analysis.json`
+  - sha256:
+    `b3647c0ec0a6d159516ce7dbc16b27bc82bc947933b5894d3be2c22662dfb085`
+- Fine K+V holdout result:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r47_residual_fine_kv_sweep.json`
+  - sha256:
+    `515a7d23e97996058afef07f8d11735f620675b0756509f019d386cf860feae3`
+- Fine K+V holdout analysis:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r47_residual_fine_kv_sweep_analysis.json`
+  - sha256:
+    `4027ee44c14ef5a3c6c316e5827c6146e35893ca85bc4d615f0acd2a18d577ed`
+- Micro residual sweep manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_micro_sweep/residual_sweep_manifest.json`
+  - sha256:
+    `a4307c78cbe2c9ec12ac6b5b8a2c727593b2794298d561ab164b8de4cdacd924`
+- Micro K+V frozen result:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r47_residual_micro_kv_sweep.json`
+  - sha256:
+    `4422e6badabbdb062f929b2089d46344a225c1f6ec8660f41d99f8eb15a32838`
+- Micro K+V frozen analysis:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r47_residual_micro_kv_sweep_analysis.json`
+  - sha256:
+    `a6b501ea685260dc064c63f0f46e8ece90b8c89a8fd283826ace38338e474c6d`
+- Micro K+V holdout result:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r47_residual_micro_kv_sweep.json`
+  - sha256:
+    `eba26871fea1be601cb124ad7fe22fcc9ab829f877b1adf6f8010509ba803b0d`
+- Micro K+V holdout analysis:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_holdout_r47_residual_micro_kv_sweep_analysis.json`
+  - sha256:
+    `03caa2d2ef4cf2c0f08db981a8842729401d0e62c116aeea42ddbb8a8fcf217e`
+- Best holdout-tuned translator manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_micro_sweep/translator_r47_micro_s0p6875_kv/translator_manifest.json`
+  - sha256:
+    `3a006fd26b0048dc2a5f97222dbb29966ea5c89211bbe94b41b56837de26d345`
+- Best holdout-tuned translator fit metrics:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r47_residual_micro_sweep/translator_r47_micro_s0p6875_kv/fit_metrics.json`
+  - sha256:
+    `4f7c220616deadaacda2e2ea965bb0aa0f65f510d868d4ab1b7873b851c327cb`
+
+**Fine K+V frozen result:**
+
+- `s0p375_kv`: `59 / 64`, mean `4.3851131776419034`, min
+  `-0.8776266003288171`
+- `s0p5_kv`: `63 / 64`, mean `5.931814594442409`, min
+  `-0.9922356751544044`
+- `s0p625_kv`: `62 / 64`, mean `7.610320836733261`, min
+  `-3.597667722569625`
+- `s0p75_kv`: `60 / 64`, mean `9.10674637797445`, min
+  `-7.48717160149144`
+- `s0p875_kv`: `59 / 64`, mean `9.752363282677788`, min
+  `-10.311038850114649`
+
+**Fine K+V holdout result:**
+
+- `s0p375_kv`: `55 / 64`, mean `4.147918890920723`, min
+  `-4.692357955645974`
+- `s0p5_kv`: `58 / 64`, mean `5.003952600746849`, min
+  `-3.777912148347035`
+- `s0p625_kv`: `59 / 64`, mean `5.281574454660446`, min
+  `-2.6199292050993606`
+- `s0p75_kv`: `60 / 64`, mean `4.996703390102546`, min
+  `-2.0782226450213415`
+- `s0p875_kv`: `57 / 64`, mean `4.570677750903977`, min
+  `-2.460061070161892`
+
+**Micro K+V result:**
+
+- Frozen:
+  - `s0p6875_kv`: `62 / 64`, mean `8.457185386698411`, min
+    `-5.453743171778854`
+  - `s0p71875_kv`: `62 / 64`, mean `8.805098854440221`, min
+    `-6.711666834461141`
+- Fresh holdout:
+  - `s0p6875_kv`: `60 / 64`, mean `5.165943132279072`, min
+    `-2.0714553694315327`
+  - `s0p71875_kv`: `60 / 64`, mean `5.079352666077328`, min
+    `-2.2554283504994572`
+
+**Gained/lost versus R4.6 `s0p5_kv`:**
+
+- Frozen:
+  - `s0p6875_kv` loses `bind-v2-011-q1`; gains none.
+  - `s0p71875_kv` loses `bind-v2-011-q1`; gains none.
+- Fresh holdout:
+  - `s0p6875_kv` recovers `bind-v2-016-q0` and `bind-v2-016-q1`; loses none.
+  - `s0p71875_kv` recovers `bind-v2-016-q0` and `bind-v2-016-q1`; loses none.
+
+**Decision:**
+
+- Keep R4.6 `s0p5_kv` as the conservative/frozen-safe default:
+  frozen `63 / 64`, holdout `58 / 64`.
+- Register R4.7 `s0p6875_kv` as the holdout-tuned secondary candidate:
+  frozen `62 / 64`, holdout `60 / 64`.
+- Do not continue blind scale growth. Larger scales inflate mean frozen margin
+  while creating deeper misses.
+- The next refinement should be a minimal learned gate/router over
+  `s0p5_kv`, `s0p625_kv`, and `s0p6875_kv`.
