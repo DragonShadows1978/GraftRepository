@@ -1,8 +1,8 @@
 # Qwen3.5 Translation Reliability Plan
 
-**Status:** R4.4 layer-routing reliability sweep complete. Best global
-translated policy is `drop_l3_to_l3` at `46 / 64`; objective-level translator
-work is next.
+**Status:** R4.5 hard-negative prep complete. No new corpus is required yet;
+the next full translator fit should use CUDA/CuPy against existing captures and
+the frozen hard-negative plan.
 
 **House rules for this track:**
 
@@ -406,6 +406,29 @@ Current R4.4 status:
   layer pair is the best tested global policy, but the remaining misses still
   require an objective-level translator or targeted hard-negative training.
 
+Current R4.5 prep status:
+
+- Complete.
+- Promoted the best tested R4.4 global policy into a stable selected
+  translator directory:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r45_selected_drop_l3`
+  - policy: drop `3->3`
+  - artifact count: `10`
+  - frozen V2 translated score from R4.4: `46 / 64`
+- Added CPU-only hard-negative plan tooling:
+  `make-binding-hard-negative-plan`.
+- Wrote the R4.5 hard-negative plan:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_hard_negative_plan_r45_drop_l3.json`
+  - selected label: `drop_l3_to_l3`
+  - hard-negative items: `18`
+  - oracle-recoverable items: `2`
+  - oracle-hard items: `16`
+  - selected recovered baseline misses: `4`
+  - selected lost baseline successes: `2`
+- Decision: do not generate more corpus yet. The next bottleneck is objective
+  quality, not capture volume. Use CUDA/CuPy for the next fit/eval because the
+  full existing capture set is large enough that CPU training would waste time.
+
 ## Phase R5: Live G0 Repair
 
 Investigate live capture/reseat numerical mismatch separately from translator
@@ -425,6 +448,9 @@ Exit gate:
 
 ## Open Queue
 
-1. Design R4.5 around objective-level translator training or targeted
-   hard-negative training for the remaining frozen V2 translated misses.
-2. Run R5 live G0 repair in parallel only when GPU/runtime time is available.
+1. Implement R4.5 objective-level or hard-negative translator training against
+   the existing captures and
+   `binding_hard_negative_plan_r45_drop_l3.json`.
+2. Run the R4.5 fit with CUDA/CuPy, then gate it against frozen V2 before
+   considering any additional corpus.
+3. Run R5 live G0 repair in parallel only when GPU/runtime time is available.

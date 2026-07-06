@@ -1084,3 +1084,74 @@ Translation reliability track.
   does not close reliability.
 - The next reliability move should be R4.5 objective-level translator training
   or targeted hard-negative training against the remaining failure pattern.
+
+### 2026-07-05 - R4.5 Hard-Negative Prep
+
+**Status:** complete.
+
+**Completed work:**
+
+- Added `make-binding-hard-negative-plan`.
+- Promoted the best tested R4.4 global policy into a stable selected
+  translator directory.
+- Generated the R4.5 hard-negative plan from existing frozen V2 sweep
+  artifacts and probes.
+- Confirmed this step does not need new corpus or model loading.
+
+**Decision before implementation:**
+
+- Do not generate more corpus yet.
+- The remaining failure pattern is not primarily corpus volume limited:
+  R4.4 routing improved the gate and showed only `48 / 64` diagnostic oracle
+  headroom over the tested layer family.
+- The next full fit should use CUDA/CuPy because it will operate over the
+  existing multi-million-token capture set. CPU is fine for planning and
+  hard-negative artifact generation; CUDA is the right choice for the next
+  solve/eval.
+
+**Commands:**
+
+- Stable selected translator:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py filter-translator-layers --translator-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_corpus_5m --out-dir /mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r45_selected_drop_l3 --policy-name r45_selected_drop_l3 --drop-pairs 3:3`
+- Hard-negative plan:
+  `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=.:/mnt/ForgeRealm/Project-Tensor/tensor_cuda python3 scripts/qwen35_graft_translate_poc.py make-binding-hard-negative-plan --sweep-eval /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_r44_layer_sweep.json --out /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_hard_negative_plan_r45_drop_l3.json --probes /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_probes_v2.json --selected-label drop_l3_to_l3 --baseline-eval /mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_eval_v2_translated_corpus_5m.json --baseline-mode translated --desired-margin 1.0`
+
+**Artifacts:**
+
+- Selected translator manifest:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/translator_r45_selected_drop_l3/translator_manifest.json`
+  - sha256:
+    `b7dc7c2a4cd38e82e487181f8e6901dbd0e79f3142362583c6bee970673a32b0`
+  - kept pairs:
+    - `7->7`
+    - `11->15`
+    - `15->19`
+    - `19->27`
+    - `23->31`
+  - dropped pairs:
+    - `3->3`
+- R4.5 hard-negative plan:
+  `/mnt/ForgeRealm/qwen35_graft_translation_poc/gates/binding_hard_negative_plan_r45_drop_l3.json`
+  - sha256:
+    `c28e475c24a617f0e9fabfa1a766f9aeebf3a7de05083c89c83319376a801377`
+  - selected label: `drop_l3_to_l3`
+  - selected frozen V2 score: `46 / 64`
+  - hard-negative items: `18`
+  - oracle-recoverable items: `2`
+  - oracle-hard items: `16`
+  - selected recovered baseline misses:
+    - `bind-v2-002-q1`
+    - `bind-v2-019-q0`
+    - `bind-v2-022-q0`
+    - `bind-v2-026-q1`
+  - selected lost baseline successes:
+    - `bind-v2-015-q1`
+    - `bind-v2-020-q0`
+
+**Next step:**
+
+- Implement R4.5 objective-level or hard-negative translator training against
+  the existing captures and
+  `binding_hard_negative_plan_r45_drop_l3.json`.
+- Run that fit with CUDA/CuPy, then gate it against frozen V2 before deciding
+  whether any additional corpus is worth generating.

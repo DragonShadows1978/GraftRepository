@@ -2923,6 +2923,224 @@ def analyze_binding_translator_sweep(
     return analysis
 
 
+def _best_translator_summary(rows_by_label):
+    summaries = []
+    for label, rows in sorted(rows_by_label.items()):
+        margins = [float(r["gold_minus_best_decoy"]) for r in rows]
+        summaries.append({
+            "translator_label": label,
+            "probes": len(rows),
+            "positive_margins": sum(1 for r in rows if r["success"]),
+            "mean_margin": float(np.mean(margins)) if margins else None,
+            "min_margin": float(np.min(margins)) if margins else None,
+        })
+    summaries.sort(
+        key=lambda r: (
+            int(r["positive_margins"]),
+            float(r["mean_margin"] if r["mean_margin"] is not None else -1e30),
+            float(r["min_margin"] if r["min_margin"] is not None else -1e30),
+        ),
+        reverse=True,
+    )
+    return summaries[0] if summaries else None
+
+
+def _best_decoy_record(row, probe):
+    scores = row.get("candidate_scores", {}).get("decoys", [])
+    decoys = list(probe.get("decoys", []))
+    if not scores or not decoys:
+        return {
+            "index": None,
+            "text": None,
+            "score": row.get("best_decoy_score"),
+        }
+    idx = int(np.argmax(np.asarray(scores, dtype=np.float64)))
+    return {
+        "index": idx,
+        "text": decoys[idx] if idx < len(decoys) else None,
+        "score": float(scores[idx]),
+    }
+
+
+def make_binding_hard_negative_plan(
+        sweep_eval_path, out_path, *, probes_path=None, selected_label=None,
+        baseline_eval_path=None, baseline_mode="translated",
+        baseline_label="all", desired_margin=1.0):
+    """Write CPU-only hard-negative objectives from a completed sweep."""
+    sweep_eval_path = Path(sweep_eval_path).expanduser()
+    metrics = _load_json(sweep_eval_path)
+    if metrics.get("schema") != (
+            "qwen35_graft_translation_binding_translator_sweep_v1"):
+        raise ValueError(
+            "expected qwen35_graft_translation_binding_translator_sweep_v1")
+
+    rows_by_probe = {}
+    rows_by_label = {}
+    for row in metrics.get("rows", []):
+        label = row["translator_label"]
+        rows_by_probe.setdefault(row["probe_id"], {})[label] = row
+        rows_by_label.setdefault(label, []).append(row)
+    if not rows_by_probe:
+        raise ValueError("sweep eval has no rows")
+
+    selected_summary = None
+    if selected_label is None:
+        selected_summary = _best_translator_summary(rows_by_label)
+        if selected_summary is None:
+            raise ValueError("could not select a translator")
+        selected_label = selected_summary["translator_label"]
+    if selected_label not in rows_by_label:
+        raise ValueError(f"unknown selected_label: {selected_label}")
+    selected_summary = selected_summary or _best_translator_summary({
+        selected_label: rows_by_label[selected_label]})
+
+    probes_path = Path(
+        probes_path or metrics.get("probes_path") or "").expanduser()
+    if not str(probes_path):
+        raise ValueError("probes_path is required")
+    probes_spec = _load_json(probes_path)
+    probes = {p["id"]: p for p in probes_spec.get("probes", [])}
+
+    if baseline_eval_path:
+        baseline_rows = _baseline_rows_by_probe(
+            baseline_eval_path, mode=baseline_mode)
+        baseline_source = str(Path(baseline_eval_path).expanduser())
+    else:
+        baseline_rows = {
+            probe_id: by_label[baseline_label]
+            for probe_id, by_label in rows_by_probe.items()
+            if baseline_label in by_label
+        }
+        baseline_source = f"sweep:{baseline_label}"
+
+    items = []
+    all_diagnostics = []
+    selected_lost_baseline = []
+    selected_recovered_baseline = []
+    oracle_recoverable = []
+    oracle_hard = []
+    for probe_id in sorted(rows_by_probe):
+        by_label = rows_by_probe[probe_id]
+        if selected_label not in by_label:
+            continue
+        selected = by_label[selected_label]
+        probe = probes.get(probe_id, {"id": probe_id, "decoys": []})
+        oracle_label, oracle_row = sorted(
+            by_label.items(),
+            key=lambda kv: float(kv[1]["gold_minus_best_decoy"]),
+            reverse=True,
+        )[0]
+        baseline = baseline_rows.get(probe_id)
+        if baseline is not None:
+            if not baseline["success"] and selected["success"]:
+                selected_recovered_baseline.append(probe_id)
+            if baseline["success"] and not selected["success"]:
+                selected_lost_baseline.append(probe_id)
+
+        diagnostic = {
+            "probe_id": probe_id,
+            "binding_id": probe.get("binding_id"),
+            "query_template": probe.get("query_template"),
+            "selected_success": bool(selected["success"]),
+            "selected_margin": float(selected["gold_minus_best_decoy"]),
+            "baseline_success": (
+                None if baseline is None else bool(baseline["success"])),
+            "baseline_margin": (
+                None if baseline is None
+                else float(baseline["gold_minus_best_decoy"])),
+            "oracle_label": oracle_label,
+            "oracle_success": bool(oracle_row["success"]),
+            "oracle_margin": float(oracle_row["gold_minus_best_decoy"]),
+        }
+        all_diagnostics.append(diagnostic)
+        if selected["success"]:
+            continue
+
+        if oracle_row["success"]:
+            priority = "oracle_recoverable"
+            oracle_recoverable.append(probe_id)
+        else:
+            priority = "hard_miss"
+            oracle_hard.append(probe_id)
+        best_decoy = _best_decoy_record(selected, probe)
+        items.append({
+            "probe_id": probe_id,
+            "binding_id": probe.get("binding_id"),
+            "query_template": probe.get("query_template"),
+            "surface_class": probe.get("surface_class"),
+            "priority": priority,
+            "fact": probe.get("fact"),
+            "question": probe.get("question"),
+            "gold": probe.get("gold"),
+            "selected_label": selected_label,
+            "selected_margin": float(selected["gold_minus_best_decoy"]),
+            "selected_gold_score": float(selected["gold_score"]),
+            "selected_best_decoy_score": float(selected["best_decoy_score"]),
+            "selected_best_decoy": best_decoy,
+            "baseline": (
+                None if baseline is None else {
+                    "success": bool(baseline["success"]),
+                    "margin": float(baseline["gold_minus_best_decoy"]),
+                }),
+            "oracle": {
+                "label": oracle_label,
+                "success": bool(oracle_row["success"]),
+                "margin": float(oracle_row["gold_minus_best_decoy"]),
+            },
+            "objective": {
+                "type": "gold_vs_best_decoy_margin",
+                "desired_margin": float(desired_margin),
+                "positive_text": probe.get("gold"),
+                "negative_text": best_decoy["text"],
+                "note": (
+                    "increase translated-graft gold candidate logprob over "
+                    "the selected policy's best decoy"),
+            },
+        })
+
+    selected_margins = [
+        float(row["gold_minus_best_decoy"])
+        for row in rows_by_label[selected_label]
+    ]
+    selected_successes = sum(
+        1 for row in rows_by_label[selected_label] if row["success"])
+    plan = {
+        "schema": "qwen35_graft_translation_hard_negative_plan_v1",
+        "sweep_eval_path": str(sweep_eval_path),
+        "sweep_eval_sha256": _sha256(sweep_eval_path),
+        "probes_path": str(probes_path),
+        "probes_sha256": _sha256(probes_path),
+        "baseline_source": baseline_source,
+        "baseline_eval_sha256": (
+            _sha256(Path(baseline_eval_path).expanduser())
+            if baseline_eval_path else None),
+        "selected_label": selected_label,
+        "selected_summary": {
+            "probes": len(rows_by_label[selected_label]),
+            "positive_margins": selected_successes,
+            "mean_margin": (
+                float(np.mean(selected_margins)) if selected_margins else None),
+            "min_margin": (
+                float(np.min(selected_margins)) if selected_margins else None),
+        },
+        "summary": {
+            "hard_negative_items": len(items),
+            "oracle_recoverable_items": len(oracle_recoverable),
+            "oracle_hard_items": len(oracle_hard),
+            "selected_recovered_baseline_misses": selected_recovered_baseline,
+            "selected_lost_baseline_successes": selected_lost_baseline,
+        },
+        "items": items,
+        "per_probe_diagnostics": all_diagnostics,
+    }
+    out = Path(out_path).expanduser()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w") as fh:
+        json.dump(plan, fh, indent=2)
+        fh.write("\n")
+    return plan
+
+
 def _tensor_to_numpy(t):
     try:
         return t.float().numpy()
@@ -3911,6 +4129,23 @@ def main(argv=None):
                      help="optional baseline binding eval json")
     bsa.add_argument("--baseline-mode", default="translated",
                      help="baseline eval mode or sweep label")
+    hn = sub.add_parser(
+        "make-binding-hard-negative-plan",
+        help="write hard-negative objectives from an existing sweep eval")
+    hn.add_argument("--sweep-eval", required=True,
+                    help="binding translator sweep eval json")
+    hn.add_argument("--out", required=True, help="output plan json")
+    hn.add_argument("--probes", default=None,
+                    help="defaults to probes_path recorded in sweep eval")
+    hn.add_argument("--selected-label", default=None,
+                    help="defaults to best global translator in the sweep")
+    hn.add_argument("--baseline-eval", default=None,
+                    help="optional baseline binding eval json")
+    hn.add_argument("--baseline-mode", default="translated",
+                    help="baseline eval mode when --baseline-eval is used")
+    hn.add_argument("--baseline-label", default="all",
+                    help="sweep label used as baseline without --baseline-eval")
+    hn.add_argument("--desired-margin", type=float, default=1.0)
     pn = sub.add_parser(
         "pipeline-next",
         help="run one next missing PoC stage for cron/Claude orchestration")
@@ -4355,6 +4590,25 @@ def main(argv=None):
             "baseline_summary": analysis["baseline_summary"],
             "best_global": analysis["best_global"],
             "oracle": analysis["oracle"],
+        }, indent=2))
+        return 0
+    if args.cmd == "make-binding-hard-negative-plan":
+        plan = make_binding_hard_negative_plan(
+            args.sweep_eval,
+            args.out,
+            probes_path=args.probes,
+            selected_label=args.selected_label,
+            baseline_eval_path=args.baseline_eval,
+            baseline_mode=args.baseline_mode,
+            baseline_label=args.baseline_label,
+            desired_margin=args.desired_margin,
+        )
+        print(json.dumps({
+            "status": "ok",
+            "out": str(Path(args.out).expanduser()),
+            "selected_label": plan["selected_label"],
+            "selected_summary": plan["selected_summary"],
+            "summary": plan["summary"],
         }, indent=2))
         return 0
     if args.cmd == "pipeline-next":

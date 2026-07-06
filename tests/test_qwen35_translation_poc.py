@@ -25,6 +25,7 @@ from core.qwen35_translation_poc import (
     make_binding_probe_set,
     make_binding_probe_set_v2,
     analyze_binding_translator_sweep,
+    make_binding_hard_negative_plan,
     refresh_capture_manifest,
     run_pipeline_next,
     validate_unquantized_source,
@@ -1478,6 +1479,107 @@ def test_analyze_binding_translator_sweep_reports_global_and_oracle(
     assert analysis["oracle"]["lost_baseline_successes"] == []
     assert analysis["oracle_per_probe"][1]["best_translator_label"] == (
         "single_l7_to_l7")
+
+
+def test_make_binding_hard_negative_plan_records_selected_misses(tmp_path):
+    probes = {
+        "schema": "qwen35_graft_translation_binding_probes_v2",
+        "count": 3,
+        "probes": [
+            {
+                "id": "bind-000",
+                "binding_id": "bind-000",
+                "query_template": 0,
+                "surface_class": "opaque-code-3x3",
+                "fact": "Handle h00 has code aaa-bbb-ccc.",
+                "question": "Which code belongs to h00?\nAnswer:",
+                "gold": " aaa-bbb-ccc",
+                "decoys": [" ddd-eee-fff", " ggg-hhh-iii"],
+            },
+            {
+                "id": "bind-001",
+                "binding_id": "bind-001",
+                "query_template": 0,
+                "surface_class": "opaque-code-3x3",
+                "fact": "Handle h01 has code jjj-kkk-lll.",
+                "question": "Which code belongs to h01?\nAnswer:",
+                "gold": " jjj-kkk-lll",
+                "decoys": [" mmm-nnn-ooo", " ppp-qqq-rrr"],
+            },
+            {
+                "id": "bind-002",
+                "binding_id": "bind-002",
+                "query_template": 0,
+                "surface_class": "opaque-code-3x3",
+                "fact": "Handle h02 has code sss-ttt-uuu.",
+                "question": "Which code belongs to h02?\nAnswer:",
+                "gold": " sss-ttt-uuu",
+                "decoys": [" vvv-www-xxx", " yyy-zzz-000"],
+            },
+        ],
+    }
+    probes_path = tmp_path / "probes.json"
+    probes_path.write_text(json.dumps(probes))
+    rows = []
+    for probe_id, all_margin, selected_margin, oracle_margin in (
+            ("bind-000", 1.0, 2.0, 2.0),
+            ("bind-001", -1.0, -0.5, 1.5),
+            ("bind-002", -0.25, -0.1, -0.05),
+    ):
+        for label, margin, decoys in (
+                ("all", all_margin, [-1.0, 0.0]),
+                ("selected", selected_margin, [-0.2, 0.0]),
+                ("oracle", oracle_margin, [-0.4, -0.1])):
+            rows.append({
+                "probe_id": probe_id,
+                "mode": "translated",
+                "translator_label": label,
+                "translator_dir": f"/tmp/{label}",
+                "gold_score": margin,
+                "best_decoy_score": 0.0,
+                "gold_minus_best_decoy": margin,
+                "success": margin > 0,
+                "candidate_scores": {
+                    "gold": margin,
+                    "decoys": decoys,
+                },
+            })
+    sweep_eval = {
+        "schema": "qwen35_graft_translation_binding_translator_sweep_v1",
+        "probes_path": str(probes_path),
+        "candidate_count": 3,
+        "probe_count": 3,
+        "summaries": [],
+        "rows": rows,
+    }
+    sweep_path = tmp_path / "sweep_eval.json"
+    sweep_path.write_text(json.dumps(sweep_eval))
+
+    plan = make_binding_hard_negative_plan(
+        sweep_path,
+        tmp_path / "hard_negative_plan.json",
+        selected_label="selected",
+        baseline_label="all",
+    )
+
+    assert plan["schema"] == (
+        "qwen35_graft_translation_hard_negative_plan_v1")
+    assert plan["selected_label"] == "selected"
+    assert plan["selected_summary"]["positive_margins"] == 1
+    assert plan["summary"]["hard_negative_items"] == 2
+    assert plan["summary"]["oracle_recoverable_items"] == 1
+    assert plan["summary"]["oracle_hard_items"] == 1
+    assert [item["probe_id"] for item in plan["items"]] == [
+        "bind-001",
+        "bind-002",
+    ]
+    assert plan["items"][0]["priority"] == "oracle_recoverable"
+    assert plan["items"][0]["selected_best_decoy"]["text"] == (
+        " ppp-qqq-rrr")
+    assert plan["items"][1]["priority"] == "hard_miss"
+    assert plan["items"][1]["objective"]["type"] == (
+        "gold_vs_best_decoy_margin")
+    assert (tmp_path / "hard_negative_plan.json").is_file()
 
 
 def test_translate_harvested_capture_applies_artifacts_to_target_shape(tmp_path):
