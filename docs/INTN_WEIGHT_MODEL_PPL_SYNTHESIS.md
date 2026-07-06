@@ -36,3 +36,15 @@ So the first answer is not an OOM story. It is a quality story. INT3 and INT2
 fit in memory on Qwen3.5-2B, but INT3 already has a major PPL penalty and INT2
 is functionally unusable on this gate. The next step is to broaden the gate:
 more windows, then the 9B target if the 2B results remain stable.
+
+The broader 2B run confirmed the direction with 6138 scored tokens per setting.
+INT4 sat at about 12.41 PPL across standard and APA refine levels. INT3 sat at
+about 28.2-28.3 PPL, so its quality loss is not a single-window artifact. INT2
+remained collapsed, around 61k-63k PPL. The APA refine sweep again did not
+repair the damage from low-bit weights.
+
+This closes the first real 2B answer: the tested low-bit weights do not hit an
+OOM wall on Qwen3.5-2B. INT3 and INT2 are memory-feasible, but INT3 is already
+too damaging for a serious operating point on this affine quantization path,
+and INT2 is unusable. The next unresolved axis is whether Qwen3.5-9B behaves
+similarly or exposes a different load/OOM boundary.

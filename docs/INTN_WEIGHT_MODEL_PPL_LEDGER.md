@@ -145,3 +145,39 @@ Interpretation:
 - APA refine variation does not rescue INT3 or INT2 in this first 2B gate.
 - This is a small 255-token scored gate; it is real model evidence, but it
   should be expanded before making final claims.
+
+## 2026-07-06 16:13-16:28 EDT
+
+Action: Ran the broader Qwen3.5-2B model PPL sweep.
+
+Protocol:
+- Real Qwen3.5-2B TensorCUDA model.
+- Real WikiText-2 raw cached dataset.
+- Window: 2048 tokens.
+- Scored tail: 1024 tokens.
+- Windows: 6.
+- Actual scored tokens: 6138 per setting.
+- Settings: standard, APA r0.15, APA r0.10, APA r0.05.
+
+Command:
+- `env PYTHONUNBUFFERED=1 PYTHONPATH=/mnt/ForgeRealm/GraftRepository:/mnt/ForgeRealm/Project-Tensor/tensor_cuda PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/qwen35_intn_weight_ppl_sweep.py --bits 4,3,2 --window 2048 --scored 1024 --n-windows 6 --step 64 --refines 0.15,0.10,0.05`
+
+Artifact:
+- `artifacts/intn_weight_ppl/qwen35_intn_ppl_20260706_161327.json`
+
+PPL results:
+
+| Bits | Standard | APA r0.15 | APA r0.10 | APA r0.05 | Load MiB | Max eval MiB |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 4 | 12.4105 | 12.4186 | 12.4154 | 12.4199 | 1433 | 2057 |
+| 3 | 28.2106 | 28.2699 | 28.3008 | 28.3060 | 1225 | 1961 |
+| 2 | 60932.5963 | 61630.3028 | 62171.6678 | 62615.3657 | 1065 | 1641 |
+
+Interpretation:
+- The broader gate confirms the small-gate direction.
+- INT3 remains a major quality loss, about 2.27x the INT4 standard PPL on this
+  protocol.
+- INT2 remains collapsed, now around 61k-63k PPL over 6138 scored tokens.
+- APA refine changes do not repair the weight quantization damage.
+- There was no OOM layer for Qwen3.5-2B at any tested bit width.
+- Final post-run GPU memory returned to baseline: 249 MiB used of 12282 MiB.
