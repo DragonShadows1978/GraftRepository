@@ -2,9 +2,8 @@
 """GPT-OSS TensorCUDA selected-expert MoE diagnostic smoke.
 
 This runs real GPT-OSS tensors through embedding, attention, post-attention
-norm, and the routed MoE for a tiny token batch. The expert path uses exact
-MXFP4 dequantization for selected experts only, so this is a correctness bridge,
-not the final packed MXFP4 production path.
+norm, and the routed MoE for a tiny token batch. It can run either the exact
+selected-expert dequant bridge or the packed MXFP4 TensorCUDA expert kernel.
 """
 
 from __future__ import annotations
@@ -55,6 +54,12 @@ def parse_args() -> argparse.Namespace:
         default=1,
         help="tiny by default because selected-expert dequant is diagnostic only",
     )
+    parser.add_argument(
+        "--expert-mode",
+        choices=("dequant", "packed_mxfp4"),
+        default="dequant",
+        help="selected-expert exact dequant bridge or packed MXFP4 kernel path",
+    )
     parser.add_argument("--output", type=Path, default=None)
     return parser.parse_args()
 
@@ -90,6 +95,17 @@ def tensor_shape(t) -> list[int]:
     return [int(x) for x in t.shape]
 
 
+def tensor_stats(t) -> dict[str, float]:
+    arr = t.float().numpy().astype(np.float32, copy=False)
+    return {
+        "min": float(arr.min()),
+        "max": float(arr.max()),
+        "mean": float(arr.mean()),
+        "std": float(arr.std()),
+        "sum": float(arr.sum()),
+    }
+
+
 def main() -> int:
     args = parse_args()
     out = output_path(args.output)
@@ -100,9 +116,10 @@ def main() -> int:
         "layer": int(args.layer),
         "prompt": args.prompt,
         "max_tokens": int(args.max_tokens),
+        "expert_mode": args.expert_mode,
         "note": (
-            "attention plus selected-expert exact MXFP4 MoE diagnostic; "
-            "no lm_head, no generation, not packed-kernel viability evidence"
+            "attention plus selected-expert GPT-OSS MoE diagnostic; "
+            "no lm_head and no generation"
         ),
         "gpu_before": nvidia_smi(),
     }
@@ -122,7 +139,9 @@ def main() -> int:
 
         with tc.no_grad():
             embed = GptOssRowEmbedding(where)
-            block = GptOssDiagnosticBlockTC.from_safetensors(cfg, where, args.layer)
+            block = GptOssDiagnosticBlockTC.from_safetensors(
+                cfg, where, args.layer, expert_mode=args.expert_mode
+            )
             h = embed(ids)
             cos, sin = gpt_oss_yarn_rope_tables(cfg, ids.shape[1])
             h2, kv, route_info = block(h, cos, sin)
@@ -136,6 +155,7 @@ def main() -> int:
                 "input_ids_shape": list(ids.shape),
                 "hidden_shape": tensor_shape(h),
                 "output_shape": tensor_shape(h2),
+                "output_stats": tensor_stats(h2),
                 "kv_shapes": [tensor_shape(kv[0]), tensor_shape(kv[1])],
                 "layer_type": cfg.layer_types[int(args.layer)],
                 "route_info": route_info,
@@ -149,6 +169,7 @@ def main() -> int:
             json.dumps(
                 {
                     "status": payload["status"],
+                    "expert_mode": payload["expert_mode"],
                     "output_shape": payload["output_shape"],
                     "unique_experts": route_info["unique_experts"],
                     "gpu_after": payload["gpu_after"],

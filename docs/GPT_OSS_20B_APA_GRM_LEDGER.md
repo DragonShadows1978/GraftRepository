@@ -559,3 +559,123 @@ Pending:
 - Add lm_head/output path and then run short behavior/PPL checks.
 - Only after the standard path is validated, attach APA/GRM and run the real
   context/recall tests.
+
+Action: Added the Project-Tensor packed MXFP4 expert linear kernel and wired it
+into the GPT-OSS MoE smoke as an explicit expert mode.
+
+Project-Tensor branch:
+- `codex/gpt-oss-mxfp4-kernel`
+
+Project-Tensor commit:
+- `e4d39d1 feat: add gpt oss mxfp4 linear kernel`
+
+Project-Tensor implementation:
+- Added `tc.mxfp4_linear(x, blocks, scales)`.
+- Kernel input:
+  - `x = (..., K)` fp32/fp16/bf16
+  - `blocks = [out_features, groups, 16]` uint8
+  - `scales = [out_features, groups]` uint8
+  - `K = groups * 32`
+- Dequant rule:
+  - GPT-OSS FP4 codebook
+  - low/high nibbles
+  - E8M0 scale exponent `scale = 2 ** (uint8_scale - 127)`
+- Added a decode-shaped GEMV path and a tiled GEMM fallback.
+- The op is frozen/inference-only; backward intentionally throws.
+
+Project-Tensor verification:
+- Build command:
+  `./build.sh 89`
+- Build result:
+  succeeded with CUDA toolkit `12.6, V12.6.85`
+- Test command:
+  `PYTHONPATH=/mnt/ForgeRealm/Project-Tensor/tensor_cuda PYTEST_ADDOPTS='-p no:cacheprovider' pytest tensor_cuda/tests/test_mxfp4_linear.py tensor_cuda/tests/test_intn_linear.py -q`
+- Test result:
+  `13 passed in 0.79s`
+- GPU returned to baseline:
+  `NVIDIA GeForce RTX 4070 SUPER, 275, 12282`
+
+GraftRepository changes:
+- `GptOssMoEDiagnosticTC` now supports:
+  - `expert_mode = "dequant"`
+  - `expert_mode = "packed_mxfp4"`
+- `scripts/gpt_oss20b_moe_diag_smoke.py` now accepts:
+  - `--expert-mode dequant`
+  - `--expert-mode packed_mxfp4`
+- Smoke artifacts now include `output_stats` for compact A/B comparison.
+
+GraftRepository verification:
+- Compile command:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile core/gpt_oss20b_tc.py scripts/gpt_oss20b_moe_diag_smoke.py tests/test_gpt_oss20b_scaffold.py`
+- Test command:
+  `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_scaffold.py -q`
+- Test result:
+  `7 passed, 2 warnings in 0.51s`
+
+Refactor regression smoke:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_moe_diag_smoke.py --layer 0 --max-tokens 1 --expert-mode dequant`
+- Artifact:
+  `artifacts/gpt_oss_20b/moe_diag_smoke_20260706_191540.json`
+- Result:
+  - `status = ok`
+  - `expert_mode = dequant`
+  - `layer_type = sliding_attention`
+  - `output_shape = [1, 1, 2880]`
+  - `unique_experts = [13, 17, 21, 29]`
+  - `wall_seconds = 3.368`
+  - `output_stats.sum = 24.8995056152`
+  - GPU before/after inside script: `275 MiB -> 497 MiB`
+
+Packed MXFP4 layer 0 smoke:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_moe_diag_smoke.py --layer 0 --max-tokens 1 --expert-mode packed_mxfp4`
+- Artifact:
+  `artifacts/gpt_oss_20b/moe_diag_smoke_20260706_191558.json`
+- Result:
+  - `status = ok`
+  - `expert_mode = packed_mxfp4`
+  - `layer_type = sliding_attention`
+  - `output_shape = [1, 1, 2880]`
+  - `unique_experts = [13, 17, 21, 29]`
+  - `top_indices = [[13, 21, 17, 29]]`
+  - `wall_seconds = 2.312`
+  - `output_stats.sum = 24.8838806152`
+  - GPU before/after inside script: `275 MiB -> 497 MiB`
+
+Packed MXFP4 layer 1 smoke:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_moe_diag_smoke.py --layer 1 --max-tokens 1 --expert-mode packed_mxfp4`
+- Artifact:
+  `artifacts/gpt_oss_20b/moe_diag_smoke_20260706_191614.json`
+- Result:
+  - `status = ok`
+  - `expert_mode = packed_mxfp4`
+  - `layer_type = full_attention`
+  - `output_shape = [1, 1, 2880]`
+  - `unique_experts = [12, 15, 25, 26]`
+  - `top_indices = [[12, 26, 15, 25]]`
+  - `wall_seconds = 2.367`
+  - `output_stats.sum = -134.4730834961`
+  - GPU before/after inside script: `275 MiB -> 497 MiB`
+
+Packed-vs-dequant interpretation:
+- Layer 0 used the same router selection in both modes.
+- Output stats are very close but not bit-identical. This is expected because
+  the older diagnostic path dequantizes on CPU and then casts the dequantized
+  matrix to BF16 before TensorCUDA matmul, while the packed kernel decodes FP4
+  values inside the kernel and accumulates directly.
+- The packed path is the first path that avoids materializing selected expert
+  `[K, N]` dequantized matrices.
+
+Remaining limitation:
+- The smoke still uploads selected expert packed blocks from CPU for the tiny
+  diagnostic call. A full loader must make expert blocks resident in packed
+  form and dispatch selected experts without CPU re-upload.
+- This is still not a full model loader, not lm_head behavior, not PPL, and not
+  APA/GRM evidence.
+
+Pending:
+- Build the resident packed-expert loader path.
+- Add lm_head/output path and short generation/PPL checks.
+- Then attach APA/GRM and run real context/recall tests.

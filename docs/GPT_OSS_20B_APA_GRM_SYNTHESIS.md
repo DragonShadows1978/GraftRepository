@@ -134,3 +134,25 @@ hard requirement is native packed MXFP4 expert GEMV/GEMM; without that, GPT-OSS
 cannot keep its expert body packed end to end on a 12GB card. Only after that
 standard path exists should lm_head behavior, PPL, APA, GRM, and real context
 extension tests be trusted.
+
+That packed MXFP4 kernel now exists in Project-Tensor on
+`codex/gpt-oss-mxfp4-kernel` at commit `e4d39d1`. It exposes
+`tc.mxfp4_linear(x, blocks, scales)` for GPT-OSS expert tensors shaped
+`[out_features, groups, 16]` with uint8 E8M0 scales. The Project-Tensor build
+passed, and the new MXFP4 tests plus the existing INT2/INT3 regression tests
+passed 13/13.
+
+GraftRepository now wires that kernel into the GPT-OSS MoE smoke through an
+explicit `--expert-mode packed_mxfp4` path. The old exact-dequant bridge still
+passes, which matters because it remains the conservative A/B reference. On the
+same layer 0 one-token prompt, dequant mode took about `3.37s`; packed MXFP4
+took about `2.31s`, routed to the same experts `[13, 17, 21, 29]`, and produced
+very close output stats. Layer 1 packed mode also passed, routing to
+`[12, 15, 25, 26]`.
+
+This is a meaningful gate: selected experts can now be consumed without
+materializing their dense dequantized matrices. It is still not the finished
+loader. The smoke harness uploads selected expert packed blocks from CPU for a
+tiny diagnostic call. The next production step is a resident packed-expert
+loader/dispatcher so the full expert body can live packed on GPU/host tiers
+without per-call CPU upload or BF16 expansion.

@@ -537,9 +537,18 @@ class GptOssMoEDiagnosticTC:
     the required production route.
     """
 
-    def __init__(self, cfg: GptOss20BConfig, layer_idx: int):
+    def __init__(
+        self,
+        cfg: GptOss20BConfig,
+        layer_idx: int,
+        *,
+        expert_mode: str = "dequant",
+    ):
+        if expert_mode not in {"dequant", "packed_mxfp4"}:
+            raise ValueError(f"unsupported GPT-OSS expert_mode {expert_mode!r}")
         self.cfg = cfg
         self.layer_idx = int(layer_idx)
+        self.expert_mode = expert_mode
         self.router_weight = None
         self.router_bias = None
         self.gate_up_blocks = None
@@ -555,8 +564,14 @@ class GptOssMoEDiagnosticTC:
         cfg: GptOss20BConfig,
         where: dict[str, str],
         layer_idx: int,
+        *,
+        expert_mode: str = "dequant",
     ) -> "GptOssMoEDiagnosticTC":
-        obj = cls(cfg, layer_idx)
+        if expert_mode == "packed_mxfp4" and not hasattr(tc, "mxfp4_linear"):
+            raise RuntimeError(
+                "packed_mxfp4 expert mode requires Project-Tensor tc.mxfp4_linear"
+            )
+        obj = cls(cfg, layer_idx, expert_mode=expert_mode)
         p = f"model.layers.{layer_idx}.mlp"
         obj.router_weight = tc.tensor(
             load_tensor_np(where, f"{p}.router.weight"), dtype="float32"
@@ -604,11 +619,50 @@ class GptOssMoEDiagnosticTC:
             np.ascontiguousarray(self.down_bias[e].astype(np.float32, copy=False)),
         )
 
+    def _selected_expert_packed(self, expert_idx: int):
+        e = int(expert_idx)
+        return (
+            tc.tensor(np.ascontiguousarray(self.gate_up_blocks[e]), dtype="uint8"),
+            tc.tensor(np.ascontiguousarray(self.gate_up_scales[e]), dtype="uint8"),
+            np.ascontiguousarray(self.gate_up_bias[e].astype(np.float32, copy=False)),
+            tc.tensor(np.ascontiguousarray(self.down_blocks[e]), dtype="uint8"),
+            tc.tensor(np.ascontiguousarray(self.down_scales[e]), dtype="uint8"),
+            np.ascontiguousarray(self.down_bias[e].astype(np.float32, copy=False)),
+        )
+
     @staticmethod
     def _bias_add(y, bias_np: np.ndarray):
         bias = tc.tensor(bias_np, dtype="float32")
         bias = bias if bias.dtype == y.dtype else bias.astype(y.dtype)
         return y + bias
+
+    def _expert_dequant(self, xt, expert_idx: int, weight: float):
+        dt = BlockTC.COMPUTE_DTYPE
+        gate_w, gate_b, down_w, down_b = self._selected_expert(expert_idx)
+        gate_tc = tc.tensor(np.ascontiguousarray(gate_w), dtype="float32").astype(dt)
+        gate_up = self._bias_add(tc.matmul(xt, gate_tc), gate_b)
+        act = gpt_oss_expert_activation_tc(gate_up)
+        down_tc = tc.tensor(np.ascontiguousarray(down_w), dtype="float32").astype(dt)
+        y = self._bias_add(tc.matmul(act, down_tc), down_b) * weight
+        del gate_w, gate_b, down_w, down_b, gate_tc, gate_up, act, down_tc
+        return y
+
+    def _expert_packed_mxfp4(self, xt, expert_idx: int, weight: float):
+        (
+            gate_blocks,
+            gate_scales,
+            gate_b,
+            down_blocks,
+            down_scales,
+            down_b,
+        ) = self._selected_expert_packed(expert_idx)
+        gate_up = self._bias_add(tc.mxfp4_linear(xt, gate_blocks, gate_scales), gate_b)
+        act = gpt_oss_expert_activation_tc(gate_up)
+        y = self._bias_add(tc.mxfp4_linear(act, down_blocks, down_scales), down_b)
+        y = y * weight
+        del gate_blocks, gate_scales, gate_b, down_blocks, down_scales, down_b
+        del gate_up, act
+        return y
 
     def __call__(self, x):
         B, L, H = x.shape
@@ -617,7 +671,6 @@ class GptOssMoEDiagnosticTC:
         topw_np = topw.numpy().astype(np.float32)
         topi_np = topi.numpy().astype(np.int64)
 
-        dt = BlockTC.COMPUTE_DTYPE
         routed = []
         for t in range(B * L):
             xt = x_flat.slice(0, t, 1)
@@ -625,19 +678,18 @@ class GptOssMoEDiagnosticTC:
             for slot in range(self.cfg.num_experts_per_tok):
                 e = int(topi_np[t, slot])
                 w = float(topw_np[t, slot])
-                gate_w, gate_b, down_w, down_b = self._selected_expert(e)
-                gate_tc = tc.tensor(np.ascontiguousarray(gate_w), dtype="float32").astype(dt)
-                gate_up = self._bias_add(tc.matmul(xt, gate_tc), gate_b)
-                act = gpt_oss_expert_activation_tc(gate_up)
-                down_tc = tc.tensor(np.ascontiguousarray(down_w), dtype="float32").astype(dt)
-                y = self._bias_add(tc.matmul(act, down_tc), down_b) * w
+                if self.expert_mode == "packed_mxfp4":
+                    y = self._expert_packed_mxfp4(xt, e, w)
+                else:
+                    y = self._expert_dequant(xt, e, w)
                 acc = y if acc is None else acc + y
-                del gate_w, gate_b, down_w, down_b, gate_tc, gate_up, act, down_tc, y
+                del y
                 if hasattr(tc, "empty_cache"):
                     tc.empty_cache()
             routed.append(acc)
         out = tc.cat(routed, dim=0).reshape([B, L, H])
         route_info = {
+            "expert_mode": self.expert_mode,
             "top_indices": topi_np.tolist(),
             "top_weights": topw_np.tolist(),
             "unique_experts": sorted({int(x) for x in topi_np.reshape(-1)}),
@@ -648,13 +700,20 @@ class GptOssMoEDiagnosticTC:
 class GptOssDiagnosticBlockTC:
     """One GPT-OSS decoder block with attention plus selected-expert MoE."""
 
-    def __init__(self, cfg: GptOss20BConfig, layer_idx: int):
+    def __init__(
+        self,
+        cfg: GptOss20BConfig,
+        layer_idx: int,
+        *,
+        expert_mode: str = "dequant",
+    ):
         self.cfg = cfg
         self.layer_idx = int(layer_idx)
+        self.expert_mode = expert_mode
         self.input_layernorm = RMSNormTC(cfg.hidden_dim, cfg.rms_norm_eps)
         self.post_attention_layernorm = RMSNormTC(cfg.hidden_dim, cfg.rms_norm_eps)
         self.self_attn = GptOssAttentionTC(cfg, layer_idx)
-        self.mlp = GptOssMoEDiagnosticTC(cfg, layer_idx)
+        self.mlp = GptOssMoEDiagnosticTC(cfg, layer_idx, expert_mode=expert_mode)
 
     @classmethod
     def from_safetensors(
@@ -662,8 +721,10 @@ class GptOssDiagnosticBlockTC:
         cfg: GptOss20BConfig,
         where: dict[str, str],
         layer_idx: int,
+        *,
+        expert_mode: str = "dequant",
     ) -> "GptOssDiagnosticBlockTC":
-        obj = cls(cfg, layer_idx)
+        obj = cls(cfg, layer_idx, expert_mode=expert_mode)
         p = f"model.layers.{layer_idx}"
         obj.input_layernorm.weight = tc.tensor(
             load_tensor_np(where, f"{p}.input_layernorm.weight"), dtype="float32"
@@ -672,7 +733,9 @@ class GptOssDiagnosticBlockTC:
             load_tensor_np(where, f"{p}.post_attention_layernorm.weight"), dtype="float32"
         )
         obj.self_attn = GptOssAttentionTC.from_safetensors(cfg, where, layer_idx)
-        obj.mlp = GptOssMoEDiagnosticTC.from_safetensors(cfg, where, layer_idx)
+        obj.mlp = GptOssMoEDiagnosticTC.from_safetensors(
+            cfg, where, layer_idx, expert_mode=expert_mode
+        )
         return obj
 
     def __call__(self, x, cos, sin, position_offset: int = 0, kv_cache=None):
