@@ -1016,3 +1016,68 @@ Pending:
 - Add Harmony-formatted prompt tests.
 - Add KV-cache/reuse decode instead of repeated full streamed forwards.
 - Run real PPL and recall/context tests after APA/GRM attachment.
+
+Action: Added and ran Harmony-formatted streamed prompt smoke.
+
+Script change:
+- `scripts/gpt_oss20b_stream_forward_smoke.py` now accepts
+  `--use-chat-template`.
+- The artifact stores:
+  - original user prompt
+  - rendered chat-template prompt
+  - raw token count
+  - whether the input was truncated by `--max-tokens`
+
+Compile check:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_stream_forward_smoke.py`
+- Result: passed.
+
+First Harmony smoke command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --prompt 'What is the capital of France? Answer with one word.' --use-chat-template --max-tokens 64 --expert-mode resident_packed_mxfp4 --top-k 8`
+
+First Harmony smoke artifact:
+- `artifacts/gpt_oss_20b/stream_forward_20260706_193944.json`
+
+First Harmony smoke result:
+- `status = ok`
+- rendered prompt length was `79` tokens
+- input was capped to `64` tokens
+- top tokens were conversational text starts:
+  - rank 0: `We`
+  - rank 1: `Hey`
+  - rank 2: `You`
+- Interpretation:
+  this was a bad behavior smoke because the cap truncated the rendered Harmony
+  prompt before the full assistant prefix was present.
+
+Second Harmony smoke command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --prompt 'What is the capital of France? Answer with one word.' --use-chat-template --max-tokens 128 --expert-mode resident_packed_mxfp4 --top-k 8`
+
+Second Harmony smoke artifact:
+- `artifacts/gpt_oss_20b/stream_forward_20260706_194041.json`
+
+Second Harmony smoke result:
+- `status = ok`
+- `input_ids_shape = [1, 79]`
+- full rendered prompt fit under the cap
+- `wall_seconds = 20.041`
+- top tokens:
+  - rank 0: token `200005`, text `<|channel|>`, logit `42.5`
+  - rank 1: token `220`, text space, logit `16.875`
+  - rank 2: token `200003`, text `<|constrain|>`, logit `15.8125`
+- post-run GPU returned to baseline:
+  `NVIDIA GeForce RTX 4070 SUPER, 275, 12282`
+
+Interpretation:
+- The streamed TensorCUDA path can run a Harmony-rendered prompt through all 24
+  layers.
+- With the full template included, the top next token is the expected protocol
+  transition token `<|channel|>`, not content text yet.
+- A content-answer Harmony test needs a greedy protocol decode that emits
+  channel/control tokens and then content tokens.
+
+Pending:
+- Add Harmony-aware greedy decode, not just single-token top-k.
+- Add KV-cache/reuse decode instead of repeated full streamed forwards.
+- Run APA/GRM context and recall tests only after the standard streamed path is
+  stable.

@@ -211,3 +211,11 @@ second was `."`, producing `The capital of France is Paris."`. The important
 part is not generation polish; it is that the streamed TensorCUDA path can now
 be driven in a greedy loop. It is still slow because each token reruns the full
 streamed forward and does not reuse KV cache.
+
+Harmony prompting now has a first streamed receipt. The first attempt was
+usefully wrong: `--max-tokens 64` truncated a 79-token rendered Harmony prompt,
+so the top tokens were ordinary conversational starts. Rerunning with
+`--max-tokens 128` kept the full template and made the top next token
+`<|channel|>`, the expected protocol transition before content. That means the
+streamed path can carry Harmony-formatted input, but a real Harmony answer test
+needs protocol-aware greedy decode rather than a one-token content expectation.

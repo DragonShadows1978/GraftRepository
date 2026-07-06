@@ -47,6 +47,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run a streamed GPT-OSS forward smoke.")
     parser.add_argument("--model-dir", default=SNAPSHOT)
     parser.add_argument("--prompt", default="The capital of France is")
+    parser.add_argument(
+        "--use-chat-template",
+        action="store_true",
+        help="render prompt as a single user message with tokenizer chat template",
+    )
     parser.add_argument("--max-tokens", type=int, default=1)
     parser.add_argument("--max-layers", type=int, default=None)
     parser.add_argument("--top-k", type=int, default=8)
@@ -115,6 +120,7 @@ def main() -> int:
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "model_dir": str(model_dir),
         "prompt": args.prompt,
+        "use_chat_template": bool(args.use_chat_template),
         "max_tokens": int(args.max_tokens),
         "max_layers": args.max_layers,
         "expert_mode": args.expert_mode,
@@ -139,14 +145,25 @@ def main() -> int:
         cfg = GptOss20BConfig.from_model_dir(model_dir)
         where = build_safetensors_map(model_dir)
         tokenizer = AutoTokenizer.from_pretrained(str(model_dir))
-        full_ids = tokenizer(args.prompt, return_tensors="np").input_ids.astype(np.int64)
+        prompt_text = args.prompt
+        if args.use_chat_template:
+            prompt_text = tokenizer.apply_chat_template(
+                [{"role": "user", "content": args.prompt}],
+                tokenize=False,
+                add_generation_prompt=True,
+            )
+        payload["rendered_prompt"] = prompt_text
+        write_json(out, payload)
+        raw_ids = tokenizer(prompt_text, return_tensors="np").input_ids.astype(np.int64)
+        raw_token_count = int(raw_ids.shape[1])
         if args.score_ppl:
-            full_ids = full_ids[:, : max(2, int(args.max_tokens))]
+            full_ids = raw_ids[:, : max(2, int(args.max_tokens))]
             if full_ids.shape[1] < 2:
                 raise ValueError("score_ppl requires at least two tokens")
             ids = full_ids[:, :-1]
             targets = full_ids[:, 1:]
         else:
+            full_ids = raw_ids
             ids = full_ids[:, : max(1, int(args.max_tokens))]
             targets = None
         n_layers = cfg.num_layers if args.max_layers is None else min(args.max_layers, cfg.num_layers)
@@ -158,6 +175,8 @@ def main() -> int:
             payload.update(
                 {
                     "status": "running_layers",
+                    "raw_token_count": raw_token_count,
+                    "input_truncated": bool(raw_token_count > int(full_ids.shape[1])),
                     "full_input_ids": full_ids.tolist(),
                     "input_ids": ids.tolist(),
                     "target_ids": None if targets is None else targets.tolist(),
