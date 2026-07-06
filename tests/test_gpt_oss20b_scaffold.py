@@ -1,0 +1,155 @@
+import os
+import sys
+from pathlib import Path
+
+import numpy as np
+import pytest
+
+sys.path.insert(0, "/mnt/ForgeRealm/Project-Tensor/tensor_cuda")
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import tensor_cuda as tc  # noqa: E402
+from tensor_cuda.quantization import dequantize_affine_per_group  # noqa: E402
+
+from core.gpt_oss20b_tc import (  # noqa: E402
+    BiasedQuantLinearTC,
+    FP4_VALUES,
+    GptOss20BConfig,
+    gpt_oss_expert_activation_np,
+    gpt_oss_expert_activation_tc,
+    mxfp4_dequantize_blocks_np,
+    sink_attention_tc,
+)
+from core.mistral7b_tc import BlockTC  # noqa: E402
+
+
+GPT_OSS_CONFIG = Path(
+    "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/"
+    "snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/config.json"
+)
+
+
+def test_gpt_oss_config_parses_pinned_metadata():
+    if not GPT_OSS_CONFIG.exists():
+        pytest.skip("pinned GPT-OSS metadata is not present in HF cache")
+    cfg = GptOss20BConfig.from_model_dir(GPT_OSS_CONFIG.parent)
+
+    assert cfg.repository == "openai/gpt-oss-20b"
+    assert cfg.revision == "6cee5e81ee83917806bbde320786a8fb61efebee"
+    assert cfg.hidden_dim == 2880
+    assert cfg.num_layers == 24
+    assert cfg.num_heads == 64
+    assert cfg.num_kv_heads == 8
+    assert cfg.head_dim == 64
+    assert cfg.num_heads_per_kv == 8
+    assert cfg.full_attention_indices() == list(range(1, 24, 2))
+    assert cfg.sliding_attention_indices() == list(range(0, 24, 2))
+    assert cfg.rope_scaling["rope_type"] == "yarn"
+    assert cfg.group_size == 64
+
+
+def _mxfp4_reference(blocks, scales):
+    b = np.asarray(blocks, dtype=np.uint8)
+    s = np.asarray(scales, dtype=np.uint8).astype(np.int32) - 127
+    vals = np.empty(b.shape[:-1] + (b.shape[-1] * 2,), dtype=np.float32)
+    vals[..., 0::2] = FP4_VALUES[b & 0x0F]
+    vals[..., 1::2] = FP4_VALUES[b >> 4]
+    vals = np.ldexp(vals, s[..., None])
+    e, o, g, expanded = vals.shape
+    return vals.reshape(e, o, g * expanded).swapaxes(1, 2)
+
+
+def test_mxfp4_dequantize_blocks_matches_reference_layout():
+    rng = np.random.default_rng(20260706)
+    blocks = rng.integers(0, 256, size=(2, 3, 4, 5), dtype=np.uint8)
+    scales = rng.integers(123, 132, size=(2, 3, 4), dtype=np.uint8)
+
+    got = mxfp4_dequantize_blocks_np(blocks, scales)
+    ref = _mxfp4_reference(blocks, scales)
+
+    assert got.shape == (2, 40, 3)
+    np.testing.assert_array_equal(got, ref)
+
+
+def test_gpt_oss_expert_activation_np_matches_formula():
+    gate_up = np.asarray(
+        [[[-10.0, -9.0, -1.0, 0.0, 0.5, 2.0, 9.0, 9.0]]],
+        dtype=np.float32,
+    )
+    got = gpt_oss_expert_activation_np(gate_up)
+
+    gate = np.minimum(gate_up[..., 0::2], 7.0)
+    up = np.clip(gate_up[..., 1::2], -7.0, 7.0)
+    ref = (up + 1.0) * gate * (1.0 / (1.0 + np.exp(-(gate * 1.702))))
+
+    np.testing.assert_allclose(got, ref, rtol=0.0, atol=1e-7)
+
+
+def test_gpt_oss_expert_activation_tc_matches_numpy():
+    rng = np.random.default_rng(7)
+    gate_up = rng.normal(size=(2, 3, 12)).astype(np.float32)
+
+    got = gpt_oss_expert_activation_tc(tc.tensor(gate_up, dtype="float32")).numpy()
+    ref = gpt_oss_expert_activation_np(gate_up)
+
+    np.testing.assert_allclose(got, ref, rtol=2e-5, atol=2e-5)
+
+
+@pytest.mark.parametrize("bits", [4, 3])
+def test_biased_quant_linear_matches_dequant_reference(bits):
+    rng = np.random.default_rng(300 + bits)
+    old_dtype = BlockTC.COMPUTE_DTYPE
+    BlockTC.COMPUTE_DTYPE = "float16"
+    try:
+        n, k = 40, 256
+        x_np = rng.standard_normal((4, k), dtype=np.float32) * 0.2
+        w_np = rng.standard_normal((n, k), dtype=np.float32) * 0.05
+        b_np = rng.standard_normal(n, dtype=np.float32) * 0.01
+
+        layer = BiasedQuantLinearTC(w_np, b_np, group_size=64, bits=bits)
+        y = layer(tc.tensor(x_np, dtype="float32")).numpy().astype(np.float32)
+
+        w = dequantize_affine_per_group(
+            layer.packed.numpy(),
+            layer.scales.numpy(),
+            layer.zeros.numpy(),
+            layer.bits,
+            layer.in_features,
+            layer.group_size,
+        )
+        ref = x_np.astype(np.float32) @ w.T.astype(np.float32) + b_np
+    finally:
+        BlockTC.COMPUTE_DTYPE = old_dtype
+
+    np.testing.assert_allclose(y, ref, rtol=5e-4, atol=5e-4)
+
+
+def test_sink_attention_matches_numpy_reference():
+    rng = np.random.default_rng(42)
+    q = rng.normal(size=(1, 4, 2, 3)).astype(np.float32)
+    k = rng.normal(size=(1, 2, 5, 3)).astype(np.float32)
+    v = rng.normal(size=(1, 2, 5, 3)).astype(np.float32)
+    sinks = rng.normal(size=(4,)).astype(np.float32)
+    scale = 0.57735026919
+
+    got = sink_attention_tc(
+        tc.tensor(q, dtype="float32"),
+        tc.tensor(k, dtype="float32"),
+        tc.tensor(v, dtype="float32"),
+        tc.tensor(sinks, dtype="float32"),
+        scale=scale,
+        num_heads_per_kv=2,
+    ).numpy()
+
+    k_rep = np.repeat(k, 2, axis=1)
+    v_rep = np.repeat(v, 2, axis=1)
+    scores = np.einsum("bhld,bhsd->bhls", q, k_rep) * scale
+    combined = np.concatenate(
+        [scores, np.broadcast_to(sinks[None, :, None, None], (1, 4, 2, 1))],
+        axis=-1,
+    )
+    shifted = combined - combined.max(axis=-1, keepdims=True)
+    probs = np.exp(shifted) / np.exp(shifted).sum(axis=-1, keepdims=True)
+    ref = np.einsum("bhls,bhsd->bhld", probs[..., :-1], v_rep)
+
+    np.testing.assert_allclose(got, ref, rtol=2e-5, atol=2e-5)

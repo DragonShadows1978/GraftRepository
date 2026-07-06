@@ -312,8 +312,58 @@ Phase 2 conclusion:
 - Exact dequantization of experts is allowed only as a one-layer or diagnostic
   parity fallback. It is not a viable 12GB resident path.
 
+Action: Added the Phase 3A TensorCUDA scaffold primitives and tests.
+
+Files added:
+- `core/gpt_oss20b_tc.py`
+- `tests/test_gpt_oss20b_scaffold.py`
+
+Implemented scaffold pieces:
+- `GptOss20BConfig.from_model_dir()`
+- `BiasedQuantLinearTC`
+- exact NumPy MXFP4 block dequantization helper
+- GPT-OSS expert activation helpers
+- sink-aware TensorCUDA standard attention helper
+
+Why these pieces:
+- GPT-OSS attention projections have bias, but the shared `QuantLinearTC`
+  wrapper is weight-only.
+- GPT-OSS experts use clipped gate/up activation, not the existing SwiGLU
+  helper.
+- GPT-OSS attention appends learned sink logits before softmax.
+- MXFP4 exact dequant is needed as a diagnostic parity fallback before a packed
+  expert kernel can be trusted.
+
+Compile check:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile core/gpt_oss20b_tc.py tests/test_gpt_oss20b_scaffold.py`
+
+First test command:
+- `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_scaffold.py -q`
+
+First test result:
+- Failed in the sandbox for TensorCUDA allocations:
+  `cudaMalloc failed: no CUDA-capable device is detected`
+- Pure Python checks passed before the TensorCUDA allocation failures.
+- Interpretation: sandbox/device-access issue, not a model math result.
+
+Escalated GPU test command:
+- `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_scaffold.py -q`
+
+Escalated test result:
+- Initial escalated run found a real wrapper bug:
+  `ew_binary dtype mismatch` when adding bias to quantized-linear output.
+- Fix: `BiasedQuantLinearTC.__call__()` now casts bias to the actual output
+  dtype before addition, matching the existing `LinearTC` pattern.
+
+Final test result:
+- `7 passed, 2 warnings in 0.48s`
+
+GPU cleanup result:
+- GPU returned to baseline:
+  `NVIDIA GeForce RTX 4070 SUPER, 275, 12282, 35`
+
 Pending:
 - Download or locate the full HF safetensors if TensorCUDA loader work proceeds.
-- Build the Phase 3A correctness scaffold.
+- Build the one-layer Phase 3A loader on top of the scaffold.
 - Add packed MXFP4 expert math before making any viable 12GB operating-point
   claim.

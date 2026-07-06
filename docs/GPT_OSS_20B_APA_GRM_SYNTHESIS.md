@@ -86,3 +86,14 @@ body and break the 12GB premise. The next real implementation gate is therefore
 not "load all weights"; it is a two-track scaffold: one-layer exact-dequant
 parity for math, followed by a packed MXFP4 expert GEMV/GEMM path for the
 actual operating point.
+
+The first Phase 3A scaffold is now in code and tested. The new GPT-OSS module
+parses the pinned config, wraps low-bit linears with bias support, reproduces
+MXFP4 exact dequantization for diagnostics, implements the GPT-OSS expert
+activation, and adds a sink-aware TensorCUDA attention helper. The focused test
+selector passed 7/7 with GPU access. One useful bug was caught immediately:
+quantized-linear bias must be cast to the output dtype at call time.
+
+This still is not a model loader. It is the math base the loader needs. The next
+gate is a one-layer loader/smoke using the full HF safetensors, followed by the
+packed MXFP4 expert kernel work required for a real 12GB operating point.
