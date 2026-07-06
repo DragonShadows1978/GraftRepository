@@ -56,6 +56,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-layers", type=int, default=None)
     parser.add_argument("--top-k", type=int, default=8)
     parser.add_argument(
+        "--attention-mode",
+        choices=("standard", "apa_selective"),
+        default="standard",
+    )
+    parser.add_argument("--refine-percentile", type=float, default=0.15)
+    parser.add_argument("--bulk-bits", type=int, default=8)
+    parser.add_argument(
         "--score-ppl",
         action="store_true",
         help="score next-token NLL/PPL over the tokenized prompt instead of only last-token top-k",
@@ -124,6 +131,9 @@ def main() -> int:
         "max_tokens": int(args.max_tokens),
         "max_layers": args.max_layers,
         "expert_mode": args.expert_mode,
+        "attention_mode": args.attention_mode,
+        "refine_percentile": float(args.refine_percentile),
+        "bulk_bits": int(args.bulk_bits),
         "skip_lm_head": bool(args.skip_lm_head),
         "score_ppl": bool(args.score_ppl),
         "note": (
@@ -192,6 +202,9 @@ def main() -> int:
                 block = GptOssDiagnosticBlockTC.from_safetensors(
                     cfg, where, layer_idx, expert_mode=args.expert_mode
                 )
+                block.self_attn.attention_mode = args.attention_mode
+                block.self_attn.refine_percentile = float(args.refine_percentile)
+                block.self_attn.bulk_bits = int(args.bulk_bits)
                 h, kv, route_info = block(h, cos, sin)
                 tc.synchronize()
                 layer_info = {

@@ -1081,3 +1081,177 @@ Pending:
 - Add KV-cache/reuse decode instead of repeated full streamed forwards.
 - Run APA/GRM context and recall tests only after the standard streamed path is
   stable.
+
+Action: Added sink-aware APA support for GPT-OSS attention and ran streamed APA
+smokes.
+
+Reason:
+- GPT-OSS attention has learned sink logits.
+- The sink logit participates in the softmax denominator but contributes no
+  value vector.
+- Existing APA kernels did not account for that denominator, so directly
+  enabling generic APA would silently score the wrong attention distribution.
+
+Project-Tensor branch:
+- `codex/gpt-oss-mxfp4-kernel`
+
+Project-Tensor commit:
+- `c9584df feat: add sink-aware apa blend softmax`
+
+Project-Tensor implementation:
+- Added `tc.apa_blend_softmax_sink(bulk, rank, sinks, zthr)`.
+- Inputs:
+  - `bulk = [B, H, L, S]`
+  - `rank = [B, H, L, S]`
+  - `sinks = [H]`
+- Behavior:
+  - selection threshold is computed over valid key columns only
+  - blended key scores use APA bulk/rank selection
+  - sink logit is included in the softmax denominator
+  - returned weights have shape `[B, H, L, S]`; no sink column is returned
+
+Project-Tensor verification:
+- Build command:
+  `./build.sh 89`
+- Test command:
+  `PYTHONPATH=/mnt/ForgeRealm/Project-Tensor/tensor_cuda PYTEST_ADDOPTS='-p no:cacheprovider' pytest tensor_cuda/tests/test_apa_selective.py tensor_cuda/tests/test_apa_value_dim.py tensor_cuda/tests/test_mxfp4_linear.py -q`
+- Test result:
+  `16 passed in 1.38s`
+
+GraftRepository implementation:
+- Added `sink_apa_blend_attention_tc(...)`.
+- `GptOssAttentionTC` now has:
+  - `attention_mode = "standard" | "apa_selective"`
+  - `refine_percentile`
+  - `bulk_bits`
+  - `attn_block`
+- In `apa_selective` mode:
+  - exact K/V remain the standard GPT-OSS projected tensors
+  - bulk K is generated with TensorCUDA APA quantization
+  - GPT-OSS attention masks are applied to both bulk and exact scores
+  - `tc.apa_blend_softmax_sink` handles selection and sink denominator
+
+GraftRepository verification:
+- Compile command:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile core/gpt_oss20b_tc.py tests/test_gpt_oss20b_scaffold.py`
+- Test command:
+  `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_scaffold.py -q`
+- Test result:
+  `8 passed, 2 warnings in 0.55s`
+- New focused test:
+  `test_sink_apa_blend_attention_matches_numpy_reference`
+
+Stream harness change:
+- `scripts/gpt_oss20b_stream_forward_smoke.py` now accepts:
+  - `--attention-mode standard|apa_selective`
+  - `--refine-percentile`
+  - `--bulk-bits`
+
+Two-layer APA shakeout:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --prompt 'The capital of France is' --max-layers 2 --max-tokens 8 --attention-mode apa_selective --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --skip-lm-head`
+- Artifact:
+  `artifacts/gpt_oss_20b/stream_forward_20260706_195250.json`
+- Result:
+  - `status = ok`
+  - `completed_layers = 2`
+  - `input_ids_shape = [1, 5]`
+  - `attention_mode = apa_selective`
+  - `refine_percentile = 0.15`
+  - `bulk_bits = 8`
+  - `wall_seconds = 3.795`
+
+Full streamed APA top-k smoke:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --prompt 'The capital of France is' --max-tokens 8 --attention-mode apa_selective --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --top-k 8`
+- Artifact:
+  `artifacts/gpt_oss_20b/stream_forward_20260706_195315.json`
+- Result:
+  - `status = ok`
+  - `completed_layers = 24`
+  - `input_ids_shape = [1, 5]`
+  - `wall_seconds = 16.815`
+  - `gpu_before_lm_head = 490 MiB`
+  - `gpu_after = 804 MiB`
+  - top tokens:
+    - rank 0: token `12650`, text ` Paris`, logit `15.9375`
+    - rank 1: token `25`, text `:`, logit `12.5625`
+    - rank 2: token `392`, text ` "`, logit `12.1875`
+
+Tiny streamed APA PPL smoke:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --prompt 'The capital of France is Paris.' --max-tokens 8 --attention-mode apa_selective --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --top-k 8 --score-ppl`
+- Artifact:
+  `artifacts/gpt_oss_20b/stream_forward_20260706_195400.json`
+- Result:
+  - `status = ok`
+  - `completed_layers = 24`
+  - `input_ids_shape = [1, 6]`
+  - scored target texts:
+    `[" capital", " of", " France", " is", " Paris", "."]`
+  - `mean_nll = 2.9740070154`
+  - `ppl = 19.5701807106`
+  - `wall_seconds = 16.968`
+  - top final-position token remains period-like:
+    token `3692`, text `."`, logit `15.875`
+
+Comparison to prior standard tiny PPL smoke:
+- Prior standard streamed smoke:
+  - artifact `artifacts/gpt_oss_20b/stream_forward_20260706_193416.json`
+  - `mean_nll = 2.9856215566`
+  - `ppl = 19.7988044911`
+- New APA streamed smoke:
+  - `mean_nll = 2.9740070154`
+  - `ppl = 19.5701807106`
+- Interpretation:
+  This is only a six-target smoke. It proves the APA path is wired and not
+  catastrophically broken on the toy sentence. It is not a corpus PPL result.
+
+Post-run GPU state:
+- `NVIDIA GeForce RTX 4070 SUPER, 278, 12282`
+
+Remaining limitation:
+- The current GPT-OSS APA path uses cuBLAS score matrices plus sink-aware blend.
+- It is correct for sink denominator behavior but not the final long-context
+  memory path.
+- A true context-extension implementation still needs an O(L) or tiled
+  sink-aware fused APA attention path, plus GRM graft capture/injection.
+
+Pending:
+- Add long-context APA memory probes on real text.
+- Add GPT-OSS KV/GRM capture and remount semantics.
+- Add context/recall tests after APA and GRM are both attached.
+
+Action: Added the GPT-OSS-20B house-rules execution plan.
+
+Reason:
+- The original GPT-OSS APA/GRM plan is already registered as the fixed intent.
+- The remaining work now needs a stricter execution document so future results
+  cannot blur smokes, PPL, context, and GRM continuity claims.
+
+New document:
+- `docs/GPT_OSS_20B_HOUSE_RULES_EXECUTION_PLAN.md`
+
+Registered evidence tiers:
+- Tier 0: source and metadata.
+- Tier 1: unit and kernel receipts.
+- Tier 2: layer and streamed-forward smokes.
+- Tier 3: short behavior receipts.
+- Tier 4: real-text PPL and memory gates.
+- Tier 5: real-token context extension gates.
+- Tier 6: GRM cold-KV continuity gates.
+
+Registered remaining phases:
+- H0: checkpoint hygiene.
+- H1: APA correctness consolidation.
+- H2: real-text PPL gate.
+- H3: tiled sink-aware APA memory path.
+- H4: real-token context ladder.
+- H5: GPT-OSS GRM capture and mount.
+- H6: cold-KV multi-turn needle.
+- H7: existing-model comparison.
+
+Interpretation:
+- Current GPT-OSS receipts reach Tier 3 at best.
+- No corpus PPL, long-context, APA memory-flattening, GRM, or cold-KV recall
+  claim is allowed until the corresponding registered gate runs.

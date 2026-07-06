@@ -219,3 +219,23 @@ so the top tokens were ordinary conversational starts. Rerunning with
 `<|channel|>`, the expected protocol transition before content. That means the
 streamed path can carry Harmony-formatted input, but a real Harmony answer test
 needs protocol-aware greedy decode rather than a one-token content expectation.
+
+Sink-aware APA is now wired into the GPT-OSS streamed path. The important
+architecture detail is that GPT-OSS attention has learned sink logits: the sink
+participates in the softmax denominator but has no value vector. Generic APA
+would therefore be wrong if it normalized only over key columns. Project-Tensor
+now exposes a sink-aware APA blend primitive, and GraftRepository can route
+GPT-OSS attention through `apa_selective` with explicit refine percentile and
+bulk-bit settings.
+
+The first APA receipts are still Tier 3 evidence. A two-layer APA shakeout and a
+full 24-layer streamed top-k smoke both completed, and the plain prompt
+`The capital of France is` still ranked ` Paris` first. A six-target toy PPL
+smoke reported `19.57` for APA r0.15 versus `19.80` for the prior standard
+smoke, but that is only a wiring sanity check, not a corpus benchmark.
+
+The house-rules execution plan now locks the remaining claim boundaries in
+`docs/GPT_OSS_20B_HOUSE_RULES_EXECUTION_PLAN.md`. Current receipts do not prove
+corpus PPL, long-context support, APA memory flattening, GRM remount, or
+cold-KV recall. Those claims require the registered real-text PPL, tiled
+sink-aware APA memory path, real-token context ladder, and GRM continuity gates.

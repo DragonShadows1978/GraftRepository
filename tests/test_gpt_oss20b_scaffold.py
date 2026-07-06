@@ -18,6 +18,7 @@ from core.gpt_oss20b_tc import (  # noqa: E402
     gpt_oss_expert_activation_np,
     gpt_oss_expert_activation_tc,
     mxfp4_dequantize_blocks_np,
+    sink_apa_blend_attention_tc,
     sink_attention_tc,
 )
 from core.mistral7b_tc import BlockTC  # noqa: E402
@@ -153,3 +154,57 @@ def test_sink_attention_matches_numpy_reference():
     ref = np.einsum("bhls,bhsd->bhld", probs[..., :-1], v_rep)
 
     np.testing.assert_allclose(got, ref, rtol=2e-5, atol=2e-5)
+
+
+def _sink_apa_ref(q, k, kq, v, sinks, mask, scale, zthr):
+    B, H, L, D = q.shape
+    KVH, S, VD = k.shape[1], k.shape[2], v.shape[3]
+    group = H // KVH
+    out = np.zeros((B, H, L, VD), dtype=np.float32)
+    for b in range(B):
+        for h in range(H):
+            kh = h // group
+            for i in range(L):
+                bulk = (kq[b, kh] @ q[b, h, i]) * scale + mask[0, 0, i]
+                rank = (k[b, kh] @ q[b, h, i]) * scale + mask[0, 0, i]
+                valid = bulk > -5e3
+                a = np.abs(bulk[valid])
+                thr = a.mean() + zthr * np.sqrt(max(a.var(), 0.0))
+                score = np.where(valid & (np.abs(bulk) >= thr), rank, bulk)
+                combined = np.concatenate([score, [sinks[h]]])
+                weights = np.exp(combined - combined.max())
+                weights /= weights.sum()
+                out[b, h, i] = weights[:-1] @ v[b, kh]
+    return out
+
+
+def test_sink_apa_blend_attention_matches_numpy_reference():
+    rng = np.random.default_rng(20260706)
+    B, H, KVH, L, S, D, VD = 1, 4, 2, 3, 7, 5, 3
+    q = (rng.standard_normal((B, H, L, D)) * 0.2).astype(np.float32)
+    k = (rng.standard_normal((B, KVH, S, D)) * 0.2).astype(np.float32)
+    kq = (k + rng.standard_normal((B, KVH, S, D)) * 0.03).astype(np.float32)
+    v = (rng.standard_normal((B, KVH, S, VD)) * 0.2).astype(np.float32)
+    sinks = rng.standard_normal(H).astype(np.float32) * 0.2
+    mask = np.zeros((1, 1, L, S), dtype=np.float32)
+    mask[:, :, 0, 4:] = -1e4
+    mask[:, :, 1, 5:] = -1e4
+    scale = D ** -0.5
+    zthr = 0.25
+
+    got = sink_apa_blend_attention_tc(
+        tc.tensor(q),
+        tc.tensor(k),
+        tc.tensor(kq),
+        tc.tensor(v),
+        tc.tensor(sinks),
+        scale=scale,
+        zthr=zthr,
+        attention_mask=tc.tensor(mask),
+        num_heads_per_kv=H // KVH,
+        attn_block=2,
+    ).numpy()
+    ref = _sink_apa_ref(q, k, kq, v, sinks, mask, scale, zthr)
+
+    assert got.shape == ref.shape
+    np.testing.assert_allclose(got, ref, rtol=3e-5, atol=3e-5)

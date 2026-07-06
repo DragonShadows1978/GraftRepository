@@ -292,6 +292,51 @@ def sink_attention_tc(
     return tc.matmul(weights, value_h)
 
 
+def sink_apa_blend_attention_tc(
+    query,
+    key,
+    key_quant,
+    value,
+    sinks,
+    *,
+    scale: float,
+    zthr: float,
+    attention_mask=None,
+    num_heads_per_kv: int = 1,
+    attn_block: int = 1024,
+):
+    """GPT-OSS sink-aware APA blend attention.
+
+    `key_quant` is the APA bulk key approximation. Selection is done by
+    TensorCUDA's APA blend kernel, then GPT-OSS sink logits are included in the
+    softmax denominator while no sink value column is returned.
+    """
+
+    if not hasattr(tc, "apa_blend_softmax_sink"):
+        raise RuntimeError(
+            "sink-aware GPT-OSS APA requires Project-Tensor "
+            "tc.apa_blend_softmax_sink"
+        )
+    key_h = _repeat_kv(key, num_heads_per_kv)
+    keyq_h = _repeat_kv(key_quant, num_heads_per_kv)
+    value_h = _repeat_kv(value, num_heads_per_kv)
+    L = query.shape[2]
+    outs = []
+    blk = max(1, int(attn_block))
+    for i in range(0, L, blk):
+        e = min(i + blk, L)
+        Qi = query.slice(2, i, e - i)
+        bulk = tc.matmul(Qi, keyq_h, alpha=scale, trans_b=True)
+        rank = tc.matmul(Qi, key_h, alpha=scale, trans_b=True)
+        if attention_mask is not None:
+            mask_i = attention_mask.slice(2, i, e - i)
+            bulk = bulk + mask_i
+            rank = rank + mask_i
+        weights = tc.apa_blend_softmax_sink(bulk, rank, sinks, float(zthr))
+        outs.append(tc.matmul(weights, value_h))
+    return tc.cat(outs, dim=2)
+
+
 def build_safetensors_map(model_dir: str | os.PathLike[str]) -> dict[str, str]:
     """Map tensor name to safetensors shard path."""
 
@@ -438,6 +483,10 @@ class GptOssAttentionTC:
         self.sliding_window = cfg.sliding_window if self.layer_type == "sliding_attention" else None
         self.q_proj = self.k_proj = self.v_proj = self.o_proj = None
         self.sinks = None
+        self.attention_mode = "standard"
+        self.refine_percentile = 0.15
+        self.bulk_bits = 8
+        self.attn_block = 1024
 
     @classmethod
     def from_safetensors(
@@ -479,15 +528,37 @@ class GptOssAttentionTC:
             sliding_window=self.sliding_window,
             dtype=q.dtype,
         )
-        attn = sink_attention_tc(
-            q,
-            k,
-            v,
-            self.sinks,
-            scale=self.scaling,
-            attention_mask=mask,
-            num_heads_per_kv=self.num_heads_per_kv,
-        )
+        if self.attention_mode == "apa_selective":
+            from tensor_cuda.quant import _norm_ppf, _quantize_keys, _tables
+
+            dev = q.device.split(":")[0]
+            R, CB, BND = _tables(
+                self.head_dim, self.bulk_bits, self.num_kv_heads, True, dev
+            )
+            kq = _quantize_keys(k, R, CB, BND)
+            z = _norm_ppf(1.0 - max(0.0, min(1.0, self.refine_percentile)))
+            attn = sink_apa_blend_attention_tc(
+                q,
+                k,
+                kq,
+                v,
+                self.sinks,
+                scale=self.scaling,
+                zthr=float(z),
+                attention_mask=mask,
+                num_heads_per_kv=self.num_heads_per_kv,
+                attn_block=self.attn_block,
+            )
+        else:
+            attn = sink_attention_tc(
+                q,
+                k,
+                v,
+                self.sinks,
+                scale=self.scaling,
+                attention_mask=mask,
+                num_heads_per_kv=self.num_heads_per_kv,
+            )
         out = attn.transpose(1, 2).reshape([B, L, self.num_heads * self.head_dim])
         return self.o_proj(out), (k, v)
 
