@@ -679,3 +679,116 @@ Pending:
 - Build the resident packed-expert loader path.
 - Add lm_head/output path and short generation/PPL checks.
 - Then attach APA/GRM and run real context/recall tests.
+
+Action: Added resident one-layer packed-expert dispatch for GPT-OSS MoE.
+
+Reason:
+- The previous `packed_mxfp4` smoke proved the kernel but still uploaded the
+  selected expert blocks from CPU for each tiny diagnostic call.
+- The next production-facing gate was to keep a layer's packed expert tensors
+  resident and dispatch selected experts from that resident packed tensor.
+
+First resident attempt:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_moe_diag_smoke.py --layer 0 --max-tokens 1 --expert-mode resident_packed_mxfp4`
+- Artifact:
+  `artifacts/gpt_oss_20b/moe_diag_smoke_20260706_191920.json`
+- Result:
+  failed with `RuntimeError: op supports float32/float16/bfloat16 only`
+- Cause:
+  TensorCUDA `slice()` does not support uint8 tensors, so Python-side slicing of
+  resident `[experts, out_features, groups, 16]` packed blocks failed.
+
+Fix:
+- Added a second Project-Tensor kernel API:
+  `tc.mxfp4_linear_expert(x, blocks4d, scales3d, expert_idx)`
+- This selects the expert by pointer offset inside the TensorCUDA op instead
+  of slicing uint8 tensors in Python.
+
+Project-Tensor branch:
+- `codex/gpt-oss-mxfp4-kernel`
+
+Project-Tensor commit:
+- `7cfd55e feat: add mxfp4 resident expert selector`
+
+Project-Tensor verification:
+- Build command:
+  `./build.sh 89`
+- Test command:
+  `PYTHONPATH=/mnt/ForgeRealm/Project-Tensor/tensor_cuda PYTEST_ADDOPTS='-p no:cacheprovider' pytest tensor_cuda/tests/test_mxfp4_linear.py tensor_cuda/tests/test_intn_linear.py -q`
+- Test result:
+  `14 passed in 0.75s`
+- GPU returned to baseline:
+  `NVIDIA GeForce RTX 4070 SUPER, 275, 12282`
+
+GraftRepository changes:
+- `resident_packed_mxfp4` mode now uploads one layer's packed expert blocks,
+  scales, and biases once during block construction.
+- Per selected expert, it calls:
+  - `tc.mxfp4_linear_expert(xt, gate_up_blocks_tc, gate_up_scales_tc, expert)`
+  - `tc.mxfp4_linear_expert(act, down_blocks_tc, down_scales_tc, expert)`
+- Only FP32 bias tensors are sliced in Python.
+
+GraftRepository verification:
+- Compile command:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile core/gpt_oss20b_tc.py scripts/gpt_oss20b_moe_diag_smoke.py`
+- Test command:
+  `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_scaffold.py -q`
+- Test result:
+  `7 passed, 2 warnings in 0.50s`
+
+Resident packed MXFP4 layer 0 smoke:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_moe_diag_smoke.py --layer 0 --max-tokens 1 --expert-mode resident_packed_mxfp4`
+- Artifact:
+  `artifacts/gpt_oss_20b/moe_diag_smoke_20260706_192407.json`
+- Result:
+  - `status = ok`
+  - `expert_mode = resident_packed_mxfp4`
+  - `layer_type = sliding_attention`
+  - `output_shape = [1, 1, 2880]`
+  - `unique_experts = [13, 17, 21, 29]`
+  - `top_indices = [[13, 21, 17, 29]]`
+  - `wall_seconds = 2.387`
+  - `output_stats.sum = 24.8838806152`
+  - GPU before/after inside script: `275 MiB -> 905 MiB`
+
+Resident packed MXFP4 layer 1 smoke:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_moe_diag_smoke.py --layer 1 --max-tokens 1 --expert-mode resident_packed_mxfp4`
+- Artifact:
+  `artifacts/gpt_oss_20b/moe_diag_smoke_20260706_192428.json`
+- Result:
+  - `status = ok`
+  - `expert_mode = resident_packed_mxfp4`
+  - `layer_type = full_attention`
+  - `output_shape = [1, 1, 2880]`
+  - `unique_experts = [12, 15, 25, 26]`
+  - `top_indices = [[12, 26, 15, 25]]`
+  - `wall_seconds = 3.072`
+  - `output_stats.sum = -134.4730834961`
+  - GPU before/after inside script: `275 MiB -> 905 MiB`
+
+Post-run GPU state:
+- `NVIDIA GeForce RTX 4070 SUPER, 275, 12282`
+
+Interpretation:
+- Resident one-layer packed expert dispatch now works for both GPT-OSS layer
+  families.
+- The layer 0 resident output stats match the CPU-selected packed path,
+  confirming that expert-offset dispatch did not change math.
+- The memory increase from `497 MiB` to `905 MiB` inside the script is expected:
+  the resident path holds the whole layer's packed expert blocks/scales on GPU
+  instead of only transient selected expert tensors.
+
+Remaining limitation:
+- This is one-layer residency, not full-model residency.
+- The full expert body is about `9.46 GiB` packed, before non-expert weights,
+  activations, KV, APA state, lm_head, or allocator margin.
+- The next full-loader design needs explicit tiering and/or non-expert
+  compression, not a blind all-GPU resident load.
+
+Pending:
+- Add a standard output path/lm_head route for short behavior and PPL tests.
+- Decide the full-loader residency policy for experts and non-experts.
+- Then attach APA/GRM and run real context/recall tests.

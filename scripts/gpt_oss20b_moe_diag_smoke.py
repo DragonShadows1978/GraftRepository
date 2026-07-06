@@ -56,9 +56,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--expert-mode",
-        choices=("dequant", "packed_mxfp4"),
+        choices=("dequant", "packed_mxfp4", "resident_packed_mxfp4"),
         default="dequant",
-        help="selected-expert exact dequant bridge or packed MXFP4 kernel path",
+        help=(
+            "selected-expert exact dequant, CPU-selected packed MXFP4, "
+            "or resident one-layer packed MXFP4"
+        ),
     )
     parser.add_argument("--output", type=Path, default=None)
     return parser.parse_args()

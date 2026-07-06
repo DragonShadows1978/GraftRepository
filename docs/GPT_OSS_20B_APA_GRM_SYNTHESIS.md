@@ -156,3 +156,24 @@ loader. The smoke harness uploads selected expert packed blocks from CPU for a
 tiny diagnostic call. The next production step is a resident packed-expert
 loader/dispatcher so the full expert body can live packed on GPU/host tiers
 without per-call CPU upload or BF16 expansion.
+
+The first resident-dispatch attempt found another useful TensorCUDA boundary:
+uint8 tensors cannot currently be sliced through the generic Python `slice()`
+op. That blocked Python-side selection from a resident
+`[experts, out_features, groups, 16]` packed tensor. The fix went into
+Project-Tensor as `tc.mxfp4_linear_expert(...)`, which selects the expert by
+offset inside the MXFP4 kernel path instead of slicing uint8 tensors in Python.
+
+With that fix, `resident_packed_mxfp4` passes for both GPT-OSS layer families.
+Layer 0 resident mode routes to `[13, 17, 21, 29]` and produces the same compact
+output stats as the CPU-selected packed path. Layer 1 resident mode routes to
+`[12, 15, 25, 26]`. The inside-script VRAM rises from the previous `497 MiB`
+smoke footprint to about `905 MiB`, which is expected because one full layer's
+packed expert body is resident on GPU.
+
+That closes the one-layer resident dispatch gate. It does not close full-model
+residency: the packed expert body alone is about `9.46 GiB`, before BF16
+non-expert weights, lm_head/embed, KV, APA state, or allocator margin. The next
+loader decision is therefore a residency policy, not just another kernel:
+which tensors stay GPU resident, which are quantized further, and which can be
+tiered without destroying decode latency.

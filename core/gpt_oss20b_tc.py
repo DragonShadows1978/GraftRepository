@@ -544,7 +544,7 @@ class GptOssMoEDiagnosticTC:
         *,
         expert_mode: str = "dequant",
     ):
-        if expert_mode not in {"dequant", "packed_mxfp4"}:
+        if expert_mode not in {"dequant", "packed_mxfp4", "resident_packed_mxfp4"}:
             raise ValueError(f"unsupported GPT-OSS expert_mode {expert_mode!r}")
         self.cfg = cfg
         self.layer_idx = int(layer_idx)
@@ -557,6 +557,12 @@ class GptOssMoEDiagnosticTC:
         self.down_blocks = None
         self.down_scales = None
         self.down_bias = None
+        self.gate_up_blocks_tc = None
+        self.gate_up_scales_tc = None
+        self.gate_up_bias_tc = None
+        self.down_blocks_tc = None
+        self.down_scales_tc = None
+        self.down_bias_tc = None
 
     @classmethod
     def from_safetensors(
@@ -570,6 +576,13 @@ class GptOssMoEDiagnosticTC:
         if expert_mode == "packed_mxfp4" and not hasattr(tc, "mxfp4_linear"):
             raise RuntimeError(
                 "packed_mxfp4 expert mode requires Project-Tensor tc.mxfp4_linear"
+            )
+        if expert_mode == "resident_packed_mxfp4" and not hasattr(
+            tc, "mxfp4_linear_expert"
+        ):
+            raise RuntimeError(
+                "resident_packed_mxfp4 expert mode requires "
+                "Project-Tensor tc.mxfp4_linear_expert"
             )
         obj = cls(cfg, layer_idx, expert_mode=expert_mode)
         p = f"model.layers.{layer_idx}.mlp"
@@ -590,6 +603,25 @@ class GptOssMoEDiagnosticTC:
         obj.down_blocks = load_tensor_np(where, f"{ep}.down_proj_blocks", dtype=np.uint8)
         obj.down_scales = load_tensor_np(where, f"{ep}.down_proj_scales", dtype=np.uint8)
         obj.down_bias = load_tensor_np(where, f"{ep}.down_proj_bias")
+        if expert_mode == "resident_packed_mxfp4":
+            obj.gate_up_blocks_tc = tc.tensor(
+                np.ascontiguousarray(obj.gate_up_blocks), dtype="uint8"
+            )
+            obj.gate_up_scales_tc = tc.tensor(
+                np.ascontiguousarray(obj.gate_up_scales), dtype="uint8"
+            )
+            obj.gate_up_bias_tc = tc.tensor(
+                np.ascontiguousarray(obj.gate_up_bias), dtype="float32"
+            )
+            obj.down_blocks_tc = tc.tensor(
+                np.ascontiguousarray(obj.down_blocks), dtype="uint8"
+            )
+            obj.down_scales_tc = tc.tensor(
+                np.ascontiguousarray(obj.down_scales), dtype="uint8"
+            )
+            obj.down_bias_tc = tc.tensor(
+                np.ascontiguousarray(obj.down_bias), dtype="float32"
+            )
         return obj
 
     def _route(self, x_flat):
@@ -632,7 +664,11 @@ class GptOssMoEDiagnosticTC:
 
     @staticmethod
     def _bias_add(y, bias_np: np.ndarray):
-        bias = tc.tensor(bias_np, dtype="float32")
+        bias = (
+            tc.tensor(bias_np, dtype="float32")
+            if isinstance(bias_np, np.ndarray)
+            else bias_np
+        )
         bias = bias if bias.dtype == y.dtype else bias.astype(y.dtype)
         return y + bias
 
@@ -648,6 +684,27 @@ class GptOssMoEDiagnosticTC:
         return y
 
     def _expert_packed_mxfp4(self, xt, expert_idx: int, weight: float):
+        if self.expert_mode == "resident_packed_mxfp4":
+            e = int(expert_idx)
+            gate_n = self.gate_up_blocks.shape[1]
+            down_n = self.down_blocks.shape[1]
+            gate_b = self.gate_up_bias_tc.slice(0, e, 1).reshape([gate_n])
+            down_b = self.down_bias_tc.slice(0, e, 1).reshape([down_n])
+            gate_up = self._bias_add(
+                tc.mxfp4_linear_expert(
+                    xt, self.gate_up_blocks_tc, self.gate_up_scales_tc, e
+                ),
+                gate_b,
+            )
+            act = gpt_oss_expert_activation_tc(gate_up)
+            y = self._bias_add(
+                tc.mxfp4_linear_expert(act, self.down_blocks_tc, self.down_scales_tc, e),
+                down_b,
+            )
+            y = y * weight
+            del gate_b, down_b, gate_up, act
+            return y
+
         (
             gate_blocks,
             gate_scales,
@@ -678,7 +735,7 @@ class GptOssMoEDiagnosticTC:
             for slot in range(self.cfg.num_experts_per_tok):
                 e = int(topi_np[t, slot])
                 w = float(topw_np[t, slot])
-                if self.expert_mode == "packed_mxfp4":
+                if self.expert_mode in {"packed_mxfp4", "resident_packed_mxfp4"}:
                     y = self._expert_packed_mxfp4(xt, e, w)
                 else:
                     y = self._expert_dequant(xt, e, w)
