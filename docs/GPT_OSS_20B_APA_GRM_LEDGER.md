@@ -792,3 +792,116 @@ Pending:
 - Add a standard output path/lm_head route for short behavior and PPL tests.
 - Decide the full-loader residency policy for experts and non-experts.
 - Then attach APA/GRM and run real context/recall tests.
+
+Action: Added and ran a streamed full-stack GPT-OSS TensorCUDA forward smoke.
+
+File added:
+- `scripts/gpt_oss20b_stream_forward_smoke.py`
+
+Purpose:
+- Stream all decoder layers one at a time.
+- Keep only one layer's packed experts resident on GPU at a time.
+- Use `resident_packed_mxfp4` MoE dispatch.
+- Attach final RMSNorm.
+- Optionally attach a TensorCUDA INT4-quantized `lm_head` for a next-token
+  top-k receipt.
+
+Important limitation:
+- This is still a smoke, not PPL and not generation-quality evidence.
+- The lm_head is quantized locally through TensorCUDA `QuantLinearTC`, so this
+  is the custom TensorCUDA quantized path, not an official BF16 reference path.
+- The prompt is plain tokenizer input, not a Harmony chat template.
+- APA and GRM are not attached in this streamed smoke.
+
+Compile check:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_stream_forward_smoke.py core/gpt_oss20b_tc.py`
+- Result: passed.
+
+Two-layer shakeout:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --max-layers 2 --max-tokens 1 --expert-mode resident_packed_mxfp4 --skip-lm-head`
+- Artifact:
+  `artifacts/gpt_oss_20b/stream_forward_20260706_192828.json`
+- Result:
+  - `status = ok`
+  - `completed_layers = 2`
+  - `input_ids_shape = [1, 1]`
+  - `wall_seconds = 2.947`
+  - layer resident GPU footprint inside script: `905 MiB`
+
+Full 24-layer streamed stack without lm_head:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --max-tokens 1 --expert-mode resident_packed_mxfp4 --skip-lm-head`
+- Artifact:
+  `artifacts/gpt_oss_20b/stream_forward_20260706_192857.json`
+- Result:
+  - `status = ok`
+  - `completed_layers = 24`
+  - `input_ids_shape = [1, 1]`
+  - `final_hidden_shape = [1, 1, 2880]`
+  - `final_hidden_stats.sum = 54.2272949219`
+  - `wall_seconds = 26.430`
+  - GPU before: `275 MiB`
+  - GPU after each resident layer: about `905 MiB`
+  - GPU before lm_head stage, with final hidden still live: `485 MiB`
+
+Full 24-layer streamed stack with lm_head, one-token cap:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --max-tokens 1 --expert-mode resident_packed_mxfp4 --top-k 8`
+- Artifact:
+  `artifacts/gpt_oss_20b/stream_forward_20260706_192950.json`
+- Result:
+  - `status = ok`
+  - `completed_layers = 24`
+  - `input_ids_shape = [1, 1]`
+  - `wall_seconds = 20.166`
+  - `gpu_before_lm_head = 485 MiB`
+  - `gpu_after = 799 MiB`
+  - top tokens:
+    - rank 0: token `3490`, text ` code`, logit `9.5`
+    - rank 1: token `5787`, text ` article`, logit `8.625`
+    - rank 2: token `2700`, text `` ` ``, logit `8.3125`
+- Interpretation:
+  one-token prompt cap is a stack/output projection smoke only, not a useful
+  language behavior check.
+
+Full 24-layer streamed stack with lm_head, five-token prompt:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --prompt 'The capital of France is' --max-tokens 8 --expert-mode resident_packed_mxfp4 --top-k 8`
+- Artifact:
+  `artifacts/gpt_oss_20b/stream_forward_20260706_193035.json`
+- Result:
+  - `status = ok`
+  - `completed_layers = 24`
+  - `input_ids_shape = [1, 5]`
+  - `input_ids = [[976, 9029, 328, 10128, 382]]`
+  - `final_hidden_shape = [1, 5, 2880]`
+  - `final_hidden_stats.sum = -71.9653320312`
+  - `wall_seconds = 21.007`
+  - `gpu_before_lm_head = 483 MiB`
+  - `gpu_after = 797 MiB`
+  - top tokens:
+    - rank 0: token `12650`, text ` Paris`, logit `15.875`
+    - rank 1: token `25`, text `:`, logit `12.5`
+    - rank 2: token `392`, text ` "`, logit `12.1875`
+    - rank 3: token `261`, text ` a`, logit `12.0625`
+    - rank 4: token `290`, text ` the`, logit `12.0`
+
+Post-run GPU state:
+- `NVIDIA GeForce RTX 4070 SUPER, 275, 12282`
+
+Interpretation:
+- The streamed TensorCUDA path now exercises all 24 GPT-OSS layers with
+  resident packed expert dispatch.
+- The output projection path is connected and can produce next-token top-k
+  logits.
+- The short plain-text sanity prompt predicts ` Paris` as the top next token,
+  which is a useful behavior smoke.
+- This still does not establish PPL, long-context behavior, Harmony chat
+  behavior, APA behavior, or GRM behavior.
+
+Pending:
+- Add a real PPL harness for this streamed path.
+- Add a short greedy decode loop using KV cache or repeated streamed forwards.
+- Add Harmony-formatted prompt tests.
+- Only then attach APA/GRM and run real context/recall tests.

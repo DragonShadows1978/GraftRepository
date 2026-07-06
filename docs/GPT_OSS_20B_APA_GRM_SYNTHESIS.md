@@ -177,3 +177,22 @@ non-expert weights, lm_head/embed, KV, APA state, or allocator margin. The next
 loader decision is therefore a residency policy, not just another kernel:
 which tensors stay GPU resident, which are quantized further, and which can be
 tiered without destroying decode latency.
+
+The first streamed full-stack smoke now works. Instead of trying to keep the
+whole model resident, the harness streams one decoder layer at a time, keeps
+that layer's packed experts resident, runs the block, frees it, and continues.
+All 24 layers completed on the 4070 Super with the resident packed expert path.
+With only the final hidden state live, the script sat around `485 MiB`; while a
+layer's packed experts were resident, it reported about `905 MiB`.
+
+The streamed path also attaches final RMSNorm and a locally quantized
+TensorCUDA lm_head. A one-token cap proved only that the output projection is
+connected. The better smoke was the plain prompt `The capital of France is`,
+which tokenized to five tokens and produced ` Paris` as the top next token. That
+is a real behavior sanity receipt for the custom streamed TensorCUDA path, but
+it is still not PPL, not Harmony chat behavior, not greedy generation, and not
+APA/GRM evidence.
+
+The project has therefore crossed from one-layer math receipts into a complete
+streamed forward receipt. The next meaningful gates are PPL, a short greedy
+decode loop, Harmony-formatted prompting, and then APA/GRM context/recall tests.
