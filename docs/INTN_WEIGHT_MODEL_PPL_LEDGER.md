@@ -244,3 +244,45 @@ Interpretation:
 - APA refine variation again does not rescue INT2 and does not materially
   change the INT3 result.
 - Final post-run GPU memory returned to baseline: 249 MiB used of 12282 MiB.
+
+## 2026-07-06 16:53-17:13 EDT
+
+Action: Ran the broader Qwen3.5-9B INT4/INT3 model PPL gate.
+
+Protocol:
+- Real Qwen3.5-9B TensorCUDA model.
+- Real WikiText-2 raw cached dataset.
+- Window: 2048 tokens.
+- Scored tail: 1024 tokens.
+- Windows: 6.
+- Actual scored tokens: 6138 per setting.
+- Settings: standard, APA r0.15, APA r0.10, APA r0.05.
+
+Command:
+- `env PYTHONUNBUFFERED=1 PYTHONPATH=/mnt/ForgeRealm/GraftRepository:/mnt/ForgeRealm/Project-Tensor/tensor_cuda PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/qwen35_intn_weight_ppl_sweep.py --model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --bits 4,3 --window 2048 --scored 1024 --n-windows 6 --step 64 --refines 0.15,0.10,0.05`
+
+Artifact:
+- `artifacts/intn_weight_ppl/qwen35_intn_ppl_20260706_165337.json`
+
+PPL results:
+
+| Bits | Standard | APA r0.15 | APA r0.10 | APA r0.05 | Load MiB | Max eval MiB range |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 4 | 8.3443 | 8.3463 | 8.3387 | 8.3534 | 4541 | 5190-5229 |
+| 3 | 10.2592 | 10.2567 | 10.2481 | 10.2578 | 3654 | 4198-4358 |
+
+Derived comparison:
+- INT3 standard PPL is 1.2295x INT4 standard, a +22.95% increase.
+- INT3 APA r0.15 PPL is 1.2289x INT4 APA r0.15, a +22.89% increase.
+- INT3 saved 887 MiB at load versus INT4.
+- INT3 saved 864-1031 MiB in observed evaluation memory versus INT4,
+  depending on the setting.
+
+Interpretation:
+- The 9B smoke was directionally valid: INT3 is damaged but not collapsed.
+- The broader gate confirms a real, stable quality hit of about +23% PPL.
+- APA refine levels do not materially change the INT3-vs-INT4 weight damage.
+- The memory saving is real: roughly 0.9 GiB at load and about 0.9-1.0 GiB
+  during this eval protocol.
+- This result does not by itself answer usability. The next required axis is a
+  functional behavior gate.

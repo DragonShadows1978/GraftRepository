@@ -60,3 +60,11 @@ INT3 around 7.65-7.69 PPL, and INT2 around 40k-43k PPL. That means INT3 did
 not collapse on the 9B smoke the way it was heavily damaged on the broader 2B
 gate, but it still lost quality. INT2 collapsed on both model sizes. APA refine
 levels did not rescue low-bit weight damage.
+
+The broader 9B gate settled the quality side more clearly. Over 6138 scored
+tokens per setting, INT4 landed at about 8.34 PPL and INT3 landed at about
+10.25-10.26 PPL. That is roughly a +23% PPL increase for INT3. In exchange,
+INT3 saved 887 MiB at load and about 0.86-1.03 GiB during the observed eval
+settings. This is not free, but it is also not a collapse. The right conclusion
+is conditional: INT3 is a real memory-saving mode on Qwen3.5-9B, but it needs
+behavior gates before it can be treated as a serious operating point.
