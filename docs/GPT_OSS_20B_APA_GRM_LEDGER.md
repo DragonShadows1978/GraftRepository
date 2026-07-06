@@ -258,8 +258,62 @@ Phase 1 gate:
 - Confirms the hybrid TensorCUDA path is still the relevant next step because
   stock Ollama needed a CPU/GPU split and only showed a 4096 active context.
 
+Action: Built the Phase 2 TensorCUDA feasibility design.
+
+Design artifact:
+- `docs/GPT_OSS_20B_TENSORCUDA_FEASIBILITY.md`
+
+Local source files inspected:
+- `/home/vader/.local/lib/python3.12/site-packages/transformers/models/gpt_oss/modeling_gpt_oss.py`
+- `/home/vader/.local/lib/python3.12/site-packages/transformers/integrations/mxfp4.py`
+- `/home/vader/.local/lib/python3.12/site-packages/transformers/quantizers/quantizer_mxfp4.py`
+- `core/mistral7b_tc.py`
+- `core/deepseek_v2_lite_tc.py`
+- `core/gemma4_tc.py`
+- `/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tensor_cuda/__init__.py`
+- `/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tensor_cuda/quantization/affine.py`
+
+Header inventory facts added:
+- Attention projections are BF16 and biased:
+  - `q_proj.weight [4096, 2880]`, `q_proj.bias [4096]`
+  - `k_proj.weight [512, 2880]`, `k_proj.bias [512]`
+  - `v_proj.weight [512, 2880]`, `v_proj.bias [512]`
+  - `o_proj.weight [2880, 4096]`, `o_proj.bias [2880]`
+- Every attention layer has `self_attn.sinks [64]`.
+- Router tensors are BF16:
+  - `router.weight [32, 2880]`
+  - `router.bias [32]`
+- Expert tensors are packed MXFP4/U8:
+  - `gate_up_proj_blocks [32, 5760, 90, 16]`
+  - `gate_up_proj_scales [32, 5760, 90]`
+  - `down_proj_blocks [32, 2880, 90, 16]`
+  - `down_proj_scales [32, 2880, 90]`
+
+Implementation facts from local HF source:
+- Expert activation is GPT-OSS-specific, not the existing SwiGLU:
+  - interleaved `gate_up[..., ::2]` / `gate_up[..., 1::2]`
+  - gate clamp max `7`
+  - up clamp range `[-7, 7]`
+  - `glu = gate * sigmoid(gate * 1.702)`
+  - activated value is `(up + 1) * glu`
+- Attention appends a learned sink logit per head before softmax, then drops
+  the sink probability before multiplying by V.
+- Router softmax is over the selected top-4 router logits, not all experts.
+- MXFP4 exact fallback dequant uses the local HF codebook:
+  `0, 0.5, 1, 1.5, 2, 3, 4, 6` plus signed variants, with scale exponent
+  `uint8_scale - 127`.
+
+Phase 2 conclusion:
+- GPT-OSS is feasible but requires GPT-OSS-specific pieces before any honest
+  TensorCUDA claim.
+- The immediate missing pieces are biased quantized linear, YARN parity,
+  sink-aware attention, the GPT-OSS expert activation, and a native packed
+  MXFP4 expert matmul/GEMV path.
+- Exact dequantization of experts is allowed only as a one-layer or diagnostic
+  parity fallback. It is not a viable 12GB resident path.
+
 Pending:
-- Begin Phase 2 TensorCUDA feasibility design from these receipts.
-- Decide how to preserve the packed MXFP4 expert body.
-- Decide how to quantize the BF16 attention/embed/lm_head body without breaking
-  Harmony-format behavior.
+- Download or locate the full HF safetensors if TensorCUDA loader work proceeds.
+- Build the Phase 3A correctness scaffold.
+- Add packed MXFP4 expert math before making any viable 12GB operating-point
+  claim.
