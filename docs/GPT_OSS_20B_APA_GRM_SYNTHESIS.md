@@ -102,3 +102,14 @@ The full pinned HF safetensors snapshot is now local as well. That matters
 because the Ollama model proved official runtime behavior, but it is not the
 source layout the TensorCUDA loader consumes. The next gate can now read real
 GPT-OSS tensors directly from the pinned HF shards.
+
+The first real TensorCUDA layer smokes now pass. The loader can row-slice real
+GPT-OSS embeddings, build GPT-OSS YARN tables, load biased attention projections
+from the HF shards, apply sink-aware attention, and run attention/residual for
+both a sliding layer and a full-attention layer. The receipts are shape/runtime
+receipts only: MoE and lm_head are still skipped, so this is not PPL, generation,
+or model-behavior evidence.
+
+That moves the hard problem exactly where expected: GPT-OSS MoE. The next step
+is selected-expert exact dequant as a diagnostic bridge, then native packed
+MXFP4 expert math for the viable path.

@@ -8,6 +8,7 @@ the GPT-OSS-specific math before claiming model support.
 from __future__ import annotations
 
 import json
+import math
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -15,7 +16,7 @@ from typing import Any
 
 import numpy as np
 
-from core.mistral7b_tc import BlockTC, QuantLinearTC, _repeat_kv, tc
+from core.mistral7b_tc import BlockTC, F, QuantLinearTC, RMSNormTC, _repeat_kv, tc
 
 
 MODEL_ID = "openai/gpt-oss-20b"
@@ -289,3 +290,239 @@ def sink_attention_tc(
     probs = combined.softmax(-1)
     weights = probs.slice(-1, 0, S)
     return tc.matmul(weights, value_h)
+
+
+def build_safetensors_map(model_dir: str | os.PathLike[str]) -> dict[str, str]:
+    """Map tensor name to safetensors shard path."""
+
+    from safetensors import safe_open
+
+    root = Path(model_dir).expanduser().resolve()
+    shards = sorted(root.glob("*.safetensors"))
+    if not shards:
+        raise FileNotFoundError(f"no safetensors shards found in {root}")
+    where: dict[str, str] = {}
+    for shard in shards:
+        with safe_open(str(shard), framework="pt", device="cpu") as fh:
+            for key in fh.keys():
+                where[key] = str(shard)
+    return where
+
+
+def load_tensor_np(where: dict[str, str], name: str, *, dtype=np.float32) -> np.ndarray:
+    """Load a tensor as a contiguous NumPy array."""
+
+    import torch
+    from safetensors import safe_open
+
+    with safe_open(where[name], framework="pt", device="cpu") as fh:
+        t = fh.get_tensor(name)
+    if dtype is np.float32:
+        t = t.to(torch.float32)
+    arr = t.numpy()
+    if dtype is not None:
+        arr = arr.astype(dtype, copy=False)
+    return np.ascontiguousarray(arr)
+
+
+class GptOssRowEmbedding:
+    """Host row-sliced embedding gather for GPT-OSS.
+
+    The full BF16 embedding is about 1.08 GiB. For loader smokes and GRM
+    turn-wise operation, gather only requested rows on CPU and upload the small
+    `(B, L, H)` result.
+    """
+
+    def __init__(self, where: dict[str, str], name: str = "model.embed_tokens.weight"):
+        self.where = where
+        self.name = name
+
+    def __call__(self, ids_np: np.ndarray):
+        import torch
+        from safetensors import safe_open
+
+        ids = np.asarray(ids_np, dtype=np.int64)
+        flat = ids.reshape(-1).tolist()
+        with safe_open(self.where[self.name], framework="pt", device="cpu") as fh:
+            rows = fh.get_slice(self.name)[flat].to(torch.float32).numpy()
+        rows = np.ascontiguousarray(rows.reshape(ids.shape + (rows.shape[-1],)))
+        dt = BlockTC.COMPUTE_DTYPE
+        return tc.tensor(rows, dtype="float32").astype(dt)
+
+
+def _yarn_get_mscale(scale: float, mscale: float = 1.0) -> float:
+    if scale <= 1:
+        return 1.0
+    return 0.1 * mscale * math.log(scale) + 1.0
+
+
+def gpt_oss_yarn_rope_tables(cfg: GptOss20BConfig, seq_len: int):
+    """Build HF-compatible GPT-OSS YARN RoPE tables in TensorCUDA layout."""
+
+    rope = dict(cfg.rope_scaling or {})
+    base = float(rope.get("rope_theta", cfg.rope_theta))
+    dim = int(cfg.head_dim)
+    factor = rope.get("factor")
+    original = int(rope.get("original_max_position_embeddings", cfg.initial_context_length))
+    if factor is None:
+        factor = cfg.max_position_embeddings / original
+    factor = float(factor)
+
+    attention_factor = rope.get("attention_factor")
+    if attention_factor is None:
+        mscale = rope.get("mscale")
+        mscale_all_dim = rope.get("mscale_all_dim")
+        if mscale and mscale_all_dim:
+            attention_factor = _yarn_get_mscale(factor, float(mscale)) / _yarn_get_mscale(
+                factor, float(mscale_all_dim)
+            )
+        else:
+            attention_factor = _yarn_get_mscale(factor)
+    attention_factor = float(attention_factor)
+
+    beta_fast = float(rope.get("beta_fast") or 32.0)
+    beta_slow = float(rope.get("beta_slow") or 1.0)
+    truncate = bool(rope.get("truncate", True))
+
+    def correction_dim(num_rotations):
+        return (dim * math.log(original / (num_rotations * 2 * math.pi))) / (
+            2 * math.log(base)
+        )
+
+    low = correction_dim(beta_fast)
+    high = correction_dim(beta_slow)
+    if truncate:
+        low = math.floor(low)
+        high = math.ceil(high)
+    low = max(low, 0.0)
+    high = min(high, float(dim - 1))
+    if low == high:
+        high += 0.001
+
+    ar = np.arange(0, dim, 2, dtype=np.float32)
+    pos_freqs = base ** (ar / float(dim))
+    inv_extra = 1.0 / pos_freqs
+    inv_interp = 1.0 / (factor * pos_freqs)
+    ramp = np.clip((np.arange(dim // 2, dtype=np.float32) - low) / (high - low), 0.0, 1.0)
+    extra_factor = 1.0 - ramp
+    inv = inv_interp * (1.0 - extra_factor) + inv_extra * extra_factor
+
+    pos = np.arange(int(seq_len), dtype=np.float32)[:, None] * inv[None, :]
+    emb = np.concatenate([pos, pos], axis=-1)
+    c = (np.cos(emb) * attention_factor).astype(np.float32)
+    s = (np.sin(emb) * attention_factor).astype(np.float32)
+    dt = BlockTC.COMPUTE_DTYPE
+    return tc.tensor(c, dtype="float32").astype(dt), tc.tensor(s, dtype="float32").astype(dt)
+
+
+def _gpt_oss_attention_mask(L: int, S: int, *, sliding_window: int | None, dtype: str):
+    q_abs = np.arange(S - L, S, dtype=np.int64)[:, None]
+    k_abs = np.arange(S, dtype=np.int64)[None, :]
+    allowed = k_abs <= q_abs
+    if sliding_window is not None:
+        allowed &= k_abs > (q_abs - int(sliding_window))
+    mask = np.where(allowed, 0.0, -1.0e4).astype(np.float32)
+    return tc.tensor(mask.reshape(1, 1, L, S), dtype="float32").astype(dtype)
+
+
+class GptOssAttentionTC:
+    def __init__(self, cfg: GptOss20BConfig, layer_idx: int):
+        self.cfg = cfg
+        self.layer_idx = int(layer_idx)
+        self.layer_type = cfg.layer_types[self.layer_idx]
+        self.num_heads = cfg.num_heads
+        self.num_kv_heads = cfg.num_kv_heads
+        self.head_dim = cfg.head_dim
+        self.num_heads_per_kv = cfg.num_heads_per_kv
+        self.scaling = cfg.head_dim ** -0.5
+        self.sliding_window = cfg.sliding_window if self.layer_type == "sliding_attention" else None
+        self.q_proj = self.k_proj = self.v_proj = self.o_proj = None
+        self.sinks = None
+
+    @classmethod
+    def from_safetensors(
+        cls,
+        cfg: GptOss20BConfig,
+        where: dict[str, str],
+        layer_idx: int,
+    ) -> "GptOssAttentionTC":
+        obj = cls(cfg, layer_idx)
+        p = f"model.layers.{layer_idx}.self_attn"
+        for attr in ("q_proj", "k_proj", "v_proj", "o_proj"):
+            w = load_tensor_np(where, f"{p}.{attr}.weight")
+            b = load_tensor_np(where, f"{p}.{attr}.bias")
+            setattr(obj, attr, BiasedQuantLinearTC(w, b, group_size=cfg.group_size))
+            del w, b
+        obj.sinks = tc.tensor(load_tensor_np(where, f"{p}.sinks"), dtype="float32").astype(
+            BlockTC.COMPUTE_DTYPE
+        )
+        return obj
+
+    def __call__(self, x, cos, sin, position_offset: int = 0, kv_cache=None):
+        B, L, _ = x.shape
+        q = self.q_proj(x).reshape([B, L, self.num_heads, self.head_dim]).transpose(1, 2)
+        k = self.k_proj(x).reshape([B, L, self.num_kv_heads, self.head_dim]).transpose(1, 2)
+        v = self.v_proj(x).reshape([B, L, self.num_kv_heads, self.head_dim]).transpose(1, 2)
+
+        cseg = cos.slice(0, position_offset, L)
+        sseg = sin.slice(0, position_offset, L)
+        q = F.apply_rotary(q, cseg, sseg)
+        k = F.apply_rotary(k, cseg, sseg)
+
+        if kv_cache is not None:
+            k = tc.cat([kv_cache[0], k], dim=2)
+            v = tc.cat([kv_cache[1], v], dim=2)
+        S = k.shape[2]
+        mask = _gpt_oss_attention_mask(
+            L,
+            S,
+            sliding_window=self.sliding_window,
+            dtype=q.dtype,
+        )
+        attn = sink_attention_tc(
+            q,
+            k,
+            v,
+            self.sinks,
+            scale=self.scaling,
+            attention_mask=mask,
+            num_heads_per_kv=self.num_heads_per_kv,
+        )
+        out = attn.transpose(1, 2).reshape([B, L, self.num_heads * self.head_dim])
+        return self.o_proj(out), (k, v)
+
+
+class GptOssAttentionBlockTC:
+    """One GPT-OSS decoder block through attention/residual only.
+
+    The MoE half is intentionally absent here; this is the Phase 3A layer-runtime
+    scaffold used before packed MXFP4 expert math is available.
+    """
+
+    def __init__(self, cfg: GptOss20BConfig, layer_idx: int):
+        self.cfg = cfg
+        self.layer_idx = int(layer_idx)
+        self.input_layernorm = RMSNormTC(cfg.hidden_dim, cfg.rms_norm_eps)
+        self.self_attn = GptOssAttentionTC(cfg, layer_idx)
+
+    @classmethod
+    def from_safetensors(
+        cls,
+        cfg: GptOss20BConfig,
+        where: dict[str, str],
+        layer_idx: int,
+    ) -> "GptOssAttentionBlockTC":
+        obj = cls(cfg, layer_idx)
+        p = f"model.layers.{layer_idx}"
+        obj.input_layernorm.weight = tc.tensor(
+            load_tensor_np(where, f"{p}.input_layernorm.weight"), dtype="float32"
+        )
+        obj.self_attn = GptOssAttentionTC.from_safetensors(cfg, where, layer_idx)
+        return obj
+
+    def __call__(self, x, cos, sin, position_offset: int = 0, kv_cache=None):
+        dt = BlockTC.COMPUTE_DTYPE
+        normed = self.input_layernorm(x)
+        normed = normed.half() if dt == "float16" else normed.astype(dt)
+        attn, kv = self.self_attn(normed, cos, sin, position_offset, kv_cache)
+        return x + attn, kv

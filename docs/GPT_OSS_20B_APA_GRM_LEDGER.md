@@ -391,7 +391,72 @@ Disk state after download:
 - GPT-OSS HF cache directory reported `26G`, which includes blobs plus cached
   snapshot metadata/symlinks.
 
+Action: Added and ran the one-layer real-tensor TensorCUDA attention smoke.
+
+Files changed:
+- `core/gpt_oss20b_tc.py`
+- `scripts/gpt_oss20b_layer_smoke.py`
+
+Implemented loader pieces:
+- safetensors tensor-name to shard map
+- row-sliced host embedding gather using `safe_open().get_slice()`
+- HF-compatible YARN RoPE table builder for GPT-OSS config
+- real biased attention projection loading from GPT-OSS safetensors
+- sink-aware standard attention inside a GPT-OSS attention block
+- attention/residual block smoke harness
+
+Compile/test checks:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile core/gpt_oss20b_tc.py scripts/gpt_oss20b_layer_smoke.py tests/test_gpt_oss20b_scaffold.py`
+- `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_scaffold.py -q`
+- Result: `7 passed, 2 warnings in 0.58s`
+
+Layer 0 smoke command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_layer_smoke.py --layer 0 --max-tokens 16`
+
+Layer 0 artifact:
+- `artifacts/gpt_oss_20b/layer_smoke_20260706_185630.json`
+
+Layer 0 result:
+- `status = ok`
+- `layer_type = sliding_attention`
+- `input_ids_shape = [1, 7]`
+- `hidden_shape = [1, 7, 2880]`
+- `output_shape = [1, 7, 2880]`
+- `kv_shapes = [[1, 8, 7, 64], [1, 8, 7, 64]]`
+- `wall_seconds = 2.670`
+- GPU before: `NVIDIA GeForce RTX 4070 SUPER, 275, 12282, 0`
+- GPU after inside script: `NVIDIA GeForce RTX 4070 SUPER, 497, 12282, 0`
+
+Layer 1 smoke command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_layer_smoke.py --layer 1 --max-tokens 16`
+
+Layer 1 artifact:
+- `artifacts/gpt_oss_20b/layer_smoke_20260706_185700.json`
+
+Layer 1 result:
+- `status = ok`
+- `layer_type = full_attention`
+- `input_ids_shape = [1, 7]`
+- `hidden_shape = [1, 7, 2880]`
+- `output_shape = [1, 7, 2880]`
+- `kv_shapes = [[1, 8, 7, 64], [1, 8, 7, 64]]`
+- `wall_seconds = 2.456`
+- GPU before: `NVIDIA GeForce RTX 4070 SUPER, 275, 12282, 0`
+- GPU after inside script: `NVIDIA GeForce RTX 4070 SUPER, 497, 12282, 0`
+
+Post-run GPU state:
+- `NVIDIA GeForce RTX 4070 SUPER, 275, 12282, 0`
+
+Interpretation:
+- Real GPT-OSS safetensors can now feed a TensorCUDA attention/residual block.
+- Both layer families have been smoke-tested: sliding attention and full
+  attention.
+- This is not a full model loader and not a behavior/PPL result because MoE and
+  lm_head are still skipped.
+- Next hard gate is GPT-OSS MoE: exact diagnostic dequant for selected experts,
+  then packed MXFP4 expert math for the viable path.
+
 Pending:
-- Build the one-layer Phase 3A loader on top of the scaffold.
+- Build the GPT-OSS MoE diagnostic path on top of the attention scaffold.
 - Add packed MXFP4 expert math before making any viable 12GB operating-point
   claim.
