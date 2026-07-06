@@ -48,3 +48,15 @@ OOM wall on Qwen3.5-2B. INT3 and INT2 are memory-feasible, but INT3 is already
 too damaging for a serious operating point on this affine quantization path,
 and INT2 is unusable. The next unresolved axis is whether Qwen3.5-9B behaves
 similarly or exposes a different load/OOM boundary.
+
+The 9B load-only check did not find an OOM boundary either. Qwen3.5-9B loaded
+at INT4, INT3, and INT2 on the 4070 Super, with resident memory after load at
+roughly 4505 MiB, 3545 MiB, and 2617 MiB respectively. The slow path remained
+INT3 loading, not CUDA memory.
+
+The 9B PPL smoke is smaller than the 2B broad gate, so it should be treated as
+a directional check only. On that 255-token smoke, INT4 landed around 6.0 PPL,
+INT3 around 7.65-7.69 PPL, and INT2 around 40k-43k PPL. That means INT3 did
+not collapse on the 9B smoke the way it was heavily damaged on the broader 2B
+gate, but it still lost quality. INT2 collapsed on both model sizes. APA refine
+levels did not rescue low-bit weight damage.

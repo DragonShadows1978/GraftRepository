@@ -181,3 +181,66 @@ Interpretation:
 - APA refine changes do not repair the weight quantization damage.
 - There was no OOM layer for Qwen3.5-2B at any tested bit width.
 - Final post-run GPU memory returned to baseline: 249 MiB used of 12282 MiB.
+
+## 2026-07-06 16:27-16:34 EDT
+
+Action: Ran Qwen3.5-9B load-only OOM boundary check.
+
+Model:
+- `/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a`
+
+Command:
+- `env PYTHONUNBUFFERED=1 PYTHONPATH=/mnt/ForgeRealm/GraftRepository:/mnt/ForgeRealm/Project-Tensor/tensor_cuda PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/qwen35_intn_weight_ppl_sweep.py --model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --bits 4,3,2 --load-only --window 256 --scored 128 --n-windows 1 --step 32`
+
+Artifact:
+- `artifacts/intn_weight_ppl/qwen35_intn_ppl_20260706_162723.json`
+
+Load results:
+
+| Bits | Status | Load seconds | Memory before MiB | Memory after MiB | OOM |
+| ---: | --- | ---: | ---: | ---: | --- |
+| 4 | load_only_ok | 122.26 | 439 | 4505 | no |
+| 3 | load_only_ok | 224.92 | 697 | 3545 | no |
+| 2 | load_only_ok | 74.36 | 697 | 2617 | no |
+
+Interpretation:
+- Qwen3.5-9B loads successfully at all three tested bit widths on the 4070
+  Super.
+- No OOM layer occurred in the load-only check.
+- INT3 load remains the slowest path.
+
+## 2026-07-06 16:35-16:43 EDT
+
+Action: Ran Qwen3.5-9B PPL smoke across standard and APA refine settings.
+
+Protocol:
+- Real Qwen3.5-9B TensorCUDA model.
+- Real WikiText-2 raw cached dataset.
+- Window: 512 tokens.
+- Scored tail: 256 tokens.
+- Windows: 1.
+- Actual scored tokens: 255 per setting.
+- Settings: standard, APA r0.15, APA r0.10, APA r0.05.
+
+Command:
+- `env PYTHONUNBUFFERED=1 PYTHONPATH=/mnt/ForgeRealm/GraftRepository:/mnt/ForgeRealm/Project-Tensor/tensor_cuda PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/qwen35_intn_weight_ppl_sweep.py --model-dir /home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a --bits 4,3,2 --window 512 --scored 256 --n-windows 1 --step 64 --refines 0.15,0.10,0.05`
+
+Artifact:
+- `artifacts/intn_weight_ppl/qwen35_intn_ppl_20260706_163459.json`
+
+PPL results:
+
+| Bits | Standard | APA r0.15 | APA r0.10 | APA r0.05 | Load MiB | Max eval MiB |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 4 | 6.0194 | 5.9991 | 6.0376 | 6.0244 | 4505 | 4873 |
+| 3 | 7.6484 | 7.6836 | 7.6929 | 7.6646 | 3625 | 3881 |
+| 2 | 39555.5458 | 43086.2102 | 41647.6702 | 40987.8827 | 2665 | 2921 |
+
+Interpretation:
+- This is a small 255-token smoke, not a broad 9B PPL gate.
+- INT3 is damaged on 9B but not collapsed in this small sample: about 1.27x
+  the INT4 standard PPL.
+- INT2 is collapsed on 9B as well.
+- APA refine variation again does not rescue INT2 and does not materially
+  change the INT3 result.
+- Final post-run GPU memory returned to baseline: 249 MiB used of 12282 MiB.
