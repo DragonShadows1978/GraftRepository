@@ -10,3 +10,6 @@ graft-repo*/
 # local investigation/artifact payloads
 inv_*/
 GRM_Stack.zip
+
+# local CMake build outputs
+cpp/build/
