@@ -23,6 +23,7 @@ import numpy as np
 sys.path.insert(0, "/mnt/ForgeRealm/Project-Tensor/tensor_cuda")
 import tensor_cuda as tc
 from tensor_cuda import functional as F
+from tensor_cuda.quantization import quantize_affine_per_group
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from adapters.tokenizer import MistralConfig
@@ -65,9 +66,19 @@ def _quantize_int4(w_fp32: np.ndarray, group_size: int = GROUP_SIZE):
     return packed, scales.astype(np.float16), zeros.astype(np.float16)
 
 
+def _read_weight_bits() -> int:
+    bits = int(os.environ.get("TC_WEIGHT_BITS", "4"))
+    if bits not in (2, 3, 4):
+        raise ValueError(f"TC_WEIGHT_BITS must be 2, 3, or 4; got {bits}")
+    return bits
+
+
 class QuantLinearTC:
-    """INT4 group-quantized linear on tensor_cuda. Weights live on-device as
-    packed uint8 + fp16 scales/zeros; forward is the native int4_linear kernel."""
+    """Low-bit group-quantized linear on tensor_cuda.
+
+    INT4 preserves the original packed-nibble model path. INT2/INT3 use the
+    Project-Tensor native intn kernels with the same affine per-group scheme.
+    """
 
     # Opt-in fused dequant-GEMM (#12): avoids materializing the full (K,N) fp16
     # weight transient by dequantizing inside the GEMM. False = the validated
@@ -80,15 +91,40 @@ class QuantLinearTC:
     # to two-stage cuBLAS — so the pick must be per-call, not global.
     FUSED_DECODE = False
     FUSED_M_MAX = 8
+    WEIGHT_BITS = _read_weight_bits()
+    LOAD_CONTEXT = None
 
-    def __init__(self, weight_fp32: np.ndarray, group_size: int = GROUP_SIZE):
+    @classmethod
+    def set_weight_bits(cls, bits: int) -> None:
+        bits = int(bits)
+        if bits not in (2, 3, 4):
+            raise ValueError(f"weight bits must be 2, 3, or 4; got {bits}")
+        cls.WEIGHT_BITS = bits
+
+    def __init__(self, weight_fp32: np.ndarray, group_size: int = GROUP_SIZE,
+                 bits: Optional[int] = None):
         self.out_features, self.in_features = weight_fp32.shape
         self.group_size = group_size
-        packed, scales, zeros = _quantize_int4(weight_fp32, group_size)
-        self.packed = tc.tensor(packed, dtype="uint8")
-        self.scales = tc.tensor(scales, dtype="float16")
-        self.zeros = tc.tensor(zeros, dtype="float16")
-        self._vram = packed.nbytes + scales.nbytes + zeros.nbytes
+        self.bits = int(bits if bits is not None else QuantLinearTC.WEIGHT_BITS)
+        if self.bits not in (2, 3, 4):
+            raise ValueError(f"weight bits must be 2, 3, or 4; got {self.bits}")
+        try:
+            if self.bits == 4:
+                packed, scales, zeros = _quantize_int4(weight_fp32, group_size)
+            else:
+                q = quantize_affine_per_group(weight_fp32, self.bits, group_size)
+                packed, scales, zeros = q.packed, q.scales, q.zeros
+            self.packed = tc.tensor(packed, dtype="uint8")
+            self.scales = tc.tensor(scales, dtype="float16")
+            self.zeros = tc.tensor(zeros, dtype="float16")
+            self._vram = packed.nbytes + scales.nbytes + zeros.nbytes
+        except Exception as exc:
+            ctx = QuantLinearTC.LOAD_CONTEXT
+            detail = f" tensor={ctx}" if ctx else ""
+            raise RuntimeError(
+                f"QuantLinearTC INT{self.bits} init failed{detail} "
+                f"shape=({self.out_features},{self.in_features})"
+            ) from exc
 
     def __call__(self, x):
         fused = QuantLinearTC.USE_FUSED
@@ -97,9 +133,17 @@ class QuantLinearTC:
             for d in x.shape[:-1]:
                 M *= d
             fused = M <= QuantLinearTC.FUSED_M_MAX
-        if fused:
+        if self.bits == 4 and fused:
             return tc.int4_linear_fused(x, self.packed, self.scales, self.zeros, self.group_size)
-        return tc.int4_linear(x, self.packed, self.scales, self.zeros, self.group_size)
+        if self.bits == 4:
+            return tc.int4_linear(x, self.packed, self.scales, self.zeros, self.group_size)
+        if fused:
+            return tc.intn_linear_fused(
+                x, self.packed, self.scales, self.zeros, self.bits,
+                self.in_features, self.group_size)
+        return tc.intn_linear(
+            x, self.packed, self.scales, self.zeros, self.bits,
+            self.in_features, self.group_size)
 
     def vram_bytes(self) -> int:
         return self._vram
@@ -678,6 +722,7 @@ class Mistral7B_TC:
         comp = orig_bytes / quant_bytes if quant_bytes else 0
         return {
             "loaded": loaded,
+            "weight_bits": QuantLinearTC.WEIGHT_BITS,
             "original_bytes": orig_bytes,
             "quantized_bytes": quant_bytes,
             "compression_ratio": comp,

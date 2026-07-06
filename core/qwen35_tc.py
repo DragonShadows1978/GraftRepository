@@ -491,6 +491,15 @@ class Qwen35_TC:
             with safe_open(where[name], framework="pt") as f:
                 return f.get_tensor(name).to(torch.float32).numpy()
 
+        def qlinear(name, arr=None):
+            w = np.ascontiguousarray(gf(name) if arr is None else arr)
+            QuantLinearTC.LOAD_CONTEXT = name
+            try:
+                return QuantLinearTC(w)
+            finally:
+                QuantLinearTC.LOAD_CONTEXT = None
+                del w
+
         P = "model.language_model"
         emb = gf(f"{P}.embed_tokens.weight")
         self.embed_tokens.weight = np.ascontiguousarray(emb)
@@ -510,28 +519,21 @@ class Qwen35_TC:
             mx = Lr.mixer
             if Lr.is_attn:
                 a = f"{p}.self_attn"
-                mx.q_proj = QuantLinearTC(np.ascontiguousarray(
-                    gf(f"{a}.q_proj.weight")))
-                mx.k_proj = QuantLinearTC(np.ascontiguousarray(
-                    gf(f"{a}.k_proj.weight")))
-                mx.v_proj = QuantLinearTC(np.ascontiguousarray(
-                    gf(f"{a}.v_proj.weight")))
-                mx.o_proj = QuantLinearTC(np.ascontiguousarray(
-                    gf(f"{a}.o_proj.weight")))
+                mx.q_proj = qlinear(f"{a}.q_proj.weight")
+                mx.k_proj = qlinear(f"{a}.k_proj.weight")
+                mx.v_proj = qlinear(f"{a}.v_proj.weight")
+                mx.o_proj = qlinear(f"{a}.o_proj.weight")
                 mx.q_norm_w = tc.tensor(np.ascontiguousarray(
                     1.0 + gf(f"{a}.q_norm.weight")), dtype="float32")
                 mx.k_norm_w = tc.tensor(np.ascontiguousarray(
                     1.0 + gf(f"{a}.k_norm.weight")), dtype="float32")
             else:
                 la = f"{p}.linear_attn"
-                mx.in_proj_qkv = QuantLinearTC(np.ascontiguousarray(
-                    gf(f"{la}.in_proj_qkv.weight")))
-                mx.in_proj_z = QuantLinearTC(np.ascontiguousarray(
-                    gf(f"{la}.in_proj_z.weight")))
+                mx.in_proj_qkv = qlinear(f"{la}.in_proj_qkv.weight")
+                mx.in_proj_z = qlinear(f"{la}.in_proj_z.weight")
                 mx.in_proj_a = F32Linear(gf(f"{la}.in_proj_a.weight"))
                 mx.in_proj_b = F32Linear(gf(f"{la}.in_proj_b.weight"))
-                mx.out_proj = QuantLinearTC(np.ascontiguousarray(
-                    gf(f"{la}.out_proj.weight")))
+                mx.out_proj = qlinear(f"{la}.out_proj.weight")
                 cw = gf(f"{la}.conv1d.weight").reshape(-1, cfg.conv_kernel)
                 mx.conv_w = [tc.tensor(np.ascontiguousarray(
                     cw[:, j].reshape(1, 1, -1)))
@@ -543,12 +545,9 @@ class Qwen35_TC:
                 mx.norm_w = tc.tensor(np.ascontiguousarray(
                     gf(f"{la}.norm.weight")), dtype="float32")   # plain w
             mx_g = f"{p}.mlp"
-            Lr.mlp.gate_proj = QuantLinearTC(np.ascontiguousarray(
-                gf(f"{mx_g}.gate_proj.weight")))
-            Lr.mlp.up_proj = QuantLinearTC(np.ascontiguousarray(
-                gf(f"{mx_g}.up_proj.weight")))
-            Lr.mlp.down_proj = QuantLinearTC(np.ascontiguousarray(
-                gf(f"{mx_g}.down_proj.weight")))
+            Lr.mlp.gate_proj = qlinear(f"{mx_g}.gate_proj.weight")
+            Lr.mlp.up_proj = qlinear(f"{mx_g}.up_proj.weight")
+            Lr.mlp.down_proj = qlinear(f"{mx_g}.down_proj.weight")
             gc.collect()
             if progress and cfg.is_attention(i):
                 print(f"    layer {i + 1}/{cfg.num_layers}", flush=True)
@@ -556,15 +555,15 @@ class Qwen35_TC:
         self.norm.weight = tc.tensor(np.ascontiguousarray(
             1.0 + gf(f"{P}.norm.weight")), dtype="float32")
         if "lm_head.weight" in where:
-            self.lm_head = QuantLinearTC(np.ascontiguousarray(
-                gf("lm_head.weight")))
+            self.lm_head = qlinear("lm_head.weight")
         else:
-            self.lm_head = QuantLinearTC(np.ascontiguousarray(
-                self.embed_tokens.weight))
+            self.lm_head = qlinear("model.language_model.embed_tokens.weight",
+                                   self.embed_tokens.weight)
         gc.collect()
         return {
-            "loaded": "INT4 hybrid",
+            "loaded": f"INT{QuantLinearTC.WEIGHT_BITS} hybrid",
             "framework": "tensor_cuda Qwen3.5",
+            "weight_bits": QuantLinearTC.WEIGHT_BITS,
             "model_dir": os.path.abspath(d),
             "repository": cfg.repository,
             "revision": cfg.revision,

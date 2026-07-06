@@ -804,7 +804,11 @@ class DeepSeekV2Lite_TC:
         resident_weight_bytes = quant_bytes + unquantized_weight_bytes
         return {
             "loaded": loaded,
-            "framework": "tensor_cuda DeepSeek-V2-Lite INT4",
+            "framework": (
+                f"tensor_cuda DeepSeek-V2-Lite "
+                f"INT{QuantLinearTC.WEIGHT_BITS}"
+            ),
+            "weight_bits": QuantLinearTC.WEIGHT_BITS,
             "group_size": group,
             "original_bytes": orig_bytes,
             "source_bf16_linear_bytes": source_bf16_linear_bytes,
