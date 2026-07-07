@@ -3573,3 +3573,40 @@ Interpretation:
 - This is only record A at 4K, not the whole instruction-retention matrix.
 - The same GPT-OSS output-policy rule holds: generated-answer parsing passes,
   while strict first-token extraction is too coarse for the current wording.
+
+Action: Reused the same 4K retained-instruction graft for records B and C.
+
+Purpose:
+- Broaden the instruction-retention result from one record to all three built-in
+  retained-instruction records without rerunning capture.
+- Check whether the mounted graft can recover multiple stored instruction
+  response strings under the same cleared-context execution prompt.
+
+GPU command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_exact_value_graft_gate.py --record-mode instruction_retention --record-id retention_instruction_b --record-id retention_instruction_c --target-tokens 4096 --steps 16 --max-tokens 192 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --skip-capture --graft-dir artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/graft --output artifacts/gpt_oss_20b/h6_instruction_retention_bc_4k_gate.json`
+
+Artifacts:
+- `artifacts/gpt_oss_20b/h6_instruction_retention_bc_4k_gate.json`
+- `artifacts/gpt_oss_20b/h6_instruction_retention_bc_4k_eval.json`
+
+Result:
+- Parent status: `ok`.
+- Strict first-token classification: `fail`, `0/2`.
+- Generated classification: `pass`, `2/2`.
+- Normalized evaluator: generated value `2/2`,
+  generated-unconfounded value `2/2`.
+- `retention_instruction_b`:
+  - control generated: `I'm sorry, but I can't comply with that.`
+  - mounted generated: `ORBIT-7` followed by return padding.
+- `retention_instruction_c`:
+  - control generated: `I'm sorry, but I can't comply with that.`
+  - mounted generated: `CIPHER-3` followed by return/repetition padding.
+
+Interpretation:
+- The full built-in retained-instruction set now passes generated-answer recall
+  at 4K: A=`LUMEN-42`, B=`ORBIT-7`, C=`CIPHER-3`.
+- This closes the first instruction-retention matrix for one 4K graft, but not
+  repetition/drift or longer-context instruction retention.
+- Strict first-token extraction remains the wrong success criterion for this
+  wording; the product policy remains generated-answer parsing or stricter
+  answer-first prompt policy.

@@ -702,3 +702,15 @@ instruction was tested, and it used generated-answer scoring rather than
 strict first-token extraction. The result is enough to keep the Phase 5
 instruction track alive; the next step is to broaden it across the remaining
 instruction records and later test drift across repeated turns.
+
+That broadening now passed for the remaining built-in instruction records using
+the same 4K captured graft. Records B and C recovered `ORBIT-7` and
+`CIPHER-3` from mounted cold K/V while no-graft controls refused. Together with
+record A, the first retained-instruction matrix is now `3/3` in generated-answer
+mode.
+
+The boundary is still clear. This proves simple retained instruction execution
+from one 4K graft, not long-run behavioral stability. Repetition/drift remains
+the next missing operating-mode axis: the model has to keep retrieving the
+right instruction across repeated cleared-context turns without mutating or
+over-repeating the response.
