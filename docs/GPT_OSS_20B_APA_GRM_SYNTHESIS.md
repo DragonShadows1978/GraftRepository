@@ -319,3 +319,14 @@ APA layers and `12` chunked sliding-standard layers. The monitor peak was
 boundary has been found yet. This is still context-fit/prefill evidence, not a
 generation or GRM continuity result, but the operating point has cleared 32K on
 real tokens.
+
+The 64K H4 rung has also passed. APA r0.15 processed `65536` real tokens
+through all 24 streamed layers with the same backend split: `12`
+`apa_selective_sink_fused` full-attention layers and `12`
+`standard_sink_sliding_chunked` sliding layers. The monitor peak was
+`4834 MiB`, the artifact max was `1421 MiB`, and the final hidden shape was
+`[1, 65536, 2880]`. The 32K-to-64K jump added `2385 MiB` to the sampled peak
+and pushed wall time from about `2216s` to about `5577s`. This clears the
+practical 64K target on real tokens. A 128K rung now looks plausible on memory,
+but the current token-routed MoE path makes it a multi-hour test rather than a
+quick confirmation.

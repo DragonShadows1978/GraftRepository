@@ -1951,3 +1951,75 @@ Next:
 - Run H4 APA r0.15 at `65536` if continuing the context ladder.
 - If `65536` passes, decide whether to attempt `131072` or move to H5 GRM
   capture/mount first.
+
+Action: Ran H4 APA r0.15 real-token 64K context rung.
+
+Command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_context_ladder.py --corpus-dir docs --lengths 65536 --settings apa_r0.15 --apa-layer-scope full --bulk-bits 8 --expert-mode resident_packed_mxfp4 --output artifacts/gpt_oss_20b/h4_context_ladder_apa_64k_sampled.json`
+
+Artifacts:
+- Ladder:
+  `artifacts/gpt_oss_20b/h4_context_ladder_apa_64k_sampled.json`
+- Run:
+  `artifacts/gpt_oss_20b/h4_context_ladder_apa_64k_sampled/apa_r0.15_65536.json`
+
+Result:
+- ladder status: `ok`
+- classification: `pass`
+- actual input tokens: `65536`
+- completed layers: `24`
+- first failure: `null`
+- first OOM: `null`
+- max pass tokens: `65536`
+- run wall seconds: `5576.632580742997`
+- stream artifact wall seconds: `5571.350367329025`
+- layer time sum: `5562.851192067028`
+- average layer time: `231.78546633612618`
+- artifact max observed memory: `1421 MiB`
+- monitor peak memory: `4834 MiB`
+- monitor samples: `10684`
+- final hidden shape: `[1, 65536, 2880]`
+- route detail: `summary`
+- expert empty cache interval: `0`
+- backend counts:
+  - `apa_selective_sink_fused = 12`
+  - `standard_sink_sliding_chunked = 12`
+- run artifact size:
+  `2076839` bytes
+- run directory size:
+  `2.3M`
+- prompt directory size:
+  `228K`
+
+Post-run GPU state:
+- `NVIDIA GeForce RTX 4070 SUPER, 279, 12282, 39`
+
+Comparison to prior H4 rungs:
+- APA 32K:
+  - monitor peak memory: `2449 MiB`
+  - artifact max memory: `1155 MiB`
+  - wall: `2216.48s`
+- APA 64K:
+  - monitor peak memory: `4834 MiB`
+  - artifact max memory: `1421 MiB`
+  - wall: `5576.63s`
+- Delta from 32K to 64K:
+  - monitor peak: `+2385 MiB`
+  - artifact max: `+266 MiB`
+  - wall: about `2.52x`
+
+Interpretation:
+- APA r0.15 has now passed a real-token `65536` context rung through all 24
+  streamed GPT-OSS layers.
+- No APA OOM boundary has been found through 64K.
+- The sampled monitor peak is still below half of the RTX 4070 Super's
+  `12282 MiB` reported memory, but the wall time is now the dominant cost.
+- This remains prefill/context-fit evidence with `--skip-lm-head`; it is not a
+  generation, recall, PPL, or GRM continuity result.
+
+Next:
+- H4 has cleared the user's stated minimum target of 64K.
+- A 131072-token rung is now plausible on memory but would likely take several
+  hours on the current token-routed MoE path.
+- Before spending that runtime, decide whether to run the 128K context rung or
+  pivot to H5 GRM capture/mount at the confirmed 64K operating point.
