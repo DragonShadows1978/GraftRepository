@@ -1,0 +1,74 @@
+# GRM GEMV Router Synthesis
+
+The GEMV router work is closed as an implementation track for the current GRM
+runtime. The original per-node scan has been replaced or bypassed by measured
+host routing paths:
+
+- MLA uses a contiguous fp32 route-key arena plus INT4 bulk/refine routing.
+- GQA uses native key-bank routing with segment-style raw `|q.k|` scoring.
+- Prepared epoch snapshots give clean route reads under mutation.
+- CUDA is no longer only a probe: there is a runtime-facing sidecar,
+  explicit native bank attachment, invalidation on route/eligibility mutation,
+  an opt-in `GRM_GQA_CUDA_ROUTE=1` arena bridge, and route-bank lifecycle
+  signatures to avoid stale GPU row reuse. The bridge has now also passed live
+  GPU validation on real Qwen3.5-2B layer-3 capture banks at 32, 128, and 512
+  nodes.
+
+The practical result is good enough for the GRM paper's routing limitation:
+hundreds to millions of memories are now in measured interactive territory on
+the host path, and the remaining performance questions are targeted kernel work
+rather than missing runtime architecture.
+
+## What Is Still Left
+
+1. Decide whether CUDA remains limited or becomes general routing.
+
+   The current CUDA bridge is intentionally a limited mount-window path with
+   `topk <= 16`, dense same-shape single-key banks, and no lexical/filter policy
+   in the CUDA sidecar. That is correct for fast mount selection. Replacing
+   general `arena.route()` would require a larger-topk/full-rank route contract,
+   filter semantics, and broader fallback behavior.
+
+2. Only build another GQA kernel if the product target needs it.
+
+   Host-side GQA full-bank routing improved, but sub-10ms larger real-capture
+   routing would need a lower-level GEMM/BLAS-style layout or a packed
+   microkernel. Several scalar/transposed host experiments were parity-green
+   but slower and should stay diagnostic-only.
+
+3. Broaden model/capture coverage before making a general GQA claim.
+
+   Qwen3.5-2B capture sweeps are green for the current evidence set. A broader
+   full-bank correctness claim should include another model or capture family.
+
+## What Is Not Left
+
+- The dependency-free CPU C ABI does not need to take a CUDA dependency.
+- The host router no longer needs a rewrite to get out of per-node scan mode.
+- ANN/IVF indexing remains out of scope until roughly 10M nodes.
+- The current stale CUDA route-bank bug is fixed: route-bank snapshots now force
+  reattachment when dense GQA rows or native node-id mappings change.
+- A live GPU bridge receipt is no longer missing: 32, 128, and 512-node
+  Qwen3.5-2B capture-bank smokes passed parity on the 4070 Super.
+
+## Current Evidence
+
+- Previous non-GPU closure gate:
+  `tests/test_grm_router_baseline.py tests/test_grm_native_runtime.py -q` ->
+  `109 passed, 2 warnings in 344.94s`.
+- 2026-07-07 focused CUDA lifecycle gate:
+  six selected native/GQA CUDA-route tests -> `6 passed, 2 warnings in 9.65s`.
+- 2026-07-07 full native-runtime gate:
+  `tests/test_grm_native_runtime.py` -> `90 passed, 2 warnings in 248.88s`.
+- 2026-07-07 live CUDA bridge gate:
+  `scripts/grm_gqa_cuda_bridge_smoke.py` on real Qwen3.5-2B layer-3 capture
+  banks -> parity true at 32, 128, and 512 nodes. Reused bridge min wall:
+  `3.15747ms`, `11.217836ms`, and `38.960699ms`; direct CUDA device/query:
+  `0.098496ms`, `0.226304ms`, and `0.740352ms`.
+
+## Decision
+
+Treat the GEMV router implementation as closed at the opt-in CUDA bridge
+boundary. The live GPU bridge receipt now exists. The next work item is a
+deliberate policy decision on whether CUDA should stay as the mount-window
+accelerator or become a full-rank general route backend.

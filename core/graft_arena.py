@@ -1482,6 +1482,7 @@ class GQAArenaCache(ArenaCache):
     def _cuda_route_bank_inputs(self):
         rows = []
         node_ids = []
+        sig_rows = []
         shape = None
         for g in self.grafts:
             if g.get("retired") or g.get("kind", "turn") == "recall":
@@ -1491,7 +1492,8 @@ class GQAArenaCache(ArenaCache):
                 return None
             if "cent" not in g:
                 return None
-            key = np.asarray(g.get("cent"), dtype=np.float32)
+            cent = g.get("cent")
+            key = np.asarray(cent, dtype=np.float32)
             if key.ndim != 3:
                 return None
             if shape is None:
@@ -1500,26 +1502,32 @@ class GQAArenaCache(ArenaCache):
                 return None
             rows.append(key)
             node_ids.append(int(node_id))
+            sig_rows.append((
+                int(node_id),
+                tuple(int(dim) for dim in key.shape),
+                key.dtype.str,
+                id(cent),
+            ))
         if not rows:
             return None
-        return (
-            np.ascontiguousarray(np.stack(rows), dtype=np.float32),
-            np.asarray(node_ids, dtype=np.uint64),
-        )
+        route_bank = np.ascontiguousarray(np.stack(rows), dtype=np.float32)
+        node_ids_np = np.asarray(node_ids, dtype=np.uint64)
+        return route_bank, node_ids_np, tuple(sig_rows)
 
-    def _ensure_cuda_route_bank(self, store):
+    def _ensure_cuda_route_bank(self, store, bank_inputs):
         if getattr(self, "_cuda_gqa_route_unavailable", False):
             return False
-        if getattr(store, "_cuda_gqa_bank", None) is not None:
-            return True
         if not hasattr(store, "configure_cuda_gqa_route_bank"):
             return False
-        bank_inputs = self._cuda_route_bank_inputs()
         if bank_inputs is None:
             return False
-        route_bank, node_ids = bank_inputs
+        route_bank, node_ids, signature = bank_inputs
+        if (getattr(store, "_cuda_gqa_bank", None) is not None
+                and getattr(store, "_cuda_gqa_bank_signature", None) == signature):
+            return True
         try:
             store.configure_cuda_gqa_route_bank(route_bank, node_ids)
+            store._cuda_gqa_bank_signature = signature
         except Exception:
             self._cuda_gqa_route_unavailable = True
             return False
@@ -1533,7 +1541,10 @@ class GQAArenaCache(ArenaCache):
             return None
         if not self._cuda_route_enabled():
             return None
-        if not self._ensure_cuda_route_bank(store):
+        bank_inputs = self._cuda_route_bank_inputs()
+        if bank_inputs is None:
+            return None
+        if not self._ensure_cuda_route_bank(store, bank_inputs):
             return None
         native_to_idx = {
             int(self.grafts[i]["native_node_id"]): int(i)
@@ -1541,9 +1552,6 @@ class GQAArenaCache(ArenaCache):
             if self.grafts[i].get("native_node_id") is not None
         }
         if len(native_to_idx) != len(cand):
-            return None
-        bank_inputs = self._cuda_route_bank_inputs()
-        if bank_inputs is None:
             return None
         bank_size = int(bank_inputs[1].shape[0])
         want = min(max(0, int(limit)), len(cand))

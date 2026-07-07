@@ -57,6 +57,24 @@ def validate_gqa_route_bank(
     return keys_np, ids_np
 
 
+def gqa_route_bank_signature(
+    keys: np.ndarray,
+    node_ids: np.ndarray,
+) -> str:
+    """Return a deterministic content signature for a dense GQA route bank."""
+    keys_np, ids_np = validate_gqa_route_bank(keys, node_ids)
+    import hashlib
+
+    digest = hashlib.blake2b(digest_size=16)
+    digest.update(str(keys_np.shape).encode("ascii"))
+    digest.update(keys_np.dtype.str.encode("ascii"))
+    digest.update(memoryview(keys_np.view(np.uint8)))
+    digest.update(str(ids_np.shape).encode("ascii"))
+    digest.update(ids_np.dtype.str.encode("ascii"))
+    digest.update(memoryview(ids_np.view(np.uint8)))
+    return digest.hexdigest()
+
+
 def _load_probe_backend():
     # Kept as a lazy import so importing this runtime-facing helper never
     # requires nvcc/CUDA. The probe remains the source of truth until the sidecar
@@ -112,11 +130,13 @@ class CudaGQARouteSidecar:
         node_ids: np.ndarray | None = None,
     ) -> "CudaGQARouteBank":
         keys_np, ids_np = validate_gqa_route_bank(keys, node_ids)
+        signature = gqa_route_bank_signature(keys_np, ids_np)
         arena = self._probe.create_arena(keys_np)
         return CudaGQARouteBank(
             arena,
             ids_np,
             setup_wall_ms=float(arena.setup_wall_ms),
+            signature=signature,
         )
 
     def close(self) -> None:
@@ -131,10 +151,18 @@ class CudaGQARouteSidecar:
 class CudaGQARouteBank:
     """Device-resident CUDA route bank with persistent route scratch buffers."""
 
-    def __init__(self, arena, node_ids: np.ndarray, *, setup_wall_ms: float):
+    def __init__(
+        self,
+        arena,
+        node_ids: np.ndarray,
+        *,
+        setup_wall_ms: float,
+        signature: str | None = None,
+    ):
         self._arena = arena
         self.node_ids = np.ascontiguousarray(node_ids, dtype=np.uint64)
         self.setup_wall_ms = float(setup_wall_ms)
+        self.signature = signature
 
     def close(self) -> None:
         if self._arena is not None:

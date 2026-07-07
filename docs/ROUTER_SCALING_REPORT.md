@@ -1,6 +1,12 @@
 # GRM Router Scaling Report
 
-Status: GEMV-router implementation closure on local `main`.
+Status: GEMV-router implementation closure in the local GraftRepository
+checkout.
+
+Tracking:
+- Implementation plan: `docs/GRM_GEMV_ROUTER_PLAN.md`
+- Operational ledger: `docs/GRM_GEMV_ROUTER_LEDGER.md`
+- Narrative synthesis: `docs/GRM_GEMV_ROUTER_SYNTHESIS.md`
 
 This report records measured router scaling after replacing the original
 per-node route scan with contiguous host arenas:
@@ -19,10 +25,22 @@ PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest \
   tests/test_grm_router_baseline.py tests/test_grm_native_runtime.py -q
 ```
 
-Result: `109 passed, 2 warnings in 344.94s`. Live CUDA bridge validation is not
-included in this receipt because this sandbox cannot see the NVIDIA device
-nodes; the CUDA bridge smoke and policy regressions are covered by non-GPU
-tests, and the CUDA live script is committed for a device-visible run.
+Result: `109 passed, 2 warnings in 344.94s`. Live CUDA bridge validation was
+added later on 2026-07-07 with a device-visible 4070 Super process and real
+Qwen3.5-2B layer-3 capture banks.
+
+Live opt-in CUDA bridge validation on 2026-07-07:
+
+| Nodes | Queries | Parity | Reused bridge min wall | Direct CUDA route wall | Direct CUDA device/query |
+| ---: | ---: | --- | ---: | ---: | ---: |
+| 32 | 2 | true | `3.15747ms` | `0.128642ms` | `0.098496ms` |
+| 128 | 3 | true | `11.217836ms` | `0.255081ms` | `0.226304ms` |
+| 512 | 3 | true | `38.960699ms` | `0.770151ms` | `0.740352ms` |
+
+Artifacts:
+- `artifacts/grm_gqa_cuda_bridge/qwen35_2b_layer3_32n_smoke.json`
+- `artifacts/grm_gqa_cuda_bridge/qwen35_2b_layer3_128n_smoke.json`
+- `artifacts/grm_gqa_cuda_bridge/qwen35_2b_layer3_512n_smoke.json`
 
 All numbers below are from local measurements on harvested repository-derived
 route vectors unless otherwise noted. Missing direct baselines are marked as
@@ -628,10 +646,15 @@ Fresh post-snapshot GQA receipts:
   exposes an explicit CUDA bank attachment path. Explicit attachments now close
   on route-key and eligibility mutations. The arena bridge now has an opt-in
   `GRM_GQA_CUDA_ROUTE=1` limited-route policy for same-shape non-lexical GQA
-  banks. The implementation work order is closed at the opt-in bridge boundary;
-  the next CUDA item is live GPU validation of that bridge in a device-visible
-  process, plus a larger-top-k/full-rank route contract if CUDA should replace
-  `arena.route()` generally.
+  banks. On 2026-07-07 the bridge gained route-bank lifecycle signatures:
+  attached CUDA banks are reused only when the current dense GQA node-id/key
+  snapshot still matches, while appended or replaced rows force reattachment.
+  Live CUDA bridge validation also passed on real Qwen3.5-2B layer-3 capture
+  banks at 32, 128, and 512 nodes with parity against the batched Python raw
+  `|q.k|` reference.
+  The implementation work order is closed at the opt-in bridge boundary; the
+  next CUDA item is a larger-top-k/full-rank route contract if CUDA should
+  replace `arena.route()` generally.
   The opt-in transposed key-bank experiment was parity-green but slower on the
   2B full-bank capture shape, so it stays diagnostic-only; the next useful slice
   is still a lower-level GEMM/BLAS layout rather than a duplicate host layout

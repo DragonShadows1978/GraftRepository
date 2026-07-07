@@ -166,6 +166,7 @@ class NativeGraftStore:
         self._head_dim = int(head_dim)
         self._cuda_gqa_sidecar = None
         self._cuda_gqa_bank = None
+        self._cuda_gqa_bank_signature = None
         defaults = self._profile_defaults(payload_kind)
         position_law = position_law or defaults["position_law"]
         state_kind = state_kind or defaults["state_kind"]
@@ -1493,7 +1494,10 @@ class NativeGraftStore:
         if self._payload_kind != "gqa":
             raise RuntimeError("CUDA GQA routing requires a GQA native store")
         self.clear_cuda_gqa_route_bank()
-        from core.grm_cuda_router import CudaGQARouteSidecar
+        from core.grm_cuda_router import (
+            CudaGQARouteSidecar,
+            gqa_route_bank_signature,
+        )
 
         owns_sidecar = sidecar is None
         if sidecar is None:
@@ -1506,6 +1510,10 @@ class NativeGraftStore:
             raise
         self._cuda_gqa_sidecar = sidecar if owns_sidecar else None
         self._cuda_gqa_bank = bank
+        self._cuda_gqa_bank_signature = (
+            getattr(bank, "signature", None) or
+            gqa_route_bank_signature(route_bank, node_ids)
+        )
         return bank
 
     def clear_cuda_gqa_route_bank(self):
@@ -1515,6 +1523,7 @@ class NativeGraftStore:
         if getattr(self, "_cuda_gqa_sidecar", None) is not None:
             self._cuda_gqa_sidecar.close()
             self._cuda_gqa_sidecar = None
+        self._cuda_gqa_bank_signature = None
 
     def route_gqa_cuda(self, query, *, topk=3, warmup=0, route_repeats=1,
                        return_receipt=False):

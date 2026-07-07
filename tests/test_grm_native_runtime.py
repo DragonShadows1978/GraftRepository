@@ -2660,6 +2660,56 @@ def test_gqa_arena_uses_opt_in_cuda_route_bank(monkeypatch):
     assert arena.native_store.cuda_calls == [((1, 1, 2), 2)]
 
 
+def test_gqa_arena_rebuilds_cuda_route_bank_when_rows_change(monkeypatch):
+    class RebuildStore:
+        def __init__(self):
+            self.configured_node_ids = []
+            self.configure_calls = 0
+            self._cuda_gqa_bank = None
+            self._cuda_gqa_bank_signature = None
+
+        def configure_cuda_gqa_route_bank(self, _route_bank, node_ids):
+            self.configure_calls += 1
+            self.configured_node_ids = [
+                int(x) for x in np.asarray(node_ids, dtype=np.uint64)]
+            self._cuda_gqa_bank = object()
+
+        def route_gqa_cuda(self, _query, *, topk=3, **_kwargs):
+            return list(reversed(self.configured_node_ids))[:int(topk)]
+
+        def route_gqa(self, *_args, **_kwargs):
+            raise AssertionError("CPU GQA route should not run")
+
+    monkeypatch.setenv("GRM_GQA_CUDA_ROUTE", "1")
+    q = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+    weak = np.asarray([[[0.1, 0.0]]], dtype=np.float32)
+    good = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+    best = np.asarray([[[2.0, 0.0]]], dtype=np.float32)
+
+    arena = GQAArenaCache.__new__(GQAArenaCache)
+    arena.native_store = RebuildStore()
+    arena.last_route_backend = "python"
+    arena.grafts = [
+        {"native_node_id": 101, "cent": weak,
+         "rare": set(), "text": "weak", "kind": "doc"},
+        {"native_node_id": 102, "cent": good,
+         "rare": set(), "text": "good", "kind": "doc"},
+    ]
+    arena._probe_key = lambda _text: q
+
+    assert arena.route("plain probe", exclude=set(), limit=1) == [1]
+    first_signature = arena.native_store._cuda_gqa_bank_signature
+
+    arena.grafts.append(
+        {"native_node_id": 103, "cent": best,
+         "rare": set(), "text": "best", "kind": "doc"})
+
+    assert arena.route("plain probe", exclude=set(), limit=1) == [2]
+    assert arena.native_store.configure_calls == 2
+    assert arena.native_store.configured_node_ids == [101, 102, 103]
+    assert arena.native_store._cuda_gqa_bank_signature != first_signature
+
+
 def test_gqa_arena_skips_cuda_route_for_lexical_queries(monkeypatch):
     class LexicalStore:
         def configure_cuda_gqa_route_bank(self, *_args, **_kwargs):
