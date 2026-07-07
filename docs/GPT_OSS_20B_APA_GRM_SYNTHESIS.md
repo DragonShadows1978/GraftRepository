@@ -464,3 +464,18 @@ plain forced-final H6 greedy recall passes narrowly, and the turn-labeled
 forced-final H6 variant fails top-1. That split is useful. It suggests the
 retrieved graft signal is real at 64K, but prompt/protocol priors can still
 overpower it when the live prompt adds more instruction context.
+
+A small mounted prompt-sensitivity sweep sharpened that finding. The plain
+prompt still returns `BLUE`. The original turn-50 wording returns `The` with
+`BLUE` at rank 4, and a compact turn-50 wording also returns `The` with `BLUE`
+at rank 3. A stricter turn-50 wording, `Return exactly the stored GPT-OSS vault
+keyword. No sentence. No punctuation.`, returns `BLUE` as top-1 with logit
+`20.375`; its no-graft control returns `GPT`, not the keyword.
+
+So the 64K conclusion is not "turn 50 works" or "turn 50 fails" as a single
+bit. The graft is carrying the fact at 64K, and a tight forced-final retrieval
+prompt can extract it even with turn-50/cleared-context wording. But more
+generic live wording leaves enough prior probability on answer-like prose that
+`The` wins. That is now a concrete reliability target rather than an unknown:
+strengthen routing/mount signal, improve recall prompting policy, or test
+whether additional/more local grafts reduce the prompt-sensitivity gap.

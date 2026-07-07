@@ -2603,3 +2603,62 @@ Interpretation:
   is: 64K H5 candidate access passes, 64K plain forced-final H6 greedy recall
   passes with a narrow top-1 margin, and 64K turn-labeled forced-final greedy
   recall fails top-1.
+
+Action: Added and ran a mounted 64K forced-final prompt-sensitivity sweep.
+
+Purpose:
+- The plain 64K forced-final H6 prompt passed, but the first turn-50 wording
+  failed top-1.
+- This helper makes prompt/protocol sensitivity repeatable instead of leaving
+  the result as ad hoc shell history.
+
+File added:
+- `scripts/gpt_oss20b_turn_prompt_sweep.py`
+
+Validation:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_turn_prompt_sweep.py`
+  passed.
+- `python3 scripts/gpt_oss20b_turn_prompt_sweep.py --help` printed the expected
+  CLI.
+
+Mounted-only sweep command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_turn_prompt_sweep.py --graft-dir artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate/graft --variants plain,turn50_original,turn50_compact,turn50_strict --skip-control --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep.json`
+
+Strict turn-50 no-graft control command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_greedy_smoke.py --prompt '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS vault keyword. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>' --steps 1 --max-tokens 160 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_turn50_64k_strict_control_forced_final_1step.json`
+
+Artifacts:
+- Sweep summary:
+  `artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep.json`
+- Strict control:
+  `artifacts/gpt_oss_20b/h6_turn50_64k_strict_control_forced_final_1step.json`
+- Strict control child:
+  `artifacts/gpt_oss_20b/h6_turn50_64k_strict_control_forced_final_1step_steps/step_00.json`
+
+Mounted sweep result:
+
+| Variant | Mounted top-1 | Top-1 logit | `BLUE` rank | `BLUE` logit | Hit |
+| --- | --- | ---: | ---: | ---: | --- |
+| `plain` | `BLUE` | `17.75` | `0` | `17.75` | yes |
+| `turn50_original` | `The` | `17.625` | `3` | `16.0` | no |
+| `turn50_compact` | `The` | `17.625` | `2` | `16.375` | no |
+| `turn50_strict` | `BLUE` | `20.375` | `0` | `20.375` | yes |
+
+Strict no-graft control result:
+- live tokens: `53`
+- top-1: `"GPT"`, token id `162016`, logit `14.5625`
+- top-2: `"g"`, token id `70`, logit `14.0625`
+- top-3: `"G"`, token id `38`, logit `13.3125`
+- child wall seconds: `19.187155350053217`
+- wrapper wall seconds: `24.457130833005067`
+
+Interpretation:
+- The 64K turn-50 failure is prompt-sensitive, not a total loss of graft signal.
+- Generic turn-50 wording lets prose/protocol priors win (`The`), while stricter
+  output-format wording restores `BLUE` as mounted greedy top-1.
+- The strict no-graft control does not produce `BLUE`, so the strict mounted hit
+  is still a graft-dependent recall result.
+- This does not erase the original turn-50 failure. The honest conclusion is
+  narrower: 64K same-model recall works when the final-channel prompt is tight,
+  but GPT-OSS still needs prompt discipline or stronger mounted signal to make
+  instruction-heavy turn-50 recall robust.
