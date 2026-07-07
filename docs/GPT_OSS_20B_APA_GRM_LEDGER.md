@@ -2773,3 +2773,74 @@ Interpretation:
   work is to scale this multi-fact gate to longer captures, test ordinary-turn
   prompt robustness, and add correction/supersession or preference-style memory
   cases.
+
+Action: Ran the same multi-fact H6 gate at 16K.
+
+Purpose:
+- Test whether the 4K multi-fact pass scales to the earlier 16K operating
+  point.
+- Keep the same four facts and same strict forced-final prompt shape.
+- Use a fresh `16384`-token real-token capture, not a synthetic cache.
+
+Command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_multifact_graft_gate.py --target-tokens 16384 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_multifact_16k_gate.json`
+
+Artifacts:
+- Summary:
+  `artifacts/gpt_oss_20b/h6_multifact_16k_gate.json`
+- Prompt diagnostic:
+  `artifacts/gpt_oss_20b/h6_multifact_16k_facta_prompt_diag.json`
+
+Capture result:
+- target/actual tokens: `16384` / `16384`
+- capture child wall seconds: `948.6960299280472`
+- capture wrapper wall seconds: `953.8862329020048`
+- all 24 layers captured
+- manifest token count: `16384`
+- manifest layers: `24`
+- manifest total host bytes: `805306368`
+- manifest schema: `gpt_oss_20b_prerope_graft_manifest_v1`
+
+16K planted fact offsets:
+- `vault_keyword`: `BLUE`, token id `134698`, offset `3261`, needle tokens `19`
+- `relay_marker`: `EMBER`, token id `78250`, offset `6541`, needle tokens `20`
+- `archive_color`: `GRAY`, token id `140884`, offset `9822`, needle tokens `20`
+- `tool_metal`: `IRON`, token id `96951`, offset `13103`, needle tokens `20`
+
+Per-fact H6 result:
+
+| Fact | Answer | Control top-1 | Mounted top-1 | Mounted answer rank | Mounted answer logit | Hit |
+| --- | --- | --- | --- | ---: | ---: | :---: |
+| `vault_keyword` | `BLUE` | `GPT` | `EMBER` | `1` | `16.875` | no |
+| `relay_marker` | `EMBER` | `GPT` | `EMBER` | `0` | `20.375` | yes |
+| `archive_color` | `GRAY` | `Blue` | `GRAY` | `0` | `18.75` | yes |
+| `tool_metal` | `IRON` | `metal` | `IRON` | `0` | `22.5` | yes |
+
+Classification:
+- `fail`
+- hits: `3/4`
+
+Important failure detail:
+- This was not an OOM and not a total graft-loss failure.
+- The missed `BLUE` answer was still rank `1`; the mounted top-5 was:
+  `EMBER` `17.375`, `BLUE` `16.875`, `blue` `16.0`, `Blue` `14.625`,
+  `RED` `13.75`.
+- That points at cross-fact binding interference or prompt-addressing
+  sensitivity, not absence of the planted fact from the mounted graft.
+
+Prompt diagnostic on the same 16K graft:
+- Mounted prompt `Return exactly the stored CLASSIFIED FACT A answer...`
+  produced top-1 `The`, with `BLUE` rank `1`, logit `16.875`.
+- Mounted prompt `In CLASSIFIED FACT A, what is the GPT-OSS vault keyword?
+  Return only the keyword...` produced top-1 `BLUE`, logit `22.0`.
+- No-graft control for the second prompt produced top-1 `g`; `BLUE` was not in
+  top-k.
+
+Interpretation:
+- The 16K multi-fact gate fails the original strict prompt at `3/4`.
+- The failed binding is recoverable when the live prompt addresses both the
+  fact letter and the semantic slot.
+- Current state: GPT-OSS can carry multiple same-model cold-KV facts at 16K,
+  but extraction policy is not robust enough yet. It needs either stronger
+  addressing metadata, better prompt policy, local/smaller graft selection, or a
+  mount signal that reduces cross-fact competition.

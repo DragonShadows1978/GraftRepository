@@ -515,3 +515,25 @@ ordinary conversational prompting. It does prove that the GPT-OSS graft path can
 carry more than one independent binding at once under a strict extraction
 prompt. The next useful movement is to scale this gate upward and then make the
 prompt less laboratory-clean.
+
+Scaling the same multi-fact gate to 16K found the first real multi-binding
+failure. The capture itself succeeded: `16384` real tokens, 24 pre-RoPE layers,
+and `805306368` host bytes in the graft manifest. Three of four facts recalled
+as mounted greedy top-1: `EMBER`, `GRAY`, and `IRON`. The first fact,
+`BLUE`, failed top-1 because the mounted run returned `EMBER`; `BLUE` was still
+rank 1.
+
+That failure is useful because it is not an OOM, not a missing-graft case, and
+not a candidate-only artifact. It looks like cross-fact competition or
+addressing weakness. A quick prompt diagnostic against the same 16K graft
+confirmed that interpretation: asking for the generic `CLASSIFIED FACT A
+answer` still lost to prose, but asking `In CLASSIFIED FACT A, what is the
+GPT-OSS vault keyword?` returned `BLUE` top-1 with no-graft control returning
+`g`, not the keyword.
+
+So the current GPT-OSS H6 reliability picture is now sharper. The graft can
+carry multiple facts at 16K, but the extraction policy is not production-robust.
+The next work should not be another larger context rung until addressing is
+improved. Better tests are fact-local addressing, metadata-assisted retrieval
+prompts, local/smaller graft selection, and correction/supersession cases where
+cross-binding errors are expected to become more visible.
