@@ -19,6 +19,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+try:
+    from scripts.gpt_oss20b_grm_output_eval import canonical_value, find_value_rank
+except ModuleNotFoundError:  # direct execution from scripts/
+    from gpt_oss20b_grm_output_eval import canonical_value, find_value_rank
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = (
@@ -258,15 +263,22 @@ def summarize_greedy(path: Path, answer: str) -> dict[str, Any]:
             rank = idx
             logit = row.get("logit")
             break
+    normalized = find_value_rank(top_tokens, answer)
     top = step.get("top_token") or {}
     return {
         "artifact": str(path),
         "status": payload.get("status"),
         "top_token": top,
         "answer": answer,
+        "normalized_answer": canonical_value(answer),
+        "normalized_top_token": canonical_value(top.get("text")),
         "answer_rank": rank,
         "answer_logit": logit,
+        "normalized_answer_rank": normalized["rank"],
+        "normalized_answer_logit": normalized["logit"],
+        "normalized_answer_text": normalized["text"],
         "hit": top.get("text") == answer,
+        "normalized_hit": canonical_value(top.get("text")) == canonical_value(answer),
         "top_tokens": top_tokens,
         "wall_seconds": payload.get("wall_seconds"),
         "child_artifact": child_path,

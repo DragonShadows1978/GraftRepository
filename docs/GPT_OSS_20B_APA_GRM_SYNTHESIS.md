@@ -602,3 +602,25 @@ mounting.
 That makes preference memory positive but not closed. Non-color preferences
 work under the strict policy; color/casing needs normalization or a value set
 that does not collide with strong default priors.
+
+The output-normalization audit separates those cases cleanly. A new reusable
+audit helper leaves the strict H6 artifacts untouched, then evaluates normalized
+top-1, unconfounded normalized top-1, normalized top-k, and stale-value
+suppression. Future GPT-OSS greedy summaries also record normalized answer
+rank/logit/text so this distinction is captured at run time instead of only by
+manual inspection.
+
+Under that audit, supersession improves from exact `3/4` to normalized
+unconfounded `4/4`, with stale top-1 hits at `0/4`. That is a real
+memory-selection pass: the current bindings beat the obsolete values, and the
+remaining strict miss was casing. Preference memory is weaker: normalized
+value top-1 is `4/4`, but unconfounded normalized evidence is still `3/4`
+because the color row has a no-graft prior of lowercase `blue`. Conversational
+wording remains a true failure after normalization: normalized top-1 is `0/8`,
+and only `3/8` probes contain the right value anywhere in top-k.
+
+The next reliability target is therefore not casing alone. Supersession needs
+the normalizer as a production policy, preference needs less prior-colliding
+value choices or stronger controls, and ordinary conversational recall still
+needs either an answer-first GRM response policy or a genuine multi-token
+conversation evaluator.

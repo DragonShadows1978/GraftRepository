@@ -3185,3 +3185,79 @@ Interpretation:
 - The non-color preference records pass cleanly.
 - Honest current state: strict preference H6 is exact `3/4`, with one
   prior/casing-confounded near-pass.
+
+Action: Added and ran a GPT-OSS GRM output-normalization audit.
+
+Purpose:
+- Keep the raw strict first-token H6 receipts intact while adding a separate
+  evaluator for answer-policy questions.
+- Separate exact uppercase token failure from case-normalized value recovery.
+- Separate true graft-dependent recovery from control-confounded priors.
+- Check whether supersession failures are stale-value failures or only casing
+  failures.
+
+File added:
+- `scripts/gpt_oss20b_grm_output_eval.py`
+
+Files updated:
+- `scripts/gpt_oss20b_multifact_graft_gate.py`
+- `scripts/gpt_oss20b_multifact_addressing_gate.py`
+
+Implementation details:
+- `canonical_value()` NFKC-normalizes, strips common punctuation/whitespace,
+  collapses whitespace, and casefolds the value text.
+- Future greedy summaries now include normalized answer/top-token fields plus
+  normalized answer rank/logit/text.
+- The standalone audit reports strict exact unconfounded top-1, normalized
+  unconfounded top-1, normalized value top-1, normalized value top-k, and
+  stale-value top-1 suppression.
+
+Validation:
+- Compile gate:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile /mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_grm_output_eval.py /mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_multifact_graft_gate.py /mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_multifact_addressing_gate.py`
+  passed.
+- Focused tests:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest /mnt/ForgeRealm/GraftRepository/tests/test_gpt_oss20b_grm_output_eval.py -q`
+  passed: `5 passed in 0.03s`.
+
+Audit command:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_grm_output_eval.py artifacts/gpt_oss_20b/h6_preference_4k_gate.json artifacts/gpt_oss_20b/h6_supersession_4k_gate.json artifacts/gpt_oss_20b/h6_multifact_16k_conversational_addressing_gate.json --output artifacts/gpt_oss_20b/h6_output_normalization_audit.json`
+
+Artifact:
+- `artifacts/gpt_oss_20b/h6_output_normalization_audit.json`
+
+Audit result summary:
+
+| Source artifact | Strict source | Exact unconfounded | Normalized unconfounded | Normalized value top-1 | Normalized value top-k | Stale top-1 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| `h6_preference_4k_gate.json` | fail | `3/4` | `3/4` | `4/4` | `4/4` | `0` |
+| `h6_supersession_4k_gate.json` | fail | `3/4` | `4/4` | `4/4` | `4/4` | `0` |
+| `h6_multifact_16k_conversational_addressing_gate.json` | fail | `0/8` | `0/8` | `0/8` | `3/8` | `0` |
+
+Row-level findings:
+- Preference:
+  - `preferred_color`: mounted top-1 `blue` normalizes to `BLUE`, but the
+    no-graft control also top-1 guessed `blue`; this remains
+    control-confounded, not a clean graft-dependent preference hit.
+  - `preferred_signal`, `preferred_shade`, and `preferred_metal`: normalized
+    unconfounded top-1 hits.
+- Supersession:
+  - `vault_keyword`: mounted top-1 `blue` normalizes to current value `BLUE`;
+    control top-1 was `GPT`; stale value `RED` did not win.
+  - All four current bindings pass normalized unconfounded top-1.
+  - No old/stale value won top-1.
+- Conversational wording:
+  - Still a real failure after normalization.
+  - Mounted top-1 remained `The` across all eight probes.
+  - Correct values appeared only in normalized top-k for three probes:
+    `BLUE` rank `4`, `GRAY` rank `4`, and `GRAY` rank `2`.
+
+Interpretation:
+- Supersession is now a normalized H6 pass at the memory-selection level:
+  current values beat stale values, and the remaining strict failure was casing.
+- Preference is not fully closed: value-top1 is `4/4`, but clean
+  graft-dependent normalized evidence remains `3/4` because color is a strong
+  no-graft prior.
+- Conversational wording is not rescued by normalization. GPT-OSS still needs
+  either an answer-first GRM response policy or a genuine multi-token evaluator
+  before ordinary natural wording can be called reliable.
