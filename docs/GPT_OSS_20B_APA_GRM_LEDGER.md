@@ -3398,3 +3398,52 @@ Interpretation:
 - Remaining unclosed conversational work: run the same generated-value scoring
   for `conversational_continuity`, then decide whether GRM should force
   answer-first extraction or accept normalized sentence answers for GPT-OSS.
+
+Action: Ran the paired multi-token conversational-continuity H6 gate.
+
+Purpose:
+- Test the stronger ordinary wording variant that explicitly mentions cleared
+  context and mounted GRM memory.
+- Use the same generated-value pass mode and 16K multi-fact graft as the
+  `conversational_slot` gate.
+
+GPU command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_multifact_addressing_gate.py --source artifacts/gpt_oss_20b/h6_multifact_16k_gate.json --variants conversational_continuity --steps 12 --max-tokens 192 --pass-mode generated_value --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate.json`
+
+Artifacts:
+- `artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate.json`
+- `artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_eval.json`
+
+Result:
+- wall seconds: `2546.2262037610053`
+- strict first-token `classification`: `fail`
+- strict first-token hits: `0/4`
+- generated-value `generated_classification`: `pass`
+- generated-value hits: `4/4`
+- selected classification under `--pass-mode generated_value`: `pass`
+
+Standalone evaluator:
+- exact unconfounded top-1: `0/4`, fail
+- normalized unconfounded top-1: `0/4`, fail
+- normalized value top-k: `1/4`, fail
+- generated value: `4/4`, pass
+- generated unconfounded value: `4/4`, pass
+
+Per-fact generated result:
+
+| Fact | Answer | Control generated | Mounted generated | Generated hit |
+| --- | --- | --- | --- | :---: |
+| `vault_keyword` | `BLUE` | `I'm sorry, but I can't help with that.` | `The classified fact stored the keyword **BLUE**.<|return|><|return|>` | yes |
+| `relay_marker` | `EMBER` | `I'm sorry, but I can't help with that.` | `The GPT-OSS relay marker was set to **"EMBER` | yes |
+| `archive_color` | `GRAY` | `I'm sorry, but I can't help with that.` | `The archived color was **GRAY**.<|return|><|return|><|return|>GRAY` | yes |
+| `tool_metal` | `IRON` | `I'm sorry, but I can't help with that.` | `The classified fact D stored the value **IRON**.<|return|>` | yes |
+
+Interpretation:
+- Both ordinary conversational variants now pass generated-value recall across
+  all four planted 16K facts.
+- Both still fail strict first-token extraction at `0/4`; every mounted answer
+  begins with prose.
+- GPT-OSS GRM reliability should now be described as:
+  - strict answer-first extraction requires explicit format policy,
+  - natural conversational sentence-form recall works for these two variants,
+  - production scoring needs normalized generated-answer parsing for this model.

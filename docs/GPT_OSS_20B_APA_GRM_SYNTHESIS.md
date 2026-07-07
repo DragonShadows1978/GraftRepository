@@ -656,3 +656,15 @@ mounted 16K cold graft. For this architecture, the GRM policy should treat
 strict first-token extraction and conversational answering as different modes.
 The remaining conversational gate is `conversational_continuity`, which keeps a
 stronger "cleared context but GRM mounted memory is available" framing.
+
+The paired `conversational_continuity` run now closes that immediate question
+the same way. It also fails strict first-token extraction at `0/4`, but passes
+generated-value scoring at `4/4`. The mounted answers contain `BLUE`, `EMBER`,
+`GRAY`, and `IRON`; the no-graft controls again generate the refusal and
+contain none of the values.
+
+That means GPT-OSS H6 conversation memory has two distinct operating modes. If
+the product requires first-token value extraction, GPT-OSS needs a strict
+answer-format prompt. If the product can accept a normal sentence and parse the
+value, both ordinary conversational variants tested here work against the 16K
+mounted cold graft.
