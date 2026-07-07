@@ -689,3 +689,16 @@ answer framing before emitting an exact value. For this architecture, the GRM
 policy should not confuse strict first-token extraction with natural answer
 recall. Exact-value production use needs either a stronger answer-first prompt
 or normalized generated-answer parsing with enough decode budget.
+
+The first retained-instruction probe is also positive, but narrow. A fresh 4K
+graft planted executable retention instructions, then the live prompt cleared
+context and asked the model to execute instruction A. The no-graft control
+refused; the mounted run output `LUMEN-42`, the retained response string. This
+is the first evidence that GPT-OSS GRM can carry more than factual lookup: it
+can recover and execute a simple stored instruction from cold K/V.
+
+This does not close the whole instruction-retention axis. Only one retained
+instruction was tested, and it used generated-answer scoring rather than
+strict first-token extraction. The result is enough to keep the Phase 5
+instruction track alive; the next step is to broaden it across the remaining
+instruction records and later test drift across repeated turns.

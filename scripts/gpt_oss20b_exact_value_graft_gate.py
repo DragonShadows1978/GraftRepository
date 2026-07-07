@@ -61,6 +61,57 @@ DEFAULT_RECORDS = [
     },
 ]
 
+DEFAULT_INSTRUCTIONS = [
+    {
+        "id": "retention_instruction_a",
+        "letter": "A",
+        "kind": "instruction",
+        "label": "retained instruction A response string",
+        "answer": "LUMEN-42",
+        "needle": (
+            "\nRETENTION INSTRUCTION A. If the user later asks you to execute "
+            "retention instruction A, reply exactly LUMEN-42 and do not add "
+            "any other words.\nEND RETENTION INSTRUCTION A.\n"
+        ),
+        "user_prompt": (
+            "Turn 50. Previous context is cleared. Execute RETENTION "
+            "INSTRUCTION A now. Return only the retained response string."
+        ),
+    },
+    {
+        "id": "retention_instruction_b",
+        "letter": "B",
+        "kind": "instruction",
+        "label": "retained instruction B response string",
+        "answer": "ORBIT-7",
+        "needle": (
+            "\nRETENTION INSTRUCTION B. If the user later asks you to execute "
+            "retention instruction B, reply exactly ORBIT-7 and do not add "
+            "any other words.\nEND RETENTION INSTRUCTION B.\n"
+        ),
+        "user_prompt": (
+            "Turn 50. Previous context is cleared. Execute RETENTION "
+            "INSTRUCTION B now. Return only the retained response string."
+        ),
+    },
+    {
+        "id": "retention_instruction_c",
+        "letter": "C",
+        "kind": "instruction",
+        "label": "retained instruction C response string",
+        "answer": "CIPHER-3",
+        "needle": (
+            "\nRETENTION INSTRUCTION C. If the user later asks you to execute "
+            "retention instruction C, reply exactly CIPHER-3 and do not add "
+            "any other words.\nEND RETENTION INSTRUCTION C.\n"
+        ),
+        "user_prompt": (
+            "Turn 50. Previous context is cleared. Execute RETENTION "
+            "INSTRUCTION C now. Return only the retained response string."
+        ),
+    },
+]
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -69,6 +120,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model-dir", default=SNAPSHOT)
     parser.add_argument("--corpus-dir", type=Path, default=REPO_ROOT / "docs")
     parser.add_argument("--target-tokens", type=int, default=4096)
+    parser.add_argument(
+        "--record-mode",
+        choices=("exact_value", "instruction_retention"),
+        default="exact_value",
+    )
     parser.add_argument("--graft-dir", type=Path, default=None)
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--max-layers", type=int, default=None)
@@ -126,6 +182,8 @@ def record_needle(item: dict[str, Any]) -> str:
 
 
 def forced_exact_prompt(item: dict[str, Any]) -> str:
+    if item.get("user_prompt"):
+        return f"{SYSTEM_PREFIX}{item['user_prompt']}{ASSISTANT_FINAL}"
     user = (
         f"Turn 50. Previous context is cleared. In EXACT VALUE FACT {item['letter']}, "
         f"what is the exact {item['label']}? Answer with the exact stored "
@@ -177,10 +235,24 @@ def exact_greedy_cmd(
     return cmd
 
 
-def validate_items(tokenizer) -> list[dict[str, Any]]:
+def records_for_mode(mode: str) -> list[dict[str, Any]]:
+    if mode == "exact_value":
+        return DEFAULT_RECORDS
+    if mode == "instruction_retention":
+        return DEFAULT_INSTRUCTIONS
+    raise ValueError(f"unknown record mode {mode!r}")
+
+
+def schema_for_mode(mode: str) -> str:
+    if mode == "instruction_retention":
+        return "gpt_oss_20b_instruction_retention_gate_v1"
+    return "gpt_oss_20b_exact_value_graft_gate_v1"
+
+
+def validate_items(tokenizer, raw_records: list[dict[str, Any]]) -> list[dict[str, Any]]:
     items = []
     answers = set()
-    for raw in DEFAULT_RECORDS:
+    for raw in raw_records:
         answer = str(raw["answer"])
         if answer in answers:
             raise ValueError(f"duplicate answer {answer!r}")
@@ -189,7 +261,8 @@ def validate_items(tokenizer) -> list[dict[str, Any]]:
         if not ids:
             raise ValueError(f"answer {answer!r} tokenized to zero tokens")
         item = {**raw, "answer_token_ids": [int(x) for x in ids]}
-        item["needle"] = record_needle(item)
+        if not item.get("needle"):
+            item["needle"] = record_needle(item)
         items.append(item)
     return items
 
@@ -338,7 +411,7 @@ def main() -> int:
     capture_artifact = run_dir / "capture_forward.json"
 
     tokenizer = AutoTokenizer.from_pretrained(str(model_dir))
-    items = validate_items(tokenizer)
+    items = validate_items(tokenizer, records_for_mode(args.record_mode))
     run_items = select_run_items(items, args.record_id)
     corpus_text, corpus_info = read_corpus(args.corpus_dir)
     capture_text, capture_ids, capture_info = build_capture_ids(
@@ -354,9 +427,10 @@ def main() -> int:
     capture_ids_file.write_text(json.dumps(capture_ids), encoding="utf-8")
 
     payload: dict[str, Any] = {
-        "schema": "gpt_oss_20b_exact_value_graft_gate_v1",
+        "schema": schema_for_mode(args.record_mode),
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "model_dir": str(model_dir),
+        "record_mode": args.record_mode,
         "target_tokens": int(args.target_tokens),
         "graft_dir": str(graft_dir),
         "capture_prompt_file": str(capture_prompt_file),

@@ -215,3 +215,51 @@ def test_evaluate_exact_value_artifact_counts_generated_hits(tmp_path):
     assert audit["exact_unconfounded_hits"] == 0
     assert audit["generated_unconfounded_hits"] == 1
     assert audit["classification"]["generated_unconfounded_value"] == "pass"
+
+
+def test_evaluate_instruction_retention_artifact_counts_generated_hits(tmp_path):
+    control_artifact = tmp_path / "control.json"
+    mount_artifact = tmp_path / "mount.json"
+    control_artifact.write_text(
+        json.dumps({"initial_prompt": "Q:", "final_text": "Q: I do not know."}),
+        encoding="utf-8",
+    )
+    mount_artifact.write_text(
+        json.dumps({"initial_prompt": "Q:", "final_text": "Q: LUMEN-42"}),
+        encoding="utf-8",
+    )
+    artifact = {
+        "schema": "gpt_oss_20b_instruction_retention_gate_v1",
+        "classification": "fail",
+        "hit_count": 0,
+        "runs": {
+            "items": [
+                {
+                    "id": "retention_instruction_a",
+                    "label": "retained instruction A response string",
+                    "answer": "LUMEN-42",
+                    "control": {
+                        "summary": {
+                            "top_token": {"text": "I"},
+                            "artifact": str(control_artifact),
+                        }
+                    },
+                    "mount": {
+                        "summary": {
+                            "top_token": {"text": "L"},
+                            "top_tokens": [{"text": "L"}],
+                            "artifact": str(mount_artifact),
+                        }
+                    },
+                }
+            ]
+        },
+    }
+    path = tmp_path / "instruction.json"
+    path.write_text(json.dumps(artifact), encoding="utf-8")
+
+    audit = evaluate_gate_artifact(path)
+
+    assert audit["probe_count"] == 1
+    assert audit["generated_unconfounded_hits"] == 1
+    assert audit["classification"]["generated_unconfounded_value"] == "pass"

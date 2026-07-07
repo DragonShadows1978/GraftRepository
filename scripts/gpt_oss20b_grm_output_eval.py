@@ -189,6 +189,7 @@ def iter_gate_rows(payload: dict[str, Any]) -> list[dict[str, Any]]:
         "gpt_oss_20b_preference_graft_gate_v1",
         "gpt_oss_20b_supersession_graft_gate_v1",
         "gpt_oss_20b_exact_value_graft_gate_v1",
+        "gpt_oss_20b_instruction_retention_gate_v1",
     }:
         return list(runs.get("items") or [])
     if schema == "gpt_oss_20b_multifact_graft_gate_v1":

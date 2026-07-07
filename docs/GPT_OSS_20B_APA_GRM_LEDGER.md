@@ -3521,3 +3521,55 @@ Interpretation:
   spent the first 13 steps on answer framing.
 - Production GRM should either force answer-first output for exact extraction or
   accept normalized generated-answer parsing for GPT-OSS.
+
+Action: Added and ran the first retained-instruction H6 gate.
+
+Purpose:
+- Start the Phase 5 multi-turn instruction-retention axis.
+- Reuse the exact-value gate mechanics with a new `instruction_retention`
+  record mode so the harness can plant executable retained instructions, clear
+  live context, and ask the model to execute one instruction from the mounted
+  graft.
+
+Implementation update:
+- `scripts/gpt_oss20b_exact_value_graft_gate.py` now supports
+  `--record-mode instruction_retention`.
+- Built-in instruction records plant response strings `LUMEN-42`, `ORBIT-7`,
+  and `CIPHER-3`.
+- The schema for this mode is
+  `gpt_oss_20b_instruction_retention_gate_v1`.
+- `scripts/gpt_oss20b_grm_output_eval.py` now audits that schema.
+
+GPU command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_exact_value_graft_gate.py --record-mode instruction_retention --record-id retention_instruction_a --target-tokens 4096 --steps 16 --max-tokens 192 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate.json`
+
+Artifacts:
+- `artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate.json`
+- `artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_eval.json`
+
+Result:
+- Capture: fresh 4096-token real-token direct-id prompt, all 24 layers.
+- Capture wall seconds: `215.83423087804113`.
+- Parent status: `ok`.
+- Strict first-token classification: `fail`, `0/1`.
+- Generated classification: `pass`, `1/1`.
+- Normalized evaluator: generated value `1/1`,
+  generated-unconfounded value `1/1`.
+- Control generated: `I'm sorry, but I can't comply with that.`
+- Mounted generated: `LUMEN-42` followed by return padding.
+
+Validation:
+- Compile:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_exact_value_graft_gate.py scripts/gpt_oss20b_grm_output_eval.py`
+  passed.
+- Focused tests:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest tests/test_gpt_oss20b_grm_output_eval.py -q`
+  passed: `10 passed in 0.04s`.
+
+Interpretation:
+- First retained-instruction evidence is positive: the model executed a
+  response instruction from the mounted cold graft after live context was
+  cleared.
+- This is only record A at 4K, not the whole instruction-retention matrix.
+- The same GPT-OSS output-policy rule holds: generated-answer parsing passes,
+  while strict first-token extraction is too coarse for the current wording.
