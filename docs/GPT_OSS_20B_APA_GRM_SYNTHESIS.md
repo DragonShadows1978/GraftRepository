@@ -590,3 +590,15 @@ bindings dominated old archived bindings. The remaining problem is answer
 normalization and exact output policy. For production GRM, corrected facts need
 both revision metadata and a response normalizer or stricter casing/format
 contract.
+
+Preference memory now has its first GPT-OSS receipt. A fresh 4K graft planted
+four user preference records and queried them with strict fact-local preference
+prompts. Exact classification was again `3/4`: `EMBER`, `GRAY`, and `IRON`
+returned as mounted top-1 while no-graft controls missed. The color preference
+is the same normalization trap as the supersession vault keyword: no-graft and
+mounted both chose lowercase `blue`, with uppercase `BLUE` rank 1 after
+mounting.
+
+That makes preference memory positive but not closed. Non-color preferences
+work under the strict policy; color/casing needs normalization or a value set
+that does not collide with strong default priors.

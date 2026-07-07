@@ -3109,3 +3109,79 @@ Interpretation:
   archived values in the mounted graft.
 - The remaining issue is output normalization / answer-format enforcement, not
   choosing obsolete memory.
+
+Action: Added and ran the first preference-memory H6 graft gate.
+
+Purpose:
+- Test preference-style memory separately from generic facts and correction
+  records.
+- Plant user preference records into one real-token capture.
+- Query with strict fact-local preference prompts and no-graft controls.
+
+File added:
+- `scripts/gpt_oss20b_preference_graft_gate.py`
+
+Script validation:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_preference_graft_gate.py`
+  passed.
+- `python3 scripts/gpt_oss20b_preference_graft_gate.py --help` printed the
+  expected CLI.
+- Dry-run:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_preference_graft_gate.py --target-tokens 1024 --dry-run --output /tmp/gpt_oss20b_preference_dryrun.json`
+  passed.
+
+GPU command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_preference_graft_gate.py --target-tokens 4096 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_preference_4k_gate.json`
+
+Artifact:
+- `artifacts/gpt_oss_20b/h6_preference_4k_gate.json`
+
+Capture result:
+- target/actual tokens: `4096` / `4096`
+- preference placements: `4`
+- total needle tokens: `82`
+- capture wrapper wall seconds: `223.23471508495277`
+- manifest token count: `4096`
+- manifest layers: `24`
+- manifest total host bytes: `201326592`
+- manifest schema: `gpt_oss_20b_prerope_graft_manifest_v1`
+
+Preference placements:
+
+| Preference | Answer | Offset | Needle tokens |
+| --- | --- | ---: | ---: |
+| `preferred_color` | `BLUE` | `802` | `19` |
+| `preferred_signal` | `EMBER` | `1623` | `21` |
+| `preferred_shade` | `GRAY` | `2446` | `21` |
+| `preferred_metal` | `IRON` | `3269` | `21` |
+
+Exact-token result:
+- classification: `fail`
+- hits: `3/4`
+
+Per-preference result:
+
+| Preference | Answer | Control top-1 | Mounted top-1 | Answer rank | Answer logit | Hit |
+| --- | --- | --- | --- | ---: | ---: | :---: |
+| `preferred_color` | `BLUE` | `blue` | `blue` | `1` | `24.25` | no |
+| `preferred_signal` | `EMBER` | `B` | `EMBER` | `0` | `26.125` | yes |
+| `preferred_shade` | `GRAY` | `white` | `GRAY` | `0` | `23.875` | yes |
+| `preferred_metal` | `IRON` | `steel` | `IRON` | `0` | `24.375` | yes |
+
+Important failure detail:
+- `preferred_color` is confounded by model prior and casing:
+  - control top-1: `blue`
+  - mounted top-1: `blue`
+  - uppercase `BLUE` rank: `1`, logit `24.25`
+  - mounted top-3: `blue` `24.875`, `BLUE` `24.25`, `Blue` `24.125`
+- This is a strong color-value signal but not a graft-dependent exact-token
+  success under the current gate.
+- The other three preference records are clean mounted top-1 hits with controls
+  missing.
+
+Interpretation:
+- Preference memory has the same output-normalization issue seen in
+  supersession: color preferences collapse to lowercase/case variants.
+- The non-color preference records pass cleanly.
+- Honest current state: strict preference H6 is exact `3/4`, with one
+  prior/casing-confounded near-pass.
