@@ -2023,3 +2023,193 @@ Next:
   hours on the current token-routed MoE path.
 - Before spending that runtime, decide whether to run the 128K context rung or
   pivot to H5 GRM capture/mount at the confirmed 64K operating point.
+
+Action: Started H4 APA r0.15 real-token 128K context rung, then pivoted H5
+implementation so the next long prefill can mint reusable GPT-OSS grafts.
+
+Live H4 command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_context_ladder.py --corpus-dir docs --lengths 131072 --settings apa_r0.15 --apa-layer-scope full --bulk-bits 8 --expert-mode resident_packed_mxfp4 --output artifacts/gpt_oss_20b/h4_context_ladder_apa_128k_sampled.json`
+
+Current live status at implementation update:
+- artifact:
+  `artifacts/gpt_oss_20b/h4_context_ladder_apa_128k_sampled/apa_r0.15_131072.json`
+- status: `running_layers`
+- completed layers: `1`
+- completed layer receipt: layer `0`, `sliding_attention`,
+  `standard_sink_sliding_chunked`
+- layer 0 wall seconds: `279.4224069789634`
+- latest GPU sample: about `6613 MiB` used, `100%` utilization, `76 C`
+
+H5 implementation update:
+- `core/gpt_oss20b_tc.py`
+  - Added GPT-OSS attention capture hooks for pre-RoPE K/V and pre-RoPE query
+    tensors.
+  - Added GPT-OSS graft injection with the established GQA remount law:
+    captured keys are re-RoPE'd at graft seats, live tokens are shifted after
+    the mounted graft, and cached decode does not re-inject the graft.
+  - Added `gpt_oss_grm_dialect_kwargs()` to register GPT-OSS as a native GRM
+    GQA-style dialect with `position_law=rope_full_yarn`,
+    `state_kind=kv`, `graftability=seat_remountable`, `num_kv_heads=8`,
+    `head_dim=64`, and `vals_per_tok_layer=1024`.
+- `scripts/gpt_oss20b_stream_forward_smoke.py`
+  - Added `--capture-graft-dir` to write per-layer pre-RoPE K/V shards during
+    a streamed forward pass.
+  - Added `--mount-graft-dir` to mount those shards before a live prompt.
+  - Added `--input-ids-file` so exact token-count capture prompts can bypass
+    text decode/re-tokenize drift.
+  - Added `--candidate-text` for first-token gold/decoy logit scoring, so an
+    H5 bulk-graft gate can test information access without slow greedy decode.
+  - Added graft manifest receipts, GPT-OSS GRM dialect receipts, mounted token
+    counts, per-layer capture geometry, and per-layer mount byte counts.
+- `scripts/gpt_oss20b_bulk_graft_gate.py`
+  - Added a repeatable H5 helper that builds an exact real-token capture prompt,
+    plants a needle near the end without repeating corpus tokens, captures
+    graft shards, runs an amnesia control, remounts the graft, and compares a
+    single-token gold candidate against single-token decoys.
+  - Capture now feeds exact token IDs to the streamed runner and writes the
+    decoded text only as an audit artifact. This avoids tokenizer
+    decode/re-tokenize drift that made a 4096-token text prompt come back as
+    4097 tokens.
+  - Default needle now uses `BLUE` because GPT-OSS tokenizes `" BLUE"` as a
+    single token; default decoys are `" RED"`, `" GREEN"`, `" BLACK"`, and
+    `" WHITE"`, also single-token continuations.
+
+Native GRM clarification:
+- The C++ GRM runtime already implements the host runtime and byte-level
+  arena oracles:
+  - `DialectDescriptor`
+  - `HostGraftStore`
+  - `RouterIndex`
+  - `DirtyQueue`
+  - `DurabilityWriter`
+  - `DeviceArena` swap/evict planner and host tensor swap/evict references
+  - C ABI plus `core/grm_native.py`
+- The C++ README explicitly says the CUDA arena is not implemented yet. For
+  GPT-OSS, the native runtime is therefore authoritative for host payloads,
+  dialect metadata, route bookkeeping, dirty/durable state, and mount commits;
+  the actual device splice still happens through the TensorCUDA GPT-OSS
+  attention adapter.
+
+Validation:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile core/gpt_oss20b_tc.py scripts/gpt_oss20b_stream_forward_smoke.py tests/test_gpt_oss20b_scaffold.py`
+  passed.
+- `python3 scripts/gpt_oss20b_stream_forward_smoke.py --help | rg -n 'capture-graft|mount-graft|route-detail'`
+  confirmed the new CLI flags.
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_bulk_graft_gate.py`
+  passed.
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_bulk_graft_gate.py --target-tokens 512 --dry-run --output /tmp/gpt_oss_h5_bulk_graft_dryrun.json`
+  passed:
+  - exact capture tokens: `512`
+  - query tokens: `16`
+  - candidate tokenization:
+    - `" BLUE"` -> `[110151]`
+    - `" RED"` -> `[45309]`
+    - `" GREEN"` -> `[107361]`
+    - `" BLACK"` -> `[71730]`
+    - `" WHITE"` -> `[94026]`
+- `env PYTHONPATH=. PYTHONPYCACHEPREFIX=/tmp/codex_pycache PYTEST_ADDOPTS='-p no:cacheprovider' pytest -q tests/test_gpt_oss20b_context_ladder.py`
+  passed: `6 passed`.
+- `env PYTHONPATH=. PYTHONPYCACHEPREFIX=/tmp/codex_pycache PYTEST_ADDOPTS='-p no:cacheprovider' pytest -q tests/test_grm_native_runtime.py -k 'dialect_profile or lifecycle_via_ctypes'`
+  passed: `2 passed, 88 deselected`.
+- `env PYTHONPATH=. PYTHONPYCACHEPREFIX=/tmp/codex_pycache PYTEST_ADDOPTS='-p no:cacheprovider' pytest -q tests/test_gpt_oss20b_scaffold.py -k 'grm_dialect or captures_prerope or does_not_reinject'`
+  passed in the sandbox as `1 passed, 2 skipped`; the skipped tests require a
+  visible TensorCUDA GPU device, which the sandboxed pytest process did not
+  have while the real H4 GPU job was active.
+- Real GPU execution of the two TensorCUDA GPT-OSS graft-splice tests remains
+  pending until the H4 128K GPU job is free.
+- After freeing the GPU, real GPU execution passed:
+  `env PYTHONPATH=. PYTHONPYCACHEPREFIX=/tmp/codex_pycache PYTEST_ADDOPTS='-p no:cacheprovider' pytest -q tests/test_gpt_oss20b_scaffold.py tests/test_gpt_oss20b_context_ladder.py`
+  -> `19 passed, 2 warnings`.
+
+Interpretation:
+- This does not claim GPT-OSS GRM recall yet.
+- It does make future long GPT-OSS forwards reusable as graft-minting passes
+  and creates the fast H5 remount path once a graft directory exists.
+- Sliding layers remain architecturally bounded by GPT-OSS's sliding window
+  even when a large graft is mounted; full-attention layers are the path that
+  can attend over the whole mounted graft.
+
+Queued H5 command for the next free GPU slot:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_bulk_graft_gate.py --target-tokens 131072 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h5_bulk_graft_128k_candidate_gate.json`
+
+Cheaper H5 shakeout command before the full 128K gate:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_bulk_graft_gate.py --target-tokens 4096 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate.json`
+
+Action: Stopped the pre-graft 128K H4 live-prefill job and ran the 4K H5
+bulk-graft candidate gate.
+
+128K H4 stop reason:
+- The job was launched before GPT-OSS graft capture existed, so it could only
+  produce H4 live-prefill evidence and could not mint reusable H5 grafts.
+- It had completed only layer `0` after a long wait:
+  - status: `running_layers`
+  - completed layers: `1`
+  - layer 0 type/backend: `sliding_attention`,
+    `standard_sink_sliding_chunked`
+  - layer 0 wall: `279.4224069789634s`
+- It was stopped with `KeyboardInterrupt`, leaving no hidden child stream
+  process and returning the GPU to idle.
+
+4K H5 command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_bulk_graft_gate.py --target-tokens 4096 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate.json`
+
+Artifacts:
+- Summary:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate.json`
+- Run directory:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate`
+- Capture:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/capture_forward.json`
+- Control:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/control_forward.json`
+- Mounted-graft:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/mount_forward.json`
+- Graft manifest:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/graft/manifest.json`
+
+Result:
+- status: `ok`
+- classification: `pass`
+- capture target/actual tokens: `4096 / 4096`
+- input mode: `direct_token_ids`
+- needle offset: `4077`
+- needle tokens: `19`
+- query tokens: `16`
+- capture run:
+  - completed layers: `24`
+  - wall seconds: `215.35076313297031`
+  - run wrapper wall seconds: `220.43408841098426`
+  - final GPU receipt: `NVIDIA GeForce RTX 4070 SUPER, 515, 12282, 12`
+- graft payload:
+  - layers: `24`
+  - token count: `4096`
+  - total host bytes: `201326592`
+  - run directory size: `193M`
+- amnesia control run:
+  - completed layers: `24`
+  - live prompt tokens: `16`
+  - wall seconds: `17.975686279998627`
+  - wrapper wall seconds: `23.084253881010227`
+  - gold candidate `" BLUE"` logit: `2.015625`
+  - best decoy `" RED"` logit: `3.796875`
+  - gold minus best decoy: `-1.78125`
+- mounted-graft run:
+  - completed layers: `24`
+  - live prompt tokens: `16`
+  - mounted graft tokens: `4096`
+  - RoPE table length: `4112`
+  - wall seconds: `18.54849335399922`
+  - wrapper wall seconds: `23.509232072974555`
+  - gold candidate `" BLUE"` logit: `11.75`
+  - best decoy `" GREEN"` logit: `7.90625`
+  - gold minus best decoy: `3.84375`
+
+Interpretation:
+- This is the first GPT-OSS same-model cold-graft access pass.
+- The live query did not contain the answer. The no-graft control preferred a
+  decoy by `1.78125` logits; the mounted-graft run preferred the gold answer
+  by `3.84375` logits.
+- This is H5 candidate-logit evidence, not open greedy recall yet.
+- The mounted pass was only about `0.57s` slower than the no-graft control at
+  the streamed-runner layer-wall level, because the live MoE workload remained
+  16 tokens while the graft was mounted as K/V.

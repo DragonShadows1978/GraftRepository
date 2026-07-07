@@ -15,8 +15,10 @@ from core.gpt_oss20b_tc import (  # noqa: E402
     BiasedQuantLinearTC,
     FP4_VALUES,
     GptOss20BConfig,
+    GptOssAttentionTC,
     gpt_oss_expert_activation_np,
     gpt_oss_expert_activation_tc,
+    gpt_oss_grm_dialect_kwargs,
     mxfp4_dequantize_blocks_np,
     resolve_gpt_oss_attention_mode,
     sink_apa_blend_attention_tc,
@@ -24,12 +26,20 @@ from core.gpt_oss20b_tc import (  # noqa: E402
     sliding_sink_attention_tc,
 )
 from core.mistral7b_tc import BlockTC  # noqa: E402
+from core.mistral7b_tc import F  # noqa: E402
 
 
 GPT_OSS_CONFIG = Path(
     "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/"
     "snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/config.json"
 )
+
+
+def _require_tensor_cuda():
+    try:
+        tc.tensor(np.zeros((1,), dtype=np.float32))
+    except RuntimeError as exc:
+        pytest.skip(f"TensorCUDA device unavailable: {exc}")
 
 
 def test_gpt_oss_config_parses_pinned_metadata():
@@ -82,6 +92,145 @@ def test_resolve_gpt_oss_attention_mode_scopes_apa_to_full_layers():
     assert all_scope["apa_active"] is True
     assert standard["effective_attention_mode"] == "standard"
     assert standard["apa_skip_reason"] == "requested_standard"
+
+
+def test_gpt_oss_grm_dialect_uses_native_gqa_remount_profile():
+    cfg = GptOss20BConfig(
+        hidden_dim=2880,
+        num_layers=24,
+        num_heads=64,
+        num_kv_heads=8,
+        head_dim=64,
+        layer_types=tuple(
+            "sliding_attention" if i % 2 == 0 else "full_attention"
+            for i in range(24)
+        ),
+    )
+
+    got = gpt_oss_grm_dialect_kwargs(cfg)
+
+    assert got["model_type"] == "GptOss20B_TC"
+    assert got["payload_kind"] == "gqa"
+    assert got["position_law"] == "rope_full_yarn"
+    assert got["state_kind"] == "kv"
+    assert got["graftability"] == "seat_remountable"
+    assert got["remountable"] is True
+    assert got["composition"] == "multi_mount"
+    assert got["route_layer"] == 1
+    assert got["num_kv_heads"] == 8
+    assert got["head_dim"] == 64
+    assert got["vals_per_tok_layer"] == 1024
+
+
+class _FixedProjection:
+    def __init__(self, array):
+        self.array = np.ascontiguousarray(array, dtype=np.float32)
+
+    def __call__(self, _x):
+        return tc.tensor(self.array, dtype="float32")
+
+
+class _IdentityProjection:
+    def __call__(self, x):
+        return x
+
+
+def test_gpt_oss_attention_captures_prerope_and_seats_graft_prefix():
+    _require_tensor_cuda()
+    cfg = GptOss20BConfig(
+        hidden_dim=4,
+        num_layers=1,
+        num_heads=2,
+        num_kv_heads=1,
+        head_dim=2,
+        layer_types=("full_attention",),
+    )
+    att = GptOssAttentionTC(cfg, 0)
+
+    q_np = np.asarray([[[0.20, -0.10, 0.05, 0.30], [0.01, 0.10, -0.20, 0.05]]])
+    k_np = np.asarray([[[0.25, 0.75], [-0.50, 0.10]]])
+    v_np = np.asarray([[[0.30, -0.20], [0.40, 0.10]]])
+    kg_np = np.asarray([[[[0.60, -0.40]]]], dtype=np.float32)
+    vg_np = np.asarray([[[[0.70, 0.80]]]], dtype=np.float32)
+
+    att.q_proj = _FixedProjection(q_np)
+    att.k_proj = _FixedProjection(k_np)
+    att.v_proj = _FixedProjection(v_np)
+    att.o_proj = _IdentityProjection()
+    att.sinks = tc.tensor(np.zeros((cfg.num_heads,), dtype=np.float32))
+    att._capture = True
+    att._capture_q = True
+    att.inject_kv = (tc.tensor(kg_np), tc.tensor(vg_np), 1.0)
+    att.graft_seats = int(kg_np.shape[2])
+
+    angles = np.arange(6, dtype=np.float32)[:, None] * np.asarray(
+        [[0.25, 0.25]], dtype=np.float32
+    )
+    cos = tc.tensor(np.cos(angles).astype(np.float32))
+    sin = tc.tensor(np.sin(angles).astype(np.float32))
+    x = tc.tensor(np.zeros((1, 2, cfg.hidden_dim), dtype=np.float32))
+
+    _, kv = att(x, cos, sin, position_offset=0, kv_cache=None)
+
+    np.testing.assert_allclose(att._captured[0], k_np.reshape(1, 2, 1, 2).transpose(0, 2, 1, 3))
+    np.testing.assert_allclose(att._captured[1], v_np.reshape(1, 2, 1, 2).transpose(0, 2, 1, 3))
+    np.testing.assert_allclose(att._captured_q, q_np.reshape(1, 2, 2, 2).transpose(0, 2, 1, 3))
+
+    kg_expected = F.apply_rotary(
+        tc.tensor(kg_np), cos.slice(0, 0, 1), sin.slice(0, 0, 1)
+    ).numpy()
+    live_expected = F.apply_rotary(
+        tc.tensor(k_np.reshape(1, 2, 1, 2).transpose(0, 2, 1, 3)),
+        cos.slice(0, 1, 2),
+        sin.slice(0, 1, 2),
+    ).numpy()
+
+    got_k = kv[0].numpy()
+    got_v = kv[1].numpy()
+    np.testing.assert_allclose(got_k[:, :, :1], kg_expected, rtol=2e-5, atol=2e-5)
+    np.testing.assert_allclose(got_k[:, :, 1:], live_expected, rtol=2e-5, atol=2e-5)
+    np.testing.assert_allclose(got_v[:, :, :1], vg_np, rtol=2e-5, atol=2e-5)
+
+
+def test_gpt_oss_attention_does_not_reinject_graft_on_cached_decode():
+    _require_tensor_cuda()
+    cfg = GptOss20BConfig(
+        hidden_dim=4,
+        num_layers=1,
+        num_heads=2,
+        num_kv_heads=1,
+        head_dim=2,
+        layer_types=("full_attention",),
+    )
+    att = GptOssAttentionTC(cfg, 0)
+    q_np = np.asarray([[[0.20, -0.10, 0.05, 0.30]]], dtype=np.float32)
+    k_np = np.asarray([[[0.25, 0.75]]], dtype=np.float32)
+    v_np = np.asarray([[[0.30, -0.20]]], dtype=np.float32)
+    kg_np = np.asarray([[[[0.60, -0.40]]]], dtype=np.float32)
+    vg_np = np.asarray([[[[0.70, 0.80]]]], dtype=np.float32)
+    cache_k = tc.tensor(np.asarray([[[[0.11, 0.12], [0.21, 0.22]]]], dtype=np.float32))
+    cache_v = tc.tensor(np.asarray([[[[0.31, 0.32], [0.41, 0.42]]]], dtype=np.float32))
+
+    att.q_proj = _FixedProjection(q_np)
+    att.k_proj = _FixedProjection(k_np)
+    att.v_proj = _FixedProjection(v_np)
+    att.o_proj = _IdentityProjection()
+    att.sinks = tc.tensor(np.zeros((cfg.num_heads,), dtype=np.float32))
+    att.inject_kv = (tc.tensor(kg_np), tc.tensor(vg_np), 1.0)
+    att.graft_seats = int(kg_np.shape[2])
+
+    angles = np.arange(6, dtype=np.float32)[:, None] * np.asarray(
+        [[0.25, 0.25]], dtype=np.float32
+    )
+    cos = tc.tensor(np.cos(angles).astype(np.float32))
+    sin = tc.tensor(np.sin(angles).astype(np.float32))
+    x = tc.tensor(np.zeros((1, 1, cfg.hidden_dim), dtype=np.float32))
+
+    _, kv = att(x, cos, sin, position_offset=1, kv_cache=(cache_k, cache_v))
+
+    assert kv[0].shape[2] == 3
+    np.testing.assert_allclose(kv[0].slice(2, 0, 2).numpy(), cache_k.numpy())
+    np.testing.assert_allclose(kv[1].slice(2, 0, 2).numpy(), cache_v.numpy())
 
 
 def _mxfp4_reference(blocks, scales):

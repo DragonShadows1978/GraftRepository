@@ -330,3 +330,54 @@ and pushed wall time from about `2216s` to about `5577s`. This clears the
 practical 64K target on real tokens. A 128K rung now looks plausible on memory,
 but the current token-routed MoE path makes it a multi-hour test rather than a
 quick confirmation.
+
+The 128K H4 rung is now running, but the faster path for the GRM question is
+clearer. A live 128K prefill proves the streamed prompt path. The GRM question
+is whether GPT-OSS can remount cold pre-RoPE K/V and use it with a short live
+prompt after KV has been cleared. To support that, the streamed GPT-OSS harness
+now has a graft capture/mount surface: `--capture-graft-dir` writes per-layer
+pre-RoPE K/V shards, and `--mount-graft-dir` seats those shards before the live
+prompt.
+
+This work deliberately stays out of the C++/CUDA arena lane. The repository
+already has a C++ host runtime with `HostGraftStore`, `RouterIndex`,
+durability, dirty planning, route metadata, and byte-level arena swap/evict
+references. A separate implementation track is handling the CUDA arena. For
+GPT-OSS, this branch owns the model dialect adapter and streamed TensorCUDA
+capture/mount harness, while the native layer remains the authority for host
+payload accounting, routing state, and mount commits.
+
+The GPT-OSS dialect is now registered as a GQA-style GRM profile:
+`rope_full_yarn | kv | seat_remountable | multi_mount`, with `8` KV heads,
+`64` head dimension, and `1024` K/V values per token per layer. The remount
+law is the same as the proven GQA path: capture K/V before RoPE, re-RoPE keys
+at the mounted seats, and shift live-token RoPE positions while the graft is
+resident. Sliding layers remain bounded by their sliding window even when a
+large graft is mounted; full-attention layers are the part of GPT-OSS that can
+see across the whole mounted graft.
+
+This is H5 plumbing, not an H5 pass. The next proof still has to mint real
+GPT-OSS graft shards, remount them with the fact omitted from the live prompt,
+and beat an amnesia/no-graft control.
+
+The first fast H5 proof should use candidate scoring rather than greedy
+generation. The new bulk-graft gate plants a single-token `BLUE` needle into an
+exact real-token capture prompt, captures the pre-RoPE K/V shards, then asks a
+short live question with no answer in the prompt. It scores the first token of
+`BLUE` against single-token decoys (`RED`, `GREEN`, `BLACK`, `WHITE`) in both
+an amnesia control and a mounted-graft run. If the mounted run moves the gold
+token above the decoys and improves over control, that is direct evidence that
+the cold graft is carrying retrievable information. It is still narrower than
+open greedy recall, but it is much faster and sharper for closing the first
+GPT-OSS remount question.
+
+That first H5 proof is now green at 4K. GPT-OSS captured a 4096-token real-token
+prompt with the `BLUE` needle at token offset 4077, wrote 24 layers of pre-RoPE
+K/V graft shards totaling `201326592` host bytes, then cleared the live prompt
+down to a 16-token query. The amnesia control preferred `RED` over `BLUE` by
+`1.78125` logits. With the 4096-token graft mounted, GPT-OSS preferred `BLUE`
+over the best decoy by `3.84375` logits. That is the first same-model GPT-OSS
+cold-graft access pass: the answer was absent from the live prompt and became
+available through the mounted graft. It is still a candidate-logit gate rather
+than open greedy recall, but it closes the first mechanical question: the
+GPT-OSS pre-RoPE capture/remount path can carry retrievable information.

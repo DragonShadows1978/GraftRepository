@@ -183,6 +183,38 @@ def resolve_gpt_oss_attention_mode(
     }
 
 
+def gpt_oss_grm_dialect_kwargs(
+    cfg: GptOss20BConfig,
+    *,
+    route_layer: int | None = None,
+) -> dict[str, Any]:
+    """Native GRM dialect profile for GPT-OSS attention grafts.
+
+    GPT-OSS graft payloads are GQA-style pre-RoPE K/V tensors. YARN changes the
+    RoPE table, not the remount law: captured keys stay position-neutral and are
+    re-RoPE'd at their mounted seats.
+    """
+
+    if route_layer is None:
+        full = cfg.full_attention_indices()
+        route_layer = full[0] if full else 0
+    return {
+        "model_type": "GptOss20B_TC",
+        "num_layers": int(cfg.num_layers),
+        "hidden_dim": int(cfg.hidden_dim),
+        "vals_per_tok_layer": int(cfg.num_kv_heads * cfg.head_dim * 2),
+        "route_layer": int(route_layer),
+        "payload_kind": "gqa",
+        "num_kv_heads": int(cfg.num_kv_heads),
+        "head_dim": int(cfg.head_dim),
+        "position_law": "rope_full_yarn",
+        "state_kind": "kv",
+        "graftability": "seat_remountable",
+        "remountable": True,
+        "composition": "multi_mount",
+    }
+
+
 class BiasedQuantLinearTC:
     """Quantized linear with an optional bias add.
 
@@ -583,6 +615,8 @@ class GptOssAttentionTC:
         self.bulk_bits = 8
         self.attn_block = 1024
         self.last_attention_backend = None
+        self.inject_kv = None
+        self.graft_seats = 0
 
     @classmethod
     def from_safetensors(
@@ -609,10 +643,40 @@ class GptOssAttentionTC:
         k = self.k_proj(x).reshape([B, L, self.num_kv_heads, self.head_dim]).transpose(1, 2)
         v = self.v_proj(x).reshape([B, L, self.num_kv_heads, self.head_dim]).transpose(1, 2)
 
-        cseg = cos.slice(0, position_offset, L)
-        sseg = sin.slice(0, position_offset, L)
+        if getattr(self, "_capture", False):
+            self._captured = (k.numpy(), v.numpy())
+        if getattr(self, "_capture_q", False):
+            self._captured_q = q.numpy()
+
+        inj = getattr(self, "inject_kv", None)
+        kg_pre = vg = None
+        gscale = 1.0
+        if inj is not None:
+            if len(inj) == 2:
+                kg_pre, vg = inj
+            else:
+                kg_pre, vg, gscale = inj
+
+        graft_seats = int(getattr(self, "graft_seats", 0) or 0)
+        if kg_pre is not None:
+            graft_seats = int(kg_pre.shape[2])
+        shift = getattr(self, "live_shift", None)
+        if shift is None:
+            shift = graft_seats
+
+        cseg = cos.slice(0, position_offset + int(shift), L)
+        sseg = sin.slice(0, position_offset + int(shift), L)
         q = F.apply_rotary(q, cseg, sseg)
         k = F.apply_rotary(k, cseg, sseg)
+
+        if inj is not None and kv_cache is None:
+            cg = cos.slice(0, 0, graft_seats)
+            sg = sin.slice(0, 0, graft_seats)
+            kg = F.apply_rotary(kg_pre, cg, sg)
+            if float(gscale) != 1.0:
+                kg = kg * float(gscale)
+            k = tc.cat([kg, k], dim=2)
+            v = tc.cat([vg, v], dim=2)
 
         if kv_cache is not None:
             k = tc.cat([kv_cache[0], k], dim=2)
