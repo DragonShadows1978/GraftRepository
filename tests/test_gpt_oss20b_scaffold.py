@@ -21,6 +21,7 @@ from core.gpt_oss20b_tc import (  # noqa: E402
     resolve_gpt_oss_attention_mode,
     sink_apa_blend_attention_tc,
     sink_attention_tc,
+    sliding_sink_attention_tc,
 )
 from core.mistral7b_tc import BlockTC  # noqa: E402
 
@@ -44,6 +45,8 @@ def test_gpt_oss_config_parses_pinned_metadata():
     assert cfg.num_kv_heads == 8
     assert cfg.head_dim == 64
     assert cfg.num_heads_per_kv == 8
+    assert cfg.num_local_experts == 32
+    assert cfg.num_experts_per_tok == 4
     assert cfg.full_attention_indices() == list(range(1, 24, 2))
     assert cfg.sliding_attention_indices() == list(range(0, 24, 2))
     assert cfg.rope_scaling["rope_type"] == "yarn"
@@ -184,6 +187,43 @@ def test_sink_attention_matches_numpy_reference():
     shifted = combined - combined.max(axis=-1, keepdims=True)
     probs = np.exp(shifted) / np.exp(shifted).sum(axis=-1, keepdims=True)
     ref = np.einsum("bhls,bhsd->bhld", probs[..., :-1], v_rep)
+
+    np.testing.assert_allclose(got, ref, rtol=2e-5, atol=2e-5)
+
+
+def test_sliding_sink_attention_matches_full_mask_reference():
+    rng = np.random.default_rng(20260707)
+    B, H, KVH, L, S, D, VD = 1, 4, 2, 6, 11, 3, 5
+    q = rng.normal(size=(B, H, L, D)).astype(np.float32)
+    k = rng.normal(size=(B, KVH, S, D)).astype(np.float32)
+    v = rng.normal(size=(B, KVH, S, VD)).astype(np.float32)
+    sinks = rng.normal(size=(H,)).astype(np.float32)
+    scale = D ** -0.5
+    window = 4
+
+    got = sliding_sink_attention_tc(
+        tc.tensor(q, dtype="float32"),
+        tc.tensor(k, dtype="float32"),
+        tc.tensor(v, dtype="float32"),
+        tc.tensor(sinks, dtype="float32"),
+        scale=scale,
+        sliding_window=window,
+        num_heads_per_kv=H // KVH,
+        attn_block=2,
+    ).numpy()
+
+    k_rep = np.repeat(k, H // KVH, axis=1)
+    v_rep = np.repeat(v, H // KVH, axis=1)
+    scores = np.einsum("bhld,bhsd->bhls", q, k_rep) * scale
+    q_abs = np.arange(S - L, S, dtype=np.int64)[:, None]
+    k_abs = np.arange(S, dtype=np.int64)[None, :]
+    allowed = (k_abs <= q_abs) & (k_abs > (q_abs - window))
+    scores = scores + np.where(allowed, 0.0, -1.0e4).astype(np.float32)[None, None]
+    sink_logits = np.broadcast_to(sinks[None, :, None, None], (B, H, L, 1))
+    combined = np.concatenate([scores, sink_logits], axis=-1)
+    weights = np.exp(combined - combined.max(axis=-1, keepdims=True))
+    weights /= weights.sum(axis=-1, keepdims=True)
+    ref = np.einsum("bhls,bhsd->bhld", weights[..., :-1], v_rep)
 
     np.testing.assert_allclose(got, ref, rtol=2e-5, atol=2e-5)
 

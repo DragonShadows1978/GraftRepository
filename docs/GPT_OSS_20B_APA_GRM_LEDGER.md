@@ -1630,3 +1630,254 @@ Interpretation:
 
 Next:
 - H4 real-token context ladder.
+
+Action: Added and ran the first H4 real-token context ladder through 16K.
+
+Reason:
+- H4 requires real-token fill and a pass/fail/OOM ladder before any
+  context-extension claim is allowed.
+- The first small ladder also exposed that GPT-OSS sliding-window layers were
+  mask-bounded but not memory-bounded in the TensorCUDA path.
+
+Implementation:
+- Added `--prompt-file` support to
+  `scripts/gpt_oss20b_stream_forward_smoke.py`.
+- Added `scripts/gpt_oss20b_context_ladder.py`.
+- The H4 runner:
+  - builds prompt files from real tokenized docs
+  - runs one process per setting/context rung
+  - records command, prompt file, artifact path, return code, classification,
+    actual token count, raw token count, completed layers, backend counts,
+    artifact memory, sampled peak memory, stdout/stderr tails, and wall time
+  - stops a setting at first failure/OOM
+- Added parent-process GPU memory sampling around each rung.
+- Added chunked GPT-OSS sliding-window sink attention:
+  `sliding_sink_attention_tc(...)`.
+- Default GPT-OSS standard sliding layers now use
+  `standard_sink_sliding_chunked` instead of materializing full `L x S` scores.
+- GPT-OSS APA full-attention layers continue to use
+  `apa_selective_sink_fused`.
+
+Verification:
+- Compile command:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile core/gpt_oss20b_tc.py tests/test_gpt_oss20b_scaffold.py scripts/gpt_oss20b_stream_forward_smoke.py scripts/gpt_oss20b_context_ladder.py`
+- Diff hygiene:
+  `git diff --check`
+- Pure ladder tests:
+  `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_context_ladder.py -q`
+  - result: `6 passed in 0.04s`
+- GPT-OSS scaffold tests:
+  `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_scaffold.py -q`
+  - result: `10 passed, 2 warnings in 0.52s`
+- New focused scaffold test:
+  `test_sliding_sink_attention_matches_full_mask_reference`
+
+Corpus source:
+- Directory:
+  `/mnt/ForgeRealm/GraftRepository/docs`
+- File count:
+  `40`
+- Directory content hash:
+  `96fa1e59a01388ba3d84424904768aa89fa17cf108d33bb6145c08398ec27a09`
+- Token count:
+  `222843`
+
+Initial H4 smoke command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_context_ladder.py --corpus-dir docs --lengths 128,256,512 --settings standard,apa_r0.15 --apa-layer-scope full --bulk-bits 8 --expert-mode resident_packed_mxfp4 --output artifacts/gpt_oss_20b/h4_context_ladder_smoke.json`
+
+Initial H4 smoke result:
+- Standard:
+  - pass: `128`, `256`, `512`
+  - max artifact memory: `911 MiB`
+- APA r0.15:
+  - pass: `128`, `256`, `512`
+  - max artifact memory: `911 MiB`
+- Interpretation:
+  - This run happened before chunked sliding attention was added; it was useful
+    as a sanity check but not the final H4 memory shape.
+
+Post-sliding-fix H4 smoke command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_context_ladder.py --corpus-dir docs --lengths 128,256,512 --settings standard,apa_r0.15 --apa-layer-scope full --bulk-bits 8 --expert-mode resident_packed_mxfp4 --output artifacts/gpt_oss_20b/h4_context_ladder_chunked_sliding_smoke.json`
+
+Post-sliding-fix H4 smoke result:
+- Standard:
+  - pass: `128`, `256`, `512`
+  - actual token counts match targets
+  - max artifact memory: `907`, `909`, `911 MiB`
+  - backend counts:
+    `standard_sink = 12`, `standard_sink_sliding_chunked = 12`
+- APA r0.15:
+  - pass: `128`, `256`, `512`
+  - actual token counts match targets
+  - max artifact memory: `907`, `909`, `911 MiB`
+  - backend counts:
+    `apa_selective_sink_fused = 12`, `standard_sink_sliding_chunked = 12`
+
+H4 1K/2K command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_context_ladder.py --corpus-dir docs --lengths 1024,2048 --settings standard,apa_r0.15 --apa-layer-scope full --bulk-bits 8 --expert-mode resident_packed_mxfp4 --output artifacts/gpt_oss_20b/h4_context_ladder_1k_2k.json`
+
+H4 1K/2K result:
+- Standard:
+  - `1024`: pass, actual `1024`, artifact max `913 MiB`, wall `69.48s`
+  - `2048`: pass, actual `2048`, artifact max `919 MiB`, wall `122.39s`
+  - backend counts:
+    `standard_sink = 12`, `standard_sink_sliding_chunked = 12`
+- APA r0.15:
+  - `1024`: pass, actual `1024`, artifact max `913 MiB`, wall `70.60s`
+  - `2048`: pass, actual `2048`, artifact max `919 MiB`, wall `125.22s`
+  - backend counts:
+    `apa_selective_sink_fused = 12`, `standard_sink_sliding_chunked = 12`
+
+H4 APA 4K/8K command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_context_ladder.py --corpus-dir docs --lengths 4096,8192 --settings apa_r0.15 --apa-layer-scope full --bulk-bits 8 --expert-mode resident_packed_mxfp4 --output artifacts/gpt_oss_20b/h4_context_ladder_apa_4k_8k.json`
+
+H4 APA 4K/8K result:
+- APA r0.15:
+  - `4096`: pass, actual `4096`, artifact max `937 MiB`, wall `236.88s`
+  - `8192`: pass, actual `8192`, artifact max `969 MiB`, wall `473.46s`
+  - backend counts:
+    `apa_selective_sink_fused = 12`, `standard_sink_sliding_chunked = 12`
+
+H4 sampled APA 8K command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_context_ladder.py --corpus-dir docs --lengths 8192 --settings apa_r0.15 --apa-layer-scope full --bulk-bits 8 --expert-mode resident_packed_mxfp4 --output artifacts/gpt_oss_20b/h4_context_ladder_apa_8k_sampled.json`
+
+H4 sampled APA 8K result:
+- APA r0.15:
+  - pass, actual `8192`
+  - artifact max memory: `967 MiB`
+  - monitor peak memory: `1891 MiB`
+  - monitor samples: `909`
+  - backend counts:
+    `apa_selective_sink_fused = 12`, `standard_sink_sliding_chunked = 12`
+  - wall: `474.62s`
+
+H4 sampled APA 16K command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_context_ladder.py --corpus-dir docs --lengths 16384 --settings apa_r0.15 --apa-layer-scope full --bulk-bits 8 --expert-mode resident_packed_mxfp4 --output artifacts/gpt_oss_20b/h4_context_ladder_apa_16k_sampled.json`
+
+H4 sampled APA 16K result:
+- APA r0.15:
+  - pass, actual `16384`
+  - artifact max memory: `1031 MiB`
+  - monitor peak memory: `2039 MiB`
+  - monitor samples: `1945`
+  - backend counts:
+    `apa_selective_sink_fused = 12`, `standard_sink_sliding_chunked = 12`
+  - wall: `1015.97s`
+
+Post-run GPU state:
+- `NVIDIA GeForce RTX 4070 SUPER, 274, 12282, 35`
+
+Interpretation:
+- H4 has not found an APA OOM boundary yet.
+- Standard has been measured through `2048` tokens with no OOM.
+- APA r0.15 has been measured through `16384` real tokens with no OOM.
+- The sampled peak rose from `1891 MiB` at 8K to `2039 MiB` at 16K, about
+  `+148 MiB` for a 2x context increase on this streamed path.
+- Artifact snapshots rose from roughly `911 MiB` at 512 to `1031 MiB` at 16K.
+- Runtime, not VRAM, is currently the limiting practical cost.
+- This is still the streamed layer-resident path. It proves context-side
+  viability for this runner, not full-model-resident serving.
+
+Next:
+- Continue H4 ladder at `32768`, then `65536` if 32K passes.
+- After H4 context fit is established, move to H5 GPT-OSS GRM capture/mount.
+
+Action: Investigated H4 runtime speed and added compact MoE routing receipts.
+
+Reason:
+- The 16K H4 rung passed on VRAM but took `1015.97s`.
+- Before running 32K, the runner needed a check for avoidable overhead that
+  does not change model math or downgrade the real-token methodology.
+
+Implementation:
+- Added `--route-detail {full,summary}` to
+  `scripts/gpt_oss20b_stream_forward_smoke.py`.
+- Added `--expert-empty-cache-interval N` to
+  `scripts/gpt_oss20b_stream_forward_smoke.py`.
+- The default stream runner remains conservative:
+  - `route_detail = full`
+  - `expert_empty_cache_interval = 1`
+- The H4 context ladder now defaults to:
+  - `route_detail = summary`
+  - `expert_empty_cache_interval = 0`
+- Summary routing receipts keep:
+  - route detail mode
+  - token count
+  - experts per token
+  - unique experts
+  - expert histogram
+  - slot weight means
+  - slot weight max values
+  - empty-cache interval
+- Full routing receipts still keep per-token `top_indices` and `top_weights`.
+
+Failure caught:
+- First fast-mode smoke failed with:
+  `AttributeError: 'GptOss20BConfig' object has no attribute 'num_experts'`
+- Root cause:
+  - GPT-OSS config uses `num_local_experts`, not `num_experts`.
+- Fix:
+  - Summary histogram now uses `cfg.num_local_experts`.
+  - Scaffold config test now asserts `num_local_experts == 32` and
+    `num_experts_per_tok == 4`.
+
+Verification:
+- Compile command:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile core/gpt_oss20b_tc.py scripts/gpt_oss20b_stream_forward_smoke.py scripts/gpt_oss20b_context_ladder.py tests/test_gpt_oss20b_scaffold.py`
+  - result: pass
+- Pure ladder tests:
+  `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_context_ladder.py -q`
+  - result: `6 passed in 0.04s`
+- GPT-OSS scaffold tests:
+  `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_scaffold.py -q`
+  - sandbox result: failed because CUDA was not visible:
+    `cudaMalloc failed: no CUDA-capable device is detected`
+  - escalated GPU result: `10 passed, 2 warnings in 0.52s`
+
+Speed smoke A/B:
+- Prompt:
+  `artifacts/gpt_oss_20b/h4_context_ladder_chunked_sliding_smoke/prompts/prompt_512.txt`
+- Shape:
+  - real prompt tokens: `512`
+  - layers: `2`
+  - attention mode: `apa_selective`
+  - APA scope: `full`
+  - refine percentile: `0.15`
+  - expert mode: `resident_packed_mxfp4`
+  - LM head skipped
+
+Old/full receipt command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --prompt-file artifacts/gpt_oss_20b/h4_context_ladder_chunked_sliding_smoke/prompts/prompt_512.txt --max-tokens 512 --max-layers 2 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --skip-lm-head --output artifacts/gpt_oss_20b/h4_speed_smoke_old_512_2layers.json`
+
+Old/full receipt result:
+- status: `ok`
+- completed layers: `2`
+- artifact: `artifacts/gpt_oss_20b/h4_speed_smoke_old_512_2layers.json`
+- route detail: `full`
+- empty cache interval: `1`
+- artifact wall seconds: `5.843513193947729`
+- artifact size: `268871` bytes
+
+Fast/summary receipt command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --prompt-file artifacts/gpt_oss_20b/h4_context_ladder_chunked_sliding_smoke/prompts/prompt_512.txt --max-tokens 512 --max-layers 2 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --skip-lm-head --output artifacts/gpt_oss_20b/h4_speed_smoke_fast_512_2layers.json`
+
+Fast/summary receipt result:
+- status: `ok`
+- completed layers: `2`
+- artifact: `artifacts/gpt_oss_20b/h4_speed_smoke_fast_512_2layers.json`
+- route detail: `summary`
+- empty cache interval: `0`
+- artifact wall seconds: `5.914710729965009`
+- artifact size: `24010` bytes
+
+Interpretation:
+- The compact receipt reduced the 512-token two-layer artifact from `268871`
+  bytes to `24010` bytes, about an 11x reduction.
+- The tiny A/B did not improve wall time because startup and layer load
+  overhead dominate at 512 tokens and 2 layers.
+- The remaining H4 wall-clock bottleneck is the token-by-token selected MoE
+  path: each token routes to `4` experts, repeated across up to `24` layers.
+- A material speedup requires a batched or fused routed MXFP4 MoE kernel, not
+  more runner cleanup.
+- The compact receipt mode is still useful for 32K+ because it prevents
+  long-context artifacts from ballooning with per-token route lists.

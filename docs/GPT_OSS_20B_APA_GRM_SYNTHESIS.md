@@ -283,3 +283,29 @@ The full H3 top-k smoke completed all 24 layers with backend counts
 `29.68`, consistent with the previous small APA gate. This closes the
 score-matrix implementation gap for full-attention GPT-OSS APA. It does not yet
 prove a longer context window; H4 has to run the real-token OOM ladder.
+
+H4 is now in motion with real-token fills from the repository docs corpus. The
+first important engineering correction was not APA itself but GPT-OSS sliding
+attention: the sliding layers were masked to a 128-token window, but the
+TensorCUDA path still built full `L x S` score matrices. That would have
+polluted any long-context result. The path now uses chunked sliding sink
+attention, so the default APA operating point is `12` fused full-attention APA
+layers plus `12` chunked sliding-standard layers.
+
+With that fixed, the real-token ladder has passed standard through 2K and APA
+r0.15 through 16K. The APA r0.15 sampled peak was `1891 MiB` at 8K and
+`2039 MiB` at 16K, while artifact snapshots rose from roughly `911 MiB` at
+512 tokens to `1031 MiB` at 16K. No APA OOM boundary has been found yet.
+Runtime is currently the expensive part, not VRAM. The next H4 rungs are 32K
+and then 64K if 32K passes.
+
+The first H4 speed pass did not change the big conclusion. Compact MoE routing
+receipts now exist, and the ladder uses them by default so long-context
+artifacts do not store per-token route lists for every layer. A 512-token,
+two-layer A/B dropped the receipt from `268871` bytes to `24010` bytes, but it
+did not improve wall time on that tiny run (`5.84s` old versus `5.91s`
+summary). The real runtime wall is the selected MoE implementation: GPT-OSS is
+still routing token-by-token into four experts across the streamed layers. A
+true speed breakthrough needs a batched or fused routed MXFP4 MoE kernel. Until
+then, the compact receipt mode reduces artifact pressure while preserving the
+real-token context ladder methodology.

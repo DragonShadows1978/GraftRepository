@@ -338,6 +338,55 @@ def sink_attention_tc(
     return tc.matmul(weights, value_h)
 
 
+def sliding_sink_attention_tc(
+    query,
+    key,
+    value,
+    sinks,
+    *,
+    scale: float,
+    sliding_window: int,
+    num_heads_per_kv: int = 1,
+    attn_block: int = 128,
+):
+    """GPT-OSS sink attention for sliding-window layers without full LxS scores."""
+
+    L = query.shape[2]
+    S = key.shape[2]
+    blk = max(1, int(attn_block))
+    window = max(1, int(sliding_window))
+    outs = []
+    for i in range(0, L, blk):
+        e = min(i + blk, L)
+        q_abs0 = S - L + i
+        q_abs1 = S - L + e - 1
+        k0 = max(0, q_abs0 - window + 1)
+        k1 = min(S, q_abs1 + 1)
+        Qi = query.slice(2, i, e - i)
+        Ki = key.slice(2, k0, k1 - k0)
+        Vi = value.slice(2, k0, k1 - k0)
+
+        q_abs = np.arange(q_abs0, q_abs1 + 1, dtype=np.int64)[:, None]
+        k_abs = np.arange(k0, k1, dtype=np.int64)[None, :]
+        allowed = (k_abs <= q_abs) & (k_abs > (q_abs - window))
+        mask = np.where(allowed, 0.0, -1.0e4).astype(np.float32)
+        mask_t = tc.tensor(mask.reshape(1, 1, e - i, k1 - k0), dtype="float32").astype(
+            query.dtype
+        )
+        outs.append(
+            sink_attention_tc(
+                Qi,
+                Ki,
+                Vi,
+                sinks,
+                scale=scale,
+                attention_mask=mask_t,
+                num_heads_per_kv=num_heads_per_kv,
+            )
+        )
+    return tc.cat(outs, dim=2)
+
+
 def sink_apa_blend_attention_tc(
     query,
     key,
@@ -569,12 +618,6 @@ class GptOssAttentionTC:
             k = tc.cat([kv_cache[0], k], dim=2)
             v = tc.cat([kv_cache[1], v], dim=2)
         S = k.shape[2]
-        mask = _gpt_oss_attention_mask(
-            L,
-            S,
-            sliding_window=self.sliding_window,
-            dtype=q.dtype,
-        )
         if self.attention_mode == "apa_selective":
             from tensor_cuda.quant import _norm_ppf, _quantize_keys, _tables
 
@@ -597,6 +640,12 @@ class GptOssAttentionTC:
                 )
                 self.last_attention_backend = "apa_selective_sink_fused"
             else:
+                mask = _gpt_oss_attention_mask(
+                    L,
+                    S,
+                    sliding_window=self.sliding_window,
+                    dtype=q.dtype,
+                )
                 attn = sink_apa_blend_attention_tc(
                     q,
                     k,
@@ -611,16 +660,35 @@ class GptOssAttentionTC:
                 )
                 self.last_attention_backend = "apa_selective_sink_blend"
         else:
-            attn = sink_attention_tc(
-                q,
-                k,
-                v,
-                self.sinks,
-                scale=self.scaling,
-                attention_mask=mask,
-                num_heads_per_kv=self.num_heads_per_kv,
-            )
-            self.last_attention_backend = "standard_sink"
+            if self.sliding_window is not None:
+                attn = sliding_sink_attention_tc(
+                    q,
+                    k,
+                    v,
+                    self.sinks,
+                    scale=self.scaling,
+                    sliding_window=self.sliding_window,
+                    num_heads_per_kv=self.num_heads_per_kv,
+                    attn_block=self.attn_block,
+                )
+                self.last_attention_backend = "standard_sink_sliding_chunked"
+            else:
+                mask = _gpt_oss_attention_mask(
+                    L,
+                    S,
+                    sliding_window=self.sliding_window,
+                    dtype=q.dtype,
+                )
+                attn = sink_attention_tc(
+                    q,
+                    k,
+                    v,
+                    self.sinks,
+                    scale=self.scaling,
+                    attention_mask=mask,
+                    num_heads_per_kv=self.num_heads_per_kv,
+                )
+                self.last_attention_backend = "standard_sink"
         out = attn.transpose(1, 2).reshape([B, L, self.num_heads * self.head_dim])
         return self.o_proj(out), (k, v)
 
@@ -696,6 +764,8 @@ class GptOssMoEDiagnosticTC:
         self.down_blocks_tc = None
         self.down_scales_tc = None
         self.down_bias_tc = None
+        self.route_detail = "full"
+        self.empty_cache_interval = 1
 
     @classmethod
     def from_safetensors(
@@ -862,6 +932,7 @@ class GptOssMoEDiagnosticTC:
         topi_np = topi.numpy().astype(np.int64)
 
         routed = []
+        empty_cache_interval = int(self.empty_cache_interval)
         for t in range(B * L):
             xt = x_flat.slice(0, t, 1)
             acc = None
@@ -874,15 +945,48 @@ class GptOssMoEDiagnosticTC:
                     y = self._expert_dequant(xt, e, w)
                 acc = y if acc is None else acc + y
                 del y
-                if hasattr(tc, "empty_cache"):
+                if (
+                    empty_cache_interval > 0
+                    and hasattr(tc, "empty_cache")
+                    and (
+                        (t * self.cfg.num_experts_per_tok + slot + 1)
+                        % empty_cache_interval
+                        == 0
+                    )
+                ):
                     tc.empty_cache()
             routed.append(acc)
         out = tc.cat(routed, dim=0).reshape([B, L, H])
         route_info = {
             "expert_mode": self.expert_mode,
+            "route_detail": self.route_detail,
+            "token_count": int(B * L),
+            "num_experts_per_tok": int(self.cfg.num_experts_per_tok),
+            "unique_experts": sorted({int(x) for x in topi_np.reshape(-1)}),
+            "empty_cache_interval": int(empty_cache_interval),
+        }
+        if self.route_detail == "summary":
+            route_info["slot_weight_means"] = [
+                float(topw_np[:, slot].mean())
+                for slot in range(self.cfg.num_experts_per_tok)
+            ]
+            route_info["slot_weight_max"] = [
+                float(topw_np[:, slot].max())
+                for slot in range(self.cfg.num_experts_per_tok)
+            ]
+            expert_hist = np.bincount(
+                topi_np.reshape(-1), minlength=int(self.cfg.num_local_experts)
+            )
+            route_info["expert_histogram"] = {
+                str(i): int(v) for i, v in enumerate(expert_hist.tolist()) if v
+            }
+            return out, route_info
+        if self.route_detail != "full":
+            raise ValueError(f"unsupported route_detail {self.route_detail!r}")
+        route_info = {
+            **route_info,
             "top_indices": topi_np.tolist(),
             "top_weights": topw_np.tolist(),
-            "unique_experts": sorted({int(x) for x in topi_np.reshape(-1)}),
         }
         return out, route_info
 

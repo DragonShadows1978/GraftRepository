@@ -49,6 +49,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model-dir", default=SNAPSHOT)
     parser.add_argument("--prompt", default="The capital of France is")
     parser.add_argument(
+        "--prompt-file",
+        type=Path,
+        default=None,
+        help="read prompt text from a file; overrides --prompt before chat-template rendering",
+    )
+    parser.add_argument(
         "--use-chat-template",
         action="store_true",
         help="render prompt as a single user message with tokenizer chat template",
@@ -78,6 +84,21 @@ def parse_args() -> argparse.Namespace:
         "--expert-mode",
         choices=("resident_packed_mxfp4", "packed_mxfp4", "dequant"),
         default="resident_packed_mxfp4",
+    )
+    parser.add_argument(
+        "--route-detail",
+        choices=("full", "summary"),
+        default="full",
+        help="full stores per-token MoE routing; summary stores compact histograms",
+    )
+    parser.add_argument(
+        "--expert-empty-cache-interval",
+        type=int,
+        default=1,
+        help=(
+            "call tc.empty_cache every N routed expert calls; 0 disables the "
+            "inner-loop trim"
+        ),
     )
     parser.add_argument("--skip-lm-head", action="store_true")
     parser.add_argument("--output", type=Path, default=None)
@@ -130,14 +151,23 @@ def main() -> int:
     args = parse_args()
     out = output_path(args.output)
     model_dir = Path(args.model_dir).expanduser().resolve()
+    prompt_source = "arg"
+    prompt_text_input = args.prompt
+    if args.prompt_file is not None:
+        prompt_path = args.prompt_file.expanduser().resolve()
+        prompt_text_input = prompt_path.read_text(encoding="utf-8", errors="ignore")
+        prompt_source = str(prompt_path)
     payload: dict[str, Any] = {
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "model_dir": str(model_dir),
-        "prompt": args.prompt,
+        "prompt": prompt_text_input,
+        "prompt_source": prompt_source,
         "use_chat_template": bool(args.use_chat_template),
         "max_tokens": int(args.max_tokens),
         "max_layers": args.max_layers,
         "expert_mode": args.expert_mode,
+        "route_detail": args.route_detail,
+        "expert_empty_cache_interval": int(args.expert_empty_cache_interval),
         "attention_mode": args.attention_mode,
         "apa_layer_scope": args.apa_layer_scope,
         "refine_percentile": float(args.refine_percentile),
@@ -174,10 +204,10 @@ def main() -> int:
         cfg = GptOss20BConfig.from_model_dir(model_dir)
         where = build_safetensors_map(model_dir)
         tokenizer = AutoTokenizer.from_pretrained(str(model_dir))
-        prompt_text = args.prompt
+        prompt_text = prompt_text_input
         if args.use_chat_template:
             prompt_text = tokenizer.apply_chat_template(
-                [{"role": "user", "content": args.prompt}],
+                [{"role": "user", "content": prompt_text_input}],
                 tokenize=False,
                 add_generation_prompt=True,
             )
@@ -259,6 +289,8 @@ def main() -> int:
                 ]
                 block.self_attn.refine_percentile = float(args.refine_percentile)
                 block.self_attn.bulk_bits = int(args.bulk_bits)
+                block.mlp.route_detail = args.route_detail
+                block.mlp.empty_cache_interval = int(args.expert_empty_cache_interval)
                 h, kv, route_info = block(h, cos, sin)
                 tc.synchronize()
                 layer_info = {
