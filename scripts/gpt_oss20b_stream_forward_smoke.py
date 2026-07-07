@@ -33,6 +33,7 @@ from core.gpt_oss20b_tc import (  # noqa: E402
     build_safetensors_map,
     gpt_oss_yarn_rope_tables,
     load_tensor_np,
+    resolve_gpt_oss_attention_mode,
 )
 from core.mistral7b_tc import BlockTC, QuantLinearTC, RMSNormTC  # noqa: E402
 
@@ -59,6 +60,12 @@ def parse_args() -> argparse.Namespace:
         "--attention-mode",
         choices=("standard", "apa_selective"),
         default="standard",
+    )
+    parser.add_argument(
+        "--apa-layer-scope",
+        choices=("full", "all"),
+        default="full",
+        help="which GPT-OSS layers may use APA when --attention-mode apa_selective",
     )
     parser.add_argument("--refine-percentile", type=float, default=0.15)
     parser.add_argument("--bulk-bits", type=int, default=8)
@@ -132,8 +139,10 @@ def main() -> int:
         "max_layers": args.max_layers,
         "expert_mode": args.expert_mode,
         "attention_mode": args.attention_mode,
+        "apa_layer_scope": args.apa_layer_scope,
         "refine_percentile": float(args.refine_percentile),
         "bulk_bits": int(args.bulk_bits),
+        "sink_aware_apa_available": bool(hasattr(tc, "apa_blend_softmax_sink")),
         "skip_lm_head": bool(args.skip_lm_head),
         "score_ppl": bool(args.score_ppl),
         "note": (
@@ -147,6 +156,14 @@ def main() -> int:
     write_json(out, payload)
 
     try:
+        if args.attention_mode == "apa_selective" and not hasattr(
+            tc, "apa_blend_softmax_sink"
+        ):
+            raise RuntimeError(
+                "GPT-OSS apa_selective requires Project-Tensor "
+                "tc.apa_blend_softmax_sink"
+            )
+
         BlockTC.COMPUTE_DTYPE = "bfloat16"
         QuantLinearTC.FUSED_DECODE = True
         RMSNormTC.USE_FUSED = True
@@ -177,6 +194,21 @@ def main() -> int:
             ids = full_ids[:, : max(1, int(args.max_tokens))]
             targets = None
         n_layers = cfg.num_layers if args.max_layers is None else min(args.max_layers, cfg.num_layers)
+        planned_attention = [
+            resolve_gpt_oss_attention_mode(
+                cfg,
+                layer_idx,
+                args.attention_mode,
+                apa_layer_scope=args.apa_layer_scope,
+            )
+            for layer_idx in range(n_layers)
+        ]
+        planned_apa_layers = [
+            int(item["layer"]) for item in planned_attention if item["apa_active"]
+        ]
+        planned_standard_layers = [
+            int(item["layer"]) for item in planned_attention if not item["apa_active"]
+        ]
 
         with tc.no_grad():
             embed = GptOssRowEmbedding(where)
@@ -193,16 +225,33 @@ def main() -> int:
                     "input_ids_shape": list(ids.shape),
                     "hidden_shape_initial": tensor_shape(h),
                     "resolved_layers": int(n_layers),
+                    "attention_audit": {
+                        "requested_attention_mode": args.attention_mode,
+                        "apa_layer_scope": args.apa_layer_scope,
+                        "refine_percentile": float(args.refine_percentile),
+                        "bulk_bits": int(args.bulk_bits),
+                        "sink_aware_apa_available": bool(
+                            hasattr(tc, "apa_blend_softmax_sink")
+                        ),
+                        "planned_layers": planned_attention,
+                    },
+                    "attention_layers_planned_apa": planned_apa_layers,
+                    "attention_layers_planned_standard": planned_standard_layers,
+                    "attention_layers_used_apa": [],
+                    "attention_layers_used_standard": [],
                 }
             )
             write_json(out, payload)
 
             for layer_idx in range(n_layers):
                 layer_started = time.perf_counter()
+                attention_audit = planned_attention[layer_idx]
                 block = GptOssDiagnosticBlockTC.from_safetensors(
                     cfg, where, layer_idx, expert_mode=args.expert_mode
                 )
-                block.self_attn.attention_mode = args.attention_mode
+                block.self_attn.attention_mode = attention_audit[
+                    "effective_attention_mode"
+                ]
                 block.self_attn.refine_percentile = float(args.refine_percentile)
                 block.self_attn.bulk_bits = int(args.bulk_bits)
                 h, kv, route_info = block(h, cos, sin)
@@ -212,12 +261,17 @@ def main() -> int:
                     "layer_type": cfg.layer_types[layer_idx],
                     "hidden_shape": tensor_shape(h),
                     "kv_shapes": [tensor_shape(kv[0]), tensor_shape(kv[1])],
+                    "attention": attention_audit,
                     "route_info": route_info,
                     "wall_seconds": time.perf_counter() - layer_started,
                     "gpu_after_layer": nvidia_smi(),
                 }
                 payload["layers"].append(layer_info)
                 payload["completed_layers"] = layer_idx + 1
+                if attention_audit["apa_active"]:
+                    payload["attention_layers_used_apa"].append(int(layer_idx))
+                else:
+                    payload["attention_layers_used_standard"].append(int(layer_idx))
                 write_json(out, payload)
                 del block, kv
                 gc.collect()

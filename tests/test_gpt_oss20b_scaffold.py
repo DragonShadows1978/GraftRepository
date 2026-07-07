@@ -18,6 +18,7 @@ from core.gpt_oss20b_tc import (  # noqa: E402
     gpt_oss_expert_activation_np,
     gpt_oss_expert_activation_tc,
     mxfp4_dequantize_blocks_np,
+    resolve_gpt_oss_attention_mode,
     sink_apa_blend_attention_tc,
     sink_attention_tc,
 )
@@ -47,6 +48,37 @@ def test_gpt_oss_config_parses_pinned_metadata():
     assert cfg.sliding_attention_indices() == list(range(0, 24, 2))
     assert cfg.rope_scaling["rope_type"] == "yarn"
     assert cfg.group_size == 64
+
+
+def test_resolve_gpt_oss_attention_mode_scopes_apa_to_full_layers():
+    cfg = GptOss20BConfig(
+        num_layers=2,
+        layer_types=("sliding_attention", "full_attention"),
+    )
+
+    sliding = resolve_gpt_oss_attention_mode(
+        cfg, 0, "apa_selective", apa_layer_scope="full"
+    )
+    full = resolve_gpt_oss_attention_mode(
+        cfg, 1, "apa_selective", apa_layer_scope="full"
+    )
+    all_scope = resolve_gpt_oss_attention_mode(
+        cfg, 0, "apa_selective", apa_layer_scope="all"
+    )
+    standard = resolve_gpt_oss_attention_mode(
+        cfg, 1, "standard", apa_layer_scope="all"
+    )
+
+    assert sliding["effective_attention_mode"] == "standard"
+    assert sliding["apa_active"] is False
+    assert sliding["apa_skip_reason"] == "sliding_window_bounded"
+    assert full["effective_attention_mode"] == "apa_selective"
+    assert full["apa_active"] is True
+    assert full["apa_skip_reason"] is None
+    assert all_scope["effective_attention_mode"] == "apa_selective"
+    assert all_scope["apa_active"] is True
+    assert standard["effective_attention_mode"] == "standard"
+    assert standard["apa_skip_reason"] == "requested_standard"
 
 
 def _mxfp4_reference(blocks, scales):

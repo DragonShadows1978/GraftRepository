@@ -239,3 +239,15 @@ The house-rules execution plan now locks the remaining claim boundaries in
 corpus PPL, long-context support, APA memory flattening, GRM remount, or
 cold-KV recall. Those claims require the registered real-text PPL, tiled
 sink-aware APA memory path, real-token context ladder, and GRM continuity gates.
+
+H1 has now tightened the APA evidence path. The stream harness separates
+requested attention mode from effective per-layer mode and records both planned
+and actual APA layers in the artifact. By default, GPT-OSS APA is scoped to the
+12 full-attention layers, while the 12 sliding-window layers stay on standard
+attention because their window is already bounded.
+
+The H1 comparison run gives a cleaner Tier 3 receipt: standard used no APA
+layers and ranked ` Paris` first; APA r0.15 used layers
+`[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`, kept sliding layers standard,
+and also ranked ` Paris` first. The logits are close enough for a smoke
+receipt, but the next meaningful quality claim still requires H2 real-text PPL.

@@ -1255,3 +1255,88 @@ Interpretation:
 - Current GPT-OSS receipts reach Tier 3 at best.
 - No corpus PPL, long-context, APA memory-flattening, GRM, or cold-KV recall
   claim is allowed until the corresponding registered gate runs.
+
+Action: Completed H1 APA correctness consolidation.
+
+Reason:
+- The previous APA artifacts recorded `attention_mode = apa_selective`, but did
+  not prove which GPT-OSS layers actually used the APA path.
+- GPT-OSS alternates sliding and full attention; the registered plan targets
+  full-attention layers first and keeps bounded sliding-window layers on the
+  simpler standard path unless explicitly overridden.
+
+Implementation:
+- Added `resolve_gpt_oss_attention_mode(...)`.
+- Added `--apa-layer-scope full|all` to
+  `scripts/gpt_oss20b_stream_forward_smoke.py`.
+- Default APA scope is `full`.
+- `--attention-mode apa_selective --apa-layer-scope full` now routes:
+  - full-attention layers through `apa_selective`
+  - sliding-window layers through `standard`
+- The harness now fails early if `apa_selective` is requested without
+  `tc.apa_blend_softmax_sink`.
+- Artifacts now record:
+  - `sink_aware_apa_available`
+  - `attention_audit`
+  - `attention_layers_planned_apa`
+  - `attention_layers_planned_standard`
+  - `attention_layers_used_apa`
+  - `attention_layers_used_standard`
+  - per-layer requested/effective attention mode and skip reason
+
+Focused verification:
+- Compile command:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile core/gpt_oss20b_tc.py scripts/gpt_oss20b_stream_forward_smoke.py tests/test_gpt_oss20b_scaffold.py`
+- Diff hygiene:
+  `git diff --check`
+- Test command:
+  `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_scaffold.py -q`
+- Test result:
+  `9 passed, 2 warnings in 0.51s`
+- New focused test:
+  `test_resolve_gpt_oss_attention_mode_scopes_apa_to_full_layers`
+
+H1 standard comparison command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --prompt 'The capital of France is' --max-tokens 8 --attention-mode standard --expert-mode resident_packed_mxfp4 --top-k 8 --output artifacts/gpt_oss_20b/h1_standard_stream_forward.json`
+
+H1 standard artifact:
+- `artifacts/gpt_oss_20b/h1_standard_stream_forward.json`
+
+H1 standard result:
+- `status = ok`
+- `completed_layers = 24`
+- `attention_layers_used_apa = []`
+- `attention_layers_used_standard` length = `24`
+- top token:
+  - token `12650`, text ` Paris`, logit `15.875`
+- `wall_seconds = 16.351192983041983`
+- `gpu_after = NVIDIA GeForce RTX 4070 SUPER, 796, 12282, 7`
+
+H1 APA r0.15 full-scope comparison command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --prompt 'The capital of France is' --max-tokens 8 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --top-k 8 --output artifacts/gpt_oss_20b/h1_apa_r015_full_scope_stream_forward.json`
+
+H1 APA r0.15 full-scope artifact:
+- `artifacts/gpt_oss_20b/h1_apa_r015_full_scope_stream_forward.json`
+
+H1 APA r0.15 full-scope result:
+- `status = ok`
+- `completed_layers = 24`
+- `attention_layers_used_apa = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`
+- `attention_layers_used_standard = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22]`
+- top token:
+  - token `12650`, text ` Paris`, logit `15.8125`
+- `wall_seconds = 17.014232303015888`
+- `gpu_after = NVIDIA GeForce RTX 4070 SUPER, 798, 12282, 8`
+
+Post-run GPU state:
+- `NVIDIA GeForce RTX 4070 SUPER, 274, 12282, 36`
+
+Interpretation:
+- H1 passes.
+- The artifacts now prove whether APA actually ran on each tested layer.
+- The full-scope APA r0.15 path still ranks ` Paris` first on the short prompt.
+- This remains Tier 3 evidence only; it is not corpus PPL, context extension,
+  GRM, or cold-KV recall evidence.
+
+Next:
+- H2 real-text PPL gate.

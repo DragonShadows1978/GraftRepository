@@ -137,6 +137,52 @@ class GptOss20BConfig:
         return [i for i in range(self.num_layers) if self.is_sliding_attention(i)]
 
 
+def resolve_gpt_oss_attention_mode(
+    cfg: GptOss20BConfig,
+    layer_idx: int,
+    requested_mode: str,
+    *,
+    apa_layer_scope: str = "full",
+) -> dict[str, Any]:
+    """Resolve requested GPT-OSS attention mode to the layer's effective mode."""
+
+    layer_idx = int(layer_idx)
+    requested_mode = str(requested_mode)
+    apa_layer_scope = str(apa_layer_scope)
+    if requested_mode not in {"standard", "apa_selective"}:
+        raise ValueError(f"unsupported GPT-OSS attention mode {requested_mode!r}")
+    if apa_layer_scope not in {"full", "all"}:
+        raise ValueError(f"unsupported GPT-OSS APA layer scope {apa_layer_scope!r}")
+
+    layer_type = cfg.layer_types[layer_idx]
+    if requested_mode == "standard":
+        effective = "standard"
+        apa_active = False
+        reason = "requested_standard"
+    elif apa_layer_scope == "all":
+        effective = "apa_selective"
+        apa_active = True
+        reason = None
+    elif layer_type == "full_attention":
+        effective = "apa_selective"
+        apa_active = True
+        reason = None
+    else:
+        effective = "standard"
+        apa_active = False
+        reason = "sliding_window_bounded"
+
+    return {
+        "layer": layer_idx,
+        "layer_type": layer_type,
+        "requested_attention_mode": requested_mode,
+        "effective_attention_mode": effective,
+        "apa_layer_scope": apa_layer_scope,
+        "apa_active": apa_active,
+        "apa_skip_reason": reason,
+    }
+
+
 class BiasedQuantLinearTC:
     """Quantized linear with an optional bias add.
 
