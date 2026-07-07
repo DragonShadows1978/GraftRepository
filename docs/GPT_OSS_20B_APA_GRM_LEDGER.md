@@ -2909,3 +2909,47 @@ Interpretation:
 - This is still a controlled forced-final extraction prompt. It does not yet
   prove ordinary conversational retrieval, correction/supersession memory, or
   preference recall.
+
+Action: Ran the metadata-card addressing variant against the same 16K graft.
+
+Purpose:
+- Test whether a more literal GRM metadata prompt works as well as the natural
+  fact-local question.
+- Reuse the same failed source graft and the same addressing helper.
+- Prompt shape:
+  `Use the mounted memory record with fact_id=..., fact_marker=CLASSIFIED FACT X,
+  label=..., token_offset=.... Return exactly the stored value for that record.`
+
+Command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_multifact_addressing_gate.py --source artifacts/gpt_oss_20b/h6_multifact_16k_gate.json --variants metadata_card --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate.json`
+
+Artifact:
+- `artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate.json`
+
+Result:
+- classification: `fail`
+- hits: `3/4`
+- wall seconds: `258.1057259819936`
+
+Per-fact metadata-card result:
+
+| Fact | Answer | Control top-1 | Mounted top-1 | Mounted answer rank | Mounted answer logit | Hit |
+| --- | --- | --- | --- | ---: | ---: | :---: |
+| `vault_keyword` | `BLUE` | `GPT` | `BLUE` | `0` | `19.25` | yes |
+| `relay_marker` | `EMBER` | `GPT` | `GPT` | `9` | `13.75` | no |
+| `archive_color` | `GRAY` | `blue` | `GRAY` | `0` | `19.0` | yes |
+| `tool_metal` | `IRON` | `GPT` | `IRON` | `0` | `20.5` | yes |
+
+Important failure detail:
+- For the failed `relay_marker` case, mounted top-10 was:
+  `GPT` `16.875`, `GRAY` `16.375`, `GR` `15.4375`, `IRON` `15.3125`,
+  `BLUE` `14.375`, `The` `14.125`, `G` `14.0`, `BLACK` `13.8125`,
+  `IR` `13.8125`, `EMBER` `13.75`.
+
+Interpretation:
+- Raw key-value metadata wording is not enough.
+- The model appears to handle natural fact-local addressing better than a
+  literal metadata card, even when the metadata card contains the correct
+  fact id, marker, label, and token offset.
+- GRM metadata should be used to compose a natural slot-specific retrieval
+  prompt, not simply dumped into the live prompt as a record card.

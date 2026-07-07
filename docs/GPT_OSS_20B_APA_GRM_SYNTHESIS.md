@@ -556,3 +556,10 @@ markers/semantic slots with graft metadata, test the policy in ordinary
 conversational wording, and then move to correction/supersession memory where
 the model must choose the current binding rather than the nearest or loudest
 old one.
+
+The first metadata-card variant is a useful negative control. Feeding the model
+the record fields directly (`fact_id`, `fact_marker`, `label`, `token_offset`)
+only reached `3/4` on the same 16K graft; `relay_marker` failed with `GPT` as
+top-1 and `EMBER` buried at rank 9. That means the useful metadata is not a
+literal card to dump into the prompt. It should be used by GRM to compose a
+natural fact-local query that names the fact marker and semantic slot.
