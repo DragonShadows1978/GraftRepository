@@ -2504,3 +2504,102 @@ Interpretation:
 - This is H5 candidate-logit access evidence at the confirmed 64K operating
   point. It does not replace the H6 forced-final greedy recall gate, which is
   still only proven at the 16K graft point.
+
+Action: Ran the forced-final H6 greedy recall probe against the 64K graft.
+
+Purpose:
+- The 64K H5 candidate gate proved logit access with a candidate list.
+- This probe removes the candidate list and tests whether the mounted 64K graft
+  can drive the first open greedy token to the hidden keyword under the same
+  forced-final protocol used at 16K.
+
+Control command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_greedy_smoke.py --prompt '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>' --steps 1 --max-tokens 128 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_greedy_64k_control_forced_final_1step.json`
+
+Mounted command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_greedy_smoke.py --prompt '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>' --steps 1 --max-tokens 128 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --mount-graft-dir artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate/graft --output artifacts/gpt_oss_20b/h6_greedy_64k_mount_forced_final_1step.json`
+
+Artifacts:
+- Control:
+  `artifacts/gpt_oss_20b/h6_greedy_64k_control_forced_final_1step.json`
+- Mounted:
+  `artifacts/gpt_oss_20b/h6_greedy_64k_mount_forced_final_1step.json`
+- Child forward artifacts:
+  - `artifacts/gpt_oss_20b/h6_greedy_64k_control_forced_final_1step_steps/step_00.json`
+  - `artifacts/gpt_oss_20b/h6_greedy_64k_mount_forced_final_1step_steps/step_00.json`
+
+Result:
+- control live tokens: `43`
+- mounted live tokens: `43`
+- mounted graft tokens: `65536`
+- mounted RoPE table length: `65579`
+- APA layers used: `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`
+- control top-1: `"I"`, token id `40`, logit `16.5`
+- mounted top-1: `"BLUE"`, token id `134698`, logit `17.75`
+- mounted top-2: `"The"`, token id `976`, logit `17.625`
+- mounted top-3: `"**"`, token id `410`, logit `16.875`
+- mounted top-4: `"Blue"`, token id `15957`, logit `16.625`
+- control child wall seconds: `19.605888377001975`
+- mounted child wall seconds: `28.86265840299893`
+- control wrapper wall seconds: `24.891181006038096`
+- mounted wrapper wall seconds: `34.221743223955855`
+
+Interpretation:
+- The 64K same-model cold-graft greedy recall gate passes under the
+  forced-final protocol.
+- The answer was absent from the live prompt. The no-graft control generated
+  `"I"`; mounting the 64K pre-RoPE graft generated `"BLUE"` as greedy top-1.
+- The margin over `"The"` was narrow at `0.125` logits, so this is a real pass
+  with a small top-1 margin, not a broad unconstrained generation proof.
+
+Action: Ran the 64K forced-final H6 probe with an explicit turn-50,
+no-prior-context live prompt.
+
+Purpose:
+- This repeats the 16K turn-labeled operating-mode probe at the 64K graft
+  point.
+- The live prompt says `Conversation turn 50` and `You do not have previous chat
+  context`; no prior turns or answer text are present.
+
+Control command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_greedy_smoke.py --prompt '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Conversation turn 50. You do not have previous chat context. What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>' --steps 1 --max-tokens 160 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_turn50_64k_control_forced_final_1step.json`
+
+Mounted command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_greedy_smoke.py --prompt '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Conversation turn 50. You do not have previous chat context. What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>' --steps 1 --max-tokens 160 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --mount-graft-dir artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate/graft --output artifacts/gpt_oss_20b/h6_turn50_64k_mount_forced_final_1step.json`
+
+Artifacts:
+- Control:
+  `artifacts/gpt_oss_20b/h6_turn50_64k_control_forced_final_1step.json`
+- Mounted:
+  `artifacts/gpt_oss_20b/h6_turn50_64k_mount_forced_final_1step.json`
+- Child forward artifacts:
+  - `artifacts/gpt_oss_20b/h6_turn50_64k_control_forced_final_1step_steps/step_00.json`
+  - `artifacts/gpt_oss_20b/h6_turn50_64k_mount_forced_final_1step_steps/step_00.json`
+
+Result:
+- control live tokens: `56`
+- mounted live tokens: `56`
+- mounted graft tokens: `65536`
+- mounted RoPE table length: `65592`
+- APA layers used: `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`
+- control top-1: `"I"`, token id `40`, logit `13.1875`
+- mounted top-1: `"The"`, token id `976`, logit `17.625`
+- mounted top-2: `"**"`, token id `410`, logit `16.75`
+- mounted top-3: `"I"`, token id `40`, logit `16.125`
+- mounted `"BLUE"` rank: `3` zero-indexed / fourth displayed token, token id
+  `134698`, logit `16.0`
+- mounted `"Blue"` rank: `7`, token id `15957`, logit `15.125`
+- control child wall seconds: `20.332646850962192`
+- mounted child wall seconds: `30.048011352017056`
+- control wrapper wall seconds: `25.677543184021488`
+- mounted wrapper wall seconds: `35.37680483801523`
+
+Interpretation:
+- The 64K turn-labeled forced-final probe does not pass greedy top-1 recall.
+- The mounted graft still changes the distribution and lifts `"BLUE"` into
+  top-k, but `"The"` wins greedy top-1.
+- This is the first observed split between the plain forced-final 64K H6 pass
+  and the more instruction-heavy turn-labeled variant. The honest current state
+  is: 64K H5 candidate access passes, 64K plain forced-final H6 greedy recall
+  passes with a narrow top-1 margin, and 64K turn-labeled forced-final greedy
+  recall fails top-1.

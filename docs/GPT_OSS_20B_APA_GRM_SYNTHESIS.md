@@ -444,3 +444,23 @@ The boundary is unchanged. This extends H5 to 64K, but H6 open greedy recall is
 still only proven at the 16K graft point under the forced-final protocol. The
 next aligned hard gate is the forced-final greedy recall probe using the 64K
 graft, followed by a turn-labeled variant if that passes.
+
+The 64K forced-final greedy gate now has a narrow pass. With the same 43-token
+live prompt used for the 16K forced-final probe, the no-graft control generated
+`I`; with the 64K pre-RoPE graft mounted, GPT-OSS generated `BLUE` as greedy
+top-1. The margin was small: `BLUE` logged `17.75`, while `The` was next at
+`17.625`. This matters because it is a real open-greedy recall pass without a
+candidate list, but it is not a wide-margin result.
+
+The 64K turn-labeled variant did not pass. The live prompt explicitly said
+`Conversation turn 50` and `You do not have previous chat context`, with no
+answer text present. The no-graft control again generated `I`, but the mounted
+64K graft generated `The` as greedy top-1. `BLUE` was present in the mounted
+top-k at rank 4 with logit `16.0`, so the graft was still influencing the
+distribution, but not enough to win the first token under that prompt.
+
+The current 64K state is therefore precise: H5 candidate-logit access passes,
+plain forced-final H6 greedy recall passes narrowly, and the turn-labeled
+forced-final H6 variant fails top-1. That split is useful. It suggests the
+retrieved graft signal is real at 64K, but prompt/protocol priors can still
+overpower it when the live prompt adds more instruction context.
