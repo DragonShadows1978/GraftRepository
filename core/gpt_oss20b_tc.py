@@ -429,6 +429,8 @@ def sink_apa_blend_attention_tc(
     scale: float,
     zthr: float,
     attention_mask=None,
+    causal: bool = False,
+    sliding_window: int | None = None,
     num_heads_per_kv: int = 1,
     attn_block: int = 1024,
 ):
@@ -437,6 +439,18 @@ def sink_apa_blend_attention_tc(
     `key_quant` is the APA bulk key approximation. Selection is done by
     TensorCUDA's APA blend kernel, then GPT-OSS sink logits are included in the
     softmax denominator while no sink value column is returned.
+
+    Two mutually exclusive masking conventions (Phase 3.1, board item 4a):
+      `attention_mask` (legacy sentinel path): an explicit (1,1,L,S) additive
+        bias, e.g. from `_gpt_oss_attention_mask` or an arbitrary custom
+        pattern -- added to bulk/rank, masked entries detected in-kernel via
+        the MASK_LIM sentinel. Use this for any mask that is NOT the
+        bottom-right causal (+ optional trailing sliding-window) pattern.
+      `causal=True` (index-arithmetic path, `attention_mask` must be None):
+        no mask tensor is built or added. `sliding_window` (None/0 = full
+        causal from key 0, else the window width) reproduces exactly
+        `_gpt_oss_attention_mask`'s bottom-right causal + trailing-window
+        convention via bounds passed straight to `apa_blend_softmax_sink`.
     """
 
     if not hasattr(tc, "apa_blend_softmax_sink"):
@@ -444,12 +458,18 @@ def sink_apa_blend_attention_tc(
             "sink-aware GPT-OSS APA requires Project-Tensor "
             "tc.apa_blend_softmax_sink"
         )
+    if attention_mask is not None and causal:
+        raise ValueError(
+            "sink_apa_blend_attention_tc: pass either attention_mask (sentinel "
+            "path) or causal=True (index-arithmetic path), not both"
+        )
     key_h = _repeat_kv(key, num_heads_per_kv)
     keyq_h = _repeat_kv(key_quant, num_heads_per_kv)
     value_h = _repeat_kv(value, num_heads_per_kv)
     L = query.shape[2]
     outs = []
     blk = max(1, int(attn_block))
+    window = int(sliding_window) if sliding_window else 0
     for i in range(0, L, blk):
         e = min(i + blk, L)
         Qi = query.slice(2, i, e - i)
@@ -459,7 +479,9 @@ def sink_apa_blend_attention_tc(
             mask_i = attention_mask.slice(2, i, e - i)
             bulk = bulk + mask_i
             rank = rank + mask_i
-        weights = tc.apa_blend_softmax_sink(bulk, rank, sinks, float(zthr))
+        weights = tc.apa_blend_softmax_sink(
+            bulk, rank, sinks, float(zthr),
+            L if causal else 0, i, window)
         outs.append(tc.matmul(weights, value_h))
     return tc.cat(outs, dim=2)
 
@@ -704,12 +726,10 @@ class GptOssAttentionTC:
                 )
                 self.last_attention_backend = "apa_selective_sink_fused"
             else:
-                mask = _gpt_oss_attention_mask(
-                    L,
-                    S,
-                    sliding_window=self.sliding_window,
-                    dtype=q.dtype,
-                )
+                # Phase 3.1 (board item 4a): index-arithmetic bounds instead
+                # of building _gpt_oss_attention_mask and adding it to bulk
+                # AND rank (O(S^2) materialize+add eliminated both here and
+                # inside apa_blend_softmax_sink's kernel).
                 attn = sink_apa_blend_attention_tc(
                     q,
                     k,
@@ -718,7 +738,8 @@ class GptOssAttentionTC:
                     self.sinks,
                     scale=self.scaling,
                     zthr=float(z),
-                    attention_mask=mask,
+                    causal=True,
+                    sliding_window=self.sliding_window,
                     num_heads_per_kv=self.num_heads_per_kv,
                     attn_block=self.attn_block,
                 )

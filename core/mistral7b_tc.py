@@ -252,8 +252,14 @@ def _cublas_blend_attention(q, kH, kq_kv, v_kv, group, scale, z, causal, blk):
     KVH heads (expanded here for the GEMM). ~6x the per-row fused kernel.
 
     bulk = q @ kq^T, rank = q @ k^T (cuBLAS), then one fused kernel does
-    threshold+select+softmax, then weights @ v (cuBLAS). Causal masking is baked
-    into the score blocks as large-negative additive bias.
+    threshold+select+softmax, then weights @ v (cuBLAS). Causal masking is
+    index-arithmetic inside apa_blend_softmax (Phase 3.1, board item 4a): no
+    mask tensor is built or added to bulk/rank. Bounds passed are Lq=L (full
+    query length), row0=i (chunk start), window=0 (full causal, bottom-right
+    aligned — matches functional._causal_mask's convention exactly, see
+    tc/core.h). When causal is False (e.g. Gemma 4 decode against an
+    already-gathered KV cache — every key is valid) Lq stays 0, the kernel's
+    legacy no-op default, and no bounds are applied.
     """
     B, H, L, D = q.shape
     S = kH.shape[2]
@@ -274,12 +280,8 @@ def _cublas_blend_attention(q, kH, kq_kv, v_kv, group, scale, z, causal, blk):
                     * scale)
             rank = (tc.matmul(Qf, kT1).reshape([B, H, bl, S])
                     * scale)
-            if causal:
-                ca = F._causal_mask(L, S, q.device.split(":")[0],
-                                    bulk.dtype).slice(0, i, bl)
-                bulk = bulk + ca
-                rank = rank + ca
-            w = tc.apa_blend_softmax(bulk, rank, z)
+            w = tc.apa_blend_softmax(bulk, rank, z,
+                                     L if causal else 0, i, 0)
             outs.append(tc.matmul(w.reshape([B, 1, H * bl, S]),
                                   v_kv).reshape([B, H, bl, D]))
         return tc.cat(outs, dim=2)
@@ -293,20 +295,8 @@ def _cublas_blend_attention(q, kH, kq_kv, v_kv, group, scale, z, causal, blk):
         Qi = q.slice(2, i, e - i)
         bulk = tc.matmul(Qi, kqT) * scale
         rank = tc.matmul(Qi, kT) * scale
-        if causal:
-            # ONE canonical mask: rows [i, e) of functional._causal_mask
-            # (bottom-right aligned, cached per shape). This path used to
-            # build its OWN triu(k=i+1) — the top-left rectangle bug that
-            # _causal_mask's docstring records FIXING in the standard
-            # path was alive here the whole time because the logic was
-            # duplicated (caught 2026-06-12 by the Gemma 4 refine ppl
-            # sweep: ppl 121 -> 11M on cached chunks; every prior APA
-            # gate ran square shapes where the two constructions agree).
-            ca = F._causal_mask(L, S, q.device.split(":")[0],
-                                bulk.dtype).slice(0, i, e - i)
-            bulk = bulk + ca
-            rank = rank + ca
-        w = tc.apa_blend_softmax(bulk, rank, z)
+        w = tc.apa_blend_softmax(bulk, rank, z,
+                                 L if causal else 0, i, 0)
         outs.append(tc.matmul(w, vH))
     return tc.cat(outs, dim=2)
 
