@@ -3032,3 +3032,80 @@ Interpretation:
     explicit answer-format clause, or
   - a multi-token conversational evaluator that can score whether `The stored
     value is BLUE` still extracts the right value later in the generation.
+
+Action: Added and ran the first correction/supersession H6 graft gate.
+
+Purpose:
+- Test whether GPT-OSS can choose the current corrected binding instead of an
+  older archived binding from the same mounted graft.
+- Plant archived values in the first half of a real-token capture and corrected
+  current values later in the same capture.
+- Query only for the current value using strict fact-local addressing.
+
+File added:
+- `scripts/gpt_oss20b_supersession_graft_gate.py`
+
+Script validation:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_supersession_graft_gate.py`
+  passed.
+- `python3 scripts/gpt_oss20b_supersession_graft_gate.py --help` printed the
+  expected CLI.
+- Dry-run:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_supersession_graft_gate.py --target-tokens 1024 --dry-run --output /tmp/gpt_oss20b_supersession_dryrun.json`
+  passed.
+
+GPU command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_supersession_graft_gate.py --target-tokens 4096 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_supersession_4k_gate.json`
+
+Artifact:
+- `artifacts/gpt_oss_20b/h6_supersession_4k_gate.json`
+
+Capture result:
+- target/actual tokens: `4096` / `4096`
+- archived/current placements: `8`
+- total needle tokens: `205`
+- capture child wall seconds: `217.55929297901457`
+- capture wrapper wall seconds: `222.74775921896799`
+- manifest token count: `4096`
+- manifest layers: `24`
+- manifest total host bytes: `201326592`
+- manifest schema: `gpt_oss_20b_prerope_graft_manifest_v1`
+
+Archived and current placements:
+
+| Fact | Archived value | Archived offset | Current value | Current offset |
+| --- | --- | ---: | --- | ---: |
+| `vault_keyword` | `RED` | `392` | `BLUE` | `2433` |
+| `relay_marker` | `STONE` | `805` | `EMBER` | `2847` |
+| `archive_color` | `BLACK` | `1219` | `GRAY` | `3263` |
+| `tool_metal` | `GREEN` | `1632` | `IRON` | `3678` |
+
+Exact-token result:
+- classification: `fail`
+- hits: `3/4`
+
+Per-item supersession result:
+
+| Fact | Old | Current | Control top-1 | Mounted top-1 | Current answer rank | Current answer logit | Hit |
+| --- | --- | --- | --- | --- | ---: | ---: | :---: |
+| `vault_keyword` | `RED` | `BLUE` | `GPT` | `blue` | `1` | `22.875` | no |
+| `relay_marker` | `STONE` | `EMBER` | `GPT` | `EMBER` | `0` | `26.375` | yes |
+| `archive_color` | `BLACK` | `GRAY` | `blue` | `GRAY` | `0` | `24.0` | yes |
+| `tool_metal` | `GREEN` | `IRON` | `metal` | `IRON` | `0` | `23.625` | yes |
+
+Important failure detail:
+- The `BLUE` miss is case-only under the current exact-token gate. Mounted
+  top-8 for the vault query was:
+  `blue` `23.0`, `BLUE` `22.875`, `Blue` `20.25`, `蓝` `16.75`,
+  `red` `16.75`, `black` `16.625`, `BLACK` `15.8125`, `RED` `15.6875`.
+- The old value `RED` did not win. The model selected the current value
+  semantically, but not with the exact uppercase token.
+- Old values also did not win for the other three facts.
+
+Interpretation:
+- The first supersession gate is an exact-token `3/4` failure, but a semantic
+  current-binding `4/4` near-pass if case is ignored.
+- The important GRM signal is positive: corrected/current values dominate older
+  archived values in the mounted graft.
+- The remaining issue is output normalization / answer-format enforcement, not
+  choosing obsolete memory.

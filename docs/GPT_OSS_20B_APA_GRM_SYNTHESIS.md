@@ -577,3 +577,16 @@ multi-binding recall, but not sufficient by itself. GPT-OSS also needs a GRM
 response policy that asks for an answer-first value, or a different evaluator
 that lets the model produce a sentence and checks whether the value appears
 after the first token.
+
+The first correction/supersession gate is mixed but useful. A fresh 4K graft
+planted old values early and corrected current values later. Exact-token
+classification was `3/4` because the vault keyword came back as lowercase
+`blue` while the expected token was uppercase `BLUE`. But the obsolete value
+`RED` did not win; it was below the current-value variants. The other corrected
+bindings returned `EMBER`, `GRAY`, and `IRON` as top-1.
+
+So the supersession signal is positive at the memory-selection level: current
+bindings dominated old archived bindings. The remaining problem is answer
+normalization and exact output policy. For production GRM, corrected facts need
+both revision metadata and a response normalizer or stricter casing/format
+contract.
