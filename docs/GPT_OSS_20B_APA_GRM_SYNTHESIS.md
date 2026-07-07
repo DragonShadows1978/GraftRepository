@@ -725,3 +725,14 @@ This is not a broad stability claim yet. It is one retained instruction, one
 graft, and three repeats with an 8-step decode budget. But it shows that the
 same cold-graft instruction can survive repeated remounts without immediate
 answer drift.
+
+The first long graft-payload boundary probe is now negative at 128K. This is
+not a candidate-scoring failure; the run never reached control or mounted
+scoring. The H5 bulk-graft gate built a valid `131072`-token real-corpus prompt
+with the needle at the end, then captured five layers before CUDA OOMed during
+layer 5 rotary application. The completed partial payload included sliding
+layers 0/2/4 and APA full layers 1/3, five 128K layer shards, and
+`1342177280` host bytes. The earlier 64K H5 gate remains the last full
+candidate-logit remount pass. So the current GPT-OSS graft-payload boundary is
+bracketed, not closed exactly: 64K passes, 128K capture OOMs, and the next
+boundary-tightening run is a 96K midpoint probe.

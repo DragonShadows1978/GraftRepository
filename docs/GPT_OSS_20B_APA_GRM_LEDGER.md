@@ -3651,3 +3651,45 @@ Interpretation:
   decode budget.
 - It does not yet close longer repeated sessions, other instruction records, or
   longer-context graft payloads.
+
+Action: Ran the first 128K H5 graft-payload boundary probe.
+
+Purpose:
+- Close the explicit Phase 5 "OOM boundary with graft payload" gap more
+  honestly than the earlier fill-only H4 ladder.
+- Test whether the same H5 capture/remount candidate gate that passed at 64K
+  can mint a full 128K pre-RoPE graft payload before remount scoring.
+
+GPU command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_bulk_graft_gate.py --target-tokens 131072 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h5_bulk_graft_128k_candidate_gate.json`
+
+Artifacts:
+- `artifacts/gpt_oss_20b/h5_bulk_graft_128k_candidate_gate.json`
+- `artifacts/gpt_oss_20b/h5_bulk_graft_128k_candidate_gate/capture_forward.json`
+- Partial graft payload:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_128k_candidate_gate/graft/`
+
+Result:
+- Parent status: `capture_error`.
+- Capture child return code: `1`.
+- Capture wall time: `3317.8s`.
+- Capture completed `5/24` layers before failure.
+- Completed layers: standard/sliding `0`, APA/full `1`, standard/sliding `2`,
+  APA/full `3`, standard/sliding `4`.
+- Serialized partial graft payload: five `131072`-token layer shards,
+  `1342177280` host bytes total by layer metadata.
+- Failure site: layer 5 rotary application,
+  `F.apply_rotary(q, cseg, sseg)`.
+- Error: `RuntimeError: cudaMalloc failed: out of memory`.
+- GPU recovered after the failure; post-run `nvidia-smi` showed the card idle
+  at about `502 MiB` used.
+
+Interpretation:
+- The 128K graft-payload gate does not pass. It OOMs during capture before
+  control or mounted candidate scoring can run.
+- The last proven H5 same-model cold-KV graft-payload operating point remains
+  64K: `h5_bulk_graft_64k_candidate_gate.json` passed candidate-logit remount
+  after a full `65536`-token capture.
+- The new practical graft-payload boundary is bracketed between 64K pass and
+  128K capture OOM. A 96K midpoint probe is the next aligned run if the goal is
+  to tighten the boundary rather than move to another Phase 5 behavior axis.
