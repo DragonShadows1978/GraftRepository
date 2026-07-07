@@ -2213,3 +2213,81 @@ Interpretation:
 - The mounted pass was only about `0.57s` slower than the no-graft control at
   the streamed-runner layer-wall level, because the live MoE workload remained
   16 tokens while the graft was mounted as K/V.
+
+Action: Scaled the H5 bulk-graft candidate gate to 16K real tokens.
+
+16K H5 command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_bulk_graft_gate.py --target-tokens 16384 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h5_bulk_graft_16k_candidate_gate.json`
+
+Artifacts:
+- Summary:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_16k_candidate_gate.json`
+- Run directory:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_16k_candidate_gate`
+- Capture:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_16k_candidate_gate/capture_forward.json`
+- Control:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_16k_candidate_gate/control_forward.json`
+- Mounted-graft:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_16k_candidate_gate/mount_forward.json`
+- Graft manifest:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_16k_candidate_gate/graft/manifest.json`
+
+Result:
+- status: `ok`
+- classification: `pass`
+- capture target/actual tokens: `16384 / 16384`
+- input mode: `direct_token_ids`
+- corpus fill tokens: `16365`
+- needle offset: `16365`
+- needle tokens: `19`
+- query tokens: `16`
+- attention split:
+  - APA layers: `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`
+  - standard sliding layers: `[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22]`
+- capture run:
+  - completed layers: `24`
+  - input shape: `[1, 16384]`
+  - RoPE table length: `16384`
+  - wall seconds: `931.0161463900004`
+  - run wrapper wall seconds: `936.0960545630078`
+  - final hidden shape: `[1, 16384, 2880]`
+  - final GPU receipt: `NVIDIA GeForce RTX 4070 SUPER, 585, 12282, 39`
+- graft payload:
+  - layers: `24`
+  - token count: `16384`
+  - total host bytes: `805306368`
+  - per-layer host bytes: `33554432`
+  - run directory size: `769M`
+- amnesia control run:
+  - completed layers: `24`
+  - live prompt tokens: `16`
+  - RoPE table length: `16`
+  - wall seconds: `19.052695906953886`
+  - wrapper wall seconds: `24.094125150004402`
+  - gold candidate `" BLUE"` logit: `2.015625`
+  - best decoy `" RED"` logit: `3.796875`
+  - gold minus best decoy: `-1.78125`
+- mounted-graft run:
+  - completed layers: `24`
+  - live prompt tokens: `16`
+  - mounted graft tokens: `16384`
+  - RoPE table length: `16400`
+  - wall seconds: `19.183853538008407`
+  - wrapper wall seconds: `24.281130205024965`
+  - gold candidate `" BLUE"` logit: `11.0`
+  - best decoy `" RED"` logit: `5.90625`
+  - gold minus best decoy: `5.09375`
+
+Interpretation:
+- The 16K same-model cold-graft candidate gate passes.
+- The live query still did not contain the answer. The no-graft control again
+  preferred a decoy by `1.78125` logits; the mounted-graft run preferred the
+  gold answer by `5.09375` logits.
+- The 16K graft payload is exactly 4x the 4K payload, as expected from the
+  captured BF16 K/V geometry.
+- The mounted pass added only about `0.13s` at the streamed-runner layer-wall
+  level versus the no-graft control, because the live prompt remained 16
+  tokens and the expensive MoE route was not replaying the 16K capture text.
+- This is still H5 candidate-logit evidence. H6 greedy/open multi-turn recall
+  remains unproven.

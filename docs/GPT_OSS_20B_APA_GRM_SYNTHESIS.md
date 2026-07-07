@@ -381,3 +381,18 @@ cold-graft access pass: the answer was absent from the live prompt and became
 available through the mounted graft. It is still a candidate-logit gate rather
 than open greedy recall, but it closes the first mechanical question: the
 GPT-OSS pre-RoPE capture/remount path can carry retrievable information.
+
+The H5 gate has now scaled to 16K real tokens. The capture prompt held the same
+single-token `BLUE` needle after 16365 real corpus-fill tokens, then wrote 24
+layers of pre-RoPE K/V graft shards totaling `805306368` host bytes. The live
+query remained only 16 tokens. The amnesia control again failed in the right
+direction, preferring `RED` over `BLUE` by `1.78125` logits. With the 16K graft
+mounted, GPT-OSS preferred `BLUE` over the best decoy by `5.09375` logits.
+
+This makes the remount story materially stronger: the same candidate-gate
+method works at 4K and 16K, the graft payload scales linearly with token count,
+and the mounted query path stays cheap because it is not replaying the original
+capture prompt through MoE. The result should still be named precisely. It is a
+same-model cold-KV candidate-logit access pass, not H6 open greedy recall and
+not a turn-50 continuity test. The next hard proof is a greedy/open recall gate
+using the mounted graft as the only source of the fact.
