@@ -260,3 +260,12 @@ full-attention layers and left the 12 sliding-window layers standard. This is
 materially stronger than the toy PPL smoke because it uses fixed real text and
 aggregated window artifacts, but it is still a small gate. The next H2 step is
 to scale token count before making a broad quality claim.
+
+That scale-up now has a stronger receipt: four 128-token windows from the same
+fixed corpus, giving 508 scored tokens per setting. Standard measured PPL
+`24.61`; APA r0.15 measured `24.25`; APA r0.10 measured `24.36`. The result is
+directionally favorable for APA on this slice and, more importantly, shows no
+quality collapse on a real-text PPL gate. The memory numbers are not yet the
+interesting part because this path still materializes score matrices. H3 is
+therefore the next real engineering gate: tiled sink-aware APA that preserves
+the sink denominator without paying full score-matrix memory.

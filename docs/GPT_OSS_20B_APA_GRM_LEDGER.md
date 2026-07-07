@@ -1438,3 +1438,76 @@ Interpretation:
 Next:
 - Scale H2 to more and/or larger real-text windows after the current checkpoint
   is committed.
+
+Action: Ran the broader GPT-OSS H2 real-text PPL gate.
+
+Reason:
+- The first H2 gate scored only `126` tokens per setting.
+- A larger receipt is needed before treating APA quality as more than a toy
+  smoke.
+
+Command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_realtext_ppl_gate.py --corpus docs/GRM_Primer.md --window-tokens 128 --n-windows 4 --stride-tokens 128 --settings standard,apa_r0.15,apa_r0.10 --apa-layer-scope full --bulk-bits 8 --expert-mode resident_packed_mxfp4 --output artifacts/gpt_oss_20b/h2_realtext_ppl_128x4.json`
+
+Artifact:
+- Aggregate:
+  `artifacts/gpt_oss_20b/h2_realtext_ppl_128x4.json`
+- Per-window sub-artifacts:
+  `artifacts/gpt_oss_20b/h2_realtext_ppl_128x4/`
+- Sub-artifact count:
+  `12`
+
+Corpus:
+- Path:
+  `/mnt/ForgeRealm/GraftRepository/docs/GRM_Primer.md`
+- sha256:
+  `992c6b602d64e19100e941d10626fe44b08bd5c051bd89f6e95b344ddd796498`
+- Windows:
+  - window 0: token start `0`, token count `128`
+  - window 1: token start `128`, token count `128`
+  - window 2: token start `256`, token count `128`
+  - window 3: token start `384`, token count `128`
+
+Result:
+- Aggregate status:
+  `ok`
+- Standard:
+  - windows ok: `4 / 4`
+  - scored tokens: `508`
+  - mean NLL: `3.2033194321851637`
+  - PPL: `24.61409957453896`
+  - max observed memory: `909 MiB`
+  - APA layers used: `[]`
+- APA r0.15:
+  - windows ok: `4 / 4`
+  - scored tokens: `508`
+  - mean NLL: `3.1885441383478828`
+  - PPL: `24.253092580566708`
+  - max observed memory: `909 MiB`
+  - APA layers used:
+    `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`
+- APA r0.10:
+  - windows ok: `4 / 4`
+  - scored tokens: `508`
+  - mean NLL: `3.19293471357478`
+  - PPL: `24.35981171578557`
+  - max observed memory: `909 MiB`
+  - APA layers used:
+    `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`
+
+Post-run GPU state:
+- `NVIDIA GeForce RTX 4070 SUPER, 276, 12282, 39`
+
+Interpretation:
+- The broader H2 gate passes.
+- APA r0.15 and r0.10 did not collapse versus standard across `508` scored
+  real-text tokens per setting.
+- On this corpus slice, APA r0.15 was `0.3610` PPL lower than standard and APA
+  r0.10 was `0.2543` PPL lower than standard.
+- Max observed memory was effectively identical across settings at `909 MiB`.
+- This still does not prove long-context memory flattening, because the current
+  GPT-OSS APA implementation uses the score-matrix smoke path. H3 remains
+  required for context-extension evidence.
+
+Next:
+- H3 tiled sink-aware APA memory path.
