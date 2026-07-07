@@ -1881,3 +1881,73 @@ Interpretation:
   more runner cleanup.
 - The compact receipt mode is still useful for 32K+ because it prevents
   long-context artifacts from ballooning with per-token route lists.
+
+Action: Ran H4 APA r0.15 real-token 32K context rung.
+
+Command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_context_ladder.py --corpus-dir docs --lengths 32768 --settings apa_r0.15 --apa-layer-scope full --bulk-bits 8 --expert-mode resident_packed_mxfp4 --output artifacts/gpt_oss_20b/h4_context_ladder_apa_32k_sampled.json`
+
+Artifacts:
+- Ladder:
+  `artifacts/gpt_oss_20b/h4_context_ladder_apa_32k_sampled.json`
+- Run:
+  `artifacts/gpt_oss_20b/h4_context_ladder_apa_32k_sampled/apa_r0.15_32768.json`
+
+Result:
+- ladder status: `ok`
+- classification: `pass`
+- actual input tokens: `32768`
+- completed layers: `24`
+- first failure: `null`
+- first OOM: `null`
+- max pass tokens: `32768`
+- run wall seconds: `2216.4767407539766`
+- stream artifact wall seconds: `2210.947730574`
+- layer time sum: `2203.3906139629544`
+- average layer time: `91.80794224845643`
+- artifact max observed memory: `1155 MiB`
+- monitor peak memory: `2449 MiB`
+- monitor samples: `4246`
+- final hidden shape: `[1, 32768, 2880]`
+- route detail: `summary`
+- expert empty cache interval: `0`
+- backend counts:
+  - `apa_selective_sink_fused = 12`
+  - `standard_sink_sliding_chunked = 12`
+- run artifact size:
+  `1067619` bytes
+- run directory size:
+  `1.2M`
+- prompt directory size:
+  `116K`
+
+Post-run GPU state:
+- `NVIDIA GeForce RTX 4070 SUPER, 251, 12282, 33`
+
+Comparison to prior H4 rungs:
+- APA 16K:
+  - monitor peak memory: `2039 MiB`
+  - artifact max memory: `1031 MiB`
+  - wall: `1015.97s`
+- APA 32K:
+  - monitor peak memory: `2449 MiB`
+  - artifact max memory: `1155 MiB`
+  - wall: `2216.48s`
+- Delta from 16K to 32K:
+  - monitor peak: `+410 MiB`
+  - artifact max: `+124 MiB`
+  - wall: about `2.18x`
+
+Interpretation:
+- APA r0.15 has now passed a real-token `32768` context rung through all 24
+  streamed GPT-OSS layers.
+- No OOM boundary has been found yet for the APA operating point.
+- Memory continues to scale modestly in this streamed path; the practical
+  limiter remains runtime.
+- This is still prefill/context-fit evidence with `--skip-lm-head`; it is not
+  yet a generation, recall, or GRM continuity result.
+
+Next:
+- Run H4 APA r0.15 at `65536` if continuing the context ladder.
+- If `65536` passes, decide whether to attempt `131072` or move to H5 GRM
+  capture/mount first.

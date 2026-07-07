@@ -309,3 +309,13 @@ still routing token-by-token into four experts across the streamed layers. A
 true speed breakthrough needs a batched or fused routed MXFP4 MoE kernel. Until
 then, the compact receipt mode reduces artifact pressure while preserving the
 real-token context ladder methodology.
+
+The 32K H4 rung has now passed. APA r0.15 processed `32768` real tokens through
+all 24 streamed GPT-OSS layers with backend counts `12` fused full-attention
+APA layers and `12` chunked sliding-standard layers. The monitor peak was
+`2449 MiB`, the artifact max was `1155 MiB`, and the final hidden shape was
+`[1, 32768, 2880]`. Compared with the 16K rung, the sampled peak rose by
+`410 MiB` and wall time rose from about `1016s` to about `2216s`. No APA OOM
+boundary has been found yet. This is still context-fit/prefill evidence, not a
+generation or GRM continuity result, but the operating point has cleared 32K on
+real tokens.
