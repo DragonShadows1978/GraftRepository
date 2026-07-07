@@ -3261,3 +3261,67 @@ Interpretation:
 - Conversational wording is not rescued by normalization. GPT-OSS still needs
   either an answer-first GRM response policy or a genuine multi-token evaluator
   before ordinary natural wording can be called reliable.
+
+Action: Added and ran the first multi-token conversational H6 probe.
+
+Purpose:
+- Test whether a conversational prompt that fails first-token extraction can
+  still answer correctly after generating a short sentence.
+- Avoid rerunning the full 8-probe conversational gate by adding a focused
+  `--fact-ids` filter to the addressing gate.
+
+File updated:
+- `scripts/gpt_oss20b_multifact_addressing_gate.py`
+
+Implementation details:
+- Added `--fact-ids` to restrict an addressing run to selected source fact ids.
+- Extended the output evaluator with generated-suffix extraction from
+  `initial_prompt` / `final_text`.
+- Added generated-text value checks:
+  - `control_generated_contains_value`
+  - `mount_generated_contains_value`
+  - `unconfounded_generated_value_hit`
+
+Validation:
+- Compile gate:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_grm_output_eval.py scripts/gpt_oss20b_multifact_graft_gate.py scripts/gpt_oss20b_multifact_addressing_gate.py`
+  passed.
+- Focused tests:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest tests/test_gpt_oss20b_grm_output_eval.py -q`
+  passed: `8 passed in 0.04s`.
+- Dry-run:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_multifact_addressing_gate.py --source artifacts/gpt_oss_20b/h6_multifact_16k_gate.json --variants conversational_slot --fact-ids vault_keyword --steps 12 --dry-run --output /tmp/gpt_oss20b_multitoken_conversation_dryrun.json`
+  passed.
+
+GPU command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_multifact_addressing_gate.py --source artifacts/gpt_oss_20b/h6_multifact_16k_gate.json --variants conversational_slot --fact-ids vault_keyword --steps 12 --max-tokens 192 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_multitoken_conversation_vault_probe.json`
+
+Artifacts:
+- `artifacts/gpt_oss_20b/h6_multitoken_conversation_vault_probe.json`
+- `artifacts/gpt_oss_20b/h6_multitoken_conversation_vault_probe_eval.json`
+
+Legacy first-token result:
+- source classification: `fail`
+- exact hits: `0/1`
+- control top-1: `I`
+- mount top-1: `The`
+- mounted `BLUE` rank: `4`
+
+Generated-text result:
+- no-graft control generated:
+  `I'm sorry, but I can't help with that.`
+- mounted graft generated:
+  `The GPT-OSS vault keyword was **BLUE**.<|return|>`
+- generated-value classification: `pass`
+- generated-unconfounded-value classification: `pass`
+- control generated contains `BLUE`: no
+- mount generated contains `BLUE`: yes
+
+Interpretation:
+- The earlier conversational `0/8` first-token failure was not the full story.
+- For at least one conversational slot probe, GPT-OSS can produce a correct
+  sentence-form answer from the mounted 16K graft even though top-1 first token
+  is prose.
+- The result is narrow: one fact, one variant, 12 greedy steps. It justifies
+  building the full multi-token conversational gate, not declaring ordinary
+  conversational recall solved.

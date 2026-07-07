@@ -22,9 +22,19 @@ from typing import Any
 from transformers import AutoTokenizer
 
 try:
-    from scripts.gpt_oss20b_grm_output_eval import canonical_value, find_value_rank
+    from scripts.gpt_oss20b_grm_output_eval import (
+        canonical_value,
+        contains_value_text,
+        find_value_rank,
+        generated_suffix_from_payload,
+    )
 except ModuleNotFoundError:  # direct execution from scripts/
-    from gpt_oss20b_grm_output_eval import canonical_value, find_value_rank
+    from gpt_oss20b_grm_output_eval import (
+        canonical_value,
+        contains_value_text,
+        find_value_rank,
+        generated_suffix_from_payload,
+    )
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -347,6 +357,7 @@ def greedy_cmd(
 
 def summarize_greedy(path: Path, answer: str) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
+    generated_text = generated_suffix_from_payload(payload)
     step = (payload.get("steps") or [{}])[0]
     child_path = step.get("child_artifact")
     top_tokens = []
@@ -376,6 +387,8 @@ def summarize_greedy(path: Path, answer: str) -> dict[str, Any]:
         "normalized_answer_text": normalized["text"],
         "hit": top.get("text") == answer,
         "normalized_hit": canonical_value(top.get("text")) == canonical_value(answer),
+        "generated_text": generated_text,
+        "generated_contains_value": contains_value_text(generated_text, answer),
         "top_tokens": top_tokens,
         "wall_seconds": payload.get("wall_seconds"),
         "child_artifact": child_path,

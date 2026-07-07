@@ -624,3 +624,20 @@ the normalizer as a production policy, preference needs less prior-colliding
 value choices or stronger controls, and ordinary conversational recall still
 needs either an answer-first GRM response policy or a genuine multi-token
 conversation evaluator.
+
+The first multi-token conversational probe changes that last sentence from a
+guess into a measured distinction. Reusing the same 16K multi-fact graft, the
+gate asked the ordinary conversational-slot vault-keyword prompt for 12 greedy
+steps. The legacy first-token gate still failed: control top-1 was `I`,
+mounted top-1 was `The`, and `BLUE` was only rank 4 at the first step. But the
+generated sentence diverged usefully. The no-graft control generated a refusal,
+while the mounted graft generated `The GPT-OSS vault keyword was **BLUE**`.
+
+That is a narrow but important H6 result. GPT-OSS can surface a mounted cold-KV
+fact under ordinary conversational wording if the evaluator allows sentence
+form. The current first-token exact gate is still the right tool for strict
+answer-first policy tests, but it is too coarse to judge natural conversational
+answers by itself. The remaining work is to scale this multi-token evaluator
+across all facts and variants, then decide whether production GRM should force
+answer-first extraction, accept normalized sentence-form answers, or use a
+two-stage policy.

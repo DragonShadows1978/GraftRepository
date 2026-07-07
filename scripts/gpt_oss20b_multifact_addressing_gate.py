@@ -20,9 +20,19 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from scripts.gpt_oss20b_grm_output_eval import canonical_value, find_value_rank
+    from scripts.gpt_oss20b_grm_output_eval import (
+        canonical_value,
+        contains_value_text,
+        find_value_rank,
+        generated_suffix_from_payload,
+    )
 except ModuleNotFoundError:  # direct execution from scripts/
-    from gpt_oss20b_grm_output_eval import canonical_value, find_value_rank
+    from gpt_oss20b_grm_output_eval import (
+        canonical_value,
+        contains_value_text,
+        find_value_rank,
+        generated_suffix_from_payload,
+    )
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -62,6 +72,11 @@ def parse_args() -> argparse.Namespace:
             "comma-separated variants: fact_local, metadata_card, "
             "conversational_slot, conversational_continuity"
         ),
+    )
+    parser.add_argument(
+        "--fact-ids",
+        default=None,
+        help="optional comma-separated fact ids to probe instead of all source facts",
     )
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--steps", type=int, default=1)
@@ -120,6 +135,15 @@ def parse_variants(raw: str) -> list[str]:
     if not variants:
         raise SystemExit("at least one variant is required")
     return variants
+
+
+def parse_fact_ids(raw: str | None) -> set[str] | None:
+    if raw is None:
+        return None
+    ids = {item.strip() for item in raw.split(",") if item.strip()}
+    if not ids:
+        raise SystemExit("--fact-ids was provided but no ids were parsed")
+    return ids
 
 
 def load_source(path: Path) -> dict[str, Any]:
@@ -250,6 +274,7 @@ def greedy_cmd(
 
 def summarize_greedy(path: Path, answer: str) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
+    generated_text = generated_suffix_from_payload(payload)
     step = (payload.get("steps") or [{}])[0]
     child_path = step.get("child_artifact")
     top_tokens = []
@@ -279,6 +304,8 @@ def summarize_greedy(path: Path, answer: str) -> dict[str, Any]:
         "normalized_answer_text": normalized["text"],
         "hit": top.get("text") == answer,
         "normalized_hit": canonical_value(top.get("text")) == canonical_value(answer),
+        "generated_text": generated_text,
+        "generated_contains_value": contains_value_text(generated_text, answer),
         "top_tokens": top_tokens,
         "wall_seconds": payload.get("wall_seconds"),
         "child_artifact": child_path,
@@ -297,6 +324,7 @@ def main() -> int:
     source_path = args.source.expanduser().resolve()
     source = load_source(source_path)
     variants = parse_variants(args.variants)
+    fact_id_filter = parse_fact_ids(args.fact_ids)
     graft_dir = (
         args.graft_dir.expanduser().resolve()
         if args.graft_dir is not None
@@ -306,6 +334,12 @@ def main() -> int:
     run_dir = out.parent / out.stem
     placement_lookup = placements_by_id(source)
     facts = source.get("facts") or []
+    if fact_id_filter is not None:
+        facts = [fact for fact in facts if str(fact.get("id")) in fact_id_filter]
+        found = {str(fact.get("id")) for fact in facts}
+        missing = sorted(fact_id_filter - found)
+        if missing:
+            raise SystemExit(f"--fact-ids did not match source facts: {missing}")
 
     payload: dict[str, Any] = {
         "schema": "gpt_oss_20b_multifact_addressing_gate_v1",
@@ -316,6 +350,7 @@ def main() -> int:
         "model_dir": str(args.model_dir),
         "graft_dir": str(graft_dir),
         "variants": variants,
+        "fact_ids": None if fact_id_filter is None else sorted(fact_id_filter),
         "attention_mode": args.attention_mode,
         "apa_layer_scope": args.apa_layer_scope,
         "refine_percentile": float(args.refine_percentile),

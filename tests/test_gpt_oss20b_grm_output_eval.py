@@ -6,8 +6,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from gpt_oss20b_grm_output_eval import (  # noqa: E402
     canonical_value,
+    contains_value_text,
     evaluate_gate_artifact,
     find_value_rank,
+    generated_suffix_from_payload,
     summarize_pair,
 )
 
@@ -29,6 +31,18 @@ def test_find_value_rank_matches_case_normalized_topk():
     assert rank["rank"] == 0
     assert rank["text"] == "blue"
     assert rank["logit"] == 24.0
+
+
+def test_contains_value_text_uses_word_boundaries():
+    assert contains_value_text("The stored value is BLUE.", "BLUE") is True
+    assert contains_value_text("The stored value is BLUEPRINT.", "BLUE") is False
+    assert contains_value_text("The stored value is blue.", "BLUE") is True
+
+
+def test_generated_suffix_from_payload_removes_prompt_prefix():
+    payload = {"initial_prompt": "Question:", "final_text": "Question: BLUE"}
+
+    assert generated_suffix_from_payload(payload) == " BLUE"
 
 
 def test_summarize_pair_separates_value_hit_from_control_confound():
@@ -66,6 +80,31 @@ def test_summarize_pair_marks_stale_suppression():
     assert summary["unconfounded_normalized_top_hit"] is True
     assert summary["stale_top_hit"] is False
     assert summary["stale_ranks"][0]["rank"] == 1
+
+
+def test_summarize_pair_scores_generated_text(tmp_path):
+    control_artifact = tmp_path / "control.json"
+    mount_artifact = tmp_path / "mount.json"
+    control_artifact.write_text(
+        json.dumps({"initial_prompt": "Q:", "final_text": "Q: I do not know."}),
+        encoding="utf-8",
+    )
+    mount_artifact.write_text(
+        json.dumps({"initial_prompt": "Q:", "final_text": "Q: The stored value is BLUE."}),
+        encoding="utf-8",
+    )
+    control = {"top_token": {"text": "I"}, "artifact": str(control_artifact)}
+    mount = {
+        "top_token": {"text": "The"},
+        "top_tokens": [{"text": "The"}],
+        "artifact": str(mount_artifact),
+    }
+
+    summary = summarize_pair(control=control, mount=mount, answer="BLUE")
+
+    assert summary["normalized_top_hit"] is False
+    assert summary["mount_generated_contains_value"] is True
+    assert summary["unconfounded_generated_value_hit"] is True
 
 
 def test_evaluate_gate_artifact_counts_normalized_hits(tmp_path):
@@ -120,5 +159,6 @@ def test_evaluate_gate_artifact_counts_normalized_hits(tmp_path):
     assert audit["probe_count"] == 2
     assert audit["normalized_value_top1_hits"] == 2
     assert audit["normalized_unconfounded_hits"] == 1
+    assert audit["generated_value_hits"] == 0
     assert audit["classification"]["normalized_value_top1"] == "pass"
     assert audit["classification"]["normalized_unconfounded_top1"] == "fail"

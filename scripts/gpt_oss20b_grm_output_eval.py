@@ -41,6 +41,46 @@ def answer_forms(answer: str, aliases: list[str] | None = None) -> set[str]:
     return {item for item in forms if item}
 
 
+def contains_value_text(
+    text: Any,
+    answer: str,
+    *,
+    aliases: list[str] | None = None,
+) -> bool:
+    value = canonical_value(text)
+    if not value:
+        return False
+    for form in answer_forms(answer, aliases):
+        pattern = rf"(?<![a-z0-9]){re.escape(form)}(?![a-z0-9])"
+        if re.search(pattern, value):
+            return True
+    return False
+
+
+def generated_suffix_from_payload(payload: dict[str, Any]) -> str:
+    final_text = payload.get("final_text")
+    initial_prompt = payload.get("initial_prompt")
+    if not isinstance(final_text, str):
+        return ""
+    if isinstance(initial_prompt, str) and final_text.startswith(initial_prompt):
+        return final_text[len(initial_prompt) :]
+    return final_text
+
+
+def generated_suffix_from_summary(summary: dict[str, Any]) -> str:
+    generated = summary.get("generated_text")
+    if isinstance(generated, str):
+        return generated
+    artifact = summary.get("artifact")
+    if not artifact:
+        return ""
+    try:
+        payload = json.loads(Path(str(artifact)).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return ""
+    return generated_suffix_from_payload(payload)
+
+
 def find_value_rank(
     top_tokens: list[dict[str, Any]],
     answer: str,
@@ -70,6 +110,8 @@ def summarize_pair(
     control_top = (control.get("top_token") or {}).get("text")
     mount_top = (mount.get("top_token") or {}).get("text")
     top_tokens = mount.get("top_tokens") or []
+    control_generated = generated_suffix_from_summary(control)
+    mount_generated = generated_suffix_from_summary(mount)
 
     answer_canon = canonical_value(answer)
     control_canon = canonical_value(control_top)
@@ -94,6 +136,8 @@ def summarize_pair(
 
     exact_top_hit = mount_top == answer
     normalized_top_hit = bool(mount_canon and mount_canon in forms)
+    control_generated_hit = contains_value_text(control_generated, answer, aliases=aliases)
+    mount_generated_hit = contains_value_text(mount_generated, answer, aliases=aliases)
     return {
         "answer": answer,
         "normalized_answer": answer_canon,
@@ -111,6 +155,13 @@ def summarize_pair(
         "normalized_answer_text": rank["text"],
         "normalized_answer_logit": rank["logit"],
         "normalized_answer_in_topk": rank["rank"] is not None,
+        "control_generated_text": control_generated,
+        "mount_generated_text": mount_generated,
+        "control_generated_contains_value": bool(control_generated_hit),
+        "mount_generated_contains_value": bool(mount_generated_hit),
+        "unconfounded_generated_value_hit": bool(
+            mount_generated_hit and not control_generated_hit
+        ),
         "stale_top_hit": bool(stale_top_hit),
         "stale_ranks": stale_rows,
     }
@@ -165,6 +216,10 @@ def evaluate_gate_artifact(path: Path) -> dict[str, Any]:
     )
     normalized_value_hits = sum(1 for row in evaluated if row["normalized_top_hit"])
     topk_value_hits = sum(1 for row in evaluated if row["normalized_answer_in_topk"])
+    generated_value_hits = sum(1 for row in evaluated if row["mount_generated_contains_value"])
+    generated_unconfounded_hits = sum(
+        1 for row in evaluated if row["unconfounded_generated_value_hit"]
+    )
     stale_top_hits = sum(1 for row in evaluated if row["stale_top_hit"])
     return {
         "artifact": str(path),
@@ -176,6 +231,8 @@ def evaluate_gate_artifact(path: Path) -> dict[str, Any]:
         "normalized_unconfounded_hits": normalized_hits,
         "normalized_value_top1_hits": normalized_value_hits,
         "normalized_value_topk_hits": topk_value_hits,
+        "generated_value_hits": generated_value_hits,
+        "generated_unconfounded_hits": generated_unconfounded_hits,
         "stale_top_hits": stale_top_hits,
         "classification": {
             "exact_unconfounded_top1": "pass" if total and exact_hits == total else "fail",
@@ -187,6 +244,12 @@ def evaluate_gate_artifact(path: Path) -> dict[str, Any]:
             ),
             "normalized_value_topk": (
                 "pass" if total and topk_value_hits == total else "fail"
+            ),
+            "generated_value": (
+                "pass" if total and generated_value_hits == total else "fail"
+            ),
+            "generated_unconfounded_value": (
+                "pass" if total and generated_unconfounded_hits == total else "fail"
             ),
             "stale_suppression": "pass" if stale_top_hits == 0 else "fail",
         },
@@ -236,6 +299,8 @@ def main() -> int:
                     "normalized_unconfounded_hits": row["normalized_unconfounded_hits"],
                     "normalized_value_top1_hits": row["normalized_value_top1_hits"],
                     "normalized_value_topk_hits": row["normalized_value_topk_hits"],
+                    "generated_value_hits": row["generated_value_hits"],
+                    "generated_unconfounded_hits": row["generated_unconfounded_hits"],
                     "probe_count": row["probe_count"],
                     "classification": row["classification"],
                 }
