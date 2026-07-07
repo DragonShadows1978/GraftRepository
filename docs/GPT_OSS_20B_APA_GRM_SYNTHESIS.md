@@ -495,3 +495,23 @@ prompt-sensitive, so the next GPT-OSS work should be reliability and economics,
 not another celebratory context rung. The concrete next gates are multi-fact
 H6, ordinary-turn prompt robustness, smaller or nearer graft tests, and
 faster MoE/mount execution through the native/CUDA arena path.
+
+The first multi-fact H6 gate is now green at the 4K shakeout point. One
+real-token capture planted four independent one-token facts: `BLUE`, `EMBER`,
+`GRAY`, and `IRON`. GPT-OSS captured all 24 layers into a `4096`-token
+pre-RoPE graft manifest with `201326592` host bytes. Each fact was then queried
+with a strict forced-final live prompt, once without a graft and once with the
+same cold graft mounted.
+
+The controls missed every target: `GPT`, `GPT`, `Blue`, and `metal` were the
+four no-graft top-1 tokens. The mounted runs returned all four planted answers
+as greedy top-1 with answer rank `0`. That makes the result a real same-model
+cold-KV multi-fact recall pass, not just a candidate-logit access result and
+not just another repetition of the single `BLUE` keyword.
+
+The boundary is equally important. This does not yet prove long-context
+multi-fact reliability, correction/supersession memory, preference recall, or
+ordinary conversational prompting. It does prove that the GPT-OSS graft path can
+carry more than one independent binding at once under a strict extraction
+prompt. The next useful movement is to scale this gate upward and then make the
+prompt less laboratory-clean.

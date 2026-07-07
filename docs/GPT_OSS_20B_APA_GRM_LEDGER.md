@@ -2695,3 +2695,81 @@ Interpretation:
   multi-fact H6 gates, prompt robustness, smaller/nearer grafts, and faster
   MoE/C++/CUDA arena integration.
 - The H7 gate does not justify replacing Qwen3.5-9B for practical local serving.
+
+Action: Added and ran the first GPT-OSS multi-fact H6 graft recall gate.
+
+Purpose:
+- Move beyond the single `BLUE` vault-keyword probe.
+- Plant multiple one-token facts into one real-token capture.
+- Capture pre-RoPE K/V once, then ask strict forced-final questions with and
+  without the mounted graft.
+- Require greedy top-1 mounted recall while the no-graft control does not
+  produce the target answer.
+
+File added:
+- `scripts/gpt_oss20b_multifact_graft_gate.py`
+
+Script validation:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_multifact_graft_gate.py`
+  passed before the GPU run.
+- Dry-run artifact:
+  `artifacts/gpt_oss_20b/h6_multifact_4k_dryrun.json`
+
+Dry-run prompt build:
+- target tokens: `4096`
+- actual tokens: `4096`
+- total needle tokens: `79`
+- planted facts:
+  - `vault_keyword`: `BLUE`, token id `134698`, offset `803`, needle tokens `19`
+  - `relay_marker`: `EMBER`, token id `78250`, offset `1625`, needle tokens `20`
+  - `archive_color`: `GRAY`, token id `140884`, offset `2448`, needle tokens `20`
+  - `tool_metal`: `IRON`, token id `96951`, offset `3271`, needle tokens `20`
+
+GPU command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_multifact_graft_gate.py --target-tokens 4096 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_multifact_4k_gate.json`
+
+Artifacts:
+- Summary:
+  `artifacts/gpt_oss_20b/h6_multifact_4k_gate.json`
+- Capture:
+  `artifacts/gpt_oss_20b/h6_multifact_4k_gate/capture_forward.json`
+- Graft manifest:
+  `artifacts/gpt_oss_20b/h6_multifact_4k_gate/graft/manifest.json`
+- Per-fact control/mount artifacts under:
+  `artifacts/gpt_oss_20b/h6_multifact_4k_gate/{fact_id}/`
+
+Capture result:
+- target/actual tokens: `4096` / `4096`
+- capture wrapper wall seconds: `215.4265122830402`
+- all 24 layers captured
+- manifest token count: `4096`
+- manifest layers: `24`
+- manifest total host bytes: `201326592`
+- manifest schema: `gpt_oss_20b_prerope_graft_manifest_v1`
+
+Per-fact H6 result:
+
+| Fact | Answer | Control top-1 | Control logit | Mounted top-1 | Mounted logit | Mounted answer rank | Hit |
+| --- | --- | --- | ---: | --- | ---: | ---: | :---: |
+| `vault_keyword` | `BLUE` | `GPT` | `14.5625` | `BLUE` | `21.625` | `0` | yes |
+| `relay_marker` | `EMBER` | `GPT` | `16.375` | `EMBER` | `23.625` | `0` | yes |
+| `archive_color` | `GRAY` | `Blue` | `14.8125` | `GRAY` | `23.0` | `0` | yes |
+| `tool_metal` | `IRON` | `metal` | `15.5625` | `IRON` | `24.625` | `0` | yes |
+
+Runtime:
+- control wrapper walls were about `29.0-29.5s`
+- mounted wrapper walls were about `29.8-30.1s`
+
+Classification:
+- `pass`
+- hits: `4/4`
+
+Interpretation:
+- This is the first GPT-OSS same-model cold-KV multi-fact greedy recall pass.
+- It is stronger than the earlier single-keyword H6 result because one graft
+  carries four independent answers and each answer is extracted by a separate
+  strict forced-final prompt.
+- It is still a 4K shakeout, not the final reliability claim. The remaining H6
+  work is to scale this multi-fact gate to longer captures, test ordinary-turn
+  prompt robustness, and add correction/supersession or preference-style memory
+  cases.
