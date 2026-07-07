@@ -533,6 +533,7 @@ class GptOssAttentionTC:
         self.refine_percentile = 0.15
         self.bulk_bits = 8
         self.attn_block = 1024
+        self.last_attention_backend = None
 
     @classmethod
     def from_safetensors(
@@ -583,18 +584,32 @@ class GptOssAttentionTC:
             )
             kq = _quantize_keys(k, R, CB, BND)
             z = _norm_ppf(1.0 - max(0.0, min(1.0, self.refine_percentile)))
-            attn = sink_apa_blend_attention_tc(
-                q,
-                k,
-                kq,
-                v,
-                self.sinks,
-                scale=self.scaling,
-                zthr=float(z),
-                attention_mask=mask,
-                num_heads_per_kv=self.num_heads_per_kv,
-                attn_block=self.attn_block,
-            )
+            if self.sliding_window is None and hasattr(tc, "apa_selective_attention_sink"):
+                attn = tc.apa_selective_attention_sink(
+                    q,
+                    k,
+                    kq,
+                    v,
+                    self.sinks,
+                    self.scaling,
+                    float(z),
+                    True,
+                )
+                self.last_attention_backend = "apa_selective_sink_fused"
+            else:
+                attn = sink_apa_blend_attention_tc(
+                    q,
+                    k,
+                    kq,
+                    v,
+                    self.sinks,
+                    scale=self.scaling,
+                    zthr=float(z),
+                    attention_mask=mask,
+                    num_heads_per_kv=self.num_heads_per_kv,
+                    attn_block=self.attn_block,
+                )
+                self.last_attention_backend = "apa_selective_sink_blend"
         else:
             attn = sink_attention_tc(
                 q,
@@ -605,6 +620,7 @@ class GptOssAttentionTC:
                 attention_mask=mask,
                 num_heads_per_kv=self.num_heads_per_kv,
             )
+            self.last_attention_backend = "standard_sink"
         out = attn.transpose(1, 2).reshape([B, L, self.num_heads * self.head_dim])
         return self.o_proj(out), (k, v)
 

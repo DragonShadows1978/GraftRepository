@@ -1511,3 +1511,122 @@ Interpretation:
 
 Next:
 - H3 tiled sink-aware APA memory path.
+
+Action: Implemented and wired the H3 fused sink-aware APA memory path.
+
+Reason:
+- The previous GPT-OSS APA path used cuBLAS score matrices plus
+  `apa_blend_softmax_sink`.
+- That path was correct for GPT-OSS sink normalization but was still a
+  score-matrix smoke path.
+- H3 requires a path that does not materialize full `[B, H, L, S]` score
+  matrices for the full-attention layers.
+
+Project-Tensor branch:
+- `codex/gpt-oss-mxfp4-kernel`
+
+Project-Tensor commit:
+- `1c2e8b0 feat: add fused sink-aware apa attention`
+
+Project-Tensor implementation:
+- Added `tc.apa_selective_attention_sink(q, k, kq, v, sinks, scale, zthr, is_causal)`.
+- The kernel mirrors the existing fused `tc.apa_selective_attention` path:
+  - no materialized score matrix
+  - GQA-aware KV head indexing
+  - bottom-right causal masking for cache/continuation layouts
+  - `VD != D` support
+- GPT-OSS learned sinks are folded into the online softmax denominator with zero
+  value contribution.
+
+Project-Tensor verification:
+- Build command:
+  `cd /mnt/ForgeRealm/Project-Tensor/tensor_cuda && ./build.sh 89`
+- Test command:
+  `PYTHONPATH=/mnt/ForgeRealm/Project-Tensor/tensor_cuda PYTEST_ADDOPTS='-p no:cacheprovider' pytest tensor_cuda/tests/test_apa_selective.py tensor_cuda/tests/test_apa_value_dim.py -q`
+- Test result:
+  `14 passed in 1.21s`
+- New tests:
+  - `test_selective_sink_matches_reference_gqa_rectangular_value_dim`
+  - `test_selective_sink_large_sink_reduces_value_mass`
+
+GraftRepository implementation:
+- `GptOssAttentionTC` now prefers `tc.apa_selective_attention_sink` for
+  full-attention GPT-OSS APA layers.
+- Sliding-window layers stay on standard attention under the default
+  `--apa-layer-scope full`.
+- The prior sink-aware blend path remains as fallback and for explicit
+  non-default experiments.
+- Stream artifacts now record per-layer `attention_backend`, with values such
+  as:
+  - `standard_sink`
+  - `apa_selective_sink_fused`
+  - `apa_selective_sink_blend`
+- Stream artifacts also record `fused_sink_apa_available`.
+
+GraftRepository verification:
+- Compile command:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile core/gpt_oss20b_tc.py scripts/gpt_oss20b_stream_forward_smoke.py`
+- Diff hygiene:
+  `git diff --check`
+- Test command:
+  `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_scaffold.py -q`
+- Test result:
+  `9 passed, 2 warnings in 0.50s`
+
+H3 two-layer fused APA smoke:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --prompt 'The capital of France is' --max-layers 2 --max-tokens 8 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --skip-lm-head --output artifacts/gpt_oss_20b/h3_fused_apa_two_layer.json`
+- Artifact:
+  `artifacts/gpt_oss_20b/h3_fused_apa_two_layer.json`
+- Result:
+  - `status = ok`
+  - `completed_layers = 2`
+  - `attention_layers_used_apa = [1]`
+  - layer 0 backend: `standard_sink`
+  - layer 1 backend: `apa_selective_sink_fused`
+
+H3 full fused APA top-k smoke:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_forward_smoke.py --prompt 'The capital of France is' --max-tokens 8 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --top-k 8 --output artifacts/gpt_oss_20b/h3_fused_apa_full_topk.json`
+- Artifact:
+  `artifacts/gpt_oss_20b/h3_fused_apa_full_topk.json`
+- Result:
+  - `status = ok`
+  - `completed_layers = 24`
+  - backend counts:
+    - `standard_sink = 12`
+    - `apa_selective_sink_fused = 12`
+  - `attention_layers_used_apa = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`
+  - top token:
+    - token `12650`, text ` Paris`, logit `15.875`
+  - `wall_seconds = 16.763880875019822`
+  - `gpu_after = NVIDIA GeForce RTX 4070 SUPER, 797, 12282, 8`
+
+H3 fused APA PPL smoke:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_realtext_ppl_gate.py --corpus docs/GRM_Primer.md --window-tokens 64 --n-windows 2 --stride-tokens 64 --settings apa_r0.15 --apa-layer-scope full --bulk-bits 8 --expert-mode resident_packed_mxfp4 --output artifacts/gpt_oss_20b/h3_fused_apa_ppl_smoke.json`
+- Artifact:
+  `artifacts/gpt_oss_20b/h3_fused_apa_ppl_smoke.json`
+- Result:
+  - status: `ok`
+  - windows ok: `2 / 2`
+  - scored tokens: `126`
+  - mean NLL: `3.3905333574251033`
+  - PPL: `29.68177904657413`
+  - max observed memory: `907 MiB`
+  - sub-artifact backend counts:
+    - `standard_sink = 12`
+    - `apa_selective_sink_fused = 12`
+
+Post-run GPU state:
+- `NVIDIA GeForce RTX 4070 SUPER, 276, 12282, 35`
+
+Interpretation:
+- H3 implementation slice passes.
+- GPT-OSS full-attention APA no longer needs the score-matrix blend path when
+  the fused sink-aware primitive is available.
+- This is still not a context-extension result. H4 must run a real-token
+  context ladder to establish usable context and OOM boundaries.
+
+Next:
+- H4 real-token context ladder.

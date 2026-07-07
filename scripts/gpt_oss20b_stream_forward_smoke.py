@@ -143,6 +143,7 @@ def main() -> int:
         "refine_percentile": float(args.refine_percentile),
         "bulk_bits": int(args.bulk_bits),
         "sink_aware_apa_available": bool(hasattr(tc, "apa_blend_softmax_sink")),
+        "fused_sink_apa_available": bool(hasattr(tc, "apa_selective_attention_sink")),
         "skip_lm_head": bool(args.skip_lm_head),
         "score_ppl": bool(args.score_ppl),
         "note": (
@@ -234,6 +235,9 @@ def main() -> int:
                         "sink_aware_apa_available": bool(
                             hasattr(tc, "apa_blend_softmax_sink")
                         ),
+                        "fused_sink_apa_available": bool(
+                            hasattr(tc, "apa_selective_attention_sink")
+                        ),
                         "planned_layers": planned_attention,
                     },
                     "attention_layers_planned_apa": planned_apa_layers,
@@ -263,6 +267,7 @@ def main() -> int:
                     "hidden_shape": tensor_shape(h),
                     "kv_shapes": [tensor_shape(kv[0]), tensor_shape(kv[1])],
                     "attention": attention_audit,
+                    "attention_backend": block.self_attn.last_attention_backend,
                     "route_info": route_info,
                     "wall_seconds": time.perf_counter() - layer_started,
                     "gpu_after_layer": nvidia_smi(),

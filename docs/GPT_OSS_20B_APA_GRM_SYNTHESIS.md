@@ -269,3 +269,17 @@ quality collapse on a real-text PPL gate. The memory numbers are not yet the
 interesting part because this path still materializes score matrices. H3 is
 therefore the next real engineering gate: tiled sink-aware APA that preserves
 the sink denominator without paying full score-matrix memory.
+
+H3 now has an implementation receipt. Project-Tensor exposes
+`tc.apa_selective_attention_sink`, a fused GQA-aware APA kernel that includes
+GPT-OSS learned sinks in the online softmax denominator without adding a value
+column. GraftRepository uses that fused path for the 12 full-attention GPT-OSS
+layers, while the 12 sliding-window layers remain on standard sink attention by
+default.
+
+The full H3 top-k smoke completed all 24 layers with backend counts
+`standard_sink = 12` and `apa_selective_sink_fused = 12`, and still ranked
+` Paris` first. A small fused-path real-text PPL smoke scored 126 tokens at PPL
+`29.68`, consistent with the previous small APA gate. This closes the
+score-matrix implementation gap for full-attention GPT-OSS APA. It does not yet
+prove a longer context window; H4 has to run the real-token OOM ladder.
