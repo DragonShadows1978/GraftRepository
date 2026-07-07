@@ -146,8 +146,9 @@ def main() -> int:
         "skip_lm_head": bool(args.skip_lm_head),
         "score_ppl": bool(args.score_ppl),
         "note": (
-            "streamed full-stack forward smoke; quantized TensorCUDA lm_head; "
-            "not PPL, not generation quality, not APA/GRM evidence"
+            "streamed full-stack forward path with quantized TensorCUDA lm_head; "
+            "score_ppl writes a teacher-forced window receipt, but this artifact "
+            "alone is not generation quality, context, or GRM evidence"
         ),
         "status": "starting",
         "layers": [],

@@ -251,3 +251,12 @@ layers and ranked ` Paris` first; APA r0.15 used layers
 `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`, kept sliding layers standard,
 and also ranked ` Paris` first. The logits are close enough for a smoke
 receipt, but the next meaningful quality claim still requires H2 real-text PPL.
+
+The first H2 real-text gate now exists. It scores two 64-token windows from
+`docs/GRM_Primer.md` through the streamed TensorCUDA path, for 126 scored
+tokens per setting. Standard landed at PPL `30.24`; APA r0.15 landed at
+`29.53`; APA r0.10 landed at `29.85`. Both APA settings used the 12
+full-attention layers and left the 12 sliding-window layers standard. This is
+materially stronger than the toy PPL smoke because it uses fixed real text and
+aggregated window artifacts, but it is still a small gate. The next H2 step is
+to scale token count before making a broad quality claim.

@@ -1340,3 +1340,101 @@ Interpretation:
 
 Next:
 - H2 real-text PPL gate.
+
+Action: Added and ran the first GPT-OSS H2 real-text PPL gate.
+
+Reason:
+- The prior PPL receipts were six-target toy smokes.
+- H2 requires fixed real text, scored token counts, memory reporting, and
+  standard-vs-APA comparison.
+
+Implementation:
+- Added `scripts/gpt_oss20b_realtext_ppl_gate.py`.
+- The runner:
+  - tokenizes fixed real text into windows
+  - invokes `scripts/gpt_oss20b_stream_forward_smoke.py --score-ppl` per window
+  - records one artifact per window/setting
+  - aggregates weighted mean NLL and PPL
+  - parses max observed GPU memory from the per-layer artifact fields
+- Added pure tests for:
+  - GPU memory parsing from `nvidia-smi` rows
+  - max memory extraction from stream artifacts
+  - weighted NLL/PPL aggregation
+  - setting parsing
+- Updated stream-forward artifact notes so `--score-ppl` is described as a
+  teacher-forced window receipt while still not implying generation, context,
+  or GRM evidence.
+
+Verification:
+- Compile command:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_realtext_ppl_gate.py scripts/gpt_oss20b_stream_forward_smoke.py tests/test_gpt_oss20b_realtext_ppl_gate.py`
+- Diff hygiene:
+  `git diff --check`
+- Pure test command:
+  `PYTEST_ADDOPTS='-p no:cacheprovider' pytest tests/test_gpt_oss20b_realtext_ppl_gate.py -q`
+- Pure test result:
+  `4 passed in 0.06s`
+
+H2 small-gate command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_realtext_ppl_gate.py --corpus docs/GRM_Primer.md --window-tokens 64 --n-windows 2 --stride-tokens 64 --settings standard,apa_r0.15,apa_r0.10 --apa-layer-scope full --bulk-bits 8 --expert-mode resident_packed_mxfp4 --output artifacts/gpt_oss_20b/h2_realtext_ppl_small.json`
+
+H2 small-gate artifact:
+- Aggregate:
+  `artifacts/gpt_oss_20b/h2_realtext_ppl_small.json`
+- Per-window sub-artifacts:
+  - `artifacts/gpt_oss_20b/h2_realtext_ppl_small/standard_w00.json`
+  - `artifacts/gpt_oss_20b/h2_realtext_ppl_small/standard_w01.json`
+  - `artifacts/gpt_oss_20b/h2_realtext_ppl_small/apa_r0.15_w00.json`
+  - `artifacts/gpt_oss_20b/h2_realtext_ppl_small/apa_r0.15_w01.json`
+  - `artifacts/gpt_oss_20b/h2_realtext_ppl_small/apa_r0.10_w00.json`
+  - `artifacts/gpt_oss_20b/h2_realtext_ppl_small/apa_r0.10_w01.json`
+
+Corpus:
+- Path:
+  `/mnt/ForgeRealm/GraftRepository/docs/GRM_Primer.md`
+- sha256:
+  `992c6b602d64e19100e941d10626fe44b08bd5c051bd89f6e95b344ddd796498`
+- Windows:
+  - window 0: token start `0`, token count `64`
+  - window 1: token start `64`, token count `64`
+
+H2 small-gate result:
+- Aggregate status:
+  `ok`
+- Standard:
+  - windows ok: `2 / 2`
+  - scored tokens: `126`
+  - mean NLL: `3.4090559656677732`
+  - PPL: `30.236686311708425`
+  - max observed memory: `908 MiB`
+- APA r0.15:
+  - windows ok: `2 / 2`
+  - scored tokens: `126`
+  - mean NLL: `3.3852607499288823`
+  - PPL: `29.525690534212117`
+  - max observed memory: `910 MiB`
+  - APA layers used:
+    `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`
+- APA r0.10:
+  - windows ok: `2 / 2`
+  - scored tokens: `126`
+  - mean NLL: `3.3960288977553046`
+  - PPL: `29.84534549173959`
+  - max observed memory: `910 MiB`
+  - APA layers used:
+    `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`
+
+Post-run GPU state:
+- `NVIDIA GeForce RTX 4070 SUPER, 274, 12282, 35`
+
+Interpretation:
+- This is the first GPT-OSS real-text PPL receipt on the streamed TensorCUDA
+  path.
+- APA r0.15 and r0.10 did not collapse on this small real-text gate.
+- Both APA settings were slightly better than standard on this small sample, but
+  the sample is only `126` scored tokens per setting; this should be treated as
+  a smoke-scale real-text gate, not a broad benchmark.
+
+Next:
+- Scale H2 to more and/or larger real-text windows after the current checkpoint
+  is committed.
