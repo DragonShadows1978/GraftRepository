@@ -479,3 +479,19 @@ generic live wording leaves enough prior probability on answer-like prose that
 `The` wins. That is now a concrete reliability target rather than an unknown:
 strengthen routing/mount signal, improve recall prompting policy, or test
 whether additional/more local grafts reduce the prompt-sensitivity gap.
+
+H7 is now explicit. GPT-OSS should stay in the stack as a research track, not
+as the current production default. Qwen3.5-9B still owns the practical serving
+slot: lower resident memory than its baseline, ready-to-work acceptance, warm
+GRM prefix economics, and much better user-facing speed. MiniCPM3 remains the
+cleanest APA/MLA context-extension proof, DeepSeek-V2-Lite remains the strongest
+latent-cache quantization result, and Gemma4-12B remains the closed negative APA
+selection-rule case.
+
+GPT-OSS earns continued work because it adds a result the others do not have in
+this form: 64K same-model cold-KV graft recall on the 4070 Super for a
+20B-class MoE with packed MXFP4 experts. The cost is high and the recall is
+prompt-sensitive, so the next GPT-OSS work should be reliability and economics,
+not another celebratory context rung. The concrete next gates are multi-fact
+H6, ordinary-turn prompt robustness, smaller or nearer graft tests, and
+faster MoE/mount execution through the native/CUDA arena path.

@@ -2662,3 +2662,36 @@ Interpretation:
   narrower: 64K same-model recall works when the final-channel prompt is tight,
   but GPT-OSS still needs prompt discipline or stronger mounted signal to make
   instruction-heavy turn-50 recall robust.
+
+Action: Added the H7 existing-model comparison decision artifact.
+
+File added:
+- `docs/GPT_OSS_20B_H7_EXISTING_MODEL_COMPARISON.md`
+
+Evidence sources used:
+- GPT-OSS receipts in this ledger and
+  `docs/GPT_OSS_20B_APA_GRM_SYNTHESIS.md`
+- Qwen3.5 operating-point report:
+  `docs/QWEN35_APA_GRM_REPORT.md`
+- MiniCPM3 MLA results:
+  `docs/MiniCPM3-MLA_Results.md`
+- DeepSeek-V2-Lite latent INT4 writeup:
+  `docs/DeepSeek-V2-Lite_APA_Latent_INT4.md`
+- Gemma4 APA mission closure on the AI Research Board and supporting Gemma docs
+
+H7 decision:
+- Keep GPT-OSS-20B as a research track, not the current production default.
+- Qwen3.5-9B remains the best local production-style GRM serving point.
+- MiniCPM3-4B remains the cleanest APA/MLA context-extension proof.
+- DeepSeek-V2-Lite remains the strongest MLA latent-cache quantization result,
+  but not a proven 32K+ prefill recall path yet.
+- Gemma4-12B remains the negative APA selection-rule example.
+- GPT-OSS earns continued research time only because it adds a new point:
+  64K same-model cold-KV graft recall on the 4070 Super with a 20B-class MoE.
+
+Interpretation:
+- The GPT-OSS result is real but not yet operationally dominant.
+- More GPT-OSS work is justified if it targets reliability and runtime economics:
+  multi-fact H6 gates, prompt robustness, smaller/nearer grafts, and faster
+  MoE/C++/CUDA arena integration.
+- The H7 gate does not justify replacing Qwen3.5-9B for practical local serving.
