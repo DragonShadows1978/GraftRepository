@@ -2422,3 +2422,85 @@ Interpretation:
   absent, and the mounted graft is the only source of the captured fact.
 - The no-graft control again failed to produce the fact; the mounted graft
   produced the exact keyword as greedy top-1.
+
+Action: Scaled the H5 bulk-graft candidate gate to 64K real tokens.
+
+64K H5 command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_bulk_graft_gate.py --target-tokens 65536 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate.json`
+
+Artifacts:
+- Summary:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate.json`
+- Capture forward:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate/capture_forward.json`
+- Control forward:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate/control_forward.json`
+- Mounted forward:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate/mount_forward.json`
+- Graft manifest:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate/graft/manifest.json`
+
+Capture result:
+- target tokens: `65536`
+- actual tokens: `65536`
+- input mode: `direct_token_ids`
+- corpus: `/mnt/ForgeRealm/GraftRepository/docs`, `42` files,
+  sha256 `aff416df8ed57fc92468367f81102dc5045d6d6990b9a3e0053b11b1d25b7de7`
+- corpus-fill tokens before the needle: `65517`
+- needle offset: `65517`
+- needle tokens: `19`
+- gold candidate: `" BLUE"` token id `110151`
+- decoys: `" RED"`, `" GREEN"`, `" BLACK"`, `" WHITE"`
+- query tokens: `16`
+- capture completed layers: `24`
+- capture forward wall seconds: `5801.249368595018`
+- wrapper capture wall seconds: `5806.41233073303`
+- backend split:
+  - APA full-attention layers:
+    `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`
+  - standard sliding layers:
+    `[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22]`
+- final hidden shape: `[1, 65536, 2880]`
+- capture GPU before/after:
+  - before: `NVIDIA GeForce RTX 4070 SUPER, 281, 12282, 8`
+  - after: `NVIDIA GeForce RTX 4070 SUPER, 863, 12282, 7`
+
+Graft manifest:
+- schema: `gpt_oss_20b_prerope_graft_manifest_v1`
+- token count: `65536`
+- layers: `24`
+- per-layer host bytes: `134217728`
+- total host bytes: `3221225472`
+- per-layer K/V shape: `[1, 8, 65536, 64]`
+- GRM dialect: `rope_full_yarn | kv | seat_remountable | multi_mount`
+
+Candidate-score result:
+- Summary status: `ok`
+- Classification: `pass`
+- Control:
+  - wall seconds: `18.567299572983757`
+  - wrapper wall seconds: `24.518398881016765`
+  - best decoy: `" RED"` logit `3.796875`
+  - gold `" BLUE"` logit: `2.015625`
+  - gold minus best decoy: `-1.78125`
+- Mounted:
+  - wall seconds: `26.81559437897522`
+  - wrapper wall seconds: `32.180055834993254`
+  - mounted graft tokens: `65536`
+  - RoPE table length: `65552`
+  - best decoy: `" RED"` logit `5.875`
+  - gold `" BLUE"` logit: `10.5`
+  - gold minus best decoy: `4.625`
+
+Interpretation:
+- The same-model GPT-OSS H5 candidate-logit gate now passes at 64K real tokens.
+- The answer was absent from the 16-token live query; the no-graft control
+  again preferred `RED` over `BLUE`; mounting the 64K pre-RoPE graft moved
+  `BLUE` above every decoy by `4.625` logits.
+- The graft payload scaled linearly to `3221225472` host bytes, exactly 4x the
+  16K payload and 16x the 4K payload.
+- The mounted query path remained cheap relative to capture: the expensive
+  64K MoE prefill was not replayed for the live query.
+- This is H5 candidate-logit access evidence at the confirmed 64K operating
+  point. It does not replace the H6 forced-final greedy recall gate, which is
+  still only proven at the 16K graft point.

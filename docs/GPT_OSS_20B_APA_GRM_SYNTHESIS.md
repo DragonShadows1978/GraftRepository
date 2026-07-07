@@ -424,3 +424,23 @@ again generated `I`. With the same 16K graft mounted, GPT-OSS generated `BLUE`
 as greedy top-1. This is not a 50-step sequential dialogue transcript, but it
 does exercise the core GRM operating law: short live prompt, cleared prior
 context, mounted cold K/V as the only source of the fact.
+
+The H5 candidate-logit gate has now scaled to the confirmed 64K operating
+point. GPT-OSS captured a `65536`-token real-token prompt built from the local
+docs corpus, with the `BLUE` needle at token offset `65517`, then wrote all 24
+layers of pre-RoPE K/V graft shards. The graft manifest records `65536` tokens,
+24 layers, `[1, 8, 65536, 64]` K/V shapes, and `3221225472` host bytes. Capture
+wall time was about `5806s`, which keeps confirming that token-routed MoE is
+the expensive part of this stack.
+
+The live query remained only 16 tokens. The no-graft control again failed in
+the expected direction, preferring `RED` over `BLUE` by `1.78125` logits. With
+the 64K graft mounted, GPT-OSS preferred `BLUE` over the best decoy by `4.625`
+logits. That is a same-model cold-KV candidate-logit access pass at 64K:
+the answer was absent from the live prompt and became available through the
+mounted pre-RoPE graft.
+
+The boundary is unchanged. This extends H5 to 64K, but H6 open greedy recall is
+still only proven at the 16K graft point under the forced-final protocol. The
+next aligned hard gate is the forced-final greedy recall probe using the 64K
+graft, followed by a turn-labeled variant if that passes.
