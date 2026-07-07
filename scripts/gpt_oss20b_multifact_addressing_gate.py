@@ -53,7 +53,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--variants",
         default="fact_local",
-        help="comma-separated variants: fact_local, metadata_card",
+        help=(
+            "comma-separated variants: fact_local, metadata_card, "
+            "conversational_slot, conversational_continuity"
+        ),
     )
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--steps", type=int, default=1)
@@ -99,7 +102,12 @@ def forced_final_prompt(user_prompt: str) -> str:
 
 
 def parse_variants(raw: str) -> list[str]:
-    known = {"fact_local", "metadata_card"}
+    known = {
+        "fact_local",
+        "metadata_card",
+        "conversational_slot",
+        "conversational_continuity",
+    }
     variants = [item.strip() for item in raw.split(",") if item.strip()]
     unknown = [item for item in variants if item not in known]
     if unknown:
@@ -160,6 +168,17 @@ def user_prompt_for(variant: str, fact: dict[str, Any], placement: dict[str, Any
             f"with fact_id={fact_id}, fact_marker=CLASSIFIED FACT {letter}, "
             f"label={label}, token_offset={offset}. Return exactly the stored "
             "value for that record. No sentence. No punctuation."
+        )
+    if variant == "conversational_slot":
+        return (
+            "I'm checking the mounted memory after clearing the chat. "
+            f"In CLASSIFIED FACT {letter}, what was the {label}?"
+        )
+    if variant == "conversational_continuity":
+        return (
+            "We cleared the prior conversation, but GRM mounted memory is "
+            f"available. What value did CLASSIFIED FACT {letter} store for "
+            f"the {label}?"
         )
     raise AssertionError(variant)
 

@@ -563,3 +563,17 @@ only reached `3/4` on the same 16K graft; `relay_marker` failed with `GPT` as
 top-1 and `EMBER` buried at rank 9. That means the useful metadata is not a
 literal card to dump into the prompt. It should be used by GRM to compose a
 natural fact-local query that names the fact marker and semantic slot.
+
+The first ordinary conversational wording gate is also negative. Two variants
+kept the fact marker and semantic slot, but removed the explicit answer-format
+contract. Both variants failed every probe: `0/8` combined. Mounted top-1 was
+`The` across the conversational prompts, even though the correct values still
+appeared in top-k for a few cases. This is the same reliability shape as the
+earlier 64K turn-wording failure: the graft signal is present, but prose priors
+win when the prompt invites a normal sentence.
+
+That narrows the product rule. Fact-local metadata is necessary for
+multi-binding recall, but not sufficient by itself. GPT-OSS also needs a GRM
+response policy that asks for an answer-first value, or a different evaluator
+that lets the model produce a sentence and checks whether the value appears
+after the first token.

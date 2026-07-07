@@ -2953,3 +2953,82 @@ Interpretation:
   fact id, marker, label, and token offset.
 - GRM metadata should be used to compose a natural slot-specific retrieval
   prompt, not simply dumped into the live prompt as a record card.
+
+Action: Added and ran ordinary conversational addressing variants against the
+same 16K graft.
+
+Purpose:
+- Test whether fact-local metadata still works when the live prompt is ordinary
+  conversational wording rather than a strict extraction instruction.
+- Reuse the same `16384`-token multi-fact graft.
+- Keep the fact marker and semantic slot in the prompt, but remove the strict
+  `Return only... No sentence... No punctuation` answer-format contract.
+
+Script change:
+- Extended `scripts/gpt_oss20b_multifact_addressing_gate.py` with variants:
+  - `conversational_slot`
+  - `conversational_continuity`
+
+Script validation:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_multifact_addressing_gate.py`
+  passed.
+- `python3 scripts/gpt_oss20b_multifact_addressing_gate.py --help` printed the
+  updated variants.
+- Dry-run:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_multifact_addressing_gate.py --source artifacts/gpt_oss_20b/h6_multifact_16k_gate.json --variants conversational_slot,conversational_continuity --dry-run --output /tmp/gpt_oss20b_conversation_addressing_dryrun.json`
+  passed and printed the expected ordinary prompts.
+
+GPU command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_multifact_addressing_gate.py --source artifacts/gpt_oss_20b/h6_multifact_16k_gate.json --variants conversational_slot,conversational_continuity --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_multifact_16k_conversational_addressing_gate.json`
+
+Artifact:
+- `artifacts/gpt_oss_20b/h6_multifact_16k_conversational_addressing_gate.json`
+
+Result:
+- classification: `fail`
+- hits: `0/8`
+- wall seconds: `487.2274303360027`
+
+`conversational_slot` prompt shape:
+- `I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A,
+  what was the GPT-OSS vault keyword?`
+
+`conversational_slot` result:
+
+| Fact | Answer | Control top-1 | Mounted top-1 | Mounted answer rank | Mounted answer logit | Hit |
+| --- | --- | --- | --- | ---: | ---: | :---: |
+| `vault_keyword` | `BLUE` | `I` | `The` | `4` | `17.625` | no |
+| `relay_marker` | `EMBER` | `I` | `The` | n/a | n/a | no |
+| `archive_color` | `GRAY` | `I` | `The` | `4` | `17.375` | no |
+| `tool_metal` | `IRON` | `I` | `The` | n/a | n/a | no |
+
+`conversational_continuity` prompt shape:
+- `We cleared the prior conversation, but GRM mounted memory is available. What
+  value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?`
+
+`conversational_continuity` result:
+
+| Fact | Answer | Control top-1 | Mounted top-1 | Mounted answer rank | Mounted answer logit | Hit |
+| --- | --- | --- | --- | ---: | ---: | :---: |
+| `vault_keyword` | `BLUE` | `I` | `The` | n/a | n/a | no |
+| `relay_marker` | `EMBER` | `I` | `The` | n/a | n/a | no |
+| `archive_color` | `GRAY` | `I` | `The` | `2` | `17.625` | no |
+| `tool_metal` | `IRON` | `I` | `The` | n/a | n/a | no |
+
+Important failure detail:
+- The mounted graft did affect the distribution in some cases: `BLUE` reached
+  rank `4` for the conversational-slot vault query, and `GRAY` reached rank `2`
+  for the conversational-continuity archive query.
+- But answer-like prose priors dominated greedy top-1. Mounted top-1 was `The`
+  for every completed conversational prompt.
+
+Interpretation:
+- Ordinary conversational wording is not robust yet, even with fact-local
+  addressing metadata present.
+- GPT-OSS currently needs an explicit answer-format contract for same-token
+  first-token extraction from mounted cold grafts.
+- The next implementation direction is either:
+  - a GRM response policy that composes natural fact-local prompts plus an
+    explicit answer-format clause, or
+  - a multi-token conversational evaluator that can score whether `The stored
+    value is BLUE` still extracts the right value later in the generation.
