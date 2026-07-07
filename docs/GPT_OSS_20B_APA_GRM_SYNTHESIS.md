@@ -396,3 +396,23 @@ capture prompt through MoE. The result should still be named precisely. It is a
 same-model cold-KV candidate-logit access pass, not H6 open greedy recall and
 not a turn-50 continuity test. The next hard proof is a greedy/open recall gate
 using the mounted graft as the only source of the fact.
+
+That greedy gate now has a first narrow pass, with useful failures around it.
+Raw one-token greedy did not recall the fact: the no-graft control generated
+` The`, while the mounted run generated ` ...`. Harmony-formatted greedy was
+protocol-correct but entered the default medium-reasoning analysis channel:
+`<|channel|>analysis<|message|>We need to`. Those are failures for direct
+answer recall, not hidden successes.
+
+The pass came from a protocol-aware forced-final probe. The live prompt ended
+at `<|channel|>final<|message|>`, the answer itself was still absent, and no
+candidate list was supplied. In the no-graft control, the first open greedy
+token was `I`. With the 16K pre-RoPE graft mounted, the first open greedy token
+was `BLUE`, with `blue` and `Blue` as the next two logits. That is the first
+GPT-OSS 16K same-model cold-graft greedy recall pass.
+
+The boundary remains important. This is stronger than candidate scoring because
+the model selected the answer as top-1 without a candidate list, but it is a
+constrained final-channel test. It does not yet prove unconstrained raw
+free-form generation, and it does not prove multi-turn turn-50 continuity with
+KV cleared on every turn.

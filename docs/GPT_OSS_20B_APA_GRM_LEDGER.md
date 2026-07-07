@@ -2291,3 +2291,86 @@ Interpretation:
   tokens and the expensive MoE route was not replaying the 16K capture text.
 - This is still H5 candidate-logit evidence. H6 greedy/open multi-turn recall
   remains unproven.
+
+Action: Added and ran GPT-OSS greedy graft-remount probes for the 16K graft.
+
+Implementation update:
+- `scripts/gpt_oss20b_stream_greedy_smoke.py`
+  - Added `--mount-graft-dir` so every generated token can remount captured
+    pre-RoPE K/V grafts through the streamed forward harness.
+  - Added GPT-OSS APA/runtime flags:
+    `--attention-mode`, `--apa-layer-scope`, `--refine-percentile`,
+    `--bulk-bits`, `--route-detail`, and `--expert-empty-cache-interval`.
+  - Added `--model-dir`, `--prompt-file`, and one-time `--use-chat-template`.
+    The chat template is rendered once before greedy generation, then decoded
+    tokens are appended to that rendered prompt. This avoids the invalid path of
+    re-wrapping generated assistant tokens as new user content on every step.
+
+Validation:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_stream_greedy_smoke.py`
+  passed.
+- `python3 scripts/gpt_oss20b_stream_greedy_smoke.py --help` confirmed the new
+  flags.
+
+Raw one-token greedy probe:
+- Control command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_greedy_smoke.py --prompt 'User: What is the GPT-OSS vault keyword? Reply with only the keyword.\nAssistant:' --steps 1 --max-tokens 64 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_greedy_16k_control_1step.json`
+- Mounted command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_greedy_smoke.py --prompt 'User: What is the GPT-OSS vault keyword? Reply with only the keyword.\nAssistant:' --steps 1 --max-tokens 64 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --mount-graft-dir artifacts/gpt_oss_20b/h5_bulk_graft_16k_candidate_gate/graft --output artifacts/gpt_oss_20b/h6_greedy_16k_mount_1step.json`
+- Result:
+  - control top-1: `" The"` with logit `11.6875`
+  - mounted top-1: `" ..."` with logit `13.625`
+- Interpretation: failed as open recall. The mounted graft changed the logit
+  distribution but raw prompt formatting still let punctuation/prose priors
+  dominate greedy top-1.
+
+Harmony six-step mounted greedy probe:
+- Command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_greedy_smoke.py --prompt 'What is the GPT-OSS vault keyword? Reply with only the keyword.' --use-chat-template --steps 6 --max-tokens 128 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --mount-graft-dir artifacts/gpt_oss_20b/h5_bulk_graft_16k_candidate_gate/graft --output artifacts/gpt_oss_20b/h6_greedy_16k_mount_harmony_6step.json`
+- Result:
+  - generated tokens:
+    1. `<|channel|>`
+    2. `analysis`
+    3. `<|message|>`
+    4. `We`
+    5. ` need`
+    6. ` to`
+- Interpretation: protocol-correct but not a recall pass. With the default
+  medium-reasoning Harmony template, greedy generation enters the analysis
+  channel before the final answer.
+
+Forced-final one-token greedy probe:
+- Control command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_greedy_smoke.py --prompt '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>' --steps 1 --max-tokens 128 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_greedy_16k_control_forced_final_1step.json`
+- Mounted command:
+  `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_greedy_smoke.py --prompt '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>' --steps 1 --max-tokens 128 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --mount-graft-dir artifacts/gpt_oss_20b/h5_bulk_graft_16k_candidate_gate/graft --output artifacts/gpt_oss_20b/h6_greedy_16k_mount_forced_final_1step.json`
+- Control artifact:
+  `artifacts/gpt_oss_20b/h6_greedy_16k_control_forced_final_1step.json`
+- Mounted artifact:
+  `artifacts/gpt_oss_20b/h6_greedy_16k_mount_forced_final_1step.json`
+- Child forward artifacts:
+  - `artifacts/gpt_oss_20b/h6_greedy_16k_control_forced_final_1step_steps/step_00.json`
+  - `artifacts/gpt_oss_20b/h6_greedy_16k_mount_forced_final_1step_steps/step_00.json`
+- Result:
+  - control live tokens: `43`
+  - mounted live tokens: `43`
+  - mounted graft tokens: `16384`
+  - mounted RoPE table length: `16427`
+  - APA layers used: `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`
+  - control top-1: `"I"`, token id `40`, logit `16.5`
+  - mounted top-1: `"BLUE"`, token id `134698`, logit `26.5`
+  - mounted top-2: `"blue"`, token id `18789`, logit `24.25`
+  - mounted top-3: `"Blue"`, token id `15957`, logit `23.375`
+  - control child wall seconds: `24.572393191978335`
+  - mounted child wall seconds: `26.649795031989925`
+
+Interpretation:
+- The forced-final probe is the first GPT-OSS 16K same-model cold-graft greedy
+  recall pass.
+- The answer was absent from the live prompt. The no-graft control generated
+  `"I"` at the answer position; the mounted-graft run generated `"BLUE"` as
+  greedy top-1.
+- This is stronger than H5 candidate scoring because no candidate list was
+  supplied to the model. It is still a constrained protocol-aware final-channel
+  test, not an unconstrained raw free-form answer and not a turn-50 multi-turn
+  continuity test.
