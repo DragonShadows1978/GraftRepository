@@ -714,3 +714,14 @@ from one 4K graft, not long-run behavioral stability. Repetition/drift remains
 the next missing operating-mode axis: the model has to keep retrieving the
 right instruction across repeated cleared-context turns without mutating or
 over-repeating the response.
+
+The first drift receipt is positive for the smallest useful version of that
+axis. Retained instruction A was asked three times in independent
+cleared-context probes against the same mounted 4K graft. Every control avoided
+the target, and every mounted run recovered `LUMEN-42`. The new drift gate
+classified the record as stable for `3/3` repeats.
+
+This is not a broad stability claim yet. It is one retained instruction, one
+graft, and three repeats with an 8-step decode budget. But it shows that the
+same cold-graft instruction can survive repeated remounts without immediate
+answer drift.

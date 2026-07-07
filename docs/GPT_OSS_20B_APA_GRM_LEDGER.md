@@ -3610,3 +3610,44 @@ Interpretation:
 - Strict first-token extraction remains the wrong success criterion for this
   wording; the product policy remains generated-answer parsing or stricter
   answer-first prompt policy.
+
+Action: Added and ran the first repetition/drift gate.
+
+Purpose:
+- Start the Phase 5 repetition/drift axis.
+- Repeatedly clear live context by launching independent greedy probes, remount
+  the same retained-instruction graft, and ask the same instruction again.
+- Check whether the answer remains stable across repeated turns rather than
+  only working once.
+
+Implementation update:
+- Added `scripts/gpt_oss20b_repetition_drift_gate.py`.
+- Added evaluator support for schema
+  `gpt_oss_20b_repetition_drift_gate_v1`.
+- The gate reports both the existing strict/generated classifications and a
+  `drift_classification` over repeated rows per record.
+
+GPU command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_repetition_drift_gate.py --graft-dir artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/graft --record-id retention_instruction_a --repeats 3 --steps 8 --max-tokens 192 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate.json`
+
+Artifacts:
+- `artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate.json`
+- `artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_eval.json`
+
+Result:
+- Parent status: `ok`.
+- Strict first-token classification: `fail`, `0/3`.
+- Generated classification: `pass`, `3/3`.
+- Drift classification: `pass`, stable records `1/1`.
+- Normalized evaluator: generated value `3/3`,
+  generated-unconfounded value `3/3`.
+- Each control row avoided `LUMEN-42`.
+- Each mounted row recovered `LUMEN-42`.
+
+Interpretation:
+- First repetition/drift receipt is positive for retained instruction A across
+  three independent cleared-context remounts.
+- This is a narrow drift pass: one record, one 4K graft, three repeats, 8-step
+  decode budget.
+- It does not yet close longer repeated sessions, other instruction records, or
+  longer-context graft payloads.

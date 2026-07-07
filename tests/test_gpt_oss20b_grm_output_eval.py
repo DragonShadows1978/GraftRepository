@@ -263,3 +263,52 @@ def test_evaluate_instruction_retention_artifact_counts_generated_hits(tmp_path)
     assert audit["probe_count"] == 1
     assert audit["generated_unconfounded_hits"] == 1
     assert audit["classification"]["generated_unconfounded_value"] == "pass"
+
+
+def test_evaluate_repetition_drift_artifact_counts_generated_hits(tmp_path):
+    control_artifact = tmp_path / "control.json"
+    mount_artifact = tmp_path / "mount.json"
+    control_artifact.write_text(
+        json.dumps({"initial_prompt": "Q:", "final_text": "Q: I do not know."}),
+        encoding="utf-8",
+    )
+    mount_artifact.write_text(
+        json.dumps({"initial_prompt": "Q:", "final_text": "Q: ORBIT-7"}),
+        encoding="utf-8",
+    )
+    artifact = {
+        "schema": "gpt_oss_20b_repetition_drift_gate_v1",
+        "classification": "fail",
+        "hit_count": 0,
+        "runs": {
+            "items": [
+                {
+                    "id": "retention_instruction_b",
+                    "repeat_index": 0,
+                    "label": "retained instruction B response string",
+                    "answer": "ORBIT-7",
+                    "control": {
+                        "summary": {
+                            "top_token": {"text": "I"},
+                            "artifact": str(control_artifact),
+                        }
+                    },
+                    "mount": {
+                        "summary": {
+                            "top_token": {"text": "OR"},
+                            "top_tokens": [{"text": "OR"}],
+                            "artifact": str(mount_artifact),
+                        }
+                    },
+                }
+            ]
+        },
+    }
+    path = tmp_path / "drift.json"
+    path.write_text(json.dumps(artifact), encoding="utf-8")
+
+    audit = evaluate_gate_artifact(path)
+
+    assert audit["probe_count"] == 1
+    assert audit["generated_unconfounded_hits"] == 1
+    assert audit["classification"]["generated_unconfounded_value"] == "pass"
