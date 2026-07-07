@@ -17,6 +17,7 @@ from gpt_oss20b_grm_output_eval import (  # noqa: E402
 def test_canonical_value_handles_case_space_and_punctuation():
     assert canonical_value(" BLUE.") == "blue"
     assert canonical_value("\u2581Blue!") == "blue"
+    assert canonical_value("7391\u20112048") == "7391-2048"
     assert canonical_value(None) == ""
 
 
@@ -37,6 +38,7 @@ def test_contains_value_text_uses_word_boundaries():
     assert contains_value_text("The stored value is BLUE.", "BLUE") is True
     assert contains_value_text("The stored value is BLUEPRINT.", "BLUE") is False
     assert contains_value_text("The stored value is blue.", "BLUE") is True
+    assert contains_value_text("The stored value is 7391\u20112048.", "7391-2048") is True
 
 
 def test_generated_suffix_from_payload_removes_prompt_prefix():
@@ -162,3 +164,54 @@ def test_evaluate_gate_artifact_counts_normalized_hits(tmp_path):
     assert audit["generated_value_hits"] == 0
     assert audit["classification"]["normalized_value_top1"] == "pass"
     assert audit["classification"]["normalized_unconfounded_top1"] == "fail"
+
+
+def test_evaluate_exact_value_artifact_counts_generated_hits(tmp_path):
+    control_artifact = tmp_path / "control.json"
+    mount_artifact = tmp_path / "mount.json"
+    control_artifact.write_text(
+        json.dumps({"initial_prompt": "Q:", "final_text": "Q: I do not know."}),
+        encoding="utf-8",
+    )
+    mount_artifact.write_text(
+        json.dumps(
+            {"initial_prompt": "Q:", "final_text": "Q: The exact code is ZX-47B."}
+        ),
+        encoding="utf-8",
+    )
+    artifact = {
+        "schema": "gpt_oss_20b_exact_value_graft_gate_v1",
+        "classification": "fail",
+        "hit_count": 0,
+        "runs": {
+            "items": [
+                {
+                    "id": "asset_code",
+                    "label": "GPT-OSS asset code",
+                    "answer": "ZX-47B",
+                    "control": {
+                        "summary": {
+                            "top_token": {"text": "I"},
+                            "artifact": str(control_artifact),
+                        }
+                    },
+                    "mount": {
+                        "summary": {
+                            "top_token": {"text": "The"},
+                            "top_tokens": [{"text": "The"}],
+                            "artifact": str(mount_artifact),
+                        }
+                    },
+                }
+            ]
+        },
+    }
+    path = tmp_path / "exact.json"
+    path.write_text(json.dumps(artifact), encoding="utf-8")
+
+    audit = evaluate_gate_artifact(path)
+
+    assert audit["probe_count"] == 1
+    assert audit["exact_unconfounded_hits"] == 0
+    assert audit["generated_unconfounded_hits"] == 1
+    assert audit["classification"]["generated_unconfounded_value"] == "pass"

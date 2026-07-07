@@ -668,3 +668,24 @@ the product requires first-token value extraction, GPT-OSS needs a strict
 answer-format prompt. If the product can accept a normal sentence and parse the
 value, both ordinary conversational variants tested here work against the 16K
 mounted cold graft.
+
+The exact-value gate extends that same operating rule beyond one-token color
+facts. A fresh 4K real-token capture planted an exact asset code (`ZX-47B`), an
+operator name (`MIRA SOL`), and an access number (`7391-2048`). The strict
+first-token gate failed, as expected for this model's sentence-first behavior,
+but generated-answer scoring recovered the actual values from the mounted
+graft while controls did not.
+
+The first 12-step full run recovered `MIRA SOL` and `7391-2048`; the number
+used a Unicode dash variant, so the output auditor now normalizes dash forms.
+The code row was not a memory failure in that receipt; it stopped immediately
+before the value after generating the framing sentence. A targeted 24-step
+rerun against the same captured graft recovered `ZX-47B` cleanly, again with no
+control leakage.
+
+So Phase 5 exact code/name/number recall is positive in generated-answer mode,
+with one important caveat: GPT-OSS may spend a surprising number of tokens on
+answer framing before emitting an exact value. For this architecture, the GRM
+policy should not confuse strict first-token extraction with natural answer
+recall. Exact-value production use needs either a stronger answer-first prompt
+or normalized generated-answer parsing with enough decode budget.

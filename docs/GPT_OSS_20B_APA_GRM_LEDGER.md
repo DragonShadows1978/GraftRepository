@@ -3447,3 +3447,77 @@ Interpretation:
   - strict answer-first extraction requires explicit format policy,
   - natural conversational sentence-form recall works for these two variants,
   - production scoring needs normalized generated-answer parsing for this model.
+
+Action: Added and ran the exact code/name/number H6 gate.
+
+Purpose:
+- Close the Phase 5 exact-value axis that one-token color/marker facts do not
+  cover.
+- Plant three multi-token exact values into a fresh real-token 4K capture:
+  `ZX-47B`, `MIRA SOL`, and `7391-2048`.
+- Preserve strict first-token scoring, but evaluate sentence-form generated
+  answers with the normalized output auditor.
+
+Implementation update:
+- Added `scripts/gpt_oss20b_exact_value_graft_gate.py`.
+- Extended `scripts/gpt_oss20b_grm_output_eval.py` to read
+  `gpt_oss_20b_exact_value_graft_gate_v1` artifacts.
+- Added dash normalization for generated-value scoring so Unicode dash variants
+  like nonbreaking hyphen are scored against ASCII exact values.
+- Added `--record-id` to the exact-value gate so capped rows can be rerun from
+  an existing graft without rerunning capture.
+
+Artifacts:
+- `artifacts/gpt_oss_20b/h6_exact_value_4k_gate.json`
+- `artifacts/gpt_oss_20b/h6_exact_value_4k_eval.json`
+- `artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_gate.json`
+- `artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_eval.json`
+
+Full 4K / 12-step gate:
+- Capture: fresh 4096-token real-token direct-id prompt, all 24 layers, existing
+  APA settings (`apa_selective`, full layer scope, refine `0.15`, bulk bits
+  `8`).
+- Capture wall seconds: `222.50104702898534`.
+- Parent status: `ok`.
+- Strict first-token classification: `fail`, `0/3`.
+- Normalized generated evaluator: generated value `2/3`,
+  generated-unconfounded value `2/3`.
+- Passing generated rows:
+  - `operator_name`: control produced a wrong partial answer; mounted generated
+    `MIRA SOL`.
+  - `access_number`: control refused; mounted generated `7391-2048` with a
+    Unicode dash variant, counted by the normalized evaluator.
+- Failing generated row:
+  - `asset_code`: control refused; mounted stopped at
+    `The exact GPT-OSS asset code referenced in the text is`, so this was a
+    decode-budget miss, not a proven graft-content miss.
+
+Targeted asset-code / 24-step rerun:
+- Command reused `artifacts/gpt_oss_20b/h6_exact_value_4k_gate/graft` with
+  `--skip-capture --record-id asset_code --steps 24`.
+- Parent status: `ok`.
+- Strict first-token classification: `fail`, `0/1`.
+- Generated classification: `pass`, `1/1`.
+- Normalized evaluator: generated value `1/1`,
+  generated-unconfounded value `1/1`.
+- Control generated no `ZX-47B`; mounted generated
+  `The exact GPT-OSS asset code referenced in the text is **ZX-47B**.`, with a
+  Unicode dash variant normalized to the expected code.
+
+Validation:
+- Compile:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_exact_value_graft_gate.py scripts/gpt_oss20b_grm_output_eval.py`
+  passed.
+- Focused tests:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest tests/test_gpt_oss20b_grm_output_eval.py -q`
+  passed: `9 passed in 0.04s`.
+
+Interpretation:
+- GPT-OSS exact code/name/number recall works from mounted cold grafts in
+  generated-answer mode for these three values.
+- Strict first-token extraction remains a real failure for this wording because
+  the mounted answers begin with prose.
+- Decode budget matters: the code answer required 24 steps because the model
+  spent the first 13 steps on answer framing.
+- Production GRM should either force answer-first output for exact extraction or
+  accept normalized generated-answer parsing for GPT-OSS.

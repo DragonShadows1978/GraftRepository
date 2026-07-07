@@ -20,6 +20,16 @@ from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 STRIP_CHARS = " \t\r\n\"'`.,:;!?()[]{}"
+DASH_TRANSLATION = str.maketrans(
+    {
+        "\u2010": "-",
+        "\u2011": "-",
+        "\u2012": "-",
+        "\u2013": "-",
+        "\u2014": "-",
+        "\u2212": "-",
+    }
+)
 
 
 def canonical_value(text: Any) -> str:
@@ -27,6 +37,7 @@ def canonical_value(text: Any) -> str:
     if text is None:
         return ""
     value = unicodedata.normalize("NFKC", str(text))
+    value = value.translate(DASH_TRANSLATION)
     value = value.replace("\u2581", " ")
     value = re.sub(r"\s+", " ", value).strip(STRIP_CHARS)
     return value.casefold()
@@ -177,6 +188,7 @@ def iter_gate_rows(payload: dict[str, Any]) -> list[dict[str, Any]]:
     if schema in {
         "gpt_oss_20b_preference_graft_gate_v1",
         "gpt_oss_20b_supersession_graft_gate_v1",
+        "gpt_oss_20b_exact_value_graft_gate_v1",
     }:
         return list(runs.get("items") or [])
     if schema == "gpt_oss_20b_multifact_graft_gate_v1":
