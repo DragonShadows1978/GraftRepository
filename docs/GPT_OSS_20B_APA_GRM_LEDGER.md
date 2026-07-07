@@ -2844,3 +2844,68 @@ Interpretation:
   but extraction policy is not robust enough yet. It needs either stronger
   addressing metadata, better prompt policy, local/smaller graft selection, or a
   mount signal that reduces cross-fact competition.
+
+Action: Added and ran a fact-local addressing gate against the 16K multi-fact
+graft.
+
+Purpose:
+- Turn the prompt-recoverable `BLUE` miss into a reusable policy test.
+- Reuse the existing `16384`-token multi-fact graft instead of recapturing.
+- Ask each fact with both its classified fact letter and semantic slot:
+  `In CLASSIFIED FACT A, what is the GPT-OSS vault keyword?`
+- Require mounted greedy top-1 hits while no-graft controls still miss.
+
+File added:
+- `scripts/gpt_oss20b_multifact_addressing_gate.py`
+
+Script validation:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_multifact_addressing_gate.py`
+  passed.
+- `python3 scripts/gpt_oss20b_multifact_addressing_gate.py --help` printed the
+  expected CLI.
+- Dry-run:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_multifact_addressing_gate.py --source artifacts/gpt_oss_20b/h6_multifact_16k_gate.json --variants fact_local --dry-run --output /tmp/gpt_oss20b_addressing_dryrun.json`
+  passed and produced the expected fact-local prompts.
+
+GPU command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_multifact_addressing_gate.py --source artifacts/gpt_oss_20b/h6_multifact_16k_gate.json --variants fact_local --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate.json`
+
+Artifact:
+- `artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate.json`
+
+Source artifact:
+- `artifacts/gpt_oss_20b/h6_multifact_16k_gate.json`
+- source classification: `fail`
+- source target tokens: `16384`
+
+Result:
+- classification: `pass`
+- hits: `4/4`
+- wall seconds: `248.53989201097284`
+
+Per-fact addressing result:
+
+| Fact | Answer | Control top-1 | Mounted top-1 | Mounted answer logit | Hit |
+| --- | --- | --- | --- | ---: | :---: |
+| `vault_keyword` | `BLUE` | `GPT` | `BLUE` | `22.0` | yes |
+| `relay_marker` | `EMBER` | `GPT` | `EMBER` | `21.375` | yes |
+| `archive_color` | `GRAY` | `blue` | `GRAY` | `21.375` | yes |
+| `tool_metal` | `IRON` | `metal` | `IRON` | `23.0` | yes |
+
+Important detail:
+- The prior 16K strict-label gate failed because the `vault_keyword` mounted
+  query returned `EMBER` over `BLUE`.
+- Fact-local addressing changed that same 16K graft to `BLUE` top-1, with top-5
+  `BLUE` `22.0`, `blue` `20.0`, `EMBER` `19.0`, `Blue` `18.125`, `EM` `16.5`.
+- No-graft control for the recovered `BLUE` query returned `GPT`, not `BLUE`.
+
+Interpretation:
+- The 16K multi-fact failure was addressability, not absence of the fact in the
+  mounted graft.
+- GPT-OSS same-model cold-KV GRM needs explicit fact-local addressing metadata
+  for multi-binding recall. The policy that passed here uses both the fact
+  marker (`CLASSIFIED FACT A/B/C/D`) and the semantic slot (`vault keyword`,
+  `relay marker`, etc.).
+- This is still a controlled forced-final extraction prompt. It does not yet
+  prove ordinary conversational retrieval, correction/supersession memory, or
+  preference recall.

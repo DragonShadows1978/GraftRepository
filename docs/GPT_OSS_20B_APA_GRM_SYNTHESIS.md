@@ -537,3 +537,22 @@ The next work should not be another larger context rung until addressing is
 improved. Better tests are fact-local addressing, metadata-assisted retrieval
 prompts, local/smaller graft selection, and correction/supersession cases where
 cross-binding errors are expected to become more visible.
+
+The first addressing fix now has a receipt. A reusable fact-local addressing
+gate reads the failed 16K multi-fact artifact, reuses the same graft, and asks
+each fact with both its classified fact marker and its semantic slot. That turns
+the previous `3/4` into `4/4`: `BLUE`, `EMBER`, `GRAY`, and `IRON` all return
+as mounted greedy top-1, while the no-graft controls still miss.
+
+This is the important GRM policy result from the failure. GPT-OSS did not lose
+the `BLUE` fact at 16K; the original prompt did not isolate the binding well
+enough. When the live query says `In CLASSIFIED FACT A, what is the GPT-OSS
+vault keyword?`, the same graft returns `BLUE` with logit `22.0`, above `EMBER`
+at `19.0`. For multi-binding GPT-OSS GRM, fact-local addressing metadata is not
+nice-to-have. It is part of the retrieval contract.
+
+The next reliability work should build on that contract: store stable fact
+markers/semantic slots with graft metadata, test the policy in ordinary
+conversational wording, and then move to correction/supersession memory where
+the model must choose the current binding rather than the nearest or loudest
+old one.
