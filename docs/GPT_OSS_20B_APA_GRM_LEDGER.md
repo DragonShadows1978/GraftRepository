@@ -2374,3 +2374,51 @@ Interpretation:
   supplied to the model. It is still a constrained protocol-aware final-channel
   test, not an unconstrained raw free-form answer and not a turn-50 multi-turn
   continuity test.
+
+Action: Ran the forced-final H6 probe with an explicit turn-50, no-prior-context
+live prompt.
+
+Purpose:
+- The previous forced-final pass proved greedy recall when the live prompt was
+  only the current question.
+- This probe makes the operating-mode assumption explicit: the live prompt says
+  `Conversation turn 50` and `You do not have previous chat context`; no prior
+  turns or answer text are present. The only long-memory carrier in the mounted
+  run is the 16K pre-RoPE graft.
+
+Control command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_greedy_smoke.py --prompt '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Conversation turn 50. You do not have previous chat context. What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>' --steps 1 --max-tokens 160 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_turn50_control_forced_final_1step.json`
+
+Mounted command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_stream_greedy_smoke.py --prompt '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Conversation turn 50. You do not have previous chat context. What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>' --steps 1 --max-tokens 160 --top-k 10 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --mount-graft-dir artifacts/gpt_oss_20b/h5_bulk_graft_16k_candidate_gate/graft --output artifacts/gpt_oss_20b/h6_turn50_mount_forced_final_1step.json`
+
+Artifacts:
+- Control:
+  `artifacts/gpt_oss_20b/h6_turn50_control_forced_final_1step.json`
+- Mounted:
+  `artifacts/gpt_oss_20b/h6_turn50_mount_forced_final_1step.json`
+- Child forward artifacts:
+  - `artifacts/gpt_oss_20b/h6_turn50_control_forced_final_1step_steps/step_00.json`
+  - `artifacts/gpt_oss_20b/h6_turn50_mount_forced_final_1step_steps/step_00.json`
+
+Result:
+- control live tokens: `56`
+- mounted live tokens: `56`
+- mounted graft tokens: `16384`
+- mounted RoPE table length: `16440`
+- APA layers used: `[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]`
+- control top-1: `"I"`, token id `40`, logit `13.1875`
+- mounted top-1: `"BLUE"`, token id `134698`, logit `26.75`
+- mounted top-2: `"blue"`, token id `18789`, logit `23.5`
+- mounted top-3: `"Blue"`, token id `15957`, logit `23.125`
+- control child wall seconds: `21.008199259988032`
+- mounted child wall seconds: `23.32753116200911`
+
+Interpretation:
+- This is a turn-labeled cold-KV greedy recall pass for GPT-OSS at the 16K graft
+  point.
+- It is not a full 50 sequential-turn dialogue transcript, but it matches the
+  GRM operating law being tested: the live prompt is short, prior KV/context is
+  absent, and the mounted graft is the only source of the captured fact.
+- The no-graft control again failed to produce the fact; the mounted graft
+  produced the exact keyword as greedy top-1.

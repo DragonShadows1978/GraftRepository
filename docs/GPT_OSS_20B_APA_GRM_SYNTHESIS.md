@@ -416,3 +416,11 @@ the model selected the answer as top-1 without a candidate list, but it is a
 constrained final-channel test. It does not yet prove unconstrained raw
 free-form generation, and it does not prove multi-turn turn-50 continuity with
 KV cleared on every turn.
+
+The turn-50 variant now passes under the same forced-final protocol. The live
+prompt explicitly said `Conversation turn 50` and `You do not have previous chat
+context`; it contained 56 live tokens and no answer text. The no-graft control
+again generated `I`. With the same 16K graft mounted, GPT-OSS generated `BLUE`
+as greedy top-1. This is not a 50-step sequential dialogue transcript, but it
+does exercise the core GRM operating law: short live prompt, cleared prior
+context, mounted cold K/V as the only source of the fact.
