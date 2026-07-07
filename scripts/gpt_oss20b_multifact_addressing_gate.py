@@ -83,6 +83,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-tokens", type=int, default=160)
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument(
+        "--pass-mode",
+        choices=("exact_top1", "generated_value"),
+        default="exact_top1",
+        help=(
+            "which classification controls process exit; exact_top1 preserves "
+            "the original first-token gate, generated_value uses normalized "
+            "generated-text value presence with no control hit"
+        ),
+    )
+    parser.add_argument(
         "--attention-mode",
         choices=("standard", "apa_selective"),
         default="apa_selective",
@@ -359,6 +369,7 @@ def main() -> int:
         "route_detail": args.route_detail,
         "expert_empty_cache_interval": int(args.expert_empty_cache_interval),
         "script_args": jsonable_args(args),
+        "pass_mode": args.pass_mode,
         "status": "dry_run" if args.dry_run else "running",
         "runs": [],
     }
@@ -479,6 +490,9 @@ def main() -> int:
         control_top = (control.get("top_token") or {}).get("text")
         mount_top = (mount.get("top_token") or {}).get("text")
         hit = bool(mount.get("hit")) and control_top != row["answer"]
+        generated_hit = bool(mount.get("generated_contains_value")) and not bool(
+            control.get("generated_contains_value")
+        )
         summary.append(
             {
                 "variant": row["variant"],
@@ -488,17 +502,38 @@ def main() -> int:
                 "mount_top": mount_top,
                 "mount_answer_rank": mount.get("answer_rank"),
                 "mount_answer_logit": mount.get("answer_logit"),
+                "control_generated_text": control.get("generated_text"),
+                "mount_generated_text": mount.get("generated_text"),
+                "control_generated_contains_value": control.get(
+                    "generated_contains_value"
+                ),
+                "mount_generated_contains_value": mount.get(
+                    "generated_contains_value"
+                ),
                 "hit": hit,
+                "generated_hit": generated_hit,
             }
         )
     hits = sum(1 for item in summary if item["hit"])
+    generated_hits = sum(1 for item in summary if item["generated_hit"])
+    exact_classification = "pass" if hits == len(summary) else "fail"
+    generated_classification = "pass" if generated_hits == len(summary) else "fail"
+    selected_classification = (
+        generated_classification
+        if args.pass_mode == "generated_value"
+        else exact_classification
+    )
     payload.update(
         {
             "status": "ok",
             "summary": summary,
             "hit_count": int(hits),
+            "generated_hit_count": int(generated_hits),
             "probe_count": len(summary),
-            "classification": "pass" if hits == len(summary) else "fail",
+            "classification": exact_classification,
+            "exact_classification": exact_classification,
+            "generated_classification": generated_classification,
+            "selected_classification": selected_classification,
             "wall_seconds": time.perf_counter() - started,
         }
     )
@@ -509,14 +544,17 @@ def main() -> int:
             {
                 "status": payload["status"],
                 "classification": payload["classification"],
+                "generated_classification": payload["generated_classification"],
+                "selected_classification": payload["selected_classification"],
                 "hits": hits,
+                "generated_hits": generated_hits,
                 "probe_count": len(summary),
                 "summary": summary,
             }
         ),
         flush=True,
     )
-    return 0 if payload["classification"] == "pass" else 1
+    return 0 if payload["selected_classification"] == "pass" else 1
 
 
 if __name__ == "__main__":

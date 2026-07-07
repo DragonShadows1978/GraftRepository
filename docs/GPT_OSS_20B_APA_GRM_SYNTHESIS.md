@@ -641,3 +641,18 @@ answers by itself. The remaining work is to scale this multi-token evaluator
 across all facts and variants, then decide whether production GRM should force
 answer-first extraction, accept normalized sentence-form answers, or use a
 two-stage policy.
+
+Scaling that exact evaluator across the `conversational_slot` variant changes
+the status from one-off to policy evidence. The 16K multi-fact graft was probed
+for all four stored facts with 12 greedy steps each. First-token exact scoring
+remained a hard failure: every mounted response began with `The`, so the strict
+gate was `0/4`. Generated-text scoring passed `4/4`: the mounted responses
+contained `BLUE`, `EMBER`, `GRAY`, and `IRON`, while every no-graft control
+generated the same refusal and contained none of the values.
+
+The conclusion is now sharper. GPT-OSS is not answer-first reliable under
+ordinary conversational-slot wording, but it is sentence-answer capable from a
+mounted 16K cold graft. For this architecture, the GRM policy should treat
+strict first-token extraction and conversational answering as different modes.
+The remaining conversational gate is `conversational_continuity`, which keeps a
+stronger "cleared context but GRM mounted memory is available" framing.

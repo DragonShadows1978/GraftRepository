@@ -3325,3 +3325,76 @@ Interpretation:
 - The result is narrow: one fact, one variant, 12 greedy steps. It justifies
   building the full multi-token conversational gate, not declaring ordinary
   conversational recall solved.
+
+Action: Ran the broader multi-token conversational-slot H6 gate.
+
+Purpose:
+- Scale the one-fact sentence-form result across all four facts in the existing
+  16K multi-fact graft.
+- Preserve strict first-token scoring while letting generated-value scoring
+  control process exit for this specific gate.
+
+Implementation update:
+- `scripts/gpt_oss20b_multifact_addressing_gate.py` now supports
+  `--pass-mode exact_top1|generated_value`.
+- The legacy `classification` field remains strict first-token exact.
+- New fields:
+  - `generated_hit_count`
+  - `generated_classification`
+  - `selected_classification`
+  - per-row generated text/value-hit fields
+
+Validation:
+- Compile gate:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss20b_multifact_addressing_gate.py scripts/gpt_oss20b_grm_output_eval.py`
+  passed.
+- Focused tests:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest tests/test_gpt_oss20b_grm_output_eval.py -q`
+  passed: `8 passed in 0.03s`.
+- Dry-run:
+  `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_multifact_addressing_gate.py --source artifacts/gpt_oss_20b/h6_multifact_16k_gate.json --variants conversational_slot --fact-ids vault_keyword,relay_marker --steps 12 --pass-mode generated_value --dry-run --output /tmp/gpt_oss20b_generated_passmode_dryrun.json`
+  passed.
+
+GPU command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_multifact_addressing_gate.py --source artifacts/gpt_oss_20b/h6_multifact_16k_gate.json --variants conversational_slot --steps 12 --max-tokens 192 --pass-mode generated_value --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate.json`
+
+Artifacts:
+- `artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate.json`
+- `artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_eval.json`
+
+Result:
+- wall seconds: `2517.2570140580065`
+- strict first-token `classification`: `fail`
+- strict first-token hits: `0/4`
+- generated-value `generated_classification`: `pass`
+- generated-value hits: `4/4`
+- selected classification under `--pass-mode generated_value`: `pass`
+
+Standalone evaluator:
+- exact unconfounded top-1: `0/4`, fail
+- normalized unconfounded top-1: `0/4`, fail
+- normalized value top-k: `2/4`, fail
+- generated value: `4/4`, pass
+- generated unconfounded value: `4/4`, pass
+
+Per-fact generated result:
+
+| Fact | Answer | Control generated | Mounted generated | Generated hit |
+| --- | --- | --- | --- | :---: |
+| `vault_keyword` | `BLUE` | `I'm sorry, but I can't help with that.` | `The GPT-OSS vault keyword was **BLUE**.<|return|>` | yes |
+| `relay_marker` | `EMBER` | `I'm sorry, but I can't help with that.` | `The GPT-OSS relay marker in that entry was **EMBER` | yes |
+| `archive_color` | `GRAY` | `I'm sorry, but I can't help with that.` | `The archive color was **GRAY**.<|return|> The archive color` | yes |
+| `tool_metal` | `IRON` | `I'm sorry, but I can't help with that.` | `The GPT-OSS tool metal was **IRON**.<|return|>` | yes |
+
+Interpretation:
+- The `conversational_slot` variant is now a generated-text H6 pass across all
+  four planted 16K facts.
+- The strict first-token result remains a real `0/4` failure; every mounted run
+  starts with `The`.
+- Production policy implication: GPT-OSS can answer ordinary slot-style
+  conversational probes from mounted cold grafts if sentence-form answers are
+  accepted and normalized. It cannot be treated as answer-first reliable under
+  this wording.
+- Remaining unclosed conversational work: run the same generated-value scoring
+  for `conversational_continuity`, then decide whether GRM should force
+  answer-first extraction or accept normalized sentence answers for GPT-OSS.
