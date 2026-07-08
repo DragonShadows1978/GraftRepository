@@ -45,3 +45,55 @@ engine, Project-Tensor main @ acc9994):
 Next action: P1 harness (quantize-at-rest, storage-bits naming, 16-bit
 identity + RMSE receipts) + fp16 noise re-run, then the P2 sweep
 (8/6/4/3/2), bounded spaced runs.
+
+## 2026-07-08 (P1+P2 complete — WORK ORDER CLOSED)
+
+Action: Harness built, sweep run, final receipts landed
+(artifacts/grm_graft_quant/SWEEP_RESULTS.md + per-depth dirs +
+SWEEP_CUMULATIVE.json). Depth-2 skipped per the plan's early-stop clause
+— invoked by the chain's OWN guard (chain log: DEPTH3_EXIT:0 →
+DEPTH3_CATASTROPHIC → CHAIN_DONE).
+
+THE CURVE (group-32 symmetric, K+V uniform, dequant-on-mount, STANDARD
+attention, noise band 0.0 — engine fully deterministic, fp16 re-run
+margins bit-identical):
+- 8 bits (1.88× disk incl. scale overhead): FREE — 16/16 cases green,
+  deltas ≤ ±0.5. E1 CONFIRMED.
+- 6 bits (2.46×): LAST GREEN DEPTH — battery = baseline. The headline
+  operating point.
+- 4 bits (3.56×): CLIFF SHOULDER — multifact FAIL (relay_marker, the
+  STRONGEST fp16 margin +4.875, inverts to −1.125), preference 2/4,
+  margins compressed system-wide. E2 shoulder.
+- 3 bits (4.57×): FLOOR — all four gates fail; most answers absent from
+  top-10. E2 CONFIRMED (cliff well above 2 bits).
+- E3 PARTIAL — STRUCTURAL BREAK FLAGGED: at 4 bits, identical bank RMSE
+  (K≈0.55) collapses the strongest margin while the weakest widens
+  (vault +0.125→+0.75 monotonically to the shoulder, then −2.19).
+  Amplitude noise does not explain the damage pattern; binding/rank
+  structure does.
+
+FINDING OF RECORD — QUANTIZATION RESURRECTS SUPERSEDED MEMORIES: at 4
+bits, stale (deliberately overwritten) values begin climbing the
+rankings; at 3 bits a stale value WINS (archive: superseded BLACK beats
+current GRAY). For a memory system, storage quantization below the safe
+floor does not merely forget — it un-supersedes. This failure mode, not
+disk economics, is the sharpest reason the floor is a law: corrections
+and retractions are the first casualties.
+
+Anomalies (verbatim, not smoothed): preferred_color non-monotonic
+(fail→pass@8→fail@6); several margins IMPROVE under quantization through
+4 bits; vault widens monotonically before annihilation.
+
+Ops: ~98 min GPU-active as 20 separated 287-307s runs (all within the
+10-min bound), temps ≤57°C, no foreign process. Correction to the
+2026-07-08 interim characterization: the depth-3→2 chain exit was BY
+DESIGN (early-stop guard), not a process failure — though the agent
+wake-notification after exit was genuinely lost (as it was twice
+earlier; polling lesson recorded in lead memory).
+
+Registered follow-up (P3, not started): packed on-disk format + dequant
+hooks at the two P0-mapped sites (load_graft_layer, unpack_node), format-1
+coverage, and the K/V-asymmetric sweep if the 4-6 bit gap ever matters.
+Recommended production setting pending P3: INT8 at rest (conservative,
+proven free) with INT6 available where disk pressure demands (green, one
+depth of margin above the shoulder).
