@@ -779,3 +779,51 @@ quantizes past its floor doesn't lose its memories — it loses its
 corrections first. That asymmetry is now a law of this system: the storage
 floor exists to protect supersession, and the recall battery is the only
 instrument that can see it.
+
+## The Composed Receipt: A Memory System Runs a Session (2026-07-08)
+
+Everything above tested organs. The end-to-end receipt asked whether the
+organism lives: one process, one model, one session — facts stated in
+conversation, witnessed into grafts from live VRAM, evicted, routed back,
+remounted, recalled, superseded, and carried across a process restart.
+
+The answer is yes, with two honest asterisks. Across a 34-turn session
+with eight facts and a mid-session restart, every fresh fact came back
+exact — seven for seven, recalled through the production chat path from
+remounted grafts, at a 37-node repository, with VRAM flat from first
+turn to last. The machinery the whole program exists to prove is proven.
+
+Getting there took six diagnostic layers in one day, each with receipts,
+each refuting the last: the failing probes were blamed on the Harmony
+template (refuted byte-for-byte — the prompts were identical), then on
+fact-value shape (refuted — distinctive values failed the same way),
+then a mechanical loop defect (refuted by a shared-snapshot A/B that was
+token-identical) — until the real cause surfaced twice. First, geometry:
+the arena's reserved RoPE hole (live_shift = sink + width) is
+dialect-bounded — GPT-OSS generates cleanly under a 96-token hole and
+collapses into word salad at 384. A law, found by sweep, confirmed by
+treatment. Second, sociology: the router's latent channel favors long
+Harmony-scaffolded turns over short pristine facts (a zero-overlap
+filler outranked the correct 15-token memory), and lowercase fact labels
+never reached the lexical channel at all. The fix that shipped is the
+narrow one — query-side lexical extension, hit-gated, suites green —
+and it turned the receipt's smoke from 0/2 to 2/2 without touching any
+stored key.
+
+The asterisks are the residuals the receipt was designed to surface.
+One: the superseded fact lost its route both times it was probed at
+session scale — the current value never returned, though the stale one
+never resurfaced either. The quantization sweep taught that corrections
+are the first casualties of storage degradation; the receipt now shows
+they are also the first casualties of route competition. Same moral,
+different mechanism, and now a registered battery of its own. Two:
+routing costs ~three-quarters of a second per turn at 37 nodes through
+the python path — the CUDA bridge still declines ragged live banks, and
+the arena re-prepares per deposit. Neither is mysterious; both have
+owners in the successor queue.
+
+The receipt closes the arc that began with "can a frozen model be handed
+its own past?" The answer on 2026-07-08: yes — it remembers what it was
+told, it survives being turned off, and it fails exactly where the
+ledgers predicted it would, which is what makes the failures next work
+instead of next mysteries.
