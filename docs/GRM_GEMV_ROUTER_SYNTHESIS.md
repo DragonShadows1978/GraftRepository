@@ -72,3 +72,18 @@ Treat the GEMV router implementation as closed at the opt-in CUDA bridge
 boundary. The live GPU bridge receipt now exists. The next work item is a
 deliberate policy decision on whether CUDA should stay as the mount-window
 accelerator or become a full-rank general route backend.
+
+## Wing Continuation: The Bridge Overhead Work Order (opened 2026-07-07)
+
+The closure receipts themselves exposed the next defect: the router is
+fast and the bridge is not. The same smoke that proved parity showed the
+Python bridge costing 25-50× the device work (3.2/11.2/39.0 ms against
+0.13/0.26/0.77 ms direct at 32/128/512 nodes), scaling linearly with node
+count — per-call O(N) host work re-deriving staleness facts the mutation
+paths already know. A successor work order
+(`GRM_CUDA_BRIDGE_OVERHEAD_PLAN.md` + its own ledger) attacks exactly
+that: O(1) epoch staleness, then a hot/cold split that promotes the CUDA
+sidecar into the native bridge with a device-pointer route entry — David's
+architecture call: C++, not a new-language adapter, and the CPU C ABI
+keeps its CUDA-free law. The registered target is a bridge that costs no
+more than 2× the direct route at any node count, with overhead flat in N.
