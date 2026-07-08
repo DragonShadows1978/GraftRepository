@@ -85,6 +85,15 @@ class ArenaCache:
         if hasattr(tc, "empty_cache"):
             tc.empty_cache()
 
+    def _bump_cuda_gqa_epoch(self):
+        """No-op on the MLA dialect (base class). GQAArenaCache overrides
+        this with the real mutation-epoch counter used by the opt-in CUDA
+        GQA route bank cache (see GQAArenaCache._cuda_route_bank_inputs).
+        Defined here, at every self.grafts mutation site shared by both
+        dialects (deposit, deposit_from_cache, step's rollback/restore), so
+        those call sites don't need dialect-specific branching."""
+        return
+
     def reset_live_cache(self):
         """Drop the live device cache without touching persisted graft nodes."""
         self.caches = None
@@ -290,6 +299,7 @@ class ArenaCache:
                for li in range(len(self.m.layers))]
         self.grafts.append({"h": dev, "cent": self._node_key(text, h),
                             "ntok": len(ids), "text": text})
+        self._bump_cuda_gqa_epoch()
         return len(self.grafts) - 1
 
     def deposit_from_cache(self, text, seg_ntok):
@@ -318,6 +328,7 @@ class ArenaCache:
             cent = self._node_key(text)
         self.grafts.append({"h": dev, "cent": cent,
                             "ntok": seg_ntok, "text": text})
+        self._bump_cuda_gqa_epoch()
         return len(self.grafts) - 1
 
     def route(self, bare_text, exclude, limit=None):
@@ -662,6 +673,9 @@ class ArenaCache:
         self.grafts[didx]["rare"] = rare | self._rare_tokens(note)
         for i in idxs:
             self.grafts[i]["retired"] = True
+        # kind/child_cents/retired all changed after deposit()'s own bump —
+        # each is read by the CUDA route bank eligibility/signature walk.
+        self._bump_cuda_gqa_epoch()
         return didx, text
 
     def consolidate(self, idxs, ngen=None):
@@ -1290,6 +1304,7 @@ class ArenaCache:
                  self.cur_mount_n) = (snap[0], snap[1], list(snap[2]),
                                       snap[3], snap[4])
                 del self.grafts[snap[5]:]
+                self._bump_cuda_gqa_epoch()
             if clean:
                 # fresh mini-cache: _attempt's bootstrap path rebuilds
                 # [sink | mounts | question] via injection — no surgery on
@@ -1321,6 +1336,7 @@ class ArenaCache:
         (self.caches, self.pos, self.live_segs,
          self.cur_mounts, self.cur_mount_n) = st[0], st[1], st[2], st[3], st[4]
         self.grafts[:] = st[5]
+        self._bump_cuda_gqa_epoch()
         return txt, info
 
     def _attempt(self, user_text, picks, ngen, deposit, stops):
@@ -1397,6 +1413,10 @@ class ArenaCache:
                     new_rare -= g["rare"]
                 if not new_rare:
                     self.grafts[gidx]["kind"] = "recall"
+                    # kind="recall" flips CUDA route-bank eligibility
+                    # (excluded from the signature walk) — bump again, the
+                    # deposit above already bumped for the append itself.
+                    self._bump_cuda_gqa_epoch()
         self.live_segs.append((gidx, seg_cache_ntok))
         evicted = self.evict()
         S = self._cache_len()
@@ -1479,7 +1499,33 @@ class GQAArenaCache(ArenaCache):
         return os.environ.get("GRM_GQA_CUDA_ROUTE", "").lower() in (
             "1", "true", "yes", "on")
 
-    def _cuda_route_bank_inputs(self):
+    def _bump_cuda_gqa_epoch(self):
+        """Mutation-epoch bump. Called at every GQAArenaCache-side site that
+        can change what `_cuda_route_bank_signature` would produce (graft
+        add/retire/replace, route-key/kind/child_cents changes, truncation or
+        restore of self.grafts). O(1) at mutation time.
+
+        This is a FAST-PATH HINT layered over the cheap per-node signature
+        walk in `_cuda_route_bank_signature`, which remains the correctness
+        authority on every route call (it re-derives from `self.grafts`
+        fresh, so it is safe even against mutations this epoch cannot see —
+        e.g. a caller poking graft dict fields directly from outside this
+        class, such as GraftRepository's lifecycle/WAL/migrate paths). The
+        epoch only lets a route call skip the walk itself when nothing this
+        class controls has changed; the walk is ~1% of the old per-call cost
+        (P0 receipt), so re-running it on an epoch mismatch is cheap
+        insurance, not a regression.
+        """
+        self._cuda_gqa_epoch = getattr(self, "_cuda_gqa_epoch", 0) + 1
+
+    def _cuda_route_bank_signature(self):
+        """Cheap O(N) walk: eligibility + signature only, NO stacking. This
+        is the part of the old `_cuda_route_bank_inputs` that was NOT the
+        P0-receipted defect (~1% of the reused-call cost) — it stays on
+        every call as the fail-closed correctness check. Returns
+        (node_ids, signature, rows) where `rows` are the raw per-node key
+        arrays (not yet stacked) so a cache miss can stack them without a
+        second walk."""
         rows = []
         node_ids = []
         sig_rows = []
@@ -1510,9 +1556,44 @@ class GQAArenaCache(ArenaCache):
             ))
         if not rows:
             return None
-        route_bank = np.ascontiguousarray(np.stack(rows), dtype=np.float32)
         node_ids_np = np.asarray(node_ids, dtype=np.uint64)
-        return route_bank, node_ids_np, tuple(sig_rows)
+        return node_ids_np, tuple(sig_rows), rows
+
+    def _cuda_route_bank_inputs(self):
+        """Full bank inputs (route_bank, node_ids, signature), rebuilding
+        the stacked bank ONLY when the cheap signature walk shows staleness
+        against the (route_bank, node_ids, signature) cached on this
+        instance. The stack + ascontiguousarray was the P0-receipted 81.6%
+        (512n) defect: it used to run on EVERY route call regardless of
+        whether the signature had changed.
+
+        The cheap per-node signature walk (`_cuda_route_bank_signature`)
+        runs on every call unconditionally — it is the fail-closed
+        correctness authority (~1% of the old per-call cost, P0 receipt),
+        safe against mutation paths the epoch cannot observe (e.g. a caller
+        mutating graft dict fields directly from outside this class, such
+        as GraftRepository's lifecycle/WAL/migrate paths). The epoch
+        (`_cuda_gqa_epoch`, bumped at every GQAArenaCache-side mutation
+        site) is the fail-closed *equivalence* the required regression
+        proves: any mutation that changes the signature also bumps the
+        epoch. It is not required for correctness here (the signature
+        compare alone is sufficient and authoritative) but is tracked as
+        cheap bookkeeping other callers/tests can use to detect staleness
+        without re-deriving the full signature.
+        """
+        sig = self._cuda_route_bank_signature()
+        if sig is None:
+            self._cuda_gqa_bank_cache = None
+            return None
+        node_ids_np, signature, rows = sig
+        cached = getattr(self, "_cuda_gqa_bank_cache", None)
+        if cached is not None and cached[2] == signature:
+            return cached
+        route_bank = np.ascontiguousarray(np.stack(rows), dtype=np.float32)
+        bank_inputs = (route_bank, node_ids_np, signature)
+        self._cuda_gqa_bank_cache = bank_inputs
+        self._cuda_gqa_cache_epoch = getattr(self, "_cuda_gqa_epoch", 0)
+        return bank_inputs
 
     def _ensure_cuda_route_bank(self, store, bank_inputs):
         if getattr(self, "_cuda_gqa_route_unavailable", False):

@@ -78,3 +78,38 @@ Next action:
   one int. Fail-closed equivalence regression REQUIRED: every mutation
   that changes the signature must bump the epoch (test asserts
   epoch-valid ⇒ signature-equal across the mutation battery).
+
+## 2026-07-08 01:30 EDT
+
+Action: P1 implemented (Sonnet, flat), lead-verified structure, committed.
+
+Findings (evidence class: interleaved same-session A/B, contended host —
+load 4.27; ratios load-bearing, absolutes deferred to P3 quiet gate):
+- Bridge reused wall: 7.76→0.44 ms (32n, 17.7×), 41.80→0.78 ms (128n,
+  53.9×), 155.78→2.12 ms (512n, 73.6×). Parity true at all node counts;
+  direct CUDA route wall unchanged (isolation confirmed).
+- Mechanism: signature walk split from bank build; np.stack runs only on
+  signature change (cache on GQAArenaCache). The P0-receipted 82% cost is
+  gone from the steady-state path.
+- CONSERVATIVE AUTHORITY DECISION (agent-flagged, lead-endorsed): the
+  per-call O(N) signature walk REMAINS the correctness authority; the
+  epoch is bookkeeping + equivalence proof. Cause: core/graft_repository.py
+  mutates arena.grafts fields directly at ~15+ sites (retire via forget/
+  correct_memory, cent replace, WAL replay, migrate, cull) which the
+  epoch does not observe. Fail-closed holds because the walk sees those
+  writes regardless (verified: raw external retired=True write with no
+  epoch bump was caught). CONSEQUENCE REGISTERED: the epoch may not
+  become the sole staleness gate until every graft_repository.py mutation
+  site is instrumented (or all mutations flow through a choke point —
+  David's ledger/index concept). This is P2 scope.
+- Tests: lifecycle 6/6; full native runtime 92 passed (90 baseline + 2
+  new: epoch/signature fail-closed equivalence battery + stale-bank
+  behavior battery), zero regressions (stash-verified baseline).
+- Residual per-call cost at 512n (~2.1 ms contended) ≈ the signature walk
+  + marshal — the P2 targets, as planned.
+
+Next action:
+- Commit P1. P2: native hot/cold split — sidecar route entry with
+  device-pointer queries; epoch becomes sole hot-path gate WITH the
+  graft_repository.py mutation sites instrumented (scope expansion
+  registered here); signature walk moves to attach/cold path only.

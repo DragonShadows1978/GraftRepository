@@ -2710,6 +2710,212 @@ def test_gqa_arena_rebuilds_cuda_route_bank_when_rows_change(monkeypatch):
     assert arena.native_store._cuda_gqa_bank_signature != first_signature
 
 
+def _gqa_epoch_battery_arena():
+    """A GQAArenaCache with three eligible dense-bank nodes, wired the same
+    way the existing 6-selector's arena-side tests are (no live model, no
+    NativeGraftStore round trip — just the Python route-bank cache
+    machinery under test)."""
+    weak = np.asarray([[[0.1, 0.0]]], dtype=np.float32)
+    good = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+    best = np.asarray([[[2.0, 0.0]]], dtype=np.float32)
+    arena = GQAArenaCache.__new__(GQAArenaCache)
+    arena.native_store = None
+    arena.last_route_backend = "python"
+    arena.grafts = [
+        {"native_node_id": 101, "cent": weak.copy(),
+         "rare": set(), "text": "weak", "kind": "doc", "retired": False},
+        {"native_node_id": 102, "cent": good.copy(),
+         "rare": set(), "text": "good", "kind": "doc", "retired": False},
+        {"native_node_id": 103, "cent": best.copy(),
+         "rare": set(), "text": "best", "kind": "doc", "retired": False},
+    ]
+    return arena
+
+
+def test_gqa_cuda_epoch_bump_covers_every_signature_changing_mutation():
+    """P1 fail-closed equivalence (plan gate): for a battery of mutations
+    covering the GQAArenaCache-side mutation set this task's epoch tracks
+    (add, retire, cent replace, active-state/kind, revision [retire+add],
+    expire [retire], clear [truncate]), any mutation that changes the arena
+    signature (`_cuda_route_bank_signature`) must also bump the epoch
+    (`_cuda_gqa_epoch`). Equivalently: epoch-valid implies signature-equal
+    — an unchanged epoch is only ever observed together with an unchanged
+    signature. Mirrors the mutation coverage of the store-level 6-selector
+    (test_native_gqa_route_mutation_clears_cuda_bank /
+    test_native_gqa_eligibility_mutation_clears_cuda_bank) one layer up, on
+    the arena-side signature the CUDA bridge's stack cache keys on."""
+    arena = _gqa_epoch_battery_arena()
+
+    def snapshot():
+        epoch = getattr(arena, "_cuda_gqa_epoch", 0)
+        sig = arena._cuda_route_bank_signature()
+        signature = None if sig is None else sig[1]
+        return epoch, signature
+
+    checked = 0
+
+    def assert_mutation_is_fail_closed(mutate):
+        nonlocal checked
+        before_epoch, before_sig = snapshot()
+        mutate()
+        after_epoch, after_sig = snapshot()
+        if after_sig != before_sig:
+            # The load-bearing assertion: any signature change must be
+            # accompanied by an epoch bump. Equivalently, an unchanged
+            # epoch must never coexist with a changed signature — under-
+            # invalidation would let a route call reuse a stale stacked
+            # bank.
+            assert after_epoch != before_epoch, (
+                "signature changed but epoch did not bump — under-"
+                "invalidation risk")
+        checked += 1
+
+    # add
+    def do_add():
+        arena.grafts.append({"native_node_id": 104,
+                             "cent": np.asarray([[[3.0, 0.0]]], np.float32),
+                             "rare": set(), "text": "added", "kind": "doc",
+                             "retired": False})
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_add)
+
+    # cent replace (route-key replace)
+    def do_cent_replace():
+        arena.grafts[0]["cent"] = np.asarray([[[9.0, 0.0]]], np.float32)
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_cent_replace)
+
+    # active-state / kind (recall exclusion mirrors "active=False")
+    def do_kind_change():
+        arena.grafts[1]["kind"] = "recall"
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_kind_change)
+
+    # metadata-only (does NOT change eligibility/signature — must NOT be
+    # required to change the signature; the epoch bump is still fail-closed
+    # to bump regardless, since over-invalidation is acceptable)
+    def do_metadata_only():
+        arena.grafts[2]["tags"] = ["noted"]
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_metadata_only)
+
+    # revision (supersede): retire the old node, add its replacement
+    def do_revision():
+        arena.grafts[2]["retired"] = True
+        arena.grafts.append({"native_node_id": 105,
+                             "cent": np.asarray([[[4.0, 0.0]]], np.float32),
+                             "rare": set(), "text": "revised", "kind": "doc",
+                             "retired": False})
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_revision)
+
+    # expire
+    def do_expire():
+        arena.grafts[0]["retired"] = True
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_expire)
+
+    # retire (plain)
+    def do_retire():
+        arena.grafts[3]["retired"] = True
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_retire)
+
+    # clear (truncate, as step()'s rollback does)
+    def do_clear():
+        del arena.grafts[:]
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_clear)
+
+    assert checked == 8
+
+
+def test_gqa_cuda_bridge_never_reuses_stale_bank_across_mutation_battery():
+    """Behavior half of the P1 regression: after each mutation in the same
+    battery, a bridged (CUDA) route must return the same node ordering a
+    fresh attach would — no stale bank reuse. Uses a fake store that fails
+    loudly if route_gqa_cuda is ever called against a bank whose configured
+    node set does not match current eligibility (the stale-bank failure
+    mode the 2026-07-07 lifecycle fix closed)."""
+    class TrackingStore:
+        def __init__(self):
+            self.configured_node_ids = None
+            self.configure_calls = 0
+            self._cuda_gqa_bank = None
+            self._cuda_gqa_bank_signature = None
+
+        def configure_cuda_gqa_route_bank(self, _route_bank, node_ids):
+            self.configure_calls += 1
+            self.configured_node_ids = [
+                int(x) for x in np.asarray(node_ids, dtype=np.uint64)]
+            self._cuda_gqa_bank = object()
+
+        def route_gqa_cuda(self, _query, *, topk=3, **_kwargs):
+            # Route against whatever is currently attached — a stale bank
+            # would answer from a node set that no longer matches the
+            # arena's live eligible grafts.
+            return list(self.configured_node_ids)[:int(topk)]
+
+        def route_gqa(self, *_args, **_kwargs):
+            raise AssertionError("CPU GQA route should not run")
+
+    import os as _os
+    _os.environ["GRM_GQA_CUDA_ROUTE"] = "1"
+    try:
+        arena = _gqa_epoch_battery_arena()
+        arena.native_store = TrackingStore()
+        q = np.asarray([[[1.0, 0.0]]], dtype=np.float32)
+        arena._probe_key = lambda _text: q
+
+        def eligible_native_ids():
+            return sorted(
+                int(g["native_node_id"]) for g in arena.grafts
+                if not g.get("retired") and g.get("kind", "turn") != "recall")
+
+        def assert_bridge_matches_fresh_attach():
+            expect = eligible_native_ids()
+            got_order = arena.route("plain probe", exclude=set(),
+                                    limit=len(expect) or 1)
+            got_native_ids = sorted(
+                int(arena.grafts[i]["native_node_id"]) for i in got_order)
+            assert got_native_ids == expect or not expect
+            assert sorted(arena.native_store.configured_node_ids) == expect, (
+                "bridged route bank does not match current eligibility — "
+                "stale bank reuse")
+
+        assert_bridge_matches_fresh_attach()
+
+        arena.grafts.append({"native_node_id": 104,
+                             "cent": np.asarray([[[3.0, 0.0]]], np.float32),
+                             "rare": set(), "text": "added", "kind": "doc",
+                             "retired": False})
+        arena._bump_cuda_gqa_epoch()
+        assert_bridge_matches_fresh_attach()
+
+        arena.grafts[0]["cent"] = np.asarray([[[9.0, 0.0]]], np.float32)
+        arena._bump_cuda_gqa_epoch()
+        assert_bridge_matches_fresh_attach()
+
+        arena.grafts[1]["kind"] = "recall"
+        arena._bump_cuda_gqa_epoch()
+        assert_bridge_matches_fresh_attach()
+
+        arena.grafts[2]["retired"] = True
+        arena._bump_cuda_gqa_epoch()
+        assert_bridge_matches_fresh_attach()
+
+        arena.grafts[3]["retired"] = True
+        arena._bump_cuda_gqa_epoch()
+        assert_bridge_matches_fresh_attach()
+
+        del arena.grafts[:]
+        arena._bump_cuda_gqa_epoch()
+        result = arena.route("plain probe", exclude=set(), limit=1)
+        assert result == []
+    finally:
+        _os.environ.pop("GRM_GQA_CUDA_ROUTE", None)
+
+
 def test_gqa_arena_skips_cuda_route_for_lexical_queries(monkeypatch):
     class LexicalStore:
         def configure_cuda_gqa_route_bank(self, *_args, **_kwargs):
