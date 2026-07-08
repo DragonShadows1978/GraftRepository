@@ -22,3 +22,39 @@ Inherited state:
 Next action: P0 composition map (Sonnet, flat, read-only) — what the
 live loop needs vs what exists; the key unknown is live per-turn
 witnessed deposit (all existing gates capture offline).
+
+## 2026-07-08 (P0 complete — composition map; plan premise corrected)
+
+Action: P0 map landed (Sonnet, read-only;
+artifacts/grm_e2e/P0_COMPOSITION_MAP.md — relocated from the agent's
+mis-pathed ~/artifacts).
+
+Findings:
+- PREMISE CORRECTION (the plan's "key unknown" was wrong): live
+  witnessed deposit EXISTS and is proven — deposit_from_cache()
+  (graft_arena.py:314-341) slices K/V from the live VRAM caches, is the
+  DEFAULT deposit path in step(), and the DeepSeek-MLA + generic-GQA
+  suites exercise the full live loop today. Offline capture was a
+  GPT-OSS-gate idiosyncrasy only.
+- REAL CENTRAL RISK: GPT-OSS-20B has never been driven live through
+  ArenaCache/GRMRuntime.chat — its cache layout (full+sliding layer
+  types, YARN RoPE) against the dialect-generic slicing math is the
+  untested seam. Wire-and-verify, not build.
+- Exists/wire: evict() IS the live-window hook; CUDA route + packed
+  store are env flips already load-bearing; flush_now/load persists the
+  repository (grafts, route index, native ids, epoch) but never live
+  caches — restart re-seeds by re-feed()ing the transcript (driver
+  responsibility, by design).
+- Build (small): per-turn route-wall timer (one-line return or wrapper);
+  probe scorecard reuses the LEXICAL grader pattern (_grounded + accept
+  lists) — no logit-margin scorer exists in-repo and none is needed.
+
+P1 architecture (from the map's sketch): scripts/grm_e2e_session.py —
+GRMRuntime.chat + gpt_oss dialect kwargs; default live deposits;
+scripted facts/supersessions/probes; evict() policy; flush_now →
+process restart → load → re-feed for the durability leg;
+GRM_GQA_CUDA_ROUTE=1 + GRM_GRAFT_STORAGE_BITS=8. FIRST LEG = the risk:
+a 2-3 turn GPT-OSS live-deposit smoke proving deposited grafts
+round-trip (mount back + recall) before the full session is attempted.
+
+Next action: P1 (Sonnet, flat).
