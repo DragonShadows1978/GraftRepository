@@ -97,3 +97,29 @@ coverage, and the K/V-asymmetric sweep if the 4-6 bit gap ever matters.
 Recommended production setting pending P3: INT8 at rest (conservative,
 proven free) with INT6 available where disk pressure demands (green, one
 depth of margin above the shoulder).
+
+## 2026-07-08 (P3 opened — packed format; gates registered before implementation)
+
+Action: David directed P3 execution (session goal). Scope as registered
+at close: packed on-disk format + dequant hooks at the two P0-mapped
+sites + format-1 coverage. Gates frozen here, before any code:
+
+- Packed format: per-layer packed uint8 payload + per-group scales
+  (group-32 symmetric, storage_bits ∈ {8,6}), explicit format-version
+  field. Fail-closed: unknown version/bits → hard error, never a silent
+  misread. Default behavior everywhere UNCHANGED (fp16); packed is
+  opt-in.
+- Round-trip gate: pack→unpack must be BIT-IDENTICAL to the sweep
+  transform's dequantized output for the same bits (the P1 transform is
+  the reference implementation; deterministic engine ⇒ exact match
+  expected).
+- Recall gate: battery re-run ONCE against real packed bytes at INT8
+  (INT6 spot-check) — margins must equal the sweep's dequantized-dir
+  results bit-for-bit (noise band 0.0 makes this a hard equality gate).
+- Disk receipt: ACTUAL on-disk sizes both formats (format-1 is
+  zlib-compressed — measured multipliers, not theoretical).
+- Mount-speed receipt: packed vs fp16 load time (the NVMe page-in
+  bonus), labeled instrument + state.
+- Suites: router baseline + native runtime green.
+
+Next action: P3 implementation (Sonnet, flat, no-delegation).
