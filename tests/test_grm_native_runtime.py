@@ -3351,6 +3351,86 @@ def test_arena_python_route_vectorizes_flat_mla_scores():
     assert arena.last_route_backend == "python"
 
 
+def test_query_lex_tokens_keep_lowercase_content_words():
+    """Query-side lex extension: lowercase labels enter the channel;
+    pure stopwords and punctuation do not. Rare identifiers still included."""
+    qlex = ArenaCache._query_lex_tokens(
+        "Recall probe. What is the current orion pin value?")
+    assert "orion" in qlex
+    assert "pin" in qlex
+    # stop / template glue must not dilute the channel
+    assert "what" not in qlex
+    assert "current" not in qlex
+    assert "value" not in qlex
+    assert "probe" not in qlex
+    # rare survivors still present when present
+    qlex2 = ArenaCache._query_lex_tokens("What about A17 and cypher bridge?")
+    assert "a17" in qlex2
+    assert "cypher" in qlex2
+    assert "bridge" in qlex2
+
+
+def test_query_side_lex_ranks_short_label_node_above_long_zero_overlap(monkeypatch):
+    """OPTION 1: short value-bearing node outranks a longer zero-overlap
+    node when the query names its label words. Latent stand-in favors the
+    long node (length-bias proxy); content-word lex against node text flips
+    the ranking. Node rare keys stay empty (lowercase labels never enter
+    _rare_tokens) — query-side only."""
+    monkeypatch.setenv("GRM_ROUTE_QUERY_LEX", "1")
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = None
+    arena.last_route_backend = "native"
+    long_text = (
+        "Session continuity filler smoke alpha. Acknowledge briefly. "
+        "Do not change any stored fact values. " * 8)
+    arena.grafts = [
+        # longer zero-overlap node — latent winner without lex
+        {"cent": np.array([1.0, 0.0], np.float32),
+         "rare": set(), "text": long_text, "kind": "turn", "retired": False},
+        # short value-bearing fact — lowercase labels only
+        {"cent": np.array([0.85, 0.0], np.float32),
+         "rare": set(),
+         "text": "The current orion pin value is Kestrel-9-Tango.",
+         "kind": "turn", "retired": False},
+    ]
+    arena._probe_key = lambda _text: np.array([1.0, 0.0], np.float32)
+    arena._vector_route_scores = lambda _p, _cand: {0: 1.0, 1: 0.85}
+    arena._normalize_scores = lambda base: base
+
+    order = arena.route(
+        "Recall probe. What is the current orion pin value?", exclude=set())
+    assert order[0] == 1, f"expected short orion node first, got {order}"
+    assert order[1] == 0
+    assert arena.last_route_backend == "python"
+
+    # Disabled: rare-only lex is empty → latent order wins
+    monkeypatch.setenv("GRM_ROUTE_QUERY_LEX", "0")
+    order_off = arena.route(
+        "Recall probe. What is the current orion pin value?", exclude=set())
+    assert order_off[0] == 0, f"disabled path should keep latent order: {order_off}"
+
+
+def test_query_side_lex_silent_when_no_content_hit_keeps_latent(monkeypatch):
+    """Content-word channel contributes +0 when no candidate text matches;
+    ranking stays latent-driven (native path when available)."""
+    monkeypatch.setenv("GRM_ROUTE_QUERY_LEX", "1")
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = None
+    arena.last_route_backend = "native"
+    arena.grafts = [
+        {"cent": np.array([1.0, 0.0], np.float32),
+         "rare": set(), "text": "alpha filler continuity", "kind": "doc",
+         "retired": False},
+        {"cent": np.array([0.5, 0.0], np.float32),
+         "rare": set(), "text": "beta filler continuity", "kind": "doc",
+         "retired": False},
+    ]
+    arena._probe_key = lambda _text: np.array([1.0, 0.0], np.float32)
+    # "orion pin" matches neither node → lex silent
+    order = arena.route("What is the current orion pin value?", exclude=set())
+    assert order == [0, 1]
+
+
 def test_arena_descent_expand_uses_native_source_closure():
     class ClosureStore:
         def __init__(self):

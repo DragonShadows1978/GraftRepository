@@ -375,7 +375,19 @@ class ArenaCache:
         # identifier hit must dominate. _key_score lives in O(1) cosine
         # range (every dialect must keep it there), so +1 per full match
         # wins outright, partial matches rank between.
+        #
+        # OPTION 1 (query-side lex extension, 2026-07-08): when enabled
+        # (default ON; set GRM_ROUTE_QUERY_LEX=0 to disable), content-word
+        # tokens from the query also participate — lowercase labels like
+        # "orion"/"pin" that never enter _rare_tokens. Match is against
+        # candidate NODE TEXT (query-side only; node rare keys / indexes
+        # unchanged). Native/CUDA stores only rare keys, so content hits
+        # force a Python rescore; when content words hit no candidate the
+        # native/CUDA order is kept (lex silent → latent ordering intact).
         qrare = self._rare_tokens(bare_text)
+        qlex = (self._query_lex_tokens(bare_text)
+                if self._route_query_lex_enabled() else qrare)
+        content_extra = qlex - qrare
 
         # P1 follow-on (profile-named): the eligible BASE (retired/kind
         # filter) depends only on graft state, so it is epoch-cached in
@@ -390,9 +402,11 @@ class ArenaCache:
             cand = [i for i in cand_base if i not in exclude]
         else:
             cand = cand_base
+        # Native lexical channel is rare-key only (node indexes unchanged).
         native_order = self._native_route_order(
             p, qrare, cand, limit=route_limit, exclude=exclude)
-        if native_order is not None:
+        if native_order is not None and not self._query_lex_needs_rescore(
+                content_extra, cand):
             return native_order
         self.last_route_backend = "python"
         base = self._vector_route_scores(p, cand)
@@ -410,7 +424,7 @@ class ArenaCache:
         for i in cand:
             if i not in base:
                 continue
-            score = base[i] + self._lex_bonus(qrare, self.grafts[i])
+            score = base[i] + self._lex_bonus(qlex, self.grafts[i])
             if np.isfinite(score):
                 scored.append((score, i))
         scored.sort(key=lambda item: -item[0])
@@ -457,12 +471,89 @@ class ArenaCache:
     def _normalize_scores(self, base):
         return base
 
-    def _lex_bonus(self, qrare, g):
-        if not qrare:
+    def _lex_bonus(self, qlex, g):
+        """Fractional lexical bonus in [0, 1] — same scale as before
+        (hits / |query_lex|). Full identifier match still +1. Content-word
+        query tokens (when present) match against node text, not only the
+        stored rare-key set, so latent ordering still dominates when the
+        lex channel is silent (no hits → +0)."""
+        if not qlex:
             return 0.0
         if "rare" not in g:
             g["rare"] = self._rare_tokens(g["text"])
-        return len(qrare & g["rare"]) / len(qrare)
+        have = set(g["rare"])
+        # Query-side residual: tokens that cannot hit stored rare keys
+        # (lowercase content words) are matched against node text.
+        if not (qlex <= have):
+            have |= self._node_text_tokens(g.get("text", ""))
+        return len(qlex & have) / len(qlex)
+
+    # Pure stopwords / query scaffolding for the content-word channel.
+    # Dialect-generic; deliberately excludes label nouns (orion, pin,
+    # cypher, bridge, …). Fact-template glue ("current", "value") is
+    # dropped so sibling fact nodes don't share spurious partial credit.
+    _QUERY_LEX_STOP = frozenset({
+        "a", "an", "the", "is", "are", "was", "were", "be", "been", "being",
+        "am", "do", "does", "did", "will", "would", "could", "should", "may",
+        "might", "must", "shall", "can", "to", "of", "in", "on", "at", "for",
+        "from", "by", "with", "as", "into", "about", "than", "that", "this",
+        "these", "those", "it", "its", "i", "me", "my", "we", "our", "you",
+        "your", "he", "she", "they", "them", "their", "what", "which", "who",
+        "whom", "whose", "where", "when", "why", "how", "and", "or", "but",
+        "not", "no", "nor", "if", "then", "so", "too", "very", "just", "only",
+        "also", "any", "all", "each", "few", "more", "most", "other", "some",
+        "such", "own", "same", "now", "here", "there", "up", "down", "out",
+        "off", "over", "under", "again", "further", "once", "please", "reply",
+        "answer", "tell", "recall", "probe", "question", "ask", "asking",
+        "user", "assistant", "current", "value",
+    })
+
+    @staticmethod
+    def _route_query_lex_enabled():
+        """Query-side content-word lex extension. Default ON; set
+        GRM_ROUTE_QUERY_LEX=0/false/off to restore rare-only behavior."""
+        v = os.environ.get("GRM_ROUTE_QUERY_LEX", "1").strip().lower()
+        return v not in ("0", "false", "no", "off", "")
+
+    @classmethod
+    def _query_content_tokens(cls, text):
+        """Lowercase content words from a route query (stopword-filtered).
+        Keeps label nouns that _rare_tokens drops (no digit / not ALL-CAPS)."""
+        out = set()
+        for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text):
+            tok = w.rstrip(".,:;").lower()
+            if len(tok) < 2 or tok in cls._QUERY_LEX_STOP:
+                continue
+            out.add(tok)
+        return out
+
+    @classmethod
+    def _query_lex_tokens(cls, text):
+        """Full query-side lexical channel: rare identifiers ∪ content words."""
+        return cls._rare_tokens(text) | cls._query_content_tokens(text)
+
+    @staticmethod
+    def _node_text_tokens(text):
+        """Lowercase word tokens from node text for query-side content match.
+        Not stored; computed on demand. Node rare keys / indexes untouched."""
+        out = set()
+        for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text or ""):
+            tok = w.rstrip(".,:;").lower()
+            if tok:
+                out.add(tok)
+        return out
+
+    def _query_lex_needs_rescore(self, content_extra, cand):
+        """True when content-word query tokens hit at least one candidate's
+        text — native rare-key scoring cannot see those hits, so Python
+        must rescore. Silent content (no hits) keeps native/CUDA order."""
+        if not content_extra:
+            return False
+        for i in cand:
+            text = self.grafts[i].get("text", "")
+            if content_extra & self._node_text_tokens(text):
+                return True
+        return False
 
     def _route_cand_base(self):
         """Epoch-cached eligible-candidate base for route(): every graft
