@@ -3352,3 +3352,476 @@ def test_repository_native_route_sync_includes_child_centroids(tmp_path):
 
         GraftRepository._native_set_route(repo, 0)
         assert store.route([0.0, 1.0], topk=1) == [node_id]
+
+
+# ============================================================================
+# MLA CUDA route P1 (docs/GRM_MLA_CUDA_ROUTE_PLAN.md /
+# docs/GRM_MLA_CUDA_ROUTE_LEDGER.md "P0 complete" design constraints):
+# limit-aware native topk + epoch-cached native_to_idx map, mirroring the
+# GQA W1 epoch-cache pattern above but on the MLA (base ArenaCache) dialect.
+# ============================================================================
+
+def _mla_epoch_battery_arena():
+    """A plain ArenaCache (MLA dialect) with three eligible flat-key nodes,
+    no live model / no NativeGraftStore round trip -- mirrors
+    _gqa_epoch_battery_arena for the MLA _native_to_idx_map cache."""
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = None
+    arena.last_route_backend = "python"
+    arena.grafts = [
+        {"native_node_id": 201, "cent": np.array([0.1, 0.0], np.float32),
+         "rare": set(), "text": "weak", "kind": "doc", "retired": False},
+        {"native_node_id": 202, "cent": np.array([1.0, 0.0], np.float32),
+         "rare": set(), "text": "good", "kind": "doc", "retired": False},
+        {"native_node_id": 203, "cent": np.array([2.0, 0.0], np.float32),
+         "rare": set(), "text": "best", "kind": "doc", "retired": False},
+    ]
+    return arena
+
+
+def test_mla_native_to_idx_epoch_bump_covers_every_signature_changing_mutation():
+    """P1 fail-closed equivalence gate (plan-registered): for a battery of
+    mutations covering the ArenaCache-side mutation set the MLA epoch now
+    tracks (add, native_node_id replace, child_cents flip, retire, kind
+    flip, clear), any mutation that changes what `_native_to_idx_map()` OR
+    `_route_cand_base()` (P1 follow-on: the epoch-cached eligibility base,
+    which reads `retired`/`kind`) would produce must also bump
+    `_cuda_gqa_epoch` (now real on the MLA dialect too, per
+    _bump_cuda_gqa_epoch). Mirrors
+    test_gqa_cuda_epoch_bump_covers_every_signature_changing_mutation one
+    dialect over."""
+    arena = _mla_epoch_battery_arena()
+
+    def snapshot():
+        epoch = getattr(arena, "_cuda_gqa_epoch", 0)
+        idx_to_native, ineligible = arena._native_to_idx_map()
+        cand_base = arena._route_cand_base()
+        return epoch, (tuple(sorted(idx_to_native.items())),
+                       tuple(sorted(ineligible)),
+                       tuple(cand_base))
+
+    checked = 0
+
+    def assert_mutation_is_fail_closed(mutate):
+        nonlocal checked
+        before_epoch, before_sig = snapshot()
+        mutate()
+        after_epoch, after_sig = snapshot()
+        if after_sig != before_sig:
+            assert after_epoch != before_epoch, (
+                "signature changed but epoch did not bump — under-"
+                "invalidation risk (MLA native_to_idx cache)")
+        checked += 1
+
+    def do_add():
+        arena.grafts.append({"native_node_id": 204,
+                             "cent": np.array([3.0, 0.0], np.float32),
+                             "rare": set(), "text": "added", "kind": "doc",
+                             "retired": False})
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_add)
+
+    def do_native_id_replace():
+        arena.grafts[0]["native_node_id"] = 9001
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_native_id_replace)
+
+    def do_child_cents_flip():
+        arena.grafts[1]["child_cents"] = [np.array([0.0, 1.0], np.float32)]
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_child_cents_flip)
+
+    def do_native_id_clear():
+        arena.grafts[2]["native_node_id"] = None
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_native_id_clear)
+
+    def do_metadata_only():
+        arena.grafts[0]["tags"] = ["noted"]
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_metadata_only)
+
+    def do_retire():
+        # retired IS an eligibility field for `_route_cand_base()` (P1
+        # follow-on) — this mutation changes the cand-base signature and
+        # the battery asserts the bump accompanies it.
+        arena.grafts[0]["retired"] = True
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_retire)
+
+    def do_kind_recall():
+        # kind="recall" flips cand-base eligibility (route() excludes
+        # recall-kind grafts) — the other NEW field the base reads.
+        arena.grafts[1]["kind"] = "recall"
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_kind_recall)
+
+    def do_clear():
+        del arena.grafts[:]
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_clear)
+
+    assert checked == 8
+
+
+def test_mla_native_to_idx_map_fast_path_returns_same_cached_object():
+    """No epoch movement -> _native_to_idx_map returns the exact same
+    cached tuple object, no rebuild (the O(1) fast path this whole cache
+    exists to provide)."""
+    arena = _mla_epoch_battery_arena()
+    arena._cuda_gqa_epoch = 0
+
+    first = arena._native_to_idx_map()
+    second = arena._native_to_idx_map()
+    assert second is first
+
+    arena._bump_cuda_gqa_epoch()
+    third = arena._native_to_idx_map()
+    assert third is not first
+    assert third[0] == first[0]     # same content, rebuilt object
+
+
+def test_mla_native_to_idx_map_under_invalidation_would_be_visible():
+    """Defense-in-depth companion to the epoch-bump battery: if a mutation
+    is (incorrectly) made WITHOUT bumping the epoch, the fast path must
+    serve the stale map -- proving the epoch is load-bearing (not simply
+    always rebuilt), i.e. that the fast-path branch is real and reachable,
+    not dead code shadowed by an always-miss cache."""
+    arena = _mla_epoch_battery_arena()
+    arena._cuda_gqa_epoch = 0
+
+    before = arena._native_to_idx_map()
+    arena.grafts[0]["native_node_id"] = 9999   # mutate WITHOUT bumping
+    stale = arena._native_to_idx_map()
+    assert stale is before
+    assert stale[0][0] == 201                  # old id, proves staleness
+
+    arena._bump_cuda_gqa_epoch()
+    fresh = arena._native_to_idx_map()
+    assert fresh[0][0] == 9999
+
+
+def test_mla_route_cand_base_fast_path_and_staleness():
+    """P1 follow-on: _route_cand_base() must (a) return the exact same
+    cached list object while the epoch is unchanged (O(1) fast path, no
+    O(N) rebuild), (b) serve the stale base if a mutation skips the bump
+    (proving the epoch is load-bearing), and (c) rebuild with correct
+    content once the epoch moves."""
+    arena = _mla_epoch_battery_arena()
+    arena._cuda_gqa_epoch = 0
+
+    first = arena._route_cand_base()
+    assert first == [0, 1, 2]
+    assert arena._route_cand_base() is first          # (a) identity
+
+    arena.grafts[0]["retired"] = True                 # mutate WITHOUT bump
+    assert arena._route_cand_base() is first          # (b) stale by design
+
+    arena._bump_cuda_gqa_epoch()
+    fresh = arena._route_cand_base()
+    assert fresh is not first
+    assert fresh == [1, 2]                            # (c) rebuilt
+
+    arena.grafts[1]["kind"] = "recall"
+    arena._bump_cuda_gqa_epoch()
+    assert arena._route_cand_base() == [2]
+
+
+def test_mla_route_cand_semantics_byte_identical_to_inline_comprehension():
+    """Byte-identity gate for the cand refactor: for a battery of graft
+    states mixing retired/recall/eligible and per-call excludes, route()'s
+    candidate set (observed through the Python-fallback ranking, which
+    consumes cand directly) must equal what the OLD inline comprehension
+    `[i for i in range(len(grafts)) if i not in exclude and not retired
+    and kind != recall]` produces — same members, same ascending order."""
+    rng = np.random.default_rng(4242)
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = None      # force the Python fallback (consumes cand)
+    arena.last_route_backend = "python"
+
+    for trial in range(12):
+        n = int(rng.integers(1, 40))
+        grafts = []
+        for i in range(n):
+            kind = rng.choice(["turn", "doc", "recall"], p=[0.6, 0.25, 0.15])
+            grafts.append({
+                "native_node_id": i,
+                "cent": np.asarray([float(i + 1), 1.0], np.float32),
+                "rare": set(), "text": f"node {i}", "kind": str(kind),
+                "retired": bool(rng.random() < 0.2),
+            })
+        arena.grafts = grafts
+        arena._bump_cuda_gqa_epoch()
+        excl_n = int(rng.integers(0, n + 1))
+        exclude = set(rng.choice(n, size=excl_n, replace=False).tolist())
+
+        old_cand = [i for i in range(len(grafts))
+                    if i not in exclude and not grafts[i].get("retired")
+                    and grafts[i].get("kind", "turn") != "recall"]
+
+        probe = np.asarray([1.0, 0.0], np.float32)
+        arena._probe_key = lambda _t, q=probe: q
+        ranking = arena.route("plain probe", exclude=exclude, limit=None)
+        assert arena.last_route_backend == "python"
+        # scores are strictly increasing with index (cent = [i+1, 1.0] vs
+        # probe [1,0]), so the fallback ranking is old_cand reversed —
+        # membership AND order both derive from cand.
+        assert ranking == sorted(old_cand, reverse=True), (
+            f"trial={trial} cand semantics diverged")
+
+
+def test_mla_limited_route_prefix_parity_mixed_eligibility_fuzz(tmp_path):
+    """Fuzz parity with retired/recall grafts mixed in (the NEW eligibility
+    fields the cand-base cache reads) plus per-call excludes: limited-path
+    native results must equal the prefix of the full-path results, and no
+    retired/recall/excluded index may ever appear."""
+    rng = np.random.default_rng(31337)
+    dim = 12
+    n_nodes = 160
+    with _mla_native_store(tmp_path) as store:
+        node_ids = []
+        cents = _random_cents(rng, n_nodes, dim)
+        for i in range(n_nodes):
+            node_id = store.add_node(f"node {i}", b"", ntok=1)
+            store.set_route(node_id, cents[i].tolist(), [])
+            node_ids.append(node_id)
+        arena = _mla_arena_from_store(store, node_ids, cents, rng)
+        # mark a random ~25% retired and ~10% recall
+        for i in range(n_nodes):
+            r = rng.random()
+            if r < 0.25:
+                arena.grafts[i]["retired"] = True
+            elif r < 0.35:
+                arena.grafts[i]["kind"] = "recall"
+        arena._bump_cuda_gqa_epoch()
+        ineligible = {i for i, g in enumerate(arena.grafts)
+                      if g.get("retired") or g.get("kind") == "recall"}
+
+        for trial in range(6):
+            probe = _random_cents(rng, 1, dim)[0]
+            arena._probe_key = lambda _t, q=probe: q
+            excl_n = int(rng.integers(0, 40))
+            exclude = set(rng.choice(n_nodes, size=excl_n, replace=False).tolist())
+            cand_n = n_nodes - len(ineligible | exclude)
+
+            full = arena.route("probe", exclude=exclude, limit=None)
+            assert arena.last_route_backend == "native"
+            assert len(full) == cand_n
+            assert not (set(full) & (ineligible | exclude))
+
+            for limit in (0, 1, 3, 9, cand_n, cand_n + 2):
+                got = arena.route("probe", exclude=exclude, limit=limit)
+                want_len = min(max(0, limit), cand_n)
+                assert got == full[:want_len], (
+                    f"trial={trial} limit={limit} diverged")
+                if want_len:
+                    assert arena.last_route_backend == "native"
+
+
+def _mla_native_store(tmp_path):
+    lib = build_native(tmp_path)
+    return NativeGraftStore(
+        lib, model_type="DeepSeekV2Lite_TC", num_layers=27,
+        hidden_dim=2048, vals_per_tok_layer=576, route_layer=3,
+        latent_rank=512, rope_dim=64)
+
+
+def _mla_arena_from_store(store, node_ids, cents, rng, n_lexical=0):
+    grafts = []
+    for i, (node_id, cent) in enumerate(zip(node_ids, cents)):
+        g = {"native_node_id": int(node_id),
+             "cent": np.asarray(cent, dtype=np.float32),
+             "rare": set(), "text": f"node {i}", "kind": "turn",
+             "retired": False}
+        grafts.append(g)
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = store
+    arena.last_route_backend = "python"
+    arena.grafts = grafts
+    return arena
+
+
+def _random_cents(rng, n, dim):
+    rows = rng.normal(size=(n, dim)).astype(np.float32)
+    rows /= (np.linalg.norm(rows, axis=1, keepdims=True) + 1e-8)
+    return rows
+
+
+@pytest.mark.parametrize("n_nodes", [37, 1000])
+def test_mla_limited_route_prefix_parity_vs_full_path(tmp_path, n_nodes):
+    """NEW prefix-parity gate (plan-registered): for a battery of
+    repos/shapes, limited-path (`limit=k`) native results must equal the
+    prefix of the old full-path (`limit=None`) results for the SAME
+    inputs. Reuses the real NativeGraftStore native runtime (not a Python
+    fake) so the C ABI's own tie-breaking/ordering is exercised, not just
+    the Python-side remap logic."""
+    rng = np.random.default_rng(1234 + n_nodes)
+    dim = 16
+    with _mla_native_store(tmp_path) as store:
+        node_ids = []
+        cents = _random_cents(rng, n_nodes, dim)
+        for i in range(n_nodes):
+            node_id = store.add_node(f"node {i}", b"", ntok=1)
+            store.set_route(node_id, cents[i].tolist(), [])
+            node_ids.append(node_id)
+        arena = _mla_arena_from_store(store, node_ids, cents, rng)
+        probe = _random_cents(rng, 1, dim)[0]
+        arena._probe_key = lambda _t, q=probe: q
+
+        full = arena.route("probe", exclude=set(), limit=None)
+        assert arena.last_route_backend == "native"
+        assert len(full) == n_nodes
+
+        for limit in (0, 1, 3, 7, n_nodes, n_nodes + 5):
+            got = arena.route("probe", exclude=set(), limit=limit)
+            assert arena.last_route_backend == "native"
+            want_len = min(max(0, limit), n_nodes)
+            assert got == full[:want_len], (
+                f"limit={limit} diverged from full-path prefix")
+
+
+def test_mla_limited_route_prefix_parity_with_excludes_and_fuzz(tmp_path):
+    """Fuzz battery over random repos with mixed eligibility (excludes),
+    the core edge case the slack design exists for: excluded winners that
+    would otherwise occupy native's top ranks ahead of eligible candidates.
+    """
+    rng = np.random.default_rng(777)
+    dim = 12
+    n_nodes = 240
+    with _mla_native_store(tmp_path) as store:
+        node_ids = []
+        cents = _random_cents(rng, n_nodes, dim)
+        for i in range(n_nodes):
+            node_id = store.add_node(f"node {i}", b"", ntok=1)
+            store.set_route(node_id, cents[i].tolist(), [])
+            node_ids.append(node_id)
+        arena = _mla_arena_from_store(store, node_ids, cents, rng)
+
+        for trial in range(8):
+            probe = _random_cents(rng, 1, dim)[0]
+            arena._probe_key = lambda _t, q=probe: q
+            # random exclude set, sized so eligible candidates still exist
+            excl_n = int(rng.integers(0, n_nodes - 5))
+            exclude = set(rng.choice(n_nodes, size=excl_n, replace=False).tolist())
+            cand_n = n_nodes - len(exclude)
+
+            full = arena.route("probe", exclude=exclude, limit=None)
+            assert arena.last_route_backend == "native"
+            assert len(full) == cand_n
+
+            for limit in (0, 1, 2, 5, cand_n, cand_n + 3):
+                got = arena.route("probe", exclude=exclude, limit=limit)
+                assert arena.last_route_backend == "native"
+                want_len = min(max(0, limit), cand_n)
+                assert got == full[:want_len], (
+                    f"trial={trial} limit={limit} exclude_n={excl_n} "
+                    "diverged from full-path prefix")
+
+
+def test_mla_limited_route_prefix_parity_limit_larger_than_eligible(tmp_path):
+    """Edge case: limit larger than the eligible count. Must return exactly
+    the full eligible ranking, not error or truncate short."""
+    rng = np.random.default_rng(55)
+    dim = 8
+    n_nodes = 20
+    with _mla_native_store(tmp_path) as store:
+        node_ids = []
+        cents = _random_cents(rng, n_nodes, dim)
+        for i in range(n_nodes):
+            node_id = store.add_node(f"node {i}", b"", ntok=1)
+            store.set_route(node_id, cents[i].tolist(), [])
+            node_ids.append(node_id)
+        arena = _mla_arena_from_store(store, node_ids, cents, rng)
+        probe = _random_cents(rng, 1, dim)[0]
+        arena._probe_key = lambda _t, q=probe: q
+
+        full = arena.route("probe", exclude=set(), limit=None)
+        got = arena.route("probe", exclude=set(), limit=10_000)
+        assert got == full
+        assert arena.last_route_backend == "native"
+
+
+def test_mla_limited_route_prefix_parity_limit_zero(tmp_path):
+    """Edge case: limit=0 must short-circuit to [] without ever calling
+    native (matches the pre-P1 `route()`-level `route_limit == 0` guard,
+    and the `_native_route_order`-level `want <= 0` guard)."""
+    rng = np.random.default_rng(9)
+    dim = 8
+    with _mla_native_store(tmp_path) as store:
+        node_id = store.add_node("only node", b"", ntok=1)
+        cent = _random_cents(rng, 1, dim)[0]
+        store.set_route(node_id, cent.tolist(), [])
+        arena = _mla_arena_from_store(store, [node_id], [cent], rng)
+        arena._probe_key = lambda _t: cent
+
+        assert arena.route("probe", exclude=set(), limit=0) == []
+
+
+def test_mla_limited_route_prefix_parity_excluded_winner(tmp_path):
+    """Edge case named explicitly in the plan: the highest-scoring node is
+    EXCLUDED by the caller. The limited path must still surface the next-
+    best eligible node(s), not silently drop the window short because the
+    excluded winner consumed slack."""
+    dim = 4
+    with _mla_native_store(tmp_path) as store:
+        cents = [
+            np.array([1.0, 0.0, 0.0, 0.0], np.float32),   # best, excluded
+            np.array([0.9, 0.1, 0.0, 0.0], np.float32),   # 2nd best
+            np.array([0.1, 0.9, 0.0, 0.0], np.float32),   # 3rd
+            np.array([0.0, 0.0, 1.0, 0.0], np.float32),   # weak
+        ]
+        node_ids = []
+        for i, c in enumerate(cents):
+            node_id = store.add_node(f"node {i}", b"", ntok=1)
+            store.set_route(node_id, c.tolist(), [])
+            node_ids.append(node_id)
+        arena = _mla_arena_from_store(store, node_ids, cents, None)
+        probe = np.array([1.0, 0.0, 0.0, 0.0], np.float32)
+        arena._probe_key = lambda _t: probe
+
+        full_no_exclude = arena.route("probe", exclude=set(), limit=None)
+        assert full_no_exclude[0] == 0     # node 0 is the true winner
+
+        excluded_full = arena.route("probe", exclude={0}, limit=None)
+        assert 0 not in excluded_full
+        assert len(excluded_full) == 3
+
+        limited = arena.route("probe", exclude={0}, limit=2)
+        assert limited == excluded_full[:2]
+        assert arena.last_route_backend == "native"
+
+
+def test_mla_limited_route_non_finite_scores_present(tmp_path):
+    """Edge case: a probe/route combination that produces a non-finite
+    score for some node must still be handled fail-closed (M6 NaN law:
+    native drops non-finite scores rather than sorting them; a legitimate
+    resulting shortfall vs the requested topk must not be mistaken for the
+    slack-under-covered failure mode)."""
+    dim = 4
+    with _mla_native_store(tmp_path) as store:
+        cents = [
+            np.array([1.0, 0.0, 0.0, 0.0], np.float32),
+            np.array([np.nan, 0.0, 0.0, 0.0], np.float32),
+            np.array([0.5, 0.5, 0.0, 0.0], np.float32),
+            np.array([0.0, 1.0, 0.0, 0.0], np.float32),
+        ]
+        node_ids = []
+        for i, c in enumerate(cents):
+            node_id = store.add_node(f"node {i}", b"", ntok=1)
+            store.set_route(node_id, c.tolist(), [])
+            node_ids.append(node_id)
+        arena = _mla_arena_from_store(store, node_ids, cents, None)
+        probe = np.array([1.0, 0.0, 0.0, 0.0], np.float32)
+        arena._probe_key = lambda _t: probe
+
+        full = arena.route("probe", exclude=set(), limit=None)
+        # the NaN node must never appear (M6 law) -- 3 finite nodes survive
+        assert 1 not in full
+        assert len(full) == 3
+
+        for limit in (1, 2, 3, 10):
+            got = arena.route("probe", exclude=set(), limit=limit)
+            want_len = min(limit, 3)
+            assert got == full[:want_len]
+            assert 1 not in got
+            assert arena.last_route_backend == "native"

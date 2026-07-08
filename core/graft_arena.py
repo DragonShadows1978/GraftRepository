@@ -86,13 +86,19 @@ class ArenaCache:
             tc.empty_cache()
 
     def _bump_cuda_gqa_epoch(self):
-        """No-op on the MLA dialect (base class). GQAArenaCache overrides
-        this with the real mutation-epoch counter used by the opt-in CUDA
-        GQA route bank cache (see GQAArenaCache._cuda_route_bank_inputs).
-        Defined here, at every self.grafts mutation site shared by both
-        dialects (deposit, deposit_from_cache, step's rollback/restore), so
-        those call sites don't need dialect-specific branching."""
-        return
+        """Mutation-epoch bump, shared by both dialects.
+
+        Historically a no-op on the MLA (base-class) dialect — GQAArenaCache
+        overrode it with the real counter driving its opt-in CUDA route bank
+        cache. MLA CUDA route P1 (docs/GRM_MLA_CUDA_ROUTE_PLAN.md) makes it
+        real here too: `_native_to_idx_cache` (the epoch-cached full
+        native_node_id -> graft-index map used by `_native_route_order`)
+        keys on this same counter. Defined at every self.grafts mutation
+        site shared by both dialects (deposit, deposit_from_cache, step's
+        rollback/restore) plus every graft_repository.py mutation site
+        (forget/correct_memory/migrate/cull_graft/...), so those call sites
+        never needed dialect-specific branching and still don't."""
+        self._cuda_gqa_epoch = getattr(self, "_cuda_gqa_epoch", 0) + 1
 
     def reset_live_cache(self):
         """Drop the live device cache without touching persisted graft nodes."""
@@ -348,9 +354,19 @@ class ArenaCache:
         # wins outright, partial matches rank between.
         qrare = self._rare_tokens(bare_text)
 
-        cand = [i for i in range(len(self.grafts))
-                if i not in exclude and not self.grafts[i].get("retired")
-                and self.grafts[i].get("kind", "turn") != "recall"]
+        # P1 follow-on (profile-named): the eligible BASE (retired/kind
+        # filter) depends only on graft state, so it is epoch-cached in
+        # _route_cand_base(); only the per-call `exclude` filter runs here.
+        # Byte-identical to the old single comprehension: same ascending
+        # order, same three membership conditions. When `exclude` is empty
+        # the cached base list itself is used — every downstream consumer
+        # (_native_route_order, _vector_route_scores, the Python-fallback
+        # scoring loops) reads cand without mutating it.
+        cand_base = self._route_cand_base()
+        if exclude:
+            cand = [i for i in cand_base if i not in exclude]
+        else:
+            cand = cand_base
         native_order = self._native_route_order(
             p, qrare, cand, limit=route_limit)
         if native_order is not None:
@@ -425,6 +441,69 @@ class ArenaCache:
             g["rare"] = self._rare_tokens(g["text"])
         return len(qrare & g["rare"]) / len(qrare)
 
+    def _route_cand_base(self):
+        """Epoch-cached eligible-candidate base for route(): every graft
+        index that is not retired and not recall-kind, ascending. The two
+        fields this reads (`retired`, `kind`) are exactly the eligibility
+        fields the GQA route-bank signature walk reads, so every mutation
+        site that can change them already bumps `_cuda_gqa_epoch` (W1
+        choke points: graft_arena _deposit_consolidation / step's
+        kind="recall" flip / rollback truncations; graft_repository
+        _mark_mutations / load / _rehydrate_from_wal / _rebuild_child_keys
+        / _fold_once / extraction sites). Per-call `exclude` filtering
+        happens in route(), against this base. The returned list is SHARED
+        (same object until the epoch moves) — callers must treat it as
+        read-only, which every current consumer does."""
+        epoch = getattr(self, "_cuda_gqa_epoch", 0)
+        cached = getattr(self, "_route_cand_base_cache", None)
+        cache_epoch = getattr(self, "_route_cand_base_epoch", None)
+        if cached is not None and cache_epoch == epoch:
+            return cached
+        base = [i for i, g in enumerate(self.grafts)
+                if not g.get("retired")
+                and g.get("kind", "turn") != "recall"]
+        self._route_cand_base_cache = base
+        self._route_cand_base_epoch = epoch
+        return base
+
+    def _native_to_idx_map(self):
+        """Epoch-cached full `graft-index -> native_node_id` map plus the
+        set of graft indices ineligible for native routing (P1,
+        docs/GRM_MLA_CUDA_ROUTE_PLAN.md). Rebuilt only when `_cuda_gqa_epoch`
+        (real on this dialect since P1 — see _bump_cuda_gqa_epoch) has moved
+        since the cache was built; a fresh mutation-epoch always triggers a
+        rebuild, so this is fail-closed the same way GQA's bank cache is
+        (over-invalidation is free; under-invalidation is the bug class both
+        caches exist to prevent). Nodes with `child_cents` and no native
+        multi-key support are marked ineligible on purpose: they must keep
+        falling through to the Python route exactly as before (the per-call
+        eligibility check in `_native_route_order` used to also police this
+        by walking every candidate's raw dict fields; it still does, now
+        against this cached map instead of re-deriving from scratch)."""
+        store = getattr(self, "native_store", None)
+        epoch = getattr(self, "_cuda_gqa_epoch", 0)
+        cached = getattr(self, "_native_to_idx_cache", None)
+        cache_epoch = getattr(self, "_native_to_idx_cache_epoch", None)
+        if cached is not None and cache_epoch == epoch:
+            return cached
+        multi_ok = bool(store is not None and getattr(
+            store, "supports_multi_route_keys", False))
+        idx_to_native = {}
+        ineligible = set()
+        for i, g in enumerate(self.grafts):
+            if g.get("child_cents") and not multi_ok:
+                ineligible.add(i)
+                continue
+            node_id = g.get("native_node_id")
+            if node_id is None:
+                ineligible.add(i)
+                continue
+            idx_to_native[i] = int(node_id)
+        result = (idx_to_native, ineligible)
+        self._native_to_idx_cache = result
+        self._native_to_idx_cache_epoch = epoch
+        return result
+
     def _native_route_order(self, pkey, qrare, cand, limit=None):
         store = getattr(self, "native_store", None)
         if store is None or not hasattr(store, "route"):
@@ -434,36 +513,99 @@ class ArenaCache:
             return None
         if not cand:
             return []
+        idx_to_native, ineligible = self._native_to_idx_map()
+        # empty ineligible set (the common case) skips the O(len(cand))
+        # membership pass entirely — any() over an empty set's genexpr is
+        # False for every element, so the guard is byte-identical.
+        if ineligible and any(i in ineligible for i in cand):
+            return None
+        # Subset the epoch-cached map by `cand` (O(len(cand)) dict lookups)
+        # instead of rebuilding a fresh {native_node_id: idx} dict from raw
+        # graft attribute access every call (the P0-receipted cost:
+        # native_to_idx build was ~O(N) per call). The cache itself
+        # (idx_to_native) is only rebuilt when the mutation epoch moves.
         native_to_idx = {}
         for i in cand:
-            g = self.grafts[i]
-            # Native v1 stores one route key per node. Hierarchical
-            # digest/era nodes use child keys too; require the multi-key
-            # native index before routing them outside Python.
-            if g.get("child_cents") and not getattr(
-                    store, "supports_multi_route_keys", False):
-                return None
-            node_id = g.get("native_node_id")
+            node_id = idx_to_native.get(i)
             if node_id is None:
                 return None
-            native_to_idx[int(node_id)] = i
+            native_to_idx[node_id] = i
+        if len(native_to_idx) != len(cand):
+            return None
+
+        n_total = len(self.grafts)
+        if limit is None:
+            # Full-rank repository ordering: byte-identical to the
+            # pre-P1 contract. topk = full N; completeness law unchanged.
+            topk = n_total
+        else:
+            want = min(max(0, int(limit)), len(cand))
+            if want <= 0:
+                return []
+            # `store.route` ranks over the ENTIRE native store, not just
+            # `cand` — nodes outside `cand` (excluded by the caller, or
+            # retired/recall-kind, which native has no concept of) can
+            # still occupy native's top ranks and would silently displace
+            # eligible ids if topk were just `want`. Slack = however many
+            # native-known ids exist outside `cand` (upper bound: native
+            # store size never exceeds len(self.grafts) -- verified
+            # invariant, GraftRepository._native_sync_node only ever grows
+            # _native_node_ids lazily up to len(arena.grafts)). Request
+            # enough that even if ALL of that slack out-ranks every
+            # eligible id, `want` eligible survivors are still inside the
+            # requested window.
+            excluded = max(0, n_total - len(cand))
+            topk = min(n_total, want + excluded)
+
         try:
             routed_native = store.route(
                 np.asarray(pkey, dtype=np.float32).reshape(-1).tolist(),
-                sorted(qrare), topk=len(self.grafts))
+                sorted(qrare), topk=topk)
         except Exception:
             return None
+
         routed = []
         for node_id in routed_native:
             idx = native_to_idx.get(int(node_id))
             if idx is not None:
                 routed.append(idx)
-        if len(routed) != len(cand):
-            return None
-        self.last_route_backend = "native"
-        if limit is not None:
-            return routed[:max(0, int(limit))]
-        return routed
+                if limit is not None and len(routed) >= min(
+                        max(0, int(limit)), len(cand)):
+                    break
+
+        if limit is None:
+            # REPLACEMENT completeness law, full-rank path: unchanged from
+            # pre-P1 — native must account for every eligible candidate.
+            if len(routed) != len(cand):
+                return None
+            self.last_route_backend = "native"
+            return routed
+
+        want = min(max(0, int(limit)), len(cand))
+        # REPLACEMENT completeness law, limited path: native must return
+        # exactly min(topk, n_eligible) ids that map through native_to_idx.
+        # We can't observe n_eligible directly (it's native-internal state
+        # — could be less than topk if non-finite scores were dropped, M6
+        # law), so the fail-closed check is: either we filled the window
+        # we asked for (`want` mapped ids found), or native handed back
+        # fewer RAW ids than `topk` (meaning it ran out of eligible nodes
+        # store-wide, not that our slack guess was wrong) and every one of
+        # those raw ids mapped cleanly. Any other shortfall (native filled
+        # its full topk quota but we still didn't reach `want` mapped ids)
+        # means the slack guess under-covered — same distrust as today,
+        # Python fallback, bounded cost.
+        if len(routed) >= want:
+            self.last_route_backend = "native"
+            return routed[:want]
+        if len(routed_native) < topk:
+            # Native legitimately exhausted its eligible pool (NaN drops or
+            # a smaller store than n_total) before filling topk. Every
+            # returned id must still map, or something else is wrong.
+            if len(routed) != len(routed_native):
+                return None
+            self.last_route_backend = "native"
+            return routed
+        return None
 
     # ------------------------------------------------------------ librarian
     # Mounted DIALOGUE turns pull generation into conversation mode — the
