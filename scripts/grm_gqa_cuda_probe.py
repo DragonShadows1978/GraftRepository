@@ -361,9 +361,18 @@ cleanup:
   return rc;
 }
 
-extern "C" int grm_gqa_cuda_arena_route(
+// Core routing loop over a DEVICE-resident query buffer (d_queries_in
+// already holds (query_count, query_heads, query_tokens, head_dim) floats
+// on-device, in the same layout the host-pointer entry would have H2D
+// copied). Shared by both the host-pointer and device-pointer public
+// entries below (W2, GRM_CUDA_BRIDGE_OVERHEAD_PLAN P2 "hot path in the
+// sidecar"): the host entry uploads into arena->d_queries then calls this;
+// the device entry is handed a caller-owned device pointer directly and
+// skips the H2D round trip entirely (the win for a forward-pass caller
+// whose queries already live on GPU).
+static int route_device_queries(
     GqaDeviceArena* arena,
-    const float* queries_host,
+    const float* d_queries_in,
     int query_count,
     int query_heads,
     int query_tokens,
@@ -371,7 +380,7 @@ extern "C" int grm_gqa_cuda_arena_route(
     int topk,
     uint64_t* out_topk_host,
     float* elapsed_ms_host) {
-  if (!arena || !queries_host || !out_topk_host || !elapsed_ms_host ||
+  if (!arena || !d_queries_in || !out_topk_host || !elapsed_ms_host ||
       query_count <= 0 || query_heads <= 0 || query_tokens <= 0 ||
       query_heads % arena->kv_heads != 0 || warmup < 0 ||
       warmup >= query_count || topk <= 0 || topk > 16 ||
@@ -384,9 +393,6 @@ extern "C" int grm_gqa_cuda_arena_route(
   const int threads = arena->threads;
   const int grid = arena->grid;
   const int matrix_rows = arena->matrix_rows;
-  const size_t query_values =
-      static_cast<size_t>(query_count) * query_heads * query_tokens *
-      arena->head_dim;
   const size_t q_col_values =
       static_cast<size_t>(query_rows) * arena->head_dim;
   const size_t score_values =
@@ -397,9 +403,6 @@ extern "C" int grm_gqa_cuda_arena_route(
   const float inv_sqrt_dim = 1.0f / sqrtf(static_cast<float>(arena->head_dim));
 
   int rc = reserve_float_buffer(
-      &arena->d_queries, &arena->query_values_cap, query_values);
-  if (rc != 0) goto cleanup;
-  rc = reserve_float_buffer(
       &arena->d_q_col, &arena->q_col_values_cap, q_col_values);
   if (rc != 0) goto cleanup;
   rc = reserve_float_buffer(
@@ -412,12 +415,6 @@ extern "C" int grm_gqa_cuda_arena_route(
       &arena->d_topk, &arena->topk_values_cap,
       static_cast<size_t>(query_count) * topk);
   if (rc != 0) goto cleanup;
-  rc = cuda_code(cudaMemcpy(
-      arena->d_queries,
-      queries_host,
-      query_values * sizeof(float),
-      cudaMemcpyHostToDevice));
-  if (rc != 0) goto cleanup;
 
   for (int qi = 0; qi < query_count; ++qi) {
     if (qi == warmup) {
@@ -427,7 +424,7 @@ extern "C" int grm_gqa_cuda_arena_route(
     zero_kernel<<<grid, threads>>>(arena->d_route, arena->nodes);
     for (int kh = 0; kh < arena->kv_heads; ++kh) {
       pack_q_col_kernel<<<grid, threads>>>(
-          arena->d_queries, arena->d_q_col, qi, query_heads, query_tokens,
+          d_queries_in, arena->d_q_col, qi, query_heads, query_tokens,
           arena->head_dim, arena->kv_heads, kh);
       rc = cuda_code(cudaGetLastError());
       if (rc != 0) goto cleanup;
@@ -479,6 +476,98 @@ extern "C" int grm_gqa_cuda_arena_route(
 
 cleanup:
   return rc;
+}
+
+extern "C" int grm_gqa_cuda_arena_route(
+    GqaDeviceArena* arena,
+    const float* queries_host,
+    int query_count,
+    int query_heads,
+    int query_tokens,
+    int warmup,
+    int topk,
+    uint64_t* out_topk_host,
+    float* elapsed_ms_host) {
+  if (!arena || !queries_host || query_count <= 0 || query_heads <= 0 ||
+      query_tokens <= 0) {
+    return -1;
+  }
+  const size_t query_values =
+      static_cast<size_t>(query_count) * query_heads * query_tokens *
+      arena->head_dim;
+  int rc = reserve_float_buffer(
+      &arena->d_queries, &arena->query_values_cap, query_values);
+  if (rc != 0) {
+    return rc;
+  }
+  rc = cuda_code(cudaMemcpy(
+      arena->d_queries,
+      queries_host,
+      query_values * sizeof(float),
+      cudaMemcpyHostToDevice));
+  if (rc != 0) {
+    return rc;
+  }
+  return route_device_queries(
+      arena, arena->d_queries, query_count, query_heads, query_tokens,
+      warmup, topk, out_topk_host, elapsed_ms_host);
+}
+
+// Device-pointer route entry (W2): the caller already holds
+// (query_count, query_heads, query_tokens, head_dim) float32 queries on
+// GPU (contract: same layout the host entry would have H2D-uploaded into
+// arena->d_queries) and passes the device pointer directly — no host
+// round-trip. Node ids still cross the ABI as a uint64 host array (Unicode/
+// time-never-crosses-the-ABI law: this is a plain integer array, not text).
+extern "C" int grm_gqa_cuda_arena_route_device(
+    GqaDeviceArena* arena,
+    const float* d_queries,
+    int query_count,
+    int query_heads,
+    int query_tokens,
+    int warmup,
+    int topk,
+    uint64_t* out_topk_host,
+    float* elapsed_ms_host) {
+  return route_device_queries(
+      arena, d_queries, query_count, query_heads, query_tokens, warmup,
+      topk, out_topk_host, elapsed_ms_host);
+}
+
+// Test-only self-contained harness helpers (W2 device-entry validation):
+// upload a host float buffer to a fresh device allocation and hand back the
+// pointer, so a test can drive grm_gqa_cuda_arena_route_device without a
+// cross-repo tensor_cuda dependency. NOT part of the production hot path —
+// the whole point of the device entry is that real callers already have
+// device memory; this exists only to prove host-entry and device-entry
+// produce identical top-k on the same bank/queries.
+extern "C" int grm_gqa_cuda_upload_queries(
+    const float* host_buf, size_t num_floats, float** out_device_ptr) {
+  if (!host_buf || !out_device_ptr || num_floats == 0) {
+    return -1;
+  }
+  *out_device_ptr = nullptr;
+  float* d_ptr = nullptr;
+  int rc = cuda_code(cudaMalloc(
+      reinterpret_cast<void**>(&d_ptr), num_floats * sizeof(float)));
+  if (rc != 0) {
+    return rc;
+  }
+  rc = cuda_code(cudaMemcpy(
+      d_ptr, host_buf, num_floats * sizeof(float), cudaMemcpyHostToDevice));
+  if (rc != 0) {
+    cudaFree(d_ptr);
+    return rc;
+  }
+  *out_device_ptr = d_ptr;
+  return 0;
+}
+
+extern "C" int grm_gqa_cuda_free_device_ptr(float* device_ptr) {
+  if (!device_ptr) {
+    return 0;
+  }
+  return cuda_code(cudaFree(device_ptr));
 }
 
 extern "C" int grm_gqa_cuda_arena_destroy(GqaDeviceArena* arena) {
@@ -579,6 +668,46 @@ class CudaProbe:
         self.lib.grm_gqa_cuda_arena_route.restype = ctypes.c_int
         self.lib.grm_gqa_cuda_arena_destroy.argtypes = [ctypes.c_void_p]
         self.lib.grm_gqa_cuda_arena_destroy.restype = ctypes.c_int
+        # W2: device-pointer hot-path entry (query buffer already on GPU,
+        # skips the H2D copy the host entry does internally) + test-only
+        # upload/free harness helpers used to validate it without a
+        # cross-repo tensor_cuda dependency.
+        self.lib.grm_gqa_cuda_arena_route_device.argtypes = [
+            ctypes.c_void_p,
+            ctypes.c_void_p,   # device float* -- opaque on the Python side
+            ctypes.c_int,
+            ctypes.c_int,
+            ctypes.c_int,
+            ctypes.c_int,
+            ctypes.c_int,
+            ctypes.POINTER(ctypes.c_uint64),
+            ctypes.POINTER(ctypes.c_float),
+        ]
+        self.lib.grm_gqa_cuda_arena_route_device.restype = ctypes.c_int
+        self.lib.grm_gqa_cuda_upload_queries.argtypes = [
+            ctypes.POINTER(ctypes.c_float),
+            ctypes.c_size_t,
+            ctypes.POINTER(ctypes.c_void_p),
+        ]
+        self.lib.grm_gqa_cuda_upload_queries.restype = ctypes.c_int
+        self.lib.grm_gqa_cuda_free_device_ptr.argtypes = [ctypes.c_void_p]
+        self.lib.grm_gqa_cuda_free_device_ptr.restype = ctypes.c_int
+
+    def upload_queries(self, queries: np.ndarray) -> "CudaDeviceQueryPtr":
+        """Test-only harness: upload a host float32 array to a fresh device
+        allocation, returning an owning handle. Mirrors what a real
+        device-resident caller (e.g. tensor_cuda) would already have,
+        without requiring that dependency here."""
+        queries = np.ascontiguousarray(queries, dtype=np.float32)
+        handle = ctypes.c_void_p()
+        rc = self.lib.grm_gqa_cuda_upload_queries(
+            queries.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+            ctypes.c_size_t(queries.size),
+            ctypes.byref(handle),
+        )
+        if rc != 0:
+            raise RuntimeError(f"CUDA query upload failed with code {rc}")
+        return CudaDeviceQueryPtr(self, handle, shape=queries.shape)
 
     def route_topk(
         self,
@@ -710,6 +839,73 @@ class CudaDeviceArena:
         if rc != 0:
             raise RuntimeError(f"CUDA/cuBLAS arena route failed with code {rc}")
         return out, float(elapsed.value), wall_ms
+
+    def route_topk_device(
+        self,
+        device_queries: "CudaDeviceQueryPtr",
+        *,
+        warmup: int,
+        topk: int,
+    ) -> tuple[np.ndarray, float, float]:
+        """W2 hot-path entry: `device_queries` already lives on GPU (see
+        `CudaProbe.upload_queries` for the test-only harness, or a real
+        device-resident caller's own pointer wrapped the same way) — no
+        H2D copy happens in this call, only the route+top-k kernels."""
+        if not self.handle:
+            raise RuntimeError("CUDA arena is closed")
+        query_count, query_heads, query_tokens, query_dim = (
+            device_queries.shape)
+        if query_dim != self.head_dim:
+            raise ValueError("query head_dim does not match keys")
+        if topk > self.nodes:
+            raise ValueError("topk cannot exceed node count")
+        out = np.empty((query_count, topk), dtype=np.uint64)
+        elapsed = ctypes.c_float(0.0)
+        t0 = time.perf_counter_ns()
+        rc = self.probe.lib.grm_gqa_cuda_arena_route_device(
+            self.handle,
+            device_queries.handle,
+            query_count,
+            query_heads,
+            query_tokens,
+            warmup,
+            topk,
+            out.ctypes.data_as(ctypes.POINTER(ctypes.c_uint64)),
+            ctypes.byref(elapsed),
+        )
+        wall_ms = (time.perf_counter_ns() - t0) / 1.0e6
+        if rc != 0:
+            raise RuntimeError(
+                f"CUDA/cuBLAS arena device route failed with code {rc}")
+        return out, float(elapsed.value), wall_ms
+
+
+class CudaDeviceQueryPtr:
+    """Owning handle for a device-resident query buffer (W2 test harness).
+
+    Not part of the production hot path — real device-resident callers
+    (e.g. tensor_cuda) hold their own pointer and pass it directly to
+    `grm_gqa_cuda_arena_route_device`; this wrapper exists so this repo's
+    own tests can validate the device entry without that cross-repo
+    dependency (`CudaProbe.upload_queries` is the self-contained harness
+    the plan asked for: "cudaMalloc+cudaMemcpy inside a small test harness
+    in the sidecar itself")."""
+
+    def __init__(self, probe: "CudaProbe", handle: ctypes.c_void_p, *,
+                shape: tuple[int, ...]):
+        self.probe = probe
+        self.handle = handle
+        self.shape = tuple(int(x) for x in shape)
+
+    def close(self) -> None:
+        if self.handle:
+            self.probe.lib.grm_gqa_cuda_free_device_ptr(self.handle)
+            self.handle = ctypes.c_void_p()
+
+    def __del__(self) -> None:
+        if getattr(self, "handle", None):
+            self.probe.lib.grm_gqa_cuda_free_device_ptr(self.handle)
+            self.handle = ctypes.c_void_p()
 
 
 def write_markdown(result: dict, path: Path) -> None:

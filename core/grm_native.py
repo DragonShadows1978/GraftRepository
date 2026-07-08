@@ -1548,6 +1548,31 @@ class NativeGraftStore:
             return result, receipt
         return result
 
+    def route_gqa_cuda_device(self, device_queries, *, topk=3, warmup=0,
+                              route_repeats=1, return_receipt=False):
+        """W2 hot-path entry: `device_queries` is a device-resident query
+        buffer (scripts.grm_gqa_cuda_probe.CudaDeviceQueryPtr, or anything
+        with the same `.handle`/`.shape` contract) — no host round-trip for
+        the query tensor. This is still Python-level delegation into the
+        opt-in CUDA sidecar object configured by
+        configure_cuda_gqa_route_bank(); the CPU C ABI (libgrm_runtime.so)
+        this class wraps stays CUDA-free, exactly as route_gqa_cuda()
+        already does. Always returns a batch result (device queries are
+        assumed pre-batched; unlike route_gqa_cuda there is no single-query
+        (heads, tokens, dim) convenience form, since the caller already
+        owns the device layout)."""
+        if self._payload_kind != "gqa":
+            raise RuntimeError("CUDA GQA routing requires a GQA native store")
+        if self._cuda_gqa_bank is None:
+            raise RuntimeError("CUDA GQA route bank is not configured")
+        mapped, receipt = self._cuda_gqa_bank.route_topk_device(
+            device_queries, topk=int(topk), warmup=int(warmup),
+            route_repeats=int(route_repeats))
+        result = [[int(x) for x in row] for row in mapped.tolist()]
+        if return_receipt:
+            return result, receipt
+        return result
+
     def configure_arena(self, sink_tokens, arena_width):
         self._check(self._lib.grm_store_configure_arena(
             self._handle, int(sink_tokens), int(arena_width)))

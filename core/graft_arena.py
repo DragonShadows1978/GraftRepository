@@ -1559,40 +1559,78 @@ class GQAArenaCache(ArenaCache):
         node_ids_np = np.asarray(node_ids, dtype=np.uint64)
         return node_ids_np, tuple(sig_rows), rows
 
-    def _cuda_route_bank_inputs(self):
-        """Full bank inputs (route_bank, node_ids, signature), rebuilding
-        the stacked bank ONLY when the cheap signature walk shows staleness
-        against the (route_bank, node_ids, signature) cached on this
-        instance. The stack + ascontiguousarray was the P0-receipted 81.6%
-        (512n) defect: it used to run on EVERY route call regardless of
-        whether the signature had changed.
+    @staticmethod
+    def _cuda_gqa_bridge_paranoid():
+        # Debug/test-only defense in depth (W2, GRM_CUDA_BRIDGE_OVERHEAD_PLAN
+        # P2): forces the O(N) signature walk to run on every call even when
+        # the epoch says nothing changed, and asserts the two decisions
+        # agree. Off in production (adds back the ~1% walk cost this phase
+        # made conditional). Read fresh every call, not cached, so tests can
+        # monkeypatch/setenv per-test without reload games.
+        return os.environ.get("GRM_GQA_BRIDGE_PARANOID", "").lower() in (
+            "1", "true", "yes", "on")
 
-        The cheap per-node signature walk (`_cuda_route_bank_signature`)
-        runs on every call unconditionally — it is the fail-closed
-        correctness authority (~1% of the old per-call cost, P0 receipt),
-        safe against mutation paths the epoch cannot observe (e.g. a caller
-        mutating graft dict fields directly from outside this class, such
-        as GraftRepository's lifecycle/WAL/migrate paths). The epoch
-        (`_cuda_gqa_epoch`, bumped at every GQAArenaCache-side mutation
-        site) is the fail-closed *equivalence* the required regression
-        proves: any mutation that changes the signature also bumps the
-        epoch. It is not required for correctness here (the signature
-        compare alone is sufficient and authoritative) but is tracked as
-        cheap bookkeeping other callers/tests can use to detect staleness
-        without re-deriving the full signature.
+    def _cuda_route_bank_inputs(self):
+        """Full bank inputs (route_bank, node_ids, signature).
+
+        Hot path (W1 complete: every graft_repository.py mutation site that
+        can change what the signature walk would produce now bumps
+        `_cuda_gqa_epoch` — see _bump_cuda_gqa_epoch docstring and the
+        GRM_CUDA_BRIDGE_OVERHEAD_LEDGER 2026-07-08 01:30 entry for the full
+        site list). The epoch is now the SOLE staleness gate on the common
+        path: if `_cuda_gqa_epoch` has not moved since the cached bank was
+        built, return the cache with NO signature walk at all (O(1), no
+        O(N) component). Only a changed epoch triggers the walk (which
+        stays exactly as before: eligibility + signature, stacking only on
+        an actual content-signature miss — the P0-receipted defect this
+        whole work order exists to close).
+
+        GRM_GQA_BRIDGE_PARANOID=1 disables the fast path: the walk always
+        runs, and its answer is asserted to agree with what the epoch-only
+        decision would have been — a self-check for this instrumentation
+        battery, not a production code path.
         """
+        epoch = getattr(self, "_cuda_gqa_epoch", 0)
+        cached = getattr(self, "_cuda_gqa_bank_cache", None)
+        cache_epoch = getattr(self, "_cuda_gqa_cache_epoch", None)
+        paranoid = self._cuda_gqa_bridge_paranoid()
+        epoch_says_fresh = cached is not None and cache_epoch == epoch
+
+        if epoch_says_fresh and not paranoid:
+            return cached
+
         sig = self._cuda_route_bank_signature()
         if sig is None:
+            if paranoid and epoch_says_fresh:
+                assert cached is None, (
+                    "GRM_GQA_BRIDGE_PARANOID: epoch says the cached bank is "
+                    "fresh but the signature walk finds no eligible bank — "
+                    "epoch under-invalidation")
             self._cuda_gqa_bank_cache = None
             return None
         node_ids_np, signature, rows = sig
-        cached = getattr(self, "_cuda_gqa_bank_cache", None)
+
+        if paranoid and epoch_says_fresh:
+            assert cached[2] == signature, (
+                "GRM_GQA_BRIDGE_PARANOID: epoch says the cached bank is "
+                "fresh but the signature walk disagrees — epoch under-"
+                "invalidation (a mutation changed the signature without "
+                "bumping _cuda_gqa_epoch)")
+
         if cached is not None and cached[2] == signature:
+            # Signature-identical even though the epoch moved (e.g. a
+            # metadata-only mutation bumped epoch but didn't touch anything
+            # the bank cares about) — over-invalidation is fine, just skip
+            # the re-stack and refresh the cache_epoch so the NEXT call can
+            # take the fast path again.
+            self._cuda_gqa_bank_cache = cached
+            self._cuda_gqa_cache_epoch = epoch
             return cached
+
         route_bank = np.ascontiguousarray(np.stack(rows), dtype=np.float32)
         bank_inputs = (route_bank, node_ids_np, signature)
         self._cuda_gqa_bank_cache = bank_inputs
-        self._cuda_gqa_cache_epoch = getattr(self, "_cuda_gqa_epoch", 0)
+        self._cuda_gqa_cache_epoch = epoch
         return bank_inputs
 
     def _ensure_cuda_route_bank(self, store, bank_inputs):

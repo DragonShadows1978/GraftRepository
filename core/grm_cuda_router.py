@@ -221,3 +221,54 @@ class CudaGQARouteBank:
             route_repeats=repeats,
         )
         return mapped, receipt
+
+    def route_topk_device(
+        self,
+        device_queries,
+        *,
+        topk: int,
+        warmup: int = 0,
+        route_repeats: int = 1,
+    ) -> tuple[np.ndarray, CudaRouteReceipt]:
+        """W2 hot-path entry: `device_queries` is a `CudaDeviceQueryPtr`
+        (scripts.grm_gqa_cuda_probe) — or any object exposing the same
+        `.handle` (ctypes device pointer) + `.shape` contract — already
+        resident on GPU. No H2D copy happens in this call; only the
+        route+top-k kernels run. Mirrors `route_topk`'s node-id mapping and
+        receipt shape exactly so callers can switch entries without
+        touching downstream code."""
+        if self._arena is None:
+            raise RuntimeError("CUDA GQA route bank is closed")
+        if int(topk) <= 0:
+            raise ValueError("topk must be positive")
+        query_count, query_heads, query_tokens, _ = device_queries.shape
+        repeats = max(1, int(route_repeats))
+        route_walls: list[float] = []
+        device_times: list[float] = []
+        topk_rows = None
+        for _ in range(repeats):
+            topk_rows, device_ms, route_wall_ms = self._arena.route_topk_device(
+                device_queries,
+                warmup=int(warmup),
+                topk=int(topk),
+            )
+            route_walls.append(float(route_wall_ms))
+            device_times.append(float(device_ms))
+        if topk_rows is None:
+            raise RuntimeError("CUDA GQA route did not run")
+        if np.any(topk_rows >= self.node_ids.shape[0]):
+            raise RuntimeError("CUDA GQA route returned an out-of-range row ID")
+        mapped = self.node_ids[topk_rows]
+        measured = max(1, int(query_count) - int(warmup))
+        receipt = CudaRouteReceipt(
+            device_route_ms_total=device_times[-1],
+            device_route_ms_per_query=device_times[-1] / measured,
+            route_wall_ms=route_walls[-1],
+            route_wall_ms_first=route_walls[0],
+            route_wall_ms_min=float(np.min(route_walls)),
+            route_wall_ms_runs=tuple(route_walls),
+            device_route_ms_runs=tuple(device_times),
+            measured_queries=measured,
+            route_repeats=repeats,
+        )
+        return mapped, receipt

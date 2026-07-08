@@ -1573,6 +1573,10 @@ class GraftRepository:
             self._append_wal("MEMORY_EXTRACT_EXPIRE",
                              expired=list(expired), text=text,
                              expired_at=expired_at)
+            # retired flips outside any _mark_mutations call in this path
+            # (apply_extraction_candidate's "expire" branch returns directly
+            # after this helper) — signature field, bump explicitly.
+            self.arena._bump_cuda_gqa_epoch()
         return expired
 
     def _candidate_text(self, candidate, source_text=None):
@@ -1994,6 +1998,11 @@ class GraftRepository:
             g["retired"] = True
             self._mark_dirty(int(i), payload=False, metadata=True)
         if supersedes:
+            # retired flips on the SUPERSEDED nodes here, after remember()'s
+            # own _mark_mutations already ran for the new node — a separate
+            # signature-field mutation this call path doesn't otherwise
+            # bump.
+            self.arena._bump_cuda_gqa_epoch()
             self._native_apply_revision(idx, supersedes)
             self._append_wal("MEMORY_EXTRACT_SUPERSEDE",
                              node_id=idx, supersedes=list(supersedes))
@@ -2543,6 +2552,11 @@ class GraftRepository:
                 self.arena.grafts[i]["no_fold"] = True
             return True
         self.arena.grafts[didx]["kind"] = kind
+        # arena.consolidate() already bumped for child_cents/retired on the
+        # digest + sources; this "kind" overwrite runs after that bump
+        # returned, so it needs its own (signature field, no _mark_mutations
+        # in this call path).
+        self.arena._bump_cuda_gqa_epoch()
         self._free_retired()
         return True
 
@@ -2821,6 +2835,14 @@ class GraftRepository:
                     g.get("host_payload")), ntok=g.get("ntok", 0))
         self._native_node_ids[int(idx)] = int(node_id)
         g["native_node_id"] = int(node_id)
+        # native_node_id is a signature field (the CUDA route bank keys on
+        # it). First-sync path only — the early-return branch above (idx
+        # already in _native_node_ids) doesn't touch it. Called from many
+        # paths that don't all end in _mark_mutations (e.g. _native_mark_
+        # durable, _native_evict_device_copy, _sync_native_full, load()'s
+        # replayed-node sync), so this bump is the single point of truth
+        # for "a graft just got assigned its native id".
+        self.arena._bump_cuda_gqa_epoch()
         self._native_set_route(idx)
         self._native_set_metadata(idx)
         return int(node_id)
@@ -3426,6 +3448,9 @@ class GraftRepository:
             self._ensure_lifecycle(len(self.arena.grafts), g)
             self.arena.grafts.append(g)
         self.review_buffer = list(getattr(self, "recovered_reviews", []))
+        # Full-list append with no _mark_mutations call in this path
+        # (crash-recovery bootstrap, no manifest yet).
+        self.arena._bump_cuda_gqa_epoch()
         return len(self.arena.grafts)
 
     def _provenance(self, segment_type, node_id=None, **fields):
@@ -3560,6 +3585,16 @@ class GraftRepository:
             self._native_set_metadata(idx)
 
     def _mark_mutations(self, before):
+        # Choke point: every top-level mutating call (add_document, remember,
+        # cull_graft, forget, correct_memory, migrate, update_memory_metadata)
+        # finishes with this method. Bump unconditionally rather than trying
+        # to prove no signature field changed — over-invalidation is cheap
+        # (P0: ~1% walk cost) and under-invalidation is the failure mode this
+        # work order exists to close. This does NOT replace the per-site
+        # bumps below at mutation paths that never call _mark_mutations
+        # (WAL replay, load(), _fold_once, _native_sync_node, standalone
+        # expire/supersede loops) — each of those bumps itself.
+        self.arena._bump_cuda_gqa_epoch()
         self._sync_lifecycle()
         for i, g in enumerate(self.arena.grafts):
             self._note_graft_text_ascii(g.get("text", ""))
@@ -3799,6 +3834,9 @@ class GraftRepository:
             for i, g in enumerate(self.arena.grafts):
                 g["native_node_id"] = int(i)
                 self._native_node_ids[int(i)] = int(i)
+            # native_node_id assigned directly here (identity mapping from a
+            # native checkpoint), bypassing _native_sync_node's own bump.
+            self.arena._bump_cuda_gqa_epoch()
         if native_loaded:
             for i in getattr(self, "replayed_wal_nodes", ()):
                 g = self.arena.grafts[int(i)]
@@ -3821,6 +3859,13 @@ class GraftRepository:
             if g.get("sources"):
                 g["child_cents"] = [c for s in g["sources"]
                                     for c in cents_of(s)]
+        # child_cents is a signature field (CUDA route bank eligibility walk
+        # excludes any graft with child_cents set). Called from
+        # _cull_graft_direct (after its own _mark_mutations already ran),
+        # _apply_manifest_wal_records, load(), and migrate() — bump here
+        # once so every caller is covered without duplicating the bump at
+        # each call site.
+        self.arena._bump_cuda_gqa_epoch()
 
     def migrate(self, src_path):
         """Rebuild THIS (empty) repository from another repository's TEXTS.

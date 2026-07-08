@@ -10,6 +10,7 @@ import pytest
 from core.graft_arena import ArenaCache, GQAArenaCache
 from core.graft_repository import GraftRepository
 from core.grm_native import NativeGraftStore
+from core.grm_runtime import GRMRuntime
 
 
 ROOT = "/mnt/ForgeRealm/GraftRepository"
@@ -2703,6 +2704,13 @@ def test_gqa_arena_rebuilds_cuda_route_bank_when_rows_change(monkeypatch):
     arena.grafts.append(
         {"native_node_id": 103, "cent": best,
          "rare": set(), "text": "best", "kind": "doc"})
+    # W2 (GRM_CUDA_BRIDGE_OVERHEAD_PLAN): the epoch is now the SOLE
+    # hot-path staleness gate — the O(N) signature walk only runs when
+    # _cuda_gqa_epoch has moved. A raw external append (this test pokes
+    # arena.grafts directly, bypassing deposit()/graft_repository.py's
+    # instrumented mutation sites) must bump the epoch itself, exactly as
+    # every real production mutation path now does.
+    arena._bump_cuda_gqa_epoch()
 
     assert arena.route("plain probe", exclude=set(), limit=1) == [2]
     assert arena.native_store.configure_calls == 2
@@ -2914,6 +2922,253 @@ def test_gqa_cuda_bridge_never_reuses_stale_bank_across_mutation_battery():
         assert result == []
     finally:
         _os.environ.pop("GRM_GQA_CUDA_ROUTE", None)
+
+
+def _fake_gqa_repo_for_epoch_battery():
+    """A GraftRepository wired to a GQAArenaCache with NO live model, NO
+    native store — pure Python mutation-path testing (mirrors
+    _gqa_epoch_battery_arena one layer up, at the GraftRepository surface
+    this task's W1 scope-expansion targets: forget/correct_memory/migrate/
+    cull_graft, all of which mutate arena.grafts fields the CUDA route bank
+    signature reads without going through GQAArenaCache's own deposit()/
+    consolidate() bump sites).
+
+    arena.deposit() is stubbed (no harvest, no model) but preserves the
+    real contract: append a graft, bump the epoch — exactly what P1 already
+    covers at the GQAArenaCache layer, so this fixture isolates the NEW
+    graft_repository.py-side sites from that pre-existing coverage.
+    """
+    arena = GQAArenaCache.__new__(GQAArenaCache)
+    arena.native_store = None
+    arena.node_loader = None
+    arena.last_route_backend = "python"
+    arena.grafts = []
+    arena._cuda_gqa_epoch = 0
+    arena._rare_tokens = staticmethod(ArenaCache._rare_tokens)
+
+    counter = {"n": 0}
+
+    def fake_deposit(text):
+        counter["n"] += 1
+        idx = len(arena.grafts)
+        cent = np.asarray([[[float(counter["n"]), 0.0]]], dtype=np.float32)
+        ntok = max(1, len(str(text).split()))
+        # GQA PAYLOAD = (("k", 2), ("v", 2)) -- token axis is index 2, so a
+        # cull_graft() slice on this fake payload can find it via
+        # _payload_token_axis the same way a real (L, H, S, D) tensor would.
+        payload = {"k": np.zeros((1, 1, ntok, 1), np.float32),
+                  "v": np.zeros((1, 1, ntok, 1), np.float32)}
+        arena.grafts.append({
+            "cent": cent, "ntok": ntok,
+            "text": text, "host_payload": payload,
+            "h": None,
+            # native_node_id populated (as a real sync would, absent a
+            # native_store here) so _cuda_route_bank_signature is non-None
+            # and the fail-closed comparison below is exercised, not
+            # trivially skipped by the "no native id -> None" early-out.
+            "native_node_id": idx,
+        })
+        arena._bump_cuda_gqa_epoch()
+        return idx
+
+    arena.deposit = fake_deposit
+    arena._node_key = lambda text, h_host=None: np.asarray(
+        [[[7.0, 0.0]]], dtype=np.float32)
+    arena.encode = lambda text: list(range(len(str(text).split())))
+    arena.decode = lambda ids: " ".join(str(i) for i in ids)
+
+    repo = GraftRepository.__new__(GraftRepository)
+    repo.arena = arena
+    repo.native_store = None
+    repo._native_node_ids = {}
+    repo.dirty_nodes = {}
+    repo._dirty_generation = 0
+    repo.wal_enabled = False
+    repo.review_buffer = []
+    repo.fold_history = []
+    repo._all_graft_text_ascii = True
+    repo.path = None
+    repo._segment_id = 0
+    repo.vram_budget = None
+    repo.autosave = False
+    repo.runtime = GRMRuntime(repo)
+    return repo
+
+
+def test_gqa_cuda_epoch_bump_covers_graft_repository_mutation_battery():
+    """W1 scope-expansion regression (ledger 2026-07-08 01:30): P1 proved
+    the epoch is fail-closed for GQAArenaCache-side mutations (deposit,
+    consolidate, step rollback). This proves the same equivalence for the
+    graft_repository.py-side mutation battery the P1 agent identified but
+    left uninstrumented: forget, correct_memory, migrate, cull_graft — every
+    one of which writes arena.grafts fields the CUDA route bank signature
+    reads (retired, kind, child_cents, native_node_id, cent, list
+    membership) via a path that does NOT go through GQAArenaCache's own
+    bump sites.
+
+    Same fail-closed contract as the arena-side battery: any signature
+    change must be accompanied by an epoch bump (epoch-valid implies
+    signature-equal)."""
+    repo = _fake_gqa_repo_for_epoch_battery()
+    arena = repo.arena
+
+    def snapshot():
+        epoch = getattr(arena, "_cuda_gqa_epoch", 0)
+        sig = arena._cuda_route_bank_signature()
+        signature = None if sig is None else sig[1]
+        return epoch, signature
+
+    checked = 0
+
+    def assert_mutation_is_fail_closed(mutate):
+        nonlocal checked
+        before_epoch, before_sig = snapshot()
+        mutate()
+        after_epoch, after_sig = snapshot()
+        if after_sig != before_sig:
+            assert after_epoch != before_epoch, (
+                "signature changed but epoch did not bump — under-"
+                "invalidation risk (graft_repository.py mutation path)")
+        checked += 1
+
+    # remember(): deposit (already-bumped) + kind overwrite afterward
+    def do_remember():
+        repo.remember("first fact about the routing subsystem")
+    assert_mutation_is_fail_closed(do_remember)
+
+    def do_remember2():
+        repo.remember("second fact about the routing subsystem")
+    assert_mutation_is_fail_closed(do_remember2)
+
+    # forget(): direct retired=True write on a matched active target
+    def do_forget():
+        repo.forget("first fact")
+    assert_mutation_is_fail_closed(do_forget)
+
+    # correct_memory(): retires active targets, writes a replacement via
+    # remember() internally
+    def do_correct():
+        repo.correct_memory("second fact", "corrected fact about routing")
+    assert_mutation_is_fail_closed(do_correct)
+
+    # add_document(): deposit + kind="doc" overwrite
+    def do_add_document():
+        repo.add_document("a standalone document about arenas", tags=("t",))
+    assert_mutation_is_fail_closed(do_add_document)
+
+    # cull_graft(): splits a graft into children, retires the parent,
+    # rebuilds child_cents
+    cull_idx = None
+
+    def do_cull_setup():
+        nonlocal cull_idx
+        cull_idx = repo.arena.deposit(
+            "one two three four five six seven eight")
+        repo.arena.grafts[cull_idx]["metadata"] = repo._default_metadata(
+            repo.arena.grafts[cull_idx])
+    assert_mutation_is_fail_closed(do_cull_setup)
+
+    def do_cull():
+        repo.cull_graft(cull_idx, spans=[(0, 4), (4, 8)],
+                        retire_parent=True, recompute_route=False)
+    assert_mutation_is_fail_closed(do_cull)
+
+    assert checked == 7
+
+
+def test_gqa_cuda_epoch_bump_covers_migrate_mutation_battery():
+    """migrate() rebuilds an EMPTY repository's graft list node-by-node from
+    another repository's manifest — a distinct code path from the battery
+    above (per-node deposit + kind/tags/sources/retired/rare overwrite,
+    then a bulk _rebuild_child_keys()). Same fail-closed contract, isolated
+    into its own test because migrate() requires an empty arena precondition
+    (RuntimeError otherwise) and a source manifest.json on disk."""
+    import json as _json
+    import os as _os
+    import tempfile as _tempfile
+
+    repo = _fake_gqa_repo_for_epoch_battery()
+    arena = repo.arena
+
+    with _tempfile.TemporaryDirectory(prefix="grm-migrate-epoch-") as src:
+        manifest = {
+            "nodes": [
+                {"text": "migrated node one", "kind": "doc", "tags": [],
+                 "sources": [], "retired": False},
+                {"text": "migrated node two", "kind": "fact", "tags": [],
+                 "sources": [], "retired": True},
+            ],
+        }
+        with open(_os.path.join(src, "manifest.json"), "w") as fh:
+            _json.dump(manifest, fh)
+
+        before_epoch = getattr(arena, "_cuda_gqa_epoch", 0)
+        before_sig = arena._cuda_route_bank_signature()
+
+        # migrate() calls flush_now()/_free_retired()/_page() at the end;
+        # stub the persistence tail so this stays a pure in-memory test.
+        repo.flush_now = lambda: None
+        repo._free_retired = lambda: None
+        repo._page = lambda: None
+
+        migrated = repo.migrate(src)
+
+        after_epoch = getattr(arena, "_cuda_gqa_epoch", 0)
+        after_sig = arena._cuda_route_bank_signature()
+
+        assert migrated == 2
+        assert after_sig != before_sig
+        assert after_epoch != before_epoch, (
+            "migrate() changed the signature but did not bump the epoch — "
+            "under-invalidation risk")
+
+
+def test_gqa_cuda_bridge_paranoid_env_catches_epoch_under_invalidation(
+        monkeypatch):
+    """W1 defense-in-depth requirement: GRM_GQA_BRIDGE_PARANOID=1 re-enables
+    the O(N) signature walk on every call (bypassing the epoch-only fast
+    path) and asserts it agrees with what the epoch says. Off (default):
+    the fast path returns the SAME cached object with no walk when the
+    epoch hasn't moved. On: an artificial under-invalidation (a mutation
+    that changes the signature without bumping the epoch — the exact bug
+    class this whole work order exists to prevent in production) must raise
+    an AssertionError instead of silently serving a stale bank."""
+    weak = np.asarray([[[0.1, 0.0]]], dtype=np.float32)
+    arena = GQAArenaCache.__new__(GQAArenaCache)
+    arena.grafts = [
+        {"native_node_id": 1, "cent": weak.copy(), "rare": set(),
+         "text": "a", "kind": "doc", "retired": False},
+    ]
+    arena._cuda_gqa_epoch = 0
+
+    monkeypatch.delenv("GRM_GQA_BRIDGE_PARANOID", raising=False)
+    bank1 = arena._cuda_route_bank_inputs()
+    assert bank1 is not None
+    bank2 = arena._cuda_route_bank_inputs()
+    assert bank2 is bank1, (
+        "fast path (epoch unchanged, paranoid off) must return the exact "
+        "same cached object with no re-walk")
+
+    monkeypatch.setenv("GRM_GQA_BRIDGE_PARANOID", "1")
+    bank3 = arena._cuda_route_bank_inputs()
+    assert bank3[2] == bank1[2], (
+        "paranoid mode's forced walk must agree with the epoch-only "
+        "decision when nothing is actually stale")
+
+    # Artificial under-invalidation: mutate a signature field WITHOUT
+    # bumping the epoch (the exact scenario every W1 instrumentation site
+    # exists to prevent). Fast path (paranoid off) would silently miss
+    # this; paranoid mode must catch it.
+    arena.grafts[0]["cent"] = np.asarray([[[9.0, 0.0]]], np.float32)
+    with pytest.raises(AssertionError, match="under-invalidation"):
+        arena._cuda_route_bank_inputs()
+
+    monkeypatch.delenv("GRM_GQA_BRIDGE_PARANOID", raising=False)
+    # Fast path recovers once queried again -- NOTE: this call also updates
+    # the cache off the stale-relative-to-epoch object since the epoch
+    # still hasn't moved; this documents that paranoid mode is a TEST/DEBUG
+    # aid; the epoch bump is what production correctness actually depends
+    # on (W1's mutation-site instrumentation), not this assertion.
 
 
 def test_gqa_arena_skips_cuda_route_for_lexical_queries(monkeypatch):
