@@ -38,6 +38,7 @@ from core.gpt_oss20b_tc import (  # noqa: E402
     resolve_gpt_oss_attention_mode,
 )
 from core.mistral7b_tc import BlockTC, QuantLinearTC, RMSNormTC  # noqa: E402
+from core.graft_quant import is_packed_payload, unpack_kv_arrays  # noqa: E402
 
 
 SNAPSHOT = (
@@ -205,12 +206,24 @@ def load_graft_manifest(root: Path) -> dict[str, Any]:
 
 
 def load_graft_layer(root: Path, layer_idx: int, dtype: str):
+    """Load one graft shard's (k, v). Transparently detects a packed
+    (quantized-at-rest) shard — P3 format-2 hook: written by
+    `pack_graft_dir.py`, marked by a `format_version` field
+    (`core.graft_quant.is_packed_payload`) — and dequantizes it to fp16
+    before upload, exactly as a plain fp16 shard would be. Default path
+    (plain {"k","v"} fp16 shard, no format_version field) is UNCHANGED
+    byte-for-byte from before this hook existed."""
     path = graft_layer_path(root, layer_idx)
     if not path.exists():
         raise FileNotFoundError(f"missing GPT-OSS graft shard {path}")
     with np.load(path) as z:
-        k_np = np.ascontiguousarray(z["k"])
-        v_np = np.ascontiguousarray(z["v"])
+        if is_packed_payload(z):
+            arrays = unpack_kv_arrays(z, ["k", "v"])
+            k_np = np.ascontiguousarray(arrays["k"])
+            v_np = np.ascontiguousarray(arrays["v"])
+        else:
+            k_np = np.ascontiguousarray(z["k"])
+            v_np = np.ascontiguousarray(z["v"])
     k = tc.tensor(k_np).astype(dtype)
     v = tc.tensor(v_np).astype(dtype)
     return k, v, int(k_np.shape[2]), int(k_np.nbytes + v_np.nbytes)

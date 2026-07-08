@@ -70,7 +70,13 @@ from typing import Any
 
 import numpy as np
 
-GROUP_SIZE = 32  # plan: "group-32, the house packing convention"
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from core.graft_quant import (  # noqa: E402
+    GROUP_SIZE,
+    quantize_dequantize_symmetric_group32 as _core_quantize_dequantize_symmetric_group32,
+    rmse_maxabs,
+)
+
 HEAD_DIM = 64  # GPT-OSS-20B geometry (P0 receipt)
 
 
@@ -93,8 +99,14 @@ def parse_args() -> argparse.Namespace:
 def qmax_signed(bits: int) -> int:
     """Symmetric signed grid max code: bits=16 uses fp16 passthrough (no
     integer grid — see quantize_dequantize_symmetric special-case), else
-    2^(bits-1) - 1 (e.g. bits=8 -> 127, matching _kv_quant's scale=max|x|/127)."""
-    return (1 << (bits - 1)) - 1
+    2^(bits-1) - 1 (e.g. bits=8 -> 127, matching _kv_quant's scale=max|x|/127).
+
+    Delegates to core.graft_quant.qmax_signed (P3 refactor: this script is
+    no longer the math's only home, core/graft_quant.py is — see that
+    module's docstring). Kept as a thin wrapper so this script's own name
+    stays importable/stable for anything that already depends on it."""
+    from core.graft_quant import qmax_signed as _qmax_signed
+    return _qmax_signed(bits)
 
 
 def quantize_dequantize_symmetric_group32(
@@ -111,34 +123,15 @@ def quantize_dequantize_symmetric_group32(
     symmetric already exceeds fp16's own precision), so we return x
     unchanged bit-for-bit — this IS the harness's own parity gate (P0/P1
     require bits=16 == identity, verified by the caller via bit-compare).
+
+    P3 refactor: this is now a thin wrapper around
+    `core.graft_quant.quantize_dequantize_symmetric_group32` (the reusable,
+    product-code home of this math — see that module's docstring). The
+    math is UNCHANGED (same reshape, same qmax, same clip range, same
+    dtype casts) — this function exists only so existing callers/receipts
+    referencing this script's own name keep working byte-identically.
     """
-    if bits == 16:
-        return x.copy()
-
-    if x.shape[-1] % group_size != 0:
-        raise ValueError(
-            f"last axis {x.shape[-1]} not divisible by group_size {group_size}"
-        )
-    orig_shape = x.shape
-    groups = orig_shape[-1] // group_size
-    xf = x.astype(np.float32)
-    grouped = xf.reshape(*orig_shape[:-1], groups, group_size)
-
-    qmax = qmax_signed(bits)  # e.g. 8->127, 6->31, 4->7, 3->3, 2->1
-    scale = np.abs(grouped).max(axis=-1, keepdims=True) / float(qmax)
-    # avoid div-by-zero on all-zero groups (padding / degenerate rows)
-    scale = np.where(scale == 0, 1.0, scale)
-
-    codes = np.clip(np.round(grouped / scale), -qmax - 1, qmax)
-    dequant = (codes * scale).reshape(orig_shape)
-    return dequant.astype(np.float16)
-
-
-def rmse_maxabs(orig: np.ndarray, recon: np.ndarray) -> tuple[float, float]:
-    diff = orig.astype(np.float32) - recon.astype(np.float32)
-    rmse = float(np.sqrt(np.mean(diff * diff)))
-    maxabs = float(np.max(np.abs(diff))) if diff.size else 0.0
-    return rmse, maxabs
+    return _core_quantize_dequantize_symmetric_group32(x, bits, group_size)
 
 
 def main() -> int:

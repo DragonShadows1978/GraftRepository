@@ -33,6 +33,9 @@ import numpy as np
 
 from core.mistral7b_tc import BlockTC, F, tc
 from core import kv_graft
+from core.graft_quant import (
+    SUPPORTED_BITS, is_packed_payload, pack_kv_arrays, unpack_kv_arrays,
+)
 
 
 class ArenaCache:
@@ -1851,7 +1854,7 @@ class GQAArenaCache(ArenaCache):
     PAYLOAD = (("k", 2), ("v", 2))
     ROPE_KEYS = ("k",)
 
-    def __init__(self, model, *a, **kw):
+    def __init__(self, model, *a, storage_bits=None, **kw):
         cfg = model.config
         # k + v vals/token/layer for node VRAM accounting (Qwen3-4B: 2048)
         self.VALS_PER_TOK_LAYER = cfg.num_kv_heads * cfg.head_dim * 2
@@ -1859,6 +1862,23 @@ class GQAArenaCache(ArenaCache):
         # form (k_u8, k_scale, v_u8, v_scale) is not surgeable
         for L in model.layers:
             L.self_attn.quant_kv_cache = False
+        # P3 format-1 storage quantization (opt-in, default OFF — unchanged
+        # fp16 node payloads unless explicitly requested). Constructor kwarg
+        # takes priority; else env var GRM_GRAFT_STORAGE_BITS (same
+        # convention as GRM_GQA_CUDA_ROUTE below). Validated against
+        # core.graft_quant.SUPPORTED_BITS's packable depths (16 means "off").
+        if storage_bits is None:
+            env_bits = os.environ.get("GRM_GRAFT_STORAGE_BITS", "").strip()
+            storage_bits = int(env_bits) if env_bits else None
+        if storage_bits is not None:
+            storage_bits = int(storage_bits)
+            if storage_bits not in SUPPORTED_BITS or storage_bits == 16:
+                raise ValueError(
+                    f"GQAArenaCache: storage_bits={storage_bits!r} invalid — "
+                    f"must be one of {[b for b in SUPPORTED_BITS if b != 16]} "
+                    "(or None/unset/16 for the default fp16 node payload)"
+                )
+        self.storage_bits = storage_bits
         super().__init__(model, *a, **kw)
 
     # --------------------------------------------------- dialect overrides
@@ -2160,14 +2180,36 @@ class GQAArenaCache(ArenaCache):
 
     # ------------------------------------------------- persistence format
     def pack_node(self, h):
+        """Node payload for disk (GraftRepository._atomic_savez_compressed
+        writes this dict straight to nodes/NNNN.npz). Default: plain fp16
+        {"k","v"} stacked (L,H,S,D) — UNCHANGED from before P3.
+
+        P3 format-1 hook (opt-in via self.storage_bits, see __init__): when
+        set, returns the PACKED payload instead (core.graft_quant
+        .pack_kv_arrays — same group-32 symmetric math as format 2,
+        explicit format_version/storage_bits fields, fail-closed on
+        unpack). Mutation/WAL semantics untouched — the WAL never carries
+        K/V bytes regardless of which payload shape this returns (P0: WAL
+        NODE_UPSERT records only a has_payload flag)."""
         _np = lambda t: (t if isinstance(t, np.ndarray)
                          else t.float().numpy()).astype(np.float16)
-        return {"k": np.stack([_np(d["k"])[0] for d in h]),
-                "v": np.stack([_np(d["v"])[0] for d in h])}
+        k = np.stack([_np(d["k"])[0] for d in h])
+        v = np.stack([_np(d["v"])[0] for d in h])
+        if self.storage_bits is None:
+            return {"k": k, "v": v}
+        return pack_kv_arrays({"k": k, "v": v}, self.storage_bits)
 
     def unpack_node(self, z):
+        """Inverse of pack_node. Transparently detects a packed payload
+        (format_version field, core.graft_quant.is_packed_payload) and
+        dequantizes before device upload; a plain fp16 payload (the
+        default, and every node written before P3) is unaffected."""
         dt = BlockTC.COMPUTE_DTYPE
-        k, v = z["k"], z["v"]
+        if is_packed_payload(z):
+            arrays = unpack_kv_arrays(z, ["k", "v"])
+            k, v = arrays["k"], arrays["v"]
+        else:
+            k, v = z["k"], z["v"]
         return [{"k": tc.tensor(np.ascontiguousarray(k[li][None])).astype(dt),
                  "v": tc.tensor(np.ascontiguousarray(v[li][None])).astype(dt)}
                 for li in range(len(self.m.layers))]

@@ -123,3 +123,36 @@ sites + format-1 coverage. Gates frozen here, before any code:
 - Suites: router baseline + native runtime green.
 
 Next action: P3 implementation (Sonnet, flat, no-delegation).
+
+## 2026-07-08 (P3 complete — WORK ORDER FULLY CLOSED)
+
+Action: Packed format shipped (Sonnet, flat), all registered gates green,
+committed.
+
+- core/graft_quant.py: shared pack/unpack core (P1 math refactored, not
+  reimplemented; transform script now delegates — byte-identical vs the
+  committed original, all depths). Fail-closed on unknown
+  format_version/storage_bits. DEVIATION (flagged, resolved toward the
+  stricter gate): scales stored fp32, not the plan's fp16 — fp16 scales
+  broke the mandatory bit-identity round-trip (1-ULP drift, 10-22% of
+  elements). Disk numbers below are the honest fp32-scale figures.
+- Hooks: format-2 load_graft_layer transparent detect+dequant (+
+  standalone pack tool, capture path untouched); format-1
+  pack_node/unpack_node opt-in via storage_bits arg / GRM_GRAFT_STORAGE_BITS
+  env. Defaults byte-identical everywhere.
+- Gates: round-trip BIT-IDENTICAL (3 banks × {8,6,4,3}, exceeds
+  registered scope); recall equality vs sweep BIT-IDENTICAL margins
+  (multifact@8, multifact@6, supersession@6 incl. the +0.25 needle);
+  suites 21/21 + 117/117 + 22 new format tests.
+- Disk (MEASURED): format-1 zlib INT8 1.793×, INT6 2.326×; format-2
+  uncompressed 1.777× (INT8; sub-8-bit packing not implemented, INT6
+  gains only under compression).
+- HONEST NEGATIVE — mount speed: packed INT8 mounts 3.76× SLOWER
+  (43.4 vs 11.6 ms/layer, N=20 median, warm page cache — CPU dequant
+  dominates; the predicted NVMe page-in win did not materialize
+  locally). Policy implication registered: INT8 = archive tier;
+  hot-mount tier stays fp16 pending GPU-side or vectorized dequant.
+  The E2E receipt will price this seam at session cadence.
+
+WORK ORDER FULLY CLOSED. Successor: E2E receipt (own plan/ledger) is the
+first production consumer of the packed format.
