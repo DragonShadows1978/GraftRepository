@@ -167,3 +167,30 @@ Next action:
   synthetic GQA route centroids (two-tier, exactness-gated); per-graft
   incremental index / ledger-derived staleness (choke-point already
   half-built by W1).
+
+## 2026-07-08 (quiet-window stamp) — WORK ORDER CLOSED
+
+Action: E2 stamp run, GPU idle, loadavg ~2.3-2.9 (ambient interactive
+load; the box is never fully quiet in practice). 32n re-run with
+queries=10 for real statistics (9 reused samples, spread 0.352-0.448 ms —
+tight, not contention).
+
+Verdicts (final):
+- E3 MET decisively: bridge overhead flat at ~0.20-0.40 ms across
+  32/128/512 nodes (16× node range; was 3.03→38.19 ms linear-in-N).
+  The O(N) defect class is eliminated. Receipts: stamp_*.json.
+- E2 MET at 512n (1.173 ms vs 0.771 direct = 1.52×); NOT MET at 32n
+  (0.352 ms vs 0.150 = 2.35×, solid statistics), marginal at 128n
+  (2.23×). FINDING per the registered misses-are-findings clause: the
+  residual is the fixed Python invocation floor (ctypes + wrapper +
+  result mapping under ambient load), not algorithmic overhead. It
+  cannot go below ~1× of a 0.15 ms direct route while the caller is
+  Python. The remedy is already built but unexercised: the
+  device-pointer route entry invoked from native/forward-pass code
+  (plan P2's stated future). Registered as the natural first receipt of
+  any forward-pass integration work order.
+- Practical outcome vs opening baseline: 3.157→0.352, 11.218→0.563,
+  38.961→1.173 ms = 9-33× at ambient load (17-40× in the P2 agent's
+  clean window). Parity green at every node count in every run.
+
+WORK ORDER CLOSED. Successors on the board.
