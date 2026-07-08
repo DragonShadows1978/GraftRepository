@@ -7,6 +7,7 @@ the GPT-OSS-specific math before claiming model support.
 
 from __future__ import annotations
 
+import gc
 import json
 import math
 import os
@@ -1127,3 +1128,217 @@ class GptOssDiagnosticBlockTC:
         mlp_in = mlp_in.half() if dt == "float16" else mlp_in.astype(dt)
         mlp_out, route_info = self.mlp(mlp_in)
         return h + mlp_out, kv, route_info
+
+
+class GptOss20B_TC:
+    """Full GPT-OSS-20B on tensor_cuda: the GRM-drivable model object.
+
+    Built AROUND the existing block primitives (GptOssDiagnosticBlockTC /
+    GptOssAttentionTC / GptOssMoEDiagnosticTC) — no math is reimplemented
+    here. This class owns the YARN RoPE tables, the layer list, and an
+    incremental KV-cache-aware `__call__` so `core/graft_arena.py`'s
+    `ArenaCache`/`GQAArenaCache` can drive GPT-OSS exactly as it drives
+    Qwen3_TC today (`core/qwen3_tc.py`, the GQA arena gate's model).
+
+    PARITY LAW (docs/GRM_E2E_RECEIPT_LEDGER.md, 2026-07-08): identical
+    input must reproduce `scripts/gpt_oss20b_stream_forward_smoke.py`'s
+    per-layer loop (:395-492) bit-for-bit (deterministic engine). That
+    script computes YARN tables OUTSIDE any model object and drives
+    `GptOssDiagnosticBlockTC.from_safetensors(...)` + `block(h, cos, sin)`
+    per layer with no `kv_cache` argument (full prefill each call, no
+    incremental decode) — this class's PREFILL path (`kv_cache=None`
+    per layer) must match that computation exactly; the incremental/decode
+    path is new surface the smoke never exercised.
+
+    Contract surface (graft_arena.py:56,67,160-250,1465,1620,1760;
+    kv_graft.py:45-77; graft_repository.py DialectDescriptor.from_model):
+      .layers            list of GptOssDiagnosticBlockTC (each exposes
+                         .self_attn for kv_graft._attention_module,
+                         inject_kv/graft_seats/live_shift/_capture/_capture_q)
+      .config            GptOss20BConfig (num_layers/hidden_dim/num_kv_heads/
+                         head_dim read by DialectDescriptor.from_model)
+      .rope_cos/.rope_sin  YARN tables, model-owned, sliced by GptOssAttentionTC
+      .extend_rope(n)    grow the YARN tables to cover position n
+      __call__(input_ids_np, kv_caches=None, position_offset=0,
+                last_token_only=False, max_layers=None)
+                         the ArenaCache/kv_graft calling convention — the
+                         SAME positional/keyword shape as core.qwen3_tc's
+                         Mistral7B_TC base class (graft_arena.py's three
+                         `self.m(...)` call sites all pass `kv_caches=`,
+                         never `caches=`; Qwen35_TC/Gemma4_TC's `caches=`
+                         convention is a DIFFERENT, so-far arena-undriven
+                         lineage — this class follows the one ArenaCache
+                         actually calls). `caches=` is accepted as an
+                         alias for compatibility with the sibling classes'
+                         convention but is not the primary contract.
+      from_pretrained()  classmethod; loads the same snapshot path and
+                         expert_mode the smoke uses (resident_packed_mxfp4
+                         default); embeddings via GptOssRowEmbedding
+                         (host row-gather), per the smoke.
+    """
+
+    def __init__(self, cfg: GptOss20BConfig | None = None):
+        self.config = cfg or GptOss20BConfig()
+        self.layers: list[GptOssDiagnosticBlockTC] = [
+            GptOssDiagnosticBlockTC(self.config, i)
+            for i in range(self.config.num_layers)
+        ]
+        self.norm = RMSNormTC(self.config.hidden_dim, self.config.rms_norm_eps)
+        self.embed_tokens: GptOssRowEmbedding | None = None
+        self.lm_head = None
+        self.rope_cos = None
+        self.rope_sin = None
+        self._rope_len = 0
+        self.extend_rope(self.config.initial_context_length)
+
+    # ------------------------------------------------------------ RoPE
+    def extend_rope(self, seq_len: int) -> None:
+        """Grow the YARN RoPE tables to cover position `seq_len`.
+
+        YARN's low/high/ramp/attention_factor depend only on the config
+        (base, factor, original context) — NOT on `seq_len` — so growing
+        is a full rebuild over the new (larger) length, matching the
+        Qwen35_TC/Gemma4_TC `extend_rope` pattern. `gpt_oss_yarn_rope_tables`
+        is the exact function `stream_forward_smoke.py:395` calls; this is
+        the same math, just owned by the model instead of computed loose
+        in a script.
+        """
+        seq_len = int(seq_len)
+        if seq_len <= self._rope_len:
+            return
+        self.rope_cos, self.rope_sin = gpt_oss_yarn_rope_tables(self.config, seq_len)
+        self._rope_len = seq_len
+
+    # --------------------------------------------------------- forward
+    def __call__(
+        self,
+        input_ids_np,
+        kv_caches=None,
+        position_offset: int = 0,
+        last_token_only: bool = False,
+        max_layers: int | None = None,
+        caches=None,
+    ):
+        """Incremental, KV-cache-aware forward across the full/sliding
+        layer mix.
+
+        `kv_caches`: list (per layer) of (k, v) tuples from a prior call,
+        or None for a cold prefill. `caches` is accepted as an alias (the
+        Qwen35_TC/Gemma4_TC convention) for a caller that already uses
+        that name; it is an error to pass both.
+        """
+        if caches is not None:
+            if kv_caches is not None:
+                raise ValueError(
+                    "GptOss20B_TC.__call__: pass either kv_caches or caches, not both"
+                )
+            kv_caches = caches
+        input_ids_np = np.asarray(input_ids_np, dtype=np.int64)
+        B, L = input_ids_np.shape
+
+        # RoPE table length must cover this call's absolute positions AND
+        # any live graft-mount shift a layer's attention currently carries
+        # (mirrors Qwen35_TC.__call__'s shift scan — GPT-OSS grafts are
+        # injected the same way via kv_graft.set_injection/_set_inject).
+        shift = 0
+        for layer in self.layers:
+            att = layer.self_attn
+            live_shift = getattr(att, "live_shift", None)
+            if live_shift is None:
+                live_shift = getattr(att, "graft_seats", 0)
+            shift = max(shift, int(live_shift or 0))
+        self.extend_rope(position_offset + shift + L)
+
+        h = self.embed_tokens(input_ids_np)
+        new_caches = []
+        run = self.layers if max_layers is None else self.layers[:max_layers]
+        for i, layer in enumerate(run):
+            cache = kv_caches[i] if kv_caches is not None else None
+            h, kv, _route_info = layer(h, self.rope_cos, self.rope_sin, position_offset, cache)
+            new_caches.append(kv)
+            if kv_caches is not None:
+                # CONTRACT (matches Gemma4_TC._forward): the input caches
+                # list is consumed — free each entry as its successor is
+                # built, since holding old+new simultaneously does not fit
+                # next to a ~11GB resident MXFP4 body on a 12GB card.
+                kv_caches[i] = None
+        if max_layers is not None:
+            return None, new_caches, h
+
+        h = self.norm(h)
+        dt = BlockTC.COMPUTE_DTYPE
+        h = h.half() if dt == "float16" else h.astype(dt)
+        if last_token_only and h.shape[1] > 1:
+            h = h.slice(1, h.shape[1] - 1, 1)
+        logits = self.lm_head(h)
+        return logits, new_caches
+
+    # ------------------------------------------------------------- load
+    @classmethod
+    def from_pretrained(
+        cls,
+        model_dir: str | os.PathLike[str] | None = None,
+        *,
+        expert_mode: str = "resident_packed_mxfp4",
+    ) -> tuple["GptOss20B_TC", dict[str, Any]]:
+        """Load GPT-OSS-20B from the same snapshot path the smoke uses.
+
+        Per the smoke's globals (BlockTC.COMPUTE_DTYPE="bfloat16",
+        QuantLinearTC.FUSED_DECODE=True, RMSNormTC.USE_FUSED=True) and the
+        smoke's default expert_mode (resident_packed_mxfp4: MXFP4 blocks
+        stay packed uint8 on device, dequantized inside the matmul kernel
+        per expert call — the smoke's measured VRAM-fitting path). Unlike
+        the smoke (which streams one layer's experts onto the GPU at a
+        time and frees them before the next), this holds every layer
+        resident simultaneously — required for ArenaCache's persistent
+        live cache. VRAM risk is real and undocumented until measured
+        live (~10.2GB of packed expert bytes alone across 24 layers);
+        callers should watch nvidia-smi and treat an OOM here as a
+        receipted finding, not a silent failure.
+        """
+        model_dir = Path(
+            model_dir
+            or "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/"
+            "snapshots/6cee5e81ee83917806bbde320786a8fb61efebee"
+        ).expanduser().resolve()
+
+        BlockTC.COMPUTE_DTYPE = "bfloat16"
+        QuantLinearTC.FUSED_DECODE = True
+        RMSNormTC.USE_FUSED = True
+
+        cfg = GptOss20BConfig.from_model_dir(model_dir)
+        where = build_safetensors_map(model_dir)
+
+        with tc.no_grad():
+            m = cls(cfg)
+            m.embed_tokens = GptOssRowEmbedding(where)
+            for i in range(cfg.num_layers):
+                m.layers[i] = GptOssDiagnosticBlockTC.from_safetensors(
+                    cfg, where, i, expert_mode=expert_mode
+                )
+                gc.collect()
+                if hasattr(tc, "empty_cache"):
+                    tc.empty_cache()
+            m.norm.weight = tc.tensor(
+                load_tensor_np(where, "model.norm.weight"), dtype="float32"
+            )
+            m.lm_head = QuantLinearTC(
+                load_tensor_np(where, "lm_head.weight"), group_size=cfg.group_size
+            )
+
+        info = {
+            "loaded": f"GPT-OSS-20B ({expert_mode})",
+            "framework": "tensor_cuda GptOss20B_TC",
+            "model_dir": str(model_dir),
+            "repository": cfg.repository,
+            "revision": cfg.revision,
+            "layers": cfg.num_layers,
+            "full_attention_layers": cfg.full_attention_indices(),
+            "sliding_attention_layers": cfg.sliding_attention_indices(),
+            "hidden_dim": cfg.hidden_dim,
+            "num_heads": cfg.num_heads,
+            "num_kv_heads": cfg.num_kv_heads,
+            "head_dim": cfg.head_dim,
+            "expert_mode": expert_mode,
+        }
+        return m, info

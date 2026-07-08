@@ -89,3 +89,42 @@ Findings:
 
 Next action: model-class build (Sonnet, flat), then Leg 1 re-run, then
 the session driver.
+
+## 2026-07-08 (prerequisite build complete — GPT-OSS runs the live loop)
+
+Action: GptOss20B_TC built (Sonnet, flat, full validation ladder),
+lead-verified, committed.
+
+Findings:
+- Class = ~215-line container around the EXISTING block primitives (no
+  math reimplemented). Contract grep-verified against every ArenaCache/
+  kv_graft touchpoint. Convention discovery: ArenaCache calls
+  self.m(..., kv_caches=...) (Mistral/Qwen3 style) — Qwen35_TC/Gemma4_TC
+  use caches= and have never been arena-driven; class accepts both,
+  rejects both-given.
+- PARITY LAW: ZERO deviation — all 24 layers' pre-RoPE K/V bit-identical
+  to stream_forward_smoke on the real snapshot (max_abs_diff_overall=0),
+  top-5 logits exact. Incremental decode == full-refeed token-for-token
+  (16-tok greedy), 1.12s vs 6.76s.
+- NEW ENVELOPE RECEIPT: all-24-layers RESIDENT load = 10852/12282 MiB
+  (the smoke always streamed one layer at a time; full residency was
+  untested). ~1.4 GB headroom — E4's long-session VRAM leg will stress
+  it.
+- LEG-1: HIT — first-ever live GPT-OSS drive through GQAArenaCache:
+  deposit_from_cache well-formed on BOTH layer types, evict confirmed,
+  route ranked the fact turn first, swap mounted it, and the model
+  answered 'Zeta-7-Quebec' PURELY from the remounted graft. The seam the
+  work order was stopped on is green.
+- Pre-existing gap surfaced (false-negative en route, root-caused):
+  ArenaCache.step()'s hardcoded "User:/Assistant:" template is not
+  Harmony format; GPT-OSS misses through step() but hits through
+  format-agnostic feed() + the same underlying machinery. DRIVER
+  DECISION REGISTERED for Leg 2: prefer a minimal dialect-appropriate
+  template hook in step() if it stays small and suite-green (production-
+  representative receipt); else the driver implements the turn loop at
+  feed()+route()+swap() level. GRMRuntime.chat() calls step() — the
+  choice determines which entry the receipt exercises.
+- Suites: 21/21 + 117/117 + 18/18 (5 new class tests).
+
+Next action: Leg 2 (session driver) — dispatched to codex-shim (first
+Codex-as-subagent work order; sandbox = GraftRepository).
