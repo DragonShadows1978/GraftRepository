@@ -736,3 +736,26 @@ layers 0/2/4 and APA full layers 1/3, five 128K layer shards, and
 candidate-logit remount pass. So the current GPT-OSS graft-payload boundary is
 bracketed, not closed exactly: 64K passes, 128K capture OOMs, and the next
 boundary-tightening run is a 96K midpoint probe.
+
+The 96K midpoint probe now passes. The rerun used the same H5 bulk-graft
+candidate gate with `98304` real tokens, APA selective attention on full
+attention layers, `refine_percentile=0.15`, `bulk_bits=8`, and resident packed
+MXFP4 experts. Capture completed all 24 layers, with 12 APA/full layers and 12
+standard/sliding layers, then both control and mounted scoring completed.
+
+The score behavior is the right shape. The no-graft control did not prefer the
+gold answer: ` BLUE` trailed ` RED` by `-1.796875` logit. The mounted run
+recovered the grafted answer: ` BLUE` beat ` RED` by `4.0625` logit. The parent
+artifact classified the gate as `pass`.
+
+The speed result also changed after the optimization. The 96K rerun captured in
+`5078.0s` by layer metadata, with full-attention layers averaging `279.5s` and
+sliding layers averaging `143.7s`. That is faster on the full-attention path
+than the older 64K H5 receipt, which averaged `338.0s` on full-attention layers,
+and vastly faster than the partial 128K failure path, where completed
+full-attention layers averaged `1065.5s` before OOM.
+
+The current boundary is therefore no longer "64K pass, 128K OOM" in practical
+terms. It is "96K full H5 gate pass, 128K capture OOM." The next boundary probe
+belongs between 96K and 128K if the goal is to find the highest stable
+graft-payload operating point on this card.

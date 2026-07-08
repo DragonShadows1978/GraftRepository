@@ -3693,3 +3693,59 @@ Interpretation:
 - The new practical graft-payload boundary is bracketed between 64K pass and
   128K capture OOM. A 96K midpoint probe is the next aligned run if the goal is
   to tighten the boundary rather than move to another Phase 5 behavior axis.
+
+Action: Re-ran the H5 96K graft-payload midpoint gate after the router/kernel
+optimization work.
+
+Purpose:
+- Tighten the H5 graft-payload boundary between the known 64K pass and the
+  128K layer-5 capture OOM.
+- Re-test the path after the latest router/kernel optimization without changing
+  the gate semantics.
+
+GPU command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss20b_bulk_graft_gate.py --target-tokens 98304 --attention-mode apa_selective --apa-layer-scope full --refine-percentile 0.15 --bulk-bits 8 --expert-mode resident_packed_mxfp4 --route-detail summary --expert-empty-cache-interval 0 --output artifacts/gpt_oss_20b/h5_bulk_graft_96k_candidate_gate_rerun.json`
+
+Artifacts:
+- `artifacts/gpt_oss_20b/h5_bulk_graft_96k_candidate_gate_rerun.json`
+- `artifacts/gpt_oss_20b/h5_bulk_graft_96k_candidate_gate_rerun/capture_forward.json`
+- `artifacts/gpt_oss_20b/h5_bulk_graft_96k_candidate_gate_rerun/control_forward.json`
+- `artifacts/gpt_oss_20b/h5_bulk_graft_96k_candidate_gate_rerun/mount_forward.json`
+- Graft payload:
+  `artifacts/gpt_oss_20b/h5_bulk_graft_96k_candidate_gate_rerun/graft/`
+
+Result:
+- Parent status: `ok`.
+- Strict candidate classification: `pass`.
+- Target tokens: `98304`.
+- Gold candidate: ` BLUE`.
+- Decoys: ` RED`, ` GREEN`, ` BLACK`, ` WHITE`.
+- Capture status: `ok`, `24/24` layers.
+- Capture layer mix: `12` APA/full-attention layers and `12`
+  standard/sliding-attention layers.
+- Capture wall time by completed layer metadata: `5078.0s`.
+- Full-attention layer average: `279.5s`; max `288.2s`.
+- Sliding-attention layer average: `143.7s`; max `149.4s`.
+- Control avoided the gold answer: gold ` BLUE` logit `2.078125`,
+  best decoy ` RED` logit `3.875`, gold margin `-1.796875`.
+- Mounted run recovered the gold answer: gold ` BLUE` logit `14.5`,
+  best decoy ` RED` logit `10.4375`, gold margin `4.0625`.
+
+Optimization note:
+- The 96K rerun is materially faster than the earlier receipts on the relevant
+  capture path. The previous 64K H5 capture averaged `338.0s` on full-attention
+  layers and `144.8s` on sliding layers. This 96K rerun averaged `279.5s` on
+  full-attention layers and `143.7s` on sliding layers.
+- The prior 128K failed capture was much slower before OOM: completed
+  full-attention layers averaged `1065.5s`, and completed sliding layers
+  averaged `391.3s`.
+
+Interpretation:
+- The H5 same-model cold-KV graft-payload boundary is now bracketed more
+  tightly: 96K passes the full capture/control/mount candidate gate, while
+  128K still OOMs during capture at layer 5.
+- The 96K pass also proves the current path clears the exact layer-5 region
+  where the 128K run failed; the 96K capture completed all 24 layers.
+- This is a candidate-logit remount pass, not a broad conversational-memory or
+  multi-turn drift claim. The next boundary run, if needed, is between 96K and
+  128K.
