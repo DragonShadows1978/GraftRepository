@@ -128,3 +128,39 @@ Findings:
 
 Next action: Leg 2 (session driver) — dispatched to codex-shim (first
 Codex-as-subagent work order; sandbox = GraftRepository).
+
+## 2026-07-08 (Leg 2 delivered — Codex work order; four seams named)
+
+Action: session driver built by CODEX (first Codex-as-subagent dispatch,
+raw shim, sandboxed workspace-write, 38 min, 301k tokens), lead
+spot-checked, committed. Suites 118+21+18+22 green.
+
+- Template decision: minimal hook chosen (ArenaCache prompt_template +
+  stop_sequences, defaults unchanged) — driver runs the REAL
+  chat()→step() path in Harmony format. Registered criterion met.
+- BONUS REAL BUG (P3 escape): repository RAM normalization wraps scalar
+  packed npz fields into 1-element arrays; unpack_kv_arrays rejected
+  them. P3's cycle test used direct npz and missed the normalization
+  path. Fixed fail-closed (0-D/size-1 accepted, wider rejected).
+- Smoke: 10 turns + restart completed; instrumentation and durability
+  machinery work (flush 0.55s; VRAM flat 10.9GB across exec/refeed).
+  PROBES 0/2 — with the memory machinery GREEN (eviction verified,
+  route found the graft, mount applied): the failure is GENERATION
+  drift (meta/refusal text instead of answer-first) through step()'s
+  loop; Leg-1's manual generate loop got a clean answer on the same
+  machinery — a loop-parameter delta (stops/length/template nuance),
+  not a memory failure.
+- SEAMS NAMED (E3 red; P2 full run HELD until seam 1 is diagnosed):
+  1. Probe generation drift (above) — first diagnosis target.
+  2. CUDA GQA route never engages on LIVE banks: turn grafts are
+     RAGGED (per-turn token counts) and the bridge contract demands
+     dense same-shape single-key banks — a capture-world assumption.
+     Design input for the synthetic-centroids successor.
+  3. Native route 609-1087 ms at ~10 nodes (harness does 10k in 6 ms) —
+     suspect per-turn arena re-preparation after each deposit epoch
+     bump. Needs its own profile.
+  4. Packed resume load ~23 s at smoke scale — dequant × load path
+     compounding; policy echo of P3's mount-cost finding.
+
+Next action: seam-1 diagnosis (compare Leg-1's working generate loop vs
+step()'s), then seams 2-3 as scoped follow-ups, then P2 full run.
