@@ -759,3 +759,23 @@ The current boundary is therefore no longer "64K pass, 128K OOM" in practical
 terms. It is "96K full H5 gate pass, 128K capture OOM." The next boundary probe
 belongs between 96K and 128K if the goal is to find the highest stable
 graft-payload operating point on this card.
+
+## Storage Quantization: Where Grafts Break (2026-07-08)
+
+The gate battery earned a second job: measuring how many bits a witnessed
+memory can lose before it stops being the memory. The answer has a clean
+staircase — INT8 is free (margins within a deterministic-engine noise band
+of zero), 6 bits is the last green depth at 2.5× disk, 4 bits is the
+shoulder where the strongest fact in the battery silently inverts, and 3
+bits is the floor where recall simply ceases to exist.
+
+Two results matter beyond the disk math. The damage is structural, not
+noisy: identical reconstruction error collapses strong bindings while
+weak ones drift wider, so RMSE cannot certify a depth — only recall gates
+can. And below the floor, quantization does something worse than
+forgetting: it un-supersedes. Stale, deliberately-overwritten values climb
+back through the rankings and, at 3 bits, win. A memory system that
+quantizes past its floor doesn't lose its memories — it loses its
+corrections first. That asymmetry is now a law of this system: the storage
+floor exists to protect supersession, and the recall battery is the only
+instrument that can see it.
