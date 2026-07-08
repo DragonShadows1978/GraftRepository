@@ -33,13 +33,17 @@ import numpy as np
 
 from core.mistral7b_tc import BlockTC, F, tc
 from core import kv_graft
+from core.graft_quant import (
+    SUPPORTED_BITS, is_packed_payload, pack_kv_arrays, unpack_kv_arrays,
+)
 
 
 class ArenaCache:
     def __init__(self, model, encode, decode, sink_text="<conversation>\n",
                  arena_width=256, route_layer=44, topk=3, live_turns=2,
                  max_live=4096, cache_deposits=True,
-                 ephemeral=False, recency_mounts=2):
+                 ephemeral=False, recency_mounts=2, prompt_template=None,
+                 stop_sequences=None):
         # EPHEMERAL MODE ("clear the boat"): the live cache is reset at the
         # START of every turn — each turn runs on [sink | mounts | turn]
         # alone, so resident seats are CONSTANT for a conversation of ANY
@@ -58,6 +62,10 @@ class ArenaCache:
         self.topk = topk
         self.live_turns = live_turns
         self.cache_deposits = cache_deposits
+        self.prompt_template = prompt_template
+        self.stop_sequences = tuple(
+            stop_sequences or
+            ("\nUser:", "User:", "\nAssistant:", "Assistant:", "\n\n"))
         self.dt = BlockTC.COMPUTE_DTYPE
         # the model auto-extends RoPE only to position_offset+L; arena
         # positions run live_shift further. Extend once, up front.
@@ -80,10 +88,40 @@ class ArenaCache:
         self.grafts = []                # {h, cent, ntok, text}
         self.last_route_backend = "python"
 
+    def _format_step_prompt(self, user_text):
+        if self.prompt_template is None:
+            return f"User: {user_text}\nAssistant:"
+        if callable(self.prompt_template):
+            return self.prompt_template(user_text, None)
+        return self.prompt_template.format(user=user_text, assistant="")
+
+    def _format_step_turn(self, user_text, assistant_text):
+        if self.prompt_template is None:
+            return f"User: {user_text}\nAssistant: {assistant_text}\n"
+        if callable(self.prompt_template):
+            return self.prompt_template(user_text, assistant_text)
+        return self.prompt_template.format(user=user_text,
+                                           assistant=assistant_text)
+
     def _clear_transients(self):
         gc.collect()
         if hasattr(tc, "empty_cache"):
             tc.empty_cache()
+
+    def _bump_cuda_gqa_epoch(self):
+        """Mutation-epoch bump, shared by both dialects.
+
+        Historically a no-op on the MLA (base-class) dialect — GQAArenaCache
+        overrode it with the real counter driving its opt-in CUDA route bank
+        cache. MLA CUDA route P1 (docs/GRM_MLA_CUDA_ROUTE_PLAN.md) makes it
+        real here too: `_native_to_idx_cache` (the epoch-cached full
+        native_node_id -> graft-index map used by `_native_route_order`)
+        keys on this same counter. Defined at every self.grafts mutation
+        site shared by both dialects (deposit, deposit_from_cache, step's
+        rollback/restore) plus every graft_repository.py mutation site
+        (forget/correct_memory/migrate/cull_graft/...), so those call sites
+        never needed dialect-specific branching and still don't."""
+        self._cuda_gqa_epoch = getattr(self, "_cuda_gqa_epoch", 0) + 1
 
     def reset_live_cache(self):
         """Drop the live device cache without touching persisted graft nodes."""
@@ -290,6 +328,7 @@ class ArenaCache:
                for li in range(len(self.m.layers))]
         self.grafts.append({"h": dev, "cent": self._node_key(text, h),
                             "ntok": len(ids), "text": text})
+        self._bump_cuda_gqa_epoch()
         return len(self.grafts) - 1
 
     def deposit_from_cache(self, text, seg_ntok):
@@ -318,6 +357,7 @@ class ArenaCache:
             cent = self._node_key(text)
         self.grafts.append({"h": dev, "cent": cent,
                             "ntok": seg_ntok, "text": text})
+        self._bump_cuda_gqa_epoch()
         return len(self.grafts) - 1
 
     def route(self, bare_text, exclude, limit=None):
@@ -335,14 +375,38 @@ class ArenaCache:
         # identifier hit must dominate. _key_score lives in O(1) cosine
         # range (every dialect must keep it there), so +1 per full match
         # wins outright, partial matches rank between.
+        #
+        # OPTION 1 (query-side lex extension, 2026-07-08): when enabled
+        # (default ON; set GRM_ROUTE_QUERY_LEX=0 to disable), content-word
+        # tokens from the query also participate — lowercase labels like
+        # "orion"/"pin" that never enter _rare_tokens. Match is against
+        # candidate NODE TEXT (query-side only; node rare keys / indexes
+        # unchanged). Native/CUDA stores only rare keys, so content hits
+        # force a Python rescore; when content words hit no candidate the
+        # native/CUDA order is kept (lex silent → latent ordering intact).
         qrare = self._rare_tokens(bare_text)
+        qlex = (self._query_lex_tokens(bare_text)
+                if self._route_query_lex_enabled() else qrare)
+        content_extra = qlex - qrare
 
-        cand = [i for i in range(len(self.grafts))
-                if i not in exclude and not self.grafts[i].get("retired")
-                and self.grafts[i].get("kind", "turn") != "recall"]
+        # P1 follow-on (profile-named): the eligible BASE (retired/kind
+        # filter) depends only on graft state, so it is epoch-cached in
+        # _route_cand_base(); only the per-call `exclude` filter runs here.
+        # Byte-identical to the old single comprehension: same ascending
+        # order, same three membership conditions. When `exclude` is empty
+        # the cached base list itself is used — every downstream consumer
+        # (_native_route_order, _vector_route_scores, the Python-fallback
+        # scoring loops) reads cand without mutating it.
+        cand_base = self._route_cand_base()
+        if exclude:
+            cand = [i for i in cand_base if i not in exclude]
+        else:
+            cand = cand_base
+        # Native lexical channel is rare-key only (node indexes unchanged).
         native_order = self._native_route_order(
-            p, qrare, cand, limit=route_limit)
-        if native_order is not None:
+            p, qrare, cand, limit=route_limit, exclude=exclude)
+        if native_order is not None and not self._query_lex_needs_rescore(
+                content_extra, cand):
             return native_order
         self.last_route_backend = "python"
         base = self._vector_route_scores(p, cand)
@@ -360,7 +424,7 @@ class ArenaCache:
         for i in cand:
             if i not in base:
                 continue
-            score = base[i] + self._lex_bonus(qrare, self.grafts[i])
+            score = base[i] + self._lex_bonus(qlex, self.grafts[i])
             if np.isfinite(score):
                 scored.append((score, i))
         scored.sort(key=lambda item: -item[0])
@@ -407,14 +471,409 @@ class ArenaCache:
     def _normalize_scores(self, base):
         return base
 
-    def _lex_bonus(self, qrare, g):
-        if not qrare:
+    def _lex_bonus(self, qlex, g):
+        """Fractional lexical bonus in [0, 1] — same scale as before
+        (hits / |query_lex|). Full identifier match still +1. Content-word
+        query tokens (when present) match against node text, not only the
+        stored rare-key set, so latent ordering still dominates when the
+        lex channel is silent (no hits → +0)."""
+        if not qlex:
             return 0.0
         if "rare" not in g:
             g["rare"] = self._rare_tokens(g["text"])
-        return len(qrare & g["rare"]) / len(qrare)
+        have = set(g["rare"])
+        # Query-side residual: tokens that cannot hit stored rare keys
+        # (lowercase content words) are matched against node text.
+        if not (qlex <= have):
+            have |= self._node_text_tokens(g.get("text", ""))
+        return len(qlex & have) / len(qlex)
 
-    def _native_route_order(self, pkey, qrare, cand, limit=None):
+    # Pure stopwords / query scaffolding for the content-word channel.
+    # Dialect-generic; deliberately excludes label nouns (orion, pin,
+    # cypher, bridge, …). Fact-template glue ("current", "value") is
+    # dropped so sibling fact nodes don't share spurious partial credit.
+    _QUERY_LEX_STOP = frozenset({
+        "a", "an", "the", "is", "are", "was", "were", "be", "been", "being",
+        "am", "do", "does", "did", "will", "would", "could", "should", "may",
+        "might", "must", "shall", "can", "to", "of", "in", "on", "at", "for",
+        "from", "by", "with", "as", "into", "about", "than", "that", "this",
+        "these", "those", "it", "its", "i", "me", "my", "we", "our", "you",
+        "your", "he", "she", "they", "them", "their", "what", "which", "who",
+        "whom", "whose", "where", "when", "why", "how", "and", "or", "but",
+        "not", "no", "nor", "if", "then", "so", "too", "very", "just", "only",
+        "also", "any", "all", "each", "few", "more", "most", "other", "some",
+        "such", "own", "same", "now", "here", "there", "up", "down", "out",
+        "off", "over", "under", "again", "further", "once", "please", "reply",
+        "answer", "tell", "recall", "probe", "question", "ask", "asking",
+        "user", "assistant", "current", "value",
+    })
+
+    @staticmethod
+    def _route_query_lex_enabled():
+        """Query-side content-word lex extension. Default ON; set
+        GRM_ROUTE_QUERY_LEX=0/false/off to restore rare-only behavior."""
+        v = os.environ.get("GRM_ROUTE_QUERY_LEX", "1").strip().lower()
+        return v not in ("0", "false", "no", "off", "")
+
+    @classmethod
+    def _query_content_tokens(cls, text):
+        """Lowercase content words from a route query (stopword-filtered).
+        Keeps label nouns that _rare_tokens drops (no digit / not ALL-CAPS)."""
+        out = set()
+        for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text):
+            tok = w.rstrip(".,:;").lower()
+            if len(tok) < 2 or tok in cls._QUERY_LEX_STOP:
+                continue
+            out.add(tok)
+        return out
+
+    @classmethod
+    def _query_lex_tokens(cls, text):
+        """Full query-side lexical channel: rare identifiers ∪ content words."""
+        return cls._rare_tokens(text) | cls._query_content_tokens(text)
+
+    @staticmethod
+    def _node_text_tokens(text):
+        """Lowercase word tokens from node text for query-side content match.
+        Not stored; computed on demand. Node rare keys / indexes untouched."""
+        out = set()
+        for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text or ""):
+            tok = w.rstrip(".,:;").lower()
+            if tok:
+                out.add(tok)
+        return out
+
+    def _query_lex_needs_rescore(self, content_extra, cand):
+        """True when content-word query tokens hit at least one candidate's
+        text — native rare-key scoring cannot see those hits, so Python
+        must rescore. Silent content (no hits) keeps native/CUDA order."""
+        if not content_extra:
+            return False
+        for i in cand:
+            text = self.grafts[i].get("text", "")
+            if content_extra & self._node_text_tokens(text):
+                return True
+        return False
+
+    def _route_cand_base(self):
+        """Epoch-cached eligible-candidate base for route(): every graft
+        index that is not retired and not recall-kind, ascending. The two
+        fields this reads (`retired`, `kind`) are exactly the eligibility
+        fields the GQA route-bank signature walk reads, so every mutation
+        site that can change them already bumps `_cuda_gqa_epoch` (W1
+        choke points: graft_arena _deposit_consolidation / step's
+        kind="recall" flip / rollback truncations; graft_repository
+        _mark_mutations / load / _rehydrate_from_wal / _rebuild_child_keys
+        / _fold_once / extraction sites). Per-call `exclude` filtering
+        happens in route(), against this base. The returned list is SHARED
+        (same object until the epoch moves) — callers must treat it as
+        read-only, which every current consumer does."""
+        epoch = getattr(self, "_cuda_gqa_epoch", 0)
+        cached = getattr(self, "_route_cand_base_cache", None)
+        cache_epoch = getattr(self, "_route_cand_base_epoch", None)
+        if cached is not None and cache_epoch == epoch:
+            return cached
+        base = [i for i, g in enumerate(self.grafts)
+                if not g.get("retired")
+                and g.get("kind", "turn") != "recall"]
+        self._route_cand_base_cache = base
+        self._route_cand_base_epoch = epoch
+        return base
+
+    def _native_to_idx_map(self):
+        """Epoch-cached full `graft-index -> native_node_id` map plus the
+        set of graft indices ineligible for native routing (P1,
+        docs/GRM_MLA_CUDA_ROUTE_PLAN.md). Rebuilt only when `_cuda_gqa_epoch`
+        (real on this dialect since P1 — see _bump_cuda_gqa_epoch) has moved
+        since the cache was built; a fresh mutation-epoch always triggers a
+        rebuild, so this is fail-closed the same way GQA's bank cache is
+        (over-invalidation is free; under-invalidation is the bug class both
+        caches exist to prevent). Nodes with `child_cents` and no native
+        multi-key support are marked ineligible on purpose: they must keep
+        falling through to the Python route exactly as before (the per-call
+        eligibility check in `_native_route_order` used to also police this
+        by walking every candidate's raw dict fields; it still does, now
+        against this cached map instead of re-deriving from scratch)."""
+        store = getattr(self, "native_store", None)
+        epoch = getattr(self, "_cuda_gqa_epoch", 0)
+        cached = getattr(self, "_native_to_idx_cache", None)
+        cache_epoch = getattr(self, "_native_to_idx_cache_epoch", None)
+        if cached is not None and cache_epoch == epoch:
+            return cached
+        multi_ok = bool(store is not None and getattr(
+            store, "supports_multi_route_keys", False))
+        idx_to_native = {}
+        ineligible = set()
+        for i, g in enumerate(self.grafts):
+            if g.get("child_cents") and not multi_ok:
+                ineligible.add(i)
+                continue
+            node_id = g.get("native_node_id")
+            if node_id is None:
+                ineligible.add(i)
+                continue
+            idx_to_native[i] = int(node_id)
+        result = (idx_to_native, ineligible)
+        self._native_to_idx_cache = result
+        self._native_to_idx_cache_epoch = epoch
+        return result
+
+    # ---------------------------------------------------- CUDA MLA route
+    # P2, docs/GRM_MLA_CUDA_ROUTE_PLAN.md: device-resident centroid arena
+    # mirroring GQAArenaCache's opt-in CUDA bridge (_cuda_route_bank_inputs
+    # / _ensure_cuda_route_bank / _cuda_route_order below the GQA subclass)
+    # but for the MLA dialect's single-centroid-per-node route key. Lives
+    # on the base class since MLA IS ArenaCache (GQAArenaCache overrides
+    # its own copies of every one of these methods with the GQA-shaped
+    # equivalents, so there is no name collision -- Python MRO picks the
+    # subclass's version there, this version here).
+    def _cuda_route_enabled(self):
+        return os.environ.get("GRM_MLA_CUDA_ROUTE", "").lower() in (
+            "1", "true", "yes", "on")
+
+    def _cuda_route_bank_signature(self):
+        """Cheap O(N) walk building the dense eligible bank: same
+        eligibility law as `_route_cand_base` (not retired, not
+        kind="recall") intersected with native-routability (`cent` is a
+        flat 1-D vector of uniform dim, `native_node_id` present, no
+        `child_cents` -- multi-row entries are OUT OF SCOPE for the CUDA
+        path per the plan, they fall through to the CPU path exactly as
+        `_native_to_idx_map`'s `ineligible` set already does for the
+        native ctypes route). Returns (node_ids, signature, rows) or None
+        if no eligible bank exists (mirrors GQA's
+        `_cuda_route_bank_signature` contract exactly)."""
+        rows = []
+        node_ids = []
+        sig_rows = []
+        dim = None
+        for g in self.grafts:
+            if g.get("retired") or g.get("kind", "turn") == "recall":
+                continue
+            if g.get("child_cents"):
+                return None
+            node_id = g.get("native_node_id")
+            if node_id is None:
+                return None
+            if "cent" not in g:
+                return None
+            cent = g.get("cent")
+            key = np.asarray(cent, dtype=np.float32).reshape(-1)
+            if dim is None:
+                dim = key.shape[0]
+            elif key.shape[0] != dim:
+                return None
+            rows.append(key)
+            node_ids.append(int(node_id))
+            sig_rows.append((
+                int(node_id), int(key.shape[0]), key.dtype.str, id(cent)))
+        if not rows:
+            return None
+        node_ids_np = np.asarray(node_ids, dtype=np.uint64)
+        return node_ids_np, tuple(sig_rows), rows
+
+    def _cuda_route_bank_inputs(self):
+        """Full bank inputs (route_bank, node_ids, signature), epoch-gated
+        exactly like GQA's `_cuda_route_bank_inputs`: the epoch
+        (`_cuda_gqa_epoch`, real on both dialects since P1) is the sole
+        hot-path staleness gate; the signature walk above only re-runs
+        when the epoch has moved, and a content-identical signature after
+        an epoch bump (e.g. a metadata-only mutation) reuses the stacked
+        bank without re-stacking."""
+        epoch = getattr(self, "_cuda_gqa_epoch", 0)
+        cached = getattr(self, "_cuda_mla_bank_cache", None)
+        cache_epoch = getattr(self, "_cuda_mla_cache_epoch", None)
+        if cached is not None and cache_epoch == epoch:
+            return cached
+        sig = self._cuda_route_bank_signature()
+        if sig is None:
+            self._cuda_mla_bank_cache = None
+            self._cuda_mla_native_to_idx_cache = None
+            return None
+        node_ids_np, signature, rows = sig
+        if cached is not None and cached[2] == signature:
+            self._cuda_mla_bank_cache = cached
+            self._cuda_mla_cache_epoch = epoch
+            return cached
+        route_bank = np.ascontiguousarray(np.stack(rows), dtype=np.float32)
+        bank_inputs = (route_bank, node_ids_np, signature)
+        self._cuda_mla_bank_cache = bank_inputs
+        self._cuda_mla_cache_epoch = epoch
+        # Invalidate the reverse (native_id -> graft_idx) map derived from
+        # this bank -- _cuda_route_native_to_idx() below rebuilds it lazily
+        # off the SAME bank_inputs object identity, so a genuine content
+        # change (this branch) must drop it; the signature-unchanged reuse
+        # branch just above returns before reaching here, so it keeps its
+        # existing reverse-map cache untouched.
+        self._cuda_mla_native_to_idx_cache = None
+        return bank_inputs
+
+    def _cuda_route_native_to_idx(self, bank_inputs):
+        """Epoch-cached (reverse map, graft-idx set) pair for the CUDA MLA
+        bank's own row set, built ONCE per bank attach rather than
+        rebuilt from `cand`/`exclude` on every route call:
+          - reverse map: native_node_id -> graft_idx (for the O(k) result
+            remap after a route call)
+          - graft-idx set: which graft indices the bank actually covers
+            (for O(len(exclude)) membership tests instead of an
+            O(bank_size) or O(len(cand)) walk)
+
+        This is the fix for the residual P1b named at close ("O(cand)
+        subset pass... absorbed into P2's design"): the naive absorption
+        still rebuilt an O(len(cand)) dict every call (a 1M-node full
+        walk, ~460ms/call measured, against a CUDA kernel that itself
+        runs in under 3ms). Caching both here, keyed off `bank_inputs`
+        identity (itself epoch-gated by `_cuda_route_bank_inputs`), makes
+        the hot path O(len(exclude)) -- typically the live/mounted node
+        count, not the eligible-base size.
+
+        Cache-MISS cost (once per bank attach, not per route call): O(N)
+        -- re-walks `self.grafts` with the SAME eligibility predicate
+        `_cuda_route_bank_signature` used to build the bank, in the same
+        ascending order, so row index i of the bank corresponds to the
+        i-th eligible graft. This walk only runs when the epoch moves
+        (bank rebuild), never on the steady-state hot path."""
+        cached = getattr(self, "_cuda_mla_native_to_idx_cache", None)
+        if cached is not None and cached[0] is bank_inputs:
+            return cached[1], cached[2]
+        node_ids_np = bank_inputs[1]
+        row_to_graft_idx = []
+        for i, g in enumerate(self.grafts):
+            if g.get("retired") or g.get("kind", "turn") == "recall":
+                continue
+            if g.get("child_cents"):
+                continue
+            if g.get("native_node_id") is None or "cent" not in g:
+                continue
+            row_to_graft_idx.append(i)
+        n = min(len(row_to_graft_idx), node_ids_np.shape[0])
+        native_to_idx = {
+            int(node_ids_np[row]): row_to_graft_idx[row] for row in range(n)
+        }
+        graft_idx_set = set(row_to_graft_idx[:n])
+        self._cuda_mla_native_to_idx_cache = (
+            bank_inputs, native_to_idx, graft_idx_set)
+        return native_to_idx, graft_idx_set
+
+    def _ensure_cuda_route_bank(self, store, bank_inputs):
+        if getattr(self, "_cuda_mla_route_unavailable", False):
+            return False
+        if not hasattr(store, "configure_cuda_mla_route_bank"):
+            return False
+        if bank_inputs is None:
+            return False
+        route_bank, node_ids, signature = bank_inputs
+        # Identity fast path before the tuple `==`: `signature` is a tuple
+        # of one (node_id, dim, dtype, id(cent)) entry PER ELIGIBLE GRAFT
+        # (`_cuda_route_bank_signature`), so at 1M nodes a value-equality
+        # comparison walks 1M elements even when both sides are the exact
+        # same cached tuple object (measured ~2.3ms/call — CPython's tuple
+        # `==` does not skip element-wise comparison on `a is b`, only
+        # `PyObject_RichCompare`'s outer object-identity shortcut applies,
+        # which the `==` operator does take for singletons but not
+        # arbitrary same-identity containers). `bank_inputs` is only ever
+        # a fresh object on a genuine content change
+        # (`_cuda_route_bank_inputs`), so comparing `signature is
+        # getattr(store, "_cuda_mla_bank_signature", None)` first turns
+        # the common (nothing changed) case into an O(1) pointer compare;
+        # the O(N) `==` only runs on an actual signature-object swap.
+        stored_signature = getattr(store, "_cuda_mla_bank_signature", None)
+        if (getattr(store, "_cuda_mla_bank", None) is not None
+                and (stored_signature is signature
+                     or stored_signature == signature)):
+            return True
+        try:
+            store.configure_cuda_mla_route_bank(route_bank, node_ids)
+            store._cuda_mla_bank_signature = signature
+        except Exception:
+            self._cuda_mla_route_unavailable = True
+            return False
+        return True
+
+    def _cuda_route_order(self, pkey, cand, limit, exclude=()):
+        """CUDA MLA route order (P2). Absorbs the O(cand) residual named
+        at P1b close: attach-time defines the dense eligible bank (every
+        row the epoch-cached `_cuda_route_bank_signature` walk accepts);
+        per-call work is bounded by `len(exclude)` (typically small --
+        the live/mounted node set -- not `len(cand)`, which is close to
+        the full eligible base N). Concretely: request
+        `topk = want + |excludes that are actually in the bank|` from the
+        CUDA arena, then drop excluded ids while mapping the O(k)
+        response back through the epoch-cached reverse map -- no O(N) or
+        O(len(cand)) host pass on the route path, matching the plan's
+        contract exactly.
+
+        First cut of this method rebuilt a fresh `{native_id: idx}` dict
+        from `cand` on every call (an O(len(cand)) walk -- 1M nodes,
+        ~460ms/call measured, entirely Python dict-building overhead
+        against a CUDA kernel that itself runs in under 3ms). Fixed by
+        caching the reverse map per bank attach (`_cuda_route_native_to_idx`)
+        and keying the per-call cost on `exclude` instead of `cand`."""
+        if limit is None:
+            return None
+        store = getattr(self, "native_store", None)
+        if store is None or not hasattr(store, "route_mla_cuda"):
+            return None
+        if not self._cuda_route_enabled():
+            return None
+        bank_inputs = self._cuda_route_bank_inputs()
+        if bank_inputs is None:
+            return None
+        if not self._ensure_cuda_route_bank(store, bank_inputs):
+            return None
+        bank_size = int(bank_inputs[1].shape[0])
+        # `cand` must equal (bank-eligible rows) minus `exclude`. Rather
+        # than proving that by walking `cand` (the expensive direction —
+        # O(N)), check the cheap arithmetic invariant instead: `cand`'s
+        # eligibility predicate (_route_cand_base: not retired, not
+        # kind="recall") is a SUPERSET of the bank's predicate (adds:
+        # native_node_id present, cent present as a uniform flat vector,
+        # no child_cents). If the bank covers the FULL base
+        # (bank_size == len(_route_cand_base())), the two predicates agree
+        # on this graft set and `len(cand) == bank_size - |exclude|`
+        # follows arithmetically from route()'s own construction
+        # (`cand = [i for i in cand_base if i not in exclude]`). Any
+        # mismatch (a CUDA-only exclusion actually removed something, or
+        # the caller's `cand` was built some other way) fails this check
+        # and falls through to the CPU path -- fail-closed, not silently
+        # wrong.
+        cand_base = self._route_cand_base()
+        if bank_size != len(cand_base):
+            return None
+        native_to_idx, bank_idx_set = self._cuda_route_native_to_idx(bank_inputs)
+        excludes_in_bank = 0
+        exclude_set = None
+        if exclude:
+            exclude_set = set(exclude)
+            excludes_in_bank = sum(1 for i in exclude_set if i in bank_idx_set)
+        if len(cand) != bank_size - excludes_in_bank:
+            return None
+        want = min(max(0, int(limit)), len(cand))
+        if want <= 0:
+            return []
+        topk = min(16, bank_size, want + excludes_in_bank)
+        if topk < want:
+            return None
+        try:
+            routed_native = store.route_mla_cuda(
+                np.asarray(pkey, dtype=np.float32), topk=topk)
+        except Exception:
+            return None
+        routed = []
+        for node_id in routed_native:
+            idx = native_to_idx.get(int(node_id))
+            if idx is None:
+                continue
+            if exclude_set is not None and idx in exclude_set:
+                continue
+            routed.append(idx)
+            if len(routed) >= want:
+                break
+        if len(routed) < want:
+            return None
+        self.last_route_backend = "cuda"
+        return routed
+
+    def _native_route_order(self, pkey, qrare, cand, limit=None, exclude=()):
         store = getattr(self, "native_store", None)
         if store is None or not hasattr(store, "route"):
             return None
@@ -423,36 +882,109 @@ class ArenaCache:
             return None
         if not cand:
             return []
+        if not qrare and limit is not None:
+            # CUDA MLA route (P2): only for the limited-window path and
+            # only when there is no lexical channel to honor (the dense
+            # CUDA bank carries no lexical bonus, same restriction GQA's
+            # bridge applies at the identical call-site shape). `exclude`
+            # is threaded through so the per-call cost stays bounded by
+            # len(exclude) rather than len(cand) -- see _cuda_route_order.
+            cuda_order = self._cuda_route_order(pkey, cand, limit, exclude)
+            if cuda_order is not None:
+                return cuda_order
+        idx_to_native, ineligible = self._native_to_idx_map()
+        # empty ineligible set (the common case) skips the O(len(cand))
+        # membership pass entirely — any() over an empty set's genexpr is
+        # False for every element, so the guard is byte-identical.
+        if ineligible and any(i in ineligible for i in cand):
+            return None
+        # Subset the epoch-cached map by `cand` (O(len(cand)) dict lookups)
+        # instead of rebuilding a fresh {native_node_id: idx} dict from raw
+        # graft attribute access every call (the P0-receipted cost:
+        # native_to_idx build was ~O(N) per call). The cache itself
+        # (idx_to_native) is only rebuilt when the mutation epoch moves.
         native_to_idx = {}
         for i in cand:
-            g = self.grafts[i]
-            # Native v1 stores one route key per node. Hierarchical
-            # digest/era nodes use child keys too; require the multi-key
-            # native index before routing them outside Python.
-            if g.get("child_cents") and not getattr(
-                    store, "supports_multi_route_keys", False):
-                return None
-            node_id = g.get("native_node_id")
+            node_id = idx_to_native.get(i)
             if node_id is None:
                 return None
-            native_to_idx[int(node_id)] = i
+            native_to_idx[node_id] = i
+        if len(native_to_idx) != len(cand):
+            return None
+
+        n_total = len(self.grafts)
+        if limit is None:
+            # Full-rank repository ordering: byte-identical to the
+            # pre-P1 contract. topk = full N; completeness law unchanged.
+            topk = n_total
+        else:
+            want = min(max(0, int(limit)), len(cand))
+            if want <= 0:
+                return []
+            # `store.route` ranks over the ENTIRE native store, not just
+            # `cand` — nodes outside `cand` (excluded by the caller, or
+            # retired/recall-kind, which native has no concept of) can
+            # still occupy native's top ranks and would silently displace
+            # eligible ids if topk were just `want`. Slack = however many
+            # native-known ids exist outside `cand` (upper bound: native
+            # store size never exceeds len(self.grafts) -- verified
+            # invariant, GraftRepository._native_sync_node only ever grows
+            # _native_node_ids lazily up to len(arena.grafts)). Request
+            # enough that even if ALL of that slack out-ranks every
+            # eligible id, `want` eligible survivors are still inside the
+            # requested window.
+            excluded = max(0, n_total - len(cand))
+            topk = min(n_total, want + excluded)
+
         try:
             routed_native = store.route(
                 np.asarray(pkey, dtype=np.float32).reshape(-1).tolist(),
-                sorted(qrare), topk=len(self.grafts))
+                sorted(qrare), topk=topk)
         except Exception:
             return None
+
         routed = []
         for node_id in routed_native:
             idx = native_to_idx.get(int(node_id))
             if idx is not None:
                 routed.append(idx)
-        if len(routed) != len(cand):
-            return None
-        self.last_route_backend = "native"
-        if limit is not None:
-            return routed[:max(0, int(limit))]
-        return routed
+                if limit is not None and len(routed) >= min(
+                        max(0, int(limit)), len(cand)):
+                    break
+
+        if limit is None:
+            # REPLACEMENT completeness law, full-rank path: unchanged from
+            # pre-P1 — native must account for every eligible candidate.
+            if len(routed) != len(cand):
+                return None
+            self.last_route_backend = "native"
+            return routed
+
+        want = min(max(0, int(limit)), len(cand))
+        # REPLACEMENT completeness law, limited path: native must return
+        # exactly min(topk, n_eligible) ids that map through native_to_idx.
+        # We can't observe n_eligible directly (it's native-internal state
+        # — could be less than topk if non-finite scores were dropped, M6
+        # law), so the fail-closed check is: either we filled the window
+        # we asked for (`want` mapped ids found), or native handed back
+        # fewer RAW ids than `topk` (meaning it ran out of eligible nodes
+        # store-wide, not that our slack guess was wrong) and every one of
+        # those raw ids mapped cleanly. Any other shortfall (native filled
+        # its full topk quota but we still didn't reach `want` mapped ids)
+        # means the slack guess under-covered — same distrust as today,
+        # Python fallback, bounded cost.
+        if len(routed) >= want:
+            self.last_route_backend = "native"
+            return routed[:want]
+        if len(routed_native) < topk:
+            # Native legitimately exhausted its eligible pool (NaN drops or
+            # a smaller store than n_total) before filling topk. Every
+            # returned id must still map, or something else is wrong.
+            if len(routed) != len(routed_native):
+                return None
+            self.last_route_backend = "native"
+            return routed
+        return None
 
     # ------------------------------------------------------------ librarian
     # Mounted DIALOGUE turns pull generation into conversation mode — the
@@ -662,6 +1194,9 @@ class ArenaCache:
         self.grafts[didx]["rare"] = rare | self._rare_tokens(note)
         for i in idxs:
             self.grafts[i]["retired"] = True
+        # kind/child_cents/retired all changed after deposit()'s own bump —
+        # each is read by the CUDA route bank eligibility/signature walk.
+        self._bump_cuda_gqa_epoch()
         return didx, text
 
     def consolidate(self, idxs, ngen=None):
@@ -1185,14 +1720,15 @@ class ArenaCache:
         return out
 
     def step(self, user_text, ngen=48, deposit=True,
-             stops=("\nUser:", "User:", "\nAssistant:", "Assistant:", "\n\n"),
-             max_trips=0):
+             stops=None, max_trips=0):
         """One conversation turn through the arena. max_trips > 0 enables
         SHUTTLING: if the answer fails the grounding check, restore the
         pre-attempt cache (snapshot = the old tensor list + position —
         cache tensors are immutable), swap in the NEXT ranking slice, and
         retry. Failed attempts never enter the live cache. Returns
         (answer, info)."""
+        if stops is None:
+            stops = self.stop_sequences
         for L in self.m.layers:
             L.self_attn.live_shift = self.live_shift
         rec = []
@@ -1290,6 +1826,7 @@ class ArenaCache:
                  self.cur_mount_n) = (snap[0], snap[1], list(snap[2]),
                                       snap[3], snap[4])
                 del self.grafts[snap[5]:]
+                self._bump_cuda_gqa_epoch()
             if clean:
                 # fresh mini-cache: _attempt's bootstrap path rebuilds
                 # [sink | mounts | question] via injection — no surgery on
@@ -1321,6 +1858,7 @@ class ArenaCache:
         (self.caches, self.pos, self.live_segs,
          self.cur_mounts, self.cur_mount_n) = st[0], st[1], st[2], st[3], st[4]
         self.grafts[:] = st[5]
+        self._bump_cuda_gqa_epoch()
         return txt, info
 
     def _attempt(self, user_text, picks, ngen, deposit, stops):
@@ -1341,7 +1879,7 @@ class ArenaCache:
             self._commit_native_mount(picks, self.cur_mount_n)
         else:
             self.swap(picks)
-        prompt_ids = self.encode(f"User: {user_text}\nAssistant:")
+        prompt_ids = self.encode(self._format_step_prompt(user_text))
         seg_start_ntok = len(prompt_ids)
         row = self._forward(prompt_ids)
         kv_graft.clear_injection(self.m)     # bootstrap injection fired once
@@ -1374,7 +1912,7 @@ class ArenaCache:
             if stop in txt:
                 txt = txt.split(stop)[0]
         txt = txt.strip()
-        turn_text = f"User: {user_text}\nAssistant: {txt}\n"
+        turn_text = self._format_step_turn(user_text, txt)
         seg_cache_ntok = seg_start_ntok + cached_out
         gidx = None
         if deposit:
@@ -1397,6 +1935,10 @@ class ArenaCache:
                     new_rare -= g["rare"]
                 if not new_rare:
                     self.grafts[gidx]["kind"] = "recall"
+                    # kind="recall" flips CUDA route-bank eligibility
+                    # (excluded from the signature walk) — bump again, the
+                    # deposit above already bumped for the append itself.
+                    self._bump_cuda_gqa_epoch()
         self.live_segs.append((gidx, seg_cache_ntok))
         evicted = self.evict()
         S = self._cache_len()
@@ -1424,7 +1966,7 @@ class GQAArenaCache(ArenaCache):
     PAYLOAD = (("k", 2), ("v", 2))
     ROPE_KEYS = ("k",)
 
-    def __init__(self, model, *a, **kw):
+    def __init__(self, model, *a, storage_bits=None, **kw):
         cfg = model.config
         # k + v vals/token/layer for node VRAM accounting (Qwen3-4B: 2048)
         self.VALS_PER_TOK_LAYER = cfg.num_kv_heads * cfg.head_dim * 2
@@ -1432,6 +1974,23 @@ class GQAArenaCache(ArenaCache):
         # form (k_u8, k_scale, v_u8, v_scale) is not surgeable
         for L in model.layers:
             L.self_attn.quant_kv_cache = False
+        # P3 format-1 storage quantization (opt-in, default OFF — unchanged
+        # fp16 node payloads unless explicitly requested). Constructor kwarg
+        # takes priority; else env var GRM_GRAFT_STORAGE_BITS (same
+        # convention as GRM_GQA_CUDA_ROUTE below). Validated against
+        # core.graft_quant.SUPPORTED_BITS's packable depths (16 means "off").
+        if storage_bits is None:
+            env_bits = os.environ.get("GRM_GRAFT_STORAGE_BITS", "").strip()
+            storage_bits = int(env_bits) if env_bits else None
+        if storage_bits is not None:
+            storage_bits = int(storage_bits)
+            if storage_bits not in SUPPORTED_BITS or storage_bits == 16:
+                raise ValueError(
+                    f"GQAArenaCache: storage_bits={storage_bits!r} invalid — "
+                    f"must be one of {[b for b in SUPPORTED_BITS if b != 16]} "
+                    "(or None/unset/16 for the default fp16 node payload)"
+                )
+        self.storage_bits = storage_bits
         super().__init__(model, *a, **kw)
 
     # --------------------------------------------------- dialect overrides
@@ -1479,9 +2038,36 @@ class GQAArenaCache(ArenaCache):
         return os.environ.get("GRM_GQA_CUDA_ROUTE", "").lower() in (
             "1", "true", "yes", "on")
 
-    def _cuda_route_bank_inputs(self):
+    def _bump_cuda_gqa_epoch(self):
+        """Mutation-epoch bump. Called at every GQAArenaCache-side site that
+        can change what `_cuda_route_bank_signature` would produce (graft
+        add/retire/replace, route-key/kind/child_cents changes, truncation or
+        restore of self.grafts). O(1) at mutation time.
+
+        This is a FAST-PATH HINT layered over the cheap per-node signature
+        walk in `_cuda_route_bank_signature`, which remains the correctness
+        authority on every route call (it re-derives from `self.grafts`
+        fresh, so it is safe even against mutations this epoch cannot see —
+        e.g. a caller poking graft dict fields directly from outside this
+        class, such as GraftRepository's lifecycle/WAL/migrate paths). The
+        epoch only lets a route call skip the walk itself when nothing this
+        class controls has changed; the walk is ~1% of the old per-call cost
+        (P0 receipt), so re-running it on an epoch mismatch is cheap
+        insurance, not a regression.
+        """
+        self._cuda_gqa_epoch = getattr(self, "_cuda_gqa_epoch", 0) + 1
+
+    def _cuda_route_bank_signature(self):
+        """Cheap O(N) walk: eligibility + signature only, NO stacking. This
+        is the part of the old `_cuda_route_bank_inputs` that was NOT the
+        P0-receipted defect (~1% of the reused-call cost) — it stays on
+        every call as the fail-closed correctness check. Returns
+        (node_ids, signature, rows) where `rows` are the raw per-node key
+        arrays (not yet stacked) so a cache miss can stack them without a
+        second walk."""
         rows = []
         node_ids = []
+        sig_rows = []
         shape = None
         for g in self.grafts:
             if g.get("retired") or g.get("kind", "turn") == "recall":
@@ -1491,7 +2077,8 @@ class GQAArenaCache(ArenaCache):
                 return None
             if "cent" not in g:
                 return None
-            key = np.asarray(g.get("cent"), dtype=np.float32)
+            cent = g.get("cent")
+            key = np.asarray(cent, dtype=np.float32)
             if key.ndim != 3:
                 return None
             if shape is None:
@@ -1500,26 +2087,105 @@ class GQAArenaCache(ArenaCache):
                 return None
             rows.append(key)
             node_ids.append(int(node_id))
+            sig_rows.append((
+                int(node_id),
+                tuple(int(dim) for dim in key.shape),
+                key.dtype.str,
+                id(cent),
+            ))
         if not rows:
             return None
-        return (
-            np.ascontiguousarray(np.stack(rows), dtype=np.float32),
-            np.asarray(node_ids, dtype=np.uint64),
-        )
+        node_ids_np = np.asarray(node_ids, dtype=np.uint64)
+        return node_ids_np, tuple(sig_rows), rows
 
-    def _ensure_cuda_route_bank(self, store):
+    @staticmethod
+    def _cuda_gqa_bridge_paranoid():
+        # Debug/test-only defense in depth (W2, GRM_CUDA_BRIDGE_OVERHEAD_PLAN
+        # P2): forces the O(N) signature walk to run on every call even when
+        # the epoch says nothing changed, and asserts the two decisions
+        # agree. Off in production (adds back the ~1% walk cost this phase
+        # made conditional). Read fresh every call, not cached, so tests can
+        # monkeypatch/setenv per-test without reload games.
+        return os.environ.get("GRM_GQA_BRIDGE_PARANOID", "").lower() in (
+            "1", "true", "yes", "on")
+
+    def _cuda_route_bank_inputs(self):
+        """Full bank inputs (route_bank, node_ids, signature).
+
+        Hot path (W1 complete: every graft_repository.py mutation site that
+        can change what the signature walk would produce now bumps
+        `_cuda_gqa_epoch` — see _bump_cuda_gqa_epoch docstring and the
+        GRM_CUDA_BRIDGE_OVERHEAD_LEDGER 2026-07-08 01:30 entry for the full
+        site list). The epoch is now the SOLE staleness gate on the common
+        path: if `_cuda_gqa_epoch` has not moved since the cached bank was
+        built, return the cache with NO signature walk at all (O(1), no
+        O(N) component). Only a changed epoch triggers the walk (which
+        stays exactly as before: eligibility + signature, stacking only on
+        an actual content-signature miss — the P0-receipted defect this
+        whole work order exists to close).
+
+        GRM_GQA_BRIDGE_PARANOID=1 disables the fast path: the walk always
+        runs, and its answer is asserted to agree with what the epoch-only
+        decision would have been — a self-check for this instrumentation
+        battery, not a production code path.
+        """
+        epoch = getattr(self, "_cuda_gqa_epoch", 0)
+        cached = getattr(self, "_cuda_gqa_bank_cache", None)
+        cache_epoch = getattr(self, "_cuda_gqa_cache_epoch", None)
+        paranoid = self._cuda_gqa_bridge_paranoid()
+        epoch_says_fresh = cached is not None and cache_epoch == epoch
+
+        if epoch_says_fresh and not paranoid:
+            return cached
+
+        sig = self._cuda_route_bank_signature()
+        if sig is None:
+            if paranoid and epoch_says_fresh:
+                assert cached is None, (
+                    "GRM_GQA_BRIDGE_PARANOID: epoch says the cached bank is "
+                    "fresh but the signature walk finds no eligible bank — "
+                    "epoch under-invalidation")
+            self._cuda_gqa_bank_cache = None
+            return None
+        node_ids_np, signature, rows = sig
+
+        if paranoid and epoch_says_fresh:
+            assert cached[2] == signature, (
+                "GRM_GQA_BRIDGE_PARANOID: epoch says the cached bank is "
+                "fresh but the signature walk disagrees — epoch under-"
+                "invalidation (a mutation changed the signature without "
+                "bumping _cuda_gqa_epoch)")
+
+        if cached is not None and cached[2] == signature:
+            # Signature-identical even though the epoch moved (e.g. a
+            # metadata-only mutation bumped epoch but didn't touch anything
+            # the bank cares about) — over-invalidation is fine, just skip
+            # the re-stack and refresh the cache_epoch so the NEXT call can
+            # take the fast path again.
+            self._cuda_gqa_bank_cache = cached
+            self._cuda_gqa_cache_epoch = epoch
+            return cached
+
+        route_bank = np.ascontiguousarray(np.stack(rows), dtype=np.float32)
+        bank_inputs = (route_bank, node_ids_np, signature)
+        self._cuda_gqa_bank_cache = bank_inputs
+        self._cuda_gqa_cache_epoch = epoch
+        return bank_inputs
+
+    def _ensure_cuda_route_bank(self, store, bank_inputs):
         if getattr(self, "_cuda_gqa_route_unavailable", False):
             return False
-        if getattr(store, "_cuda_gqa_bank", None) is not None:
-            return True
         if not hasattr(store, "configure_cuda_gqa_route_bank"):
             return False
-        bank_inputs = self._cuda_route_bank_inputs()
         if bank_inputs is None:
             return False
-        route_bank, node_ids = bank_inputs
+        route_bank, node_ids, signature = bank_inputs
+        if (getattr(store, "_cuda_gqa_bank", None) is not None
+                and getattr(store, "_cuda_gqa_bank_signature", None) == signature):
+            return True
         try:
             store.configure_cuda_gqa_route_bank(route_bank, node_ids)
+            store._cuda_gqa_bank_signature = signature
         except Exception:
             self._cuda_gqa_route_unavailable = True
             return False
@@ -1533,7 +2199,10 @@ class GQAArenaCache(ArenaCache):
             return None
         if not self._cuda_route_enabled():
             return None
-        if not self._ensure_cuda_route_bank(store):
+        bank_inputs = self._cuda_route_bank_inputs()
+        if bank_inputs is None:
+            return None
+        if not self._ensure_cuda_route_bank(store, bank_inputs):
             return None
         native_to_idx = {
             int(self.grafts[i]["native_node_id"]): int(i)
@@ -1541,9 +2210,6 @@ class GQAArenaCache(ArenaCache):
             if self.grafts[i].get("native_node_id") is not None
         }
         if len(native_to_idx) != len(cand):
-            return None
-        bank_inputs = self._cuda_route_bank_inputs()
-        if bank_inputs is None:
             return None
         bank_size = int(bank_inputs[1].shape[0])
         want = min(max(0, int(limit)), len(cand))
@@ -1570,7 +2236,13 @@ class GQAArenaCache(ArenaCache):
         self.last_route_backend = "cuda"
         return routed
 
-    def _native_route_order(self, pkey, qrare, cand, limit=None):
+    def _native_route_order(self, pkey, qrare, cand, limit=None, exclude=()):
+        # `exclude` accepted for base-class call-site compatibility
+        # (route() passes it positionally-by-keyword to every dialect's
+        # _native_route_order since the P2 MLA CUDA route fix); GQA's own
+        # _cuda_route_order below does not yet consume it -- out of scope
+        # for this work order, GQA's bridge was not re-profiled at 1M-node
+        # scale here.
         store = getattr(self, "native_store", None)
         if store is None or not hasattr(store, "route_gqa"):
             return None
@@ -1620,14 +2292,36 @@ class GQAArenaCache(ArenaCache):
 
     # ------------------------------------------------- persistence format
     def pack_node(self, h):
+        """Node payload for disk (GraftRepository._atomic_savez_compressed
+        writes this dict straight to nodes/NNNN.npz). Default: plain fp16
+        {"k","v"} stacked (L,H,S,D) — UNCHANGED from before P3.
+
+        P3 format-1 hook (opt-in via self.storage_bits, see __init__): when
+        set, returns the PACKED payload instead (core.graft_quant
+        .pack_kv_arrays — same group-32 symmetric math as format 2,
+        explicit format_version/storage_bits fields, fail-closed on
+        unpack). Mutation/WAL semantics untouched — the WAL never carries
+        K/V bytes regardless of which payload shape this returns (P0: WAL
+        NODE_UPSERT records only a has_payload flag)."""
         _np = lambda t: (t if isinstance(t, np.ndarray)
                          else t.float().numpy()).astype(np.float16)
-        return {"k": np.stack([_np(d["k"])[0] for d in h]),
-                "v": np.stack([_np(d["v"])[0] for d in h])}
+        k = np.stack([_np(d["k"])[0] for d in h])
+        v = np.stack([_np(d["v"])[0] for d in h])
+        if self.storage_bits is None:
+            return {"k": k, "v": v}
+        return pack_kv_arrays({"k": k, "v": v}, self.storage_bits)
 
     def unpack_node(self, z):
+        """Inverse of pack_node. Transparently detects a packed payload
+        (format_version field, core.graft_quant.is_packed_payload) and
+        dequantizes before device upload; a plain fp16 payload (the
+        default, and every node written before P3) is unaffected."""
         dt = BlockTC.COMPUTE_DTYPE
-        k, v = z["k"], z["v"]
+        if is_packed_payload(z):
+            arrays = unpack_kv_arrays(z, ["k", "v"])
+            k, v = arrays["k"], arrays["v"]
+        else:
+            k, v = z["k"], z["v"]
         return [{"k": tc.tensor(np.ascontiguousarray(k[li][None])).astype(dt),
                  "v": tc.tensor(np.ascontiguousarray(v[li][None])).astype(dt)}
                 for li in range(len(self.m.layers))]

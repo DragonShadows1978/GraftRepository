@@ -7,15 +7,25 @@ segment-reduce (GQA raw) — with an APA-shaped two-tier precision scheme
 Target: "hundreds of memories" → 100k–1M nodes at interactive latency,
 on host CPU, with the paper's §5 routing limitation retired in v1.1.
 
-**Status: IMPLEMENTATION CLOSED on local `main`.** P0-P6
+**Status: IMPLEMENTATION CLOSED in the local GraftRepository checkout.** P0-P6
 shipped with measured MLA/GQA routing receipts, INT4 bulk/refine host routing,
 prepared epoch snapshots, opt-in CUDA GQA route attachment, and the
 `GRM_GQA_CUDA_ROUTE=1` limited-route arena bridge. Final non-GPU closure gate:
 `PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest
 tests/test_grm_router_baseline.py tests/test_grm_native_runtime.py -q` passed
 `109 passed, 2 warnings in 344.94s` on 2026-07-03. Live CUDA bridge validation
-is the only unrun receipt in this environment because the sandbox cannot see
-the NVIDIA device nodes.
+ran on 2026-07-07 against real Qwen3.5-2B layer-3 capture banks at 32, 128, and
+512 nodes; all matched the batched Python raw `|q.k|` reference.
+
+Tracking artifacts:
+- Operational ledger: `docs/GRM_GEMV_ROUTER_LEDGER.md`
+- Narrative synthesis: `docs/GRM_GEMV_ROUTER_SYNTHESIS.md`
+- Scaling report: `docs/ROUTER_SCALING_REPORT.md`
+
+**Successor work order (2026-07-07):** the CUDA bridge overhead exposed by
+this plan's closure receipts (bridge 25-50× the device route cost) is being
+fixed under `docs/GRM_CUDA_BRIDGE_OVERHEAD_PLAN.md` (own ledger, wing
+synthesis continues here) on branch **`grm-cuda-bridge-overhead`**.
 
 **House laws in force:** measure, don't model (baseline curve BEFORE any
 optimization); commit-per-phase; gate-per-phase (166-test floor); every
@@ -566,6 +576,41 @@ errors fall back to the existing CPU native route. CPU-only regressions cover
 the CUDA auto-attachment path and the lexical fallback path; the CUDA top-k cap
 still limits this path to the step/mount-window contract rather than replacing
 full-rank `arena.route()` calls.
+
+P4 CUDA route-bank lifecycle note: `GQAArenaCache` now binds an attached CUDA
+route bank to a cheap route-snapshot signature over native node IDs, key shapes,
+dtypes, and route-key object identities. A route call reuses the GPU bank only
+when that signature still matches; appended/replaced dense GQA rows force a new
+`configure_cuda_gqa_route_bank()` attachment instead of reusing stale GPU row
+state. Direct `NativeGraftStore.configure_cuda_gqa_route_bank()` attachments
+also record a deterministic content signature from the validated dense bank, and
+`clear_cuda_gqa_route_bank()` clears that marker with the device bank. CPU-only
+regression coverage now checks explicit-bank failure, route-key mutation
+invalidation, active-state invalidation, opt-in CUDA routing, lexical fallback,
+and row-change reattachment:
+```
+PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest
+tests/test_grm_native_runtime.py::test_native_gqa_cuda_route_requires_explicit_bank
+tests/test_grm_native_runtime.py::test_native_gqa_route_mutation_clears_cuda_bank
+tests/test_grm_native_runtime.py::test_native_gqa_eligibility_mutation_clears_cuda_bank
+tests/test_grm_native_runtime.py::test_gqa_arena_uses_opt_in_cuda_route_bank
+tests/test_grm_native_runtime.py::test_gqa_arena_rebuilds_cuda_route_bank_when_rows_change
+tests/test_grm_native_runtime.py::test_gqa_arena_skips_cuda_route_for_lexical_queries
+```
+passed `6 passed, 2 warnings in 9.65s` on 2026-07-07.
+The broader native-runtime regression then passed:
+```
+PYTEST_ADDOPTS='-p no:cacheprovider' python3 -m pytest tests/test_grm_native_runtime.py
+```
+Result: `90 passed, 2 warnings in 248.88s`.
+
+P4 live CUDA bridge receipt: `scripts/grm_gqa_cuda_bridge_smoke.py` now has a
+device-visible validation run on real Qwen3.5-2B source layer-3 capture banks.
+The opt-in arena bridge (`GRM_GQA_CUDA_ROUTE=1`) matched both the batched Python
+raw `|q.k|` reference and direct `NativeGraftStore.route_gqa_cuda()` at 32, 128,
+and 512 full 256-token K-bank nodes. Reused bridge min wall was `3.15747ms`,
+`11.217836ms`, and `38.960699ms`; direct CUDA device/query was `0.098496ms`,
+`0.226304ms`, and `0.740352ms`.
 
 P4 transposed-bank experiment: `GRM_ROUTER_GQA_TRANSPOSED=1` builds an opt-in
 transposed prepared GQA key bank and routes query-token-4 keys through it. The

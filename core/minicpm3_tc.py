@@ -372,7 +372,11 @@ class MiniCPM3_TC:
             np.ascontiguousarray(g("model.norm.weight")), dtype="float32")
         self.lm_head = _TiedLMHead(self.embed_tokens.weight)  # tied, UNscaled weight
         W.clear()
-        return {"loaded": "INT4 MLA", "framework": "tensor_cuda MiniCPM3-4B"}
+        return {
+            "loaded": f"INT{QuantLinearTC.WEIGHT_BITS} MLA",
+            "framework": "tensor_cuda MiniCPM3-4B",
+            "weight_bits": QuantLinearTC.WEIGHT_BITS,
+        }
 
     @classmethod
     def from_pretrained(cls, model_dir=None):

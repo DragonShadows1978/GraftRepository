@@ -23,6 +23,7 @@ import numpy as np
 sys.path.insert(0, "/mnt/ForgeRealm/Project-Tensor/tensor_cuda")
 import tensor_cuda as tc
 from tensor_cuda import functional as F
+from tensor_cuda.quantization import quantize_affine_per_group
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from adapters.tokenizer import MistralConfig
@@ -65,9 +66,19 @@ def _quantize_int4(w_fp32: np.ndarray, group_size: int = GROUP_SIZE):
     return packed, scales.astype(np.float16), zeros.astype(np.float16)
 
 
+def _read_weight_bits() -> int:
+    bits = int(os.environ.get("TC_WEIGHT_BITS", "4"))
+    if bits not in (2, 3, 4):
+        raise ValueError(f"TC_WEIGHT_BITS must be 2, 3, or 4; got {bits}")
+    return bits
+
+
 class QuantLinearTC:
-    """INT4 group-quantized linear on tensor_cuda. Weights live on-device as
-    packed uint8 + fp16 scales/zeros; forward is the native int4_linear kernel."""
+    """Low-bit group-quantized linear on tensor_cuda.
+
+    INT4 preserves the original packed-nibble model path. INT2/INT3 use the
+    Project-Tensor native intn kernels with the same affine per-group scheme.
+    """
 
     # Opt-in fused dequant-GEMM (#12): avoids materializing the full (K,N) fp16
     # weight transient by dequantizing inside the GEMM. False = the validated
@@ -80,15 +91,40 @@ class QuantLinearTC:
     # to two-stage cuBLAS — so the pick must be per-call, not global.
     FUSED_DECODE = False
     FUSED_M_MAX = 8
+    WEIGHT_BITS = _read_weight_bits()
+    LOAD_CONTEXT = None
 
-    def __init__(self, weight_fp32: np.ndarray, group_size: int = GROUP_SIZE):
+    @classmethod
+    def set_weight_bits(cls, bits: int) -> None:
+        bits = int(bits)
+        if bits not in (2, 3, 4):
+            raise ValueError(f"weight bits must be 2, 3, or 4; got {bits}")
+        cls.WEIGHT_BITS = bits
+
+    def __init__(self, weight_fp32: np.ndarray, group_size: int = GROUP_SIZE,
+                 bits: Optional[int] = None):
         self.out_features, self.in_features = weight_fp32.shape
         self.group_size = group_size
-        packed, scales, zeros = _quantize_int4(weight_fp32, group_size)
-        self.packed = tc.tensor(packed, dtype="uint8")
-        self.scales = tc.tensor(scales, dtype="float16")
-        self.zeros = tc.tensor(zeros, dtype="float16")
-        self._vram = packed.nbytes + scales.nbytes + zeros.nbytes
+        self.bits = int(bits if bits is not None else QuantLinearTC.WEIGHT_BITS)
+        if self.bits not in (2, 3, 4):
+            raise ValueError(f"weight bits must be 2, 3, or 4; got {self.bits}")
+        try:
+            if self.bits == 4:
+                packed, scales, zeros = _quantize_int4(weight_fp32, group_size)
+            else:
+                q = quantize_affine_per_group(weight_fp32, self.bits, group_size)
+                packed, scales, zeros = q.packed, q.scales, q.zeros
+            self.packed = tc.tensor(packed, dtype="uint8")
+            self.scales = tc.tensor(scales, dtype="float16")
+            self.zeros = tc.tensor(zeros, dtype="float16")
+            self._vram = packed.nbytes + scales.nbytes + zeros.nbytes
+        except Exception as exc:
+            ctx = QuantLinearTC.LOAD_CONTEXT
+            detail = f" tensor={ctx}" if ctx else ""
+            raise RuntimeError(
+                f"QuantLinearTC INT{self.bits} init failed{detail} "
+                f"shape=({self.out_features},{self.in_features})"
+            ) from exc
 
     def __call__(self, x):
         fused = QuantLinearTC.USE_FUSED
@@ -97,9 +133,17 @@ class QuantLinearTC:
             for d in x.shape[:-1]:
                 M *= d
             fused = M <= QuantLinearTC.FUSED_M_MAX
-        if fused:
+        if self.bits == 4 and fused:
             return tc.int4_linear_fused(x, self.packed, self.scales, self.zeros, self.group_size)
-        return tc.int4_linear(x, self.packed, self.scales, self.zeros, self.group_size)
+        if self.bits == 4:
+            return tc.int4_linear(x, self.packed, self.scales, self.zeros, self.group_size)
+        if fused:
+            return tc.intn_linear_fused(
+                x, self.packed, self.scales, self.zeros, self.bits,
+                self.in_features, self.group_size)
+        return tc.intn_linear(
+            x, self.packed, self.scales, self.zeros, self.bits,
+            self.in_features, self.group_size)
 
     def vram_bytes(self) -> int:
         return self._vram
@@ -208,8 +252,14 @@ def _cublas_blend_attention(q, kH, kq_kv, v_kv, group, scale, z, causal, blk):
     KVH heads (expanded here for the GEMM). ~6x the per-row fused kernel.
 
     bulk = q @ kq^T, rank = q @ k^T (cuBLAS), then one fused kernel does
-    threshold+select+softmax, then weights @ v (cuBLAS). Causal masking is baked
-    into the score blocks as large-negative additive bias.
+    threshold+select+softmax, then weights @ v (cuBLAS). Causal masking is
+    index-arithmetic inside apa_blend_softmax (Phase 3.1, board item 4a): no
+    mask tensor is built or added to bulk/rank. Bounds passed are Lq=L (full
+    query length), row0=i (chunk start), window=0 (full causal, bottom-right
+    aligned — matches functional._causal_mask's convention exactly, see
+    tc/core.h). When causal is False (e.g. Gemma 4 decode against an
+    already-gathered KV cache — every key is valid) Lq stays 0, the kernel's
+    legacy no-op default, and no bounds are applied.
     """
     B, H, L, D = q.shape
     S = kH.shape[2]
@@ -230,12 +280,8 @@ def _cublas_blend_attention(q, kH, kq_kv, v_kv, group, scale, z, causal, blk):
                     * scale)
             rank = (tc.matmul(Qf, kT1).reshape([B, H, bl, S])
                     * scale)
-            if causal:
-                ca = F._causal_mask(L, S, q.device.split(":")[0],
-                                    bulk.dtype).slice(0, i, bl)
-                bulk = bulk + ca
-                rank = rank + ca
-            w = tc.apa_blend_softmax(bulk, rank, z)
+            w = tc.apa_blend_softmax(bulk, rank, z,
+                                     L if causal else 0, i, 0)
             outs.append(tc.matmul(w.reshape([B, 1, H * bl, S]),
                                   v_kv).reshape([B, H, bl, D]))
         return tc.cat(outs, dim=2)
@@ -249,20 +295,8 @@ def _cublas_blend_attention(q, kH, kq_kv, v_kv, group, scale, z, causal, blk):
         Qi = q.slice(2, i, e - i)
         bulk = tc.matmul(Qi, kqT) * scale
         rank = tc.matmul(Qi, kT) * scale
-        if causal:
-            # ONE canonical mask: rows [i, e) of functional._causal_mask
-            # (bottom-right aligned, cached per shape). This path used to
-            # build its OWN triu(k=i+1) — the top-left rectangle bug that
-            # _causal_mask's docstring records FIXING in the standard
-            # path was alive here the whole time because the logic was
-            # duplicated (caught 2026-06-12 by the Gemma 4 refine ppl
-            # sweep: ppl 121 -> 11M on cached chunks; every prior APA
-            # gate ran square shapes where the two constructions agree).
-            ca = F._causal_mask(L, S, q.device.split(":")[0],
-                                bulk.dtype).slice(0, i, e - i)
-            bulk = bulk + ca
-            rank = rank + ca
-        w = tc.apa_blend_softmax(bulk, rank, z)
+        w = tc.apa_blend_softmax(bulk, rank, z,
+                                 L if causal else 0, i, 0)
         outs.append(tc.matmul(w, vH))
     return tc.cat(outs, dim=2)
 
@@ -678,6 +712,7 @@ class Mistral7B_TC:
         comp = orig_bytes / quant_bytes if quant_bytes else 0
         return {
             "loaded": loaded,
+            "weight_bits": QuantLinearTC.WEIGHT_BITS,
             "original_bytes": orig_bytes,
             "quantized_bytes": quant_bytes,
             "compression_ratio": comp,
