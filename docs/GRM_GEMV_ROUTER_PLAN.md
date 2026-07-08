@@ -22,6 +22,11 @@ Tracking artifacts:
 - Narrative synthesis: `docs/GRM_GEMV_ROUTER_SYNTHESIS.md`
 - Scaling report: `docs/ROUTER_SCALING_REPORT.md`
 
+**Successor work order (2026-07-07):** the CUDA bridge overhead exposed by
+this plan's closure receipts (bridge 25-50× the device route cost) is being
+fixed under `docs/GRM_CUDA_BRIDGE_OVERHEAD_PLAN.md` (own ledger, wing
+synthesis continues here) on branch **`grm-cuda-bridge-overhead`**.
+
 **House laws in force:** measure, don't model (baseline curve BEFORE any
 optimization); commit-per-phase; gate-per-phase (166-test floor); every
 phase ships a regression test; NaN law (M6) preserved identically in all
