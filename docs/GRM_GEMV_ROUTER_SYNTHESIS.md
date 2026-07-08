@@ -115,3 +115,21 @@ Translation protects grafts, not search structures — a centroid is an
 index over witnessed keys, exactness-gated two-tier keeps the law); and
 the per-graft incremental index, whose choke-point foundation W1 already
 laid.
+
+## Wing Continuation II: The MLA Order (opened and closed 2026-07-08)
+
+The third work order asked whether MLA was "CUDA routing properly" and
+found it wasn't routing properly at all — on two levels nobody had
+receipts for. The production path had never been timed (925.6 ms at 1M,
+not the harness's 23.9), and the production library had never been
+compiled with optimization (-O0 since inception; -O3 alone returned 21×).
+Three profile-guided passes later — limit-aware topk with a conservative
+replacement for the completeness law, epoch-cached maps on the mutation
+choke points, then a device-resident centroid arena in the sidecar —
+the same production call routes a million nodes in 2.22 ms, byte-exact
+across the operational envelope, with one flagged fp32 near-tie
+reordering at the 1M scaling demonstration (David's ruling: known,
+accepted, frozen-model repositories never approach that scale). Both
+dialects now route on CUDA under one epoch law, and the wing's original
+promise — repository-scale memory at interactive latency — holds where
+production actually calls it.
