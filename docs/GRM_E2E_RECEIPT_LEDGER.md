@@ -58,3 +58,34 @@ a 2-3 turn GPT-OSS live-deposit smoke proving deposited grafts
 round-trip (mount back + recall) before the full session is attempted.
 
 Next action: P1 (Sonnet, flat).
+
+## 2026-07-08 (P1 Leg 1 — RED at diagnosis; prerequisite build ordered)
+
+Action: Leg-1 agent STOPPED correctly at a static diagnosis, zero GPU
+spent. P0-map correction accepted.
+
+Findings:
+- GPT-OSS-20B has NO full-model class in the repo. ArenaCache binds
+  self.m and requires .layers/.rope_cos/.rope_sin/.extend_rope()/
+  __call__(ids, last_token_only=True) (graft_arena.py:56,67,160-250,
+  1465,1620,1760; kv_graft.py:45-77). core/gpt_oss20b_tc.py provides
+  per-block primitives only; "GptOss20B_TC" exists solely as a dialect
+  metadata STRING (:202). All existing gates subprocess-drive
+  stream_forward_smoke.py's hand-written per-layer loop (:430-492, YARN
+  tables computed outside any model object at :395).
+- P0-map correction: the gap is one level below "wire, not build" — the
+  model object itself must be built before the actual named risk
+  (dialect-generic cache slicing vs full+sliding mix + YARN) is even
+  testable.
+- DECISION (lead): build GptOss20B_TC as the in-plan P1 prerequisite
+  (the plan's P1 clause authorizes product code exactly where P0 names a
+  genuine gap; the corrected P0 names this one). Scope: embeddings +
+  .layers of existing blocks + YARN RoPE table ownership/extend_rope +
+  incremental KV-cache forward across the full/sliding mix + MoE
+  dispatch, from_pretrained. PARITY LAW: identical input must reproduce
+  stream_forward_smoke.py's captures/logits (the smoke IS the reference
+  implementation; deterministic engine ⇒ near-bit parity expected).
+  Precedents: Qwen35_TC (hybrid cache), Gemma4_TC (sliding mix).
+
+Next action: model-class build (Sonnet, flat), then Leg 1 re-run, then
+the session driver.
