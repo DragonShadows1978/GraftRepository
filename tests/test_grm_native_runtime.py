@@ -16,6 +16,29 @@ from core.grm_runtime import GRMRuntime
 ROOT = "/mnt/ForgeRealm/GraftRepository"
 
 
+def test_arena_step_prompt_template_formats_prompt_and_deposit_turn():
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.prompt_template = (
+        lambda user, assistant: (
+            f"<|start|>user<|message|>{user}"
+            f"<|end|><|start|>assistant<|channel|>final<|message|>"
+            if assistant is None
+            else f"<|start|>user<|message|>{user}"
+                 f"<|end|><|start|>assistant<|channel|>final<|message|>"
+                 f"{assistant}<|end|>"
+        )
+    )
+    arena.stop_sequences = ("<|end|>",)
+
+    assert arena._format_step_prompt("Probe A") == (
+        "<|start|>user<|message|>Probe A"
+        "<|end|><|start|>assistant<|channel|>final<|message|>")
+    assert arena._format_step_turn("Probe A", "BLUE") == (
+        "<|start|>user<|message|>Probe A"
+        "<|end|><|start|>assistant<|channel|>final<|message|>BLUE<|end|>")
+    assert arena.stop_sequences == ("<|end|>",)
+
+
 def build_native(tmp_path, extra_cxxflags=(), extra_ldflags=()):
     suffix = "default" if not extra_cxxflags else "_".join(
         flag.strip("-").replace("=", "_") for flag in extra_cxxflags)

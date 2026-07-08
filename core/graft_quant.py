@@ -217,6 +217,18 @@ def pack_kv_arrays(
     return out
 
 
+def _scalar_int_field(payload: dict[str, Any], name: str) -> int:
+    arr = np.asarray(payload[name])
+    if arr.shape == ():
+        return int(arr)
+    if arr.size == 1:
+        return int(arr.reshape(-1)[0])
+    raise GraftQuantFormatError(
+        f"unpack_kv_arrays: field {name!r} must be scalar-like, got shape "
+        f"{arr.shape}"
+    )
+
+
 def unpack_kv_arrays(payload: dict[str, Any], names: list[str]) -> dict[str, np.ndarray]:
     """Inverse of `pack_kv_arrays`. `payload` is whatever a packed npz load
     yields (dict-like: NpzFile or a plain dict of arrays). Fail-closed: an
@@ -229,13 +241,13 @@ def unpack_kv_arrays(payload: dict[str, Any], names: list[str]) -> dict[str, np.
             "unpack_kv_arrays: payload has no format_version field "
             "(not a packed graft payload, or a corrupt/foreign file)"
         )
-    version = int(np.asarray(payload["format_version"]))
+    version = _scalar_int_field(payload, "format_version")
     if version != FORMAT_VERSION:
         raise GraftQuantFormatError(
             f"unpack_kv_arrays: unknown format_version {version} "
             f"(this build only understands {FORMAT_VERSION})"
         )
-    bits = int(np.asarray(payload["storage_bits"]))
+    bits = _scalar_int_field(payload, "storage_bits")
     _validate_bits(bits)
     if bits == 16:
         raise GraftQuantFormatError(

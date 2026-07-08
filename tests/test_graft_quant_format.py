@@ -241,7 +241,11 @@ def test_pack_node_save_load_npz_cycle_with_storage_bits(tmp_path):
     with storage_bits configured end-to-end through an actual npz file."""
     arena = _make_gqa_arena(storage_bits=6)
     h = _fake_node_h(seed=11)
-    payload = arena.pack_node(h)
+    payload = {
+        key: np.ascontiguousarray(value)
+        for key, value in arena.pack_node(h).items()
+    }
+    assert payload["format_version"].shape == (1,)
 
     node_path = tmp_path / "0000.npz"
     np.savez_compressed(node_path, **payload)

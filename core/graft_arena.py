@@ -42,7 +42,8 @@ class ArenaCache:
     def __init__(self, model, encode, decode, sink_text="<conversation>\n",
                  arena_width=256, route_layer=44, topk=3, live_turns=2,
                  max_live=4096, cache_deposits=True,
-                 ephemeral=False, recency_mounts=2):
+                 ephemeral=False, recency_mounts=2, prompt_template=None,
+                 stop_sequences=None):
         # EPHEMERAL MODE ("clear the boat"): the live cache is reset at the
         # START of every turn — each turn runs on [sink | mounts | turn]
         # alone, so resident seats are CONSTANT for a conversation of ANY
@@ -61,6 +62,10 @@ class ArenaCache:
         self.topk = topk
         self.live_turns = live_turns
         self.cache_deposits = cache_deposits
+        self.prompt_template = prompt_template
+        self.stop_sequences = tuple(
+            stop_sequences or
+            ("\nUser:", "User:", "\nAssistant:", "Assistant:", "\n\n"))
         self.dt = BlockTC.COMPUTE_DTYPE
         # the model auto-extends RoPE only to position_offset+L; arena
         # positions run live_shift further. Extend once, up front.
@@ -82,6 +87,21 @@ class ArenaCache:
         self.live_segs = []             # [(graft_idx or None, ntok), ...]
         self.grafts = []                # {h, cent, ntok, text}
         self.last_route_backend = "python"
+
+    def _format_step_prompt(self, user_text):
+        if self.prompt_template is None:
+            return f"User: {user_text}\nAssistant:"
+        if callable(self.prompt_template):
+            return self.prompt_template(user_text, None)
+        return self.prompt_template.format(user=user_text, assistant="")
+
+    def _format_step_turn(self, user_text, assistant_text):
+        if self.prompt_template is None:
+            return f"User: {user_text}\nAssistant: {assistant_text}\n"
+        if callable(self.prompt_template):
+            return self.prompt_template(user_text, assistant_text)
+        return self.prompt_template.format(user=user_text,
+                                           assistant=assistant_text)
 
     def _clear_transients(self):
         gc.collect()
@@ -1609,14 +1629,15 @@ class ArenaCache:
         return out
 
     def step(self, user_text, ngen=48, deposit=True,
-             stops=("\nUser:", "User:", "\nAssistant:", "Assistant:", "\n\n"),
-             max_trips=0):
+             stops=None, max_trips=0):
         """One conversation turn through the arena. max_trips > 0 enables
         SHUTTLING: if the answer fails the grounding check, restore the
         pre-attempt cache (snapshot = the old tensor list + position —
         cache tensors are immutable), swap in the NEXT ranking slice, and
         retry. Failed attempts never enter the live cache. Returns
         (answer, info)."""
+        if stops is None:
+            stops = self.stop_sequences
         for L in self.m.layers:
             L.self_attn.live_shift = self.live_shift
         rec = []
@@ -1767,7 +1788,7 @@ class ArenaCache:
             self._commit_native_mount(picks, self.cur_mount_n)
         else:
             self.swap(picks)
-        prompt_ids = self.encode(f"User: {user_text}\nAssistant:")
+        prompt_ids = self.encode(self._format_step_prompt(user_text))
         seg_start_ntok = len(prompt_ids)
         row = self._forward(prompt_ids)
         kv_graft.clear_injection(self.m)     # bootstrap injection fired once
@@ -1800,7 +1821,7 @@ class ArenaCache:
             if stop in txt:
                 txt = txt.split(stop)[0]
         txt = txt.strip()
-        turn_text = f"User: {user_text}\nAssistant: {txt}\n"
+        turn_text = self._format_step_turn(user_text, txt)
         seg_cache_ntok = seg_start_ntok + cached_out
         gidx = None
         if deposit:
