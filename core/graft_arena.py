@@ -368,7 +368,7 @@ class ArenaCache:
         else:
             cand = cand_base
         native_order = self._native_route_order(
-            p, qrare, cand, limit=route_limit)
+            p, qrare, cand, limit=route_limit, exclude=exclude)
         if native_order is not None:
             return native_order
         self.last_route_backend = "python"
@@ -504,7 +504,262 @@ class ArenaCache:
         self._native_to_idx_cache_epoch = epoch
         return result
 
-    def _native_route_order(self, pkey, qrare, cand, limit=None):
+    # ---------------------------------------------------- CUDA MLA route
+    # P2, docs/GRM_MLA_CUDA_ROUTE_PLAN.md: device-resident centroid arena
+    # mirroring GQAArenaCache's opt-in CUDA bridge (_cuda_route_bank_inputs
+    # / _ensure_cuda_route_bank / _cuda_route_order below the GQA subclass)
+    # but for the MLA dialect's single-centroid-per-node route key. Lives
+    # on the base class since MLA IS ArenaCache (GQAArenaCache overrides
+    # its own copies of every one of these methods with the GQA-shaped
+    # equivalents, so there is no name collision -- Python MRO picks the
+    # subclass's version there, this version here).
+    def _cuda_route_enabled(self):
+        return os.environ.get("GRM_MLA_CUDA_ROUTE", "").lower() in (
+            "1", "true", "yes", "on")
+
+    def _cuda_route_bank_signature(self):
+        """Cheap O(N) walk building the dense eligible bank: same
+        eligibility law as `_route_cand_base` (not retired, not
+        kind="recall") intersected with native-routability (`cent` is a
+        flat 1-D vector of uniform dim, `native_node_id` present, no
+        `child_cents` -- multi-row entries are OUT OF SCOPE for the CUDA
+        path per the plan, they fall through to the CPU path exactly as
+        `_native_to_idx_map`'s `ineligible` set already does for the
+        native ctypes route). Returns (node_ids, signature, rows) or None
+        if no eligible bank exists (mirrors GQA's
+        `_cuda_route_bank_signature` contract exactly)."""
+        rows = []
+        node_ids = []
+        sig_rows = []
+        dim = None
+        for g in self.grafts:
+            if g.get("retired") or g.get("kind", "turn") == "recall":
+                continue
+            if g.get("child_cents"):
+                return None
+            node_id = g.get("native_node_id")
+            if node_id is None:
+                return None
+            if "cent" not in g:
+                return None
+            cent = g.get("cent")
+            key = np.asarray(cent, dtype=np.float32).reshape(-1)
+            if dim is None:
+                dim = key.shape[0]
+            elif key.shape[0] != dim:
+                return None
+            rows.append(key)
+            node_ids.append(int(node_id))
+            sig_rows.append((
+                int(node_id), int(key.shape[0]), key.dtype.str, id(cent)))
+        if not rows:
+            return None
+        node_ids_np = np.asarray(node_ids, dtype=np.uint64)
+        return node_ids_np, tuple(sig_rows), rows
+
+    def _cuda_route_bank_inputs(self):
+        """Full bank inputs (route_bank, node_ids, signature), epoch-gated
+        exactly like GQA's `_cuda_route_bank_inputs`: the epoch
+        (`_cuda_gqa_epoch`, real on both dialects since P1) is the sole
+        hot-path staleness gate; the signature walk above only re-runs
+        when the epoch has moved, and a content-identical signature after
+        an epoch bump (e.g. a metadata-only mutation) reuses the stacked
+        bank without re-stacking."""
+        epoch = getattr(self, "_cuda_gqa_epoch", 0)
+        cached = getattr(self, "_cuda_mla_bank_cache", None)
+        cache_epoch = getattr(self, "_cuda_mla_cache_epoch", None)
+        if cached is not None and cache_epoch == epoch:
+            return cached
+        sig = self._cuda_route_bank_signature()
+        if sig is None:
+            self._cuda_mla_bank_cache = None
+            self._cuda_mla_native_to_idx_cache = None
+            return None
+        node_ids_np, signature, rows = sig
+        if cached is not None and cached[2] == signature:
+            self._cuda_mla_bank_cache = cached
+            self._cuda_mla_cache_epoch = epoch
+            return cached
+        route_bank = np.ascontiguousarray(np.stack(rows), dtype=np.float32)
+        bank_inputs = (route_bank, node_ids_np, signature)
+        self._cuda_mla_bank_cache = bank_inputs
+        self._cuda_mla_cache_epoch = epoch
+        # Invalidate the reverse (native_id -> graft_idx) map derived from
+        # this bank -- _cuda_route_native_to_idx() below rebuilds it lazily
+        # off the SAME bank_inputs object identity, so a genuine content
+        # change (this branch) must drop it; the signature-unchanged reuse
+        # branch just above returns before reaching here, so it keeps its
+        # existing reverse-map cache untouched.
+        self._cuda_mla_native_to_idx_cache = None
+        return bank_inputs
+
+    def _cuda_route_native_to_idx(self, bank_inputs):
+        """Epoch-cached (reverse map, graft-idx set) pair for the CUDA MLA
+        bank's own row set, built ONCE per bank attach rather than
+        rebuilt from `cand`/`exclude` on every route call:
+          - reverse map: native_node_id -> graft_idx (for the O(k) result
+            remap after a route call)
+          - graft-idx set: which graft indices the bank actually covers
+            (for O(len(exclude)) membership tests instead of an
+            O(bank_size) or O(len(cand)) walk)
+
+        This is the fix for the residual P1b named at close ("O(cand)
+        subset pass... absorbed into P2's design"): the naive absorption
+        still rebuilt an O(len(cand)) dict every call (a 1M-node full
+        walk, ~460ms/call measured, against a CUDA kernel that itself
+        runs in under 3ms). Caching both here, keyed off `bank_inputs`
+        identity (itself epoch-gated by `_cuda_route_bank_inputs`), makes
+        the hot path O(len(exclude)) -- typically the live/mounted node
+        count, not the eligible-base size.
+
+        Cache-MISS cost (once per bank attach, not per route call): O(N)
+        -- re-walks `self.grafts` with the SAME eligibility predicate
+        `_cuda_route_bank_signature` used to build the bank, in the same
+        ascending order, so row index i of the bank corresponds to the
+        i-th eligible graft. This walk only runs when the epoch moves
+        (bank rebuild), never on the steady-state hot path."""
+        cached = getattr(self, "_cuda_mla_native_to_idx_cache", None)
+        if cached is not None and cached[0] is bank_inputs:
+            return cached[1], cached[2]
+        node_ids_np = bank_inputs[1]
+        row_to_graft_idx = []
+        for i, g in enumerate(self.grafts):
+            if g.get("retired") or g.get("kind", "turn") == "recall":
+                continue
+            if g.get("child_cents"):
+                continue
+            if g.get("native_node_id") is None or "cent" not in g:
+                continue
+            row_to_graft_idx.append(i)
+        n = min(len(row_to_graft_idx), node_ids_np.shape[0])
+        native_to_idx = {
+            int(node_ids_np[row]): row_to_graft_idx[row] for row in range(n)
+        }
+        graft_idx_set = set(row_to_graft_idx[:n])
+        self._cuda_mla_native_to_idx_cache = (
+            bank_inputs, native_to_idx, graft_idx_set)
+        return native_to_idx, graft_idx_set
+
+    def _ensure_cuda_route_bank(self, store, bank_inputs):
+        if getattr(self, "_cuda_mla_route_unavailable", False):
+            return False
+        if not hasattr(store, "configure_cuda_mla_route_bank"):
+            return False
+        if bank_inputs is None:
+            return False
+        route_bank, node_ids, signature = bank_inputs
+        # Identity fast path before the tuple `==`: `signature` is a tuple
+        # of one (node_id, dim, dtype, id(cent)) entry PER ELIGIBLE GRAFT
+        # (`_cuda_route_bank_signature`), so at 1M nodes a value-equality
+        # comparison walks 1M elements even when both sides are the exact
+        # same cached tuple object (measured ~2.3ms/call — CPython's tuple
+        # `==` does not skip element-wise comparison on `a is b`, only
+        # `PyObject_RichCompare`'s outer object-identity shortcut applies,
+        # which the `==` operator does take for singletons but not
+        # arbitrary same-identity containers). `bank_inputs` is only ever
+        # a fresh object on a genuine content change
+        # (`_cuda_route_bank_inputs`), so comparing `signature is
+        # getattr(store, "_cuda_mla_bank_signature", None)` first turns
+        # the common (nothing changed) case into an O(1) pointer compare;
+        # the O(N) `==` only runs on an actual signature-object swap.
+        stored_signature = getattr(store, "_cuda_mla_bank_signature", None)
+        if (getattr(store, "_cuda_mla_bank", None) is not None
+                and (stored_signature is signature
+                     or stored_signature == signature)):
+            return True
+        try:
+            store.configure_cuda_mla_route_bank(route_bank, node_ids)
+            store._cuda_mla_bank_signature = signature
+        except Exception:
+            self._cuda_mla_route_unavailable = True
+            return False
+        return True
+
+    def _cuda_route_order(self, pkey, cand, limit, exclude=()):
+        """CUDA MLA route order (P2). Absorbs the O(cand) residual named
+        at P1b close: attach-time defines the dense eligible bank (every
+        row the epoch-cached `_cuda_route_bank_signature` walk accepts);
+        per-call work is bounded by `len(exclude)` (typically small --
+        the live/mounted node set -- not `len(cand)`, which is close to
+        the full eligible base N). Concretely: request
+        `topk = want + |excludes that are actually in the bank|` from the
+        CUDA arena, then drop excluded ids while mapping the O(k)
+        response back through the epoch-cached reverse map -- no O(N) or
+        O(len(cand)) host pass on the route path, matching the plan's
+        contract exactly.
+
+        First cut of this method rebuilt a fresh `{native_id: idx}` dict
+        from `cand` on every call (an O(len(cand)) walk -- 1M nodes,
+        ~460ms/call measured, entirely Python dict-building overhead
+        against a CUDA kernel that itself runs in under 3ms). Fixed by
+        caching the reverse map per bank attach (`_cuda_route_native_to_idx`)
+        and keying the per-call cost on `exclude` instead of `cand`."""
+        if limit is None:
+            return None
+        store = getattr(self, "native_store", None)
+        if store is None or not hasattr(store, "route_mla_cuda"):
+            return None
+        if not self._cuda_route_enabled():
+            return None
+        bank_inputs = self._cuda_route_bank_inputs()
+        if bank_inputs is None:
+            return None
+        if not self._ensure_cuda_route_bank(store, bank_inputs):
+            return None
+        bank_size = int(bank_inputs[1].shape[0])
+        # `cand` must equal (bank-eligible rows) minus `exclude`. Rather
+        # than proving that by walking `cand` (the expensive direction —
+        # O(N)), check the cheap arithmetic invariant instead: `cand`'s
+        # eligibility predicate (_route_cand_base: not retired, not
+        # kind="recall") is a SUPERSET of the bank's predicate (adds:
+        # native_node_id present, cent present as a uniform flat vector,
+        # no child_cents). If the bank covers the FULL base
+        # (bank_size == len(_route_cand_base())), the two predicates agree
+        # on this graft set and `len(cand) == bank_size - |exclude|`
+        # follows arithmetically from route()'s own construction
+        # (`cand = [i for i in cand_base if i not in exclude]`). Any
+        # mismatch (a CUDA-only exclusion actually removed something, or
+        # the caller's `cand` was built some other way) fails this check
+        # and falls through to the CPU path -- fail-closed, not silently
+        # wrong.
+        cand_base = self._route_cand_base()
+        if bank_size != len(cand_base):
+            return None
+        native_to_idx, bank_idx_set = self._cuda_route_native_to_idx(bank_inputs)
+        excludes_in_bank = 0
+        exclude_set = None
+        if exclude:
+            exclude_set = set(exclude)
+            excludes_in_bank = sum(1 for i in exclude_set if i in bank_idx_set)
+        if len(cand) != bank_size - excludes_in_bank:
+            return None
+        want = min(max(0, int(limit)), len(cand))
+        if want <= 0:
+            return []
+        topk = min(16, bank_size, want + excludes_in_bank)
+        if topk < want:
+            return None
+        try:
+            routed_native = store.route_mla_cuda(
+                np.asarray(pkey, dtype=np.float32), topk=topk)
+        except Exception:
+            return None
+        routed = []
+        for node_id in routed_native:
+            idx = native_to_idx.get(int(node_id))
+            if idx is None:
+                continue
+            if exclude_set is not None and idx in exclude_set:
+                continue
+            routed.append(idx)
+            if len(routed) >= want:
+                break
+        if len(routed) < want:
+            return None
+        self.last_route_backend = "cuda"
+        return routed
+
+    def _native_route_order(self, pkey, qrare, cand, limit=None, exclude=()):
         store = getattr(self, "native_store", None)
         if store is None or not hasattr(store, "route"):
             return None
@@ -513,6 +768,16 @@ class ArenaCache:
             return None
         if not cand:
             return []
+        if not qrare and limit is not None:
+            # CUDA MLA route (P2): only for the limited-window path and
+            # only when there is no lexical channel to honor (the dense
+            # CUDA bank carries no lexical bonus, same restriction GQA's
+            # bridge applies at the identical call-site shape). `exclude`
+            # is threaded through so the per-call cost stays bounded by
+            # len(exclude) rather than len(cand) -- see _cuda_route_order.
+            cuda_order = self._cuda_route_order(pkey, cand, limit, exclude)
+            if cuda_order is not None:
+                return cuda_order
         idx_to_native, ineligible = self._native_to_idx_map()
         # empty ineligible set (the common case) skips the O(len(cand))
         # membership pass entirely — any() over an empty set's genexpr is
@@ -1839,7 +2104,13 @@ class GQAArenaCache(ArenaCache):
         self.last_route_backend = "cuda"
         return routed
 
-    def _native_route_order(self, pkey, qrare, cand, limit=None):
+    def _native_route_order(self, pkey, qrare, cand, limit=None, exclude=()):
+        # `exclude` accepted for base-class call-site compatibility
+        # (route() passes it positionally-by-keyword to every dialect's
+        # _native_route_order since the P2 MLA CUDA route fix); GQA's own
+        # _cuda_route_order below does not yet consume it -- out of scope
+        # for this work order, GQA's bridge was not re-profiled at 1M-node
+        # scale here.
         store = getattr(self, "native_store", None)
         if store is None or not hasattr(store, "route_gqa"):
             return None

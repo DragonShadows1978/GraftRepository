@@ -167,6 +167,9 @@ class NativeGraftStore:
         self._cuda_gqa_sidecar = None
         self._cuda_gqa_bank = None
         self._cuda_gqa_bank_signature = None
+        self._cuda_mla_sidecar = None
+        self._cuda_mla_bank = None
+        self._cuda_mla_bank_signature = None
         defaults = self._profile_defaults(payload_kind)
         position_law = position_law or defaults["position_law"]
         state_kind = state_kind or defaults["state_kind"]
@@ -660,6 +663,7 @@ class NativeGraftStore:
 
     def close(self):
         self.clear_cuda_gqa_route_bank()
+        self.clear_cuda_mla_route_bank()
         if getattr(self, "_handle", None):
             self._lib.grm_store_destroy(self._handle)
             self._handle = None
@@ -856,6 +860,7 @@ class NativeGraftStore:
         self._check(self._lib.grm_store_set_active(
             self._handle, int(node_id), 1 if active else 0))
         self.clear_cuda_gqa_route_bank()
+        self.clear_cuda_mla_route_bank()
 
     def set_no_fold(self, node_id, no_fold=False):
         if not getattr(self, "_has_no_fold", False):
@@ -893,6 +898,7 @@ class NativeGraftStore:
             ("" if durability is None else str(durability)).encode("utf-8"),
             ("" if mutability is None else str(mutability)).encode("utf-8")))
         self.clear_cuda_gqa_route_bank()
+        self.clear_cuda_mla_route_bank()
 
     def set_fact_identity(self, node_id, *, subject=None, predicate=None,
                           value=None, scope=None, valid_from=None,
@@ -1057,6 +1063,7 @@ class NativeGraftStore:
         self._check(self._lib.grm_store_apply_revision(
             self._handle, int(replacement_node_id), arr, n))
         self.clear_cuda_gqa_route_bank()
+        self.clear_cuda_mla_route_bank()
 
     def apply_expire(self, node_ids):
         if not getattr(self, "_has_apply_expire", False):
@@ -1064,6 +1071,7 @@ class NativeGraftStore:
         arr, n = self._u64_array(node_ids)
         self._check(self._lib.grm_store_apply_expire(self._handle, arr, n))
         self.clear_cuda_gqa_route_bank()
+        self.clear_cuda_mla_route_bank()
 
     def metadata(self, node_id):
         needed = ctypes.c_uint64()
@@ -1385,6 +1393,7 @@ class NativeGraftStore:
             self._handle, int(node_id), arr, n,
             self._lexical_blob(lexical_keys)))
         self.clear_cuda_gqa_route_bank()
+        self.clear_cuda_mla_route_bank()
 
     def set_route_keys(self, node_id, route_keys, lexical_keys=()):
         keys = np.asarray(route_keys, dtype=np.float32)
@@ -1401,6 +1410,7 @@ class NativeGraftStore:
             self._handle, int(node_id), arr, int(keys.shape[0]),
             int(keys.shape[1]), self._lexical_blob(lexical_keys)))
         self.clear_cuda_gqa_route_bank()
+        self.clear_cuda_mla_route_bank()
 
     def set_route_key_list(self, node_id, route_keys, lexical_keys=()):
         if not getattr(self, "_has_route_list", False):
@@ -1422,6 +1432,7 @@ class NativeGraftStore:
             self._handle, int(node_id), values, int(flat.size),
             offsets_arr, len(keys), self._lexical_blob(lexical_keys)))
         self.clear_cuda_gqa_route_bank()
+        self.clear_cuda_mla_route_bank()
 
     def clear_route(self, node_id):
         if not getattr(self, "_has_clear_route", False):
@@ -1429,6 +1440,7 @@ class NativeGraftStore:
         self._check(self._lib.grm_store_clear_route(
             self._handle, int(node_id)))
         self.clear_cuda_gqa_route_bank()
+        self.clear_cuda_mla_route_bank()
 
     def route(self, query, lexical_keys=(), topk=3, kinds=(), scopes=(),
               durabilities=(), mutabilities=()):
@@ -1566,6 +1578,91 @@ class NativeGraftStore:
         if self._cuda_gqa_bank is None:
             raise RuntimeError("CUDA GQA route bank is not configured")
         mapped, receipt = self._cuda_gqa_bank.route_topk_device(
+            device_queries, topk=int(topk), warmup=int(warmup),
+            route_repeats=int(route_repeats))
+        result = [[int(x) for x in row] for row in mapped.tolist()]
+        if return_receipt:
+            return result, receipt
+        return result
+
+    def configure_cuda_mla_route_bank(self, route_bank, node_ids=None, *,
+                                      sidecar=None, build_dir=None,
+                                      nvcc="nvcc"):
+        """Attach an explicit CUDA MLA route bank.
+
+        Mirrors configure_cuda_gqa_route_bank() exactly. The default
+        `route()` path remains the dependency-free CPU C ABI. CUDA routing
+        is opt-in through `route_mla_cuda()` and is intended for dense
+        single-centroid-per-node MLA route banks without lexical/filter
+        policy (P2, docs/GRM_MLA_CUDA_ROUTE_PLAN.md).
+        """
+        if self._payload_kind != "mla":
+            raise RuntimeError("CUDA MLA routing requires an MLA native store")
+        self.clear_cuda_mla_route_bank()
+        from core.grm_cuda_router import (
+            CudaMLARouteSidecar,
+            mla_route_bank_signature,
+        )
+
+        owns_sidecar = sidecar is None
+        if sidecar is None:
+            sidecar = CudaMLARouteSidecar.build(build_dir=build_dir, nvcc=nvcc)
+        try:
+            bank = sidecar.create_bank(route_bank, node_ids)
+        except Exception:
+            if owns_sidecar:
+                sidecar.close()
+            raise
+        self._cuda_mla_sidecar = sidecar if owns_sidecar else None
+        self._cuda_mla_bank = bank
+        self._cuda_mla_bank_signature = (
+            getattr(bank, "signature", None) or
+            mla_route_bank_signature(route_bank, node_ids)
+        )
+        return bank
+
+    def clear_cuda_mla_route_bank(self):
+        if getattr(self, "_cuda_mla_bank", None) is not None:
+            self._cuda_mla_bank.close()
+            self._cuda_mla_bank = None
+        if getattr(self, "_cuda_mla_sidecar", None) is not None:
+            self._cuda_mla_sidecar.close()
+            self._cuda_mla_sidecar = None
+        self._cuda_mla_bank_signature = None
+
+    def route_mla_cuda(self, query, *, topk=3, warmup=0, route_repeats=1,
+                       return_receipt=False):
+        if self._payload_kind != "mla":
+            raise RuntimeError("CUDA MLA routing requires an MLA native store")
+        if self._cuda_mla_bank is None:
+            raise RuntimeError("CUDA MLA route bank is not configured")
+        q_np = np.ascontiguousarray(query, dtype=np.float32).reshape(-1)
+        mapped, receipt = self._cuda_mla_bank.route_topk(
+            q_np, topk=int(topk), warmup=int(warmup),
+            route_repeats=int(route_repeats))
+        result = [int(x) for x in mapped[0].tolist()]
+        if return_receipt:
+            return result, receipt
+        return result
+
+    def route_mla_cuda_device(self, device_queries, *, topk=3, warmup=0,
+                              route_repeats=1, return_receipt=False):
+        """Device-pointer hot-path entry: `device_queries` is a device-
+        resident query buffer (scripts.grm_mla_cuda_probe.CudaDeviceQueryPtr,
+        or anything with the same `.handle`/`.shape` contract) -- no host
+        round-trip for the query tensor. This is still Python-level
+        delegation into the opt-in CUDA sidecar object configured by
+        configure_cuda_mla_route_bank(); the CPU C ABI (libgrm_runtime.so)
+        this class wraps stays CUDA-free, exactly as route_mla_cuda()
+        already does. Always returns a batch result (device queries are
+        assumed pre-batched; unlike route_mla_cuda there is no single-query
+        (dim,) convenience form, since the caller already owns the device
+        layout). Mirrors route_gqa_cuda_device exactly."""
+        if self._payload_kind != "mla":
+            raise RuntimeError("CUDA MLA routing requires an MLA native store")
+        if self._cuda_mla_bank is None:
+            raise RuntimeError("CUDA MLA route bank is not configured")
+        mapped, receipt = self._cuda_mla_bank.route_topk_device(
             device_queries, topk=int(topk), warmup=int(warmup),
             route_repeats=int(route_repeats))
         result = [[int(x) for x in row] for row in mapped.tolist()]

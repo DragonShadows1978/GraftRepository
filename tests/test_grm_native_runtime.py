@@ -529,6 +529,72 @@ def test_native_gqa_eligibility_mutation_clears_cuda_bank(tmp_path):
             store.route_gqa_cuda(q, topk=1)
 
 
+def test_native_mla_cuda_route_requires_explicit_bank(tmp_path):
+    """MLA P2 mirror of test_native_gqa_cuda_route_requires_explicit_bank."""
+    lib = build_native(tmp_path)
+    q = np.zeros(4, dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="RouterMlaLifecycle", num_layers=1,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=0,
+            payload_kind="mla", latent_rank=512, rope_dim=64) as store:
+        with pytest.raises(RuntimeError, match="route bank is not configured"):
+            store.route_mla_cuda(q, topk=1)
+
+
+class _DummyCudaMlaRouteBank:
+    def __init__(self):
+        self.closed = False
+
+    def close(self):
+        self.closed = True
+
+    def route_topk(self, *_args, **_kwargs):
+        raise AssertionError("stale CUDA MLA route bank was used")
+
+
+def test_native_mla_route_mutation_clears_cuda_bank(tmp_path):
+    """MLA P2 mirror of test_native_gqa_route_mutation_clears_cuda_bank."""
+    lib = build_native(tmp_path)
+    q = np.zeros(4, dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="RouterMlaLifecycle", num_layers=1,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=0,
+            payload_kind="mla", latent_rank=512, rope_dim=64) as store:
+        node_id = store.add_node("cuda mla route stale", b"", ntok=1)
+        dummy = _DummyCudaMlaRouteBank()
+        store._cuda_mla_bank = dummy
+
+        store.set_route(node_id, [1.0, 0.0, 0.0, 0.0])
+
+        assert dummy.closed
+        assert store._cuda_mla_bank is None
+        with pytest.raises(RuntimeError, match="route bank is not configured"):
+            store.route_mla_cuda(q, topk=1)
+
+
+def test_native_mla_eligibility_mutation_clears_cuda_bank(tmp_path):
+    """MLA P2 mirror of test_native_gqa_eligibility_mutation_clears_cuda_bank."""
+    lib = build_native(tmp_path)
+    q = np.zeros(4, dtype=np.float32)
+
+    with NativeGraftStore(
+            lib, model_type="RouterMlaLifecycle", num_layers=1,
+            hidden_dim=2048, vals_per_tok_layer=576, route_layer=0,
+            payload_kind="mla", latent_rank=512, rope_dim=64) as store:
+        node_id = store.add_node("cuda mla eligibility stale", b"", ntok=1)
+        dummy = _DummyCudaMlaRouteBank()
+        store._cuda_mla_bank = dummy
+
+        store.set_active(node_id, False)
+
+        assert dummy.closed
+        assert store._cuda_mla_bank is None
+        with pytest.raises(RuntimeError, match="route bank is not configured"):
+            store.route_mla_cuda(q, topk=1)
+
+
 def test_native_gqa_segment_reduce_matches_python_law(tmp_path, monkeypatch):
     def raw_score(query, key):
         h, _, dh = query.shape
@@ -3825,3 +3891,381 @@ def test_mla_limited_route_non_finite_scores_present(tmp_path):
             assert got == full[:want_len]
             assert 1 not in got
             assert arena.last_route_backend == "native"
+
+
+# --------------------------------------------------------------------------
+# MLA CUDA route lifecycle (P2, docs/GRM_MLA_CUDA_ROUTE_PLAN.md). Mirrors the
+# GQA 6-selector battery above (test_native_gqa_cuda_route_requires_explicit_
+# bank / test_native_gqa_route_mutation_clears_cuda_bank / test_native_gqa_
+# eligibility_mutation_clears_cuda_bank / test_gqa_arena_uses_opt_in_cuda_
+# route_bank / test_gqa_arena_rebuilds_cuda_route_bank_when_rows_change /
+# test_gqa_cuda_epoch_bump_covers_every_signature_changing_mutation) for the
+# base ArenaCache (MLA dialect) instead of GQAArenaCache. The store-level
+# 3-selector (requires-explicit-bank / mutation-clears-bank / eligibility-
+# mutation-clears-bank) lives earlier in this file next to its GQA sibling;
+# these are the arena-level 3 plus the epoch-fail-closed extension.
+
+
+def test_mla_arena_uses_opt_in_cuda_route_bank(monkeypatch):
+    class CudaStore:
+        def __init__(self):
+            self.configured = None
+            self.cuda_calls = []
+            self._cuda_mla_bank = None
+
+        def configure_cuda_mla_route_bank(self, route_bank, node_ids):
+            self.configured = (
+                np.asarray(route_bank).copy(),
+                np.asarray(node_ids, dtype=np.uint64).copy(),
+            )
+            self._cuda_mla_bank = object()
+
+        def route_mla_cuda(self, query, *, topk=3, **_kwargs):
+            self.cuda_calls.append((np.asarray(query).shape, int(topk)))
+            return [102, 101][:int(topk)]
+
+        def route(self, *_args, **_kwargs):
+            raise AssertionError("CPU MLA route should not run")
+
+    monkeypatch.setenv("GRM_MLA_CUDA_ROUTE", "1")
+    q = np.asarray([1.0, 0.0], dtype=np.float32)
+    weak = np.asarray([0.1, 0.0], dtype=np.float32)
+    good = np.asarray([1.0, 0.0], dtype=np.float32)
+
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = CudaStore()
+    arena.last_route_backend = "python"
+    arena.grafts = [
+        {"native_node_id": 101, "cent": weak,
+         "rare": set(), "text": "weak", "kind": "doc", "retired": False},
+        {"native_node_id": 102, "cent": good,
+         "rare": set(), "text": "good", "kind": "doc", "retired": False},
+    ]
+    arena._probe_key = lambda _text: q
+
+    assert arena.route("plain probe", exclude=set(), limit=2) == [1, 0]
+    assert arena.last_route_backend == "cuda"
+    bank, node_ids = arena.native_store.configured
+    assert bank.shape == (2, 2)
+    assert node_ids.tolist() == [101, 102]
+    assert arena.native_store.cuda_calls == [((2,), 2)]
+
+
+def test_mla_arena_rebuilds_cuda_route_bank_when_rows_change(monkeypatch):
+    class RebuildStore:
+        def __init__(self):
+            self.configured_node_ids = []
+            self.configure_calls = 0
+            self._cuda_mla_bank = None
+            self._cuda_mla_bank_signature = None
+
+        def configure_cuda_mla_route_bank(self, _route_bank, node_ids):
+            self.configure_calls += 1
+            self.configured_node_ids = [
+                int(x) for x in np.asarray(node_ids, dtype=np.uint64)]
+            self._cuda_mla_bank = object()
+
+        def route_mla_cuda(self, _query, *, topk=3, **_kwargs):
+            return list(reversed(self.configured_node_ids))[:int(topk)]
+
+        def route(self, *_args, **_kwargs):
+            raise AssertionError("CPU MLA route should not run")
+
+    monkeypatch.setenv("GRM_MLA_CUDA_ROUTE", "1")
+    q = np.asarray([1.0, 0.0], dtype=np.float32)
+    weak = np.asarray([0.1, 0.0], dtype=np.float32)
+    good = np.asarray([1.0, 0.0], dtype=np.float32)
+    best = np.asarray([2.0, 0.0], dtype=np.float32)
+
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = RebuildStore()
+    arena.last_route_backend = "python"
+    arena.grafts = [
+        {"native_node_id": 101, "cent": weak,
+         "rare": set(), "text": "weak", "kind": "doc", "retired": False},
+        {"native_node_id": 102, "cent": good,
+         "rare": set(), "text": "good", "kind": "doc", "retired": False},
+    ]
+    arena._probe_key = lambda _text: q
+
+    assert arena.route("plain probe", exclude=set(), limit=1) == [1]
+    first_signature = arena.native_store._cuda_mla_bank_signature
+
+    arena.grafts.append(
+        {"native_node_id": 103, "cent": best,
+         "rare": set(), "text": "best", "kind": "doc", "retired": False})
+    # The epoch is the sole hot-path staleness gate -- a raw external
+    # append (this test pokes arena.grafts directly, bypassing deposit()/
+    # graft_repository.py's instrumented mutation sites) must bump the
+    # epoch itself, exactly as every real production mutation path does.
+    arena._bump_cuda_gqa_epoch()
+
+    assert arena.route("plain probe", exclude=set(), limit=1) == [2]
+    assert arena.native_store.configure_calls == 2
+    assert arena.native_store.configured_node_ids == [101, 102, 103]
+    assert arena.native_store._cuda_mla_bank_signature != first_signature
+
+
+def test_mla_arena_skips_cuda_route_for_lexical_queries(monkeypatch):
+    """Mirrors test_gqa_arena_skips_cuda_route_for_lexical_queries: the
+    dense CUDA MLA bank carries no lexical bonus, so any probe with a
+    lexical channel (`qrare` non-empty) must never attach/use it."""
+    class LexicalStore:
+        def configure_cuda_mla_route_bank(self, *_args, **_kwargs):
+            raise AssertionError("lexical route should not attach CUDA bank")
+
+        def route_mla_cuda(self, *_args, **_kwargs):
+            raise AssertionError("lexical route should not use CUDA")
+
+        def route(self, *_args, **_kwargs):
+            return [201, 202]
+
+    monkeypatch.setenv("GRM_MLA_CUDA_ROUTE", "1")
+    q = np.asarray([1.0, 0.0], dtype=np.float32)
+    weak = np.asarray([0.1, 0.0], dtype=np.float32)
+    good = np.asarray([1.0, 0.0], dtype=np.float32)
+
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = LexicalStore()
+    arena.last_route_backend = "python"
+    arena.grafts = [
+        {"native_node_id": 201, "cent": weak,
+         "rare": {"a17"}, "text": "A17 weak", "kind": "doc", "retired": False},
+        {"native_node_id": 202, "cent": good,
+         "rare": set(), "text": "good", "kind": "doc", "retired": False},
+    ]
+    arena._probe_key = lambda _text: q
+
+    assert arena.route("What about A17?", exclude=set(), limit=2) == [0, 1]
+    assert arena.last_route_backend == "native"
+
+
+def _mla_cuda_route_epoch_battery_arena():
+    """An ArenaCache (MLA dialect) with three eligible dense-bank nodes,
+    wired the same way GQA's `_gqa_epoch_battery_arena` is -- no live
+    model, no NativeGraftStore round trip, just the Python route-bank
+    cache machinery under test. Distinct from the earlier P1
+    `_mla_epoch_battery_arena` fixture (node ids 201/202/203) -- same
+    shape, different fixture, to avoid colliding with that pre-existing
+    module-level name."""
+    weak = np.asarray([0.1, 0.0], dtype=np.float32)
+    good = np.asarray([1.0, 0.0], dtype=np.float32)
+    best = np.asarray([2.0, 0.0], dtype=np.float32)
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = None
+    arena.last_route_backend = "python"
+    arena.grafts = [
+        {"native_node_id": 101, "cent": weak.copy(),
+         "rare": set(), "text": "weak", "kind": "doc", "retired": False},
+        {"native_node_id": 102, "cent": good.copy(),
+         "rare": set(), "text": "good", "kind": "doc", "retired": False},
+        {"native_node_id": 103, "cent": best.copy(),
+         "rare": set(), "text": "best", "kind": "doc", "retired": False},
+    ]
+    return arena
+
+
+def test_mla_cuda_epoch_bump_covers_every_signature_changing_mutation():
+    """P2 fail-closed equivalence gate, mirrors
+    test_gqa_cuda_epoch_bump_covers_every_signature_changing_mutation: for a
+    battery of mutations covering the ArenaCache-side mutation set the MLA
+    CUDA bank's epoch tracks (add, cent replace, kind change, metadata-only,
+    revision, expire, retire, clear), any mutation that changes the arena's
+    MLA CUDA bank signature (`_cuda_route_bank_signature`) must also bump
+    the shared epoch (`_cuda_gqa_epoch` -- real on both dialects since P1).
+    Equivalently: epoch-valid implies signature-equal."""
+    arena = _mla_cuda_route_epoch_battery_arena()
+
+    def snapshot():
+        epoch = getattr(arena, "_cuda_gqa_epoch", 0)
+        sig = arena._cuda_route_bank_signature()
+        signature = None if sig is None else sig[1]
+        return epoch, signature
+
+    checked = 0
+
+    def assert_mutation_is_fail_closed(mutate):
+        nonlocal checked
+        before_epoch, before_sig = snapshot()
+        mutate()
+        after_epoch, after_sig = snapshot()
+        if after_sig != before_sig:
+            assert after_epoch != before_epoch, (
+                "signature changed but epoch did not bump — under-"
+                "invalidation risk")
+        checked += 1
+
+    def do_add():
+        arena.grafts.append({"native_node_id": 104,
+                             "cent": np.asarray([3.0, 0.0], np.float32),
+                             "rare": set(), "text": "added", "kind": "doc",
+                             "retired": False})
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_add)
+
+    def do_cent_replace():
+        arena.grafts[0]["cent"] = np.asarray([9.0, 0.0], np.float32)
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_cent_replace)
+
+    def do_kind_change():
+        arena.grafts[1]["kind"] = "recall"
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_kind_change)
+
+    def do_metadata_only():
+        arena.grafts[2]["tags"] = ["noted"]
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_metadata_only)
+
+    def do_revision():
+        arena.grafts[2]["retired"] = True
+        arena.grafts.append({"native_node_id": 105,
+                             "cent": np.asarray([4.0, 0.0], np.float32),
+                             "rare": set(), "text": "revised", "kind": "doc",
+                             "retired": False})
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_revision)
+
+    def do_expire():
+        arena.grafts[0]["retired"] = True
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_expire)
+
+    def do_retire():
+        arena.grafts[3]["retired"] = True
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_retire)
+
+    def do_clear():
+        del arena.grafts[:]
+        arena._bump_cuda_gqa_epoch()
+    assert_mutation_is_fail_closed(do_clear)
+
+    assert checked == 8
+
+
+def test_mla_cuda_bridge_never_reuses_stale_bank_across_mutation_battery():
+    """Behavior half of the P2 regression, mirrors test_gqa_cuda_bridge_
+    never_reuses_stale_bank_across_mutation_battery: after each mutation in
+    the same battery, a bridged (CUDA) MLA route must return the same node
+    ordering a fresh attach would -- no stale bank reuse."""
+    class TrackingStore:
+        def __init__(self):
+            self.configured_node_ids = None
+            self.configure_calls = 0
+            self._cuda_mla_bank = None
+            self._cuda_mla_bank_signature = None
+
+        def configure_cuda_mla_route_bank(self, _route_bank, node_ids):
+            self.configure_calls += 1
+            self.configured_node_ids = [
+                int(x) for x in np.asarray(node_ids, dtype=np.uint64)]
+            self._cuda_mla_bank = object()
+
+        def route_mla_cuda(self, _query, *, topk=3, **_kwargs):
+            return list(self.configured_node_ids)[:int(topk)]
+
+        def route(self, *_args, **_kwargs):
+            raise AssertionError("CPU MLA route should not run")
+
+    import os as _os
+    _os.environ["GRM_MLA_CUDA_ROUTE"] = "1"
+    try:
+        arena = _mla_cuda_route_epoch_battery_arena()
+        arena.native_store = TrackingStore()
+        q = np.asarray([1.0, 0.0], dtype=np.float32)
+        arena._probe_key = lambda _text: q
+
+        def eligible_native_ids():
+            return sorted(
+                int(g["native_node_id"]) for g in arena.grafts
+                if not g.get("retired") and g.get("kind", "turn") != "recall")
+
+        def assert_bridge_matches_fresh_attach():
+            expect = eligible_native_ids()
+            got_order = arena.route("plain probe", exclude=set(),
+                                    limit=len(expect) or 1)
+            got_native_ids = sorted(
+                int(arena.grafts[i]["native_node_id"]) for i in got_order)
+            assert got_native_ids == expect or not expect
+            assert sorted(arena.native_store.configured_node_ids) == expect, (
+                "bridged MLA route bank does not match current eligibility "
+                "— stale bank reuse")
+
+        assert_bridge_matches_fresh_attach()
+
+        arena.grafts.append({"native_node_id": 104,
+                             "cent": np.asarray([3.0, 0.0], np.float32),
+                             "rare": set(), "text": "added", "kind": "doc",
+                             "retired": False})
+        arena._bump_cuda_gqa_epoch()
+        assert_bridge_matches_fresh_attach()
+
+        arena.grafts[0]["retired"] = True
+        arena._bump_cuda_gqa_epoch()
+        assert_bridge_matches_fresh_attach()
+
+        arena.grafts[1]["kind"] = "recall"
+        arena._bump_cuda_gqa_epoch()
+        assert_bridge_matches_fresh_attach()
+
+        del arena.grafts[:]
+        arena._bump_cuda_gqa_epoch()
+        # route() short-circuits to [] at the top when self.grafts is
+        # empty (before _cuda_route_order is ever reached), so there is no
+        # bank to compare against here -- mirrors the GQA precedent's
+        # final step exactly.
+        result = arena.route("plain probe", exclude=set(), limit=1)
+        assert result == []
+    finally:
+        _os.environ.pop("GRM_MLA_CUDA_ROUTE", None)
+
+
+def test_mla_cuda_route_falls_back_on_out_of_range_row_id(monkeypatch):
+    """Sidecar/bank fail-closed contract: a degenerate query (e.g. every
+    node scores non-finite, the M6 all-NaN-query edge case measured in the
+    P2 fuzz battery) makes the raw CUDA top-k kernel emit UINT64_MAX
+    sentinel row ids for the unfilled slots. CudaMLARouteBank.route_topk
+    bounds-checks and raises (mirrors CudaGQARouteBank exactly); the arena's
+    `_cuda_route_order` catches that and returns None, so `route()` falls
+    through to the CPU path rather than surfacing garbage node ids."""
+    class DegenerateBank:
+        def route_topk(self, *_args, **_kwargs):
+            raise RuntimeError("CUDA MLA route returned an out-of-range row ID")
+
+    class DegenerateStore:
+        def __init__(self):
+            self._cuda_mla_bank = None
+            self._cuda_mla_bank_signature = None
+
+        def configure_cuda_mla_route_bank(self, _route_bank, node_ids):
+            self._cuda_mla_bank = DegenerateBank()
+            self._cuda_mla_bank_signature = tuple(
+                int(x) for x in np.asarray(node_ids, dtype=np.uint64))
+
+        def route_mla_cuda(self, _query, *, topk=3, **_kwargs):
+            raise RuntimeError(
+                "CUDA MLA route returned an out-of-range row ID")
+
+        def route(self, _query, _lexical, *, topk=3, **_kwargs):
+            return [101, 102][:int(topk)]
+
+    monkeypatch.setenv("GRM_MLA_CUDA_ROUTE", "1")
+    q = np.asarray([1.0, 0.0], dtype=np.float32)
+    weak = np.asarray([0.1, 0.0], dtype=np.float32)
+    good = np.asarray([1.0, 0.0], dtype=np.float32)
+
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.native_store = DegenerateStore()
+    arena.last_route_backend = "python"
+    arena.grafts = [
+        {"native_node_id": 101, "cent": weak,
+         "rare": set(), "text": "weak", "kind": "doc", "retired": False},
+        {"native_node_id": 102, "cent": good,
+         "rare": set(), "text": "good", "kind": "doc", "retired": False},
+    ]
+    arena._probe_key = lambda _text: q
+
+    assert arena.route("plain probe", exclude=set(), limit=2) == [0, 1]
+    assert arena.last_route_backend == "native"

@@ -1,8 +1,8 @@
-"""Optional CUDA/cuBLAS sidecar for GQA router banks.
+"""Optional CUDA/cuBLAS sidecar for GQA and MLA router banks.
 
 The dependency-free C++ runtime remains the default router. This module wraps
-the CUDA probe as an explicit sidecar so callers can opt into device-resident
-GQA route banks without changing the CPU C ABI path.
+the CUDA probes as explicit sidecars so callers can opt into device-resident
+route banks (GQA or MLA) without changing the CPU C ABI path.
 """
 
 from __future__ import annotations
@@ -258,6 +258,263 @@ class CudaGQARouteBank:
             raise RuntimeError("CUDA GQA route did not run")
         if np.any(topk_rows >= self.node_ids.shape[0]):
             raise RuntimeError("CUDA GQA route returned an out-of-range row ID")
+        mapped = self.node_ids[topk_rows]
+        measured = max(1, int(query_count) - int(warmup))
+        receipt = CudaRouteReceipt(
+            device_route_ms_total=device_times[-1],
+            device_route_ms_per_query=device_times[-1] / measured,
+            route_wall_ms=route_walls[-1],
+            route_wall_ms_first=route_walls[0],
+            route_wall_ms_min=float(np.min(route_walls)),
+            route_wall_ms_runs=tuple(route_walls),
+            device_route_ms_runs=tuple(device_times),
+            measured_queries=measured,
+            route_repeats=repeats,
+        )
+        return mapped, receipt
+
+
+# --------------------------------------------------------------- MLA sidecar
+# Mirrors the GQA sidecar above exactly, scoring the MLA dialect's single
+# fp32 centroid-per-node route key (plain cosine -- see
+# scripts/grm_mla_cuda_probe.py's module docstring for the exact formula
+# replicated from RouterIndex::exact_mla_entry_score,
+# cpp/grm_runtime.cpp:3518-3545).
+
+
+def validate_mla_route_bank(
+    rows: np.ndarray,
+    node_ids: np.ndarray | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Normalize and validate a dense MLA route bank.
+
+    Shape is `(nodes, dim)` -- one centroid row per node. Node IDs map CUDA
+    top-k row indices back to GRM node IDs; default IDs are dense row
+    indices.
+    """
+    rows_np = np.ascontiguousarray(rows, dtype=np.float32)
+    if rows_np.ndim != 2:
+        raise ValueError("MLA CUDA route bank must have shape (nodes, dim)")
+    if any(int(dim) <= 0 for dim in rows_np.shape):
+        raise ValueError("MLA CUDA route bank dimensions must be nonzero")
+    if node_ids is None:
+        ids_np = np.arange(rows_np.shape[0], dtype=np.uint64)
+    else:
+        ids_np = np.ascontiguousarray(node_ids, dtype=np.uint64).reshape(-1)
+    if ids_np.shape[0] != rows_np.shape[0]:
+        raise ValueError("node_ids length must match MLA route-bank nodes")
+    return rows_np, ids_np
+
+
+def mla_route_bank_signature(
+    rows: np.ndarray,
+    node_ids: np.ndarray,
+) -> str:
+    """Return a deterministic content signature for a dense MLA route bank."""
+    rows_np, ids_np = validate_mla_route_bank(rows, node_ids)
+    import hashlib
+
+    digest = hashlib.blake2b(digest_size=16)
+    digest.update(str(rows_np.shape).encode("ascii"))
+    digest.update(rows_np.dtype.str.encode("ascii"))
+    digest.update(memoryview(rows_np.view(np.uint8)))
+    digest.update(str(ids_np.shape).encode("ascii"))
+    digest.update(ids_np.dtype.str.encode("ascii"))
+    digest.update(memoryview(ids_np.view(np.uint8)))
+    return digest.hexdigest()
+
+
+def _load_mla_probe_backend():
+    # Kept as a lazy import so importing this runtime-facing helper never
+    # requires nvcc/CUDA. The probe remains the source of truth until the
+    # sidecar source is promoted into a compiled runtime artifact.
+    from scripts.grm_mla_cuda_probe import CudaProbe, build_probe
+
+    return CudaProbe, build_probe
+
+
+class CudaMLARouteSidecar:
+    """Build/load the optional CUDA MLA router sidecar library."""
+
+    def __init__(
+        self,
+        lib_path: Path,
+        *,
+        build_temp: tempfile.TemporaryDirectory[str] | None = None,
+    ):
+        CudaProbe, _ = _load_mla_probe_backend()
+        self._build_temp = build_temp
+        self.lib_path = Path(lib_path)
+        self._probe = CudaProbe(self.lib_path)
+
+    @classmethod
+    def build(
+        cls,
+        build_dir: Path | None = None,
+        *,
+        nvcc: str = "nvcc",
+    ) -> "CudaMLARouteSidecar":
+        nvcc_path = shutil.which(nvcc)
+        if not nvcc_path:
+            raise CudaRouterUnavailable(f"nvcc not found: {nvcc}")
+        _, build_probe = _load_mla_probe_backend()
+        build_temp: tempfile.TemporaryDirectory[str] | None = None
+        if build_dir is None:
+            build_temp = tempfile.TemporaryDirectory(prefix="grm-mla-cuda-sidecar-")
+            build_dir = Path(build_temp.name)
+        else:
+            build_dir = Path(build_dir)
+            build_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            lib_path = build_probe(build_dir, nvcc_path)
+        except Exception as exc:  # pragma: no cover - exact nvcc errors vary.
+            if build_temp is not None:
+                build_temp.cleanup()
+            raise CudaRouterUnavailable(str(exc)) from exc
+        return cls(lib_path, build_temp=build_temp)
+
+    def create_bank(
+        self,
+        rows: np.ndarray,
+        node_ids: np.ndarray | None = None,
+    ) -> "CudaMLARouteBank":
+        rows_np, ids_np = validate_mla_route_bank(rows, node_ids)
+        signature = mla_route_bank_signature(rows_np, ids_np)
+        arena = self._probe.create_arena(rows_np)
+        return CudaMLARouteBank(
+            arena,
+            ids_np,
+            setup_wall_ms=float(arena.setup_wall_ms),
+            signature=signature,
+        )
+
+    def close(self) -> None:
+        if self._build_temp is not None:
+            self._build_temp.cleanup()
+            self._build_temp = None
+
+    def __del__(self) -> None:
+        self.close()
+
+
+class CudaMLARouteBank:
+    """Device-resident CUDA MLA route bank with persistent route scratch
+    buffers. Mirrors CudaGQARouteBank exactly."""
+
+    def __init__(
+        self,
+        arena,
+        node_ids: np.ndarray,
+        *,
+        setup_wall_ms: float,
+        signature: str | None = None,
+    ):
+        self._arena = arena
+        self.node_ids = np.ascontiguousarray(node_ids, dtype=np.uint64)
+        self.setup_wall_ms = float(setup_wall_ms)
+        self.signature = signature
+
+    def close(self) -> None:
+        if self._arena is not None:
+            self._arena.close()
+            self._arena = None
+
+    def __del__(self) -> None:
+        self.close()
+
+    def route_topk(
+        self,
+        queries: np.ndarray,
+        *,
+        topk: int,
+        warmup: int = 0,
+        route_repeats: int = 1,
+    ) -> tuple[np.ndarray, CudaRouteReceipt]:
+        if self._arena is None:
+            raise RuntimeError("CUDA MLA route bank is closed")
+        queries_np = np.ascontiguousarray(queries, dtype=np.float32)
+        if queries_np.ndim == 1:
+            queries_np = queries_np[None, ...]
+        if queries_np.ndim != 2:
+            raise ValueError(
+                "MLA CUDA queries must have shape (queries, dim) or (dim,)")
+        if int(topk) <= 0:
+            raise ValueError("topk must be positive")
+        repeats = max(1, int(route_repeats))
+        route_walls: list[float] = []
+        device_times: list[float] = []
+        topk_rows = None
+        for _ in range(repeats):
+            topk_rows, device_ms, route_wall_ms = self._arena.route_topk(
+                queries_np,
+                warmup=int(warmup),
+                topk=int(topk),
+            )
+            route_walls.append(float(route_wall_ms))
+            device_times.append(float(device_ms))
+        if topk_rows is None:
+            raise RuntimeError("CUDA MLA route did not run")
+        # Bounds check (mirrors GQA exactly): the sidecar's top-k kernel
+        # fills unfilled slots with UINT64_MAX (M6/degenerate-query
+        # signal -- e.g. every score non-finite because the query itself
+        # carried a NaN/Inf component, so nothing beat the -inf sentinel).
+        # An out-of-range row id here means "fewer than topk nodes had a
+        # finite score" -- not a bank/row-id-mapping bug -- so this raises
+        # and the caller (ArenaCache._cuda_route_order) catches it and
+        # falls back to the CPU path, which independently produces the
+        # same degenerate (possibly empty) result under the same NaN law.
+        if np.any(topk_rows >= self.node_ids.shape[0]):
+            raise RuntimeError("CUDA MLA route returned an out-of-range row ID")
+        mapped = self.node_ids[topk_rows]
+        measured = max(1, int(queries_np.shape[0]) - int(warmup))
+        receipt = CudaRouteReceipt(
+            device_route_ms_total=device_times[-1],
+            device_route_ms_per_query=device_times[-1] / measured,
+            route_wall_ms=route_walls[-1],
+            route_wall_ms_first=route_walls[0],
+            route_wall_ms_min=float(np.min(route_walls)),
+            route_wall_ms_runs=tuple(route_walls),
+            device_route_ms_runs=tuple(device_times),
+            measured_queries=measured,
+            route_repeats=repeats,
+        )
+        return mapped, receipt
+
+    def route_topk_device(
+        self,
+        device_queries,
+        *,
+        topk: int,
+        warmup: int = 0,
+        route_repeats: int = 1,
+    ) -> tuple[np.ndarray, CudaRouteReceipt]:
+        """Device-pointer hot-path entry: `device_queries` is a
+        `CudaDeviceQueryPtr` (scripts.grm_mla_cuda_probe) -- or any object
+        exposing the same `.handle`/`.shape` contract -- already resident
+        on GPU. No H2D copy happens in this call; only the route+top-k
+        kernels run. Mirrors `route_topk`'s node-id mapping and receipt
+        shape exactly, and CudaGQARouteBank.route_topk_device."""
+        if self._arena is None:
+            raise RuntimeError("CUDA MLA route bank is closed")
+        if int(topk) <= 0:
+            raise ValueError("topk must be positive")
+        query_count, _dim = device_queries.shape
+        repeats = max(1, int(route_repeats))
+        route_walls: list[float] = []
+        device_times: list[float] = []
+        topk_rows = None
+        for _ in range(repeats):
+            topk_rows, device_ms, route_wall_ms = self._arena.route_topk_device(
+                device_queries,
+                warmup=int(warmup),
+                topk=int(topk),
+            )
+            route_walls.append(float(route_wall_ms))
+            device_times.append(float(device_ms))
+        if topk_rows is None:
+            raise RuntimeError("CUDA MLA route did not run")
+        if np.any(topk_rows >= self.node_ids.shape[0]):
+            raise RuntimeError("CUDA MLA route returned an out-of-range row ID")
         mapped = self.node_ids[topk_rows]
         measured = max(1, int(query_count) - int(warmup))
         receipt = CudaRouteReceipt(

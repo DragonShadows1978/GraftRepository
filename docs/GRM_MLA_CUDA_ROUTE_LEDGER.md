@@ -105,3 +105,44 @@ Findings:
   GQA bridge pattern (dense eligible attach + fallback on shortfall).
 
 Next action: P2 — device-resident MLA centroid arena in the sidecar.
+
+## 2026-07-08 (P2 complete — E2 met 57×; E3 ruling by David)
+
+Action: P2 device-resident MLA CUDA route implemented (Sonnet, flat),
+lead-reviewed, committed. Opt-in (GRM_MLA_CUDA_ROUTE=1), dormant by
+default.
+
+Findings:
+- E2 MET WITH MARGIN: 1M-node route through production ArenaCache.route()
+  = 2.22 ms p50 (target ≤5 ms; host P1b 127.5 ms; 57.3×). Within ~10% of
+  the measured raw kernel floor. Curve: 0.184/0.210/0.398/2.22 ms at
+  1k/10k/100k/1M. Suites 117/117 (9 new lifecycle tests mirror the GQA
+  selector + epoch fail-closed + out-of-range-row fallback).
+- Scoring semantics replicated from RouterIndex::exact_mla_entry_score
+  (grm_runtime.cpp:3518-3545) incl. the 1e-8 denominator guard and
+  score-desc/node-id-asc tie order (score_node_better, :75-82); M6
+  preserved on device (isfinite guard before ranking).
+- **E3 AS REGISTERED: MISSED — FLAGGED, KNOWN, ACCEPTED (David's ruling
+  2026-07-08).** Byte-identical top-k at 1k/10k/100k across the full
+  fuzz matrix (excludes × retirement × exact ties × NaN rows). At 1M,
+  1 of 4 sampled queries swaps its LAST TWO ids on a genuine near-tie
+  (fp64 refs 0.70710675 vs 0.70710667, Δ≈8.6e-8): cuBLAS fp32 reduction
+  order vs the fp64 host reference. Both orderings defensible under
+  fp32 data. Disposition (David): flag it, make it known, no tie-epsilon
+  law amendment, no rescore engineering — 1M nodes is never happening on
+  a frozen-model repository (GPT/Qwen class); the operational envelope
+  (≤ thousands of nodes) is byte-exact. The 1M point stands as a scaling
+  demonstration carrying this caveat wherever it is cited.
+- Agent self-caught two of its own O(N) host bugs pre-report (per-call
+  reverse-map rebuild ~460 ms; 1M-tuple == compare ~2.3 ms — identity
+  fast path added). Also renamed a shadowed pre-existing test fixture
+  (flagged).
+- CROSS-TRACK FLAG (board): GQA's _cuda_route_order retains the same
+  O(len(cand)) residual MLA just fixed — fine at the mount-window scale
+  GQA runs today, unvalidated past a few hundred nodes.
+
+Work-order status: E1 met, E2 met, E3 missed-with-ruling, E4 missed
+(residual absorbed into P2's O(k) contract — production path now 2.22 ms
+at 1M, moot). P3 formal re-stamp = the gate artifacts
+(artifacts/grm_mla_cuda_route/p2_gate.json, device_entry_parity.json);
+official curves recorded above.
