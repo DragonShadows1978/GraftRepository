@@ -87,3 +87,31 @@ sidecar into the native bridge with a device-pointer route entry — David's
 architecture call: C++, not a new-language adapter, and the CPU C ABI
 keeps its CUDA-free law. The registered target is a bridge that costs no
 more than 2× the direct route at any node count, with overhead flat in N.
+
+The work order closed in one night, and the profile-first discipline paid
+immediately: P0 attributed 82% of the gap to a single line — the dense
+bank re-stacked (268 MB at 512 nodes) on every reused call and then
+discarded by the very signature check meant to avoid work — and corrected
+the plan's own suspect (the signature compare was cheap; the epoch fix
+alone would have missed). P1 cached the bank behind the signature; P2 made
+a mutation epoch the sole hot-path gate (every graft_repository mutation
+site instrumented through a choke point, paranoid-mode cross-check kept
+for tests) and gave the sidecar a device-pointer route entry, so a
+forward-pass caller's queries never visit host memory. Steady state now:
+one integer compare, one C call, one kernel. Clean-window receipts:
+0.185/0.339/0.966 ms bridged at 32/128/512 nodes against
+0.128/0.261/0.770 direct — 1.26-1.44×, ratio improving with N. That is
+17-40× over the closure receipts that opened this work order, parity
+green throughout, 95/95 tests. One checkbox remains: a quiet-machine
+stamp of the exact smoke commands (small-node points inflate under host
+contention — receipted, not disputed).
+
+Where the wing points next, from David's own framing — routing is
+attention over the model's attention states, so every trick that made
+attention fast applies one level up: an MLA production-path profile (the
+1M-node receipts timed the native call, never the Python wrapper around
+it); synthetic GQA route centroids (the payload law from SCRIBE/
+Translation protects grafts, not search structures — a centroid is an
+index over witnessed keys, exactness-gated two-tier keeps the law); and
+the per-graft incremental index, whose choke-point foundation W1 already
+laid.

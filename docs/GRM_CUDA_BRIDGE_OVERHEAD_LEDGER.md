@@ -113,3 +113,57 @@ Next action:
   device-pointer queries; epoch becomes sole hot-path gate WITH the
   graft_repository.py mutation sites instrumented (scope expansion
   registered here); signature walk moves to attach/cold path only.
+
+## 2026-07-08 02:40 EDT
+
+Action: P2 implemented (Sonnet, flat), lead-verified, committed e8906dc.
+P3 receipts taken; formal quiet-window confirmation registered as the
+one open checkbox.
+
+Findings:
+- W1: epoch is now the SOLE hot-path staleness gate. All
+  graft_repository.py signature-relevant mutation sites instrumented
+  (choke-point `_mark_mutations` + `_rebuild_child_keys` +
+  `_native_sync_node` first-sync + `_fold_once` + expire/supersede/
+  WAL-rehydrate/load-identity-mapping paths — full list in the P2 agent
+  report and code comments). Ambiguous sites examined and ruled out with
+  reasons (metadata-only writes). `GRM_GQA_BRIDGE_PARANOID=1` re-enables
+  the per-call walk with an agreement assert; a test proves it catches
+  injected under-invalidation. CONTRACT NOW LOAD-BEARING: any direct
+  arena.grafts mutation (including test code) must bump the epoch — a
+  pre-existing P1 test doing a raw append was caught by its own failure
+  and fixed; paranoid mode is the dev safety net.
+- W2: sidecar route entry with DEVICE-pointer queries
+  (`grm_gqa_cuda_arena_route_device` + Python surface through
+  CudaGQARouteBank.route_topk_device / NativeGraftStore.route_gqa_cuda_device).
+  Host-vs-device entry: byte-identical top-k on real capture banks at
+  32/512 nodes. CPU C ABI untouched (CUDA-free law holds).
+- Profile receipt: steady-state hot path has NO O(N) component —
+  `_cuda_route_bank_inputs` flat at ~0.005 ms/call at BOTH 32n and 512n;
+  signature walk absent from steady-state profiles.
+- Timing:
+  - P2 agent clean-window interleaved (loadavg 2.3-2.8, idle GPU):
+    0.185/0.339/0.966 ms at 32/128/512n vs direct 0.128/0.261/0.770 =
+    1.44×/1.30×/1.26×. E2 (≤2× direct) MET at all node counts; E3 MET
+    (ratio improves with N — overhead flat, no longer scales).
+  - Lead P3 runs under load (loadavg ~3.2, other sessions active,
+    exact ledger commands): parity true all counts; 512n 1.52× (met),
+    128n 2.03×, 32n 2.7× — small-node fixed Python cost inflates under
+    CPU contention exactly as P0's caveat predicted. Receipts:
+    artifacts/grm_gqa_cuda_bridge/p3*_*.json.
+  - Vs the original baseline: 3.157→0.185, 11.218→0.339, 38.961→0.966 ms
+    = 17×/33×/40× on the clean-window instrument.
+- Tests: 95 passed (92 + 3 new: graft_repository mutation battery,
+  migrate battery, paranoid under-invalidation catch), two independent
+  full runs, zero regressions. Lifecycle selector + P1 regressions green.
+
+OPEN CHECKBOX: one quiet-machine run of the three exact ledger smoke
+commands to stamp E2 formally at 32/128n free of contention. No code
+change rides on it.
+
+Next action:
+- Wing synthesis + board update. Candidate successors (David-raised):
+  MLA production-path Python overhead profile (P0 method, 1M harness);
+  synthetic GQA route centroids (two-tier, exactness-gated); per-graft
+  incremental index / ledger-derived staleness (choke-point already
+  half-built by W1).
