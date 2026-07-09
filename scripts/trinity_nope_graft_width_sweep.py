@@ -74,6 +74,7 @@ TrinityAttentionTC = TN.TrinityAttentionTC
 TBlockTC = TN.BlockTC
 LinearTC = TN.LinearTC
 QuantLinearTC = TN.QuantLinearTC
+QuantLinearInt8TC = getattr(TN, "QuantLinearInt8TC", None)
 RMSNormTC = TN.RMSNormTC
 _cast = TN._cast
 _to_dtype = TN._to_dtype
@@ -531,7 +532,7 @@ class TrinityGQAArenaCache(GQAArenaCache):
 
 
 # ---------------------------------------------------------------------------
-# Compute-dtype / load (INT4 weights + fp32 COMPUTE)
+# Compute-dtype / load (resident quantized weights + fp32 COMPUTE)
 # ---------------------------------------------------------------------------
 
 def _iter_lineartc(model):
@@ -560,7 +561,12 @@ def _iter_lineartc(model):
         yield ("lm_head", lm)
 
 
-def set_compute_dtype(model, compute_dtype: str = "float32") -> dict[str, Any]:
+def set_compute_dtype(
+    model,
+    compute_dtype: str = "float32",
+    *,
+    weight_mode: str = "int4",
+) -> dict[str, Any]:
     dt = str(compute_dtype)
     # Sync BOTH BlockTC knobs: Trinity product uses TBlockTC; arena/kv_graft
     # import GraftRepository's mistral7b_tc.BlockTC for payload dtypes.
@@ -588,10 +594,10 @@ def set_compute_dtype(model, compute_dtype: str = "float32") -> dict[str, Any]:
             cast_n += 1
     return {
         "compute_dtype": dt,
-        "weight_mode": "int4",
+        "weight_mode": str(weight_mode),
         "mode_label": (
-            "fp32_compute_int4_dequant" if dt == "float32"
-            else "bf16_compute_int4_dequant"
+            f"fp32_compute_{weight_mode}_dequant" if dt == "float32"
+            else f"bf16_compute_{weight_mode}_dequant"
         ),
         "rope_rebuild": rope_note,
         "lineartc_cast_count": cast_n,
@@ -600,7 +606,11 @@ def set_compute_dtype(model, compute_dtype: str = "float32") -> dict[str, Any]:
     }
 
 
-def load_model(model_dir: Path) -> tuple[Any, dict[str, Any], float, dict[str, Any]]:
+def load_model(
+    model_dir: Path,
+    *,
+    weight_mode: str = "int4",
+) -> tuple[Any, dict[str, Any], float, dict[str, Any]]:
     TBlockTC.COMPUTE_DTYPE = "bfloat16"
     LinearTC.DTYPE = "bfloat16"
     QuantLinearTC.FUSED_DECODE = True
@@ -608,10 +618,10 @@ def load_model(model_dir: Path) -> tuple[Any, dict[str, Any], float, dict[str, A
     t0 = time.perf_counter()
     with tc.no_grad():
         model, info = TrinityNano_TC.from_pretrained(
-            str(model_dir), weight_mode="int4", load_lm_head=True, progress=True,
+            str(model_dir), weight_mode=str(weight_mode), load_lm_head=True, progress=True,
         )
         model.configure_moe_empty_cache(0)
-        dtype_meta = set_compute_dtype(model, "float32")
+        dtype_meta = set_compute_dtype(model, "float32", weight_mode=str(weight_mode))
         if hasattr(tc, "synchronize"):
             tc.synchronize()
     return model, info, time.perf_counter() - t0, dtype_meta
@@ -986,6 +996,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--widths", type=int, nargs="+", default=list(WIDTHS))
     p.add_argument("--ngen", type=int, default=NGEN)
     p.add_argument("--wall-rail-s", type=float, default=GPU_WALL_RAIL_S)
+    p.add_argument("--weight-mode", choices=("int4", "int8"), default="int4")
     p.add_argument("--skip-control", action="store_true")
     return p.parse_args(argv)
 
@@ -998,8 +1009,13 @@ def main(argv: list[str] | None = None) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     run_t0 = time.perf_counter()
-    print(f"[T1] loading INT4 Trinity Nano from {args.model_dir}", flush=True)
-    model, model_info, load_s, dtype_meta = load_model(args.model_dir)
+    print(
+        f"[T1] loading {args.weight_mode.upper()} Trinity Nano from {args.model_dir}",
+        flush=True,
+    )
+    model, model_info, load_s, dtype_meta = load_model(
+        args.model_dir, weight_mode=args.weight_mode,
+    )
     print(f"[T1] load_s={load_s:.1f} dtype={dtype_meta['mode_label']}", flush=True)
 
     if load_s > args.wall_rail_s:
@@ -1023,7 +1039,7 @@ def main(argv: list[str] | None = None) -> int:
     config = {
         "experiment": "T1_NoPE_graft_width_sweep",
         "model_dir": str(args.model_dir),
-        "weight_mode": "int4",
+        "weight_mode": args.weight_mode,
         "compute": dtype_meta,
         "apa": "OFF_standard_everywhere",
         "widths": list(args.widths),
