@@ -2042,33 +2042,27 @@ class GQAArenaCache(ArenaCache):
         """Mutation-epoch bump. Called at every GQAArenaCache-side site that
         can change what `_cuda_route_bank_signature` would produce (graft
         add/retire/replace, route-key/kind/child_cents changes, truncation or
-        restore of self.grafts). O(1) at mutation time.
-
-        This is a FAST-PATH HINT layered over the cheap per-node signature
-        walk in `_cuda_route_bank_signature`, which remains the correctness
-        authority on every route call (it re-derives from `self.grafts`
-        fresh, so it is safe even against mutations this epoch cannot see —
-        e.g. a caller poking graft dict fields directly from outside this
-        class, such as GraftRepository's lifecycle/WAL/migrate paths). The
-        epoch only lets a route call skip the walk itself when nothing this
-        class controls has changed; the walk is ~1% of the old per-call cost
-        (P0 receipt), so re-running it on an epoch mismatch is cheap
-        insurance, not a regression.
+        restore of self.grafts). O(1) at mutation time. Repository mutation
+        sites share this choke point, so the epoch is the sole production hot-
+        path staleness gate; `GRM_GQA_BRIDGE_PARANOID=1` re-runs the signature
+        walk as a development assertion against under-invalidation.
         """
         self._cuda_gqa_epoch = getattr(self, "_cuda_gqa_epoch", 0) + 1
 
     def _cuda_route_bank_signature(self):
         """Cheap O(N) walk: eligibility + signature only, NO stacking. This
         is the part of the old `_cuda_route_bank_inputs` that was NOT the
-        P0-receipted defect (~1% of the reused-call cost) — it stays on
-        every call as the fail-closed correctness check. Returns
+        P0-receipted defect (~1% of the reused-call cost). It runs when the
+        mutation epoch changes (and on every paranoid-mode call), not on the
+        production reused-bank hot path. Returns
         (node_ids, signature, rows) where `rows` are the raw per-node key
-        arrays (not yet stacked) so a cache miss can stack them without a
-        second walk."""
+        arrays (not yet materialized as a dense bank) so a cache miss can
+        build them without a second walk. Leaf rows may differ only in their
+        token extent; common KV-head and head dimensions are required."""
         rows = []
         node_ids = []
         sig_rows = []
-        shape = None
+        geometry = None
         for g in self.grafts:
             if g.get("retired") or g.get("kind", "turn") == "recall":
                 continue
@@ -2079,11 +2073,14 @@ class GQAArenaCache(ArenaCache):
                 return None
             cent = g.get("cent")
             key = np.asarray(cent, dtype=np.float32)
-            if key.ndim != 3:
+            if key.ndim != 3 or any(int(dim) <= 0 for dim in key.shape):
                 return None
-            if shape is None:
-                shape = key.shape
-            elif key.shape != shape:
+            if not np.isfinite(key).all():
+                return None
+            row_geometry = (int(key.shape[0]), int(key.shape[2]))
+            if geometry is None:
+                geometry = row_geometry
+            elif row_geometry != geometry:
                 return None
             rows.append(key)
             node_ids.append(int(node_id))
@@ -2097,6 +2094,71 @@ class GQAArenaCache(ArenaCache):
             return None
         node_ids_np = np.asarray(node_ids, dtype=np.uint64)
         return node_ids_np, tuple(sig_rows), rows
+
+    @staticmethod
+    def _cuda_build_dense_route_bank(rows):
+        """Return an exact dense fp32 bank plus its auditable layout receipt.
+
+        Every row has shape ``[kv_heads, tokens_i, head_dim]``. Equal-length
+        rows retain the historical ``np.stack`` path. Mixed-length rows are
+        copied into zero-filled prefixes of one max-token bank. Because the
+        route law takes a maximum of absolute dot products, a zero tail cannot
+        raise any non-empty row's score.
+        """
+        if not rows:
+            raise ValueError("GQA CUDA route bank requires at least one row")
+
+        arrays = []
+        token_counts = []
+        geometry = None
+        for row in rows:
+            key = np.asarray(row, dtype=np.float32)
+            if key.ndim != 3 or any(int(dim) <= 0 for dim in key.shape):
+                raise ValueError(
+                    "GQA CUDA route rows must be non-empty rank-3 arrays")
+            if not np.isfinite(key).all():
+                raise ValueError("GQA CUDA route rows must be finite")
+            row_geometry = (int(key.shape[0]), int(key.shape[2]))
+            if geometry is None:
+                geometry = row_geometry
+            elif row_geometry != geometry:
+                raise ValueError(
+                    "GQA CUDA route rows must share KV-head/head-dim geometry")
+            arrays.append(key)
+            token_counts.append(int(key.shape[1]))
+
+        max_tokens = max(token_counts)
+        same_shape = len(set(token_counts)) == 1
+        if same_shape:
+            route_bank = np.ascontiguousarray(
+                np.stack(arrays), dtype=np.float32)
+        else:
+            kv_heads, head_dim = geometry
+            route_bank = np.zeros(
+                (len(arrays), kv_heads, max_tokens, head_dim),
+                dtype=np.float32,
+                order="C",
+            )
+            for idx, key in enumerate(arrays):
+                route_bank[idx, :, :key.shape[1], :] = key
+
+        raw_value_count = sum(int(key.size) for key in arrays)
+        padded_value_count = int(route_bank.size)
+        receipt = {
+            "schema": "grm_gqa_cuda_route_bank_layout_v1",
+            "layout": "dense" if same_shape else "zero_padded",
+            "node_count": len(arrays),
+            "kv_heads": int(geometry[0]),
+            "head_dim": int(geometry[1]),
+            "row_token_counts": tuple(token_counts),
+            "max_tokens": int(max_tokens),
+            "raw_value_count": raw_value_count,
+            "padded_value_count": padded_value_count,
+            "raw_bytes": raw_value_count * np.dtype(np.float32).itemsize,
+            "padded_bytes": int(route_bank.nbytes),
+            "padding_ratio": padded_value_count / raw_value_count,
+        }
+        return route_bank, receipt
 
     @staticmethod
     def _cuda_gqa_bridge_paranoid():
@@ -2146,6 +2208,7 @@ class GQAArenaCache(ArenaCache):
                     "fresh but the signature walk finds no eligible bank — "
                     "epoch under-invalidation")
             self._cuda_gqa_bank_cache = None
+            self._cuda_gqa_padding_receipt = None
             return None
         node_ids_np, signature, rows = sig
 
@@ -2166,10 +2229,11 @@ class GQAArenaCache(ArenaCache):
             self._cuda_gqa_cache_epoch = epoch
             return cached
 
-        route_bank = np.ascontiguousarray(np.stack(rows), dtype=np.float32)
+        route_bank, layout_receipt = self._cuda_build_dense_route_bank(rows)
         bank_inputs = (route_bank, node_ids_np, signature)
         self._cuda_gqa_bank_cache = bank_inputs
         self._cuda_gqa_cache_epoch = epoch
+        self._cuda_gqa_padding_receipt = layout_receipt
         return bank_inputs
 
     def _ensure_cuda_route_bank(self, store, bank_inputs):
@@ -2184,7 +2248,13 @@ class GQAArenaCache(ArenaCache):
                 and getattr(store, "_cuda_gqa_bank_signature", None) == signature):
             return True
         try:
-            store.configure_cuda_gqa_route_bank(route_bank, node_ids)
+            configure_kwargs = (
+                {"signature": signature}
+                if getattr(store, "supports_cuda_gqa_epoch_signature", False)
+                else {}
+            )
+            store.configure_cuda_gqa_route_bank(
+                route_bank, node_ids, **configure_kwargs)
             store._cuda_gqa_bank_signature = signature
         except Exception:
             self._cuda_gqa_route_unavailable = True

@@ -133,3 +133,54 @@ accepted, frozen-model repositories never approach that scale). Both
 dialects now route on CUDA under one epoch law, and the wing's original
 promise — repository-scale memory at interactive latency — holds where
 production actually calls it.
+
+## Wing Continuation III: Fixed GQA Route Cards (stopped 2026-07-11)
+
+The next branch tested the tempting analogue of MLA's compact latent
+centroids: fixed GQA route cards made from actual source keys, then hybrid
+cards that replaced half the slots with strictly validated generated-query
+keys. The representation failed its first governed Qwen development gate.
+Full ragged raw keys recovered 18/20 source nodes; source-only cards recovered
+2/3/4 and hybrid cards 3/2/3 at 2/4/8 slots. The aliases passed their source-
+support checks but did not restore the distributed model-native route signal.
+That is a representation failure, not a kernel failure. The branch was stopped
+before fresh evidence and archived, including its negative receipts, as stash
+commit `68c9f0a7945e1872aeb9aba5439a0ee09fc806f2`.
+
+## Wing Continuation IV: Exact Ragged GQA CUDA (development-closed 2026-07-11)
+
+The failure narrows the next move: preserve the routing law and remove the
+shape restriction. Today's CUDA bridge already scores exact raw keys quickly,
+but its bank builder rejects otherwise compatible GQA nodes when their token
+lengths differ. The first exact representation is therefore a zero-padded
+immutable leaf bank. Padding cannot raise an absolute-dot maximum for a
+non-empty row, keeps every original fp32 key byte, and reuses the proven CUDA
+sidecar and epoch lifecycle.
+
+This work order deliberately separates two meanings of ragged. Variable token
+lengths within one route row are exactly representable by zero padding.
+Hierarchical nodes with multiple completed route rows are not: concatenating
+children changes the order of max and mean reductions. They remain on the CPU
+until an exact row-to-node reduction exists. If global padding passes parity
+but misses the memory rail, the evidence chooses length buckets or a segmented-
+offset kernel next. Compression and generated aliases are no longer on this
+line of effort.
+
+The smallest exact move worked. On the sealed Qwen3.5-9B capture ladder,
+zero-padded raw keys matched the production NumPy law and ragged native CPU at
+every top-k point for 175/175 stored model-native queries; the normal bridge
+used CUDA 175/175 times. At 512 nodes the bank is 512 MiB (`2.199x` its ragged
+rows), resident bridge latency is 1.59/2.01 ms p50/p95, and sampled process
+residency settles at 708 MiB. An initial 896 ms cold miss exposed two copies of
+work rather than a need for approximate indexing: a redundant 512 MiB content
+hash after the epoch signature was already authoritative, then a full device
+temporary/upload/repack. Passing the epoch token through the native attach and
+pitched-copying host rows directly into final per-head matrices reduced the
+512-node cold build to 147 ms and removed the bank-sized device temporary.
+
+That closes the development decision in favor of exact global padding for the
+registered envelope; length buckets and segmented offsets are not prepaid.
+Hierarchy remains deliberately unresolved and CPU-routed. This is not an
+adoption result: default behavior stays CPU/dependency-free, CUDA stays
+opt-in, and fresh dual-GQA quality/restart/concurrency evidence is still the
+operator gate.

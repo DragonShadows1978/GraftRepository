@@ -309,10 +309,10 @@ extern "C" int grm_gqa_cuda_arena_create(
   const int threads = 256;
   const int grid = 256;
   const int matrix_rows = nodes * key_tokens;
-  const size_t key_values =
-      static_cast<size_t>(nodes) * kv_heads * key_tokens * head_dim;
   const size_t k_col_values =
       static_cast<size_t>(kv_heads) * matrix_rows * head_dim;
+  const size_t head_row_values =
+      static_cast<size_t>(key_tokens) * head_dim;
 
   GqaDeviceArena* arena = new GqaDeviceArena();
   arena->nodes = nodes;
@@ -323,27 +323,31 @@ extern "C" int grm_gqa_cuda_arena_create(
   arena->threads = threads;
   arena->grid = grid;
 
-  float* d_keys = nullptr;
-  int rc = cuda_code(cudaMalloc(&d_keys, key_values * sizeof(float)));
+  int rc = cuda_code(cudaMalloc(&arena->d_k_cols,
+                                k_col_values * sizeof(float)));
   if (rc != 0) goto cleanup;
-  rc = cuda_code(cudaMalloc(&arena->d_k_cols, k_col_values * sizeof(float)));
-  if (rc != 0) goto cleanup;
-  rc = cuda_code(cudaMemcpy(
-      d_keys, keys_host, key_values * sizeof(float), cudaMemcpyHostToDevice));
-  if (rc != 0) goto cleanup;
+  // The host bank is [node, kv_head, token, dim], while cuBLAS consumes one
+  // contiguous [node * token, dim] matrix per KV head. Copy each head with a
+  // pitched 2-D transfer directly into its final device matrix. The old path
+  // uploaded the whole bank to d_keys, allocated a second bank-sized buffer,
+  // launched a pack kernel, synchronized, and freed d_keys. This layout copy
+  // is identical but removes the temporary 512 MiB allocation and device-side
+  // repack at the 512-node development point.
   for (int kh = 0; kh < kv_heads; ++kh) {
     float* k_col =
         arena->d_k_cols + static_cast<size_t>(kh) * matrix_rows * head_dim;
-    pack_k_col_kernel<<<grid, threads>>>(
-        d_keys, k_col, nodes, kv_heads, key_tokens, head_dim, kh);
+    const float* head_src = keys_host +
+        static_cast<size_t>(kh) * head_row_values;
+    rc = cuda_code(cudaMemcpy2D(
+        k_col,
+        head_row_values * sizeof(float),
+        head_src,
+        static_cast<size_t>(kv_heads) * head_row_values * sizeof(float),
+        head_row_values * sizeof(float),
+        static_cast<size_t>(nodes),
+        cudaMemcpyHostToDevice));
+    if (rc != 0) goto cleanup;
   }
-  rc = cuda_code(cudaGetLastError());
-  if (rc != 0) goto cleanup;
-  rc = cuda_code(cudaDeviceSynchronize());
-  if (rc != 0) goto cleanup;
-  rc = cuda_code(cudaFree(d_keys));
-  d_keys = nullptr;
-  if (rc != 0) goto cleanup;
   rc = cublas_code(cublasCreate(&arena->handle));
   if (rc != 0) goto cleanup;
   rc = cublas_code(cublasSetMathMode(arena->handle, CUBLAS_DEFAULT_MATH));
@@ -356,7 +360,6 @@ extern "C" int grm_gqa_cuda_arena_create(
   return 0;
 
 cleanup:
-  if (d_keys) cudaFree(d_keys);
   destroy_device_arena(arena);
   return rc;
 }
