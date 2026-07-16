@@ -47,3 +47,22 @@ Plan: GRM_IMPORTANCE_PLAN.md (immutable after initial commit).
   turn-pairing — not a later use (documented in fixture README).
 - Identifier collision check across files reported clean by seat
   (BX-44/BX-51, C14, Kessyrn-9, LP-2231 unique per file).
+
+## 2026-07-16 — WO-1 (S1 telemetry) LANDED, lead-verified
+
+- Tap: core/minicpm3_tc.py absorbed-decode path, pure read of `w`
+  post-softmax (lead read the diff: no in-place ops, off-path is the
+  pre-existing two statements verbatim). Decode-only = matches the
+  registered metric. 9/9 CPU tests under lead re-run.
+- Seat attribution VERIFIED by lead against source, not taken from
+  the seat's report: cur_mounts = picks at swap (graft_arena.py:1502,
+  1530); _graft_block cats in picks order re-RoPE'd from n_sink →
+  _mount_seat_ranges IS the physical layout. Evidence class: source
+  audit + unit test.
+- LEAD SIGN-OFF on two flagged calls: (1) s1_mass keyed by graft
+  index in cur_mounts (consistent with step() info["mounts"]; node-id
+  translation layer deferred to consumer phase); (2) share denominator
+  = ALL non-live mass incl. sink (literal plan reading; mount ordering
+  unaffected by common denominator; sink share visible as 1−Σ).
+- _attempt() resets telemetry per attempt incl. rollbacks — failed
+  trips can't bleed mass into accepted attempts.

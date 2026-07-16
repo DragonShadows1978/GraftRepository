@@ -1556,6 +1556,93 @@ class ArenaCache:
         self._clear_transients()
         return drop_n
 
+    # ------------------------------------------------------ S1 telemetry
+    # GRM_IMPORTANCE_PLAN.md WO-1: opt-in, read-only attention-mass tap.
+    # The tap itself lives on MLAAttentionTC (core/minicpm3_tc.py, absorbed
+    # decode's softmax site); this section owns seat-range -> mount-id
+    # aggregation, MEANED over heads (done in the tap) and ALL layers (done
+    # here), reported as the registered headline metric: share of total
+    # non-live mass. Per-layer numbers are exposed as diagnostics only and
+    # never feed the headline scalar (plan: "no post-hoc layer picking").
+    def set_telemetry(self, enabled):
+        """Enable/disable the S1 tap on every layer. Mirrors the existing
+        absorbed_decode/live_shift broadcast pattern (set once, external to
+        the per-attempt hot path). Disabling also drops any accumulated
+        mass — a stale accumulator from a previous ON stretch must never
+        leak into a later aggregation call."""
+        for L in self.m.layers:
+            L.self_attn.telemetry = bool(enabled)
+            if not enabled:
+                L.self_attn.reset_telemetry()
+
+    def _telemetry_enabled(self):
+        return any(getattr(L.self_attn, "telemetry", False)
+                   for L in self.m.layers)
+
+    def _mount_seat_ranges(self):
+        """Arena seats occupied by each currently-mounted node, in mount
+        order: mounts are a packed PREFIX of the arena starting at n_sink
+        (no hole padding in the physical cache tensor — the hole is a
+        RoPE-position-only concept, see module docstring). Returns
+        {graft_idx: (start, end)} with end exclusive."""
+        ranges = {}
+        seat = self.n_sink
+        for i in self.cur_mounts:
+            n = self.grafts[i]["ntok"]
+            ranges[i] = (seat, seat + n)
+            seat += n
+        return ranges
+
+    def s1_mass(self, per_layer=False):
+        """Per-mount S1 mass for the decode steps accumulated since the last
+        reset_telemetry() (i.e. the current/most-recent attempt — see
+        _attempt's reset-on-entry). Registered metric: sum over reply decode
+        steps of softmax mass on the node's seats, mean over heads and ALL
+        layers, reported as a share of total non-live mass (SINK + ARENA
+        seats, i.e. everything before the live region — the physical seat
+        range [0, n_sink + cur_mount_n)).
+
+        Denominator note: "total non-live mass" is ALL mass on seats
+        [0, n_sink+cur_mount_n) — sink included — not just the sum over
+        mounted nodes' own seats. The two coincide only when sink mass is
+        zero; sink is a permanent resident and typically draws some mass,
+        so it is counted in the denominator but (having no graft_idx) never
+        appears as a numerator term. Returns {graft_idx: share}.
+        per_layer=True additionally returns a {layer_idx: {graft_idx:
+        raw_mass}} diagnostics dict as a second return value — never
+        consumed by the headline scalar above."""
+        ranges = self._mount_seat_ranges()
+        non_live_end = self.n_sink + self.cur_mount_n
+        layers = self.m.layers
+        n_layers = len(layers)
+        per_layer_diag = {}
+        raw = {i: 0.0 for i in ranges}
+        total_raw = 0.0
+        for li, L in enumerate(layers):
+            acc = getattr(L.self_attn, "_telemetry_mass", None)
+            layer_raw = {}
+            if acc is not None:
+                e_all = min(non_live_end, acc.shape[0])
+                total_raw += float(acc[:e_all].sum()) if e_all > 0 else 0.0
+                for i, (s, e) in ranges.items():
+                    e = min(e, acc.shape[0])
+                    m = float(acc[s:e].sum()) if e > s else 0.0
+                    layer_raw[i] = m
+                    raw[i] += m
+            per_layer_diag[li] = layer_raw
+        # mean over ALL layers (registered metric — no per-layer gating)
+        if n_layers:
+            for i in raw:
+                raw[i] /= n_layers
+            total_raw /= n_layers
+        if total_raw > 0:
+            shares = {i: v / total_raw for i, v in raw.items()}
+        else:
+            shares = {i: 0.0 for i in raw}
+        if per_layer:
+            return shares, per_layer_diag
+        return shares
+
     # ------------------------------------------------------------ forward
     def _forward(self, ids, last_only=True):
         with tc.no_grad():     # inference-only; also unlocks fused-norm paths
@@ -1863,6 +1950,16 @@ class ArenaCache:
 
     def _attempt(self, user_text, picks, ngen, deposit, stops):
         self._ensure_h(picks)
+        # S1 telemetry (WO-1): reset the per-layer accumulator at the start
+        # of EVERY attempt (including shuttling retries) so mass only ever
+        # reflects this attempt's reply decode steps — a retry's cache
+        # rollback already discards the failed attempt's tokens; the mass
+        # accumulator must discard its mass the same way. No-op when
+        # telemetry is off (reset_telemetry() just clears an already-None
+        # accumulator).
+        if self._telemetry_enabled():
+            for L in self.m.layers:
+                L.self_attn.reset_telemetry()
         if self.caches is None:
             # bootstrap: sink (+ first mounts) enter via the injection path
             mounts = [{"h": self.sink_h}] + [self.grafts[i] for i in picks]
