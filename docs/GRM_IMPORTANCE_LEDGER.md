@@ -66,3 +66,27 @@ Plan: GRM_IMPORTANCE_PLAN.md (immutable after initial commit).
   unaffected by common denominator; sink share visible as 1−Σ).
 - _attempt() resets telemetry per attempt incl. rollbacks — failed
   trips can't bleed mass into accepted attempts.
+
+## 2026-07-16 — G0a first run RED → tap EXONERATED, harness+engine finding
+
+- G0a as-shipped FAILED: max|Δlogit| 0.5, s1_mass {}. Lead diagnostic
+  driver (scratchpad, teacher-forced logit A/B, model loaded once):
+  - off-vs-off (runs 1,2) = 0.5 → the DELTA IS NOT THE TAP.
+  - warm off vs warm on = 0.0 EXACTLY (direct receipt, both
+    orderings) → telemetry tap is bit-clean under matched warmth.
+  - live_shift-after-feed ordering hypothesis REFUTED: with
+    live_shift broadcast before feed on every run, off-vs-off
+    still 0.5.
+  - Pattern: FIRST RUN OF THE PROCESS differs (≤0.5 logit, bf16-noise
+    scale) from all subsequent runs; all warm runs bit-identical
+    regardless of telemetry/ordering.
+- ENGINE FINDING (open seam, not chased here): process-warmth
+  first-run effect. Candidates: kernel autotune / lazy table build.
+  Measurement law (kin to Trinity's matched-reference law): any
+  same-process A/B gate must warm up before capturing side A.
+- s1_mass {} root cause: gate never calls step() — nothing mounts.
+  Harness gap, separate from the parity question.
+- Gate fix dispatched to WO-1 seat: warm-up pass before the A/B pair;
+  mount via step() so attribution is exercised (assert s1_mass
+  non-empty); live_shift-before-feed hygiene. Bit-identical demand
+  UNCHANGED. Evidence class: teacher-forced logit A/B.
