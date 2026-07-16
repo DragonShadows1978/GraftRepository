@@ -96,6 +96,22 @@ the node, leaving the rest host-only for later mount/page-in. Regression:
 
 ## Majors
 
+**M11 — fold-after-recovery bricks the librarian (2026-07-16,
+lead-reproduced with instrumentation).** Librarian fold-source
+selection never excludes WAL-recovery placeholder nodes (kind=turn,
+ntok=0, h=None, recovered/payload_pending flags — the state a repo
+boots into from wal/ with payloads missing). Placeholders count as
+foldable turns → threshold crosses → `_fold_once` →
+`arena.consolidate` (graft_arena.py:1252) indexes `h=None` →
+TypeError; `_ensure_h` cannot heal an unbacked placeholder and falls
+through silently. Production impact: any crash-recovered session
+bricks its librarian on the FIRST idle(). Sibling of M2 (flush path
+guarded 2026-07-02; fold path never was). Fix in flight 2026-07-16
+(fold eligibility = resolvable payload only, both deferred and
+backpressure paths, counter-jam guard per 816a0a0). Secondary,
+unrouted: `_ensure_h` silent fall-through deserves a named error
+(graft_arena.py ownership).
+
 **M10 — lifecycle suite RED: FakeArena drift vs epoch API (2026-07-16,
 lead-verified).** `tests/test_grm_runtime_lifecycle.py` fails 91/101 on
 clean main: `GraftRepository` now calls `arena._bump_cuda_gqa_epoch()`

@@ -194,3 +194,45 @@ after.
   STANDING_PREF vs FILLER s1_mass; no pass/fail attached to S1 here.
 - G3 dispatch condition per plan: G1 green for at least one signal
   OR G2 green.
+
+## 2026-07-16 — WO-5 (G1/G2 driver) LANDED + leg-1 shakeout arc
+
+- Driver + analysis + 43 CPU tests (lead re-ran; 31→43 through the
+  arc below). Lead sign-offs: probe eligibility rule applies to BOTH
+  signals' top-1 denominators (probe property, not signal property);
+  defensive user+assistant turn-id mapping; S3 sweeps snapshot-
+  isolated on fresh mini-caches (WO-2's gated pattern).
+- Shakeout iterations, each mechanism NAMED before fixing:
+  (1) fixture probe→scripted-answer structure unmodeled (probe pairs
+  now consumed but NEVER deposited — the wake-turn hygiene law;
+  scripted answer recorded as expected_answer_scripted; invariant
+  test walks all 6 fixtures);
+  (2) s1 flat 0.0 — driver never set absorbed_decode=True; the S1
+  tap exists only in the absorbed-decode branch; generic SDPA path
+  never fires it. Lead's stale-read hypothesis WRONG, seat's trace
+  right (read ordering was already correct);
+  (3) librarian fold crash, mechanism confirmed by lead's
+  instrumented run (scratchpad monkeypatch): STALE WORKSPACE —
+  /tmp/graftrepo_g1g2_convo_01 carried wal/ state from earlier
+  crashed attempts; repo BOOTED with 11 WAL-recovery placeholder
+  nodes (kind=turn, ntok=0, h=None, recovered/payload_pending);
+  placeholders count as foldable → fold fired instantly → consolidate
+  TypeError. native_store=False confirmed (Python fold path; seat's
+  fresh-repo fold arithmetic was correct all along).
+- OPERATIONAL NOTE: bare `pytest --collect-only` over tests/ is a
+  GPU hazard — a legacy module loads a model at import; a leaked
+  10.8GB collection process blocked leg 1 (killed after identifying
+  it as this session's own leftover).
+
+## 2026-07-16 — M11 REGISTERED: fold-after-recovery bricks librarian
+
+- REAL PRODUCTION BUG exposed by the leg-1 crash (not a harness
+  artifact): fold-source selection never excludes payload-missing
+  placeholder nodes. Any crash-recovered session (WAL replay,
+  payloads gone) bricks its librarian on the first idle() —
+  TypeError in consolidate. M2 guarded the FLUSH path against gap
+  placeholders (2026-07-02); the FOLD path was never guarded.
+  Evidence class: instrumented reproduction (graft state dumped at
+  crash). Fix order dispatched (fold eligibility = resolvable
+  payload only; both deferred and backpressure paths; counter-jam
+  guard per 816a0a0 lesson). Queued in GRM_BUG_QUEUE.md as M11.
