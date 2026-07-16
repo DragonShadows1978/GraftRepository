@@ -87,6 +87,12 @@ class ArenaCache:
         self.live_segs = []             # [(graft_idx or None, ntok), ...]
         self.grafts = []                # {h, cent, ntok, text}
         self.last_route_backend = "python"
+        # GRM S4 grounding ledger.  The repository installs the callback
+        # after load/recovery so accepted counter changes ride its existing
+        # metadata dirty/WAL path.  A bare ArenaCache remains fully usable:
+        # counters still update in-memory and the callback is simply absent.
+        self._s4_turn = 0
+        self.s4_metadata_callback = None
 
     def _format_step_prompt(self, user_text):
         if self.prompt_template is None:
@@ -1666,7 +1672,9 @@ class ArenaCache:
         if self.ephemeral:
             # no persistent live cache to push through — a fed turn IS its
             # deposit (recency-as-mount picks it up on the next step)
-            return self.deposit(turn_text) if deposit else None
+            result = self.deposit(turn_text) if deposit else None
+            self._s4_turn = int(getattr(self, "_s4_turn", 0)) + 1
+            return result
         for L in self.m.layers:
             L.self_attn.live_shift = self.live_shift
         ids = self.encode(turn_text)
@@ -1680,6 +1688,10 @@ class ArenaCache:
                     if self.cache_deposits else self.deposit(turn_text))
         self.live_segs.append((gidx, len(ids)))
         self.evict()
+        # Scripted/observed turns do not route and therefore touch no S4
+        # node counter, but they still advance the conversation ordinal used
+        # by last_grounded_turn on the next accepted retrieval attempt.
+        self._s4_turn = int(getattr(self, "_s4_turn", 0)) + 1
 
     # confabulation / hedge detection between trips: an answer asserting
     # code/number-shaped tokens absent from every mounted source (and the
@@ -1708,30 +1720,46 @@ class ArenaCache:
                     out.add(w.lower().rstrip(".,;:"))
         return out
 
-    def _grounded(self, ans, mount_idxs, question):
+    def _grounding_attribution(self, ans, mount_idxs, question):
+        """Return ``(pooled_grounded, contributing_mounts)``.
+
+        This is a pure split of grounding v3's existing pooled coverage
+        calculation.  ``pooled_grounded`` deliberately follows the former
+        ``_grounded`` branches and set operations exactly; the additional
+        per-mount sets only identify which mounted sources supplied at least
+        one token to the coverage set after that pooled verdict succeeds.
+        No routing, model forward, or token machinery is introduced here.
+        """
         a = ans.lower()
         if any(h in a for h in self.HEDGES):
-            return False
+            return False, set()
         # identifier-aware: if the question names codes and NO mounted
         # source contains any of them, the right document is not mounted —
         # whatever the answer says, it cannot be about the asked entity
         # ("right family, wrong sibling" is grounded-but-wrong otherwise)
         qrare = self._rare_tokens(question)
+        per_mount_content = {}
         if qrare:
             mounted = set()
             for i in mount_idxs:
-                mounted |= self._rare_tokens(self.grafts[i]["text"])
+                rare = self._rare_tokens(self.grafts[i]["text"])
+                mounted |= rare
             if not (qrare & mounted):
-                return False
+                return False, set()
         content = ((self._rare_tokens(ans) | self._caps_tokens(ans))
                    - self._rare_tokens(question)
                    - self._caps_tokens(question, skip_sentence_initial=False))
         have = set()
         words = set()
+        per_mount_words = {}
         for i in mount_idxs:
             t = self.grafts[i]["text"]
-            have |= self._rare_tokens(t) | self._caps_tokens(t, False)
-            words |= {w.lower().rstrip(".,:;") for w in t.split()}
+            mount_content = self._rare_tokens(t) | self._caps_tokens(t, False)
+            mount_words = {w.lower().rstrip(".,:;") for w in t.split()}
+            per_mount_content[i] = mount_content
+            per_mount_words[i] = mount_words
+            have |= mount_content
+            words |= mount_words
         if not content:
             # no identifier-shaped tokens — fall back to substantive words:
             # a correct prose answer ("The header parser is crashing.") has
@@ -1740,8 +1768,80 @@ class ArenaCache:
             qw = {w.lower().rstrip(".,:;?") for w in question.split()}
             subst = ({w.lower().rstrip(".,:;") for w in ans.split()
                       if len(w.rstrip(".,:;")) >= 4} - qw - self.SCAFFOLD)
-            return bool(subst) and bool(subst & words)
-        return content <= have
+            grounded = bool(subst) and bool(subst & words)
+            if not grounded:
+                return False, set()
+            contributors = {i for i in mount_idxs
+                            if subst & per_mount_words[i]}
+            return True, contributors
+        grounded = content <= have
+        if not grounded:
+            return False, set()
+        contributors = {i for i in mount_idxs
+                        if content & per_mount_content[i]}
+        return True, contributors
+
+    def _grounded(self, ans, mount_idxs, question):
+        """Compatibility wrapper: pooled verdict is unchanged."""
+        return self._grounding_attribution(ans, mount_idxs, question)[0]
+
+    @staticmethod
+    def _s4_counter_defaults():
+        return {"n_routed": 0, "n_mounted": 0, "n_grounded": 0,
+                "last_grounded_turn": None}
+
+    def _s4_ledger(self, idx):
+        """Return one node's S4 sub-ledger without touching sibling arms."""
+        g = self.grafts[int(idx)]
+        metadata = g.setdefault("metadata", {})
+        importance = metadata.setdefault("importance", {})
+        s4 = importance.get("s4")
+        if not isinstance(s4, dict):
+            s4 = {}
+            importance["s4"] = s4
+        for key, value in self._s4_counter_defaults().items():
+            s4.setdefault(key, value)
+        return s4
+
+    def _next_s4_turn(self):
+        """One-based conversation-turn ordinal for the next ``step``.
+
+        ``feed`` advances scripted/observed turns; accepted ``step`` commits
+        advance retrieval turns.  Repository load establishes the restart-
+        stable floor from persisted turn/recall nodes, keeping this hot-path
+        lookup O(1).
+        """
+        return int(getattr(self, "_s4_turn", 0)) + 1
+
+    def _commit_s4_attempt(self, routed, mounted, grounded_mounts,
+                           turn=None):
+        """Commit the one attempt whose state/answer survives ``step``.
+
+        Routing is a turn-level funnel, so every unique node returned in the
+        routed candidate ranking counts once.  Mount and grounding events are
+        restricted to the accepted mount set; failed shuttling attempts call
+        neither this method nor the repository persistence callback.
+        """
+        routed = {int(i) for i in routed}
+        mounted = {int(i) for i in mounted}
+        grounded_mounts = mounted & {int(i) for i in grounded_mounts}
+        if turn is None:
+            turn = int(getattr(self, "_s4_turn", 0)) + 1
+        turn = int(turn)
+        self._s4_turn = max(int(getattr(self, "_s4_turn", 0)), turn)
+        changed = routed | mounted | grounded_mounts
+        for i in sorted(changed):
+            s4 = self._s4_ledger(i)
+            if i in routed:
+                s4["n_routed"] = int(s4.get("n_routed", 0)) + 1
+            if i in mounted:
+                s4["n_mounted"] = int(s4.get("n_mounted", 0)) + 1
+            if i in grounded_mounts:
+                s4["n_grounded"] = int(s4.get("n_grounded", 0)) + 1
+                s4["last_grounded_turn"] = turn
+        callback = getattr(self, "s4_metadata_callback", None)
+        if changed and callback is not None:
+            callback(tuple(sorted(changed)))
 
     def _native_source_closure_indices(self, picks, max_depth=1,
                                        include_roots=False):
@@ -1838,6 +1938,7 @@ class ArenaCache:
         live_idx = {g for g, _ in self.live_segs if g is not None} | set(rec)
         route_limit = max(1, (int(max_trips) + 1) * int(self.topk))
         ranking = self.route(user_text, exclude=live_idx, limit=route_limit)
+        s4_turn = self._next_s4_turn()
         snap = (self.caches, self.pos, list(self.live_segs),
                 self.cur_mounts, self.cur_mount_n, len(self.grafts))
         # PRECISE-MOUNT policy (corpus-100 lesson): an identifier query is a
@@ -1936,23 +2037,30 @@ class ArenaCache:
             info["trip"] = trip
             if clean:
                 info["clean_room"] = True
-            if self._grounded(txt, mset, user_text):
+            grounded, contributors = self._grounding_attribution(
+                txt, mset, user_text)
+            if grounded:
+                self._commit_s4_attempt(
+                    ranking, mset, contributors, turn=s4_turn)
                 return txt, info
             if best is None:
                 best = (txt, info, (self.caches, self.pos, list(self.live_segs),
                                     self.cur_mounts, self.cur_mount_n,
-                                    list(self.grafts)))
+                                    list(self.grafts)), tuple(mset))
         # nothing grounded — keep the FIRST attempt's answer and state
         if best is None:
             txt, info = self._attempt(user_text, [], ngen, deposit, stops)
             info["trip"] = 0
             info["no_mount_fit"] = True
+            self._commit_s4_attempt(ranking, (), (), turn=s4_turn)
             return txt, info
-        txt, info, st = best
+        txt, info, st, accepted_mounts = best
         (self.caches, self.pos, self.live_segs,
          self.cur_mounts, self.cur_mount_n) = st[0], st[1], st[2], st[3], st[4]
         self.grafts[:] = st[5]
         self._bump_cuda_gqa_epoch()
+        self._commit_s4_attempt(
+            ranking, accepted_mounts, (), turn=s4_turn)
         return txt, info
 
     def _attempt(self, user_text, picks, ngen, deposit, stops):

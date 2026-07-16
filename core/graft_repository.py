@@ -307,6 +307,12 @@ class GraftRepository:
             self._rebuild_text_ascii_cache()
             self._sync_native_full()
             self.dirty_nodes.clear()
+        # GRM S4: bind accepted-attempt counter commits to the repository's
+        # existing metadata persistence path only after manifest/WAL recovery
+        # has established the live graft list.  Restore the ordinal from the
+        # largest persisted grounding turn so a reopened repository never
+        # moves last_grounded_turn backwards.
+        self._bind_s4_ledger()
         self.runtime = GRMRuntime(self)
 
     def close(self):
@@ -401,6 +407,41 @@ class GraftRepository:
         self.close()
 
     # ----------------------------------------------------------- hot path
+    def _bind_s4_ledger(self):
+        last_turn = 0
+        persisted_turns = 0
+        for g in self.arena.grafts:
+            if g.get("kind", "turn") in ("turn", "recall"):
+                persisted_turns += 1
+            s4 = (g.get("metadata", {}).get("importance", {}).get("s4", {}))
+            if not isinstance(s4, dict):
+                continue
+            value = s4.get("last_grounded_turn")
+            if isinstance(value, int) and not isinstance(value, bool):
+                last_turn = max(last_turn, value)
+        self.arena._s4_turn = max(
+            int(getattr(self.arena, "_s4_turn", 0)), last_turn,
+            persisted_turns)
+        self.arena.s4_metadata_callback = self._persist_s4_metadata
+
+    def _persist_s4_metadata(self, node_idxs):
+        """Persist ArenaCache's already-committed S4 sub-ledgers.
+
+        The arena owns attribution and transaction timing; the repository
+        only marks the affected node metadata dirty and appends the same
+        NODE_META WAL record used by other importance metadata.  No routing
+        epoch bump is needed because importance metadata is not a route-bank
+        signature field.
+        """
+        for i in sorted({int(idx) for idx in node_idxs}):
+            if i < 0 or i >= len(self.arena.grafts):
+                continue
+            g = self.arena.grafts[i]
+            self._mark_dirty(i, payload=False, metadata=True)
+            self._append_wal("NODE_META", node_id=i,
+                             metadata=g.get("metadata", {}),
+                             state=list(self._state_tuple(g)))
+
     def chat(self, user_text, ngen=64, max_trips=2):
         ans, info = self.runtime.chat(user_text, ngen=ngen, max_trips=max_trips)
         self._queue_s2_pending()
@@ -4062,6 +4103,9 @@ class GraftRepository:
         if not native_loaded:
             self._sync_native_full()
         self._page()
+        # load() is also a public compatibility entry point; refresh the S4
+        # persistence callback/ordinal here, not only in __init__.
+        self._bind_s4_ledger()
 
     def _rebuild_child_keys(self):
         """Descent keys rebuild from lineage (recursive: eras reach leaves)."""
