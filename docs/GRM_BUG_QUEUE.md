@@ -96,6 +96,20 @@ the node, leaving the rest host-only for later mount/page-in. Regression:
 
 ## Majors
 
+**M10 — lifecycle suite RED: FakeArena drift vs epoch API (2026-07-16,
+lead-verified).** `tests/test_grm_runtime_lifecycle.py` fails 91/101 on
+clean main: `GraftRepository` now calls `arena._bump_cuda_gqa_epoch()`
+(landed `e8906dc`, merged with the CUDA bridge `bcd5f51` 2026-07-08) and
+the suite's `FakeArena` double never grew the method. Rule 2's "166
+passed" gate has been silently red since that merge — every fix
+committed against rule 2 since 2026-07-08 ran a broken gate. Fix: add
+the epoch method (no-op) to the test double; audit other FakeArena gaps
+vs the current ArenaCache surface while there. Verified: quiet-machine
+run + stash A/B (same failures with/without 2026-07-16 working-tree
+changes); first failure signature `AttributeError:
+'FakeArena' object has no attribute '_bump_cuda_gqa_epoch'` at
+`core/graft_repository.py:3779`.
+
 All verified major queue items are fixed.
 
 ## Minors

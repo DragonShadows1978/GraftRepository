@@ -90,3 +90,59 @@ Plan: GRM_IMPORTANCE_PLAN.md (immutable after initial commit).
   mount via step() so attribution is exercised (assert s1_mass
   non-empty); live_shift-before-feed hygiene. Bit-identical demand
   UNCHANGED. Evidence class: teacher-forced logit A/B.
+
+## 2026-07-16 — WO-3 (S2 salience) LANDED (ab2d83a), lead-verified
+
+- Idle-window scoring pass in core/graft_repository.py: frozen rubric
+  (module constant, primed-prefix "Assistant: Rating:" mirroring
+  DIGEST_PROMPTS), strict first-position 0-3 parse, one retry, double
+  failure → None never a guess; arena snapshot/restore stricter than
+  consolidate(); no deposits, routing state untouched. 19/19 CPU
+  under lead re-run (17 + 2 after correction below).
+- LEAD CORRECTION applied by seat: kind="recall" nodes EXCLUDED from
+  S2 scoring (derivative-turn hygiene law — no consumer reads a
+  salience score off a wake node). Unit tests prove never-queued /
+  never-scored.
+- LEAD SIGN-OFFS: importance dict lives at metadata["importance"]
+  (program-wide manifest location, S1 consumer-phase persistence to
+  match); multi-node new_nodes all scored (matches S1 per-mount
+  granularity). Seat self-caught + fixed a retry-remount bug
+  (retry would have scored an empty mount).
+
+## 2026-07-16 — G0b PASS (registered floors) + pre-existing suite RED
+
+- G0b (warm-up-equipped, commit ab2d83a): load-bearing dependence
+  mean|Δlogit| 7.970 / KL 2.599 vs decoy 1.881 / 0.0181. Ordering
+  assertion PASS. REGISTERED FLOORS for G1/G2 thresholds:
+  noise_floor mean|Δlogit| = 1.881, KL floor = 0.0181; dynamic range
+  4.24× (|Δlogit|) / 143× (KL). Evidence class: teacher-forced logit
+  A/B, sealed JSON line (schema grm_importance_s3_g0b_v1).
+- OBSERVATION (not a metric change): KL separates 34× harder than
+  |Δlogit|. Registered primary for S3 stays mean|Δlogit| per plan;
+  any arbiter-metric change would need David + fresh registration
+  BEFORE G1 runs, never after.
+- Decoy floor 1.881 > the historical 0.75-0.9 cache-vs-prefill bf16
+  band — expected: removing a real mount changes the attention
+  denominator everywhere; different measurement class, keep separate.
+- PRE-EXISTING FINDING (not this program): tests/
+  test_grm_runtime_lifecycle.py 91/101 RED on clean main — FakeArena
+  test double lacks _bump_cuda_gqa_epoch (call site landed e8906dc,
+  July 8 bridge merge). Confirmed by lead on quiet machine + stash
+  A/B; WO-3 seat's "environment contention" attribution WRONG, its
+  same-both-sides A/B conclusion RIGHT. Queued in GRM_BUG_QUEUE.md.
+
+## 2026-07-16 — G0a round 3: harness green, gate caught a REAL tap bug
+
+- Round-3 harness (fact turn + 2 fillers pushes fact graft out of the
+  live_turns=2 recency window per evict()/live_segs mechanics; mounts
+  now happen). Gate then crashed IN THE TAP: minicpm3_tc.py:229
+  broadcast (103,)→(77,) — S_all SHRANK mid-accumulation-window
+  (trips rollback / clean-room mini-cache = cache surgery).
+- Real defect class: growth-only accumulator + physical-seat keying
+  across surgery = crash now, silent misattribution if merely
+  clamped. Invariant registered: MASS ACCUMULATES ONLY WITHIN A
+  STABLE SEATING EPOCH; surgery invalidates the accumulator.
+  Note: _telemetry_mass lives on the LAYER, not the arena — fresh
+  ArenaCache ≠ fresh accumulator (suspected hole in warm-up/measured
+  sequencing; seat ordered to name the mechanism, not patch the
+  symptom). Fix dispatched to WO-1.
