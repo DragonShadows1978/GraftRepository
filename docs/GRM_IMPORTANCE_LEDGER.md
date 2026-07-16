@@ -226,6 +226,30 @@ after.
 
 ## 2026-07-16 — M11 REGISTERED: fold-after-recovery bricks librarian
 
+## 2026-07-16 — G1/G2 PARTIAL RESULTS (15/18 probes — NOT the gate)
+
+- Legs 1,3,4,5,6 GREEN (artifacts committed); leg 2 failed pre-run:
+  convo_02 turn 19 is a SOLO scripted user turn (no assistant reply
+  before the next probe) — driver's strict-pairing assumption; fix
+  order = first Sol dispatch under the new protocol. Fixtures are
+  gate-registered data: the DRIVER adapts, fixtures unchanged.
+- PROVISIONAL numbers over 15 probes (verdict schema sealed in
+  analyze output; gate verdict WAITS for all 18 registered probes):
+  - S1 G1: median Spearman 0.5071 (bar 0.5), top-1 53.3% (bar 50%)
+    — passing BY A HAIR; 3 missing probes can flip it. NO CALL YET.
+  - S2 G1: FAIL trajectory — Spearman 0.171, top-1 25%, rankable on
+    only 4/15 probes (scores collapse to 0).
+  - S2 G2: FAIL trajectory — median s2(STANDING_PREF)=0.0 vs bar 2.0;
+    the 4B judge rates standing preferences as throwaway. NOTE: the
+    frozen rubric words the scale around "facts" — plausible wording
+    artifact, but the rubric froze pre-G1; result stands. A reworded
+    rubric is a SUCCESSOR arm (fresh registration), never a retune.
+  - S1 on G2 (registered expectation of failure, no gate):
+    STANDING_PREF 0.0568 vs FILLER 0.0277 — 2× separation at tiny
+    magnitude, observation only.
+- Evidence class: recall-gate-style driver receipts + analysis over
+  sealed per-convo JSON artifacts (grm_importance_g1g2_convo_v1).
+
 - REAL PRODUCTION BUG exposed by the leg-1 crash (not a harness
   artifact): fold-source selection never excludes payload-missing
   placeholder nodes. Any crash-recovered session (WAL replay,

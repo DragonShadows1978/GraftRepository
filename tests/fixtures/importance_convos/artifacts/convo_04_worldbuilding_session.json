@@ -1,0 +1,204 @@
+{
+  "schema": "grm_importance_g1g2_convo_v1",
+  "conversation_id": "convo_04_worldbuilding_session",
+  "probes": [
+    {
+      "probe_id": "convo_04_worldbuilding_session#19",
+      "expected_answer_scripted": "The Vhorrik Ascendancy, homeworld Kessyrn-9.",
+      "candidates": [
+        {
+          "turn_id": 1,
+          "candidate_id": "1",
+          "node_class": "PROBED_LATER",
+          "ground_truth_grade": 3,
+          "s1_mass": 0.4851312338924346,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 10.623736213235293,
+          "s3_dep_kl": 2.960142128550228
+        },
+        {
+          "turn_id": 5,
+          "candidate_id": "5",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 1,
+          "s1_mass": 0.03576029222239699,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 1.39501953125,
+          "s3_dep_kl": 0.01644586556033648
+        },
+        {
+          "turn_id": 7,
+          "candidate_id": "7",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.019474848662456506,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 0.5031594669117647,
+          "s3_dep_kl": 0.0019283583160627467
+        },
+        {
+          "turn_id": 9,
+          "candidate_id": "9",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 1,
+          "s1_mass": 0.025613273626842074,
+          "s2_salience": null,
+          "s3_dep_dlogit": 0.7062270220588235,
+          "s3_dep_kl": 0.003913531563700888
+        },
+        {
+          "turn_id": 11,
+          "candidate_id": "11",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.04384727139752633,
+          "s2_salience": 3,
+          "s3_dep_dlogit": 0.5132266773897058,
+          "s3_dep_kl": 0.006070337809225538
+        },
+        {
+          "turn_id": 15,
+          "candidate_id": "15",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.023931241697827094,
+          "s2_salience": 3,
+          "s3_dep_dlogit": 0.41521139705882354,
+          "s3_dep_kl": 0.0007354207440530286
+        }
+      ]
+    },
+    {
+      "probe_id": "convo_04_worldbuilding_session#21",
+      "expected_answer_scripted": "Wing-Captain.",
+      "candidates": [
+        {
+          "turn_id": 1,
+          "candidate_id": "1",
+          "node_class": "PROBED_LATER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.45510793169241714,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 2.1168212890625,
+          "s3_dep_kl": 0.020358146638898893
+        },
+        {
+          "turn_id": 5,
+          "candidate_id": "5",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 1,
+          "s1_mass": 0.04711794755584809,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 4.07623291015625,
+          "s3_dep_kl": 0.12469987761812204
+        },
+        {
+          "turn_id": 7,
+          "candidate_id": "7",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.021597360045402605,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 0.781036376953125,
+          "s3_dep_kl": 0.005097295029702772
+        },
+        {
+          "turn_id": 9,
+          "candidate_id": "9",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 3,
+          "s1_mass": 0.04377116513085185,
+          "s2_salience": null,
+          "s3_dep_dlogit": 4.59832763671875,
+          "s3_dep_kl": 1.1714075371021546
+        },
+        {
+          "turn_id": 13,
+          "candidate_id": "13",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.019314545555987744,
+          "s2_salience": null,
+          "s3_dep_dlogit": 0.573486328125,
+          "s3_dep_kl": 0.004764706963286021
+        },
+        {
+          "turn_id": 17,
+          "candidate_id": "17",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.03329576497899509,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 0.970703125,
+          "s3_dep_kl": 0.0029585695640086344
+        }
+      ]
+    },
+    {
+      "probe_id": "convo_04_worldbuilding_session#23",
+      "expected_answer_scripted": null,
+      "candidates": [
+        {
+          "turn_id": 1,
+          "candidate_id": "1",
+          "node_class": "PROBED_LATER",
+          "ground_truth_grade": 1,
+          "s1_mass": 0.4454736665775115,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 2.7701514991554053,
+          "s3_dep_kl": 0.1047126410052099
+        },
+        {
+          "turn_id": 3,
+          "candidate_id": "3",
+          "node_class": "STANDING_PREF",
+          "ground_truth_grade": 3,
+          "s1_mass": 0.05675394552949963,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 1.8362043226087414,
+          "s3_dep_kl": 0.02860093271827407
+        },
+        {
+          "turn_id": 9,
+          "candidate_id": "9",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 2,
+          "s1_mass": 0.039876370661854475,
+          "s2_salience": null,
+          "s3_dep_dlogit": 5.0526873614337,
+          "s3_dep_kl": 1.4058333620718175
+        },
+        {
+          "turn_id": 13,
+          "candidate_id": "13",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.017491883739884508,
+          "s2_salience": null,
+          "s3_dep_dlogit": 0.49468829180743246,
+          "s3_dep_kl": 0.00542969641204171
+        },
+        {
+          "turn_id": 15,
+          "candidate_id": "15",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.02632405302394968,
+          "s2_salience": 3,
+          "s3_dep_dlogit": 1.2700063344594594,
+          "s3_dep_kl": 0.03267640105341429
+        },
+        {
+          "turn_id": 17,
+          "candidate_id": "17",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.02971192830265561,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 0.5117418443834459,
+          "s3_dep_kl": 0.0035648182524134773
+        }
+      ]
+    }
+  ]
+}

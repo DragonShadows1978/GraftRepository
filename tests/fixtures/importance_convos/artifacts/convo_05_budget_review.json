@@ -1,0 +1,204 @@
+{
+  "schema": "grm_importance_g1g2_convo_v1",
+  "conversation_id": "convo_05_budget_review",
+  "probes": [
+    {
+      "probe_id": "convo_05_budget_review#19",
+      "expected_answer_scripted": "17.99 a month for the first year.",
+      "candidates": [
+        {
+          "turn_id": 1,
+          "candidate_id": "1",
+          "node_class": "PROBED_LATER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.3582442628471364,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 2.4225531684027777,
+          "s3_dep_kl": 0.06176103816611686
+        },
+        {
+          "turn_id": 3,
+          "candidate_id": "3",
+          "node_class": "STANDING_PREF",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.06411427374680416,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 2.3128119574652777,
+          "s3_dep_kl": 0.06557840246049601
+        },
+        {
+          "turn_id": 5,
+          "candidate_id": "5",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 1,
+          "s1_mass": 0.09739053826385825,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 3.1323784722222223,
+          "s3_dep_kl": 0.14620213519340455
+        },
+        {
+          "turn_id": 9,
+          "candidate_id": "9",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 3,
+          "s1_mass": 0.10614660643729844,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 5.221286349826389,
+          "s3_dep_kl": 0.8726236111533155
+        },
+        {
+          "turn_id": 13,
+          "candidate_id": "13",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.029824584679040023,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 0.9740125868055556,
+          "s3_dep_kl": 0.015301416609706995
+        },
+        {
+          "turn_id": 15,
+          "candidate_id": "15",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.03879748219172861,
+          "s2_salience": null,
+          "s3_dep_dlogit": 1.1715494791666667,
+          "s3_dep_kl": 0.010211537459468154
+        }
+      ]
+    },
+    {
+      "probe_id": "convo_05_budget_review#21",
+      "expected_answer_scripted": "620 dollars a month.",
+      "candidates": [
+        {
+          "turn_id": 1,
+          "candidate_id": "1",
+          "node_class": "PROBED_LATER",
+          "ground_truth_grade": 3,
+          "s1_mass": 0.4588872763985925,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 8.561631944444445,
+          "s3_dep_kl": 2.819587489018719
+        },
+        {
+          "turn_id": 3,
+          "candidate_id": "3",
+          "node_class": "STANDING_PREF",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.07794876493134541,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 2.5218098958333335,
+          "s3_dep_kl": 0.029273908192357263
+        },
+        {
+          "turn_id": 5,
+          "candidate_id": "5",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.051081271796274336,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 1.3853081597222223,
+          "s3_dep_kl": 0.019588202341542443
+        },
+        {
+          "turn_id": 9,
+          "candidate_id": "9",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 1,
+          "s1_mass": 0.04878353955024131,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 0.9099799262152778,
+          "s3_dep_kl": 0.008173230303672742
+        },
+        {
+          "turn_id": 11,
+          "candidate_id": "11",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.023018232310365754,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 0.3804253472222222,
+          "s3_dep_kl": 0.0014240639920777365
+        },
+        {
+          "turn_id": 17,
+          "candidate_id": "17",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.027704397964855475,
+          "s2_salience": 3,
+          "s3_dep_dlogit": 0.7840169270833334,
+          "s3_dep_kl": 0.002768263924101131
+        }
+      ]
+    },
+    {
+      "probe_id": "convo_05_budget_review#23",
+      "expected_answer_scripted": null,
+      "candidates": [
+        {
+          "turn_id": 1,
+          "candidate_id": "1",
+          "node_class": "PROBED_LATER",
+          "ground_truth_grade": 3,
+          "s1_mass": 0.422605307480059,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 6.8905029296875,
+          "s3_dep_kl": 1.9688715712886253
+        },
+        {
+          "turn_id": 3,
+          "candidate_id": "3",
+          "node_class": "STANDING_PREF",
+          "ground_truth_grade": 3,
+          "s1_mass": 0.06941774495678957,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 2.79730224609375,
+          "s3_dep_kl": 0.1171827895736697
+        },
+        {
+          "turn_id": 5,
+          "candidate_id": "5",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.057272124166966865,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 2.104736328125,
+          "s3_dep_kl": 0.10764336269163836
+        },
+        {
+          "turn_id": 9,
+          "candidate_id": "9",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 1,
+          "s1_mass": 0.04518301918011528,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 1.112548828125,
+          "s3_dep_kl": 0.010255316915667232
+        },
+        {
+          "turn_id": 13,
+          "candidate_id": "13",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.02843934548810288,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 0.98419189453125,
+          "s3_dep_kl": 0.020334776807220744
+        },
+        {
+          "turn_id": 15,
+          "candidate_id": "15",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.03766322313316209,
+          "s2_salience": null,
+          "s3_dep_dlogit": 1.059326171875,
+          "s3_dep_kl": 0.034931508603651344
+        }
+      ]
+    }
+  ]
+}

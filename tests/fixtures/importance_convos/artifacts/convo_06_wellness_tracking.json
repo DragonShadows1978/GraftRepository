@@ -1,0 +1,204 @@
+{
+  "schema": "grm_importance_g1g2_convo_v1",
+  "conversation_id": "convo_06_wellness_tracking",
+  "probes": [
+    {
+      "probe_id": "convo_06_wellness_tracking#19",
+      "expected_answer_scripted": "LP-2231.",
+      "candidates": [
+        {
+          "turn_id": 1,
+          "candidate_id": "1",
+          "node_class": "PROBED_LATER",
+          "ground_truth_grade": 3,
+          "s1_mass": 0.4751287050226849,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 8.977957589285714,
+          "s3_dep_kl": 3.2119088939502154
+        },
+        {
+          "turn_id": 3,
+          "candidate_id": "3",
+          "node_class": "STANDING_PREF",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.06750946384706101,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 2.262939453125,
+          "s3_dep_kl": 0.05956723434801425
+        },
+        {
+          "turn_id": 5,
+          "candidate_id": "5",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 1,
+          "s1_mass": 0.057853014719509856,
+          "s2_salience": null,
+          "s3_dep_dlogit": 1.0535714285714286,
+          "s3_dep_kl": 0.020519564204507987
+        },
+        {
+          "turn_id": 9,
+          "candidate_id": "9",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 1,
+          "s1_mass": 0.041646298499244366,
+          "s2_salience": 3,
+          "s3_dep_dlogit": 0.7197265625,
+          "s3_dep_kl": 0.006005221130600237
+        },
+        {
+          "turn_id": 13,
+          "candidate_id": "13",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.0278625095930472,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 0.6852504185267857,
+          "s3_dep_kl": 0.0057572895172649735
+        },
+        {
+          "turn_id": 17,
+          "candidate_id": "17",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.034099286403749096,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 0.8198939732142857,
+          "s3_dep_kl": 0.0031093566360953684
+        }
+      ]
+    },
+    {
+      "probe_id": "convo_06_wellness_tracking#21",
+      "expected_answer_scripted": "29th at 9:45am.",
+      "candidates": [
+        {
+          "turn_id": 1,
+          "candidate_id": "1",
+          "node_class": "PROBED_LATER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.37176954992516864,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 1.853759765625,
+          "s3_dep_kl": 0.012299030849077025
+        },
+        {
+          "turn_id": 3,
+          "candidate_id": "3",
+          "node_class": "STANDING_PREF",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.04782387902116108,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 1.5025227864583333,
+          "s3_dep_kl": 0.010205567443769785
+        },
+        {
+          "turn_id": 5,
+          "candidate_id": "5",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 1,
+          "s1_mass": 0.1453747096952829,
+          "s2_salience": null,
+          "s3_dep_dlogit": 6.32958984375,
+          "s3_dep_kl": 0.5145707781655929
+        },
+        {
+          "turn_id": 7,
+          "candidate_id": "7",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.022362530467017246,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 1.2413431803385417,
+          "s3_dep_kl": 0.011340446893059117
+        },
+        {
+          "turn_id": 9,
+          "candidate_id": "9",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 3,
+          "s1_mass": 0.07305718966877159,
+          "s2_salience": 3,
+          "s3_dep_dlogit": 2.42681884765625,
+          "s3_dep_kl": 0.22305031294521763
+        },
+        {
+          "turn_id": 15,
+          "candidate_id": "15",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.024227822833216534,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 0.3629353841145833,
+          "s3_dep_kl": 0.0009485342359655856
+        }
+      ]
+    },
+    {
+      "probe_id": "convo_06_wellness_tracking#23",
+      "expected_answer_scripted": null,
+      "candidates": [
+        {
+          "turn_id": 1,
+          "candidate_id": "1",
+          "node_class": "PROBED_LATER",
+          "ground_truth_grade": 2,
+          "s1_mass": 0.44133267366845363,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 6.4418212890625,
+          "s3_dep_kl": 1.1899433394184942
+        },
+        {
+          "turn_id": 3,
+          "candidate_id": "3",
+          "node_class": "STANDING_PREF",
+          "ground_truth_grade": 3,
+          "s1_mass": 0.07158721390474468,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 2.6865234375,
+          "s3_dep_kl": 0.07424347962072393
+        },
+        {
+          "turn_id": 5,
+          "candidate_id": "5",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.054490317886527306,
+          "s2_salience": null,
+          "s3_dep_dlogit": 1.2295074462890625,
+          "s3_dep_kl": 0.026725533140812607
+        },
+        {
+          "turn_id": 9,
+          "candidate_id": "9",
+          "node_class": "SUPERSEDED",
+          "ground_truth_grade": 1,
+          "s1_mass": 0.03204509688290591,
+          "s2_salience": 3,
+          "s3_dep_dlogit": 0.848828125,
+          "s3_dep_kl": 0.011468419324940799
+        },
+        {
+          "turn_id": 11,
+          "candidate_id": "11",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.04221480725426727,
+          "s2_salience": 2,
+          "s3_dep_dlogit": 0.6693359375,
+          "s3_dep_kl": 0.008053858192254676
+        },
+        {
+          "turn_id": 13,
+          "candidate_id": "13",
+          "node_class": "FILLER",
+          "ground_truth_grade": 0,
+          "s1_mass": 0.03846462241240779,
+          "s2_salience": 0,
+          "s3_dep_dlogit": 0.81484375,
+          "s3_dep_kl": 0.011982827717252776
+        }
+      ]
+    }
+  ]
+}
