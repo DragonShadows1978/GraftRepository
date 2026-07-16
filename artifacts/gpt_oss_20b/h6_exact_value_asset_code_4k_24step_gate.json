@@ -1,0 +1,459 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "capture_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_gate/capture_forward.json",
+  "capture_ids_file": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_gate/capture_ids.json",
+  "capture_prompt": {
+    "actual_tokens": 4096,
+    "input_mode": "direct_token_ids",
+    "placements": [
+      {
+        "answer": "ZX-47B",
+        "answer_token_ids": [
+          85538,
+          12,
+          4146,
+          33
+        ],
+        "id": "asset_code",
+        "kind": "code",
+        "label": "GPT-OSS asset code",
+        "letter": "A",
+        "needle_offset_tokens": 1004,
+        "needle_sha256": "071ece18fdc9e709449195dcf89ced15a6b75f862591e928b4dfa27f7c378261",
+        "needle_tokens": 26
+      },
+      {
+        "answer": "MIRA SOL",
+        "answer_token_ids": [
+          44,
+          62521,
+          52538
+        ],
+        "id": "operator_name",
+        "kind": "name",
+        "label": "GPT-OSS operator name",
+        "letter": "B",
+        "needle_offset_tokens": 2034,
+        "needle_sha256": "cbeb9c2be82f749fb369c5b502416252457272b2eb5ac5d3d5b12c78c39d2c75",
+        "needle_tokens": 25
+      },
+      {
+        "answer": "7391-2048",
+        "answer_token_ids": [
+          49505,
+          16,
+          12,
+          14397,
+          23
+        ],
+        "id": "access_number",
+        "kind": "number",
+        "label": "GPT-OSS access number",
+        "letter": "C",
+        "needle_offset_tokens": 3063,
+        "needle_sha256": "3a3af0f8b764960d25d7c74607b006fbbc940a67353b5c64a2fec1343ad46192",
+        "needle_tokens": 28
+      }
+    ],
+    "target_tokens": 4096,
+    "total_needle_tokens": 79
+  },
+  "capture_prompt_file": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_gate/capture_prompt.txt",
+  "classification": "fail",
+  "corpus": {
+    "file_count": 43,
+    "kind": "directory",
+    "path": "/mnt/ForgeRealm/GraftRepository/docs",
+    "sha256": "863a0c3e709a44ec933592b7ae4c39fa1cd68cc806a4a7476358a42fe0329bd7"
+  },
+  "created_at": "2026-07-07T07:54:08",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "generated_classification": "pass",
+  "generated_hit_count": 1,
+  "graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/graft",
+  "hit_count": 0,
+  "item_count": 1,
+  "items": [
+    {
+      "answer": "ZX-47B",
+      "answer_token_ids": [
+        85538,
+        12,
+        4146,
+        33
+      ],
+      "id": "asset_code",
+      "kind": "code",
+      "label": "GPT-OSS asset code",
+      "letter": "A",
+      "needle": "\nEXACT VALUE FACT A. The exact GPT-OSS asset code is ZX-47B.\nEND EXACT VALUE FACT A.\n"
+    },
+    {
+      "answer": "MIRA SOL",
+      "answer_token_ids": [
+        44,
+        62521,
+        52538
+      ],
+      "id": "operator_name",
+      "kind": "name",
+      "label": "GPT-OSS operator name",
+      "letter": "B",
+      "needle": "\nEXACT VALUE FACT B. The exact GPT-OSS operator name is MIRA SOL.\nEND EXACT VALUE FACT B.\n"
+    },
+    {
+      "answer": "7391-2048",
+      "answer_token_ids": [
+        49505,
+        16,
+        12,
+        14397,
+        23
+      ],
+      "id": "access_number",
+      "kind": "number",
+      "label": "GPT-OSS access number",
+      "letter": "C",
+      "needle": "\nEXACT VALUE FACT C. The exact GPT-OSS access number is 7391-2048.\nEND EXACT VALUE FACT C.\n"
+    }
+  ],
+  "max_tokens": 192,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "run_item_ids": [
+    "asset_code"
+  ],
+  "runs": {
+    "capture": null,
+    "items": [
+      {
+        "answer": "ZX-47B",
+        "answer_token_ids": [
+          85538,
+          12,
+          4146,
+          33
+        ],
+        "control": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT A, what is the exact GPT-OSS asset code? Answer with the exact stored code.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "24",
+              "--max-tokens",
+              "192",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "apa_selective",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_gate/asset_code/control.json"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_gate/asset_code/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT A, what is the exact GPT-OSS asset code? Answer with the exact stored code.<|end|><|start|>assistant<|channel|>final<|message|>I\\u2019m sorry, but I can\\u2019t provide that.<|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|> code.<|return|> code.\", \"steps\": [{\"logit\": 21.25, \"rank\": 0, \"text\": \"I\", \"token_id\": 40}, {\"logit\": 24.125, \"rank\": 0, \"text\": \"\\u2019m\", \"token_id\": 4572}, {\"logit\": 25.75, \"rank\": 0, \"text\": \" sorry\", \"token_id\": 23045}, {\"logit\": 28.375, \"rank\": 0, \"text\": \",\", \"token_id\": 11}, {\"logit\": 29.75, \"rank\": 0, \"text\": \" but\", \"token_id\": 889}, {\"logit\": 26.125, \"rank\": 0, \"text\": \" I\", \"token_id\": 357}, {\"logit\": 27.375, \"rank\": 0, \"text\": \" can\", \"token_id\": 665}, {\"logit\": 33.25, \"rank\": 0, \"text\": \"\\u2019t\", \"token_id\": 1573}, {\"logit\": 27.875, \"rank\": 0, \"text\": \" provide\", \"token_id\": 3587}, {\"logit\": 28.0, \"rank\": 0, \"text\": \" that\", \"token_id\": 484}, {\"logit\": 25.125, \"rank\": 0, \"text\": \".\", \"token_id\": 13}, {\"logit\": 31.5, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 18.375, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 14.25, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 12.3125, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 11.75, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 11.75, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 12.0625, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 11.9375, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 11.75, \"rank\": 0, \"text\": \" code\", \"token_id\": 3490}, {\"logit\": 18.375, \"rank\": 0, \"text\": \".\", \"token_id\": 13}, {\"logit\": 21.125, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 12.625, \"rank\": 0, \"text\": \" code\", \"token_id\": 3490}, {\"logit\": 18.125, \"rank\": 0, \"text\": \".\", \"token_id\": 13}]}\n",
+            "wall_seconds": 614.4403187130229
+          },
+          "summary": {
+            "answer": "ZX-47B",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_gate/asset_code/control.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_gate/asset_code/control_steps/step_00.json",
+            "generated_contains_value": false,
+            "generated_text": "I\u2019m sorry, but I can\u2019t provide that.<|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|> code.<|return|> code.",
+            "hit": false,
+            "normalized_answer": "zx-47b",
+            "normalized_answer_logit": null,
+            "normalized_answer_rank": null,
+            "normalized_answer_text": null,
+            "normalized_hit": false,
+            "normalized_top_token": "i",
+            "status": "ok",
+            "top_token": {
+              "logit": 21.25,
+              "rank": 0,
+              "text": "I",
+              "token_id": 40
+            },
+            "top_tokens": [
+              {
+                "logit": 21.25,
+                "rank": 0,
+                "text": "I",
+                "token_id": 40
+              },
+              {
+                "logit": 19.5,
+                "rank": 1,
+                "text": "The",
+                "token_id": 976
+              },
+              {
+                "logit": 17.25,
+                "rank": 2,
+                "text": "**",
+                "token_id": 410
+              },
+              {
+                "logit": 16.875,
+                "rank": 3,
+                "text": "We",
+                "token_id": 2167
+              },
+              {
+                "logit": 16.75,
+                "rank": 4,
+                "text": "I'm",
+                "token_id": 15390
+              },
+              {
+                "logit": 16.375,
+                "rank": 5,
+                "text": "Sorry",
+                "token_id": 33680
+              },
+              {
+                "logit": 16.25,
+                "rank": 6,
+                "text": "You",
+                "token_id": 3575
+              },
+              {
+                "logit": 15.9375,
+                "rank": 7,
+                "text": "There",
+                "token_id": 5632
+              },
+              {
+                "logit": 15.9375,
+                "rank": 8,
+                "text": "It",
+                "token_id": 3206
+              },
+              {
+                "logit": 15.75,
+                "rank": 9,
+                "text": "In",
+                "token_id": 637
+              }
+            ],
+            "wall_seconds": 609.5839733069879
+          }
+        },
+        "id": "asset_code",
+        "kind": "code",
+        "label": "GPT-OSS asset code",
+        "letter": "A",
+        "mount": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT A, what is the exact GPT-OSS asset code? Answer with the exact stored code.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "24",
+              "--max-tokens",
+              "192",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "apa_selective",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_gate/asset_code/mount.json",
+              "--mount-graft-dir",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/graft"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_gate/asset_code/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT A, what is the exact GPT-OSS asset code? Answer with the exact stored code.<|end|><|start|>assistant<|channel|>final<|message|>The exact GPT\\u2011OSS asset code referenced in the text is **ZX\\u201147B**.<|return|><|return|><|return|><|return|><|return|>\", \"steps\": [{\"logit\": 21.5, \"rank\": 0, \"text\": \"The\", \"token_id\": 976}, {\"logit\": 18.125, \"rank\": 0, \"text\": \" exact\", \"token_id\": 6354}, {\"logit\": 24.25, \"rank\": 0, \"text\": \" GPT\", \"token_id\": 174803}, {\"logit\": 28.125, \"rank\": 0, \"text\": \"\\u2011\", \"token_id\": 50005}, {\"logit\": 33.5, \"rank\": 0, \"text\": \"OSS\", \"token_id\": 26496}, {\"logit\": 23.75, \"rank\": 0, \"text\": \" asset\", \"token_id\": 15264}, {\"logit\": 23.375, \"rank\": 0, \"text\": \" code\", \"token_id\": 3490}, {\"logit\": 22.625, \"rank\": 0, \"text\": \" referenced\", \"token_id\": 48585}, {\"logit\": 25.375, \"rank\": 0, \"text\": \" in\", \"token_id\": 306}, {\"logit\": 20.25, \"rank\": 0, \"text\": \" the\", \"token_id\": 290}, {\"logit\": 18.75, \"rank\": 0, \"text\": \" text\", \"token_id\": 2201}, {\"logit\": 23.375, \"rank\": 0, \"text\": \" is\", \"token_id\": 382}, {\"logit\": 22.0, \"rank\": 0, \"text\": \" **\", \"token_id\": 6240}, {\"logit\": 25.0, \"rank\": 0, \"text\": \"ZX\", \"token_id\": 85538}, {\"logit\": 27.875, \"rank\": 0, \"text\": \"\\u2011\", \"token_id\": 50005}, {\"logit\": 29.5, \"rank\": 0, \"text\": \"47\", \"token_id\": 4146}, {\"logit\": 29.875, \"rank\": 0, \"text\": \"B\", \"token_id\": 33}, {\"logit\": 29.5, \"rank\": 0, \"text\": \"**\", \"token_id\": 410}, {\"logit\": 24.875, \"rank\": 0, \"text\": \".\", \"token_id\": 13}, {\"logit\": 27.375, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 18.375, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 14.375, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 14.1875, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 12.625, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}]}\n",
+            "wall_seconds": 635.2543796229875
+          },
+          "summary": {
+            "answer": "ZX-47B",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_gate/asset_code/mount.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_gate/asset_code/mount_steps/step_00.json",
+            "generated_contains_value": true,
+            "generated_text": "The exact GPT\u2011OSS asset code referenced in the text is **ZX\u201147B**.<|return|><|return|><|return|><|return|><|return|>",
+            "hit": false,
+            "normalized_answer": "zx-47b",
+            "normalized_answer_logit": null,
+            "normalized_answer_rank": null,
+            "normalized_answer_text": null,
+            "normalized_hit": false,
+            "normalized_top_token": "the",
+            "status": "ok",
+            "top_token": {
+              "logit": 21.5,
+              "rank": 0,
+              "text": "The",
+              "token_id": 976
+            },
+            "top_tokens": [
+              {
+                "logit": 21.5,
+                "rank": 0,
+                "text": "The",
+                "token_id": 976
+              },
+              {
+                "logit": 19.625,
+                "rank": 1,
+                "text": "ZX",
+                "token_id": 85538
+              },
+              {
+                "logit": 17.625,
+                "rank": 2,
+                "text": "**",
+                "token_id": 410
+              },
+              {
+                "logit": 17.5,
+                "rank": 3,
+                "text": "In",
+                "token_id": 637
+              },
+              {
+                "logit": 17.125,
+                "rank": 4,
+                "text": "Z",
+                "token_id": 57
+              },
+              {
+                "logit": 15.875,
+                "rank": 5,
+                "text": "It",
+                "token_id": 3206
+              },
+              {
+                "logit": 15.3125,
+                "rank": 6,
+                "text": "A",
+                "token_id": 32
+              },
+              {
+                "logit": 15.125,
+                "rank": 7,
+                "text": "ZF",
+                "token_id": 159734
+              },
+              {
+                "logit": 15.125,
+                "rank": 8,
+                "text": "`",
+                "token_id": 63
+              },
+              {
+                "logit": 14.9375,
+                "rank": 9,
+                "text": "I",
+                "token_id": 40
+              }
+            ],
+            "wall_seconds": 630.4061876980122
+          }
+        },
+        "placement": {
+          "answer": "ZX-47B",
+          "answer_token_ids": [
+            85538,
+            12,
+            4146,
+            33
+          ],
+          "id": "asset_code",
+          "kind": "code",
+          "label": "GPT-OSS asset code",
+          "letter": "A",
+          "needle_offset_tokens": 1004,
+          "needle_sha256": "071ece18fdc9e709449195dcf89ced15a6b75f862591e928b4dfa27f7c378261",
+          "needle_tokens": 26
+        },
+        "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT A, what is the exact GPT-OSS asset code? Answer with the exact stored code.<|end|><|start|>assistant<|channel|>final<|message|>"
+      }
+    ]
+  },
+  "schema": "gpt_oss_20b_exact_value_graft_gate_v1",
+  "script_args": {
+    "apa_layer_scope": "full",
+    "attention_mode": "apa_selective",
+    "bulk_bits": 8,
+    "corpus_dir": "/mnt/ForgeRealm/GraftRepository/docs",
+    "dry_run": false,
+    "expert_empty_cache_interval": 0,
+    "expert_mode": "resident_packed_mxfp4",
+    "graft_dir": "artifacts/gpt_oss_20b/h6_exact_value_4k_gate/graft",
+    "max_layers": null,
+    "max_tokens": 192,
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "output": "artifacts/gpt_oss_20b/h6_exact_value_asset_code_4k_24step_gate.json",
+    "record_id": [
+      "asset_code"
+    ],
+    "refine_percentile": 0.15,
+    "route_detail": "summary",
+    "skip_capture": true,
+    "skip_control": false,
+    "steps": 24,
+    "target_tokens": 4096,
+    "top_k": 10
+  },
+  "status": "ok",
+  "steps": 24,
+  "summary": [
+    {
+      "answer": "ZX-47B",
+      "control_generated_contains_value": false,
+      "control_generated_text": "I\u2019m sorry, but I can\u2019t provide that.<|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|> code.<|return|> code.",
+      "control_top": "I",
+      "generated_hit": true,
+      "hit": false,
+      "id": "asset_code",
+      "kind": "code",
+      "mount_answer_logit": null,
+      "mount_answer_rank": null,
+      "mount_generated_contains_value": true,
+      "mount_generated_text": "The exact GPT\u2011OSS asset code referenced in the text is **ZX\u201147B**.<|return|><|return|><|return|><|return|><|return|>",
+      "mount_top": "The"
+    }
+  ],
+  "target_tokens": 4096,
+  "top_k": 10
+}

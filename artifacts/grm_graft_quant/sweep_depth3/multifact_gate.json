@@ -1,0 +1,1210 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "standard",
+  "bulk_bits": 8,
+  "capture_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/capture_forward.json",
+  "capture_ids_file": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/capture_ids.json",
+  "capture_prompt": {
+    "actual_tokens": 4096,
+    "facts": [
+      {
+        "answer": "BLUE",
+        "answer_token_id": 134698,
+        "id": "vault_keyword",
+        "label": "GPT-OSS vault keyword",
+        "needle_offset_tokens": 803,
+        "needle_sha256": "a8c84ea9c0ae41d1f2d1ea6d0e270d6d5de7c39dada4f3a773b3bfc06a7065ed",
+        "needle_tokens": 19
+      },
+      {
+        "answer": "EMBER",
+        "answer_token_id": 78250,
+        "id": "relay_marker",
+        "label": "GPT-OSS relay marker",
+        "needle_offset_tokens": 1625,
+        "needle_sha256": "bcaedfc28644e7906847a9e7cb0d8c9acd5990f80aeefb6cbb2f15c1a5da5057",
+        "needle_tokens": 20
+      },
+      {
+        "answer": "GRAY",
+        "answer_token_id": 140884,
+        "id": "archive_color",
+        "label": "GPT-OSS archive color",
+        "needle_offset_tokens": 2448,
+        "needle_sha256": "c5dd34ae04552ed50b27706789bc698e699f54358224ccc23e8468bc8138522e",
+        "needle_tokens": 20
+      },
+      {
+        "answer": "IRON",
+        "answer_token_id": 96951,
+        "id": "tool_metal",
+        "label": "GPT-OSS tool metal",
+        "needle_offset_tokens": 3271,
+        "needle_sha256": "e222c6999efdcc5e132d85d999db2e5f374b484f09dd69a6bdecfd0b0aa5eb1a",
+        "needle_tokens": 20
+      }
+    ],
+    "input_mode": "direct_token_ids",
+    "target_tokens": 4096,
+    "total_needle_tokens": 79
+  },
+  "capture_prompt_file": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/capture_prompt.txt",
+  "classification": "fail",
+  "corpus": {
+    "file_count": 49,
+    "kind": "directory",
+    "path": "/mnt/ForgeRealm/GraftRepository/docs",
+    "sha256": "440d019ae72847ac4c21c0dee01f99be79ec4af4abb7f1b3860988c982209704"
+  },
+  "created_at": "2026-07-08T10:19:32",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "fact_count": 4,
+  "facts": [
+    {
+      "answer": "BLUE",
+      "answer_token_id": 134698,
+      "id": "vault_keyword",
+      "label": "GPT-OSS vault keyword",
+      "needle": "\nCLASSIFIED FACT A. The GPT-OSS vault keyword is BLUE.\nEND FACT A.\n"
+    },
+    {
+      "answer": "EMBER",
+      "answer_token_id": 78250,
+      "id": "relay_marker",
+      "label": "GPT-OSS relay marker",
+      "needle": "\nCLASSIFIED FACT B. The GPT-OSS relay marker is EMBER.\nEND FACT B.\n"
+    },
+    {
+      "answer": "GRAY",
+      "answer_token_id": 140884,
+      "id": "archive_color",
+      "label": "GPT-OSS archive color",
+      "needle": "\nCLASSIFIED FACT C. The GPT-OSS archive color is GRAY.\nEND FACT C.\n"
+    },
+    {
+      "answer": "IRON",
+      "answer_token_id": 96951,
+      "id": "tool_metal",
+      "label": "GPT-OSS tool metal",
+      "needle": "\nCLASSIFIED FACT D. The GPT-OSS tool metal is IRON.\nEND FACT D.\n"
+    }
+  ],
+  "graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/banks/multifact",
+  "hit_count": 1,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "runs": {
+    "capture": null,
+    "facts": [
+      {
+        "answer": "BLUE",
+        "control": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS vault keyword. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/vault_keyword/control.json"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/vault_keyword/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS vault keyword. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GPT\", \"steps\": [{\"logit\": 14.375, \"rank\": 0, \"text\": \"GPT\", \"token_id\": 162016}]}\n",
+            "wall_seconds": 36.30533792998176
+          },
+          "summary": {
+            "answer": "BLUE",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/vault_keyword/control.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/vault_keyword/control_steps/step_00.json",
+            "generated_contains_value": false,
+            "generated_text": "GPT",
+            "hit": false,
+            "normalized_answer": "blue",
+            "normalized_answer_logit": null,
+            "normalized_answer_rank": null,
+            "normalized_answer_text": null,
+            "normalized_hit": false,
+            "normalized_top_token": "gpt",
+            "status": "ok",
+            "top_token": {
+              "logit": 14.375,
+              "rank": 0,
+              "text": "GPT",
+              "token_id": 162016
+            },
+            "top_tokens": [
+              {
+                "logit": 14.375,
+                "rank": 0,
+                "text": "GPT",
+                "token_id": 162016
+              },
+              {
+                "logit": 14.0625,
+                "rank": 1,
+                "text": "g",
+                "token_id": 70
+              },
+              {
+                "logit": 12.9375,
+                "rank": 2,
+                "text": "G",
+                "token_id": 38
+              },
+              {
+                "logit": 12.0,
+                "rank": 3,
+                "text": "keyword",
+                "token_id": 43996
+              },
+              {
+                "logit": 11.6875,
+                "rank": 4,
+                "text": "vault",
+                "token_id": 160594
+              },
+              {
+                "logit": 11.5,
+                "rank": 5,
+                "text": "Open",
+                "token_id": 6447
+              },
+              {
+                "logit": 11.5,
+                "rank": 6,
+                "text": "s",
+                "token_id": 82
+              },
+              {
+                "logit": 11.4375,
+                "rank": 7,
+                "text": "The",
+                "token_id": 976
+              },
+              {
+                "logit": 11.4375,
+                "rank": 8,
+                "text": "Keyword",
+                "token_id": 39863
+              },
+              {
+                "logit": 11.375,
+                "rank": 9,
+                "text": "k",
+                "token_id": 74
+              }
+            ],
+            "wall_seconds": 31.394324454013258
+          }
+        },
+        "id": "vault_keyword",
+        "label": "GPT-OSS vault keyword",
+        "mount": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS vault keyword. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/vault_keyword/mount.json",
+              "--mount-graft-dir",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/banks/multifact"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/vault_keyword/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS vault keyword. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>**\", \"steps\": [{\"logit\": 15.5, \"rank\": 0, \"text\": \"**\", \"token_id\": 410}]}\n",
+            "wall_seconds": 36.41612632095348
+          },
+          "summary": {
+            "answer": "BLUE",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/vault_keyword/mount.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/vault_keyword/mount_steps/step_00.json",
+            "generated_contains_value": false,
+            "generated_text": "**",
+            "hit": false,
+            "normalized_answer": "blue",
+            "normalized_answer_logit": null,
+            "normalized_answer_rank": null,
+            "normalized_answer_text": null,
+            "normalized_hit": false,
+            "normalized_top_token": "**",
+            "status": "ok",
+            "top_token": {
+              "logit": 15.5,
+              "rank": 0,
+              "text": "**",
+              "token_id": 410
+            },
+            "top_tokens": [
+              {
+                "logit": 15.5,
+                "rank": 0,
+                "text": "**",
+                "token_id": 410
+              },
+              {
+                "logit": 13.75,
+                "rank": 1,
+                "text": "`",
+                "token_id": 63
+              },
+              {
+                "logit": 13.5,
+                "rank": 2,
+                "text": "The",
+                "token_id": 976
+              },
+              {
+                "logit": 13.3125,
+                "rank": 3,
+                "text": "``",
+                "token_id": 26178
+              },
+              {
+                "logit": 13.0625,
+                "rank": 4,
+                "text": "GRAY",
+                "token_id": 140884
+              },
+              {
+                "logit": 12.8125,
+                "rank": 5,
+                "text": "A",
+                "token_id": 32
+              },
+              {
+                "logit": 12.75,
+                "rank": 6,
+                "text": "[",
+                "token_id": 58
+              },
+              {
+                "logit": 12.625,
+                "rank": 7,
+                "text": "RE",
+                "token_id": 1099
+              },
+              {
+                "logit": 12.5625,
+                "rank": 8,
+                "text": "T",
+                "token_id": 51
+              },
+              {
+                "logit": 12.375,
+                "rank": 9,
+                "text": "```",
+                "token_id": 168394
+              }
+            ],
+            "wall_seconds": 31.5414535489399
+          }
+        },
+        "placement": {
+          "answer": "BLUE",
+          "answer_token_id": 134698,
+          "id": "vault_keyword",
+          "label": "GPT-OSS vault keyword",
+          "needle_offset_tokens": 803,
+          "needle_sha256": "a8c84ea9c0ae41d1f2d1ea6d0e270d6d5de7c39dada4f3a773b3bfc06a7065ed",
+          "needle_tokens": 19
+        },
+        "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS vault keyword. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>"
+      },
+      {
+        "answer": "EMBER",
+        "control": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS relay marker. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/relay_marker/control.json"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/relay_marker/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS relay marker. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GPT\", \"steps\": [{\"logit\": 16.375, \"rank\": 0, \"text\": \"GPT\", \"token_id\": 162016}]}\n",
+            "wall_seconds": 35.23942265799269
+          },
+          "summary": {
+            "answer": "EMBER",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/relay_marker/control.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/relay_marker/control_steps/step_00.json",
+            "generated_contains_value": false,
+            "generated_text": "GPT",
+            "hit": false,
+            "normalized_answer": "ember",
+            "normalized_answer_logit": null,
+            "normalized_answer_rank": null,
+            "normalized_answer_text": null,
+            "normalized_hit": false,
+            "normalized_top_token": "gpt",
+            "status": "ok",
+            "top_token": {
+              "logit": 16.375,
+              "rank": 0,
+              "text": "GPT",
+              "token_id": 162016
+            },
+            "top_tokens": [
+              {
+                "logit": 16.375,
+                "rank": 0,
+                "text": "GPT",
+                "token_id": 162016
+              },
+              {
+                "logit": 14.5625,
+                "rank": 1,
+                "text": "<",
+                "token_id": 27
+              },
+              {
+                "logit": 14.125,
+                "rank": 2,
+                "text": "[",
+                "token_id": 58
+              },
+              {
+                "logit": 13.4375,
+                "rank": 3,
+                "text": "G",
+                "token_id": 38
+              },
+              {
+                "logit": 13.0625,
+                "rank": 4,
+                "text": "\ufffd",
+                "token_id": 158
+              },
+              {
+                "logit": 12.875,
+                "rank": 5,
+                "text": "**",
+                "token_id": 410
+              },
+              {
+                "logit": 12.875,
+                "rank": 6,
+                "text": "g",
+                "token_id": 70
+              },
+              {
+                "logit": 12.875,
+                "rank": 7,
+                "text": "```",
+                "token_id": 168394
+              },
+              {
+                "logit": 12.8125,
+                "rank": 8,
+                "text": "[[",
+                "token_id": 26245
+              },
+              {
+                "logit": 12.75,
+                "rank": 9,
+                "text": "??",
+                "token_id": 6961
+              }
+            ],
+            "wall_seconds": 30.4053240850335
+          }
+        },
+        "id": "relay_marker",
+        "label": "GPT-OSS relay marker",
+        "mount": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS relay marker. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/relay_marker/mount.json",
+              "--mount-graft-dir",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/banks/multifact"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/relay_marker/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS relay marker. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>**\", \"steps\": [{\"logit\": 15.0625, \"rank\": 0, \"text\": \"**\", \"token_id\": 410}]}\n",
+            "wall_seconds": 35.824378176010214
+          },
+          "summary": {
+            "answer": "EMBER",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/relay_marker/mount.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/relay_marker/mount_steps/step_00.json",
+            "generated_contains_value": false,
+            "generated_text": "**",
+            "hit": false,
+            "normalized_answer": "ember",
+            "normalized_answer_logit": null,
+            "normalized_answer_rank": null,
+            "normalized_answer_text": null,
+            "normalized_hit": false,
+            "normalized_top_token": "**",
+            "status": "ok",
+            "top_token": {
+              "logit": 15.0625,
+              "rank": 0,
+              "text": "**",
+              "token_id": 410
+            },
+            "top_tokens": [
+              {
+                "logit": 15.0625,
+                "rank": 0,
+                "text": "**",
+                "token_id": 410
+              },
+              {
+                "logit": 14.8125,
+                "rank": 1,
+                "text": "81",
+                "token_id": 9989
+              },
+              {
+                "logit": 13.5,
+                "rank": 2,
+                "text": "`",
+                "token_id": 63
+              },
+              {
+                "logit": 13.5,
+                "rank": 3,
+                "text": "The",
+                "token_id": 976
+              },
+              {
+                "logit": 12.875,
+                "rank": 4,
+                "text": "8",
+                "token_id": 23
+              },
+              {
+                "logit": 12.6875,
+                "rank": 5,
+                "text": "``",
+                "token_id": 26178
+              },
+              {
+                "logit": 12.625,
+                "rank": 6,
+                "text": "58",
+                "token_id": 4635
+              },
+              {
+                "logit": 12.625,
+                "rank": 7,
+                "text": "I",
+                "token_id": 40
+              },
+              {
+                "logit": 12.5625,
+                "rank": 8,
+                "text": "[",
+                "token_id": 58
+              },
+              {
+                "logit": 12.4375,
+                "rank": 9,
+                "text": "??",
+                "token_id": 6961
+              }
+            ],
+            "wall_seconds": 31.093488599988632
+          }
+        },
+        "placement": {
+          "answer": "EMBER",
+          "answer_token_id": 78250,
+          "id": "relay_marker",
+          "label": "GPT-OSS relay marker",
+          "needle_offset_tokens": 1625,
+          "needle_sha256": "bcaedfc28644e7906847a9e7cb0d8c9acd5990f80aeefb6cbb2f15c1a5da5057",
+          "needle_tokens": 20
+        },
+        "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS relay marker. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>"
+      },
+      {
+        "answer": "GRAY",
+        "control": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS archive color. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/archive_color/control.json"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/archive_color/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS archive color. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>Blue\", \"steps\": [{\"logit\": 14.875, \"rank\": 0, \"text\": \"Blue\", \"token_id\": 15957}]}\n",
+            "wall_seconds": 34.96256791893393
+          },
+          "summary": {
+            "answer": "GRAY",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/archive_color/control.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/archive_color/control_steps/step_00.json",
+            "generated_contains_value": false,
+            "generated_text": "Blue",
+            "hit": false,
+            "normalized_answer": "gray",
+            "normalized_answer_logit": null,
+            "normalized_answer_rank": null,
+            "normalized_answer_text": null,
+            "normalized_hit": false,
+            "normalized_top_token": "blue",
+            "status": "ok",
+            "top_token": {
+              "logit": 14.875,
+              "rank": 0,
+              "text": "Blue",
+              "token_id": 15957
+            },
+            "top_tokens": [
+              {
+                "logit": 14.875,
+                "rank": 0,
+                "text": "Blue",
+                "token_id": 15957
+              },
+              {
+                "logit": 14.625,
+                "rank": 1,
+                "text": "blue",
+                "token_id": 18789
+              },
+              {
+                "logit": 13.9375,
+                "rank": 2,
+                "text": "Red",
+                "token_id": 7805
+              },
+              {
+                "logit": 13.5,
+                "rank": 3,
+                "text": "Color",
+                "token_id": 2324
+              },
+              {
+                "logit": 13.5,
+                "rank": 4,
+                "text": "white",
+                "token_id": 9988
+              },
+              {
+                "logit": 13.3125,
+                "rank": 5,
+                "text": "color",
+                "token_id": 4991
+              },
+              {
+                "logit": 13.25,
+                "rank": 6,
+                "text": "brown",
+                "token_id": 152168
+              },
+              {
+                "logit": 13.25,
+                "rank": 7,
+                "text": "red",
+                "token_id": 1291
+              },
+              {
+                "logit": 13.125,
+                "rank": 8,
+                "text": "green",
+                "token_id": 22743
+              },
+              {
+                "logit": 12.75,
+                "rank": 9,
+                "text": "White",
+                "token_id": 17578
+              }
+            ],
+            "wall_seconds": 30.258036218001507
+          }
+        },
+        "id": "archive_color",
+        "label": "GPT-OSS archive color",
+        "mount": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS archive color. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/archive_color/mount.json",
+              "--mount-graft-dir",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/banks/multifact"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/archive_color/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS archive color. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GRAY\", \"steps\": [{\"logit\": 15.625, \"rank\": 0, \"text\": \"GRAY\", \"token_id\": 140884}]}\n",
+            "wall_seconds": 35.98039531393442
+          },
+          "summary": {
+            "answer": "GRAY",
+            "answer_logit": 15.625,
+            "answer_rank": 0,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/archive_color/mount.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/archive_color/mount_steps/step_00.json",
+            "generated_contains_value": true,
+            "generated_text": "GRAY",
+            "hit": true,
+            "normalized_answer": "gray",
+            "normalized_answer_logit": 15.625,
+            "normalized_answer_rank": 0,
+            "normalized_answer_text": "GRAY",
+            "normalized_hit": true,
+            "normalized_top_token": "gray",
+            "status": "ok",
+            "top_token": {
+              "logit": 15.625,
+              "rank": 0,
+              "text": "GRAY",
+              "token_id": 140884
+            },
+            "top_tokens": [
+              {
+                "logit": 15.625,
+                "rank": 0,
+                "text": "GRAY",
+                "token_id": 140884
+              },
+              {
+                "logit": 15.1875,
+                "rank": 1,
+                "text": "**",
+                "token_id": 410
+              },
+              {
+                "logit": 14.1875,
+                "rank": 2,
+                "text": "The",
+                "token_id": 976
+              },
+              {
+                "logit": 13.8125,
+                "rank": 3,
+                "text": "BLUE",
+                "token_id": 134698
+              },
+              {
+                "logit": 13.6875,
+                "rank": 4,
+                "text": "B",
+                "token_id": 33
+              },
+              {
+                "logit": 13.4375,
+                "rank": 5,
+                "text": "A",
+                "token_id": 32
+              },
+              {
+                "logit": 13.4375,
+                "rank": 6,
+                "text": "EMBER",
+                "token_id": 78250
+              },
+              {
+                "logit": 13.375,
+                "rank": 7,
+                "text": "C",
+                "token_id": 34
+              },
+              {
+                "logit": 13.375,
+                "rank": 8,
+                "text": "GR",
+                "token_id": 13905
+              },
+              {
+                "logit": 13.1875,
+                "rank": 9,
+                "text": "Gray",
+                "token_id": 43338
+              }
+            ],
+            "wall_seconds": 31.258080826024525
+          }
+        },
+        "placement": {
+          "answer": "GRAY",
+          "answer_token_id": 140884,
+          "id": "archive_color",
+          "label": "GPT-OSS archive color",
+          "needle_offset_tokens": 2448,
+          "needle_sha256": "c5dd34ae04552ed50b27706789bc698e699f54358224ccc23e8468bc8138522e",
+          "needle_tokens": 20
+        },
+        "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS archive color. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>"
+      },
+      {
+        "answer": "IRON",
+        "control": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS tool metal. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/tool_metal/control.json"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/tool_metal/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS tool metal. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>metal\", \"steps\": [{\"logit\": 15.9375, \"rank\": 0, \"text\": \"metal\", \"token_id\": 88393}]}\n",
+            "wall_seconds": 35.54176065593492
+          },
+          "summary": {
+            "answer": "IRON",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/tool_metal/control.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/tool_metal/control_steps/step_00.json",
+            "generated_contains_value": false,
+            "generated_text": "metal",
+            "hit": false,
+            "normalized_answer": "iron",
+            "normalized_answer_logit": null,
+            "normalized_answer_rank": null,
+            "normalized_answer_text": null,
+            "normalized_hit": false,
+            "normalized_top_token": "metal",
+            "status": "ok",
+            "top_token": {
+              "logit": 15.9375,
+              "rank": 0,
+              "text": "metal",
+              "token_id": 88393
+            },
+            "top_tokens": [
+              {
+                "logit": 15.9375,
+                "rank": 0,
+                "text": "metal",
+                "token_id": 88393
+              },
+              {
+                "logit": 15.6875,
+                "rank": 1,
+                "text": "Metal",
+                "token_id": 76410
+              },
+              {
+                "logit": 15.375,
+                "rank": 2,
+                "text": "GPT",
+                "token_id": 162016
+              },
+              {
+                "logit": 13.8125,
+                "rank": 3,
+                "text": "G",
+                "token_id": 38
+              },
+              {
+                "logit": 12.9375,
+                "rank": 4,
+                "text": "```",
+                "token_id": 168394
+              },
+              {
+                "logit": 12.5625,
+                "rank": 5,
+                "text": "MET",
+                "token_id": 73740
+              },
+              {
+                "logit": 12.5,
+                "rank": 6,
+                "text": "met",
+                "token_id": 3001
+              },
+              {
+                "logit": 12.5,
+                "rank": 7,
+                "text": "I",
+                "token_id": 40
+              },
+              {
+                "logit": 12.4375,
+                "rank": 8,
+                "text": "g",
+                "token_id": 70
+              },
+              {
+                "logit": 12.375,
+                "rank": 9,
+                "text": " metal",
+                "token_id": 11002
+              }
+            ],
+            "wall_seconds": 30.74164721008856
+          }
+        },
+        "id": "tool_metal",
+        "label": "GPT-OSS tool metal",
+        "mount": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS tool metal. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/tool_metal/mount.json",
+              "--mount-graft-dir",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/banks/multifact"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/tool_metal/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS tool metal. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>**\", \"steps\": [{\"logit\": 15.0625, \"rank\": 0, \"text\": \"**\", \"token_id\": 410}]}\n",
+            "wall_seconds": 36.03891206998378
+          },
+          "summary": {
+            "answer": "IRON",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/tool_metal/mount.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate/tool_metal/mount_steps/step_00.json",
+            "generated_contains_value": false,
+            "generated_text": "**",
+            "hit": false,
+            "normalized_answer": "iron",
+            "normalized_answer_logit": null,
+            "normalized_answer_rank": null,
+            "normalized_answer_text": null,
+            "normalized_hit": false,
+            "normalized_top_token": "**",
+            "status": "ok",
+            "top_token": {
+              "logit": 15.0625,
+              "rank": 0,
+              "text": "**",
+              "token_id": 410
+            },
+            "top_tokens": [
+              {
+                "logit": 15.0625,
+                "rank": 0,
+                "text": "**",
+                "token_id": 410
+              },
+              {
+                "logit": 13.8125,
+                "rank": 1,
+                "text": "GRAY",
+                "token_id": 140884
+              },
+              {
+                "logit": 13.75,
+                "rank": 2,
+                "text": "The",
+                "token_id": 976
+              },
+              {
+                "logit": 13.375,
+                "rank": 3,
+                "text": "`",
+                "token_id": 63
+              },
+              {
+                "logit": 13.3125,
+                "rank": 4,
+                "text": "8",
+                "token_id": 23
+              },
+              {
+                "logit": 13.0625,
+                "rank": 5,
+                "text": "Gray",
+                "token_id": 43338
+              },
+              {
+                "logit": 12.9375,
+                "rank": 6,
+                "text": "``",
+                "token_id": 26178
+              },
+              {
+                "logit": 12.5,
+                "rank": 7,
+                "text": "[",
+                "token_id": 58
+              },
+              {
+                "logit": 12.5,
+                "rank": 8,
+                "text": "81",
+                "token_id": 9989
+              },
+              {
+                "logit": 12.375,
+                "rank": 9,
+                "text": "A",
+                "token_id": 32
+              }
+            ],
+            "wall_seconds": 31.28232548793312
+          }
+        },
+        "placement": {
+          "answer": "IRON",
+          "answer_token_id": 96951,
+          "id": "tool_metal",
+          "label": "GPT-OSS tool metal",
+          "needle_offset_tokens": 3271,
+          "needle_sha256": "e222c6999efdcc5e132d85d999db2e5f374b484f09dd69a6bdecfd0b0aa5eb1a",
+          "needle_tokens": 20
+        },
+        "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS tool metal. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>"
+      }
+    ]
+  },
+  "schema": "gpt_oss_20b_multifact_graft_gate_v1",
+  "script_args": {
+    "apa_layer_scope": "full",
+    "attention_mode": "standard",
+    "bulk_bits": 8,
+    "corpus_dir": "/mnt/ForgeRealm/GraftRepository/docs",
+    "dry_run": false,
+    "expert_empty_cache_interval": 0,
+    "expert_mode": "resident_packed_mxfp4",
+    "graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/banks/multifact",
+    "max_layers": null,
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "output": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/multifact_gate.json",
+    "refine_percentile": 0.15,
+    "route_detail": "summary",
+    "skip_capture": true,
+    "skip_control": false,
+    "target_tokens": 4096
+  },
+  "status": "ok",
+  "summary": [
+    {
+      "answer": "BLUE",
+      "control_top": "GPT",
+      "hit": false,
+      "id": "vault_keyword",
+      "mount_answer_rank": null,
+      "mount_top": "**"
+    },
+    {
+      "answer": "EMBER",
+      "control_top": "GPT",
+      "hit": false,
+      "id": "relay_marker",
+      "mount_answer_rank": null,
+      "mount_top": "**"
+    },
+    {
+      "answer": "GRAY",
+      "control_top": "Blue",
+      "hit": true,
+      "id": "archive_color",
+      "mount_answer_rank": 0,
+      "mount_top": "GRAY"
+    },
+    {
+      "answer": "IRON",
+      "control_top": "metal",
+      "hit": false,
+      "id": "tool_metal",
+      "mount_answer_rank": null,
+      "mount_top": "**"
+    }
+  ],
+  "target_tokens": 4096
+}

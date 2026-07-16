@@ -1,0 +1,21 @@
+# DeepSeek-V2-Lite APA + MLA Latent INT4 Results
+
+Date: 2026-06-27
+
+## Verdict
+
+DeepSeek-V2-Lite's MLA latent cache tolerates INT4 storage well enough for
+the full configured YaRN resident cache plus one decode token to fit on the
+12GB card. That is a cache/decode result, not proof that every prefill path can
+ingest a real 163K-token prompt.
+
+The first real-token prefill fix is now landed in the local DeepSeek loader:
+`attention_mode="absorbed_exact"` keeps prefill in MLA latent space instead of
+expanding the accumulated latent cache through `kv_b(c_n)` every chunk. This is
+not the final fused latent-APA kernel, but it proves the optimization diagnosis:
+the old expanded APA prefill ceiling was `16,384`; absorbed exact prefill has
+now passed real-token `65,536` on the same 12GB card.
+
+The first high-context open-ended greedy needle ladder is stricter than
+fill-only. Absorbed exact latent4 hit exact planted codes at `16,384`, `32,768`,
+and `49,152` tokens, but OOMed at `65,536

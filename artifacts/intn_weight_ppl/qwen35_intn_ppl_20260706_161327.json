@@ -1,0 +1,234 @@
+{
+  "bits": [
+    4,
+    3,
+    2
+  ],
+  "created_at": "2026-07-06T16:13:33",
+  "eval_tokens_available": 297054,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc",
+  "n_windows": 6,
+  "refines": [
+    0.15,
+    0.1,
+    0.05
+  ],
+  "results": [
+    {
+      "bits": 4,
+      "load_info": {
+        "attention_layers": [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23
+        ],
+        "framework": "tensor_cuda Qwen3.5",
+        "head_dim": 256,
+        "hidden_dim": 2048,
+        "layers": 24,
+        "loaded": "INT4 hybrid",
+        "model_dir": "/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc",
+        "num_heads": 8,
+        "num_kv_heads": 2,
+        "repository": "Qwen/Qwen3.5-2B",
+        "revision": "15852e8c16360a2fea060d615a32b45270f8a8fc",
+        "tie_word_embeddings": true,
+        "weight_bits": 4
+      },
+      "load_wall_seconds": 14.397108263976406,
+      "memory_after_load_mib": 1433,
+      "memory_before_load_mib": 439,
+      "settings": [
+        {
+          "max_observed_memory_mib": 1993,
+          "mode": "standard",
+          "name": "standard",
+          "ppl": 12.410468531616358,
+          "refine": null,
+          "scored_tokens": 6138,
+          "status": "ok",
+          "wall_seconds": 55.62994605401764
+        },
+        {
+          "max_observed_memory_mib": 2057,
+          "mode": "apa_selective",
+          "name": "apa_r0.15",
+          "ppl": 12.418573006481436,
+          "refine": 0.15,
+          "scored_tokens": 6138,
+          "status": "ok",
+          "wall_seconds": 55.838653724989854
+        },
+        {
+          "max_observed_memory_mib": 2057,
+          "mode": "apa_selective",
+          "name": "apa_r0.10",
+          "ppl": 12.415357601500176,
+          "refine": 0.1,
+          "scored_tokens": 6138,
+          "status": "ok",
+          "wall_seconds": 55.68262786796549
+        },
+        {
+          "max_observed_memory_mib": 2025,
+          "mode": "apa_selective",
+          "name": "apa_r0.05",
+          "ppl": 12.419917092087024,
+          "refine": 0.05,
+          "scored_tokens": 6138,
+          "status": "ok",
+          "wall_seconds": 55.76135072595207
+        }
+      ],
+      "status": "ok"
+    },
+    {
+      "bits": 3,
+      "load_info": {
+        "attention_layers": [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23
+        ],
+        "framework": "tensor_cuda Qwen3.5",
+        "head_dim": 256,
+        "hidden_dim": 2048,
+        "layers": 24,
+        "loaded": "INT3 hybrid",
+        "model_dir": "/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc",
+        "num_heads": 8,
+        "num_kv_heads": 2,
+        "repository": "Qwen/Qwen3.5-2B",
+        "revision": "15852e8c16360a2fea060d615a32b45270f8a8fc",
+        "tie_word_embeddings": true,
+        "weight_bits": 3
+      },
+      "load_wall_seconds": 54.54647668602411,
+      "memory_after_load_mib": 1225,
+      "memory_before_load_mib": 713,
+      "settings": [
+        {
+          "max_observed_memory_mib": 1897,
+          "mode": "standard",
+          "name": "standard",
+          "ppl": 28.210647605852134,
+          "refine": null,
+          "scored_tokens": 6138,
+          "status": "ok",
+          "wall_seconds": 56.07213256700197
+        },
+        {
+          "max_observed_memory_mib": 1961,
+          "mode": "apa_selective",
+          "name": "apa_r0.15",
+          "ppl": 28.269874702265746,
+          "refine": 0.15,
+          "scored_tokens": 6138,
+          "status": "ok",
+          "wall_seconds": 56.34188702702522
+        },
+        {
+          "max_observed_memory_mib": 1801,
+          "mode": "apa_selective",
+          "name": "apa_r0.10",
+          "ppl": 28.30078563274181,
+          "refine": 0.1,
+          "scored_tokens": 6138,
+          "status": "ok",
+          "wall_seconds": 56.26163968100445
+        },
+        {
+          "max_observed_memory_mib": 1833,
+          "mode": "apa_selective",
+          "name": "apa_r0.05",
+          "ppl": 28.30595202170026,
+          "refine": 0.05,
+          "scored_tokens": 6138,
+          "status": "ok",
+          "wall_seconds": 56.27078210801119
+        }
+      ],
+      "status": "ok"
+    },
+    {
+      "bits": 2,
+      "load_info": {
+        "attention_layers": [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23
+        ],
+        "framework": "tensor_cuda Qwen3.5",
+        "head_dim": 256,
+        "hidden_dim": 2048,
+        "layers": 24,
+        "loaded": "INT2 hybrid",
+        "model_dir": "/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc",
+        "num_heads": 8,
+        "num_kv_heads": 2,
+        "repository": "Qwen/Qwen3.5-2B",
+        "revision": "15852e8c16360a2fea060d615a32b45270f8a8fc",
+        "tie_word_embeddings": true,
+        "weight_bits": 2
+      },
+      "load_wall_seconds": 15.516567846992984,
+      "memory_after_load_mib": 1065,
+      "memory_before_load_mib": 713,
+      "settings": [
+        {
+          "max_observed_memory_mib": 1545,
+          "mode": "standard",
+          "name": "standard",
+          "ppl": 60932.596287674096,
+          "refine": null,
+          "scored_tokens": 6138,
+          "status": "ok",
+          "wall_seconds": 53.44459122797707
+        },
+        {
+          "max_observed_memory_mib": 1609,
+          "mode": "apa_selective",
+          "name": "apa_r0.15",
+          "ppl": 61630.30277358983,
+          "refine": 0.15,
+          "scored_tokens": 6138,
+          "status": "ok",
+          "wall_seconds": 53.71648622403154
+        },
+        {
+          "max_observed_memory_mib": 1641,
+          "mode": "apa_selective",
+          "name": "apa_r0.10",
+          "ppl": 62171.6678470332,
+          "refine": 0.1,
+          "scored_tokens": 6138,
+          "status": "ok",
+          "wall_seconds": 53.891773252980784
+        },
+        {
+          "max_observed_memory_mib": 1577,
+          "mode": "apa_selective",
+          "name": "apa_r0.05",
+          "ppl": 62615.365720480346,
+          "refine": 0.05,
+          "scored_tokens": 6138,
+          "status": "ok",
+          "wall_seconds": 53.85377401497681
+        }
+      ],
+      "status": "ok"
+    }
+  ],
+  "scored": 1024,
+  "step": 64,
+  "window": 2048
+}

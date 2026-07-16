@@ -1,0 +1,96 @@
+{
+  "arena_width": 96,
+  "env": {
+    "GRM_GQA_CUDA_ROUTE": "1",
+    "GRM_GRAFT_STORAGE_BITS": "8"
+  },
+  "gpu_idle_check": {
+    "checks": [],
+    "idle": "skipped",
+    "waited_s": 0
+  },
+  "live_turns": 1,
+  "max_trips": 1,
+  "mode": "smoke",
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "native_lib": "/mnt/ForgeRealm/GraftRepository/cpp/build/libgrm_runtime.so",
+  "ngen": 24,
+  "restart_after": 5,
+  "schema": "grm_e2e_session_config_v1",
+  "script": [
+    {
+      "assistant": "Understood \u2014 the current orion pin value is Auric-4-Alpha.",
+      "fact_id": "orion pin",
+      "fact_phrase": "current orion pin value is Auric-4-Alpha",
+      "kind": "fact",
+      "user": "Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.",
+      "value": "Auric-4-Alpha"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler smoke alpha. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "assistant": "Understood \u2014 the current orion pin value is Kestrel-9-Tango.",
+      "correction_command": "correct memory: current orion pin value is Auric-4-Alpha => The current orion pin value is Kestrel-9-Tango.",
+      "fact_id": "orion pin",
+      "fact_phrase": "current orion pin value is Kestrel-9-Tango",
+      "kind": "supersede",
+      "old_value": "Auric-4-Alpha",
+      "user": "Authoritative update turn. fact orion pin. The current orion pin value is Kestrel-9-Tango. This is the current value. If asked later, answer Kestrel-9-Tango only.",
+      "value": "Kestrel-9-Tango"
+    },
+    {
+      "assistant": "Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.",
+      "fact_id": "cypher bridge",
+      "fact_phrase": "current cypher bridge value is Vortex-3-Sierra",
+      "kind": "fact",
+      "user": "Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.",
+      "value": "Vortex-3-Sierra"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler smoke beta. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "accepts": [
+        "Vortex-3-Sierra"
+      ],
+      "expected": "Vortex-3-Sierra",
+      "fact_id": "cypher bridge",
+      "kind": "probe",
+      "old_value": null,
+      "source_turn": 3,
+      "supersession": false,
+      "user": "Recall probe. What is the current cypher bridge value? Reply with only the value."
+    },
+    {
+      "accepts": [
+        "Kestrel-9-Tango"
+      ],
+      "expected": "Kestrel-9-Tango",
+      "fact_id": "orion pin",
+      "kind": "probe",
+      "old_value": "Auric-4-Alpha",
+      "source_turn": 2,
+      "supersession": true,
+      "user": "Recall probe. What is the current orion pin value? Reply with only the value."
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler smoke gamma. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler smoke delta. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler smoke epsilon. Acknowledge briefly. Do not change any stored fact values."
+    }
+  ],
+  "session_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_e2e/smoke_session_20260708_170350",
+  "template_decision": "ArenaCache prompt_template + stop_sequences hook; probe/filler use real GRMRuntime.chat()/ArenaCache.step(); fact/supersede plants use arena.feed() COMPLETE turns (scripted acceptance; value-bearing deposit, no free-gen).",
+  "topk": 3,
+  "turns": 10
+}

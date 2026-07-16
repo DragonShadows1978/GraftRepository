@@ -1,0 +1,137 @@
+[
+  {
+    "storage_bits": 16,
+    "tag": "noise_fp16",
+    "status": "gate_error",
+    "wall_seconds": 1202.4518909454346,
+    "result_path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_noise_fp16/result.json",
+    "needles": {
+      "vault (supersession)": {
+        "bank": "supersession",
+        "id": "vault_keyword",
+        "mount_margin": 0.125,
+        "mount_hit": true
+      },
+      "shade (preference)": {
+        "bank": "preference",
+        "id": "preferred_shade",
+        "mount_margin": 0.5,
+        "mount_hit": true
+      }
+    },
+    "gate_classification": {
+      "multifact": "pass",
+      "preference": "fail",
+      "supersession": "pass",
+      "addressing_fact_local": "pass"
+    }
+  },
+  {
+    "storage_bits": 8,
+    "tag": "depth8",
+    "status": "ok",
+    "wall_seconds": 1404.1617441177368,
+    "result_path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/result.json",
+    "needles": {
+      "vault (supersession)": {
+        "bank": "supersession",
+        "id": "vault_keyword",
+        "mount_margin": 0.125,
+        "mount_hit": true
+      },
+      "shade (preference)": {
+        "bank": "preference",
+        "id": "preferred_shade",
+        "mount_margin": 0.375,
+        "mount_hit": true
+      }
+    },
+    "gate_classification": {
+      "multifact": "pass",
+      "preference": "pass",
+      "supersession": "pass",
+      "addressing_fact_local": "pass"
+    }
+  },
+  {
+    "storage_bits": 6,
+    "tag": "depth6",
+    "status": "ok",
+    "wall_seconds": 1399.371651172638,
+    "result_path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth6/result.json",
+    "needles": {
+      "vault (supersession)": {
+        "bank": "supersession",
+        "id": "vault_keyword",
+        "mount_margin": 0.25,
+        "mount_hit": true
+      },
+      "shade (preference)": {
+        "bank": "preference",
+        "id": "preferred_shade",
+        "mount_margin": 0.375,
+        "mount_hit": true
+      }
+    },
+    "gate_classification": {
+      "multifact": "pass",
+      "preference": "fail",
+      "supersession": "pass",
+      "addressing_fact_local": "pass"
+    }
+  },
+  {
+    "storage_bits": 4,
+    "tag": "depth4",
+    "status": "ok",
+    "wall_seconds": 1402.7592318058014,
+    "result_path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/result.json",
+    "needles": {
+      "vault (supersession)": {
+        "bank": "supersession",
+        "id": "vault_keyword",
+        "mount_margin": 0.75,
+        "mount_hit": true
+      },
+      "shade (preference)": {
+        "bank": "preference",
+        "id": "preferred_shade",
+        "mount_margin": -1.0,
+        "mount_hit": false
+      }
+    },
+    "gate_classification": {
+      "multifact": "fail",
+      "preference": "fail",
+      "supersession": "pass",
+      "addressing_fact_local": "pass"
+    }
+  },
+  {
+    "storage_bits": 3,
+    "tag": "depth3",
+    "status": "ok",
+    "wall_seconds": 1406.9226620197296,
+    "result_path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth3/result.json",
+    "needles": {
+      "vault (supersession)": {
+        "bank": "supersession",
+        "id": "vault_keyword",
+        "mount_margin": -2.1875,
+        "mount_hit": false
+      },
+      "shade (preference)": {
+        "bank": "preference",
+        "id": "preferred_shade",
+        "mount_margin": -0.75,
+        "mount_hit": false
+      }
+    },
+    "gate_classification": {
+      "multifact": "fail",
+      "preference": "fail",
+      "supersession": "fail",
+      "addressing_fact_local": "fail"
+    }
+  }
+]

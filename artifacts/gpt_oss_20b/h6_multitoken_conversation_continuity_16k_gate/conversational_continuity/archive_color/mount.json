@@ -1,0 +1,194 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "created_at": "2026-07-07T06:55:06",
+  "current_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archived color was **GRAY**.<|return|><|return|><|return|>GRAY",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "final_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archived color was **GRAY**.<|return|><|return|><|return|>GRAY",
+  "initial_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>",
+  "initial_user_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>",
+  "max_tokens": 192,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "mount_graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft",
+  "note": "greedy smoke via repeated streamed full forwards; no KV cache",
+  "prompt_file": null,
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "status": "ok",
+  "steps": [
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_00.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_00.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 976, \"logit\": 22.0, \"text\": \"The\"}, {\"rank\": 1, \"token_id\": 3206, \"logit\": 18.125, \"text\": \"It\"}, {\"rank\": 2, \"token_id\": 140884, \"logit\": 17.625, \"text\": \"GRAY\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 0,
+      "top_token": {
+        "logit": 22.0,
+        "rank": 0,
+        "text": "The",
+        "token_id": 976
+      },
+      "wall_seconds": 27.2943956880481
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_01.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_01.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 81026, \"logit\": 17.625, \"text\": \" archived\"}, {\"rank\": 1, \"token_id\": 37340, \"logit\": 16.875, \"text\": \" classified\"}, {\"rank\": 2, \"token_id\": 2840, \"logit\": 15.8125, \"text\": \" fact\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 0\"}\n",
+      "step": 1,
+      "top_token": {
+        "logit": 17.625,
+        "rank": 0,
+        "text": " archived",
+        "token_id": 81026
+      },
+      "wall_seconds": 27.211633546976373
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_02.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archived",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_02.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 3089, \"logit\": 18.75, \"text\": \" color\"}, {\"rank\": 1, \"token_id\": 174803, \"logit\": 16.875, \"text\": \" GPT\"}, {\"rank\": 2, \"token_id\": 33542, \"logit\": 15.9375, \"text\": \" archive\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 0\"}\n",
+      "step": 2,
+      "top_token": {
+        "logit": 18.75,
+        "rank": 0,
+        "text": " color",
+        "token_id": 3089
+      },
+      "wall_seconds": 27.246148373000324
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_03.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archived color",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_03.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 673, \"logit\": 19.75, \"text\": \" was\"}, {\"rank\": 1, \"token_id\": 19460, \"logit\": 19.75, \"text\": \" recorded\"}, {\"rank\": 2, \"token_id\": 16240, \"logit\": 19.0, \"text\": \" stored\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 3,
+      "top_token": {
+        "logit": 19.75,
+        "rank": 0,
+        "text": " was",
+        "token_id": 673
+      },
+      "wall_seconds": 27.313901201996487
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_04.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archived color was",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_04.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 6240, \"logit\": 20.625, \"text\": \" **\"}, {\"rank\": 1, \"token_id\": 19460, \"logit\": 19.375, \"text\": \" recorded\"}, {\"rank\": 2, \"token_id\": 16240, \"logit\": 18.375, \"text\": \" stored\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 4,
+      "top_token": {
+        "logit": 20.625,
+        "rank": 0,
+        "text": " **",
+        "token_id": 6240
+      },
+      "wall_seconds": 27.60449061600957
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_05.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archived color was **",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_05.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 140884, \"logit\": 25.75, \"text\": \"GRAY\"}, {\"rank\": 1, \"token_id\": 43222, \"logit\": 23.75, \"text\": \"gray\"}, {\"rank\": 2, \"token_id\": 13905, \"logit\": 22.0, \"text\": \"GR\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 5,
+      "top_token": {
+        "logit": 25.75,
+        "rank": 0,
+        "text": "GRAY",
+        "token_id": 140884
+      },
+      "wall_seconds": 27.4748977739946
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_06.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archived color was **GRAY",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_06.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 410, \"logit\": 27.875, \"text\": \"**\"}, {\"rank\": 1, \"token_id\": 13, \"logit\": 20.0, \"text\": \".\"}, {\"rank\": 2, \"token_id\": 1612, \"logit\": 19.875, \"text\": \"**\\n\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 6,
+      "top_token": {
+        "logit": 27.875,
+        "rank": 0,
+        "text": "**",
+        "token_id": 410
+      },
+      "wall_seconds": 27.585296430974267
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_07.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archived color was **GRAY**",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_07.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 13, \"logit\": 23.5, \"text\": \".\"}, {\"rank\": 1, \"token_id\": 200002, \"logit\": 17.5, \"text\": \"<|return|>\"}, {\"rank\": 2, \"token_id\": 350, \"logit\": 17.5, \"text\": \" (\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 800, 12282, 15\"}\n",
+      "step": 7,
+      "top_token": {
+        "logit": 23.5,
+        "rank": 0,
+        "text": ".",
+        "token_id": 13
+      },
+      "wall_seconds": 27.668372563028242
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_08.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archived color was **GRAY**.",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_08.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 27.5, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 220, \"logit\": 16.5, \"text\": \" \"}, {\"rank\": 2, \"token_id\": 200007, \"logit\": 16.375, \"text\": \"<|end|>\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 8,
+      "top_token": {
+        "logit": 27.5,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 27.7890688010375
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_09.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archived color was **GRAY**.<|return|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_09.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 16.0, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 623, \"logit\": 14.8125, \"text\": \" The\"}, {\"rank\": 2, \"token_id\": 200007, \"logit\": 13.3125, \"text\": \"<|end|>\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 9,
+      "top_token": {
+        "logit": 16.0,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 27.83291061100317
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_10.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archived color was **GRAY**.<|return|><|return|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_10.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 12.5, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 623, \"logit\": 11.8125, \"text\": \" The\"}, {\"rank\": 2, \"token_id\": 290, \"logit\": 11.8125, \"text\": \" the\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 10,
+      "top_token": {
+        "logit": 12.5,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 27.877481503004674
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_11.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT C store for the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archived color was **GRAY**.<|return|><|return|><|return|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/archive_color/mount_steps/step_11.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 140884, \"logit\": 11.9375, \"text\": \"GRAY\"}, {\"rank\": 1, \"token_id\": 410, \"logit\": 11.75, \"text\": \"**\"}, {\"rank\": 2, \"token_id\": 290, \"logit\": 11.5625, \"text\": \" the\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 11,
+      "top_token": {
+        "logit": 11.9375,
+        "rank": 0,
+        "text": "GRAY",
+        "token_id": 140884
+      },
+      "wall_seconds": 27.844131740974262
+    }
+  ],
+  "steps_requested": 12,
+  "top_k": 10,
+  "use_chat_template": false,
+  "wall_seconds": 330.7489024529932
+}

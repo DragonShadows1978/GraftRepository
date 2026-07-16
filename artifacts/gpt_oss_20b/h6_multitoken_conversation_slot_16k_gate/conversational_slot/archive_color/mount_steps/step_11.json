@@ -1,0 +1,3824 @@
+{
+  "apa_layer_scope": "full",
+  "attention_audit": {
+    "apa_layer_scope": "full",
+    "bulk_bits": 8,
+    "fused_sink_apa_available": true,
+    "planned_layers": [
+      {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 0,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 1,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 2,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 3,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 4,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 5,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 6,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 7,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 8,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 9,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 10,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 11,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 12,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 13,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 14,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 15,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 16,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 17,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 18,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 19,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 20,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 21,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 22,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 23,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      }
+    ],
+    "refine_percentile": 0.15,
+    "requested_attention_mode": "apa_selective",
+    "sink_aware_apa_available": true
+  },
+  "attention_layers_planned_apa": [
+    1,
+    3,
+    5,
+    7,
+    9,
+    11,
+    13,
+    15,
+    17,
+    19,
+    21,
+    23
+  ],
+  "attention_layers_planned_standard": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    16,
+    18,
+    20,
+    22
+  ],
+  "attention_layers_used_apa": [
+    1,
+    3,
+    5,
+    7,
+    9,
+    11,
+    13,
+    15,
+    17,
+    19,
+    21,
+    23
+  ],
+  "attention_layers_used_standard": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    16,
+    18,
+    20,
+    22
+  ],
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "candidate_scores": [],
+  "candidate_texts": [],
+  "capture_graft_dir": null,
+  "completed_layers": 24,
+  "created_at": "2026-07-07T06:14:50",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "final_hidden_shape": [
+    1,
+    64,
+    2880
+  ],
+  "final_hidden_stats": {
+    "max": 154.0,
+    "mean": 0.01012318953871727,
+    "min": -26.0,
+    "std": 5.585687160491943,
+    "sum": 29.15478515625
+  },
+  "full_input_ids": [
+    [
+      200006,
+      17360,
+      200008,
+      3575,
+      553,
+      17554,
+      162016,
+      13,
+      57369,
+      289,
+      25,
+      4465,
+      13,
+      13888,
+      9334,
+      25,
+      1721,
+      13,
+      200007,
+      200006,
+      1428,
+      200008,
+      15390,
+      19141,
+      290,
+      36902,
+      8197,
+      1934,
+      56507,
+      290,
+      7999,
+      13,
+      730,
+      57111,
+      47407,
+      99053,
+      363,
+      11,
+      1412,
+      673,
+      290,
+      174803,
+      12,
+      26496,
+      33542,
+      3089,
+      30,
+      200007,
+      200006,
+      173781,
+      200005,
+      17196,
+      200008,
+      976,
+      33542,
+      3089,
+      673,
+      6240,
+      140884,
+      410,
+      13,
+      200002,
+      623,
+      33542
+    ]
+  ],
+  "fused_sink_apa_available": true,
+  "gpu_after": "NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 17",
+  "gpu_before": "NVIDIA GeForce RTX 4070 SUPER, 268, 12282, 0",
+  "gpu_before_lm_head": "NVIDIA GeForce RTX 4070 SUPER, 488, 12282, 19",
+  "grm_dialect": {
+    "composition": "multi_mount",
+    "graftability": "seat_remountable",
+    "head_dim": 64,
+    "hidden_dim": 2880,
+    "model_type": "GptOss20B_TC",
+    "num_kv_heads": 8,
+    "num_layers": 24,
+    "payload_kind": "gqa",
+    "position_law": "rope_full_yarn",
+    "remountable": true,
+    "route_layer": 1,
+    "state_kind": "kv",
+    "vals_per_tok_layer": 1024
+  },
+  "hidden_shape_initial": [
+    1,
+    64,
+    2880
+  ],
+  "input_ids": [
+    [
+      200006,
+      17360,
+      200008,
+      3575,
+      553,
+      17554,
+      162016,
+      13,
+      57369,
+      289,
+      25,
+      4465,
+      13,
+      13888,
+      9334,
+      25,
+      1721,
+      13,
+      200007,
+      200006,
+      1428,
+      200008,
+      15390,
+      19141,
+      290,
+      36902,
+      8197,
+      1934,
+      56507,
+      290,
+      7999,
+      13,
+      730,
+      57111,
+      47407,
+      99053,
+      363,
+      11,
+      1412,
+      673,
+      290,
+      174803,
+      12,
+      26496,
+      33542,
+      3089,
+      30,
+      200007,
+      200006,
+      173781,
+      200005,
+      17196,
+      200008,
+      976,
+      33542,
+      3089,
+      673,
+      6240,
+      140884,
+      410,
+      13,
+      200002,
+      623,
+      33542
+    ]
+  ],
+  "input_ids_file": null,
+  "input_ids_shape": [
+    1,
+    64
+  ],
+  "input_ids_source": "tokenizer",
+  "input_truncated": false,
+  "layers": [
+    {
+      "attention": {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 0,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "standard_sink_sliding_chunked",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 23",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_000.npz",
+        "sliding_window_limited": true,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 0,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 7,
+          "1": 13,
+          "10": 7,
+          "11": 8,
+          "12": 8,
+          "13": 8,
+          "14": 2,
+          "15": 3,
+          "16": 7,
+          "17": 9,
+          "18": 16,
+          "19": 2,
+          "2": 7,
+          "21": 7,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 7,
+          "26": 8,
+          "27": 3,
+          "28": 14,
+          "29": 5,
+          "3": 12,
+          "30": 7,
+          "31": 2,
+          "4": 7,
+          "5": 17,
+          "6": 6,
+          "7": 3,
+          "8": 4,
+          "9": 27
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.7769379615783691,
+          0.35524851083755493,
+          0.28470921516418457,
+          0.21497386693954468
+        ],
+        "slot_weight_means": [
+          0.41175776720046997,
+          0.25762635469436646,
+          0.1873563528060913,
+          0.14325951039791107
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.5158815130125731
+    },
+    {
+      "attention": {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 1,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "apa_selective_sink_fused",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 27",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_001.npz",
+        "sliding_window_limited": false,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 1,
+      "layer_type": "full_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 10,
+          "1": 15,
+          "10": 13,
+          "11": 12,
+          "12": 13,
+          "13": 12,
+          "15": 2,
+          "16": 5,
+          "17": 2,
+          "18": 20,
+          "19": 4,
+          "2": 6,
+          "20": 10,
+          "21": 3,
+          "22": 4,
+          "23": 1,
+          "24": 2,
+          "25": 5,
+          "26": 8,
+          "27": 12,
+          "28": 33,
+          "29": 10,
+          "3": 4,
+          "30": 2,
+          "31": 2,
+          "4": 3,
+          "5": 18,
+          "6": 6,
+          "7": 17,
+          "8": 1,
+          "9": 1
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.5226774215698242,
+          0.3887878954410553,
+          0.2634453773498535,
+          0.21738441288471222
+        ],
+        "slot_weight_means": [
+          0.3863680958747864,
+          0.2664106488227844,
+          0.19273217022418976,
+          0.15448905527591705
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 1.3503422299982049
+    },
+    {
+      "attention": {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 2,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "standard_sink_sliding_chunked",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 3",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_002.npz",
+        "sliding_window_limited": true,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 2,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 14,
+          "1": 1,
+          "10": 13,
+          "12": 15,
+          "13": 1,
+          "14": 1,
+          "16": 1,
+          "17": 1,
+          "18": 7,
+          "19": 2,
+          "20": 4,
+          "21": 43,
+          "22": 9,
+          "23": 17,
+          "24": 4,
+          "25": 5,
+          "26": 9,
+          "27": 8,
+          "28": 9,
+          "29": 20,
+          "3": 6,
+          "31": 20,
+          "4": 6,
+          "5": 13,
+          "6": 7,
+          "8": 20
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.5634680390357971,
+          0.3522161543369293,
+          0.2643035650253296,
+          0.2463606595993042
+        ],
+        "slot_weight_means": [
+          0.35732266306877136,
+          0.25978195667266846,
+          0.2043789029121399,
+          0.17851650714874268
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          3,
+          4,
+          5,
+          6,
+          8,
+          10,
+          12,
+          13,
+          14,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          31
+        ]
+      },
+      "wall_seconds": 0.42679911898449063
+    },
+    {
+      "attention": {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 3,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "apa_selective_sink_fused",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 100",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_003.npz",
+        "sliding_window_limited": false,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 3,
+      "layer_type": "full_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 22,
+          "1": 24,
+          "10": 5,
+          "11": 12,
+          "12": 6,
+          "14": 1,
+          "15": 1,
+          "16": 2,
+          "18": 1,
+          "19": 18,
+          "2": 10,
+          "20": 1,
+          "21": 1,
+          "22": 10,
+          "23": 17,
+          "25": 1,
+          "26": 13,
+          "27": 3,
+          "28": 3,
+          "29": 5,
+          "3": 6,
+          "30": 12,
+          "31": 24,
+          "5": 1,
+          "6": 3,
+          "7": 30,
+          "8": 17,
+          "9": 7
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.5501718521118164,
+          0.32295486330986023,
+          0.26240211725234985,
+          0.2376548945903778
+        ],
+        "slot_weight_means": [
+          0.3388465642929077,
+          0.2678217887878418,
+          0.212650865316391,
+          0.1806807816028595
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          14,
+          15,
+          16,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.5498444969998673
+    },
+    {
+      "attention": {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 4,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "standard_sink_sliding_chunked",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 18",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_004.npz",
+        "sliding_window_limited": true,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 4,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 7,
+          "1": 4,
+          "10": 6,
+          "11": 1,
+          "12": 2,
+          "14": 11,
+          "15": 35,
+          "17": 1,
+          "18": 21,
+          "19": 8,
+          "2": 1,
+          "20": 25,
+          "22": 1,
+          "23": 15,
+          "24": 25,
+          "25": 13,
+          "26": 3,
+          "27": 2,
+          "3": 1,
+          "30": 8,
+          "31": 3,
+          "4": 4,
+          "5": 11,
+          "6": 44,
+          "7": 1,
+          "8": 2,
+          "9": 1
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.5933238863945007,
+          0.33760783076286316,
+          0.2583756148815155,
+          0.23104988038539886
+        ],
+        "slot_weight_means": [
+          0.38382112979888916,
+          0.24836361408233643,
+          0.19938251376152039,
+          0.16843274235725403
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          14,
+          15,
+          17,
+          18,
+          19,
+          20,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.43277481000404805
+    },
+    {
+      "attention": {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 5,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "apa_selective_sink_fused",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 1",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_005.npz",
+        "sliding_window_limited": false,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 5,
+      "layer_type": "full_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 22,
+          "10": 21,
+          "11": 1,
+          "12": 6,
+          "14": 15,
+          "15": 12,
+          "16": 10,
+          "17": 7,
+          "18": 6,
+          "19": 10,
+          "2": 8,
+          "21": 1,
+          "22": 6,
+          "23": 1,
+          "24": 55,
+          "26": 6,
+          "27": 3,
+          "29": 5,
+          "3": 6,
+          "30": 2,
+          "31": 15,
+          "4": 4,
+          "5": 1,
+          "6": 26,
+          "8": 4,
+          "9": 3
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.581579327583313,
+          0.3189537227153778,
+          0.2671434283256531,
+          0.23245872557163239
+        ],
+        "slot_weight_means": [
+          0.3355429768562317,
+          0.260612428188324,
+          0.21801060438156128,
+          0.18583397567272186
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8,
+          9,
+          10,
+          11,
+          12,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          21,
+          22,
+          23,
+          24,
+          26,
+          27,
+          29,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.5632523610256612
+    },
+    {
+      "attention": {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 6,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "standard_sink_sliding_chunked",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 10",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_006.npz",
+        "sliding_window_limited": true,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 6,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "10": 21,
+          "11": 12,
+          "13": 3,
+          "14": 10,
+          "15": 5,
+          "16": 16,
+          "17": 9,
+          "18": 2,
+          "19": 2,
+          "2": 26,
+          "20": 13,
+          "21": 8,
+          "23": 3,
+          "24": 8,
+          "25": 1,
+          "27": 2,
+          "28": 18,
+          "29": 4,
+          "3": 14,
+          "30": 6,
+          "31": 6,
+          "4": 11,
+          "5": 22,
+          "6": 2,
+          "7": 4,
+          "9": 28
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.5651766061782837,
+          0.34168872237205505,
+          0.2625908851623535,
+          0.23796342313289642
+        ],
+        "slot_weight_means": [
+          0.36281800270080566,
+          0.25508832931518555,
+          0.2096233069896698,
+          0.172470360994339
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          9,
+          10,
+          11,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          23,
+          24,
+          25,
+          27,
+          28,
+          29,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.43330282694660127
+    },
+    {
+      "attention": {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 7,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "apa_selective_sink_fused",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 48",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_007.npz",
+        "sliding_window_limited": false,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 7,
+      "layer_type": "full_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 2,
+          "1": 9,
+          "10": 25,
+          "12": 2,
+          "13": 24,
+          "14": 21,
+          "15": 6,
+          "16": 4,
+          "17": 6,
+          "18": 1,
+          "19": 9,
+          "2": 1,
+          "20": 7,
+          "21": 9,
+          "22": 1,
+          "23": 5,
+          "24": 18,
+          "26": 1,
+          "28": 8,
+          "29": 9,
+          "30": 10,
+          "4": 14,
+          "5": 43,
+          "6": 1,
+          "7": 8,
+          "9": 12
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.6190246343612671,
+          0.3204003572463989,
+          0.2593223452568054,
+          0.2327859103679657
+        ],
+        "slot_weight_means": [
+          0.3659572899341583,
+          0.253587543964386,
+          0.20652340352535248,
+          0.17393174767494202
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          6,
+          7,
+          9,
+          10,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          26,
+          28,
+          29,
+          30
+        ]
+      },
+      "wall_seconds": 0.533841427997686
+    },
+    {
+      "attention": {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 8,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "standard_sink_sliding_chunked",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 1",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_008.npz",
+        "sliding_window_limited": true,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 8,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 16,
+          "1": 3,
+          "10": 9,
+          "12": 10,
+          "13": 13,
+          "14": 5,
+          "15": 1,
+          "17": 42,
+          "18": 3,
+          "19": 10,
+          "2": 4,
+          "20": 16,
+          "23": 32,
+          "24": 27,
+          "25": 1,
+          "26": 1,
+          "28": 3,
+          "3": 8,
+          "30": 3,
+          "31": 11,
+          "4": 11,
+          "5": 9,
+          "6": 5,
+          "7": 1,
+          "9": 12
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.5175687670707703,
+          0.32943737506866455,
+          0.26432427763938904,
+          0.2305683195590973
+        ],
+        "slot_weight_means": [
+          0.34559333324432373,
+          0.2594653367996216,
+          0.21434955298900604,
+          0.18059179186820984
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          9,
+          10,
+          12,
+          13,
+          14,
+          15,
+          17,
+          18,
+          19,
+          20,
+          23,
+          24,
+          25,
+          26,
+          28,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.4313028890173882
+    },
+    {
+      "attention": {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 9,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "apa_selective_sink_fused",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 97",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_009.npz",
+        "sliding_window_limited": false,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 9,
+      "layer_type": "full_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 1,
+          "1": 2,
+          "10": 1,
+          "13": 5,
+          "14": 5,
+          "15": 19,
+          "16": 32,
+          "18": 4,
+          "19": 33,
+          "20": 1,
+          "21": 17,
+          "22": 4,
+          "23": 7,
+          "24": 9,
+          "25": 26,
+          "26": 13,
+          "28": 1,
+          "29": 7,
+          "3": 4,
+          "30": 6,
+          "5": 10,
+          "8": 47,
+          "9": 2
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.5308919548988342,
+          0.33918291330337524,
+          0.26821306347846985,
+          0.22589713335037231
+        ],
+        "slot_weight_means": [
+          0.3616008162498474,
+          0.262964129447937,
+          0.20655134320259094,
+          0.16888368129730225
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          3,
+          5,
+          8,
+          9,
+          10,
+          13,
+          14,
+          15,
+          16,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          28,
+          29,
+          30
+        ]
+      },
+      "wall_seconds": 0.5407179620233364
+    },
+    {
+      "attention": {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 10,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "standard_sink_sliding_chunked",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 23",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_010.npz",
+        "sliding_window_limited": true,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 10,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 6,
+          "1": 4,
+          "10": 57,
+          "11": 1,
+          "12": 1,
+          "14": 4,
+          "15": 14,
+          "17": 2,
+          "19": 22,
+          "20": 7,
+          "21": 1,
+          "23": 36,
+          "25": 2,
+          "26": 21,
+          "27": 2,
+          "28": 2,
+          "5": 42,
+          "6": 3,
+          "7": 27,
+          "8": 2
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.4822203516960144,
+          0.33266010880470276,
+          0.24997641146183014,
+          0.2344072461128235
+        ],
+        "slot_weight_means": [
+          0.36018019914627075,
+          0.26270899176597595,
+          0.20451311767101288,
+          0.1725977063179016
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          5,
+          6,
+          7,
+          8,
+          10,
+          11,
+          12,
+          14,
+          15,
+          17,
+          19,
+          20,
+          21,
+          23,
+          25,
+          26,
+          27,
+          28
+        ]
+      },
+      "wall_seconds": 0.42763903498416767
+    },
+    {
+      "attention": {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 11,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "apa_selective_sink_fused",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 8",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_011.npz",
+        "sliding_window_limited": false,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 11,
+      "layer_type": "full_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 8,
+          "11": 4,
+          "12": 3,
+          "13": 16,
+          "16": 11,
+          "17": 2,
+          "18": 5,
+          "19": 11,
+          "20": 28,
+          "21": 1,
+          "24": 27,
+          "25": 13,
+          "26": 3,
+          "27": 18,
+          "30": 55,
+          "4": 9,
+          "5": 7,
+          "7": 11,
+          "9": 24
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.48622971773147583,
+          0.3751918375492096,
+          0.25627994537353516,
+          0.23934778571128845
+        ],
+        "slot_weight_means": [
+          0.33874255418777466,
+          0.2610982656478882,
+          0.21152159571647644,
+          0.1886376291513443
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          4,
+          5,
+          7,
+          9,
+          11,
+          12,
+          13,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          24,
+          25,
+          26,
+          27,
+          30
+        ]
+      },
+      "wall_seconds": 0.5363785320078023
+    },
+    {
+      "attention": {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 12,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "standard_sink_sliding_chunked",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 0",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_012.npz",
+        "sliding_window_limited": true,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 12,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 3,
+          "1": 22,
+          "10": 3,
+          "12": 21,
+          "14": 8,
+          "15": 1,
+          "18": 1,
+          "2": 5,
+          "21": 42,
+          "22": 11,
+          "23": 55,
+          "24": 8,
+          "25": 10,
+          "26": 8,
+          "27": 1,
+          "28": 13,
+          "3": 27,
+          "31": 1,
+          "6": 4,
+          "8": 10,
+          "9": 2
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.5064560770988464,
+          0.3349902331829071,
+          0.2492377609014511,
+          0.2412036806344986
+        ],
+        "slot_weight_means": [
+          0.34916746616363525,
+          0.2590646743774414,
+          0.20690006017684937,
+          0.18486779928207397
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          2,
+          3,
+          6,
+          8,
+          9,
+          10,
+          12,
+          14,
+          15,
+          18,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          31
+        ]
+      },
+      "wall_seconds": 0.42277063603978604
+    },
+    {
+      "attention": {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 13,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "apa_selective_sink_fused",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 67",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_013.npz",
+        "sliding_window_limited": false,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 13,
+      "layer_type": "full_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 15,
+          "1": 42,
+          "10": 2,
+          "11": 4,
+          "12": 2,
+          "14": 7,
+          "15": 17,
+          "16": 6,
+          "17": 2,
+          "19": 13,
+          "20": 1,
+          "21": 36,
+          "23": 11,
+          "24": 19,
+          "26": 1,
+          "27": 2,
+          "29": 1,
+          "3": 5,
+          "30": 2,
+          "4": 16,
+          "5": 9,
+          "7": 3,
+          "8": 12,
+          "9": 28
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.5482134222984314,
+          0.35709503293037415,
+          0.25973135232925415,
+          0.23527677357196808
+        ],
+        "slot_weight_means": [
+          0.3467099964618683,
+          0.25573787093162537,
+          0.21128299832344055,
+          0.1862691342830658
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          14,
+          15,
+          16,
+          17,
+          19,
+          20,
+          21,
+          23,
+          24,
+          26,
+          27,
+          29,
+          30
+        ]
+      },
+      "wall_seconds": 0.5684240820119157
+    },
+    {
+      "attention": {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 14,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "standard_sink_sliding_chunked",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 1",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_014.npz",
+        "sliding_window_limited": true,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 14,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 15,
+          "1": 14,
+          "10": 9,
+          "11": 1,
+          "12": 10,
+          "14": 1,
+          "15": 4,
+          "16": 14,
+          "17": 6,
+          "18": 27,
+          "19": 1,
+          "21": 5,
+          "22": 4,
+          "23": 6,
+          "24": 15,
+          "26": 3,
+          "27": 4,
+          "28": 2,
+          "29": 31,
+          "3": 2,
+          "31": 2,
+          "4": 9,
+          "6": 36,
+          "7": 5,
+          "9": 30
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.5299143195152283,
+          0.35156863927841187,
+          0.2502680718898773,
+          0.24239440262317657
+        ],
+        "slot_weight_means": [
+          0.37378865480422974,
+          0.251847505569458,
+          0.20173460245132446,
+          0.1726292371749878
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          3,
+          4,
+          6,
+          7,
+          9,
+          10,
+          11,
+          12,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          21,
+          22,
+          23,
+          24,
+          26,
+          27,
+          28,
+          29,
+          31
+        ]
+      },
+      "wall_seconds": 0.42648561601527035
+    },
+    {
+      "attention": {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 15,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "apa_selective_sink_fused",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 0",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_015.npz",
+        "sliding_window_limited": false,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 15,
+      "layer_type": "full_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 11,
+          "1": 3,
+          "10": 8,
+          "11": 4,
+          "12": 20,
+          "13": 36,
+          "14": 5,
+          "17": 3,
+          "18": 7,
+          "2": 5,
+          "21": 8,
+          "22": 3,
+          "23": 9,
+          "24": 8,
+          "25": 16,
+          "26": 14,
+          "27": 6,
+          "28": 21,
+          "29": 5,
+          "3": 4,
+          "30": 2,
+          "31": 21,
+          "4": 11,
+          "6": 1,
+          "7": 3,
+          "8": 7,
+          "9": 15
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.5414626598358154,
+          0.3375172019004822,
+          0.2616538405418396,
+          0.24293473362922668
+        ],
+        "slot_weight_means": [
+          0.3489556610584259,
+          0.2610936462879181,
+          0.20875243842601776,
+          0.18119826912879944
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          17,
+          18,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.5339489810285158
+    },
+    {
+      "attention": {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 16,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "standard_sink_sliding_chunked",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 29",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_016.npz",
+        "sliding_window_limited": true,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 16,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 4,
+          "1": 8,
+          "11": 19,
+          "12": 10,
+          "13": 12,
+          "14": 2,
+          "15": 10,
+          "16": 4,
+          "17": 1,
+          "18": 8,
+          "19": 5,
+          "2": 26,
+          "20": 8,
+          "21": 6,
+          "22": 4,
+          "24": 13,
+          "26": 15,
+          "27": 29,
+          "30": 4,
+          "31": 49,
+          "4": 10,
+          "5": 2,
+          "7": 5,
+          "8": 1,
+          "9": 1
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.4489578306674957,
+          0.33326688408851624,
+          0.2654012143611908,
+          0.23717622458934784
+        ],
+        "slot_weight_means": [
+          0.34250423312187195,
+          0.2520364820957184,
+          0.2156943380832672,
+          0.18976493179798126
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          7,
+          8,
+          9,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          24,
+          26,
+          27,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.4341542160254903
+    },
+    {
+      "attention": {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 17,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "apa_selective_sink_fused",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 13",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_017.npz",
+        "sliding_window_limited": false,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 17,
+      "layer_type": "full_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "10": 5,
+          "11": 34,
+          "12": 6,
+          "13": 2,
+          "14": 12,
+          "15": 6,
+          "16": 15,
+          "19": 2,
+          "20": 6,
+          "21": 9,
+          "22": 1,
+          "23": 7,
+          "24": 16,
+          "25": 6,
+          "26": 4,
+          "28": 5,
+          "3": 1,
+          "30": 9,
+          "31": 2,
+          "4": 27,
+          "5": 50,
+          "7": 14,
+          "8": 11,
+          "9": 6
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.49122166633605957,
+          0.33868664503097534,
+          0.27944880723953247,
+          0.23015044629573822
+        ],
+        "slot_weight_means": [
+          0.35468295216560364,
+          0.2621668577194214,
+          0.20512351393699646,
+          0.17802667617797852
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          28,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.5427895649918355
+    },
+    {
+      "attention": {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 18,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "standard_sink_sliding_chunked",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 0",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_018.npz",
+        "sliding_window_limited": true,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 18,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 2,
+          "1": 53,
+          "11": 8,
+          "12": 5,
+          "14": 29,
+          "15": 13,
+          "16": 7,
+          "17": 3,
+          "18": 22,
+          "19": 6,
+          "2": 2,
+          "20": 9,
+          "21": 8,
+          "23": 2,
+          "24": 17,
+          "26": 10,
+          "27": 5,
+          "28": 3,
+          "29": 17,
+          "30": 26,
+          "31": 1,
+          "5": 1,
+          "6": 2,
+          "7": 1,
+          "8": 1,
+          "9": 3
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.543437659740448,
+          0.3336971402168274,
+          0.2757643759250641,
+          0.22555209696292877
+        ],
+        "slot_weight_means": [
+          0.3726980686187744,
+          0.2526624798774719,
+          0.2061806321144104,
+          0.16845880448818207
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          2,
+          5,
+          6,
+          7,
+          8,
+          9,
+          11,
+          12,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          23,
+          24,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.4303630830254406
+    },
+    {
+      "attention": {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 19,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "apa_selective_sink_fused",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 99",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_019.npz",
+        "sliding_window_limited": false,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 19,
+      "layer_type": "full_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 16,
+          "1": 19,
+          "10": 1,
+          "12": 2,
+          "13": 24,
+          "14": 1,
+          "15": 6,
+          "17": 3,
+          "18": 6,
+          "19": 40,
+          "2": 2,
+          "20": 2,
+          "21": 4,
+          "22": 24,
+          "23": 9,
+          "24": 2,
+          "25": 3,
+          "26": 9,
+          "28": 1,
+          "29": 7,
+          "3": 4,
+          "30": 6,
+          "31": 5,
+          "6": 21,
+          "7": 31,
+          "8": 7,
+          "9": 1
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.48359861969947815,
+          0.3572610914707184,
+          0.2607157230377197,
+          0.22369422018527985
+        ],
+        "slot_weight_means": [
+          0.3651185631752014,
+          0.25948357582092285,
+          0.20103293657302856,
+          0.17436490952968597
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          2,
+          3,
+          6,
+          7,
+          8,
+          9,
+          10,
+          12,
+          13,
+          14,
+          15,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          28,
+          29,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.5339133130037226
+    },
+    {
+      "attention": {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 20,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "standard_sink_sliding_chunked",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 0",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_020.npz",
+        "sliding_window_limited": true,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 20,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 4,
+          "1": 22,
+          "10": 24,
+          "11": 7,
+          "12": 6,
+          "13": 2,
+          "14": 13,
+          "15": 24,
+          "16": 7,
+          "18": 1,
+          "19": 6,
+          "2": 24,
+          "20": 9,
+          "21": 1,
+          "22": 10,
+          "23": 9,
+          "24": 15,
+          "25": 5,
+          "26": 9,
+          "28": 3,
+          "3": 1,
+          "30": 7,
+          "31": 10,
+          "4": 12,
+          "5": 13,
+          "6": 2,
+          "7": 7,
+          "9": 3
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.6192784905433655,
+          0.3090343773365021,
+          0.26080453395843506,
+          0.24279114603996277
+        ],
+        "slot_weight_means": [
+          0.36429810523986816,
+          0.24526742100715637,
+          0.2085847556591034,
+          0.18184971809387207
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          28,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.4365749399876222
+    },
+    {
+      "attention": {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 21,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "apa_selective_sink_fused",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 0",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_021.npz",
+        "sliding_window_limited": false,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 21,
+      "layer_type": "full_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "1": 1,
+          "10": 1,
+          "11": 13,
+          "12": 5,
+          "13": 1,
+          "14": 11,
+          "16": 1,
+          "18": 3,
+          "19": 23,
+          "2": 3,
+          "20": 4,
+          "21": 5,
+          "23": 38,
+          "24": 30,
+          "25": 4,
+          "26": 8,
+          "27": 7,
+          "3": 28,
+          "30": 29,
+          "31": 4,
+          "4": 1,
+          "5": 15,
+          "6": 6,
+          "7": 5,
+          "9": 10
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.4701438844203949,
+          0.3463895320892334,
+          0.2639652192592621,
+          0.24578261375427246
+        ],
+        "slot_weight_means": [
+          0.3494689464569092,
+          0.2576715648174286,
+          0.21192826330661774,
+          0.18093127012252808
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          16,
+          18,
+          19,
+          20,
+          21,
+          23,
+          24,
+          25,
+          26,
+          27,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.547144323005341
+    },
+    {
+      "attention": {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 22,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "standard_sink_sliding_chunked",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 46",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_022.npz",
+        "sliding_window_limited": true,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 22,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 4,
+          "1": 3,
+          "10": 1,
+          "11": 29,
+          "12": 3,
+          "13": 23,
+          "14": 16,
+          "15": 5,
+          "16": 12,
+          "17": 15,
+          "18": 4,
+          "19": 4,
+          "2": 11,
+          "20": 4,
+          "21": 3,
+          "22": 5,
+          "23": 30,
+          "24": 18,
+          "25": 12,
+          "26": 6,
+          "27": 6,
+          "3": 13,
+          "30": 5,
+          "31": 6,
+          "4": 2,
+          "5": 1,
+          "7": 6,
+          "8": 3,
+          "9": 6
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.5419635772705078,
+          0.35887232422828674,
+          0.2856142520904541,
+          0.23746612668037415
+        ],
+        "slot_weight_means": [
+          0.36419031023979187,
+          0.24572879076004028,
+          0.2081640362739563,
+          0.18191686272621155
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          30,
+          31
+        ]
+      },
+      "wall_seconds": 0.4269107689615339
+    },
+    {
+      "attention": {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 23,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "apa_selective_sink_fused",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 976, 12282, 19",
+      "graft_capture": null,
+      "graft_mount": {
+        "host_bytes": 33554432,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_023.npz",
+        "sliding_window_limited": false,
+        "token_count": 16384
+      },
+      "hidden_shape": [
+        1,
+        64,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          16448,
+          64
+        ],
+        [
+          1,
+          8,
+          16448,
+          64
+        ]
+      ],
+      "layer": 23,
+      "layer_type": "full_attention",
+      "route_info": {
+        "empty_cache_interval": 0,
+        "expert_histogram": {
+          "0": 4,
+          "10": 3,
+          "12": 26,
+          "13": 27,
+          "14": 9,
+          "15": 3,
+          "16": 7,
+          "18": 11,
+          "19": 31,
+          "2": 2,
+          "20": 2,
+          "21": 16,
+          "22": 5,
+          "23": 6,
+          "24": 43,
+          "26": 1,
+          "28": 8,
+          "3": 9,
+          "31": 12,
+          "4": 6,
+          "6": 7,
+          "7": 18
+        },
+        "expert_mode": "resident_packed_mxfp4",
+        "num_experts_per_tok": 4,
+        "route_detail": "summary",
+        "slot_weight_max": [
+          0.5570597052574158,
+          0.298788458108902,
+          0.25882482528686523,
+          0.24420306086540222
+        ],
+        "slot_weight_means": [
+          0.3206193149089813,
+          0.2543637156486511,
+          0.22203367948532104,
+          0.2029832899570465
+        ],
+        "token_count": 64,
+        "unique_experts": [
+          0,
+          2,
+          3,
+          4,
+          6,
+          7,
+          10,
+          12,
+          13,
+          14,
+          15,
+          16,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          26,
+          28,
+          31
+        ]
+      },
+      "wall_seconds": 0.5394724170328118
+    }
+  ],
+  "max_layers": null,
+  "max_tokens": 192,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "mount_graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft",
+  "mount_graft_manifest": {
+    "created_at": "2026-07-07T03:41:05",
+    "dtype": "bfloat16",
+    "grm_dialect": {
+      "composition": "multi_mount",
+      "graftability": "seat_remountable",
+      "head_dim": 64,
+      "hidden_dim": 2880,
+      "model_type": "GptOss20B_TC",
+      "num_kv_heads": 8,
+      "num_layers": 24,
+      "payload_kind": "gqa",
+      "position_law": "rope_full_yarn",
+      "remountable": true,
+      "route_layer": 1,
+      "state_kind": "kv",
+      "vals_per_tok_layer": 1024
+    },
+    "layers": [
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 0,
+        "layer_type": "sliding_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_000.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 1,
+        "layer_type": "full_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_001.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 2,
+        "layer_type": "sliding_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_002.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 3,
+        "layer_type": "full_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_003.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 4,
+        "layer_type": "sliding_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_004.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 5,
+        "layer_type": "full_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_005.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 6,
+        "layer_type": "sliding_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_006.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 7,
+        "layer_type": "full_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_007.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 8,
+        "layer_type": "sliding_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_008.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 9,
+        "layer_type": "full_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_009.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 10,
+        "layer_type": "sliding_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_010.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 11,
+        "layer_type": "full_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_011.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 12,
+        "layer_type": "sliding_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_012.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 13,
+        "layer_type": "full_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_013.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 14,
+        "layer_type": "sliding_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_014.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 15,
+        "layer_type": "full_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_015.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 16,
+        "layer_type": "sliding_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_016.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 17,
+        "layer_type": "full_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_017.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 18,
+        "layer_type": "sliding_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_018.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 19,
+        "layer_type": "full_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_019.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 20,
+        "layer_type": "sliding_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_020.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 21,
+        "layer_type": "full_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_021.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 22,
+        "layer_type": "sliding_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_022.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      },
+      {
+        "host_bytes": 33554432,
+        "k_shape": [
+          1,
+          8,
+          16384,
+          64
+        ],
+        "layer": 23,
+        "layer_type": "full_attention",
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft/layer_023.npz",
+        "token_count": 16384,
+        "v_shape": [
+          1,
+          8,
+          16384,
+          64
+        ]
+      }
+    ],
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "note": "per-layer pre-RoPE K/V shards captured by the streamed GPT-OSS TensorCUDA harness; remount with --mount-graft-dir",
+    "schema": "gpt_oss_20b_prerope_graft_manifest_v1",
+    "token_count": 16384,
+    "total_host_bytes": 805306368
+  },
+  "mount_graft_tokens": 16384,
+  "mount_position_note": "live tokens are RoPE-shifted after mounted graft seats; GPT-OSS sliding layers remain limited by their sliding window",
+  "note": "streamed full-stack forward path with quantized TensorCUDA lm_head; score_ppl writes a teacher-forced window receipt, but this artifact alone is not generation quality, context, or GRM evidence",
+  "ppl": null,
+  "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT C, what was the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archive color was **GRAY**.<|return|> The archive",
+  "prompt_source": "arg",
+  "raw_token_count": 64,
+  "refine_percentile": 0.15,
+  "rendered_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT C, what was the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archive color was **GRAY**.<|return|> The archive",
+  "resolved_layers": 24,
+  "rope_table_length": 16448,
+  "route_detail": "summary",
+  "score_ppl": false,
+  "sink_aware_apa_available": true,
+  "skip_lm_head": false,
+  "status": "ok",
+  "target_ids": null,
+  "top_tokens": [
+    {
+      "logit": 21.625,
+      "rank": 0,
+      "text": " color",
+      "token_id": 3089
+    },
+    {
+      "logit": 17.375,
+      "rank": 1,
+      "text": " was",
+      "token_id": 673
+    },
+    {
+      "logit": 16.375,
+      "rank": 2,
+      "text": "\u2019s",
+      "token_id": 802
+    },
+    {
+      "logit": 16.375,
+      "rank": 3,
+      "text": " is",
+      "token_id": 382
+    },
+    {
+      "logit": 15.75,
+      "rank": 4,
+      "text": " colour",
+      "token_id": 16458
+    },
+    {
+      "logit": 14.75,
+      "rank": 5,
+      "text": " in",
+      "token_id": 306
+    },
+    {
+      "logit": 14.4375,
+      "rank": 6,
+      "text": "\u2011",
+      "token_id": 50005
+    },
+    {
+      "logit": 14.25,
+      "rank": 7,
+      "text": " \u201c",
+      "token_id": 966
+    },
+    {
+      "logit": 13.625,
+      "rank": 8,
+      "text": "'s",
+      "token_id": 885
+    },
+    {
+      "logit": 13.5625,
+      "rank": 9,
+      "text": " (",
+      "token_id": 350
+    }
+  ],
+  "use_chat_template": false,
+  "wall_seconds": 22.60852949199034
+}

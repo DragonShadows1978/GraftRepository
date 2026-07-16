@@ -1,0 +1,131 @@
+{
+  "cache_after_plant": {
+    "all_S_equal": true,
+    "full_S0": 51,
+    "full_S_unique": [
+      51
+    ],
+    "live_shift_on_layers_unique": [
+      "405"
+    ],
+    "n_layers": 56,
+    "sliding_S0": 51,
+    "sliding_S_unique": [
+      51
+    ]
+  },
+  "cache_post_gen": {
+    "all_S_equal": true,
+    "full_S0": 93,
+    "full_S_unique": [
+      93
+    ],
+    "live_shift_on_layers_unique": [
+      "405"
+    ],
+    "n_layers": 56,
+    "sliding_S0": 93,
+    "sliding_S_unique": [
+      93
+    ]
+  },
+  "cache_pre_gen": {
+    "all_S_equal": true,
+    "full_S0": 51,
+    "full_S_unique": [
+      51
+    ],
+    "live_shift_on_layers_unique": [
+      "405"
+    ],
+    "n_layers": 56,
+    "sliding_S0": 51,
+    "sliding_S_unique": [
+      51
+    ]
+  },
+  "cur_mount_n": 0,
+  "cur_mounts": [],
+  "fact_evicted": true,
+  "fact_ntok": 52,
+  "full_nope_rope": false,
+  "generation": {
+    "bos_count": 20,
+    "clean_english": false,
+    "collapse_signature": "bos_loop",
+    "ids": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "n_steps": 20,
+    "steps_head": [
+      {
+        "chosen": 0,
+        "pos": 105,
+        "rope0_expected": 487,
+        "tag": "prompt",
+        "text": "<|begin_of_text|>"
+      },
+      {
+        "chosen": 0,
+        "pos": 106,
+        "tag": "g0",
+        "text": "<|begin_of_text|>"
+      },
+      {
+        "chosen": 0,
+        "pos": 107,
+        "tag": "g1",
+        "text": "<|begin_of_text|>"
+      }
+    ],
+    "stop_hit": null,
+    "stopped": false,
+    "text": "<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+    "text_raw": "<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+    "unique_id_ratio": 0.05,
+    "value_recovered": false,
+    "wall_s": 2.832
+  },
+  "graft0_text_head": "<|im_start|>user\nMemory planting turn. The vault code is Vortex-3-Sierra. If asked later for the vault code, answer Vortex-3-Sierra only.<|im_end|>\n<|im_start|>",
+  "label": "w384_control",
+  "live_segs_after_plant": [
+    [
+      1,
+      30
+    ]
+  ],
+  "live_shift": 405,
+  "mount": false,
+  "n_sink": 21,
+  "picks": [],
+  "picks_forced": false,
+  "pos_after_plant": 82,
+  "probe_prompt": "<|im_start|>user\nRecall probe. What is the vault code? Reply with only the value.<|im_end|>\n<|im_start|>assistant\n",
+  "probe_prompt_ntok": 23,
+  "ranking": [],
+  "sink_ntok": 21,
+  "sink_text": "<|im_start|>system\nYou are Trinity. Answer fact probes with the stored value only. Be concise.<|im_end|>\n",
+  "sliding_live_shift_seen": 405,
+  "sliding_rope_at": "position_offset + live_shift (= pos + 405)",
+  "wall_s": 9.654,
+  "width": 384
+}

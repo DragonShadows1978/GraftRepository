@@ -1,0 +1,345 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "classification": "fail",
+  "created_at": "2026-07-07T05:27:26",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "fact_ids": [
+    "vault_keyword"
+  ],
+  "graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft",
+  "hit_count": 0,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "planned_runs": [
+    {
+      "answer": "BLUE",
+      "id": "vault_keyword",
+      "label": "GPT-OSS vault keyword",
+      "placement": {
+        "answer": "BLUE",
+        "answer_token_id": 134698,
+        "id": "vault_keyword",
+        "label": "GPT-OSS vault keyword",
+        "needle_offset_tokens": 3261,
+        "needle_sha256": "a8c84ea9c0ae41d1f2d1ea6d0e270d6d5de7c39dada4f3a773b3bfc06a7065ed",
+        "needle_tokens": 19
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?",
+      "variant": "conversational_slot"
+    }
+  ],
+  "probe_count": 1,
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "runs": [
+    {
+      "answer": "BLUE",
+      "control": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "12",
+            "--max-tokens",
+            "192",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_vault_probe/conversational_slot/vault_keyword/control.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_vault_probe/conversational_slot/vault_keyword/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\\u2019m sorry, but I can\\u2019t help with that.\", \"steps\": [{\"logit\": 23.5, \"rank\": 0, \"text\": \"I\", \"token_id\": 40}, {\"logit\": 25.5, \"rank\": 0, \"text\": \"\\u2019m\", \"token_id\": 4572}, {\"logit\": 26.5, \"rank\": 0, \"text\": \" sorry\", \"token_id\": 23045}, {\"logit\": 27.875, \"rank\": 0, \"text\": \",\", \"token_id\": 11}, {\"logit\": 31.0, \"rank\": 0, \"text\": \" but\", \"token_id\": 889}, {\"logit\": 27.625, \"rank\": 0, \"text\": \" I\", \"token_id\": 357}, {\"logit\": 29.75, \"rank\": 0, \"text\": \" can\", \"token_id\": 665}, {\"logit\": 35.0, \"rank\": 0, \"text\": \"\\u2019t\", \"token_id\": 1573}, {\"logit\": 31.625, \"rank\": 0, \"text\": \" help\", \"token_id\": 1652}, {\"logit\": 30.125, \"rank\": 0, \"text\": \" with\", \"token_id\": 483}, {\"logit\": 33.5, \"rank\": 0, \"text\": \" that\", \"token_id\": 484}, {\"logit\": 27.5, \"rank\": 0, \"text\": \".\", \"token_id\": 13}]}\n",
+          "wall_seconds": 298.16692587098805
+        },
+        "summary": {
+          "answer": "BLUE",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_vault_probe/conversational_slot/vault_keyword/control.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_vault_probe/conversational_slot/vault_keyword/control_steps/step_00.json",
+          "generated_contains_value": false,
+          "generated_text": "I\u2019m sorry, but I can\u2019t help with that.",
+          "hit": false,
+          "normalized_answer": "blue",
+          "normalized_answer_logit": null,
+          "normalized_answer_rank": null,
+          "normalized_answer_text": null,
+          "normalized_hit": false,
+          "normalized_top_token": "i",
+          "status": "ok",
+          "top_token": {
+            "logit": 23.5,
+            "rank": 0,
+            "text": "I",
+            "token_id": 40
+          },
+          "top_tokens": [
+            {
+              "logit": 23.5,
+              "rank": 0,
+              "text": "I",
+              "token_id": 40
+            },
+            {
+              "logit": 19.625,
+              "rank": 1,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 18.25,
+              "rank": 2,
+              "text": "Sorry",
+              "token_id": 33680
+            },
+            {
+              "logit": 17.875,
+              "rank": 3,
+              "text": "I'm",
+              "token_id": 15390
+            },
+            {
+              "logit": 17.875,
+              "rank": 4,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 17.75,
+              "rank": 5,
+              "text": "You",
+              "token_id": 3575
+            },
+            {
+              "logit": 17.375,
+              "rank": 6,
+              "text": "In",
+              "token_id": 637
+            },
+            {
+              "logit": 17.25,
+              "rank": 7,
+              "text": "It",
+              "token_id": 3206
+            },
+            {
+              "logit": 16.5,
+              "rank": 8,
+              "text": "We",
+              "token_id": 2167
+            },
+            {
+              "logit": 16.125,
+              "rank": 9,
+              "text": "Ap",
+              "token_id": 11756
+            }
+          ],
+          "wall_seconds": 293.3174165249802
+        }
+      },
+      "id": "vault_keyword",
+      "label": "GPT-OSS vault keyword",
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "12",
+            "--max-tokens",
+            "192",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_vault_probe/conversational_slot/vault_keyword/mount.json",
+            "--mount-graft-dir",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_vault_probe/conversational_slot/vault_keyword/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\\u2011OSS vault keyword was **BLUE**.<|return|>\", \"steps\": [{\"logit\": 23.0, \"rank\": 0, \"text\": \"The\", \"token_id\": 976}, {\"logit\": 18.625, \"rank\": 0, \"text\": \" GPT\", \"token_id\": 174803}, {\"logit\": 28.375, \"rank\": 0, \"text\": \"\\u2011\", \"token_id\": 50005}, {\"logit\": 35.0, \"rank\": 0, \"text\": \"OSS\", \"token_id\": 26496}, {\"logit\": 22.125, \"rank\": 0, \"text\": \" vault\", \"token_id\": 56538}, {\"logit\": 21.375, \"rank\": 0, \"text\": \" keyword\", \"token_id\": 26463}, {\"logit\": 21.25, \"rank\": 0, \"text\": \" was\", \"token_id\": 673}, {\"logit\": 22.75, \"rank\": 0, \"text\": \" **\", \"token_id\": 6240}, {\"logit\": 25.25, \"rank\": 0, \"text\": \"BLUE\", \"token_id\": 134698}, {\"logit\": 28.75, \"rank\": 0, \"text\": \"**\", \"token_id\": 410}, {\"logit\": 24.375, \"rank\": 0, \"text\": \".\", \"token_id\": 13}, {\"logit\": 27.25, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}]}\n",
+          "wall_seconds": 331.6579055740149
+        },
+        "summary": {
+          "answer": "BLUE",
+          "answer_logit": 17.625,
+          "answer_rank": 4,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_vault_probe/conversational_slot/vault_keyword/mount.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_vault_probe/conversational_slot/vault_keyword/mount_steps/step_00.json",
+          "generated_contains_value": true,
+          "generated_text": "The GPT\u2011OSS vault keyword was **BLUE**.<|return|>",
+          "hit": false,
+          "normalized_answer": "blue",
+          "normalized_answer_logit": 17.625,
+          "normalized_answer_rank": 4,
+          "normalized_answer_text": "BLUE",
+          "normalized_hit": false,
+          "normalized_top_token": "the",
+          "status": "ok",
+          "top_token": {
+            "logit": 23.0,
+            "rank": 0,
+            "text": "The",
+            "token_id": 976
+          },
+          "top_tokens": [
+            {
+              "logit": 23.0,
+              "rank": 0,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 19.75,
+              "rank": 1,
+              "text": "In",
+              "token_id": 637
+            },
+            {
+              "logit": 19.0,
+              "rank": 2,
+              "text": "It",
+              "token_id": 3206
+            },
+            {
+              "logit": 17.75,
+              "rank": 3,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 17.625,
+              "rank": 4,
+              "text": "BLUE",
+              "token_id": 134698
+            },
+            {
+              "logit": 17.375,
+              "rank": 5,
+              "text": "A",
+              "token_id": 32
+            },
+            {
+              "logit": 17.375,
+              "rank": 6,
+              "text": "Blue",
+              "token_id": 15957
+            },
+            {
+              "logit": 17.0,
+              "rank": 7,
+              "text": "I",
+              "token_id": 40
+            },
+            {
+              "logit": 16.0,
+              "rank": 8,
+              "text": "You",
+              "token_id": 3575
+            },
+            {
+              "logit": 16.0,
+              "rank": 9,
+              "text": "CLASS",
+              "token_id": 54314
+            }
+          ],
+          "wall_seconds": 326.7675434310222
+        }
+      },
+      "placement": {
+        "answer": "BLUE",
+        "answer_token_id": 134698,
+        "id": "vault_keyword",
+        "label": "GPT-OSS vault keyword",
+        "needle_offset_tokens": 3261,
+        "needle_sha256": "a8c84ea9c0ae41d1f2d1ea6d0e270d6d5de7c39dada4f3a773b3bfc06a7065ed",
+        "needle_tokens": 19
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?",
+      "variant": "conversational_slot"
+    }
+  ],
+  "schema": "gpt_oss_20b_multifact_addressing_gate_v1",
+  "script_args": {
+    "apa_layer_scope": "full",
+    "attention_mode": "apa_selective",
+    "bulk_bits": 8,
+    "dry_run": false,
+    "expert_empty_cache_interval": 0,
+    "expert_mode": "resident_packed_mxfp4",
+    "fact_ids": "vault_keyword",
+    "graft_dir": null,
+    "max_tokens": 192,
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "output": "artifacts/gpt_oss_20b/h6_multitoken_conversation_vault_probe.json",
+    "refine_percentile": 0.15,
+    "route_detail": "summary",
+    "skip_control": false,
+    "source": "artifacts/gpt_oss_20b/h6_multifact_16k_gate.json",
+    "steps": 12,
+    "top_k": 10,
+    "variants": "conversational_slot"
+  },
+  "source": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate.json",
+  "source_classification": "fail",
+  "source_target_tokens": 16384,
+  "status": "ok",
+  "summary": [
+    {
+      "answer": "BLUE",
+      "control_top": "I",
+      "hit": false,
+      "id": "vault_keyword",
+      "mount_answer_logit": 17.625,
+      "mount_answer_rank": 4,
+      "mount_top": "The",
+      "variant": "conversational_slot"
+    }
+  ],
+  "variants": [
+    "conversational_slot"
+  ],
+  "wall_seconds": 629.828446043015
+}

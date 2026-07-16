@@ -1,0 +1,194 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "created_at": "2026-07-07T06:20:16",
+  "current_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS tool metal was **IRON**.<|return|>",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "final_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS tool metal was **IRON**.<|return|>",
+  "initial_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>",
+  "initial_user_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>",
+  "max_tokens": 192,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "mount_graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft",
+  "note": "greedy smoke via repeated streamed full forwards; no KV cache",
+  "prompt_file": null,
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "status": "ok",
+  "steps": [
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_00.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_00.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 976, \"logit\": 21.75, \"text\": \"The\"}, {\"rank\": 1, \"token_id\": 637, \"logit\": 20.125, \"text\": \"In\"}, {\"rank\": 2, \"token_id\": 3206, \"logit\": 18.875, \"text\": \"It\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 2\"}\n",
+      "step": 0,
+      "top_token": {
+        "logit": 21.75,
+        "rank": 0,
+        "text": "The",
+        "token_id": 976
+      },
+      "wall_seconds": 26.73491382895736
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_01.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_01.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 174803, \"logit\": 17.625, \"text\": \" GPT\"}, {\"rank\": 1, \"token_id\": 11002, \"logit\": 17.0, \"text\": \" metal\"}, {\"rank\": 2, \"token_id\": 37340, \"logit\": 16.5, \"text\": \" classified\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 0\"}\n",
+      "step": 1,
+      "top_token": {
+        "logit": 17.625,
+        "rank": 0,
+        "text": " GPT",
+        "token_id": 174803
+      },
+      "wall_seconds": 26.898156578012276
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_02.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The GPT",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_02.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 50005, \"logit\": 29.125, \"text\": \"\\u2011\"}, {\"rank\": 1, \"token_id\": 12, \"logit\": 22.375, \"text\": \"-\"}, {\"rank\": 2, \"token_id\": 62961, \"logit\": 19.375, \"text\": \"\\u2010\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 2\"}\n",
+      "step": 2,
+      "top_token": {
+        "logit": 29.125,
+        "rank": 0,
+        "text": "\u2011",
+        "token_id": 50005
+      },
+      "wall_seconds": 27.032412737957202
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_03.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_03.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 26496, \"logit\": 34.75, \"text\": \"OSS\"}, {\"rank\": 1, \"token_id\": 164915, \"logit\": 22.25, \"text\": \" OSS\"}, {\"rank\": 2, \"token_id\": 3360, \"logit\": 22.0, \"text\": \"OS\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 2\"}\n",
+      "step": 3,
+      "top_token": {
+        "logit": 34.75,
+        "rank": 0,
+        "text": "OSS",
+        "token_id": 26496
+      },
+      "wall_seconds": 27.125516016967595
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_04.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_04.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 4584, \"logit\": 19.75, \"text\": \" tool\"}, {\"rank\": 1, \"token_id\": 966, \"logit\": 17.0, \"text\": \" \\u201c\"}, {\"rank\": 2, \"token_id\": 11002, \"logit\": 16.875, \"text\": \" metal\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 2\"}\n",
+      "step": 4,
+      "top_token": {
+        "logit": 19.75,
+        "rank": 0,
+        "text": " tool",
+        "token_id": 4584
+      },
+      "wall_seconds": 27.09337516198866
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_05.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS tool",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_05.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 11002, \"logit\": 20.0, \"text\": \" metal\"}, {\"rank\": 1, \"token_id\": 802, \"logit\": 18.0, \"text\": \"\\u2019s\"}, {\"rank\": 2, \"token_id\": 673, \"logit\": 17.5, \"text\": \" was\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 1\"}\n",
+      "step": 5,
+      "top_token": {
+        "logit": 20.0,
+        "rank": 0,
+        "text": " metal",
+        "token_id": 11002
+      },
+      "wall_seconds": 27.188421286991797
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_06.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS tool metal",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_06.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 673, \"logit\": 21.75, \"text\": \" was\"}, {\"rank\": 1, \"token_id\": 13808, \"logit\": 19.75, \"text\": \" mentioned\"}, {\"rank\": 2, \"token_id\": 382, \"logit\": 19.125, \"text\": \" is\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 0\"}\n",
+      "step": 6,
+      "top_token": {
+        "logit": 21.75,
+        "rank": 0,
+        "text": " was",
+        "token_id": 673
+      },
+      "wall_seconds": 27.12700345000485
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_07.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS tool metal was",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_07.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 6240, \"logit\": 22.0, \"text\": \" **\"}, {\"rank\": 1, \"token_id\": 17069, \"logit\": 18.875, \"text\": \" iron\"}, {\"rank\": 2, \"token_id\": 23712, \"logit\": 17.75, \"text\": \" IR\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 14\"}\n",
+      "step": 7,
+      "top_token": {
+        "logit": 22.0,
+        "rank": 0,
+        "text": " **",
+        "token_id": 6240
+      },
+      "wall_seconds": 27.222941435989924
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_08.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS tool metal was **",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_08.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 96951, \"logit\": 27.25, \"text\": \"IRON\"}, {\"rank\": 1, \"token_id\": 58333, \"logit\": 26.625, \"text\": \"iron\"}, {\"rank\": 2, \"token_id\": 4368, \"logit\": 23.125, \"text\": \"IR\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 17\"}\n",
+      "step": 8,
+      "top_token": {
+        "logit": 27.25,
+        "rank": 0,
+        "text": "IRON",
+        "token_id": 96951
+      },
+      "wall_seconds": 27.470675238000695
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_09.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS tool metal was **IRON",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_09.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 410, \"logit\": 27.5, \"text\": \"**\"}, {\"rank\": 1, \"token_id\": 13, \"logit\": 20.125, \"text\": \".\"}, {\"rank\": 2, \"token_id\": 1612, \"logit\": 19.625, \"text\": \"**\\n\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 2\"}\n",
+      "step": 9,
+      "top_token": {
+        "logit": 27.5,
+        "rank": 0,
+        "text": "**",
+        "token_id": 410
+      },
+      "wall_seconds": 27.409950121014845
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_10.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS tool metal was **IRON**",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_10.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 13, \"logit\": 23.125, \"text\": \".\"}, {\"rank\": 1, \"token_id\": 350, \"logit\": 19.375, \"text\": \" (\"}, {\"rank\": 2, \"token_id\": 1805, \"logit\": 19.125, \"text\": \"\\u3010\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 16\"}\n",
+      "step": 10,
+      "top_token": {
+        "logit": 23.125,
+        "rank": 0,
+        "text": ".",
+        "token_id": 13
+      },
+      "wall_seconds": 27.584047909011133
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_11.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS tool metal was **IRON**.",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_11.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 25.0, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 220, \"logit\": 16.625, \"text\": \" \"}, {\"rank\": 2, \"token_id\": 623, \"logit\": 16.0, \"text\": \" The\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 11,
+      "top_token": {
+        "logit": 25.0,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 27.60443496197695
+    }
+  ],
+  "steps_requested": 12,
+  "top_k": 10,
+  "use_chat_template": false,
+  "wall_seconds": 326.49985239398666
+}

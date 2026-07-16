@@ -1,0 +1,503 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "capture_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/capture_forward.json",
+  "capture_ids_file": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/capture_ids.json",
+  "capture_prompt": {
+    "actual_tokens": 4096,
+    "input_mode": "direct_token_ids",
+    "placements": [
+      {
+        "answer": "LUMEN-42",
+        "answer_token_ids": [
+          43,
+          4540,
+          1262,
+          12,
+          4689
+        ],
+        "id": "retention_instruction_a",
+        "kind": "instruction",
+        "label": "retained instruction A response string",
+        "letter": "A",
+        "needle_offset_tokens": 993,
+        "needle_sha256": "06466e8f9f7f1415703e4f84c80800e2576c405bd44a11be5a81ddab99b30574",
+        "needle_tokens": 41
+      },
+      {
+        "answer": "ORBIT-7",
+        "answer_token_ids": [
+          1301,
+          41038,
+          12,
+          22
+        ],
+        "id": "retention_instruction_b",
+        "kind": "instruction",
+        "label": "retained instruction B response string",
+        "letter": "B",
+        "needle_offset_tokens": 2027,
+        "needle_sha256": "8aba63bfef1c366a6f8faf5e275bc7e45b068ad2190b091dc86854e8b0e1fc9b",
+        "needle_tokens": 40
+      },
+      {
+        "answer": "CIPHER-3",
+        "answer_token_ids": [
+          34,
+          155267,
+          12,
+          18
+        ],
+        "id": "retention_instruction_c",
+        "kind": "instruction",
+        "label": "retained instruction C response string",
+        "letter": "C",
+        "needle_offset_tokens": 3060,
+        "needle_sha256": "f8412bdf9fc5511ee4f8534ecac27a266b037674ab01b50aa91ad2d821b88ff7",
+        "needle_tokens": 40
+      }
+    ],
+    "target_tokens": 4096,
+    "total_needle_tokens": 121
+  },
+  "capture_prompt_file": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/capture_prompt.txt",
+  "classification": "fail",
+  "corpus": {
+    "file_count": 43,
+    "kind": "directory",
+    "path": "/mnt/ForgeRealm/GraftRepository/docs",
+    "sha256": "c582ca1378a88369548ed3d9da421373f0ecabc3b270ce3613406ff31b25731d"
+  },
+  "created_at": "2026-07-07T08:20:20",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "generated_classification": "pass",
+  "generated_hit_count": 1,
+  "graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/graft",
+  "hit_count": 0,
+  "item_count": 1,
+  "items": [
+    {
+      "answer": "LUMEN-42",
+      "answer_token_ids": [
+        43,
+        4540,
+        1262,
+        12,
+        4689
+      ],
+      "id": "retention_instruction_a",
+      "kind": "instruction",
+      "label": "retained instruction A response string",
+      "letter": "A",
+      "needle": "\nRETENTION INSTRUCTION A. If the user later asks you to execute retention instruction A, reply exactly LUMEN-42 and do not add any other words.\nEND RETENTION INSTRUCTION A.\n",
+      "user_prompt": "Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string."
+    },
+    {
+      "answer": "ORBIT-7",
+      "answer_token_ids": [
+        1301,
+        41038,
+        12,
+        22
+      ],
+      "id": "retention_instruction_b",
+      "kind": "instruction",
+      "label": "retained instruction B response string",
+      "letter": "B",
+      "needle": "\nRETENTION INSTRUCTION B. If the user later asks you to execute retention instruction B, reply exactly ORBIT-7 and do not add any other words.\nEND RETENTION INSTRUCTION B.\n",
+      "user_prompt": "Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION B now. Return only the retained response string."
+    },
+    {
+      "answer": "CIPHER-3",
+      "answer_token_ids": [
+        34,
+        155267,
+        12,
+        18
+      ],
+      "id": "retention_instruction_c",
+      "kind": "instruction",
+      "label": "retained instruction C response string",
+      "letter": "C",
+      "needle": "\nRETENTION INSTRUCTION C. If the user later asks you to execute retention instruction C, reply exactly CIPHER-3 and do not add any other words.\nEND RETENTION INSTRUCTION C.\n",
+      "user_prompt": "Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION C now. Return only the retained response string."
+    }
+  ],
+  "max_tokens": 192,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "record_mode": "instruction_retention",
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "run_item_ids": [
+    "retention_instruction_a"
+  ],
+  "runs": {
+    "capture": {
+      "cmd": [
+        "/usr/bin/python3",
+        "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_forward_smoke.py",
+        "--model-dir",
+        "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+        "--prompt-file",
+        "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/capture_prompt.txt",
+        "--input-ids-file",
+        "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/capture_ids.json",
+        "--max-tokens",
+        "4096",
+        "--attention-mode",
+        "apa_selective",
+        "--apa-layer-scope",
+        "full",
+        "--refine-percentile",
+        "0.15",
+        "--bulk-bits",
+        "8",
+        "--expert-mode",
+        "resident_packed_mxfp4",
+        "--route-detail",
+        "summary",
+        "--expert-empty-cache-interval",
+        "0",
+        "--skip-lm-head",
+        "--capture-graft-dir",
+        "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/graft",
+        "--output",
+        "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/capture_forward.json"
+      ],
+      "returncode": 0,
+      "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/capture_forward.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"skip_lm_head\": true, \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 502, 12282, 66\"}\n",
+      "wall_seconds": 215.83423087804113
+    },
+    "items": [
+      {
+        "answer": "LUMEN-42",
+        "answer_token_ids": [
+          43,
+          4540,
+          1262,
+          12,
+          4689
+        ],
+        "control": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "16",
+              "--max-tokens",
+              "192",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "apa_selective",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/retention_instruction_a/control.json"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/retention_instruction_a/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string.<|end|><|start|>assistant<|channel|>final<|message|>I\\u2019m sorry, but I can\\u2019t comply with that.<|return|><|return|><|return|><|return|>\", \"steps\": [{\"logit\": 17.5, \"rank\": 0, \"text\": \"I\", \"token_id\": 40}, {\"logit\": 18.375, \"rank\": 0, \"text\": \"\\u2019m\", \"token_id\": 4572}, {\"logit\": 19.25, \"rank\": 0, \"text\": \" sorry\", \"token_id\": 23045}, {\"logit\": 25.0, \"rank\": 0, \"text\": \",\", \"token_id\": 11}, {\"logit\": 26.75, \"rank\": 0, \"text\": \" but\", \"token_id\": 889}, {\"logit\": 22.75, \"rank\": 0, \"text\": \" I\", \"token_id\": 357}, {\"logit\": 25.5, \"rank\": 0, \"text\": \" can\", \"token_id\": 665}, {\"logit\": 29.875, \"rank\": 0, \"text\": \"\\u2019t\", \"token_id\": 1573}, {\"logit\": 27.625, \"rank\": 0, \"text\": \" comply\", \"token_id\": 40206}, {\"logit\": 25.25, \"rank\": 0, \"text\": \" with\", \"token_id\": 483}, {\"logit\": 29.0, \"rank\": 0, \"text\": \" that\", \"token_id\": 484}, {\"logit\": 25.125, \"rank\": 0, \"text\": \".\", \"token_id\": 13}, {\"logit\": 29.0, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 16.75, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 13.375, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 12.6875, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}]}\n",
+            "wall_seconds": 412.47288631403353
+          },
+          "summary": {
+            "answer": "LUMEN-42",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/retention_instruction_a/control.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/retention_instruction_a/control_steps/step_00.json",
+            "generated_contains_value": false,
+            "generated_text": "I\u2019m sorry, but I can\u2019t comply with that.<|return|><|return|><|return|><|return|>",
+            "hit": false,
+            "normalized_answer": "lumen-42",
+            "normalized_answer_logit": null,
+            "normalized_answer_rank": null,
+            "normalized_answer_text": null,
+            "normalized_hit": false,
+            "normalized_top_token": "i",
+            "status": "ok",
+            "top_token": {
+              "logit": 17.5,
+              "rank": 0,
+              "text": "I",
+              "token_id": 40
+            },
+            "top_tokens": [
+              {
+                "logit": 17.5,
+                "rank": 0,
+                "text": "I",
+                "token_id": 40
+              },
+              {
+                "logit": 14.5,
+                "rank": 1,
+                "text": "I'm",
+                "token_id": 15390
+              },
+              {
+                "logit": 14.4375,
+                "rank": 2,
+                "text": "You",
+                "token_id": 3575
+              },
+              {
+                "logit": 14.0,
+                "rank": 3,
+                "text": "The",
+                "token_id": 976
+              },
+              {
+                "logit": 14.0,
+                "rank": 4,
+                "text": "We",
+                "token_id": 2167
+              },
+              {
+                "logit": 13.9375,
+                "rank": 5,
+                "text": "Ret",
+                "token_id": 15595
+              },
+              {
+                "logit": 13.75,
+                "rank": 6,
+                "text": "Sorry",
+                "token_id": 33680
+              },
+              {
+                "logit": 13.3125,
+                "rank": 7,
+                "text": "Turn",
+                "token_id": 24358
+              },
+              {
+                "logit": 13.0,
+                "rank": 8,
+                "text": "It",
+                "token_id": 3206
+              },
+              {
+                "logit": 12.9375,
+                "rank": 9,
+                "text": "[",
+                "token_id": 58
+              }
+            ],
+            "wall_seconds": 407.55362277897075
+          }
+        },
+        "id": "retention_instruction_a",
+        "kind": "instruction",
+        "label": "retained instruction A response string",
+        "letter": "A",
+        "mount": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "16",
+              "--max-tokens",
+              "192",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "apa_selective",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/retention_instruction_a/mount.json",
+              "--mount-graft-dir",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/graft"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/retention_instruction_a/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string.<|end|><|start|>assistant<|channel|>final<|message|>LUMEN-42<|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|>.\", \"steps\": [{\"logit\": 20.625, \"rank\": 0, \"text\": \"L\", \"token_id\": 43}, {\"logit\": 32.5, \"rank\": 0, \"text\": \"UM\", \"token_id\": 4540}, {\"logit\": 36.25, \"rank\": 0, \"text\": \"EN\", \"token_id\": 1262}, {\"logit\": 26.75, \"rank\": 0, \"text\": \"-\", \"token_id\": 12}, {\"logit\": 30.875, \"rank\": 0, \"text\": \"42\", \"token_id\": 4689}, {\"logit\": 27.5, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 19.0, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 16.5, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 13.1875, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 13.4375, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 12.5625, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 12.375, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 11.5625, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 11.3125, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 10.9375, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 10.0625, \"rank\": 0, \"text\": \".\", \"token_id\": 13}]}\n",
+            "wall_seconds": 424.9371379580116
+          },
+          "summary": {
+            "answer": "LUMEN-42",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/retention_instruction_a/mount.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/retention_instruction_a/mount_steps/step_00.json",
+            "generated_contains_value": true,
+            "generated_text": "LUMEN-42<|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|>.",
+            "hit": false,
+            "normalized_answer": "lumen-42",
+            "normalized_answer_logit": null,
+            "normalized_answer_rank": null,
+            "normalized_answer_text": null,
+            "normalized_hit": false,
+            "normalized_top_token": "l",
+            "status": "ok",
+            "top_token": {
+              "logit": 20.625,
+              "rank": 0,
+              "text": "L",
+              "token_id": 43
+            },
+            "top_tokens": [
+              {
+                "logit": 20.625,
+                "rank": 0,
+                "text": "L",
+                "token_id": 43
+              },
+              {
+                "logit": 16.125,
+                "rank": 1,
+                "text": "RET",
+                "token_id": 67713
+              },
+              {
+                "logit": 15.625,
+                "rank": 2,
+                "text": "**",
+                "token_id": 410
+              },
+              {
+                "logit": 15.5,
+                "rank": 3,
+                "text": "I",
+                "token_id": 40
+              },
+              {
+                "logit": 14.9375,
+                "rank": 4,
+                "text": "The",
+                "token_id": 976
+              },
+              {
+                "logit": 14.75,
+                "rank": 5,
+                "text": "We",
+                "token_id": 2167
+              },
+              {
+                "logit": 14.625,
+                "rank": 6,
+                "text": "A",
+                "token_id": 32
+              },
+              {
+                "logit": 14.5,
+                "rank": 7,
+                "text": "Ret",
+                "token_id": 15595
+              },
+              {
+                "logit": 14.25,
+                "rank": 8,
+                "text": " L",
+                "token_id": 451
+              },
+              {
+                "logit": 14.1875,
+                "rank": 9,
+                "text": "[L",
+                "token_id": 112100
+              }
+            ],
+            "wall_seconds": 420.00954014301533
+          }
+        },
+        "placement": {
+          "answer": "LUMEN-42",
+          "answer_token_ids": [
+            43,
+            4540,
+            1262,
+            12,
+            4689
+          ],
+          "id": "retention_instruction_a",
+          "kind": "instruction",
+          "label": "retained instruction A response string",
+          "letter": "A",
+          "needle_offset_tokens": 993,
+          "needle_sha256": "06466e8f9f7f1415703e4f84c80800e2576c405bd44a11be5a81ddab99b30574",
+          "needle_tokens": 41
+        },
+        "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string.<|end|><|start|>assistant<|channel|>final<|message|>"
+      }
+    ]
+  },
+  "schema": "gpt_oss_20b_instruction_retention_gate_v1",
+  "script_args": {
+    "apa_layer_scope": "full",
+    "attention_mode": "apa_selective",
+    "bulk_bits": 8,
+    "corpus_dir": "/mnt/ForgeRealm/GraftRepository/docs",
+    "dry_run": false,
+    "expert_empty_cache_interval": 0,
+    "expert_mode": "resident_packed_mxfp4",
+    "graft_dir": null,
+    "max_layers": null,
+    "max_tokens": 192,
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "output": "artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate.json",
+    "record_id": [
+      "retention_instruction_a"
+    ],
+    "record_mode": "instruction_retention",
+    "refine_percentile": 0.15,
+    "route_detail": "summary",
+    "skip_capture": false,
+    "skip_control": false,
+    "steps": 16,
+    "target_tokens": 4096,
+    "top_k": 10
+  },
+  "status": "ok",
+  "steps": 16,
+  "summary": [
+    {
+      "answer": "LUMEN-42",
+      "control_generated_contains_value": false,
+      "control_generated_text": "I\u2019m sorry, but I can\u2019t comply with that.<|return|><|return|><|return|><|return|>",
+      "control_top": "I",
+      "generated_hit": true,
+      "hit": false,
+      "id": "retention_instruction_a",
+      "kind": "instruction",
+      "mount_answer_logit": null,
+      "mount_answer_rank": null,
+      "mount_generated_contains_value": true,
+      "mount_generated_text": "LUMEN-42<|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|>.",
+      "mount_top": "L"
+    }
+  ],
+  "target_tokens": 4096,
+  "top_k": 10
+}

@@ -1,0 +1,8 @@
+{
+  "experiment": "T1_floor_reverb",
+  "gpu_before": "NVIDIA GeForce RTX 4070 SUPER, 195 MiB, 12282 MiB, 4 %",
+  "model_dir": "/mnt/ForgeRealm/models/trinity-nano",
+  "plan": "/mnt/ForgeRealm/GraftRepository/artifacts/trinity_nope_graft/T1_FLOOR_REVERDICT_IMPLEMENTATION_PLAN.md",
+  "stamp": "20260709_050910",
+  "wall_rail_s": 600.0
+}

@@ -1,0 +1,13 @@
+{
+  "created_at": "2026-07-06T19:03:33",
+  "error": "matmul dtype mismatch",
+  "error_type": "RuntimeError",
+  "gpu_after": "NVIDIA GeForce RTX 4070 SUPER, 497, 12282, 39",
+  "gpu_before": "NVIDIA GeForce RTX 4070 SUPER, 275, 12282, 43",
+  "layer": 0,
+  "max_tokens": 1,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "note": "attention plus selected-expert exact MXFP4 MoE diagnostic; no lm_head, no generation, not packed-kernel viability evidence",
+  "prompt": "The capital of France is Paris.",
+  "status": "error"
+}

@@ -1,0 +1,64 @@
+{
+  "all_passed": false,
+  "passed": 0,
+  "probes": [
+    {
+      "accepts": [
+        "lantern"
+      ],
+      "answer": "The current cypher bridge value is <|constrain|>\n\nIt is The Chat.\n\nIt. The Chat\n\nIt seems like you're trying to create a complex string that",
+      "contains_expected": false,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          7
+        ],
+        "live_turns": 1,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 6,
+        "source_node_live_before": false,
+        "source_turn": 3
+      },
+      "expected": "lantern",
+      "fact_id": "cypher bridge",
+      "mounts": [
+        7
+      ],
+      "old_value": null,
+      "pass": false,
+      "resumed": true,
+      "route_backend": "native",
+      "turn": 5
+    },
+    {
+      "accepts": [
+        "copper"
+      ],
+      "answer": "The current orion pin value is 0.",
+      "contains_expected": false,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          8
+        ],
+        "live_turns": 1,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 4,
+        "source_node_live_before": false,
+        "source_turn": 2
+      },
+      "expected": "copper",
+      "fact_id": "orion pin",
+      "mounts": [
+        5
+      ],
+      "old_value": "amber",
+      "pass": false,
+      "resumed": true,
+      "route_backend": "native",
+      "turn": 6
+    }
+  ],
+  "schema": "grm_e2e_probe_scorecard_v1",
+  "total": 2
+}

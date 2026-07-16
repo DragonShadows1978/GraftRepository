@@ -1,0 +1,298 @@
+{
+  "backend": "cuda",
+  "bridge_results": [
+    [
+      11,
+      31,
+      4,
+      15,
+      29
+    ],
+    [
+      16,
+      29,
+      11,
+      15,
+      27
+    ],
+    [
+      21,
+      6,
+      24,
+      23,
+      8
+    ],
+    [
+      26,
+      21,
+      16,
+      25,
+      31
+    ],
+    [
+      31,
+      30,
+      12,
+      3,
+      9
+    ],
+    [
+      4,
+      7,
+      5,
+      27,
+      10
+    ],
+    [
+      9,
+      7,
+      8,
+      23,
+      25
+    ],
+    [
+      14,
+      20,
+      10,
+      24,
+      16
+    ],
+    [
+      19,
+      29,
+      9,
+      31,
+      8
+    ],
+    [
+      24,
+      25,
+      26,
+      17,
+      22
+    ]
+  ],
+  "bridge_wall_ms_first": 1746.489702,
+  "bridge_wall_ms_min": 0.352052,
+  "bridge_wall_ms_runs": [
+    1746.489702,
+    0.447951,
+    0.364284,
+    0.352192,
+    0.363373,
+    0.352442,
+    0.360337,
+    0.363443,
+    0.352052,
+    0.357361
+  ],
+  "capture": {
+    "capture_dir": "/mnt/ForgeRealm/qwen35_graft_translation_poc/captures",
+    "first_shards": [
+      "/mnt/ForgeRealm/qwen35_graft_translation_poc/captures/source_doc00cd7dc0ec810389_chunk009271.npz",
+      "/mnt/ForgeRealm/qwen35_graft_translation_poc/captures/source_doc00cd7dc0ec810389_chunk009272.npz",
+      "/mnt/ForgeRealm/qwen35_graft_translation_poc/captures/source_doc00cd7dc0ec810389_chunk009273.npz",
+      "/mnt/ForgeRealm/qwen35_graft_translation_poc/captures/source_doc04bc65bb2095774e_chunk007730.npz",
+      "/mnt/ForgeRealm/qwen35_graft_translation_poc/captures/source_doc04bc65bb2095774e_chunk007731.npz"
+    ],
+    "head_dim": 256,
+    "key_name": "l3_k",
+    "key_tokens": 256,
+    "kv_heads": 2,
+    "layer": 3,
+    "role": "source",
+    "shards": 127,
+    "skipped_shape": 1
+  },
+  "direct_cuda_results": [
+    [
+      11,
+      31,
+      4,
+      15,
+      29
+    ],
+    [
+      16,
+      29,
+      11,
+      15,
+      27
+    ],
+    [
+      21,
+      6,
+      24,
+      23,
+      8
+    ],
+    [
+      26,
+      21,
+      16,
+      25,
+      31
+    ],
+    [
+      31,
+      30,
+      12,
+      3,
+      9
+    ],
+    [
+      4,
+      7,
+      5,
+      27,
+      10
+    ],
+    [
+      9,
+      7,
+      8,
+      23,
+      25
+    ],
+    [
+      14,
+      20,
+      10,
+      24,
+      16
+    ],
+    [
+      19,
+      29,
+      9,
+      31,
+      8
+    ],
+    [
+      24,
+      25,
+      26,
+      17,
+      22
+    ]
+  ],
+  "expected_results": [
+    [
+      11,
+      31,
+      4,
+      15,
+      29
+    ],
+    [
+      16,
+      29,
+      11,
+      15,
+      27
+    ],
+    [
+      21,
+      6,
+      24,
+      23,
+      8
+    ],
+    [
+      26,
+      21,
+      16,
+      25,
+      31
+    ],
+    [
+      31,
+      30,
+      12,
+      3,
+      9
+    ],
+    [
+      4,
+      7,
+      5,
+      27,
+      10
+    ],
+    [
+      9,
+      7,
+      8,
+      23,
+      25
+    ],
+    [
+      14,
+      20,
+      10,
+      24,
+      16
+    ],
+    [
+      19,
+      29,
+      9,
+      31,
+      8
+    ],
+    [
+      24,
+      25,
+      26,
+      17,
+      22
+    ]
+  ],
+  "last_cuda_receipt": {
+    "device_route_ms_per_query": 0.12185599654912949,
+    "device_route_ms_runs": [
+      0.10239999741315842,
+      0.09932799637317657,
+      0.12185599654912949
+    ],
+    "device_route_ms_total": 0.12185599654912949,
+    "measured_queries": 1,
+    "route_repeats": 3,
+    "route_wall_ms": 0.149802,
+    "route_wall_ms_first": 0.133922,
+    "route_wall_ms_min": 0.126728,
+    "route_wall_ms_runs": [
+      0.133922,
+      0.126728,
+      0.149802
+    ]
+  },
+  "mismatches": [],
+  "nodes": 32,
+  "parity": true,
+  "preset": "qwen35-2b-attn",
+  "queries": 10,
+  "schema": "grm_gqa_cuda_bridge_smoke_v1",
+  "shape": {
+    "key_bank": [
+      32,
+      2,
+      256,
+      256
+    ],
+    "queries": [
+      10,
+      8,
+      4,
+      256
+    ],
+    "routes": [
+      32,
+      1,
+      2,
+      256,
+      256
+    ]
+  },
+  "topk": 5
+}

@@ -1,0 +1,164 @@
+{
+  "cache_after_evict": {
+    "all_S_equal": true,
+    "full_S0": 43,
+    "full_S_unique": [
+      43
+    ],
+    "live_shift_on_layers_unique": [
+      "99"
+    ],
+    "n_layers": 56,
+    "sliding_S0": 43,
+    "sliding_S_unique": [
+      43
+    ]
+  },
+  "cache_after_plant": {
+    "all_S_equal": true,
+    "full_S0": 22,
+    "full_S_unique": [
+      22
+    ],
+    "live_shift_on_layers_unique": [
+      "99"
+    ],
+    "n_layers": 56,
+    "sliding_S0": 22,
+    "sliding_S_unique": [
+      22
+    ]
+  },
+  "cache_post_gen": {
+    "all_S_equal": true,
+    "full_S0": 86,
+    "full_S_unique": [
+      86
+    ],
+    "live_shift_on_layers_unique": [
+      "99"
+    ],
+    "n_layers": 56,
+    "sliding_S0": 86,
+    "sliding_S_unique": [
+      86
+    ]
+  },
+  "cache_pre_gen": {
+    "all_S_equal": true,
+    "full_S0": 62,
+    "full_S_unique": [
+      62
+    ],
+    "live_shift_on_layers_unique": [
+      "99"
+    ],
+    "n_layers": 56,
+    "sliding_S0": 62,
+    "sliding_S_unique": [
+      62
+    ]
+  },
+  "chat_template_used": false,
+  "cur_mount_n": 19,
+  "cur_mounts": [
+    0
+  ],
+  "fact_evicted": true,
+  "filler_text": "The next notebook paragraph describes a quiet maintenance walk through the archive corridor. The lights were checked, the shelves were dusted, and the operator wrote down that routine observations should continue without changing any earlier record.\n",
+  "generation": {
+    "class": "value_hit",
+    "generated_ids": [
+      111485,
+      44,
+      50,
+      4655,
+      25046,
+      45,
+      7983,
+      394,
+      3926,
+      440,
+      581,
+      1934,
+      25232,
+      10573,
+      7301,
+      290
+    ],
+    "generated_text": "Vortex-3-Sierra. Keep it safe.\nThe next notebook paragraph describes a",
+    "generated_text_raw": " Vortex-3-Sierra. Keep it safe.\nThe next notebook paragraph describes a",
+    "generated_token_texts": [
+      " Vortex",
+      "-",
+      "3",
+      "-S",
+      "ierra",
+      ".",
+      " Keep",
+      " it",
+      " safe",
+      ".\n",
+      "The",
+      " next",
+      " notebook",
+      " paragraph",
+      " describes",
+      " a"
+    ],
+    "n_steps": 16,
+    "prompt_ntok": 9,
+    "prompt_text": "As noted earlier, the vault access code is",
+    "steps_head": [
+      {
+        "arena_pos_after_prompt": 68,
+        "chosen": 111485,
+        "rope0_expected": 158,
+        "tag": "prompt",
+        "text": " Vortex"
+      },
+      {
+        "arena_pos": 69,
+        "chosen": 44,
+        "tag": "g0",
+        "text": "-"
+      },
+      {
+        "arena_pos": 70,
+        "chosen": 50,
+        "tag": "g1",
+        "text": "3"
+      },
+      {
+        "arena_pos": 71,
+        "chosen": 4655,
+        "tag": "g2",
+        "text": "-S"
+      }
+    ],
+    "value_recovered": true,
+    "wall_s": 14.623
+  },
+  "label": "w96_mount",
+  "live_segs_after_evict": [
+    [
+      1,
+      40
+    ]
+  ],
+  "live_shift": 99,
+  "mount": true,
+  "picks": [
+    0
+  ],
+  "picks_forced": false,
+  "plant_ntok": 19,
+  "plant_text": "For the record, the vault access code is Vortex-3-Sierra. Keep it safe.\n",
+  "ranking": [
+    0
+  ],
+  "sink_ntok": 3,
+  "sink_text": "Notebook context:\n",
+  "wall_s": 69.767,
+  "width": 96
+}

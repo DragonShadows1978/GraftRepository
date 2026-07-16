@@ -1,0 +1,194 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "created_at": "2026-07-07T06:28:52",
+  "current_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry, but I can\u2019t help with that.",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "final_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry, but I can\u2019t help with that.",
+  "initial_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+  "initial_user_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+  "max_tokens": 192,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "mount_graft_dir": null,
+  "note": "greedy smoke via repeated streamed full forwards; no KV cache",
+  "prompt_file": null,
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "status": "ok",
+  "steps": [
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_00.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_00.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 40, \"logit\": 23.0, \"text\": \"I\"}, {\"rank\": 1, \"token_id\": 976, \"logit\": 19.625, \"text\": \"The\"}, {\"rank\": 2, \"token_id\": 3206, \"logit\": 18.375, \"text\": \"It\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 796, 12282, 14\"}\n",
+      "step": 0,
+      "top_token": {
+        "logit": 23.0,
+        "rank": 0,
+        "text": "I",
+        "token_id": 40
+      },
+      "wall_seconds": 24.314704557997175
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_01.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_01.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 4572, \"logit\": 25.625, \"text\": \"\\u2019m\"}, {\"rank\": 1, \"token_id\": 665, \"logit\": 21.5, \"text\": \" can\"}, {\"rank\": 2, \"token_id\": 8535, \"logit\": 20.75, \"text\": \" can't\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 796, 12282, 0\"}\n",
+      "step": 1,
+      "top_token": {
+        "logit": 25.625,
+        "rank": 0,
+        "text": "\u2019m",
+        "token_id": 4572
+      },
+      "wall_seconds": 24.289947930024937
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_02.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_02.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 23045, \"logit\": 28.875, \"text\": \" sorry\"}, {\"rank\": 1, \"token_id\": 2715, \"logit\": 20.375, \"text\": \" really\"}, {\"rank\": 2, \"token_id\": 19706, \"logit\": 19.875, \"text\": \" unable\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 796, 12282, 0\"}\n",
+      "step": 2,
+      "top_token": {
+        "logit": 28.875,
+        "rank": 0,
+        "text": " sorry",
+        "token_id": 23045
+      },
+      "wall_seconds": 24.416640640993137
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_03.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_03.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 11, \"logit\": 29.375, \"text\": \",\"}, {\"rank\": 1, \"token_id\": 889, \"logit\": 21.875, \"text\": \" but\"}, {\"rank\": 2, \"token_id\": 395, \"logit\": 20.625, \"text\": \" for\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 794, 12282, 2\"}\n",
+      "step": 3,
+      "top_token": {
+        "logit": 29.375,
+        "rank": 0,
+        "text": ",",
+        "token_id": 11
+      },
+      "wall_seconds": 24.50703837297624
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_04.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry,",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_04.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 889, \"logit\": 30.125, \"text\": \" but\"}, {\"rank\": 1, \"token_id\": 357, \"logit\": 24.125, \"text\": \" I\"}, {\"rank\": 2, \"token_id\": 484, \"logit\": 18.0, \"text\": \" that\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 794, 12282, 0\"}\n",
+      "step": 4,
+      "top_token": {
+        "logit": 30.125,
+        "rank": 0,
+        "text": " but",
+        "token_id": 889
+      },
+      "wall_seconds": 24.51030951901339
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_05.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry, but",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_05.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 357, \"logit\": 28.0, \"text\": \" I\"}, {\"rank\": 1, \"token_id\": 484, \"logit\": 19.0, \"text\": \" that\"}, {\"rank\": 2, \"token_id\": 665, \"logit\": 18.125, \"text\": \" can\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 794, 12282, 0\"}\n",
+      "step": 5,
+      "top_token": {
+        "logit": 28.0,
+        "rank": 0,
+        "text": " I",
+        "token_id": 357
+      },
+      "wall_seconds": 24.666671762999613
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_06.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry, but I",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_06.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 665, \"logit\": 29.0, \"text\": \" can\"}, {\"rank\": 1, \"token_id\": 1700, \"logit\": 23.875, \"text\": \" don\"}, {\"rank\": 2, \"token_id\": 4572, \"logit\": 23.25, \"text\": \"\\u2019m\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 792, 12282, 8\"}\n",
+      "step": 6,
+      "top_token": {
+        "logit": 29.0,
+        "rank": 0,
+        "text": " can",
+        "token_id": 665
+      },
+      "wall_seconds": 24.655765360046644
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_07.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry, but I can",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_07.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 1573, \"logit\": 34.75, \"text\": \"\\u2019t\"}, {\"rank\": 1, \"token_id\": 1606, \"logit\": 19.875, \"text\": \" only\"}, {\"rank\": 2, \"token_id\": 186917, \"logit\": 19.25, \"text\": \"\\u2018t\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 790, 12282, 0\"}\n",
+      "step": 7,
+      "top_token": {
+        "logit": 34.75,
+        "rank": 0,
+        "text": "\u2019t",
+        "token_id": 1573
+      },
+      "wall_seconds": 24.757966393022798
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_08.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry, but I can\u2019t",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_08.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 1652, \"logit\": 29.125, \"text\": \" help\"}, {\"rank\": 1, \"token_id\": 3587, \"logit\": 26.75, \"text\": \" provide\"}, {\"rank\": 2, \"token_id\": 40206, \"logit\": 25.375, \"text\": \" comply\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 790, 12282, 0\"}\n",
+      "step": 8,
+      "top_token": {
+        "logit": 29.125,
+        "rank": 0,
+        "text": " help",
+        "token_id": 1652
+      },
+      "wall_seconds": 24.85074273101054
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_09.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry, but I can\u2019t help",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_09.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 483, \"logit\": 28.875, \"text\": \" with\"}, {\"rank\": 1, \"token_id\": 13, \"logit\": 17.875, \"text\": \".\"}, {\"rank\": 2, \"token_id\": 481, \"logit\": 17.0, \"text\": \" you\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 794, 12282, 0\"}\n",
+      "step": 9,
+      "top_token": {
+        "logit": 28.875,
+        "rank": 0,
+        "text": " with",
+        "token_id": 483
+      },
+      "wall_seconds": 24.89092737005558
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_10.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry, but I can\u2019t help with",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_10.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 484, \"logit\": 33.0, \"text\": \" that\"}, {\"rank\": 1, \"token_id\": 495, \"logit\": 19.875, \"text\": \" this\"}, {\"rank\": 2, \"token_id\": 2617, \"logit\": 17.375, \"text\": \" those\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 792, 12282, 16\"}\n",
+      "step": 10,
+      "top_token": {
+        "logit": 33.0,
+        "rank": 0,
+        "text": " that",
+        "token_id": 484
+      },
+      "wall_seconds": 24.903313422983047
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_11.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>We cleared the prior conversation, but GRM mounted memory is available. What value did CLASSIFIED FACT A store for the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry, but I can\u2019t help with that",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_continuity_16k_gate/conversational_continuity/vault_keyword/control_steps/step_11.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 13, \"logit\": 27.0, \"text\": \".\"}, {\"rank\": 1, \"token_id\": 2616, \"logit\": 19.25, \"text\": \" request\"}, {\"rank\": 2, \"token_id\": 558, \"logit\": 19.0, \"text\": \".\\n\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 794, 12282, 18\"}\n",
+      "step": 11,
+      "top_token": {
+        "logit": 27.0,
+        "rank": 0,
+        "text": ".",
+        "token_id": 13
+      },
+      "wall_seconds": 25.02692376601044
+    }
+  ],
+  "steps_requested": 12,
+  "top_k": 10,
+  "use_chat_template": false,
+  "wall_seconds": 295.80140677903546
+}

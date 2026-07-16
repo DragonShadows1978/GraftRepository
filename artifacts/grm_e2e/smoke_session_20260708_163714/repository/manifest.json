@@ -1,0 +1,404 @@
+{
+ "dialect": "GptOss20B_TC:24x2880:g8x64",
+ "dialect_descriptor": {
+  "model_type": "GptOss20B_TC",
+  "num_layers": 24,
+  "hidden_dim": 2880,
+  "payload_kind": "gqa",
+  "vals_per_tok_layer": 1024,
+  "route_layer": 1,
+  "latent_rank": 0,
+  "rope_dim": 0,
+  "num_kv_heads": 8,
+  "head_dim": 64,
+  "position_law": "rope_full_yarn",
+  "state_kind": "kv",
+  "graftability": "seat_remountable",
+  "remountable": true,
+  "composition": "multi_mount"
+ },
+ "route_layer": 1,
+ "durability_mode": "session_safe",
+ "native_checkpoint": "native/grm_store.bin",
+ "wal_lsn": 16,
+ "review_buffer": [],
+ "nodes": [
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>",
+   "ntok": 86,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "auric-4-alpha"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "superseded_by": [
+     3
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 0,
+   "provenance": [
+    {
+     "segment_id": 0,
+     "node_id": 0,
+     "segment_type": "exchange_span",
+     "created_at": 1783543062.6695023
+    }
+   ]
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke alpha. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Got it.<|end|>",
+   "ntok": 50,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 1,
+   "provenance": []
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact orion pin. The current orion pin value is Kestrel-9-Tango. This is the current value. If asked later, answer Kestrel-9-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Kestrel-9-Tango.<|end|>",
+   "ntok": 92,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "kestrel-9-tango"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 2,
+   "provenance": [
+    {
+     "segment_id": 1,
+     "node_id": 2,
+     "segment_type": "exchange_span",
+     "created_at": 1783543072.74695
+    }
+   ]
+  },
+  {
+   "kind": "fact",
+   "text": "The current orion pin value is Kestrel-9-Tango.",
+   "ntok": 15,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "kestrel-9-tango"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     0
+    ],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 3,
+   "provenance": [
+    {
+     "segment_id": 2,
+     "node_id": 3,
+     "segment_type": "fact_span",
+     "created_at": 1783543073.350895
+    }
+   ]
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>",
+   "ntok": 86,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "vortex-3-sierra"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 4,
+   "provenance": [
+    {
+     "segment_id": 3,
+     "node_id": 4,
+     "segment_type": "exchange_span",
+     "created_at": 1783543078.922184
+    }
+   ]
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke beta. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry, but I can\u2019t comply with that.<|end|>",
+   "ntok": 59,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 5,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current cypher bridge value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Vortex-3-Sierra<|end|>",
+   "ntok": 52,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "vortex-3-sierra"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 6,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>The current cypher bridge value is Vortex-3-Sierra.<|end|>",
+   "ntok": 60,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "vortex-3-sierra"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 7,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke gamma. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>I will respond with the cypher is Vortex-3-Sierra.<|end|>",
+   "ntok": 62,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "vortex-3-sierra"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 8,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke delta. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|><|end|>",
+   "ntok": 47,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 9,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke epsilon. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|><|end|>",
+   "ntok": 47,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 10,
+   "provenance": []
+  }
+ ]
+}

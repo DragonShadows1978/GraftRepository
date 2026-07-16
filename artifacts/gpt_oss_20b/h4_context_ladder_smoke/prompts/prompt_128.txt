@@ -1,0 +1,13 @@
+# DeepSeek-V2-Lite APA + MLA Latent INT4 Results
+
+Date: 2026-06-27
+
+## Verdict
+
+DeepSeek-V2-Lite's MLA latent cache tolerates INT4 storage well enough for
+the full configured YaRN resident cache plus one decode token to fit on the
+12GB card. That is a cache/decode result, not proof that every prefill path can
+ingest a real 163K-token prompt.
+
+The first real-token prefill fix is now landed in the local DeepSeek loader:
+`attention_mode="absorbed_exact"` keeps prefill in MLA latent space instead

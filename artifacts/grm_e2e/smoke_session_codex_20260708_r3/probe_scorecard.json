@@ -1,0 +1,66 @@
+{
+  "all_passed": false,
+  "passed": 1,
+  "probes": [
+    {
+      "accepts": [
+        "copper"
+      ],
+      "answer": "copper<|return|>.",
+      "contains_expected": true,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          4,
+          5
+        ],
+        "live_turns": 2,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 3,
+        "source_node_live_before": false,
+        "source_turn": 2
+      },
+      "expected": "copper",
+      "fact_id": "orion pin",
+      "mounts": [
+        3
+      ],
+      "old_value": "amber",
+      "pass": true,
+      "resumed": true,
+      "route_backend": "native",
+      "turn": 5
+    },
+    {
+      "accepts": [
+        "lantern"
+      ],
+      "answer": "I\u2019m sorry, but I can\u2019t comply with that.<|return|><|channel|>assistant<|channel|>analysis<|message|>We must not reveal that we",
+      "contains_expected": false,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          6,
+          7
+        ],
+        "live_turns": 2,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 4,
+        "source_node_live_before": false,
+        "source_turn": 3
+      },
+      "expected": "lantern",
+      "fact_id": "cypher bridge",
+      "mounts": [
+        3
+      ],
+      "old_value": null,
+      "pass": false,
+      "resumed": true,
+      "route_backend": "native",
+      "turn": 7
+    }
+  ],
+  "schema": "grm_e2e_probe_scorecard_v1",
+  "total": 2
+}

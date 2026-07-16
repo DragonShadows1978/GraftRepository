@@ -1,0 +1,291 @@
+{
+  "A_ids": [
+    40,
+    738,
+    9570,
+    483,
+    392,
+    53,
+    78222,
+    12,
+    18,
+    6968,
+    23181,
+    1,
+    472,
+    290,
+    16240,
+    1432
+  ],
+  "A_text": "I will respond with \"Vortex-3-Sierra\" as the stored value",
+  "B_ids": [
+    40,
+    4720,
+    3357,
+    484,
+    306,
+    4246,
+    13,
+    200002
+  ],
+  "B_text": "I\u2019ll keep that in mind.",
+  "C_text": "The current cypher bridge value is Vortex-3-Sierra.<|return|>.",
+  "D_step_text": "I\u2019ll keep that in mind.",
+  "classification_A_vs_B": {
+    "candidates": [
+      "c_stop_or_commit_slicing"
+    ],
+    "class": "c_stop_or_commit_slicing",
+    "first_div_step": 0,
+    "note": "See divergence receipt for numeric mismatch."
+  },
+  "compare_prompt": "step_harmony_prompt",
+  "divergence_A_vs_B": {
+    "A_cache": {
+      "all_equal": true,
+      "full_S0": 116,
+      "full_S_unique": [
+        116
+      ],
+      "n_layers": 24,
+      "sliding_S0": 116,
+      "sliding_S_unique": [
+        116
+      ]
+    },
+    "A_chosen": {
+      "id": 40,
+      "text": "I"
+    },
+    "A_pre_pos": 97,
+    "A_rope_start": 212,
+    "B_cache": {
+      "all_equal": true,
+      "full_S0": 116,
+      "full_S_unique": [
+        116
+      ],
+      "n_layers": 24,
+      "sliding_S0": 116,
+      "sliding_S_unique": [
+        116
+      ]
+    },
+    "B_chosen": {
+      "id": 40,
+      "text": "I"
+    },
+    "B_pre_pos": 97,
+    "B_rope_start": 212,
+    "diffs": {
+      "top5_ids": {
+        "A": [
+          40,
+          62915,
+          52301,
+          17886,
+          976
+        ],
+        "B": [
+          40,
+          62915,
+          52301,
+          976,
+          160889
+        ]
+      }
+    },
+    "step": 0
+  },
+  "divergence_A_vs_C_prompt_delta": {
+    "A_cache": {
+      "all_equal": true,
+      "full_S0": 116,
+      "full_S_unique": [
+        116
+      ],
+      "n_layers": 24,
+      "sliding_S0": 116,
+      "sliding_S_unique": [
+        116
+      ]
+    },
+    "A_chosen": {
+      "id": 40,
+      "text": "I"
+    },
+    "A_pre_pos": 97,
+    "A_rope_start": 212,
+    "B_cache": {
+      "all_equal": true,
+      "full_S0": 116,
+      "full_S_unique": [
+        116
+      ],
+      "n_layers": 24,
+      "sliding_S0": 116,
+      "sliding_S_unique": [
+        116
+      ]
+    },
+    "B_chosen": {
+      "id": 976,
+      "text": "The"
+    },
+    "B_pre_pos": 97,
+    "B_rope_start": 212,
+    "diffs": {
+      "chosen_id": {
+        "A": 40,
+        "B": 976
+      },
+      "post_cache": {
+        "A": {
+          "all_equal": true,
+          "full_S0": 162,
+          "full_S_unique": [
+            162
+          ],
+          "n_layers": 24,
+          "sliding_S0": 162,
+          "sliding_S_unique": [
+            162
+          ]
+        },
+        "B": {
+          "all_equal": true,
+          "full_S0": 143,
+          "full_S_unique": [
+            143
+          ],
+          "n_layers": 24,
+          "sliding_S0": 143,
+          "sliding_S_unique": [
+            143
+          ]
+        }
+      },
+      "post_pos": {
+        "A": 143,
+        "B": 124
+      },
+      "top5_ids": {
+        "A": [
+          40,
+          62915,
+          52301,
+          17886,
+          976
+        ],
+        "B": [
+          976,
+          40,
+          17886,
+          52301,
+          3575
+        ]
+      }
+    },
+    "step": 0
+  },
+  "prompt_sha256": "9025cc17865f2b94e8a4df8822ec0333347363728197752deb443441bb0d47f0",
+  "prompts": {
+    "byte_equal": false,
+    "id_equal": false,
+    "leg1_prefix": {
+      "ids_head": [
+        200006,
+        1428,
+        200008,
+        170167,
+        31925,
+        13,
+        4614,
+        382,
+        290,
+        2208,
+        5504,
+        29878,
+        23273,
+        1432,
+        30,
+        40500
+      ],
+      "n_ids": 27,
+      "sha256": "5c5f09446230df2c5ba4a0e1111216323068e12a1430bfd9c54e034f60bc4027",
+      "text": "<|start|>user<|message|>Recall probe. What is the current cypher bridge value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>"
+    },
+    "step_harmony_turn": {
+      "ids_head": [
+        200006,
+        17360,
+        200008,
+        3575,
+        553,
+        17554,
+        162016,
+        13,
+        57369,
+        289,
+        25,
+        4465,
+        13,
+        13888,
+        9334,
+        25
+      ],
+      "n_ids": 46,
+      "sha256": "9025cc17865f2b94e8a4df8822ec0333347363728197752deb443441bb0d47f0",
+      "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current cypher bridge value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>"
+    }
+  },
+  "schema": "grm_e2e_step_vs_manual_ab_v1",
+  "setup": {
+    "cache": {
+      "all_equal": true,
+      "full_S0": 116,
+      "full_S_unique": [
+        116
+      ],
+      "n_layers": 24,
+      "sliding_S0": 116,
+      "sliding_S_unique": [
+        116
+      ]
+    },
+    "cur_mount_n": 65,
+    "cur_mounts": [
+      0
+    ],
+    "graft0_ntok": 65,
+    "graft0_text_head": "<|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If",
+    "live_segs": [
+      [
+        1,
+        32
+      ]
+    ],
+    "live_shift": 115,
+    "n_sink": 19,
+    "picks": [
+      0
+    ],
+    "picks_forced": false,
+    "pos": 97,
+    "ranking": [
+      0
+    ],
+    "width": 96
+  },
+  "setup_rebuild_equal_A_B": true,
+  "value_in_A": true,
+  "value_in_B": false,
+  "value_in_C": true,
+  "value_in_D": false,
+  "walls": {
+    "A": 2.3821755619992473,
+    "B": 1.9331242999996903,
+    "C": 1.8335450459999265,
+    "D": 2.567790156999763
+  }
+}

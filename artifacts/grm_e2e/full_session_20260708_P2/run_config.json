@@ -1,0 +1,293 @@
+{
+  "arena_width": 96,
+  "env": {
+    "GRM_GQA_CUDA_ROUTE": "1",
+    "GRM_GRAFT_STORAGE_BITS": "8"
+  },
+  "gpu_idle_check": {
+    "checks": [
+      {
+        "pids": [],
+        "waited_s": 0
+      }
+    ],
+    "idle": true,
+    "waited_s": 0
+  },
+  "live_turns": 2,
+  "max_trips": 1,
+  "mode": "full",
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "native_lib": "/mnt/ForgeRealm/GraftRepository/cpp/build/libgrm_runtime.so",
+  "ngen": 32,
+  "restart_after": 17,
+  "schema": "grm_e2e_session_config_v1",
+  "script": [
+    {
+      "assistant": "Understood \u2014 the current orion pin value is Auric-4-Alpha.",
+      "fact_id": "orion pin",
+      "fact_phrase": "current orion pin value is Auric-4-Alpha",
+      "kind": "fact",
+      "user": "Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.",
+      "value": "Auric-4-Alpha"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler full alpha. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "assistant": "Understood \u2014 the current lyra dock value is Nadir-1-Delta.",
+      "fact_id": "lyra dock",
+      "fact_phrase": "current lyra dock value is Nadir-1-Delta",
+      "kind": "fact",
+      "user": "Memory planting turn. fact lyra dock. The current lyra dock value is Nadir-1-Delta. If asked later for lyra dock, answer Nadir-1-Delta only.",
+      "value": "Nadir-1-Delta"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler full beta. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "assistant": "Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.",
+      "fact_id": "cypher bridge",
+      "fact_phrase": "current cypher bridge value is Vortex-3-Sierra",
+      "kind": "fact",
+      "user": "Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.",
+      "value": "Vortex-3-Sierra"
+    },
+    {
+      "accepts": [
+        "Auric-4-Alpha"
+      ],
+      "expected": "Auric-4-Alpha",
+      "fact_id": "orion pin",
+      "kind": "probe",
+      "old_value": null,
+      "source_turn": 0,
+      "supersession": false,
+      "user": "Recall probe. What is the current orion pin value? Reply with only the value."
+    },
+    {
+      "assistant": "Understood \u2014 the current orion pin value is Kestrel-9-Tango.",
+      "correction_command": "correct memory: current orion pin value is Auric-4-Alpha => The current orion pin value is Kestrel-9-Tango.",
+      "fact_id": "orion pin",
+      "fact_phrase": "current orion pin value is Kestrel-9-Tango",
+      "kind": "supersede",
+      "old_value": "Auric-4-Alpha",
+      "user": "Authoritative update turn. fact orion pin. The current orion pin value is Kestrel-9-Tango. This is the current value. If asked later, answer Kestrel-9-Tango only.",
+      "value": "Kestrel-9-Tango"
+    },
+    {
+      "assistant": "Understood \u2014 the current nova key value is Quartz-5-Bravo.",
+      "fact_id": "nova key",
+      "fact_phrase": "current nova key value is Quartz-5-Bravo",
+      "kind": "fact",
+      "user": "Memory planting turn. fact nova key. The current nova key value is Quartz-5-Bravo. If asked later for nova key, answer Quartz-5-Bravo only.",
+      "value": "Quartz-5-Bravo"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler full gamma. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "accepts": [
+        "Vortex-3-Sierra"
+      ],
+      "expected": "Vortex-3-Sierra",
+      "fact_id": "cypher bridge",
+      "kind": "probe",
+      "old_value": null,
+      "source_turn": 4,
+      "supersession": false,
+      "user": "Recall probe. What is the current cypher bridge value? Reply with only the value."
+    },
+    {
+      "assistant": "Understood \u2014 the current mira seal value is Silver-6-Charlie.",
+      "fact_id": "mira seal",
+      "fact_phrase": "current mira seal value is Silver-6-Charlie",
+      "kind": "fact",
+      "user": "Memory planting turn. fact mira seal. The current mira seal value is Silver-6-Charlie. If asked later for mira seal, answer Silver-6-Charlie only.",
+      "value": "Silver-6-Charlie"
+    },
+    {
+      "assistant": "Understood \u2014 the current lyra dock value is Zenith-2-Echo.",
+      "correction_command": "correct memory: current lyra dock value is Nadir-1-Delta => The current lyra dock value is Zenith-2-Echo.",
+      "fact_id": "lyra dock",
+      "fact_phrase": "current lyra dock value is Zenith-2-Echo",
+      "kind": "supersede",
+      "old_value": "Nadir-1-Delta",
+      "user": "Authoritative update turn. fact lyra dock. The current lyra dock value is Zenith-2-Echo. This is the current value. If asked later, answer Zenith-2-Echo only.",
+      "value": "Zenith-2-Echo"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler full delta. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "accepts": [
+        "Kestrel-9-Tango"
+      ],
+      "expected": "Kestrel-9-Tango",
+      "fact_id": "orion pin",
+      "kind": "probe",
+      "old_value": "Auric-4-Alpha",
+      "source_turn": 6,
+      "supersession": true,
+      "user": "Recall probe. What is the current orion pin value? Reply with only the value."
+    },
+    {
+      "assistant": "Understood \u2014 the current terra port value is Harbor-8-Golf.",
+      "fact_id": "terra port",
+      "fact_phrase": "current terra port value is Harbor-8-Golf",
+      "kind": "fact",
+      "user": "Memory planting turn. fact terra port. The current terra port value is Harbor-8-Golf. If asked later for terra port, answer Harbor-8-Golf only.",
+      "value": "Harbor-8-Golf"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler full epsilon. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "accepts": [
+        "Zenith-2-Echo"
+      ],
+      "expected": "Zenith-2-Echo",
+      "fact_id": "lyra dock",
+      "kind": "probe",
+      "old_value": "Nadir-1-Delta",
+      "source_turn": 11,
+      "supersession": true,
+      "user": "Recall probe. What is the current lyra dock value? Reply with only the value."
+    },
+    {
+      "assistant": "Understood \u2014 the current mira seal value is Gold-7-Foxtrot.",
+      "correction_command": "correct memory: current mira seal value is Silver-6-Charlie => The current mira seal value is Gold-7-Foxtrot.",
+      "fact_id": "mira seal",
+      "fact_phrase": "current mira seal value is Gold-7-Foxtrot",
+      "kind": "supersede",
+      "old_value": "Silver-6-Charlie",
+      "user": "Authoritative update turn. fact mira seal. The current mira seal value is Gold-7-Foxtrot. This is the current value. If asked later, answer Gold-7-Foxtrot only.",
+      "value": "Gold-7-Foxtrot"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler full zeta. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "accepts": [
+        "Quartz-5-Bravo"
+      ],
+      "expected": "Quartz-5-Bravo",
+      "fact_id": "nova key",
+      "kind": "probe",
+      "old_value": null,
+      "source_turn": 7,
+      "supersession": false,
+      "user": "Recall probe. What is the current nova key value? Reply with only the value."
+    },
+    {
+      "assistant": "Understood \u2014 the current ember code value is Violet-2-Hotel.",
+      "fact_id": "ember code",
+      "fact_phrase": "current ember code value is Violet-2-Hotel",
+      "kind": "fact",
+      "user": "Memory planting turn. fact ember code. The current ember code value is Violet-2-Hotel. If asked later for ember code, answer Violet-2-Hotel only.",
+      "value": "Violet-2-Hotel"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler full eta. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "accepts": [
+        "Gold-7-Foxtrot"
+      ],
+      "expected": "Gold-7-Foxtrot",
+      "fact_id": "mira seal",
+      "kind": "probe",
+      "old_value": "Silver-6-Charlie",
+      "source_turn": 17,
+      "supersession": true,
+      "user": "Recall probe. What is the current mira seal value? Reply with only the value."
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler full theta. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "accepts": [
+        "Harbor-8-Golf"
+      ],
+      "expected": "Harbor-8-Golf",
+      "fact_id": "terra port",
+      "kind": "probe",
+      "old_value": null,
+      "source_turn": 14,
+      "supersession": false,
+      "user": "Recall probe. What is the current terra port value? Reply with only the value."
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler full iota. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "accepts": [
+        "Violet-2-Hotel"
+      ],
+      "expected": "Violet-2-Hotel",
+      "fact_id": "ember code",
+      "kind": "probe",
+      "old_value": null,
+      "source_turn": 20,
+      "supersession": false,
+      "user": "Recall probe. What is the current ember code value? Reply with only the value."
+    },
+    {
+      "assistant": "Understood \u2014 the current atlas tone value is Cobalt-1-India.",
+      "fact_id": "atlas tone",
+      "fact_phrase": "current atlas tone value is Cobalt-1-India",
+      "kind": "fact",
+      "user": "Memory planting turn. fact atlas tone. The current atlas tone value is Cobalt-1-India. If asked later for atlas tone, answer Cobalt-1-India only.",
+      "value": "Cobalt-1-India"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler full kappa. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler full lambda. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "accepts": [
+        "Cobalt-1-India"
+      ],
+      "expected": "Cobalt-1-India",
+      "fact_id": "atlas tone",
+      "kind": "probe",
+      "old_value": null,
+      "source_turn": 27,
+      "supersession": false,
+      "user": "Recall probe. What is the current atlas tone value? Reply with only the value."
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler full mu. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "assistant": "Understood \u2014 the current polaris mark value is Marble-4-Juliet.",
+      "fact_id": "polaris mark",
+      "fact_phrase": "current polaris mark value is Marble-4-Juliet",
+      "kind": "fact",
+      "user": "Memory planting turn. fact polaris mark. The current polaris mark value is Marble-4-Juliet. If asked later for polaris mark, answer Marble-4-Juliet only.",
+      "value": "Marble-4-Juliet"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler full nu. Acknowledge briefly. Do not change any stored fact values."
+    }
+  ],
+  "session_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_e2e/full_session_20260708_P2",
+  "template_decision": "ArenaCache prompt_template + stop_sequences hook; probe/filler use real GRMRuntime.chat()/ArenaCache.step(); fact/supersede plants use arena.feed() COMPLETE turns (scripted acceptance; value-bearing deposit, no free-gen).",
+  "topk": 3,
+  "turns": 34
+}

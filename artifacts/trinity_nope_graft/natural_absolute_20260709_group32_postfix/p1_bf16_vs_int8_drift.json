@@ -1,0 +1,253 @@
+{
+  "evidence_class": "teacher-forced INT8-resident logits vs saved BF16 HF P1 logits",
+  "max_abs_delta_logit": 0.8276119232177734,
+  "multi_logit_drift_stop": false,
+  "reference_path": "/mnt/ForgeRealm/Project-Tensor/artifacts/trinity_nano/reference_capture_fp32/probe_00_plain_short.npz",
+  "step_count": 8,
+  "steps": [
+    {
+      "argmax_id": 8849,
+      "bf16_argmax_id": 8849,
+      "bf16_top5_ids": [
+        8849,
+        487,
+        290,
+        4999,
+        296
+      ],
+      "int8_top5_ids": [
+        8849,
+        290,
+        487,
+        4999,
+        296
+      ],
+      "max_abs_delta_logit": 0.5616970062255859,
+      "mean_abs_delta_logit": 0.08559046685695648,
+      "step": 0,
+      "top5_exact": false,
+      "top5_overlap_count": 5,
+      "top5_overlap_ids": [
+        290,
+        296,
+        487,
+        4999,
+        8849
+      ]
+    },
+    {
+      "argmax_id": 45,
+      "bf16_argmax_id": 45,
+      "bf16_top5_ids": [
+        45,
+        43,
+        373,
+        440,
+        326
+      ],
+      "int8_top5_ids": [
+        45,
+        43,
+        373,
+        440,
+        326
+      ],
+      "max_abs_delta_logit": 0.7498116493225098,
+      "mean_abs_delta_logit": 0.13611985743045807,
+      "step": 1,
+      "top5_exact": true,
+      "top5_overlap_count": 5,
+      "top5_overlap_ids": [
+        43,
+        45,
+        326,
+        373,
+        440
+      ]
+    },
+    {
+      "argmax_id": 671,
+      "bf16_argmax_id": 671,
+      "bf16_top5_ids": [
+        671,
+        405,
+        8849,
+        252,
+        1542
+      ],
+      "int8_top5_ids": [
+        671,
+        405,
+        8849,
+        252,
+        704
+      ],
+      "max_abs_delta_logit": 0.8276119232177734,
+      "mean_abs_delta_logit": 0.1633412390947342,
+      "step": 2,
+      "top5_exact": false,
+      "top5_overlap_count": 4,
+      "top5_overlap_ids": [
+        252,
+        405,
+        671,
+        8849
+      ]
+    },
+    {
+      "argmax_id": 351,
+      "bf16_argmax_id": 351,
+      "bf16_top5_ids": [
+        351,
+        414,
+        651,
+        493,
+        556
+      ],
+      "int8_top5_ids": [
+        351,
+        414,
+        651,
+        493,
+        556
+      ],
+      "max_abs_delta_logit": 0.49030447006225586,
+      "mean_abs_delta_logit": 0.08330533653497696,
+      "step": 3,
+      "top5_exact": true,
+      "top5_overlap_count": 5,
+      "top5_overlap_ids": [
+        351,
+        414,
+        493,
+        556,
+        651
+      ]
+    },
+    {
+      "argmax_id": 296,
+      "bf16_argmax_id": 4999,
+      "bf16_top5_ids": [
+        4999,
+        296,
+        290,
+        772,
+        653
+      ],
+      "int8_top5_ids": [
+        296,
+        4999,
+        772,
+        290,
+        653
+      ],
+      "max_abs_delta_logit": 0.5251085758209229,
+      "mean_abs_delta_logit": 0.08457136899232864,
+      "step": 4,
+      "top5_exact": false,
+      "top5_overlap_count": 5,
+      "top5_overlap_ids": [
+        290,
+        296,
+        653,
+        772,
+        4999
+      ]
+    },
+    {
+      "argmax_id": 320,
+      "bf16_argmax_id": 320,
+      "bf16_top5_ids": [
+        320,
+        376,
+        475,
+        2418,
+        1434
+      ],
+      "int8_top5_ids": [
+        320,
+        376,
+        2418,
+        475,
+        1434
+      ],
+      "max_abs_delta_logit": 0.7440904378890991,
+      "mean_abs_delta_logit": 0.12308474630117416,
+      "step": 5,
+      "top5_exact": false,
+      "top5_overlap_count": 5,
+      "top5_overlap_ids": [
+        320,
+        376,
+        475,
+        1434,
+        2418
+      ]
+    },
+    {
+      "argmax_id": 296,
+      "bf16_argmax_id": 296,
+      "bf16_top5_ids": [
+        296,
+        6766,
+        10499,
+        10972,
+        48962
+      ],
+      "int8_top5_ids": [
+        296,
+        6766,
+        10499,
+        10972,
+        48962
+      ],
+      "max_abs_delta_logit": 0.5747184753417969,
+      "mean_abs_delta_logit": 0.08226555585861206,
+      "step": 6,
+      "top5_exact": true,
+      "top5_overlap_count": 5,
+      "top5_overlap_ids": [
+        296,
+        6766,
+        10499,
+        10972,
+        48962
+      ]
+    },
+    {
+      "argmax_id": 6766,
+      "bf16_argmax_id": 6766,
+      "bf16_top5_ids": [
+        6766,
+        10499,
+        3741,
+        3915,
+        199825
+      ],
+      "int8_top5_ids": [
+        6766,
+        10499,
+        3741,
+        3915,
+        199825
+      ],
+      "max_abs_delta_logit": 0.6694974899291992,
+      "mean_abs_delta_logit": 0.08518820255994797,
+      "step": 7,
+      "top5_exact": true,
+      "top5_overlap_count": 5,
+      "top5_overlap_ids": [
+        3741,
+        3915,
+        6766,
+        10499,
+        199825
+      ]
+    }
+  ],
+  "stop_max_abs_delta_logit": 1.0,
+  "top5_exact_steps": 4,
+  "top5_overlap_total": 39,
+  "top5_total_steps": 8,
+  "wall_s": 8.108
+}

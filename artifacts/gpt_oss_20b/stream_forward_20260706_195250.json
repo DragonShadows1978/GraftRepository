@@ -1,0 +1,286 @@
+{
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "completed_layers": 2,
+  "created_at": "2026-07-06T19:52:50",
+  "expert_mode": "resident_packed_mxfp4",
+  "final_hidden_shape": [
+    1,
+    5,
+    2880
+  ],
+  "final_hidden_stats": {
+    "max": 215.0,
+    "mean": 0.4637641906738281,
+    "min": -131.0,
+    "std": 13.914050102233887,
+    "sum": 1335.640869140625
+  },
+  "full_input_ids": [
+    [
+      976,
+      9029,
+      328,
+      10128,
+      382
+    ]
+  ],
+  "gpu_after": "NVIDIA GeForce RTX 4070 SUPER, 490, 12282, 31",
+  "gpu_before": "NVIDIA GeForce RTX 4070 SUPER, 278, 12282, 37",
+  "gpu_before_lm_head": "NVIDIA GeForce RTX 4070 SUPER, 490, 12282, 31",
+  "hidden_shape_initial": [
+    1,
+    5,
+    2880
+  ],
+  "input_ids": [
+    [
+      976,
+      9029,
+      328,
+      10128,
+      382
+    ]
+  ],
+  "input_ids_shape": [
+    1,
+    5
+  ],
+  "input_truncated": false,
+  "layers": [
+    {
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 908, 12282, 6",
+      "hidden_shape": [
+        1,
+        5,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          5,
+          64
+        ],
+        [
+          1,
+          8,
+          5,
+          64
+        ]
+      ],
+      "layer": 0,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "expert_mode": "resident_packed_mxfp4",
+        "top_indices": [
+          [
+            13,
+            21,
+            17,
+            29
+          ],
+          [
+            9,
+            7,
+            16,
+            11
+          ],
+          [
+            8,
+            25,
+            11,
+            17
+          ],
+          [
+            26,
+            11,
+            9,
+            27
+          ],
+          [
+            25,
+            26,
+            4,
+            11
+          ]
+        ],
+        "top_weights": [
+          [
+            0.43302229046821594,
+            0.3585277497768402,
+            0.11114282160997391,
+            0.09730710834264755
+          ],
+          [
+            0.4742794334888458,
+            0.24210099875926971,
+            0.17523600161075592,
+            0.10838358849287033
+          ],
+          [
+            0.4983903765678406,
+            0.395017147064209,
+            0.0628458559513092,
+            0.043746598064899445
+          ],
+          [
+            0.4787285327911377,
+            0.2967950105667114,
+            0.1264730840921402,
+            0.09800335019826889
+          ],
+          [
+            0.4730567932128906,
+            0.31611478328704834,
+            0.1336803436279297,
+            0.07714810967445374
+          ]
+        ],
+        "unique_experts": [
+          4,
+          7,
+          8,
+          9,
+          11,
+          13,
+          16,
+          17,
+          21,
+          25,
+          26,
+          27,
+          29
+        ]
+      },
+      "wall_seconds": 1.1808655849890783
+    },
+    {
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 908, 12282, 6",
+      "hidden_shape": [
+        1,
+        5,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          5,
+          64
+        ],
+        [
+          1,
+          8,
+          5,
+          64
+        ]
+      ],
+      "layer": 1,
+      "layer_type": "full_attention",
+      "route_info": {
+        "expert_mode": "resident_packed_mxfp4",
+        "top_indices": [
+          [
+            27,
+            12,
+            25,
+            26
+          ],
+          [
+            28,
+            1,
+            17,
+            0
+          ],
+          [
+            20,
+            16,
+            30,
+            3
+          ],
+          [
+            28,
+            22,
+            17,
+            6
+          ],
+          [
+            13,
+            10,
+            8,
+            26
+          ]
+        ],
+        "top_weights": [
+          [
+            0.3083246648311615,
+            0.3054819703102112,
+            0.23186181485652924,
+            0.15433156490325928
+          ],
+          [
+            0.30802804231643677,
+            0.23913542926311493,
+            0.23555539548397064,
+            0.21728113293647766
+          ],
+          [
+            0.5906148552894592,
+            0.23326124250888824,
+            0.1081407219171524,
+            0.06798312813043594
+          ],
+          [
+            0.3998466432094574,
+            0.23172184824943542,
+            0.18503759801387787,
+            0.1833939254283905
+          ],
+          [
+            0.3703097105026245,
+            0.3101736605167389,
+            0.1705242395401001,
+            0.14899244904518127
+          ]
+        ],
+        "unique_experts": [
+          0,
+          1,
+          3,
+          6,
+          8,
+          10,
+          12,
+          13,
+          16,
+          17,
+          20,
+          22,
+          25,
+          26,
+          27,
+          28,
+          30
+        ]
+      },
+      "wall_seconds": 0.24983461201190948
+    }
+  ],
+  "max_layers": 2,
+  "max_tokens": 8,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "note": "streamed full-stack forward smoke; quantized TensorCUDA lm_head; not PPL, not generation quality, not APA/GRM evidence",
+  "prompt": "The capital of France is",
+  "raw_token_count": 5,
+  "refine_percentile": 0.15,
+  "rendered_prompt": "The capital of France is",
+  "resolved_layers": 2,
+  "score_ppl": false,
+  "skip_lm_head": true,
+  "status": "ok",
+  "target_ids": null,
+  "top_tokens": [],
+  "use_chat_template": false,
+  "wall_seconds": 3.7947575140278786
+}

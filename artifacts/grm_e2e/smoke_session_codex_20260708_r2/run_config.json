@@ -1,0 +1,98 @@
+{
+  "arena_width": 384,
+  "env": {
+    "GRM_GQA_CUDA_ROUTE": "1",
+    "GRM_GRAFT_STORAGE_BITS": "8"
+  },
+  "gpu_idle_check": {
+    "checks": [
+      {
+        "pids": [],
+        "waited_s": 0
+      }
+    ],
+    "idle": true,
+    "waited_s": 0
+  },
+  "live_turns": 2,
+  "max_trips": 1,
+  "mode": "smoke",
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "native_lib": "/mnt/ForgeRealm/GraftRepository/cpp/build/libgrm_runtime.so",
+  "ngen": 24,
+  "restart_after": 5,
+  "schema": "grm_e2e_session_config_v1",
+  "script": [
+    {
+      "fact_id": "ORION-PIN",
+      "fact_phrase": "current ORION-PIN value is AMBER",
+      "kind": "fact",
+      "user": "Memory planting turn. FACT ORION-PIN. The current ORION-PIN value is AMBER. If asked later for ORION-PIN, answer AMBER only.",
+      "value": "AMBER"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler S01. Acknowledge briefly. Do not change any stored FACT values."
+    },
+    {
+      "correction_command": "correct memory: current ORION-PIN value is AMBER => The current ORION-PIN value is COPPER.",
+      "fact_id": "ORION-PIN",
+      "fact_phrase": "current ORION-PIN value is COPPER",
+      "kind": "supersede",
+      "old_value": "AMBER",
+      "user": "Authoritative update turn. FACT ORION-PIN. The current ORION-PIN value is COPPER. This is the current value. If asked later, answer COPPER only.",
+      "value": "COPPER"
+    },
+    {
+      "fact_id": "CYPHER-BRIDGE",
+      "fact_phrase": "current CYPHER-BRIDGE value is LANTERN",
+      "kind": "fact",
+      "user": "Memory planting turn. FACT CYPHER-BRIDGE. The current CYPHER-BRIDGE value is LANTERN. If asked later for CYPHER-BRIDGE, answer LANTERN only.",
+      "value": "LANTERN"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler S02. Acknowledge briefly. Do not change any stored FACT values."
+    },
+    {
+      "accepts": [
+        "COPPER"
+      ],
+      "expected": "COPPER",
+      "fact_id": "ORION-PIN",
+      "kind": "probe",
+      "old_value": "AMBER",
+      "source_turn": 2,
+      "supersession": true,
+      "user": "Recall probe. What is the current ORION-PIN value? Reply with only the value."
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler S03. Acknowledge briefly. Do not change any stored FACT values."
+    },
+    {
+      "accepts": [
+        "LANTERN"
+      ],
+      "expected": "LANTERN",
+      "fact_id": "CYPHER-BRIDGE",
+      "kind": "probe",
+      "old_value": null,
+      "source_turn": 3,
+      "supersession": false,
+      "user": "Recall probe. What is the current CYPHER-BRIDGE value? Reply with only the value."
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler S04. Acknowledge briefly. Do not change any stored FACT values."
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler S05. Acknowledge briefly. Do not change any stored FACT values."
+    }
+  ],
+  "session_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_e2e/smoke_session_codex_20260708_r2",
+  "template_decision": "ArenaCache prompt_template + stop_sequences hook; driver uses real GRMRuntime.chat()/ArenaCache.step().",
+  "topk": 1,
+  "turns": 10
+}

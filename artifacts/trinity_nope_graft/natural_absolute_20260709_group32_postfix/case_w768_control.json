@@ -1,0 +1,158 @@
+{
+  "cache_after_evict": {
+    "all_S_equal": true,
+    "full_S0": 43,
+    "full_S_unique": [
+      43
+    ],
+    "live_shift_on_layers_unique": [
+      "771"
+    ],
+    "n_layers": 56,
+    "sliding_S0": 43,
+    "sliding_S_unique": [
+      43
+    ]
+  },
+  "cache_after_plant": {
+    "all_S_equal": true,
+    "full_S0": 22,
+    "full_S_unique": [
+      22
+    ],
+    "live_shift_on_layers_unique": [
+      "771"
+    ],
+    "n_layers": 56,
+    "sliding_S0": 22,
+    "sliding_S_unique": [
+      22
+    ]
+  },
+  "cache_post_gen": {
+    "all_S_equal": true,
+    "full_S0": 67,
+    "full_S_unique": [
+      67
+    ],
+    "live_shift_on_layers_unique": [
+      "771"
+    ],
+    "n_layers": 56,
+    "sliding_S0": 67,
+    "sliding_S_unique": [
+      67
+    ]
+  },
+  "cache_pre_gen": {
+    "all_S_equal": true,
+    "full_S0": 43,
+    "full_S_unique": [
+      43
+    ],
+    "live_shift_on_layers_unique": [
+      "771"
+    ],
+    "n_layers": 56,
+    "sliding_S0": 43,
+    "sliding_S_unique": [
+      43
+    ]
+  },
+  "chat_template_used": false,
+  "cur_mount_n": 0,
+  "cur_mounts": [],
+  "fact_evicted": true,
+  "filler_text": "The next notebook paragraph describes a quiet maintenance walk through the archive corridor. The lights were checked, the shelves were dusted, and the operator wrote down that routine observations should continue without changing any earlier record.\n",
+  "generation": {
+    "class": "clean_english",
+    "generated_ids": [
+      252,
+      48,
+      15913,
+      45,
+      405,
+      9183,
+      351,
+      26240,
+      325,
+      854,
+      296,
+      2702,
+      325,
+      1740,
+      296,
+      30665
+    ],
+    "generated_text": "1234. The operator is instructed to use the code to open the vault",
+    "generated_text_raw": " 1234. The operator is instructed to use the code to open the vault",
+    "generated_token_texts": [
+      " ",
+      "1",
+      "234",
+      ".",
+      " The",
+      " operator",
+      " is",
+      " instructed",
+      " to",
+      " use",
+      " the",
+      " code",
+      " to",
+      " open",
+      " the",
+      " vault"
+    ],
+    "n_steps": 16,
+    "prompt_ntok": 9,
+    "prompt_text": "As noted earlier, the vault access code is",
+    "steps_head": [
+      {
+        "arena_pos_after_prompt": 68,
+        "chosen": 252,
+        "rope0_expected": 830,
+        "tag": "prompt",
+        "text": " "
+      },
+      {
+        "arena_pos": 69,
+        "chosen": 48,
+        "tag": "g0",
+        "text": "1"
+      },
+      {
+        "arena_pos": 70,
+        "chosen": 15913,
+        "tag": "g1",
+        "text": "234"
+      },
+      {
+        "arena_pos": 71,
+        "chosen": 45,
+        "tag": "g2",
+        "text": "."
+      }
+    ],
+    "value_recovered": false,
+    "wall_s": 11.593
+  },
+  "label": "w768_control",
+  "live_segs_after_evict": [
+    [
+      1,
+      40
+    ]
+  ],
+  "live_shift": 771,
+  "mount": false,
+  "picks": [],
+  "picks_forced": false,
+  "plant_ntok": 19,
+  "plant_text": "For the record, the vault access code is Vortex-3-Sierra. Keep it safe.\n",
+  "ranking": [],
+  "sink_ntok": 3,
+  "sink_text": "Notebook context:\n",
+  "wall_s": 49.891,
+  "width": 768
+}

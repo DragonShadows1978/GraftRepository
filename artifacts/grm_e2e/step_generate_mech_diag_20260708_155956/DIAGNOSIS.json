@@ -1,0 +1,206 @@
+{
+  "schema": "grm_e2e_step_generate_mech_diag_v1",
+  "hypothesis_tested": "defect is MECHANICAL in step() generate path (a-d)",
+  "verdict": {
+    "step_vs_manual_loop_body": "REFUTED",
+    "evidence": "Shared KV snapshot A/B (manual_leg1 vs _attempt body) produced BYTE-IDENTICAL token streams and BOTH hit Vortex-3-Sierra. clear_injection after prompt is a no-op when inject already None. Stop-sequence early-exit only fires after <|return|> is already chosen.",
+    "real_defect_class": "a_kv_position_misalignment",
+    "real_defect_detail": "Arena live_shift = n_sink + arena_width opens a RoPE hole. GPT-OSS free generation collapses into word-salad/special-token text when live_shift is large (session default arena_width=384 \u2192 live_shift\u2248387). Pure model (position_offset continuous from 0) and arena with forced live_shift\u2208{0,n_sink} produce clean English on the same prompt bytes. Leg-1 HIT used width=96 (live_shift=115) + feed()-planted facts, not session width=384 + step() plants."
+  },
+  "divergence_receipts": {
+    "shared_state_A_vs_B": {
+      "result": "NO_DIVERGENCE",
+      "A_text": "I will respond with \"Vortex-3-Sierra\" as the stored value",
+      "B_text": "I will respond with \"Vortex-3-Sierra\" as the stored value",
+      "C_leg1_prefix_text": "The current cypher bridge value is Vortex-3-Sierra.<|return|>.",
+      "value_in": {
+        "A": true,
+        "B": true,
+        "C": true,
+        "A2": true
+      },
+      "setup": {
+        "pos": 97,
+        "S": 116,
+        "live_shift": 115,
+        "cur_mount_n": 65,
+        "cur_mounts": [
+          0
+        ],
+        "ranking": [
+          0
+        ],
+        "picks": [
+          0
+        ]
+      },
+      "prompt_step_sha256": "9025cc17865f2b94e8a4df8822ec0333347363728197752deb443441bb0d47f0",
+      "artifact": "artifacts/grm_e2e/step_vs_manual_ab_shared_20260708_155615"
+    },
+    "independent_rebuild_false_positive": {
+      "note": "First run rebuilt state twice; step1 top-2 was a near-tie (' will' logit=15.5625 vs '\u2019ll' 15.5625). Rebuild FP noise flipped greedy choice \u2014 NOT a loop-body delta. Shared snapshot eliminated it.",
+      "artifact": "artifacts/grm_e2e/step_vs_manual_ab_20260708_155312"
+    },
+    "live_shift_width_sweep": {
+      "rows": [
+        {
+          "label": "pure",
+          "live_shift": null,
+          "sink_n": null,
+          "width": null,
+          "answer_head": "I\u2019m sorry, but I can\u2019t comply with that.<|return|><|return|><|return|><|return|>.<|return|><|return|",
+          "english_ok": true,
+          "matches_pure_refusal": true
+        },
+        {
+          "label": "sess_w384",
+          "live_shift": 387,
+          "sink_n": 3,
+          "width": 384,
+          "answer_head": "User: 3-V> < 3-4> <5 6-7-",
+          "english_ok": false,
+          "matches_pure_refusal": false
+        },
+        {
+          "label": "sess_w96",
+          "live_shift": 99,
+          "sink_n": 3,
+          "width": 96,
+          "answer_head": "Sure! If you have any questions or need assistance, feel free to let me know.",
+          "english_ok": true,
+          "matches_pure_refusal": false
+        },
+        {
+          "label": "sess_w16",
+          "live_shift": 19,
+          "sink_n": 3,
+          "width": 16,
+          "answer_head": "Sure! If you have any questions or need assistance, feel free to let me know.",
+          "english_ok": true,
+          "matches_pure_refusal": false
+        },
+        {
+          "label": "sess_w0",
+          "live_shift": 4,
+          "sink_n": 3,
+          "width": 1,
+          "answer_head": "I\u2019m sorry, but I can\u2019t comply with that.",
+          "english_ok": true,
+          "matches_pure_refusal": true
+        },
+        {
+          "label": "sys_w96",
+          "live_shift": 115,
+          "sink_n": 19,
+          "width": 96,
+          "answer_head": "I\u2019m sorry, but I can\u2019t comply with that.",
+          "english_ok": true,
+          "matches_pure_refusal": true
+        },
+        {
+          "label": "sys_w384",
+          "live_shift": 403,
+          "sink_n": 19,
+          "width": 384,
+          "answer_head": "**. The user.",
+          "english_ok": false,
+          "matches_pure_refusal": false
+        },
+        {
+          "label": "sess_w384_shift_nsink",
+          "live_shift": 3,
+          "sink_n": 3,
+          "width": 384,
+          "answer_head": "I\u2019m sorry, but I can\u2019t comply with that.",
+          "english_ok": true,
+          "matches_pure_refusal": true
+        },
+        {
+          "label": "sess_w384_shift0",
+          "live_shift": 0,
+          "sink_n": 3,
+          "width": 384,
+          "answer_head": "I\u2019m sorry, but I can\u2019t comply with that.",
+          "english_ok": true,
+          "matches_pure_refusal": true
+        },
+        {
+          "label": "sess_w1",
+          "live_shift": 4,
+          "sink_n": 3,
+          "width": 1,
+          "answer_head": "I\u2019m sorry, but I can\u2019t comply with that.",
+          "english_ok": true,
+          "matches_pure_refusal": true
+        }
+      ],
+      "artifact": "artifacts/grm_e2e/live_shift_width_ab_20260708_155826",
+      "law": "live_shift \u2272 ~20\u2013115: English (matches pure refusal or benign chat). live_shift \u2248 387\u2013403: catastrophic salad (session smoke signature)."
+    }
+  },
+  "classification_vs_candidates": {
+    "a_kv_position_misalignment": {
+      "status": "CONFIRMED (session-scale root cause)",
+      "numeric": {
+        "session_default": {
+          "arena_width": 384,
+          "n_sink_conversation": 3,
+          "live_shift": 387,
+          "answer_head": "User: 3-V> < 3-4> <5 6-7-"
+        },
+        "forced_shift_nsink": {
+          "live_shift": 3,
+          "answer_head": "I\u2019m sorry, but I can\u2019t comply with that."
+        },
+        "forced_shift_0": {
+          "live_shift": 0,
+          "answer_head": "I\u2019m sorry, but I can\u2019t comply with that."
+        },
+        "pure_model": {
+          "live_shift": null,
+          "answer_head": "I\u2019m sorry, but I can\u2019t comply with that."
+        },
+        "leg1_proven": {
+          "arena_width": 96,
+          "n_sink_sys": 19,
+          "live_shift": 115,
+          "probe": "HIT Vortex-3-Sierra"
+        }
+      }
+    },
+    "b_resume_refeed_misalignment": {
+      "status": "SECONDARY amplifier, not primary",
+      "note": "Probes resumed:true refeed garbage transcripts deposited by (a)-broken plants."
+    },
+    "c_stop_sequence_token_slicing": {
+      "status": "REFUTED as primary",
+      "note": "Stops only truncate after <|return|> already decoded; shared A/B identical without needing stop delta."
+    },
+    "d_sampling_greedy_config": {
+      "status": "REFUTED as primary",
+      "note": "Both paths greedy argmax; shared state identical. Knife-edge ties exist but are not the salad class."
+    },
+    "e_new_session_plant_via_generate": {
+      "status": "COMPOSING factor",
+      "note": "Leg-1 feed()s complete turns (no generate). Session step()-generates every plant under live_shift=387 \u2192 deposits salad into grafts/live window \u2192 later probes read poison."
+    }
+  },
+  "minimal_fix_statement": {
+    "do_not_implement_in_this_order": true,
+    "primary": "scripts/grm_e2e_session.py: load_model_and_repo / argparse --arena-width default 384 \u2192 drop to Leg-1-proven 96 (or measure max safe live_shift for GPT-OSS YARN). Also set sink_text to Harmony SYS (not default '<conversation>\\n') so n_sink/live_shift match the proven Leg-1 seating.",
+    "file_lines": [
+      "scripts/grm_e2e_session.py:208  (--arena-width default=384)",
+      "scripts/grm_e2e_session.py:407-434 (load_model_and_repo: no sink_text override)",
+      "core/graft_arena.py:77 (live_shift = n_sink + arena_width  \u2014 product law; dialect may need GPT-OSS bound)",
+      "core/gpt_oss20b_tc.py:686-691 (RoPE uses position_offset + live_shift)"
+    ],
+    "secondary_driver": "Plant facts via feed(complete harmony turn) like Leg-1, or accept that free-gen plants under a large live_shift hole will poison deposits. Product fix for hole tolerance is deeper than a driver default.",
+    "not_the_fix": "Changing step() stop-sequence loop or prompt_template alone (already byte-correct)."
+  },
+  "artifact_dirs": {
+    "run1_rebuild_ab": "artifacts/grm_e2e/step_vs_manual_ab_20260708_155312",
+    "shared_state_ab": "artifacts/grm_e2e/step_vs_manual_ab_shared_20260708_155615",
+    "width_sweep": "artifacts/grm_e2e/live_shift_width_ab_20260708_155826",
+    "session_cold": "artifacts/grm_e2e/session_cold_sink_ab_20260708_155719"
+  }
+}

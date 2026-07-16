@@ -1,0 +1,185 @@
+# DeepSeek-V2-Lite APA + MLA Latent INT4 Results
+
+Date: 2026-06-27
+
+## Verdict
+
+DeepSeek-V2-Lite's MLA latent cache tolerates INT4 storage well enough for
+the full configured YaRN resident cache plus one decode token to fit on the
+12GB card. That is a cache/decode result, not proof that every prefill path can
+ingest a real 163K-token prompt.
+
+The first real-token prefill fix is now landed in the local DeepSeek loader:
+`attention_mode="absorbed_exact"` keeps prefill in MLA latent space instead of
+expanding the accumulated latent cache through `kv_b(c_n)` every chunk. This is
+not the final fused latent-APA kernel, but it proves the optimization diagnosis:
+the old expanded APA prefill ceiling was `16,384`; absorbed exact prefill has
+now passed real-token `65,536` on the same 12GB card.
+
+The first high-context open-ended greedy needle ladder is stricter than
+fill-only. Absorbed exact latent4 hit exact planted codes at `16,384`, `32,768`,
+and `49,152` tokens, but OOMed at `65,536` during the greedy test.
+
+The same run now includes an explicit INT2 floor check. A quality-only
+group-32 affine INT2 fake-store path does not catastrophically destroy the
+model, but it is no longer in the "free" zone: six-window Wikitext PPL rises
+by about `+5.8%` versus APA latent16, and the forced-choice needle grid gets
+one 8K retrieval rank flip.
+
+This is not a no-prior-art claim. DeepSeek's own V2 paper reports that their
+deployed DeepSeek-V2 stack uses KV-cache quantization to compress each KV-cache
+element to **6 bits on average**, on top of MLA and FP8 weights. That is the
+nearest direct prior art for this line of work.
+
+Our contribution in this run is narrower and lower-level:
+
+- reproduce the latent-cache quantization idea in the local
+  `tensor_cuda`/APA DeepSeek-V2-Lite port,
+- push the MLA resident latent to **INT4 group-32** rather than 6-bit average,
+- measure the PPL and forced-choice retrieval cost on this exact stack, and
+- show that a synthetic `163840`-row resident cache plus one decode token fits
+  on the 12GB card.
+
+Also note the quantizer caveat: this result is not a generic statement about
+"any 4-bit runtime." Prior repo measurements show the local `tensor_cuda`
+INT4 stack can be materially better than the default PyTorch bitsandbytes path.
+On MiniCPM3-4B, same card and protocol, `tensor_cuda INT4` measured
+`ppl@1024 = 20.065` while PyTorch GPU `bnb-4bit` measured `22.507`; the
+`tensor_cuda` path also held a larger standard-attention context ceiling
+(`3072` vs `2048`). That makes the DeepSeek result a property of this
+model/MLA representation **and** this quantization/kernel stack.
+
+The important result is not "V-only" quantization. In DeepSeek MLA there is
+no separable resident V cache. The resident decode state is:
+
+- `c_n`: the post-norm MLA latent, shape `(B, S, kv_lora_rank=512)`
+- `k_pe`: the roped shared key, shape `(B, 1, S, qk_rope_head_dim=64)`
+
+Absorbed MLA decode uses `c_n` for both:
+
+- key-side scoring, via `(q_nope W_k) dot c_n`
+- value-side accumulation, via `softmax(scores) @ c_n`, then projection by
+  `W_v`
+
+So the memory-saving experiment quantizes the resident latent itself, not a
+separate V tensor. `k_pe` remains bf16.
+
+## Implementation
+
+Code path:
+
+- `core/deepseek_v2_lite_tc.py`
+- probe: `/home/vader/deepseek_apa_oom_probe.py`
+- PPL runner: `/home/vader/deepseek_latent_ppl.py`
+- needle runner: `/home/vader/deepseek_needle_forced_choice.py`
+
+Main implementation points:
+
+- Added mutable `DeepSeekMLACache`.
+- Added optional latent cache storage mode:
+  - `latent_bits=16`: bf16 latent buffer
+  - `latent_bits=4`: `tc.kv_int4_pack` packed latent bytes plus bf16 group
+    scales, group size 32
+  - `latent_bits=2`: experimental group-32 affine fake-store, dequantized
+    back into bf16 cache storage; this tests quality damage only, not memory
+    savings
+- Added model switches:
+  - `set_latent_cache_bits(bits, group=32)`
+  - `set_value_int4(enabled=True, group=32)`
+- Decode uses absorbed MLA instead of expanding full per-head K/V for the
+  whole cache.
+- Added `attention_mode="absorbed_exact"` for real prompt prefill. This path
+  computes:
+  - `q_lat = q_nope @ W_k`
+  - `scores = q_lat @ c_n.T + q_pe @ k_pe.T`
+  - `ctx_lat = softmax(scores) @ c_n`
+  - `out = ctx_lat @ W_v`
+  It avoids full-span `kv_b(c_n)` expansion. It still materializes an `L x S`
+  score matrix per chunk, so chunk size remains a real transient-memory lever.
+
+The group-32 INT4 latent layout stores, per token per layer:
+
+| Component | bf16 latent cache | INT4 latent cache |
+|---|---:|---:|
+| latent payload | `512 * 2 = 1024 B` | `512 / 2 = 256 B` |
+| latent scales | none | `(512 / 32) * 2 = 32 B` |
+| roped `k_pe` | `64 * 2 = 128 B` | `64 * 2 = 128 B` |
+| total / layer / token | `1152 B` | `416 B` |
+| total / token / 27 layers | `31,104 B` | `11,232 B` |
+
+Net resident cache compression: about `2.77x`.
+
+## Cache/Decode Wall
+
+These probes used DeepSeek-V2-Lite with post-hoc INT4 weights in
+`tensor_cuda`, APA r0.15 bulk4, synthetic cache allocation, and one absorbed
+MLA decode token. They measure resident-cache/decode capacity only. They do
+not measure full prompt prefill.
+
+BF16 latent cache:
+
+- 64K cached tokens passed: after load `9112 MB`, after cache `11164 MB`,
+  after decode `11340 MB`.
+- 96K cached tokens failed during synthetic cache allocation around layer 21.
+
+INT4 latent cache:
+
+| Cached tokens | After load | After cache | After decode | Result |
+|---:|---:|---:|---:|---|
+| 64K | `9142 MB` | `9844 MB` | `10020 MB` | OK |
+| 96K | `9142 MB` | `10222 MB` | `10430 MB` | OK |
+| 128K | `9140 MB` | `10544 MB` | `10752 MB` | OK |
+| 163840 | `9140 MB` | `11030 MB` | `11238 MB` | OK |
+
+The INT4 latent cache reaches the model's configured YaRN maximum
+(`163840`) with about 1GB of visible VRAM still unused after one decode token.
+
+## Prefill Wall
+
+The overnight high-context needle run showed that the original expanded APA
+prefill path does **not** reach the cache/decode limits on real prompts.
+
+Run directory:
+
+`/home/vader/deepseek_needle_runs/overnight_20260627_024912`
+
+Observed behavior:
+
+- Open-gen greedy needle at `2K/4K/8K` passed:
+  - APA latent16: `9/9`
+  - APA latent4: `9/9`
+- Forced-choice latent16 high-context run OOMed on the first `16K` item before
+  any score.
+- Forced-choice latent4 high-context run completed `16K` at `3/3`, then OOMed
+  on the first `32K` item.
+
+The OOM was in the prefill-time APA key quantization path, not in the resident
+latent cache:
+
+```text
+_quantize_keys(...)
+recon = tc.matmul(centroids, Rb) * norms
+RuntimeError: cudaMallocAsync failed: out of memory
+```
+
+So the current state is:
+
+- cache/decode storage: INT4 reaches the synthetic 163840-token cache rung
+- expanded APA real prompt prefill: not solved past 16K
+- absorbed exact real prompt prefill: solved through at least 65K
+
+### Real Fill Ceiling - Expanded APA vs Absorbed Exact
+
+Protocol:
+
+- real Wikitext/local-doc token stream, no repeated-token synthetic cache rows
+- exact-length prompts
+- chunked prefill
+- finite-logit check plus short greedy decode smoke
+- `latent_bits=4`, group 32
+
+Old expanded APA path, `attention_mode="apa_selective"`, `chunk=256`:
+
+| Context | Result | Prefill | VRAM after prefill/decode |
+|---:|---|---:|---:|
+| 2,048 | OK | `16.0

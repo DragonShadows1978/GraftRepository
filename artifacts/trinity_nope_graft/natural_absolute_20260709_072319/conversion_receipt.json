@@ -1,0 +1,13 @@
+{
+  "embedding_host_bytes": 819986432,
+  "evidence_class": "loader conversion accounting from TensorCUDA model_info plus safetensors stat",
+  "lm_head_loaded": true,
+  "model_info_weight_mode": "int8",
+  "note": "INT8 weights are quantized on load; no separate 6GB weight shard was materialized.",
+  "resident_quantized_linear_bytes": 6014140416,
+  "resident_quantized_linear_gib": 5.6011,
+  "source_bf16_linear_bytes_est": 11829510144,
+  "source_bf16_linear_gib_est": 11.0171,
+  "source_safetensors_on_disk_bytes": 12242694352,
+  "source_safetensors_on_disk_gib": 11.4019
+}

@@ -1,0 +1,28 @@
+{
+  "experiment": "T1_absolute_natural_continuation",
+  "reconstructed_after_drift_stop_from_receipt": true,
+  "chat_template_used": false,
+  "model_dir": "/mnt/ForgeRealm/models/trinity-nano",
+  "weight_mode": "int8",
+  "compute_mode_label": "fp32_compute_int8_dequant",
+  "conversion_receipt_path": "/mnt/ForgeRealm/GraftRepository/artifacts/trinity_nope_graft/natural_absolute_20260709_072319/conversion_receipt.json",
+  "p1_drift_path": "/mnt/ForgeRealm/GraftRepository/artifacts/trinity_nope_graft/natural_absolute_20260709_072319/p1_bf16_vs_int8_drift.json",
+  "apa": "OFF_standard_everywhere",
+  "plant_text": "For the record, the vault access code is Vortex-3-Sierra. Keep it safe.\n",
+  "filler_text": "The next notebook paragraph describes a quiet maintenance walk through the archive corridor. The lights were checked, the shelves were dusted, and the operator wrote down that routine observations should continue without changing any earlier record.\n",
+  "readout_prompt": "As noted earlier, the vault access code is",
+  "sink_text": "Notebook context:\n",
+  "widths": [
+    96,
+    768
+  ],
+  "ngen": 16,
+  "value": "Vortex-3-Sierra",
+  "rails": {
+    "single_gpu_run_wall_s": 600.0,
+    "drift_stop_max_abs_delta_logit": 1.0,
+    "project_tensor_product_diff": "core/trinity_nano_tc.py INT8 weight-mode option"
+  },
+  "load_s": 22.1,
+  "receipt_path": "/mnt/ForgeRealm/GraftRepository/artifacts/trinity_nope_graft/natural_absolute_20260709_072319/receipt.json"
+}

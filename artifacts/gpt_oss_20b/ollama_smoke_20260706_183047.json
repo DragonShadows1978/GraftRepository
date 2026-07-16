@@ -1,0 +1,5242 @@
+{
+  "base_url": "http://127.0.0.1:11434",
+  "created_at": "2026-07-06T18:30:47",
+  "generate": {
+    "body": {
+      "context": [
+        200006,
+        17360,
+        200008,
+        3575,
+        553,
+        17554,
+        162016,
+        11,
+        261,
+        4410,
+        6439,
+        2359,
+        22203,
+        656,
+        7788,
+        17527,
+        558,
+        87447,
+        100594,
+        25,
+        220,
+        1323,
+        19,
+        12,
+        3218,
+        198,
+        6576,
+        3521,
+        25,
+        220,
+        1323,
+        21,
+        12,
+        3173,
+        12,
+        3218,
+        279,
+        30377,
+        289,
+        25,
+        14093,
+        279,
+        2,
+        13888,
+        18403,
+        25,
+        8450,
+        11,
+        49159,
+        11,
+        1721,
+        13,
+        21030,
+        2804,
+        413,
+        7360,
+        395,
+        1753,
+        3176,
+        13,
+        200007,
+        200006,
+        1428,
+        200008,
+        17045,
+        483,
+        9707,
+        1001,
+        21872,
+        25,
+        1412,
+        382,
+        290,
+        9029,
+        328,
+        10128,
+        30,
+        200007,
+        200006,
+        173781,
+        200005,
+        35644,
+        200008,
+        976,
+        1825,
+        31064,
+        25,
+        392,
+        17045,
+        483,
+        9707,
+        1001,
+        21872,
+        25,
+        1412,
+        382,
+        290,
+        9029,
+        328,
+        10128,
+        16842,
+        2632,
+        581,
+        1309,
+        316,
+        6052,
+        306,
+        9707,
+        1001,
+        21872,
+        13,
+        623,
+        6052,
+        25,
+        392,
+        976,
+        9029,
+        328,
+        10128,
+        382,
+        12650,
+        3692,
+        21926,
+        1001,
+        21872,
+        13,
+        43810,
+        860,
+        5018,
+        107300,
+        11615,
+        484,
+        13,
+        7744,
+        8975,
+        13,
+        200007,
+        200006,
+        173781,
+        200005,
+        17196,
+        200008,
+        976,
+        9029
+      ],
+      "created_at": "2026-07-06T22:31:37.372987005Z",
+      "done": true,
+      "done_reason": "length",
+      "eval_count": 64,
+      "eval_duration": 3211112858,
+      "load_duration": 36173672644,
+      "model": "gpt-oss:20b",
+      "prompt_eval_count": 80,
+      "prompt_eval_duration": 9749502435,
+      "response": "The capital",
+      "thinking": "The user asks: \"Answer with exactly one sentence: what is the capital of France?\" So we need to answer in exactly one sentence. The answer: \"The capital of France is Paris.\" That's one sentence. Ensure no extra punctuation beyond that. It's fine.",
+      "total_duration": 49402165794
+    },
+    "status_code": 200
+  },
+  "gpu_samples": [
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 275,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421145.681522324,
+      "timestamp": "2026/07/06 18:30:47.991",
+      "utilization_gpu_percent": 34
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 275,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421145.95959436,
+      "timestamp": "2026/07/06 18:30:48.269",
+      "utilization_gpu_percent": 34
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 275,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421146.239185424,
+      "timestamp": "2026/07/06 18:30:48.547",
+      "utilization_gpu_percent": 34
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 275,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421146.519095963,
+      "timestamp": "2026/07/06 18:30:48.829",
+      "utilization_gpu_percent": 31
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 275,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421146.795787591,
+      "timestamp": "2026/07/06 18:30:49.107",
+      "utilization_gpu_percent": 31
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 275,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421147.075460255,
+      "timestamp": "2026/07/06 18:30:49.383",
+      "utilization_gpu_percent": 32
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 275,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421147.429318613,
+      "timestamp": "2026/07/06 18:30:49.670",
+      "utilization_gpu_percent": 32
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 476,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421147.701960354,
+      "timestamp": "2026/07/06 18:30:50.014",
+      "utilization_gpu_percent": 32
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 476,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421147.975200094,
+      "timestamp": "2026/07/06 18:30:50.288",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 476,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421148.247766999,
+      "timestamp": "2026/07/06 18:30:50.560",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421148.521833766,
+      "timestamp": "2026/07/06 18:30:50.833",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421148.793474355,
+      "timestamp": "2026/07/06 18:30:51.106",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421149.066557755,
+      "timestamp": "2026/07/06 18:30:51.378",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421149.340157634,
+      "timestamp": "2026/07/06 18:30:51.652",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421149.613220164,
+      "timestamp": "2026/07/06 18:30:51.926",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421149.885678958,
+      "timestamp": "2026/07/06 18:30:52.198",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421150.159203971,
+      "timestamp": "2026/07/06 18:30:52.471",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421150.435393323,
+      "timestamp": "2026/07/06 18:30:52.747",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421150.710769674,
+      "timestamp": "2026/07/06 18:30:53.023",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421150.983200119,
+      "timestamp": "2026/07/06 18:30:53.296",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421151.255469138,
+      "timestamp": "2026/07/06 18:30:53.568",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421151.528220952,
+      "timestamp": "2026/07/06 18:30:53.841",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421151.801813367,
+      "timestamp": "2026/07/06 18:30:54.114",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421152.074703039,
+      "timestamp": "2026/07/06 18:30:54.388",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421152.347211287,
+      "timestamp": "2026/07/06 18:30:54.660",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421152.620673053,
+      "timestamp": "2026/07/06 18:30:54.932",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421152.893277782,
+      "timestamp": "2026/07/06 18:30:55.206",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421153.165955538,
+      "timestamp": "2026/07/06 18:30:55.478",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421153.438862488,
+      "timestamp": "2026/07/06 18:30:55.751",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421153.71188146,
+      "timestamp": "2026/07/06 18:30:56.025",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421153.984252391,
+      "timestamp": "2026/07/06 18:30:56.297",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421154.257895202,
+      "timestamp": "2026/07/06 18:30:56.570",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421154.530525514,
+      "timestamp": "2026/07/06 18:30:56.843",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 482,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421154.804887126,
+      "timestamp": "2026/07/06 18:30:57.117",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421155.07705598,
+      "timestamp": "2026/07/06 18:30:57.390",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421155.351070752,
+      "timestamp": "2026/07/06 18:30:57.663",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421155.623600219,
+      "timestamp": "2026/07/06 18:30:57.936",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421155.896371081,
+      "timestamp": "2026/07/06 18:30:58.209",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421156.169094161,
+      "timestamp": "2026/07/06 18:30:58.481",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421156.442235364,
+      "timestamp": "2026/07/06 18:30:58.754",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421156.714875918,
+      "timestamp": "2026/07/06 18:30:59.028",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421156.987713872,
+      "timestamp": "2026/07/06 18:30:59.300",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421157.260320418,
+      "timestamp": "2026/07/06 18:30:59.573",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421157.532801226,
+      "timestamp": "2026/07/06 18:30:59.846",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421157.805427718,
+      "timestamp": "2026/07/06 18:31:00.118",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421158.078613087,
+      "timestamp": "2026/07/06 18:31:00.391",
+      "utilization_gpu_percent": 8
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421158.350910854,
+      "timestamp": "2026/07/06 18:31:00.664",
+      "utilization_gpu_percent": 8
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421158.627446421,
+      "timestamp": "2026/07/06 18:31:00.939",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421158.90182633,
+      "timestamp": "2026/07/06 18:31:01.214",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421159.174320726,
+      "timestamp": "2026/07/06 18:31:01.487",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421159.447386685,
+      "timestamp": "2026/07/06 18:31:01.760",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421159.720720711,
+      "timestamp": "2026/07/06 18:31:02.033",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421159.994276023,
+      "timestamp": "2026/07/06 18:31:02.307",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421160.267057579,
+      "timestamp": "2026/07/06 18:31:02.580",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421160.540185342,
+      "timestamp": "2026/07/06 18:31:02.853",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421160.813144402,
+      "timestamp": "2026/07/06 18:31:03.125",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421161.088164947,
+      "timestamp": "2026/07/06 18:31:03.401",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421161.362073855,
+      "timestamp": "2026/07/06 18:31:03.675",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421161.635733462,
+      "timestamp": "2026/07/06 18:31:03.948",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421161.908969091,
+      "timestamp": "2026/07/06 18:31:04.222",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421162.183899411,
+      "timestamp": "2026/07/06 18:31:04.497",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421162.457761527,
+      "timestamp": "2026/07/06 18:31:04.769",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421162.731434595,
+      "timestamp": "2026/07/06 18:31:05.043",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421163.003595874,
+      "timestamp": "2026/07/06 18:31:05.316",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421163.276340228,
+      "timestamp": "2026/07/06 18:31:05.589",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421163.549525949,
+      "timestamp": "2026/07/06 18:31:05.862",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421163.82233814,
+      "timestamp": "2026/07/06 18:31:06.135",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421164.094655452,
+      "timestamp": "2026/07/06 18:31:06.407",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421164.367205284,
+      "timestamp": "2026/07/06 18:31:06.680",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421164.640833389,
+      "timestamp": "2026/07/06 18:31:06.953",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421164.913393497,
+      "timestamp": "2026/07/06 18:31:07.226",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421165.186059095,
+      "timestamp": "2026/07/06 18:31:07.499",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421165.458761492,
+      "timestamp": "2026/07/06 18:31:07.772",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421165.731616889,
+      "timestamp": "2026/07/06 18:31:08.044",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421166.004614291,
+      "timestamp": "2026/07/06 18:31:08.317",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421166.277726271,
+      "timestamp": "2026/07/06 18:31:08.590",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421166.550702073,
+      "timestamp": "2026/07/06 18:31:08.863",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421166.823572663,
+      "timestamp": "2026/07/06 18:31:09.136",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421167.095374026,
+      "timestamp": "2026/07/06 18:31:09.408",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421167.368150456,
+      "timestamp": "2026/07/06 18:31:09.681",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421167.642602902,
+      "timestamp": "2026/07/06 18:31:09.954",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421167.917027352,
+      "timestamp": "2026/07/06 18:31:10.229",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421168.191863821,
+      "timestamp": "2026/07/06 18:31:10.504",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421168.465370381,
+      "timestamp": "2026/07/06 18:31:10.778",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421168.740119996,
+      "timestamp": "2026/07/06 18:31:11.052",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421169.013189694,
+      "timestamp": "2026/07/06 18:31:11.325",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421169.286878315,
+      "timestamp": "2026/07/06 18:31:11.599",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421169.559098083,
+      "timestamp": "2026/07/06 18:31:11.872",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421169.832104339,
+      "timestamp": "2026/07/06 18:31:12.144",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421170.105534006,
+      "timestamp": "2026/07/06 18:31:12.418",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421170.378495356,
+      "timestamp": "2026/07/06 18:31:12.691",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421170.651516438,
+      "timestamp": "2026/07/06 18:31:12.964",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421170.924773925,
+      "timestamp": "2026/07/06 18:31:13.237",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421171.197336676,
+      "timestamp": "2026/07/06 18:31:13.510",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421171.470566921,
+      "timestamp": "2026/07/06 18:31:13.783",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421171.743408299,
+      "timestamp": "2026/07/06 18:31:14.056",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421172.016356706,
+      "timestamp": "2026/07/06 18:31:14.329",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421172.289697828,
+      "timestamp": "2026/07/06 18:31:14.602",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421172.562075083,
+      "timestamp": "2026/07/06 18:31:14.875",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421172.83515594,
+      "timestamp": "2026/07/06 18:31:15.148",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421173.107920285,
+      "timestamp": "2026/07/06 18:31:15.420",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421173.380110843,
+      "timestamp": "2026/07/06 18:31:15.693",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421173.652814393,
+      "timestamp": "2026/07/06 18:31:15.965",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421173.92619936,
+      "timestamp": "2026/07/06 18:31:16.238",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421174.199722519,
+      "timestamp": "2026/07/06 18:31:16.512",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421174.473245989,
+      "timestamp": "2026/07/06 18:31:16.785",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421174.746620846,
+      "timestamp": "2026/07/06 18:31:17.058",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421175.01959948,
+      "timestamp": "2026/07/06 18:31:17.332",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421175.292811787,
+      "timestamp": "2026/07/06 18:31:17.605",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421175.567190303,
+      "timestamp": "2026/07/06 18:31:17.880",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421175.841763355,
+      "timestamp": "2026/07/06 18:31:18.154",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421176.114457116,
+      "timestamp": "2026/07/06 18:31:18.427",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421176.389508974,
+      "timestamp": "2026/07/06 18:31:18.702",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421176.663447052,
+      "timestamp": "2026/07/06 18:31:18.976",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421176.937132918,
+      "timestamp": "2026/07/06 18:31:19.250",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421177.210064866,
+      "timestamp": "2026/07/06 18:31:19.522",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421177.482906964,
+      "timestamp": "2026/07/06 18:31:19.795",
+      "utilization_gpu_percent": 8
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421177.756184746,
+      "timestamp": "2026/07/06 18:31:20.068",
+      "utilization_gpu_percent": 8
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421178.028533525,
+      "timestamp": "2026/07/06 18:31:20.341",
+      "utilization_gpu_percent": 5
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421178.300972285,
+      "timestamp": "2026/07/06 18:31:20.614",
+      "utilization_gpu_percent": 5
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421178.573685445,
+      "timestamp": "2026/07/06 18:31:20.886",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421178.846450131,
+      "timestamp": "2026/07/06 18:31:21.159",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421179.118971032,
+      "timestamp": "2026/07/06 18:31:21.431",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 500,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421179.392540591,
+      "timestamp": "2026/07/06 18:31:21.704",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421179.676320564,
+      "timestamp": "2026/07/06 18:31:21.984",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421179.954581488,
+      "timestamp": "2026/07/06 18:31:22.266",
+      "utilization_gpu_percent": 51
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421180.234477599,
+      "timestamp": "2026/07/06 18:31:22.544",
+      "utilization_gpu_percent": 51
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421180.512892183,
+      "timestamp": "2026/07/06 18:31:22.823",
+      "utilization_gpu_percent": 51
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421180.792861391,
+      "timestamp": "2026/07/06 18:31:23.104",
+      "utilization_gpu_percent": 51
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421181.067521869,
+      "timestamp": "2026/07/06 18:31:23.380",
+      "utilization_gpu_percent": 51
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421181.341308552,
+      "timestamp": "2026/07/06 18:31:23.653",
+      "utilization_gpu_percent": 51
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421181.615487839,
+      "timestamp": "2026/07/06 18:31:23.928",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421181.888932521,
+      "timestamp": "2026/07/06 18:31:24.201",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421182.161717081,
+      "timestamp": "2026/07/06 18:31:24.474",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421182.434620517,
+      "timestamp": "2026/07/06 18:31:24.748",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421182.707420777,
+      "timestamp": "2026/07/06 18:31:25.020",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421182.980622043,
+      "timestamp": "2026/07/06 18:31:25.293",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421183.253146898,
+      "timestamp": "2026/07/06 18:31:25.566",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421183.525684688,
+      "timestamp": "2026/07/06 18:31:25.838",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421183.797949018,
+      "timestamp": "2026/07/06 18:31:26.110",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421184.070164443,
+      "timestamp": "2026/07/06 18:31:26.383",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421184.342596258,
+      "timestamp": "2026/07/06 18:31:26.655",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421184.616488981,
+      "timestamp": "2026/07/06 18:31:26.929",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421184.889092478,
+      "timestamp": "2026/07/06 18:31:27.202",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421185.161271942,
+      "timestamp": "2026/07/06 18:31:27.474",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421185.434648613,
+      "timestamp": "2026/07/06 18:31:27.747",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421185.709156478,
+      "timestamp": "2026/07/06 18:31:28.021",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421185.983636816,
+      "timestamp": "2026/07/06 18:31:28.296",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421186.257344141,
+      "timestamp": "2026/07/06 18:31:28.569",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421186.533479525,
+      "timestamp": "2026/07/06 18:31:28.845",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421186.808264149,
+      "timestamp": "2026/07/06 18:31:29.121",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421187.082194562,
+      "timestamp": "2026/07/06 18:31:29.395",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421187.354925643,
+      "timestamp": "2026/07/06 18:31:29.667",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421187.628537604,
+      "timestamp": "2026/07/06 18:31:29.941",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421187.900698542,
+      "timestamp": "2026/07/06 18:31:30.214",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421188.174376233,
+      "timestamp": "2026/07/06 18:31:30.486",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421188.446263622,
+      "timestamp": "2026/07/06 18:31:30.759",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421188.720586635,
+      "timestamp": "2026/07/06 18:31:31.033",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421188.993314064,
+      "timestamp": "2026/07/06 18:31:31.306",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421189.265137929,
+      "timestamp": "2026/07/06 18:31:31.578",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421189.537802037,
+      "timestamp": "2026/07/06 18:31:31.850",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421189.811094703,
+      "timestamp": "2026/07/06 18:31:32.123",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421190.083810575,
+      "timestamp": "2026/07/06 18:31:32.396",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421190.357159235,
+      "timestamp": "2026/07/06 18:31:32.669",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421190.629130206,
+      "timestamp": "2026/07/06 18:31:32.942",
+      "utilization_gpu_percent": 6
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421190.902198683,
+      "timestamp": "2026/07/06 18:31:33.215",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421191.176591628,
+      "timestamp": "2026/07/06 18:31:33.489",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421191.449184814,
+      "timestamp": "2026/07/06 18:31:33.762",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11386,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421191.725383099,
+      "timestamp": "2026/07/06 18:31:34.037",
+      "utilization_gpu_percent": 7
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11392,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421192.009639055,
+      "timestamp": "2026/07/06 18:31:34.316",
+      "utilization_gpu_percent": 16
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11392,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421192.301306081,
+      "timestamp": "2026/07/06 18:31:34.608",
+      "utilization_gpu_percent": 16
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11392,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421192.587387205,
+      "timestamp": "2026/07/06 18:31:34.897",
+      "utilization_gpu_percent": 18
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11392,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421192.867856876,
+      "timestamp": "2026/07/06 18:31:35.175",
+      "utilization_gpu_percent": 21
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11392,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421193.156594208,
+      "timestamp": "2026/07/06 18:31:35.463",
+      "utilization_gpu_percent": 21
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11392,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421193.446503581,
+      "timestamp": "2026/07/06 18:31:35.751",
+      "utilization_gpu_percent": 18
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11392,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421193.730147062,
+      "timestamp": "2026/07/06 18:31:36.037",
+      "utilization_gpu_percent": 18
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11392,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421194.01688361,
+      "timestamp": "2026/07/06 18:31:36.328",
+      "utilization_gpu_percent": 21
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11392,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421194.300679648,
+      "timestamp": "2026/07/06 18:31:36.606",
+      "utilization_gpu_percent": 21
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11392,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421194.586954802,
+      "timestamp": "2026/07/06 18:31:36.897",
+      "utilization_gpu_percent": 19
+    },
+    {
+      "memory_total_mib": 12282,
+      "memory_used_mib": 11392,
+      "name": "NVIDIA GeForce RTX 4070 SUPER",
+      "t_monotonic": 421194.874430177,
+      "timestamp": "2026/07/06 18:31:37.179",
+      "utilization_gpu_percent": 20
+    }
+  ],
+  "gpu_summary": {
+    "baseline_memory_used_mib": 275,
+    "final_memory_used_mib": 11392,
+    "peak_delta_mib": 11117,
+    "peak_memory_used_mib": 11392,
+    "peak_utilization_gpu_percent": 51,
+    "sample_count": 180,
+    "valid_sample_count": 180
+  },
+  "model": "gpt-oss:20b",
+  "ollama_show": {
+    "body": {
+      "capabilities": [
+        "completion",
+        "tools",
+        "thinking"
+      ],
+      "details": {
+        "families": [
+          "gptoss"
+        ],
+        "family": "gptoss",
+        "format": "gguf",
+        "parameter_size": "20.9B",
+        "parent_model": "",
+        "quantization_level": "MXFP4"
+      },
+      "license": "\n                                 Apache License\n                           Version 2.0, January 2004\n                        http://www.apache.org/licenses/\n\n   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n   1. Definitions.\n\n      \"License\" shall mean the terms and conditions for use, reproduction,\n      and distribution as defined by Sections 1 through 9 of this document.\n\n      \"Licensor\" shall mean the copyright owner or entity authorized by\n      the copyright owner that is granting the License.\n\n      \"Legal Entity\" shall mean the union of the acting entity and all\n      other entities that control, are controlled by, or are under common\n      control with that entity. For the purposes of this definition,\n      \"control\" means (i) the power, direct or indirect, to cause the\n      direction or management of such entity, whether by contract or\n      otherwise, or (ii) ownership of fifty percent (50%) or more of the\n      outstanding shares, or (iii) beneficial ownership of such entity.\n\n      \"You\" (or \"Your\") shall mean an individual or Legal Entity\n      exercising permissions granted by this License.\n\n      \"Source\" form shall mean the preferred form for making modifications,\n      including but not limited to software source code, documentation\n      source, and configuration files.\n\n      \"Object\" form shall mean any form resulting from mechanical\n      transformation or translation of a Source form, including but\n      not limited to compiled object code, generated documentation,\n      and conversions to other media types.\n\n      \"Work\" shall mean the work of authorship, whether in Source or\n      Object form, made available under the License, as indicated by a\n      copyright notice that is included in or attached to the work\n      (an example is provided in the Appendix below).\n\n      \"Derivative Works\" shall mean any work, whether in Source or Object\n      form, that is based on (or derived from) the Work and for which the\n      editorial revisions, annotations, elaborations, or other modifications\n      represent, as a whole, an original work of authorship. For the purposes\n      of this License, Derivative Works shall not include works that remain\n      separable from, or merely link (or bind by name) to the interfaces of,\n      the Work and Derivative Works thereof.\n\n      \"Contribution\" shall mean any work of authorship, including\n      the original version of the Work and any modifications or additions\n      to that Work or Derivative Works thereof, that is intentionally\n      submitted to Licensor for inclusion in the Work by the copyright owner\n      or by an individual or Legal Entity authorized to submit on behalf of\n      the copyright owner. For the purposes of this definition, \"submitted\"\n      means any form of electronic, verbal, or written communication sent\n      to the Licensor or its representatives, including but not limited to\n      communication on electronic mailing lists, source code control systems,\n      and issue tracking systems that are managed by, or on behalf of, the\n      Licensor for the purpose of discussing and improving the Work, but\n      excluding communication that is conspicuously marked or otherwise\n      designated in writing by the copyright owner as \"Not a Contribution.\"\n\n      \"Contributor\" shall mean Licensor and any individual or Legal Entity\n      on behalf of whom a Contribution has been received by Licensor and\n      subsequently incorporated within the Work.\n\n   2. Grant of Copyright License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      copyright license to reproduce, prepare Derivative Works of,\n      publicly display, publicly perform, sublicense, and distribute the\n      Work and such Derivative Works in Source or Object form.\n\n   3. Grant of Patent License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      (except as stated in this section) patent license to make, have made,\n      use, offer to sell, sell, import, and otherwise transfer the Work,\n      where such license applies only to those patent claims licensable\n      by such Contributor that are necessarily infringed by their\n      Contribution(s) alone or by combination of their Contribution(s)\n      with the Work to which such Contribution(s) was submitted. If You\n      institute patent litigation against any entity (including a\n      cross-claim or counterclaim in a lawsuit) alleging that the Work\n      or a Contribution incorporated within the Work constitutes direct\n      or contributory patent infringement, then any patent licenses\n      granted to You under this License for that Work shall terminate\n      as of the date such litigation is filed.\n\n   4. Redistribution. You may reproduce and distribute copies of the\n      Work or Derivative Works thereof in any medium, with or without\n      modifications, and in Source or Object form, provided that You\n      meet the following conditions:\n\n      (a) You must give any other recipients of the Work or\n          Derivative Works a copy of this License; and\n\n      (b) You must cause any modified files to carry prominent notices\n          stating that You changed the files; and\n\n      (c) You must retain, in the Source form of any Derivative Works\n          that You distribute, all copyright, patent, trademark, and\n          attribution notices from the Source form of the Work,\n          excluding those notices that do not pertain to any part of\n          the Derivative Works; and\n\n      (d) If the Work includes a \"NOTICE\" text file as part of its\n          distribution, then any Derivative Works that You distribute must\n          include a readable copy of the attribution notices contained\n          within such NOTICE file, excluding those notices that do not\n          pertain to any part of the Derivative Works, in at least one\n          of the following places: within a NOTICE text file distributed\n          as part of the Derivative Works; within the Source form or\n          documentation, if provided along with the Derivative Works; or,\n          within a display generated by the Derivative Works, if and\n          wherever such third-party notices normally appear. The contents\n          of the NOTICE file are for informational purposes only and\n          do not modify the License. You may add Your own attribution\n          notices within Derivative Works that You distribute, alongside\n          or as an addendum to the NOTICE text from the Work, provided\n          that such additional attribution notices cannot be construed\n          as modifying the License.\n\n      You may add Your own copyright statement to Your modifications and\n      may provide additional or different license terms and conditions\n      for use, reproduction, or distribution of Your modifications, or\n      for any such Derivative Works as a whole, provided Your use,\n      reproduction, and distribution of the Work otherwise complies with\n      the conditions stated in this License.\n\n   5. Submission of Contributions. Unless You explicitly state otherwise,\n      any Contribution intentionally submitted for inclusion in the Work\n      by You to the Licensor shall be under the terms and conditions of\n      this License, without any additional terms or conditions.\n      Notwithstanding the above, nothing herein shall supersede or modify\n      the terms of any separate license agreement you may have executed\n      with Licensor regarding such Contributions.\n\n   6. Trademarks. This License does not grant permission to use the trade\n      names, trademarks, service marks, or product names of the Licensor,\n      except as required for reasonable and customary use in describing the\n      origin of the Work and reproducing the content of the NOTICE file.\n\n   7. Disclaimer of Warranty. Unless required by applicable law or\n      agreed to in writing, Licensor provides the Work (and each\n      Contributor provides its Contributions) on an \"AS IS\" BASIS,\n      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n      implied, including, without limitation, any warranties or conditions\n      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n      PARTICULAR PURPOSE. You are solely responsible for determining the\n      appropriateness of using or redistributing the Work and assume any\n      risks associated with Your exercise of permissions under this License.\n\n   8. Limitation of Liability. In no event and under no legal theory,\n      whether in tort (including negligence), contract, or otherwise,\n      unless required by applicable law (such as deliberate and grossly\n      negligent acts) or agreed to in writing, shall any Contributor be\n      liable to You for damages, including any direct, indirect, special,\n      incidental, or consequential damages of any character arising as a\n      result of this License or out of the use or inability to use the\n      Work (including but not limited to damages for loss of goodwill,\n      work stoppage, computer failure or malfunction, or any and all\n      other commercial damages or losses), even if such Contributor\n      has been advised of the possibility of such damages.\n\n   9. Accepting Warranty or Additional Liability. While redistributing\n      the Work or Derivative Works thereof, You may choose to offer,\n      and charge a fee for, acceptance of support, warranty, indemnity,\n      or other liability obligations and/or rights consistent with this\n      License. However, in accepting such obligations, You may act only\n      on Your own behalf and on Your sole responsibility, not on behalf\n      of any other Contributor, and only if You agree to indemnify,\n      defend, and hold each Contributor harmless for any liability\n      incurred by, or claims asserted against, such Contributor by reason\n      of your accepting any such warranty or additional liability.\n\n   END OF TERMS AND CONDITIONS\n\n   APPENDIX: How to apply the Apache License to your work.\n\n      To apply the Apache License to your work, attach the following\n      boilerplate notice, with the fields enclosed by brackets \"[]\"\n      replaced with your own identifying information. (Don't include\n      the brackets!)  The text should be enclosed in the appropriate\n      comment syntax for the file format. We also recommend that a\n      file or class name and description of purpose be included on the\n      same \"printed page\" as the copyright notice for easier\n      identification within third-party archives.\n   Copyright [yyyy] [name of copyright owner]\n   Licensed under the Apache License, Version 2.0 (the \"License\");\n   you may not use this file except in compliance with the License.\n   You may obtain a copy of the License at\n       http://www.apache.org/licenses/LICENSE-2.0\n   Unless required by applicable law or agreed to in writing, software\n   distributed under the License is distributed on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n   See the License for the specific language governing permissions and\n   limitations under the License.",
+      "model_info": {
+        "general.architecture": "gptoss",
+        "general.file_type": 4,
+        "general.parameter_count": 20914757184,
+        "general.quantization_version": 2,
+        "gptoss.attention.head_count": 64,
+        "gptoss.attention.head_count_kv": 8,
+        "gptoss.attention.key_length": 64,
+        "gptoss.attention.layer_norm_rms_epsilon": 1e-05,
+        "gptoss.attention.sliding_window": 128,
+        "gptoss.attention.value_length": 64,
+        "gptoss.block_count": 24,
+        "gptoss.context_length": 131072,
+        "gptoss.embedding_length": 2880,
+        "gptoss.expert_count": 32,
+        "gptoss.expert_used_count": 4,
+        "gptoss.feed_forward_length": 2880,
+        "gptoss.rope.freq_base": 150000,
+        "gptoss.rope.scaling.factor": 32,
+        "gptoss.rope.scaling.original_context_length": 4096,
+        "tokenizer.ggml.add_bos_token": false,
+        "tokenizer.ggml.add_eos_token": false,
+        "tokenizer.ggml.add_padding_token": false,
+        "tokenizer.ggml.bos_token_id": 199998,
+        "tokenizer.ggml.eos_token_id": 199999,
+        "tokenizer.ggml.eos_token_ids": null,
+        "tokenizer.ggml.merges": null,
+        "tokenizer.ggml.model": "gpt2",
+        "tokenizer.ggml.padding_token_id": 199999,
+        "tokenizer.ggml.pre": "default",
+        "tokenizer.ggml.scores": null,
+        "tokenizer.ggml.token_type": null,
+        "tokenizer.ggml.tokens": null
+      },
+      "modelfile": "# Modelfile generated by \"ollama show\"\n# To build a new Modelfile based on this, replace FROM with:\n# FROM gpt-oss:20b\n\nFROM /usr/share/ollama/.ollama/models/blobs/sha256-e7b273f9636059a689e3ddcab3716e4f65abe0143ac978e46673ad0e52d09efb\nTEMPLATE \"\"\"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.\nKnowledge cutoff: 2024-06\nCurrent date: {{ currentDate }}\n{{- if and .IsThinkSet .Think (ne .ThinkLevel \"\") }}\n\nReasoning: {{ .ThinkLevel }}\n{{- else if or (not .IsThinkSet) (and .IsThinkSet .Think) }}\n\nReasoning: medium\n{{- end }}\n\n{{- $hasNonBuiltinTools := false }}\n{{- if .Tools -}}\n{{- $hasBrowserSearch := false }}\n{{- $hasBrowserOpen := false }}\n{{- $hasBrowserFind := false }}\n{{- $hasPython := false }}\n  {{- range .Tools }}\n    {{- if eq .Function.Name \"browser.search\" -}}{{- $hasBrowserSearch = true -}}\n    {{- else if eq .Function.Name \"browser.open\" -}}{{- $hasBrowserOpen = true -}}\n    {{- else if eq .Function.Name \"browser.find\" -}}{{- $hasBrowserFind = true -}}\n    {{- else if eq .Function.Name \"python\" -}}{{- $hasPython = true -}}\n    {{- else }}{{ $hasNonBuiltinTools = true -}}\n    {{- end }}\n  {{- end }}\n{{- if or $hasBrowserSearch $hasBrowserOpen $hasBrowserFind $hasPython }}\n\n# Tools\n{{- if or $hasBrowserSearch $hasBrowserOpen $hasBrowserFind }}\n\n## browser\n\n// Tool for browsing.\n// The `cursor` appears in brackets before each browsing display: `[{cursor}]`.\n// Cite information from the tool using the following format:\n// `\u3010{cursor}\u2020L{line_start}(-L{line_end})?\u3011`, for example: `\u30106\u2020L9-L11\u3011` or `\u30108\u2020L3\u3011`.\n// Do not quote more than 10 words directly from the tool output.\n// sources=web (default: web)\nnamespace browser {\n{{- if $hasBrowserSearch }}\n\n// Searches for information related to `query` and displays `topn` results.\ntype search = (_: {\nquery: string,\ntopn?: number, // default: 10\nsource?: string,\n}) => any;\n{{- end }}\n{{- if $hasBrowserOpen }}\n\n// Opens the link `id` from the page indicated by `cursor` starting at line number `loc`, showing `num_lines` lines.\n// Valid link ids are displayed with the formatting: `\u3010{id}\u2020.*\u3011`.\n// If `cursor` is not provided, the most recent page is implied.\n// If `id` is a string, it is treated as a fully qualified URL associated with `source`.\n// If `loc` is not provided, the viewport will be positioned at the beginning of the document or centered on the most relevant passage, if available.\n// Use this function without `id` to scroll to a new location of an opened page.\ntype open = (_: {\nid?: number | string, // default: -1\ncursor?: number, // default: -1\nloc?: number, // default: -1\nnum_lines?: number, // default: -1\nview_source?: boolean, // default: false\nsource?: string,\n}) => any;\n{{- end }}\n{{- if $hasBrowserFind }}\n\n// Finds exact matches of `pattern` in the current page, or the page given by `cursor`.\ntype find = (_: {\npattern: string,\ncursor?: number, // default: -1\n}) => any;\n{{- end }}\n\n} // namespace browser\n{{- end }}{{/* end if has browser tools */}}\n{{- if $hasPython }}\n\n## python\n\nUse this tool to execute Python code in your chain of thought. The code will not be shown to the user. This tool should be used for internal reasoning, but not for code that is intended to be visible to the user (e.g. when creating plots, tables, or files).\n\nWhen you send a message containing Python code to python, it will be executed in a stateful Jupyter notebook environment. python will respond with the output of the execution or time out after 120.0 seconds. The drive at '/mnt/data' can be used to save and persist user files. Internet access for this session is UNKNOWN. Depends on the cluster.\n{{- end }}{{/* end if hasPython */}}\n{{- end }}{{/* end if has any built-in tools */}}\n{{- end }}{{/* end if .Tools */}}\n\n# Valid channels: analysis, commentary, final. Channel must be included for every message.{{ if $hasNonBuiltinTools }}\nCalls to these tools must go to the commentary channel: 'functions'.\n{{- end -}}<|end|>{{/* end of system */ -}}\n{{- if or $hasNonBuiltinTools .System -}}\n<|start|>developer<|message|>{{- if $hasNonBuiltinTools }}# Tools\n\n## functions\n\nnamespace functions {\n{{- range .Tools }}\n{{- if not (or (eq .Function.Name \"browser.search\") (eq .Function.Name \"browser.open\") (eq .Function.Name \"browser.find\") (eq .Function.Name \"python\")) }}\n{{if .Function.Description }}\n// {{ .Function.Description }}\n{{- end }}\n{{- if and .Function.Parameters.Properties (gt (len .Function.Parameters.Properties) 0) }}\ntype {{ .Function.Name }} = (_: {\n{{- range $name, $prop := .Function.Parameters.Properties }}\n{{- if $prop.Description }}\n  // {{ $prop.Description }}\n{{- end }}\n  {{ $name }}: {{ $prop | toTypeScriptType }},\n{{- end }}\n}) => any;\n{{- else }}\ntype {{ .Function.Name }} = () => any;\n{{- end }}\n{{- end }}{{/* end if not browser tool */}}\n{{- end }}{{/* end of range .Tools */}}\n\n} // namespace functions\n{{- end }}{{/* end if hasNonBuiltinTools */}}\n{{- if .System}}\n\n# Instructions\n\n{{ .System }}\n{{- end -}}\n<|end|>\n{{- end -}}\n{{- /* Find the index of the last user message */ -}}\n{{- $lastUserIdx := -1 }}\n{{- $prefillingContent := false }}\n{{- $prefillingThinkingOnly := false }}\n{{- range $i, $msg := .Messages }}\n  {{- $last := eq (len (slice $.Messages $i)) 1 -}}\n  {{- if eq $msg.Role \"user\" }}\n    {{- $lastUserIdx = $i }}\n  {{- end -}}\n  {{- if and $last (eq $msg.Role \"assistant\") (gt (len $msg.Content) 0) }}\n    {{- $prefillingContent = true }}\n  {{- else if and $last (eq $msg.Role \"assistant\") (gt (len $msg.Thinking) 0) }}\n    {{- $prefillingThinkingOnly = true }}\n  {{- end }}\n{{- end -}}\n{{- /* Now render messages */ -}}\n{{- range $i, $msg := .Messages }}\n  {{- $last := eq (len (slice $.Messages $i)) 1 -}}\n  {{- if (ne $msg.Role \"system\") -}}\n    {{- if eq $msg.Role \"tool\" -}}\n      {{- if or (eq $msg.ToolName \"python\") (eq $msg.ToolName \"browser.search\") (eq $msg.ToolName \"browser.open\") (eq $msg.ToolName \"browser.find\") -}}\n        <|start|>{{ $msg.ToolName }} to=assistant<|message|>{{ $msg.Content }}<|end|>\n      {{- else -}}\n        <|start|>functions.{{ $msg.ToolName }} to=assistant<|message|>{{ $msg.Content }}<|end|>\n      {{- end -}}\n    {{- else if eq $msg.Role \"assistant\" -}}\n      {{- if and $msg.Thinking (gt $i $lastUserIdx) -}}{{- /* Show thinking only after last user message */ -}}\n      <|start|>assistant<|channel|>analysis<|message|>{{ $msg.Thinking }}{{- if not $prefillingThinkingOnly -}}<|end|>{{- end -}}\n      {{- end -}}\n      {{- if gt (len $msg.Content) 0 -}}\n        <|start|>assistant<|channel|>final<|message|>{{ $msg.Content }}{{- if not $prefillingContent -}}<|end|>{{- end -}}\n      {{- end -}}\n      {{- if gt (len $msg.ToolCalls) 0 -}}\n        {{- range $j, $toolCall := $msg.ToolCalls -}}\n          {{- $isBuiltin := or (eq $toolCall.Function.Name \"python\") (eq $toolCall.Function.Name \"browser.search\") (eq $toolCall.Function.Name \"browser.open\") (eq $toolCall.Function.Name \"browser.find\") -}}\n          <|start|>assistant<|channel|>{{ if $isBuiltin }}analysis{{ else }}commentary{{ end }} to={{ if not $isBuiltin}}functions.{{end}}{{ $toolCall.Function.Name }} <|constrain|>json<|message|>{{ $toolCall.Function.Arguments }}<|call|>\n        {{- end -}}\n      {{- end -}}\n    {{- else if eq $msg.Role \"user\" -}}\n      <|start|>{{ $msg.Role }}<|message|>{{ $msg.Content }}<|end|>\n    {{- end }}\n  {{- else }}\n  {{- end }}\n{{- end -}}\n{{- if not (or $prefillingContent $prefillingThinkingOnly) -}}\n<|start|>assistant\n{{- end -}}\"\"\"\nPARAMETER temperature 1\nLICENSE \"\"\"\n                                 Apache License\n                           Version 2.0, January 2004\n                        http://www.apache.org/licenses/\n\n   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n   1. Definitions.\n\n      \"License\" shall mean the terms and conditions for use, reproduction,\n      and distribution as defined by Sections 1 through 9 of this document.\n\n      \"Licensor\" shall mean the copyright owner or entity authorized by\n      the copyright owner that is granting the License.\n\n      \"Legal Entity\" shall mean the union of the acting entity and all\n      other entities that control, are controlled by, or are under common\n      control with that entity. For the purposes of this definition,\n      \"control\" means (i) the power, direct or indirect, to cause the\n      direction or management of such entity, whether by contract or\n      otherwise, or (ii) ownership of fifty percent (50%) or more of the\n      outstanding shares, or (iii) beneficial ownership of such entity.\n\n      \"You\" (or \"Your\") shall mean an individual or Legal Entity\n      exercising permissions granted by this License.\n\n      \"Source\" form shall mean the preferred form for making modifications,\n      including but not limited to software source code, documentation\n      source, and configuration files.\n\n      \"Object\" form shall mean any form resulting from mechanical\n      transformation or translation of a Source form, including but\n      not limited to compiled object code, generated documentation,\n      and conversions to other media types.\n\n      \"Work\" shall mean the work of authorship, whether in Source or\n      Object form, made available under the License, as indicated by a\n      copyright notice that is included in or attached to the work\n      (an example is provided in the Appendix below).\n\n      \"Derivative Works\" shall mean any work, whether in Source or Object\n      form, that is based on (or derived from) the Work and for which the\n      editorial revisions, annotations, elaborations, or other modifications\n      represent, as a whole, an original work of authorship. For the purposes\n      of this License, Derivative Works shall not include works that remain\n      separable from, or merely link (or bind by name) to the interfaces of,\n      the Work and Derivative Works thereof.\n\n      \"Contribution\" shall mean any work of authorship, including\n      the original version of the Work and any modifications or additions\n      to that Work or Derivative Works thereof, that is intentionally\n      submitted to Licensor for inclusion in the Work by the copyright owner\n      or by an individual or Legal Entity authorized to submit on behalf of\n      the copyright owner. For the purposes of this definition, \"submitted\"\n      means any form of electronic, verbal, or written communication sent\n      to the Licensor or its representatives, including but not limited to\n      communication on electronic mailing lists, source code control systems,\n      and issue tracking systems that are managed by, or on behalf of, the\n      Licensor for the purpose of discussing and improving the Work, but\n      excluding communication that is conspicuously marked or otherwise\n      designated in writing by the copyright owner as \"Not a Contribution.\"\n\n      \"Contributor\" shall mean Licensor and any individual or Legal Entity\n      on behalf of whom a Contribution has been received by Licensor and\n      subsequently incorporated within the Work.\n\n   2. Grant of Copyright License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      copyright license to reproduce, prepare Derivative Works of,\n      publicly display, publicly perform, sublicense, and distribute the\n      Work and such Derivative Works in Source or Object form.\n\n   3. Grant of Patent License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      (except as stated in this section) patent license to make, have made,\n      use, offer to sell, sell, import, and otherwise transfer the Work,\n      where such license applies only to those patent claims licensable\n      by such Contributor that are necessarily infringed by their\n      Contribution(s) alone or by combination of their Contribution(s)\n      with the Work to which such Contribution(s) was submitted. If You\n      institute patent litigation against any entity (including a\n      cross-claim or counterclaim in a lawsuit) alleging that the Work\n      or a Contribution incorporated within the Work constitutes direct\n      or contributory patent infringement, then any patent licenses\n      granted to You under this License for that Work shall terminate\n      as of the date such litigation is filed.\n\n   4. Redistribution. You may reproduce and distribute copies of the\n      Work or Derivative Works thereof in any medium, with or without\n      modifications, and in Source or Object form, provided that You\n      meet the following conditions:\n\n      (a) You must give any other recipients of the Work or\n          Derivative Works a copy of this License; and\n\n      (b) You must cause any modified files to carry prominent notices\n          stating that You changed the files; and\n\n      (c) You must retain, in the Source form of any Derivative Works\n          that You distribute, all copyright, patent, trademark, and\n          attribution notices from the Source form of the Work,\n          excluding those notices that do not pertain to any part of\n          the Derivative Works; and\n\n      (d) If the Work includes a \"NOTICE\" text file as part of its\n          distribution, then any Derivative Works that You distribute must\n          include a readable copy of the attribution notices contained\n          within such NOTICE file, excluding those notices that do not\n          pertain to any part of the Derivative Works, in at least one\n          of the following places: within a NOTICE text file distributed\n          as part of the Derivative Works; within the Source form or\n          documentation, if provided along with the Derivative Works; or,\n          within a display generated by the Derivative Works, if and\n          wherever such third-party notices normally appear. The contents\n          of the NOTICE file are for informational purposes only and\n          do not modify the License. You may add Your own attribution\n          notices within Derivative Works that You distribute, alongside\n          or as an addendum to the NOTICE text from the Work, provided\n          that such additional attribution notices cannot be construed\n          as modifying the License.\n\n      You may add Your own copyright statement to Your modifications and\n      may provide additional or different license terms and conditions\n      for use, reproduction, or distribution of Your modifications, or\n      for any such Derivative Works as a whole, provided Your use,\n      reproduction, and distribution of the Work otherwise complies with\n      the conditions stated in this License.\n\n   5. Submission of Contributions. Unless You explicitly state otherwise,\n      any Contribution intentionally submitted for inclusion in the Work\n      by You to the Licensor shall be under the terms and conditions of\n      this License, without any additional terms or conditions.\n      Notwithstanding the above, nothing herein shall supersede or modify\n      the terms of any separate license agreement you may have executed\n      with Licensor regarding such Contributions.\n\n   6. Trademarks. This License does not grant permission to use the trade\n      names, trademarks, service marks, or product names of the Licensor,\n      except as required for reasonable and customary use in describing the\n      origin of the Work and reproducing the content of the NOTICE file.\n\n   7. Disclaimer of Warranty. Unless required by applicable law or\n      agreed to in writing, Licensor provides the Work (and each\n      Contributor provides its Contributions) on an \"AS IS\" BASIS,\n      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n      implied, including, without limitation, any warranties or conditions\n      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n      PARTICULAR PURPOSE. You are solely responsible for determining the\n      appropriateness of using or redistributing the Work and assume any\n      risks associated with Your exercise of permissions under this License.\n\n   8. Limitation of Liability. In no event and under no legal theory,\n      whether in tort (including negligence), contract, or otherwise,\n      unless required by applicable law (such as deliberate and grossly\n      negligent acts) or agreed to in writing, shall any Contributor be\n      liable to You for damages, including any direct, indirect, special,\n      incidental, or consequential damages of any character arising as a\n      result of this License or out of the use or inability to use the\n      Work (including but not limited to damages for loss of goodwill,\n      work stoppage, computer failure or malfunction, or any and all\n      other commercial damages or losses), even if such Contributor\n      has been advised of the possibility of such damages.\n\n   9. Accepting Warranty or Additional Liability. While redistributing\n      the Work or Derivative Works thereof, You may choose to offer,\n      and charge a fee for, acceptance of support, warranty, indemnity,\n      or other liability obligations and/or rights consistent with this\n      License. However, in accepting such obligations, You may act only\n      on Your own behalf and on Your sole responsibility, not on behalf\n      of any other Contributor, and only if You agree to indemnify,\n      defend, and hold each Contributor harmless for any liability\n      incurred by, or claims asserted against, such Contributor by reason\n      of your accepting any such warranty or additional liability.\n\n   END OF TERMS AND CONDITIONS\n\n   APPENDIX: How to apply the Apache License to your work.\n\n      To apply the Apache License to your work, attach the following\n      boilerplate notice, with the fields enclosed by brackets \"[]\"\n      replaced with your own identifying information. (Don't include\n      the brackets!)  The text should be enclosed in the appropriate\n      comment syntax for the file format. We also recommend that a\n      file or class name and description of purpose be included on the\n      same \"printed page\" as the copyright notice for easier\n      identification within third-party archives.\n   Copyright [yyyy] [name of copyright owner]\n   Licensed under the Apache License, Version 2.0 (the \"License\");\n   you may not use this file except in compliance with the License.\n   You may obtain a copy of the License at\n       http://www.apache.org/licenses/LICENSE-2.0\n   Unless required by applicable law or agreed to in writing, software\n   distributed under the License is distributed on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n   See the License for the specific language governing permissions and\n   limitations under the License.\"\"\"\n",
+      "modified_at": "2026-07-06T18:27:36.630735829-04:00",
+      "parameters": "temperature                    1",
+      "template": "<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.\nKnowledge cutoff: 2024-06\nCurrent date: {{ currentDate }}\n{{- if and .IsThinkSet .Think (ne .ThinkLevel \"\") }}\n\nReasoning: {{ .ThinkLevel }}\n{{- else if or (not .IsThinkSet) (and .IsThinkSet .Think) }}\n\nReasoning: medium\n{{- end }}\n\n{{- $hasNonBuiltinTools := false }}\n{{- if .Tools -}}\n{{- $hasBrowserSearch := false }}\n{{- $hasBrowserOpen := false }}\n{{- $hasBrowserFind := false }}\n{{- $hasPython := false }}\n  {{- range .Tools }}\n    {{- if eq .Function.Name \"browser.search\" -}}{{- $hasBrowserSearch = true -}}\n    {{- else if eq .Function.Name \"browser.open\" -}}{{- $hasBrowserOpen = true -}}\n    {{- else if eq .Function.Name \"browser.find\" -}}{{- $hasBrowserFind = true -}}\n    {{- else if eq .Function.Name \"python\" -}}{{- $hasPython = true -}}\n    {{- else }}{{ $hasNonBuiltinTools = true -}}\n    {{- end }}\n  {{- end }}\n{{- if or $hasBrowserSearch $hasBrowserOpen $hasBrowserFind $hasPython }}\n\n# Tools\n{{- if or $hasBrowserSearch $hasBrowserOpen $hasBrowserFind }}\n\n## browser\n\n// Tool for browsing.\n// The `cursor` appears in brackets before each browsing display: `[{cursor}]`.\n// Cite information from the tool using the following format:\n// `\u3010{cursor}\u2020L{line_start}(-L{line_end})?\u3011`, for example: `\u30106\u2020L9-L11\u3011` or `\u30108\u2020L3\u3011`.\n// Do not quote more than 10 words directly from the tool output.\n// sources=web (default: web)\nnamespace browser {\n{{- if $hasBrowserSearch }}\n\n// Searches for information related to `query` and displays `topn` results.\ntype search = (_: {\nquery: string,\ntopn?: number, // default: 10\nsource?: string,\n}) => any;\n{{- end }}\n{{- if $hasBrowserOpen }}\n\n// Opens the link `id` from the page indicated by `cursor` starting at line number `loc`, showing `num_lines` lines.\n// Valid link ids are displayed with the formatting: `\u3010{id}\u2020.*\u3011`.\n// If `cursor` is not provided, the most recent page is implied.\n// If `id` is a string, it is treated as a fully qualified URL associated with `source`.\n// If `loc` is not provided, the viewport will be positioned at the beginning of the document or centered on the most relevant passage, if available.\n// Use this function without `id` to scroll to a new location of an opened page.\ntype open = (_: {\nid?: number | string, // default: -1\ncursor?: number, // default: -1\nloc?: number, // default: -1\nnum_lines?: number, // default: -1\nview_source?: boolean, // default: false\nsource?: string,\n}) => any;\n{{- end }}\n{{- if $hasBrowserFind }}\n\n// Finds exact matches of `pattern` in the current page, or the page given by `cursor`.\ntype find = (_: {\npattern: string,\ncursor?: number, // default: -1\n}) => any;\n{{- end }}\n\n} // namespace browser\n{{- end }}{{/* end if has browser tools */}}\n{{- if $hasPython }}\n\n## python\n\nUse this tool to execute Python code in your chain of thought. The code will not be shown to the user. This tool should be used for internal reasoning, but not for code that is intended to be visible to the user (e.g. when creating plots, tables, or files).\n\nWhen you send a message containing Python code to python, it will be executed in a stateful Jupyter notebook environment. python will respond with the output of the execution or time out after 120.0 seconds. The drive at '/mnt/data' can be used to save and persist user files. Internet access for this session is UNKNOWN. Depends on the cluster.\n{{- end }}{{/* end if hasPython */}}\n{{- end }}{{/* end if has any built-in tools */}}\n{{- end }}{{/* end if .Tools */}}\n\n# Valid channels: analysis, commentary, final. Channel must be included for every message.{{ if $hasNonBuiltinTools }}\nCalls to these tools must go to the commentary channel: 'functions'.\n{{- end -}}<|end|>{{/* end of system */ -}}\n{{- if or $hasNonBuiltinTools .System -}}\n<|start|>developer<|message|>{{- if $hasNonBuiltinTools }}# Tools\n\n## functions\n\nnamespace functions {\n{{- range .Tools }}\n{{- if not (or (eq .Function.Name \"browser.search\") (eq .Function.Name \"browser.open\") (eq .Function.Name \"browser.find\") (eq .Function.Name \"python\")) }}\n{{if .Function.Description }}\n// {{ .Function.Description }}\n{{- end }}\n{{- if and .Function.Parameters.Properties (gt (len .Function.Parameters.Properties) 0) }}\ntype {{ .Function.Name }} = (_: {\n{{- range $name, $prop := .Function.Parameters.Properties }}\n{{- if $prop.Description }}\n  // {{ $prop.Description }}\n{{- end }}\n  {{ $name }}: {{ $prop | toTypeScriptType }},\n{{- end }}\n}) => any;\n{{- else }}\ntype {{ .Function.Name }} = () => any;\n{{- end }}\n{{- end }}{{/* end if not browser tool */}}\n{{- end }}{{/* end of range .Tools */}}\n\n} // namespace functions\n{{- end }}{{/* end if hasNonBuiltinTools */}}\n{{- if .System}}\n\n# Instructions\n\n{{ .System }}\n{{- end -}}\n<|end|>\n{{- end -}}\n{{- /* Find the index of the last user message */ -}}\n{{- $lastUserIdx := -1 }}\n{{- $prefillingContent := false }}\n{{- $prefillingThinkingOnly := false }}\n{{- range $i, $msg := .Messages }}\n  {{- $last := eq (len (slice $.Messages $i)) 1 -}}\n  {{- if eq $msg.Role \"user\" }}\n    {{- $lastUserIdx = $i }}\n  {{- end -}}\n  {{- if and $last (eq $msg.Role \"assistant\") (gt (len $msg.Content) 0) }}\n    {{- $prefillingContent = true }}\n  {{- else if and $last (eq $msg.Role \"assistant\") (gt (len $msg.Thinking) 0) }}\n    {{- $prefillingThinkingOnly = true }}\n  {{- end }}\n{{- end -}}\n{{- /* Now render messages */ -}}\n{{- range $i, $msg := .Messages }}\n  {{- $last := eq (len (slice $.Messages $i)) 1 -}}\n  {{- if (ne $msg.Role \"system\") -}}\n    {{- if eq $msg.Role \"tool\" -}}\n      {{- if or (eq $msg.ToolName \"python\") (eq $msg.ToolName \"browser.search\") (eq $msg.ToolName \"browser.open\") (eq $msg.ToolName \"browser.find\") -}}\n        <|start|>{{ $msg.ToolName }} to=assistant<|message|>{{ $msg.Content }}<|end|>\n      {{- else -}}\n        <|start|>functions.{{ $msg.ToolName }} to=assistant<|message|>{{ $msg.Content }}<|end|>\n      {{- end -}}\n    {{- else if eq $msg.Role \"assistant\" -}}\n      {{- if and $msg.Thinking (gt $i $lastUserIdx) -}}{{- /* Show thinking only after last user message */ -}}\n      <|start|>assistant<|channel|>analysis<|message|>{{ $msg.Thinking }}{{- if not $prefillingThinkingOnly -}}<|end|>{{- end -}}\n      {{- end -}}\n      {{- if gt (len $msg.Content) 0 -}}\n        <|start|>assistant<|channel|>final<|message|>{{ $msg.Content }}{{- if not $prefillingContent -}}<|end|>{{- end -}}\n      {{- end -}}\n      {{- if gt (len $msg.ToolCalls) 0 -}}\n        {{- range $j, $toolCall := $msg.ToolCalls -}}\n          {{- $isBuiltin := or (eq $toolCall.Function.Name \"python\") (eq $toolCall.Function.Name \"browser.search\") (eq $toolCall.Function.Name \"browser.open\") (eq $toolCall.Function.Name \"browser.find\") -}}\n          <|start|>assistant<|channel|>{{ if $isBuiltin }}analysis{{ else }}commentary{{ end }} to={{ if not $isBuiltin}}functions.{{end}}{{ $toolCall.Function.Name }} <|constrain|>json<|message|>{{ $toolCall.Function.Arguments }}<|call|>\n        {{- end -}}\n      {{- end -}}\n    {{- else if eq $msg.Role \"user\" -}}\n      <|start|>{{ $msg.Role }}<|message|>{{ $msg.Content }}<|end|>\n    {{- end }}\n  {{- else }}\n  {{- end }}\n{{- end -}}\n{{- if not (or $prefillingContent $prefillingThinkingOnly) -}}\n<|start|>assistant\n{{- end -}}",
+      "tensors": [
+        {
+          "name": "blk.0.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.0.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.0.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.0.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.0.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.0.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.0.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.0.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.0.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.0.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.0.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.0.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.0.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.0.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.0.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.0.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.0.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.0.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.0.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.1.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.1.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.1.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.1.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.1.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.1.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.1.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.1.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.1.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.1.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.1.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.1.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.1.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.1.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.1.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.1.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.1.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.1.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.1.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.2.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.2.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.2.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.2.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.2.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.2.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.2.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.2.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.2.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.2.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.2.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.2.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.2.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.2.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.2.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.2.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.2.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.2.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.2.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.3.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.3.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.3.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.3.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.3.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.3.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.3.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.3.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.3.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.3.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.3.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.3.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.3.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.3.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.3.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.3.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.3.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.3.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.3.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.4.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.4.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.4.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.4.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.4.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.4.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.4.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.4.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.4.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.4.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.4.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.4.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.4.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.4.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.4.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.4.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.4.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.4.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.4.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.5.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.5.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.5.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.5.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.5.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.5.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.5.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.5.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.5.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.5.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.5.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.5.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.5.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.5.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.5.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.5.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.5.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.5.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.5.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.6.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.6.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.6.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.6.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.6.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.6.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.6.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.6.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.6.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.6.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.6.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.6.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.6.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.6.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.6.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.6.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.6.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.6.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.6.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.7.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.7.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.7.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.7.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.7.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.7.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.7.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.7.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.7.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.7.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.7.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.7.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.7.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.7.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.7.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.7.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.7.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.7.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.7.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.8.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.8.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.8.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.8.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.8.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.8.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.8.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.8.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.8.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.8.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.8.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.8.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.8.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.8.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.8.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.8.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.8.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.8.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.8.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.9.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.9.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.9.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.9.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.9.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.9.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.9.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.9.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.9.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.9.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.9.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.9.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.9.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.9.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.9.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.9.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.9.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.9.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.9.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.10.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.10.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.10.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.10.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.10.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.10.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.10.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.10.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.10.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.10.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.10.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.10.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.10.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.10.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.10.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.10.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.10.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.10.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.10.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.11.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.11.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.11.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.11.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.11.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.11.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.11.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.11.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.11.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.11.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.11.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.11.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.11.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.11.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.11.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.11.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.11.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.11.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.11.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.12.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.12.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.12.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.12.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.12.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.12.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.12.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.12.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.12.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.12.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.12.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.12.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.12.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.12.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.12.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.12.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.12.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.12.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.12.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.13.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.13.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.13.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.13.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.13.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.13.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.13.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.13.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.13.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.13.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.13.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.13.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.13.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.13.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.13.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.13.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.13.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.13.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.13.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.14.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.14.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.14.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.14.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.14.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.14.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.14.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.14.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.14.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.14.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.14.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.14.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.14.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.14.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.14.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.14.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.14.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.14.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.14.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.15.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.15.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.15.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.15.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.15.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.15.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.15.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.15.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.15.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.15.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.15.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.15.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.15.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.15.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.15.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.15.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.15.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.15.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.15.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.16.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.16.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.16.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.16.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.16.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.16.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.16.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.16.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.16.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.16.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.16.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.16.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.16.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.16.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.16.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.16.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.16.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.16.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.16.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.17.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.17.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.17.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.17.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.17.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.17.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.17.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.17.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.17.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.17.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.17.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.17.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.17.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.17.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.17.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.17.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.17.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.17.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.17.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.18.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.18.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.18.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.18.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.18.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.18.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.18.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.18.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.18.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.18.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.18.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.18.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.18.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.18.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.18.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.18.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.18.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.18.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.18.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.19.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.19.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.19.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.19.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.19.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.19.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.19.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.19.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.19.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.19.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.19.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.19.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.19.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.19.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.19.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.19.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.19.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.19.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.19.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.20.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.20.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.20.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.20.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.20.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.20.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.20.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.20.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.20.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.20.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.20.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.20.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.20.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.20.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.20.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.20.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.20.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.20.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.20.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.21.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.21.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.21.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.21.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.21.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.21.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.21.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.21.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.21.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.21.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.21.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.21.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.21.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.21.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.21.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.21.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.21.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.21.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.21.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.22.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.22.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.22.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.22.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.22.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.22.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.22.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.22.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.22.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.22.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.22.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.22.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.22.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.22.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.22.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.22.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.22.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.22.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.22.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.23.attn_k.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.23.attn_k.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.23.attn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.23.attn_out.bias",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.23.attn_out.weight",
+          "shape": [
+            4096,
+            2880
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.23.attn_q.bias",
+          "shape": [
+            4096
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.23.attn_q.weight",
+          "shape": [
+            2880,
+            4096
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.23.attn_sinks",
+          "shape": [
+            64
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.23.attn_v.bias",
+          "shape": [
+            512
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.23.attn_v.weight",
+          "shape": [
+            2880,
+            512
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "blk.23.ffn_down_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.23.ffn_down_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.23.ffn_gate_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.23.ffn_gate_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "blk.23.ffn_gate_inp.bias",
+          "shape": [
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.23.ffn_gate_inp.weight",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.23.ffn_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.23.ffn_up_exps.bias",
+          "shape": [
+            2880,
+            32
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "blk.23.ffn_up_exps.weight",
+          "shape": [
+            2880,
+            2880,
+            32
+          ],
+          "type": "MXFP4"
+        },
+        {
+          "name": "output.weight",
+          "shape": [
+            2880,
+            201088
+          ],
+          "type": "BF16"
+        },
+        {
+          "name": "output_norm.weight",
+          "shape": [
+            2880
+          ],
+          "type": "F32"
+        },
+        {
+          "name": "token_embd.weight",
+          "shape": [
+            2880,
+            201088
+          ],
+          "type": "BF16"
+        }
+      ]
+    },
+    "status_code": 200
+  },
+  "prompt": "Answer with exactly one sentence: what is the capital of France?",
+  "prompt_format": "Ollama model template for gpt-oss:20b",
+  "request": {
+    "options": {
+      "num_predict": 64,
+      "temperature": 0.0
+    },
+    "stream": false
+  },
+  "status": "ok",
+  "wall_seconds": 49.40885784197599
+}

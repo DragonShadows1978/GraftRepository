@@ -1,0 +1,348 @@
+{
+  "apa_layer_scope": "full",
+  "attention_audit": {
+    "apa_layer_scope": "full",
+    "bulk_bits": 8,
+    "fused_sink_apa_available": true,
+    "planned_layers": [
+      {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 0,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 1,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      }
+    ],
+    "refine_percentile": 0.15,
+    "requested_attention_mode": "apa_selective",
+    "sink_aware_apa_available": true
+  },
+  "attention_layers_planned_apa": [
+    1
+  ],
+  "attention_layers_planned_standard": [
+    0
+  ],
+  "attention_layers_used_apa": [
+    1
+  ],
+  "attention_layers_used_standard": [
+    0
+  ],
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "completed_layers": 2,
+  "created_at": "2026-07-06T20:28:26",
+  "expert_mode": "resident_packed_mxfp4",
+  "final_hidden_shape": [
+    1,
+    5,
+    2880
+  ],
+  "final_hidden_stats": {
+    "max": 214.0,
+    "mean": 0.46778395771980286,
+    "min": -130.0,
+    "std": 13.890728950500488,
+    "sum": 1347.2177734375
+  },
+  "full_input_ids": [
+    [
+      976,
+      9029,
+      328,
+      10128,
+      382
+    ]
+  ],
+  "fused_sink_apa_available": true,
+  "gpu_after": "NVIDIA GeForce RTX 4070 SUPER, 483, 12282, 23",
+  "gpu_before": "NVIDIA GeForce RTX 4070 SUPER, 274, 12282, 35",
+  "gpu_before_lm_head": "NVIDIA GeForce RTX 4070 SUPER, 483, 12282, 23",
+  "hidden_shape_initial": [
+    1,
+    5,
+    2880
+  ],
+  "input_ids": [
+    [
+      976,
+      9029,
+      328,
+      10128,
+      382
+    ]
+  ],
+  "input_ids_shape": [
+    1,
+    5
+  ],
+  "input_truncated": false,
+  "layers": [
+    {
+      "attention": {
+        "apa_active": false,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": "sliding_window_bounded",
+        "effective_attention_mode": "standard",
+        "layer": 0,
+        "layer_type": "sliding_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "standard_sink",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 903, 12282, 8",
+      "hidden_shape": [
+        1,
+        5,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          5,
+          64
+        ],
+        [
+          1,
+          8,
+          5,
+          64
+        ]
+      ],
+      "layer": 0,
+      "layer_type": "sliding_attention",
+      "route_info": {
+        "expert_mode": "resident_packed_mxfp4",
+        "top_indices": [
+          [
+            13,
+            21,
+            17,
+            29
+          ],
+          [
+            9,
+            7,
+            16,
+            11
+          ],
+          [
+            8,
+            25,
+            11,
+            17
+          ],
+          [
+            26,
+            11,
+            9,
+            27
+          ],
+          [
+            25,
+            26,
+            4,
+            11
+          ]
+        ],
+        "top_weights": [
+          [
+            0.43296265602111816,
+            0.35862860083580017,
+            0.11111205816268921,
+            0.09729673713445663
+          ],
+          [
+            0.4727887213230133,
+            0.2432323396205902,
+            0.17447899281978607,
+            0.1094999834895134
+          ],
+          [
+            0.4967457354068756,
+            0.39997339248657227,
+            0.060453757643699646,
+            0.04282714053988457
+          ],
+          [
+            0.47826921939849854,
+            0.2951936423778534,
+            0.12855784595012665,
+            0.09797925502061844
+          ],
+          [
+            0.4696079194545746,
+            0.31668949127197266,
+            0.13523176312446594,
+            0.07847082614898682
+          ]
+        ],
+        "unique_experts": [
+          4,
+          7,
+          8,
+          9,
+          11,
+          13,
+          16,
+          17,
+          21,
+          25,
+          26,
+          27,
+          29
+        ]
+      },
+      "wall_seconds": 0.3302539800060913
+    },
+    {
+      "attention": {
+        "apa_active": true,
+        "apa_layer_scope": "full",
+        "apa_skip_reason": null,
+        "effective_attention_mode": "apa_selective",
+        "layer": 1,
+        "layer_type": "full_attention",
+        "requested_attention_mode": "apa_selective"
+      },
+      "attention_backend": "apa_selective_sink_fused",
+      "gpu_after_layer": "NVIDIA GeForce RTX 4070 SUPER, 903, 12282, 7",
+      "hidden_shape": [
+        1,
+        5,
+        2880
+      ],
+      "kv_shapes": [
+        [
+          1,
+          8,
+          5,
+          64
+        ],
+        [
+          1,
+          8,
+          5,
+          64
+        ]
+      ],
+      "layer": 1,
+      "layer_type": "full_attention",
+      "route_info": {
+        "expert_mode": "resident_packed_mxfp4",
+        "top_indices": [
+          [
+            27,
+            12,
+            25,
+            26
+          ],
+          [
+            28,
+            17,
+            1,
+            0
+          ],
+          [
+            20,
+            16,
+            30,
+            28
+          ],
+          [
+            28,
+            22,
+            17,
+            6
+          ],
+          [
+            13,
+            10,
+            8,
+            26
+          ]
+        ],
+        "top_weights": [
+          [
+            0.30973997712135315,
+            0.3046993911266327,
+            0.2316589504480362,
+            0.15390165150165558
+          ],
+          [
+            0.30706098675727844,
+            0.23819784820079803,
+            0.2376105785369873,
+            0.217130646109581
+          ],
+          [
+            0.5877212882041931,
+            0.23542791604995728,
+            0.10989486426115036,
+            0.06695591658353806
+          ],
+          [
+            0.38640981912612915,
+            0.2386176586151123,
+            0.1887582689523697,
+            0.18621420860290527
+          ],
+          [
+            0.3710326552391052,
+            0.30910277366638184,
+            0.17169001698493958,
+            0.14817456901073456
+          ]
+        ],
+        "unique_experts": [
+          0,
+          1,
+          6,
+          8,
+          10,
+          12,
+          13,
+          16,
+          17,
+          20,
+          22,
+          25,
+          26,
+          27,
+          28,
+          30
+        ]
+      },
+      "wall_seconds": 1.0611544440034777
+    }
+  ],
+  "max_layers": 2,
+  "max_tokens": 8,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "note": "streamed full-stack forward path with quantized TensorCUDA lm_head; score_ppl writes a teacher-forced window receipt, but this artifact alone is not generation quality, context, or GRM evidence",
+  "prompt": "The capital of France is",
+  "raw_token_count": 5,
+  "refine_percentile": 0.15,
+  "rendered_prompt": "The capital of France is",
+  "resolved_layers": 2,
+  "score_ppl": false,
+  "sink_aware_apa_available": true,
+  "skip_lm_head": true,
+  "status": "ok",
+  "target_ids": null,
+  "top_tokens": [],
+  "use_chat_template": false,
+  "wall_seconds": 3.831025028019212
+}

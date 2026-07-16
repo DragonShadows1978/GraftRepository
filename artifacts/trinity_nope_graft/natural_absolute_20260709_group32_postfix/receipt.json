@@ -1,0 +1,1224 @@
+{
+  "cases": [
+    {
+      "cache_after_evict": {
+        "all_S_equal": true,
+        "full_S0": 43,
+        "full_S_unique": [
+          43
+        ],
+        "live_shift_on_layers_unique": [
+          "99"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 43,
+        "sliding_S_unique": [
+          43
+        ]
+      },
+      "cache_after_plant": {
+        "all_S_equal": true,
+        "full_S0": 22,
+        "full_S_unique": [
+          22
+        ],
+        "live_shift_on_layers_unique": [
+          "99"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 22,
+        "sliding_S_unique": [
+          22
+        ]
+      },
+      "cache_post_gen": {
+        "all_S_equal": true,
+        "full_S0": 86,
+        "full_S_unique": [
+          86
+        ],
+        "live_shift_on_layers_unique": [
+          "99"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 86,
+        "sliding_S_unique": [
+          86
+        ]
+      },
+      "cache_pre_gen": {
+        "all_S_equal": true,
+        "full_S0": 62,
+        "full_S_unique": [
+          62
+        ],
+        "live_shift_on_layers_unique": [
+          "99"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 62,
+        "sliding_S_unique": [
+          62
+        ]
+      },
+      "chat_template_used": false,
+      "cur_mount_n": 19,
+      "cur_mounts": [
+        0
+      ],
+      "fact_evicted": true,
+      "filler_text": "The next notebook paragraph describes a quiet maintenance walk through the archive corridor. The lights were checked, the shelves were dusted, and the operator wrote down that routine observations should continue without changing any earlier record.\n",
+      "generation": {
+        "class": "value_hit",
+        "generated_ids": [
+          111485,
+          44,
+          50,
+          4655,
+          25046,
+          45,
+          7983,
+          394,
+          3926,
+          440,
+          581,
+          1934,
+          25232,
+          10573,
+          7301,
+          290
+        ],
+        "generated_text": "Vortex-3-Sierra. Keep it safe.\nThe next notebook paragraph describes a",
+        "generated_text_raw": " Vortex-3-Sierra. Keep it safe.\nThe next notebook paragraph describes a",
+        "generated_token_texts": [
+          " Vortex",
+          "-",
+          "3",
+          "-S",
+          "ierra",
+          ".",
+          " Keep",
+          " it",
+          " safe",
+          ".\n",
+          "The",
+          " next",
+          " notebook",
+          " paragraph",
+          " describes",
+          " a"
+        ],
+        "n_steps": 16,
+        "prompt_ntok": 9,
+        "prompt_text": "As noted earlier, the vault access code is",
+        "steps_head": [
+          {
+            "arena_pos_after_prompt": 68,
+            "chosen": 111485,
+            "rope0_expected": 158,
+            "tag": "prompt",
+            "text": " Vortex"
+          },
+          {
+            "arena_pos": 69,
+            "chosen": 44,
+            "tag": "g0",
+            "text": "-"
+          },
+          {
+            "arena_pos": 70,
+            "chosen": 50,
+            "tag": "g1",
+            "text": "3"
+          },
+          {
+            "arena_pos": 71,
+            "chosen": 4655,
+            "tag": "g2",
+            "text": "-S"
+          }
+        ],
+        "value_recovered": true,
+        "wall_s": 14.623
+      },
+      "label": "w96_mount",
+      "live_segs_after_evict": [
+        [
+          1,
+          40
+        ]
+      ],
+      "live_shift": 99,
+      "mount": true,
+      "picks": [
+        0
+      ],
+      "picks_forced": false,
+      "plant_ntok": 19,
+      "plant_text": "For the record, the vault access code is Vortex-3-Sierra. Keep it safe.\n",
+      "ranking": [
+        0
+      ],
+      "sink_ntok": 3,
+      "sink_text": "Notebook context:\n",
+      "wall_s": 69.767,
+      "width": 96
+    },
+    {
+      "cache_after_evict": {
+        "all_S_equal": true,
+        "full_S0": 43,
+        "full_S_unique": [
+          43
+        ],
+        "live_shift_on_layers_unique": [
+          "99"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 43,
+        "sliding_S_unique": [
+          43
+        ]
+      },
+      "cache_after_plant": {
+        "all_S_equal": true,
+        "full_S0": 22,
+        "full_S_unique": [
+          22
+        ],
+        "live_shift_on_layers_unique": [
+          "99"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 22,
+        "sliding_S_unique": [
+          22
+        ]
+      },
+      "cache_post_gen": {
+        "all_S_equal": true,
+        "full_S0": 67,
+        "full_S_unique": [
+          67
+        ],
+        "live_shift_on_layers_unique": [
+          "99"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 67,
+        "sliding_S_unique": [
+          67
+        ]
+      },
+      "cache_pre_gen": {
+        "all_S_equal": true,
+        "full_S0": 43,
+        "full_S_unique": [
+          43
+        ],
+        "live_shift_on_layers_unique": [
+          "99"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 43,
+        "sliding_S_unique": [
+          43
+        ]
+      },
+      "chat_template_used": false,
+      "cur_mount_n": 0,
+      "cur_mounts": [],
+      "fact_evicted": true,
+      "filler_text": "The next notebook paragraph describes a quiet maintenance walk through the archive corridor. The lights were checked, the shelves were dusted, and the operator wrote down that routine observations should continue without changing any earlier record.\n",
+      "generation": {
+        "class": "clean_english",
+        "generated_ids": [
+          252,
+          48,
+          15913,
+          45,
+          405,
+          30665,
+          351,
+          4999,
+          320,
+          296,
+          27185,
+          323,
+          296,
+          23980,
+          3207,
+          45
+        ],
+        "generated_text": "1234. The vault is located in the basement of the archive building.",
+        "generated_text_raw": " 1234. The vault is located in the basement of the archive building.",
+        "generated_token_texts": [
+          " ",
+          "1",
+          "234",
+          ".",
+          " The",
+          " vault",
+          " is",
+          " located",
+          " in",
+          " the",
+          " basement",
+          " of",
+          " the",
+          " archive",
+          " building",
+          "."
+        ],
+        "n_steps": 16,
+        "prompt_ntok": 9,
+        "prompt_text": "As noted earlier, the vault access code is",
+        "steps_head": [
+          {
+            "arena_pos_after_prompt": 68,
+            "chosen": 252,
+            "rope0_expected": 158,
+            "tag": "prompt",
+            "text": " "
+          },
+          {
+            "arena_pos": 69,
+            "chosen": 48,
+            "tag": "g0",
+            "text": "1"
+          },
+          {
+            "arena_pos": 70,
+            "chosen": 15913,
+            "tag": "g1",
+            "text": "234"
+          },
+          {
+            "arena_pos": 71,
+            "chosen": 45,
+            "tag": "g2",
+            "text": "."
+          }
+        ],
+        "value_recovered": false,
+        "wall_s": 11.859
+      },
+      "label": "w96_control",
+      "live_segs_after_evict": [
+        [
+          1,
+          40
+        ]
+      ],
+      "live_shift": 99,
+      "mount": false,
+      "picks": [],
+      "picks_forced": false,
+      "plant_ntok": 19,
+      "plant_text": "For the record, the vault access code is Vortex-3-Sierra. Keep it safe.\n",
+      "ranking": [],
+      "sink_ntok": 3,
+      "sink_text": "Notebook context:\n",
+      "wall_s": 63.791,
+      "width": 96
+    },
+    {
+      "cache_after_evict": {
+        "all_S_equal": true,
+        "full_S0": 43,
+        "full_S_unique": [
+          43
+        ],
+        "live_shift_on_layers_unique": [
+          "771"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 43,
+        "sliding_S_unique": [
+          43
+        ]
+      },
+      "cache_after_plant": {
+        "all_S_equal": true,
+        "full_S0": 22,
+        "full_S_unique": [
+          22
+        ],
+        "live_shift_on_layers_unique": [
+          "771"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 22,
+        "sliding_S_unique": [
+          22
+        ]
+      },
+      "cache_post_gen": {
+        "all_S_equal": true,
+        "full_S0": 86,
+        "full_S_unique": [
+          86
+        ],
+        "live_shift_on_layers_unique": [
+          "771"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 86,
+        "sliding_S_unique": [
+          86
+        ]
+      },
+      "cache_pre_gen": {
+        "all_S_equal": true,
+        "full_S0": 62,
+        "full_S_unique": [
+          62
+        ],
+        "live_shift_on_layers_unique": [
+          "771"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 62,
+        "sliding_S_unique": [
+          62
+        ]
+      },
+      "chat_template_used": false,
+      "cur_mount_n": 19,
+      "cur_mounts": [
+        0
+      ],
+      "fact_evicted": true,
+      "filler_text": "The next notebook paragraph describes a quiet maintenance walk through the archive corridor. The lights were checked, the shelves were dusted, and the operator wrote down that routine observations should continue without changing any earlier record.\n",
+      "generation": {
+        "class": "value_hit",
+        "generated_ids": [
+          111485,
+          44,
+          50,
+          4655,
+          25046,
+          45,
+          7983,
+          394,
+          3926,
+          440,
+          581,
+          1934,
+          25232,
+          10573,
+          7301,
+          290
+        ],
+        "generated_text": "Vortex-3-Sierra. Keep it safe.\nThe next notebook paragraph describes a",
+        "generated_text_raw": " Vortex-3-Sierra. Keep it safe.\nThe next notebook paragraph describes a",
+        "generated_token_texts": [
+          " Vortex",
+          "-",
+          "3",
+          "-S",
+          "ierra",
+          ".",
+          " Keep",
+          " it",
+          " safe",
+          ".\n",
+          "The",
+          " next",
+          " notebook",
+          " paragraph",
+          " describes",
+          " a"
+        ],
+        "n_steps": 16,
+        "prompt_ntok": 9,
+        "prompt_text": "As noted earlier, the vault access code is",
+        "steps_head": [
+          {
+            "arena_pos_after_prompt": 68,
+            "chosen": 111485,
+            "rope0_expected": 830,
+            "tag": "prompt",
+            "text": " Vortex"
+          },
+          {
+            "arena_pos": 69,
+            "chosen": 44,
+            "tag": "g0",
+            "text": "-"
+          },
+          {
+            "arena_pos": 70,
+            "chosen": 50,
+            "tag": "g1",
+            "text": "3"
+          },
+          {
+            "arena_pos": 71,
+            "chosen": 4655,
+            "tag": "g2",
+            "text": "-S"
+          }
+        ],
+        "value_recovered": true,
+        "wall_s": 14.818
+      },
+      "label": "w768_mount",
+      "live_segs_after_evict": [
+        [
+          1,
+          40
+        ]
+      ],
+      "live_shift": 771,
+      "mount": true,
+      "picks": [
+        0
+      ],
+      "picks_forced": false,
+      "plant_ntok": 19,
+      "plant_text": "For the record, the vault access code is Vortex-3-Sierra. Keep it safe.\n",
+      "ranking": [
+        0
+      ],
+      "sink_ntok": 3,
+      "sink_text": "Notebook context:\n",
+      "wall_s": 70.189,
+      "width": 768
+    },
+    {
+      "cache_after_evict": {
+        "all_S_equal": true,
+        "full_S0": 43,
+        "full_S_unique": [
+          43
+        ],
+        "live_shift_on_layers_unique": [
+          "771"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 43,
+        "sliding_S_unique": [
+          43
+        ]
+      },
+      "cache_after_plant": {
+        "all_S_equal": true,
+        "full_S0": 22,
+        "full_S_unique": [
+          22
+        ],
+        "live_shift_on_layers_unique": [
+          "771"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 22,
+        "sliding_S_unique": [
+          22
+        ]
+      },
+      "cache_post_gen": {
+        "all_S_equal": true,
+        "full_S0": 67,
+        "full_S_unique": [
+          67
+        ],
+        "live_shift_on_layers_unique": [
+          "771"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 67,
+        "sliding_S_unique": [
+          67
+        ]
+      },
+      "cache_pre_gen": {
+        "all_S_equal": true,
+        "full_S0": 43,
+        "full_S_unique": [
+          43
+        ],
+        "live_shift_on_layers_unique": [
+          "771"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 43,
+        "sliding_S_unique": [
+          43
+        ]
+      },
+      "chat_template_used": false,
+      "cur_mount_n": 0,
+      "cur_mounts": [],
+      "fact_evicted": true,
+      "filler_text": "The next notebook paragraph describes a quiet maintenance walk through the archive corridor. The lights were checked, the shelves were dusted, and the operator wrote down that routine observations should continue without changing any earlier record.\n",
+      "generation": {
+        "class": "clean_english",
+        "generated_ids": [
+          252,
+          48,
+          15913,
+          45,
+          405,
+          9183,
+          351,
+          26240,
+          325,
+          854,
+          296,
+          2702,
+          325,
+          1740,
+          296,
+          30665
+        ],
+        "generated_text": "1234. The operator is instructed to use the code to open the vault",
+        "generated_text_raw": " 1234. The operator is instructed to use the code to open the vault",
+        "generated_token_texts": [
+          " ",
+          "1",
+          "234",
+          ".",
+          " The",
+          " operator",
+          " is",
+          " instructed",
+          " to",
+          " use",
+          " the",
+          " code",
+          " to",
+          " open",
+          " the",
+          " vault"
+        ],
+        "n_steps": 16,
+        "prompt_ntok": 9,
+        "prompt_text": "As noted earlier, the vault access code is",
+        "steps_head": [
+          {
+            "arena_pos_after_prompt": 68,
+            "chosen": 252,
+            "rope0_expected": 830,
+            "tag": "prompt",
+            "text": " "
+          },
+          {
+            "arena_pos": 69,
+            "chosen": 48,
+            "tag": "g0",
+            "text": "1"
+          },
+          {
+            "arena_pos": 70,
+            "chosen": 15913,
+            "tag": "g1",
+            "text": "234"
+          },
+          {
+            "arena_pos": 71,
+            "chosen": 45,
+            "tag": "g2",
+            "text": "."
+          }
+        ],
+        "value_recovered": false,
+        "wall_s": 11.593
+      },
+      "label": "w768_control",
+      "live_segs_after_evict": [
+        [
+          1,
+          40
+        ]
+      ],
+      "live_shift": 771,
+      "mount": false,
+      "picks": [],
+      "picks_forced": false,
+      "plant_ntok": 19,
+      "plant_text": "For the record, the vault access code is Vortex-3-Sierra. Keep it safe.\n",
+      "ranking": [],
+      "sink_ntok": 3,
+      "sink_text": "Notebook context:\n",
+      "wall_s": 49.891,
+      "width": 768
+    }
+  ],
+  "conversion_receipt": {
+    "embedding_host_bytes": 819986432,
+    "evidence_class": "loader conversion accounting from TensorCUDA model_info plus safetensors stat",
+    "lm_head_loaded": true,
+    "model_info_weight_mode": "int8",
+    "note": "INT8 weights are quantized on load; no separate 6GB weight shard was materialized.",
+    "resident_quantized_linear_bytes": 6291062784,
+    "resident_quantized_linear_gib": 5.859,
+    "source_bf16_linear_bytes_est": 11829510144,
+    "source_bf16_linear_gib_est": 11.0171,
+    "source_safetensors_on_disk_bytes": 12242694352,
+    "source_safetensors_on_disk_gib": 11.4019
+  },
+  "grid_table": [
+    {
+      "class": "clean_english",
+      "cur_mount_n": 0,
+      "fact_evicted": null,
+      "ids": [
+        290,
+        252,
+        51,
+        19980,
+        1211,
+        45,
+        405,
+        2702,
+        351,
+        19232,
+        7642,
+        43,
+        326,
+        1010,
+        9414,
+        474
+      ],
+      "label": "pure_baseline_no_context",
+      "live_shift": null,
+      "mount": false,
+      "picks": [],
+      "picks_forced": false,
+      "raw": " a 4-digit number. The code is randomly generated, and each digit can",
+      "text": "a 4-digit number. The code is randomly generated, and each digit can",
+      "value_recovered": false,
+      "wall_s": 15.321,
+      "width": null
+    },
+    {
+      "class": "value_hit",
+      "cur_mount_n": 19,
+      "fact_evicted": true,
+      "ids": [
+        111485,
+        44,
+        50,
+        4655,
+        25046,
+        45,
+        7983,
+        394,
+        3926,
+        440,
+        581,
+        1934,
+        25232,
+        10573,
+        7301,
+        290
+      ],
+      "label": "w96_mount",
+      "live_shift": 99,
+      "mount": true,
+      "picks": [
+        0
+      ],
+      "picks_forced": false,
+      "raw": " Vortex-3-Sierra. Keep it safe.\nThe next notebook paragraph describes a",
+      "text": "Vortex-3-Sierra. Keep it safe.\nThe next notebook paragraph describes a",
+      "value_recovered": true,
+      "wall_s": 69.767,
+      "width": 96
+    },
+    {
+      "class": "clean_english",
+      "cur_mount_n": 0,
+      "fact_evicted": true,
+      "ids": [
+        252,
+        48,
+        15913,
+        45,
+        405,
+        30665,
+        351,
+        4999,
+        320,
+        296,
+        27185,
+        323,
+        296,
+        23980,
+        3207,
+        45
+      ],
+      "label": "w96_control",
+      "live_shift": 99,
+      "mount": false,
+      "picks": [],
+      "picks_forced": false,
+      "raw": " 1234. The vault is located in the basement of the archive building.",
+      "text": "1234. The vault is located in the basement of the archive building.",
+      "value_recovered": false,
+      "wall_s": 63.791,
+      "width": 96
+    },
+    {
+      "class": "value_hit",
+      "cur_mount_n": 19,
+      "fact_evicted": true,
+      "ids": [
+        111485,
+        44,
+        50,
+        4655,
+        25046,
+        45,
+        7983,
+        394,
+        3926,
+        440,
+        581,
+        1934,
+        25232,
+        10573,
+        7301,
+        290
+      ],
+      "label": "w768_mount",
+      "live_shift": 771,
+      "mount": true,
+      "picks": [
+        0
+      ],
+      "picks_forced": false,
+      "raw": " Vortex-3-Sierra. Keep it safe.\nThe next notebook paragraph describes a",
+      "text": "Vortex-3-Sierra. Keep it safe.\nThe next notebook paragraph describes a",
+      "value_recovered": true,
+      "wall_s": 70.189,
+      "width": 768
+    },
+    {
+      "class": "clean_english",
+      "cur_mount_n": 0,
+      "fact_evicted": true,
+      "ids": [
+        252,
+        48,
+        15913,
+        45,
+        405,
+        9183,
+        351,
+        26240,
+        325,
+        854,
+        296,
+        2702,
+        325,
+        1740,
+        296,
+        30665
+      ],
+      "label": "w768_control",
+      "live_shift": 771,
+      "mount": false,
+      "picks": [],
+      "picks_forced": false,
+      "raw": " 1234. The operator is instructed to use the code to open the vault",
+      "text": "1234. The operator is instructed to use the code to open the vault",
+      "value_recovered": false,
+      "wall_s": 49.891,
+      "width": 768
+    }
+  ],
+  "honest_residuals": [
+    "This receipt uses INT8 weights + fp32 compute after the P1 BF16 reference drift gate.",
+    "The BF16 side of the drift receipt is the saved HF P1 reference artifact, not a same-process bf16 stream rerun.",
+    "The adapter hook is in-memory harness code; Project-Tensor product edit is limited to the INT8 weight-mode loader.",
+    "Value recovery is exact code-shape normalized over generated continuation only.",
+    "Controls prove graft-carrying only if their continuations miss the value.",
+    "VRAM peak is sampled nvidia-smi, not a TensorCUDA allocator peak."
+  ],
+  "p1_drift": {
+    "evidence_class": "teacher-forced INT8-resident logits vs saved BF16 HF P1 logits",
+    "max_abs_delta_logit": 0.8276119232177734,
+    "multi_logit_drift_stop": false,
+    "reference_path": "/mnt/ForgeRealm/Project-Tensor/artifacts/trinity_nano/reference_capture_fp32/probe_00_plain_short.npz",
+    "step_count": 8,
+    "steps": [
+      {
+        "argmax_id": 8849,
+        "bf16_argmax_id": 8849,
+        "bf16_top5_ids": [
+          8849,
+          487,
+          290,
+          4999,
+          296
+        ],
+        "int8_top5_ids": [
+          8849,
+          290,
+          487,
+          4999,
+          296
+        ],
+        "max_abs_delta_logit": 0.5616970062255859,
+        "mean_abs_delta_logit": 0.08559046685695648,
+        "step": 0,
+        "top5_exact": false,
+        "top5_overlap_count": 5,
+        "top5_overlap_ids": [
+          290,
+          296,
+          487,
+          4999,
+          8849
+        ]
+      },
+      {
+        "argmax_id": 45,
+        "bf16_argmax_id": 45,
+        "bf16_top5_ids": [
+          45,
+          43,
+          373,
+          440,
+          326
+        ],
+        "int8_top5_ids": [
+          45,
+          43,
+          373,
+          440,
+          326
+        ],
+        "max_abs_delta_logit": 0.7498116493225098,
+        "mean_abs_delta_logit": 0.13611985743045807,
+        "step": 1,
+        "top5_exact": true,
+        "top5_overlap_count": 5,
+        "top5_overlap_ids": [
+          43,
+          45,
+          326,
+          373,
+          440
+        ]
+      },
+      {
+        "argmax_id": 671,
+        "bf16_argmax_id": 671,
+        "bf16_top5_ids": [
+          671,
+          405,
+          8849,
+          252,
+          1542
+        ],
+        "int8_top5_ids": [
+          671,
+          405,
+          8849,
+          252,
+          704
+        ],
+        "max_abs_delta_logit": 0.8276119232177734,
+        "mean_abs_delta_logit": 0.1633412390947342,
+        "step": 2,
+        "top5_exact": false,
+        "top5_overlap_count": 4,
+        "top5_overlap_ids": [
+          252,
+          405,
+          671,
+          8849
+        ]
+      },
+      {
+        "argmax_id": 351,
+        "bf16_argmax_id": 351,
+        "bf16_top5_ids": [
+          351,
+          414,
+          651,
+          493,
+          556
+        ],
+        "int8_top5_ids": [
+          351,
+          414,
+          651,
+          493,
+          556
+        ],
+        "max_abs_delta_logit": 0.49030447006225586,
+        "mean_abs_delta_logit": 0.08330533653497696,
+        "step": 3,
+        "top5_exact": true,
+        "top5_overlap_count": 5,
+        "top5_overlap_ids": [
+          351,
+          414,
+          493,
+          556,
+          651
+        ]
+      },
+      {
+        "argmax_id": 296,
+        "bf16_argmax_id": 4999,
+        "bf16_top5_ids": [
+          4999,
+          296,
+          290,
+          772,
+          653
+        ],
+        "int8_top5_ids": [
+          296,
+          4999,
+          772,
+          290,
+          653
+        ],
+        "max_abs_delta_logit": 0.5251085758209229,
+        "mean_abs_delta_logit": 0.08457136899232864,
+        "step": 4,
+        "top5_exact": false,
+        "top5_overlap_count": 5,
+        "top5_overlap_ids": [
+          290,
+          296,
+          653,
+          772,
+          4999
+        ]
+      },
+      {
+        "argmax_id": 320,
+        "bf16_argmax_id": 320,
+        "bf16_top5_ids": [
+          320,
+          376,
+          475,
+          2418,
+          1434
+        ],
+        "int8_top5_ids": [
+          320,
+          376,
+          2418,
+          475,
+          1434
+        ],
+        "max_abs_delta_logit": 0.7440904378890991,
+        "mean_abs_delta_logit": 0.12308474630117416,
+        "step": 5,
+        "top5_exact": false,
+        "top5_overlap_count": 5,
+        "top5_overlap_ids": [
+          320,
+          376,
+          475,
+          1434,
+          2418
+        ]
+      },
+      {
+        "argmax_id": 296,
+        "bf16_argmax_id": 296,
+        "bf16_top5_ids": [
+          296,
+          6766,
+          10499,
+          10972,
+          48962
+        ],
+        "int8_top5_ids": [
+          296,
+          6766,
+          10499,
+          10972,
+          48962
+        ],
+        "max_abs_delta_logit": 0.5747184753417969,
+        "mean_abs_delta_logit": 0.08226555585861206,
+        "step": 6,
+        "top5_exact": true,
+        "top5_overlap_count": 5,
+        "top5_overlap_ids": [
+          296,
+          6766,
+          10499,
+          10972,
+          48962
+        ]
+      },
+      {
+        "argmax_id": 6766,
+        "bf16_argmax_id": 6766,
+        "bf16_top5_ids": [
+          6766,
+          10499,
+          3741,
+          3915,
+          199825
+        ],
+        "int8_top5_ids": [
+          6766,
+          10499,
+          3741,
+          3915,
+          199825
+        ],
+        "max_abs_delta_logit": 0.6694974899291992,
+        "mean_abs_delta_logit": 0.08518820255994797,
+        "step": 7,
+        "top5_exact": true,
+        "top5_overlap_count": 5,
+        "top5_overlap_ids": [
+          3741,
+          3915,
+          6766,
+          10499,
+          199825
+        ]
+      }
+    ],
+    "stop_max_abs_delta_logit": 1.0,
+    "top5_exact_steps": 4,
+    "top5_overlap_total": 39,
+    "top5_total_steps": 8,
+    "wall_s": 8.108
+  },
+  "pure_baseline": {
+    "chat_template_used": false,
+    "class": "clean_english",
+    "generated_ids": [
+      290,
+      252,
+      51,
+      19980,
+      1211,
+      45,
+      405,
+      2702,
+      351,
+      19232,
+      7642,
+      43,
+      326,
+      1010,
+      9414,
+      474
+    ],
+    "generated_text": "a 4-digit number. The code is randomly generated, and each digit can",
+    "generated_text_raw": " a 4-digit number. The code is randomly generated, and each digit can",
+    "generated_token_texts": [
+      " a",
+      " ",
+      "4",
+      "-digit",
+      " number",
+      ".",
+      " The",
+      " code",
+      " is",
+      " randomly",
+      " generated",
+      ",",
+      " and",
+      " each",
+      " digit",
+      " can"
+    ],
+    "label": "pure_baseline_no_context",
+    "mode": "int8_fp32_resident_no_arena",
+    "n_steps": 16,
+    "prompt_ntok": 9,
+    "prompt_text": "As noted earlier, the vault access code is",
+    "value_recovered": false,
+    "wall_s": 15.321
+  },
+  "run_config_path": "/mnt/ForgeRealm/GraftRepository/artifacts/trinity_nope_graft/natural_absolute_20260709_group32_postfix/run_config.json",
+  "sanity": {
+    "chat_template_used": false,
+    "class": "value_hit",
+    "generated_ids": [
+      111485,
+      44,
+      50,
+      4655,
+      25046,
+      45,
+      7983,
+      394,
+      3926,
+      373,
+      581,
+      30665,
+      1959,
+      2702,
+      351,
+      111485
+    ],
+    "generated_text": "Vortex-3-Sierra. Keep it safe.\n\nThe vault access code is Vortex",
+    "generated_text_raw": " Vortex-3-Sierra. Keep it safe.\n\nThe vault access code is Vortex",
+    "generated_token_texts": [
+      " Vortex",
+      "-",
+      "3",
+      "-S",
+      "ierra",
+      ".",
+      " Keep",
+      " it",
+      " safe",
+      ".\n\n",
+      "The",
+      " vault",
+      " access",
+      " code",
+      " is",
+      " Vortex"
+    ],
+    "label": "sanity_live_context_no_arena",
+    "mode": "int8_fp32_resident_no_arena",
+    "n_steps": 16,
+    "prompt_ntok": 28,
+    "prompt_text": "For the record, the vault access code is Vortex-3-Sierra. Keep it safe.\n\nAs noted earlier, the vault access code is",
+    "value_recovered": true,
+    "wall_s": 23.772
+  },
+  "total_wall_s": 332.42,
+  "verdict": {
+    "grid_ran": true,
+    "hits": {
+      "w768_control": false,
+      "w768_mount": true,
+      "w96_control": false,
+      "w96_mount": true
+    },
+    "reason": "Value recovered from the width-768 mounted graft while both no-mount controls missed; the graft, not live context, carried it.",
+    "sanity_passed": true,
+    "verdict": "T1_ABSOLUTE_CONFIRMED"
+  },
+  "vram_samples": {
+    "evidence_class": "nvidia-smi sampled process-adjacent VRAM, not allocator peak",
+    "first": {
+      "smi": "NVIDIA GeForce RTX 4070 SUPER, 193, 12282, 0",
+      "t": 1783597307.863139,
+      "tag": "start",
+      "used_mib": 193
+    },
+    "last": {
+      "smi": "NVIDIA GeForce RTX 4070 SUPER, 6433, 12282, 70",
+      "t": 1783597640.2539127,
+      "tag": "after_w768_control",
+      "used_mib": 6433
+    },
+    "max_used_gib": 8.6045,
+    "max_used_mib": 8811,
+    "num_samples": 562,
+    "sample_interval_s": 0.5
+  }
+}

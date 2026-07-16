@@ -1,0 +1,102 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "capture_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_4k_dryrun/capture_forward.json",
+  "capture_ids_file": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_4k_dryrun/capture_ids.json",
+  "capture_prompt": {
+    "actual_tokens": 4096,
+    "facts": [
+      {
+        "answer": "BLUE",
+        "answer_token_id": 134698,
+        "id": "vault_keyword",
+        "label": "GPT-OSS vault keyword",
+        "needle_offset_tokens": 803,
+        "needle_sha256": "a8c84ea9c0ae41d1f2d1ea6d0e270d6d5de7c39dada4f3a773b3bfc06a7065ed",
+        "needle_tokens": 19
+      },
+      {
+        "answer": "EMBER",
+        "answer_token_id": 78250,
+        "id": "relay_marker",
+        "label": "GPT-OSS relay marker",
+        "needle_offset_tokens": 1625,
+        "needle_sha256": "bcaedfc28644e7906847a9e7cb0d8c9acd5990f80aeefb6cbb2f15c1a5da5057",
+        "needle_tokens": 20
+      },
+      {
+        "answer": "GRAY",
+        "answer_token_id": 140884,
+        "id": "archive_color",
+        "label": "GPT-OSS archive color",
+        "needle_offset_tokens": 2448,
+        "needle_sha256": "c5dd34ae04552ed50b27706789bc698e699f54358224ccc23e8468bc8138522e",
+        "needle_tokens": 20
+      },
+      {
+        "answer": "IRON",
+        "answer_token_id": 96951,
+        "id": "tool_metal",
+        "label": "GPT-OSS tool metal",
+        "needle_offset_tokens": 3271,
+        "needle_sha256": "e222c6999efdcc5e132d85d999db2e5f374b484f09dd69a6bdecfd0b0aa5eb1a",
+        "needle_tokens": 20
+      }
+    ],
+    "input_mode": "direct_token_ids",
+    "target_tokens": 4096,
+    "total_needle_tokens": 79
+  },
+  "capture_prompt_file": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_4k_dryrun/capture_prompt.txt",
+  "corpus": {
+    "file_count": 43,
+    "kind": "directory",
+    "path": "/mnt/ForgeRealm/GraftRepository/docs",
+    "sha256": "2dab1aa5b1c659c5eb894d8d333eb544a99a07a765e1c86f48796cb92c456b9b"
+  },
+  "created_at": "2026-07-07T03:25:35",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "facts": [
+    {
+      "answer": "BLUE",
+      "answer_token_id": 134698,
+      "id": "vault_keyword",
+      "label": "GPT-OSS vault keyword",
+      "needle": "\nCLASSIFIED FACT A. The GPT-OSS vault keyword is BLUE.\nEND FACT A.\n"
+    },
+    {
+      "answer": "EMBER",
+      "answer_token_id": 78250,
+      "id": "relay_marker",
+      "label": "GPT-OSS relay marker",
+      "needle": "\nCLASSIFIED FACT B. The GPT-OSS relay marker is EMBER.\nEND FACT B.\n"
+    },
+    {
+      "answer": "GRAY",
+      "answer_token_id": 140884,
+      "id": "archive_color",
+      "label": "GPT-OSS archive color",
+      "needle": "\nCLASSIFIED FACT C. The GPT-OSS archive color is GRAY.\nEND FACT C.\n"
+    },
+    {
+      "answer": "IRON",
+      "answer_token_id": 96951,
+      "id": "tool_metal",
+      "label": "GPT-OSS tool metal",
+      "needle": "\nCLASSIFIED FACT D. The GPT-OSS tool metal is IRON.\nEND FACT D.\n"
+    }
+  ],
+  "graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_4k_dryrun/graft",
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "runs": {
+    "capture": null,
+    "facts": []
+  },
+  "schema": "gpt_oss_20b_multifact_graft_gate_v1",
+  "status": "dry_run",
+  "target_tokens": 4096
+}

@@ -1,0 +1,778 @@
+{
+  "label": "C_manual_leg1_shared",
+  "out_ids": [
+    976,
+    2208,
+    5504,
+    29878,
+    23273,
+    1432,
+    382,
+    631,
+    78222,
+    12,
+    18,
+    6968,
+    23181,
+    13,
+    200002,
+    13
+  ],
+  "out_text": "The current cypher bridge value is Vortex-3-Sierra.<|return|>.",
+  "steps": [
+    {
+      "tag": "prompt",
+      "in_n": 27,
+      "pre_pos": 97,
+      "post_pos": 124,
+      "rope_start": 212,
+      "pre_S": 116,
+      "post_S": 143,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 976,
+      "chosen_text": "The",
+      "top5": [
+        {
+          "id": 976,
+          "logit": 17.375,
+          "text": "The"
+        },
+        {
+          "id": 40,
+          "logit": 17.0,
+          "text": "I"
+        },
+        {
+          "id": 17886,
+          "logit": 16.5,
+          "text": "Will"
+        },
+        {
+          "id": 52301,
+          "logit": 16.0,
+          "text": "Got"
+        },
+        {
+          "id": 3575,
+          "logit": 15.875,
+          "text": "You"
+        }
+      ]
+    },
+    {
+      "tag": "gen0",
+      "in_n": 1,
+      "pre_pos": 124,
+      "post_pos": 125,
+      "rope_start": 239,
+      "pre_S": 143,
+      "post_S": 144,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 2208,
+      "chosen_text": " current",
+      "top5": [
+        {
+          "id": 16240,
+          "logit": 16.25,
+          "text": " stored"
+        },
+        {
+          "id": 2208,
+          "logit": 16.25,
+          "text": " current"
+        },
+        {
+          "id": 5504,
+          "logit": 15.8125,
+          "text": " cy"
+        },
+        {
+          "id": 44416,
+          "logit": 14.5625,
+          "text": " remembered"
+        },
+        {
+          "id": 1432,
+          "logit": 14.25,
+          "text": " value"
+        }
+      ]
+    },
+    {
+      "tag": "gen1",
+      "in_n": 1,
+      "pre_pos": 125,
+      "post_pos": 126,
+      "rope_start": 240,
+      "pre_S": 144,
+      "post_S": 145,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 5504,
+      "chosen_text": " cy",
+      "top5": [
+        {
+          "id": 5504,
+          "logit": 18.875,
+          "text": " cy"
+        },
+        {
+          "id": 1432,
+          "logit": 16.75,
+          "text": " value"
+        },
+        {
+          "id": 16240,
+          "logit": 16.5,
+          "text": " stored"
+        },
+        {
+          "id": 44416,
+          "logit": 14.0,
+          "text": " remembered"
+        },
+        {
+          "id": 19460,
+          "logit": 13.6875,
+          "text": " recorded"
+        }
+      ]
+    },
+    {
+      "tag": "gen2",
+      "in_n": 1,
+      "pre_pos": 126,
+      "post_pos": 127,
+      "rope_start": 241,
+      "pre_S": 145,
+      "post_S": 146,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 29878,
+      "chosen_text": "pher",
+      "top5": [
+        {
+          "id": 29878,
+          "logit": 29.625,
+          "text": "pher"
+        },
+        {
+          "id": 961,
+          "logit": 20.0,
+          "text": "ph"
+        },
+        {
+          "id": 855,
+          "logit": 17.875,
+          "text": "fer"
+        },
+        {
+          "id": 718,
+          "logit": 17.125,
+          "text": "ber"
+        },
+        {
+          "id": 942,
+          "logit": 17.0,
+          "text": "ther"
+        }
+      ]
+    },
+    {
+      "tag": "gen3",
+      "in_n": 1,
+      "pre_pos": 127,
+      "post_pos": 128,
+      "rope_start": 242,
+      "pre_S": 146,
+      "post_S": 147,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 23273,
+      "chosen_text": " bridge",
+      "top5": [
+        {
+          "id": 23273,
+          "logit": 17.875,
+          "text": " bridge"
+        },
+        {
+          "id": 1432,
+          "logit": 16.625,
+          "text": " value"
+        },
+        {
+          "id": 382,
+          "logit": 15.0,
+          "text": " is"
+        },
+        {
+          "id": 50005,
+          "logit": 12.875,
+          "text": "\u2011"
+        },
+        {
+          "id": 4824,
+          "logit": 12.5,
+          "text": " values"
+        }
+      ]
+    },
+    {
+      "tag": "gen4",
+      "in_n": 1,
+      "pre_pos": 128,
+      "post_pos": 129,
+      "rope_start": 243,
+      "pre_S": 147,
+      "post_S": 148,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 1432,
+      "chosen_text": " value",
+      "top5": [
+        {
+          "id": 1432,
+          "logit": 19.125,
+          "text": " value"
+        },
+        {
+          "id": 382,
+          "logit": 17.25,
+          "text": " is"
+        },
+        {
+          "id": 14777,
+          "logit": 15.3125,
+          "text": " remains"
+        },
+        {
+          "id": 314,
+          "logit": 13.375,
+          "text": " ="
+        },
+        {
+          "id": 853,
+          "logit": 13.25,
+          "text": " has"
+        }
+      ]
+    },
+    {
+      "tag": "gen5",
+      "in_n": 1,
+      "pre_pos": 129,
+      "post_pos": 130,
+      "rope_start": 244,
+      "pre_S": 148,
+      "post_S": 149,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 382,
+      "chosen_text": " is",
+      "top5": [
+        {
+          "id": 382,
+          "logit": 20.0,
+          "text": " is"
+        },
+        {
+          "id": 25,
+          "logit": 16.5,
+          "text": ":"
+        },
+        {
+          "id": 14777,
+          "logit": 16.5,
+          "text": " remains"
+        },
+        {
+          "id": 16240,
+          "logit": 14.625,
+          "text": " stored"
+        },
+        {
+          "id": 316,
+          "logit": 14.5625,
+          "text": " to"
+        }
+      ]
+    },
+    {
+      "tag": "gen6",
+      "in_n": 1,
+      "pre_pos": 130,
+      "post_pos": 131,
+      "rope_start": 245,
+      "pre_S": 149,
+      "post_S": 150,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 631,
+      "chosen_text": " V",
+      "top5": [
+        {
+          "id": 631,
+          "logit": 16.625,
+          "text": " V"
+        },
+        {
+          "id": 25,
+          "logit": 14.8125,
+          "text": ":"
+        },
+        {
+          "id": 6240,
+          "logit": 14.5,
+          "text": " **"
+        },
+        {
+          "id": 392,
+          "logit": 14.1875,
+          "text": " \""
+        },
+        {
+          "id": 966,
+          "logit": 13.125,
+          "text": " \u201c"
+        }
+      ]
+    },
+    {
+      "tag": "gen7",
+      "in_n": 1,
+      "pre_pos": 131,
+      "post_pos": 132,
+      "rope_start": 246,
+      "pre_S": 150,
+      "post_S": 151,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 78222,
+      "chosen_text": "ortex",
+      "top5": [
+        {
+          "id": 78222,
+          "logit": 19.75,
+          "text": "ortex"
+        },
+        {
+          "id": 5160,
+          "logit": 13.3125,
+          "text": "ORT"
+        },
+        {
+          "id": 12,
+          "logit": 12.8125,
+          "text": "-"
+        },
+        {
+          "id": 13,
+          "logit": 12.625,
+          "text": "."
+        },
+        {
+          "id": 9310,
+          "logit": 12.1875,
+          "text": "CS"
+        }
+      ]
+    },
+    {
+      "tag": "gen8",
+      "in_n": 1,
+      "pre_pos": 132,
+      "post_pos": 133,
+      "rope_start": 247,
+      "pre_S": 151,
+      "post_S": 152,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 12,
+      "chosen_text": "-",
+      "top5": [
+        {
+          "id": 12,
+          "logit": 20.0,
+          "text": "-"
+        },
+        {
+          "id": 50005,
+          "logit": 15.25,
+          "text": "\u2011"
+        },
+        {
+          "id": 13,
+          "logit": 13.75,
+          "text": "."
+        },
+        {
+          "id": 220,
+          "logit": 11.875,
+          "text": " "
+        },
+        {
+          "id": 11,
+          "logit": 11.1875,
+          "text": ","
+        }
+      ]
+    },
+    {
+      "tag": "gen9",
+      "in_n": 1,
+      "pre_pos": 133,
+      "post_pos": 134,
+      "rope_start": 248,
+      "pre_S": 152,
+      "post_S": 153,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 18,
+      "chosen_text": "3",
+      "top5": [
+        {
+          "id": 18,
+          "logit": 19.125,
+          "text": "3"
+        },
+        {
+          "id": 19,
+          "logit": 14.9375,
+          "text": "4"
+        },
+        {
+          "id": 20,
+          "logit": 14.5625,
+          "text": "5"
+        },
+        {
+          "id": 17,
+          "logit": 14.0,
+          "text": "2"
+        },
+        {
+          "id": 22,
+          "logit": 13.0625,
+          "text": "7"
+        }
+      ]
+    },
+    {
+      "tag": "gen10",
+      "in_n": 1,
+      "pre_pos": 134,
+      "post_pos": 135,
+      "rope_start": 249,
+      "pre_S": 153,
+      "post_S": 154,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 6968,
+      "chosen_text": "-S",
+      "top5": [
+        {
+          "id": 6968,
+          "logit": 19.25,
+          "text": "-S"
+        },
+        {
+          "id": 50005,
+          "logit": 15.75,
+          "text": "\u2011"
+        },
+        {
+          "id": 13,
+          "logit": 13.875,
+          "text": "."
+        },
+        {
+          "id": 51925,
+          "logit": 13.25,
+          "text": " Sierra"
+        },
+        {
+          "id": 12,
+          "logit": 13.0,
+          "text": "-"
+        }
+      ]
+    },
+    {
+      "tag": "gen11",
+      "in_n": 1,
+      "pre_pos": 135,
+      "post_pos": 136,
+      "rope_start": 250,
+      "pre_S": 154,
+      "post_S": 155,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 23181,
+      "chosen_text": "ierra",
+      "top5": [
+        {
+          "id": 23181,
+          "logit": 26.625,
+          "text": "ierra"
+        },
+        {
+          "id": 72,
+          "logit": 15.875,
+          "text": "i"
+        },
+        {
+          "id": 13,
+          "logit": 14.375,
+          "text": "."
+        },
+        {
+          "id": 40,
+          "logit": 14.3125,
+          "text": "I"
+        },
+        {
+          "id": 11,
+          "logit": 14.0,
+          "text": ","
+        }
+      ]
+    },
+    {
+      "tag": "gen12",
+      "in_n": 1,
+      "pre_pos": 136,
+      "post_pos": 137,
+      "rope_start": 251,
+      "pre_S": 155,
+      "post_S": 156,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 13,
+      "chosen_text": ".",
+      "top5": [
+        {
+          "id": 13,
+          "logit": 19.375,
+          "text": "."
+        },
+        {
+          "id": 11,
+          "logit": 13.3125,
+          "text": ","
+        },
+        {
+          "id": 279,
+          "logit": 12.875,
+          "text": "\n\n"
+        },
+        {
+          "id": 364,
+          "logit": 12.6875,
+          "text": ".\n\n"
+        },
+        {
+          "id": 30,
+          "logit": 12.625,
+          "text": "?"
+        }
+      ]
+    },
+    {
+      "tag": "gen13",
+      "in_n": 1,
+      "pre_pos": 137,
+      "post_pos": 138,
+      "rope_start": 252,
+      "pre_S": 156,
+      "post_S": 157,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 200002,
+      "chosen_text": "<|return|>",
+      "top5": [
+        {
+          "id": 200002,
+          "logit": 19.25,
+          "text": "<|return|>"
+        },
+        {
+          "id": 200007,
+          "logit": 16.0,
+          "text": "<|end|>"
+        },
+        {
+          "id": 3004,
+          "logit": 12.75,
+          "text": " No"
+        },
+        {
+          "id": 200012,
+          "logit": 12.6875,
+          "text": "<|call|>"
+        },
+        {
+          "id": 28014,
+          "logit": 12.5,
+          "text": " Remember"
+        }
+      ]
+    },
+    {
+      "tag": "gen14",
+      "in_n": 1,
+      "pre_pos": 138,
+      "post_pos": 139,
+      "rope_start": 253,
+      "pre_S": 157,
+      "post_S": 158,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 13,
+      "chosen_text": ".",
+      "top5": [
+        {
+          "id": 13,
+          "logit": 10.625,
+          "text": "."
+        },
+        {
+          "id": 200002,
+          "logit": 10.3125,
+          "text": "<|return|>"
+        },
+        {
+          "id": 11,
+          "logit": 10.125,
+          "text": ","
+        },
+        {
+          "id": 20849,
+          "logit": 10.125,
+          "text": "brid"
+        },
+        {
+          "id": 21542,
+          "logit": 9.9375,
+          "text": "bridge"
+        }
+      ]
+    }
+  ],
+  "final_pos": 139,
+  "final_S": 158
+}

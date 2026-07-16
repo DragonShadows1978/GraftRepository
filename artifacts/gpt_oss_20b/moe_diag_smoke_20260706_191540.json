@@ -1,0 +1,74 @@
+{
+  "created_at": "2026-07-06T19:15:40",
+  "expert_mode": "dequant",
+  "gpu_after": "NVIDIA GeForce RTX 4070 SUPER, 497, 12282, 9",
+  "gpu_before": "NVIDIA GeForce RTX 4070 SUPER, 275, 12282, 35",
+  "hidden_shape": [
+    1,
+    1,
+    2880
+  ],
+  "input_ids_shape": [
+    1,
+    1
+  ],
+  "kv_shapes": [
+    [
+      1,
+      8,
+      1,
+      64
+    ],
+    [
+      1,
+      8,
+      1,
+      64
+    ]
+  ],
+  "layer": 0,
+  "layer_type": "sliding_attention",
+  "max_tokens": 1,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "note": "attention plus selected-expert GPT-OSS MoE diagnostic; no lm_head and no generation",
+  "output_shape": [
+    1,
+    1,
+    2880
+  ],
+  "output_stats": {
+    "max": 56.0,
+    "mean": 0.008645662106573582,
+    "min": -59.25,
+    "std": 2.9881656169891357,
+    "sum": 24.899505615234375
+  },
+  "prompt": "The capital of France is Paris.",
+  "route_info": {
+    "expert_mode": "dequant",
+    "top_indices": [
+      [
+        13,
+        21,
+        17,
+        29
+      ]
+    ],
+    "top_weights": [
+      [
+        0.432962566614151,
+        0.35862860083580017,
+        0.11111202090978622,
+        0.09729672968387604
+      ]
+    ],
+    "unique_experts": [
+      13,
+      17,
+      21,
+      29
+    ]
+  },
+  "status": "ok",
+  "wall_seconds": 3.36799796303967
+}

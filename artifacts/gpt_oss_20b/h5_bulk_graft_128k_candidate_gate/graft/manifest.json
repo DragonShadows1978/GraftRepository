@@ -1,0 +1,121 @@
+{
+  "created_at": "2026-07-07T09:42:46",
+  "dtype": "bfloat16",
+  "grm_dialect": {
+    "composition": "multi_mount",
+    "graftability": "seat_remountable",
+    "head_dim": 64,
+    "hidden_dim": 2880,
+    "model_type": "GptOss20B_TC",
+    "num_kv_heads": 8,
+    "num_layers": 24,
+    "payload_kind": "gqa",
+    "position_law": "rope_full_yarn",
+    "remountable": true,
+    "route_layer": 1,
+    "state_kind": "kv",
+    "vals_per_tok_layer": 1024
+  },
+  "layers": [
+    {
+      "host_bytes": 268435456,
+      "k_shape": [
+        1,
+        8,
+        131072,
+        64
+      ],
+      "layer": 0,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_128k_candidate_gate/graft/layer_000.npz",
+      "token_count": 131072,
+      "v_shape": [
+        1,
+        8,
+        131072,
+        64
+      ]
+    },
+    {
+      "host_bytes": 268435456,
+      "k_shape": [
+        1,
+        8,
+        131072,
+        64
+      ],
+      "layer": 1,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_128k_candidate_gate/graft/layer_001.npz",
+      "token_count": 131072,
+      "v_shape": [
+        1,
+        8,
+        131072,
+        64
+      ]
+    },
+    {
+      "host_bytes": 268435456,
+      "k_shape": [
+        1,
+        8,
+        131072,
+        64
+      ],
+      "layer": 2,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_128k_candidate_gate/graft/layer_002.npz",
+      "token_count": 131072,
+      "v_shape": [
+        1,
+        8,
+        131072,
+        64
+      ]
+    },
+    {
+      "host_bytes": 268435456,
+      "k_shape": [
+        1,
+        8,
+        131072,
+        64
+      ],
+      "layer": 3,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_128k_candidate_gate/graft/layer_003.npz",
+      "token_count": 131072,
+      "v_shape": [
+        1,
+        8,
+        131072,
+        64
+      ]
+    },
+    {
+      "host_bytes": 268435456,
+      "k_shape": [
+        1,
+        8,
+        131072,
+        64
+      ],
+      "layer": 4,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_128k_candidate_gate/graft/layer_004.npz",
+      "token_count": 131072,
+      "v_shape": [
+        1,
+        8,
+        131072,
+        64
+      ]
+    }
+  ],
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "note": "per-layer pre-RoPE K/V shards captured by the streamed GPT-OSS TensorCUDA harness; remount with --mount-graft-dir",
+  "schema": "gpt_oss_20b_prerope_graft_manifest_v1",
+  "token_count": 131072,
+  "total_host_bytes": 1342177280
+}

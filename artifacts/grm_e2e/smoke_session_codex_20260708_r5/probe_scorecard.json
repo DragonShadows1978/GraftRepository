@@ -1,0 +1,64 @@
+{
+  "all_passed": false,
+  "passed": 0,
+  "probes": [
+    {
+      "accepts": [
+        "lantern"
+      ],
+      "answer": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure! Here's a",
+      "contains_expected": false,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          5
+        ],
+        "live_turns": 1,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 4,
+        "source_node_live_before": false,
+        "source_turn": 3
+      },
+      "expected": "lantern",
+      "fact_id": "cypher bridge",
+      "mounts": [
+        2
+      ],
+      "old_value": null,
+      "pass": false,
+      "resumed": true,
+      "route_backend": "native",
+      "turn": 5
+    },
+    {
+      "accepts": [
+        "copper"
+      ],
+      "answer": ". The conversation that you. The conversation. The. The user wants a new answer. The user says: \"Sure",
+      "contains_expected": false,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          6
+        ],
+        "live_turns": 1,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 3,
+        "source_node_live_before": false,
+        "source_turn": 2
+      },
+      "expected": "copper",
+      "fact_id": "orion pin",
+      "mounts": [
+        2
+      ],
+      "old_value": "amber",
+      "pass": false,
+      "resumed": true,
+      "route_backend": "native",
+      "turn": 6
+    }
+  ],
+  "schema": "grm_e2e_probe_scorecard_v1",
+  "total": 2
+}

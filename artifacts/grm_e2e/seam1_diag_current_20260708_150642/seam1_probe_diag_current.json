@@ -1,0 +1,2092 @@
+{
+  "capture": {
+    "decode_calls": [
+      {
+        "ids": [
+          40
+        ],
+        "text": "I"
+      },
+      {
+        "ids": [
+          40
+        ],
+        "text": "I"
+      },
+      {
+        "ids": [
+          40
+        ],
+        "text": "I"
+      },
+      {
+        "ids": [
+          40
+        ],
+        "text": "I"
+      },
+      {
+        "ids": [
+          40,
+          68695
+        ],
+        "text": "I apologize"
+      },
+      {
+        "ids": [
+          40,
+          68695
+        ],
+        "text": "I apologize"
+      },
+      {
+        "ids": [
+          40,
+          68695
+        ],
+        "text": "I apologize"
+      },
+      {
+        "ids": [
+          40,
+          68695
+        ],
+        "text": "I apologize"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395
+        ],
+        "text": "I apologize for"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395
+        ],
+        "text": "I apologize for"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395
+        ],
+        "text": "I apologize for"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395
+        ],
+        "text": "I apologize for"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290
+        ],
+        "text": "I apologize for the"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290
+        ],
+        "text": "I apologize for the"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290
+        ],
+        "text": "I apologize for the"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290
+        ],
+        "text": "I apologize for the"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825
+        ],
+        "text": "I apologize for the user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825
+        ],
+        "text": "I apologize for the user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825
+        ],
+        "text": "I apologize for the user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825
+        ],
+        "text": "I apologize for the user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13
+        ],
+        "text": "I apologize for the user."
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13
+        ],
+        "text": "I apologize for the user."
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13
+        ],
+        "text": "I apologize for the user."
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13
+        ],
+        "text": "I apologize for the user."
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623
+        ],
+        "text": "I apologize for the user. The"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623
+        ],
+        "text": "I apologize for the user. The"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623
+        ],
+        "text": "I apologize for the user. The"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623
+        ],
+        "text": "I apologize for the user. The"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825
+        ],
+        "text": "I apologize for the user. The user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825
+        ],
+        "text": "I apologize for the user. The user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825
+        ],
+        "text": "I apologize for the user. The user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825
+        ],
+        "text": "I apologize for the user. The user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648
+        ],
+        "text": "I apologize for the user. The user wants"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648
+        ],
+        "text": "I apologize for the user. The user wants"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648
+        ],
+        "text": "I apologize for the user. The user wants"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648
+        ],
+        "text": "I apologize for the user. The user wants"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825
+        ],
+        "text": "I apologize for the user. The user wants user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825
+        ],
+        "text": "I apologize for the user. The user wants user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825
+        ],
+        "text": "I apologize for the user. The user wants user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825
+        ],
+        "text": "I apologize for the user. The user wants user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648
+        ],
+        "text": "I apologize for the user. The user wants user wants"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648
+        ],
+        "text": "I apologize for the user. The user wants user wants"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648
+        ],
+        "text": "I apologize for the user. The user wants user wants"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648
+        ],
+        "text": "I apologize for the user. The user wants user wants"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261
+        ],
+        "text": "I apologize for the user. The user wants user wants a"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261
+        ],
+        "text": "I apologize for the user. The user wants user wants a"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261
+        ],
+        "text": "I apologize for the user. The user wants user wants a"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261
+        ],
+        "text": "I apologize for the user. The user wants user wants a"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620
+        ],
+        "text": "I apologize for the user. The user wants user wants a new"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620
+        ],
+        "text": "I apologize for the user. The user wants user wants a new"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620
+        ],
+        "text": "I apologize for the user. The user wants user wants a new"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620
+        ],
+        "text": "I apologize for the user. The user wants user wants a new"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer."
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer."
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer."
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer."
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says:"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says:"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says:"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says:"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \""
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \""
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \""
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \""
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915,
+          0
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure!"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915,
+          0
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure!"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915,
+          0
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure!"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915,
+          0
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure!"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915,
+          0,
+          44257
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure! Here's"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915,
+          0,
+          44257
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure! Here's"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915,
+          0,
+          44257
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure! Here's"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915,
+          0,
+          44257
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure! Here's"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915,
+          0,
+          44257,
+          261
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure! Here's a"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915,
+          0,
+          44257,
+          261
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure! Here's a"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915,
+          0,
+          44257,
+          261
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure! Here's a"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915,
+          0,
+          44257,
+          261
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure! Here's a"
+      },
+      {
+        "ids": [
+          40,
+          68695,
+          395,
+          290,
+          1825,
+          13,
+          623,
+          1825,
+          10648,
+          1825,
+          10648,
+          261,
+          620,
+          6052,
+          13,
+          623,
+          1825,
+          5003,
+          25,
+          392,
+          62915,
+          0,
+          44257,
+          261
+        ],
+        "text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure! Here's a"
+      }
+    ],
+    "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current cypher bridge value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>",
+    "prompt_len_bytes": 244,
+    "prompt_sha256": "9025cc17865f2b94e8a4df8822ec0333347363728197752deb443441bb0d47f0",
+    "prompt_token_ids": [
+      200006,
+      17360,
+      200008,
+      3575,
+      553,
+      17554,
+      162016,
+      13,
+      57369,
+      289,
+      25,
+      4465,
+      13,
+      13888,
+      9334,
+      25,
+      1721,
+      13,
+      200007,
+      200006,
+      1428,
+      200008,
+      170167,
+      31925,
+      13,
+      4614,
+      382,
+      290,
+      2208,
+      5504,
+      29878,
+      23273,
+      1432,
+      30,
+      40500,
+      483,
+      1606,
+      290,
+      1432,
+      13,
+      200007,
+      200006,
+      173781,
+      200005,
+      17196,
+      200008
+    ],
+    "prompt_utf8_hex": "3c7c73746172747c3e73797374656d3c7c6d6573736167657c3e596f752061726520436861744750542e20526561736f6e696e673a206c6f772e2056616c6964206368616e6e656c3a2066696e616c2e3c7c656e647c3e3c7c73746172747c3e757365723c7c6d6573736167657c3e526563616c6c2070726f62652e2057686174206973207468652063757272656e7420637970686572206272696467652076616c75653f205265706c792077697468206f6e6c79207468652076616c75652e3c7c656e647c3e3c7c73746172747c3e617373697374616e743c7c6368616e6e656c7c3e66696e616c3c7c6d6573736167657c3e",
+    "raw_generated_text": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure! Here's a",
+    "raw_generated_token_ids": [
+      40,
+      68695,
+      395,
+      290,
+      1825,
+      13,
+      623,
+      1825,
+      10648,
+      1825,
+      10648,
+      261,
+      620,
+      6052,
+      13,
+      623,
+      1825,
+      5003,
+      25,
+      392,
+      62915,
+      0,
+      44257,
+      261
+    ]
+  },
+  "flush_wall_ms": 544.5266229999106,
+  "leg1_forced_final_same_user": {
+    "len_bytes": 244,
+    "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current cypher bridge value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>",
+    "sha256": "9025cc17865f2b94e8a4df8822ec0333347363728197752deb443441bb0d47f0",
+    "token_ids": [
+      200006,
+      17360,
+      200008,
+      3575,
+      553,
+      17554,
+      162016,
+      13,
+      57369,
+      289,
+      25,
+      4465,
+      13,
+      13888,
+      9334,
+      25,
+      1721,
+      13,
+      200007,
+      200006,
+      1428,
+      200008,
+      170167,
+      31925,
+      13,
+      4614,
+      382,
+      290,
+      2208,
+      5504,
+      29878,
+      23273,
+      1432,
+      30,
+      40500,
+      483,
+      1606,
+      290,
+      1432,
+      13,
+      200007,
+      200006,
+      173781,
+      200005,
+      17196,
+      200008
+    ],
+    "utf8_hex": "3c7c73746172747c3e73797374656d3c7c6d6573736167657c3e596f752061726520436861744750542e20526561736f6e696e673a206c6f772e2056616c6964206368616e6e656c3a2066696e616c2e3c7c656e647c3e3c7c73746172747c3e757365723c7c6d6573736167657c3e526563616c6c2070726f62652e2057686174206973207468652063757272656e7420637970686572206272696467652076616c75653f205265706c792077697468206f6e6c79207468652076616c75652e3c7c656e647c3e3c7c73746172747c3e617373697374616e743c7c6368616e6e656c7c3e66696e616c3c7c6d6573736167657c3e"
+  },
+  "model_info": {
+    "expert_mode": "resident_packed_mxfp4",
+    "framework": "tensor_cuda GptOss20B_TC",
+    "full_attention_layers": [
+      1,
+      3,
+      5,
+      7,
+      9,
+      11,
+      13,
+      15,
+      17,
+      19,
+      21,
+      23
+    ],
+    "head_dim": 64,
+    "hidden_dim": 2880,
+    "layers": 24,
+    "loaded": "GPT-OSS-20B (resident_packed_mxfp4)",
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "num_heads": 64,
+    "num_kv_heads": 8,
+    "repository": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+    "sliding_attention_layers": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+      22
+    ]
+  },
+  "prefix_transcript": [
+    {
+      "assistant": "We are <|> <|> is> <|> is> <|> <|> <|>",
+      "chat_node_id": 0,
+      "correction_result": null,
+      "fact_id": "orion pin",
+      "kind": "fact",
+      "turn": 0,
+      "user": "Memory planting turn. fact orion pin. The current orion pin value is amber. If asked later for orion pin, answer amber only."
+    },
+    {
+      "assistant": "The conversation ended. The user wants a new answer. The user says: \"Sure! Here's a concise summary of the",
+      "chat_node_id": 1,
+      "correction_result": null,
+      "fact_id": null,
+      "kind": "filler",
+      "turn": 1,
+      "user": "Session continuity filler smoke alpha. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "assistant": "Sure! Here\u2019s a concise, \u201cone\u2011liner\u201d cheat sheet that captures the core ideas from the discussion:\n\n-",
+      "chat_node_id": 2,
+      "correction_result": {
+        "action": "correct",
+        "node_id": 3
+      },
+      "fact_id": "orion pin",
+      "kind": "supersede",
+      "turn": 2,
+      "user": "Authoritative update turn. fact orion pin. The current orion pin value is copper. This is the current value. If asked later, answer copper only."
+    },
+    {
+      "assistant": "Sure! Sure, the assistant's response. The user wants a new. The user. The user wants a new.",
+      "chat_node_id": 4,
+      "correction_result": null,
+      "fact_id": "cypher bridge",
+      "kind": "fact",
+      "turn": 3,
+      "user": "Memory planting turn. fact cypher bridge. The current cypher bridge value is lantern. If asked later for cypher bridge, answer lantern only."
+    },
+    {
+      "assistant": "The user wants: \"Sure. The user: \"Sure. The user wants: \"Sure. The user wants:",
+      "chat_node_id": 5,
+      "correction_result": null,
+      "fact_id": null,
+      "kind": "filler",
+      "turn": 4,
+      "user": "Session continuity filler smoke beta. Acknowledge briefly. Do not change any stored fact values."
+    }
+  ],
+  "probe_answer": "I apologize for the user. The user wants user wants a new answer. The user says: \"Sure! Here's a",
+  "probe_event": {
+    "accepts": [
+      "lantern"
+    ],
+    "expected": "lantern",
+    "fact_id": "cypher bridge",
+    "kind": "probe",
+    "old_value": null,
+    "source_turn": 3,
+    "supersession": false,
+    "user": "Recall probe. What is the current cypher bridge value? Reply with only the value."
+  },
+  "probe_info": {
+    "evicted": 72,
+    "live_tokens": 70,
+    "mounts": [
+      2
+    ],
+    "resident": 144,
+    "trip": 0
+  },
+  "probe_wall_ms": 3872.4028060005367,
+  "raw_generated_token_text": [
+    "I",
+    " apologize",
+    " for",
+    " the",
+    " user",
+    ".",
+    " The",
+    " user",
+    " wants",
+    " user",
+    " wants",
+    " a",
+    " new",
+    " answer",
+    ".",
+    " The",
+    " user",
+    " says",
+    ":",
+    " \"",
+    "Sure",
+    "!",
+    " Here's",
+    " a"
+  ],
+  "refeed": [
+    {
+      "chat_node_id": 5,
+      "ntok": 72,
+      "turn": 4
+    }
+  ],
+  "reload_wall_ms": 21660.305146999235,
+  "schema": "grm_e2e_seam1_probe_diag_v1",
+  "session_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_e2e/seam1_diag_current_20260708_150642",
+  "step_prompt_equals_leg1_forced_final_same_user": true,
+  "stops": [
+    "<|return|>",
+    "<|end|>",
+    "<|start|>user",
+    "<|start|>assistant"
+  ],
+  "strict_style_probe_for_comparison": {
+    "len_bytes": 339,
+    "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CURRENT FACT cypher bridge, what is the current cypher bridge value? Return only the current stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+    "sha256": "41dd9068b84b4ec29f88b55e5417194ac715ce70158aec66379a42ed2f2d9f47",
+    "token_ids": [
+      200006,
+      17360,
+      200008,
+      3575,
+      553,
+      17554,
+      162016,
+      13,
+      57369,
+      289,
+      25,
+      4465,
+      13,
+      13888,
+      9334,
+      25,
+      1721,
+      13,
+      200007,
+      200006,
+      1428,
+      200008,
+      24358,
+      220,
+      1434,
+      13,
+      55602,
+      3814,
+      382,
+      42261,
+      13,
+      730,
+      89788,
+      99053,
+      5504,
+      29878,
+      23273,
+      11,
+      1412,
+      382,
+      290,
+      2208,
+      5504,
+      29878,
+      23273,
+      1432,
+      30,
+      6318,
+      1606,
+      290,
+      2208,
+      16240,
+      1432,
+      13,
+      3004,
+      21872,
+      13,
+      3004,
+      107300,
+      13,
+      200007,
+      200006,
+      173781,
+      200005,
+      17196,
+      200008
+    ],
+    "user": "Turn 50. Previous context is cleared. In CURRENT FACT cypher bridge, what is the current cypher bridge value? Return only the current stored value. No sentence. No punctuation.",
+    "utf8_hex": "3c7c73746172747c3e73797374656d3c7c6d6573736167657c3e596f752061726520436861744750542e20526561736f6e696e673a206c6f772e2056616c6964206368616e6e656c3a2066696e616c2e3c7c656e647c3e3c7c73746172747c3e757365723c7c6d6573736167657c3e5475726e2035302e2050726576696f757320636f6e7465787420697320636c65617265642e20496e2043555252454e54204641435420637970686572206272696467652c2077686174206973207468652063757272656e7420637970686572206272696467652076616c75653f2052657475726e206f6e6c79207468652063757272656e742073746f7265642076616c75652e204e6f2073656e74656e63652e204e6f2070756e6374756174696f6e2e3c7c656e647c3e3c7c73746172747c3e617373697374616e743c7c6368616e6e656c7c3e66696e616c3c7c6d6573736167657c3e"
+  },
+  "vram_after": {
+    "gpus": [
+      {
+        "total_mb": 12282,
+        "used_mb": 10974
+      }
+    ],
+    "raw": "10974, 12282",
+    "returncode": 0
+  },
+  "wall_seconds_total": 101.3685342159988
+}

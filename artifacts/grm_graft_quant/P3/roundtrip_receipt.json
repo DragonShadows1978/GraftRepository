@@ -1,0 +1,73 @@
+{
+  "schema": "grm_graft_quant_p3_roundtrip_receipt_v1",
+  "banks": {
+    "multifact": {
+      "8": {
+        "num_layers": 24,
+        "bit_exact": true,
+        "first_fail": null
+      },
+      "6": {
+        "num_layers": 24,
+        "bit_exact": true,
+        "first_fail": null
+      },
+      "4": {
+        "num_layers": 24,
+        "bit_exact": true,
+        "first_fail": null
+      },
+      "3": {
+        "num_layers": 24,
+        "bit_exact": true,
+        "first_fail": null
+      }
+    },
+    "preference": {
+      "8": {
+        "num_layers": 24,
+        "bit_exact": true,
+        "first_fail": null
+      },
+      "6": {
+        "num_layers": 24,
+        "bit_exact": true,
+        "first_fail": null
+      },
+      "4": {
+        "num_layers": 24,
+        "bit_exact": true,
+        "first_fail": null
+      },
+      "3": {
+        "num_layers": 24,
+        "bit_exact": true,
+        "first_fail": null
+      }
+    },
+    "supersession": {
+      "8": {
+        "num_layers": 24,
+        "bit_exact": true,
+        "first_fail": null
+      },
+      "6": {
+        "num_layers": 24,
+        "bit_exact": true,
+        "first_fail": null
+      },
+      "4": {
+        "num_layers": 24,
+        "bit_exact": true,
+        "first_fail": null
+      },
+      "3": {
+        "num_layers": 24,
+        "bit_exact": true,
+        "first_fail": null
+      }
+    }
+  },
+  "all_bit_identical": true,
+  "wall_seconds": 38.77760100364685
+}

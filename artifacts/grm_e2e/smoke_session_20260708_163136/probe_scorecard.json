@@ -1,0 +1,64 @@
+{
+  "all_passed": false,
+  "passed": 0,
+  "probes": [
+    {
+      "accepts": [
+        "Vortex-3-Sierra"
+      ],
+      "answer": "The current cypher bridge value is 0.",
+      "contains_expected": false,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          5
+        ],
+        "live_turns": 1,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 4,
+        "source_node_live_before": false,
+        "source_turn": 3
+      },
+      "expected": "Vortex-3-Sierra",
+      "fact_id": "cypher bridge",
+      "mounts": [
+        2
+      ],
+      "old_value": null,
+      "pass": false,
+      "resumed": true,
+      "route_backend": "native",
+      "turn": 5
+    },
+    {
+      "accepts": [
+        "Kestrel-9-Tango"
+      ],
+      "answer": "The current ionization level is 0.",
+      "contains_expected": false,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          6
+        ],
+        "live_turns": 1,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 3,
+        "source_node_live_before": false,
+        "source_turn": 2
+      },
+      "expected": "Kestrel-9-Tango",
+      "fact_id": "orion pin",
+      "mounts": [
+        2
+      ],
+      "old_value": "Auric-4-Alpha",
+      "pass": false,
+      "resumed": true,
+      "route_backend": "native",
+      "turn": 6
+    }
+  ],
+  "schema": "grm_e2e_probe_scorecard_v1",
+  "total": 2
+}

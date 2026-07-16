@@ -1,0 +1,46 @@
+{
+  "loadavg_note": "P1 re-measure, ambient loadavg ~3.1-3.4 pre-run, single-run",
+  "results": [
+    {
+      "backend": "native",
+      "harvest": {
+        "centroid_bank_rows": 8192,
+        "dim": 128,
+        "mean_active_dims": 9.1014404296875,
+        "mean_l1": 2.8466129302978516,
+        "mean_tokens_per_row": 10.0469970703125,
+        "source_files": 26,
+        "source_root": "/mnt/ForgeRealm/GraftRepository"
+      },
+      "mode": "fp32",
+      "node_count": 1000000,
+      "queries": 8,
+      "refine_m": null,
+      "route_ms_max": 373.332609,
+      "route_ms_min": 354.070597,
+      "route_ms_p50": 365.748334,
+      "route_ms_p95": 371.83072295
+    },
+    {
+      "backend": "native",
+      "harvest": {
+        "centroid_bank_rows": 8192,
+        "dim": 128,
+        "mean_active_dims": 9.1014404296875,
+        "mean_l1": 2.8466129302978516,
+        "mean_tokens_per_row": 10.0469970703125,
+        "source_files": 26,
+        "source_root": "/mnt/ForgeRealm/GraftRepository"
+      },
+      "mode": "int4_bounded_staging",
+      "node_count": 1000000,
+      "queries": 8,
+      "refine_m": 128,
+      "route_ms_max": 264.833645,
+      "route_ms_min": 257.196481,
+      "route_ms_p50": 260.8863005,
+      "route_ms_p95": 264.7430776
+    }
+  ],
+  "schema": "grm_mla_route_wall_curve_v1"
+}

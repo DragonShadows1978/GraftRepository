@@ -1,0 +1,1459 @@
+{
+  "_save_full_layers": false,
+  "cached_out": 12,
+  "cleared_injection_after_prompt": true,
+  "committed_last_token": false,
+  "final_cache": {
+    "all_equal": true,
+    "full_S0": 77,
+    "full_S_unique": [
+      77
+    ],
+    "n_layers": 24,
+    "sliding_S0": 77,
+    "sliding_S_unique": [
+      77
+    ]
+  },
+  "final_pos": 58,
+  "label": "cold_B_attempt",
+  "mode": "attempt_step",
+  "ngen": 16,
+  "out_ids": [
+    40,
+    4572,
+    23045,
+    11,
+    889,
+    357,
+    665,
+    1573,
+    1652,
+    483,
+    484,
+    13,
+    200002
+  ],
+  "out_text": "I\u2019m sorry, but I can\u2019t help with that.",
+  "out_text_raw": "I\u2019m sorry, but I can\u2019t help with that.<|return|>",
+  "prompt_n": 46,
+  "steps": [
+    {
+      "chosen_id": 40,
+      "chosen_text": "I",
+      "cur_mount_n": 0,
+      "graft_seats_unique": [
+        "19"
+      ],
+      "inject_any": true,
+      "inject_count": 24,
+      "input_ids": [
+        200006,
+        17360,
+        200008,
+        3575,
+        "...",
+        17196,
+        200008
+      ],
+      "input_n": 46,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 65,
+        "full_S_unique": [
+          65
+        ],
+        "n_layers": 24,
+        "sliding_S0": 65,
+        "sliding_S_unique": [
+          65
+        ]
+      },
+      "post_cache_layers": [
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 0,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 1,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 2,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 3,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 4,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 5,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 6,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 7,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 8,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 9,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 10,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 11,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 12,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 13,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 14,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 15,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 16,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 17,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 18,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 19,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 20,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 21,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 22,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        },
+        {
+          "S": 65,
+          "k_shape": [
+            1,
+            8,
+            65,
+            64
+          ],
+          "layer": 23,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            65,
+            64
+          ]
+        }
+      ],
+      "post_pos": 46,
+      "pre_cache": {
+        "full_S": null,
+        "n_layers": 0,
+        "sliding_S": null
+      },
+      "pre_cache_layers": [],
+      "pre_pos": 0,
+      "rope_end_expected": 160,
+      "rope_start_expected": 115,
+      "top5": [
+        {
+          "id": 40,
+          "logit": 15.5625,
+          "text": "I"
+        },
+        {
+          "id": 15,
+          "logit": 14.9375,
+          "text": "0"
+        },
+        {
+          "id": 976,
+          "logit": 14.8125,
+          "text": "The"
+        },
+        {
+          "id": 12,
+          "logit": 14.4375,
+          "text": "-"
+        },
+        {
+          "id": 2167,
+          "logit": 13.625,
+          "text": "We"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 4572,
+      "chosen_text": "\u2019m",
+      "cur_mount_n": 0,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        40
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 66,
+        "full_S_unique": [
+          66
+        ],
+        "n_layers": 24,
+        "sliding_S0": 66,
+        "sliding_S_unique": [
+          66
+        ]
+      },
+      "post_pos": 47,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 65,
+        "full_S_unique": [
+          65
+        ],
+        "n_layers": 24,
+        "sliding_S0": 65,
+        "sliding_S_unique": [
+          65
+        ]
+      },
+      "pre_pos": 46,
+      "rope_end_expected": 161,
+      "rope_start_expected": 161,
+      "top5": [
+        {
+          "id": 4572,
+          "logit": 20.875,
+          "text": "\u2019m"
+        },
+        {
+          "id": 8535,
+          "logit": 17.375,
+          "text": " can't"
+        },
+        {
+          "id": 1700,
+          "logit": 17.375,
+          "text": " don"
+        },
+        {
+          "id": 4128,
+          "logit": 17.0,
+          "text": " don't"
+        },
+        {
+          "id": 665,
+          "logit": 16.875,
+          "text": " can"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 23045,
+      "chosen_text": " sorry",
+      "cur_mount_n": 0,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        4572
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 67,
+        "full_S_unique": [
+          67
+        ],
+        "n_layers": 24,
+        "sliding_S0": 67,
+        "sliding_S_unique": [
+          67
+        ]
+      },
+      "post_pos": 48,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 66,
+        "full_S_unique": [
+          66
+        ],
+        "n_layers": 24,
+        "sliding_S0": 66,
+        "sliding_S_unique": [
+          66
+        ]
+      },
+      "pre_pos": 47,
+      "rope_end_expected": 162,
+      "rope_start_expected": 162,
+      "top5": [
+        {
+          "id": 23045,
+          "logit": 25.25,
+          "text": " sorry"
+        },
+        {
+          "id": 19706,
+          "logit": 17.75,
+          "text": " unable"
+        },
+        {
+          "id": 2715,
+          "logit": 16.875,
+          "text": " really"
+        },
+        {
+          "id": 625,
+          "logit": 16.0,
+          "text": " not"
+        },
+        {
+          "id": 24894,
+          "logit": 15.9375,
+          "text": " afraid"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 11,
+      "chosen_text": ",",
+      "cur_mount_n": 0,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        23045
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 68,
+        "full_S_unique": [
+          68
+        ],
+        "n_layers": 24,
+        "sliding_S0": 68,
+        "sliding_S_unique": [
+          68
+        ]
+      },
+      "post_pos": 49,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 67,
+        "full_S_unique": [
+          67
+        ],
+        "n_layers": 24,
+        "sliding_S0": 67,
+        "sliding_S_unique": [
+          67
+        ]
+      },
+      "pre_pos": 48,
+      "rope_end_expected": 163,
+      "rope_start_expected": 163,
+      "top5": [
+        {
+          "id": 11,
+          "logit": 26.625,
+          "text": ","
+        },
+        {
+          "id": 889,
+          "logit": 18.375,
+          "text": " but"
+        },
+        {
+          "id": 13,
+          "logit": 18.375,
+          "text": "."
+        },
+        {
+          "id": 395,
+          "logit": 17.625,
+          "text": " for"
+        },
+        {
+          "id": 316,
+          "logit": 16.625,
+          "text": " to"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 889,
+      "chosen_text": " but",
+      "cur_mount_n": 0,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        11
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 69,
+        "full_S_unique": [
+          69
+        ],
+        "n_layers": 24,
+        "sliding_S0": 69,
+        "sliding_S_unique": [
+          69
+        ]
+      },
+      "post_pos": 50,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 68,
+        "full_S_unique": [
+          68
+        ],
+        "n_layers": 24,
+        "sliding_S0": 68,
+        "sliding_S_unique": [
+          68
+        ]
+      },
+      "pre_pos": 49,
+      "rope_end_expected": 164,
+      "rope_start_expected": 164,
+      "top5": [
+        {
+          "id": 889,
+          "logit": 29.375,
+          "text": " but"
+        },
+        {
+          "id": 357,
+          "logit": 24.75,
+          "text": " I"
+        },
+        {
+          "id": 484,
+          "logit": 17.75,
+          "text": " that"
+        },
+        {
+          "id": 35971,
+          "logit": 17.75,
+          "text": "\u202f"
+        },
+        {
+          "id": 4066,
+          "logit": 16.875,
+          "text": "  \n"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 357,
+      "chosen_text": " I",
+      "cur_mount_n": 0,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        889
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 70,
+        "full_S_unique": [
+          70
+        ],
+        "n_layers": 24,
+        "sliding_S0": 70,
+        "sliding_S_unique": [
+          70
+        ]
+      },
+      "post_pos": 51,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 69,
+        "full_S_unique": [
+          69
+        ],
+        "n_layers": 24,
+        "sliding_S0": 69,
+        "sliding_S_unique": [
+          69
+        ]
+      },
+      "pre_pos": 50,
+      "rope_end_expected": 165,
+      "rope_start_expected": 165,
+      "top5": [
+        {
+          "id": 357,
+          "logit": 25.125,
+          "text": " I"
+        },
+        {
+          "id": 665,
+          "logit": 16.375,
+          "text": " can"
+        },
+        {
+          "id": 575,
+          "logit": 16.375,
+          "text": " i"
+        },
+        {
+          "id": 35971,
+          "logit": 15.0,
+          "text": "\u202f"
+        },
+        {
+          "id": 484,
+          "logit": 14.875,
+          "text": " that"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 665,
+      "chosen_text": " can",
+      "cur_mount_n": 0,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        357
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 71,
+        "full_S_unique": [
+          71
+        ],
+        "n_layers": 24,
+        "sliding_S0": 71,
+        "sliding_S_unique": [
+          71
+        ]
+      },
+      "post_pos": 52,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 70,
+        "full_S_unique": [
+          70
+        ],
+        "n_layers": 24,
+        "sliding_S0": 70,
+        "sliding_S_unique": [
+          70
+        ]
+      },
+      "pre_pos": 51,
+      "rope_end_expected": 166,
+      "rope_start_expected": 166,
+      "top5": [
+        {
+          "id": 665,
+          "logit": 27.875,
+          "text": " can"
+        },
+        {
+          "id": 1700,
+          "logit": 23.375,
+          "text": " don"
+        },
+        {
+          "id": 8535,
+          "logit": 21.375,
+          "text": " can't"
+        },
+        {
+          "id": 4572,
+          "logit": 21.25,
+          "text": "\u2019m"
+        },
+        {
+          "id": 6284,
+          "logit": 18.125,
+          "text": " cannot"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 1573,
+      "chosen_text": "\u2019t",
+      "cur_mount_n": 0,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        665
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 72,
+        "full_S_unique": [
+          72
+        ],
+        "n_layers": 24,
+        "sliding_S0": 72,
+        "sliding_S_unique": [
+          72
+        ]
+      },
+      "post_pos": 53,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 71,
+        "full_S_unique": [
+          71
+        ],
+        "n_layers": 24,
+        "sliding_S0": 71,
+        "sliding_S_unique": [
+          71
+        ]
+      },
+      "pre_pos": 52,
+      "rope_end_expected": 167,
+      "rope_start_expected": 167,
+      "top5": [
+        {
+          "id": 1573,
+          "logit": 32.25,
+          "text": "\u2019t"
+        },
+        {
+          "id": 186917,
+          "logit": 19.375,
+          "text": "\u2018t"
+        },
+        {
+          "id": 1606,
+          "logit": 19.0,
+          "text": " only"
+        },
+        {
+          "id": 279,
+          "logit": 17.25,
+          "text": "\n\n"
+        },
+        {
+          "id": 35971,
+          "logit": 16.875,
+          "text": "\u202f"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 1652,
+      "chosen_text": " help",
+      "cur_mount_n": 0,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        1573
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 73,
+        "full_S_unique": [
+          73
+        ],
+        "n_layers": 24,
+        "sliding_S0": 73,
+        "sliding_S_unique": [
+          73
+        ]
+      },
+      "post_pos": 54,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 72,
+        "full_S_unique": [
+          72
+        ],
+        "n_layers": 24,
+        "sliding_S0": 72,
+        "sliding_S_unique": [
+          72
+        ]
+      },
+      "pre_pos": 53,
+      "rope_end_expected": 168,
+      "rope_start_expected": 168,
+      "top5": [
+        {
+          "id": 1652,
+          "logit": 28.0,
+          "text": " help"
+        },
+        {
+          "id": 40206,
+          "logit": 27.625,
+          "text": " comply"
+        },
+        {
+          "id": 3587,
+          "logit": 27.375,
+          "text": " provide"
+        },
+        {
+          "id": 7756,
+          "logit": 24.625,
+          "text": " assist"
+        },
+        {
+          "id": 5143,
+          "logit": 22.25,
+          "text": " share"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 483,
+      "chosen_text": " with",
+      "cur_mount_n": 0,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        1652
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 74,
+        "full_S_unique": [
+          74
+        ],
+        "n_layers": 24,
+        "sliding_S0": 74,
+        "sliding_S_unique": [
+          74
+        ]
+      },
+      "post_pos": 55,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 73,
+        "full_S_unique": [
+          73
+        ],
+        "n_layers": 24,
+        "sliding_S0": 73,
+        "sliding_S_unique": [
+          73
+        ]
+      },
+      "pre_pos": 54,
+      "rope_end_expected": 169,
+      "rope_start_expected": 169,
+      "top5": [
+        {
+          "id": 483,
+          "logit": 27.0,
+          "text": " with"
+        },
+        {
+          "id": 13,
+          "logit": 20.375,
+          "text": "."
+        },
+        {
+          "id": 51836,
+          "logit": 17.0,
+          "text": ".|"
+        },
+        {
+          "id": 15043,
+          "logit": 16.125,
+          "text": ".\\"
+        },
+        {
+          "id": 6052,
+          "logit": 15.875,
+          "text": " answer"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 484,
+      "chosen_text": " that",
+      "cur_mount_n": 0,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        483
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 75,
+        "full_S_unique": [
+          75
+        ],
+        "n_layers": 24,
+        "sliding_S0": 75,
+        "sliding_S_unique": [
+          75
+        ]
+      },
+      "post_pos": 56,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 74,
+        "full_S_unique": [
+          74
+        ],
+        "n_layers": 24,
+        "sliding_S0": 74,
+        "sliding_S_unique": [
+          74
+        ]
+      },
+      "pre_pos": 55,
+      "rope_end_expected": 170,
+      "rope_start_expected": 170,
+      "top5": [
+        {
+          "id": 484,
+          "logit": 29.625,
+          "text": " that"
+        },
+        {
+          "id": 495,
+          "logit": 18.625,
+          "text": " this"
+        },
+        {
+          "id": 14116,
+          "logit": 16.75,
+          "text": "that"
+        },
+        {
+          "id": 35971,
+          "logit": 16.75,
+          "text": "\u202f"
+        },
+        {
+          "id": 2617,
+          "logit": 15.5,
+          "text": " those"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 13,
+      "chosen_text": ".",
+      "cur_mount_n": 0,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        484
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 76,
+        "full_S_unique": [
+          76
+        ],
+        "n_layers": 24,
+        "sliding_S0": 76,
+        "sliding_S_unique": [
+          76
+        ]
+      },
+      "post_pos": 57,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 75,
+        "full_S_unique": [
+          75
+        ],
+        "n_layers": 24,
+        "sliding_S0": 75,
+        "sliding_S_unique": [
+          75
+        ]
+      },
+      "pre_pos": 56,
+      "rope_end_expected": 171,
+      "rope_start_expected": 171,
+      "top5": [
+        {
+          "id": 13,
+          "logit": 26.25,
+          "text": "."
+        },
+        {
+          "id": 558,
+          "logit": 17.75,
+          "text": ".\n"
+        },
+        {
+          "id": 364,
+          "logit": 17.125,
+          "text": ".\n\n"
+        },
+        {
+          "id": 2616,
+          "logit": 16.25,
+          "text": " request"
+        },
+        {
+          "id": 279,
+          "logit": 15.625,
+          "text": "\n\n"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 200002,
+      "chosen_text": "<|return|>",
+      "cur_mount_n": 0,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        13
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 77,
+        "full_S_unique": [
+          77
+        ],
+        "n_layers": 24,
+        "sliding_S0": 77,
+        "sliding_S_unique": [
+          77
+        ]
+      },
+      "post_pos": 58,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 76,
+        "full_S_unique": [
+          76
+        ],
+        "n_layers": 24,
+        "sliding_S0": 76,
+        "sliding_S_unique": [
+          76
+        ]
+      },
+      "pre_pos": 57,
+      "rope_end_expected": 172,
+      "rope_start_expected": 172,
+      "top5": [
+        {
+          "id": 200002,
+          "logit": 32.25,
+          "text": "<|return|>"
+        },
+        {
+          "id": 793,
+          "logit": 19.625,
+          "text": " \n"
+        },
+        {
+          "id": 1202,
+          "logit": 17.375,
+          "text": " \n\n"
+        },
+        {
+          "id": 256,
+          "logit": 17.25,
+          "text": "  "
+        },
+        {
+          "id": 200007,
+          "logit": 17.0,
+          "text": "<|end|>"
+        }
+      ],
+      "width": 96
+    }
+  ],
+  "stop_events": [
+    {
+      "at_gen": 12,
+      "decoded": "I\u2019m sorry, but I can\u2019t help with that.<|return|>",
+      "out_ids": [
+        40,
+        4572,
+        23045,
+        11,
+        889,
+        357,
+        665,
+        1573,
+        1652,
+        483,
+        484,
+        13,
+        200002
+      ],
+      "stops": [
+        "<|return|>"
+      ]
+    }
+  ],
+  "stopped": true,
+  "stops": [
+    "<|return|>",
+    "<|end|>",
+    "<|start|>user",
+    "<|start|>assistant"
+  ],
+  "wall_s": 2.07574017999832
+}

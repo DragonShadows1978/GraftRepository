@@ -1,0 +1,33 @@
+         730201 function calls in 12.100 seconds
+
+   Ordered by: cumulative time
+   List reduced from 62 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+      300    0.015    0.000   12.100    0.040 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:323(route)
+      300    1.882    0.006   12.068    0.040 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:1581(_native_route_order)
+      300    0.026    0.000   10.186    0.034 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:1536(_cuda_route_order)
+      300    0.133    0.000    9.990    0.033 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:1482(_cuda_route_bank_inputs)
+      300    9.774    0.033    9.777    0.033 /home/vader/.local/lib/python3.12/site-packages/numpy/_core/shape_base.py:378(stack)
+      300    0.002    0.000    0.151    0.001 /mnt/ForgeRealm/GraftRepository/core/grm_native.py:1528(route_gqa_cuda)
+      300    0.013    0.000    0.148    0.000 /mnt/ForgeRealm/GraftRepository/core/grm_cuda_router.py:175(route_topk)
+      300    0.114    0.000    0.121    0.000 /mnt/ForgeRealm/GraftRepository/scripts/grm_gqa_cuda_probe.py:680(route_topk)
+   308700    0.037    0.000    0.037    0.000 {method 'get' of 'dict' objects}
+   153600    0.023    0.000    0.023    0.000 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:1507(<genexpr>)
+   117600    0.016    0.000    0.016    0.000 {method 'append' of 'list' objects}
+    39000    0.012    0.000    0.012    0.000 {built-in method numpy.asarray}
+      300    0.009    0.000    0.010    0.000 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:1517(_ensure_cuda_route_bank)
+      300    0.001    0.000    0.008    0.000 /home/vader/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:2436(any)
+      300    0.002    0.000    0.007    0.000 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:562(_rare_tokens)
+      600    0.007    0.000    0.007    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+      300    0.001    0.000    0.007    0.000 /home/vader/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:86(_wrapreduction_any_all)
+      300    0.001    0.000    0.005    0.000 /home/vader/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:3149(min)
+    38400    0.005    0.000    0.005    0.000 {built-in method builtins.id}
+      300    0.001    0.000    0.004    0.000 /home/vader/.local/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:66(_wrapreduction)
+      600    0.001    0.000    0.004    0.000 /home/vader/.local/lib/python3.12/site-packages/numpy/_core/_internal.py:280(data_as)
+      600    0.004    0.000    0.004    0.000 /usr/lib/python3.12/ctypes/__init__.py:517(cast)
+      300    0.000    0.000    0.003    0.000 /usr/lib/python3.12/re/__init__.py:209(findall)
+      300    0.001    0.000    0.003    0.000 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:1478(_cuda_route_enabled)
+    38400    0.002    0.000    0.002    0.000 {built-in method numpy.asanyarray}
+
+

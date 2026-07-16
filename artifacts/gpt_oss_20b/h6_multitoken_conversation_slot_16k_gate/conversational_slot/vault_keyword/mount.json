@@ -1,0 +1,194 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "created_at": "2026-07-07T05:48:48",
+  "current_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS vault keyword was **BLUE**.<|return|>",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "final_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS vault keyword was **BLUE**.<|return|>",
+  "initial_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+  "initial_user_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+  "max_tokens": 192,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "mount_graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft",
+  "note": "greedy smoke via repeated streamed full forwards; no KV cache",
+  "prompt_file": null,
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "status": "ok",
+  "steps": [
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_00.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_00.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 976, \"logit\": 23.0, \"text\": \"The\"}, {\"rank\": 1, \"token_id\": 637, \"logit\": 19.75, \"text\": \"In\"}, {\"rank\": 2, \"token_id\": 3206, \"logit\": 19.0, \"text\": \"It\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 14\"}\n",
+      "step": 0,
+      "top_token": {
+        "logit": 23.0,
+        "rank": 0,
+        "text": "The",
+        "token_id": 976
+      },
+      "wall_seconds": 26.890981610980816
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_01.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_01.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 174803, \"logit\": 18.625, \"text\": \" GPT\"}, {\"rank\": 1, \"token_id\": 26463, \"logit\": 18.25, \"text\": \" keyword\"}, {\"rank\": 2, \"token_id\": 56538, \"logit\": 17.625, \"text\": \" vault\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 15\"}\n",
+      "step": 1,
+      "top_token": {
+        "logit": 18.625,
+        "rank": 0,
+        "text": " GPT",
+        "token_id": 174803
+      },
+      "wall_seconds": 26.95238405902637
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_02.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_02.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 50005, \"logit\": 28.375, \"text\": \"\\u2011\"}, {\"rank\": 1, \"token_id\": 12, \"logit\": 21.875, \"text\": \"-\"}, {\"rank\": 2, \"token_id\": 62961, \"logit\": 19.0, \"text\": \"\\u2010\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 16\"}\n",
+      "step": 2,
+      "top_token": {
+        "logit": 28.375,
+        "rank": 0,
+        "text": "\u2011",
+        "token_id": 50005
+      },
+      "wall_seconds": 27.030096260947175
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_03.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_03.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 26496, \"logit\": 35.0, \"text\": \"OSS\"}, {\"rank\": 1, \"token_id\": 3360, \"logit\": 23.75, \"text\": \"OS\"}, {\"rank\": 2, \"token_id\": 5417, \"logit\": 23.125, \"text\": \"OV\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 6\"}\n",
+      "step": 3,
+      "top_token": {
+        "logit": 35.0,
+        "rank": 0,
+        "text": "OSS",
+        "token_id": 26496
+      },
+      "wall_seconds": 27.036973062029574
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_04.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_04.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 56538, \"logit\": 22.125, \"text\": \" vault\"}, {\"rank\": 1, \"token_id\": 26463, \"logit\": 18.375, \"text\": \" keyword\"}, {\"rank\": 2, \"token_id\": 966, \"logit\": 16.25, \"text\": \" \\u201c\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 0\"}\n",
+      "step": 4,
+      "top_token": {
+        "logit": 22.125,
+        "rank": 0,
+        "text": " vault",
+        "token_id": 56538
+      },
+      "wall_seconds": 27.111423397029284
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_05.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS vault",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_05.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 26463, \"logit\": 21.375, \"text\": \" keyword\"}, {\"rank\": 1, \"token_id\": 2140, \"logit\": 17.5, \"text\": \" key\"}, {\"rank\": 2, \"token_id\": 673, \"logit\": 16.0, \"text\": \" was\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 5,
+      "top_token": {
+        "logit": 21.375,
+        "rank": 0,
+        "text": " keyword",
+        "token_id": 26463
+      },
+      "wall_seconds": 27.084029481979087
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_06.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS vault keyword",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_06.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 673, \"logit\": 21.25, \"text\": \" was\"}, {\"rank\": 1, \"token_id\": 306, \"logit\": 21.125, \"text\": \" in\"}, {\"rank\": 2, \"token_id\": 13808, \"logit\": 20.25, \"text\": \" mentioned\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 18\"}\n",
+      "step": 6,
+      "top_token": {
+        "logit": 21.25,
+        "rank": 0,
+        "text": " was",
+        "token_id": 673
+      },
+      "wall_seconds": 27.250981728022452
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_07.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS vault keyword was",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_07.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 6240, \"logit\": 22.75, \"text\": \" **\"}, {\"rank\": 1, \"token_id\": 966, \"logit\": 19.5, \"text\": \" \\u201c\"}, {\"rank\": 2, \"token_id\": 35971, \"logit\": 18.125, \"text\": \"\\u202f\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 804, 12282, 0\"}\n",
+      "step": 7,
+      "top_token": {
+        "logit": 22.75,
+        "rank": 0,
+        "text": " **",
+        "token_id": 6240
+      },
+      "wall_seconds": 27.239245530974586
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_08.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS vault keyword was **",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_08.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 134698, \"logit\": 25.25, \"text\": \"BLUE\"}, {\"rank\": 1, \"token_id\": 1100, \"logit\": 24.875, \"text\": \"\\u201c\"}, {\"rank\": 2, \"token_id\": 1, \"logit\": 21.375, \"text\": \"\\\"\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 18\"}\n",
+      "step": 8,
+      "top_token": {
+        "logit": 25.25,
+        "rank": 0,
+        "text": "BLUE",
+        "token_id": 134698
+      },
+      "wall_seconds": 27.297992456005886
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_09.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS vault keyword was **BLUE",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_09.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 410, \"logit\": 28.75, \"text\": \"**\"}, {\"rank\": 1, \"token_id\": 1612, \"logit\": 20.875, \"text\": \"**\\n\"}, {\"rank\": 2, \"token_id\": 13, \"logit\": 19.375, \"text\": \".\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 15\"}\n",
+      "step": 9,
+      "top_token": {
+        "logit": 28.75,
+        "rank": 0,
+        "text": "**",
+        "token_id": 410
+      },
+      "wall_seconds": 27.4953157720156
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_10.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS vault keyword was **BLUE**",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_10.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 13, \"logit\": 24.375, \"text\": \".\"}, {\"rank\": 1, \"token_id\": 1805, \"logit\": 19.0, \"text\": \"\\u3010\"}, {\"rank\": 2, \"token_id\": 350, \"logit\": 19.0, \"text\": \" (\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 10,
+      "top_token": {
+        "logit": 24.375,
+        "rank": 0,
+        "text": ".",
+        "token_id": 13
+      },
+      "wall_seconds": 27.614085261011496
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_11.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\u2011OSS vault keyword was **BLUE**.",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_11.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 27.25, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 793, \"logit\": 16.75, \"text\": \" \\n\"}, {\"rank\": 2, \"token_id\": 1225, \"logit\": 16.75, \"text\": \" It\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 11,
+      "top_token": {
+        "logit": 27.25,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 27.569056651962455
+    }
+  ],
+  "steps_requested": 12,
+  "top_k": 10,
+  "use_chat_template": false,
+  "wall_seconds": 326.57835222099675
+}

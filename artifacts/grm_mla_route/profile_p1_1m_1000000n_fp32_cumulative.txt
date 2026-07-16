@@ -1,0 +1,38 @@
+         32001233 function calls in 8.971 seconds
+
+   Ordered by: cumulative time
+   List reduced from 34 to 30 due to restriction <30>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        8    2.566    0.321    8.971    1.121 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:340(route)
+        8    1.487    0.186    4.517    0.565 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:472(_native_route_order)
+ 24000024    2.882    0.000    2.882    0.000 {method 'get' of 'dict' objects}
+        8    1.038    0.130    1.039    0.130 /mnt/ForgeRealm/GraftRepository/core/grm_native.py:1433(route)
+       56    0.505    0.009    0.997    0.018 {built-in method builtins.any}
+  8000008    0.492    0.000    0.492    0.000 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:482(<genexpr>)
+        8    0.000    0.000    0.000    0.000 /mnt/ForgeRealm/GraftRepository/core/grm_native.py:1374(_float_array)
+        8    0.000    0.000    0.000    0.000 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:677(_rare_tokens)
+        8    0.000    0.000    0.000    0.000 /usr/lib/python3.12/re/__init__.py:209(findall)
+      280    0.000    0.000    0.000    0.000 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:686(<genexpr>)
+       64    0.000    0.000    0.000    0.000 {built-in method builtins.max}
+        8    0.000    0.000    0.000    0.000 {method 'reshape' of 'numpy.ndarray' objects}
+        8    0.000    0.000    0.000    0.000 {method 'findall' of 're.Pattern' objects}
+        8    0.000    0.000    0.000    0.000 /usr/lib/python3.12/re/__init__.py:280(_compile)
+        8    0.000    0.000    0.000    0.000 {method 'tolist' of 'numpy.ndarray' objects}
+        8    0.000    0.000    0.000    0.000 {built-in method numpy.asarray}
+      128    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+       40    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+      240    0.000    0.000    0.000    0.000 {method 'isdigit' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+       32    0.000    0.000    0.000    0.000 /mnt/ForgeRealm/GraftRepository/core/grm_native.py:1363(_filter_blob)
+        8    0.000    0.000    0.000    0.000 {built-in method builtins.sorted}
+        8    0.000    0.000    0.000    0.000 /mnt/ForgeRealm/GraftRepository/core/graft_arena.py:434(_native_to_idx_map)
+       40    0.000    0.000    0.000    0.000 {built-in method builtins.getattr}
+       48    0.000    0.000    0.000    0.000 {built-in method builtins.min}
+       16    0.000    0.000    0.000    0.000 {built-in method time.perf_counter_ns}
+        8    0.000    0.000    0.000    0.000 {built-in method builtins.hasattr}
+       32    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+       40    0.000    0.000    0.000    0.000 {method 'rstrip' of 'str' objects}
+        8    0.000    0.000    0.000    0.000 /mnt/ForgeRealm/GraftRepository/core/grm_native.py:676(_check)
+
+

@@ -1,0 +1,24 @@
+{
+  "schema": "grm_graft_quant_p3_mount_speed_receipt_v1",
+  "layer_idx": 0,
+  "n_reps": 20,
+  "fp16": {
+    "label": "fp16 (default path)",
+    "n": 20,
+    "median_s": 0.011559279500033881,
+    "mean_s": 0.02173832355003924,
+    "min_s": 0.011492912999983673,
+    "max_s": 0.2102646220000679,
+    "stdev_s": 0.04438775769173428
+  },
+  "packed_int8": {
+    "label": "packed int8 (format-2 hook)",
+    "n": 20,
+    "median_s": 0.04342272149983728,
+    "mean_s": 0.04334031110001888,
+    "min_s": 0.03831977499976347,
+    "max_s": 0.04557802199997241,
+    "stdev_s": 0.0013240993078938999
+  },
+  "packed_vs_fp16_median_ratio": 3.7565249200618434
+}

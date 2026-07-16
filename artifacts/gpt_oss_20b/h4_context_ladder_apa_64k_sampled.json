@@ -1,0 +1,121 @@
+{
+  "apa_layer_scope": "full",
+  "bulk_bits": 8,
+  "corpus_source": {
+    "file_count": 40,
+    "kind": "directory",
+    "path": "/mnt/ForgeRealm/GraftRepository/docs",
+    "sha256": "0d128c37a5cc70cc4980db7ab8c8456a3e575c3623320a045dcb6cca703cea65"
+  },
+  "corpus_token_count": 227682,
+  "created_at": "2026-07-06T22:22:44",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "lengths": [
+    65536
+  ],
+  "max_layers": null,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "route_detail": "summary",
+  "runs": [
+    {
+      "actual_input_tokens": 65536,
+      "artifact": "artifacts/gpt_oss_20b/h4_context_ladder_apa_64k_sampled/apa_r0.15_65536.json",
+      "attention_backend_counts": {
+        "apa_selective_sink_fused": 12,
+        "standard_sink_sliding_chunked": 12
+      },
+      "attention_layers_used_apa": [
+        1,
+        3,
+        5,
+        7,
+        9,
+        11,
+        13,
+        15,
+        17,
+        19,
+        21,
+        23
+      ],
+      "attention_layers_used_standard": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18,
+        20,
+        22
+      ],
+      "classification": "pass",
+      "command": [
+        "/usr/bin/python3",
+        "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_forward_smoke.py",
+        "--model-dir",
+        "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+        "--prompt-file",
+        "artifacts/gpt_oss_20b/h4_context_ladder_apa_64k_sampled/prompts/prompt_65536.txt",
+        "--max-tokens",
+        "65536",
+        "--attention-mode",
+        "apa_selective",
+        "--expert-mode",
+        "resident_packed_mxfp4",
+        "--route-detail",
+        "summary",
+        "--expert-empty-cache-interval",
+        "0",
+        "--output",
+        "artifacts/gpt_oss_20b/h4_context_ladder_apa_64k_sampled/apa_r0.15_65536.json",
+        "--skip-lm-head",
+        "--apa-layer-scope",
+        "full",
+        "--refine-percentile",
+        "0.15",
+        "--bulk-bits",
+        "8"
+      ],
+      "completed_layers": 24,
+      "error": null,
+      "error_type": null,
+      "gpu_after": "NVIDIA GeForce RTX 4070 SUPER, 865, 12282, 44",
+      "gpu_before": "NVIDIA GeForce RTX 4070 SUPER, 251, 12282, 30",
+      "max_observed_memory_mib": 1421,
+      "monitor_peak_memory_mib": 4834,
+      "monitor_sample_count": 10684,
+      "prompt_file": "artifacts/gpt_oss_20b/h4_context_ladder_apa_64k_sampled/prompts/prompt_65536.txt",
+      "raw_token_count": 65536,
+      "returncode": 0,
+      "setting": "apa_r0.15",
+      "status": "ok",
+      "stderr_tail": "",
+      "stdout_tail": "artifact=artifacts/gpt_oss_20b/h4_context_ladder_apa_64k_sampled/apa_r0.15_65536.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"skip_lm_head\": true, \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 865, 12282, 44\"}\n",
+      "target_tokens": 65536,
+      "wall_seconds": 5576.632580742997
+    }
+  ],
+  "schema": "gpt_oss20b_context_ladder_v1",
+  "settings": [
+    "apa_r0.15"
+  ],
+  "status": "ok",
+  "summary": {
+    "apa_r0.15": {
+      "failures": [],
+      "first_failure": null,
+      "first_oom": null,
+      "max_pass_tokens": 65536,
+      "ooms": [],
+      "passes": [
+        65536
+      ]
+    }
+  },
+  "with_lm_head": false
+}

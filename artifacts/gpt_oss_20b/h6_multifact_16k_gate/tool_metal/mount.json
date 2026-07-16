@@ -1,0 +1,40 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "created_at": "2026-07-07T04:00:34",
+  "current_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS tool metal. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>IRON",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "final_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS tool metal. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>IRON",
+  "initial_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS tool metal. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+  "initial_user_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS tool metal. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+  "max_tokens": 160,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "mount_graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft",
+  "note": "greedy smoke via repeated streamed full forwards; no KV cache",
+  "prompt_file": null,
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "status": "ok",
+  "steps": [
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/tool_metal/mount_steps/step_00.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS tool metal. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/tool_metal/mount_steps/step_00.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 96951, \"logit\": 22.5, \"text\": \"IRON\"}, {\"rank\": 1, \"token_id\": 58333, \"logit\": 19.625, \"text\": \"iron\"}, {\"rank\": 2, \"token_id\": 72998, \"logit\": 18.875, \"text\": \"Iron\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 17\"}\n",
+      "step": 0,
+      "top_token": {
+        "logit": 22.5,
+        "rank": 0,
+        "text": "IRON",
+        "token_id": 96951
+      },
+      "wall_seconds": 27.67895996797597
+    }
+  ],
+  "steps_requested": 1,
+  "top_k": 10,
+  "use_chat_template": false,
+  "wall_seconds": 27.679334545042366
+}

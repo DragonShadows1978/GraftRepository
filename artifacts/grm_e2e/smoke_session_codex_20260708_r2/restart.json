@@ -1,0 +1,16 @@
+{
+  "after_turn": 4,
+  "flush_wall_ms": 548.2550489996356,
+  "mode": "smoke",
+  "schema": "grm_e2e_restart_v1",
+  "vram_before_exec": {
+    "gpus": [
+      {
+        "total_mb": 12282,
+        "used_mb": 11016
+      }
+    ],
+    "raw": "11016, 12282",
+    "returncode": 0
+  }
+}

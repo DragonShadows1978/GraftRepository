@@ -1,0 +1,110 @@
+{
+  "arena_width": 384,
+  "env": {
+    "GRM_GQA_CUDA_ROUTE": "1",
+    "GRM_GRAFT_STORAGE_BITS": "8"
+  },
+  "gpu_idle_check": {
+    "checks": [
+      {
+        "pids": [],
+        "waited_s": 0
+      }
+    ],
+    "idle": true,
+    "waited_s": 0
+  },
+  "live_turns": 1,
+  "max_trips": 1,
+  "mode": "smoke",
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "native_lib": "/mnt/ForgeRealm/GraftRepository/cpp/build/libgrm_runtime.so",
+  "ngen": 24,
+  "restart_after": 5,
+  "schema": "grm_e2e_session_config_v1",
+  "script": [
+    {
+      "fact_id": "orion pin",
+      "fact_phrase": "current orion pin value is amber",
+      "kind": "fact",
+      "memory_command": "remember this for the project: The current orion pin value is amber. Memory key CURRENT-FACT-ORION-PIN.",
+      "memory_text": "The current orion pin value is amber. Memory key CURRENT-FACT-ORION-PIN.",
+      "route_key": "CURRENT-FACT-ORION-PIN",
+      "user": "Memory planting turn. fact orion pin. Memory key CURRENT-FACT-ORION-PIN. The current orion pin value is amber. If asked later for orion pin, answer amber only.",
+      "value": "amber"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler smoke alpha. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "correction_command": "correct memory: current orion pin value is amber => The current orion pin value is copper. Memory key CURRENT-FACT-ORION-PIN.",
+      "fact_id": "orion pin",
+      "fact_phrase": "current orion pin value is copper",
+      "kind": "supersede",
+      "memory_text": "The current orion pin value is copper. Memory key CURRENT-FACT-ORION-PIN.",
+      "old_value": "amber",
+      "route_key": "CURRENT-FACT-ORION-PIN",
+      "user": "Authoritative update turn. fact orion pin. Memory key CURRENT-FACT-ORION-PIN. The current orion pin value is copper. This is the current value. If asked later, answer copper only.",
+      "value": "copper"
+    },
+    {
+      "fact_id": "cypher bridge",
+      "fact_phrase": "current cypher bridge value is lantern",
+      "kind": "fact",
+      "memory_command": "remember this for the project: The current cypher bridge value is lantern. Memory key CURRENT-FACT-CYPHER-BRIDGE.",
+      "memory_text": "The current cypher bridge value is lantern. Memory key CURRENT-FACT-CYPHER-BRIDGE.",
+      "route_key": "CURRENT-FACT-CYPHER-BRIDGE",
+      "user": "Memory planting turn. fact cypher bridge. Memory key CURRENT-FACT-CYPHER-BRIDGE. The current cypher bridge value is lantern. If asked later for cypher bridge, answer lantern only.",
+      "value": "lantern"
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler smoke beta. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "accepts": [
+        "lantern"
+      ],
+      "assistant_prefill": "The current cypher bridge value is ",
+      "expected": "lantern",
+      "fact_id": "cypher bridge",
+      "kind": "probe",
+      "old_value": null,
+      "route_key": "CURRENT-FACT-CYPHER-BRIDGE",
+      "source_turn": 3,
+      "supersession": false,
+      "user": "Recall probe for CURRENT-FACT-CYPHER-BRIDGE. What is the current cypher bridge value? Reply with only the value."
+    },
+    {
+      "accepts": [
+        "copper"
+      ],
+      "assistant_prefill": "The current orion pin value is ",
+      "expected": "copper",
+      "fact_id": "orion pin",
+      "kind": "probe",
+      "old_value": "amber",
+      "route_key": "CURRENT-FACT-ORION-PIN",
+      "source_turn": 2,
+      "supersession": true,
+      "user": "Recall probe for CURRENT-FACT-ORION-PIN. What is the current orion pin value? Reply with only the value."
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler smoke gamma. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler smoke delta. Acknowledge briefly. Do not change any stored fact values."
+    },
+    {
+      "kind": "filler",
+      "user": "Session continuity filler smoke epsilon. Acknowledge briefly. Do not change any stored fact values."
+    }
+  ],
+  "session_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_e2e/smoke_session_20260708_151555",
+  "template_decision": "ArenaCache prompt_template + stop_sequences hook; driver uses real GRMRuntime.chat()/ArenaCache.step().",
+  "topk": 1,
+  "turns": 10
+}

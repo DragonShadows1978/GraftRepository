@@ -1,0 +1,1245 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "classification": "fail",
+  "created_at": "2026-07-07T05:43:46",
+  "exact_classification": "fail",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "fact_ids": null,
+  "generated_classification": "pass",
+  "generated_hit_count": 4,
+  "graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft",
+  "hit_count": 0,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "pass_mode": "generated_value",
+  "planned_runs": [
+    {
+      "answer": "BLUE",
+      "id": "vault_keyword",
+      "label": "GPT-OSS vault keyword",
+      "placement": {
+        "answer": "BLUE",
+        "answer_token_id": 134698,
+        "id": "vault_keyword",
+        "label": "GPT-OSS vault keyword",
+        "needle_offset_tokens": 3261,
+        "needle_sha256": "a8c84ea9c0ae41d1f2d1ea6d0e270d6d5de7c39dada4f3a773b3bfc06a7065ed",
+        "needle_tokens": 19
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?",
+      "variant": "conversational_slot"
+    },
+    {
+      "answer": "EMBER",
+      "id": "relay_marker",
+      "label": "GPT-OSS relay marker",
+      "placement": {
+        "answer": "EMBER",
+        "answer_token_id": 78250,
+        "id": "relay_marker",
+        "label": "GPT-OSS relay marker",
+        "needle_offset_tokens": 6541,
+        "needle_sha256": "bcaedfc28644e7906847a9e7cb0d8c9acd5990f80aeefb6cbb2f15c1a5da5057",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT B, what was the GPT-OSS relay marker?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT B, what was the GPT-OSS relay marker?",
+      "variant": "conversational_slot"
+    },
+    {
+      "answer": "GRAY",
+      "id": "archive_color",
+      "label": "GPT-OSS archive color",
+      "placement": {
+        "answer": "GRAY",
+        "answer_token_id": 140884,
+        "id": "archive_color",
+        "label": "GPT-OSS archive color",
+        "needle_offset_tokens": 9822,
+        "needle_sha256": "c5dd34ae04552ed50b27706789bc698e699f54358224ccc23e8468bc8138522e",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT C, what was the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT C, what was the GPT-OSS archive color?",
+      "variant": "conversational_slot"
+    },
+    {
+      "answer": "IRON",
+      "id": "tool_metal",
+      "label": "GPT-OSS tool metal",
+      "placement": {
+        "answer": "IRON",
+        "answer_token_id": 96951,
+        "id": "tool_metal",
+        "label": "GPT-OSS tool metal",
+        "needle_offset_tokens": 13103,
+        "needle_sha256": "e222c6999efdcc5e132d85d999db2e5f374b484f09dd69a6bdecfd0b0aa5eb1a",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?",
+      "variant": "conversational_slot"
+    }
+  ],
+  "probe_count": 4,
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "runs": [
+    {
+      "answer": "BLUE",
+      "control": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "12",
+            "--max-tokens",
+            "192",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/control.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>I\\u2019m sorry, but I can\\u2019t help with that.\", \"steps\": [{\"logit\": 23.5, \"rank\": 0, \"text\": \"I\", \"token_id\": 40}, {\"logit\": 25.5, \"rank\": 0, \"text\": \"\\u2019m\", \"token_id\": 4572}, {\"logit\": 26.5, \"rank\": 0, \"text\": \" sorry\", \"token_id\": 23045}, {\"logit\": 27.875, \"rank\": 0, \"text\": \",\", \"token_id\": 11}, {\"logit\": 31.0, \"rank\": 0, \"text\": \" but\", \"token_id\": 889}, {\"logit\": 27.625, \"rank\": 0, \"text\": \" I\", \"token_id\": 357}, {\"logit\": 29.75, \"rank\": 0, \"text\": \" can\", \"token_id\": 665}, {\"logit\": 35.0, \"rank\": 0, \"text\": \"\\u2019t\", \"token_id\": 1573}, {\"logit\": 31.625, \"rank\": 0, \"text\": \" help\", \"token_id\": 1652}, {\"logit\": 30.125, \"rank\": 0, \"text\": \" with\", \"token_id\": 483}, {\"logit\": 33.5, \"rank\": 0, \"text\": \" that\", \"token_id\": 484}, {\"logit\": 27.5, \"rank\": 0, \"text\": \".\", \"token_id\": 13}]}\n",
+          "wall_seconds": 297.79480793100083
+        },
+        "summary": {
+          "answer": "BLUE",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/control.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/control_steps/step_00.json",
+          "generated_contains_value": false,
+          "generated_text": "I\u2019m sorry, but I can\u2019t help with that.",
+          "hit": false,
+          "normalized_answer": "blue",
+          "normalized_answer_logit": null,
+          "normalized_answer_rank": null,
+          "normalized_answer_text": null,
+          "normalized_hit": false,
+          "normalized_top_token": "i",
+          "status": "ok",
+          "top_token": {
+            "logit": 23.5,
+            "rank": 0,
+            "text": "I",
+            "token_id": 40
+          },
+          "top_tokens": [
+            {
+              "logit": 23.5,
+              "rank": 0,
+              "text": "I",
+              "token_id": 40
+            },
+            {
+              "logit": 19.625,
+              "rank": 1,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 18.25,
+              "rank": 2,
+              "text": "Sorry",
+              "token_id": 33680
+            },
+            {
+              "logit": 17.875,
+              "rank": 3,
+              "text": "I'm",
+              "token_id": 15390
+            },
+            {
+              "logit": 17.875,
+              "rank": 4,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 17.75,
+              "rank": 5,
+              "text": "You",
+              "token_id": 3575
+            },
+            {
+              "logit": 17.375,
+              "rank": 6,
+              "text": "In",
+              "token_id": 637
+            },
+            {
+              "logit": 17.25,
+              "rank": 7,
+              "text": "It",
+              "token_id": 3206
+            },
+            {
+              "logit": 16.5,
+              "rank": 8,
+              "text": "We",
+              "token_id": 2167
+            },
+            {
+              "logit": 16.125,
+              "rank": 9,
+              "text": "Ap",
+              "token_id": 11756
+            }
+          ],
+          "wall_seconds": 292.9255673880107
+        }
+      },
+      "id": "vault_keyword",
+      "label": "GPT-OSS vault keyword",
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "12",
+            "--max-tokens",
+            "192",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount.json",
+            "--mount-graft-dir",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\\u2011OSS vault keyword was **BLUE**.<|return|>\", \"steps\": [{\"logit\": 23.0, \"rank\": 0, \"text\": \"The\", \"token_id\": 976}, {\"logit\": 18.625, \"rank\": 0, \"text\": \" GPT\", \"token_id\": 174803}, {\"logit\": 28.375, \"rank\": 0, \"text\": \"\\u2011\", \"token_id\": 50005}, {\"logit\": 35.0, \"rank\": 0, \"text\": \"OSS\", \"token_id\": 26496}, {\"logit\": 22.125, \"rank\": 0, \"text\": \" vault\", \"token_id\": 56538}, {\"logit\": 21.375, \"rank\": 0, \"text\": \" keyword\", \"token_id\": 26463}, {\"logit\": 21.25, \"rank\": 0, \"text\": \" was\", \"token_id\": 673}, {\"logit\": 22.75, \"rank\": 0, \"text\": \" **\", \"token_id\": 6240}, {\"logit\": 25.25, \"rank\": 0, \"text\": \"BLUE\", \"token_id\": 134698}, {\"logit\": 28.75, \"rank\": 0, \"text\": \"**\", \"token_id\": 410}, {\"logit\": 24.375, \"rank\": 0, \"text\": \".\", \"token_id\": 13}, {\"logit\": 27.25, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}]}\n",
+          "wall_seconds": 331.40199788700556
+        },
+        "summary": {
+          "answer": "BLUE",
+          "answer_logit": 17.625,
+          "answer_rank": 4,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/vault_keyword/mount_steps/step_00.json",
+          "generated_contains_value": true,
+          "generated_text": "The GPT\u2011OSS vault keyword was **BLUE**.<|return|>",
+          "hit": false,
+          "normalized_answer": "blue",
+          "normalized_answer_logit": 17.625,
+          "normalized_answer_rank": 4,
+          "normalized_answer_text": "BLUE",
+          "normalized_hit": false,
+          "normalized_top_token": "the",
+          "status": "ok",
+          "top_token": {
+            "logit": 23.0,
+            "rank": 0,
+            "text": "The",
+            "token_id": 976
+          },
+          "top_tokens": [
+            {
+              "logit": 23.0,
+              "rank": 0,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 19.75,
+              "rank": 1,
+              "text": "In",
+              "token_id": 637
+            },
+            {
+              "logit": 19.0,
+              "rank": 2,
+              "text": "It",
+              "token_id": 3206
+            },
+            {
+              "logit": 17.75,
+              "rank": 3,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 17.625,
+              "rank": 4,
+              "text": "BLUE",
+              "token_id": 134698
+            },
+            {
+              "logit": 17.375,
+              "rank": 5,
+              "text": "A",
+              "token_id": 32
+            },
+            {
+              "logit": 17.375,
+              "rank": 6,
+              "text": "Blue",
+              "token_id": 15957
+            },
+            {
+              "logit": 17.0,
+              "rank": 7,
+              "text": "I",
+              "token_id": 40
+            },
+            {
+              "logit": 16.0,
+              "rank": 8,
+              "text": "You",
+              "token_id": 3575
+            },
+            {
+              "logit": 16.0,
+              "rank": 9,
+              "text": "CLASS",
+              "token_id": 54314
+            }
+          ],
+          "wall_seconds": 326.57835222099675
+        }
+      },
+      "placement": {
+        "answer": "BLUE",
+        "answer_token_id": 134698,
+        "id": "vault_keyword",
+        "label": "GPT-OSS vault keyword",
+        "needle_offset_tokens": 3261,
+        "needle_sha256": "a8c84ea9c0ae41d1f2d1ea6d0e270d6d5de7c39dada4f3a773b3bfc06a7065ed",
+        "needle_tokens": 19
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT A, what was the GPT-OSS vault keyword?",
+      "variant": "conversational_slot"
+    },
+    {
+      "answer": "EMBER",
+      "control": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT B, what was the GPT-OSS relay marker?<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "12",
+            "--max-tokens",
+            "192",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/relay_marker/control.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/relay_marker/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT B, what was the GPT-OSS relay marker?<|end|><|start|>assistant<|channel|>final<|message|>I\\u2019m sorry, but I can\\u2019t help with that.\", \"steps\": [{\"logit\": 22.125, \"rank\": 0, \"text\": \"I\", \"token_id\": 40}, {\"logit\": 24.375, \"rank\": 0, \"text\": \"\\u2019m\", \"token_id\": 4572}, {\"logit\": 26.0, \"rank\": 0, \"text\": \" sorry\", \"token_id\": 23045}, {\"logit\": 27.75, \"rank\": 0, \"text\": \",\", \"token_id\": 11}, {\"logit\": 30.625, \"rank\": 0, \"text\": \" but\", \"token_id\": 889}, {\"logit\": 27.5, \"rank\": 0, \"text\": \" I\", \"token_id\": 357}, {\"logit\": 29.625, \"rank\": 0, \"text\": \" can\", \"token_id\": 665}, {\"logit\": 35.0, \"rank\": 0, \"text\": \"\\u2019t\", \"token_id\": 1573}, {\"logit\": 29.375, \"rank\": 0, \"text\": \" help\", \"token_id\": 1652}, {\"logit\": 30.5, \"rank\": 0, \"text\": \" with\", \"token_id\": 483}, {\"logit\": 33.75, \"rank\": 0, \"text\": \" that\", \"token_id\": 484}, {\"logit\": 27.125, \"rank\": 0, \"text\": \".\", \"token_id\": 13}]}\n",
+          "wall_seconds": 297.93696252600057
+        },
+        "summary": {
+          "answer": "EMBER",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/relay_marker/control.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/relay_marker/control_steps/step_00.json",
+          "generated_contains_value": false,
+          "generated_text": "I\u2019m sorry, but I can\u2019t help with that.",
+          "hit": false,
+          "normalized_answer": "ember",
+          "normalized_answer_logit": null,
+          "normalized_answer_rank": null,
+          "normalized_answer_text": null,
+          "normalized_hit": false,
+          "normalized_top_token": "i",
+          "status": "ok",
+          "top_token": {
+            "logit": 22.125,
+            "rank": 0,
+            "text": "I",
+            "token_id": 40
+          },
+          "top_tokens": [
+            {
+              "logit": 22.125,
+              "rank": 0,
+              "text": "I",
+              "token_id": 40
+            },
+            {
+              "logit": 19.75,
+              "rank": 1,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 18.25,
+              "rank": 2,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 18.25,
+              "rank": 3,
+              "text": "In",
+              "token_id": 637
+            },
+            {
+              "logit": 17.5,
+              "rank": 4,
+              "text": "It",
+              "token_id": 3206
+            },
+            {
+              "logit": 17.375,
+              "rank": 5,
+              "text": "Sorry",
+              "token_id": 33680
+            },
+            {
+              "logit": 17.125,
+              "rank": 6,
+              "text": "You",
+              "token_id": 3575
+            },
+            {
+              "logit": 16.875,
+              "rank": 7,
+              "text": "I'm",
+              "token_id": 15390
+            },
+            {
+              "logit": 16.25,
+              "rank": 8,
+              "text": "We",
+              "token_id": 2167
+            },
+            {
+              "logit": 15.3125,
+              "rank": 9,
+              "text": "Ap",
+              "token_id": 11756
+            }
+          ],
+          "wall_seconds": 293.1519949659705
+        }
+      },
+      "id": "relay_marker",
+      "label": "GPT-OSS relay marker",
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT B, what was the GPT-OSS relay marker?<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "12",
+            "--max-tokens",
+            "192",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/relay_marker/mount.json",
+            "--mount-graft-dir",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/relay_marker/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT B, what was the GPT-OSS relay marker?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\\u2011OSS relay marker in that entry was **EMBER\", \"steps\": [{\"logit\": 22.125, \"rank\": 0, \"text\": \"The\", \"token_id\": 976}, {\"logit\": 19.125, \"rank\": 0, \"text\": \" GPT\", \"token_id\": 174803}, {\"logit\": 29.75, \"rank\": 0, \"text\": \"\\u2011\", \"token_id\": 50005}, {\"logit\": 36.5, \"rank\": 0, \"text\": \"OSS\", \"token_id\": 26496}, {\"logit\": 20.375, \"rank\": 0, \"text\": \" relay\", \"token_id\": 60698}, {\"logit\": 23.0, \"rank\": 0, \"text\": \" marker\", \"token_id\": 22071}, {\"logit\": 21.375, \"rank\": 0, \"text\": \" in\", \"token_id\": 306}, {\"logit\": 21.125, \"rank\": 0, \"text\": \" that\", \"token_id\": 484}, {\"logit\": 19.125, \"rank\": 0, \"text\": \" entry\", \"token_id\": 7251}, {\"logit\": 25.5, \"rank\": 0, \"text\": \" was\", \"token_id\": 673}, {\"logit\": 23.125, \"rank\": 0, \"text\": \" **\", \"token_id\": 6240}, {\"logit\": 25.75, \"rank\": 0, \"text\": \"EMBER\", \"token_id\": 78250}]}\n",
+          "wall_seconds": 330.716102624021
+        },
+        "summary": {
+          "answer": "EMBER",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/relay_marker/mount.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/relay_marker/mount_steps/step_00.json",
+          "generated_contains_value": true,
+          "generated_text": "The GPT\u2011OSS relay marker in that entry was **EMBER",
+          "hit": false,
+          "normalized_answer": "ember",
+          "normalized_answer_logit": null,
+          "normalized_answer_rank": null,
+          "normalized_answer_text": null,
+          "normalized_hit": false,
+          "normalized_top_token": "the",
+          "status": "ok",
+          "top_token": {
+            "logit": 22.125,
+            "rank": 0,
+            "text": "The",
+            "token_id": 976
+          },
+          "top_tokens": [
+            {
+              "logit": 22.125,
+              "rank": 0,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 20.0,
+              "rank": 1,
+              "text": "In",
+              "token_id": 637
+            },
+            {
+              "logit": 18.375,
+              "rank": 2,
+              "text": "It",
+              "token_id": 3206
+            },
+            {
+              "logit": 17.875,
+              "rank": 3,
+              "text": "B",
+              "token_id": 33
+            },
+            {
+              "logit": 17.125,
+              "rank": 4,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 16.75,
+              "rank": 5,
+              "text": "GRAY",
+              "token_id": 140884
+            },
+            {
+              "logit": 16.25,
+              "rank": 6,
+              "text": "I",
+              "token_id": 40
+            },
+            {
+              "logit": 16.125,
+              "rank": 7,
+              "text": "CLASS",
+              "token_id": 54314
+            },
+            {
+              "logit": 16.0,
+              "rank": 8,
+              "text": "Class",
+              "token_id": 2579
+            },
+            {
+              "logit": 15.5625,
+              "rank": 9,
+              "text": "BLUE",
+              "token_id": 134698
+            }
+          ],
+          "wall_seconds": 325.9849585960037
+        }
+      },
+      "placement": {
+        "answer": "EMBER",
+        "answer_token_id": 78250,
+        "id": "relay_marker",
+        "label": "GPT-OSS relay marker",
+        "needle_offset_tokens": 6541,
+        "needle_sha256": "bcaedfc28644e7906847a9e7cb0d8c9acd5990f80aeefb6cbb2f15c1a5da5057",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT B, what was the GPT-OSS relay marker?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT B, what was the GPT-OSS relay marker?",
+      "variant": "conversational_slot"
+    },
+    {
+      "answer": "GRAY",
+      "control": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT C, what was the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "12",
+            "--max-tokens",
+            "192",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/archive_color/control.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/archive_color/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT C, what was the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>I\\u2019m sorry, but I can\\u2019t help with that.\", \"steps\": [{\"logit\": 22.375, \"rank\": 0, \"text\": \"I\", \"token_id\": 40}, {\"logit\": 24.125, \"rank\": 0, \"text\": \"\\u2019m\", \"token_id\": 4572}, {\"logit\": 25.75, \"rank\": 0, \"text\": \" sorry\", \"token_id\": 23045}, {\"logit\": 29.125, \"rank\": 0, \"text\": \",\", \"token_id\": 11}, {\"logit\": 30.375, \"rank\": 0, \"text\": \" but\", \"token_id\": 889}, {\"logit\": 27.0, \"rank\": 0, \"text\": \" I\", \"token_id\": 357}, {\"logit\": 28.875, \"rank\": 0, \"text\": \" can\", \"token_id\": 665}, {\"logit\": 34.75, \"rank\": 0, \"text\": \"\\u2019t\", \"token_id\": 1573}, {\"logit\": 29.5, \"rank\": 0, \"text\": \" help\", \"token_id\": 1652}, {\"logit\": 30.125, \"rank\": 0, \"text\": \" with\", \"token_id\": 483}, {\"logit\": 33.5, \"rank\": 0, \"text\": \" that\", \"token_id\": 484}, {\"logit\": 27.25, \"rank\": 0, \"text\": \".\", \"token_id\": 13}]}\n",
+          "wall_seconds": 298.49189945997205
+        },
+        "summary": {
+          "answer": "GRAY",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/archive_color/control.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/archive_color/control_steps/step_00.json",
+          "generated_contains_value": false,
+          "generated_text": "I\u2019m sorry, but I can\u2019t help with that.",
+          "hit": false,
+          "normalized_answer": "gray",
+          "normalized_answer_logit": null,
+          "normalized_answer_rank": null,
+          "normalized_answer_text": null,
+          "normalized_hit": false,
+          "normalized_top_token": "i",
+          "status": "ok",
+          "top_token": {
+            "logit": 22.375,
+            "rank": 0,
+            "text": "I",
+            "token_id": 40
+          },
+          "top_tokens": [
+            {
+              "logit": 22.375,
+              "rank": 0,
+              "text": "I",
+              "token_id": 40
+            },
+            {
+              "logit": 20.125,
+              "rank": 1,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 18.25,
+              "rank": 2,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 18.0,
+              "rank": 3,
+              "text": "In",
+              "token_id": 637
+            },
+            {
+              "logit": 17.625,
+              "rank": 4,
+              "text": "You",
+              "token_id": 3575
+            },
+            {
+              "logit": 17.625,
+              "rank": 5,
+              "text": "Sorry",
+              "token_id": 33680
+            },
+            {
+              "logit": 17.5,
+              "rank": 6,
+              "text": "It",
+              "token_id": 3206
+            },
+            {
+              "logit": 17.25,
+              "rank": 7,
+              "text": "I'm",
+              "token_id": 15390
+            },
+            {
+              "logit": 16.75,
+              "rank": 8,
+              "text": "We",
+              "token_id": 2167
+            },
+            {
+              "logit": 15.75,
+              "rank": 9,
+              "text": "Ap",
+              "token_id": 11756
+            }
+          ],
+          "wall_seconds": 293.7291461980203
+        }
+      },
+      "id": "archive_color",
+      "label": "GPT-OSS archive color",
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT C, what was the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "12",
+            "--max-tokens",
+            "192",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/archive_color/mount.json",
+            "--mount-graft-dir",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/archive_color/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT C, what was the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>The archive color was **GRAY**.<|return|> The archive color\", \"steps\": [{\"logit\": 22.625, \"rank\": 0, \"text\": \"The\", \"token_id\": 976}, {\"logit\": 19.5, \"rank\": 0, \"text\": \" archive\", \"token_id\": 33542}, {\"logit\": 22.375, \"rank\": 0, \"text\": \" color\", \"token_id\": 3089}, {\"logit\": 22.0, \"rank\": 0, \"text\": \" was\", \"token_id\": 673}, {\"logit\": 20.625, \"rank\": 0, \"text\": \" **\", \"token_id\": 6240}, {\"logit\": 25.875, \"rank\": 0, \"text\": \"GRAY\", \"token_id\": 140884}, {\"logit\": 28.625, \"rank\": 0, \"text\": \"**\", \"token_id\": 410}, {\"logit\": 23.5, \"rank\": 0, \"text\": \".\", \"token_id\": 13}, {\"logit\": 26.875, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}, {\"logit\": 15.25, \"rank\": 0, \"text\": \" The\", \"token_id\": 623}, {\"logit\": 18.25, \"rank\": 0, \"text\": \" archive\", \"token_id\": 33542}, {\"logit\": 21.625, \"rank\": 0, \"text\": \" color\", \"token_id\": 3089}]}\n",
+          "wall_seconds": 331.28397653304273
+        },
+        "summary": {
+          "answer": "GRAY",
+          "answer_logit": 17.375,
+          "answer_rank": 4,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/archive_color/mount.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/archive_color/mount_steps/step_00.json",
+          "generated_contains_value": true,
+          "generated_text": "The archive color was **GRAY**.<|return|> The archive color",
+          "hit": false,
+          "normalized_answer": "gray",
+          "normalized_answer_logit": 17.375,
+          "normalized_answer_rank": 4,
+          "normalized_answer_text": "GRAY",
+          "normalized_hit": false,
+          "normalized_top_token": "the",
+          "status": "ok",
+          "top_token": {
+            "logit": 22.625,
+            "rank": 0,
+            "text": "The",
+            "token_id": 976
+          },
+          "top_tokens": [
+            {
+              "logit": 22.625,
+              "rank": 0,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 19.375,
+              "rank": 1,
+              "text": "In",
+              "token_id": 637
+            },
+            {
+              "logit": 18.75,
+              "rank": 2,
+              "text": "It",
+              "token_id": 3206
+            },
+            {
+              "logit": 17.875,
+              "rank": 3,
+              "text": "I",
+              "token_id": 40
+            },
+            {
+              "logit": 17.375,
+              "rank": 4,
+              "text": "GRAY",
+              "token_id": 140884
+            },
+            {
+              "logit": 17.25,
+              "rank": 5,
+              "text": "C",
+              "token_id": 34
+            },
+            {
+              "logit": 16.75,
+              "rank": 6,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 16.75,
+              "rank": 7,
+              "text": "CLASS",
+              "token_id": 54314
+            },
+            {
+              "logit": 16.75,
+              "rank": 8,
+              "text": "Class",
+              "token_id": 2579
+            },
+            {
+              "logit": 16.0,
+              "rank": 9,
+              "text": "Gray",
+              "token_id": 43338
+            }
+          ],
+          "wall_seconds": 326.5247407889692
+        }
+      },
+      "placement": {
+        "answer": "GRAY",
+        "answer_token_id": 140884,
+        "id": "archive_color",
+        "label": "GPT-OSS archive color",
+        "needle_offset_tokens": 9822,
+        "needle_sha256": "c5dd34ae04552ed50b27706789bc698e699f54358224ccc23e8468bc8138522e",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT C, what was the GPT-OSS archive color?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT C, what was the GPT-OSS archive color?",
+      "variant": "conversational_slot"
+    },
+    {
+      "answer": "IRON",
+      "control": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "12",
+            "--max-tokens",
+            "192",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/control.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>I\\u2019m sorry, but I can\\u2019t help with that.\", \"steps\": [{\"logit\": 22.375, \"rank\": 0, \"text\": \"I\", \"token_id\": 40}, {\"logit\": 24.375, \"rank\": 0, \"text\": \"\\u2019m\", \"token_id\": 4572}, {\"logit\": 26.0, \"rank\": 0, \"text\": \" sorry\", \"token_id\": 23045}, {\"logit\": 28.0, \"rank\": 0, \"text\": \",\", \"token_id\": 11}, {\"logit\": 29.875, \"rank\": 0, \"text\": \" but\", \"token_id\": 889}, {\"logit\": 27.25, \"rank\": 0, \"text\": \" I\", \"token_id\": 357}, {\"logit\": 29.375, \"rank\": 0, \"text\": \" can\", \"token_id\": 665}, {\"logit\": 34.5, \"rank\": 0, \"text\": \"\\u2019t\", \"token_id\": 1573}, {\"logit\": 29.25, \"rank\": 0, \"text\": \" help\", \"token_id\": 1652}, {\"logit\": 30.25, \"rank\": 0, \"text\": \" with\", \"token_id\": 483}, {\"logit\": 33.25, \"rank\": 0, \"text\": \" that\", \"token_id\": 484}, {\"logit\": 26.5, \"rank\": 0, \"text\": \".\", \"token_id\": 13}]}\n",
+          "wall_seconds": 298.3134943410405
+        },
+        "summary": {
+          "answer": "IRON",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/control.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/control_steps/step_00.json",
+          "generated_contains_value": false,
+          "generated_text": "I\u2019m sorry, but I can\u2019t help with that.",
+          "hit": false,
+          "normalized_answer": "iron",
+          "normalized_answer_logit": null,
+          "normalized_answer_rank": null,
+          "normalized_answer_text": null,
+          "normalized_hit": false,
+          "normalized_top_token": "i",
+          "status": "ok",
+          "top_token": {
+            "logit": 22.375,
+            "rank": 0,
+            "text": "I",
+            "token_id": 40
+          },
+          "top_tokens": [
+            {
+              "logit": 22.375,
+              "rank": 0,
+              "text": "I",
+              "token_id": 40
+            },
+            {
+              "logit": 19.625,
+              "rank": 1,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 18.625,
+              "rank": 2,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 18.375,
+              "rank": 3,
+              "text": "It",
+              "token_id": 3206
+            },
+            {
+              "logit": 18.25,
+              "rank": 4,
+              "text": "In",
+              "token_id": 637
+            },
+            {
+              "logit": 17.5,
+              "rank": 5,
+              "text": "Sorry",
+              "token_id": 33680
+            },
+            {
+              "logit": 17.25,
+              "rank": 6,
+              "text": "You",
+              "token_id": 3575
+            },
+            {
+              "logit": 17.125,
+              "rank": 7,
+              "text": "I'm",
+              "token_id": 15390
+            },
+            {
+              "logit": 16.125,
+              "rank": 8,
+              "text": "We",
+              "token_id": 2167
+            },
+            {
+              "logit": 15.9375,
+              "rank": 9,
+              "text": "Sure",
+              "token_id": 62915
+            }
+          ],
+          "wall_seconds": 293.5490281130187
+        }
+      },
+      "id": "tool_metal",
+      "label": "GPT-OSS tool metal",
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "12",
+            "--max-tokens",
+            "192",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount.json",
+            "--mount-graft-dir",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>The GPT\\u2011OSS tool metal was **IRON**.<|return|>\", \"steps\": [{\"logit\": 21.75, \"rank\": 0, \"text\": \"The\", \"token_id\": 976}, {\"logit\": 17.625, \"rank\": 0, \"text\": \" GPT\", \"token_id\": 174803}, {\"logit\": 29.125, \"rank\": 0, \"text\": \"\\u2011\", \"token_id\": 50005}, {\"logit\": 34.75, \"rank\": 0, \"text\": \"OSS\", \"token_id\": 26496}, {\"logit\": 19.75, \"rank\": 0, \"text\": \" tool\", \"token_id\": 4584}, {\"logit\": 20.0, \"rank\": 0, \"text\": \" metal\", \"token_id\": 11002}, {\"logit\": 21.75, \"rank\": 0, \"text\": \" was\", \"token_id\": 673}, {\"logit\": 22.0, \"rank\": 0, \"text\": \" **\", \"token_id\": 6240}, {\"logit\": 27.25, \"rank\": 0, \"text\": \"IRON\", \"token_id\": 96951}, {\"logit\": 27.5, \"rank\": 0, \"text\": \"**\", \"token_id\": 410}, {\"logit\": 23.125, \"rank\": 0, \"text\": \".\", \"token_id\": 13}, {\"logit\": 25.0, \"rank\": 0, \"text\": \"<|return|>\", \"token_id\": 200002}]}\n",
+          "wall_seconds": 331.30414278502576
+        },
+        "summary": {
+          "answer": "IRON",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate/conversational_slot/tool_metal/mount_steps/step_00.json",
+          "generated_contains_value": true,
+          "generated_text": "The GPT\u2011OSS tool metal was **IRON**.<|return|>",
+          "hit": false,
+          "normalized_answer": "iron",
+          "normalized_answer_logit": null,
+          "normalized_answer_rank": null,
+          "normalized_answer_text": null,
+          "normalized_hit": false,
+          "normalized_top_token": "the",
+          "status": "ok",
+          "top_token": {
+            "logit": 21.75,
+            "rank": 0,
+            "text": "The",
+            "token_id": 976
+          },
+          "top_tokens": [
+            {
+              "logit": 21.75,
+              "rank": 0,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 20.125,
+              "rank": 1,
+              "text": "In",
+              "token_id": 637
+            },
+            {
+              "logit": 18.875,
+              "rank": 2,
+              "text": "It",
+              "token_id": 3206
+            },
+            {
+              "logit": 17.875,
+              "rank": 3,
+              "text": "Metal",
+              "token_id": 76410
+            },
+            {
+              "logit": 17.375,
+              "rank": 4,
+              "text": "D",
+              "token_id": 35
+            },
+            {
+              "logit": 16.5,
+              "rank": 5,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 16.25,
+              "rank": 6,
+              "text": "I",
+              "token_id": 40
+            },
+            {
+              "logit": 16.125,
+              "rank": 7,
+              "text": "Class",
+              "token_id": 2579
+            },
+            {
+              "logit": 15.8125,
+              "rank": 8,
+              "text": "CLASS",
+              "token_id": 54314
+            },
+            {
+              "logit": 15.6875,
+              "rank": 9,
+              "text": "Met",
+              "token_id": 9228
+            }
+          ],
+          "wall_seconds": 326.49985239398666
+        }
+      },
+      "placement": {
+        "answer": "IRON",
+        "answer_token_id": 96951,
+        "id": "tool_metal",
+        "label": "GPT-OSS tool metal",
+        "needle_offset_tokens": 13103,
+        "needle_sha256": "e222c6999efdcc5e132d85d999db2e5f374b484f09dd69a6bdecfd0b0aa5eb1a",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "I'm checking the mounted memory after clearing the chat. In CLASSIFIED FACT D, what was the GPT-OSS tool metal?",
+      "variant": "conversational_slot"
+    }
+  ],
+  "schema": "gpt_oss_20b_multifact_addressing_gate_v1",
+  "script_args": {
+    "apa_layer_scope": "full",
+    "attention_mode": "apa_selective",
+    "bulk_bits": 8,
+    "dry_run": false,
+    "expert_empty_cache_interval": 0,
+    "expert_mode": "resident_packed_mxfp4",
+    "fact_ids": null,
+    "graft_dir": null,
+    "max_tokens": 192,
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "output": "artifacts/gpt_oss_20b/h6_multitoken_conversation_slot_16k_gate.json",
+    "pass_mode": "generated_value",
+    "refine_percentile": 0.15,
+    "route_detail": "summary",
+    "skip_control": false,
+    "source": "artifacts/gpt_oss_20b/h6_multifact_16k_gate.json",
+    "steps": 12,
+    "top_k": 10,
+    "variants": "conversational_slot"
+  },
+  "selected_classification": "pass",
+  "source": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate.json",
+  "source_classification": "fail",
+  "source_target_tokens": 16384,
+  "status": "ok",
+  "summary": [
+    {
+      "answer": "BLUE",
+      "control_generated_contains_value": false,
+      "control_generated_text": "I\u2019m sorry, but I can\u2019t help with that.",
+      "control_top": "I",
+      "generated_hit": true,
+      "hit": false,
+      "id": "vault_keyword",
+      "mount_answer_logit": 17.625,
+      "mount_answer_rank": 4,
+      "mount_generated_contains_value": true,
+      "mount_generated_text": "The GPT\u2011OSS vault keyword was **BLUE**.<|return|>",
+      "mount_top": "The",
+      "variant": "conversational_slot"
+    },
+    {
+      "answer": "EMBER",
+      "control_generated_contains_value": false,
+      "control_generated_text": "I\u2019m sorry, but I can\u2019t help with that.",
+      "control_top": "I",
+      "generated_hit": true,
+      "hit": false,
+      "id": "relay_marker",
+      "mount_answer_logit": null,
+      "mount_answer_rank": null,
+      "mount_generated_contains_value": true,
+      "mount_generated_text": "The GPT\u2011OSS relay marker in that entry was **EMBER",
+      "mount_top": "The",
+      "variant": "conversational_slot"
+    },
+    {
+      "answer": "GRAY",
+      "control_generated_contains_value": false,
+      "control_generated_text": "I\u2019m sorry, but I can\u2019t help with that.",
+      "control_top": "I",
+      "generated_hit": true,
+      "hit": false,
+      "id": "archive_color",
+      "mount_answer_logit": 17.375,
+      "mount_answer_rank": 4,
+      "mount_generated_contains_value": true,
+      "mount_generated_text": "The archive color was **GRAY**.<|return|> The archive color",
+      "mount_top": "The",
+      "variant": "conversational_slot"
+    },
+    {
+      "answer": "IRON",
+      "control_generated_contains_value": false,
+      "control_generated_text": "I\u2019m sorry, but I can\u2019t help with that.",
+      "control_top": "I",
+      "generated_hit": true,
+      "hit": false,
+      "id": "tool_metal",
+      "mount_answer_logit": null,
+      "mount_answer_rank": null,
+      "mount_generated_contains_value": true,
+      "mount_generated_text": "The GPT\u2011OSS tool metal was **IRON**.<|return|>",
+      "mount_top": "The",
+      "variant": "conversational_slot"
+    }
+  ],
+  "variants": [
+    "conversational_slot"
+  ],
+  "wall_seconds": 2517.2570140580065
+}

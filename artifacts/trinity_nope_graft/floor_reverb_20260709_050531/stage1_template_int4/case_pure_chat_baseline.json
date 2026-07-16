@@ -1,0 +1,41 @@
+{
+  "generation": {
+    "bos_count": 3,
+    "clean_english": false,
+    "collapse_signature": "bos_loop",
+    "ids": [
+      753,
+      10170,
+      4314,
+      5474,
+      5474,
+      7670,
+      55257,
+      106166,
+      1025,
+      411,
+      17840,
+      2846,
+      2615,
+      0,
+      0,
+      0
+    ],
+    "n_steps": 16,
+    "scorer": "strict_v2_posthoc",
+    "text": "AnswerNoneasureNumberNumberNull_Inodoreuthistructor OneAnd<|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+    "text_raw": "AnswerNoneasureNumberNumberNull_Inodoreuthistructor OneAnd<|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+    "unique_id_ratio": 0.8125,
+    "value_recovered": false,
+    "wall_s": 3.322
+  },
+  "label": "pure_chat_baseline",
+  "live_shift": 0,
+  "mode": "int4_fp32_resident",
+  "mount": false,
+  "n_sink": 0,
+  "probe_prompt": "<|im_start|>system\nYou are Trinity. Answer fact probes with the stored value only. Be concise.<|im_end|>\n<|im_start|>user\nRecall probe. What is the vault code? Reply with only the value.<|im_end|>\n<|im_start|>assistant\n",
+  "probe_prompt_ntok": 44,
+  "wall_s": 3.322,
+  "width": null
+}

@@ -1,0 +1,778 @@
+{
+  "label": "A_manual_shared",
+  "out_ids": [
+    40,
+    738,
+    9570,
+    483,
+    392,
+    53,
+    78222,
+    12,
+    18,
+    6968,
+    23181,
+    1,
+    472,
+    290,
+    16240,
+    1432
+  ],
+  "out_text": "I will respond with \"Vortex-3-Sierra\" as the stored value",
+  "steps": [
+    {
+      "tag": "prompt",
+      "in_n": 46,
+      "pre_pos": 97,
+      "post_pos": 143,
+      "rope_start": 212,
+      "pre_S": 116,
+      "post_S": 162,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 40,
+      "chosen_text": "I",
+      "top5": [
+        {
+          "id": 40,
+          "logit": 18.375,
+          "text": "I"
+        },
+        {
+          "id": 62915,
+          "logit": 17.5,
+          "text": "Sure"
+        },
+        {
+          "id": 52301,
+          "logit": 17.0,
+          "text": "Got"
+        },
+        {
+          "id": 17886,
+          "logit": 15.6875,
+          "text": "Will"
+        },
+        {
+          "id": 976,
+          "logit": 15.6875,
+          "text": "The"
+        }
+      ]
+    },
+    {
+      "tag": "gen0",
+      "in_n": 1,
+      "pre_pos": 143,
+      "post_pos": 144,
+      "rope_start": 258,
+      "pre_S": 162,
+      "post_S": 163,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 738,
+      "chosen_text": " will",
+      "top5": [
+        {
+          "id": 738,
+          "logit": 15.5625,
+          "text": " will"
+        },
+        {
+          "id": 4720,
+          "logit": 15.5625,
+          "text": "\u2019ll"
+        },
+        {
+          "id": 4572,
+          "logit": 15.1875,
+          "text": "\u2019m"
+        },
+        {
+          "id": 4313,
+          "logit": 14.5625,
+          "text": "\u2019ve"
+        },
+        {
+          "id": 4218,
+          "logit": 14.5,
+          "text": " understand"
+        }
+      ]
+    },
+    {
+      "tag": "gen1",
+      "in_n": 1,
+      "pre_pos": 144,
+      "post_pos": 145,
+      "rope_start": 259,
+      "pre_S": 163,
+      "post_S": 164,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 9570,
+      "chosen_text": " respond",
+      "top5": [
+        {
+          "id": 9570,
+          "logit": 16.375,
+          "text": " respond"
+        },
+        {
+          "id": 8203,
+          "logit": 15.8125,
+          "text": " remember"
+        },
+        {
+          "id": 3357,
+          "logit": 15.625,
+          "text": " keep"
+        },
+        {
+          "id": 625,
+          "logit": 14.6875,
+          "text": " not"
+        },
+        {
+          "id": 16794,
+          "logit": 14.6875,
+          "text": " reply"
+        }
+      ]
+    },
+    {
+      "tag": "gen2",
+      "in_n": 1,
+      "pre_pos": 145,
+      "post_pos": 146,
+      "rope_start": 260,
+      "pre_S": 164,
+      "post_S": 165,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 483,
+      "chosen_text": " with",
+      "top5": [
+        {
+          "id": 483,
+          "logit": 19.0,
+          "text": " with"
+        },
+        {
+          "id": 25,
+          "logit": 17.0,
+          "text": ":"
+        },
+        {
+          "id": 1606,
+          "logit": 15.6875,
+          "text": " only"
+        },
+        {
+          "id": 392,
+          "logit": 15.25,
+          "text": " \""
+        },
+        {
+          "id": 966,
+          "logit": 14.875,
+          "text": " \u201c"
+        }
+      ]
+    },
+    {
+      "tag": "gen3",
+      "in_n": 1,
+      "pre_pos": 146,
+      "post_pos": 147,
+      "rope_start": 261,
+      "pre_S": 165,
+      "post_S": 166,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 392,
+      "chosen_text": " \"",
+      "top5": [
+        {
+          "id": 392,
+          "logit": 16.5,
+          "text": " \""
+        },
+        {
+          "id": 290,
+          "logit": 16.125,
+          "text": " the"
+        },
+        {
+          "id": 631,
+          "logit": 16.0,
+          "text": " V"
+        },
+        {
+          "id": 25,
+          "logit": 15.4375,
+          "text": ":"
+        },
+        {
+          "id": 966,
+          "logit": 15.3125,
+          "text": " \u201c"
+        }
+      ]
+    },
+    {
+      "tag": "gen4",
+      "in_n": 1,
+      "pre_pos": 147,
+      "post_pos": 148,
+      "rope_start": 262,
+      "pre_S": 166,
+      "post_S": 167,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 53,
+      "chosen_text": "V",
+      "top5": [
+        {
+          "id": 53,
+          "logit": 17.375,
+          "text": "V"
+        },
+        {
+          "id": 160889,
+          "logit": 14.375,
+          "text": "Acknowled"
+        },
+        {
+          "id": 15009,
+          "logit": 14.3125,
+          "text": "Memory"
+        },
+        {
+          "id": 32,
+          "logit": 14.125,
+          "text": "A"
+        },
+        {
+          "id": 21900,
+          "logit": 14.0625,
+          "text": "Under"
+        }
+      ]
+    },
+    {
+      "tag": "gen5",
+      "in_n": 1,
+      "pre_pos": 148,
+      "post_pos": 149,
+      "rope_start": 263,
+      "pre_S": 167,
+      "post_S": 168,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 78222,
+      "chosen_text": "ortex",
+      "top5": [
+        {
+          "id": 78222,
+          "logit": 24.75,
+          "text": "ortex"
+        },
+        {
+          "id": 5160,
+          "logit": 17.75,
+          "text": "ORT"
+        },
+        {
+          "id": 390,
+          "logit": 17.125,
+          "text": "ort"
+        },
+        {
+          "id": 77118,
+          "logit": 14.75,
+          "text": "ortic"
+        },
+        {
+          "id": 1,
+          "logit": 14.625,
+          "text": "\""
+        }
+      ]
+    },
+    {
+      "tag": "gen6",
+      "in_n": 1,
+      "pre_pos": 149,
+      "post_pos": 150,
+      "rope_start": 264,
+      "pre_S": 168,
+      "post_S": 169,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 12,
+      "chosen_text": "-",
+      "top5": [
+        {
+          "id": 12,
+          "logit": 19.25,
+          "text": "-"
+        },
+        {
+          "id": 6968,
+          "logit": 15.625,
+          "text": "-S"
+        },
+        {
+          "id": 1,
+          "logit": 13.8125,
+          "text": "\""
+        },
+        {
+          "id": 50005,
+          "logit": 13.6875,
+          "text": "\u2011"
+        },
+        {
+          "id": 4050,
+          "logit": 13.0625,
+          "text": "\"."
+        }
+      ]
+    },
+    {
+      "tag": "gen7",
+      "in_n": 1,
+      "pre_pos": 150,
+      "post_pos": 151,
+      "rope_start": 265,
+      "pre_S": 169,
+      "post_S": 170,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 18,
+      "chosen_text": "3",
+      "top5": [
+        {
+          "id": 18,
+          "logit": 19.875,
+          "text": "3"
+        },
+        {
+          "id": 17,
+          "logit": 14.4375,
+          "text": "2"
+        },
+        {
+          "id": 19,
+          "logit": 13.9375,
+          "text": "4"
+        },
+        {
+          "id": 20,
+          "logit": 13.75,
+          "text": "5"
+        },
+        {
+          "id": 16,
+          "logit": 13.125,
+          "text": "1"
+        }
+      ]
+    },
+    {
+      "tag": "gen8",
+      "in_n": 1,
+      "pre_pos": 151,
+      "post_pos": 152,
+      "rope_start": 266,
+      "pre_S": 170,
+      "post_S": 171,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 6968,
+      "chosen_text": "-S",
+      "top5": [
+        {
+          "id": 6968,
+          "logit": 20.5,
+          "text": "-S"
+        },
+        {
+          "id": 12,
+          "logit": 16.375,
+          "text": "-"
+        },
+        {
+          "id": 50005,
+          "logit": 14.8125,
+          "text": "\u2011"
+        },
+        {
+          "id": 1,
+          "logit": 14.3125,
+          "text": "\""
+        },
+        {
+          "id": 4050,
+          "logit": 14.25,
+          "text": "\"."
+        }
+      ]
+    },
+    {
+      "tag": "gen9",
+      "in_n": 1,
+      "pre_pos": 152,
+      "post_pos": 153,
+      "rope_start": 267,
+      "pre_S": 171,
+      "post_S": 172,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 23181,
+      "chosen_text": "ierra",
+      "top5": [
+        {
+          "id": 23181,
+          "logit": 26.875,
+          "text": "ierra"
+        },
+        {
+          "id": 51925,
+          "logit": 18.625,
+          "text": " Sierra"
+        },
+        {
+          "id": 1,
+          "logit": 15.9375,
+          "text": "\""
+        },
+        {
+          "id": 72,
+          "logit": 15.5625,
+          "text": "i"
+        },
+        {
+          "id": 40,
+          "logit": 15.4375,
+          "text": "I"
+        }
+      ]
+    },
+    {
+      "tag": "gen10",
+      "in_n": 1,
+      "pre_pos": 153,
+      "post_pos": 154,
+      "rope_start": 268,
+      "pre_S": 172,
+      "post_S": 173,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 1,
+      "chosen_text": "\"",
+      "top5": [
+        {
+          "id": 1,
+          "logit": 18.625,
+          "text": "\""
+        },
+        {
+          "id": 4050,
+          "logit": 18.5,
+          "text": "\"."
+        },
+        {
+          "id": 3692,
+          "logit": 18.25,
+          "text": ".\""
+        },
+        {
+          "id": 69029,
+          "logit": 15.8125,
+          "text": "\"?"
+        },
+        {
+          "id": 3532,
+          "logit": 14.5625,
+          "text": ",\""
+        }
+      ]
+    },
+    {
+      "tag": "gen11",
+      "in_n": 1,
+      "pre_pos": 154,
+      "post_pos": 155,
+      "rope_start": 269,
+      "pre_S": 173,
+      "post_S": 174,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 472,
+      "chosen_text": " as",
+      "top5": [
+        {
+          "id": 472,
+          "logit": 17.625,
+          "text": " as"
+        },
+        {
+          "id": 1261,
+          "logit": 16.625,
+          "text": " when"
+        },
+        {
+          "id": 538,
+          "logit": 16.5,
+          "text": " if"
+        },
+        {
+          "id": 1606,
+          "logit": 15.375,
+          "text": " only"
+        },
+        {
+          "id": 777,
+          "logit": 15.3125,
+          "text": " per"
+        }
+      ]
+    },
+    {
+      "tag": "gen12",
+      "in_n": 1,
+      "pre_pos": 155,
+      "post_pos": 156,
+      "rope_start": 270,
+      "pre_S": 174,
+      "post_S": 175,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 290,
+      "chosen_text": " the",
+      "top5": [
+        {
+          "id": 777,
+          "logit": 18.25,
+          "text": " per"
+        },
+        {
+          "id": 290,
+          "logit": 18.25,
+          "text": " the"
+        },
+        {
+          "id": 17222,
+          "logit": 18.25,
+          "text": " requested"
+        },
+        {
+          "id": 79758,
+          "logit": 16.875,
+          "text": " instructed"
+        },
+        {
+          "id": 23699,
+          "logit": 16.0,
+          "text": " directed"
+        }
+      ]
+    },
+    {
+      "tag": "gen13",
+      "in_n": 1,
+      "pre_pos": 156,
+      "post_pos": 157,
+      "rope_start": 271,
+      "pre_S": 175,
+      "post_S": 176,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 16240,
+      "chosen_text": " stored",
+      "top5": [
+        {
+          "id": 16240,
+          "logit": 15.9375,
+          "text": " stored"
+        },
+        {
+          "id": 5504,
+          "logit": 15.875,
+          "text": " cy"
+        },
+        {
+          "id": 44416,
+          "logit": 14.625,
+          "text": " remembered"
+        },
+        {
+          "id": 2208,
+          "logit": 14.125,
+          "text": " current"
+        },
+        {
+          "id": 1432,
+          "logit": 13.875,
+          "text": " value"
+        }
+      ]
+    },
+    {
+      "tag": "gen14",
+      "in_n": 1,
+      "pre_pos": 157,
+      "post_pos": 158,
+      "rope_start": 272,
+      "pre_S": 176,
+      "post_S": 177,
+      "live_shift": 115,
+      "cur_mount_n": 65,
+      "shifts": [
+        "115"
+      ],
+      "inject": false,
+      "seats": [
+        "0"
+      ],
+      "chosen": 1432,
+      "chosen_text": " value",
+      "top5": [
+        {
+          "id": 1432,
+          "logit": 16.75,
+          "text": " value"
+        },
+        {
+          "id": 5504,
+          "logit": 15.75,
+          "text": " cy"
+        },
+        {
+          "id": 8197,
+          "logit": 13.5625,
+          "text": " memory"
+        },
+        {
+          "id": 2840,
+          "logit": 13.0625,
+          "text": " fact"
+        },
+        {
+          "id": 23273,
+          "logit": 12.625,
+          "text": " bridge"
+        }
+      ]
+    }
+  ],
+  "final_pos": 158,
+  "final_S": 177
+}

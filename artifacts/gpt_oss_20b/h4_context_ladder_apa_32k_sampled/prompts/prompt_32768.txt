@@ -1,0 +1,2035 @@
+# DeepSeek-V2-Lite APA + MLA Latent INT4 Results
+
+Date: 2026-06-27
+
+## Verdict
+
+DeepSeek-V2-Lite's MLA latent cache tolerates INT4 storage well enough for
+the full configured YaRN resident cache plus one decode token to fit on the
+12GB card. That is a cache/decode result, not proof that every prefill path can
+ingest a real 163K-token prompt.
+
+The first real-token prefill fix is now landed in the local DeepSeek loader:
+`attention_mode="absorbed_exact"` keeps prefill in MLA latent space instead of
+expanding the accumulated latent cache through `kv_b(c_n)` every chunk. This is
+not the final fused latent-APA kernel, but it proves the optimization diagnosis:
+the old expanded APA prefill ceiling was `16,384`; absorbed exact prefill has
+now passed real-token `65,536` on the same 12GB card.
+
+The first high-context open-ended greedy needle ladder is stricter than
+fill-only. Absorbed exact latent4 hit exact planted codes at `16,384`, `32,768`,
+and `49,152` tokens, but OOMed at `65,536` during the greedy test.
+
+The same run now includes an explicit INT2 floor check. A quality-only
+group-32 affine INT2 fake-store path does not catastrophically destroy the
+model, but it is no longer in the "free" zone: six-window Wikitext PPL rises
+by about `+5.8%` versus APA latent16, and the forced-choice needle grid gets
+one 8K retrieval rank flip.
+
+This is not a no-prior-art claim. DeepSeek's own V2 paper reports that their
+deployed DeepSeek-V2 stack uses KV-cache quantization to compress each KV-cache
+element to **6 bits on average**, on top of MLA and FP8 weights. That is the
+nearest direct prior art for this line of work.
+
+Our contribution in this run is narrower and lower-level:
+
+- reproduce the latent-cache quantization idea in the local
+  `tensor_cuda`/APA DeepSeek-V2-Lite port,
+- push the MLA resident latent to **INT4 group-32** rather than 6-bit average,
+- measure the PPL and forced-choice retrieval cost on this exact stack, and
+- show that a synthetic `163840`-row resident cache plus one decode token fits
+  on the 12GB card.
+
+Also note the quantizer caveat: this result is not a generic statement about
+"any 4-bit runtime." Prior repo measurements show the local `tensor_cuda`
+INT4 stack can be materially better than the default PyTorch bitsandbytes path.
+On MiniCPM3-4B, same card and protocol, `tensor_cuda INT4` measured
+`ppl@1024 = 20.065` while PyTorch GPU `bnb-4bit` measured `22.507`; the
+`tensor_cuda` path also held a larger standard-attention context ceiling
+(`3072` vs `2048`). That makes the DeepSeek result a property of this
+model/MLA representation **and** this quantization/kernel stack.
+
+The important result is not "V-only" quantization. In DeepSeek MLA there is
+no separable resident V cache. The resident decode state is:
+
+- `c_n`: the post-norm MLA latent, shape `(B, S, kv_lora_rank=512)`
+- `k_pe`: the roped shared key, shape `(B, 1, S, qk_rope_head_dim=64)`
+
+Absorbed MLA decode uses `c_n` for both:
+
+- key-side scoring, via `(q_nope W_k) dot c_n`
+- value-side accumulation, via `softmax(scores) @ c_n`, then projection by
+  `W_v`
+
+So the memory-saving experiment quantizes the resident latent itself, not a
+separate V tensor. `k_pe` remains bf16.
+
+## Implementation
+
+Code path:
+
+- `core/deepseek_v2_lite_tc.py`
+- probe: `/home/vader/deepseek_apa_oom_probe.py`
+- PPL runner: `/home/vader/deepseek_latent_ppl.py`
+- needle runner: `/home/vader/deepseek_needle_forced_choice.py`
+
+Main implementation points:
+
+- Added mutable `DeepSeekMLACache`.
+- Added optional latent cache storage mode:
+  - `latent_bits=16`: bf16 latent buffer
+  - `latent_bits=4`: `tc.kv_int4_pack` packed latent bytes plus bf16 group
+    scales, group size 32
+  - `latent_bits=2`: experimental group-32 affine fake-store, dequantized
+    back into bf16 cache storage; this tests quality damage only, not memory
+    savings
+- Added model switches:
+  - `set_latent_cache_bits(bits, group=32)`
+  - `set_value_int4(enabled=True, group=32)`
+- Decode uses absorbed MLA instead of expanding full per-head K/V for the
+  whole cache.
+- Added `attention_mode="absorbed_exact"` for real prompt prefill. This path
+  computes:
+  - `q_lat = q_nope @ W_k`
+  - `scores = q_lat @ c_n.T + q_pe @ k_pe.T`
+  - `ctx_lat = softmax(scores) @ c_n`
+  - `out = ctx_lat @ W_v`
+  It avoids full-span `kv_b(c_n)` expansion. It still materializes an `L x S`
+  score matrix per chunk, so chunk size remains a real transient-memory lever.
+
+The group-32 INT4 latent layout stores, per token per layer:
+
+| Component | bf16 latent cache | INT4 latent cache |
+|---|---:|---:|
+| latent payload | `512 * 2 = 1024 B` | `512 / 2 = 256 B` |
+| latent scales | none | `(512 / 32) * 2 = 32 B` |
+| roped `k_pe` | `64 * 2 = 128 B` | `64 * 2 = 128 B` |
+| total / layer / token | `1152 B` | `416 B` |
+| total / token / 27 layers | `31,104 B` | `11,232 B` |
+
+Net resident cache compression: about `2.77x`.
+
+## Cache/Decode Wall
+
+These probes used DeepSeek-V2-Lite with post-hoc INT4 weights in
+`tensor_cuda`, APA r0.15 bulk4, synthetic cache allocation, and one absorbed
+MLA decode token. They measure resident-cache/decode capacity only. They do
+not measure full prompt prefill.
+
+BF16 latent cache:
+
+- 64K cached tokens passed: after load `9112 MB`, after cache `11164 MB`,
+  after decode `11340 MB`.
+- 96K cached tokens failed during synthetic cache allocation around layer 21.
+
+INT4 latent cache:
+
+| Cached tokens | After load | After cache | After decode | Result |
+|---:|---:|---:|---:|---|
+| 64K | `9142 MB` | `9844 MB` | `10020 MB` | OK |
+| 96K | `9142 MB` | `10222 MB` | `10430 MB` | OK |
+| 128K | `9140 MB` | `10544 MB` | `10752 MB` | OK |
+| 163840 | `9140 MB` | `11030 MB` | `11238 MB` | OK |
+
+The INT4 latent cache reaches the model's configured YaRN maximum
+(`163840`) with about 1GB of visible VRAM still unused after one decode token.
+
+## Prefill Wall
+
+The overnight high-context needle run showed that the original expanded APA
+prefill path does **not** reach the cache/decode limits on real prompts.
+
+Run directory:
+
+`/home/vader/deepseek_needle_runs/overnight_20260627_024912`
+
+Observed behavior:
+
+- Open-gen greedy needle at `2K/4K/8K` passed:
+  - APA latent16: `9/9`
+  - APA latent4: `9/9`
+- Forced-choice latent16 high-context run OOMed on the first `16K` item before
+  any score.
+- Forced-choice latent4 high-context run completed `16K` at `3/3`, then OOMed
+  on the first `32K` item.
+
+The OOM was in the prefill-time APA key quantization path, not in the resident
+latent cache:
+
+```text
+_quantize_keys(...)
+recon = tc.matmul(centroids, Rb) * norms
+RuntimeError: cudaMallocAsync failed: out of memory
+```
+
+So the current state is:
+
+- cache/decode storage: INT4 reaches the synthetic 163840-token cache rung
+- expanded APA real prompt prefill: not solved past 16K
+- absorbed exact real prompt prefill: solved through at least 65K
+
+### Real Fill Ceiling - Expanded APA vs Absorbed Exact
+
+Protocol:
+
+- real Wikitext/local-doc token stream, no repeated-token synthetic cache rows
+- exact-length prompts
+- chunked prefill
+- finite-logit check plus short greedy decode smoke
+- `latent_bits=4`, group 32
+
+Old expanded APA path, `attention_mode="apa_selective"`, `chunk=256`:
+
+| Context | Result | Prefill | VRAM after prefill/decode |
+|---:|---|---:|---:|
+| 2,048 | OK | `16.0s` | `9,537 MiB` |
+| 4,096 | OK | `32.4s` | `9,953 MiB` |
+| 8,192 | OK | `118.6s` | `10,625 MiB` |
+| 12,288 | OK | `240.7s` | `11,169 MiB` |
+| 16,384 | OK | `399.7s` | `11,617 MiB` |
+| 24,576 | OOM | `479.8s` | `11,651 MiB at failure` |
+
+New absorbed exact path, `attention_mode="absorbed_exact"`:
+
+| Context | Chunk | Result | Prefill | VRAM after prefill/decode |
+|---:|---:|---|---:|---:|
+| 2,048 | 256 | OK | `15.5s` | `9,537 MiB` |
+| 4,096 | 256 | OK | `31.0s` | `9,633 MiB` |
+| 8,192 | 256 | OK | `63.7s` | `10,145 MiB` |
+| 12,288 | 256 | OK | `99.4s` | `10,276 MiB` |
+| 16,384 | 256 | OK | `132.3s` | `10,563 MiB` |
+| 24,576 | 256 | OK | `204.3s` | `10,787 MiB` |
+| 32,768 | 256 | OK | `275.1s` | `11,107 MiB` |
+| 49,152 | 256 | OOM | `383.0s` | `11,523 MiB at failure` |
+| 49,152 | 128 | OK | `447.4s` | `11,363 MiB` |
+| 65,536 | 128 | OK | `621.7s` | `11,715 MiB` |
+| 98,304 | 64 | OOM | `891.5s` | `11,713 MiB at failure` |
+
+Branch counters confirmed the new path used absorbed MLA prefill only:
+
+```text
+absorbed_exact_prefill > 0
+apa_cublas_blend = 0
+apa_fused_selective = 0
+standard_sdpa = 0
+```
+
+The 49K result shows the remaining wall for the first-pass fix: `chunk=256`
+OOMs because absorbed exact still materializes an `L x S` score matrix. Halving
+the chunk to 128 passes. The 98K chunk64 failure shows that the first-pass
+absorbed exact path is still score-transient bound near the top of this card.
+The next non-kernel improvement is adaptive prefill chunking; the next kernel
+improvement is fused latent APA that keeps the absorbed MLA math but does not
+materialize the full score matrix.
+
+## Open-Ended Greedy Context Ladder
+
+Protocol: real-token filler, one planted numeric code, greedy generation answer,
+exact-match check. This is a stricter gate than cache allocation or prefill-only
+fill because it exercises the long prompt and the answer generation path.
+
+Command:
+
+```bash
+PYTHONUNBUFFERED=1 PYTHONPATH=/mnt/ForgeRealm/GraftRepository:/mnt/ForgeRealm/Project-Tensor/tensor_cuda:/home/vader PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 /home/vader/deepseek_real_context_ladder.py --contexts 16384,32768,49152,65536 --depths 0.5 --n-per-cell 1 --settings absorbed4 --chunk 128 --max-new 16 --refine 0.15 --bulk-bits 4 --stop-on-oom
+```
+
+| Context | Depth | Result | Expected | Generated | Elapsed |
+|---:|---:|---|---|---|---:|
+| 16,384 | `0.5` | HIT | `81-4520` | `81-4520` | `122.8s` |
+| 32,768 | `0.5` | HIT | `67-8619` | `67-8619` | `258.6s` |
+| 49,152 | `0.5` | HIT | `38-3329` | `38-3329` | `409.7s` |
+| 65,536 | `0.5` | OOM | `51-9776` | `<OOM:RuntimeError: cudaMallocAsync failed: out of memory>` | `539.3s` |
+
+Summary: `absorbed exact latent4 real_ctx_acc 3/4 = 75.0%`
+(`[16k:1/1 32k:1/1 48k:1/1 64k:0/1]`).
+
+Evidence:
+`/home/vader/deepseek_needle_runs/absorbed4_greedy_real_20260627_65k_middepth`
+
+## PPL Checks
+
+Dataset: cached local Wikitext-2 raw test set.
+
+Protocol: teacher-forced decode scoring with `step=1`, so the measured path
+uses the resident MLA cache and the absorbed decode branch. This is the
+right path for testing latent cache quantization.
+
+### Short triage
+
+`window=192`, `scored=64`, `windows=1`, 63 scored tokens:
+
+| Mode | NLL | PPL |
+|---|---:|---:|
+| standard latent16 | `1.698767` | `5.4672` |
+| APA r0.15 latent16 | `1.714028` | `5.5513` |
+| APA r0.15 latent4 | `1.741862` | `5.7080` |
+| APA r0.15 latent2 | `1.807146` | `6.0930` |
+
+This small run was noisy; latent4 looked worse by `+2.82%` PPL versus APA
+latent16. Latent2 was already visibly worse at `+9.76%` PPL ratio versus APA
+latent16.
+
+### Single 511-token scored pass
+
+`window=640`, `scored=512`, `windows=1`, 511 scored tokens:
+
+| Mode | NLL | PPL |
+|---|---:|---:|
+| standard latent16 | `1.645527` | `5.1837` |
+| APA r0.15 latent16 | `1.647907` | `5.1961` |
+| APA r0.15 latent4 | `1.651350` | `5.2140` |
+| APA r0.15 latent2 | `1.703844` | `5.4950` |
+
+Latent4 delta versus APA latent16:
+
+- NLL delta: `+0.003443`
+- PPL ratio: `1.003449`
+- PPL hit: about `+0.345%`
+
+Latent2 delta versus APA latent16:
+
+- NLL delta: `+0.055937`
+- PPL ratio: `1.057531`
+- PPL hit: about `+5.753%`
+
+### Six-window 1024/512 protocol
+
+`window=1024`, `scored=512`, `windows=6`, 3066 scored tokens:
+
+| Mode | NLL | PPL |
+|---|---:|---:|
+| standard latent16 | `2.123933` | `8.3640` |
+| APA r0.15 latent16 | `2.125756` | `8.3792` |
+| APA r0.15 latent4 | `2.129944` | `8.4144` |
+| APA r0.15 latent2 | `2.182210` | `8.8659` |
+
+Latent4 delta versus APA latent16:
+
+- NLL delta: `+0.004188`
+- PPL ratio: `1.004197`
+- PPL hit: about `+0.420%`
+
+Latent2 delta versus APA latent16:
+
+- NLL delta: `+0.056454`
+- PPL ratio: `1.058078`
+- PPL hit: about `+5.808%`
+
+### Six-window 2048/1024 protocol
+
+`window=2048`, `scored=1024`, `windows=6`, 6138 scored tokens:
+
+| Mode | NLL | PPL |
+|---|---:|---:|
+| APA r0.15 latent16 | `1.783484` | `5.9506` |
+| APA r0.15 latent4 | `1.788551` | `5.9808` |
+| absorbed exact latent16 | `1.782938` | `5.9473` |
+| absorbed exact latent4 | `1.788475` | `5.9803` |
+
+Latent4 delta versus APA latent16:
+
+- NLL delta: `+0.005068`
+- PPL ratio: `1.005080`
+- PPL hit: about `+0.508%`
+
+Absorbed exact latent4 delta versus APA latent16:
+
+- NLL delta: `+0.004992`
+- PPL ratio: `1.005004`
+- PPL hit: about `+0.500%`
+
+Absorbed exact latent4 is effectively tied with expanded APA latent4 on this
+protocol (`5.9803` vs `5.9808`), while providing the much higher real-token
+prefill ceiling described above.
+
+## Needle Check
+
+Protocol: forced-choice retrieval, not sampled generation.
+
+Each item plants a fact:
+
+`hidden color for <key> is <value>`
+
+Then asks for the value. The correct value and three decoys are all
+single-token candidates, so scoring is one clean next-token logits row.
+
+Grid:
+
+- context lengths: `2048`, `4096`, `8192`
+- depths: `0.1`, `0.5`, `0.9`
+- one item per cell, 9 items total
+
+| Mode | Accuracy | Mean margin | Min margin |
+|---|---:|---:|---:|
+| APA r0.15 latent16 | `9/9` | `+6.924` | `+2.250` |
+| APA r0.15 latent4 | `9/9` | `+6.632` | `+2.875` |
+| APA r0.15 latent2 | `8/9` | `+6.535` | `-1.188` |
+
+By context:
+
+| Mode | 2K | 4K | 8K |
+|---|---:|---:|---:|
+| APA r0.15 latent16 | `3/3` | `3/3` | `3/3` |
+| APA r0.15 latent4 | `3/3` | `3/3` | `3/3` |
+| APA r0.15 latent2 | `3/3` | `3/3` | `2/3` |
+
+For the INT4 comparison, no retrieval rank flips were observed. Margins
+changed, but not in a collapse pattern; one low-margin 8K case improved
+slightly under latent4.
+
+Latent2 did produce one rank flip at 8K/depth 0.9:
+
+- correct value: `mango`
+- top decoy: `amber`
+- rank: `2`
+- margin: `-1.188`
+
+So the floor is not a total recall collapse, but it is no longer retrieval
+parity.
+
+## Interpretation
+
+This challenges the useful field assumption one step further than the published
+DeepSeek deployment point. The prior art already establishes that MLA KV-cache
+quantization is viable at about 6 bits/element in deployed DeepSeek-V2. The
+new observation here is that the 4-bit bulk law appears to extend beyond APA
+key-score bulk to the resident MLA latent cache itself, at least for
+DeepSeek-V2-Lite.
+
+The conservative claim:
+
+- DeepSeek-V2-Lite's MLA latent cache can be stored at INT4 group-32 with
+  about a half-percent Wikitext PPL hit in the tested decode protocol.
+- The same mode preserves a small forced-choice retrieval grid through 8K.
+- The memory win is large enough to move the practical decode cache wall from
+  failing around 96K bf16-latent cache to passing synthetic resident-cache
+  allocation plus one-token decode at the configured 163840-token window.
+- The old expanded prefill wall is fixed for absorbed exact through 65K
+  fill-only, but usable open-ended greedy recall is only verified through 49K
+  in the first high-context real-token ladder; 65K OOMed during the greedy
+  test.
+- INT2 group-32 affine fake-store is a useful broken-floor control: it costs
+  about `+5.8%` PPL and creates an 8K retrieval miss in the tested grid.
+
+What is not proven yet:
+
+- novelty of latent/KV-cache quantization as a general idea
+- that any off-the-shelf 4-bit quantizer will match this result
+- open-ended generation recall parity beyond the 49K hit in the first
+  high-context ladder
+- long-context retrieval at 16K/32K/49K/64K/128K across full depth sweeps
+- a memory-flat real-prompt prefill path that reaches the resident-cache limit
+- multi-needle interference
+- cross-model latent-cache quantization law
+- whether a real packed INT2 kernel with a different quantization scheme or
+  hybrid hot-tail policy can recover enough quality to be useful
+- whether group-64 or group-128 scales are still safe
+
+## Next Tests
+
+1. Add adaptive absorbed chunking and/or fused latent APA to remove the current
+   score/transient wall; fill-only reaches 65K, but 65K greedy recall OOMs.
+2. Repeat the forced-choice needle grid at 16K, 32K, 64K, and 128K.
+3. Add multiple simultaneous needles to test interference, not just point
+   recall.
+4. Run open-ended greedy decode recall as a full depth sweep at 16K, 32K, 49K,
+   and 64K after the 65K greedy OOM wall is reduced.
+5. Sweep latent groups: 16, 32, 64, 128.
+6. Try hybrid hot-tail storage: recent rows bf16, old rows INT4.
+7. Treat INT2 latent as the broken-floor control unless a real packed INT2
+   kernel plus hybrid policy materially improves the result.
+
+## External Prior Art
+
+- DeepSeek-V2 paper, Section 3.2.3, "Inference Efficiency": deployed
+  DeepSeek-V2 uses FP8 weights and KV-cache quantization, compressing each
+  KV-cache element to 6 bits on average:
+  <https://arxiv.org/html/2405.04434>
+- The same paragraph cites KVQuant and Atom as related KV-cache / low-bit
+  serving references:
+  - KVQuant: <https://arxiv.org/abs/2401.18079>
+  - Atom: <https://arxiv.org/abs/2310.19102>
+- Local quantizer baseline: `MiniCPM3-MLA_Results.md` records
+  `tensor_cuda INT4` beating PyTorch GPU `bnb-4bit` on PPL
+  (`20.065` vs `22.507`) and standard-attention context ceiling
+  (`3072` vs `2048`) under the same local evaluation setup.
+
+
+# FINDING: Translation binding is the SCRIBE dialect lock, not an optimization gap
+
+**Registered:** 2026-07-06 (David's empirical result + SCRIBE mapping).
+**Status:** load-bearing reinterpretation of the Qwen3.5 2B->9B translation track.
+
+## The empirical result (David)
+A 2B graft run through the translator DOES NOT transfer extractable data to
+the 9B: when the 9B tries to EXTRACT / read the fact out of the translated
+graft, the data is not there. Transfer fails at extraction.
+
+## Why this coexists with the 63/64 binding gate (mechanism, code-confirmed)
+The binding gate (core/qwen35_translation_poc.py, gold-vs-decoy) is a
+SCORING gate: it ranks candidate answers by logprob and checks the gold-
+minus-best-decoy MARGIN. It never asks the 9B to GENERATE/extract the fact.
+Transported keys (key recall ~0.65) can tilt a 4-way logit margin toward
+the gold answer WITHOUT the bound content being readable. So:
+- 63/64 gate PASS  = routing/association survived (margin moved)
+- extraction FAIL   = the bound content requiring the native dialect did not
+These are the SAME divergence SCRIBE measured: "content unreadable while
+logits 80% right" (H2). The gate measured the wrong axis.
+
+## The SCRIBE connection (this is the same wall, not an analogy)
+SCRIBE (project_kv_graft.md, CLOSED 2026-06-11, premise refuted) proved by
+composition argument + 3-regime G3 0/10: "attention is the only cross-
+position channel; deep latents = transcripts of the computation; a shallow
+student can't flatten the circuit -- texture transfers, bindings don't. The
+process IS the product." A linear/residual 2B->9B translator is the SAME
+CLASS of object SCRIBE refuted: a shallow map trying to reproduce another
+model's contextualization. The GraftRepository loader already enforces a
+"DIALECT WALL" guard at load; SCRIBE proved why it can't be crossed shallowly.
+The dialect is HARD-LOCKED to the model that produced it.
+
+## Consequences
+- The 63/64 / R4.6 oracle 64/64 do NOT indicate "one refinement from solved."
+  They indicate the margin proxy is saturating while extraction stays at floor.
+- Codex's "easily refined" optimism applies to the MARGIN gate, not to
+  extraction. Refining the margin further does not cross the dialect lock.
+
+## The deciding test (do this before any more margin optimization)
+Add an EXTRACTION gate distinct from the margin gate: mount the translated
+graft, have the 9B GENERATE the answer (teacher-forced readback or free
+generation), measure verbatim/content recall vs an amnesia floor. Predict
+(SCRIBE): extraction stays at/near floor even where the margin gate passes.
+If extraction is at floor -> dialect lock confirmed; translation of
+extractable content via shallow maps is refuted, same as SCRIBE.
+If extraction transfers -> the lock does NOT apply here and the margin gate
+was merely under-powered; a genuinely new result. Either way the EXTRACTION
+gate, not the margin gate, is the real metric from here.
+
+## The refit (SCRIBE's own conclusion, applies here)
+SCRIBE closed with: "graft-native = reads its own dialect from birth" ->
+GRAPA. If translation-of-dialect is hard-locked, the durable path is not a
+better 2B->9B map; it is grafts minted and read within a shared dialect by
+construction. Keys/routing DO transport (that survives) -- so cross-model
+ROUTING/addressing may be viable even where cross-model CONTENT extraction
+is not. That distinction is the salvage.
+
+
+# Gemma-4 `core/gemma4_tc.py` — Blind Bug Hunt
+
+**Scope:** independent correctness-only audit. Not told what the Architect's
+3 claimed bugs are. No fixes, no commits, no GPU runs. All checks below are
+either direct code reading or cheap CPU-only Python re-derivations of the
+mask/index formulas compared against the documented/intended semantics.
+
+**File audited:** `core/gemma4_tc.py`, 1010 lines, read in full.
+
+**Integrity check (required by the task):**
+- Start: mtime `2026-07-02 14:13:39.708331115 -0400`, size 48018 bytes,
+  sha256 `74c125a4183cd5da6381217ade5706238b4a4b262a17781251312e3edab3b2e4`
+- End: **identical** mtime, size, and sha256.
+- **The file was NOT modified during this hunt.** All findings below refer
+  to this exact, single version of the file (same version already covered
+  by `docs/GEMMA4_APA_AUDIT_A1.md`).
+
+---
+
+## Result: 0 confirmed correctness bugs found
+
+I read the file in full, cross-checked every one of the 16 registered traps
+in `docs/GEMMA4_PORT_LEDGER.md` against the code, re-derived every mask/index
+formula named as a prime suspect in the task brief, and ran CPU-only Python
+checks against each. **None of them turned up a bug.** Per the task's
+instruction not to manufacture findings to hit a count: this report lists 0
+CONFIRMED bugs and 0 SUSPECTs I'd stand behind. Below is the checked list
+(what I verified and why each one is clean), not a padded candidate list.
+
+If the Architect is confident 3 bugs exist in this exact file version, they
+are either (a) in code paths I could reason about but not execute (this was
+a static-only audit, same constraint as A1 — nothing here was run on a GPU),
+(b) subtler than anything a single-pass reading + formula re-derivation
+catches (e.g. a numerical/dtype-precision issue that only shows up under
+real tensor values, not shape/index logic), or (c) I'm simply missing them.
+I'd rather say that plainly than invent 3 findings.
+
+---
+
+## Checks performed (all clean — no bug found)
+
+### A. Mask geometry, non-square L×S (bottom-right causal)
+- `functional.py:_causal_mask(L, S, ...)` builds `triu(-1e4, k=1+(S-L))` —
+  re-derived in numpy against the documented bottom-right semantics (row i =
+  absolute query position `S-L+i`, visible keys `j <= S-L+i`). **Matches.**
+- Engine `causal_softmax_kernel` (`kernels.cu:2338-2367`) computes
+  `visible = S - L + i + 1` from the tensor's own shape (`i = row % L`).
+  Re-derived by hand: at Gemma's decode call site
+  (`gemma4_tc.py:519-520`, `sc.reshape([B, KV*rep, 1, cap])`), this collapses
+  to `visible = cap` for every row (L=1) — full visibility, matching the
+  "L==1 causal == full row" comment exactly. **Matches.**
+- Fused `apa_selective_attention` kernel (`kernels.cu:1080` /
+  `:1269` / `:1387`) uses the same `s_max = (S-L)+i+1` formula (the
+  A1 audit already traced this; I independently re-read all three call
+  sites of the macro/pattern in `kernels.cu` and confirm they agree).
+  Gemma's call site (`gemma4_tc.py:577-578`) passes whole, unchunked-in-L
+  `q`/`k` per outer prefill chunk with `is_causal = L > 1`, and I verified
+  by hand that `is_causal=False` at `L=1` yields the same `s_max` as
+  `is_causal=True` would (`(S-1)+0+1 == S`), so the `L>1` shortcut is
+  coincidentally exact, not a bug.
+- `_cublas_blend_attention` MQA arm (`mistral7b_tc.py:216-241`, Gemma's
+  only reachable arm since KVH=1 always for its globals): builds
+  `F._causal_mask(L, S, ...)` using the **outer** `L` (whole-call query
+  length, i.e. `q.shape[2]` from the top of the function) and slices rows
+  `[i, i+bl)` per block — re-derived in numpy that this equals the
+  correct per-block sub-mask of the full `(L,S)` bottom-right mask.
+  **Matches**, and is consistent with the non-MQA arm's identical pattern
+  a few lines down (both call the single canonical `F._causal_mask`, no
+  private duplicate construction — the class of bug this codebase has
+  been bitten by twice, per the ledger, is not present here).
+
+### B. Sliding-window band mask (`kv ∈ (q−1024, q]`)
+- `_band_mask` (`gemma4_tc.py:324-339`): re-derived the visibility formula
+  `(j <= i) & (j > i - window)` in numpy at `window=3` — produced exactly
+  `window` visible keys per row, matching "includes self, `window` keys
+  max" (trap 8). **Matches.**
+- Checked the `S_all <= W` branch (`gemma4_tc.py:610-613`), which uses
+  plain `is_causal=True` (no band mask at all) instead of `_band_mask`.
+  Proved algebraically that when `S_all <= W`, the band's lower bound
+  (`j > abs_pos - W`) is never binding (`abs_pos - W < 0 <= j` always), so
+  plain causal is exactly equivalent to the band mask in this regime.
+  Verified the boundary case `S_all == W` explicitly in numpy (arrays
+  compared with `np.array_equal`, true). **Not a bug** — a valid
+  optimization, not a missing restriction.
+- Ring-trim (`gemma4_tc.py:620-625`, `keep = min(W-1, S_all)`): confirmed
+  `keep + 1 == W` after the next append, i.e. trimming to `W-1` before
+  appending the new key is exactly right to land back at window size `W`.
+  **Matches.**
+
+### C. Chunked-prefill state handling
+- `last_token_only` passthrough (`gemma4_tc.py:734-741, 779-780`): traced
+  that slicing `h` to 1 row before `lm_head` on every chunk (not just the
+  final one) only affects logits, never the K/V caches propagated between
+  chunks — the wasted GEMV on non-final chunks is discarded by construction
+  (outer loop only keeps the last chunk's `lg`). **Not a bug**, matches the
+  documented trap/fix.
+- Adaptive chunk step-size formula (`gemma4_tc.py:729-732`): simulated a
+  20,000-token prefill in Python — terminates in 229 iterations, exact
+  full coverage, no skipped or double-counted tokens, `step` floor of 64
+  prevents a zero-step infinite loop at any context length tested up to
+  10,000,000. **Not a bug.**
+- `KVRing.append`/`quantized_keys` (`gemma4_tc.py:231-304`) bookkeeping:
+  traced the growth interaction between `kb`/`vb`/`kqb` (`_grow1` runs on
+  all three, in order, copying the same `old_n` valid-row prefix into each
+  new same-sized buffer) and confirmed `quantized_keys`'s incremental
+  `[kq_count:count)` window stays aligned with `kb`'s logical positions
+  across growth events, because `quantized_keys` is only ever reachable on
+  **global** layers, which are constructed with `ring_cap=None` and
+  therefore never wrap (`self.ring=False`) — positions are stable for the
+  cache's entire lifetime, exactly as the docstring claims. **Not a bug.**
+- Bias-mask (`-1e4` invalid-row padding) interaction with ring wraparound:
+  simulated a small ring (`window=4`) through and past its first wrap in
+  Python — once `full` becomes true the bias buffer is permanently all-zero
+  and stays correct; before that, `bias[pos]` is unmasked exactly on first
+  write of each row. **Not a bug.**
+- Decode-APA path (`gemma4_tc.py:484-508`) sidesteps the invalid-row-bias
+  question entirely by slicing `kk`/`vv`/`kq` to exactly `kv_cache.count`
+  (not `cap`), and passes `causal=False` — verified this is exactly right
+  for decode (single newest query, always fully visible to its own prefix).
+  **Not a bug.**
+
+### D. dtype handling
+- Searched the whole repo for `_NP_DTYPE`: **zero hits**. This class does
+  not exist in `core/gemma4_tc.py` or anywhere else in this repository —
+  it is not applicable to this file (may be a trap class from a different
+  codebase, e.g. the tensor_cuda engine itself, conflated in the brief).
+- Traced `QuantLinearTC.__init__` (`mistral7b_tc.py:84-91`) to confirm the
+  embed-scale in-place mutation (`gemma4_tc.py:813-814`,
+  `self.lm_head = QuantLinearTC(emb); emb *= sqrt(hidden)`) cannot corrupt
+  the already-quantized tied head: `_quantize_int4` runs synchronously
+  inside `__init__` and produces independent new arrays: no reference to
+  the caller's `emb` is retained. **Not a bug.**
+- `_q40_repack` (`gemma4_tc.py:73-88`): built a synthetic q4_0 block by
+  hand in Python (known `x` values in [-8,7], packed per the documented
+  GGUF j/j+16 nibble-interleave layout) and confirmed the function's
+  output is bit-exact equal to the engine's expected even/odd-pair packed
+  layout after de-interleaving. **Matches, verified not trusted.**
+
+### E. Registered traps implemented subtly wrong
+Checked all 16 traps from the ledger against the code; all match:
+1. Plain-w RMSNorm everywhere incl. qk-norms — `_head_rmsnorm` never adds 1.
+2. `layer_scalar` multiplies the whole post-block stream including the
+   residual — `Gemma4BlockTC.__call__` line 666, `return h * self.layer_scalar`
+   where `h` already contains the residual sum. **Confirmed correct
+   placement** (this is exactly the kind of thing the brief flagged as a
+   suspect — "layer_scalar applied to the wrong stream" — and it is NOT
+   wrong here).
+3. Attention scale 1.0 — grepped every attention call site (7 total),
+   all pass `scale=1.0` / `alpha=1.0`.
+4. Embed scale `sqrt(3840)` in fp32, lm_head unscaled — confirmed order of
+   operations (quantize-then-scale) is safe, see D above.
+5. Global V = `v_norm(k_proj out)`, no RoPE — confirmed `vsrc = kraw`
+   (pre-norm, pre-RoPE raw projection) is independently normalized with
+   `w=None` (scale-free) and RoPE is applied only to `q`/`k`, never `v`.
+   **Confirmed correct** (this is exactly the "RoPE applied to global V by
+   accident" suspect from the brief, and it is NOT present).
+6. p-RoPE: re-derived the 64-real+192-zero frequency construction in numpy
+   against `theta^(-2i/512)` for `i<64` — exact match, including the
+   full-512-width apply via `emb_g = concat([pos*inv_g, pos*inv_g])`.
+7. Sliding RoPE full 256-dim, θ=1e4 — confirmed same code path, different
+   config constants.
+8. Sliding mask window — see B above.
+9. Sandwich norms — traced `Gemma4BlockTC.__call__` order: input_ln → attn
+   → post_attn_ln(on attn output) → +residual → pre_ffw_ln → mlp →
+   post_ffw_ln(on mlp output) → +residual. Matches Gemma-2-style sandwich.
+10. Logit softcap 30 — `(lg.float()/30).tanh()*30`, matches.
+11. RMSNorm eps inside rsqrt — confirmed in both the fused kernel
+    (`kernels.cu`: `powf(mean_sq + eps, -0.5f)`) and the Python fallback
+    (`(ms + eps).pow(-0.5)`).
+12. RoPE layout — not independently re-derived (would need the HF
+    reference to diff against; out of scope for a static/CPU-only check).
+13. qk-norm present, bulk_bits=4 — `self.bulk_bits = 4` at
+    `gemma4_tc.py:403`, matches.
+14. Inert machinery — not exercised (config surface, no live code path in
+    this file references MoE/double-wide-MLP/bidirectional).
+15. Chat template — not applicable to this file (lives elsewhere).
+16. Engine gelu tanh-approx — used via `.gelu()` in `GegluTC`, not
+    independently re-verified against the exact tanh formula (would need
+    the kernel source's constants, outside this file).
+
+---
+
+## What I did NOT check (explicit scope limits)
+- No GPU execution — every finding above is either a direct code read or a
+  CPU-only Python re-derivation of shapes/indices/formulas, per the task's
+  constraints.
+- Items 12, 14, 15, 16 above were traced for presence/placement but not
+  independently re-derived bit-for-bit against an external reference,
+  since doing so needs files outside `core/gemma4_tc.py` (HF reference
+  impl, engine kernel constants) beyond what a quick cross-check allows.
+- Did not attempt to find performance or style issues — out of scope per
+  the task.
+
+## Bottom line
+Ranked list of candidate bugs, most-confident first: **none.** I found 0
+CONFIRMED and 0 SUSPECT correctness bugs in `core/gemma4_tc.py` as it
+stands at sha256 `74c125a4...edab3b2e4`. Every prime-suspect area named in
+the task brief, and every registered trap in the ledger, checks out
+correct under direct reading plus CPU-only formula verification. This is
+fewer than the stated 3 — reported as-is rather than padded.
+
+
+# Gemma-4 APA Extension — Phase A1 Code Audit
+
+**Scope:** static code audit only. No fixes, no commits, no GPU runs.
+Re-verifies claims in `docs/GEMMA4_PORT_LEDGER.md` against
+`core/gemma4_tc.py` (1010 lines, read in full), `core/mistral7b_tc.py`
+(the shared `_repeat_kv`/`_cublas_blend_attention`/GQA reference path),
+and the engine at `/mnt/ForgeRealm/Project-Tensor` as built (kernels.cu,
+bindings.cpp, quant.py). Every finding below cites `file:line`; where a
+number could not be pinned to source it is marked "COULD NOT DETERMINE"
+rather than estimated.
+
+**Files read in full:** `core/gemma4_tc.py` (1010 lines). Files read in
+targeted ranges with line numbers recorded per citation:
+`core/mistral7b_tc.py`, `tensor_cuda/src/kernels.cu`,
+`tensor_cuda/src/bindings.cpp`, `tensor_cuda/tensor_cuda/quant.py`.
+
+**Engine build provenance (checked, not assumed):** two engine trees
+exist on disk —`/mnt/ForgeRealm/Project-Tensor/tensor_cuda` (git HEAD
+`e3f2388`, `d57b76e` "fused APA kernel accepts head_dim 512 + bottom-
+right causal fix" confirmed an ancestor via `git merge-base
+--is-ancestor d57b76e HEAD`) and a second, unrelated
+`/mnt/ForgeRealm/Project-Tensor/tc-speed/tensor_cuda` clone whose
+`kernels.cu:976` still reads `TC_APA_MAXD = 256` and whose compiled
+`.so` is dated Jun 10. `core/mistral7b_tc.py:23` (`sys.path.insert(0,
+"/mnt/ForgeRealm/Project-Tensor/tensor_cuda")`) hard-codes the import
+to the FIRST tree — the `tc-speed` clone is never on the Gemma port's
+import path. The first tree's compiled `.so`
+(`tensor_cuda/tensor_cuda/_tensor_cuda.cpython-312-x86_64-linux-gnu.so`,
+Jun 28) predates `kernels.cu`'s Jul 2 mtime, but `git log --oneline --
+tensor_cuda/src/kernels.cu` shows the only commits after `d57b76e` are
+`c583119` (INT4 KV-cache pack/unpack) and `fa988d9` (GRM arena
+cache-surgery) — unrelated to APA dispatch. `strings` on the `.so`
+confirms `_ZN2tc20apa_selective_kernelI...Li512EEE` and
+`_ZN2tc24apa_selective_bwd_kernelI...Li512EEE` template instantiations
+are present in the binary. **Conclusion: the running engine is the
+D=512-capable build; the mtime skew is a checkout artifact, not an
+unbuilt fix.**
+
+---
+
+## 1. Expansion census
+
+`_repeat_kv` is defined once, at `core/mistral7b_tc.py:172-177`
+(unsqueeze+expand+reshape — a real materializing copy, not a view: the
+`.expand` creates a broadcast view but `.reshape` after it forces a
+contiguous copy since the expanded dim has stride 0).
+
+### 1a. `core/gemma4_tc.py` — direct call sites
+
+| Line | Code | Path reached | Materializes? |
+|---|---|---|---|
+| `gemma4_tc.py:612` | `_repeat_kv(k, H // KV)` | **Sliding-window layers only** (`else:` branch of `if self.is_global:` at line 544, i.e. taken when `self.is_global` is False — 40 of 48 layers). Both prefill and decode reach this via `F.scaled_dot_product_attention` at S_all ≤ window (line 610-613). | YES — expands `(B, 8, S≤1024, 256)` to `(B, 16, S≤1024, 256)`, a real 2× copy. At S=1024 that's `16·1024·256·2B(bf16)` ≈ **8.4 MB** per tensor (k and v each), ≈17MB total — small because sliding layers cap at window=1024 by construction. |
+| `gemma4_tc.py:617` | `_repeat_kv(k, H // KV)` / `_repeat_kv(v, H // KV)` | Sliding-window layers, `S_all > W` branch (line 614-619, the masked non-square case). Same 40 layers, same bound (S never exceeds 1024 in this branch by the ring-trim contract at lines 620-625). | YES, same size class as above — bounded by `sliding_window=1024` regardless of total context. **This is NOT a global/APA-path expansion and does not scale with 4K/8K/12K context** — the registration note's "STILL LIVE" finding is correct as a grep hit but the ticket's actual target (the GQA-era 16× MQA blend expansion on the 512-dim GLOBAL layers) is a *different* code path (see 1b) that has already been de-expanded. |
+
+**No other `_repeat_kv` call site exists in `gemma4_tc.py`** (grep-verified:
+only 3 hits total in the file — 1 import at line 36, 2 calls at 612/617,
+both traced above).
+
+### 1b. Global-layer (D=512, 1 KV head) attention paths — the ticket's actual target
+
+Global layers (8 of 48, `Gemma4Config.is_global`, `i % 6 == 5`,
+`gemma4_tc.py:61-63`) reach FOUR distinct branches inside
+`Gemma4AttentionTC.__call__` (`gemma4_tc.py:419-628`), none of which
+call `_repeat_kv` on the 512-dim global K/V:
+
+1. **Decode, standard (non-APA)** — `gemma4_tc.py:509-527`. Builds
+   `qg = q.reshape([B, KV, rep, D])` (line 511, KV=1, rep=16) — a
+   **reshape, not an expansion**, since q already has all 16 heads;
+   `tc.matmul(qg, kv_cache.kb, ...)` (line 512) broadcasts the single KV
+   head against 16 query-head rows inside the GEMM, no K/V copy. Zero
+   materializing expansion.
+2. **Decode, APA** (`apa_active`, lines 484-508) — calls
+   `_cublas_blend_attention(q, kk, kq, vv, H // KV, ...)` (line 505-506)
+   with `kk = kv_cache.kb.slice(...)` and `vv = kv_cache._v_get(...)` —
+   both **unexpanded** (KV=1) tensors passed straight through. Inside
+   `_cublas_blend_attention` (`mistral7b_tc.py:205-267`), the guard at
+   `mistral7b_tc.py:216` (`if kH.shape[1] == 1 and H > 1`) is hit
+   (KV=1 for Gemma globals) and takes the **MQA de-expansion branch**
+   (lines 217-241): q heads fold into rows (`Qf = q.slice(...).reshape([B,
+   1, H*bl, D])`, line 228) against the unexpanded `kqT1`/`kT1`
+   (transposed views only, lines 222-223) — **no `_repeat_kv` call in
+   this branch.** Confirmed by grep: `_cublas_blend_attention`'s MQA arm
+   (lines 216-241) contains no `_repeat_kv` reference; the ONLY
+   `_repeat_kv` calls inside `_cublas_blend_attention` are at line 242-243,
+   inside the **non-MQA** `else` arm (the GQA case, `kH.shape[1] > 1`),
+   which Gemma globals never reach.
+3. **Prefill, standard (non-APA)** — `gemma4_tc.py:587-607`. `qf =
+   q.reshape([B, 1, H*L, D])` (line 593) — reshape, folds heads into
+   rows against unexpanded `k` (`(B,1,S_all,D)`). Zero expansion.
+4. **Prefill, APA** — `gemma4_tc.py:546-586`. Same
+   `_cublas_blend_attention` MQA-branch path as (2) when `S_all ≤
+   fast_max_seq` (4096), or the fused `tc.apa_selective_attention` kernel
+   (line 577-578) above `fast_max_seq` — the fused kernel is natively
+   GQA/MQA-aware (`kernels.cu:1056` `kv_h = h / group`, no expansion
+   ever, by kernel design) when `S_all > 4096`.
+
+**Transient sizes at Gemma-4 12B global-layer geometry (1 KV head × 16 q
+heads × D=512), per context length** — all four branches above are
+confirmed expansion-free on K/V. The dominant materializing transient on
+the global/APA path is NOT a `_repeat_kv` expansion but `_quantize_keys`
+(`tensor_cuda/quant.py:111-129`, traced in §2 below), which the ledger
+already identifies as the OOM driver (ledger lines 402-410, 552-558) and
+which this audit independently confirms materializes ~5-6 simultaneous
+fp32 `(B,1,S,512)` tensors:
+
+| S | one fp32 (1,1,S,512) tensor | ×~6 (kd, unit, rotated, centroids, recon, +rotation-matrix broadcast `Rb.expand([B,1,512,512])`≈1MB fixed) |
+|---|---|---|
+| 4K | 512·4096·4B ≈ 8.4 MB | ≈ 44-50 MB (matches ledger's "S=4096 ... ~44 MiB" line 450) |
+| 8K | ≈ 16.8 MB | ≈ 80-96 MB (matches ledger's measured OOM figure, lines 407-409, 445) |
+| 12K | ≈ 25.2 MB | ≈ 140 MB (matches ledger line 502, 536, 576) |
+
+This arithmetic reproduces the ledger's own numbers from the source
+(`quant.py:111-129`) rather than re-quoting them — **independently
+verified, not re-stated on trust.**
+
+### 1c. Mask materialization
+
+`_band_mask` (`gemma4_tc.py:324-339`) is cached per `(L,S,window,device,
+dtype)` key (`_band_cache` dict, line 329) — a real per-shape tensor
+build but cached across calls, so it is NOT a per-token materializing
+copy in steady state (only on first hit of a new `(L,S)` shape, which
+adaptive chunking makes numerous — the ledger's own "maskless global
+prefill" fix at ledger:353-356 addresses this exact churn on the GLOBAL
+path by using `causal_softmax`'s built-in mask instead; sliding layers
+still use `_band_mask`, unaudited by that ticket since sliding context
+is bounded at 1024 by design). No private/duplicate mask-copy pattern
+found in `gemma4_tc.py` itself.
+
+**Verdict for §1:** the registration note ("`_repeat_kv` STILL LIVE at
+~lines 612, 617") is a correct grep result but a mischaracterization of
+scope — those two call sites are on the **sliding-window path**
+(bounded, cheap, never touches the 512-dim global geometry the mission
+is about). The global/APA path that the ticket actually targets (GQA-era
+16× MQA blend expansion on Gemma's 1-KV-head globals) is **already
+de-expanded** in the current code, confirmed by tracing all four global-
+layer branches to their unexpanded call sites. The live cost driver on
+the global path is `_quantize_keys`'s O(S·D) transient, not `_repeat_kv`.
+
+---
+
+## 2. Kernel cap verification
+
+- **`TC_APA_MAXD` in the live engine:** `tensor_cuda/src/kernels.cu:1035`
+  — `constexpr int TC_APA_MAXD = 512;   // bumped 256->512 for Gemma 4
+  global`. Confirmed this is the tree actually imported (see provenance
+  note above; `core/mistral7b_tc.py:23`).
+- **Did the June d57b76e commit raise it?** Yes — `git show
+  d57b76e --stat` scope and `git merge-base --is-ancestor d57b76e HEAD`
+  both confirm; the commit message itself ("fused APA kernel accepts
+  head_dim 512 + bottom-right causal fix") matches the code found.
+- **Is D=512 actually compiled into the running `.so`?** Yes —
+  `strings tensor_cuda/tensor_cuda/_tensor_cuda.cpython-312-x86_64-
+  linux-gnu.so | grep apa_selective` shows
+  `_ZN2tc20apa_selective_kernelI13__nv_bfloat16Li512EEE...` and the
+  `Li256E`/`Li128E`/`Li64E` sibling instantiations — all four dispatch
+  arms are present as compiled template instances, not just source text.
+- **Dispatch condition, traced in code** (`kernels.cu:1197-1219`):
+  ```
+  int cap = D > VD ? D : VD;
+  if (cap > TC_APA_MAXD) throw ...
+  ...
+  if (cap <= 64)        launch(std::integral_constant<int, 64>{});
+  else if (cap <= 128)  launch(std::integral_constant<int, 128>{});
+  else if (cap <= 256)  launch(std::integral_constant<int, 256>{});
+  else                  launch(std::integral_constant<int, 512>{});
+  ```
+  For Gemma globals, `D = VD = 512`, so `cap = 512`, which falls through
+  to the last arm (`launch<512>`) — **the fused kernel CAN dispatch at
+  D=512, confirmed by the dispatch arithmetic, not inferred.**
+- **Bottom-right causal fix, traced:** `kernels.cu:1069-1073` —
+  `int s_max = is_causal ? ((S - L) + i + 1) : S;` with the comment
+  explicitly contrasting this against the old `s_max=i+1` top-left bug.
+  Present in the same file/build as the D=512 arm.
+- **Does the Gemma port actually REACH the fused kernel, or does it
+  fall back to the blend?** Traced at `gemma4_tc.py:570-586`: `if S_all >
+  self.fast_max_seq:` (line 570, `fast_max_seq=4096`, set at
+  `gemma4_tc.py:417`) dispatches `tc.apa_selective_attention(...)` (line
+  577), ELSE falls to `_cublas_blend_attention` (line 585). This gate
+  exists ONLY in the **prefill** APA branch (lines 544-586, inside `if
+  self.is_global:` / `apa_active` at line 546). **The decode APA branch
+  (lines 484-508) has NO `fast_max_seq` check and unconditionally calls
+  `_cublas_blend_attention` (line 505)** — confirmed by grep: `fast_max_seq`
+  appears exactly once as a comparison (`gemma4_tc.py:570`), nowhere in
+  the decode branch. This matches the ledger's own claim (ledger:610-611,
+  "decode stays on the blend") and the stated rationale (fused kernel is
+  a decode loser by structure, ledger:685-690) — **verified consistent
+  between ledger and code, not just asserted by the ledger.**
+
+**Verdict for §2:** the D=512 fused-kernel claim is CONFIRMED at every
+level checked (source constant, compiled symbol, dispatch arithmetic,
+call-site gating). The Gemma APA path dispatches the fused kernel ONLY
+in prefill above 4096 tokens; decode always uses the blend by design
+(not a silent fallback bug — an explicit, documented architectural
+choice traceable in both files).
+
+---
+
+## 3. June-fix reachability
+
+| Claimed fix | Exists? | Reached from current call graph? | Evidence |
+|---|---|---|---|
+| **Incremental kq ring** (`kqb`/`kq_count`) | YES | YES | `KVRing.__slots__` includes `kqb`, `kq_count` (`gemma4_tc.py:164-165`), initialized `None`/`0` in `__init__` (lines 175-176). `quantized_keys()` method (lines 275-304) is the only writer of `kqb`/`kq_count`. Called from exactly one site: `gemma4_tc.py:496-497`, inside the decode `apa_active` branch (line 484), which is reached when `L==1 and kv_cache is not None` (line 474) and `apa_active` (line 481-483: `self.is_global and self.attention_mode=="apa_selective" and S_all > self.apa_min_context`). Live so long as a caller sets `attention_mode="apa_selective"` on a global layer past `apa_min_context=2048` tokens — confirmed reachable, not dead code (single call site, on the hot decode path). |
+| **Chunked cold-start quantize** (CHUNK=512 in `quantized_keys`) | YES | YES | `gemma4_tc.py:295-302`: `CHUNK = 512` then `for s0 in range(self.kq_count, self.count, CHUNK):` — this loop is the body of `quantized_keys`, same single call site as above (line 496). Reached whenever `new = self.count - self.kq_count` exceeds one row (cold start) via the same decode-APA path. Also present: chunked whole-span quantize for PREFILL APA at `gemma4_tc.py:558-565` (`if S_all > 4096: for s0 in range(0, S_all, 2048): ...`) — a second, separate chunking site, both confirmed live inside the two `apa_active` branches (decode: line 484-508; prefill: line 546-586). |
+| **Bounded `_grow_cap`** | YES | YES | Defined `gemma4_tc.py:128-139` (double-while-small, then `+2048` block growth, matching ledger:493-497's "8K cap 16384→10240" description of the same algorithm). Called from `KVRing.__init__` (line 183) and `KVRing.append` (lines 239-240) — both on the live decode-append path (`append` called from `gemma4_tc.py:479`, inside the `L==1` decode branch that runs on every decode step for every layer). Confirmed reached on every decode token, not just at construction. |
+| **Canonical-mask slicing in the blend (no private mask copies)** | YES | YES | `mistral7b_tc.py:253-260` comment explicitly documents this as a FIX for a prior bug ("this path used to build its OWN triu(k=i+1) ... duplicated"); current code at line 261 calls `F._causal_mask(L, S, ...)` — the shared/canonical mask function, not a private construction. Reached from the non-MQA arm of `_cublas_blend_attention` (line 252-264); Gemma's MQA arm (lines 216-241) uses `F._causal_mask` too, at line 234, same function. Both arms of the one function Gemma calls use the canonical mask — confirmed, no duplicate mask-building code found anywhere in `gemma4_tc.py` or the reachable part of `mistral7b_tc.py`. |
+| **`write_rows` ring machinery** | YES | YES | Engine op `tc.write_rows` called 8 times in `gemma4_tc.py` (lines 199, 207, 208, 210, 252, 269, 272, 300) — covers KVRing construction, V-quant write, growth (`_grow1`), decode append (K, V, bias-unmask), and kqb chunk-write. All on paths already traced live above (construction, decode append, incremental-kq). Engine-side: `write_rows` symbol confirmed to exist as a bound op (`bindings.cpp` — not re-grepped in this pass beyond confirming the Python-side call sites resolve to `tc.write_rows`, a `tensor_cuda` engine attribute used throughout `gemma4_tc.py` without a local shim, so it resolves to the compiled engine binding). |
+
+**Verdict for §3:** every claimed June fix is BOTH present in source AND
+reached from the live call graph via at least one concrete call site
+traced to the hot decode or prefill path. No dead/bypassed fix found in
+this file. This is a stronger result than the mission's DISTRUST prior
+predicted going in — worth flagging as the audit's most surprising
+finding (see report-back).
+
+---
+
+## 4. Verdict table — ticket by ticket
+
+| Ticket (ledger: line ~306 order) | Status | Evidence (file:line) |
+|---|---|---|
+| **Ring buffers** | **DONE** | `KVRing` class (`gemma4_tc.py:142-321`) implements fixed sliding-window ring (`ring_cap` param, line 167) + capacity-doubling globals (`_grow_cap`, lines 128-139) + in-place `write_rows` (line 199, 269, etc.) + bias-masked invalid rows (`self.bias`, lines 192-194, 263-265, 271-272). Ownership contract documented and consumed-list pattern enforced at `gemma4_tc.py:768-775` (`caches[i] = None` after each layer consumes its cache). |
+| **Blend de-expansion** | **DONE for the global/APA path that was the actual ticket target; the two remaining `_repeat_kv` sites are on the sliding-window path (bounded ≤1024, not in scope of the GQA-era 16×/512-dim complaint)** | `_cublas_blend_attention`'s MQA arm (`mistral7b_tc.py:216-241`) is expansion-free and is the arm Gemma's global/APA calls hit (`gemma4_tc.py:505-506, 585-586`). Standard (non-APA) global decode/prefill also expansion-free via reshape-not-copy (`gemma4_tc.py:511-512, 593-594`). Remaining `_repeat_kv` calls: `gemma4_tc.py:612, 617` — sliding layers only, per §1. **Grep-clean claim from the ledger (line 51-52, "no `_repeat_kv` materialization anywhere in the attention path") is FALSE AS LITERALLY STATED (grep is not clean) but TRUE IN SUBSTANCE for the global-layer path the mission is about.** This is a real discrepancy between the registration note's framing and the code, worth flagging explicitly. |
+| **Re-probe readiness (expect APA > standard)** | **NOT YET MEASURED — this audit is static only, per Phase A1 scope. Phase A0 (re-probe on the 4070S) is a separate, not-yet-executed step per the plan.** | N/A — out of scope for A1; flagging that A0 must run before B3's gate has any numbers to compare against. |
+| **V-side APA** | **PARTIAL — INT8 V-storage done and gated; 4-bit V (global) measured but NOT shipped as default; asymmetric K8+V4 measured best-of-table but explicitly held behind a confirmation run** | `KVRing.QUANT_V` flag (`gemma4_tc.py:162`, env `GEMMA4_QUANT_V`, default OFF per line 162 `bool(int(os.environ.get(...,"0")))`) — confirms ledger's "shipped default is V-only INT8, conservatively" (ledger:563) is accurate: the flag being OFF by default is verified in code, not just asserted in the ledger. `_v_put`/`_v_get` (lines 203-224) implement the quantize-on-write/dequantize-on-read path. No K8+V4 asymmetric mode found wired into `KVRing` itself (only uniform `QUANT_V` for V; K stays bf16 unconditionally — no `QUANT_K` flag or equivalent exists in `gemma4_tc.py`, confirmed by grep for "QUANT_K"/"quant_k": zero hits). **The asymmetric K8+V4 mode described as "the best mode in the entire table" (ledger:552-558) is NOT implemented in `core/gemma4_tc.py` — it exists only as a ppl-sweep measurement via the external `KV_STORE_HOOK` test harness (`gemma4_tc.py:383-386, 463-464`), not as a shippable code path.** This is a load-bearing gap: the ledger's own "CAVEAT" (line 559-563) already flags this as unconfirmed/unshipped, and this audit confirms it is additionally *unbuilt* as a real KVRing mode, not merely unconfirmed. |
+
+---
+
+## Report-back summary (for the calling agent)
+
+**Verdict table:** ring buffers DONE; blend de-expansion DONE on the
+global/APA path (the actual ticket target) but the registration note's
+"grep clean" framing is technically false — two `_repeat_kv` calls
+remain, both on the bounded sliding-window path, out of scope for the
+512-dim global complaint; re-probe (B3) not yet run (A0 is a separate,
+unexecuted step); V-side APA PARTIAL — INT8 V shipped OFF-by-default
+and gated, but the measured-best asymmetric K8+V4 mode is not built into
+`KVRing` at all, only measured via an external test hook.
+
+**Three most load-bearing findings:**
+
+1. **The registration note's "`_repeat_kv` STILL LIVE" finding
+   (mission doc lines 16-19) is a real grep hit but points at the wrong
+   code path.** `gemma4_tc.py:612,617` are sliding-window-layer calls
+   (bounded ≤1024 context by the ring-trim contract at lines 620-625),
+   not the GQA-era 16×/512-dim global expansion the ticket is about. All
+   four global-layer branches (decode-standard, decode-APA,
+   prefill-standard, prefill-APA — `gemma4_tc.py:509-527, 484-508,
+   587-607, 546-586`) are confirmed expansion-free, tracing into
+   `_cublas_blend_attention`'s MQA de-expansion arm
+   (`mistral7b_tc.py:216-241`) or the natively-GQA-aware fused kernel.
+   Practical effect: **Phase B2 ("blend de-expansion, TOTAL... grep
+   clean") as literally scoped in the plan cannot pass a pure grep-for-
+   `_repeat_kv` gate without also touching the sliding-window path**,
+   which is architecturally out of scope for the mission's stated
+   problem (Gemma's 1-KV-head globals). The plan's B2 gate wording needs
+   reconciling with this distinction before it's run.
+
+2. **D=512 fused-kernel dispatch is real and verified at every layer
+   checked** (source constant `kernels.cu:1035`, compiled symbol via
+   `strings` on the actual `.so`, dispatch arithmetic `kernels.cu:1197-
+   1219`, and the Gemma-side gating condition `gemma4_tc.py:570`) — this
+   was the highest-risk claim to re-verify (compiled-binary claims are
+   the easiest to silently regress) and it holds up. The two engine
+   trees on disk (`Project-Tensor/tensor_cuda` vs the stale
+   `tc-speed/tensor_cuda` clone with `TC_APA_MAXD=256`) could have been a
+   silent-fallback trap if the import path were wrong; confirmed
+   `mistral7b_tc.py:23` hard-codes the correct tree.
+
+3. **The asymmetric K8+V4 storage mode — the ledger's own "BEST mode in
+   the entire table" (ledger:552-558, −3.56% ppl) and the mission plan's
+   B4 ticket — does not exist as a code path in `KVRing`.** Only
+   uniform V-only INT8 (`QUANT_V`) is wired; there is no `QUANT_K` or
+   equivalent. It was measured through the external `KV_STORE_HOOK`
+   test-only hook (`gemma4_tc.py:383-386`), which round-trips K/V for
+   ppl measurement but is not the same code as the actual `KVRing`
+   storage/dequant path used in real serving. This means B4 has a
+   ppl number but zero implementation — don't read "measured" as "built."
+
+**Audit file:** `/mnt/ForgeRealm/GraftRepository/docs/GEMMA4_APA_AUDIT_A1.md`
+(this document — the only file written).
+
+
+# Gemma 4-12B APA Extension — Mission Plan (Fable, registered 2026-07-04)
+
+> **MISSION CLOSED 2026-07-04 (same day) — negative result with a
+> law.** A0 re-probe: NO OOM anywhere on the 4070S 12GB — both modes
+> hold the full 32K trained window, both phases (June walls were 8GB
+> artifacts); B3's gate is untestable by context ceiling. APA as-built
+> is a net cost on the 12B (+peak VRAM, 3.5× prefill, +8% decode,
+> ppl +1.5-1.9% engaged). **Law extracted: APA is a multi-KV-head
+> thing** — statistics need key POPULATION (sliding fails), economics
+> need KV-HEAD MULTIPLICITY (MQA fails: coherent noise, D=512 blocks
+> the fused kernel, KV slack pre-spent at training time). The 12B
+> fails both axes independently. **Architect's closure: "to try and
+> save memory on storage is not APA"** — B4/prefill-into-rings are a
+> separate storage project, not surviving APA tickets; their 12B case
+> fails on pool size (~0.5-1GB at 32K, ~zero at the ~700-tok serving
+> shape). Selection rule: APA belongs on GQA-family models (26B-A4B
+> qualifies). Phases B4/S below are retained for the record only.
+> Results: GEMMA4_PORT_LEDGER.md "A0 re-probe" + "A0-B" sections;
+> verdict on the AI_Research_Board (Gemma track).
+
+**Mission (Architect, queued 2026-07-02):** make APA truly EXTEND
+Gemma-4 — restore the design law (APA outruns standard's context
+ceiling) that holds on every other ported architecture. The Opus-era
+APA implementation is DISTRUSTED: every prior claim gets re-verified by
+measurement on the current hardware (4070 SUPER 12GB — the June
+contract was built for the 3070 8GB) before being believed.
+
+**Known root cause (June investigation, to re-verify):** the blend's
+GQA-era 16× MQA expansion (`_repeat_kv(k, 16)`) violates APA's
+bounded-transient design on Gemma's 1-KV-head globals. Registered
+ticket order (ledger line ~306): ring buffers → blend de-expansion →
+re-probe (expect APA > standard) → V-side APA.
+
+**Audit finding at registration (2026-07-04), CORRECTED by A1
+(docs/GEMMA4_APA_AUDIT_A1.md):** the registration's "16× expansion
+still live" claim was WRONG — the surviving `_repeat_kv` calls
+(gemma4_tc.py:612,617, spot-verified) are on the SLIDING path, bounded
+≤1024 by ring-trim; all four GLOBAL branches are expansion-free
+(traced to the de-expanded blend / fused kernel). A1 verdicts: ring
+buffers DONE; global de-expansion DONE; fused D=512 kernel REAL and
+dispatched (prefill-only above fast_max_seq=4096; decode always
+blends by design; stale twin engine tree exists but imports pin to
+the current one); **K8+V4 "best mode" (−3.56% ppl) has ZERO real
+implementation** — measured via external test hook only, never built
+into KVRing (B4 starts from scratch, not near-done). Consequence:
+B1/B2 are substantially closed; the mission's center of gravity is
+Phase S (sliding — exactly the Architect's independent read) plus B4
+(real quantized-storage arc) and the A0/B3 probes on the 12GB card.
+B2's "grep clean" gate is re-scoped: global path only; the sliding
+`_repeat_kv` is Phase S's object (bounded, and its de-expansion is a
+compute/resident win, not an OOM fix).
+
+## Phase A — Audit first (no fixes until measured)
+
+- **A0. Re-probe on the 4070S, current HEAD:** one-process-per-mode
+  OOM ladders (the June discipline — fragmentation fakes cross-context
+  OOMs), standard vs APA-r0.10, prefill and decode ceilings. June
+  numbers (3070): standard 6,144 vs APA 3,072 decode; both-modes 12K
+  prefill wall. The 12GB card moves every wall — get TODAY's numbers
+  or nothing downstream means anything.
+- **A1. Code audit:** enumerate every surviving expansion site
+  (`_repeat_kv` callers, private mask copies, whole-cache requantize
+  paths), verify TC_APA_MAXD status for D=512 against the engine as
+  built (the June D=512 fused kernel claim gets a direct kernel-launch
+  test, not a changelog read), and check which June fixes (incremental
+  kq ring, chunked cold-start quantize, bounded _grow_cap) are present
+  and actually reached from the current call graph.
+- **A2. Gate inventory:** run the existing Gemma gates (parity, state,
+  APA bulk4, rect-with-cache, apa_incremental) on HEAD before touching
+  anything — the baseline must be green or the mission starts with a
+  repair, not a feature.
+
+## Phase B — Tickets, in registered order, each with a gate
+
+- **B1. Ring buffers (complete the June start):** in-place row writes,
+  bias-masked invalid rows, zero steady-state copies; ownership
+  contract (live caches owned by their decode loop; sharing = explicit
+  copy; GRM's host round-trip already complies). Gate: decode-step
+  transient allocations flat with S (live allocator trace, not
+  inference).
+- **B2. Blend de-expansion, TOTAL:** no `_repeat_kv` materialization
+  anywhere in the attention path — grouped-batch GEMMs against
+  unexpanded K/V on both prefill and decode, both modes. Gate: grep
+  clean + parity vs QAT GT unchanged + the June ppl sweep numbers
+  reproduced (r0.10 within noise of standard).
+- **B3. THE MISSION GATE — re-probe:** one-process-per-mode ladders,
+  post-fix. Frozen expectation: **APA ceiling > standard ceiling on
+  the 12GB card, both decode and prefill.** If APA merely ties, the
+  mission is NOT done — ties mean a hidden resident cost (June: the
+  kqb ring's +50%) still cancels the design win; find it or store it
+  quantized (tail-law arc: K8+V4 resident storage, the measured
+  −3.56% asymmetric config).
+- **B4. V-side APA (research extension):** Gemma's scale-free v_norm
+  predicts 4-bit V bulk is safe by the same tail law (June measured:
+  V4-global +5% but V4-sliding fatal — the split design must respect
+  that asymmetry). Registered prediction to freeze before measuring.
+
+## Phase S — The sliding/global split (Architect's direction, 2026-07-04)
+
+Architect: globals work fine under APA; SLIDING layers are the
+problem — the mission includes making sliding as effective as global.
+June's own measurement is the mechanism: V4 cost +5% ppl on globals
+vs +1696% on sliding — with ≤1024 keys each V carries high attention
+weight and quant noise is not crushed by aggregation. IME framing:
+sliding layers sit in the small-N regime where the geometric bulk has
+not formed; the bulk-bits floor is higher there. "Same tiers
+everywhere" is the wrong design; the floor must be measured per layer
+class.
+
+- **S1. Depth-distribution study** (instrument already staged:
+  tests/gemma4_attn_dist.py — needs a GPU window): interaction-depth
+  distributions per layer class, GHOST_PRECISION style.
+  **Registered prediction (frozen pre-data): global layers show the
+  geometric bulk (APA-shaped); sliding layers show a suppressed bulk
+  and a higher stabilization floor.** If sliding shows NO usable bulk,
+  the honest conclusion is "sliding is tail-only — do not force bulk
+  economics"; quantized STORAGE (K8, V per the June asymmetry) is
+  then the sliding win, not blend compute.
+- **S2. K-side-first sliding APA:** the +1696% catastrophe was
+  V-side (output-direct). K-side quantization perturbs selection
+  only — APA's robust premise. Design: INT8-K scoring bulk + fp
+  refine (~r0.10 of 1024 keys) on sliding layers; V untouched in v1.
+- **S3. The sliding prize is compute + resident, not context:**
+  40/48 layers × 1024 keys/token dominates decode below ~5K context;
+  plus the fixed 40-layer resident cache. Success metric for sliding:
+  decode ms/tok and resident GB, at unchanged ppl (within noise, the
+  June sweep protocol) — NOT context ceiling (that's the globals'
+  trophy, Phase B).
+
+## Coordination
+
+- GPU is shared: translation-corpus target capture finishing
+  (~9.85K/9.86K shards); the translation fit queue (Codex) claims the
+  card next per the frozen PoC protocol. APA probe windows slot
+  between; ladders are one-process-each and resumable by design.
+- All measurements go in GEMMA4_PORT_LEDGER.md per house style;
+  registered predictions frozen before data; inconclusive is a result.
+
+
+# Gemma 4 12B Unified — tensor_cuda port ledger
+
+## K4+V4 RESIDENT KV-QUANT (2026-06-13) — the wall moved 14.3K → 16K+, MEASURED
+
+The tail-law arc completed: real 4-bit RESIDENT storage of BOTH K and V on
+the global layers (not a round-trip that stays bf16 — actual uint8 packed
+cache, ~4x cut). New engine primitive `tc.kv_int4_pack`/`kv_int4_unpack`
+(D-grouped symmetric-8, distinct from the K-grouped weight `int4_dequant`;
+the segfault-prone uint8 strided-copy avoided by writing raw uint8 in pack
+and st<float> in unpack). Bit-identical to the rt_int4 ppl math (max|d|=0).
+Wired into KVRing behind `GEMMA4_QUANT_KV4` (global-only — 4-bit V is fatal
+on the sliding window, +1696%). Config from the bulk-bits law (Gemma qk-norm
+=> 4): `int4_kv_glob` (K4+V4) = **+5.55% ppl** (baseline 119.85), survivable.
+
+**MEASURED CEILING LADDER — prefill-512 + sequential decode, 3070 8GB:**
+
+| | bf16 baseline | **K4+V4** |
+|---|---|---|
+| decode ceiling | **OOM at ~14,342** | **OOM at ~20,146** |
+| context gain | — | **+5,800 tok / +40%** |
+| @13,312 tok | 7835 MiB | 7609 MiB (−226) |
+| @16,384 tok | (dead) | 7767 MiB SURVIVED |
+| @19,456 tok | (dead) | 7767 MiB (cache PLATEAUED) |
+
+bf16 walls at ~14.3K; K4+V4 reaches ~20K — 40% more context on the same
+card. Key finding: past ~16K the q4 cache footprint PLATEAUS (7767 flat
+16K→19K — 4-bit per-token KV growth is negligible). The 20K wall is NOT
+the cache — it's the DECODE ATTENTION TRANSIENT (score/softmax buffers in
+the blend path grow with context). So the next memory lever shifted from
+storage-quant to the fused O(L) decode path. Lever identified, not yet
+pulled. NO REGRESSION: Qwen3.5 parity PASS, Gemma parity
+(q4 off) PASS w/ KV cosines 1.0000; r0.10 refine still −4.1% below standard
+(the APA path untouched). gemma4_decode_ceiling.py is the probe.
+
+## OVERNIGHT BUILD SUMMARY (2026-06-13) — KV-memory extension, 5 milestones shipped
+
+Goal: extend Gemma's context on 8GB beyond where bf16 walls (~8K). The
+APA was missing the fused O(L) path every other architecture uses; the
+tail-law storage arc was the load-bearing complement. Both built.
+
+| # | Milestone | Commit | Result |
+|---|---|---|---|
+| 1 | engine `write_rows` uint8 | `6b5e9b5` | storage-ring enabler, gated |
+| 2 | INT8 V-storage in KVRing | `a5c04b9` | all gates green; 8K survives 64MB lighter |
+| 3 | asymmetric K8+V4 measured | `a9f8373` | **−3.56% ppl, BEST mode** (anti-additive) |
+| 4 | D=512 fused kernel + bottom-right causal | `d57b76e` | engine 66/66; the causal trap caught proactively |
+| 5 | fused dispatch + chunked prefill quantize | `b267144` | **12K prefill survives at 7805 MiB — wall moved** |
+
+MEASURED CEILINGS (all rungs, one-process-each): **PREFILL** — bf16:
+solid ~10-11K, 12K RAGGED-EDGE (allocator nondeterminism at ~5%
+headroom — survived bare/gate at 7805 MiB, OOM'd in the ladder run),
+16K/20K hard OOM. qv (INT8-V): **12K SOLID at 7802 MiB** (firms up the
+ragged bf16 edge), 16K OOM. So the real prefill ceiling is **~12K**,
+bf16-marginal / qv-solid; INT8-V's ~64MB saving firmed the 12K floor
+but did NOT reach 16K (16K's footprint is well beyond the saving).
+**DECODE** — bf16 8K solid (12K OOMs in prefill), qv 8K at 7545 MiB
+(64MB lighter, ~6ms/tok dequant tax). NET: the stack took Gemma from
+walling at ~8K to a SOLID ~12K (prefill, qv) — a real ~1.5× extension
+toward the trained window, achieved as a managed rising wall, NOT
+MLA-flat (Gemma's full-width cache grows structurally). bf16 alone
+can't hold the trained 32K (~25K wall); these pieces let it climb. ·
+
+DISCIPLINE HELD: every quant test ACTIVE-guarded (no dead patches —
+one was caught: KVRing.append hook was a no-op, +0.000% across 7 modes
+flagged it); the bottom-right causal bug caught BEFORE shipping (vs the
+121→11M blowup it caused once); the −3.56% surprise flagged for
+confirmation not trusted; three fake OOMs correctly traced to
+allocator fragmentation, now fixed in test DESIGN (one-context-per-
+process). Open items: (a) confirm the −3.56% asymmetric; (b) asymmetric
+K8+V4 resident storage as a second opt-in (deepest-context config);
+(c) _v_get read-path opt (full-cap astype wasteful); (d) native uint8
+engine slice (nvcc segfaults on ld/st<uint8> — astype-then-slice
+workaround shipped).
+
+---
+
+**Started:** 2026-06-12 · **Hardware:** RTX 3070 8GB ·
+**Weights:** `/mnt/ForgeRealm/models/gemma-4-12B-it` (bf16, 22.3GB, Apache 2.0)
+**Directive:** straight to APA+GRM — no baseline benchmarking. PyTorch
+fp32 stays as the port-correctness oracle only (the established law).
+
+## Why this model
+
+12B dense, 48L = 40× sliding-window(1024) + 8× global attention — and the
+8 growing layers are **MQA with a single 512-dim head where K and V share
+one projection**. Growing cache ≈ 16KB/token raw (2KB/token/global-layer
+× 8), sliding layers hard-cap at 320MB. **Pure-KV model: no recurrent
+state — GRM seats compose (the thing DeltaNet states can't do); full
+KV-Graft arena semantics apply.**
+
+## Shape sheet (config + checkpoint verified)
+
+| | |
+|---|---|
+| hidden / FFN | 3840 / 15360, gelu_pytorch_tanh gated MLP |
+| layers | 48; global at i%6==5 (5,11,17,23,29,35,41,47), final global |
+| sliding attn | 16q/8kv, head_dim 256, window 1024, RoPE θ=1e4 full-dim |
+| global attn | 16q/**1kv**, head_dim **512**, K=V shared proj, p-RoPE θ=1e6 factor 0.25 |
+| vocab | 262144, **tied** embeddings (no lm_head in ckpt), pad 0 bos 2 eos {1,106,50} |
+| weights | `model.language_model.*`, 666 tensors; vision_embedder/embed_audio/embed_vision skipped (text-only) |
+| params | 11.96B total; INT4 resident est. ~6.3GB (incl. tied lm_head); embed gather host-side fp32 (~4GB RAM) |
+
+## REGISTERED TRAPS — verified in modeling_gemma4_unified.py (transformers 5.12)
+
+1. **RMSNorm is PLAIN w** — `normed * weight`, init ones. NOT Gemma 3's
+   (1+w). **No bake anywhere.** Applies to all norms incl. q_norm/k_norm.
+2. **`layer_scalar` is load-bearing**: per-layer ckpt scalar multiplies the
+   ENTIRE post-block hidden state (residual included) at every block exit.
+   Values 0.0045 (L11!) … 0.886. Omit it → garbage. fp32 multiply.
+3. **Attention scaling = 1.0.** No 1/√d — qk-norm does the conditioning.
+4. **Embed scale** = √3840 ≈ 61.9677 multiplies embedding output. HF
+   casts it to weight dtype (bf16 → 62.0); fp32 GT uses 61.9677 — use the
+   fp32 value in our host-side gather (diff is sub-INT4-noise).
+5. **Global K=V**: one k_proj (512 out), v_proj absent in ckpt.
+   K path: k_norm (scaled RMSNorm) → p-RoPE. V path: v_norm
+   (**scale-free** RMSNorm, no weight in ckpt), NO RoPE. Cache stores both
+   processed tensors (simple route, 2KB/tok/layer).
+6. **p-RoPE**: inv_freq = [θ^(−2i/512) for i<64] ++ zeros(192) → 256
+   freqs, full-width 512 rotary apply; zero-freq dims are identity
+   (cos 1, sin 0). rotate_half convention, fp32 tables.
+7. Sliding RoPE: standard full 256-dim, θ=1e4.
+8. **Sliding mask**: kv ∈ (q−1024, q] — includes self, 1024 keys max.
+   Cache ring keeps last 1024 per sliding layer.
+9. **Sandwich norms** (Gemma-2 style): input_ln → attn → post_attn_ln →
+   +residual; pre_ffw_ln → mlp → post_ffw_ln → +residual.
+10. **Final logit softcap 30.0**: logits = 30·tanh(logits/30), after tied
+    lm_head. No attention softcap (param exists, never passed).
+11. RMSNorm formula: x·(mean(x²)+eps)^−0.5 in fp32 then ·w, cast back;
+    eps=1e-6 INSIDE the rsqrt.
+12. RoPE applied in (B,S,H,D) layout pre-transpose (unsqueeze_dim=2) —
+    same math as our post-transpose path, keep our layout.
+13. qk-norm present → **bulk-bits law predicts bulk_bits=4** (6th
+    architecture test). q_norm/k_norm per-head-dim (512 global / 256
+    sliding), scaled, plain-w.
+14. Inert machinery (config-disabled): num_kv_shared_layers=0, MoE off,
+    double-wide MLP off, use_bidirectional_attention="vision" (text =
+    causal everywhere). Don't port.
+15. Chat template (thinking OFF is the default render):
+    `<bos><|turn>user\n…<turn|>\n<|turn>model\n<|channel>thought\n<channel|>`
+    — generation continues directly after the pre-filled empty thought
+    block. `<|think|>` (id 98) in system prompt enables thinking.
+    eos set {1, 106, 50}; suppress {258882, 258883}.
+16. Engine has exact `gelu` (tanh approx, √(2/π), 0.044715) — matches
+    gelu_pytorch_tanh. No new kernels required for this port.
+
+## Gate plan (same law as Qwen3.5)
+
+- **GT oracle**: tests/gemma4_gt.py — fp32 CPU via transformers 5.12,
+  3 prompts: full per-layer hiddens, final logits, greedy 16, k/v probes
+  at L0 (sliding) and L5 (global). Adjudication is margin-based
+  (INT4-vs-fp32: flips must sit at GT near-ties).
+- **State gate**: save/restore hybrid… no, *pure-KV* caches —
+  bit-identical continuation post-prefill and mid-decode.
+- **APA gate**: apa_selective on the 8 global layers (cuBLAS blend,
+  head_dim 512 > fused cap 128; single KV head → trivial codebook
+  granularity), bulk4/refine 0.15 predicted; flips vs standard ≈ 0.
+- **Ready gate**: the consumer's own loop through the serving shim — the
+  only valid done signal.
+
+## Results
+
+### Forensics: bf16-origin INT4-g128 FAILS on this model (2026-06-12)
+
+First parity run vs fp32 GT: late-layer collapse (trail: L41 cos 0.71,
+L47 0.28, final-norm 0.67; worst flip costs 8.7-9.2 logits). Bisection
+chain, each step decisive:
+
+1. **GT hidden semantics adjudicated from checkpoint math**: hidden[0]
+   = scaled embeds; hidden[48] reproduces GT logits through the tied
+   head with NO extra norm → it is POST-final-norm. The naive L47 probe
+   compared pre-norm vs post-norm (artifact); entries 1..47 are layer
+   outputs as assumed.
+2. **Graph definition EXACT**: GT's own L46 output pushed through this
+   port's L47 graph in fp64 numpy with exact weights reproduces GT's
+   hidden[48] at cos 1.000000 (gemma4_l47_probe.py).
+3. **Engine execution EXACT**: stage-by-stage L47 attention on the
+   engine vs an fp64 reference with the same INT4-dequantized weights:
+   1.00000 at every stage (gemma4_l47_engine_bisect.py).
+4. **bf16 exonerated**: HF-bf16 vs HF-fp32 stays ≥0.995 cos all 48
+   layers, zero top-1 flips, last|d| 1.45 (gemma4_gt_bf16.py).
+5. **SMOKING GUN**: full 48-layer host simulation in fp32 with
+   quantize→dequantized g128 weights reproduces the engine trail
+   layer-for-layer (L41 0.707/0.706, L47 0.284/0.282, final
+   0.676/0.675; gemma4_int4_sim.py). **The entire divergence is
+   post-hoc INT4-g128 quantization noise on Gemma 4's weights.**
+
+Notes: damage concentrates at GLOBAL layers (MQA 1-KV-head — all 16
+query heads share the noisy key/value, no cross-head averaging) and is
+amplified by massive-activation outlier dims (hidden[24] has a 220:1
+outlier; cosine on raw hiddens is dominated by them — the 0.28→0.67
+"recovery" through the final norm is those dims being down-weighted).
+**This is why Google ships a QAT release for Gemma 4** — the Architect
+flagged the QAT repo before the evidence landed.
+
+Requant check (gemma4_qat_requant_sim.py): QAT weights re-quantized at
+g128 wander less (final cos 0.84, top1 held on prompt 0) but lose much
+of the QAT benefit → exact import required.
+
+### QAT pivot: exact q4_0 import (the production path)
+
+- Engine: **symmetric-8 INT4 variant** (Project-Tensor, commit after
+  0eb2ca9): empty zeros tensor → kernels derive z = −8·s in-register
+  across all three int4 paths. The q4_0 grid w = s·(q−8) is
+  represented BIT-EXACTLY at group_size 32 with no zeros tensor
+  (~0.75GB VRAM saved). Engine gate: dequant max|d| 0.0 on the grid,
+  GEMV/tile/two-stage rel err ~3e-7, asymmetric regression max|d| 0.0;
+  full suite 62/62 green.
+- Port: `Q40LinearTC` + `_q40_repack` (GGUF j/j+16 nibble interleave →
+  engine even/odd pairs; verified byte-exact vs gguf dequantize on
+  attn/ffn shapes). `load_weights_qat` = default. Only post-hoc tensor:
+  the tied head (token_embd ships Q6_K) requantized at g32 asym.
+- GGUF facts: norms PLAIN w (means match safetensors — no +1 shift);
+  `rope_freqs` = freq_factors [1.0]×64 ++ [1e30]×192 — llama.cpp's
+  encoding of p-RoPE, independently confirming ours; layer_output_scale
+  values differ from the bf16 release (QAT is a distinct training).
+- GT: QAT GGUF dequantized → fp32 HF checkpoint (2 shards — a single
+  48GB save_file OOMs 62GB RAM) → transformers is the oracle for the
+  SAME weights the engine serves (tests/gemma4_qat_to_hf.py).
+
+### Gates vs QAT GT (engine = exact q4_0 import, 2026-06-12)
+
+| Gate | Result |
+|---|---|
+| **PARITY** | **PASS** — top-1 75/80; worst flip cost 1.081 (true near-ties; was 8.7-9.2 pre-QAT); L0/L5 caches 0.9999-1.0000; final-norm cos 0.965-0.9999. Engine-vs-QAT-GT distance = bf16 compute noise, as predicted. |
+| **STATE** | **PASS** — pure-KV save/restore bit-identical, post-prefill and mid-decode. |
+| **APA** | **PASS** — apa_selective bulk4/refine 0.15 on the 8 globals: 4/80 flips, worst 0.25 logits. **Bulk-bits law (qk-norm → 4): 6th architecture.** |
+| **LONGCTX** | **PASS** — 1200-tok prefill vs HF fp32: top-1 match (the external adjudication of band mask + ring trim); cross-boundary chunking (512 vs 384) top-1 consistent; greedy continuations identical. |
+| **READY-TO-WORK** | **PASS** — corpus driver's own run_shard through the shim: **10/10 validated STORED_IN templates in 44s** (one request, cold). APA explicitly ON and logged. |
+
+### Speed ladder (begins 2026-06-12; measured at the ready gate)
+
+| Configuration | decode | cold prefill | warm (GRM mount) |
+|---|---|---|---|
+| v1: fused-tile/GEMV only, chunk 512 | 4.6 tok/s | 22 ms/tok (15.2s @ 691) | — |
+| + GEMV 96KB shmem (engine `2d628d6`; ffn_down K=15360 onto GEMV) | 8.6 tok/s | 15.2s (unchanged, tile) | — |
+| + free prefix minting (slice the request's own caches) + len-1 cap | 8.6 tok/s | 15.2s | **prefill 0.2s, mounted 690/691** |
+| + concat projections (qkv / gate\|up: 7→4 GEMV launches), fused head norms, no-repeat_kv decode attention | 13.5 tok/s | — | — |
+| + APA context threshold (blend only past 2048 tok; the per-token whole-cache requant at S=700 was pure overhead — gate forces threshold 0 to keep testing the machinery) | 15.0 tok/s | — | — |
+| + native-dtype GEMV staging + fused `rope_apply` (engine) | 15.4 tok/s | — | — |
+| + **fused causal_softmax at decode** (the composed softmax chain measured **580µs/layer** on an 11K-element tensor — 23ms/token!) + no-op ring-trim guard | **31.0 tok/s (32.3 ms/tok)** | — | — |
+
+Forensic method note: the rope rung "should" have saved 14ms and saved
+1.5 — the launch-cost model was wrong (dispatch measured 5.6µs, not
+25µs). Micro-benchmarks of every decode op at REAL shapes then put the
+missing 0.8ms/layer in softmax (580µs) and full-cache "trim" copies
+(91µs) — both confirmed by the post-fix step time landing within 1ms
+of the micro-bench prediction. Measure, don't model.
+
+Remaining levers (diminishing): `down` GEMV at 179 GB/s (others
+320-355); cat-append cache copies (~95µs/layer — needs an engine ring
+op or capacity-doubling); cold prefill on the tile path (column-
+blocked two-stage cuBLAS); CUDA graphs.
+
+### Softmax investigation (Architect-directed, 2026-06-12)
+
+Two latent bugs found, both invisible to every prior gate on every
+model:
+
+1. **Engine trailing-axis reductions ran one thread per OUTPUT**
+   (533µs for an 11K-element max — 16 working threads on the GPU).
+   Block-per-row fast path: 57×/51× (engine `eb20615`). Explains the
+   580µs/layer composed softmax completely. All composed paths (qwen
+   stack, training, APA internals) inherit the fix.
+2. **APA blend causal mask was TOP-LEFT aligned for cached chunks** —
+   and this bug had ALREADY BEEN FIXED ONCE (Architect's catch):
+   `functional._causal_mask` carries the bottom-right fix with the
+   measured anecdote from the KV-Graft era. The blend path kept its
+   OWN private mask construction (`_CAUSAL_BLOCK_CACHE`,
+   `triu(k=i+1)`, assumes L==S) and the fix never propagated. Every
+   rectangular-with-cache APA call silently blinded queries to the
+   most recent S−L keys; survived because ALL APA gates ran square
+   cacheless shapes. Found by the refine ppl sweep (ppl 121 →
+   11,000,000). Fix: the blend now SLICES the canonical
+   `functional._causal_mask` (single implementation, equivalence
+   verified incl. square shapes; private cache deleted); APA gate
+   carries a permanent rect-with-cache check. TWO LESSONS
+   (registered): (a) gate the regime the feature EXISTS FOR, not the
+   shapes that are convenient; (b) a fixed bug isn't fixed while a
+   duplicate of the buggy logic survives — fixes must hunt their
+   copies.
+
+**Refine-percentile ppl sweep** (wikitext raw, 6×2048-token windows,
+1024 scored each, blend forced active, post-fix):
+
+| setting | ppl | vs standard |
+|---|---|---|
+| standard | 121.74 | — |
+| apa r0.15 | 119.53 | −1.8% (noise) |
+| apa r0.10 | 117.30 | −3.6% (noise) |
+| apa r0.05 | 121.29 | −0.4% (noise) |
+
+The Architect's r0.10/r0.05 prior transfers: **refine cost is
+unmeasurable at this sample size, down to r0.05.** (Absolute ppl ~121
+on raw untemplated text is consistent with the -it model's hard
+template binding; HF control pending. The APA conclusion is relative —
+same harness, same data, only the attention path varies.)
+
+All attention softmaxes also now route through the fused row kernel at
+inference (`functional.py`): masks fold into scores, then
+causal_softmax over L=1 rows — 8× at band-mask prefill shapes.
+
+### OOM ceiling probe (Architect-directed, 2026-06-12) — tests/gemma4_oom_ceiling.py
+
+Predictions registered BEFORE measurement; per-process ladders (an
+OOM episode leaves the allocator fragmentation-pinned — ~1GB of
+reserved segments survive gc + dual-pool flush; ONE MODE PER PROCESS
+is the only rigorous ladder). 1K stages, PREFILL_CHUNK=256.
+
+| mode | ceiling | decode at top rung |
+|---|---|---|
+| APA r0.10 (blend >2048) | **3,072 tok** | ~757 ms/tok |
+| standard | **6,144 tok** | ~791 ms/tok |
+
+**Standard runs 2× further — the registered MQA-expansion prediction
+confirmed, the Architect's design expectation ("APA should run
+longer") violated BY THE IMPLEMENTATION:** `_cublas_blend_attention`
+opens with `_repeat_kv(k, 16)` (+ expanded kq and V) — written in the
+GQA era (2-4× expansion), it materializes 16 copies of the global
+cache on this MQA architecture. Registered fix: grouped-batch GEMMs
+against UNEXPANDED K/V (the decode fast path's trick) — after which
+APA's bounded score blocks beat standard's L×S prefill scores by
+construction and the design contract holds.
+
+Both modes share the bigger disease: decode is ~770-790 ms/tok at
+EVERY rung past 1K (flat with S; 24× the 32ms at S=700) — the
+cat-churn signature: at full rings every token allocates+copies
+~670MB of cache tensors (cat append + trim slice ×40 layers) against
+a near-full card. **Registered fix (THE long-context enabler): ring
+buffers** — sliding layers get fixed (KV,1024,D) buffers + one
+in-place row write/token + bias-masked invalid rows (zero-init keeps
+softmax NaN-safe); globals get capacity-doubling append. Steady-state
+decode cache copies → ZERO. Contract change: in-place writes end
+pure-functional cache sharing — live caches are exclusively owned by
+their decode loop; sharing requires explicit copy (GRM already copies
+via the host round-trip; state gate re-registers the semantics).
+
+Serving today is unaffected (corpus prompts ~700 tok sit below all of
+this); these are the long-context tickets, in order: ring buffers →
+blend de-expansion → re-probe (expect APA > standard) → V-side APA.
+
+### Ring rework (2026-06-12, "build the ring buffers — APA gets its rematch")
+
+Engine: `write_rows` (in-place ring block write, grad-guarded, gated
+exact incl. wrap). Port: `KVRing` — sliding layers ring at window
+1024, globals capacity-double; decode appends are in-place; invalid
+rows bias-masked (zero-init keeps softmax finite); lazy per-layer
+conversion from prefill tuples at first decode; prefill-after-decode
+unwraps via `ordered()` (two-slice unroll on wrap — band masks need
+temporal order; attention itself doesn't). OWNERSHIP CONTRACT: the
+decode loop owns ring buffers; sharing copies (GRM host round-trip
+already does).
+
+**Measured (per-step, synchronized): steady decode 28.8 ms/tok at
+S=1100+ — flat with S, faster than the 32.3ms tuple-path at S=700,
+27× the churn-era 773ms.** Ring decode is exactly deterministic
+through the wrap boundary (C1 gate).
+
+Iteration lessons (each OOM-proven, each fixed):
+1. Saving rings as FULL BUFFERS made a 48-token state file 670MB and
+   OOMed its own restore → save VALID ROWS + ring flag; wrapped rings
+   restore with count==cap so the next append hits the logical-oldest.
+2. FIXED-size rings cost ~370MB per cache set at ANY context (state
+   gate holds 3 sets) → capacity-double from 64, cap at window, wrap
+   only at window.
+3. Per-chunk prefill score transients (16·step·S_all·2B ×2) OOM past
+   ~3-4K → ADAPTIVE chunking holds the transient ≤32MB (step shrinks
+   with context, floor 64).
+4. KVRing guards its own in-place writes (load_caches runs outside
+   caller no_grad).
+5. Probe methodology: the v1 ladder (interleaved prefill/decode
+   stages) produced decode numbers 27× off the clean per-step
+   measurement and cycled caches through unwrap/reconvert each rung —
+   superseded by gemma4_decode_probe.py (one prefill, long decode,
+   one process per (mode, S)). And — third strike — NEVER grep-filter
+   a failing gate's output; full logs to /tmp, always.
+
+### The rematch (blend de-expansion + maskless prefill, 2026-06-12/13)
+
+- **MQA blend de-expansion** (`_cublas_blend_attention` MQA branch +
+  unexpanded call site): q heads fold into rows against the unexpanded
+  K/quantized-K/V — the expansion path materialized 3× ~200MB per
+  chunk at 12K. **Proven numerically exact**: synthetic diff vs the
+  expansion path max|d| 0.0156 (bf16 ulp), isolated-real rect check
+  worst flip 0.361 (cleaner than the expansion path's 1.18).
+- **Maskless global prefill**: causal_softmax's built-in bottom-right
+  causal replaces materialized masks (adaptive chunking gave every
+  chunk a unique (L,S) → ~200MB of mask-cache churn at 12K;
+  rectangular semantics verified exact at all shapes incl. L=1).
+- **CASCADE SENSITIVITY (registered phenomenon, not a bug)**: two
+  equally-valid pipelines (blend vs standard, or different chunkings)
+  compound benign per-chunk rounding chaotically over 48 layers ×
+  hundreds of tokens — isolated blend worst 0.361 vs
+  blend-through-prefill 5.9 ON THE SAME INPUTS. Gates must test the
+  MACHINERY (isolated) and treat cross-pipeline cascades as
+  informational; the APA rect check now isolates (apa_min_context >
+  prefill length).
+
+**Ring-era scoreboard (decode probes, real serving shape):**
+
+| S | standard | APA r0.10 (de-expanded) |
+|---|---|---|
+| 1.1K | 28.8 ms/tok | — |
+| 4K | **47.0 ms/tok, SURVIVED** (7.39GB) | **56.1 ms/tok, SURVIVED** (7.54GB) |
+| 8K | **69.7 ms/tok, SURVIVED** (7.64GB) | OOM — `_quantize_keys` |
+| 12K | OOM — prefill budget (weights 6.77 + rings 0.34 + KV 0.2 leave ~340MB for transients+fragmentation) | OOM — `_quantize_keys` re-quantizes the WHOLE cache per call and materializes a reconstruction |
+
+**Verdict on the rematch:** standard reaches 8K, APA dies at 8K — APA
+runs SHORTER, the OPPOSITE of the design intent ("APA should run
+longer"), confirmed measured. BUT the cause is now pinpointed and it
+is NOT the algorithm: `_quantize_keys` (tensor_cuda/quant.py) rebuilds
+the entire quantized key set AND a full-precision reconstruction
+(`tc.matmul(centroids, Rb) * norms`) EVERY decode step — O(S) work and
+O(S) transient per token, on the whole growing cache. The
+`cache_apa_kq` lever (incremental: quantize only the appended key,
+reuse cached quantized prefix) already exists in GQAAttentionTC and
+was simply never wired into the Gemma port. Wiring it makes APA's
+per-step cost flat and its transient bounded — exactly the design
+contract — and is the gate to APA outrunning standard. Registered as
+the next ticket.
+
+Where the pre-ring stack decoded at 0.8s/tok and died at 5K, both
+modes now serve real decode at 4K+. Remaining long-context tickets:
+incremental kq caching (the `cache_apa_kq` lever that ALREADY EXISTS
+in GQAAttentionTC, never wired here), prefill-into-rings, and the arc
+that actually moves the 12K wall for BOTH modes: **quantized KV
+STORAGE** (INT8 → 4-bit bulk + hot set per the Architect's tail law —
+where APA stops being scoring-only and starts extending memory).
+
+### Root-cause: WHY APA runs shorter on Gemma but longer elsewhere (multi-agent investigation, conf 0.88)
+
+The contradiction has TWO layers; a single mechanism explains the
+proximate OOM, three stacked deficits explain the sign flip.
+
+**Proximate cause (the OOM):** Gemma APA decode re-quantizes the
+ENTIRE growing global cache every token — `gemma4_tc.py:401` calls
+`_quantize_keys(kv_cache.ordered())` on the whole `(1,1,S,512)` cache;
+`new_kv = ring_cache` (`:394`) stashes NO kq, so it recomputes from
+scratch each step. `_quantize_keys` (`quant.py:120-127`) materializes
+5-6 simultaneous fp32 `(1,1,S,512)` tensors (kd, kd*kd, unit, rotated,
+centroids, recon). At S=8192 that is ~80-96 MiB transient; the OOM
+trace lands EXACTLY on `recon = matmul(centroids,Rb)*norms`
+(`quant.py:127`), on APA's FIRST decode step (transient, not a leak).
+Standard's competing transient is the ~0.5MB `(1,1,16,cap)` score
+pair — two orders smaller — so standard survives 8K (7641 MiB) where
+APA OOMs.
+
+**Why the SIGN FLIPS (three stacked deficits, none present elsewhere):**
+1. `cache_apa_kq` (incremental decode: quantize only the new key,
+   concat onto cached prefix — `mistral7b_tc.py:418-420,459-463`) is
+   WIRED on the GQA ports, never ported to Gemma. Makes APA's per-step
+   quantize transient O(1) vs Gemma's O(S).
+2. The fused O(L)-memory kernel `apa_selective_attention` — the real
+   source of "APA longer" elsewhere (MiniCPM3: std 3,072 vs APA
+   **32,768**) — is ARCHITECTURALLY FORBIDDEN on Gemma:
+   `kernels.cu TC_APA_MAXD=256`, hard-throws for head_dim>256, Gemma
+   global D=**512**. Gemma can ONLY run the transient-heavy cuBLAS
+   blend fallback.
+3. No INT8 KV storage (`quant_kv_cache=True` elsewhere) + ~6.8GB QAT
+   body on 8GB: standard's own 8K decode high-water is only ~128 MiB,
+   so any tens-of-MB transient is fatal.
+
+**Adversarially RULED OUT:** the 16x MQA blend (de-expansion already
+fixed it; OOM is in `_quantize_keys`, not the blend); head_dim-512 as
+prime cause (MQA makes Gemma's KV×D=512 the SMALLEST of all APA ports —
+if head_dim drove it MiniCPM3's 40×96=3840 would die first; it's a 2x
+multiplier riding the true cause); fixed-overhead-shifts-the-wall (the
+transient is provably O(S·D) by structure); ordered()-copy (globals
+return slice VIEWS, zero copy); resident leak (no kq stashed back).
+
+**Fix + honest scope:** wiring `cache_apa_kq` collapses the decode
+transient ~80-96 MiB → ~16-32 KiB and lets APA CATCH UP to standard's
+8K decode ceiling. It does NOT restore "APA longer" on Gemma: (a) the
+12K APA OOM is in PREFILL, where the incremental lever is inert
+(whole-span quantize), and (b) outrunning standard needs raising
+`TC_APA_MAXD` to admit head_dim 512 into the fused kernel AND/OR INT8/
+4-bit KV STORAGE (the tail-law arc). Decisive test: allocator
+high-water for one S=8192 APA decode step, current path (~80-96 MiB
+spike at quant.py:125-127) vs a one-key incremental patch (~16-32 KiB),
+then re-run the 8K decode ceiling probe with cache_apa_kq wired.
+
+**Open:** an unexplained ~110 MiB of allocator high-water at S=4096
+(derived quantize transient is only ~44 MiB there) — wants a live
+allocator trace to isolate fragmentation vs a near-fixed cuBLAS
+workspace. The cross-model "APA longer" baselines are from the
+MiniCPM3 results doc + code levers, not a freshly measured GQA
+scoreboard this session.
+
+### THE FIX: incremental kq cache wired into Gemma APA decode (2026-06-13)
+
+Implemented the cheap lever the two investigations pointed at. `KVRing`
+gains a parallel `kqb` quantized-key ring + `kq_count`; `quantized_keys
+(quantize_fn)` quantizes ONLY newly-appended rows `[kq_count:count)`
+(O(D)/step) and caches them — a key's quantization is fixed once it is
+roped+written, so this is exact (verified row-independent: incremental
+== whole-span, bit-identical at the same batch shape; the cross-batch
+fp32 reassociation diff is 2.6e-6, bf16-noise class). The decode APA
+branch reads cached kq + the unexpanded MQA cache directly into the
+de-expanded blend — collapsing the per-step quantize transient from
+~80-96 MiB (the measured 8K-decode OOM) to ~16-32 KiB.
+
+kq is DERIVED state, never persisted (save/load round-trips k/v only;
+kqb re-derives lazily on the first APA call after restore). Gate:
+`tests/gemma4_apa_incremental.py` — all 8 global layers engage
+(kqb populated, kq_count==count, none re-quantized), greedy
+deterministic. Unit test: `quantized_keys` is bit-exact vs whole-span
+at matched shapes.
+
+**RESULT — APA SURVIVES 8K DECODE (the deliverable):** the rung where
+APA OOM'd in `_quantize_keys` before now serves at 73.9 ms/tok,
+7.61GB — *lighter than standard's own 8K high-water (7.64GB)*. APA has
+CAUGHT UP to standard's decode ceiling (both ~8K) — exactly the
+kernel-investigation prediction ("cache_apa_kq makes APA catch up, not
+outrun"). APA decode 4K also improved: 50.1 ms/tok / 7.51GB (was
+56.1 / 7.54 pre-fix — faster AND lighter, no per-step requant).
+
+Wiring the incremental cache SURFACED three latent memory issues that
+nothing had stressed because no run reached APA this deep before —
+each a real fix helping BOTH modes:
+1. **bf16-direct ring allocation** (`_zeros` via `tc.zeros(dtype=...)`):
+   the old `_cast(tc.tensor(np.zeros(fp32)))` transiently needed 2× the
+   final bf16 size — OOMed kqb alloc at 8K.
+2. **chunked cold-start quantize**: the first APA decode quantizes the
+   whole prefill span — `quantized_keys` does it in 512-row slices
+   (row-independent → bit-exact), capping the one-time transient.
+3. **bounded capacity growth** (`_grow_cap`): pure power-of-two
+   doubling wasted up to 2× — next_pow2(8193)=16384 held 8192 tokens
+   at 8K (+100%). Now: double while small, +2048 blocks once large →
+   8K cap 16384→10240 (+25%), ~150MB recovered at the pressure point.
+   Helps STANDARD too (it paid the same overallocation).
+
+**Honest ceiling:** APA 12K still OOMs — but in PREFILL (the prefill
+APA branch's whole-span `_quantize_keys`, ~140MB transient), NOT
+decode. Decode is fixed. The 12K prefill wall is the same chunking
+idea applied to the prefill branch, a distinct ticket; and 12K may
+not fit 8GB regardless given resident KV. The dramatic ceiling
+extension (APA OUTRUNNING standard) still needs quantized KV STORAGE
+(the tail-law arc) — incremental kq carries +50% resident (the kqb
+ring), so it equals standard's ceiling, doesn't exceed it.
+
+### IMPLEMENTED: INT8 V-storage (the ceiling lever, 2026-06-13 overnight)
+
+Built the measured-safe storage quantization. Engine: `write_rows`
+uint8 path (commit 6b5e9b5 — strided raw copy, dtype-agnostic; the
+slice-uint8 companion was attempted but nvcc SEGFAULTS instantiating
+dimcopy's ld/st<uint8>, so a native uint8 slice is a future ticket).
+Port (KVRing): `QUANT_V` flag (env GEMMA4_QUANT_V, default off) makes
+`vb` uint8 + `vsb` per-row scale; `_v_put` quantizes on write,
+`_v_get` dequantizes on read (astype-then-slice, since the engine
+slice is float-only — resident stays uint8 so the ceiling win holds;
+the read transient is the full cap buffer, registered as a read-path
+optimization follow-up). All sites routed: init/append/_grow1/ordered/
+the two attention reads/save_caches(via ordered)/load_caches.
+WHY V-only INT8 and K bf16: measured int8_v −1.5% (a mild regularizer)
+vs int8_glob +6.2% (the global K score-path is precision-sensitive —
+head_dim 512 with attention scale 1.0, no 1/√d damping). Smoke: 48
+rings uint8+scale, coherent decode, save/load round-trips.
+
+**GATES (GEMMA4_QUANT_V=1): PARITY / APA / LONGCTX PASS; STATE PASS
+as-corrected** — the "lossless bit-identical restore" contract became
+"round-trip-idempotent" (tokens match exactly, bf16-exact logit
+identity gone by design); the gate now demands bit-identity only at
+bf16, token-match at QUANT_V. Re-baselined honestly, not forced.
+
+**MEASURED CEILING (decode probe, qv):** 8K SURVIVES at **7545 MiB —
+64 MiB lighter than bf16-V's 7609 MiB** (the resident saving is real
+and shows up); decode 84 ms/tok (vs 74 bf16 — the dequant-on-read tax,
+recoverable by the registered _v_get read-path opt). **12K still OOMs
+— but in PREFILL (`_quantize_keys` whole-span fp32 transient ~140MB),
+NOT the V cache.** This is the predicted boundary: storage quant bends
+the RESIDENT slope (confirmed — 8K lighter), but the 12K wall is the
+prefill TRANSIENT, which only the fused D=512 kernel removes. The two
+pieces are complementary exactly as designed — storage + fused kernel,
+not storage alone. INT8 V-storage shipped (commit a5c04b9).
+
+CEILING (workflow-verified byte math, corrects the earlier "~32K
+modest" framing): bf16 KV can't even hold trained 32K on 8GB (~25K
+wall); uniform INT8 (12.3KB/tok global vs 24KB bf16, ~2×) reaches
+~38-51K realistic / ~51-65K optimistic — EXCEEDS trained 32K with
+margin. So INT8 is what lets Gemma reach its own designed context.
+Asymmetric (K8+V4+kqb4, ~1.4× further to ~53-92K) was a speculative
+reach gated behind the combined mode — **now MEASURED, and the result
+flips the decision:**
+
+**int8k_int4v_glob (K-INT8 + V-4bit on global) = 115.58 ppl, −3.56%
+vs baseline — the BEST mode in the entire table**, better than either
+component alone (int8_glob +6.2%, int4v_glob +5.1%) AND better than
+int8_v (−1.5%). The combination is ANTI-additive: the two perturbations
+partially cancel into net benefit (a regularizer effect), not compound.
+So asymmetric global K8+V4 is BOTH the best quality AND the bigger
+memory cut (~1.4× past uniform INT8) — genuinely worth building, not
+just survivable. (CAVEAT: a −3.56% "too good" result gets the same
+skepticism as the dead-patch +0.000% — ACTIVE-guard confirms it's real
+and the value is in-band/plausible, but a confirmation run is
+registered before it becomes the shipped default. The current shipped
+default is V-only INT8, conservatively.)
+
+### IMPLEMENTED: fused D=512 APA kernel wired — 12K PREFILL WALL MOVED (2026-06-13 overnight)
+
+The fused O(L)-memory `apa_selective_attention` path, the piece that
+was architecturally missing from Gemma's APA (it ran the memory-heavy
+cuBLAS blend at every context). Engine (commit d57b76e): TC_APA_MAXD
+256→512 + dispatch arm + the BOTTOM-RIGHT causal fix (s_max=(S-L)+i+1,
+was top-left — the 121→11M bug class, caught BEFORE shipping this time;
+regression tests cover non-square S>L + MQA-D512). Port: fast_max_seq
+=4096 switch at the global PREFILL APA site (decode stays on the blend
+— at L=1 the blend transient is ~1MB and the fused kernel loses 30× on
+the 16-block launch), PLUS chunked whole-span `_quantize_keys` (2048-
+row slices, bit-exact, caps the ~140MB fp32 recon transient the fused
+kernel doesn't touch).
+
+**MEASURED: 12K PREFILL NOW SURVIVES at 7805 MiB** (load 6759 + ~1046
+of cache/transients, ~390 MiB headroom) — where the blend OOM'd. The
+prefill wall moved from <12K to ≥12K. Fused≡blend equivalence: top1
+match, max|d| 1.25 (near-tie) at a shared context. NOTE: the gate must
+drain the allocator pool between contexts — running 1024 then 12K in
+one process fragmented the pool and falsely OOMed (the recurring
+one-process-per-context lesson; gate now flushes).
+
+So the complementary picture is now BUILT and MEASURED: incremental-kq
+(decode O(D)) + INT8 V-storage (resident ~2×) + fused kernel (prefill
+transient) together take Gemma from walling at ~8K to **12K prefill +
+deeper decode**, reaching toward its trained window. Asymmetric K8+V4
+storage (measured −3.56%, best mode) is the next resident lever for
+beyond 12K.
+
+### THE MISSING PIECE + the honest MLA-flatness limit (Architect's catch, 2026-06-13)
+
+The Architect sensed Gemma's APA was "missing something" — every other
+architecture saw massive memory gains, Gemma didn't. CONFIRMED in
+source: **Gemma's APA has NO fused-kernel branch.** MLA/GQA dispatch
+(minicpm3_tc.py:231-243, mistral7b_tc.py:432-441) switch to the fused
+O(L)-memory `apa_selective_attention` above fast_max_seq=4096 — that
+fused path is what ran MiniCPM3's 2,048→32,768 climb at ~10MB resident
+drift. Gemma runs `_cublas_blend_attention` at EVERY length (no
+fast_max_seq, no switch) because the fused kernel throws at head_dim>256
+and Gemma globals are 512. The prior "DON'T build D=512" verdict was
+correct ON THE SPEED axis and WRONG on the memory axis.
+
+**Two corrections to the framing (memory-feasibility investigation,
+conf 0.86):**
+1. The fused kernel saves memory at PREFILL, not DECODE (at L=1 the
+   blend transients collapse to ~1MB). The decode 8K wall was already
+   broken by incremental-kq. So the fused kernel is the **12K+ PREFILL
+   ceiling lever**, not the decode fix.
+2. **Gemma CANNOT get MLA-flat residency — it's a HARD architectural
+   difference.** MLA flattened because its cache is a tiny fixed latent
+   (~288 vals/token). Gemma globals are full-width MQA: kb+vb+kqb =
+   24KB/token, growing linearly, ~85× heavier per token, structural
+   (from the trained 512-wide single-head global attention). No kernel
+   flattens it. Honest ceiling: fused kernel converts an early ~8-12K
+   TRANSIENT wall into a later ~24-32K RESIDENT wall (a rising line
+   192→768MB across 8K→32K, NOT MLA's flat shelf); +INT8/4-bit storage
+   bends the slope ~1.5-2.7× shallower (clears 32K with margin). The
+   achievable goal is "reaches the trained 32K window as a managed
+   rising wall," not "memory never walls."
+
+**Build plan: BUILD-WITH-STORAGE.** Piece 1 (transient killer): D=512
+dispatch (TC_APA_MAXD 256→512, launch arm, delete throw) + fast_max_seq
+switch in the Gemma APA branch. TRAP (the same class that's bitten 3×):
+the fused kernel is TOP-LEFT causal (s_max=i+1) while the whole Gemma
+stack is BOTTOM-RIGHT — they agree ONLY at S==L, and Gemma always
+chunks prefill onto a cache (S>L), so a naive wire is the 121→11M-ppl
+bug AGAIN, and the existing kernel test runs only S==L so it passes
+while wrong. Needs a bottom-right/q_offset kernel mode + a NON-SQUARE
+regression test. Piece 2 (the load-bearing half — bends the resident
+slope, the only durable-ceiling lever): INT8/4-bit kb/vb storage in
+KVRing with dequant-on-read, gated by the ppl experiment below.
+
+**KV-STORAGE PPL (tests/gemma4_kv_quant_ppl.py, real wikitext 6×2048).**
+CORRECTION: an earlier version of this entry claimed "INT8 perceptually
+free, +0.000%, bit-identical" — that was a DEAD PATCH (it hooked
+KVRing.append, which only runs at first decode; the scored tokens flow
+through the prefill/cat path it never touched, so all 7 modes returned
+bit-identical ppl — the physical impossibility was the tell). The test
+now hooks `Gemma4AttentionTC.KV_STORE_HOOK` (every scored token's K/V,
+every path) with a NO-OP GUARD asserting each mode actually perturbs the
+logits. Real numbers (all ACTIVE, baseline 119.85):
+
+| mode | ppl | Δ | |
+|---|---|---|---|
+| int8_v | 118.02 | **−1.5%** | best — V-only INT8 safe |
+| int8_slide | 121.51 | +1.4% | safe |
+| int8_kv | 123.11 | +2.7% | borderline |
+| int4v_glob | 125.94 | +5.1% | marginal |
+| int8_glob | 127.25 | +6.2% | marginal |
+| int4v_slide | 2152 | **+1696%** | CATASTROPHIC |
+| int4v_all | 6559 | **+5373%** | CATASTROPHIC |
+
+**FINDINGS, against prediction:** (1) The "scale-free v_norm ⇒ V
+tolerates 4-bit like K" hypothesis is REFUTED — 4-bit V is fine on
+GLOBAL (+5%) but ANNIHILATES SLIDING (+1696%). Same quant, opposite
+outcome by layer class. (2) Likely mechanism: sliding attention sees
+only 1024 keys, so each V carries much higher weight (less softmax
+averaging) — a 4-bit V error on a high-weight value is NOT crushed (the
+un-crushed-hot-value risk the kernel workflow flagged). (3) INT8 is
+GOOD not free: int8_v (V-only) is the sweet spot at −1.5%; INT8 on K
+(int8_glob/kv) costs more (the score path is more precision-sensitive
+than the value path). (4) The tail-law arc's realistic operating point
+is **INT8 V-storage** (or INT8 sliding + INT8 V global), NOT blanket
+4-bit. 4-bit is reserved for the GLOBAL V only, and even there +5% needs
+a serving-quality decision. The 2.7× slope cut from blanket 4-bit is
+OFF THE TABLE; the achievable cut is ~2× (INT8) with a V-only refinement.
+
+### CAN the fused kernel be fixed for D=512? (kernel-feasibility investigation, conf 0.86)
+
+VERDICT: mechanically YES, but it's the WRONG LEVER — DON'T build it;
+wire `cache_apa_kq` instead. Three findings (an agent RE-COMPILED the
+kernel with nvcc 12.0 -arch=sm_86 -Xptxas -v, numbers measured not
+estimated):
+1. The `TC_APA_MAXD=256` throw guards a register cliff THAT DOESN'T
+   EXIST. `acc[DMAX]` is dynamically indexed → ptxas places it in
+   LOCAL memory at EVERY head_dim (stack frame 512/1024/2048 B at
+   D=128/256/512); the comment claiming register residency is false.
+   D=512 compiles clean (42 regs, 13312 B smem, 0 spills), launches
+   legally (~7 blocks/SM, smem-bound), correct output. Removing the
+   throw is a 3-line change.
+2. But the fused kernel is a DECODE LOSER BY STRUCTURE: one block per
+   (b,h,row) → at decode L=1,B=1 it launches B*H*L=16 blocks on a
+   46-SM card, 30 SMs idle every token. Measured ~5.0ms (fused) vs
+   ~0.16ms (cuBLAS blend) at S=8192 — 30× slower. cuBLAS GEMV
+   saturates the device; one-block-per-row cannot. Warp-scoping
+   (the only correct non-naive restructure) makes it WORSE.
+3. And it's UPSTREAM of the wrong problem: the 8K OOM is in
+   `_quantize_keys` (the CALLER, before attention dispatches) — no
+   attention backend can fix it. The fused kernel's only real win is
+   prefill memory, already delivered by the blend de-expansion.
+
+So: `cache_apa_kq` (≈1-2 days, machinery exists in GQAAttentionTC,
+removes the measured O(S) requant transient) gets essentially ALL the
+win and is the ONLY thing touching the real allocation. A D=512 fused
+kernel would matter only for a future PREFILL-ceiling push (~2× slower
+prefill-memory win, gate above fast_max_seq); a decode-fast fused
+kernel needs a FlashDecoding split-over-S redesign (1-2 weeks), none
+of the explored approaches. Expected outcome of the cheap fix: APA
+reaches a HIGHER context ceiling than standard ("runs longer"), while
+staying a few ms/tok SLOWER per token (more quant work) — longer, not
+faster. That distinction is the whole claim.
+
+**Job economics at the ready gate: 10/10 validated templates in 16s
+warm** (vs 38s on the Qwen3.5 stack — fewer output tokens per accepted
+template; per-job this is already the fastest stack on the machine).
+GRM mint discovery: pure-KV means the state-at-cp is EXACTLY a slice
+of the request's own post-prefill caches (below the sliding window) —
+minting is FREE; the re-prefill mint (which doubled request latency)
+is only needed past 1023 tokens. Identical prompts mount via the
+len(ids)-1 cap. Prefix states stored in HOST RAM (8 GPU-resident sets
+would eat half the card), uploaded on mount (~30ms, invisible).
+
+Remaining decode rungs (8.6 tok/s = 116ms/tok vs ~25ms bandwidth-ish
+floor): profile first (qwen pattern — orchestration vs kernel split);
+GEMV occupancy at 60KB shmem (1 block/SM); cold prefill via
+column-blocked two-stage cuBLAS; CUDA graphs.
+
+Fixes en route (both registered): (a) the parity gate's last-layer
+probe now compares final-normed output vs GT hidden[48] (pre-vs-post
+norm comparison collapses by construction under massive activations);
+(b) **auto-chunked prefill** (`PREFILL_CHUNK=512` in `__call__`) — the
+QAT body is ~6.8GB resident and single-shot long prefills OOM on
+transients; chunking bounds them. Trap within the fix:
+`last_token_only` must pass through to EVERY chunk — computing full
+chunk logits to discard them is a 0.8GB transient per chunk (OOMed
+once before the probe was caught). Operational lesson re-learned: ONE
+GPU job at a time — a second gate chain launched while the first still
+held the card produced two mutual-OOM casualties and one survivor.
+
+
+# GPT-OSS-20B APA/GRM Ledger
+
+This ledger records the operational trail for evaluating
+`openai/gpt-oss-20b` as a TensorCUDA / APA / GRM target.
+
+The implementation plan is immutable after its initial commit.
+
+## 2026-07-06
+
+Action: Opened the GPT-OSS-20B evaluation track.
+
+Repo state:
+- Repository: `/mnt/ForgeRealm/GraftRepository`
+- Branch: `codex/intn-model-ppl-sweep`
+- Starting point: `da13e20 docs: record qwen35 9b int3 usability gate`
+
+Reason for this track:
+- The user asked whether `gpt-oss-20b` is worth investigating.
+- The model has a potentially attractive shape for APA/GRM: RoPE/YARN,
+  GQA, MoE, low active parameters, and 131k context.
+- The model also has non-trivial implementation risk because the expert weights
+  are published in MXFP4 and require Harmony formatting.
+
+Source facts recorded:
+- HF config says `model_type = gpt_oss`.
+- `num_hidden_layers = 24`
+- `hidden_size = 2880`
+- `num_attention_heads = 64`
+- `num_key_value_heads = 8`
+- `head_dim = 64`
+- `num_local_experts = 32`
+- `num_experts_per_tok = 4`
+- `layer_types` alternate `sliding_attention` and `full_attention`
+- `sliding_window = 128`
+- `max_position_embeddings = 131072`
+- RoPE scaling uses YARN with factor `32.0`.
+- `vocab_size = 201088`
+- `tie_word_embeddings = false`
+- `quantization_config.quant_method = mxfp4`
+- Modules not converted by MXFP4 include attention, router, embeddings, and
+  lm_head.
+
+Remote metadata commands used:
+- `curl -sS https://huggingface.co/openai/gpt-oss-20b/raw/main/config.json`
+- `curl -sS https://huggingface.co/openai/gpt-oss-20b/raw/main/model.safetensors.index.json`
+- HTTP range reads of the three safetensors headers to inspect tensor dtypes,
+  shapes, and byte counts without downloading full weights.
+
+Memory metadata:
+
+| Component | Bytes | GiB |
+| --- | ---: | ---: |
+| MXFP4/U8 expert tensors | 10,152,345,600 | 9.455 |
+| BF16 non-expert tensors | 3,608,919,168 | 3.361 |
+| Total safetensors payload | 13,761,264,768 | 12.816 |
+
+Large BF16 tensors:
+
+| Tensor | Shape | Size |
+| --- | --- | ---: |
+| `model.embed_tokens.weight` | `[201088, 2880]` | 1104.61 MiB |
+| `lm_head.weight` | `[201088, 2880]` | 1104.61 MiB |
+
+Derived estimates:
+- If MXFP4 experts stay packed and BF16 non-experts move to INT4-ish
+  `4.25 bits/param`, total resident weight floor is about `10.348 GiB`.
+- If MXFP4 experts stay packed and BF16 non-experts move to INT3-ish
+  `3.25 bits/param`, total resident weight floor is about `10.138 GiB`.
+
+Interpretation:
+- Stock HF payload is likely too tight for a 12GB 4070 Super once runtime
+  buffers and scratch are included.
+- A local path may become viable only if the expert body remains packed and the
+  non-expert BF16 body is compressed.
+- Dequantizing experts to BF16 is not a viable 12GB strategy.
+- The model is graftable in principle because it uses RoPE/YARN, but the
+  implementation must capture/inject at the correct pre-RoPE boundary.
+
+Action: Added and ran the Phase 0 metadata snapshot script.
+
+Script:
+- `scripts/gpt_oss_20b_phase0_snapshot.py`
+
+Compile check:
+- `env PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 -m py_compile scripts/gpt_oss_20b_phase0_snapshot.py`
+
+Run command:
+- `env PYTHONUNBUFFERED=1 PYTHONPYCACHEPREFIX=/tmp/codex_pycache python3 scripts/gpt_oss_20b_phase0_snapshot.py`
+
+Artifact:
+- `artifacts/gpt_oss_20b/phase0_snapshot_20260706_182416.json`
+
+Snapshot result:
+- Resolved HF revision:
+  `6cee5e81ee83917806bbde320786a8fb61efebee`
+- Metadata files were downloaded into the local HF cache, but full weight
+  bodies were not downloaded through the HF path.
+- Runtime packages:
+  - `transformers = 5.12.0`
+  - `huggingface_hub = 1.13.0`
+  - `safetensors = 0.7.0`
+  - `vllm = None`
+  - `openai_harmony = None`
+  - `ollama_path = /usr/local/bin/ollama`
+- GPU baseline in the artifact:
+  `NVIDIA GeForce RTX 4070 SUPER, 275, 12282, 37`
+
+Config facts confirmed by artifact:
+- `model_type = gpt_oss`
+- `architectures = ["GptOssForCausalLM"]`
+- `num_hidden_layers = 24`
+- `hidden_size = 2880`
+- `intermediate_size = 2880`
+- `num_attention_heads = 64`
+- `num_key_value_heads = 8`
+- `head_dim = 64`
+- `num_local_experts = 32`
+- `num_experts_per_tok = 4`
+- `experts_per_token = 4`
+- `sliding_window = 128`
+- `max_position_embeddings = 131072`
+- `initial_context_length = 4096`
+- `rope_theta = 150000`
+- `rope_scaling.rope_type = yarn`
+- `rope_scaling.factor = 32.0`
+- `vocab_size = 201088`
+- `tie_word_embeddings = false`
+- `layer_types` alternate `sliding_attention` and `full_attention` across all
+  24 layers.
+- `quantization_config.quant_method = m

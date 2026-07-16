@@ -1,0 +1,144 @@
+{
+  "backend": "cuda",
+  "bridge_results": [
+    [
+      11,
+      102,
+      151,
+      177,
+      187
+    ],
+    [
+      48,
+      273,
+      145,
+      339,
+      113
+    ],
+    [
+      85,
+      68,
+      398,
+      12,
+      4
+    ]
+  ],
+  "bridge_wall_ms_first": 2224.012199,
+  "bridge_wall_ms_min": 159.972997,
+  "bridge_wall_ms_runs": [
+    2224.012199,
+    160.052518,
+    159.972997
+  ],
+  "capture": {
+    "capture_dir": "/mnt/ForgeRealm/qwen35_graft_translation_poc/captures",
+    "first_shards": [
+      "/mnt/ForgeRealm/qwen35_graft_translation_poc/captures/source_doc00cd7dc0ec810389_chunk009271.npz",
+      "/mnt/ForgeRealm/qwen35_graft_translation_poc/captures/source_doc00cd7dc0ec810389_chunk009272.npz",
+      "/mnt/ForgeRealm/qwen35_graft_translation_poc/captures/source_doc00cd7dc0ec810389_chunk009273.npz",
+      "/mnt/ForgeRealm/qwen35_graft_translation_poc/captures/source_doc04bc65bb2095774e_chunk007730.npz",
+      "/mnt/ForgeRealm/qwen35_graft_translation_poc/captures/source_doc04bc65bb2095774e_chunk007731.npz"
+    ],
+    "head_dim": 256,
+    "key_name": "l3_k",
+    "key_tokens": 256,
+    "kv_heads": 2,
+    "layer": 3,
+    "role": "source",
+    "shards": 595,
+    "skipped_shape": 5
+  },
+  "direct_cuda_results": [
+    [
+      11,
+      102,
+      151,
+      177,
+      187
+    ],
+    [
+      48,
+      273,
+      145,
+      339,
+      113
+    ],
+    [
+      85,
+      68,
+      398,
+      12,
+      4
+    ]
+  ],
+  "expected_results": [
+    [
+      11,
+      102,
+      151,
+      177,
+      187
+    ],
+    [
+      48,
+      273,
+      145,
+      339,
+      113
+    ],
+    [
+      85,
+      68,
+      398,
+      12,
+      4
+    ]
+  ],
+  "last_cuda_receipt": {
+    "device_route_ms_per_query": 0.7393280267715454,
+    "device_route_ms_runs": [
+      0.7884799838066101,
+      0.7413759827613831,
+      0.7393280267715454
+    ],
+    "device_route_ms_total": 0.7393280267715454,
+    "measured_queries": 1,
+    "route_repeats": 3,
+    "route_wall_ms": 0.769056,
+    "route_wall_ms_first": 0.889655,
+    "route_wall_ms_min": 0.769056,
+    "route_wall_ms_runs": [
+      0.889655,
+      0.783193,
+      0.769056
+    ]
+  },
+  "mismatches": [],
+  "nodes": 512,
+  "parity": true,
+  "preset": "qwen35-2b-attn",
+  "queries": 3,
+  "schema": "grm_gqa_cuda_bridge_smoke_v1",
+  "shape": {
+    "key_bank": [
+      512,
+      2,
+      256,
+      256
+    ],
+    "queries": [
+      3,
+      8,
+      4,
+      256
+    ],
+    "routes": [
+      512,
+      1,
+      2,
+      256,
+      256
+    ]
+  },
+  "topk": 5
+}

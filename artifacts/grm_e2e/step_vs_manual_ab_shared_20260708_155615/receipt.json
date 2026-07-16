@@ -1,0 +1,245 @@
+{
+  "schema": "grm_e2e_step_vs_manual_shared_ab_v1",
+  "setup": {
+    "pos": 97,
+    "S": 116,
+    "live_shift": 115,
+    "cur_mount_n": 65,
+    "cur_mounts": [
+      0
+    ],
+    "ranking": [
+      0
+    ],
+    "picks": [
+      0
+    ]
+  },
+  "prompts": {
+    "step": {
+      "sha256": "9025cc17865f2b94e8a4df8822ec0333347363728197752deb443441bb0d47f0",
+      "n": 46,
+      "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current cypher bridge value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>"
+    },
+    "leg1": {
+      "sha256": "5c5f09446230df2c5ba4a0e1111216323068e12a1430bfd9c54e034f60bc4027",
+      "n": 27,
+      "text": "<|start|>user<|message|>Recall probe. What is the current cypher bridge value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>"
+    },
+    "byte_equal": false
+  },
+  "A_text": "I will respond with \"Vortex-3-Sierra\" as the stored value",
+  "B_text": "I will respond with \"Vortex-3-Sierra\" as the stored value",
+  "C_text": "The current cypher bridge value is Vortex-3-Sierra.<|return|>.",
+  "A2_text": "I will respond with \"Vortex-3-Sierra\" as the stored value",
+  "A_ids": [
+    40,
+    738,
+    9570,
+    483,
+    392,
+    53,
+    78222,
+    12,
+    18,
+    6968,
+    23181,
+    1,
+    472,
+    290,
+    16240,
+    1432
+  ],
+  "B_ids": [
+    40,
+    738,
+    9570,
+    483,
+    392,
+    53,
+    78222,
+    12,
+    18,
+    6968,
+    23181,
+    1,
+    472,
+    290,
+    16240,
+    1432
+  ],
+  "C_ids": [
+    976,
+    2208,
+    5504,
+    29878,
+    23273,
+    1432,
+    382,
+    631,
+    78222,
+    12,
+    18,
+    6968,
+    23181,
+    13,
+    200002,
+    13
+  ],
+  "A2_ids": [
+    40,
+    738,
+    9570,
+    483,
+    392,
+    53,
+    78222,
+    12,
+    18,
+    6968,
+    23181,
+    1,
+    472,
+    290,
+    16240,
+    1432
+  ],
+  "value_in": {
+    "A": true,
+    "B": true,
+    "C": true,
+    "A2": true
+  },
+  "B_stop_events": [],
+  "divergence": {
+    "A_vs_B": null,
+    "A_vs_A2_clear": null,
+    "A_vs_C_prompt": {
+      "step": 0,
+      "diffs": {
+        "post_pos": {
+          "x": 143,
+          "y": 124
+        },
+        "post_S": {
+          "x": 162,
+          "y": 143
+        },
+        "chosen": {
+          "x": 40,
+          "y": 976
+        },
+        "top5_ids": {
+          "x": [
+            40,
+            62915,
+            52301,
+            17886,
+            976
+          ],
+          "y": [
+            976,
+            40,
+            17886,
+            52301,
+            3575
+          ]
+        }
+      },
+      "x": {
+        "tag": "prompt",
+        "in_n": 46,
+        "pre_pos": 97,
+        "post_pos": 143,
+        "rope_start": 212,
+        "pre_S": 116,
+        "post_S": 162,
+        "live_shift": 115,
+        "cur_mount_n": 65,
+        "shifts": [
+          "115"
+        ],
+        "inject": false,
+        "seats": [
+          "0"
+        ],
+        "chosen": 40,
+        "chosen_text": "I",
+        "top5": [
+          {
+            "id": 40,
+            "logit": 18.375,
+            "text": "I"
+          },
+          {
+            "id": 62915,
+            "logit": 17.5,
+            "text": "Sure"
+          },
+          {
+            "id": 52301,
+            "logit": 17.0,
+            "text": "Got"
+          },
+          {
+            "id": 17886,
+            "logit": 15.6875,
+            "text": "Will"
+          },
+          {
+            "id": 976,
+            "logit": 15.6875,
+            "text": "The"
+          }
+        ]
+      },
+      "y": {
+        "tag": "prompt",
+        "in_n": 27,
+        "pre_pos": 97,
+        "post_pos": 124,
+        "rope_start": 212,
+        "pre_S": 116,
+        "post_S": 143,
+        "live_shift": 115,
+        "cur_mount_n": 65,
+        "shifts": [
+          "115"
+        ],
+        "inject": false,
+        "seats": [
+          "0"
+        ],
+        "chosen": 976,
+        "chosen_text": "The",
+        "top5": [
+          {
+            "id": 976,
+            "logit": 17.375,
+            "text": "The"
+          },
+          {
+            "id": 40,
+            "logit": 17.0,
+            "text": "I"
+          },
+          {
+            "id": 17886,
+            "logit": 16.5,
+            "text": "Will"
+          },
+          {
+            "id": 52301,
+            "logit": 16.0,
+            "text": "Got"
+          },
+          {
+            "id": 3575,
+            "logit": 15.875,
+            "text": "You"
+          }
+        ]
+      }
+    }
+  }
+}

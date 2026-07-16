@@ -1,0 +1,54 @@
+{
+  "generation": {
+    "bos_count": 0,
+    "clean_english": false,
+    "collapse_signature": "other_degraded",
+    "ids": [
+      48,
+      15913,
+      3
+    ],
+    "live_shift": 789,
+    "n_steps": 3,
+    "position_offset": 0,
+    "step_walls": [
+      {
+        "layer_wall_sum_s": 35.368,
+        "n_layers": 56,
+        "tag": "prompt",
+        "wall_s": 35.368
+      },
+      {
+        "chosen": 48,
+        "layer_wall_sum_s": 33.959,
+        "tag": "g0",
+        "wall_s": 41.178
+      },
+      {
+        "chosen": 15913,
+        "layer_wall_sum_s": null,
+        "tag": "g1",
+        "wall_s": 40.741
+      },
+      {
+        "chosen": 3,
+        "tag": "g2",
+        "wall_s": 0.001
+      }
+    ],
+    "text": "1234",
+    "text_raw": "1234<|im_end|>",
+    "unique_id_ratio": 1.0,
+    "value_recovered": false,
+    "wall_s": 124.519
+  },
+  "graft_content_seated": false,
+  "honest_limitation": "Stream path cannot seat arena graft KV; live_shift on RoPE only. Value recovery UNCLASSABLE.",
+  "label": "w768_control",
+  "live_shift": 789,
+  "mode": "bf16_stream_fp32_compute_live_shift_stress",
+  "mount": false,
+  "probe_prompt": "<|im_start|>system\nYou are Trinity. Answer fact probes with the stored value only. Be concise.<|im_end|>\n<|im_start|>user\nRecall probe. What is the vault code? Reply with only the value.<|im_end|>\n<|im_start|>assistant\n",
+  "wall_s": 124.519,
+  "width": 768
+}

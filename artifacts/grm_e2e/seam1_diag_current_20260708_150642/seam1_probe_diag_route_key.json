@@ -1,0 +1,29 @@
+{
+  "answer": "I apologize for the confusion. It appears that the formatting has become garbled. Let's provide a clear, corrected version of",
+  "contains_lantern": false,
+  "info": {
+    "evicted": 72,
+    "live_tokens": 80,
+    "mounts": [
+      7
+    ],
+    "resident": 104,
+    "trip": 0
+  },
+  "mode": "explicit_memory_route_key_probe",
+  "mounted_texts": [
+    "The current cypher bridge value is lantern. Memory key CURRENT-FACT-CYPHER-BRIDGE."
+  ],
+  "probe_user": "Recall probe for CURRENT-FACT-CYPHER-BRIDGE. What is the current cypher bridge value? Reply with only the value.",
+  "refeed": [
+    {
+      "chat_node_id": 5,
+      "ntok": 72,
+      "turn": 4
+    }
+  ],
+  "remember_id": 6,
+  "remember_text": "The current cypher bridge value is lantern. Memory key CURRENT-FACT-CYPHER-BRIDGE.",
+  "schema": "grm_e2e_seam1_probe_diag_v1",
+  "wall_seconds_total": 33.40241046199844
+}

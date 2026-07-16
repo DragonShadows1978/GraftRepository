@@ -1,0 +1,239 @@
+{
+  "schema": "grm_graft_quant_transform_receipt_v1",
+  "created_at": "2026-07-08T08:07:07",
+  "src": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/supersession_4k_fp16_gate/graft",
+  "dst": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/supersession",
+  "storage_bits": 4,
+  "storage_group_size": 32,
+  "grouping_axis": "head_dim (last axis of (1,H,S,D)), group_size=32",
+  "quant_kind": "uniform_symmetric_per_group",
+  "bit_exact_at_16": null,
+  "num_layers": 24,
+  "wall_seconds": 1.9272902011871338,
+  "summary": {
+    "k_rmse_mean": 0.5454085816939672,
+    "k_rmse_max": 1.0422381162643433,
+    "v_rmse_mean": 0.2579827367638548,
+    "v_rmse_max": 0.47629010677337646,
+    "k_maxabs_max": 8.375,
+    "v_maxabs_max": 4.375
+  },
+  "per_layer": [
+    {
+      "layer": 0,
+      "layer_type": "sliding_attention",
+      "k_rmse": 0.9392181634902954,
+      "k_maxabs": 4.59375,
+      "v_rmse": 0.129085972905159,
+      "v_maxabs": 0.69921875,
+      "bit_exact": null
+    },
+    {
+      "layer": 1,
+      "layer_type": "full_attention",
+      "k_rmse": 1.0422381162643433,
+      "k_maxabs": 7.59375,
+      "v_rmse": 0.10077817738056183,
+      "v_maxabs": 0.51171875,
+      "bit_exact": null
+    },
+    {
+      "layer": 2,
+      "layer_type": "sliding_attention",
+      "k_rmse": 0.4858107566833496,
+      "k_maxabs": 2.12109375,
+      "v_rmse": 0.10874313861131668,
+      "v_maxabs": 0.580078125,
+      "bit_exact": null
+    },
+    {
+      "layer": 3,
+      "layer_type": "full_attention",
+      "k_rmse": 0.8234409093856812,
+      "k_maxabs": 5.25,
+      "v_rmse": 0.09487969428300858,
+      "v_maxabs": 0.66796875,
+      "bit_exact": null
+    },
+    {
+      "layer": 4,
+      "layer_type": "sliding_attention",
+      "k_rmse": 0.5924879312515259,
+      "k_maxabs": 7.59375,
+      "v_rmse": 0.14167723059654236,
+      "v_maxabs": 1.44921875,
+      "bit_exact": null
+    },
+    {
+      "layer": 5,
+      "layer_type": "full_attention",
+      "k_rmse": 0.6165243983268738,
+      "k_maxabs": 2.9140625,
+      "v_rmse": 0.11070454865694046,
+      "v_maxabs": 0.7578125,
+      "bit_exact": null
+    },
+    {
+      "layer": 6,
+      "layer_type": "sliding_attention",
+      "k_rmse": 0.4246442914009094,
+      "k_maxabs": 2.4453125,
+      "v_rmse": 0.15091796219348907,
+      "v_maxabs": 0.79296875,
+      "bit_exact": null
+    },
+    {
+      "layer": 7,
+      "layer_type": "full_attention",
+      "k_rmse": 0.5752736330032349,
+      "k_maxabs": 8.375,
+      "v_rmse": 0.15941721200942993,
+      "v_maxabs": 1.140625,
+      "bit_exact": null
+    },
+    {
+      "layer": 8,
+      "layer_type": "sliding_attention",
+      "k_rmse": 0.3723389804363251,
+      "k_maxabs": 2.30078125,
+      "v_rmse": 0.16752229630947113,
+      "v_maxabs": 0.75390625,
+      "bit_exact": null
+    },
+    {
+      "layer": 9,
+      "layer_type": "full_attention",
+      "k_rmse": 0.5889801979064941,
+      "k_maxabs": 4.0078125,
+      "v_rmse": 0.1496923863887787,
+      "v_maxabs": 1.890625,
+      "bit_exact": null
+    },
+    {
+      "layer": 10,
+      "layer_type": "sliding_attention",
+      "k_rmse": 0.33522331714630127,
+      "k_maxabs": 3.2421875,
+      "v_rmse": 0.19498515129089355,
+      "v_maxabs": 1.015625,
+      "bit_exact": null
+    },
+    {
+      "layer": 11,
+      "layer_type": "full_attention",
+      "k_rmse": 0.541438639163971,
+      "k_maxabs": 3.296875,
+      "v_rmse": 0.25271737575531006,
+      "v_maxabs": 1.5703125,
+      "bit_exact": null
+    },
+    {
+      "layer": 12,
+      "layer_type": "sliding_attention",
+      "k_rmse": 0.17365020513534546,
+      "k_maxabs": 1.1171875,
+      "v_rmse": 0.27876463532447815,
+      "v_maxabs": 1.38671875,
+      "bit_exact": null
+    },
+    {
+      "layer": 13,
+      "layer_type": "full_attention",
+      "k_rmse": 0.5288539528846741,
+      "k_maxabs": 3.875,
+      "v_rmse": 0.2772771716117859,
+      "v_maxabs": 1.5390625,
+      "bit_exact": null
+    },
+    {
+      "layer": 14,
+      "layer_type": "sliding_attention",
+      "k_rmse": 0.23262551426887512,
+      "k_maxabs": 3.078125,
+      "v_rmse": 0.4712744951248169,
+      "v_maxabs": 1.9921875,
+      "bit_exact": null
+    },
+    {
+      "layer": 15,
+      "layer_type": "full_attention",
+      "k_rmse": 0.5814528465270996,
+      "k_maxabs": 3.5859375,
+      "v_rmse": 0.2905352711677551,
+      "v_maxabs": 4.375,
+      "bit_exact": null
+    },
+    {
+      "layer": 16,
+      "layer_type": "sliding_attention",
+      "k_rmse": 0.24152712523937225,
+      "k_maxabs": 2.7265625,
+      "v_rmse": 0.4199756383895874,
+      "v_maxabs": 1.958984375,
+      "bit_exact": null
+    },
+    {
+      "layer": 17,
+      "layer_type": "full_attention",
+      "k_rmse": 0.6032180190086365,
+      "k_maxabs": 5.140625,
+      "v_rmse": 0.3125399053096771,
+      "v_maxabs": 1.59375,
+      "bit_exact": null
+    },
+    {
+      "layer": 18,
+      "layer_type": "sliding_attention",
+      "k_rmse": 0.31936994194984436,
+      "k_maxabs": 3.265625,
+      "v_rmse": 0.4261462092399597,
+      "v_maxabs": 1.94921875,
+      "bit_exact": null
+    },
+    {
+      "layer": 19,
+      "layer_type": "full_attention",
+      "k_rmse": 0.9488419890403748,
+      "k_maxabs": 8.25,
+      "v_rmse": 0.333391934633255,
+      "v_maxabs": 1.671875,
+      "bit_exact": null
+    },
+    {
+      "layer": 20,
+      "layer_type": "sliding_attention",
+      "k_rmse": 0.38324984908103943,
+      "k_maxabs": 2.484375,
+      "v_rmse": 0.3933428227901459,
+      "v_maxabs": 2.0859375,
+      "bit_exact": null
+    },
+    {
+      "layer": 21,
+      "layer_type": "full_attention",
+      "k_rmse": 0.9276390075683594,
+      "k_maxabs": 8.1875,
+      "v_rmse": 0.35706573724746704,
+      "v_maxabs": 2.2421875,
+      "bit_exact": null
+    },
+    {
+      "layer": 22,
+      "layer_type": "sliding_attention",
+      "k_rmse": 0.22613073885440826,
+      "k_maxabs": 2.265625,
+      "v_rmse": 0.47629010677337646,
+      "v_maxabs": 2.59375,
+      "bit_exact": null
+    },
+    {
+      "layer": 23,
+      "layer_type": "full_attention",
+      "k_rmse": 0.5856274366378784,
+      "k_maxabs": 6.1875,
+      "v_rmse": 0.3938606083393097,
+      "v_maxabs": 2.8828125,
+      "bit_exact": null
+    }
+  ]
+}

@@ -1,0 +1,2068 @@
+{
+  "_save_full_layers": false,
+  "final_cache": {
+    "all_equal": true,
+    "full_S0": 158,
+    "full_S_unique": [
+      158
+    ],
+    "n_layers": 24,
+    "sliding_S0": 158,
+    "sliding_S_unique": [
+      158
+    ]
+  },
+  "final_pos": 139,
+  "label": "C_manual_leg1_prefix",
+  "mode": "manual_leg1",
+  "ngen": 16,
+  "out_ids": [
+    976,
+    2208,
+    5504,
+    29878,
+    23273,
+    1432,
+    382,
+    631,
+    78222,
+    12,
+    18,
+    6968,
+    23181,
+    13,
+    200002,
+    13
+  ],
+  "out_text": "The current cypher bridge value is Vortex-3-Sierra.<|return|>.",
+  "prompt_n": 27,
+  "steps": [
+    {
+      "chosen_id": 976,
+      "chosen_text": "The",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        200006,
+        1428,
+        200008,
+        170167,
+        "...",
+        17196,
+        200008
+      ],
+      "input_n": 27,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 143,
+        "full_S_unique": [
+          143
+        ],
+        "n_layers": 24,
+        "sliding_S0": 143,
+        "sliding_S_unique": [
+          143
+        ]
+      },
+      "post_cache_layers": [
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 0,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 1,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 2,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 3,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 4,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 5,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 6,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 7,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 8,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 9,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 10,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 11,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 12,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 13,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 14,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 15,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 16,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 17,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 18,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 19,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 20,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 21,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 22,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        },
+        {
+          "S": 143,
+          "k_shape": [
+            1,
+            8,
+            143,
+            64
+          ],
+          "layer": 23,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            143,
+            64
+          ]
+        }
+      ],
+      "post_pos": 124,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 116,
+        "full_S_unique": [
+          116
+        ],
+        "n_layers": 24,
+        "sliding_S0": 116,
+        "sliding_S_unique": [
+          116
+        ]
+      },
+      "pre_cache_layers": [
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 0,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 1,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 2,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 3,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 4,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 5,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 6,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 7,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 8,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 9,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 10,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 11,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 12,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 13,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 14,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 15,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 16,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 17,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 18,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 19,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 20,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 21,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 22,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 23,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        }
+      ],
+      "pre_pos": 97,
+      "rope_end_expected": 238,
+      "rope_start_expected": 212,
+      "top5": [
+        {
+          "id": 976,
+          "logit": 17.0,
+          "text": "The"
+        },
+        {
+          "id": 40,
+          "logit": 16.875,
+          "text": "I"
+        },
+        {
+          "id": 17886,
+          "logit": 16.75,
+          "text": "Will"
+        },
+        {
+          "id": 52301,
+          "logit": 16.25,
+          "text": "Got"
+        },
+        {
+          "id": 3575,
+          "logit": 15.8125,
+          "text": "You"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 2208,
+      "chosen_text": " current",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        976
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 144,
+        "full_S_unique": [
+          144
+        ],
+        "n_layers": 24,
+        "sliding_S0": 144,
+        "sliding_S_unique": [
+          144
+        ]
+      },
+      "post_pos": 125,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 143,
+        "full_S_unique": [
+          143
+        ],
+        "n_layers": 24,
+        "sliding_S0": 143,
+        "sliding_S_unique": [
+          143
+        ]
+      },
+      "pre_pos": 124,
+      "rope_end_expected": 239,
+      "rope_start_expected": 239,
+      "top5": [
+        {
+          "id": 2208,
+          "logit": 16.375,
+          "text": " current"
+        },
+        {
+          "id": 16240,
+          "logit": 16.125,
+          "text": " stored"
+        },
+        {
+          "id": 5504,
+          "logit": 15.9375,
+          "text": " cy"
+        },
+        {
+          "id": 44416,
+          "logit": 14.5625,
+          "text": " remembered"
+        },
+        {
+          "id": 1432,
+          "logit": 14.125,
+          "text": " value"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 5504,
+      "chosen_text": " cy",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        2208
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 145,
+        "full_S_unique": [
+          145
+        ],
+        "n_layers": 24,
+        "sliding_S0": 145,
+        "sliding_S_unique": [
+          145
+        ]
+      },
+      "post_pos": 126,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 144,
+        "full_S_unique": [
+          144
+        ],
+        "n_layers": 24,
+        "sliding_S0": 144,
+        "sliding_S_unique": [
+          144
+        ]
+      },
+      "pre_pos": 125,
+      "rope_end_expected": 240,
+      "rope_start_expected": 240,
+      "top5": [
+        {
+          "id": 5504,
+          "logit": 18.75,
+          "text": " cy"
+        },
+        {
+          "id": 1432,
+          "logit": 16.625,
+          "text": " value"
+        },
+        {
+          "id": 16240,
+          "logit": 16.125,
+          "text": " stored"
+        },
+        {
+          "id": 44416,
+          "logit": 13.8125,
+          "text": " remembered"
+        },
+        {
+          "id": 19460,
+          "logit": 13.4375,
+          "text": " recorded"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 29878,
+      "chosen_text": "pher",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        5504
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 146,
+        "full_S_unique": [
+          146
+        ],
+        "n_layers": 24,
+        "sliding_S0": 146,
+        "sliding_S_unique": [
+          146
+        ]
+      },
+      "post_pos": 127,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 145,
+        "full_S_unique": [
+          145
+        ],
+        "n_layers": 24,
+        "sliding_S0": 145,
+        "sliding_S_unique": [
+          145
+        ]
+      },
+      "pre_pos": 126,
+      "rope_end_expected": 241,
+      "rope_start_expected": 241,
+      "top5": [
+        {
+          "id": 29878,
+          "logit": 30.25,
+          "text": "pher"
+        },
+        {
+          "id": 961,
+          "logit": 19.375,
+          "text": "ph"
+        },
+        {
+          "id": 855,
+          "logit": 18.125,
+          "text": "fer"
+        },
+        {
+          "id": 942,
+          "logit": 17.25,
+          "text": "ther"
+        },
+        {
+          "id": 718,
+          "logit": 17.125,
+          "text": "ber"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 23273,
+      "chosen_text": " bridge",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        29878
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 147,
+        "full_S_unique": [
+          147
+        ],
+        "n_layers": 24,
+        "sliding_S0": 147,
+        "sliding_S_unique": [
+          147
+        ]
+      },
+      "post_pos": 128,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 146,
+        "full_S_unique": [
+          146
+        ],
+        "n_layers": 24,
+        "sliding_S0": 146,
+        "sliding_S_unique": [
+          146
+        ]
+      },
+      "pre_pos": 127,
+      "rope_end_expected": 242,
+      "rope_start_expected": 242,
+      "top5": [
+        {
+          "id": 23273,
+          "logit": 17.75,
+          "text": " bridge"
+        },
+        {
+          "id": 1432,
+          "logit": 16.5,
+          "text": " value"
+        },
+        {
+          "id": 382,
+          "logit": 14.75,
+          "text": " is"
+        },
+        {
+          "id": 50005,
+          "logit": 13.0625,
+          "text": "\u2011"
+        },
+        {
+          "id": 3490,
+          "logit": 12.875,
+          "text": " code"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 1432,
+      "chosen_text": " value",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        23273
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 148,
+        "full_S_unique": [
+          148
+        ],
+        "n_layers": 24,
+        "sliding_S0": 148,
+        "sliding_S_unique": [
+          148
+        ]
+      },
+      "post_pos": 129,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 147,
+        "full_S_unique": [
+          147
+        ],
+        "n_layers": 24,
+        "sliding_S0": 147,
+        "sliding_S_unique": [
+          147
+        ]
+      },
+      "pre_pos": 128,
+      "rope_end_expected": 243,
+      "rope_start_expected": 243,
+      "top5": [
+        {
+          "id": 1432,
+          "logit": 19.25,
+          "text": " value"
+        },
+        {
+          "id": 382,
+          "logit": 17.375,
+          "text": " is"
+        },
+        {
+          "id": 14777,
+          "logit": 15.6875,
+          "text": " remains"
+        },
+        {
+          "id": 314,
+          "logit": 14.375,
+          "text": " ="
+        },
+        {
+          "id": 3490,
+          "logit": 13.5625,
+          "text": " code"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 382,
+      "chosen_text": " is",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        1432
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 149,
+        "full_S_unique": [
+          149
+        ],
+        "n_layers": 24,
+        "sliding_S0": 149,
+        "sliding_S_unique": [
+          149
+        ]
+      },
+      "post_pos": 130,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 148,
+        "full_S_unique": [
+          148
+        ],
+        "n_layers": 24,
+        "sliding_S0": 148,
+        "sliding_S_unique": [
+          148
+        ]
+      },
+      "pre_pos": 129,
+      "rope_end_expected": 244,
+      "rope_start_expected": 244,
+      "top5": [
+        {
+          "id": 382,
+          "logit": 19.875,
+          "text": " is"
+        },
+        {
+          "id": 25,
+          "logit": 16.875,
+          "text": ":"
+        },
+        {
+          "id": 14777,
+          "logit": 16.625,
+          "text": " remains"
+        },
+        {
+          "id": 314,
+          "logit": 14.6875,
+          "text": " ="
+        },
+        {
+          "id": 316,
+          "logit": 14.5625,
+          "text": " to"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 631,
+      "chosen_text": " V",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        382
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 150,
+        "full_S_unique": [
+          150
+        ],
+        "n_layers": 24,
+        "sliding_S0": 150,
+        "sliding_S_unique": [
+          150
+        ]
+      },
+      "post_pos": 131,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 149,
+        "full_S_unique": [
+          149
+        ],
+        "n_layers": 24,
+        "sliding_S0": 149,
+        "sliding_S_unique": [
+          149
+        ]
+      },
+      "pre_pos": 130,
+      "rope_end_expected": 245,
+      "rope_start_expected": 245,
+      "top5": [
+        {
+          "id": 631,
+          "logit": 16.5,
+          "text": " V"
+        },
+        {
+          "id": 25,
+          "logit": 14.6875,
+          "text": ":"
+        },
+        {
+          "id": 6240,
+          "logit": 14.25,
+          "text": " **"
+        },
+        {
+          "id": 392,
+          "logit": 14.1875,
+          "text": " \""
+        },
+        {
+          "id": 966,
+          "logit": 13.1875,
+          "text": " \u201c"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 78222,
+      "chosen_text": "ortex",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        631
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 151,
+        "full_S_unique": [
+          151
+        ],
+        "n_layers": 24,
+        "sliding_S0": 151,
+        "sliding_S_unique": [
+          151
+        ]
+      },
+      "post_pos": 132,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 150,
+        "full_S_unique": [
+          150
+        ],
+        "n_layers": 24,
+        "sliding_S0": 150,
+        "sliding_S_unique": [
+          150
+        ]
+      },
+      "pre_pos": 131,
+      "rope_end_expected": 246,
+      "rope_start_expected": 246,
+      "top5": [
+        {
+          "id": 78222,
+          "logit": 20.625,
+          "text": "ortex"
+        },
+        {
+          "id": 5160,
+          "logit": 13.75,
+          "text": "ORT"
+        },
+        {
+          "id": 155223,
+          "logit": 12.8125,
+          "text": " vortex"
+        },
+        {
+          "id": 13,
+          "logit": 12.75,
+          "text": "."
+        },
+        {
+          "id": 9310,
+          "logit": 12.375,
+          "text": "CS"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 12,
+      "chosen_text": "-",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        78222
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 152,
+        "full_S_unique": [
+          152
+        ],
+        "n_layers": 24,
+        "sliding_S0": 152,
+        "sliding_S_unique": [
+          152
+        ]
+      },
+      "post_pos": 133,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 151,
+        "full_S_unique": [
+          151
+        ],
+        "n_layers": 24,
+        "sliding_S0": 151,
+        "sliding_S_unique": [
+          151
+        ]
+      },
+      "pre_pos": 132,
+      "rope_end_expected": 247,
+      "rope_start_expected": 247,
+      "top5": [
+        {
+          "id": 12,
+          "logit": 20.0,
+          "text": "-"
+        },
+        {
+          "id": 50005,
+          "logit": 15.5,
+          "text": "\u2011"
+        },
+        {
+          "id": 13,
+          "logit": 13.6875,
+          "text": "."
+        },
+        {
+          "id": 220,
+          "logit": 11.8125,
+          "text": " "
+        },
+        {
+          "id": 30,
+          "logit": 11.1875,
+          "text": "?"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 18,
+      "chosen_text": "3",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        12
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 153,
+        "full_S_unique": [
+          153
+        ],
+        "n_layers": 24,
+        "sliding_S0": 153,
+        "sliding_S_unique": [
+          153
+        ]
+      },
+      "post_pos": 134,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 152,
+        "full_S_unique": [
+          152
+        ],
+        "n_layers": 24,
+        "sliding_S0": 152,
+        "sliding_S_unique": [
+          152
+        ]
+      },
+      "pre_pos": 133,
+      "rope_end_expected": 248,
+      "rope_start_expected": 248,
+      "top5": [
+        {
+          "id": 18,
+          "logit": 19.0,
+          "text": "3"
+        },
+        {
+          "id": 19,
+          "logit": 15.3125,
+          "text": "4"
+        },
+        {
+          "id": 20,
+          "logit": 14.6875,
+          "text": "5"
+        },
+        {
+          "id": 17,
+          "logit": 14.125,
+          "text": "2"
+        },
+        {
+          "id": 16,
+          "logit": 13.375,
+          "text": "1"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 6968,
+      "chosen_text": "-S",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        18
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 154,
+        "full_S_unique": [
+          154
+        ],
+        "n_layers": 24,
+        "sliding_S0": 154,
+        "sliding_S_unique": [
+          154
+        ]
+      },
+      "post_pos": 135,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 153,
+        "full_S_unique": [
+          153
+        ],
+        "n_layers": 24,
+        "sliding_S0": 153,
+        "sliding_S_unique": [
+          153
+        ]
+      },
+      "pre_pos": 134,
+      "rope_end_expected": 249,
+      "rope_start_expected": 249,
+      "top5": [
+        {
+          "id": 6968,
+          "logit": 18.75,
+          "text": "-S"
+        },
+        {
+          "id": 50005,
+          "logit": 15.8125,
+          "text": "\u2011"
+        },
+        {
+          "id": 13,
+          "logit": 14.25,
+          "text": "."
+        },
+        {
+          "id": 51925,
+          "logit": 13.9375,
+          "text": " Sierra"
+        },
+        {
+          "id": 12,
+          "logit": 13.375,
+          "text": "-"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 23181,
+      "chosen_text": "ierra",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        6968
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 155,
+        "full_S_unique": [
+          155
+        ],
+        "n_layers": 24,
+        "sliding_S0": 155,
+        "sliding_S_unique": [
+          155
+        ]
+      },
+      "post_pos": 136,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 154,
+        "full_S_unique": [
+          154
+        ],
+        "n_layers": 24,
+        "sliding_S0": 154,
+        "sliding_S_unique": [
+          154
+        ]
+      },
+      "pre_pos": 135,
+      "rope_end_expected": 250,
+      "rope_start_expected": 250,
+      "top5": [
+        {
+          "id": 23181,
+          "logit": 25.25,
+          "text": "ierra"
+        },
+        {
+          "id": 72,
+          "logit": 15.5,
+          "text": "i"
+        },
+        {
+          "id": 13,
+          "logit": 14.4375,
+          "text": "."
+        },
+        {
+          "id": 40,
+          "logit": 13.9375,
+          "text": "I"
+        },
+        {
+          "id": 11,
+          "logit": 13.625,
+          "text": ","
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 13,
+      "chosen_text": ".",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        23181
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 156,
+        "full_S_unique": [
+          156
+        ],
+        "n_layers": 24,
+        "sliding_S0": 156,
+        "sliding_S_unique": [
+          156
+        ]
+      },
+      "post_pos": 137,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 155,
+        "full_S_unique": [
+          155
+        ],
+        "n_layers": 24,
+        "sliding_S0": 155,
+        "sliding_S_unique": [
+          155
+        ]
+      },
+      "pre_pos": 136,
+      "rope_end_expected": 251,
+      "rope_start_expected": 251,
+      "top5": [
+        {
+          "id": 13,
+          "logit": 19.5,
+          "text": "."
+        },
+        {
+          "id": 11,
+          "logit": 13.375,
+          "text": ","
+        },
+        {
+          "id": 364,
+          "logit": 12.9375,
+          "text": ".\n\n"
+        },
+        {
+          "id": 30,
+          "logit": 12.875,
+          "text": "?"
+        },
+        {
+          "id": 279,
+          "logit": 12.6875,
+          "text": "\n\n"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 200002,
+      "chosen_text": "<|return|>",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        13
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 157,
+        "full_S_unique": [
+          157
+        ],
+        "n_layers": 24,
+        "sliding_S0": 157,
+        "sliding_S_unique": [
+          157
+        ]
+      },
+      "post_pos": 138,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 156,
+        "full_S_unique": [
+          156
+        ],
+        "n_layers": 24,
+        "sliding_S0": 156,
+        "sliding_S_unique": [
+          156
+        ]
+      },
+      "pre_pos": 137,
+      "rope_end_expected": 252,
+      "rope_start_expected": 252,
+      "top5": [
+        {
+          "id": 200002,
+          "logit": 18.5,
+          "text": "<|return|>"
+        },
+        {
+          "id": 200007,
+          "logit": 15.75,
+          "text": "<|end|>"
+        },
+        {
+          "id": 28014,
+          "logit": 12.75,
+          "text": " Remember"
+        },
+        {
+          "id": 3004,
+          "logit": 12.375,
+          "text": " No"
+        },
+        {
+          "id": 357,
+          "logit": 12.25,
+          "text": " I"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 13,
+      "chosen_text": ".",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        200002
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 158,
+        "full_S_unique": [
+          158
+        ],
+        "n_layers": 24,
+        "sliding_S0": 158,
+        "sliding_S_unique": [
+          158
+        ]
+      },
+      "post_pos": 139,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 157,
+        "full_S_unique": [
+          157
+        ],
+        "n_layers": 24,
+        "sliding_S0": 157,
+        "sliding_S_unique": [
+          157
+        ]
+      },
+      "pre_pos": 138,
+      "rope_end_expected": 253,
+      "rope_start_expected": 253,
+      "top5": [
+        {
+          "id": 13,
+          "logit": 10.8125,
+          "text": "."
+        },
+        {
+          "id": 11,
+          "logit": 10.1875,
+          "text": ","
+        },
+        {
+          "id": 25,
+          "logit": 10.0625,
+          "text": ":"
+        },
+        {
+          "id": 20849,
+          "logit": 10.0,
+          "text": "brid"
+        },
+        {
+          "id": 21542,
+          "logit": 9.9375,
+          "text": "bridge"
+        }
+      ],
+      "width": 96
+    }
+  ],
+  "wall_s": 1.8335450459999265
+}

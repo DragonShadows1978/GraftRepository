@@ -1,0 +1,290 @@
+{
+  "conversion_receipt": {
+    "embedding_host_bytes": 819986432,
+    "evidence_class": "loader conversion accounting from TensorCUDA model_info plus safetensors stat",
+    "lm_head_loaded": true,
+    "model_info_weight_mode": "int8",
+    "note": "INT8 weights are quantized on load; no separate 6GB weight shard was materialized.",
+    "resident_quantized_linear_bytes": 6014140416,
+    "resident_quantized_linear_gib": 5.6011,
+    "source_bf16_linear_bytes_est": 11829510144,
+    "source_bf16_linear_gib_est": 11.0171,
+    "source_safetensors_on_disk_bytes": 12242694352,
+    "source_safetensors_on_disk_gib": 11.4019
+  },
+  "honest_residuals": [
+    "T1 sanity/grid not run because the registered INT8 drift rail fired.",
+    "The BF16 side of the drift receipt is the saved HF P1 reference artifact.",
+    "VRAM peak is sampled nvidia-smi, not a TensorCUDA allocator peak."
+  ],
+  "p1_drift": {
+    "evidence_class": "teacher-forced INT8-resident logits vs saved BF16 HF P1 logits",
+    "max_abs_delta_logit": 10.055524826049805,
+    "multi_logit_drift_stop": true,
+    "reference_path": "/mnt/ForgeRealm/Project-Tensor/artifacts/trinity_nano/reference_capture/probe_00_plain_short.npz",
+    "step_count": 8,
+    "steps": [
+      {
+        "argmax_id": 8849,
+        "bf16_argmax_id": 8849,
+        "bf16_top5_ids": [
+          8849,
+          4999,
+          296,
+          320,
+          290
+        ],
+        "int8_top5_ids": [
+          8849,
+          290,
+          487,
+          4999,
+          296
+        ],
+        "max_abs_delta_logit": 6.472875595092773,
+        "mean_abs_delta_logit": 1.088822841644287,
+        "step": 0,
+        "top5_exact": false,
+        "top5_overlap_count": 4,
+        "top5_overlap_ids": [
+          290,
+          296,
+          4999,
+          8849
+        ]
+      },
+      {
+        "argmax_id": 45,
+        "bf16_argmax_id": 43,
+        "bf16_top5_ids": [
+          43,
+          45,
+          326,
+          373,
+          440
+        ],
+        "int8_top5_ids": [
+          45,
+          43,
+          373,
+          440,
+          326
+        ],
+        "max_abs_delta_logit": 5.814861297607422,
+        "mean_abs_delta_logit": 1.0949914455413818,
+        "step": 1,
+        "top5_exact": false,
+        "top5_overlap_count": 5,
+        "top5_overlap_ids": [
+          43,
+          45,
+          326,
+          373,
+          440
+        ]
+      },
+      {
+        "argmax_id": 643,
+        "bf16_argmax_id": 296,
+        "bf16_top5_ids": [
+          296,
+          326,
+          643,
+          4999,
+          351
+        ],
+        "int8_top5_ids": [
+          643,
+          326,
+          296,
+          290,
+          4999
+        ],
+        "max_abs_delta_logit": 7.0376973152160645,
+        "mean_abs_delta_logit": 1.6523559093475342,
+        "step": 2,
+        "top5_exact": false,
+        "top5_overlap_count": 4,
+        "top5_overlap_ids": [
+          296,
+          326,
+          643,
+          4999
+        ]
+      },
+      {
+        "argmax_id": 5481,
+        "bf16_argmax_id": 5481,
+        "bf16_top5_ids": [
+          5481,
+          4533,
+          2458,
+          4395,
+          4277
+        ],
+        "int8_top5_ids": [
+          5481,
+          2458,
+          4533,
+          986,
+          2525
+        ],
+        "max_abs_delta_logit": 5.289813995361328,
+        "mean_abs_delta_logit": 0.826905369758606,
+        "step": 3,
+        "top5_exact": false,
+        "top5_overlap_count": 3,
+        "top5_overlap_ids": [
+          2458,
+          4533,
+          5481
+        ]
+      },
+      {
+        "argmax_id": 2525,
+        "bf16_argmax_id": 2525,
+        "bf16_top5_ids": [
+          2525,
+          2458,
+          5769,
+          4277,
+          35901
+        ],
+        "int8_top5_ids": [
+          2525,
+          35901,
+          6256,
+          320,
+          326
+        ],
+        "max_abs_delta_logit": 7.214507102966309,
+        "mean_abs_delta_logit": 1.2557610273361206,
+        "step": 4,
+        "top5_exact": false,
+        "top5_overlap_count": 2,
+        "top5_overlap_ids": [
+          2525,
+          35901
+        ]
+      },
+      {
+        "argmax_id": 320,
+        "bf16_argmax_id": 320,
+        "bf16_top5_ids": [
+          320,
+          323,
+          45,
+          43,
+          351
+        ],
+        "int8_top5_ids": [
+          320,
+          323,
+          45,
+          326,
+          43
+        ],
+        "max_abs_delta_logit": 10.055524826049805,
+        "mean_abs_delta_logit": 2.4416143894195557,
+        "step": 5,
+        "top5_exact": false,
+        "top5_overlap_count": 4,
+        "top5_overlap_ids": [
+          43,
+          45,
+          320,
+          323
+        ]
+      },
+      {
+        "argmax_id": 6364,
+        "bf16_argmax_id": 6364,
+        "bf16_top5_ids": [
+          6364,
+          296,
+          252,
+          2884,
+          35901
+        ],
+        "int8_top5_ids": [
+          6364,
+          296,
+          2884,
+          6670,
+          1185
+        ],
+        "max_abs_delta_logit": 8.664473533630371,
+        "mean_abs_delta_logit": 1.906912922859192,
+        "step": 6,
+        "top5_exact": false,
+        "top5_overlap_count": 3,
+        "top5_overlap_ids": [
+          296,
+          2884,
+          6364
+        ]
+      },
+      {
+        "argmax_id": 45,
+        "bf16_argmax_id": 43,
+        "bf16_top5_ids": [
+          43,
+          45,
+          351,
+          373,
+          326
+        ],
+        "int8_top5_ids": [
+          45,
+          326,
+          43,
+          373,
+          440
+        ],
+        "max_abs_delta_logit": 9.326704978942871,
+        "mean_abs_delta_logit": 2.3527774810791016,
+        "step": 7,
+        "top5_exact": false,
+        "top5_overlap_count": 4,
+        "top5_overlap_ids": [
+          43,
+          45,
+          326,
+          373
+        ]
+      }
+    ],
+    "stop_max_abs_delta_logit": 1.0,
+    "top5_exact_steps": 0,
+    "top5_overlap_total": 29,
+    "top5_total_steps": 8,
+    "wall_s": 5.69
+  },
+  "run_config_path": "/mnt/ForgeRealm/GraftRepository/artifacts/trinity_nope_graft/natural_absolute_20260709_072319/run_config.json",
+  "total_wall_s": 28.872,
+  "verdict": {
+    "grid_ran": false,
+    "reason": "INT8-resident P1 teacher-forced logits exceeded the registered multi-logit drift rail (10.055524826049805 > 1.0); stop before sanity/grid. This points at the quant/dequant path itself, not INT4 bit width.",
+    "sanity_passed": false,
+    "verdict": "INT8_DRIFT_STOP"
+  },
+  "vram_samples": {
+    "evidence_class": "nvidia-smi sampled process-adjacent VRAM, not allocator peak",
+    "first": {
+      "smi": "NVIDIA GeForce RTX 4070 SUPER, 193, 12282, 0",
+      "t": 1783596199.3075294,
+      "tag": "start",
+      "used_mib": 193
+    },
+    "last": {
+      "smi": "NVIDIA GeForce RTX 4070 SUPER, 6169, 12282, 78",
+      "t": 1783596228.1491888,
+      "tag": "after_p1_drift",
+      "used_mib": 6169
+    },
+    "max_used_gib": 6.0264,
+    "max_used_mib": 6171,
+    "num_samples": 54,
+    "sample_interval_s": 0.5
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "answer": "I\u2019ll keep that in mind.",
+  "final_cache": {
+    "all_equal": true,
+    "full_S0": 137,
+    "full_S_unique": [
+      137
+    ],
+    "n_layers": 24,
+    "sliding_S0": 137,
+    "sliding_S_unique": [
+      137
+    ]
+  },
+  "final_pos": 150,
+  "info": {
+    "evicted": 32,
+    "live_tokens": 53,
+    "mounts": [
+      1
+    ],
+    "resident": 137,
+    "trip": 0
+  },
+  "label": "D_step_e2e",
+  "mode": "step",
+  "mounts": [
+    1
+  ],
+  "setup": {
+    "cache": {
+      "all_equal": true,
+      "full_S0": 116,
+      "full_S_unique": [
+        116
+      ],
+      "n_layers": 24,
+      "sliding_S0": 116,
+      "sliding_S_unique": [
+        116
+      ]
+    },
+    "cur_mount_n": 65,
+    "cur_mounts": [
+      0
+    ],
+    "graft0_ntok": 65,
+    "graft0_text_head": "<|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If",
+    "live_segs": [
+      [
+        1,
+        32
+      ]
+    ],
+    "live_shift": 115,
+    "n_sink": 19,
+    "picks": [
+      0
+    ],
+    "picks_forced": false,
+    "pos": 97,
+    "ranking": [
+      0
+    ],
+    "width": 96
+  },
+  "wall_s": 2.567790156999763
+}

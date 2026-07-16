@@ -1,0 +1,544 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "created_at": "2026-07-07T03:11:19",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "graft_dir": "artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate/graft",
+  "max_tokens": 160,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "runs": [
+    {
+      "control": null,
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep/plain_mount.json",
+            "--mount-graft-dir",
+            "artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep/plain_mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>BLUE\", \"steps\": [{\"logit\": 17.75, \"rank\": 0, \"text\": \"BLUE\", \"token_id\": 134698}]}\n",
+          "wall_seconds": 38.59446759300772
+        },
+        "summary": {
+          "artifact": "artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep/plain_mount.json",
+          "status": "ok",
+          "target_logit": 17.75,
+          "target_rank": 0,
+          "target_text": "BLUE",
+          "top_token": {
+            "logit": 17.75,
+            "rank": 0,
+            "text": "BLUE",
+            "token_id": 134698
+          },
+          "top_tokens": [
+            {
+              "logit": 17.75,
+              "rank": 0,
+              "text": "BLUE",
+              "token_id": 134698
+            },
+            {
+              "logit": 17.625,
+              "rank": 1,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 16.875,
+              "rank": 2,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 16.625,
+              "rank": 3,
+              "text": "Blue",
+              "token_id": 15957
+            },
+            {
+              "logit": 15.9375,
+              "rank": 4,
+              "text": "It",
+              "token_id": 3206
+            },
+            {
+              "logit": 15.9375,
+              "rank": 5,
+              "text": "I",
+              "token_id": 40
+            },
+            {
+              "logit": 15.25,
+              "rank": 6,
+              "text": "`",
+              "token_id": 63
+            },
+            {
+              "logit": 14.9375,
+              "rank": 7,
+              "text": "\"",
+              "token_id": 1
+            },
+            {
+              "logit": 14.9375,
+              "rank": 8,
+              "text": "Sorry",
+              "token_id": 33680
+            },
+            {
+              "logit": 14.875,
+              "rank": 9,
+              "text": "blue",
+              "token_id": 18789
+            }
+          ],
+          "wall_seconds": 33.47935017797863
+        }
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "What is the GPT-OSS vault keyword? Reply with only the keyword.",
+      "variant": "plain"
+    },
+    {
+      "control": null,
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Conversation turn 50. You do not have previous chat context. What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep/turn50_original_mount.json",
+            "--mount-graft-dir",
+            "artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep/turn50_original_mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Conversation turn 50. You do not have previous chat context. What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>The\", \"steps\": [{\"logit\": 17.625, \"rank\": 0, \"text\": \"The\", \"token_id\": 976}]}\n",
+          "wall_seconds": 39.378178255981766
+        },
+        "summary": {
+          "artifact": "artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep/turn50_original_mount.json",
+          "status": "ok",
+          "target_logit": 16.0,
+          "target_rank": 3,
+          "target_text": "BLUE",
+          "top_token": {
+            "logit": 17.625,
+            "rank": 0,
+            "text": "The",
+            "token_id": 976
+          },
+          "top_tokens": [
+            {
+              "logit": 17.625,
+              "rank": 0,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 16.75,
+              "rank": 1,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 16.125,
+              "rank": 2,
+              "text": "I",
+              "token_id": 40
+            },
+            {
+              "logit": 16.0,
+              "rank": 3,
+              "text": "BLUE",
+              "token_id": 134698
+            },
+            {
+              "logit": 15.8125,
+              "rank": 4,
+              "text": "It",
+              "token_id": 3206
+            },
+            {
+              "logit": 15.25,
+              "rank": 5,
+              "text": "`",
+              "token_id": 63
+            },
+            {
+              "logit": 15.125,
+              "rank": 6,
+              "text": "Sorry",
+              "token_id": 33680
+            },
+            {
+              "logit": 15.125,
+              "rank": 7,
+              "text": "Blue",
+              "token_id": 15957
+            },
+            {
+              "logit": 15.0,
+              "rank": 8,
+              "text": "'",
+              "token_id": 6
+            },
+            {
+              "logit": 14.5625,
+              "rank": 9,
+              "text": "\"",
+              "token_id": 1
+            }
+          ],
+          "wall_seconds": 34.496847377042286
+        }
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Conversation turn 50. You do not have previous chat context. What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Conversation turn 50. You do not have previous chat context. What is the GPT-OSS vault keyword? Reply with only the keyword.",
+      "variant": "turn50_original"
+    },
+    {
+      "control": null,
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep/turn50_compact_mount.json",
+            "--mount-graft-dir",
+            "artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep/turn50_compact_mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>The\", \"steps\": [{\"logit\": 17.625, \"rank\": 0, \"text\": \"The\", \"token_id\": 976}]}\n",
+          "wall_seconds": 39.15875659597805
+        },
+        "summary": {
+          "artifact": "artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep/turn50_compact_mount.json",
+          "status": "ok",
+          "target_logit": 16.375,
+          "target_rank": 2,
+          "target_text": "BLUE",
+          "top_token": {
+            "logit": 17.625,
+            "rank": 0,
+            "text": "The",
+            "token_id": 976
+          },
+          "top_tokens": [
+            {
+              "logit": 17.625,
+              "rank": 0,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 16.875,
+              "rank": 1,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 16.375,
+              "rank": 2,
+              "text": "BLUE",
+              "token_id": 134698
+            },
+            {
+              "logit": 15.875,
+              "rank": 3,
+              "text": "I",
+              "token_id": 40
+            },
+            {
+              "logit": 15.5625,
+              "rank": 4,
+              "text": "`",
+              "token_id": 63
+            },
+            {
+              "logit": 15.375,
+              "rank": 5,
+              "text": "'",
+              "token_id": 6
+            },
+            {
+              "logit": 15.3125,
+              "rank": 6,
+              "text": "It",
+              "token_id": 3206
+            },
+            {
+              "logit": 15.0625,
+              "rank": 7,
+              "text": "Blue",
+              "token_id": 15957
+            },
+            {
+              "logit": 15.0,
+              "rank": 8,
+              "text": "\"",
+              "token_id": 1
+            },
+            {
+              "logit": 14.6875,
+              "rank": 9,
+              "text": "Sorry",
+              "token_id": 33680
+            }
+          ],
+          "wall_seconds": 34.286983475030866
+        }
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. What is the GPT-OSS vault keyword? Reply with only the keyword.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. What is the GPT-OSS vault keyword? Reply with only the keyword.",
+      "variant": "turn50_compact"
+    },
+    {
+      "control": null,
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS vault keyword. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep/turn50_strict_mount.json",
+            "--mount-graft-dir",
+            "artifacts/gpt_oss_20b/h5_bulk_graft_64k_candidate_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep/turn50_strict_mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS vault keyword. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>BLUE\", \"steps\": [{\"logit\": 20.375, \"rank\": 0, \"text\": \"BLUE\", \"token_id\": 134698}]}\n",
+          "wall_seconds": 38.9649157950189
+        },
+        "summary": {
+          "artifact": "artifacts/gpt_oss_20b/h6_64k_prompt_sensitivity_mount_sweep/turn50_strict_mount.json",
+          "status": "ok",
+          "target_logit": 20.375,
+          "target_rank": 0,
+          "target_text": "BLUE",
+          "top_token": {
+            "logit": 20.375,
+            "rank": 0,
+            "text": "BLUE",
+            "token_id": 134698
+          },
+          "top_tokens": [
+            {
+              "logit": 20.375,
+              "rank": 0,
+              "text": "BLUE",
+              "token_id": 134698
+            },
+            {
+              "logit": 17.625,
+              "rank": 1,
+              "text": "blue",
+              "token_id": 18789
+            },
+            {
+              "logit": 17.375,
+              "rank": 2,
+              "text": "Blue",
+              "token_id": 15957
+            },
+            {
+              "logit": 15.6875,
+              "rank": 3,
+              "text": "**",
+              "token_id": 410
+            },
+            {
+              "logit": 15.5625,
+              "rank": 4,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 14.3125,
+              "rank": 5,
+              "text": " BLUE",
+              "token_id": 110151
+            },
+            {
+              "logit": 14.3125,
+              "rank": 6,
+              "text": "GPT",
+              "token_id": 162016
+            },
+            {
+              "logit": 14.25,
+              "rank": 7,
+              "text": "``",
+              "token_id": 26178
+            },
+            {
+              "logit": 13.875,
+              "rank": 8,
+              "text": "BL",
+              "token_id": 16350
+            },
+            {
+              "logit": 13.8125,
+              "rank": 9,
+              "text": "I",
+              "token_id": 40
+            }
+          ],
+          "wall_seconds": 34.10822018398903
+        }
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS vault keyword. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS vault keyword. No sentence. No punctuation.",
+      "variant": "turn50_strict"
+    }
+  ],
+  "schema": "gpt_oss_20b_turn_prompt_sweep_v1",
+  "status": "ok",
+  "steps": 1,
+  "summary": [
+    {
+      "mount_blue_logit": 17.75,
+      "mount_blue_rank": 0,
+      "mount_hit": true,
+      "mount_top_logit": 17.75,
+      "mount_top_text": "BLUE",
+      "variant": "plain"
+    },
+    {
+      "mount_blue_logit": 16.0,
+      "mount_blue_rank": 3,
+      "mount_hit": false,
+      "mount_top_logit": 17.625,
+      "mount_top_text": "The",
+      "variant": "turn50_original"
+    },
+    {
+      "mount_blue_logit": 16.375,
+      "mount_blue_rank": 2,
+      "mount_hit": false,
+      "mount_top_logit": 17.625,
+      "mount_top_text": "The",
+      "variant": "turn50_compact"
+    },
+    {
+      "mount_blue_logit": 20.375,
+      "mount_blue_rank": 0,
+      "mount_hit": true,
+      "mount_top_logit": 20.375,
+      "mount_top_text": "BLUE",
+      "variant": "turn50_strict"
+    }
+  ],
+  "top_k": 10,
+  "variants": [
+    "plain",
+    "turn50_original",
+    "turn50_compact",
+    "turn50_strict"
+  ],
+  "wall_seconds": 156.11450101598166
+}

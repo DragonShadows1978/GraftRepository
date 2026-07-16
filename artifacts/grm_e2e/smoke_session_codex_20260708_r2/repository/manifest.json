@@ -1,0 +1,241 @@
+{
+ "dialect": "GptOss20B_TC:24x2880:g8x64",
+ "dialect_descriptor": {
+  "model_type": "GptOss20B_TC",
+  "num_layers": 24,
+  "hidden_dim": 2880,
+  "payload_kind": "gqa",
+  "vals_per_tok_layer": 1024,
+  "route_layer": 1,
+  "latent_rank": 0,
+  "rope_dim": 0,
+  "num_kv_heads": 8,
+  "head_dim": 64,
+  "position_law": "rope_full_yarn",
+  "state_kind": "kv",
+  "graftability": "seat_remountable",
+  "remountable": true,
+  "composition": "multi_mount"
+ },
+ "route_layer": 1,
+ "durability_mode": "session_safe",
+ "native_checkpoint": "native/grm_store.bin",
+ "wal_lsn": 10,
+ "review_buffer": [],
+ "nodes": [
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. FACT ORION-PIN. The current ORION-PIN value is AMBER. If asked later for ORION-PIN, answer AMBER only.<|end|><|start|>assistant<|channel|>final<|message|><|>\n\nI\n\nIt seems to=\n\nIt\n\nIt seems to=\n\nIt\n\nIt\n\nIt<|end|>",
+   "ntok": 87,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "amber",
+    "fact",
+    "orion-pin"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "superseded_by": [
+     3
+    ]
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 0,
+   "provenance": []
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler S01. Acknowledge briefly. Do not change any stored FACT values.<|end|><|start|>assistant<|channel|>final<|message|>The problem is that the code you posted is not a valid SQL query. In a real\u2011world scenario you would need<|end|>",
+   "ntok": 71,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "fact",
+    "s01",
+    "sql"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 1,
+   "provenance": []
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. FACT ORION-PIN. The current ORION-PIN value is COPPER. This is the current value. If asked later, answer COPPER only.<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry, but I can\u2019t comply with that.<|return|><|return|><|return|>.<|return|><|return|><|return|><|return|><|return|><|return|>.<|return|><|end|>",
+   "ntok": 89,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "copper",
+    "fact",
+    "orion-pin"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 2,
+   "provenance": []
+  },
+  {
+   "kind": "fact",
+   "text": "The current ORION-PIN value is COPPER.",
+   "ntok": 11,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "copper",
+    "orion-pin"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     0
+    ],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 3,
+   "provenance": [
+    {
+     "segment_id": 0,
+     "node_id": 3,
+     "segment_type": "fact_span",
+     "created_at": 1783535279.2292902
+    }
+   ]
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. FACT CYPHER-BRIDGE. The current CYPHER-BRIDGE value is LANTERN. If asked later for CYPHER-BRIDGE, answer LANTERN only.<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry, but I can\u2019t comply with that.<|return|><|return|>\u2026<|return|><|return|>\u2026<|return|>\u2026<|return|>\u2026<|return|>\u2026<|end|>",
+   "ntok": 92,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "cypher-bridge",
+    "fact",
+    "lantern"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 4,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler S02. Acknowledge briefly. Do not change any stored FACT values.<|end|><|start|>assistant<|channel|>final<|message|>I\u2019m sorry, but I can\u2019t comply with that.<|return|><|return|>\u2026<|return|>\u2026<|return|>\u2026<|return|>\u2026<|return|>\u2026<|return|><|end|>",
+   "ntok": 71,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "fact",
+    "s02"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 5,
+   "provenance": []
+  }
+ ]
+}

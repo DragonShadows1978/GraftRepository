@@ -1,0 +1,136 @@
+{
+  "decision": {
+    "floor_clean": false,
+    "floor_mode": null,
+    "fork": "PARTIAL_NATURAL_ONLY_CHAT_UNTESTED",
+    "gpu_after": "NVIDIA GeForce RTX 4070 SUPER, 1187 MiB, 12282 MiB, 4 %",
+    "ngen_use": 12,
+    "pure_chat_clean": null,
+    "pure_chat_sig": null,
+    "pure_chat_text": null,
+    "pure_natural_clean": true,
+    "pure_natural_sig": "clean_english",
+    "pure_natural_text": "Paris. It is located in the north-central part of the",
+    "residual_read": "natural clean; chat not run (wall) \u2014 chat floor unclassed",
+    "s_per_fwd_measured": 41.452288227999816,
+    "stage": 2,
+    "stage_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/trinity_nope_graft/floor_reverb_20260709_050531/stage2_bf16_stream",
+    "total_wall_s": 578.329
+  },
+  "results": [
+    {
+      "generation": {
+        "bos_count": 0,
+        "clean_english": true,
+        "collapse_signature": "clean_english",
+        "ids": [
+          8849,
+          45,
+          671,
+          351,
+          4999,
+          320,
+          296,
+          6766,
+          64470,
+          707,
+          323,
+          296
+        ],
+        "live_shift": null,
+        "n_steps": 12,
+        "position_offset": 0,
+        "step_walls": [
+          {
+            "layer_wall_sum_s": 34.38,
+            "n_layers": 56,
+            "tag": "prompt",
+            "wall_s": 34.38
+          },
+          {
+            "chosen": 8849,
+            "layer_wall_sum_s": 33.47,
+            "tag": "g0",
+            "wall_s": 40.815
+          },
+          {
+            "chosen": 45,
+            "layer_wall_sum_s": null,
+            "tag": "g1",
+            "wall_s": 40.66
+          },
+          {
+            "chosen": 671,
+            "layer_wall_sum_s": null,
+            "tag": "g2",
+            "wall_s": 40.186
+          },
+          {
+            "chosen": 351,
+            "layer_wall_sum_s": null,
+            "tag": "g3",
+            "wall_s": 42.183
+          },
+          {
+            "chosen": 4999,
+            "layer_wall_sum_s": null,
+            "tag": "g4",
+            "wall_s": 41.063
+          },
+          {
+            "chosen": 320,
+            "layer_wall_sum_s": null,
+            "tag": "g5",
+            "wall_s": 41.057
+          },
+          {
+            "chosen": 296,
+            "layer_wall_sum_s": null,
+            "tag": "g6",
+            "wall_s": 40.989
+          },
+          {
+            "chosen": 6766,
+            "layer_wall_sum_s": null,
+            "tag": "g7",
+            "wall_s": 41.133
+          },
+          {
+            "chosen": 64470,
+            "layer_wall_sum_s": null,
+            "tag": "g8",
+            "wall_s": 40.851
+          },
+          {
+            "chosen": 707,
+            "layer_wall_sum_s": null,
+            "tag": "g9",
+            "wall_s": 40.6
+          },
+          {
+            "chosen": 323,
+            "layer_wall_sum_s": null,
+            "tag": "g10",
+            "wall_s": 40.211
+          },
+          {
+            "chosen": 296,
+            "layer_wall_sum_s": null,
+            "tag": "g11",
+            "wall_s": 41.397
+          }
+        ],
+        "text": "Paris. It is located in the north-central part of the",
+        "text_raw": " Paris. It is located in the north-central part of the",
+        "unique_id_ratio": 0.9167,
+        "value_recovered": false,
+        "wall_s": 533.019
+      },
+      "label": "pure_natural_bf16_stream",
+      "mode": "bf16_stream_fp32_compute",
+      "probe_prompt": "The capital of France is",
+      "probe_prompt_ntok": 5,
+      "wall_s": 533.019
+    }
+  ]
+}

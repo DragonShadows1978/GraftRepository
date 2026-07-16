@@ -1,0 +1,6 @@
+{
+  "grid_ran": false,
+  "reason": "INT8-resident P1 teacher-forced logits exceeded the registered multi-logit drift rail (10.055524826049805 > 1.0); stop before sanity/grid. This points at the quant/dequant path itself, not INT4 bit width.",
+  "sanity_passed": false,
+  "verdict": "INT8_DRIFT_STOP"
+}

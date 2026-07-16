@@ -1,0 +1,1153 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "classification": "fail",
+  "created_at": "2026-07-07T04:21:14",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft",
+  "hit_count": 3,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "planned_runs": [
+    {
+      "answer": "BLUE",
+      "id": "vault_keyword",
+      "label": "GPT-OSS vault keyword",
+      "placement": {
+        "answer": "BLUE",
+        "answer_token_id": 134698,
+        "id": "vault_keyword",
+        "label": "GPT-OSS vault keyword",
+        "needle_offset_tokens": 3261,
+        "needle_sha256": "a8c84ea9c0ae41d1f2d1ea6d0e270d6d5de7c39dada4f3a773b3bfc06a7065ed",
+        "needle_tokens": 19
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=vault_keyword, fact_marker=CLASSIFIED FACT A, label=GPT-OSS vault keyword, token_offset=3261. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=vault_keyword, fact_marker=CLASSIFIED FACT A, label=GPT-OSS vault keyword, token_offset=3261. Return exactly the stored value for that record. No sentence. No punctuation.",
+      "variant": "metadata_card"
+    },
+    {
+      "answer": "EMBER",
+      "id": "relay_marker",
+      "label": "GPT-OSS relay marker",
+      "placement": {
+        "answer": "EMBER",
+        "answer_token_id": 78250,
+        "id": "relay_marker",
+        "label": "GPT-OSS relay marker",
+        "needle_offset_tokens": 6541,
+        "needle_sha256": "bcaedfc28644e7906847a9e7cb0d8c9acd5990f80aeefb6cbb2f15c1a5da5057",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=relay_marker, fact_marker=CLASSIFIED FACT B, label=GPT-OSS relay marker, token_offset=6541. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=relay_marker, fact_marker=CLASSIFIED FACT B, label=GPT-OSS relay marker, token_offset=6541. Return exactly the stored value for that record. No sentence. No punctuation.",
+      "variant": "metadata_card"
+    },
+    {
+      "answer": "GRAY",
+      "id": "archive_color",
+      "label": "GPT-OSS archive color",
+      "placement": {
+        "answer": "GRAY",
+        "answer_token_id": 140884,
+        "id": "archive_color",
+        "label": "GPT-OSS archive color",
+        "needle_offset_tokens": 9822,
+        "needle_sha256": "c5dd34ae04552ed50b27706789bc698e699f54358224ccc23e8468bc8138522e",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=archive_color, fact_marker=CLASSIFIED FACT C, label=GPT-OSS archive color, token_offset=9822. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=archive_color, fact_marker=CLASSIFIED FACT C, label=GPT-OSS archive color, token_offset=9822. Return exactly the stored value for that record. No sentence. No punctuation.",
+      "variant": "metadata_card"
+    },
+    {
+      "answer": "IRON",
+      "id": "tool_metal",
+      "label": "GPT-OSS tool metal",
+      "placement": {
+        "answer": "IRON",
+        "answer_token_id": 96951,
+        "id": "tool_metal",
+        "label": "GPT-OSS tool metal",
+        "needle_offset_tokens": 13103,
+        "needle_sha256": "e222c6999efdcc5e132d85d999db2e5f374b484f09dd69a6bdecfd0b0aa5eb1a",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=tool_metal, fact_marker=CLASSIFIED FACT D, label=GPT-OSS tool metal, token_offset=13103. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=tool_metal, fact_marker=CLASSIFIED FACT D, label=GPT-OSS tool metal, token_offset=13103. Return exactly the stored value for that record. No sentence. No punctuation.",
+      "variant": "metadata_card"
+    }
+  ],
+  "probe_count": 4,
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "runs": [
+    {
+      "answer": "BLUE",
+      "control": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=vault_keyword, fact_marker=CLASSIFIED FACT A, label=GPT-OSS vault keyword, token_offset=3261. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/vault_keyword/control.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/vault_keyword/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=vault_keyword, fact_marker=CLASSIFIED FACT A, label=GPT-OSS vault keyword, token_offset=3261. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GPT\", \"steps\": [{\"logit\": 16.875, \"rank\": 0, \"text\": \"GPT\", \"token_id\": 162016}]}\n",
+          "wall_seconds": 30.68529305199627
+        },
+        "summary": {
+          "answer": "BLUE",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/vault_keyword/control.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/vault_keyword/control_steps/step_00.json",
+          "hit": false,
+          "status": "ok",
+          "top_token": {
+            "logit": 16.875,
+            "rank": 0,
+            "text": "GPT",
+            "token_id": 162016
+          },
+          "top_tokens": [
+            {
+              "logit": 16.875,
+              "rank": 0,
+              "text": "GPT",
+              "token_id": 162016
+            },
+            {
+              "logit": 14.25,
+              "rank": 1,
+              "text": "vault",
+              "token_id": 160594
+            },
+            {
+              "logit": 12.75,
+              "rank": 2,
+              "text": "g",
+              "token_id": 70
+            },
+            {
+              "logit": 12.6875,
+              "rank": 3,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 12.4375,
+              "rank": 4,
+              "text": "G",
+              "token_id": 38
+            },
+            {
+              "logit": 12.0,
+              "rank": 5,
+              "text": "Open",
+              "token_id": 6447
+            },
+            {
+              "logit": 12.0,
+              "rank": 6,
+              "text": "Vault",
+              "token_id": 84654
+            },
+            {
+              "logit": 12.0,
+              "rank": 7,
+              "text": "v",
+              "token_id": 85
+            },
+            {
+              "logit": 11.875,
+              "rank": 8,
+              "text": "[",
+              "token_id": 58
+            },
+            {
+              "logit": 11.75,
+              "rank": 9,
+              "text": "class",
+              "token_id": 1444
+            }
+          ],
+          "wall_seconds": 25.759894107992295
+        }
+      },
+      "id": "vault_keyword",
+      "label": "GPT-OSS vault keyword",
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=vault_keyword, fact_marker=CLASSIFIED FACT A, label=GPT-OSS vault keyword, token_offset=3261. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/vault_keyword/mount.json",
+            "--mount-graft-dir",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/vault_keyword/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=vault_keyword, fact_marker=CLASSIFIED FACT A, label=GPT-OSS vault keyword, token_offset=3261. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>BLUE\", \"steps\": [{\"logit\": 19.25, \"rank\": 0, \"text\": \"BLUE\", \"token_id\": 134698}]}\n",
+          "wall_seconds": 33.773290921002626
+        },
+        "summary": {
+          "answer": "BLUE",
+          "answer_logit": 19.25,
+          "answer_rank": 0,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/vault_keyword/mount.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/vault_keyword/mount_steps/step_00.json",
+          "hit": true,
+          "status": "ok",
+          "top_token": {
+            "logit": 19.25,
+            "rank": 0,
+            "text": "BLUE",
+            "token_id": 134698
+          },
+          "top_tokens": [
+            {
+              "logit": 19.25,
+              "rank": 0,
+              "text": "BLUE",
+              "token_id": 134698
+            },
+            {
+              "logit": 17.5,
+              "rank": 1,
+              "text": "GPT",
+              "token_id": 162016
+            },
+            {
+              "logit": 17.5,
+              "rank": 2,
+              "text": "Blue",
+              "token_id": 15957
+            },
+            {
+              "logit": 17.25,
+              "rank": 3,
+              "text": "blue",
+              "token_id": 18789
+            },
+            {
+              "logit": 15.0625,
+              "rank": 4,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 14.3125,
+              "rank": 5,
+              "text": "BLACK",
+              "token_id": 120338
+            },
+            {
+              "logit": 14.3125,
+              "rank": 6,
+              "text": "v",
+              "token_id": 85
+            },
+            {
+              "logit": 13.875,
+              "rank": 7,
+              "text": "G",
+              "token_id": 38
+            },
+            {
+              "logit": 13.875,
+              "rank": 8,
+              "text": "vault",
+              "token_id": 160594
+            },
+            {
+              "logit": 13.875,
+              "rank": 9,
+              "text": "EMBER",
+              "token_id": 78250
+            }
+          ],
+          "wall_seconds": 28.997871942003258
+        }
+      },
+      "placement": {
+        "answer": "BLUE",
+        "answer_token_id": 134698,
+        "id": "vault_keyword",
+        "label": "GPT-OSS vault keyword",
+        "needle_offset_tokens": 3261,
+        "needle_sha256": "a8c84ea9c0ae41d1f2d1ea6d0e270d6d5de7c39dada4f3a773b3bfc06a7065ed",
+        "needle_tokens": 19
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=vault_keyword, fact_marker=CLASSIFIED FACT A, label=GPT-OSS vault keyword, token_offset=3261. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=vault_keyword, fact_marker=CLASSIFIED FACT A, label=GPT-OSS vault keyword, token_offset=3261. Return exactly the stored value for that record. No sentence. No punctuation.",
+      "variant": "metadata_card"
+    },
+    {
+      "answer": "EMBER",
+      "control": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=relay_marker, fact_marker=CLASSIFIED FACT B, label=GPT-OSS relay marker, token_offset=6541. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/relay_marker/control.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/relay_marker/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=relay_marker, fact_marker=CLASSIFIED FACT B, label=GPT-OSS relay marker, token_offset=6541. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GPT\", \"steps\": [{\"logit\": 16.625, \"rank\": 0, \"text\": \"GPT\", \"token_id\": 162016}]}\n",
+          "wall_seconds": 30.54254889197182
+        },
+        "summary": {
+          "answer": "EMBER",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/relay_marker/control.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/relay_marker/control_steps/step_00.json",
+          "hit": false,
+          "status": "ok",
+          "top_token": {
+            "logit": 16.625,
+            "rank": 0,
+            "text": "GPT",
+            "token_id": 162016
+          },
+          "top_tokens": [
+            {
+              "logit": 16.625,
+              "rank": 0,
+              "text": "GPT",
+              "token_id": 162016
+            },
+            {
+              "logit": 16.25,
+              "rank": 1,
+              "text": "CLASS",
+              "token_id": 54314
+            },
+            {
+              "logit": 14.6875,
+              "rank": 2,
+              "text": "Class",
+              "token_id": 2579
+            },
+            {
+              "logit": 13.6875,
+              "rank": 3,
+              "text": "class",
+              "token_id": 1444
+            },
+            {
+              "logit": 13.1875,
+              "rank": 4,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 13.0,
+              "rank": 5,
+              "text": "G",
+              "token_id": 38
+            },
+            {
+              "logit": 12.9375,
+              "rank": 6,
+              "text": "B",
+              "token_id": 33
+            },
+            {
+              "logit": 12.875,
+              "rank": 7,
+              "text": "relay",
+              "token_id": 195183
+            },
+            {
+              "logit": 12.25,
+              "rank": 8,
+              "text": "Relay",
+              "token_id": 115912
+            },
+            {
+              "logit": 12.0625,
+              "rank": 9,
+              "text": "I",
+              "token_id": 40
+            }
+          ],
+          "wall_seconds": 25.706597440992482
+        }
+      },
+      "id": "relay_marker",
+      "label": "GPT-OSS relay marker",
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=relay_marker, fact_marker=CLASSIFIED FACT B, label=GPT-OSS relay marker, token_offset=6541. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/relay_marker/mount.json",
+            "--mount-graft-dir",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/relay_marker/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=relay_marker, fact_marker=CLASSIFIED FACT B, label=GPT-OSS relay marker, token_offset=6541. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GPT\", \"steps\": [{\"logit\": 16.875, \"rank\": 0, \"text\": \"GPT\", \"token_id\": 162016}]}\n",
+          "wall_seconds": 33.93618591799168
+        },
+        "summary": {
+          "answer": "EMBER",
+          "answer_logit": 13.75,
+          "answer_rank": 9,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/relay_marker/mount.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/relay_marker/mount_steps/step_00.json",
+          "hit": false,
+          "status": "ok",
+          "top_token": {
+            "logit": 16.875,
+            "rank": 0,
+            "text": "GPT",
+            "token_id": 162016
+          },
+          "top_tokens": [
+            {
+              "logit": 16.875,
+              "rank": 0,
+              "text": "GPT",
+              "token_id": 162016
+            },
+            {
+              "logit": 16.375,
+              "rank": 1,
+              "text": "GRAY",
+              "token_id": 140884
+            },
+            {
+              "logit": 15.4375,
+              "rank": 2,
+              "text": "GR",
+              "token_id": 13905
+            },
+            {
+              "logit": 15.3125,
+              "rank": 3,
+              "text": "IRON",
+              "token_id": 96951
+            },
+            {
+              "logit": 14.375,
+              "rank": 4,
+              "text": "BLUE",
+              "token_id": 134698
+            },
+            {
+              "logit": 14.125,
+              "rank": 5,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 14.0,
+              "rank": 6,
+              "text": "G",
+              "token_id": 38
+            },
+            {
+              "logit": 13.8125,
+              "rank": 7,
+              "text": "BLACK",
+              "token_id": 120338
+            },
+            {
+              "logit": 13.8125,
+              "rank": 8,
+              "text": "IR",
+              "token_id": 4368
+            },
+            {
+              "logit": 13.75,
+              "rank": 9,
+              "text": "EMBER",
+              "token_id": 78250
+            }
+          ],
+          "wall_seconds": 29.10165359795792
+        }
+      },
+      "placement": {
+        "answer": "EMBER",
+        "answer_token_id": 78250,
+        "id": "relay_marker",
+        "label": "GPT-OSS relay marker",
+        "needle_offset_tokens": 6541,
+        "needle_sha256": "bcaedfc28644e7906847a9e7cb0d8c9acd5990f80aeefb6cbb2f15c1a5da5057",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=relay_marker, fact_marker=CLASSIFIED FACT B, label=GPT-OSS relay marker, token_offset=6541. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=relay_marker, fact_marker=CLASSIFIED FACT B, label=GPT-OSS relay marker, token_offset=6541. Return exactly the stored value for that record. No sentence. No punctuation.",
+      "variant": "metadata_card"
+    },
+    {
+      "answer": "GRAY",
+      "control": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=archive_color, fact_marker=CLASSIFIED FACT C, label=GPT-OSS archive color, token_offset=9822. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/archive_color/control.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/archive_color/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=archive_color, fact_marker=CLASSIFIED FACT C, label=GPT-OSS archive color, token_offset=9822. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>blue\", \"steps\": [{\"logit\": 14.375, \"rank\": 0, \"text\": \"blue\", \"token_id\": 18789}]}\n",
+          "wall_seconds": 30.792216981993988
+        },
+        "summary": {
+          "answer": "GRAY",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/archive_color/control.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/archive_color/control_steps/step_00.json",
+          "hit": false,
+          "status": "ok",
+          "top_token": {
+            "logit": 14.375,
+            "rank": 0,
+            "text": "blue",
+            "token_id": 18789
+          },
+          "top_tokens": [
+            {
+              "logit": 14.375,
+              "rank": 0,
+              "text": "blue",
+              "token_id": 18789
+            },
+            {
+              "logit": 14.3125,
+              "rank": 1,
+              "text": "red",
+              "token_id": 1291
+            },
+            {
+              "logit": 14.3125,
+              "rank": 2,
+              "text": "Red",
+              "token_id": 7805
+            },
+            {
+              "logit": 14.125,
+              "rank": 3,
+              "text": "GPT",
+              "token_id": 162016
+            },
+            {
+              "logit": 13.4375,
+              "rank": 4,
+              "text": "Blue",
+              "token_id": 15957
+            },
+            {
+              "logit": 13.4375,
+              "rank": 5,
+              "text": "white",
+              "token_id": 9988
+            },
+            {
+              "logit": 13.1875,
+              "rank": 6,
+              "text": "green",
+              "token_id": 22743
+            },
+            {
+              "logit": 13.125,
+              "rank": 7,
+              "text": "Color",
+              "token_id": 2324
+            },
+            {
+              "logit": 13.0625,
+              "rank": 8,
+              "text": "black",
+              "token_id": 18474
+            },
+            {
+              "logit": 12.9375,
+              "rank": 9,
+              "text": "color",
+              "token_id": 4991
+            }
+          ],
+          "wall_seconds": 25.96052562101977
+        }
+      },
+      "id": "archive_color",
+      "label": "GPT-OSS archive color",
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=archive_color, fact_marker=CLASSIFIED FACT C, label=GPT-OSS archive color, token_offset=9822. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/archive_color/mount.json",
+            "--mount-graft-dir",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/archive_color/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=archive_color, fact_marker=CLASSIFIED FACT C, label=GPT-OSS archive color, token_offset=9822. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GRAY\", \"steps\": [{\"logit\": 19.0, \"rank\": 0, \"text\": \"GRAY\", \"token_id\": 140884}]}\n",
+          "wall_seconds": 33.925847249047365
+        },
+        "summary": {
+          "answer": "GRAY",
+          "answer_logit": 19.0,
+          "answer_rank": 0,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/archive_color/mount.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/archive_color/mount_steps/step_00.json",
+          "hit": true,
+          "status": "ok",
+          "top_token": {
+            "logit": 19.0,
+            "rank": 0,
+            "text": "GRAY",
+            "token_id": 140884
+          },
+          "top_tokens": [
+            {
+              "logit": 19.0,
+              "rank": 0,
+              "text": "GRAY",
+              "token_id": 140884
+            },
+            {
+              "logit": 16.625,
+              "rank": 1,
+              "text": "gray",
+              "token_id": 43222
+            },
+            {
+              "logit": 16.125,
+              "rank": 2,
+              "text": "Gray",
+              "token_id": 43338
+            },
+            {
+              "logit": 15.5,
+              "rank": 3,
+              "text": "GR",
+              "token_id": 13905
+            },
+            {
+              "logit": 15.0,
+              "rank": 4,
+              "text": "archive",
+              "token_id": 34784
+            },
+            {
+              "logit": 14.625,
+              "rank": 5,
+              "text": "Archive",
+              "token_id": 34870
+            },
+            {
+              "logit": 14.4375,
+              "rank": 6,
+              "text": "RED",
+              "token_id": 9935
+            },
+            {
+              "logit": 14.375,
+              "rank": 7,
+              "text": "red",
+              "token_id": 1291
+            },
+            {
+              "logit": 14.25,
+              "rank": 8,
+              "text": "Red",
+              "token_id": 7805
+            },
+            {
+              "logit": 14.0625,
+              "rank": 9,
+              "text": "BLUE",
+              "token_id": 134698
+            }
+          ],
+          "wall_seconds": 29.0623009869596
+        }
+      },
+      "placement": {
+        "answer": "GRAY",
+        "answer_token_id": 140884,
+        "id": "archive_color",
+        "label": "GPT-OSS archive color",
+        "needle_offset_tokens": 9822,
+        "needle_sha256": "c5dd34ae04552ed50b27706789bc698e699f54358224ccc23e8468bc8138522e",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=archive_color, fact_marker=CLASSIFIED FACT C, label=GPT-OSS archive color, token_offset=9822. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=archive_color, fact_marker=CLASSIFIED FACT C, label=GPT-OSS archive color, token_offset=9822. Return exactly the stored value for that record. No sentence. No punctuation.",
+      "variant": "metadata_card"
+    },
+    {
+      "answer": "IRON",
+      "control": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=tool_metal, fact_marker=CLASSIFIED FACT D, label=GPT-OSS tool metal, token_offset=13103. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/tool_metal/control.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/tool_metal/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=tool_metal, fact_marker=CLASSIFIED FACT D, label=GPT-OSS tool metal, token_offset=13103. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GPT\", \"steps\": [{\"logit\": 16.125, \"rank\": 0, \"text\": \"GPT\", \"token_id\": 162016}]}\n",
+          "wall_seconds": 30.57808400999056
+        },
+        "summary": {
+          "answer": "IRON",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/tool_metal/control.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/tool_metal/control_steps/step_00.json",
+          "hit": false,
+          "status": "ok",
+          "top_token": {
+            "logit": 16.125,
+            "rank": 0,
+            "text": "GPT",
+            "token_id": 162016
+          },
+          "top_tokens": [
+            {
+              "logit": 16.125,
+              "rank": 0,
+              "text": "GPT",
+              "token_id": 162016
+            },
+            {
+              "logit": 15.1875,
+              "rank": 1,
+              "text": "Metal",
+              "token_id": 76410
+            },
+            {
+              "logit": 15.125,
+              "rank": 2,
+              "text": "metal",
+              "token_id": 88393
+            },
+            {
+              "logit": 13.375,
+              "rank": 3,
+              "text": "tool",
+              "token_id": 17952
+            },
+            {
+              "logit": 13.0625,
+              "rank": 4,
+              "text": "Tool",
+              "token_id": 7199
+            },
+            {
+              "logit": 12.75,
+              "rank": 5,
+              "text": "Gold",
+              "token_id": 30717
+            },
+            {
+              "logit": 12.625,
+              "rank": 6,
+              "text": "G",
+              "token_id": 38
+            },
+            {
+              "logit": 12.125,
+              "rank": 7,
+              "text": "gold",
+              "token_id": 61496
+            },
+            {
+              "logit": 11.9375,
+              "rank": 8,
+              "text": "\u91d1",
+              "token_id": 5314
+            },
+            {
+              "logit": 11.875,
+              "rank": 9,
+              "text": "The",
+              "token_id": 976
+            }
+          ],
+          "wall_seconds": 25.743916892039124
+        }
+      },
+      "id": "tool_metal",
+      "label": "GPT-OSS tool metal",
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=tool_metal, fact_marker=CLASSIFIED FACT D, label=GPT-OSS tool metal, token_offset=13103. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/tool_metal/mount.json",
+            "--mount-graft-dir",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/tool_metal/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=tool_metal, fact_marker=CLASSIFIED FACT D, label=GPT-OSS tool metal, token_offset=13103. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>IRON\", \"steps\": [{\"logit\": 20.5, \"rank\": 0, \"text\": \"IRON\", \"token_id\": 96951}]}\n",
+          "wall_seconds": 33.856514414947014
+        },
+        "summary": {
+          "answer": "IRON",
+          "answer_logit": 20.5,
+          "answer_rank": 0,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/tool_metal/mount.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate/metadata_card/tool_metal/mount_steps/step_00.json",
+          "hit": true,
+          "status": "ok",
+          "top_token": {
+            "logit": 20.5,
+            "rank": 0,
+            "text": "IRON",
+            "token_id": 96951
+          },
+          "top_tokens": [
+            {
+              "logit": 20.5,
+              "rank": 0,
+              "text": "IRON",
+              "token_id": 96951
+            },
+            {
+              "logit": 17.625,
+              "rank": 1,
+              "text": "Iron",
+              "token_id": 72998
+            },
+            {
+              "logit": 16.875,
+              "rank": 2,
+              "text": "GPT",
+              "token_id": 162016
+            },
+            {
+              "logit": 16.625,
+              "rank": 3,
+              "text": "iron",
+              "token_id": 58333
+            },
+            {
+              "logit": 16.25,
+              "rank": 4,
+              "text": "IR",
+              "token_id": 4368
+            },
+            {
+              "logit": 15.0,
+              "rank": 5,
+              "text": "G",
+              "token_id": 38
+            },
+            {
+              "logit": 14.75,
+              "rank": 6,
+              "text": "GRAY",
+              "token_id": 140884
+            },
+            {
+              "logit": 14.625,
+              "rank": 7,
+              "text": "metal",
+              "token_id": 88393
+            },
+            {
+              "logit": 14.375,
+              "rank": 8,
+              "text": "Metal",
+              "token_id": 76410
+            },
+            {
+              "logit": 14.1875,
+              "rank": 9,
+              "text": "Ir",
+              "token_id": 42208
+            }
+          ],
+          "wall_seconds": 29.036857873026747
+        }
+      },
+      "placement": {
+        "answer": "IRON",
+        "answer_token_id": 96951,
+        "id": "tool_metal",
+        "label": "GPT-OSS tool metal",
+        "needle_offset_tokens": 13103,
+        "needle_sha256": "e222c6999efdcc5e132d85d999db2e5f374b484f09dd69a6bdecfd0b0aa5eb1a",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=tool_metal, fact_marker=CLASSIFIED FACT D, label=GPT-OSS tool metal, token_offset=13103. Return exactly the stored value for that record. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. Use the mounted memory record with fact_id=tool_metal, fact_marker=CLASSIFIED FACT D, label=GPT-OSS tool metal, token_offset=13103. Return exactly the stored value for that record. No sentence. No punctuation.",
+      "variant": "metadata_card"
+    }
+  ],
+  "schema": "gpt_oss_20b_multifact_addressing_gate_v1",
+  "script_args": {
+    "apa_layer_scope": "full",
+    "attention_mode": "apa_selective",
+    "bulk_bits": 8,
+    "dry_run": false,
+    "expert_empty_cache_interval": 0,
+    "expert_mode": "resident_packed_mxfp4",
+    "graft_dir": null,
+    "max_tokens": 160,
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "output": "artifacts/gpt_oss_20b/h6_multifact_16k_metadata_card_addressing_gate.json",
+    "refine_percentile": 0.15,
+    "route_detail": "summary",
+    "skip_control": false,
+    "source": "artifacts/gpt_oss_20b/h6_multifact_16k_gate.json",
+    "steps": 1,
+    "top_k": 10,
+    "variants": "metadata_card"
+  },
+  "source": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate.json",
+  "source_classification": "fail",
+  "source_target_tokens": 16384,
+  "status": "ok",
+  "summary": [
+    {
+      "answer": "BLUE",
+      "control_top": "GPT",
+      "hit": true,
+      "id": "vault_keyword",
+      "mount_answer_logit": 19.25,
+      "mount_answer_rank": 0,
+      "mount_top": "BLUE",
+      "variant": "metadata_card"
+    },
+    {
+      "answer": "EMBER",
+      "control_top": "GPT",
+      "hit": false,
+      "id": "relay_marker",
+      "mount_answer_logit": 13.75,
+      "mount_answer_rank": 9,
+      "mount_top": "GPT",
+      "variant": "metadata_card"
+    },
+    {
+      "answer": "GRAY",
+      "control_top": "blue",
+      "hit": true,
+      "id": "archive_color",
+      "mount_answer_logit": 19.0,
+      "mount_answer_rank": 0,
+      "mount_top": "GRAY",
+      "variant": "metadata_card"
+    },
+    {
+      "answer": "IRON",
+      "control_top": "GPT",
+      "hit": true,
+      "id": "tool_metal",
+      "mount_answer_logit": 20.5,
+      "mount_answer_rank": 0,
+      "mount_top": "IRON",
+      "variant": "metadata_card"
+    }
+  ],
+  "variants": [
+    "metadata_card"
+  ],
+  "wall_seconds": 258.1057259819936
+}

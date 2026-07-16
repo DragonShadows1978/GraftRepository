@@ -1,0 +1,1308 @@
+{
+ "dialect": "GptOss20B_TC:24x2880:g8x64",
+ "dialect_descriptor": {
+  "model_type": "GptOss20B_TC",
+  "num_layers": 24,
+  "hidden_dim": 2880,
+  "payload_kind": "gqa",
+  "vals_per_tok_layer": 1024,
+  "route_layer": 1,
+  "latent_rank": 0,
+  "rope_dim": 0,
+  "num_kv_heads": 8,
+  "head_dim": 64,
+  "position_law": "rope_full_yarn",
+  "state_kind": "kv",
+  "graftability": "seat_remountable",
+  "remountable": true,
+  "composition": "multi_mount"
+ },
+ "route_layer": 1,
+ "durability_mode": "session_safe",
+ "native_checkpoint": "native/grm_store.bin",
+ "wal_lsn": 52,
+ "review_buffer": [],
+ "nodes": [
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>",
+   "ntok": 86,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "auric-4-alpha"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "superseded_by": [
+     7
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 0,
+   "provenance": [
+    {
+     "segment_id": 0,
+     "node_id": 0,
+     "segment_type": "exchange_span",
+     "created_at": 1783547200.874796
+    }
+   ]
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full alpha. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Got it.<|end|>",
+   "ntok": 50,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 1,
+   "provenance": []
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact lyra dock. The current lyra dock value is Nadir-1-Delta. If asked later for lyra dock, answer Nadir-1-Delta only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current lyra dock value is Nadir-1-Delta.<|end|>",
+   "ntok": 86,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "nadir-1-delta"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "superseded_by": [
+     13
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 2,
+   "provenance": [
+    {
+     "segment_id": 1,
+     "node_id": 2,
+     "segment_type": "exchange_span",
+     "created_at": 1783547210.4835532
+    }
+   ]
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full beta. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Got it! The session continuity filler is set to \u201cfull beta.\u201d<|end|>",
+   "ntok": 61,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 3,
+   "provenance": []
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>",
+   "ntok": 86,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "vortex-3-sierra"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 4,
+   "provenance": [
+    {
+     "segment_id": 2,
+     "node_id": 4,
+     "segment_type": "exchange_span",
+     "created_at": 1783547225.5655122
+    }
+   ]
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>The current Orion PIN value is Vortex-3-Sierra.<|end|>",
+   "ntok": 59,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "pin",
+    "vortex-3-sierra"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 5,
+   "provenance": []
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact orion pin. The current orion pin value is Kestrel-9-Tango. This is the current value. If asked later, answer Kestrel-9-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Kestrel-9-Tango.<|end|>",
+   "ntok": 92,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "kestrel-9-tango"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 6,
+   "provenance": [
+    {
+     "segment_id": 3,
+     "node_id": 6,
+     "segment_type": "exchange_span",
+     "created_at": 1783547237.8218007
+    }
+   ]
+  },
+  {
+   "kind": "fact",
+   "text": "The current orion pin value is Kestrel-9-Tango.",
+   "ntok": 15,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "kestrel-9-tango"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     0
+    ],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 7,
+   "provenance": [
+    {
+     "segment_id": 4,
+     "node_id": 7,
+     "segment_type": "fact_span",
+     "created_at": 1783547238.4077666
+    }
+   ]
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact nova key. The current nova key value is Quartz-5-Bravo. If asked later for nova key, answer Quartz-5-Bravo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current nova key value is Quartz-5-Bravo.<|end|>",
+   "ntok": 79,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "quartz-5-bravo"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 8,
+   "provenance": [
+    {
+     "segment_id": 5,
+     "node_id": 8,
+     "segment_type": "exchange_span",
+     "created_at": 1783547243.3370147
+    }
+   ]
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full gamma. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Got it. The session continues with the same facts.<|end|>",
+   "ntok": 58,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 9,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current cypher bridge value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Vortex-3-Sierra<|end|>",
+   "ntok": 52,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "vortex-3-sierra"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 10,
+   "provenance": []
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact mira seal. The current mira seal value is Silver-6-Charlie. If asked later for mira seal, answer Silver-6-Charlie only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current mira seal value is Silver-6-Charlie.<|end|>",
+   "ntok": 82,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "silver-6-charlie"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "superseded_by": [
+     20
+    ]
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 11,
+   "provenance": [
+    {
+     "segment_id": 6,
+     "node_id": 11,
+     "segment_type": "exchange_span",
+     "created_at": 1783547262.448884
+    }
+   ]
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact lyra dock. The current lyra dock value is Zenith-2-Echo. This is the current value. If asked later, answer Zenith-2-Echo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current lyra dock value is Zenith-2-Echo.<|end|>",
+   "ntok": 86,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "zenith-2-echo"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 12,
+   "provenance": [
+    {
+     "segment_id": 7,
+     "node_id": 12,
+     "segment_type": "exchange_span",
+     "created_at": 1783547267.684428
+    }
+   ]
+  },
+  {
+   "kind": "fact",
+   "text": "The current lyra dock value is Zenith-2-Echo.",
+   "ntok": 13,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "zenith-2-echo"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     2
+    ],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 13,
+   "provenance": [
+    {
+     "segment_id": 8,
+     "node_id": 13,
+     "segment_type": "fact_span",
+     "created_at": 1783547268.1721852
+    }
+   ]
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full delta. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Acknowledged.<|end|>",
+   "ntok": 50,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 14,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Vortex-3-Sierra.<|end|>",
+   "ntok": 53,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "vortex-3-sierra"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 15,
+   "provenance": []
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact terra port. The current terra port value is Harbor-8-Golf. If asked later for terra port, answer Harbor-8-Golf only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current terra port value is Harbor-8-Golf.<|end|>",
+   "ntok": 79,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "harbor-8-golf"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 16,
+   "provenance": [
+    {
+     "segment_id": 9,
+     "node_id": 16,
+     "segment_type": "exchange_span",
+     "created_at": 1783547286.3641665
+    }
+   ]
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full epsilon. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Acknowledged.<|end|>",
+   "ntok": 50,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 17,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current lyra dock value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Zenith-2-Echo<|end|>",
+   "ntok": 52,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "zenith-2-echo"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 18,
+   "provenance": []
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact mira seal. The current mira seal value is Gold-7-Foxtrot. This is the current value. If asked later, answer Gold-7-Foxtrot only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current mira seal value is Gold-7-Foxtrot.<|end|>",
+   "ntok": 89,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "gold-7-foxtrot"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 19,
+   "provenance": [
+    {
+     "segment_id": 0,
+     "node_id": 19,
+     "segment_type": "exchange_span",
+     "created_at": 1783547363.061993
+    }
+   ]
+  },
+  {
+   "kind": "fact",
+   "text": "The current mira seal value is Gold-7-Foxtrot.",
+   "ntok": 14,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "gold-7-foxtrot"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     11
+    ],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 20,
+   "provenance": [
+    {
+     "segment_id": 1,
+     "node_id": 20,
+     "segment_type": "fact_span",
+     "created_at": 1783547363.6131396
+    }
+   ]
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full zeta. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Acknowledged.<|end|>",
+   "ntok": 51,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 21,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current nova key value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Quartz-5-Bravo<|end|>",
+   "ntok": 50,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "quartz-5-bravo"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 22,
+   "provenance": []
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact ember code. The current ember code value is Violet-2-Hotel. If asked later for ember code, answer Violet-2-Hotel only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current ember code value is Violet-2-Hotel.<|end|>",
+   "ntok": 79,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "violet-2-hotel"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 23,
+   "provenance": [
+    {
+     "segment_id": 2,
+     "node_id": 23,
+     "segment_type": "exchange_span",
+     "created_at": 1783547381.9686115
+    }
+   ]
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full eta. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Acknowledged.<|end|>",
+   "ntok": 50,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 24,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current mira seal value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Gold-7-Foxtrot.<|end|>",
+   "ntok": 53,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "gold-7-foxtrot"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 25,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full theta. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Acknowledged.<|end|>",
+   "ntok": 50,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 26,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current terra port value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Harbor-8-Golf.<|end|>",
+   "ntok": 52,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "harbor-8-golf"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 27,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full iota. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Acknowledged.<|end|>",
+   "ntok": 51,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 28,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current ember code value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Violet-2-Hotel<|end|>",
+   "ntok": 51,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "violet-2-hotel"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 29,
+   "provenance": []
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact atlas tone. The current atlas tone value is Cobalt-1-India. If asked later for atlas tone, answer Cobalt-1-India only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current atlas tone value is Cobalt-1-India.<|end|>",
+   "ntok": 82,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "cobalt-1-india"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 30,
+   "provenance": [
+    {
+     "segment_id": 3,
+     "node_id": 30,
+     "segment_type": "exchange_span",
+     "created_at": 1783547429.4208739
+    }
+   ]
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full kappa. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Acknowledged.<|end|>",
+   "ntok": 51,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 31,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full lambda. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Acknowledged.<|end|>",
+   "ntok": 50,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 32,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current atlas tone value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Cobalt-1-India<|end|>",
+   "ntok": 51,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "cobalt-1-india"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 33,
+   "provenance": []
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full mu. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Got it.<|end|>",
+   "ntok": 50,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 34,
+   "provenance": []
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact polaris mark. The current polaris mark value is Marble-4-Juliet. If asked later for polaris mark, answer Marble-4-Juliet only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current polaris mark value is Marble-4-Juliet.<|end|>",
+   "ntok": 83,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "marble-4-juliet"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 35,
+   "provenance": [
+    {
+     "segment_id": 4,
+     "node_id": 35,
+     "segment_type": "exchange_span",
+     "created_at": 1783547465.0760036
+    }
+   ]
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full nu. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Got it. The polaris mark remains Marble\u20114\u2011Juliet.<|end|>",
+   "ntok": 62,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "4"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 36,
+   "provenance": []
+  }
+ ]
+}

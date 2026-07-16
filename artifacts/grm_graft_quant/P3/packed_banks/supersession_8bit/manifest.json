@@ -1,0 +1,487 @@
+{
+  "created_at": "2026-07-08T13:03:28",
+  "dtype": "bfloat16",
+  "grm_dialect": {
+    "composition": "multi_mount",
+    "graftability": "seat_remountable",
+    "head_dim": 64,
+    "hidden_dim": 2880,
+    "model_type": "GptOss20B_TC",
+    "num_kv_heads": 8,
+    "num_layers": 24,
+    "payload_kind": "gqa",
+    "position_law": "rope_full_yarn",
+    "remountable": true,
+    "route_layer": 1,
+    "state_kind": "kv",
+    "vals_per_tok_layer": 1024
+  },
+  "layers": [
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 0,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_000.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 1,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_001.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 2,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_002.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 3,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_003.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 4,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_004.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 5,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_005.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 6,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_006.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 7,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_007.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 8,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_008.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 9,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_009.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 10,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_010.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 11,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_011.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 12,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_012.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 13,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_013.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 14,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_014.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 15,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_015.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 16,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_016.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 17,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_017.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 18,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_018.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 19,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_019.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 20,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_020.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 21,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_021.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 22,
+      "layer_type": "sliding_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_022.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    },
+    {
+      "host_bytes": 4720950,
+      "k_shape": [
+        1,
+        8,
+        4096,
+        64
+      ],
+      "layer": 23,
+      "layer_type": "full_attention",
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/packed_banks/supersession_8bit/layer_023.npz",
+      "token_count": 4096,
+      "v_shape": [
+        1,
+        8,
+        4096,
+        64
+      ]
+    }
+  ],
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "note": "per-layer pre-RoPE K/V shards captured by the streamed GPT-OSS TensorCUDA harness; remount with --mount-graft-dir",
+  "schema": "gpt_oss_20b_prerope_graft_manifest_v1",
+  "token_count": 4096,
+  "total_host_bytes": 201326592,
+  "storage_bits": 8,
+  "storage_group_size": 32,
+  "format_version": 1,
+  "quant_source_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/supersession_4k_fp16_gate/graft",
+  "quant_transform": "packed_symmetric_group32_headdim_axis"
+}

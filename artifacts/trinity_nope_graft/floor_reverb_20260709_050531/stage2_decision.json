@@ -1,0 +1,23 @@
+{
+  "floor_clean": false,
+  "floor_mode": null,
+  "fork": "STOP_CHAT_PATH_BROKEN_EVEN_BF16",
+  "gpu_after": "NVIDIA GeForce RTX 4070 SUPER, 1185 MiB, 12282 MiB, 3 %",
+  "ngen_chat": 8,
+  "note": "Stage2b is a separate wall-bounded run for chat after natural consumed Stage2a rail",
+  "pure_chat_clean": false,
+  "pure_chat_ids": [
+    48,
+    15913,
+    3
+  ],
+  "pure_chat_sig": "other_degraded",
+  "pure_chat_text": "1234",
+  "pure_natural_clean": true,
+  "pure_natural_sig": "clean_english",
+  "pure_natural_text": "Paris. It is located in the north-central part of the",
+  "residual_read": "bf16 natural clean but chat still degraded (sig=other_degraded, text='1234') \u2014 not INT4-only; chat free-gen residual (model chat behavior or template path)",
+  "s2b_wall_s": 127.199,
+  "stage": 2,
+  "stage_dir": "artifacts/trinity_nope_graft/floor_reverb_20260709_050531/stage2_bf16_stream"
+}

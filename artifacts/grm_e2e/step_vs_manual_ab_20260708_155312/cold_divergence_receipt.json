@@ -1,0 +1,130 @@
+{
+  "A_ids": [
+    15,
+    13,
+    15,
+    200002,
+    200002,
+    200002,
+    15,
+    13,
+    15,
+    200002,
+    200002,
+    15,
+    13,
+    15,
+    200002,
+    15
+  ],
+  "A_text": "0.0<|return|><|return|><|return|>0.0<|return|><|return|>0.0<|return|>0",
+  "B_ids": [
+    40,
+    4572,
+    23045,
+    11,
+    889,
+    357,
+    665,
+    1573,
+    1652,
+    483,
+    484,
+    13,
+    200002
+  ],
+  "B_text": "I\u2019m sorry, but I can\u2019t help with that.",
+  "C_info": {
+    "evicted": 0,
+    "live_tokens": 49,
+    "mounts": [],
+    "no_mount_fit": true,
+    "resident": 68,
+    "trip": 0
+  },
+  "C_step_text": "0.0",
+  "D_pure_model_ids": [
+    15,
+    13,
+    15,
+    200002,
+    200002,
+    200002,
+    15,
+    13,
+    15,
+    200002,
+    15,
+    13,
+    15,
+    200002,
+    15,
+    13
+  ],
+  "D_pure_model_text": "0.0<|return|><|return|><|return|>0.0<|return|>0.0<|return|>0.",
+  "classification_A_vs_B": {
+    "candidates": [
+      "c_stop_or_commit_slicing",
+      "d_sampling_or_hidden_state_delta"
+    ],
+    "class": "c_stop_or_commit_slicing",
+    "first_div_step": 0,
+    "note": "See divergence receipt for numeric mismatch."
+  },
+  "divergence_A_vs_B": {
+    "A_cache": {
+      "full_S": null,
+      "n_layers": 0,
+      "sliding_S": null
+    },
+    "A_chosen": {
+      "id": 15,
+      "text": "0"
+    },
+    "A_pre_pos": 0,
+    "A_rope_start": 115,
+    "B_cache": {
+      "full_S": null,
+      "n_layers": 0,
+      "sliding_S": null
+    },
+    "B_chosen": {
+      "id": 40,
+      "text": "I"
+    },
+    "B_pre_pos": 0,
+    "B_rope_start": 115,
+    "diffs": {
+      "chosen_id": {
+        "A": 15,
+        "B": 40
+      },
+      "top5_ids": {
+        "A": [
+          15,
+          40,
+          976,
+          12,
+          17
+        ],
+        "B": [
+          40,
+          15,
+          976,
+          12,
+          2167
+        ]
+      }
+    },
+    "step": 0
+  },
+  "prompt_n_ids": 46,
+  "prompt_sha256": "9025cc17865f2b94e8a4df8822ec0333347363728197752deb443441bb0d47f0",
+  "schema": "grm_e2e_step_vs_manual_cold_ab_v1",
+  "walls": {
+    "A": 2.2127035219982645,
+    "B": 2.07574017999832,
+    "C": 1.6107048230005603,
+    "D_pure": 2.326910638001209
+  }
+}

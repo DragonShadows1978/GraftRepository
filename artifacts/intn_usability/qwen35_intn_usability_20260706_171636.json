@@ -1,0 +1,349 @@
+{
+  "bits": [
+    4,
+    3
+  ],
+  "cases": [
+    {
+      "expected": "LUMEN-482",
+      "name": "vault_code",
+      "question": "What is the vault access code?"
+    },
+    {
+      "expected": "Mara Voss",
+      "name": "backup_pilot",
+      "question": "Who is the backup pilot?"
+    },
+    {
+      "expected": "amber",
+      "name": "coolant_color",
+      "question": "What color is the coolant marker?"
+    },
+    {
+      "expected": "Kenora",
+      "name": "checkpoint_city",
+      "question": "Which city is checkpoint delta?"
+    },
+    {
+      "expected": "73194",
+      "name": "numeric_handshake",
+      "question": "What is the numeric handshake?"
+    }
+  ],
+  "created_at": "2026-07-06T17:16:42",
+  "max_new": 32,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "modes": "standard,apa_r0.15",
+  "results": [
+    {
+      "bits": 4,
+      "load_info": {
+        "attention_layers": [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23,
+          27,
+          31
+        ],
+        "framework": "tensor_cuda Qwen3.5",
+        "head_dim": 256,
+        "hidden_dim": 4096,
+        "layers": 32,
+        "loaded": "INT4 hybrid",
+        "model_dir": "/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+        "num_heads": 16,
+        "num_kv_heads": 4,
+        "repository": "Qwen/Qwen3.5-9B",
+        "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+        "tie_word_embeddings": false,
+        "weight_bits": 4
+      },
+      "load_wall_seconds": 58.66218479297822,
+      "memory_after_load_mib": 4536,
+      "memory_before_load_mib": 470,
+      "settings": [
+        {
+          "cases": [
+            {
+              "answer": "LUMEN-482\n",
+              "degenerate": false,
+              "expected": "LUMEN-482",
+              "generated_tokens": 9,
+              "hit": true,
+              "name": "vault_code",
+              "question": "What is the vault access code?",
+              "wall_seconds": 1.2054739840095863
+            },
+            {
+              "answer": "Mara Voss\n",
+              "degenerate": false,
+              "expected": "Mara Voss",
+              "generated_tokens": 6,
+              "hit": true,
+              "name": "backup_pilot",
+              "question": "Who is the backup pilot?",
+              "wall_seconds": 0.875434311979916
+            },
+            {
+              "answer": "amber\n",
+              "degenerate": false,
+              "expected": "amber",
+              "generated_tokens": 3,
+              "hit": true,
+              "name": "coolant_color",
+              "question": "What color is the coolant marker?",
+              "wall_seconds": 0.830534273001831
+            },
+            {
+              "answer": "Kenora\n",
+              "degenerate": false,
+              "expected": "Kenora",
+              "generated_tokens": 4,
+              "hit": true,
+              "name": "checkpoint_city",
+              "question": "Which city is checkpoint delta?",
+              "wall_seconds": 0.8411794230341911
+            },
+            {
+              "answer": "73194\n",
+              "degenerate": false,
+              "expected": "73194",
+              "generated_tokens": 7,
+              "hit": true,
+              "name": "numeric_handshake",
+              "question": "What is the numeric handshake?",
+              "wall_seconds": 0.891123156005051
+            }
+          ],
+          "hits": 5,
+          "max_observed_memory_mib": 4584,
+          "mode": "standard",
+          "name": "standard",
+          "refine": null,
+          "status": "ok",
+          "total": 5
+        },
+        {
+          "cases": [
+            {
+              "answer": "LUMEN-482\n",
+              "degenerate": false,
+              "expected": "LUMEN-482",
+              "generated_tokens": 9,
+              "hit": true,
+              "name": "vault_code",
+              "question": "What is the vault access code?",
+              "wall_seconds": 0.992512897006236
+            },
+            {
+              "answer": "Mara Voss\n",
+              "degenerate": false,
+              "expected": "Mara Voss",
+              "generated_tokens": 6,
+              "hit": true,
+              "name": "backup_pilot",
+              "question": "Who is the backup pilot?",
+              "wall_seconds": 0.8829231529962271
+            },
+            {
+              "answer": "amber\n",
+              "degenerate": false,
+              "expected": "amber",
+              "generated_tokens": 3,
+              "hit": true,
+              "name": "coolant_color",
+              "question": "What color is the coolant marker?",
+              "wall_seconds": 0.8424485709983855
+            },
+            {
+              "answer": "Kenora\n",
+              "degenerate": false,
+              "expected": "Kenora",
+              "generated_tokens": 4,
+              "hit": true,
+              "name": "checkpoint_city",
+              "question": "Which city is checkpoint delta?",
+              "wall_seconds": 0.8544148349901661
+            },
+            {
+              "answer": "73194\n",
+              "degenerate": false,
+              "expected": "73194",
+              "generated_tokens": 7,
+              "hit": true,
+              "name": "numeric_handshake",
+              "question": "What is the numeric handshake?",
+              "wall_seconds": 0.9078443390317261
+            }
+          ],
+          "hits": 5,
+          "max_observed_memory_mib": 4616,
+          "mode": "apa_selective",
+          "name": "apa_r0.15",
+          "refine": 0.15,
+          "status": "ok",
+          "total": 5
+        }
+      ],
+      "status": "ok"
+    },
+    {
+      "bits": 3,
+      "load_info": {
+        "attention_layers": [
+          3,
+          7,
+          11,
+          15,
+          19,
+          23,
+          27,
+          31
+        ],
+        "framework": "tensor_cuda Qwen3.5",
+        "head_dim": 256,
+        "hidden_dim": 4096,
+        "layers": 32,
+        "loaded": "INT3 hybrid",
+        "model_dir": "/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+        "num_heads": 16,
+        "num_kv_heads": 4,
+        "repository": "Qwen/Qwen3.5-9B",
+        "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+        "tie_word_embeddings": false,
+        "weight_bits": 3
+      },
+      "load_wall_seconds": 205.51844565197825,
+      "memory_after_load_mib": 3622,
+      "memory_before_load_mib": 744,
+      "settings": [
+        {
+          "cases": [
+            {
+              "answer": "LUMEN-482\n",
+              "degenerate": false,
+              "expected": "LUMEN-482",
+              "generated_tokens": 9,
+              "hit": true,
+              "name": "vault_code",
+              "question": "What is the vault access code?",
+              "wall_seconds": 1.3152472809888422
+            },
+            {
+              "answer": "Mara Voss\n",
+              "degenerate": false,
+              "expected": "Mara Voss",
+              "generated_tokens": 6,
+              "hit": true,
+              "name": "backup_pilot",
+              "question": "Who is the backup pilot?",
+              "wall_seconds": 1.132497402955778
+            },
+            {
+              "answer": "Amber\n",
+              "degenerate": false,
+              "expected": "amber",
+              "generated_tokens": 4,
+              "hit": true,
+              "name": "coolant_color",
+              "question": "What color is the coolant marker?",
+              "wall_seconds": 1.0148765190388076
+            },
+            {
+              "answer": "Kenora\n",
+              "degenerate": false,
+              "expected": "Kenora",
+              "generated_tokens": 4,
+              "hit": true,
+              "name": "checkpoint_city",
+              "question": "Which city is checkpoint delta?",
+              "wall_seconds": 1.0170327730011195
+            },
+            {
+              "answer": "73194\n",
+              "degenerate": false,
+              "expected": "73194",
+              "generated_tokens": 7,
+              "hit": true,
+              "name": "numeric_handshake",
+              "question": "What is the numeric handshake?",
+              "wall_seconds": 1.1839239060063846
+            }
+          ],
+          "hits": 5,
+          "max_observed_memory_mib": 3622,
+          "mode": "standard",
+          "name": "standard",
+          "refine": null,
+          "status": "ok",
+          "total": 5
+        },
+        {
+          "cases": [
+            {
+              "answer": "LUMEN-482\n",
+              "degenerate": false,
+              "expected": "LUMEN-482",
+              "generated_tokens": 9,
+              "hit": true,
+              "name": "vault_code",
+              "question": "What is the vault access code?",
+              "wall_seconds": 1.316821904038079
+            },
+            {
+              "answer": "Mara Voss\n",
+              "degenerate": false,
+              "expected": "Mara Voss",
+              "generated_tokens": 6,
+              "hit": true,
+              "name": "backup_pilot",
+              "question": "Who is the backup pilot?",
+              "wall_seconds": 1.1403862190200016
+            },
+            {
+              "answer": "Amber\n",
+              "degenerate": false,
+              "expected": "amber",
+              "generated_tokens": 4,
+              "hit": true,
+              "name": "coolant_color",
+              "question": "What color is the coolant marker?",
+              "wall_seconds": 1.0283991240430623
+            },
+            {
+              "answer": "Kenora\n",
+              "degenerate": false,
+              "expected": "Kenora",
+              "generated_tokens": 4,
+              "hit": true,
+              "name": "checkpoint_city",
+              "question": "Which city is checkpoint delta?",
+              "wall_seconds": 1.017197159002535
+            },
+            {
+              "answer": "73194\n",
+              "degenerate": false,
+              "expected": "73194",
+              "generated_tokens": 7,
+              "hit": true,
+              "name": "numeric_handshake",
+              "question": "What is the numeric handshake?",
+              "wall_seconds": 1.1887140049948357
+            }
+          ],
+          "hits": 5,
+          "max_observed_memory_mib": 3622,
+          "mode": "apa_selective",
+          "name": "apa_r0.15",
+          "refine": 0.15,
+          "status": "ok",
+          "total": 5
+        }
+      ],
+      "status": "ok"
+    }
+  ]
+}

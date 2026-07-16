@@ -1,0 +1,66 @@
+{
+  "loadavg_note": "concurrent with 1M int4 bg profile run",
+  "results": [
+    {
+      "backend": "native",
+      "harvest": {
+        "centroid_bank_rows": 8192,
+        "dim": 128,
+        "mean_active_dims": 9.09326171875,
+        "mean_l1": 2.8452112674713135,
+        "mean_tokens_per_row": 10.036865234375,
+        "source_files": 26,
+        "source_root": "/mnt/ForgeRealm/GraftRepository"
+      },
+      "mode": "fp32",
+      "node_count": 1000,
+      "queries": 20,
+      "refine_m": null,
+      "route_ms_max": 0.642448,
+      "route_ms_min": 0.607743,
+      "route_ms_p50": 0.626804,
+      "route_ms_p95": 0.6364896
+    },
+    {
+      "backend": "native",
+      "harvest": {
+        "centroid_bank_rows": 8192,
+        "dim": 128,
+        "mean_active_dims": 9.09326171875,
+        "mean_l1": 2.8452112674713135,
+        "mean_tokens_per_row": 10.036865234375,
+        "source_files": 26,
+        "source_root": "/mnt/ForgeRealm/GraftRepository"
+      },
+      "mode": "fp32",
+      "node_count": 10000,
+      "queries": 20,
+      "refine_m": null,
+      "route_ms_max": 7.629074,
+      "route_ms_min": 5.986646,
+      "route_ms_p50": 6.4526275,
+      "route_ms_p95": 7.192954650000001
+    },
+    {
+      "backend": "native",
+      "harvest": {
+        "centroid_bank_rows": 8192,
+        "dim": 128,
+        "mean_active_dims": 9.09326171875,
+        "mean_l1": 2.8452112674713135,
+        "mean_tokens_per_row": 10.036865234375,
+        "source_files": 26,
+        "source_root": "/mnt/ForgeRealm/GraftRepository"
+      },
+      "mode": "fp32",
+      "node_count": 100000,
+      "queries": 20,
+      "refine_m": null,
+      "route_ms_max": 78.731484,
+      "route_ms_min": 61.078302,
+      "route_ms_p50": 72.7352955,
+      "route_ms_p95": 78.1897826
+    }
+  ],
+  "schema": "grm_mla_route_wall_curve_v1"
+}

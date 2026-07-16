@@ -1,0 +1,1230 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "standard",
+  "bulk_bits": 8,
+  "capture_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/capture_forward.json",
+  "capture_ids_file": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/capture_ids.json",
+  "capture_prompt": {
+    "actual_tokens": 4096,
+    "input_mode": "direct_token_ids",
+    "placements": [
+      {
+        "answer": "BLUE",
+        "answer_token_id": 134698,
+        "id": "preferred_color",
+        "label": "user's preferred color",
+        "letter": "A",
+        "needle_offset_tokens": 802,
+        "needle_sha256": "396cad40b7e2631e7e3c5f384dcab712530dbcd5af0e1b38ec89e8b562f7b327",
+        "needle_tokens": 19
+      },
+      {
+        "answer": "EMBER",
+        "answer_token_id": 78250,
+        "id": "preferred_signal",
+        "label": "user's preferred signal word",
+        "letter": "B",
+        "needle_offset_tokens": 1623,
+        "needle_sha256": "f1b155ba38265a1426c4b225596d892a876d67cbb8565632d5aaa4f5a7aacef8",
+        "needle_tokens": 21
+      },
+      {
+        "answer": "GRAY",
+        "answer_token_id": 140884,
+        "id": "preferred_shade",
+        "label": "user's preferred neutral shade",
+        "letter": "C",
+        "needle_offset_tokens": 2446,
+        "needle_sha256": "b8fe93a4defa0df89c695f15e24fdcf405f251c1bd168c81f5a8fdf52bc070f0",
+        "needle_tokens": 21
+      },
+      {
+        "answer": "IRON",
+        "answer_token_id": 96951,
+        "id": "preferred_metal",
+        "label": "user's preferred tool metal",
+        "letter": "D",
+        "needle_offset_tokens": 3269,
+        "needle_sha256": "2086fa72dd45cfe703e0434043c2400ea81af573416a087538b41094a8a18b78",
+        "needle_tokens": 21
+      }
+    ],
+    "target_tokens": 4096,
+    "total_needle_tokens": 82
+  },
+  "capture_prompt_file": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/capture_prompt.txt",
+  "classification": "pass",
+  "corpus": {
+    "file_count": 49,
+    "kind": "directory",
+    "path": "/mnt/ForgeRealm/GraftRepository/docs",
+    "sha256": "440d019ae72847ac4c21c0dee01f99be79ec4af4abb7f1b3860988c982209704"
+  },
+  "created_at": "2026-07-08T06:18:35",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/banks/preference",
+  "hit_count": 4,
+  "item_count": 4,
+  "items": [
+    {
+      "answer": "BLUE",
+      "answer_token_id": 134698,
+      "id": "preferred_color",
+      "label": "user's preferred color",
+      "letter": "A",
+      "needle": "\nPREFERENCE FACT A. The user's preferred color is BLUE.\nEND PREFERENCE FACT A.\n"
+    },
+    {
+      "answer": "EMBER",
+      "answer_token_id": 78250,
+      "id": "preferred_signal",
+      "label": "user's preferred signal word",
+      "letter": "B",
+      "needle": "\nPREFERENCE FACT B. The user's preferred signal word is EMBER.\nEND PREFERENCE FACT B.\n"
+    },
+    {
+      "answer": "GRAY",
+      "answer_token_id": 140884,
+      "id": "preferred_shade",
+      "label": "user's preferred neutral shade",
+      "letter": "C",
+      "needle": "\nPREFERENCE FACT C. The user's preferred neutral shade is GRAY.\nEND PREFERENCE FACT C.\n"
+    },
+    {
+      "answer": "IRON",
+      "answer_token_id": 96951,
+      "id": "preferred_metal",
+      "label": "user's preferred tool metal",
+      "letter": "D",
+      "needle": "\nPREFERENCE FACT D. The user's preferred tool metal is IRON.\nEND PREFERENCE FACT D.\n"
+    }
+  ],
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "runs": {
+    "capture": null,
+    "items": [
+      {
+        "answer": "BLUE",
+        "control": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT A, what is the user's preferred color? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_color/control.json"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_color/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT A, what is the user's preferred color? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>blue\", \"steps\": [{\"logit\": 17.375, \"rank\": 0, \"text\": \"blue\", \"token_id\": 18789}]}\n",
+            "wall_seconds": 35.47400643792935
+          },
+          "summary": {
+            "answer": "BLUE",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_color/control.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_color/control_steps/step_00.json",
+            "generated_contains_value": true,
+            "generated_text": "blue",
+            "hit": false,
+            "normalized_answer": "blue",
+            "normalized_answer_logit": 17.375,
+            "normalized_answer_rank": 0,
+            "normalized_answer_text": "blue",
+            "normalized_hit": true,
+            "normalized_top_token": "blue",
+            "status": "ok",
+            "top_token": {
+              "logit": 17.375,
+              "rank": 0,
+              "text": "blue",
+              "token_id": 18789
+            },
+            "top_tokens": [
+              {
+                "logit": 17.375,
+                "rank": 0,
+                "text": "blue",
+                "token_id": 18789
+              },
+              {
+                "logit": 16.375,
+                "rank": 1,
+                "text": "Blue",
+                "token_id": 15957
+              },
+              {
+                "logit": 16.375,
+                "rank": 2,
+                "text": "red",
+                "token_id": 1291
+              },
+              {
+                "logit": 15.625,
+                "rank": 3,
+                "text": "green",
+                "token_id": 22743
+              },
+              {
+                "logit": 15.5625,
+                "rank": 4,
+                "text": "Red",
+                "token_id": 7805
+              },
+              {
+                "logit": 15.4375,
+                "rank": 5,
+                "text": "white",
+                "token_id": 9988
+              },
+              {
+                "logit": 14.8125,
+                "rank": 6,
+                "text": "black",
+                "token_id": 18474
+              },
+              {
+                "logit": 14.5,
+                "rank": 7,
+                "text": "orange",
+                "token_id": 65681
+              },
+              {
+                "logit": 14.4375,
+                "rank": 8,
+                "text": "color",
+                "token_id": 4991
+              },
+              {
+                "logit": 14.125,
+                "rank": 9,
+                "text": "yellow",
+                "token_id": 60139
+              }
+            ],
+            "wall_seconds": 30.686698475969024
+          }
+        },
+        "id": "preferred_color",
+        "label": "user's preferred color",
+        "letter": "A",
+        "mount": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT A, what is the user's preferred color? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_color/mount.json",
+              "--mount-graft-dir",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/banks/preference"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_color/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT A, what is the user's preferred color? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>BLUE\", \"steps\": [{\"logit\": 25.125, \"rank\": 0, \"text\": \"BLUE\", \"token_id\": 134698}]}\n",
+            "wall_seconds": 36.09774930693675
+          },
+          "summary": {
+            "answer": "BLUE",
+            "answer_logit": 25.125,
+            "answer_rank": 0,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_color/mount.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_color/mount_steps/step_00.json",
+            "generated_contains_value": true,
+            "generated_text": "BLUE",
+            "hit": true,
+            "normalized_answer": "blue",
+            "normalized_answer_logit": 25.125,
+            "normalized_answer_rank": 0,
+            "normalized_answer_text": "BLUE",
+            "normalized_hit": true,
+            "normalized_top_token": "blue",
+            "status": "ok",
+            "top_token": {
+              "logit": 25.125,
+              "rank": 0,
+              "text": "BLUE",
+              "token_id": 134698
+            },
+            "top_tokens": [
+              {
+                "logit": 25.125,
+                "rank": 0,
+                "text": "BLUE",
+                "token_id": 134698
+              },
+              {
+                "logit": 25.0,
+                "rank": 1,
+                "text": "blue",
+                "token_id": 18789
+              },
+              {
+                "logit": 24.25,
+                "rank": 2,
+                "text": "Blue",
+                "token_id": 15957
+              },
+              {
+                "logit": 18.125,
+                "rank": 3,
+                "text": "\u84dd",
+                "token_id": 72721
+              },
+              {
+                "logit": 17.75,
+                "rank": 4,
+                "text": " blue",
+                "token_id": 9861
+              },
+              {
+                "logit": 17.375,
+                "rank": 5,
+                "text": "BL",
+                "token_id": 16350
+              },
+              {
+                "logit": 16.75,
+                "rank": 6,
+                "text": "blu",
+                "token_id": 125889
+              },
+              {
+                "logit": 16.375,
+                "rank": 7,
+                "text": " BLUE",
+                "token_id": 110151
+              },
+              {
+                "logit": 16.25,
+                "rank": 8,
+                "text": "B",
+                "token_id": 33
+              },
+              {
+                "logit": 15.9375,
+                "rank": 9,
+                "text": " Blue",
+                "token_id": 11942
+              }
+            ],
+            "wall_seconds": 31.368299400084652
+          }
+        },
+        "placement": {
+          "answer": "BLUE",
+          "answer_token_id": 134698,
+          "id": "preferred_color",
+          "label": "user's preferred color",
+          "letter": "A",
+          "needle_offset_tokens": 802,
+          "needle_sha256": "396cad40b7e2631e7e3c5f384dcab712530dbcd5af0e1b38ec89e8b562f7b327",
+          "needle_tokens": 19
+        },
+        "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT A, what is the user's preferred color? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>"
+      },
+      {
+        "answer": "EMBER",
+        "control": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT B, what is the user's preferred signal word? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_signal/control.json"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_signal/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT B, what is the user's preferred signal word? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>signal\", \"steps\": [{\"logit\": 12.125, \"rank\": 0, \"text\": \"signal\", \"token_id\": 57706}]}\n",
+            "wall_seconds": 35.8764212600654
+          },
+          "summary": {
+            "answer": "EMBER",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_signal/control.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_signal/control_steps/step_00.json",
+            "generated_contains_value": false,
+            "generated_text": "signal",
+            "hit": false,
+            "normalized_answer": "ember",
+            "normalized_answer_logit": null,
+            "normalized_answer_rank": null,
+            "normalized_answer_text": null,
+            "normalized_hit": false,
+            "normalized_top_token": "signal",
+            "status": "ok",
+            "top_token": {
+              "logit": 12.125,
+              "rank": 0,
+              "text": "signal",
+              "token_id": 57706
+            },
+            "top_tokens": [
+              {
+                "logit": 12.125,
+                "rank": 0,
+                "text": "signal",
+                "token_id": 57706
+              },
+              {
+                "logit": 11.8125,
+                "rank": 1,
+                "text": "P",
+                "token_id": 47
+              },
+              {
+                "logit": 11.625,
+                "rank": 2,
+                "text": "none",
+                "token_id": 12851
+              },
+              {
+                "logit": 11.5625,
+                "rank": 3,
+                "text": "B",
+                "token_id": 33
+              },
+              {
+                "logit": 11.4375,
+                "rank": 4,
+                "text": "Signal",
+                "token_id": 31411
+              },
+              {
+                "logit": 11.25,
+                "rank": 5,
+                "text": "yes",
+                "token_id": 6763
+              },
+              {
+                "logit": 11.25,
+                "rank": 6,
+                "text": "turn",
+                "token_id": 529
+              },
+              {
+                "logit": 11.0625,
+                "rank": 7,
+                "text": "NO",
+                "token_id": 14695
+              },
+              {
+                "logit": 11.0,
+                "rank": 8,
+                "text": "The",
+                "token_id": 976
+              },
+              {
+                "logit": 11.0,
+                "rank": 9,
+                "text": "S",
+                "token_id": 50
+              }
+            ],
+            "wall_seconds": 31.142772329971194
+          }
+        },
+        "id": "preferred_signal",
+        "label": "user's preferred signal word",
+        "letter": "B",
+        "mount": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT B, what is the user's preferred signal word? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_signal/mount.json",
+              "--mount-graft-dir",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/banks/preference"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_signal/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT B, what is the user's preferred signal word? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>EMBER\", \"steps\": [{\"logit\": 26.5, \"rank\": 0, \"text\": \"EMBER\", \"token_id\": 78250}]}\n",
+            "wall_seconds": 36.10136413003784
+          },
+          "summary": {
+            "answer": "EMBER",
+            "answer_logit": 26.5,
+            "answer_rank": 0,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_signal/mount.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_signal/mount_steps/step_00.json",
+            "generated_contains_value": true,
+            "generated_text": "EMBER",
+            "hit": true,
+            "normalized_answer": "ember",
+            "normalized_answer_logit": 26.5,
+            "normalized_answer_rank": 0,
+            "normalized_answer_text": "EMBER",
+            "normalized_hit": true,
+            "normalized_top_token": "ember",
+            "status": "ok",
+            "top_token": {
+              "logit": 26.5,
+              "rank": 0,
+              "text": "EMBER",
+              "token_id": 78250
+            },
+            "top_tokens": [
+              {
+                "logit": 26.5,
+                "rank": 0,
+                "text": "EMBER",
+                "token_id": 78250
+              },
+              {
+                "logit": 21.875,
+                "rank": 1,
+                "text": "ember",
+                "token_id": 1634
+              },
+              {
+                "logit": 21.125,
+                "rank": 2,
+                "text": "EM",
+                "token_id": 3646
+              },
+              {
+                "logit": 18.25,
+                "rank": 3,
+                "text": "embers",
+                "token_id": 3929
+              },
+              {
+                "logit": 17.75,
+                "rank": 4,
+                "text": "Em",
+                "token_id": 2585
+              },
+              {
+                "logit": 16.25,
+                "rank": 5,
+                "text": "embr",
+                "token_id": 49226
+              },
+              {
+                "logit": 16.0,
+                "rank": 6,
+                "text": "em",
+                "token_id": 347
+              },
+              {
+                "logit": 15.875,
+                "rank": 7,
+                "text": "Embed",
+                "token_id": 46277
+              },
+              {
+                "logit": 15.75,
+                "rank": 8,
+                "text": "emer",
+                "token_id": 32523
+              },
+              {
+                "logit": 15.6875,
+                "rank": 9,
+                "text": "emb",
+                "token_id": 2072
+              }
+            ],
+            "wall_seconds": 31.37895270891022
+          }
+        },
+        "placement": {
+          "answer": "EMBER",
+          "answer_token_id": 78250,
+          "id": "preferred_signal",
+          "label": "user's preferred signal word",
+          "letter": "B",
+          "needle_offset_tokens": 1623,
+          "needle_sha256": "f1b155ba38265a1426c4b225596d892a876d67cbb8565632d5aaa4f5a7aacef8",
+          "needle_tokens": 21
+        },
+        "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT B, what is the user's preferred signal word? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>"
+      },
+      {
+        "answer": "GRAY",
+        "control": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT C, what is the user's preferred neutral shade? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_shade/control.json"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_shade/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT C, what is the user's preferred neutral shade? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>white\", \"steps\": [{\"logit\": 14.5625, \"rank\": 0, \"text\": \"white\", \"token_id\": 9988}]}\n",
+            "wall_seconds": 35.512141874060035
+          },
+          "summary": {
+            "answer": "GRAY",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_shade/control.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_shade/control_steps/step_00.json",
+            "generated_contains_value": false,
+            "generated_text": "white",
+            "hit": false,
+            "normalized_answer": "gray",
+            "normalized_answer_logit": 14.25,
+            "normalized_answer_rank": 1,
+            "normalized_answer_text": "gray",
+            "normalized_hit": false,
+            "normalized_top_token": "white",
+            "status": "ok",
+            "top_token": {
+              "logit": 14.5625,
+              "rank": 0,
+              "text": "white",
+              "token_id": 9988
+            },
+            "top_tokens": [
+              {
+                "logit": 14.5625,
+                "rank": 0,
+                "text": "white",
+                "token_id": 9988
+              },
+              {
+                "logit": 14.25,
+                "rank": 1,
+                "text": "gray",
+                "token_id": 43222
+              },
+              {
+                "logit": 13.9375,
+                "rank": 2,
+                "text": "Gray",
+                "token_id": 43338
+              },
+              {
+                "logit": 13.625,
+                "rank": 3,
+                "text": "neutral",
+                "token_id": 117131
+              },
+              {
+                "logit": 13.4375,
+                "rank": 4,
+                "text": "White",
+                "token_id": 17578
+              },
+              {
+                "logit": 13.1875,
+                "rank": 5,
+                "text": "light",
+                "token_id": 6038
+              },
+              {
+                "logit": 13.1875,
+                "rank": 6,
+                "text": "0",
+                "token_id": 15
+              },
+              {
+                "logit": 12.9375,
+                "rank": 7,
+                "text": "Light",
+                "token_id": 15952
+              },
+              {
+                "logit": 12.75,
+                "rank": 8,
+                "text": "Neutral",
+                "token_id": 126240
+              },
+              {
+                "logit": 12.75,
+                "rank": 9,
+                "text": "5",
+                "token_id": 20
+              }
+            ],
+            "wall_seconds": 30.75642544706352
+          }
+        },
+        "id": "preferred_shade",
+        "label": "user's preferred neutral shade",
+        "letter": "C",
+        "mount": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT C, what is the user's preferred neutral shade? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_shade/mount.json",
+              "--mount-graft-dir",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/banks/preference"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_shade/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT C, what is the user's preferred neutral shade? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GRAY\", \"steps\": [{\"logit\": 23.625, \"rank\": 0, \"text\": \"GRAY\", \"token_id\": 140884}]}\n",
+            "wall_seconds": 36.169528627884574
+          },
+          "summary": {
+            "answer": "GRAY",
+            "answer_logit": 23.625,
+            "answer_rank": 0,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_shade/mount.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_shade/mount_steps/step_00.json",
+            "generated_contains_value": true,
+            "generated_text": "GRAY",
+            "hit": true,
+            "normalized_answer": "gray",
+            "normalized_answer_logit": 23.625,
+            "normalized_answer_rank": 0,
+            "normalized_answer_text": "GRAY",
+            "normalized_hit": true,
+            "normalized_top_token": "gray",
+            "status": "ok",
+            "top_token": {
+              "logit": 23.625,
+              "rank": 0,
+              "text": "GRAY",
+              "token_id": 140884
+            },
+            "top_tokens": [
+              {
+                "logit": 23.625,
+                "rank": 0,
+                "text": "GRAY",
+                "token_id": 140884
+              },
+              {
+                "logit": 23.25,
+                "rank": 1,
+                "text": "gray",
+                "token_id": 43222
+              },
+              {
+                "logit": 22.5,
+                "rank": 2,
+                "text": "Gray",
+                "token_id": 43338
+              },
+              {
+                "logit": 18.75,
+                "rank": 3,
+                "text": "GR",
+                "token_id": 13905
+              },
+              {
+                "logit": 17.375,
+                "rank": 4,
+                "text": "grey",
+                "token_id": 71129
+              },
+              {
+                "logit": 17.125,
+                "rank": 5,
+                "text": " gray",
+                "token_id": 32299
+              },
+              {
+                "logit": 16.75,
+                "rank": 6,
+                "text": "Grey",
+                "token_id": 84222
+              },
+              {
+                "logit": 16.25,
+                "rank": 7,
+                "text": "\u7070",
+                "token_id": 148348
+              },
+              {
+                "logit": 15.625,
+                "rank": 8,
+                "text": "_GRAY",
+                "token_id": 147880
+              },
+              {
+                "logit": 15.4375,
+                "rank": 9,
+                "text": "GRE",
+                "token_id": 130540
+              }
+            ],
+            "wall_seconds": 31.42958813800942
+          }
+        },
+        "placement": {
+          "answer": "GRAY",
+          "answer_token_id": 140884,
+          "id": "preferred_shade",
+          "label": "user's preferred neutral shade",
+          "letter": "C",
+          "needle_offset_tokens": 2446,
+          "needle_sha256": "b8fe93a4defa0df89c695f15e24fdcf405f251c1bd168c81f5a8fdf52bc070f0",
+          "needle_tokens": 21
+        },
+        "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT C, what is the user's preferred neutral shade? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>"
+      },
+      {
+        "answer": "IRON",
+        "control": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT D, what is the user's preferred tool metal? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_metal/control.json"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_metal/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT D, what is the user's preferred tool metal? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>steel\", \"steps\": [{\"logit\": 16.75, \"rank\": 0, \"text\": \"steel\", \"token_id\": 134040}]}\n",
+            "wall_seconds": 35.60326674999669
+          },
+          "summary": {
+            "answer": "IRON",
+            "answer_logit": null,
+            "answer_rank": null,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_metal/control.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_metal/control_steps/step_00.json",
+            "generated_contains_value": false,
+            "generated_text": "steel",
+            "hit": false,
+            "normalized_answer": "iron",
+            "normalized_answer_logit": 14.5,
+            "normalized_answer_rank": 6,
+            "normalized_answer_text": "iron",
+            "normalized_hit": false,
+            "normalized_top_token": "steel",
+            "status": "ok",
+            "top_token": {
+              "logit": 16.75,
+              "rank": 0,
+              "text": "steel",
+              "token_id": 134040
+            },
+            "top_tokens": [
+              {
+                "logit": 16.75,
+                "rank": 0,
+                "text": "steel",
+                "token_id": 134040
+              },
+              {
+                "logit": 15.625,
+                "rank": 1,
+                "text": "gold",
+                "token_id": 61496
+              },
+              {
+                "logit": 15.125,
+                "rank": 2,
+                "text": "silver",
+                "token_id": 189496
+              },
+              {
+                "logit": 14.6875,
+                "rank": 3,
+                "text": "Steel",
+                "token_id": 115806
+              },
+              {
+                "logit": 14.625,
+                "rank": 4,
+                "text": "bron",
+                "token_id": 112519
+              },
+              {
+                "logit": 14.5,
+                "rank": 5,
+                "text": "Al",
+                "token_id": 2348
+              },
+              {
+                "logit": 14.5,
+                "rank": 6,
+                "text": "iron",
+                "token_id": 58333
+              },
+              {
+                "logit": 14.375,
+                "rank": 7,
+                "text": "Gold",
+                "token_id": 30717
+              },
+              {
+                "logit": 13.875,
+                "rank": 8,
+                "text": "al",
+                "token_id": 280
+              },
+              {
+                "logit": 13.4375,
+                "rank": 9,
+                "text": "br",
+                "token_id": 1697
+              }
+            ],
+            "wall_seconds": 30.902136472053826
+          }
+        },
+        "id": "preferred_metal",
+        "label": "user's preferred tool metal",
+        "letter": "D",
+        "mount": {
+          "run": {
+            "cmd": [
+              "/usr/bin/python3",
+              "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+              "--model-dir",
+              "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+              "--prompt",
+              "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT D, what is the user's preferred tool metal? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+              "--steps",
+              "1",
+              "--max-tokens",
+              "160",
+              "--top-k",
+              "10",
+              "--attention-mode",
+              "standard",
+              "--apa-layer-scope",
+              "full",
+              "--refine-percentile",
+              "0.15",
+              "--bulk-bits",
+              "8",
+              "--expert-mode",
+              "resident_packed_mxfp4",
+              "--route-detail",
+              "summary",
+              "--expert-empty-cache-interval",
+              "0",
+              "--output",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_metal/mount.json",
+              "--mount-graft-dir",
+              "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/banks/preference"
+            ],
+            "returncode": 0,
+            "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_metal/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT D, what is the user's preferred tool metal? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>IRON\", \"steps\": [{\"logit\": 24.875, \"rank\": 0, \"text\": \"IRON\", \"token_id\": 96951}]}\n",
+            "wall_seconds": 36.36478676297702
+          },
+          "summary": {
+            "answer": "IRON",
+            "answer_logit": 24.875,
+            "answer_rank": 0,
+            "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_metal/mount.json",
+            "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate/preferred_metal/mount_steps/step_00.json",
+            "generated_contains_value": true,
+            "generated_text": "IRON",
+            "hit": true,
+            "normalized_answer": "iron",
+            "normalized_answer_logit": 24.875,
+            "normalized_answer_rank": 0,
+            "normalized_answer_text": "IRON",
+            "normalized_hit": true,
+            "normalized_top_token": "iron",
+            "status": "ok",
+            "top_token": {
+              "logit": 24.875,
+              "rank": 0,
+              "text": "IRON",
+              "token_id": 96951
+            },
+            "top_tokens": [
+              {
+                "logit": 24.875,
+                "rank": 0,
+                "text": "IRON",
+                "token_id": 96951
+              },
+              {
+                "logit": 22.0,
+                "rank": 1,
+                "text": "iron",
+                "token_id": 58333
+              },
+              {
+                "logit": 21.625,
+                "rank": 2,
+                "text": "Iron",
+                "token_id": 72998
+              },
+              {
+                "logit": 19.625,
+                "rank": 3,
+                "text": "IR",
+                "token_id": 4368
+              },
+              {
+                "logit": 17.125,
+                "rank": 4,
+                "text": "ir",
+                "token_id": 380
+              },
+              {
+                "logit": 16.875,
+                "rank": 5,
+                "text": " iron",
+                "token_id": 17069
+              },
+              {
+                "logit": 15.6875,
+                "rank": 6,
+                "text": "Ir",
+                "token_id": 42208
+              },
+              {
+                "logit": 15.5,
+                "rank": 7,
+                "text": "irond",
+                "token_id": 162948
+              },
+              {
+                "logit": 14.8125,
+                "rank": 8,
+                "text": "\u94c1",
+                "token_id": 42567
+              },
+              {
+                "logit": 14.75,
+                "rank": 9,
+                "text": " Iron",
+                "token_id": 28758
+              }
+            ],
+            "wall_seconds": 31.625664860010147
+          }
+        },
+        "placement": {
+          "answer": "IRON",
+          "answer_token_id": 96951,
+          "id": "preferred_metal",
+          "label": "user's preferred tool metal",
+          "letter": "D",
+          "needle_offset_tokens": 3269,
+          "needle_sha256": "2086fa72dd45cfe703e0434043c2400ea81af573416a087538b41094a8a18b78",
+          "needle_tokens": 21
+        },
+        "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT D, what is the user's preferred tool metal? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>"
+      }
+    ]
+  },
+  "schema": "gpt_oss_20b_preference_graft_gate_v1",
+  "script_args": {
+    "apa_layer_scope": "full",
+    "attention_mode": "standard",
+    "bulk_bits": 8,
+    "corpus_dir": "/mnt/ForgeRealm/GraftRepository/docs",
+    "dry_run": false,
+    "expert_empty_cache_interval": 0,
+    "expert_mode": "resident_packed_mxfp4",
+    "graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/banks/preference",
+    "max_layers": null,
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "output": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth8/preference_gate.json",
+    "refine_percentile": 0.15,
+    "route_detail": "summary",
+    "skip_capture": true,
+    "skip_control": false,
+    "target_tokens": 4096
+  },
+  "status": "ok",
+  "summary": [
+    {
+      "answer": "BLUE",
+      "control_top": "blue",
+      "hit": true,
+      "id": "preferred_color",
+      "mount_answer_logit": 25.125,
+      "mount_answer_rank": 0,
+      "mount_top": "BLUE"
+    },
+    {
+      "answer": "EMBER",
+      "control_top": "signal",
+      "hit": true,
+      "id": "preferred_signal",
+      "mount_answer_logit": 26.5,
+      "mount_answer_rank": 0,
+      "mount_top": "EMBER"
+    },
+    {
+      "answer": "GRAY",
+      "control_top": "white",
+      "hit": true,
+      "id": "preferred_shade",
+      "mount_answer_logit": 23.625,
+      "mount_answer_rank": 0,
+      "mount_top": "GRAY"
+    },
+    {
+      "answer": "IRON",
+      "control_top": "steel",
+      "hit": true,
+      "id": "preferred_metal",
+      "mount_answer_logit": 24.875,
+      "mount_answer_rank": 0,
+      "mount_top": "IRON"
+    }
+  ],
+  "target_tokens": 4096
+}

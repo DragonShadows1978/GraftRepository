@@ -1,0 +1,51 @@
+{
+  "generation": {
+    "bos_count": 0,
+    "clean_english": false,
+    "collapse_signature": "other_degraded",
+    "ids": [
+      48,
+      15913,
+      3
+    ],
+    "live_shift": null,
+    "n_steps": 3,
+    "position_offset": 0,
+    "step_walls": [
+      {
+        "layer_wall_sum_s": 36.008,
+        "n_layers": 56,
+        "tag": "prompt",
+        "wall_s": 36.008
+      },
+      {
+        "chosen": 48,
+        "layer_wall_sum_s": 33.139,
+        "tag": "g0",
+        "wall_s": 40.48
+      },
+      {
+        "chosen": 15913,
+        "layer_wall_sum_s": null,
+        "tag": "g1",
+        "wall_s": 40.826
+      },
+      {
+        "chosen": 3,
+        "tag": "g2",
+        "wall_s": 0.001
+      }
+    ],
+    "text": "1234",
+    "text_raw": "1234<|im_end|>",
+    "unique_id_ratio": 1.0,
+    "value_recovered": false,
+    "wall_s": 124.661
+  },
+  "label": "pure_chat_bf16_stream",
+  "mode": "bf16_stream_fp32_compute",
+  "ngen": 8,
+  "probe_prompt": "<|im_start|>system\nYou are Trinity. Answer fact probes with the stored value only. Be concise.<|im_end|>\n<|im_start|>user\nRecall probe. What is the vault code? Reply with only the value.<|im_end|>\n<|im_start|>assistant\n",
+  "probe_prompt_ntok": 44,
+  "wall_s": 127.199
+}

@@ -1,0 +1,12 @@
+{
+  "grid_ran": true,
+  "hits": {
+    "w768_control": false,
+    "w768_mount": true,
+    "w96_control": false,
+    "w96_mount": true
+  },
+  "reason": "Value recovered from the width-768 mounted graft while both no-mount controls missed; the graft, not live context, carried it.",
+  "sanity_passed": true,
+  "verdict": "T1_ABSOLUTE_CONFIRMED"
+}

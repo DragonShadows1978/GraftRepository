@@ -1,0 +1,40 @@
+# DeepSeek-V2-Lite APA + MLA Latent INT4 Results
+
+Date: 2026-06-27
+
+## Verdict
+
+DeepSeek-V2-Lite's MLA latent cache tolerates INT4 storage well enough for
+the full configured YaRN resident cache plus one decode token to fit on the
+12GB card. That is a cache/decode result, not proof that every prefill path can
+ingest a real 163K-token prompt.
+
+The first real-token prefill fix is now landed in the local DeepSeek loader:
+`attention_mode="absorbed_exact"` keeps prefill in MLA latent space instead of
+expanding the accumulated latent cache through `kv_b(c_n)` every chunk. This is
+not the final fused latent-APA kernel, but it proves the optimization diagnosis:
+the old expanded APA prefill ceiling was `16,384`; absorbed exact prefill has
+now passed real-token `65,536` on the same 12GB card.
+
+The first high-context open-ended greedy needle ladder is stricter than
+fill-only. Absorbed exact latent4 hit exact planted codes at `16,384`, `32,768`,
+and `49,152` tokens, but OOMed at `65,536` during the greedy test.
+
+The same run now includes an explicit INT2 floor check. A quality-only
+group-32 affine INT2 fake-store path does not catastrophically destroy the
+model, but it is no longer in the "free" zone: six-window Wikitext PPL rises
+by about `+5.8%` versus APA latent16, and the forced-choice needle grid gets
+one 8K retrieval rank flip.
+
+This is not a no-prior-art claim. DeepSeek's own V2 paper reports that their
+deployed DeepSeek-V2 stack uses KV-cache quantization to compress each KV-cache
+element to **6 bits on average**, on top of MLA and FP8 weights. That is the
+nearest direct prior art for this line of work.
+
+Our contribution in this run is narrower and lower-level:
+
+- reproduce the latent-cache quantization idea in the local
+  `tensor_cuda`/APA DeepSeek-V2-Lite port,
+- push the MLA resident latent to **INT4 group-32** rather than 6-bit average,
+- measure the PPL and forced-choice retrieval cost on this exact stack, and
+- show that a synthetic `163840`-row resident cache plus one decode token fits

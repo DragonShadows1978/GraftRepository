@@ -1,0 +1,6 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4070 SUPER, 1185 MiB, 12282 MiB, 3 %",
+  "layer_wall_sum_s": 34.093,
+  "ntok": 5,
+  "prefill_wall_s": 41.452
+}

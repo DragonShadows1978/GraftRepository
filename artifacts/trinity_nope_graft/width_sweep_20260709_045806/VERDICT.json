@@ -1,0 +1,56 @@
+{
+  "decisive": [
+    {
+      "control_clean": false,
+      "control_sig": "bos_loop",
+      "control_text": "<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "live_shift": 117,
+      "mount_bos_count": 15,
+      "mount_clean": false,
+      "mount_sig": "bos_loop",
+      "mount_text": "<|begin_of_text|>nullnullstream.Stream please<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "mount_value": false,
+      "width": 96
+    },
+    {
+      "control_clean": false,
+      "control_sig": "bos_loop",
+      "control_text": "<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "live_shift": 405,
+      "mount_bos_count": 13,
+      "mount_clean": false,
+      "mount_sig": "bos_loop",
+      "mount_text": "<|begin_of_text|>linenullNAD Buyers Andliner One<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "mount_value": false,
+      "width": 384
+    },
+    {
+      "control_clean": false,
+      "control_sig": "bos_loop",
+      "control_text": "<|begin_of_text|><|begin_of_text|>nullnull=null;<|begin_of_text|><|begin_of_text|><|begin_of_text|>Null Truth:interpreter \"<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "live_shift": 789,
+      "mount_bos_count": 19,
+      "mount_clean": false,
+      "mount_sig": "bos_loop",
+      "mount_text": "In<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "mount_value": false,
+      "width": 768
+    }
+  ],
+  "gpt_oss_law_reference": {
+    "diag": "artifacts/grm_e2e/step_generate_mech_diag_20260708_155956/DIAGNOSIS.md",
+    "receipt": "artifacts/grm_e2e/live_shift_width_ab_20260708_155826/receipt.json",
+    "sess_w384_answer": "User: 3-V> < 3-4> <5 6-7-",
+    "sess_w384_live_shift": 387,
+    "sys_w96_answer_head": "I'm sorry, but I can't comply with that.",
+    "sys_w96_live_shift": 115
+  },
+  "novel_angle_salad": false,
+  "pure_sig": "bos_loop",
+  "reason": "No additional width-dependent collapse at w=384/768 vs w96 (w96_sig='bos_loop', large sigs=['bos_loop', 'bos_loop']). Absolute clean_english is NOT available under ordered INT4+fp32 free-gen (pure baseline also non-English) \u2014 product INT4 residual blocks absolute T1_CONFIRMED. Relative to the GPT-OSS hole law (clean@~115 \u2192 salad@387), Trinity does NOT show that width-triggered salad transition. Quotes: w96 shift=117 sig=bos_loop: '<|begin_of_text|>nullnullstream.Stream please<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>' | w384 shift=405 sig=bos_loop: '<|begin_of_text|>linenullNAD Buyers Andliner One<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>' | w768 shift=789 sig=bos_loop: 'In<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>'",
+  "t1_prediction_source": "/mnt/ForgeRealm/Project-Tensor/docs/TRINITY_NANO_PORT_PLAN.md prediction T1 (frozen; not modified this order)",
+  "verdict": "T1_RELATIVE_HOLD",
+  "w96_mount_clean": false,
+  "w96_mount_sig": "bos_loop",
+  "width_worsened": false
+}

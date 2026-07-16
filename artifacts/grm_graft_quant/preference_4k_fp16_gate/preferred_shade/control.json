@@ -1,0 +1,40 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "standard",
+  "bulk_bits": 8,
+  "created_at": "2026-07-08T05:23:33",
+  "current_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT C, what is the user's preferred neutral shade? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>white",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "final_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT C, what is the user's preferred neutral shade? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>white",
+  "initial_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT C, what is the user's preferred neutral shade? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+  "initial_user_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT C, what is the user's preferred neutral shade? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+  "max_tokens": 160,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "mount_graft_dir": null,
+  "note": "greedy smoke via repeated streamed full forwards; no KV cache",
+  "prompt_file": null,
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "status": "ok",
+  "steps": [
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/preference_4k_fp16_gate/preferred_shade/control_steps/step_00.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In PREFERENCE FACT C, what is the user's preferred neutral shade? Return only the stored preference value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/preference_4k_fp16_gate/preferred_shade/control_steps/step_00.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 9988, \"logit\": 14.5625, \"text\": \"white\"}, {\"rank\": 1, \"token_id\": 43222, \"logit\": 14.25, \"text\": \"gray\"}, {\"rank\": 2, \"token_id\": 43338, \"logit\": 13.9375, \"text\": \"Gray\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 802, 12282, 0\"}\n",
+      "step": 0,
+      "top_token": {
+        "logit": 14.5625,
+        "rank": 0,
+        "text": "white",
+        "token_id": 9988
+      },
+      "wall_seconds": 31.252817971049808
+    }
+  ],
+  "steps_requested": 1,
+  "top_k": 10,
+  "use_chat_template": false,
+  "wall_seconds": 31.253225922002457
+}

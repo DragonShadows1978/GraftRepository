@@ -1,0 +1,435 @@
+{
+  "entries": [
+    {
+      "event": "start",
+      "out_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/trinity_nope_graft/floor_reverb_20260709_050531",
+      "stage": 0,
+      "ts": "2026-07-09T05:05:31"
+    },
+    {
+      "event": "template_extracted",
+      "finding": "Prior width-sweep sink/probe already match REAL apply_chat_template bytes (hash c295e73\u2026); template-invention hypothesis is refutable if Stage-1 arm still bos_loops.",
+      "full_prompt_utf8_sha256": "3c01b1eed311136043aece60588d65e96c68f450dd926eb6d6a34cdf0e3a53ac",
+      "hashes_match_p1": true,
+      "jinja_sha256": "c295e73aea820982584a1f874fa71c61b1f3e6856adc6ef1d7efe339b936f2ad",
+      "prior_byte_equal": true,
+      "sink_utf8_sha256": "93893fc8d0aaba3dadab53420dc98f5bb1f744788c16792d54229ba07269f396",
+      "stage": 1,
+      "ts": "2026-07-09T05:05:32"
+    },
+    {
+      "dtype_meta": {
+        "compute_dtype": "float32",
+        "graft_blocktc_dtype": "float32",
+        "lineartc_cast_count": 54,
+        "mode_label": "fp32_compute_int4_dequant",
+        "rope_rebuild": "invalidated_and_rebuild_prev_len=4096_prev_dtype=bfloat16_now=float32",
+        "trinity_blocktc_dtype": "float32",
+        "weight_mode": "int4"
+      },
+      "event": "model_loaded",
+      "gpu": "NVIDIA GeForce RTX 4070 SUPER, 3427 MiB, 12282 MiB, 0 %",
+      "load_s": 30.672,
+      "model_info_weight_mode": "int4",
+      "stage": 1,
+      "ts": "2026-07-09T05:06:03"
+    },
+    {
+      "clean": false,
+      "event": "pure_chat",
+      "ids": [
+        753,
+        10170,
+        4314,
+        5474,
+        5474,
+        7670,
+        55257,
+        106166,
+        1025,
+        411,
+        17840,
+        2846,
+        2615,
+        0,
+        0,
+        0
+      ],
+      "sig": "bos_loop",
+      "stage": 1,
+      "text": "AnswerNoneasureNumberNumberNull_Inodoreuthistructor OneAnd<|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "ts": "2026-07-09T05:06:06",
+      "wall_s": 3.322
+    },
+    {
+      "clean": true,
+      "event": "pure_natural",
+      "evidence_class": "end-to-end free-gen vs T4 parity natural prompt",
+      "ids": [
+        373,
+        373,
+        373,
+        52,
+        98,
+        48,
+        8993,
+        15262,
+        414,
+        98,
+        48,
+        21603,
+        1383,
+        48,
+        98,
+        47,
+        2910,
+        47,
+        10496,
+        51
+      ],
+      "sig": "clean_english",
+      "stage": 1,
+      "text": ".\n\n.\n\n.\n\n5c1256'h'sc1306 And1c0rc0mu4",
+      "ts": "2026-07-09T05:06:08",
+      "wall_s": 2.247
+    },
+    {
+      "clean": false,
+      "event": "w96_mount",
+      "ids": [
+        0,
+        5639,
+        5639,
+        6580,
+        72701,
+        5587,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "live_shift": 117,
+      "sig": "bos_loop",
+      "stage": 1,
+      "text": "<|begin_of_text|>nullnullstream.Stream please<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "ts": "2026-07-09T05:06:19",
+      "value": false,
+      "wall_s": 10.639
+    },
+    {
+      "event": "decision",
+      "floor_clean": false,
+      "fork": "PROCEED_STAGE2_BF16_STREAM",
+      "hashes_match_p1": true,
+      "int4_natural_ok_chat_broken": true,
+      "note": "Template bytes match P1 + prior sweep; residual is not template invention. INT4 free-gen OK on natural prompt; chat/probe path degraded (not universal INT4 free-gen death).",
+      "pure_chat_clean": false,
+      "pure_chat_sig": "bos_loop",
+      "pure_chat_text": "AnswerNoneasureNumberNumberNull_Inodoreuthistructor OneAnd<|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "pure_natural_clean": true,
+      "pure_natural_sig": "clean_english",
+      "pure_natural_text": ".\n\n.\n\n.\n\n5c1256'h'sc1306 And1c0rc0mu4",
+      "stage": 1,
+      "still_bos_or_degraded": true,
+      "template_was_already_real": true,
+      "ts": "2026-07-09T05:06:19",
+      "w96_mount_clean": false,
+      "w96_mount_sig": "bos_loop",
+      "w96_mount_text": "<|begin_of_text|>nullnullstream.Stream please<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "w96_mount_value": false
+    },
+    {
+      "event": "start",
+      "out_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/trinity_nope_graft/floor_reverb_20260709_050531",
+      "stage": 0,
+      "ts": "2026-07-09T05:08:51"
+    },
+    {
+      "decision": "launch pure natural + pure chat; mount only if pure_chat clean and mount_fits",
+      "event": "projection",
+      "mount_fits_600": false,
+      "mount_forwards_rough": 20,
+      "mount_proj_s": 660.0,
+      "ngen": 16,
+      "pure_fits_600": true,
+      "pure_forwards": 17,
+      "pure_proj_s": 561.0,
+      "s_per_forward_assumed": 33.0,
+      "stage": 2,
+      "ts": "2026-07-09T05:08:51"
+    },
+    {
+      "compute_dtype": "float32",
+      "event": "runner_ready",
+      "gpu": "NVIDIA GeForce RTX 4070 SUPER, 1175 MiB, 12282 MiB, 29 %",
+      "stage": 2,
+      "ts": "2026-07-09T05:08:54",
+      "weight_mode": "bf16_layer_stream"
+    },
+    {
+      "event": "start",
+      "out_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/trinity_nope_graft/floor_reverb_20260709_050531",
+      "stage": 0,
+      "ts": "2026-07-09T05:09:10"
+    },
+    {
+      "decision": "launch pure natural + pure chat; mount only if pure_chat clean and mount_fits",
+      "event": "projection",
+      "mount_fits_600": false,
+      "mount_forwards_rough": 20,
+      "mount_proj_s": 660.0,
+      "ngen": 16,
+      "pure_fits_600": true,
+      "pure_forwards": 17,
+      "pure_proj_s": 561.0,
+      "s_per_forward_assumed": 33.0,
+      "stage": 2,
+      "ts": "2026-07-09T05:09:10"
+    },
+    {
+      "compute_dtype": "float32",
+      "event": "runner_ready",
+      "gpu": "NVIDIA GeForce RTX 4070 SUPER, 1175 MiB, 12282 MiB, 2 %",
+      "stage": 2,
+      "ts": "2026-07-09T05:09:14",
+      "weight_mode": "bf16_layer_stream"
+    },
+    {
+      "event": "timing_pilot",
+      "gpu": "NVIDIA GeForce RTX 4070 SUPER, 1185 MiB, 12282 MiB, 3 %",
+      "layer_wall_sum_s": 34.093,
+      "ntok": 5,
+      "prefill_wall_s": 41.452,
+      "stage": 2,
+      "ts": "2026-07-09T05:09:55"
+    },
+    {
+      "decision": "ABORT: pure projection exceeds rail",
+      "event": "projection_measured",
+      "measured_from": "natural_prefill_L5",
+      "mount_fits_600": false,
+      "mount_forwards_rough": 20,
+      "mount_proj_s": 829.0457645599963,
+      "ngen": 16,
+      "pure_fits_600": false,
+      "pure_forwards": 17,
+      "pure_proj_s": 704.6888998759969,
+      "s_per_forward_assumed": 41.452288227999816,
+      "stage": 2,
+      "ts": "2026-07-09T05:09:55"
+    },
+    {
+      "event": "ngen_reduced_to_fit_rail",
+      "ngen_use": 12,
+      "s_meas": 41.452288227999816,
+      "stage": 2,
+      "ts": "2026-07-09T05:09:55"
+    },
+    {
+      "clean": true,
+      "event": "pure_natural",
+      "ids": [
+        8849,
+        45,
+        671,
+        351,
+        4999,
+        320,
+        296,
+        6766,
+        64470,
+        707,
+        323,
+        296
+      ],
+      "sig": "clean_english",
+      "stage": 2,
+      "step_walls_head": [
+        {
+          "layer_wall_sum_s": 34.38,
+          "n_layers": 56,
+          "tag": "prompt",
+          "wall_s": 34.38
+        },
+        {
+          "chosen": 8849,
+          "layer_wall_sum_s": 33.47,
+          "tag": "g0",
+          "wall_s": 40.815
+        },
+        {
+          "chosen": 45,
+          "layer_wall_sum_s": null,
+          "tag": "g1",
+          "wall_s": 40.66
+        }
+      ],
+      "text": "Paris. It is located in the north-central part of the",
+      "ts": "2026-07-09T05:18:48",
+      "wall_s": 533.019
+    },
+    {
+      "elapsed_s": 578.2981202919982,
+      "event": "pure_chat_skipped_wall",
+      "pure_chat_budget_s": 538.8797469639976,
+      "stage": 2,
+      "ts": "2026-07-09T05:18:48"
+    },
+    {
+      "chat_clean": false,
+      "elapsed_s": 578.3284034169992,
+      "event": "mount_not_run",
+      "mount_budget_s": 663.236611647997,
+      "stage": 2,
+      "ts": "2026-07-09T05:18:48"
+    },
+    {
+      "event": "decision",
+      "floor_clean": false,
+      "floor_mode": null,
+      "fork": "PARTIAL_NATURAL_ONLY_CHAT_UNTESTED",
+      "gpu_after": "NVIDIA GeForce RTX 4070 SUPER, 1187 MiB, 12282 MiB, 4 %",
+      "ngen_use": 12,
+      "pure_chat_clean": null,
+      "pure_chat_sig": null,
+      "pure_chat_text": null,
+      "pure_natural_clean": true,
+      "pure_natural_sig": "clean_english",
+      "pure_natural_text": "Paris. It is located in the north-central part of the",
+      "residual_read": "natural clean; chat not run (wall) \u2014 chat floor unclassed",
+      "s_per_fwd_measured": 41.452288227999816,
+      "stage": 2,
+      "stage_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/trinity_nope_graft/floor_reverb_20260709_050531/stage2_bf16_stream",
+      "total_wall_s": 578.329,
+      "ts": "2026-07-09T05:18:48"
+    },
+    {
+      "event": "s2b_pure_chat_decision",
+      "floor_clean": false,
+      "floor_mode": null,
+      "fork": "STOP_CHAT_PATH_BROKEN_EVEN_BF16",
+      "gpu_after": "NVIDIA GeForce RTX 4070 SUPER, 1185 MiB, 12282 MiB, 3 %",
+      "ngen_chat": 8,
+      "note": "Stage2b is a separate wall-bounded run for chat after natural consumed Stage2a rail",
+      "pure_chat_clean": false,
+      "pure_chat_ids": [
+        48,
+        15913,
+        3
+      ],
+      "pure_chat_sig": "other_degraded",
+      "pure_chat_text": "1234",
+      "pure_natural_clean": true,
+      "pure_natural_sig": "clean_english",
+      "pure_natural_text": "Paris. It is located in the north-central part of the",
+      "residual_read": "bf16 natural clean but chat still degraded (sig=other_degraded, text='1234') \u2014 not INT4-only; chat free-gen residual (model chat behavior or template path)",
+      "s2b_wall_s": 127.199,
+      "stage": 2,
+      "stage_dir": "artifacts/trinity_nope_graft/floor_reverb_20260709_050531/stage2_bf16_stream",
+      "ts": "2026-07-09T05:21:32"
+    },
+    {
+      "clean": false,
+      "event": "case",
+      "ids": [
+        48,
+        15913,
+        3
+      ],
+      "label": "pure_chat_baseline",
+      "live_shift": null,
+      "sig": "other_degraded",
+      "stage": 3,
+      "text": "1234",
+      "ts": "2026-07-09T05:24:13"
+    },
+    {
+      "clean": false,
+      "event": "case",
+      "ids": [
+        48,
+        15913,
+        3
+      ],
+      "label": "w96_mount",
+      "live_shift": 117,
+      "sig": "other_degraded",
+      "stage": 3,
+      "text": "1234",
+      "ts": "2026-07-09T05:26:18"
+    },
+    {
+      "clean": false,
+      "event": "case",
+      "ids": [
+        48,
+        15913,
+        3
+      ],
+      "label": "w96_control",
+      "live_shift": 117,
+      "sig": "other_degraded",
+      "stage": 3,
+      "text": "1234",
+      "ts": "2026-07-09T05:28:22"
+    },
+    {
+      "clean": false,
+      "event": "case",
+      "ids": [
+        48,
+        15913,
+        3
+      ],
+      "label": "w768_mount",
+      "live_shift": 789,
+      "sig": "other_degraded",
+      "stage": 3,
+      "text": "1234",
+      "ts": "2026-07-09T05:30:26"
+    },
+    {
+      "clean": false,
+      "event": "case",
+      "ids": [
+        48,
+        15913,
+        3
+      ],
+      "label": "w768_control",
+      "live_shift": 789,
+      "sig": "other_degraded",
+      "stage": 3,
+      "text": "1234",
+      "ts": "2026-07-09T05:32:30"
+    },
+    {
+      "both_widths_clean": false,
+      "event": "verdict",
+      "reason": "No width-worsened collapse under stream live_shift stress; absolute clean unavailable (w96_clean=False, w768_clean=False, pure_clean=False). Quotes: '1234' | '1234'",
+      "stage": 3,
+      "ts": "2026-07-09T05:32:30",
+      "verdict": "T1_RELATIVE_HOLD",
+      "width_worsened": false
+    },
+    {
+      "event": "final_verdict",
+      "reason": "Template-invention alternative REFUTED (real template hash c295e73\u2026; prior sweep already used it; Stage1 re-run still bos_loop). INT4 free-gen residual CONFIRMED: bf16 stream natural free-gen is clean English ('Paris. It is located in the north-central part of the') while INT4 natural is salad. Chat under bf16 is non-bos short invent ('1234', ids=[48, 15913, 3]) not clean prose. Stage3 live_shift stress at 0/117/789 produces IDENTICAL token sequence [48,15913,3]='1234'+EOS \u2014 no width-worsened collapse (GPT-OSS hole law not observed). Absolute T1_CONFIRMED blocked: clean-English chat floor unavailable and value recovery unclassable (stream cannot seat arena graft KV).",
+      "stage": 99,
+      "strength": "STRENGTHENED_VS_PRIOR_INT4_ONLY",
+      "ts": "2026-07-09T05:33:02",
+      "verdict": "T1_RELATIVE_HOLD"
+    }
+  ],
+  "schema": "t1_floor_reverb_ledger_v1"
+}

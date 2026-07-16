@@ -1,0 +1,1089 @@
+{
+  "schema": "grm_graft_quant_sweep_depth_v1",
+  "created_at": "2026-07-08T08:07:00",
+  "storage_bits": 4,
+  "tag": "depth4",
+  "group_size": 32,
+  "attention_mode": "standard",
+  "transform": {
+    "multifact": {
+      "bank": "multifact",
+      "run": {
+        "cmd": [
+          "/usr/bin/python3",
+          "/mnt/ForgeRealm/GraftRepository/scripts/grm_graft_quant_transform.py",
+          "--src",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/multifact_4k_fp16_gate/graft",
+          "--dst",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/multifact",
+          "--storage-bits",
+          "4",
+          "--group-size",
+          "32",
+          "--force"
+        ],
+        "returncode": 0,
+        "wall_seconds": 2.1291093826293945,
+        "stdout_tail": "{\n  \"dst\": \"/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/multifact\",\n  \"storage_bits\": 4,\n  \"summary\": {\n    \"k_rmse_mean\": 0.5456573373327652,\n    \"k_rmse_max\": 1.0426877737045288,\n    \"v_rmse_mean\": 0.25747792050242424,\n    \"v_rmse_max\": 0.47530561685562134,\n    \"k_maxabs_max\": 8.421875,\n    \"v_maxabs_max\": 4.375\n  },\n  \"bit_exact_at_16\": null\n}\n",
+        "stderr_tail": "",
+        "log": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/transform_multifact.log"
+      },
+      "receipt": {
+        "schema": "grm_graft_quant_transform_receipt_v1",
+        "created_at": "2026-07-08T08:07:02",
+        "src": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/multifact_4k_fp16_gate/graft",
+        "dst": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/multifact",
+        "storage_bits": 4,
+        "storage_group_size": 32,
+        "grouping_axis": "head_dim (last axis of (1,H,S,D)), group_size=32",
+        "quant_kind": "uniform_symmetric_per_group",
+        "bit_exact_at_16": null,
+        "num_layers": 24,
+        "wall_seconds": 1.9734773635864258,
+        "summary": {
+          "k_rmse_mean": 0.5456573373327652,
+          "k_rmse_max": 1.0426877737045288,
+          "v_rmse_mean": 0.25747792050242424,
+          "v_rmse_max": 0.47530561685562134,
+          "k_maxabs_max": 8.421875,
+          "v_maxabs_max": 4.375
+        },
+        "per_layer": [
+          {
+            "layer": 0,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.9382868409156799,
+            "k_maxabs": 4.59375,
+            "v_rmse": 0.1287616491317749,
+            "v_maxabs": 0.69921875,
+            "bit_exact": null
+          },
+          {
+            "layer": 1,
+            "layer_type": "full_attention",
+            "k_rmse": 1.0426877737045288,
+            "k_maxabs": 7.625,
+            "v_rmse": 0.10069745779037476,
+            "v_maxabs": 0.521484375,
+            "bit_exact": null
+          },
+          {
+            "layer": 2,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.4869292080402374,
+            "k_maxabs": 2.0859375,
+            "v_rmse": 0.10856525599956512,
+            "v_maxabs": 0.55859375,
+            "bit_exact": null
+          },
+          {
+            "layer": 3,
+            "layer_type": "full_attention",
+            "k_rmse": 0.8246461153030396,
+            "k_maxabs": 5.3125,
+            "v_rmse": 0.09460394829511642,
+            "v_maxabs": 0.69140625,
+            "bit_exact": null
+          },
+          {
+            "layer": 4,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.5929751396179199,
+            "k_maxabs": 7.625,
+            "v_rmse": 0.14131833612918854,
+            "v_maxabs": 1.404296875,
+            "bit_exact": null
+          },
+          {
+            "layer": 5,
+            "layer_type": "full_attention",
+            "k_rmse": 0.616971492767334,
+            "k_maxabs": 2.953125,
+            "v_rmse": 0.10995658487081528,
+            "v_maxabs": 0.7578125,
+            "bit_exact": null
+          },
+          {
+            "layer": 6,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.4256993532180786,
+            "k_maxabs": 2.46484375,
+            "v_rmse": 0.15055976808071136,
+            "v_maxabs": 0.79296875,
+            "bit_exact": null
+          },
+          {
+            "layer": 7,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5768734812736511,
+            "k_maxabs": 8.3125,
+            "v_rmse": 0.15927284955978394,
+            "v_maxabs": 1.140625,
+            "bit_exact": null
+          },
+          {
+            "layer": 8,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.372087299823761,
+            "k_maxabs": 2.3359375,
+            "v_rmse": 0.16673865914344788,
+            "v_maxabs": 0.7421875,
+            "bit_exact": null
+          },
+          {
+            "layer": 9,
+            "layer_type": "full_attention",
+            "k_rmse": 0.589712381362915,
+            "k_maxabs": 4.203125,
+            "v_rmse": 0.14891363680362701,
+            "v_maxabs": 1.890625,
+            "bit_exact": null
+          },
+          {
+            "layer": 10,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.3342263400554657,
+            "k_maxabs": 3.25,
+            "v_rmse": 0.19485525786876678,
+            "v_maxabs": 1.015625,
+            "bit_exact": null
+          },
+          {
+            "layer": 11,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5383912324905396,
+            "k_maxabs": 3.296875,
+            "v_rmse": 0.2525239884853363,
+            "v_maxabs": 1.5703125,
+            "bit_exact": null
+          },
+          {
+            "layer": 12,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.1736195683479309,
+            "k_maxabs": 1.115234375,
+            "v_rmse": 0.2787107825279236,
+            "v_maxabs": 1.38671875,
+            "bit_exact": null
+          },
+          {
+            "layer": 13,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5269576907157898,
+            "k_maxabs": 3.9375,
+            "v_rmse": 0.27610477805137634,
+            "v_maxabs": 1.5390625,
+            "bit_exact": null
+          },
+          {
+            "layer": 14,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.23258553445339203,
+            "k_maxabs": 3.078125,
+            "v_rmse": 0.4704876244068146,
+            "v_maxabs": 2.046875,
+            "bit_exact": null
+          },
+          {
+            "layer": 15,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5816231369972229,
+            "k_maxabs": 3.5859375,
+            "v_rmse": 0.28935855627059937,
+            "v_maxabs": 4.375,
+            "bit_exact": null
+          },
+          {
+            "layer": 16,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.24117958545684814,
+            "k_maxabs": 2.7265625,
+            "v_rmse": 0.4181918799877167,
+            "v_maxabs": 1.890625,
+            "bit_exact": null
+          },
+          {
+            "layer": 17,
+            "layer_type": "full_attention",
+            "k_rmse": 0.60332190990448,
+            "k_maxabs": 5.28125,
+            "v_rmse": 0.3119359016418457,
+            "v_maxabs": 1.6328125,
+            "bit_exact": null
+          },
+          {
+            "layer": 18,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.31838926672935486,
+            "k_maxabs": 3.25,
+            "v_rmse": 0.42523470520973206,
+            "v_maxabs": 1.96875,
+            "bit_exact": null
+          },
+          {
+            "layer": 19,
+            "layer_type": "full_attention",
+            "k_rmse": 0.9504320621490479,
+            "k_maxabs": 8.25,
+            "v_rmse": 0.332748681306839,
+            "v_maxabs": 1.662109375,
+            "bit_exact": null
+          },
+          {
+            "layer": 20,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.3842945992946625,
+            "k_maxabs": 2.484375,
+            "v_rmse": 0.39362937211990356,
+            "v_maxabs": 2.05859375,
+            "bit_exact": null
+          },
+          {
+            "layer": 21,
+            "layer_type": "full_attention",
+            "k_rmse": 0.9303680062294006,
+            "k_maxabs": 8.421875,
+            "v_rmse": 0.3562956154346466,
+            "v_maxabs": 2.49609375,
+            "bit_exact": null
+          },
+          {
+            "layer": 22,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.22758832573890686,
+            "k_maxabs": 2.35546875,
+            "v_rmse": 0.47530561685562134,
+            "v_maxabs": 2.65234375,
+            "bit_exact": null
+          },
+          {
+            "layer": 23,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5859297513961792,
+            "k_maxabs": 5.671875,
+            "v_rmse": 0.39469918608665466,
+            "v_maxabs": 2.8828125,
+            "bit_exact": null
+          }
+        ]
+      }
+    },
+    "preference": {
+      "bank": "preference",
+      "run": {
+        "cmd": [
+          "/usr/bin/python3",
+          "/mnt/ForgeRealm/GraftRepository/scripts/grm_graft_quant_transform.py",
+          "--src",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/preference_4k_fp16_gate/graft",
+          "--dst",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/preference",
+          "--storage-bits",
+          "4",
+          "--group-size",
+          "32",
+          "--force"
+        ],
+        "returncode": 0,
+        "wall_seconds": 2.096221685409546,
+        "stdout_tail": "{\n  \"dst\": \"/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/preference\",\n  \"storage_bits\": 4,\n  \"summary\": {\n    \"k_rmse_mean\": 0.5453221586843332,\n    \"k_rmse_max\": 1.0427722930908203,\n    \"v_rmse_mean\": 0.2573065080990394,\n    \"v_rmse_max\": 0.47489187121391296,\n    \"k_maxabs_max\": 8.78125,\n    \"v_maxabs_max\": 4.375\n  },\n  \"bit_exact_at_16\": null\n}\n",
+        "stderr_tail": "",
+        "log": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/transform_preference.log"
+      },
+      "receipt": {
+        "schema": "grm_graft_quant_transform_receipt_v1",
+        "created_at": "2026-07-08T08:07:05",
+        "src": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/preference_4k_fp16_gate/graft",
+        "dst": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/preference",
+        "storage_bits": 4,
+        "storage_group_size": 32,
+        "grouping_axis": "head_dim (last axis of (1,H,S,D)), group_size=32",
+        "quant_kind": "uniform_symmetric_per_group",
+        "bit_exact_at_16": null,
+        "num_layers": 24,
+        "wall_seconds": 1.9822664260864258,
+        "summary": {
+          "k_rmse_mean": 0.5453221586843332,
+          "k_rmse_max": 1.0427722930908203,
+          "v_rmse_mean": 0.2573065080990394,
+          "v_rmse_max": 0.47489187121391296,
+          "k_maxabs_max": 8.78125,
+          "v_maxabs_max": 4.375
+        },
+        "per_layer": [
+          {
+            "layer": 0,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.9384589791297913,
+            "k_maxabs": 4.59375,
+            "v_rmse": 0.12872594594955444,
+            "v_maxabs": 0.69921875,
+            "bit_exact": null
+          },
+          {
+            "layer": 1,
+            "layer_type": "full_attention",
+            "k_rmse": 1.0427722930908203,
+            "k_maxabs": 7.625,
+            "v_rmse": 0.10068655759096146,
+            "v_maxabs": 0.521484375,
+            "bit_exact": null
+          },
+          {
+            "layer": 2,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.4869175851345062,
+            "k_maxabs": 2.05078125,
+            "v_rmse": 0.10859085619449615,
+            "v_maxabs": 0.55859375,
+            "bit_exact": null
+          },
+          {
+            "layer": 3,
+            "layer_type": "full_attention",
+            "k_rmse": 0.8244208097457886,
+            "k_maxabs": 5.34375,
+            "v_rmse": 0.09465078264474869,
+            "v_maxabs": 0.6640625,
+            "bit_exact": null
+          },
+          {
+            "layer": 4,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.5930690765380859,
+            "k_maxabs": 7.53125,
+            "v_rmse": 0.14159512519836426,
+            "v_maxabs": 1.404296875,
+            "bit_exact": null
+          },
+          {
+            "layer": 5,
+            "layer_type": "full_attention",
+            "k_rmse": 0.6171233057975769,
+            "k_maxabs": 2.84375,
+            "v_rmse": 0.11009205877780914,
+            "v_maxabs": 0.74609375,
+            "bit_exact": null
+          },
+          {
+            "layer": 6,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.42532745003700256,
+            "k_maxabs": 2.44921875,
+            "v_rmse": 0.15040323138237,
+            "v_maxabs": 0.79296875,
+            "bit_exact": null
+          },
+          {
+            "layer": 7,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5763574242591858,
+            "k_maxabs": 8.375,
+            "v_rmse": 0.15918618440628052,
+            "v_maxabs": 1.140625,
+            "bit_exact": null
+          },
+          {
+            "layer": 8,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.37241750955581665,
+            "k_maxabs": 2.31640625,
+            "v_rmse": 0.16685472428798676,
+            "v_maxabs": 0.74609375,
+            "bit_exact": null
+          },
+          {
+            "layer": 9,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5894858837127686,
+            "k_maxabs": 4.203125,
+            "v_rmse": 0.14915315806865692,
+            "v_maxabs": 1.890625,
+            "bit_exact": null
+          },
+          {
+            "layer": 10,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.3343542516231537,
+            "k_maxabs": 3.25,
+            "v_rmse": 0.1948722004890442,
+            "v_maxabs": 1.05078125,
+            "bit_exact": null
+          },
+          {
+            "layer": 11,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5385470986366272,
+            "k_maxabs": 3.30078125,
+            "v_rmse": 0.25232023000717163,
+            "v_maxabs": 1.5703125,
+            "bit_exact": null
+          },
+          {
+            "layer": 12,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.1739056557416916,
+            "k_maxabs": 1.115234375,
+            "v_rmse": 0.27857935428619385,
+            "v_maxabs": 1.38671875,
+            "bit_exact": null
+          },
+          {
+            "layer": 13,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5261836647987366,
+            "k_maxabs": 4.0625,
+            "v_rmse": 0.2760288417339325,
+            "v_maxabs": 1.5390625,
+            "bit_exact": null
+          },
+          {
+            "layer": 14,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.23253785073757172,
+            "k_maxabs": 3.078125,
+            "v_rmse": 0.4709486961364746,
+            "v_maxabs": 2.046875,
+            "bit_exact": null
+          },
+          {
+            "layer": 15,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5817100405693054,
+            "k_maxabs": 3.5859375,
+            "v_rmse": 0.2896549701690674,
+            "v_maxabs": 4.375,
+            "bit_exact": null
+          },
+          {
+            "layer": 16,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.24126793444156647,
+            "k_maxabs": 2.7265625,
+            "v_rmse": 0.41838693618774414,
+            "v_maxabs": 1.90625,
+            "bit_exact": null
+          },
+          {
+            "layer": 17,
+            "layer_type": "full_attention",
+            "k_rmse": 0.6017465591430664,
+            "k_maxabs": 4.9453125,
+            "v_rmse": 0.3117988407611847,
+            "v_maxabs": 1.671875,
+            "bit_exact": null
+          },
+          {
+            "layer": 18,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.3182426989078522,
+            "k_maxabs": 3.2578125,
+            "v_rmse": 0.4251680374145508,
+            "v_maxabs": 1.9609375,
+            "bit_exact": null
+          },
+          {
+            "layer": 19,
+            "layer_type": "full_attention",
+            "k_rmse": 0.947182834148407,
+            "k_maxabs": 8.25,
+            "v_rmse": 0.3314913511276245,
+            "v_maxabs": 1.6796875,
+            "bit_exact": null
+          },
+          {
+            "layer": 20,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.3844265341758728,
+            "k_maxabs": 2.484375,
+            "v_rmse": 0.39400234818458557,
+            "v_maxabs": 2.046875,
+            "bit_exact": null
+          },
+          {
+            "layer": 21,
+            "layer_type": "full_attention",
+            "k_rmse": 0.9301438927650452,
+            "k_maxabs": 8.78125,
+            "v_rmse": 0.354928195476532,
+            "v_maxabs": 2.578125,
+            "bit_exact": null
+          },
+          {
+            "layer": 22,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.22696708142757416,
+            "k_maxabs": 2.31640625,
+            "v_rmse": 0.47489187121391296,
+            "v_maxabs": 2.5859375,
+            "bit_exact": null
+          },
+          {
+            "layer": 23,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5841653943061829,
+            "k_maxabs": 6.0390625,
+            "v_rmse": 0.39234569668769836,
+            "v_maxabs": 2.8828125,
+            "bit_exact": null
+          }
+        ]
+      }
+    },
+    "supersession": {
+      "bank": "supersession",
+      "run": {
+        "cmd": [
+          "/usr/bin/python3",
+          "/mnt/ForgeRealm/GraftRepository/scripts/grm_graft_quant_transform.py",
+          "--src",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/supersession_4k_fp16_gate/graft",
+          "--dst",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/supersession",
+          "--storage-bits",
+          "4",
+          "--group-size",
+          "32",
+          "--force"
+        ],
+        "returncode": 0,
+        "wall_seconds": 2.0529747009277344,
+        "stdout_tail": "{\n  \"dst\": \"/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/supersession\",\n  \"storage_bits\": 4,\n  \"summary\": {\n    \"k_rmse_mean\": 0.5454085816939672,\n    \"k_rmse_max\": 1.0422381162643433,\n    \"v_rmse_mean\": 0.2579827367638548,\n    \"v_rmse_max\": 0.47629010677337646,\n    \"k_maxabs_max\": 8.375,\n    \"v_maxabs_max\": 4.375\n  },\n  \"bit_exact_at_16\": null\n}\n",
+        "stderr_tail": "",
+        "log": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/transform_supersession.log"
+      },
+      "receipt": {
+        "schema": "grm_graft_quant_transform_receipt_v1",
+        "created_at": "2026-07-08T08:07:07",
+        "src": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/supersession_4k_fp16_gate/graft",
+        "dst": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/supersession",
+        "storage_bits": 4,
+        "storage_group_size": 32,
+        "grouping_axis": "head_dim (last axis of (1,H,S,D)), group_size=32",
+        "quant_kind": "uniform_symmetric_per_group",
+        "bit_exact_at_16": null,
+        "num_layers": 24,
+        "wall_seconds": 1.9272902011871338,
+        "summary": {
+          "k_rmse_mean": 0.5454085816939672,
+          "k_rmse_max": 1.0422381162643433,
+          "v_rmse_mean": 0.2579827367638548,
+          "v_rmse_max": 0.47629010677337646,
+          "k_maxabs_max": 8.375,
+          "v_maxabs_max": 4.375
+        },
+        "per_layer": [
+          {
+            "layer": 0,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.9392181634902954,
+            "k_maxabs": 4.59375,
+            "v_rmse": 0.129085972905159,
+            "v_maxabs": 0.69921875,
+            "bit_exact": null
+          },
+          {
+            "layer": 1,
+            "layer_type": "full_attention",
+            "k_rmse": 1.0422381162643433,
+            "k_maxabs": 7.59375,
+            "v_rmse": 0.10077817738056183,
+            "v_maxabs": 0.51171875,
+            "bit_exact": null
+          },
+          {
+            "layer": 2,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.4858107566833496,
+            "k_maxabs": 2.12109375,
+            "v_rmse": 0.10874313861131668,
+            "v_maxabs": 0.580078125,
+            "bit_exact": null
+          },
+          {
+            "layer": 3,
+            "layer_type": "full_attention",
+            "k_rmse": 0.8234409093856812,
+            "k_maxabs": 5.25,
+            "v_rmse": 0.09487969428300858,
+            "v_maxabs": 0.66796875,
+            "bit_exact": null
+          },
+          {
+            "layer": 4,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.5924879312515259,
+            "k_maxabs": 7.59375,
+            "v_rmse": 0.14167723059654236,
+            "v_maxabs": 1.44921875,
+            "bit_exact": null
+          },
+          {
+            "layer": 5,
+            "layer_type": "full_attention",
+            "k_rmse": 0.6165243983268738,
+            "k_maxabs": 2.9140625,
+            "v_rmse": 0.11070454865694046,
+            "v_maxabs": 0.7578125,
+            "bit_exact": null
+          },
+          {
+            "layer": 6,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.4246442914009094,
+            "k_maxabs": 2.4453125,
+            "v_rmse": 0.15091796219348907,
+            "v_maxabs": 0.79296875,
+            "bit_exact": null
+          },
+          {
+            "layer": 7,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5752736330032349,
+            "k_maxabs": 8.375,
+            "v_rmse": 0.15941721200942993,
+            "v_maxabs": 1.140625,
+            "bit_exact": null
+          },
+          {
+            "layer": 8,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.3723389804363251,
+            "k_maxabs": 2.30078125,
+            "v_rmse": 0.16752229630947113,
+            "v_maxabs": 0.75390625,
+            "bit_exact": null
+          },
+          {
+            "layer": 9,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5889801979064941,
+            "k_maxabs": 4.0078125,
+            "v_rmse": 0.1496923863887787,
+            "v_maxabs": 1.890625,
+            "bit_exact": null
+          },
+          {
+            "layer": 10,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.33522331714630127,
+            "k_maxabs": 3.2421875,
+            "v_rmse": 0.19498515129089355,
+            "v_maxabs": 1.015625,
+            "bit_exact": null
+          },
+          {
+            "layer": 11,
+            "layer_type": "full_attention",
+            "k_rmse": 0.541438639163971,
+            "k_maxabs": 3.296875,
+            "v_rmse": 0.25271737575531006,
+            "v_maxabs": 1.5703125,
+            "bit_exact": null
+          },
+          {
+            "layer": 12,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.17365020513534546,
+            "k_maxabs": 1.1171875,
+            "v_rmse": 0.27876463532447815,
+            "v_maxabs": 1.38671875,
+            "bit_exact": null
+          },
+          {
+            "layer": 13,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5288539528846741,
+            "k_maxabs": 3.875,
+            "v_rmse": 0.2772771716117859,
+            "v_maxabs": 1.5390625,
+            "bit_exact": null
+          },
+          {
+            "layer": 14,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.23262551426887512,
+            "k_maxabs": 3.078125,
+            "v_rmse": 0.4712744951248169,
+            "v_maxabs": 1.9921875,
+            "bit_exact": null
+          },
+          {
+            "layer": 15,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5814528465270996,
+            "k_maxabs": 3.5859375,
+            "v_rmse": 0.2905352711677551,
+            "v_maxabs": 4.375,
+            "bit_exact": null
+          },
+          {
+            "layer": 16,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.24152712523937225,
+            "k_maxabs": 2.7265625,
+            "v_rmse": 0.4199756383895874,
+            "v_maxabs": 1.958984375,
+            "bit_exact": null
+          },
+          {
+            "layer": 17,
+            "layer_type": "full_attention",
+            "k_rmse": 0.6032180190086365,
+            "k_maxabs": 5.140625,
+            "v_rmse": 0.3125399053096771,
+            "v_maxabs": 1.59375,
+            "bit_exact": null
+          },
+          {
+            "layer": 18,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.31936994194984436,
+            "k_maxabs": 3.265625,
+            "v_rmse": 0.4261462092399597,
+            "v_maxabs": 1.94921875,
+            "bit_exact": null
+          },
+          {
+            "layer": 19,
+            "layer_type": "full_attention",
+            "k_rmse": 0.9488419890403748,
+            "k_maxabs": 8.25,
+            "v_rmse": 0.333391934633255,
+            "v_maxabs": 1.671875,
+            "bit_exact": null
+          },
+          {
+            "layer": 20,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.38324984908103943,
+            "k_maxabs": 2.484375,
+            "v_rmse": 0.3933428227901459,
+            "v_maxabs": 2.0859375,
+            "bit_exact": null
+          },
+          {
+            "layer": 21,
+            "layer_type": "full_attention",
+            "k_rmse": 0.9276390075683594,
+            "k_maxabs": 8.1875,
+            "v_rmse": 0.35706573724746704,
+            "v_maxabs": 2.2421875,
+            "bit_exact": null
+          },
+          {
+            "layer": 22,
+            "layer_type": "sliding_attention",
+            "k_rmse": 0.22613073885440826,
+            "k_maxabs": 2.265625,
+            "v_rmse": 0.47629010677337646,
+            "v_maxabs": 2.59375,
+            "bit_exact": null
+          },
+          {
+            "layer": 23,
+            "layer_type": "full_attention",
+            "k_rmse": 0.5856274366378784,
+            "k_maxabs": 6.1875,
+            "v_rmse": 0.3938606083393097,
+            "v_maxabs": 2.8828125,
+            "bit_exact": null
+          }
+        ]
+      }
+    }
+  },
+  "gates": {
+    "multifact": {
+      "run": {
+        "cmd": [
+          "/usr/bin/python3",
+          "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_multifact_graft_gate.py",
+          "--output",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/multifact_gate.json",
+          "--graft-dir",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/multifact",
+          "--attention-mode",
+          "standard",
+          "--skip-capture"
+        ],
+        "returncode": 1,
+        "wall_seconds": 292.8188989162445,
+        "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/multifact_gate.json\n{\"status\": \"ok\", \"classification\": \"fail\", \"hits\": 3, \"fact_count\": 4, \"summary\": [{\"id\": \"vault_keyword\", \"answer\": \"BLUE\", \"control_top\": \"GPT\", \"mount_top\": \"BLUE\", \"mount_answer_rank\": 0, \"hit\": true}, {\"id\": \"relay_marker\", \"answer\": \"EMBER\", \"control_top\": \"GPT\", \"mount_top\": \"BLUE\", \"mount_answer_rank\": 1, \"hit\": false}, {\"id\": \"archive_color\", \"answer\": \"GRAY\", \"control_top\": \"Blue\", \"mount_top\": \"GRAY\", \"mount_answer_rank\": 0, \"hit\": true}, {\"id\": \"tool_metal\", \"answer\": \"IRON\", \"control_top\": \"metal\", \"mount_top\": \"IRON\", \"mount_answer_rank\": 0, \"hit\": true}]}\n",
+        "stderr_tail": "",
+        "log": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/multifact_gate.log"
+      },
+      "margins": {
+        "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/multifact_gate.json",
+        "classification": "fail",
+        "hit_count": 3,
+        "count": 4,
+        "rows": [
+          {
+            "id": "vault_keyword",
+            "variant": null,
+            "answer": "BLUE",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": true,
+            "mount_margin": 2.25,
+            "mount_answer_rank": 0
+          },
+          {
+            "id": "relay_marker",
+            "variant": null,
+            "answer": "EMBER",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": false,
+            "mount_margin": -1.125,
+            "mount_answer_rank": 1
+          },
+          {
+            "id": "archive_color",
+            "variant": null,
+            "answer": "GRAY",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": true,
+            "mount_margin": 3.0,
+            "mount_answer_rank": 0
+          },
+          {
+            "id": "tool_metal",
+            "variant": null,
+            "answer": "IRON",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": true,
+            "mount_margin": 2.75,
+            "mount_answer_rank": 0
+          }
+        ]
+      }
+    },
+    "preference": {
+      "run": {
+        "cmd": [
+          "/usr/bin/python3",
+          "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_preference_graft_gate.py",
+          "--output",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/preference_gate.json",
+          "--graft-dir",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/preference",
+          "--attention-mode",
+          "standard",
+          "--skip-capture"
+        ],
+        "returncode": 1,
+        "wall_seconds": 295.2645654678345,
+        "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/preference_gate.json\n{\"status\": \"ok\", \"classification\": \"fail\", \"hits\": 2, \"item_count\": 4, \"summary\": [{\"id\": \"preferred_color\", \"answer\": \"BLUE\", \"control_top\": \"blue\", \"mount_top\": \"blue\", \"mount_answer_rank\": 1, \"mount_answer_logit\": 25.25, \"hit\": false}, {\"id\": \"preferred_signal\", \"answer\": \"EMBER\", \"control_top\": \"signal\", \"mount_top\": \"EMBER\", \"mount_answer_rank\": 0, \"mount_answer_logit\": 22.5, \"hit\": true}, {\"id\": \"preferred_shade\", \"answer\": \"GRAY\", \"control_top\": \"white\", \"mount_top\": \"gray\", \"mount_answer_rank\": 1, \"mount_answer_logit\": 23.375, \"hit\": false}, {\"id\": \"preferred_metal\", \"answer\": \"IRON\", \"control_top\": \"steel\", \"mount_top\": \"IRON\", \"mount_answer_rank\": 0, \"mount_answer_logit\": 24.5, \"hit\": true}]}\n",
+        "stderr_tail": "",
+        "log": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/preference_gate.log"
+      },
+      "margins": {
+        "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/preference_gate.json",
+        "classification": "fail",
+        "hit_count": 2,
+        "count": 4,
+        "rows": [
+          {
+            "id": "preferred_color",
+            "variant": null,
+            "answer": "BLUE",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": false,
+            "mount_margin": -0.25,
+            "mount_answer_rank": 1
+          },
+          {
+            "id": "preferred_signal",
+            "variant": null,
+            "answer": "EMBER",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": true,
+            "mount_margin": 2.5,
+            "mount_answer_rank": 0
+          },
+          {
+            "id": "preferred_shade",
+            "variant": null,
+            "answer": "GRAY",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": false,
+            "mount_margin": -1.0,
+            "mount_answer_rank": 1
+          },
+          {
+            "id": "preferred_metal",
+            "variant": null,
+            "answer": "IRON",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": true,
+            "mount_margin": 2.0,
+            "mount_answer_rank": 0
+          }
+        ]
+      }
+    },
+    "supersession": {
+      "run": {
+        "cmd": [
+          "/usr/bin/python3",
+          "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_supersession_graft_gate.py",
+          "--output",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/supersession_gate.json",
+          "--graft-dir",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/supersession",
+          "--attention-mode",
+          "standard",
+          "--skip-capture"
+        ],
+        "returncode": 0,
+        "wall_seconds": 294.73065209388733,
+        "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/supersession_gate.json\n{\"status\": \"ok\", \"classification\": \"pass\", \"hits\": 4, \"item_count\": 4, \"summary\": [{\"id\": \"vault_keyword\", \"old_answer\": \"RED\", \"answer\": \"BLUE\", \"control_top\": \"GPT\", \"mount_top\": \"BLUE\", \"mount_answer_rank\": 0, \"mount_answer_logit\": 22.375, \"hit\": true}, {\"id\": \"relay_marker\", \"old_answer\": \"STONE\", \"answer\": \"EMBER\", \"control_top\": \"GPT\", \"mount_top\": \"EMBER\", \"mount_answer_rank\": 0, \"mount_answer_logit\": 23.0, \"hit\": true}, {\"id\": \"archive_color\", \"old_answer\": \"BLACK\", \"answer\": \"GRAY\", \"control_top\": \"blue\", \"mount_top\": \"GRAY\", \"mount_answer_rank\": 0, \"mount_answer_logit\": 23.5, \"hit\": true}, {\"id\": \"tool_metal\", \"old_answer\": \"GREEN\", \"answer\": \"IRON\", \"control_top\": \"metal\", \"mount_top\": \"IRON\", \"mount_answer_rank\": 0, \"mount_answer_logit\": 20.5, \"hit\": true}]}\n",
+        "stderr_tail": "",
+        "log": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/supersession_gate.log"
+      },
+      "margins": {
+        "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/supersession_gate.json",
+        "classification": "pass",
+        "hit_count": 4,
+        "count": 4,
+        "rows": [
+          {
+            "id": "vault_keyword",
+            "variant": null,
+            "answer": "BLUE",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": true,
+            "mount_margin": 0.75,
+            "mount_answer_rank": 0
+          },
+          {
+            "id": "relay_marker",
+            "variant": null,
+            "answer": "EMBER",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": true,
+            "mount_margin": 5.75,
+            "mount_answer_rank": 0
+          },
+          {
+            "id": "archive_color",
+            "variant": null,
+            "answer": "GRAY",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": true,
+            "mount_margin": 2.0,
+            "mount_answer_rank": 0
+          },
+          {
+            "id": "tool_metal",
+            "variant": null,
+            "answer": "IRON",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": true,
+            "mount_margin": 3.0,
+            "mount_answer_rank": 0
+          }
+        ]
+      }
+    },
+    "addressing_fact_local": {
+      "run": {
+        "cmd": [
+          "/usr/bin/python3",
+          "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_multifact_addressing_gate.py",
+          "--source",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/multifact_4k_fp16_gate.json",
+          "--graft-dir",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/banks/multifact",
+          "--variants",
+          "fact_local",
+          "--output",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/addressing_fact_local_gate.json",
+          "--attention-mode",
+          "standard"
+        ],
+        "returncode": 0,
+        "wall_seconds": 288.56328439712524,
+        "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/addressing_fact_local_gate.json\n{\"status\": \"ok\", \"classification\": \"pass\", \"generated_classification\": \"pass\", \"selected_classification\": \"pass\", \"hits\": 4, \"generated_hits\": 4, \"probe_count\": 4, \"summary\": [{\"variant\": \"fact_local\", \"id\": \"vault_keyword\", \"answer\": \"BLUE\", \"control_top\": \"GPT\", \"mount_top\": \"BLUE\", \"mount_answer_rank\": 0, \"mount_answer_logit\": 23.375, \"control_generated_text\": \"GPT\", \"mount_generated_text\": \"BLUE\", \"control_generated_contains_value\": false, \"mount_generated_contains_value\": true, \"hit\": true, \"generated_hit\": true}, {\"variant\": \"fact_local\", \"id\": \"relay_marker\", \"answer\": \"EMBER\", \"control_top\": \"GPT\", \"mount_top\": \"EMBER\", \"mount_answer_rank\": 0, \"mount_answer_logit\": 22.5, \"control_generated_text\": \"GPT\", \"mount_generated_text\": \"EMBER\", \"control_generated_contains_value\": false, \"mount_generated_contains_value\": true, \"hit\": true, \"generated_hit\": true}, {\"variant\": \"fact_local\", \"id\": \"archive_color\", \"answer\": \"GRAY\", \"control_top\": \"blue\", \"mount_top\": \"GRAY\", \"mount_answer_rank\": 0, \"mount_answer_logit\": 22.125, \"control_generated_text\": \"blue\", \"mount_generated_text\": \"GRAY\", \"control_generated_contains_value\": false, \"mount_generated_contains_value\": true, \"hit\": true, \"generated_hit\": true}, {\"variant\": \"fact_local\", \"id\": \"tool_metal\", \"answer\": \"IRON\", \"control_top\": \"metal\", \"mount_top\": \"IRON\", \"mount_answer_rank\": 0, \"mount_answer_logit\": 23.125, \"control_generated_text\": \"metal\", \"mount_generated_text\": \"IRON\", \"control_generated_contains_value\": false, \"mount_generated_contains_value\": true, \"hit\": true, \"generated_hit\": true}]}\n",
+        "stderr_tail": "",
+        "log": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/addressing_gate.log"
+      },
+      "margins": {
+        "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/sweep_depth4/addressing_fact_local_gate.json",
+        "classification": "pass",
+        "hit_count": 4,
+        "count": 4,
+        "rows": [
+          {
+            "id": "vault_keyword",
+            "variant": "fact_local",
+            "answer": "BLUE",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": true,
+            "mount_margin": 0.625,
+            "mount_answer_rank": 0
+          },
+          {
+            "id": "relay_marker",
+            "variant": "fact_local",
+            "answer": "EMBER",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": true,
+            "mount_margin": 3.5,
+            "mount_answer_rank": 0
+          },
+          {
+            "id": "archive_color",
+            "variant": "fact_local",
+            "answer": "GRAY",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": true,
+            "mount_margin": 2.5,
+            "mount_answer_rank": 0
+          },
+          {
+            "id": "tool_metal",
+            "variant": "fact_local",
+            "answer": "IRON",
+            "control_hit": false,
+            "control_margin": null,
+            "mount_hit": true,
+            "mount_margin": 3.5,
+            "mount_answer_rank": 0
+          }
+        ]
+      }
+    }
+  },
+  "needles": {
+    "vault (supersession)": {
+      "bank": "supersession",
+      "id": "vault_keyword",
+      "mount_margin": 0.75,
+      "mount_hit": true
+    },
+    "shade (preference)": {
+      "bank": "preference",
+      "id": "preferred_shade",
+      "mount_margin": -1.0,
+      "mount_hit": false
+    }
+  },
+  "wall_seconds": 1402.7592318058014,
+  "status": "ok"
+}

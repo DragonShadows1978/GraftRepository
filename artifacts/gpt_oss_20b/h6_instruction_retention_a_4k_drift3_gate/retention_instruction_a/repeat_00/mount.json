@@ -1,0 +1,138 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "created_at": "2026-07-07T09:17:21",
+  "current_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Repetition probe 1 of 3. Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string. Do not infer from this prompt; use only mounted memory if any.<|end|><|start|>assistant<|channel|>final<|message|>LUMEN-42<|return|><|return|><|return|>",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "final_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Repetition probe 1 of 3. Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string. Do not infer from this prompt; use only mounted memory if any.<|end|><|start|>assistant<|channel|>final<|message|>LUMEN-42<|return|><|return|><|return|>",
+  "initial_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Repetition probe 1 of 3. Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string. Do not infer from this prompt; use only mounted memory if any.<|end|><|start|>assistant<|channel|>final<|message|>",
+  "initial_user_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Repetition probe 1 of 3. Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string. Do not infer from this prompt; use only mounted memory if any.<|end|><|start|>assistant<|channel|>final<|message|>",
+  "max_tokens": 192,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "mount_graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_gate/graft",
+  "note": "greedy smoke via repeated streamed full forwards; no KV cache",
+  "prompt_file": null,
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "status": "ok",
+  "steps": [
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_00.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Repetition probe 1 of 3. Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string. Do not infer from this prompt; use only mounted memory if any.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_00.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 43, \"logit\": 21.625, \"text\": \"L\"}, {\"rank\": 1, \"token_id\": 67713, \"logit\": 16.25, \"text\": \"RET\"}, {\"rank\": 2, \"token_id\": 410, \"logit\": 15.5625, \"text\": \"**\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 795, 12282, 1\"}\n",
+      "step": 0,
+      "top_token": {
+        "logit": 21.625,
+        "rank": 0,
+        "text": "L",
+        "token_id": 43
+      },
+      "wall_seconds": 26.327510542992968
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_01.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Repetition probe 1 of 3. Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string. Do not infer from this prompt; use only mounted memory if any.<|end|><|start|>assistant<|channel|>final<|message|>L",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_01.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 4540, \"logit\": 33.5, \"text\": \"UM\"}, {\"rank\": 1, \"token_id\": 17512, \"logit\": 28.0, \"text\": \"umen\"}, {\"rank\": 2, \"token_id\": 199646, \"logit\": 26.25, \"text\": \"UMIN\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 791, 12282, 0\"}\n",
+      "step": 1,
+      "top_token": {
+        "logit": 33.5,
+        "rank": 0,
+        "text": "UM",
+        "token_id": 4540
+      },
+      "wall_seconds": 26.649850739049725
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_02.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Repetition probe 1 of 3. Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string. Do not infer from this prompt; use only mounted memory if any.<|end|><|start|>assistant<|channel|>final<|message|>LUM",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_02.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 1262, \"logit\": 36.75, \"text\": \"EN\"}, {\"rank\": 1, \"token_id\": 17842, \"logit\": 22.125, \"text\": \"ENS\"}, {\"rank\": 2, \"token_id\": 965, \"logit\": 22.0, \"text\": \"IN\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 791, 12282, 1\"}\n",
+      "step": 2,
+      "top_token": {
+        "logit": 36.75,
+        "rank": 0,
+        "text": "EN",
+        "token_id": 1262
+      },
+      "wall_seconds": 26.427359244960826
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_03.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Repetition probe 1 of 3. Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string. Do not infer from this prompt; use only mounted memory if any.<|end|><|start|>assistant<|channel|>final<|message|>LUMEN",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_03.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 12, \"logit\": 26.5, \"text\": \"-\"}, {\"rank\": 1, \"token_id\": 50005, \"logit\": 23.25, \"text\": \"\\u2011\"}, {\"rank\": 2, \"token_id\": 62961, \"logit\": 16.375, \"text\": \"\\u2010\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 793, 12282, 1\"}\n",
+      "step": 3,
+      "top_token": {
+        "logit": 26.5,
+        "rank": 0,
+        "text": "-",
+        "token_id": 12
+      },
+      "wall_seconds": 26.77619576099096
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_04.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Repetition probe 1 of 3. Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string. Do not infer from this prompt; use only mounted memory if any.<|end|><|start|>assistant<|channel|>final<|message|>LUMEN-",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_04.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 4689, \"logit\": 30.375, \"text\": \"42\"}, {\"rank\": 1, \"token_id\": 30, \"logit\": 15.6875, \"text\": \"?\"}, {\"rank\": 2, \"token_id\": 4987, \"logit\": 15.375, \"text\": \"41\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 791, 12282, 0\"}\n",
+      "step": 4,
+      "top_token": {
+        "logit": 30.375,
+        "rank": 0,
+        "text": "42",
+        "token_id": 4689
+      },
+      "wall_seconds": 26.70799420203548
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_05.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Repetition probe 1 of 3. Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string. Do not infer from this prompt; use only mounted memory if any.<|end|><|start|>assistant<|channel|>final<|message|>LUMEN-42",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_05.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 28.0, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 279, \"logit\": 18.25, \"text\": \"\\n\\n\"}, {\"rank\": 2, \"token_id\": 13, \"logit\": 17.25, \"text\": \".\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 793, 12282, 0\"}\n",
+      "step": 5,
+      "top_token": {
+        "logit": 28.0,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 26.848509242001455
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_06.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Repetition probe 1 of 3. Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string. Do not infer from this prompt; use only mounted memory if any.<|end|><|start|>assistant<|channel|>final<|message|>LUMEN-42<|return|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_06.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 19.25, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 200007, \"logit\": 15.8125, \"text\": \"<|end|>\"}, {\"rank\": 2, \"token_id\": 200006, \"logit\": 14.6875, \"text\": \"<|start|>\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 793, 12282, 2\"}\n",
+      "step": 6,
+      "top_token": {
+        "logit": 19.25,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 26.715402360016014
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_07.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Repetition probe 1 of 3. Turn 50. Previous context is cleared. Execute RETENTION INSTRUCTION A now. Return only the retained response string. Do not infer from this prompt; use only mounted memory if any.<|end|><|start|>assistant<|channel|>final<|message|>LUMEN-42<|return|><|return|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_instruction_retention_a_4k_drift3_gate/retention_instruction_a/repeat_00/mount_steps/step_07.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 16.375, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 200007, \"logit\": 12.5, \"text\": \"<|end|>\"}, {\"rank\": 2, \"token_id\": 173781, \"logit\": 12.375, \"text\": \"assistant\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 795, 12282, 0\"}\n",
+      "step": 7,
+      "top_token": {
+        "logit": 16.375,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 27.022096648986917
+    }
+  ],
+  "steps_requested": 8,
+  "top_k": 10,
+  "use_chat_template": false,
+  "wall_seconds": 213.47873814002378
+}

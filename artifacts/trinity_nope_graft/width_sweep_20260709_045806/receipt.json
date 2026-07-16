@@ -1,0 +1,1182 @@
+{
+  "aborted": null,
+  "honest_residuals": [
+    "Value recovery depends on graft content + routing/mount fidelity, not only hole immunity; a clean miss is not T1 refutation.",
+    "Sliding layers still RoPE under live_shift; mixed outcome possible (clean full NoPE contribution, degraded sliding) \u2014 S receipts captured.",
+    "fp32 compute ~1s/token class; ngen=20 is a short probe, not long-form.",
+    "INT4 weight numerics residual (prior port ledger); semantic path used fp32 compute as ordered.",
+    "Driver attention hook is harness-only; product TrinityAttentionTC still lacks inject_kv/live_shift until a product order lands them.",
+    "Absolute T1_CONFIRMED blocked: INT4 free-gen under fp32 compute is bos_loop even on pure_baseline (no arena, live_shift=0) \u2014 same class as all width cases. bf16 weight mode OOMs on 12GB card; cannot run clean-English reference path here.",
+    "Mount path exercised: route found fact graft (picks_forced=False), cur_mount_n=52 at all mount widths; full_S==sliding_S pre-gen (window 2048 not binding).",
+    "Sliding layers see live_shift identical to full layers (attribute set on all att); RoPE applied only on sliding at position_offset+live_shift; full=NoPE."
+  ],
+  "results": [
+    {
+      "generation": {
+        "bos_count": 7,
+        "clean_english": false,
+        "collapse_signature": "bos_loop",
+        "ids": [
+          753,
+          10170,
+          4314,
+          5474,
+          5474,
+          7670,
+          55257,
+          106166,
+          1025,
+          411,
+          17840,
+          2846,
+          2615,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "n_steps": 20,
+        "text": "AnswerNoneasureNumberNumberNull_Inodoreuthistructor OneAnd<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "text_raw": "AnswerNoneasureNumberNumberNull_Inodoreuthistructor OneAnd<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "unique_id_ratio": 0.65,
+        "value_recovered": false,
+        "wall_s": 3.561
+      },
+      "label": "pure_baseline",
+      "live_shift": 0,
+      "mount": false,
+      "n_sink": 0,
+      "probe_prompt": "<|im_start|>system\nYou are Trinity. Answer fact probes with the stored value only. Be concise.<|im_end|>\n<|im_start|>user\nRecall probe. What is the vault code? Reply with only the value.<|im_end|>\n<|im_start|>assistant\n",
+      "probe_prompt_ntok": 44,
+      "wall_s": 3.561,
+      "width": null
+    },
+    {
+      "cache_after_plant": {
+        "all_S_equal": true,
+        "full_S0": 51,
+        "full_S_unique": [
+          51
+        ],
+        "live_shift_on_layers_unique": [
+          "117"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 51,
+        "sliding_S_unique": [
+          51
+        ]
+      },
+      "cache_post_gen": {
+        "all_S_equal": true,
+        "full_S0": 145,
+        "full_S_unique": [
+          145
+        ],
+        "live_shift_on_layers_unique": [
+          "117"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 145,
+        "sliding_S_unique": [
+          145
+        ]
+      },
+      "cache_pre_gen": {
+        "all_S_equal": true,
+        "full_S0": 103,
+        "full_S_unique": [
+          103
+        ],
+        "live_shift_on_layers_unique": [
+          "117"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 103,
+        "sliding_S_unique": [
+          103
+        ]
+      },
+      "cur_mount_n": 52,
+      "cur_mounts": [
+        0
+      ],
+      "fact_evicted": true,
+      "fact_ntok": 52,
+      "full_nope_rope": false,
+      "generation": {
+        "bos_count": 15,
+        "clean_english": false,
+        "collapse_signature": "bos_loop",
+        "ids": [
+          0,
+          5639,
+          5639,
+          6580,
+          72701,
+          5587,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "n_steps": 20,
+        "steps_head": [
+          {
+            "chosen": 0,
+            "pos": 105,
+            "rope0_expected": 199,
+            "tag": "prompt",
+            "text": "<|begin_of_text|>"
+          },
+          {
+            "chosen": 5639,
+            "pos": 106,
+            "tag": "g0",
+            "text": "null"
+          },
+          {
+            "chosen": 5639,
+            "pos": 107,
+            "tag": "g1",
+            "text": "null"
+          }
+        ],
+        "stop_hit": null,
+        "stopped": false,
+        "text": "<|begin_of_text|>nullnullstream.Stream please<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "text_raw": "<|begin_of_text|>nullnullstream.Stream please<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "unique_id_ratio": 0.25,
+        "value_recovered": false,
+        "wall_s": 3.045
+      },
+      "graft0_text_head": "<|im_start|>user\nMemory planting turn. The vault code is Vortex-3-Sierra. If asked later for the vault code, answer Vortex-3-Sierra only.<|im_end|>\n<|im_start|>",
+      "label": "w96_mount",
+      "live_segs_after_plant": [
+        [
+          1,
+          30
+        ]
+      ],
+      "live_shift": 117,
+      "mount": true,
+      "n_sink": 21,
+      "picks": [
+        0
+      ],
+      "picks_forced": false,
+      "pos_after_plant": 82,
+      "probe_prompt": "<|im_start|>user\nRecall probe. What is the vault code? Reply with only the value.<|im_end|>\n<|im_start|>assistant\n",
+      "probe_prompt_ntok": 23,
+      "ranking": [
+        0
+      ],
+      "sink_ntok": 21,
+      "sink_text": "<|im_start|>system\nYou are Trinity. Answer fact probes with the stored value only. Be concise.<|im_end|>\n",
+      "sliding_live_shift_seen": 117,
+      "sliding_rope_at": "position_offset + live_shift (= pos + 117)",
+      "wall_s": 10.686,
+      "width": 96
+    },
+    {
+      "cache_after_plant": {
+        "all_S_equal": true,
+        "full_S0": 51,
+        "full_S_unique": [
+          51
+        ],
+        "live_shift_on_layers_unique": [
+          "117"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 51,
+        "sliding_S_unique": [
+          51
+        ]
+      },
+      "cache_post_gen": {
+        "all_S_equal": true,
+        "full_S0": 93,
+        "full_S_unique": [
+          93
+        ],
+        "live_shift_on_layers_unique": [
+          "117"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 93,
+        "sliding_S_unique": [
+          93
+        ]
+      },
+      "cache_pre_gen": {
+        "all_S_equal": true,
+        "full_S0": 51,
+        "full_S_unique": [
+          51
+        ],
+        "live_shift_on_layers_unique": [
+          "117"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 51,
+        "sliding_S_unique": [
+          51
+        ]
+      },
+      "cur_mount_n": 0,
+      "cur_mounts": [],
+      "fact_evicted": true,
+      "fact_ntok": 52,
+      "full_nope_rope": false,
+      "generation": {
+        "bos_count": 20,
+        "clean_english": false,
+        "collapse_signature": "bos_loop",
+        "ids": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "n_steps": 20,
+        "steps_head": [
+          {
+            "chosen": 0,
+            "pos": 105,
+            "rope0_expected": 199,
+            "tag": "prompt",
+            "text": "<|begin_of_text|>"
+          },
+          {
+            "chosen": 0,
+            "pos": 106,
+            "tag": "g0",
+            "text": "<|begin_of_text|>"
+          },
+          {
+            "chosen": 0,
+            "pos": 107,
+            "tag": "g1",
+            "text": "<|begin_of_text|>"
+          }
+        ],
+        "stop_hit": null,
+        "stopped": false,
+        "text": "<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "text_raw": "<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "unique_id_ratio": 0.05,
+        "value_recovered": false,
+        "wall_s": 2.877
+      },
+      "graft0_text_head": "<|im_start|>user\nMemory planting turn. The vault code is Vortex-3-Sierra. If asked later for the vault code, answer Vortex-3-Sierra only.<|im_end|>\n<|im_start|>",
+      "label": "w96_control",
+      "live_segs_after_plant": [
+        [
+          1,
+          30
+        ]
+      ],
+      "live_shift": 117,
+      "mount": false,
+      "n_sink": 21,
+      "picks": [],
+      "picks_forced": false,
+      "pos_after_plant": 82,
+      "probe_prompt": "<|im_start|>user\nRecall probe. What is the vault code? Reply with only the value.<|im_end|>\n<|im_start|>assistant\n",
+      "probe_prompt_ntok": 23,
+      "ranking": [],
+      "sink_ntok": 21,
+      "sink_text": "<|im_start|>system\nYou are Trinity. Answer fact probes with the stored value only. Be concise.<|im_end|>\n",
+      "sliding_live_shift_seen": 117,
+      "sliding_rope_at": "position_offset + live_shift (= pos + 117)",
+      "wall_s": 9.69,
+      "width": 96
+    },
+    {
+      "cache_after_plant": {
+        "all_S_equal": true,
+        "full_S0": 51,
+        "full_S_unique": [
+          51
+        ],
+        "live_shift_on_layers_unique": [
+          "405"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 51,
+        "sliding_S_unique": [
+          51
+        ]
+      },
+      "cache_post_gen": {
+        "all_S_equal": true,
+        "full_S0": 145,
+        "full_S_unique": [
+          145
+        ],
+        "live_shift_on_layers_unique": [
+          "405"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 145,
+        "sliding_S_unique": [
+          145
+        ]
+      },
+      "cache_pre_gen": {
+        "all_S_equal": true,
+        "full_S0": 103,
+        "full_S_unique": [
+          103
+        ],
+        "live_shift_on_layers_unique": [
+          "405"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 103,
+        "sliding_S_unique": [
+          103
+        ]
+      },
+      "cur_mount_n": 52,
+      "cur_mounts": [
+        0
+      ],
+      "fact_evicted": true,
+      "fact_ntok": 52,
+      "full_nope_rope": false,
+      "generation": {
+        "bos_count": 13,
+        "clean_english": false,
+        "collapse_signature": "bos_loop",
+        "ids": [
+          0,
+          1197,
+          5639,
+          72092,
+          97692,
+          1383,
+          54247,
+          2846,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "n_steps": 20,
+        "steps_head": [
+          {
+            "chosen": 0,
+            "pos": 105,
+            "rope0_expected": 487,
+            "tag": "prompt",
+            "text": "<|begin_of_text|>"
+          },
+          {
+            "chosen": 1197,
+            "pos": 106,
+            "tag": "g0",
+            "text": "line"
+          },
+          {
+            "chosen": 5639,
+            "pos": 107,
+            "tag": "g1",
+            "text": "null"
+          }
+        ],
+        "stop_hit": null,
+        "stopped": false,
+        "text": "<|begin_of_text|>linenullNAD Buyers Andliner One<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "text_raw": "<|begin_of_text|>linenullNAD Buyers Andliner One<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "unique_id_ratio": 0.4,
+        "value_recovered": false,
+        "wall_s": 3.031
+      },
+      "graft0_text_head": "<|im_start|>user\nMemory planting turn. The vault code is Vortex-3-Sierra. If asked later for the vault code, answer Vortex-3-Sierra only.<|im_end|>\n<|im_start|>",
+      "label": "w384_mount",
+      "live_segs_after_plant": [
+        [
+          1,
+          30
+        ]
+      ],
+      "live_shift": 405,
+      "mount": true,
+      "n_sink": 21,
+      "picks": [
+        0
+      ],
+      "picks_forced": false,
+      "pos_after_plant": 82,
+      "probe_prompt": "<|im_start|>user\nRecall probe. What is the vault code? Reply with only the value.<|im_end|>\n<|im_start|>assistant\n",
+      "probe_prompt_ntok": 23,
+      "ranking": [
+        0
+      ],
+      "sink_ntok": 21,
+      "sink_text": "<|im_start|>system\nYou are Trinity. Answer fact probes with the stored value only. Be concise.<|im_end|>\n",
+      "sliding_live_shift_seen": 405,
+      "sliding_rope_at": "position_offset + live_shift (= pos + 405)",
+      "wall_s": 10.76,
+      "width": 384
+    },
+    {
+      "cache_after_plant": {
+        "all_S_equal": true,
+        "full_S0": 51,
+        "full_S_unique": [
+          51
+        ],
+        "live_shift_on_layers_unique": [
+          "405"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 51,
+        "sliding_S_unique": [
+          51
+        ]
+      },
+      "cache_post_gen": {
+        "all_S_equal": true,
+        "full_S0": 93,
+        "full_S_unique": [
+          93
+        ],
+        "live_shift_on_layers_unique": [
+          "405"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 93,
+        "sliding_S_unique": [
+          93
+        ]
+      },
+      "cache_pre_gen": {
+        "all_S_equal": true,
+        "full_S0": 51,
+        "full_S_unique": [
+          51
+        ],
+        "live_shift_on_layers_unique": [
+          "405"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 51,
+        "sliding_S_unique": [
+          51
+        ]
+      },
+      "cur_mount_n": 0,
+      "cur_mounts": [],
+      "fact_evicted": true,
+      "fact_ntok": 52,
+      "full_nope_rope": false,
+      "generation": {
+        "bos_count": 20,
+        "clean_english": false,
+        "collapse_signature": "bos_loop",
+        "ids": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "n_steps": 20,
+        "steps_head": [
+          {
+            "chosen": 0,
+            "pos": 105,
+            "rope0_expected": 487,
+            "tag": "prompt",
+            "text": "<|begin_of_text|>"
+          },
+          {
+            "chosen": 0,
+            "pos": 106,
+            "tag": "g0",
+            "text": "<|begin_of_text|>"
+          },
+          {
+            "chosen": 0,
+            "pos": 107,
+            "tag": "g1",
+            "text": "<|begin_of_text|>"
+          }
+        ],
+        "stop_hit": null,
+        "stopped": false,
+        "text": "<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "text_raw": "<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "unique_id_ratio": 0.05,
+        "value_recovered": false,
+        "wall_s": 2.832
+      },
+      "graft0_text_head": "<|im_start|>user\nMemory planting turn. The vault code is Vortex-3-Sierra. If asked later for the vault code, answer Vortex-3-Sierra only.<|im_end|>\n<|im_start|>",
+      "label": "w384_control",
+      "live_segs_after_plant": [
+        [
+          1,
+          30
+        ]
+      ],
+      "live_shift": 405,
+      "mount": false,
+      "n_sink": 21,
+      "picks": [],
+      "picks_forced": false,
+      "pos_after_plant": 82,
+      "probe_prompt": "<|im_start|>user\nRecall probe. What is the vault code? Reply with only the value.<|im_end|>\n<|im_start|>assistant\n",
+      "probe_prompt_ntok": 23,
+      "ranking": [],
+      "sink_ntok": 21,
+      "sink_text": "<|im_start|>system\nYou are Trinity. Answer fact probes with the stored value only. Be concise.<|im_end|>\n",
+      "sliding_live_shift_seen": 405,
+      "sliding_rope_at": "position_offset + live_shift (= pos + 405)",
+      "wall_s": 9.654,
+      "width": 384
+    },
+    {
+      "cache_after_plant": {
+        "all_S_equal": true,
+        "full_S0": 51,
+        "full_S_unique": [
+          51
+        ],
+        "live_shift_on_layers_unique": [
+          "789"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 51,
+        "sliding_S_unique": [
+          51
+        ]
+      },
+      "cache_post_gen": {
+        "all_S_equal": true,
+        "full_S0": 145,
+        "full_S_unique": [
+          145
+        ],
+        "live_shift_on_layers_unique": [
+          "789"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 145,
+        "sliding_S_unique": [
+          145
+        ]
+      },
+      "cache_pre_gen": {
+        "all_S_equal": true,
+        "full_S0": 103,
+        "full_S_unique": [
+          103
+        ],
+        "live_shift_on_layers_unique": [
+          "789"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 103,
+        "sliding_S_unique": [
+          103
+        ]
+      },
+      "cur_mount_n": 52,
+      "cur_mounts": [
+        0
+      ],
+      "fact_evicted": true,
+      "fact_ntok": 52,
+      "full_nope_rope": false,
+      "generation": {
+        "bos_count": 19,
+        "clean_english": false,
+        "collapse_signature": "bos_loop",
+        "ids": [
+          691,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "n_steps": 20,
+        "steps_head": [
+          {
+            "chosen": 691,
+            "pos": 105,
+            "rope0_expected": 871,
+            "tag": "prompt",
+            "text": "In"
+          },
+          {
+            "chosen": 0,
+            "pos": 106,
+            "tag": "g0",
+            "text": "<|begin_of_text|>"
+          },
+          {
+            "chosen": 0,
+            "pos": 107,
+            "tag": "g1",
+            "text": "<|begin_of_text|>"
+          }
+        ],
+        "stop_hit": null,
+        "stopped": false,
+        "text": "In<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "text_raw": "In<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "unique_id_ratio": 0.1,
+        "value_recovered": false,
+        "wall_s": 2.981
+      },
+      "graft0_text_head": "<|im_start|>user\nMemory planting turn. The vault code is Vortex-3-Sierra. If asked later for the vault code, answer Vortex-3-Sierra only.<|im_end|>\n<|im_start|>",
+      "label": "w768_mount",
+      "live_segs_after_plant": [
+        [
+          1,
+          30
+        ]
+      ],
+      "live_shift": 789,
+      "mount": true,
+      "n_sink": 21,
+      "picks": [
+        0
+      ],
+      "picks_forced": false,
+      "pos_after_plant": 82,
+      "probe_prompt": "<|im_start|>user\nRecall probe. What is the vault code? Reply with only the value.<|im_end|>\n<|im_start|>assistant\n",
+      "probe_prompt_ntok": 23,
+      "ranking": [
+        0
+      ],
+      "sink_ntok": 21,
+      "sink_text": "<|im_start|>system\nYou are Trinity. Answer fact probes with the stored value only. Be concise.<|im_end|>\n",
+      "sliding_live_shift_seen": 789,
+      "sliding_rope_at": "position_offset + live_shift (= pos + 789)",
+      "wall_s": 10.513,
+      "width": 768
+    },
+    {
+      "cache_after_plant": {
+        "all_S_equal": true,
+        "full_S0": 51,
+        "full_S_unique": [
+          51
+        ],
+        "live_shift_on_layers_unique": [
+          "789"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 51,
+        "sliding_S_unique": [
+          51
+        ]
+      },
+      "cache_post_gen": {
+        "all_S_equal": true,
+        "full_S0": 93,
+        "full_S_unique": [
+          93
+        ],
+        "live_shift_on_layers_unique": [
+          "789"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 93,
+        "sliding_S_unique": [
+          93
+        ]
+      },
+      "cache_pre_gen": {
+        "all_S_equal": true,
+        "full_S0": 51,
+        "full_S_unique": [
+          51
+        ],
+        "live_shift_on_layers_unique": [
+          "789"
+        ],
+        "n_layers": 56,
+        "sliding_S0": 51,
+        "sliding_S_unique": [
+          51
+        ]
+      },
+      "cur_mount_n": 0,
+      "cur_mounts": [],
+      "fact_evicted": true,
+      "fact_ntok": 52,
+      "full_nope_rope": false,
+      "generation": {
+        "bos_count": 11,
+        "clean_english": false,
+        "collapse_signature": "bos_loop",
+        "ids": [
+          0,
+          0,
+          5639,
+          5639,
+          32657,
+          58,
+          0,
+          0,
+          0,
+          7670,
+          22042,
+          57,
+          106077,
+          443,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "n_steps": 20,
+        "steps_head": [
+          {
+            "chosen": 0,
+            "pos": 105,
+            "rope0_expected": 871,
+            "tag": "prompt",
+            "text": "<|begin_of_text|>"
+          },
+          {
+            "chosen": 0,
+            "pos": 106,
+            "tag": "g0",
+            "text": "<|begin_of_text|>"
+          },
+          {
+            "chosen": 5639,
+            "pos": 107,
+            "tag": "g1",
+            "text": "null"
+          }
+        ],
+        "stop_hit": null,
+        "stopped": false,
+        "text": "<|begin_of_text|><|begin_of_text|>nullnull=null;<|begin_of_text|><|begin_of_text|><|begin_of_text|>Null Truth:interpreter \"<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "text_raw": "<|begin_of_text|><|begin_of_text|>nullnull=null;<|begin_of_text|><|begin_of_text|><|begin_of_text|>Null Truth:interpreter \"<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "unique_id_ratio": 0.45,
+        "value_recovered": false,
+        "wall_s": 2.848
+      },
+      "graft0_text_head": "<|im_start|>user\nMemory planting turn. The vault code is Vortex-3-Sierra. If asked later for the vault code, answer Vortex-3-Sierra only.<|im_end|>\n<|im_start|>",
+      "label": "w768_control",
+      "live_segs_after_plant": [
+        [
+          1,
+          30
+        ]
+      ],
+      "live_shift": 789,
+      "mount": false,
+      "n_sink": 21,
+      "picks": [],
+      "picks_forced": false,
+      "pos_after_plant": 82,
+      "probe_prompt": "<|im_start|>user\nRecall probe. What is the vault code? Reply with only the value.<|im_end|>\n<|im_start|>assistant\n",
+      "probe_prompt_ntok": 23,
+      "ranking": [],
+      "sink_ntok": 21,
+      "sink_text": "<|im_start|>system\nYou are Trinity. Answer fact probes with the stored value only. Be concise.<|im_end|>\n",
+      "sliding_live_shift_seen": 789,
+      "sliding_rope_at": "position_offset + live_shift (= pos + 789)",
+      "wall_s": 9.798,
+      "width": 768
+    }
+  ],
+  "sink_ntok": 21,
+  "sink_text": "<|im_start|>system\nYou are Trinity. Answer fact probes with the stored value only. Be concise.<|im_end|>\n",
+  "table": [
+    {
+      "bos_count": 7,
+      "clean_english": false,
+      "collapse_signature": "bos_loop",
+      "cur_mount_n": null,
+      "error": null,
+      "full_S0": null,
+      "ids": [
+        753,
+        10170,
+        4314,
+        5474,
+        5474,
+        7670,
+        55257,
+        106166,
+        1025,
+        411,
+        17840,
+        2846,
+        2615,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "label": "pure_baseline",
+      "live_shift": 0,
+      "mount": false,
+      "sliding_S0": null,
+      "text": "AnswerNoneasureNumberNumberNull_Inodoreuthistructor OneAnd<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "value_recovered": false,
+      "width": null
+    },
+    {
+      "bos_count": 15,
+      "clean_english": false,
+      "collapse_signature": "bos_loop",
+      "cur_mount_n": 52,
+      "error": null,
+      "full_S0": 103,
+      "ids": [
+        0,
+        5639,
+        5639,
+        6580,
+        72701,
+        5587,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "label": "w96_mount",
+      "live_shift": 117,
+      "mount": true,
+      "sliding_S0": 103,
+      "text": "<|begin_of_text|>nullnullstream.Stream please<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "value_recovered": false,
+      "width": 96
+    },
+    {
+      "bos_count": 20,
+      "clean_english": false,
+      "collapse_signature": "bos_loop",
+      "cur_mount_n": 0,
+      "error": null,
+      "full_S0": 51,
+      "ids": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "label": "w96_control",
+      "live_shift": 117,
+      "mount": false,
+      "sliding_S0": 51,
+      "text": "<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "value_recovered": false,
+      "width": 96
+    },
+    {
+      "bos_count": 13,
+      "clean_english": false,
+      "collapse_signature": "bos_loop",
+      "cur_mount_n": 52,
+      "error": null,
+      "full_S0": 103,
+      "ids": [
+        0,
+        1197,
+        5639,
+        72092,
+        97692,
+        1383,
+        54247,
+        2846,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "label": "w384_mount",
+      "live_shift": 405,
+      "mount": true,
+      "sliding_S0": 103,
+      "text": "<|begin_of_text|>linenullNAD Buyers Andliner One<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "value_recovered": false,
+      "width": 384
+    },
+    {
+      "bos_count": 20,
+      "clean_english": false,
+      "collapse_signature": "bos_loop",
+      "cur_mount_n": 0,
+      "error": null,
+      "full_S0": 51,
+      "ids": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "label": "w384_control",
+      "live_shift": 405,
+      "mount": false,
+      "sliding_S0": 51,
+      "text": "<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "value_recovered": false,
+      "width": 384
+    },
+    {
+      "bos_count": 19,
+      "clean_english": false,
+      "collapse_signature": "bos_loop",
+      "cur_mount_n": 52,
+      "error": null,
+      "full_S0": 103,
+      "ids": [
+        691,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "label": "w768_mount",
+      "live_shift": 789,
+      "mount": true,
+      "sliding_S0": 103,
+      "text": "In<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "value_recovered": false,
+      "width": 768
+    },
+    {
+      "bos_count": 11,
+      "clean_english": false,
+      "collapse_signature": "bos_loop",
+      "cur_mount_n": 0,
+      "error": null,
+      "full_S0": 51,
+      "ids": [
+        0,
+        0,
+        5639,
+        5639,
+        32657,
+        58,
+        0,
+        0,
+        0,
+        7670,
+        22042,
+        57,
+        106077,
+        443,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "label": "w768_control",
+      "live_shift": 789,
+      "mount": false,
+      "sliding_S0": 51,
+      "text": "<|begin_of_text|><|begin_of_text|>nullnull=null;<|begin_of_text|><|begin_of_text|><|begin_of_text|>Null Truth:interpreter \"<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+      "value_recovered": false,
+      "width": 768
+    }
+  ],
+  "total_wall_s": 97.651,
+  "verdict": {
+    "decisive": [
+      {
+        "control_clean": false,
+        "control_sig": "bos_loop",
+        "control_text": "<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "live_shift": 117,
+        "mount_bos_count": 15,
+        "mount_clean": false,
+        "mount_sig": "bos_loop",
+        "mount_text": "<|begin_of_text|>nullnullstream.Stream please<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "mount_value": false,
+        "width": 96
+      },
+      {
+        "control_clean": false,
+        "control_sig": "bos_loop",
+        "control_text": "<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "live_shift": 405,
+        "mount_bos_count": 13,
+        "mount_clean": false,
+        "mount_sig": "bos_loop",
+        "mount_text": "<|begin_of_text|>linenullNAD Buyers Andliner One<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "mount_value": false,
+        "width": 384
+      },
+      {
+        "control_clean": false,
+        "control_sig": "bos_loop",
+        "control_text": "<|begin_of_text|><|begin_of_text|>nullnull=null;<|begin_of_text|><|begin_of_text|><|begin_of_text|>Null Truth:interpreter \"<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "live_shift": 789,
+        "mount_bos_count": 19,
+        "mount_clean": false,
+        "mount_sig": "bos_loop",
+        "mount_text": "In<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>",
+        "mount_value": false,
+        "width": 768
+      }
+    ],
+    "gpt_oss_law_reference": {
+      "diag": "artifacts/grm_e2e/step_generate_mech_diag_20260708_155956/DIAGNOSIS.md",
+      "receipt": "artifacts/grm_e2e/live_shift_width_ab_20260708_155826/receipt.json",
+      "sess_w384_answer": "User: 3-V> < 3-4> <5 6-7-",
+      "sess_w384_live_shift": 387,
+      "sys_w96_answer_head": "I'm sorry, but I can't comply with that.",
+      "sys_w96_live_shift": 115
+    },
+    "novel_angle_salad": false,
+    "pure_sig": "bos_loop",
+    "reason": "No additional width-dependent collapse at w=384/768 vs w96 (w96_sig='bos_loop', large sigs=['bos_loop', 'bos_loop']). Absolute clean_english is NOT available under ordered INT4+fp32 free-gen (pure baseline also non-English) \u2014 product INT4 residual blocks absolute T1_CONFIRMED. Relative to the GPT-OSS hole law (clean@~115 \u2192 salad@387), Trinity does NOT show that width-triggered salad transition. Quotes: w96 shift=117 sig=bos_loop: '<|begin_of_text|>nullnullstream.Stream please<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>' | w384 shift=405 sig=bos_loop: '<|begin_of_text|>linenullNAD Buyers Andliner One<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>' | w768 shift=789 sig=bos_loop: 'In<|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|><|begin_of_text|>'",
+    "t1_prediction_source": "/mnt/ForgeRealm/Project-Tensor/docs/TRINITY_NANO_PORT_PLAN.md prediction T1 (frozen; not modified this order)",
+    "verdict": "T1_RELATIVE_HOLD",
+    "w96_mount_clean": false,
+    "w96_mount_sig": "bos_loop",
+    "width_worsened": false
+  }
+}

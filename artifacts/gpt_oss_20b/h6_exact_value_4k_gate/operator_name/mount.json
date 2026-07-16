@@ -1,0 +1,194 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "created_at": "2026-07-07T07:36:48",
+  "current_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>MIRA SOL<|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|>",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "final_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>MIRA SOL<|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|>",
+  "initial_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>",
+  "initial_user_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>",
+  "max_tokens": 192,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "mount_graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/graft",
+  "note": "greedy smoke via repeated streamed full forwards; no KV cache",
+  "prompt_file": null,
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "status": "ok",
+  "steps": [
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_00.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_00.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 44, \"logit\": 20.875, \"text\": \"M\"}, {\"rank\": 1, \"token_id\": 976, \"logit\": 20.875, \"text\": \"The\"}, {\"rank\": 2, \"token_id\": 410, \"logit\": 17.75, \"text\": \"**\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 798, 12282, 0\"}\n",
+      "step": 0,
+      "top_token": {
+        "logit": 20.875,
+        "rank": 0,
+        "text": "M",
+        "token_id": 44
+      },
+      "wall_seconds": 25.709038604982197
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_01.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>M",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_01.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 62521, \"logit\": 28.5, \"text\": \"IRA\"}, {\"rank\": 1, \"token_id\": 4368, \"logit\": 21.125, \"text\": \"IR\"}, {\"rank\": 2, \"token_id\": 2633, \"logit\": 20.375, \"text\": \"ira\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 798, 12282, 18\"}\n",
+      "step": 1,
+      "top_token": {
+        "logit": 28.5,
+        "rank": 0,
+        "text": "IRA",
+        "token_id": 62521
+      },
+      "wall_seconds": 25.428581648040563
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_02.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>MIRA",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_02.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 52538, \"logit\": 22.625, \"text\": \" SOL\"}, {\"rank\": 1, \"token_id\": 35971, \"logit\": 20.125, \"text\": \"\\u202f\"}, {\"rank\": 2, \"token_id\": 5310, \"logit\": 19.0, \"text\": \"\\u00a0\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 794, 12282, 1\"}\n",
+      "step": 2,
+      "top_token": {
+        "logit": 22.625,
+        "rank": 0,
+        "text": " SOL",
+        "token_id": 52538
+      },
+      "wall_seconds": 25.759440374968108
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_03.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>MIRA SOL",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_03.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 25.0, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 200005, \"logit\": 16.625, \"text\": \"<|channel|>\"}, {\"rank\": 2, \"token_id\": 13, \"logit\": 16.0, \"text\": \".\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 794, 12282, 15\"}\n",
+      "step": 3,
+      "top_token": {
+        "logit": 25.0,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 25.722037706989795
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_04.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>MIRA SOL<|return|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_04.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 17.875, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 200007, \"logit\": 14.625, \"text\": \"<|end|>\"}, {\"rank\": 2, \"token_id\": 279, \"logit\": 14.5, \"text\": \"\\n\\n\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 796, 12282, 0\"}\n",
+      "step": 4,
+      "top_token": {
+        "logit": 17.875,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 25.97402815602254
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_05.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>MIRA SOL<|return|><|return|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_05.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 15.875, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 279, \"logit\": 13.0625, \"text\": \"\\n\\n\"}, {\"rank\": 2, \"token_id\": 173781, \"logit\": 12.5625, \"text\": \"assistant\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 794, 12282, 0\"}\n",
+      "step": 5,
+      "top_token": {
+        "logit": 15.875,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 25.931470015028026
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_06.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>MIRA SOL<|return|><|return|><|return|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_06.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 13.9375, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 173781, \"logit\": 12.6875, \"text\": \"assistant\"}, {\"rank\": 2, \"token_id\": 13, \"logit\": 11.75, \"text\": \".\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 796, 12282, 0\"}\n",
+      "step": 6,
+      "top_token": {
+        "logit": 13.9375,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 25.948130186006892
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_07.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>MIRA SOL<|return|><|return|><|return|><|return|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_07.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 14.25, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 173781, \"logit\": 11.6875, \"text\": \"assistant\"}, {\"rank\": 2, \"token_id\": 13, \"logit\": 11.6875, \"text\": \".\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 794, 12282, 0\"}\n",
+      "step": 7,
+      "top_token": {
+        "logit": 14.25,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 25.923527342034504
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_08.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>MIRA SOL<|return|><|return|><|return|><|return|><|return|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_08.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 13.125, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 13, \"logit\": 10.9375, \"text\": \".\"}, {\"rank\": 2, \"token_id\": 173781, \"logit\": 10.75, \"text\": \"assistant\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 794, 12282, 0\"}\n",
+      "step": 8,
+      "top_token": {
+        "logit": 13.125,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 25.968135442992207
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_09.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>MIRA SOL<|return|><|return|><|return|><|return|><|return|><|return|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_09.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 12.8125, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 13, \"logit\": 11.375, \"text\": \".\"}, {\"rank\": 2, \"token_id\": 815, \"logit\": 10.4375, \"text\": \"ary\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 796, 12282, 0\"}\n",
+      "step": 9,
+      "top_token": {
+        "logit": 12.8125,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 26.10108328796923
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_10.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>MIRA SOL<|return|><|return|><|return|><|return|><|return|><|return|><|return|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_10.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 12.4375, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 13, \"logit\": 11.125, \"text\": \".\"}, {\"rank\": 2, \"token_id\": 279, \"logit\": 10.4375, \"text\": \"\\n\\n\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 792, 12282, 0\"}\n",
+      "step": 10,
+      "top_token": {
+        "logit": 12.4375,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 26.01140132098226
+    },
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_11.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In EXACT VALUE FACT B, what is the exact GPT-OSS operator name? Answer with the exact stored name.<|end|><|start|>assistant<|channel|>final<|message|>MIRA SOL<|return|><|return|><|return|><|return|><|return|><|return|><|return|><|return|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_exact_value_4k_gate/operator_name/mount_steps/step_11.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 200002, \"logit\": 12.0625, \"text\": \"<|return|>\"}, {\"rank\": 1, \"token_id\": 13, \"logit\": 10.6875, \"text\": \".\"}, {\"rank\": 2, \"token_id\": 279, \"logit\": 10.625, \"text\": \"\\n\\n\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 792, 12282, 0\"}\n",
+      "step": 11,
+      "top_token": {
+        "logit": 12.0625,
+        "rank": 0,
+        "text": "<|return|>",
+        "token_id": 200002
+      },
+      "wall_seconds": 26.175399364030454
+    }
+  ],
+  "steps_requested": 12,
+  "top_k": 10,
+  "use_chat_template": false,
+  "wall_seconds": 310.6578317419626
+}

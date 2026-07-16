@@ -1,0 +1,1153 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "apa_selective",
+  "bulk_bits": 8,
+  "classification": "pass",
+  "created_at": "2026-07-07T04:13:00",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft",
+  "hit_count": 4,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "planned_runs": [
+    {
+      "answer": "BLUE",
+      "id": "vault_keyword",
+      "label": "GPT-OSS vault keyword",
+      "placement": {
+        "answer": "BLUE",
+        "answer_token_id": 134698,
+        "id": "vault_keyword",
+        "label": "GPT-OSS vault keyword",
+        "needle_offset_tokens": 3261,
+        "needle_sha256": "a8c84ea9c0ae41d1f2d1ea6d0e270d6d5de7c39dada4f3a773b3bfc06a7065ed",
+        "needle_tokens": 19
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the stored value. No sentence. No punctuation.",
+      "variant": "fact_local"
+    },
+    {
+      "answer": "EMBER",
+      "id": "relay_marker",
+      "label": "GPT-OSS relay marker",
+      "placement": {
+        "answer": "EMBER",
+        "answer_token_id": 78250,
+        "id": "relay_marker",
+        "label": "GPT-OSS relay marker",
+        "needle_offset_tokens": 6541,
+        "needle_sha256": "bcaedfc28644e7906847a9e7cb0d8c9acd5990f80aeefb6cbb2f15c1a5da5057",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT B, what is the GPT-OSS relay marker? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. In CLASSIFIED FACT B, what is the GPT-OSS relay marker? Return only the stored value. No sentence. No punctuation.",
+      "variant": "fact_local"
+    },
+    {
+      "answer": "GRAY",
+      "id": "archive_color",
+      "label": "GPT-OSS archive color",
+      "placement": {
+        "answer": "GRAY",
+        "answer_token_id": 140884,
+        "id": "archive_color",
+        "label": "GPT-OSS archive color",
+        "needle_offset_tokens": 9822,
+        "needle_sha256": "c5dd34ae04552ed50b27706789bc698e699f54358224ccc23e8468bc8138522e",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT C, what is the GPT-OSS archive color? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. In CLASSIFIED FACT C, what is the GPT-OSS archive color? Return only the stored value. No sentence. No punctuation.",
+      "variant": "fact_local"
+    },
+    {
+      "answer": "IRON",
+      "id": "tool_metal",
+      "label": "GPT-OSS tool metal",
+      "placement": {
+        "answer": "IRON",
+        "answer_token_id": 96951,
+        "id": "tool_metal",
+        "label": "GPT-OSS tool metal",
+        "needle_offset_tokens": 13103,
+        "needle_sha256": "e222c6999efdcc5e132d85d999db2e5f374b484f09dd69a6bdecfd0b0aa5eb1a",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT D, what is the GPT-OSS tool metal? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. In CLASSIFIED FACT D, what is the GPT-OSS tool metal? Return only the stored value. No sentence. No punctuation.",
+      "variant": "fact_local"
+    }
+  ],
+  "probe_count": 4,
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "runs": [
+    {
+      "answer": "BLUE",
+      "control": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/vault_keyword/control.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/vault_keyword/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GPT\", \"steps\": [{\"logit\": 13.5, \"rank\": 0, \"text\": \"GPT\", \"token_id\": 162016}]}\n",
+          "wall_seconds": 29.75497751304647
+        },
+        "summary": {
+          "answer": "BLUE",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/vault_keyword/control.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/vault_keyword/control_steps/step_00.json",
+          "hit": false,
+          "status": "ok",
+          "top_token": {
+            "logit": 13.5,
+            "rank": 0,
+            "text": "GPT",
+            "token_id": 162016
+          },
+          "top_tokens": [
+            {
+              "logit": 13.5,
+              "rank": 0,
+              "text": "GPT",
+              "token_id": 162016
+            },
+            {
+              "logit": 12.6875,
+              "rank": 1,
+              "text": "g",
+              "token_id": 70
+            },
+            {
+              "logit": 12.0625,
+              "rank": 2,
+              "text": "secret",
+              "token_id": 37612
+            },
+            {
+              "logit": 11.8125,
+              "rank": 3,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 11.8125,
+              "rank": 4,
+              "text": "Open",
+              "token_id": 6447
+            },
+            {
+              "logit": 11.625,
+              "rank": 5,
+              "text": "s",
+              "token_id": 82
+            },
+            {
+              "logit": 11.625,
+              "rank": 6,
+              "text": "the",
+              "token_id": 3086
+            },
+            {
+              "logit": 11.625,
+              "rank": 7,
+              "text": "keyword",
+              "token_id": 43996
+            },
+            {
+              "logit": 11.375,
+              "rank": 8,
+              "text": "v",
+              "token_id": 85
+            },
+            {
+              "logit": 11.375,
+              "rank": 9,
+              "text": "a",
+              "token_id": 64
+            }
+          ],
+          "wall_seconds": 24.844417680054903
+        }
+      },
+      "id": "vault_keyword",
+      "label": "GPT-OSS vault keyword",
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/vault_keyword/mount.json",
+            "--mount-graft-dir",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/vault_keyword/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>BLUE\", \"steps\": [{\"logit\": 22.0, \"rank\": 0, \"text\": \"BLUE\", \"token_id\": 134698}]}\n",
+          "wall_seconds": 32.65331082796911
+        },
+        "summary": {
+          "answer": "BLUE",
+          "answer_logit": 22.0,
+          "answer_rank": 0,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/vault_keyword/mount.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/vault_keyword/mount_steps/step_00.json",
+          "hit": true,
+          "status": "ok",
+          "top_token": {
+            "logit": 22.0,
+            "rank": 0,
+            "text": "BLUE",
+            "token_id": 134698
+          },
+          "top_tokens": [
+            {
+              "logit": 22.0,
+              "rank": 0,
+              "text": "BLUE",
+              "token_id": 134698
+            },
+            {
+              "logit": 20.0,
+              "rank": 1,
+              "text": "blue",
+              "token_id": 18789
+            },
+            {
+              "logit": 19.0,
+              "rank": 2,
+              "text": "EMBER",
+              "token_id": 78250
+            },
+            {
+              "logit": 18.125,
+              "rank": 3,
+              "text": "Blue",
+              "token_id": 15957
+            },
+            {
+              "logit": 16.5,
+              "rank": 4,
+              "text": "EM",
+              "token_id": 3646
+            },
+            {
+              "logit": 15.875,
+              "rank": 5,
+              "text": "GREEN",
+              "token_id": 121903
+            },
+            {
+              "logit": 15.6875,
+              "rank": 6,
+              "text": "RED",
+              "token_id": 9935
+            },
+            {
+              "logit": 15.4375,
+              "rank": 7,
+              "text": "GRAY",
+              "token_id": 140884
+            },
+            {
+              "logit": 15.0625,
+              "rank": 8,
+              "text": "ember",
+              "token_id": 1634
+            },
+            {
+              "logit": 14.875,
+              "rank": 9,
+              "text": "BLACK",
+              "token_id": 120338
+            }
+          ],
+          "wall_seconds": 27.773220744973514
+        }
+      },
+      "placement": {
+        "answer": "BLUE",
+        "answer_token_id": 134698,
+        "id": "vault_keyword",
+        "label": "GPT-OSS vault keyword",
+        "needle_offset_tokens": 3261,
+        "needle_sha256": "a8c84ea9c0ae41d1f2d1ea6d0e270d6d5de7c39dada4f3a773b3bfc06a7065ed",
+        "needle_tokens": 19
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the stored value. No sentence. No punctuation.",
+      "variant": "fact_local"
+    },
+    {
+      "answer": "EMBER",
+      "control": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT B, what is the GPT-OSS relay marker? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/relay_marker/control.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/relay_marker/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT B, what is the GPT-OSS relay marker? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GPT\", \"steps\": [{\"logit\": 14.625, \"rank\": 0, \"text\": \"GPT\", \"token_id\": 162016}]}\n",
+          "wall_seconds": 29.67117149301339
+        },
+        "summary": {
+          "answer": "EMBER",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/relay_marker/control.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/relay_marker/control_steps/step_00.json",
+          "hit": false,
+          "status": "ok",
+          "top_token": {
+            "logit": 14.625,
+            "rank": 0,
+            "text": "GPT",
+            "token_id": 162016
+          },
+          "top_tokens": [
+            {
+              "logit": 14.625,
+              "rank": 0,
+              "text": "GPT",
+              "token_id": 162016
+            },
+            {
+              "logit": 13.1875,
+              "rank": 1,
+              "text": "0",
+              "token_id": 15
+            },
+            {
+              "logit": 12.625,
+              "rank": 2,
+              "text": "2",
+              "token_id": 17
+            },
+            {
+              "logit": 12.125,
+              "rank": 3,
+              "text": "B",
+              "token_id": 33
+            },
+            {
+              "logit": 12.0625,
+              "rank": 4,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 12.0,
+              "rank": 5,
+              "text": "G",
+              "token_id": 38
+            },
+            {
+              "logit": 12.0,
+              "rank": 6,
+              "text": "4",
+              "token_id": 19
+            },
+            {
+              "logit": 11.8125,
+              "rank": 7,
+              "text": "5",
+              "token_id": 20
+            },
+            {
+              "logit": 11.8125,
+              "rank": 8,
+              "text": "1",
+              "token_id": 16
+            },
+            {
+              "logit": 11.6875,
+              "rank": 9,
+              "text": "g",
+              "token_id": 70
+            }
+          ],
+          "wall_seconds": 24.870801584038418
+        }
+      },
+      "id": "relay_marker",
+      "label": "GPT-OSS relay marker",
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT B, what is the GPT-OSS relay marker? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/relay_marker/mount.json",
+            "--mount-graft-dir",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/relay_marker/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT B, what is the GPT-OSS relay marker? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>EMBER\", \"steps\": [{\"logit\": 21.375, \"rank\": 0, \"text\": \"EMBER\", \"token_id\": 78250}]}\n",
+          "wall_seconds": 32.45064692205051
+        },
+        "summary": {
+          "answer": "EMBER",
+          "answer_logit": 21.375,
+          "answer_rank": 0,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/relay_marker/mount.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/relay_marker/mount_steps/step_00.json",
+          "hit": true,
+          "status": "ok",
+          "top_token": {
+            "logit": 21.375,
+            "rank": 0,
+            "text": "EMBER",
+            "token_id": 78250
+          },
+          "top_tokens": [
+            {
+              "logit": 21.375,
+              "rank": 0,
+              "text": "EMBER",
+              "token_id": 78250
+            },
+            {
+              "logit": 19.25,
+              "rank": 1,
+              "text": "BLUE",
+              "token_id": 134698
+            },
+            {
+              "logit": 18.625,
+              "rank": 2,
+              "text": "EM",
+              "token_id": 3646
+            },
+            {
+              "logit": 18.0,
+              "rank": 3,
+              "text": "GRAY",
+              "token_id": 140884
+            },
+            {
+              "logit": 17.5,
+              "rank": 4,
+              "text": "GR",
+              "token_id": 13905
+            },
+            {
+              "logit": 16.75,
+              "rank": 5,
+              "text": "GREEN",
+              "token_id": 121903
+            },
+            {
+              "logit": 16.5,
+              "rank": 6,
+              "text": "RED",
+              "token_id": 9935
+            },
+            {
+              "logit": 15.8125,
+              "rank": 7,
+              "text": "blue",
+              "token_id": 18789
+            },
+            {
+              "logit": 15.8125,
+              "rank": 8,
+              "text": "BLACK",
+              "token_id": 120338
+            },
+            {
+              "logit": 15.6875,
+              "rank": 9,
+              "text": "Blue",
+              "token_id": 15957
+            }
+          ],
+          "wall_seconds": 27.63372015900677
+        }
+      },
+      "placement": {
+        "answer": "EMBER",
+        "answer_token_id": 78250,
+        "id": "relay_marker",
+        "label": "GPT-OSS relay marker",
+        "needle_offset_tokens": 6541,
+        "needle_sha256": "bcaedfc28644e7906847a9e7cb0d8c9acd5990f80aeefb6cbb2f15c1a5da5057",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT B, what is the GPT-OSS relay marker? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. In CLASSIFIED FACT B, what is the GPT-OSS relay marker? Return only the stored value. No sentence. No punctuation.",
+      "variant": "fact_local"
+    },
+    {
+      "answer": "GRAY",
+      "control": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT C, what is the GPT-OSS archive color? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/archive_color/control.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/archive_color/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT C, what is the GPT-OSS archive color? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>blue\", \"steps\": [{\"logit\": 16.25, \"rank\": 0, \"text\": \"blue\", \"token_id\": 18789}]}\n",
+          "wall_seconds": 29.617923974990845
+        },
+        "summary": {
+          "answer": "GRAY",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/archive_color/control.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/archive_color/control_steps/step_00.json",
+          "hit": false,
+          "status": "ok",
+          "top_token": {
+            "logit": 16.25,
+            "rank": 0,
+            "text": "blue",
+            "token_id": 18789
+          },
+          "top_tokens": [
+            {
+              "logit": 16.25,
+              "rank": 0,
+              "text": "blue",
+              "token_id": 18789
+            },
+            {
+              "logit": 15.1875,
+              "rank": 1,
+              "text": "Blue",
+              "token_id": 15957
+            },
+            {
+              "logit": 14.9375,
+              "rank": 2,
+              "text": "green",
+              "token_id": 22743
+            },
+            {
+              "logit": 14.9375,
+              "rank": 3,
+              "text": "red",
+              "token_id": 1291
+            },
+            {
+              "logit": 14.8125,
+              "rank": 4,
+              "text": "orange",
+              "token_id": 65681
+            },
+            {
+              "logit": 14.75,
+              "rank": 5,
+              "text": "Red",
+              "token_id": 7805
+            },
+            {
+              "logit": 14.75,
+              "rank": 6,
+              "text": "white",
+              "token_id": 9988
+            },
+            {
+              "logit": 14.1875,
+              "rank": 7,
+              "text": "brown",
+              "token_id": 152168
+            },
+            {
+              "logit": 14.0,
+              "rank": 8,
+              "text": "black",
+              "token_id": 18474
+            },
+            {
+              "logit": 13.875,
+              "rank": 9,
+              "text": "gray",
+              "token_id": 43222
+            }
+          ],
+          "wall_seconds": 24.740583056991454
+        }
+      },
+      "id": "archive_color",
+      "label": "GPT-OSS archive color",
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT C, what is the GPT-OSS archive color? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/archive_color/mount.json",
+            "--mount-graft-dir",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/archive_color/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT C, what is the GPT-OSS archive color? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GRAY\", \"steps\": [{\"logit\": 21.375, \"rank\": 0, \"text\": \"GRAY\", \"token_id\": 140884}]}\n",
+          "wall_seconds": 32.41579902602825
+        },
+        "summary": {
+          "answer": "GRAY",
+          "answer_logit": 21.375,
+          "answer_rank": 0,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/archive_color/mount.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/archive_color/mount_steps/step_00.json",
+          "hit": true,
+          "status": "ok",
+          "top_token": {
+            "logit": 21.375,
+            "rank": 0,
+            "text": "GRAY",
+            "token_id": 140884
+          },
+          "top_tokens": [
+            {
+              "logit": 21.375,
+              "rank": 0,
+              "text": "GRAY",
+              "token_id": 140884
+            },
+            {
+              "logit": 18.25,
+              "rank": 1,
+              "text": "gray",
+              "token_id": 43222
+            },
+            {
+              "logit": 17.625,
+              "rank": 2,
+              "text": "GR",
+              "token_id": 13905
+            },
+            {
+              "logit": 16.875,
+              "rank": 3,
+              "text": "Gray",
+              "token_id": 43338
+            },
+            {
+              "logit": 16.5,
+              "rank": 4,
+              "text": "BLUE",
+              "token_id": 134698
+            },
+            {
+              "logit": 16.25,
+              "rank": 5,
+              "text": "RED",
+              "token_id": 9935
+            },
+            {
+              "logit": 15.375,
+              "rank": 6,
+              "text": "IRON",
+              "token_id": 96951
+            },
+            {
+              "logit": 15.1875,
+              "rank": 7,
+              "text": "blue",
+              "token_id": 18789
+            },
+            {
+              "logit": 14.875,
+              "rank": 8,
+              "text": "GREEN",
+              "token_id": 121903
+            },
+            {
+              "logit": 14.875,
+              "rank": 9,
+              "text": "BLACK",
+              "token_id": 120338
+            }
+          ],
+          "wall_seconds": 27.62199126300402
+        }
+      },
+      "placement": {
+        "answer": "GRAY",
+        "answer_token_id": 140884,
+        "id": "archive_color",
+        "label": "GPT-OSS archive color",
+        "needle_offset_tokens": 9822,
+        "needle_sha256": "c5dd34ae04552ed50b27706789bc698e699f54358224ccc23e8468bc8138522e",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT C, what is the GPT-OSS archive color? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. In CLASSIFIED FACT C, what is the GPT-OSS archive color? Return only the stored value. No sentence. No punctuation.",
+      "variant": "fact_local"
+    },
+    {
+      "answer": "IRON",
+      "control": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT D, what is the GPT-OSS tool metal? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/tool_metal/control.json"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/tool_metal/control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT D, what is the GPT-OSS tool metal? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>metal\", \"steps\": [{\"logit\": 16.25, \"rank\": 0, \"text\": \"metal\", \"token_id\": 88393}]}\n",
+          "wall_seconds": 29.56793401396135
+        },
+        "summary": {
+          "answer": "IRON",
+          "answer_logit": null,
+          "answer_rank": null,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/tool_metal/control.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/tool_metal/control_steps/step_00.json",
+          "hit": false,
+          "status": "ok",
+          "top_token": {
+            "logit": 16.25,
+            "rank": 0,
+            "text": "metal",
+            "token_id": 88393
+          },
+          "top_tokens": [
+            {
+              "logit": 16.25,
+              "rank": 0,
+              "text": "metal",
+              "token_id": 88393
+            },
+            {
+              "logit": 15.5,
+              "rank": 1,
+              "text": "Metal",
+              "token_id": 76410
+            },
+            {
+              "logit": 13.4375,
+              "rank": 2,
+              "text": "GPT",
+              "token_id": 162016
+            },
+            {
+              "logit": 12.6875,
+              "rank": 3,
+              "text": "gold",
+              "token_id": 61496
+            },
+            {
+              "logit": 12.5625,
+              "rank": 4,
+              "text": "met",
+              "token_id": 3001
+            },
+            {
+              "logit": 12.1875,
+              "rank": 5,
+              "text": "Gold",
+              "token_id": 30717
+            },
+            {
+              "logit": 12.1875,
+              "rank": 6,
+              "text": "The",
+              "token_id": 976
+            },
+            {
+              "logit": 12.1875,
+              "rank": 7,
+              "text": "\u91d1",
+              "token_id": 5314
+            },
+            {
+              "logit": 12.0625,
+              "rank": 8,
+              "text": "iron",
+              "token_id": 58333
+            },
+            {
+              "logit": 11.625,
+              "rank": 9,
+              "text": " metal",
+              "token_id": 11002
+            }
+          ],
+          "wall_seconds": 24.699299275991507
+        }
+      },
+      "id": "tool_metal",
+      "label": "GPT-OSS tool metal",
+      "mount": {
+        "run": {
+          "cmd": [
+            "/usr/bin/python3",
+            "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+            "--model-dir",
+            "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+            "--prompt",
+            "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT D, what is the GPT-OSS tool metal? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+            "--steps",
+            "1",
+            "--max-tokens",
+            "160",
+            "--top-k",
+            "10",
+            "--attention-mode",
+            "apa_selective",
+            "--apa-layer-scope",
+            "full",
+            "--refine-percentile",
+            "0.15",
+            "--bulk-bits",
+            "8",
+            "--expert-mode",
+            "resident_packed_mxfp4",
+            "--route-detail",
+            "summary",
+            "--expert-empty-cache-interval",
+            "0",
+            "--output",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/tool_metal/mount.json",
+            "--mount-graft-dir",
+            "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+          ],
+          "returncode": 0,
+          "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/tool_metal/mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT D, what is the GPT-OSS tool metal? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>IRON\", \"steps\": [{\"logit\": 23.0, \"rank\": 0, \"text\": \"IRON\", \"token_id\": 96951}]}\n",
+          "wall_seconds": 32.39536467695143
+        },
+        "summary": {
+          "answer": "IRON",
+          "answer_logit": 23.0,
+          "answer_rank": 0,
+          "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/tool_metal/mount.json",
+          "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate/fact_local/tool_metal/mount_steps/step_00.json",
+          "hit": true,
+          "status": "ok",
+          "top_token": {
+            "logit": 23.0,
+            "rank": 0,
+            "text": "IRON",
+            "token_id": 96951
+          },
+          "top_tokens": [
+            {
+              "logit": 23.0,
+              "rank": 0,
+              "text": "IRON",
+              "token_id": 96951
+            },
+            {
+              "logit": 19.75,
+              "rank": 1,
+              "text": "iron",
+              "token_id": 58333
+            },
+            {
+              "logit": 19.25,
+              "rank": 2,
+              "text": "Iron",
+              "token_id": 72998
+            },
+            {
+              "logit": 18.75,
+              "rank": 3,
+              "text": "IR",
+              "token_id": 4368
+            },
+            {
+              "logit": 15.4375,
+              "rank": 4,
+              "text": " iron",
+              "token_id": 17069
+            },
+            {
+              "logit": 15.125,
+              "rank": 5,
+              "text": "ir",
+              "token_id": 380
+            },
+            {
+              "logit": 14.8125,
+              "rank": 6,
+              "text": "GRAY",
+              "token_id": 140884
+            },
+            {
+              "logit": 14.75,
+              "rank": 7,
+              "text": "Ir",
+              "token_id": 42208
+            },
+            {
+              "logit": 14.5625,
+              "rank": 8,
+              "text": "metal",
+              "token_id": 88393
+            },
+            {
+              "logit": 14.3125,
+              "rank": 9,
+              "text": "GR",
+              "token_id": 13905
+            }
+          ],
+          "wall_seconds": 27.634558685007505
+        }
+      },
+      "placement": {
+        "answer": "IRON",
+        "answer_token_id": 96951,
+        "id": "tool_metal",
+        "label": "GPT-OSS tool metal",
+        "needle_offset_tokens": 13103,
+        "needle_sha256": "e222c6999efdcc5e132d85d999db2e5f374b484f09dd69a6bdecfd0b0aa5eb1a",
+        "needle_tokens": 20
+      },
+      "prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT D, what is the GPT-OSS tool metal? Return only the stored value. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "user_prompt": "Turn 50. Previous context is cleared. In CLASSIFIED FACT D, what is the GPT-OSS tool metal? Return only the stored value. No sentence. No punctuation.",
+      "variant": "fact_local"
+    }
+  ],
+  "schema": "gpt_oss_20b_multifact_addressing_gate_v1",
+  "script_args": {
+    "apa_layer_scope": "full",
+    "attention_mode": "apa_selective",
+    "bulk_bits": 8,
+    "dry_run": false,
+    "expert_empty_cache_interval": 0,
+    "expert_mode": "resident_packed_mxfp4",
+    "graft_dir": null,
+    "max_tokens": 160,
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "output": "artifacts/gpt_oss_20b/h6_multifact_16k_fact_local_addressing_gate.json",
+    "refine_percentile": 0.15,
+    "route_detail": "summary",
+    "skip_control": false,
+    "source": "artifacts/gpt_oss_20b/h6_multifact_16k_gate.json",
+    "steps": 1,
+    "top_k": 10,
+    "variants": "fact_local"
+  },
+  "source": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate.json",
+  "source_classification": "fail",
+  "source_target_tokens": 16384,
+  "status": "ok",
+  "summary": [
+    {
+      "answer": "BLUE",
+      "control_top": "GPT",
+      "hit": true,
+      "id": "vault_keyword",
+      "mount_answer_logit": 22.0,
+      "mount_answer_rank": 0,
+      "mount_top": "BLUE",
+      "variant": "fact_local"
+    },
+    {
+      "answer": "EMBER",
+      "control_top": "GPT",
+      "hit": true,
+      "id": "relay_marker",
+      "mount_answer_logit": 21.375,
+      "mount_answer_rank": 0,
+      "mount_top": "EMBER",
+      "variant": "fact_local"
+    },
+    {
+      "answer": "GRAY",
+      "control_top": "blue",
+      "hit": true,
+      "id": "archive_color",
+      "mount_answer_logit": 21.375,
+      "mount_answer_rank": 0,
+      "mount_top": "GRAY",
+      "variant": "fact_local"
+    },
+    {
+      "answer": "IRON",
+      "control_top": "metal",
+      "hit": true,
+      "id": "tool_metal",
+      "mount_answer_logit": 23.0,
+      "mount_answer_rank": 0,
+      "mount_top": "IRON",
+      "variant": "fact_local"
+    }
+  ],
+  "variants": [
+    "fact_local"
+  ],
+  "wall_seconds": 248.53989201097284
+}

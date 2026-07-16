@@ -1,0 +1,371 @@
+{
+  "graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft",
+  "runs": [
+    {
+      "mode": "mount",
+      "run": {
+        "cmd": [
+          "/usr/bin/python3",
+          "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+          "--steps",
+          "1",
+          "--max-tokens",
+          "160",
+          "--top-k",
+          "10",
+          "--attention-mode",
+          "apa_selective",
+          "--apa-layer-scope",
+          "full",
+          "--refine-percentile",
+          "0.15",
+          "--bulk-bits",
+          "8",
+          "--expert-mode",
+          "resident_packed_mxfp4",
+          "--route-detail",
+          "summary",
+          "--expert-empty-cache-interval",
+          "0",
+          "--prompt",
+          "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored CLASSIFIED FACT A answer. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+          "--output",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_facta_prompt_diag/fact_a_answer_mount.json",
+          "--mount-graft-dir",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+        ],
+        "returncode": 0,
+        "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_facta_prompt_diag/fact_a_answer_mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored CLASSIFIED FACT A answer. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>The\", \"steps\": [{\"logit\": 18.0, \"rank\": 0, \"text\": \"The\", \"token_id\": 976}]}\n",
+        "wall_seconds": 32.24453080195235
+      },
+      "summary": {
+        "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_facta_prompt_diag/fact_a_answer_mount.json",
+        "target_logit": 16.875,
+        "target_rank": 1,
+        "top_token": {
+          "logit": 18.0,
+          "rank": 0,
+          "text": "The",
+          "token_id": 976
+        },
+        "top_tokens": [
+          {
+            "logit": 18.0,
+            "rank": 0,
+            "text": "The",
+            "token_id": 976
+          },
+          {
+            "logit": 16.875,
+            "rank": 1,
+            "text": "BLUE",
+            "token_id": 134698
+          },
+          {
+            "logit": 16.25,
+            "rank": 2,
+            "text": "A",
+            "token_id": 32
+          },
+          {
+            "logit": 15.875,
+            "rank": 3,
+            "text": "CLASS",
+            "token_id": 54314
+          },
+          {
+            "logit": 15.8125,
+            "rank": 4,
+            "text": "Blue",
+            "token_id": 15957
+          },
+          {
+            "logit": 15.3125,
+            "rank": 5,
+            "text": "blue",
+            "token_id": 18789
+          },
+          {
+            "logit": 15.3125,
+            "rank": 6,
+            "text": "Class",
+            "token_id": 2579
+          },
+          {
+            "logit": 15.3125,
+            "rank": 7,
+            "text": "the",
+            "token_id": 3086
+          },
+          {
+            "logit": 14.5625,
+            "rank": 8,
+            "text": "THE",
+            "token_id": 27022
+          },
+          {
+            "logit": 14.1875,
+            "rank": 9,
+            "text": "EMBER",
+            "token_id": 78250
+          }
+        ],
+        "wall_seconds": 27.386695428052917
+      },
+      "user_prompt": "Turn 50. Previous context is cleared. Return exactly the stored CLASSIFIED FACT A answer. No sentence. No punctuation.",
+      "variant": "fact_a_answer"
+    },
+    {
+      "mode": "mount",
+      "run": {
+        "cmd": [
+          "/usr/bin/python3",
+          "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+          "--steps",
+          "1",
+          "--max-tokens",
+          "160",
+          "--top-k",
+          "10",
+          "--attention-mode",
+          "apa_selective",
+          "--apa-layer-scope",
+          "full",
+          "--refine-percentile",
+          "0.15",
+          "--bulk-bits",
+          "8",
+          "--expert-mode",
+          "resident_packed_mxfp4",
+          "--route-detail",
+          "summary",
+          "--expert-empty-cache-interval",
+          "0",
+          "--prompt",
+          "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the keyword. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+          "--output",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_facta_prompt_diag/fact_a_vault_keyword_mount.json",
+          "--mount-graft-dir",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_gate/graft"
+        ],
+        "returncode": 0,
+        "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_facta_prompt_diag/fact_a_vault_keyword_mount.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the keyword. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>BLUE\", \"steps\": [{\"logit\": 22.0, \"rank\": 0, \"text\": \"BLUE\", \"token_id\": 134698}]}\n",
+        "wall_seconds": 32.69813861500006
+      },
+      "summary": {
+        "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_facta_prompt_diag/fact_a_vault_keyword_mount.json",
+        "target_logit": 22.0,
+        "target_rank": 0,
+        "top_token": {
+          "logit": 22.0,
+          "rank": 0,
+          "text": "BLUE",
+          "token_id": 134698
+        },
+        "top_tokens": [
+          {
+            "logit": 22.0,
+            "rank": 0,
+            "text": "BLUE",
+            "token_id": 134698
+          },
+          {
+            "logit": 20.0,
+            "rank": 1,
+            "text": "blue",
+            "token_id": 18789
+          },
+          {
+            "logit": 19.875,
+            "rank": 2,
+            "text": "EMBER",
+            "token_id": 78250
+          },
+          {
+            "logit": 17.75,
+            "rank": 3,
+            "text": "EM",
+            "token_id": 3646
+          },
+          {
+            "logit": 17.5,
+            "rank": 4,
+            "text": "Blue",
+            "token_id": 15957
+          },
+          {
+            "logit": 16.25,
+            "rank": 5,
+            "text": "ember",
+            "token_id": 1634
+          },
+          {
+            "logit": 15.625,
+            "rank": 6,
+            "text": "RED",
+            "token_id": 9935
+          },
+          {
+            "logit": 15.625,
+            "rank": 7,
+            "text": "GREEN",
+            "token_id": 121903
+          },
+          {
+            "logit": 15.0,
+            "rank": 8,
+            "text": "BLACK",
+            "token_id": 120338
+          },
+          {
+            "logit": 15.0,
+            "rank": 9,
+            "text": "A",
+            "token_id": 32
+          }
+        ],
+        "wall_seconds": 27.886084763042163
+      },
+      "user_prompt": "Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the keyword. No sentence. No punctuation.",
+      "variant": "fact_a_vault_keyword"
+    },
+    {
+      "mode": "control",
+      "run": {
+        "cmd": [
+          "/usr/bin/python3",
+          "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_greedy_smoke.py",
+          "--steps",
+          "1",
+          "--max-tokens",
+          "160",
+          "--top-k",
+          "10",
+          "--attention-mode",
+          "apa_selective",
+          "--apa-layer-scope",
+          "full",
+          "--refine-percentile",
+          "0.15",
+          "--bulk-bits",
+          "8",
+          "--expert-mode",
+          "resident_packed_mxfp4",
+          "--route-detail",
+          "summary",
+          "--expert-empty-cache-interval",
+          "0",
+          "--prompt",
+          "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the keyword. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+          "--output",
+          "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_facta_prompt_diag/fact_a_vault_keyword_control.json"
+        ],
+        "returncode": 0,
+        "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_facta_prompt_diag/fact_a_vault_keyword_control.json\n{\"status\": \"ok\", \"final_text\": \"<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the keyword. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>g\", \"steps\": [{\"logit\": 13.8125, \"rank\": 0, \"text\": \"g\", \"token_id\": 70}]}\n",
+        "wall_seconds": 29.579525222012307
+      },
+      "summary": {
+        "artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h6_multifact_16k_facta_prompt_diag/fact_a_vault_keyword_control.json",
+        "target_logit": null,
+        "target_rank": null,
+        "top_token": {
+          "logit": 13.8125,
+          "rank": 0,
+          "text": "g",
+          "token_id": 70
+        },
+        "top_tokens": [
+          {
+            "logit": 13.8125,
+            "rank": 0,
+            "text": "g",
+            "token_id": 70
+          },
+          {
+            "logit": 13.6875,
+            "rank": 1,
+            "text": "GPT",
+            "token_id": 162016
+          },
+          {
+            "logit": 12.875,
+            "rank": 2,
+            "text": "keyword",
+            "token_id": 43996
+          },
+          {
+            "logit": 12.375,
+            "rank": 3,
+            "text": "secret",
+            "token_id": 37612
+          },
+          {
+            "logit": 12.0625,
+            "rank": 4,
+            "text": "Open",
+            "token_id": 6447
+          },
+          {
+            "logit": 12.0,
+            "rank": 5,
+            "text": "vault",
+            "token_id": 160594
+          },
+          {
+            "logit": 11.9375,
+            "rank": 6,
+            "text": "s",
+            "token_id": 82
+          },
+          {
+            "logit": 11.8125,
+            "rank": 7,
+            "text": "v",
+            "token_id": 85
+          },
+          {
+            "logit": 11.6875,
+            "rank": 8,
+            "text": "open",
+            "token_id": 3843
+          },
+          {
+            "logit": 11.5,
+            "rank": 9,
+            "text": "p",
+            "token_id": 79
+          }
+        ],
+        "wall_seconds": 24.788844925002195
+      },
+      "user_prompt": "Turn 50. Previous context is cleared. In CLASSIFIED FACT A, what is the GPT-OSS vault keyword? Return only the keyword. No sentence. No punctuation.",
+      "variant": "fact_a_vault_keyword"
+    }
+  ],
+  "schema": "gpt_oss_20b_multifact_facta_prompt_diag_v1",
+  "status": "ok",
+  "summary": [
+    {
+      "mode": "mount",
+      "target_logit": 16.875,
+      "target_rank": 1,
+      "top": "The",
+      "variant": "fact_a_answer"
+    },
+    {
+      "mode": "mount",
+      "target_logit": 22.0,
+      "target_rank": 0,
+      "top": "BLUE",
+      "variant": "fact_a_vault_keyword"
+    },
+    {
+      "mode": "control",
+      "target_logit": null,
+      "target_rank": null,
+      "top": "g",
+      "variant": "fact_a_vault_keyword"
+    }
+  ],
+  "wall_seconds": 94.52591546002077
+}

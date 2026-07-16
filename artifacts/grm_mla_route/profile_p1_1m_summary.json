@@ -1,0 +1,83 @@
+{
+  "harvest": {
+    "centroid_bank_rows": 8192,
+    "dim": 128,
+    "mean_active_dims": 9.1014404296875,
+    "mean_l1": 2.8466129302978516,
+    "mean_tokens_per_row": 10.0469970703125,
+    "source_files": 26,
+    "source_root": "/mnt/ForgeRealm/GraftRepository"
+  },
+  "loadavg_note": "P1 re-profile",
+  "results": [
+    {
+      "attribution": {
+        "buckets_ms_per_call": {
+          "ctypes_marshal (_float_array/_lexical_blob/_filter_blob/_check)": 0.0513365,
+          "native_call (store.route/_lib.grm_store_route*)": 129.788847875,
+          "native_route_order_own (native_to_idx build loop, O(N))": 185.84223225000002,
+          "other": 124.6670455,
+          "python_fallback (_vector_route_scores/_cent_score/_normalize_scores/_lex_bonus)": 0.0,
+          "rare_tokens (_rare_tokens)": 0.00918675,
+          "remap_dict_get ({method 'get' of 'dict'}: O(N), inflated by topk=len(grafts))": 360.29334125,
+          "remap_list_append ({method 'append' of 'list'}: O(N))": 0.0013830000000000001,
+          "route_own_cand_build (route(): O(N) `cand` list comp)": 320.692282
+        },
+        "total_named_tottime_ms_per_call": 1121.3456551250001
+      },
+      "backend": "native",
+      "cold_route": [
+        0,
+        57344,
+        811008
+      ],
+      "cold_wall_ms": 3274.70456,
+      "control_wall_ms_median": 370.5911995,
+      "control_wall_ms_min": 367.142654,
+      "control_wall_ms_p95": 381.4523686,
+      "mode": "fp32",
+      "node_count": 1000000,
+      "profile_repeats": 8,
+      "profiled_wall_ms_median": 1130.0901835,
+      "profiled_wall_ms_min": 1122.782134,
+      "pstats_path": "artifacts/grm_mla_route/profile_p1_1m_1000000n_fp32.pstats",
+      "pstats_text_path": "artifacts/grm_mla_route/profile_p1_1m_1000000n_fp32_cumulative.txt",
+      "refine_m": null
+    },
+    {
+      "attribution": {
+        "buckets_ms_per_call": {
+          "ctypes_marshal (_float_array/_lexical_blob/_filter_blob/_check)": 0.052020500000000004,
+          "native_call (store.route/_lib.grm_store_route*)": 24.116822875000004,
+          "native_route_order_own (native_to_idx build loop, O(N))": 190.638809125,
+          "other": 126.14568700000001,
+          "python_fallback (_vector_route_scores/_cent_score/_normalize_scores/_lex_bonus)": 0.0,
+          "rare_tokens (_rare_tokens)": 0.009988375,
+          "remap_dict_get ({method 'get' of 'dict'}: O(N), inflated by topk=len(grafts))": 372.124584875,
+          "remap_list_append ({method 'append' of 'list'}: O(N))": 0.0022870000000000004,
+          "route_own_cand_build (route(): O(N) `cand` list comp)": 328.474295375
+        },
+        "total_named_tottime_ms_per_call": 1041.5644951250001
+      },
+      "backend": "native",
+      "cold_route": [
+        0,
+        57344,
+        811008
+      ],
+      "cold_wall_ms": 2886.69931,
+      "control_wall_ms_median": 270.046327,
+      "control_wall_ms_min": 262.549699,
+      "control_wall_ms_p95": 273.6971434,
+      "mode": "int4_bounded_staging",
+      "node_count": 1000000,
+      "profile_repeats": 8,
+      "profiled_wall_ms_median": 1049.8308275,
+      "profiled_wall_ms_min": 1021.469582,
+      "pstats_path": "artifacts/grm_mla_route/profile_p1_1m_1000000n_int4_bounded_staging.pstats",
+      "pstats_text_path": "artifacts/grm_mla_route/profile_p1_1m_1000000n_int4_bounded_staging_cumulative.txt",
+      "refine_m": 128
+    }
+  ],
+  "schema": "grm_mla_route_profile_v1"
+}

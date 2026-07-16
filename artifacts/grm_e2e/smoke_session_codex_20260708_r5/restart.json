@@ -1,0 +1,34 @@
+{
+  "after_turn": 4,
+  "flush_wall_ms": 552.5614440002755,
+  "mode": "smoke",
+  "refeed": [
+    {
+      "chat_node_id": 5,
+      "ntok": 72,
+      "turn": 4
+    }
+  ],
+  "resume_load_wall_ms": 22969.52920500007,
+  "schema": "grm_e2e_restart_v1",
+  "vram_after_refeed": {
+    "gpus": [
+      {
+        "total_mb": 12282,
+        "used_mb": 10930
+      }
+    ],
+    "raw": "10930, 12282",
+    "returncode": 0
+  },
+  "vram_before_exec": {
+    "gpus": [
+      {
+        "total_mb": 12282,
+        "used_mb": 10930
+      }
+    ],
+    "raw": "10930, 12282",
+    "returncode": 0
+  }
+}

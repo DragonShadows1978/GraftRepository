@@ -1,0 +1,6 @@
+{
+  "grid_ran": false,
+  "reason": "Plain live-context natural continuation did not recover the code; stop rail hit before graft grid. Quote: 'And<|begin_of_text|>And<|begin_of_text|><|begin_of_text|><|begin_of_text|>8176brx0acerBoard/B/Signature@{'",
+  "sanity_passed": false,
+  "verdict": "SANITY_FAILED_STOP"
+}

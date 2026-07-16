@@ -1,0 +1,11 @@
+{
+  "decision": "launch pure natural + pure chat; mount only if pure_chat clean and mount_fits",
+  "mount_fits_600": false,
+  "mount_forwards_rough": 20,
+  "mount_proj_s": 660.0,
+  "ngen": 16,
+  "pure_fits_600": true,
+  "pure_forwards": 17,
+  "pure_proj_s": 561.0,
+  "s_per_forward_assumed": 33.0
+}

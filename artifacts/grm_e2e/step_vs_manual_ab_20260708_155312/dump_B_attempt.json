@@ -1,0 +1,1503 @@
+{
+  "_save_full_layers": false,
+  "cached_out": 7,
+  "cleared_injection_after_prompt": true,
+  "committed_last_token": false,
+  "final_cache": {
+    "all_equal": true,
+    "full_S0": 169,
+    "full_S_unique": [
+      169
+    ],
+    "n_layers": 24,
+    "sliding_S0": 169,
+    "sliding_S_unique": [
+      169
+    ]
+  },
+  "final_pos": 150,
+  "label": "B_attempt",
+  "mode": "attempt_step",
+  "ngen": 16,
+  "out_ids": [
+    40,
+    4720,
+    3357,
+    484,
+    306,
+    4246,
+    13,
+    200002
+  ],
+  "out_text": "I\u2019ll keep that in mind.",
+  "out_text_raw": "I\u2019ll keep that in mind.<|return|>",
+  "prompt_n": 46,
+  "setup_cache": {
+    "all_equal": true,
+    "full_S0": 116,
+    "full_S_unique": [
+      116
+    ],
+    "n_layers": 24,
+    "sliding_S0": 116,
+    "sliding_S_unique": [
+      116
+    ]
+  },
+  "setup_pos": 97,
+  "steps": [
+    {
+      "chosen_id": 40,
+      "chosen_text": "I",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        200006,
+        17360,
+        200008,
+        3575,
+        "...",
+        17196,
+        200008
+      ],
+      "input_n": 46,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 162,
+        "full_S_unique": [
+          162
+        ],
+        "n_layers": 24,
+        "sliding_S0": 162,
+        "sliding_S_unique": [
+          162
+        ]
+      },
+      "post_cache_layers": [
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 0,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 1,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 2,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 3,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 4,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 5,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 6,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 7,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 8,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 9,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 10,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 11,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 12,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 13,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 14,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 15,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 16,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 17,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 18,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 19,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 20,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 21,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 22,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        },
+        {
+          "S": 162,
+          "k_shape": [
+            1,
+            8,
+            162,
+            64
+          ],
+          "layer": 23,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            162,
+            64
+          ]
+        }
+      ],
+      "post_pos": 143,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 116,
+        "full_S_unique": [
+          116
+        ],
+        "n_layers": 24,
+        "sliding_S0": 116,
+        "sliding_S_unique": [
+          116
+        ]
+      },
+      "pre_cache_layers": [
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 0,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 1,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 2,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 3,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 4,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 5,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 6,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 7,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 8,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 9,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 10,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 11,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 12,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 13,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 14,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 15,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 16,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 17,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 18,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 19,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 20,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 21,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 22,
+          "type": "sliding_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        },
+        {
+          "S": 116,
+          "k_shape": [
+            1,
+            8,
+            116,
+            64
+          ],
+          "layer": 23,
+          "type": "full_attention",
+          "v_shape": [
+            1,
+            8,
+            116,
+            64
+          ]
+        }
+      ],
+      "pre_pos": 97,
+      "rope_end_expected": 257,
+      "rope_start_expected": 212,
+      "top5": [
+        {
+          "id": 40,
+          "logit": 18.125,
+          "text": "I"
+        },
+        {
+          "id": 62915,
+          "logit": 17.625,
+          "text": "Sure"
+        },
+        {
+          "id": 52301,
+          "logit": 17.5,
+          "text": "Got"
+        },
+        {
+          "id": 976,
+          "logit": 15.625,
+          "text": "The"
+        },
+        {
+          "id": 160889,
+          "logit": 15.5625,
+          "text": "Acknowled"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 4720,
+      "chosen_text": "\u2019ll",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        40
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 163,
+        "full_S_unique": [
+          163
+        ],
+        "n_layers": 24,
+        "sliding_S0": 163,
+        "sliding_S_unique": [
+          163
+        ]
+      },
+      "post_pos": 144,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 162,
+        "full_S_unique": [
+          162
+        ],
+        "n_layers": 24,
+        "sliding_S0": 162,
+        "sliding_S_unique": [
+          162
+        ]
+      },
+      "pre_pos": 143,
+      "rope_end_expected": 258,
+      "rope_start_expected": 258,
+      "top5": [
+        {
+          "id": 4720,
+          "logit": 15.5625,
+          "text": "\u2019ll"
+        },
+        {
+          "id": 738,
+          "logit": 15.375,
+          "text": " will"
+        },
+        {
+          "id": 4572,
+          "logit": 15.375,
+          "text": "\u2019m"
+        },
+        {
+          "id": 4313,
+          "logit": 14.875,
+          "text": "\u2019ve"
+        },
+        {
+          "id": 4218,
+          "logit": 14.8125,
+          "text": " understand"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 3357,
+      "chosen_text": " keep",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        4720
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 164,
+        "full_S_unique": [
+          164
+        ],
+        "n_layers": 24,
+        "sliding_S0": 164,
+        "sliding_S_unique": [
+          164
+        ]
+      },
+      "post_pos": 145,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 163,
+        "full_S_unique": [
+          163
+        ],
+        "n_layers": 24,
+        "sliding_S0": 163,
+        "sliding_S_unique": [
+          163
+        ]
+      },
+      "pre_pos": 144,
+      "rope_end_expected": 259,
+      "rope_start_expected": 259,
+      "top5": [
+        {
+          "id": 3357,
+          "logit": 17.375,
+          "text": " keep"
+        },
+        {
+          "id": 8203,
+          "logit": 16.25,
+          "text": " remember"
+        },
+        {
+          "id": 9570,
+          "logit": 15.625,
+          "text": " respond"
+        },
+        {
+          "id": 16794,
+          "logit": 14.75,
+          "text": " reply"
+        },
+        {
+          "id": 5060,
+          "logit": 14.5,
+          "text": " hold"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 484,
+      "chosen_text": " that",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        3357
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 165,
+        "full_S_unique": [
+          165
+        ],
+        "n_layers": 24,
+        "sliding_S0": 165,
+        "sliding_S_unique": [
+          165
+        ]
+      },
+      "post_pos": 146,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 164,
+        "full_S_unique": [
+          164
+        ],
+        "n_layers": 24,
+        "sliding_S0": 164,
+        "sliding_S_unique": [
+          164
+        ]
+      },
+      "pre_pos": 145,
+      "rope_end_expected": 260,
+      "rope_start_expected": 260,
+      "top5": [
+        {
+          "id": 484,
+          "logit": 17.375,
+          "text": " that"
+        },
+        {
+          "id": 480,
+          "logit": 17.0,
+          "text": " it"
+        },
+        {
+          "id": 290,
+          "logit": 15.625,
+          "text": " the"
+        },
+        {
+          "id": 495,
+          "logit": 14.6875,
+          "text": " this"
+        },
+        {
+          "id": 922,
+          "logit": 13.9375,
+          "text": " my"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 306,
+      "chosen_text": " in",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        484
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 166,
+        "full_S_unique": [
+          166
+        ],
+        "n_layers": 24,
+        "sliding_S0": 166,
+        "sliding_S_unique": [
+          166
+        ]
+      },
+      "post_pos": 147,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 165,
+        "full_S_unique": [
+          165
+        ],
+        "n_layers": 24,
+        "sliding_S0": 165,
+        "sliding_S_unique": [
+          165
+        ]
+      },
+      "pre_pos": 146,
+      "rope_end_expected": 261,
+      "rope_start_expected": 261,
+      "top5": [
+        {
+          "id": 306,
+          "logit": 16.875,
+          "text": " in"
+        },
+        {
+          "id": 13,
+          "logit": 15.0625,
+          "text": "."
+        },
+        {
+          "id": 472,
+          "logit": 14.3125,
+          "text": " as"
+        },
+        {
+          "id": 8197,
+          "logit": 13.1875,
+          "text": " memory"
+        },
+        {
+          "id": 2164,
+          "logit": 13.125,
+          "text": " information"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 4246,
+      "chosen_text": " mind",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        306
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 167,
+        "full_S_unique": [
+          167
+        ],
+        "n_layers": 24,
+        "sliding_S0": 167,
+        "sliding_S_unique": [
+          167
+        ]
+      },
+      "post_pos": 148,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 166,
+        "full_S_unique": [
+          166
+        ],
+        "n_layers": 24,
+        "sliding_S0": 166,
+        "sliding_S_unique": [
+          166
+        ]
+      },
+      "pre_pos": 147,
+      "rope_end_expected": 262,
+      "rope_start_expected": 262,
+      "top5": [
+        {
+          "id": 4246,
+          "logit": 18.875,
+          "text": " mind"
+        },
+        {
+          "id": 8197,
+          "logit": 16.875,
+          "text": " memory"
+        },
+        {
+          "id": 922,
+          "logit": 16.75,
+          "text": " my"
+        },
+        {
+          "id": 290,
+          "logit": 15.375,
+          "text": " the"
+        },
+        {
+          "id": 2475,
+          "logit": 14.9375,
+          "text": " place"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 13,
+      "chosen_text": ".",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        4246
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 168,
+        "full_S_unique": [
+          168
+        ],
+        "n_layers": 24,
+        "sliding_S0": 168,
+        "sliding_S_unique": [
+          168
+        ]
+      },
+      "post_pos": 149,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 167,
+        "full_S_unique": [
+          167
+        ],
+        "n_layers": 24,
+        "sliding_S0": 167,
+        "sliding_S_unique": [
+          167
+        ]
+      },
+      "pre_pos": 148,
+      "rope_end_expected": 263,
+      "rope_start_expected": 263,
+      "top5": [
+        {
+          "id": 13,
+          "logit": 17.875,
+          "text": "."
+        },
+        {
+          "id": 25,
+          "logit": 15.375,
+          "text": ":"
+        },
+        {
+          "id": 2322,
+          "logit": 14.6875,
+          "text": "\u2014"
+        },
+        {
+          "id": 0,
+          "logit": 14.5625,
+          "text": "!"
+        },
+        {
+          "id": 472,
+          "logit": 13.875,
+          "text": " as"
+        }
+      ],
+      "width": 96
+    },
+    {
+      "chosen_id": 200002,
+      "chosen_text": "<|return|>",
+      "cur_mount_n": 65,
+      "graft_seats_unique": [
+        "0"
+      ],
+      "inject_any": false,
+      "inject_count": 0,
+      "input_ids": [
+        13
+      ],
+      "input_n": 1,
+      "live_shift": 115,
+      "live_shift_on_layers_unique": [
+        "115"
+      ],
+      "n_sink": 19,
+      "post_cache": {
+        "all_equal": true,
+        "full_S0": 169,
+        "full_S_unique": [
+          169
+        ],
+        "n_layers": 24,
+        "sliding_S0": 169,
+        "sliding_S_unique": [
+          169
+        ]
+      },
+      "post_pos": 150,
+      "pre_cache": {
+        "all_equal": true,
+        "full_S0": 168,
+        "full_S_unique": [
+          168
+        ],
+        "n_layers": 24,
+        "sliding_S0": 168,
+        "sliding_S_unique": [
+          168
+        ]
+      },
+      "pre_pos": 149,
+      "rope_end_expected": 264,
+      "rope_start_expected": 264,
+      "top5": [
+        {
+          "id": 200002,
+          "logit": 15.6875,
+          "text": "<|return|>"
+        },
+        {
+          "id": 200007,
+          "logit": 15.5625,
+          "text": "<|end|>"
+        },
+        {
+          "id": 3004,
+          "logit": 13.5,
+          "text": " No"
+        },
+        {
+          "id": 1843,
+          "logit": 13.4375,
+          "text": " If"
+        },
+        {
+          "id": 3072,
+          "logit": 13.125,
+          "text": " But"
+        }
+      ],
+      "width": 96
+    }
+  ],
+  "stop_events": [
+    {
+      "at_gen": 7,
+      "decoded": "I\u2019ll keep that in mind.<|return|>",
+      "out_ids": [
+        40,
+        4720,
+        3357,
+        484,
+        306,
+        4246,
+        13,
+        200002
+      ],
+      "stops": [
+        "<|return|>"
+      ]
+    }
+  ],
+  "stopped": true,
+  "stops": [
+    "<|return|>",
+    "<|end|>",
+    "<|start|>user",
+    "<|start|>assistant"
+  ],
+  "wall_s": 1.9331242999996903
+}

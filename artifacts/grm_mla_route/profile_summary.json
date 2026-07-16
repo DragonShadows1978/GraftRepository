@@ -1,0 +1,49 @@
+{
+  "harvest": {
+    "centroid_bank_rows": 8192,
+    "dim": 128,
+    "mean_active_dims": 9.09326171875,
+    "mean_l1": 2.8452112674713135,
+    "mean_tokens_per_row": 10.036865234375,
+    "source_files": 26,
+    "source_root": "/mnt/ForgeRealm/GraftRepository"
+  },
+  "loadavg_note": "pre-run loadavg 2.38 2.52 2.88",
+  "results": [
+    {
+      "attribution": {
+        "buckets_ms_per_call": {
+          "ctypes_marshal (_float_array/_lexical_blob/_filter_blob/_check)": 0.049291125,
+          "native_call (store.route/_lib.grm_store_route*)": 324.198245375,
+          "native_route_order_own (native_to_idx build loop, O(N))": 887.980661,
+          "other": 0.072157,
+          "python_fallback (_vector_route_scores/_cent_score/_normalize_scores/_lex_bonus)": 0.0,
+          "rare_tokens (_rare_tokens)": 0.008568500000000001,
+          "remap_dict_get ({method 'get' of 'dict'}: O(N), inflated by topk=len(grafts))": 891.9519735000001,
+          "remap_list_append ({method 'append' of 'list'}: O(N))": 124.23118000000001,
+          "route_own_cand_build (route(): O(N) `cand` list comp)": 342.1886495
+        },
+        "total_named_tottime_ms_per_call": 2570.6807260000005
+      },
+      "backend": "native",
+      "cold_route": [
+        0,
+        57344,
+        811008
+      ],
+      "cold_wall_ms": 3644.857291,
+      "control_wall_ms_median": 910.7241389999999,
+      "control_wall_ms_min": 891.802068,
+      "control_wall_ms_p95": 919.5945925,
+      "mode": "fp32",
+      "node_count": 1000000,
+      "profile_repeats": 8,
+      "profiled_wall_ms_median": 2588.132184,
+      "profiled_wall_ms_min": 2525.036509,
+      "pstats_path": "artifacts/grm_mla_route/profile_1000000n_fp32.pstats",
+      "pstats_text_path": "artifacts/grm_mla_route/profile_1000000n_fp32_cumulative.txt",
+      "refine_m": null
+    }
+  ],
+  "schema": "grm_mla_route_profile_v1"
+}

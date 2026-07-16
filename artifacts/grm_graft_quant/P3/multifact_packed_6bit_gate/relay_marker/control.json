@@ -1,0 +1,40 @@
+{
+  "apa_layer_scope": "full",
+  "attention_mode": "standard",
+  "bulk_bits": 8,
+  "created_at": "2026-07-08T13:10:46",
+  "current_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS relay marker. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GPT",
+  "expert_empty_cache_interval": 0,
+  "expert_mode": "resident_packed_mxfp4",
+  "final_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS relay marker. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>GPT",
+  "initial_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS relay marker. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+  "initial_user_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS relay marker. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+  "max_tokens": 160,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "mount_graft_dir": null,
+  "note": "greedy smoke via repeated streamed full forwards; no KV cache",
+  "prompt_file": null,
+  "refine_percentile": 0.15,
+  "route_detail": "summary",
+  "status": "ok",
+  "steps": [
+    {
+      "child_artifact": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/multifact_packed_6bit_gate/relay_marker/control_steps/step_00.json",
+      "prompt_before": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Turn 50. Previous context is cleared. Return exactly the stored GPT-OSS relay marker. No sentence. No punctuation.<|end|><|start|>assistant<|channel|>final<|message|>",
+      "returncode": 0,
+      "stdout": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/grm_graft_quant/P3/multifact_packed_6bit_gate/relay_marker/control_steps/step_00.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 162016, \"logit\": 16.375, \"text\": \"GPT\"}, {\"rank\": 1, \"token_id\": 27, \"logit\": 14.5625, \"text\": \"<\"}, {\"rank\": 2, \"token_id\": 58, \"logit\": 14.125, \"text\": \"[\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 688, 12282, 6\"}\n",
+      "step": 0,
+      "top_token": {
+        "logit": 16.375,
+        "rank": 0,
+        "text": "GPT",
+        "token_id": 162016
+      },
+      "wall_seconds": 28.019988836000266
+    }
+  ],
+  "steps_requested": 1,
+  "top_k": 10,
+  "use_chat_template": false,
+  "wall_seconds": 28.020330118999937
+}

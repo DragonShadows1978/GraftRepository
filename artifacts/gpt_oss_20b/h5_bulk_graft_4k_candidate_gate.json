@@ -1,0 +1,229 @@
+{
+  "artifacts": {
+    "capture": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/capture_forward.json",
+    "control": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/control_forward.json",
+    "graft_manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/graft/manifest.json",
+    "mount": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/mount_forward.json"
+  },
+  "candidate_tokenization": {
+    " BLACK": [
+      71730
+    ],
+    " BLUE": [
+      110151
+    ],
+    " GREEN": [
+      107361
+    ],
+    " RED": [
+      45309
+    ],
+    " WHITE": [
+      94026
+    ]
+  },
+  "capture_ids_file": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/capture_ids.json",
+  "capture_prompt": {
+    "actual_tokens": 4096,
+    "corpus_fill_tokens": 4077,
+    "input_mode": "direct_token_ids",
+    "needle_offset_tokens": 4077,
+    "needle_text_sha256": "a3ef7eddf7dc87e77c16050efe77711172688a04a2023b2127499f17cbd96ea2",
+    "needle_tokens": 19,
+    "target_tokens": 4096
+  },
+  "capture_prompt_file": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/capture_prompt.txt",
+  "classification": "pass",
+  "corpus": {
+    "file_count": 42,
+    "kind": "directory",
+    "path": "/mnt/ForgeRealm/GraftRepository/docs",
+    "sha256": "01424d16e85fc530114d5cc6176b558cf8ec5e3a4f64b3122c892167a17ab851"
+  },
+  "created_at": "2026-07-07T00:26:11",
+  "decoy_candidates": [
+    " RED",
+    " GREEN",
+    " BLACK",
+    " WHITE"
+  ],
+  "gold_candidate": " BLUE",
+  "graft_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/graft",
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "note": "gold-vs-decoy candidate scoring with and without mounted pre-RoPE K/V grafts; a pass here is H5 logit-access evidence, not greedy open-generation recall",
+  "query_file": "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/query_prompt.txt",
+  "query_tokens": 16,
+  "runs": {
+    "capture": {
+      "cmd": [
+        "/usr/bin/python3",
+        "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_forward_smoke.py",
+        "--model-dir",
+        "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+        "--prompt-file",
+        "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/capture_prompt.txt",
+        "--max-tokens",
+        "4096",
+        "--attention-mode",
+        "apa_selective",
+        "--apa-layer-scope",
+        "full",
+        "--refine-percentile",
+        "0.15",
+        "--bulk-bits",
+        "8",
+        "--expert-mode",
+        "resident_packed_mxfp4",
+        "--route-detail",
+        "summary",
+        "--expert-empty-cache-interval",
+        "0",
+        "--output",
+        "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/capture_forward.json",
+        "--input-ids-file",
+        "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/capture_ids.json",
+        "--skip-lm-head",
+        "--capture-graft-dir",
+        "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/graft"
+      ],
+      "returncode": 0,
+      "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/capture_forward.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"skip_lm_head\": true, \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 515, 12282, 12\"}\n",
+      "wall_seconds": 220.43408841098426
+    },
+    "control": {
+      "cmd": [
+        "/usr/bin/python3",
+        "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_forward_smoke.py",
+        "--model-dir",
+        "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+        "--prompt-file",
+        "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/query_prompt.txt",
+        "--max-tokens",
+        "16",
+        "--attention-mode",
+        "apa_selective",
+        "--apa-layer-scope",
+        "full",
+        "--refine-percentile",
+        "0.15",
+        "--bulk-bits",
+        "8",
+        "--expert-mode",
+        "resident_packed_mxfp4",
+        "--route-detail",
+        "summary",
+        "--expert-empty-cache-interval",
+        "0",
+        "--output",
+        "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/control_forward.json",
+        "--candidate-text",
+        " BLUE",
+        "--candidate-text",
+        " RED",
+        "--candidate-text",
+        " GREEN",
+        "--candidate-text",
+        " BLACK",
+        "--candidate-text",
+        " WHITE"
+      ],
+      "returncode": 0,
+      "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/control_forward.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 392, \"logit\": 13.3125, \"text\": \" \\\"\"}, {\"rank\": 1, \"token_id\": 461, \"logit\": 11.8125, \"text\": \" '\"}, {\"rank\": 2, \"token_id\": 25, \"logit\": 10.9375, \"text\": \":\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 805, 12282, 16\"}\n",
+      "wall_seconds": 23.084253881010227
+    },
+    "mount": {
+      "cmd": [
+        "/usr/bin/python3",
+        "/mnt/ForgeRealm/GraftRepository/scripts/gpt_oss20b_stream_forward_smoke.py",
+        "--model-dir",
+        "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+        "--prompt-file",
+        "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/query_prompt.txt",
+        "--max-tokens",
+        "16",
+        "--attention-mode",
+        "apa_selective",
+        "--apa-layer-scope",
+        "full",
+        "--refine-percentile",
+        "0.15",
+        "--bulk-bits",
+        "8",
+        "--expert-mode",
+        "resident_packed_mxfp4",
+        "--route-detail",
+        "summary",
+        "--expert-empty-cache-interval",
+        "0",
+        "--output",
+        "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/mount_forward.json",
+        "--mount-graft-dir",
+        "/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/graft",
+        "--candidate-text",
+        " BLUE",
+        "--candidate-text",
+        " RED",
+        "--candidate-text",
+        " GREEN",
+        "--candidate-text",
+        " BLACK",
+        "--candidate-text",
+        " WHITE"
+      ],
+      "returncode": 0,
+      "stdout_tail": "artifact=/mnt/ForgeRealm/GraftRepository/artifacts/gpt_oss_20b/h5_bulk_graft_4k_candidate_gate/mount_forward.json\n{\"status\": \"ok\", \"completed_layers\": 24, \"top_tokens\": [{\"rank\": 0, \"token_id\": 6240, \"logit\": 13.25, \"text\": \" **\"}, {\"rank\": 1, \"token_id\": 4908, \"logit\": 13.125, \"text\": \"...\\n\"}, {\"rank\": 2, \"token_id\": 1008, \"logit\": 12.9375, \"text\": \"...\"}], \"gpu_after\": \"NVIDIA GeForce RTX 4070 SUPER, 807, 12282, 14\"}\n",
+      "wall_seconds": 23.509232072974555
+    }
+  },
+  "schema": "gpt_oss_20b_bulk_graft_gate_v1",
+  "score_summary": {
+    "control": {
+      "best_decoy": {
+        "candidate_text": " RED",
+        "first_token_id": 45309,
+        "first_token_logit": 3.796875,
+        "first_token_logprob": -10.32916259765625,
+        "first_token_text": " RED",
+        "token_ids": [
+          45309
+        ]
+      },
+      "gold": {
+        "candidate_text": " BLUE",
+        "first_token_id": 110151,
+        "first_token_logit": 2.015625,
+        "first_token_logprob": -12.11041259765625,
+        "first_token_text": " BLUE",
+        "token_ids": [
+          110151
+        ]
+      },
+      "gold_minus_best_decoy_logit": -1.78125
+    },
+    "mount": {
+      "best_decoy": {
+        "candidate_text": " GREEN",
+        "first_token_id": 107361,
+        "first_token_logit": 7.90625,
+        "first_token_logprob": -7.273432731628418,
+        "first_token_text": " GREEN",
+        "token_ids": [
+          107361
+        ]
+      },
+      "gold": {
+        "candidate_text": " BLUE",
+        "first_token_id": 110151,
+        "first_token_logit": 11.75,
+        "first_token_logprob": -3.429682731628418,
+        "first_token_text": " BLUE",
+        "token_ids": [
+          110151
+        ]
+      },
+      "gold_minus_best_decoy_logit": 3.84375
+    }
+  },
+  "status": "ok",
+  "target_tokens": 4096
+}

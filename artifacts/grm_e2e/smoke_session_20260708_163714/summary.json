@@ -1,0 +1,143 @@
+{
+  "load_wall_ms_last_process": 23563.58636799996,
+  "mode": "smoke",
+  "model_info": {
+    "expert_mode": "resident_packed_mxfp4",
+    "framework": "tensor_cuda GptOss20B_TC",
+    "full_attention_layers": [
+      1,
+      3,
+      5,
+      7,
+      9,
+      11,
+      13,
+      15,
+      17,
+      19,
+      21,
+      23
+    ],
+    "head_dim": 64,
+    "hidden_dim": 2880,
+    "layers": 24,
+    "loaded": "GPT-OSS-20B (resident_packed_mxfp4)",
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "num_heads": 64,
+    "num_kv_heads": 8,
+    "repository": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+    "sliding_attention_layers": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+      22
+    ]
+  },
+  "post_restart_probes": 2,
+  "probes_passed": 1,
+  "probes_total": 2,
+  "restart": {
+    "after_turn": 4,
+    "flush_wall_ms": 526.3315979991603,
+    "mode": "smoke",
+    "refeed": [
+      {
+        "chat_node_id": 5,
+        "ntok": 60,
+        "turn": 4
+      }
+    ],
+    "resume_load_wall_ms": 23563.58636799996,
+    "schema": "grm_e2e_restart_v1",
+    "vram_after_refeed": {
+      "gpus": [
+        {
+          "total_mb": 12282,
+          "used_mb": 10861
+        }
+      ],
+      "raw": "10861, 12282",
+      "returncode": 0
+    },
+    "vram_before_exec": {
+      "gpus": [
+        {
+          "total_mb": 12282,
+          "used_mb": 10885
+        }
+      ],
+      "raw": "10885, 12282",
+      "returncode": 0
+    }
+  },
+  "run_wall_ms_this_process": 32458.019208999758,
+  "sample_instrumentation": {
+    "correction_wall_ms": 0.0,
+    "deposit_calls": 2,
+    "deposit_wall_ms": 3114.1349550016457,
+    "error": null,
+    "fact_id": null,
+    "info": {
+      "evicted": 47,
+      "live_tokens": 47,
+      "mounts": [
+        3
+      ],
+      "resident": 158,
+      "trip": 0
+    },
+    "kind": "filler",
+    "live_node_ids_after": [
+      10
+    ],
+    "live_node_ids_before": [
+      9
+    ],
+    "live_window_tokens": 47,
+    "mount_calls": 1,
+    "mount_wall_ms": 118.91230400033237,
+    "mounts_after": [
+      2
+    ],
+    "mounts_before": [
+      4
+    ],
+    "mounts_changed": true,
+    "new_node_count": 1,
+    "plant_mode": null,
+    "repo_node_count": 11,
+    "repo_node_count_before": 10,
+    "resumed": true,
+    "route_backend": "native",
+    "route_calls": 1,
+    "route_wall_ms": 695.52282100085,
+    "schema": "grm_e2e_session_turn_v1",
+    "turn": 9,
+    "turn_wall_ms": 7377.516255999581,
+    "vram": {
+      "gpus": [
+        {
+          "total_mb": 12282,
+          "used_mb": 10893
+        }
+      ],
+      "raw": "10893, 12282",
+      "returncode": 0
+    }
+  },
+  "schema": "grm_e2e_session_summary_v1",
+  "session_dir": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_e2e/smoke_session_20260708_163714",
+  "status": "probe_failures",
+  "supersession_probes": 1,
+  "turns_completed": 10,
+  "turns_expected": 10
+}

@@ -1,0 +1,50 @@
+{
+  "byte_equal": false,
+  "id_equal": false,
+  "leg1_prefix": {
+    "ids_head": [
+      200006,
+      1428,
+      200008,
+      170167,
+      31925,
+      13,
+      4614,
+      382,
+      290,
+      2208,
+      5504,
+      29878,
+      23273,
+      1432,
+      30,
+      40500
+    ],
+    "n_ids": 27,
+    "sha256": "5c5f09446230df2c5ba4a0e1111216323068e12a1430bfd9c54e034f60bc4027",
+    "text": "<|start|>user<|message|>Recall probe. What is the current cypher bridge value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  "step_harmony_turn": {
+    "ids_head": [
+      200006,
+      17360,
+      200008,
+      3575,
+      553,
+      17554,
+      162016,
+      13,
+      57369,
+      289,
+      25,
+      4465,
+      13,
+      13888,
+      9334,
+      25
+    ],
+    "n_ids": 46,
+    "sha256": "9025cc17865f2b94e8a4df8822ec0333347363728197752deb443441bb0d47f0",
+    "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current cypher bridge value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>"
+  }
+}
