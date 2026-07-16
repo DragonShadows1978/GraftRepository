@@ -1,0 +1,70 @@
+{
+  "conversation_id": "convo_04_worldbuilding_session",
+  "description": "Fiction worldbuilding brainstorm: an alien faction name and homeworld (PROBED_LATER), a standing tone preference (STANDING_PREF), a character's rank that gets corrected (SUPERSEDED), and filler chit-chat.",
+  "turns": [
+    {"turn_id": 1, "role": "user", "text": "Let's lock the antagonist faction name, going with the Vhorrik Ascendancy, homeworld is Kessyrn-9.", "node_class": "PROBED_LATER", "node_id": "faction_name"},
+    {"turn_id": 2, "role": "assistant", "text": "The Vhorrik Ascendancy, based out of Kessyrn-9, locked in. Good hard consonants for an antagonist name.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 3, "role": "user", "text": "Standing note for this whole project: keep the tone dry and understated, no purple prose, ever, even in the big dramatic beats.", "node_class": "STANDING_PREF", "node_id": "dry_tone_pref"},
+    {"turn_id": 4, "role": "assistant", "text": "Dry and understated throughout, noted, I'll keep the dramatic beats restrained rather than florid.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 5, "role": "user", "text": "The Vhorrik commander we meet in chapter two is a Fleet-Marshal, name is Ozreth Kallum.", "node_class": "SUPERSEDED", "node_id": "commander_rank"},
+    {"turn_id": 6, "role": "assistant", "text": "Fleet-Marshal Ozreth Kallum, chapter two, got it.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 7, "role": "user", "text": "Random thought, should the ship names be numbered or actually named? Leaning named.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 8, "role": "assistant", "text": "Named ships tend to carry more weight in the reader's memory than hull numbers.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 9, "role": "user", "text": "Actually demoting Kallum, Fleet-Marshal was too senior for a chapter-two intro, he's a Wing-Captain instead, same name.", "node_class": "SUPERSEDED", "node_id": "commander_rank"},
+    {"turn_id": 10, "role": "assistant", "text": "Wing-Captain Ozreth Kallum now, adjusted, that fits a chapter-two intro better anyway.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 11, "role": "user", "text": "Also debating whether the protagonist should have a pet or not, feels like a cliche.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 12, "role": "assistant", "text": "Cliche only if it's decorative, give it a mechanical function in the plot and it earns its place.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 13, "role": "user", "text": "The cover artist sent a rough sketch, colors are way too saturated for the mood we want.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 14, "role": "assistant", "text": "Worth a note back on the palette before they go further, cheaper to fix now.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 15, "role": "user", "text": "Found a good reference for the ship interiors, very industrial, not sleek at all.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 16, "role": "assistant", "text": "Industrial reads more lived-in, fits a wartime fleet better than sleek would.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 17, "role": "user", "text": "Editor liked the opening chapter, one note about pacing in the middle third.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 18, "role": "assistant", "text": "Middle-third pacing is a common note, usually a trim rather than a rewrite fixes it.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 19, "role": "user", "text": "Remind me what we named the antagonist faction and their homeworld?", "node_class": "PROBE", "node_id": null},
+    {"turn_id": 20, "role": "assistant", "text": "The Vhorrik Ascendancy, homeworld Kessyrn-9.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 21, "role": "user", "text": "What's Kallum's actual rank in chapter two?", "node_class": "PROBE", "node_id": null},
+    {"turn_id": 22, "role": "assistant", "text": "Wing-Captain.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 23, "role": "user", "text": "Draft me the big confrontation scene between the protagonist and Kallum.", "node_class": "PROBE", "node_id": null}
+  ],
+  "probes": [
+    {
+      "probe_turn_id": 19,
+      "question": "Remind me what we named the antagonist faction and their homeworld?",
+      "expected_answer_tokens": ["vhorrik", "kessyrn"],
+      "relevance": {
+        "1": 3,
+        "5": 1,
+        "9": 1,
+        "7": 0,
+        "11": 0,
+        "15": 0
+      }
+    },
+    {
+      "probe_turn_id": 21,
+      "question": "What's Kallum's actual rank in chapter two?",
+      "expected_answer_tokens": ["wing-captain", "wing captain"],
+      "relevance": {
+        "5": 1,
+        "9": 3,
+        "1": 0,
+        "7": 0,
+        "13": 0,
+        "17": 0
+      }
+    },
+    {
+      "probe_turn_id": 23,
+      "question": "Draft me the big confrontation scene between the protagonist and Kallum.",
+      "expected_answer_tokens": ["dry", "understated"],
+      "relevance": {
+        "3": 3,
+        "9": 2,
+        "1": 1,
+        "13": 0,
+        "15": 0,
+        "17": 0
+      }
+    }
+  ]
+}

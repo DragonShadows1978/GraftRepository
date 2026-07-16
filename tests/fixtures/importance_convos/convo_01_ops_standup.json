@@ -1,0 +1,70 @@
+{
+  "conversation_id": "convo_01_ops_standup",
+  "description": "Ops/engineering standup chatter: a project codename (PROBED_LATER), a standing infra preference (STANDING_PREF), a rack unit that gets reassigned (SUPERSEDED), and filler chit-chat.",
+  "turns": [
+    {"turn_id": 1, "role": "user", "text": "Morning. Kicking off the new effort today, we're calling it Project HALCYON internally, keep it off the public boards.", "node_class": "PROBED_LATER", "node_id": "halcyon_codename"},
+    {"turn_id": 2, "role": "assistant", "text": "Morning! Understood, Project HALCYON stays internal. Ready to help when you need me.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 3, "role": "user", "text": "Quick standing thing: whenever you draft a deploy checklist for me, always put the rollback step first, not last. I've been burned by that ordering before.", "node_class": "STANDING_PREF", "node_id": "rollback_first_pref"},
+    {"turn_id": 4, "role": "assistant", "text": "Got it, rollback step goes first on every deploy checklist from here on.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 5, "role": "user", "text": "Build server moved, it's in rack unit BX-44 now, same credentials as before.", "node_class": "SUPERSEDED", "node_id": "rack_unit_fact"},
+    {"turn_id": 6, "role": "assistant", "text": "Logged, build server now in rack unit BX-44, credentials unchanged.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 7, "role": "user", "text": "Coffee machine on three is broken again, second time this month.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 8, "role": "assistant", "text": "That machine has a rough life. A facilities ticket might actually stick this time.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 9, "role": "user", "text": "Correction on the build server: they re-racked it again overnight, it's actually BX-51 now, not BX-44. BX-44 is decommissioned.", "node_class": "SUPERSEDED", "node_id": "rack_unit_fact"},
+    {"turn_id": 10, "role": "assistant", "text": "Updated, build server is BX-51 now. BX-44 marked decommissioned.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 11, "role": "user", "text": "Parking garage is repainting levels two and three all week.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 12, "role": "assistant", "text": "So everyone fights for level one, allow ten extra minutes.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 13, "role": "user", "text": "My gym added one of those climbing walls. Tempted to try it.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 14, "role": "assistant", "text": "Do it, worst case is a story, best case is a hobby.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 15, "role": "user", "text": "Reading anything good? I need a book for the flight.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 16, "role": "assistant", "text": "If you want absorbing but light, a heist novel beats a doorstopper at thirty thousand feet.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 17, "role": "user", "text": "The vending machine took my dollar and gave me nothing. Tiny tragedies.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 18, "role": "assistant", "text": "Technically a loan with no terms. Shake gently, file a complaint.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 19, "role": "user", "text": "Remind me, what's our project codename?", "node_class": "PROBE", "node_id": null},
+    {"turn_id": 20, "role": "assistant", "text": "Project HALCYON.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 21, "role": "user", "text": "Which rack unit is the build server in right now?", "node_class": "PROBE", "node_id": null},
+    {"turn_id": 22, "role": "assistant", "text": "BX-51.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 23, "role": "user", "text": "Draft me a deploy checklist for tomorrow's release.", "node_class": "PROBE", "node_id": null}
+  ],
+  "probes": [
+    {
+      "probe_turn_id": 19,
+      "question": "Remind me, what's our project codename?",
+      "expected_answer_tokens": ["halcyon"],
+      "relevance": {
+        "1": 3,
+        "3": 0,
+        "5": 0,
+        "7": 1,
+        "9": 0,
+        "11": 0
+      }
+    },
+    {
+      "probe_turn_id": 21,
+      "question": "Which rack unit is the build server in right now?",
+      "expected_answer_tokens": ["bx-51", "bx51"],
+      "relevance": {
+        "5": 1,
+        "9": 3,
+        "1": 0,
+        "3": 0,
+        "13": 0,
+        "17": 0
+      }
+    },
+    {
+      "probe_turn_id": 23,
+      "question": "Draft me a deploy checklist for tomorrow's release.",
+      "expected_answer_tokens": ["rollback"],
+      "relevance": {
+        "3": 3,
+        "9": 2,
+        "1": 1,
+        "5": 0,
+        "15": 0,
+        "17": 0
+      }
+    }
+  ]
+}

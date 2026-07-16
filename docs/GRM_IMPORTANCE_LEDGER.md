@@ -31,3 +31,19 @@ Plan: GRM_IMPORTANCE_PLAN.md (immutable after initial commit).
 - G0b fixture content borrowed from test_graft_mla_gate.py
   (coolant-manifold / osprey) since WO-4 fixtures hadn't landed;
   acceptable — G0b is a floor measurement, not a G1/G2 gate.
+
+## 2026-07-16 — WO-4 (fixture set) LANDED, lead-verified
+
+- tests/fixtures/importance_convos/: 6 conversations (23-24 turns),
+  18 probes, every probe 6 graded candidates (0-3 scale). Validator
+  6/6 under lead re-run; convo_02 spot-checked by hand: STANDING_PREF
+  turn 3, zero intermediate touches, probed turn 24 (21-turn silent
+  gap ≥ the plan's 10-turn floor); SUPERSEDED = shared node_id across
+  original+correction, correction higher-graded. Evidence class:
+  validator run + manual spot-check.
+- LEAD SIGN-OFF on fixture design calls: shared node_id for
+  SUPERSEDED touches; turn-4 assistant acknowledgment of the
+  preference counts as the SAME graft node under (user, assistant)
+  turn-pairing — not a later use (documented in fixture README).
+- Identifier collision check across files reported clean by seat
+  (BX-44/BX-51, C14, Kessyrn-9, LP-2231 unique per file).

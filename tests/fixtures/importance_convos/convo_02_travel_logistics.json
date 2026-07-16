@@ -1,0 +1,71 @@
+{
+  "conversation_id": "convo_02_travel_logistics",
+  "description": "Personal travel planning: a conference booking (PROBED_LATER), a standing dietary preference (STANDING_PREF), a hotel room number that gets changed (SUPERSEDED), and filler chit-chat.",
+  "turns": [
+    {"turn_id": 1, "role": "user", "text": "Booked my flight for the conference, it's Delta flight 2217 out of gate C14, leaves 6:40am.", "node_class": "PROBED_LATER", "node_id": "flight_details"},
+    {"turn_id": 2, "role": "assistant", "text": "Got it, Delta 2217 from gate C14 at 6:40am. Early one, set a backup alarm.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 3, "role": "user", "text": "One standing thing for any restaurant recs you give me from now on: I'm allergic to shellfish, so just always filter those out, don't ask me each time.", "node_class": "STANDING_PREF", "node_id": "shellfish_allergy_pref"},
+    {"turn_id": 4, "role": "assistant", "text": "Noted, shellfish is off the table for every recommendation going forward, no need to flag it again.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 5, "role": "user", "text": "Hotel confirmed too, I'm in room 814 at the Meridian downtown.", "node_class": "SUPERSEDED", "node_id": "hotel_room"},
+    {"turn_id": 6, "role": "assistant", "text": "Room 814 at the Meridian, logged.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 7, "role": "user", "text": "My neighbor's dog got loose again this morning, chased it two blocks in my socks.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 8, "role": "assistant", "text": "Heroic sock-clad pursuit. Hope the dog appreciated the effort.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 9, "role": "user", "text": "Small hotel update, they moved me, it's actually room 1102 now, 814 had a plumbing issue.", "node_class": "SUPERSEDED", "node_id": "hotel_room"},
+    {"turn_id": 10, "role": "assistant", "text": "Updated, room 1102, away from the plumbing drama on 8.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 11, "role": "user", "text": "The office printer jammed twice before 9am, personal record.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 12, "role": "assistant", "text": "The printer knows when you're in a hurry, it's a documented phenomenon.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 13, "role": "user", "text": "Trying a new podcast on the commute, three episodes in and I'm hooked.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 14, "role": "assistant", "text": "Nothing better than a commute that suddenly feels too short.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 15, "role": "user", "text": "Spilled coffee on my only clean shirt for tomorrow, laundry emergency.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 16, "role": "assistant", "text": "Cold water, salt, and prayer, that's the standard protocol.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 17, "role": "user", "text": "Found a decent coffee shop near the venue, might become a daily stop.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 18, "role": "assistant", "text": "A reliable coffee shop near a conference venue is worth more than the swag bag.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 19, "role": "user", "text": "Gate agent said the flight might be delayed a bit, we'll see.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 20, "role": "user", "text": "What flight am I on and what gate again?", "node_class": "PROBE", "node_id": null},
+    {"turn_id": 21, "role": "assistant", "text": "Delta 2217, gate C14.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 22, "role": "user", "text": "What room am I in at the hotel?", "node_class": "PROBE", "node_id": null},
+    {"turn_id": 23, "role": "assistant", "text": "Room 1102.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 24, "role": "user", "text": "Can you recommend a good dinner spot near the venue for tonight?", "node_class": "PROBE", "node_id": null}
+  ],
+  "probes": [
+    {
+      "probe_turn_id": 20,
+      "question": "What flight am I on and what gate again?",
+      "expected_answer_tokens": ["2217", "c14"],
+      "relevance": {
+        "1": 3,
+        "5": 0,
+        "9": 0,
+        "3": 0,
+        "17": 1,
+        "19": 2
+      }
+    },
+    {
+      "probe_turn_id": 22,
+      "question": "What room am I in at the hotel?",
+      "expected_answer_tokens": ["1102"],
+      "relevance": {
+        "5": 1,
+        "9": 3,
+        "1": 0,
+        "3": 0,
+        "11": 0,
+        "13": 0
+      }
+    },
+    {
+      "probe_turn_id": 24,
+      "question": "Can you recommend a good dinner spot near the venue for tonight?",
+      "expected_answer_tokens": ["shellfish"],
+      "relevance": {
+        "3": 3,
+        "17": 2,
+        "1": 1,
+        "5": 0,
+        "11": 0,
+        "15": 0
+      }
+    }
+  ]
+}

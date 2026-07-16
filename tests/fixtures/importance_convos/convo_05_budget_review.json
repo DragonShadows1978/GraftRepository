@@ -1,0 +1,70 @@
+{
+  "conversation_id": "convo_05_budget_review",
+  "description": "Personal finance review: a savings transfer amount (PROBED_LATER), a standing formatting preference (STANDING_PREF), a subscription price that gets corrected (SUPERSEDED), and filler chit-chat.",
+  "turns": [
+    {"turn_id": 1, "role": "user", "text": "Set up the auto-transfer to savings, it's 620 dollars on the first of every month now.", "node_class": "PROBED_LATER", "node_id": "savings_transfer"},
+    {"turn_id": 2, "role": "assistant", "text": "620 dollars monthly to savings, first of the month, logged.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 3, "role": "user", "text": "Standing thing for any numbers you give me on money stuff: always show the annual total too, not just monthly, I think better in yearly terms.", "node_class": "STANDING_PREF", "node_id": "annual_total_pref"},
+    {"turn_id": 4, "role": "assistant", "text": "Understood, I'll always pair a monthly figure with its annual total from here on.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 5, "role": "user", "text": "That streaming bundle we added is 24.99 a month, more than I remembered.", "node_class": "SUPERSEDED", "node_id": "streaming_price"},
+    {"turn_id": 6, "role": "assistant", "text": "24.99 a month for the bundle, noted, that adds up over a year.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 7, "role": "user", "text": "My phone case cracked again, third one this year, might just get a case-less life.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 8, "role": "assistant", "text": "Living dangerously, but bold. At least screen glass has gotten tougher.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 9, "role": "user", "text": "Correction on the streaming bundle, they had a promo I forgot about, it's actually 17.99 a month for the first year.", "node_class": "SUPERSEDED", "node_id": "streaming_price"},
+    {"turn_id": 10, "role": "assistant", "text": "Better, 17.99 a month for year one, updated.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 11, "role": "user", "text": "Grabbed lunch with an old coworker today, hadn't caught up in ages.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 12, "role": "assistant", "text": "Those catch-ups are always better than expected once you actually do them.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 13, "role": "user", "text": "Car made a weird noise on the highway, probably nothing, probably not nothing.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 14, "role": "assistant", "text": "The classic Schrodinger's car noise, worth a mechanic look before it decides for you.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 15, "role": "user", "text": "Finally organized the garage, found tools I forgot I owned.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 16, "role": "assistant", "text": "A rediscovered tool collection is basically a free trip to the hardware store.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 17, "role": "user", "text": "Neighbor's having a yard sale this weekend, might swing by out of curiosity.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 18, "role": "assistant", "text": "Yard sales are 90 percent looking, 10 percent buying, a good low-stakes Saturday.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 19, "role": "user", "text": "What's the actual monthly cost of that streaming bundle right now?", "node_class": "PROBE", "node_id": null},
+    {"turn_id": 20, "role": "assistant", "text": "17.99 a month for the first year.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 21, "role": "user", "text": "Remind me what I set the savings auto-transfer to?", "node_class": "PROBE", "node_id": null},
+    {"turn_id": 22, "role": "assistant", "text": "620 dollars a month.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 23, "role": "user", "text": "How much am I putting toward savings this year in total?", "node_class": "PROBE", "node_id": null}
+  ],
+  "probes": [
+    {
+      "probe_turn_id": 19,
+      "question": "What's the actual monthly cost of that streaming bundle right now?",
+      "expected_answer_tokens": ["17.99"],
+      "relevance": {
+        "5": 1,
+        "9": 3,
+        "1": 0,
+        "3": 0,
+        "13": 0,
+        "15": 0
+      }
+    },
+    {
+      "probe_turn_id": 21,
+      "question": "Remind me what I set the savings auto-transfer to?",
+      "expected_answer_tokens": ["620"],
+      "relevance": {
+        "1": 3,
+        "9": 1,
+        "5": 0,
+        "3": 0,
+        "11": 0,
+        "17": 0
+      }
+    },
+    {
+      "probe_turn_id": 23,
+      "question": "How much am I putting toward savings this year in total?",
+      "expected_answer_tokens": ["7,440", "7440"],
+      "relevance": {
+        "1": 3,
+        "3": 3,
+        "9": 1,
+        "5": 0,
+        "13": 0,
+        "15": 0
+      }
+    }
+  ]
+}

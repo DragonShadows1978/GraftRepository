@@ -1,0 +1,70 @@
+{
+  "conversation_id": "convo_03_household_planning",
+  "description": "Household/family planning chat: a contractor quote (PROBED_LATER), a standing scheduling preference (STANDING_PREF), a delivery date that gets rescheduled (SUPERSEDED), and filler chit-chat.",
+  "turns": [
+    {"turn_id": 1, "role": "user", "text": "Got the quote back from the contractor for the fence, it's 3,150 dollars, name on the estimate is Doug Vantrease.", "node_class": "PROBED_LATER", "node_id": "fence_quote"},
+    {"turn_id": 2, "role": "assistant", "text": "3,150 dollars from Doug Vantrease, noted. Want me to track that against the other quotes?", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 3, "role": "user", "text": "Standing rule for anything you schedule for me: never book anything before 9am, I am useless before that, no exceptions.", "node_class": "STANDING_PREF", "node_id": "no_before_9am_pref"},
+    {"turn_id": 4, "role": "assistant", "text": "Understood, nothing before 9am on the calendar, ever.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 5, "role": "user", "text": "New couch delivery is scheduled for the 14th, between noon and 4.", "node_class": "SUPERSEDED", "node_id": "couch_delivery"},
+    {"turn_id": 6, "role": "assistant", "text": "14th, noon to 4, got it, I'll assume you want to be home for that window.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 7, "role": "user", "text": "The cat knocked a plant off the windowsill again, third casualty this year.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 8, "role": "assistant", "text": "The cat has clearly declared war on your houseplants. Consider a truce with hanging pots.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 9, "role": "user", "text": "Delivery company called, couch is pushed back to the 19th now, same time window though.", "node_class": "SUPERSEDED", "node_id": "couch_delivery"},
+    {"turn_id": 10, "role": "assistant", "text": "Updated to the 19th, noon to 4. I'll mentally file the 14th as free again.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 11, "role": "user", "text": "Neighbor's kid is selling raffle tickets for the school fundraiser, bought a few out of guilt.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 12, "role": "assistant", "text": "A classic guilt-purchase, may the raffle gods smile on you.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 13, "role": "user", "text": "Finally fixed the squeaky hinge on the back door, oil and five minutes, should've done it months ago.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 14, "role": "assistant", "text": "The most satisfying five-minute fixes are always the ones you put off longest.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 15, "role": "user", "text": "Tried a new recipe for dinner, turned out better than expected, saving that one.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 16, "role": "assistant", "text": "Always a good night when the experiment works.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 17, "role": "user", "text": "Got two more fence quotes in, both higher than the first one, kind of expected that honestly.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 18, "role": "assistant", "text": "First quote holding up as the value pick then, good to know.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 19, "role": "user", "text": "Remind me who gave us the fence quote and how much it was?", "node_class": "PROBE", "node_id": null},
+    {"turn_id": 20, "role": "assistant", "text": "Doug Vantrease, 3,150 dollars.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 21, "role": "user", "text": "When is the couch actually arriving now?", "node_class": "PROBE", "node_id": null},
+    {"turn_id": 22, "role": "assistant", "text": "The 19th, noon to 4.", "node_class": "FILLER", "node_id": null},
+    {"turn_id": 23, "role": "user", "text": "Can you set up a call with the plumber for tomorrow morning?", "node_class": "PROBE", "node_id": null}
+  ],
+  "probes": [
+    {
+      "probe_turn_id": 19,
+      "question": "Remind me who gave us the fence quote and how much it was?",
+      "expected_answer_tokens": ["vantrease", "3,150", "3150"],
+      "relevance": {
+        "1": 3,
+        "17": 2,
+        "5": 0,
+        "3": 0,
+        "13": 0,
+        "15": 0
+      }
+    },
+    {
+      "probe_turn_id": 21,
+      "question": "When is the couch actually arriving now?",
+      "expected_answer_tokens": ["19th"],
+      "relevance": {
+        "5": 1,
+        "9": 3,
+        "1": 0,
+        "3": 0,
+        "7": 0,
+        "11": 0
+      }
+    },
+    {
+      "probe_turn_id": 23,
+      "question": "Can you set up a call with the plumber for tomorrow morning?",
+      "expected_answer_tokens": ["9am", "9 am", "before 9"],
+      "relevance": {
+        "3": 3,
+        "5": 1,
+        "1": 0,
+        "7": 0,
+        "13": 0,
+        "15": 0
+      }
+    }
+  ]
+}
