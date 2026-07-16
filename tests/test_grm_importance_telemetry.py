@@ -173,6 +173,54 @@ def test_reset_telemetry_clears_accumulator():
     assert attn._telemetry_mass is None
 
 
+def test_accumulate_telemetry_grows_without_copying_stale_tail():
+    """GROW case: S_all increases (ordinary decode progress within a
+    stable seating epoch). Old mass must survive at its old seat indices;
+    new seats start at zero before this step's mass lands on them."""
+    attn = MLAAttentionTC(MiniCPM3Config())
+    attn._telemetry_mass = np.array([1.0, 2.0, 3.0])   # S_all was 3
+    attn._accumulate_telemetry(np.array([0.1, 0.2, 0.3, 0.4]), S_all=4)
+    assert attn._telemetry_mass.shape == (4,)
+    np.testing.assert_allclose(attn._telemetry_mass,
+                               [1.1, 2.2, 3.3, 0.4])
+
+
+def test_accumulate_telemetry_shrink_restarts_clean_no_crash():
+    """SHRINK case (the bug this test guards): accumulator holds N seats,
+    the tap is called with S_all < N (proof a cache surgery — swap/evict/
+    a shuttling rollback — remapped seats since the last accumulate). Must
+    NOT raise (the original bug: `acc[:prev.shape[0]] = prev` broadcasting
+    a longer prev into a shorter fresh buffer), must NOT carry any stale
+    mass forward (old seat indices no longer mean the same nodes), and
+    must land exactly this step's mass at the new, smaller size."""
+    attn = MLAAttentionTC(MiniCPM3Config())
+    attn._telemetry_mass = np.arange(103, dtype=np.float64)  # N=103, stale
+    step_mass = np.full(77, 5.0)                              # new S_all=77
+    attn._accumulate_telemetry(step_mass, S_all=77)           # must not raise
+    assert attn._telemetry_mass.shape == (77,)
+    # exactly this step's mass, nothing carried over from the stale N=103
+    # buffer (a truncating copy would have left old values at seats 0..76)
+    np.testing.assert_allclose(attn._telemetry_mass, step_mass)
+
+
+def test_accumulate_telemetry_shrink_then_grow_sequence():
+    """Realistic sequence: grow a few steps, surgery shrinks mid-window,
+    grow resumes from the post-surgery size. Only mass from AFTER the
+    shrink should ever appear — this is the seating-epoch invariant the
+    lead's design directive names explicitly."""
+    attn = MLAAttentionTC(MiniCPM3Config())
+    attn._accumulate_telemetry(np.array([1.0, 1.0, 1.0]), S_all=3)
+    attn._accumulate_telemetry(np.array([1.0, 1.0, 1.0, 1.0]), S_all=4)
+    assert attn._telemetry_mass.tolist() == [2.0, 2.0, 2.0, 1.0]
+    # surgery: S_all drops from 4 to 2 (seats remapped, e.g. an evict)
+    attn._accumulate_telemetry(np.array([9.0, 9.0]), S_all=2)
+    assert attn._telemetry_mass.shape == (2,)
+    np.testing.assert_allclose(attn._telemetry_mass, [9.0, 9.0])
+    # resumes growing cleanly from the post-surgery size
+    attn._accumulate_telemetry(np.array([1.0, 1.0, 1.0]), S_all=3)
+    np.testing.assert_allclose(attn._telemetry_mass, [10.0, 10.0, 1.0])
+
+
 def test_telemetry_tap_is_gated_behind_the_flag_and_reads_w_only():
     """Static-inspection check (same technique as
     test_deepseek_grm_hooks_static.py's hook-contract tests): the tap must
@@ -191,6 +239,9 @@ def test_telemetry_tap_is_gated_behind_the_flag_and_reads_w_only():
 
     tap_block = src[telemetry_at:ctxl_at]
     assert "w.numpy()" in tap_block
+    # accumulation itself is delegated (unit-tested separately, see
+    # test_accumulate_telemetry_* above) rather than inlined here
+    assert "self._accumulate_telemetry(" in tap_block
     # never write through w itself (no `w[...] =`, no `w +=`, no in-place
     # method call on w before ctxl consumes it)
     assert "w[" not in tap_block
@@ -212,11 +263,23 @@ def run_g0a_telemetry_parity_gate():
 
     Drives a minimal one-mount arena conversation (structure follows
     tests/test_graft_e4_arena.py: load the model, build an ArenaCache,
-    feed a scripted turn so it deposits a graft, then run one `step()` to
-    mount + generate). Runs the SAME teacher-forced token sequence twice
-    through fresh forward passes (telemetry off, then on) and diffs the
-    full logit vector at every decode step. The hook is a pure read, so
-    the demand is bit-identical — not the usual bf16 receipt floor.
+    feed a scripted deposit turn, then run one `step()` probe so a graft
+    actually routes and mounts). Runs the SAME setup twice (telemetry off,
+    then on) and diffs a teacher-forced continuation's full logit vector at
+    every decode step. The hook is a pure read, so the demand is
+    bit-identical — not the usual bf16 receipt floor.
+
+    Mount pattern for the A/B (lead's choice, documented per instruction):
+    run the mount-producing step() ONCE PER SIDE with identical inputs,
+    not shared across sides. Greedy step() is deterministic given a warm
+    process and matched config (see WARM-UP below), so both sides walk the
+    identical routing/mount/generation trajectory independently, then the
+    fixed teacher-forced continuation is layered on top for the actual A/B
+    measurement. This was picked over "mount once, fork the cache" because
+    ArenaCache has no clean cache-fork primitive — rebuilding per side from
+    identical scripted inputs is simpler than adding one, and determinism
+    under matched warmth is now an established fact (ledger below), not an
+    assumption this gate has to re-prove.
     """
     import tensor_cuda as tc
     from core.minicpm3_tc import MiniCPM3_TC, _snap
@@ -236,40 +299,93 @@ def run_g0a_telemetry_parity_gate():
                           arena_width=64, route_layer=44, topk=1,
                           live_turns=2)
 
+    # FILLER turns (content-free chit-chat, flavor mirrors
+    # test_graft_e4_conversation.py's turns 9-14): with live_turns=2, the
+    # fact turn stays in the recency window — and thus OUT of the routable
+    # candidate set (graft_arena.py:1923-1926, "recency joins topical/
+    # anaphora attempts only") — until at least 2 more turns are fed after
+    # it. One fact + one filler leaves the fact still inside the window;
+    # need >= live_turns fillers so the probe's step() actually has a
+    # candidate to route to instead of falling through to no_mount_fit.
+    FILLER_TURNS = [
+        "User: Did you see the storm forecast for the weekend?\n"
+        "Assistant: Sounds dramatic — worth securing the patio furniture.\n",
+        "User: Coffee machine on three is broken again.\n"
+        "Assistant: That machine has a rough life, might be worth a ticket.\n",
+    ]
+
+    def _feed_fact_then_fillers(arena):
+        arena.feed("User: My access code is Q77-1130.\n"
+                   "Assistant: Recorded.\n")
+        for turn in FILLER_TURNS:
+            arena.feed(turn)
+
+    # WARM-UP (docs/GRM_IMPORTANCE_LEDGER.md, 2026-07-16 G0a entry): the
+    # FIRST forward pass of a process differs by up to ~0.5 logit (bf16-
+    # noise scale, suspected kernel-autotune/lazy-table-build) from every
+    # subsequent pass; all WARM runs are bit-identical to each other
+    # regardless of telemetry. One throwaway forward, same shapes as the
+    # measured passes, before either side of the A/B — makes the == 0.0
+    # demand honest instead of comparing a cold run against a warm one.
+    # Same turn shape (fact + fillers + routed probe) as the measured runs
+    # so warm-up actually exercises the mount path, not just raw decode.
+    _warm = fresh_arena()
+    for L in m.layers:
+        L.self_attn.live_shift = _warm.live_shift
+    _feed_fact_then_fillers(_warm)
+    _warm.step("What is my access code?", ngen=1, deposit=False)
+    del _warm
+
     def run(telemetry_on):
         arena = fresh_arena()
         arena.set_telemetry(telemetry_on)
-        arena.feed("User: My access code is Q77-1130.\n"
-                   "Assistant: Recorded.\n")
+        # hygiene: broadcast live_shift before feed (test_graft_e4_arena.py
+        # convention), even though the ledger refutes shift-ordering as the
+        # cold-start cause.
         for L in m.layers:
             L.self_attn.live_shift = arena.live_shift
-        prompt_ids = arena.encode(arena._format_step_prompt(
-            "What is my access code?"))
+        _feed_fact_then_fillers(arena)
+        # MOUNT: a real step() so cur_mounts is non-empty and s1_mass has
+        # something to attribute. deposit=False keeps this probe itself out
+        # of the graft set (only the access-code turn above is a mount
+        # candidate) — greedy decode is short so the mount stays live. The
+        # fact turn is now outside the live_turns=2 recency window (2
+        # fillers fed after it), so it is a routable candidate, not stuck
+        # in recency-only limbo.
+        _, info_ = arena.step("What is my access code?", ngen=4,
+                              deposit=False)
+        assert info_["mounts"], (
+            "G0a setup bug: step() routed nothing — nothing mounted, "
+            f"info={info_}")
         logits = []
-        row = arena._forward(prompt_ids)
-        logits.append(row.copy())
         # teacher-force a FIXED continuation (not argmax-driven) so both
-        # runs see byte-identical inputs at every step regardless of any
-        # earlier logit drift
+        # sides see byte-identical inputs at every measured step regardless
+        # of any earlier logit drift
         forced_ids = arena.encode(" Q77-1130 is your access code.")
         for tid in forced_ids:
             row = arena._forward([tid])
             logits.append(row.copy())
-        return np.stack(logits, axis=0), (arena.s1_mass() if telemetry_on
-                                          else None)
+        s1 = arena.s1_mass() if telemetry_on else None
+        return np.stack(logits, axis=0), s1, info_["mounts"]
 
-    logits_off, _ = run(False)
-    logits_on, s1 = run(True)
+    logits_off, _, mounts_off = run(False)
+    logits_on, s1, mounts_on = run(True)
 
     max_delta = float(np.max(np.abs(logits_on - logits_off)))
     print(f"G0a: max |Δlogit| over {logits_off.shape[0]} decode steps "
           f"= {max_delta}", flush=True)
+    print(f"G0a: mounts off={mounts_off} on={mounts_on}", flush=True)
     print(f"G0a: s1_mass (telemetry-on run) = {s1}", flush=True)
     assert max_delta == 0.0, (
         f"G0a FAILED: telemetry tap perturbed the forward computation "
         f"(max |Δlogit| = {max_delta}, expected exactly 0.0)")
-    print("G0a: PASS (bit-identical logits, telemetry on vs off)",
-          flush=True)
+    assert s1, (
+        f"G0a FAILED: s1_mass is empty on the telemetry-on run — nothing "
+        f"mounted or nothing attributed (mounts={mounts_on})")
+    assert any(share > 0 for share in s1.values()), (
+        f"G0a FAILED: no mounted node has positive S1 share: {s1}")
+    print("G0a: PASS (bit-identical logits telemetry on vs off; "
+          "s1_mass non-empty with positive mounted share)", flush=True)
 
 
 if __name__ == "__main__":

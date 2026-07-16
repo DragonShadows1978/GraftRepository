@@ -1567,13 +1567,20 @@ class ArenaCache:
     def set_telemetry(self, enabled):
         """Enable/disable the S1 tap on every layer. Mirrors the existing
         absorbed_decode/live_shift broadcast pattern (set once, external to
-        the per-attempt hot path). Disabling also drops any accumulated
-        mass — a stale accumulator from a previous ON stretch must never
-        leak into a later aggregation call."""
+        the per-attempt hot path). Resets the accumulator on EVERY call,
+        both directions: _telemetry_mass lives on the LAYER (MLAAttentionTC
+        instance), not on this ArenaCache — the model's layers are shared
+        across ArenaCache instances (a fresh ArenaCache does NOT imply a
+        fresh accumulator), so a stale accumulator from a previous ON
+        stretch on a DIFFERENT arena over the SAME model must never leak
+        into this one's first aggregation call. _attempt()'s own
+        reset-per-attempt narrows the window further once turns are
+        running; this call is the outer bound for anything before the
+        first attempt (bootstrap forward calls via feed(), which never go
+        through _attempt())."""
         for L in self.m.layers:
             L.self_attn.telemetry = bool(enabled)
-            if not enabled:
-                L.self_attn.reset_telemetry()
+            L.self_attn.reset_telemetry()
 
     def _telemetry_enabled(self):
         return any(getattr(L.self_attn, "telemetry", False)

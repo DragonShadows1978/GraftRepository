@@ -146,3 +146,51 @@ Plan: GRM_IMPORTANCE_PLAN.md (immutable after initial commit).
   ArenaCache ≠ fresh accumulator (suspected hole in warm-up/measured
   sequencing; seat ordered to name the mechanism, not patch the
   symptom). Fix dispatched to WO-1.
+
+## 2026-07-16 — G0a PASS. G0 PHASE COMPLETE (both gates green)
+
+- WO-1 round-4 fix: (a) crash fixed — accumulator SHRINK (S_all <
+  stored length) now discards and restarts (shrink = proof of cache
+  surgery; conservative under-attribution, never misattribution);
+  (b) real scoping hole closed — set_telemetry(True) previously never
+  reset the layer-level accumulator (only disable did), so mass could
+  leak across arena instances sharing the model. 12/12 CPU under lead
+  re-run.
+- Seat's static trace could NOT reconcile the 103→77 shrink with
+  max_trips=0 (trips/clean-room ruled out inside step()); flagged
+  honestly. Lead's candidate mechanism: end-of-step LIVE-SEGMENT
+  EVICTION physically removes rows between step() and the
+  teacher-forced loop. UNCONFIRMED — recorded as interpretation, not
+  a gate finding. Gate green either way (discard-on-shrink is safe
+  by construction).
+- G0a RECEIPT: max |Δlogit| = 0.0 EXACTLY over 15 teacher-forced
+  decode steps, telemetry on vs off; mounts non-empty both sides;
+  s1_mass = {0: 0.600} — the mounted graft drew 60.0% of non-live
+  attention mass during the reply. Evidence class: teacher-forced
+  logit A/B.
+- Receipt-reading note for G1 authors: info["mounts"] is 1-BASED
+  (existing arena convention, graft_arena.py:2049); s1_mass keys are
+  0-based raw graft indices. mounts=[1] ↔ s1_mass key 0. Checked,
+  consistent, not a bug.
+
+## 2026-07-16 — G1/G2 THRESHOLDS REGISTERED (before either gate runs)
+
+From the G0b floors (noise_floor mean|Δlogit| 1.881). Registered by
+lead; David may veto/adjust BEFORE the governed gate runs — never
+after.
+
+- G1 (per candidate signal, over all 18 fixture probes):
+  PASS = median Spearman(signal ranks, S3 ranks) ≥ 0.5 AND top-1
+  agreement with S3 ≥ 50% (chance ≈ 17-25% at 4-6 graded candidates).
+  S3 ranks computed on the registered primary (mean|Δlogit|); mounts
+  with dependence < 2× noise floor (< 3.762) are reported but their
+  top-1 slots don't count against a signal (no load-bearing winner
+  exists there). KL reported as diagnostic throughout.
+- G2 (S2 only; prospective discriminator):
+  PASS = median s2_salience(STANDING_PREF) ≥ 2 AND
+  (median STANDING_PREF − median FILLER) ≥ 1 rubric point.
+  S1 on STANDING_PREF is a REGISTERED EXPECTATION of failure
+  (retrospective signal, zero uses by construction): report
+  STANDING_PREF vs FILLER s1_mass; no pass/fail attached to S1 here.
+- G3 dispatch condition per plan: G1 green for at least one signal
+  OR G2 green.

@@ -125,6 +125,32 @@ class MLAAttentionTC:
         silently-wrong mass."""
         self._telemetry_mass = None
 
+    def _accumulate_telemetry(self, step_mass, S_all):
+        """Pure-numpy accumulate step, factored out of the tap so it is
+        CPU-unit-testable without a forward pass. `step_mass` is this
+        decode step's per-seat mass (already meaned over heads, already
+        copied off any device tensor by the caller).
+
+        GROW (prev.shape[0] < S_all) is ordinary decode progress within a
+        stable seating epoch: carry the old mass forward into a bigger
+        buffer, new seats start at zero.
+
+        SHRINK (prev.shape[0] > S_all) is proof cache SURGERY happened
+        since the last accumulate — swap()/evict()/a shuttling rollback
+        remapped physical seats, so mass gathered under the OLD seat
+        numbering no longer means anything under the new one (a seat index
+        is not a stable node identity across a resize). DISCARD rather than
+        truncate-copy: mis-keyed old mass is worse than zero mass, and a
+        naive truncating copy is also exactly how this used to crash
+        (broadcasting a longer `prev` into a shorter fresh buffer)."""
+        prev = self._telemetry_mass
+        if prev is None or prev.shape[0] != S_all:
+            acc = np.zeros(S_all, dtype=np.float64)
+            if prev is not None and prev.shape[0] < S_all:
+                acc[:prev.shape[0]] = prev
+            self._telemetry_mass = acc
+        self._telemetry_mass += step_mass.astype(np.float64)
+
     def __call__(self, x, cos, sin, position_offset=0, kv_cache=None):
         cfg = self.cfg
         B, L, _ = x.shape
@@ -216,19 +242,14 @@ class MLAAttentionTC:
             w = tc.causal_softmax(s)                             # L=1: full row
             if getattr(self, "telemetry", False):
                 # S1 tap (read-only): copy w out to host, mean over heads,
-                # accumulate per-seat mass. `w` itself is untouched — this
+                # accumulate per-seat mass via _accumulate_telemetry (pure
+                # numpy, unit-tested separately — see that method for the
+                # SHRINK-vs-GROW handling). `w` itself is untouched — this
                 # runs AFTER causal_softmax produced it and BEFORE ctxl
                 # consumes it, so the forward computation below is exactly
                 # the telemetry-off code path regardless of this branch.
                 step_mass = w.numpy().reshape([H, S_all]).mean(axis=0)
-                if (self._telemetry_mass is None
-                        or self._telemetry_mass.shape[0] != S_all):
-                    prev = self._telemetry_mass
-                    acc = np.zeros(S_all, dtype=np.float64)
-                    if prev is not None:
-                        acc[:prev.shape[0]] = prev
-                    self._telemetry_mass = acc
-                self._telemetry_mass += step_mass.astype(np.float64)
+                self._accumulate_telemetry(step_mass, S_all)
             ctxl = tc.matmul(w, c2)                              # (H,1,R)
             attn = tc.matmul(ctxl, Wuv, trans_b=True)            # (H,1,V)
             attn = attn.reshape([B, H, 1, V]).transpose(1, 2).reshape([B, 1, H * V])
