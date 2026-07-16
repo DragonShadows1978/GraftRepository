@@ -58,3 +58,25 @@ Plan: GRM_SUPERSESSION_PLAN.md (immutable, b5428f9).
     non-lineage nodes;
   - diagnostic leg (--resolve alone, no gate): isolates L2's
     contribution given L1's expected vacuity.
+## 2026-07-16 — G1 PASS (vacuous, as registered), G2 PASS (L2 is the fix)
+
+- G1 (--debias): battery IDENTICAL to baseline — every rank, every
+  classification (receipts g1_debias.jsonl). Registered
+  regression-only demand met; L1 empirically inert on MLA centroid
+  routing. L1's decisive test remains GQA (registered successor).
+- **G2 (--debias --resolve): PASS on every registered demand** —
+  stale 0/5 (was 2); harbor/lumen/orion all CURRENT; multi-hop
+  mounts head only (['lumen_c']; A and B excluded); non-lineage
+  nodes untouched (orion keeps falcon_competitor mounted; fresh
+  controls byte-identical to baseline, 1/2 with the same
+  co-mount-confusion miss). Receipts g2_debias_resolve.jsonl.
+- Resolve-only diagnostic IDENTICAL to L1+L2 (diag_resolve_only.
+  jsonl): **L2 accounts for 100% of the improvement.** Attribution
+  clean.
+- Both levers remain flagged, DEFAULT OFF — enabling in production
+  is an operator decision; default-path behavior unchanged (34/34
+  shared suites).
+- Residual, explicitly NOT closed: the praxis fresh-control miss is
+  the corpus-100 co-mount confusion class (routed right, mounted
+  right, read the sibling) — pre-existing, out of this program's
+  scope, now with a fresh receipt.
