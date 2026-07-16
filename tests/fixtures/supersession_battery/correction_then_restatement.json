@@ -1,0 +1,49 @@
+{
+  "schema": "grm_supersession_battery_v1",
+  "session_id": "correction_then_restatement",
+  "scenario": "correction_then_restatement",
+  "description": "A corrected value is authoritatively restated as the newest explicit revision before the probe.",
+  "nodes": [
+    {
+      "node_id": "harbor_a",
+      "role": "stale",
+      "value": "Morrow-5-Red",
+      "text": "User: The current Harbor token value is Morrow-5-Red.\nAssistant: Recorded: Harbor token is Morrow-5-Red.",
+      "supersedes": []
+    },
+    {
+      "node_id": "harbor_b",
+      "role": "correction",
+      "value": "Nacre-6-Blue",
+      "text": "User: Correction: the current Harbor token value is Nacre-6-Blue, replacing Morrow-5-Red.\nAssistant: Updated: Harbor token is Nacre-6-Blue.",
+      "supersedes": ["harbor_a"]
+    },
+    {
+      "node_id": "harbor_c",
+      "role": "restatement",
+      "value": "Nacre-6-Blue",
+      "text": "User: Authoritative restatement for the record: the current Harbor token remains Nacre-6-Blue.\nAssistant: Confirmed: Harbor token remains Nacre-6-Blue.",
+      "supersedes": ["harbor_b"]
+    },
+    {
+      "node_id": "opal_competitor",
+      "role": "competitor",
+      "value": "Opal-7-Green",
+      "text": "User: The Harbor token is named in the preface of this separate shipping memorandum because the warehouse search index groups every token reference together. The memorandum then covers the north entrance inspection, morning dispatch cadence, return-label printer, pallet wrap order, customs call, lunch relief schedule, spare scanner allocation, and a delayed courier handoff. Its sole authoritative value is the current Juniper pass value, Opal-7-Green. Keep Opal-7-Green attached to Juniper pass; this memorandum does not alter the Harbor token.\nAssistant: Archived Juniper pass as Opal-7-Green with its shipping context.",
+      "supersedes": []
+    }
+  ],
+  "probes": [
+    {
+      "probe_id": "harbor_restatement",
+      "question": "What is the current Harbor token value?",
+      "target_node": "harbor_c",
+      "correction_node": "harbor_c",
+      "stale_nodes": ["harbor_a", "harbor_b"],
+      "competitor_node": "opal_competitor",
+      "expected_values": ["nacre-6-blue"],
+      "stale_values": ["morrow-5-red"],
+      "wrong_fact_values": ["opal-7-green"]
+    }
+  ]
+}

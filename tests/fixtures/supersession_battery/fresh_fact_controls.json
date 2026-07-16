@@ -1,0 +1,53 @@
+{
+  "schema": "grm_supersession_battery_v1",
+  "session_id": "fresh_fact_controls",
+  "scenario": "fresh_fact_controls",
+  "description": "Two ordinary facts with no revision edges test that fresh-fact recall remains visible under the same competition shape.",
+  "nodes": [
+    {
+      "node_id": "praxis_fact",
+      "role": "fresh",
+      "value": "Quartz-8-Jade",
+      "text": "User: The current Praxis dock value is Quartz-8-Jade.\nAssistant: Recorded: Praxis dock is Quartz-8-Jade.",
+      "supersedes": []
+    },
+    {
+      "node_id": "solace_fact",
+      "role": "fresh",
+      "value": "Raven-9-Ivory",
+      "text": "User: The current Solace key value is Raven-9-Ivory.\nAssistant: Recorded: Solace key is Raven-9-Ivory.",
+      "supersedes": []
+    },
+    {
+      "node_id": "sable_competitor",
+      "role": "competitor",
+      "value": "Sable-0-Copper",
+      "text": "User: This long planning transcript mentions both the Praxis dock and the Solace key while cataloging search terms, but it owns neither fact. The participants reviewed conference rooms, access windows, catering counts, shuttle timing, presentation order, printed badges, microphone batteries, visitor escorts, emergency contacts, and the final cleanup roster. After that background they recorded the independent fact that the current Tundra ledger value is Sable-0-Copper. Preserve Sable-0-Copper for Tundra ledger only; the Praxis dock and Solace key references are index context.\nAssistant: Archived Tundra ledger as Sable-0-Copper and kept the planning context.",
+      "supersedes": []
+    }
+  ],
+  "probes": [
+    {
+      "probe_id": "praxis_fresh",
+      "question": "What is the current Praxis dock value?",
+      "target_node": "praxis_fact",
+      "correction_node": null,
+      "stale_nodes": [],
+      "competitor_node": "sable_competitor",
+      "expected_values": ["quartz-8-jade"],
+      "stale_values": [],
+      "wrong_fact_values": ["sable-0-copper", "raven-9-ivory"]
+    },
+    {
+      "probe_id": "solace_fresh",
+      "question": "What is the current Solace key value?",
+      "target_node": "solace_fact",
+      "correction_node": null,
+      "stale_nodes": [],
+      "competitor_node": "sable_competitor",
+      "expected_values": ["raven-9-ivory"],
+      "stale_values": [],
+      "wrong_fact_values": ["sable-0-copper", "quartz-8-jade"]
+    }
+  ]
+}
