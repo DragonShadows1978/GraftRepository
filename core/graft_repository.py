@@ -37,6 +37,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 import json
 import os
+import re
 import threading
 import time
 
@@ -44,6 +45,37 @@ import numpy as np
 
 from core.graft_arena import ArenaCache
 from core.grm_runtime import GRMRuntime
+from core.mistral7b_tc import tc
+from core import kv_graft
+
+
+# --------------------------------------------------------------- GRM-IMPORTANCE
+# S2 PROSPECT: silent self-report salience pass (docs/GRM_IMPORTANCE_PLAN.md,
+# WO-3). Runs opt-in in the deferred-librarian idle slot, after a turn has
+# been deposited, and rates that turn's long-term importance on a fixed
+# 0-3 rubric. FROZEN pre-G1 (registered metric definition, plan section
+# "Registered metric definitions" — S2 salience). Do not tune this prompt
+# after gates run; a wording change invalidates any G1/G2 numbers already
+# collected against it.
+#
+# Same acknowledgment-trap lesson as DIGEST_PROMPTS (graft_arena.py): over
+# mounted dialogue turns the model answers a meta-request about the
+# conversation AS a chat turn ("Sure, I can help rate that...") instead of
+# emitting the rating. The primed prefix forces the answer to open with the
+# rating token itself, mirroring the digest machinery's content-mode primer.
+S2_SALIENCE_PROMPT = (
+    "User: On a scale of 0 to 3, rate how important the turn above is to "
+    "remember for the long term. 0 = throwaway small talk, 1 = minor "
+    "detail, 2 = useful fact worth keeping, 3 = critical fact that must "
+    "not be lost. Answer with the rating digit first, then one short "
+    "reason.\n"
+    "Assistant: Rating:"
+)
+# Strict single-position parse: the first standalone 0-3 digit after the
+# primer. No natural-language number words, no partial credit — a QC
+# mismatch is a parse failure, not a best-effort guess (spec: "parse the
+# score strictly").
+_S2_SCORE_RE = re.compile(r"\s*([0-3])\b")
 
 
 @dataclass(frozen=True)
@@ -194,7 +226,9 @@ class GraftRepository:
                  wal_enabled=None, native_store=None, native_lib_path=None,
                  native_enabled=False, native_auto=True, extractor=None,
                  extraction_write_threshold=0.95,
-                 extraction_error_policy="record", **arena_kw):
+                 extraction_error_policy="record",
+                 s2_salience_enabled=False, s2_salience_ngen=24,
+                 **arena_kw):
         self.path = path
         self.autosave = autosave
         self.durability_mode = self._normalize_durability_mode(durability_mode)
@@ -214,6 +248,14 @@ class GraftRepository:
         self.extractor = extractor
         self.extraction_write_threshold = float(extraction_write_threshold)
         self.extraction_error_policy = extraction_error_policy
+        # GRM-IMPORTANCE WO-3 (S2 PROSPECT): opt-in, off by default. When
+        # enabled, idle() rates newly-deposited turns after chat()/add_turn()
+        # using S2_SALIENCE_PROMPT and writes ONLY metadata["importance"]
+        # ["s2_salience"] — S1 (attention telemetry) and S3 (counterfactual)
+        # own their own keys elsewhere in the plan and are untouched here.
+        self.s2_salience_enabled = bool(s2_salience_enabled)
+        self.s2_salience_ngen = int(s2_salience_ngen)
+        self._s2_pending = ()
         self.last_extraction_results = []
         self.last_extraction_error = None
         # device-byte budget for node tensors; least-recently-MOUNTED saved
@@ -360,11 +402,14 @@ class GraftRepository:
 
     # ----------------------------------------------------------- hot path
     def chat(self, user_text, ngen=64, max_trips=2):
-        return self.runtime.chat(user_text, ngen=ngen, max_trips=max_trips)
+        ans, info = self.runtime.chat(user_text, ngen=ngen, max_trips=max_trips)
+        self._queue_s2_pending()
+        return ans, info
 
     def add_turn(self, user, assistant):
         """Deposit an already-complete turn (scripted or externally run)."""
         self.runtime.add_turn(user, assistant)
+        self._queue_s2_pending()
 
     def add_document(self, text, tags=()):
         before = self._snapshot_state()
@@ -2562,8 +2607,145 @@ class GraftRepository:
 
     def idle(self, max_jobs=1):
         """Run deferred librarian work; call between turns or when the
-        conversation is quiet. Returns folds executed."""
-        return self.runtime.idle(max_jobs=max_jobs)
+        conversation is quiet. Returns folds executed.
+
+        GRM-IMPORTANCE WO-3: the S2 self-report salience pass rides in this
+        same idle slot, after the fold queue drains, and is entirely
+        separate bookkeeping (opt-in, silent, never affects the return
+        value or the fold count)."""
+        done = self.runtime.idle(max_jobs=max_jobs)
+        if self.s2_salience_enabled:
+            self._run_s2_salience_pass()
+        return done
+
+    # ------------------------------------------------- GRM-IMPORTANCE (S2)
+    def _queue_s2_pending(self):
+        """Record the turn node(s) just deposited by chat()/add_turn() so
+        the NEXT idle() call can rate them. Stateless like _librarian_jobs:
+        overwritten every turn-completion call, never accumulated, so a
+        turn that never gets an idle window before the next one simply
+        never gets scored (S2 is best-effort bookkeeping, not a queue that
+        must drain)."""
+        if not self.s2_salience_enabled:
+            self._s2_pending = ()
+            return
+        result = self.runtime.last_result
+        if result is None:
+            self._s2_pending = ()
+            return
+        # Derivative-turn hygiene law (2026-06-11 batch): kind="recall"
+        # nodes are retrieval-only — excluded from routing and folding — so
+        # no consumer ever reads a salience score off one. Scoring them
+        # would spend an idle-window generation on a weight nothing reads;
+        # excluded here, not just at the fold/route boundary.
+        self._s2_pending = tuple(
+            i for i in result.new_nodes
+            if self.arena.grafts[i].get("kind", "turn") == "turn")
+
+    def _run_s2_salience_pass(self):
+        """The silent second pass (plan: 'after the model replies, a silent
+        second pass runs in the idle window... rates the just-deposited
+        turn's long-term importance'). Scores each pending node once, then
+        clears the queue regardless of outcome — a scoring failure is
+        recorded as an absent score (QC law), not retried across idle
+        calls."""
+        pending = self._s2_pending
+        self._s2_pending = ()
+        for i in pending:
+            if i >= len(self.arena.grafts):
+                continue        # folded/culled away before idle ran
+            g = self.arena.grafts[i]
+            if g.get("retired"):
+                continue        # already folded into a digest this idle()
+            meta = g.setdefault("metadata", self._default_metadata(g))
+            importance = meta.setdefault("importance", {})
+            if "s2_salience" in importance:
+                continue        # already scored (defensive; queue is 1-shot)
+            before = self._snapshot_state()
+            score = self._s2_score_node(i)
+            importance["s2_salience"] = score
+            self._mark_dirty(i, payload=False, metadata=True)
+            self._append_wal("NODE_META", node_id=i, metadata=meta,
+                             state=list(self._state_tuple(g)))
+            self._mark_mutations(before)
+
+    def _s2_generate(self, prompt):
+        """One short forced-prefix continuation, mirroring
+        ArenaCache.consolidate()'s standalone-generation shape (mount ->
+        greedy decode -> unmount) but WITHOUT depositing or retiring
+        anything — this is a read-only rating pass. Snapshots and restores
+        every piece of live-cache state consolidate() itself does not
+        bother restoring (consolidate relies on the next step()/feed() to
+        reset live_shift; the S2 pass has no guaranteed next turn before a
+        caller inspects the arena, so it restores explicitly)."""
+        arena = self.arena
+        snap = (arena.caches, arena.pos, list(arena.live_segs),
+               arena.cur_mounts, arena.cur_mount_n)
+        live_shifts = [L.self_attn.live_shift for L in arena.m.layers]
+        for L in arena.m.layers:
+            L.self_attn.live_shift = None
+        arena._clear_transients()
+        try:
+            ids = self.arena.encode(prompt)
+            with tc.no_grad():
+                lg, caches = arena.m(np.array([ids], dtype=np.int64),
+                                     last_token_only=True)
+            pos = len(ids)
+            out = [int(lg.numpy()[0, -1].argmax())]
+            for _ in range(self.s2_salience_ngen - 1):
+                with tc.no_grad():
+                    lg, caches = arena.m(
+                        np.array([[out[-1]]], dtype=np.int64),
+                        kv_caches=caches, position_offset=pos,
+                        last_token_only=True)
+                pos += 1
+                out.append(int(lg.numpy()[0, -1].argmax()))
+            text = self.arena.decode(out)
+        finally:
+            kv_graft.clear_injection(arena.m)
+            for L, shift in zip(arena.m.layers, live_shifts):
+                L.self_attn.live_shift = shift
+            (arena.caches, arena.pos, arena.live_segs,
+             arena.cur_mounts, arena.cur_mount_n) = (
+                snap[0], snap[1], list(snap[2]), snap[3], snap[4])
+            arena._clear_transients()
+        return text
+
+    @staticmethod
+    def _parse_s2_score(text):
+        """Strict single-position parse: the first standalone 0-3 digit.
+        No natural-language numbers, no scanning the whole reply for any
+        digit that happens to appear — the rubric primer puts the digit
+        in a fixed position ('Rating: N'), so anything else is a QC
+        failure, not a looser reading of a valid answer."""
+        m = _S2_SCORE_RE.match(text)
+        if not m:
+            return None
+        return int(m.group(1))
+
+    def _s2_score_node(self, i):
+        """Mount node i ALONE and run the frozen rubric prompt. One retry
+        maximum on a parse failure (spec: QC law, mirrors the librarian's
+        one-retry ladder); double failure records s2_salience=None
+        (absent), never a guessed value.
+
+        Re-mounts on every attempt: _s2_generate() unconditionally clears
+        the injection in its own `finally` (read-only pass, never leaves a
+        graft mounted after it returns), so a retry with a stale mount
+        would silently score against no content — remount fresh each try."""
+        arena = self.arena
+        arena._ensure_h([i])
+        for _attempt in range(2):        # one retry maximum
+            for li, layer in enumerate(arena.m.layers):
+                att = layer.self_attn
+                hs = [arena.grafts[i]["h"][li]]
+                blk = {key: hs[0][key] for key, dim in arena.PAYLOAD}
+                arena._set_inject(att, blk)
+            text = self._s2_generate(S2_SALIENCE_PROMPT)
+            score = self._parse_s2_score(text)
+            if score is not None:
+                return score
+        return None
 
     def _librarian(self):
         if self.librarian_mode == "inline":
@@ -3530,6 +3712,11 @@ class GraftRepository:
             "source_grafts": list(g.get("sources", [])),
             "supersedes": [],
             "active": not bool(g.get("retired")),
+            # GRM-IMPORTANCE: per-arm scores, each arm writes only its own
+            # key (s1_mass / s2_salience / s3_dep — plan section "Registered
+            # metric definitions"). Empty by default; absent means unscored,
+            # never a guessed value.
+            "importance": {},
         }
 
     def _ensure_lifecycle(self, i, g):

@@ -332,6 +332,15 @@ def _run_g0b_gate():
         # a reply token, i.e. positions [len(prompt_ids)-1 : -1]
         return logits[len(prompt_ids) - 1: len(prompt_ids) - 1 + len(reply_ids)]
 
+    # Warm-up throwaway forward, SAME shape class as the measured passes
+    # (full mounted set, same prompt+reply length) before capturing side A.
+    # Ledger 2026-07-16 "G0a first run RED": the first forward of a process
+    # differs by <=0.5 logit (bf16-noise scale) from all subsequent warm
+    # runs, which are bit-identical to each other — a same-process A/B must
+    # warm up before capturing side A or the reference carries cold-run
+    # pollution at exactly the decoy noise-floor scale being measured.
+    _ = teacher_forced_logits(mounted)
+
     full_logits = teacher_forced_logits(mounted)
 
     results = {}
