@@ -2455,11 +2455,33 @@ class GraftRepository:
                 if not g.get("retired") and i not in live
                 and g.get("kind", "turn") in kinds]
 
+    def _has_resolvable_payload(self, i, g):
+        """M11 guard: a WAL-recovery placeholder (payload_pending=True,
+        recovered=True, h=None, host_payload=None, no nodes/NNNN.npz on
+        disk — _rehydrate_from_wal / manifest-gap placeholders) is TEXT
+        authoritative but has no K/V to fold. arena.consolidate() mounts
+        fold sources by indexing grafts[i]["h"][li] with no defense
+        against h=None; its own _ensure_h() -> node_loader() ->
+        _load_node() already catches the missing-file case and downgrades
+        the node to payload_pending instead of raising (_mark_payload_
+        missing), so the TypeError on grafts[i]["h"][li] is the FIRST
+        place this ever surfaces. Fold selection must exclude these
+        nodes entirely rather than rely on that fall-through. Checks the
+        same three sources _load_node() itself trusts, in the same
+        order, so a node this says is resolvable really is loadable."""
+        if g.get("h") is not None:
+            return True
+        if g.get("host_payload") is not None:
+            return True
+        return os.path.exists(self._payload_file_path(i))
+
     def _foldable(self, kinds):
         native = self._native_foldable(kinds)
         if native is not None:
             return native
-        ok = lambda i: not self.arena.grafts[i].get("no_fold")
+        ok = lambda i: (not self.arena.grafts[i].get("no_fold")
+                       and self._has_resolvable_payload(
+                           i, self.arena.grafts[i]))
         return [i for i in self._active(kinds) if ok(i)]
 
     def _native_foldable(self, kinds):
@@ -2509,6 +2531,14 @@ class GraftRepository:
             if g.get("retired") or not meta.get("active", True):
                 continue
             if g.get("kind", "turn") != kind:
+                continue
+            # M11 guard: the native store indexes by kind/active/no_fold —
+            # it has no notion of "resolvable K/V payload" (that's a
+            # Python-side RAM/disk fact, never crosses the ABI). Apply the
+            # same check _foldable()'s Python-fallback branch applies, so
+            # a WAL-recovery placeholder can't reach consolidate() via the
+            # native-backed path either.
+            if not self._has_resolvable_payload(idx, g):
                 continue
             out.append(idx)
         return sorted(dict.fromkeys(out))
