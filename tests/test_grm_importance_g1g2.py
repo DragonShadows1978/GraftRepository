@@ -7,9 +7,9 @@ Three tiers:
      conversation per invocation): loads MiniCPM3, drives a persistent
      ArenaCache-backed GraftRepository through
      tests/fixtures/importance_convos/convo_0N_*.json turn by turn.
-     Scripted (non-PROBE) turns are deposited via GraftRepository.add_turn()
-     (the same (user, assistant) turn-pairing convention documented in the
-     fixture README and used by ArenaCache.feed()/GRMRuntime.add_turn()),
+     Scripted (non-PROBE) turns are deposited as paired exchanges via
+     GraftRepository.add_turn(), or as natural ``User: ...\n`` ArenaCache
+     feeds when no scripted assistant half exists,
      followed by repo.idle() so the S2 idle-window salience pass fires
      immediately at deposit time (WO-3, core/graft_repository.py). At each
      PROBE turn: mount EXACTLY the probe's graded candidate set (relevance
@@ -730,36 +730,58 @@ def test_next_probe_answer_turn_never_deposited_semantics_via_artifact_field():
               for c in probe_record["candidates"])
 
 
+def test_fixture_walk_classifies_solo_user_followed_by_probe():
+    turns = [
+        _mk_turn(1, "user", "FILLER", "solo filler"),
+        _mk_turn(2, "user", "PROBE", "probe at EOF"),
+    ]
+    assert classify_fixture_turns(turns) == [(1, "solo"), (2, "probe")]
+
+
+def test_fixture_walk_classifies_solo_user_followed_by_user():
+    turns = [
+        _mk_turn(1, "user", "FILLER", "first user"),
+        _mk_turn(2, "user", "FILLER", "second user"),
+        _mk_turn(3, "assistant", "FILLER", "paired reply"),
+    ]
+    assert classify_fixture_turns(turns) == [
+        (1, "solo"), (2, "pair"), (3, "pair")]
+
+
+def test_fixture_walk_classifies_solo_user_at_eof():
+    turns = [_mk_turn(1, "user", "FILLER", "solo at EOF")]
+    assert classify_fixture_turns(turns) == [(1, "solo")]
+
+
+def test_scripted_deposit_text_uses_natural_solo_form():
+    user = _mk_turn(7, "user", "FILLER", "No reply was scripted.")
+    assert scripted_deposit_text(user) == "User: No reply was scripted.\n"
+
+
 @pytest.mark.parametrize("fixture_path", sorted(
     glob.glob(os.path.join(FIXTURES_DIR, "convo_*.json"))))
 def test_real_fixtures_satisfy_probe_answer_invariant(fixture_path):
-    """Regression check against the actual shipped fixtures (lead
-    verified convo_01 by hand; this locks the invariant for all 6 so a
-    future fixture edit that breaks it fails CI instead of a GPU leg)."""
+    """Walk every shipped turn through the driver's structural classifier."""
     with open(fixture_path, "r", encoding="utf-8") as fh:
         data = json.load(fh)
     turns = data["turns"]
-    i = 0
-    n = len(turns)
-    seen_probes = 0
-    while i < n:
-        t = turns[i]
-        if t["node_class"] == "PROBE":
-            seen_probes += 1
-            answer, next_i = next_probe_answer_turn(turns, i)  # must not raise
-            if i + 1 < n:
-                # every probe not at EOF in these 6 fixtures IS followed
-                # by exactly one scripted assistant answer (lead's
-                # verified claim) -- assert the strong form here, not
-                # just "didn't raise".
-                assert answer is not None, (
-                    f"{fixture_path} turn {t['turn_id']}: expected a "
-                    f"scripted answer turn to follow (not EOF)")
-                assert answer["role"] == "assistant"
-            i = next_i
-        else:
-            i += 1
-    assert seen_probes == len(data["probes"])
+    classified = classify_fixture_turns(turns)  # must not raise
+    assert [turn_id for turn_id, _ in classified] == [
+        t["turn_id"] for t in turns]
+    labels = [label for _, label in classified]
+    assert set(labels) <= {"pair", "solo", "probe", "probe-answer"}
+    assert labels.count("probe") == len(data["probes"])
+
+    # Lock the complete currently registered shape: convo_02 has the one
+    # solo filler (turn 19); all other scripted turns are paired. Every
+    # non-EOF probe in all six fixtures has one scripted answer.
+    solo_ids = [turn_id for turn_id, label in classified if label == "solo"]
+    expected_solos = ([19] if os.path.basename(fixture_path).startswith(
+        "convo_02_") else [])
+    assert solo_ids == expected_solos
+    for idx, t in enumerate(turns):
+        if t["node_class"] == "PROBE" and idx + 1 < len(turns):
+            assert classified[idx + 1][1] == "probe-answer"
 
 
 # ============================================================================
@@ -987,6 +1009,70 @@ def next_probe_answer_turn(turns, probe_index):
     return nxt, probe_index + 2
 
 
+def next_scripted_deposit_turn(turns, user_index):
+    """Return (assistant_half_or_None, next_index) for a non-PROBE user.
+
+    A following assistant forms the repository's usual paired exchange.
+    A following user (including a PROBE) or EOF makes this a solo user
+    deposit; the following user remains unconsumed for the next walk step.
+    """
+    t = turns[user_index]
+    assert t["node_class"] != "PROBE", (
+        f"next_scripted_deposit_turn called on PROBE turn {t['turn_id']}")
+    assert t["role"] == "user", (
+        f"expected a scripted user turn at {t['turn_id']}, "
+        f"got role={t['role']!r}")
+    if user_index + 1 >= len(turns):
+        return None, user_index + 1
+    nxt = turns[user_index + 1]
+    if nxt["role"] == "assistant":
+        return nxt, user_index + 2
+    if nxt["role"] == "user":
+        return None, user_index + 1
+    raise ValueError(
+        f"turn {nxt['turn_id']} has unsupported role={nxt['role']!r}")
+
+
+def classify_fixture_turns(turns):
+    """Classify every turn using the exact structural walk of the driver."""
+    classified = []
+    i = 0
+    while i < len(turns):
+        t = turns[i]
+        if t["node_class"] == "PROBE":
+            assert t["role"] == "user", (
+                f"PROBE turn {t['turn_id']} must have role='user', "
+                f"got {t['role']!r}")
+            classified.append((t["turn_id"], "probe"))
+            answer, i = next_probe_answer_turn(turns, i)
+            if answer is not None:
+                classified.append((answer["turn_id"], "probe-answer"))
+            continue
+        assistant, next_i = next_scripted_deposit_turn(turns, i)
+        label = "pair" if assistant is not None else "solo"
+        classified.append((t["turn_id"], label))
+        if assistant is not None:
+            classified.append((assistant["turn_id"], label))
+        i = next_i
+
+    walked_ids = [turn_id for turn_id, _ in classified]
+    fixture_ids = [t["turn_id"] for t in turns]
+    assert walked_ids == fixture_ids, (
+        f"fixture walk did not classify every turn exactly once: "
+        f"walked={walked_ids}, fixture={fixture_ids}")
+    return classified
+
+
+def scripted_deposit_text(user_turn, assistant_turn=None):
+    """Format a paired or solo scripted deposit exactly as ArenaCache does."""
+    assert user_turn["role"] == "user"
+    text = f"User: {user_turn['text']}\n"
+    if assistant_turn is not None:
+        assert assistant_turn["role"] == "assistant"
+        text += f"Assistant: {assistant_turn['text']}\n"
+    return text
+
+
 def _load_fixture(convo_n):
     paths = sorted(glob.glob(os.path.join(FIXTURES_DIR, "convo_*.json")))
     matches = [p for p in paths
@@ -1104,25 +1190,41 @@ def _run_gpu_driver(convo_n):
     probes_by_turn = {p["probe_turn_id"]: p for p in fixture["probes"]}
     turn_by_id = {t["turn_id"]: t for t in turns}
 
-    # turn_id -> deposited graft index. Built as scripted (user, assistant)
-    # PAIRS are deposited — the fixture README's turn-pairing convention:
-    # this repo deposits (user, assistant) as ONE node (add_turn ->
-    # arena.feed(f"User: {u}\nAssistant: {a}\n")), so a fixture pair's
-    # user turn_id AND its paired assistant turn_id both resolve to the
-    # SAME graft index (the relevance map only ever cites user turn_ids
-    # in the six fixtures as authored, but map both defensively).
+    # turn_id -> deposited graft index. Scripted (user, assistant) pairs are
+    # one node (add_turn -> arena.feed("User: ...\nAssistant: ...\n")); a
+    # scripted user without an assistant half is one natural solo node
+    # (arena.feed("User: ...\n")). Map every deposited fixture turn_id so
+    # either shape can be a graded probe candidate.
     turn_id_to_graft = {}
 
-    def deposit_pair(user_turn, asst_turn):
+    def deposit_scripted(user_turn, asst_turn=None):
         before_len = len(arena.grafts)
-        repo.add_turn(user_turn["text"], asst_turn["text"])
-        new_nodes = repo.runtime.last_result.new_nodes
+        if asst_turn is None:
+            before = repo._snapshot_state()
+            # add_turn(user, assistant) always emits the Assistant scaffold;
+            # feed() is the lowest public deposit path that can represent a
+            # genuinely absent assistant half. Complete the same repository
+            # bookkeeping sequence as GRMRuntime.add_turn() around that feed.
+            arena.feed(scripted_deposit_text(user_turn))
+            repo._set_new_node_provenance(before, "exchange_span")
+            extracted = repo._extract_from_new_turns(
+                before, context={"event": "add_turn",
+                                 "user_text": user_turn["text"],
+                                 "assistant_text": None})
+            result = repo.runtime._finish_turn_event(
+                "add_turn", before, extraction=extracted, autosave=False)
+            repo._queue_s2_pending()
+            new_nodes = result.new_nodes
+        else:
+            repo.add_turn(user_turn["text"], asst_turn["text"])
+            new_nodes = repo.runtime.last_result.new_nodes
         assert len(new_nodes) == 1 and new_nodes[0] == before_len, (
             f"expected exactly one new node at {before_len}, got "
             f"{new_nodes}")
         gidx = new_nodes[0]
         turn_id_to_graft[user_turn["turn_id"]] = gidx
-        turn_id_to_graft[asst_turn["turn_id"]] = gidx
+        if asst_turn is not None:
+            turn_id_to_graft[asst_turn["turn_id"]] = gidx
         repo.idle(max_jobs=1)   # fires S2 immediately at deposit time
         return gidx
 
@@ -1257,16 +1359,10 @@ def _run_gpu_driver(convo_n):
             i = next_i
             continue
 
-        # scripted (user, assistant) pair -> one deposit, S2 fires now.
-        assert t["role"] == "user", (
-            f"expected a user-led scripted pair at turn {t['turn_id']}, "
-            f"got role={t['role']!r}")
-        asst = turns[i + 1]
-        assert asst["role"] == "assistant", (
-            f"turn {t['turn_id']} (user) not followed by an assistant "
-            f"turn — fixture pairing assumption violated at index {i}")
-        deposit_pair(t, asst)
-        i += 2
+        # Scripted pair or solo user -> one deposit; S2 fires now.
+        asst, next_i = next_scripted_deposit_turn(turns, i)
+        deposit_scripted(t, asst)
+        i = next_i
 
     os.makedirs(ARTIFACTS_DIR, exist_ok=True)
     artifact = make_convo_artifact(fixture["conversation_id"],

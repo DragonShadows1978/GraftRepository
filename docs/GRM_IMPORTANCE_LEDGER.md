@@ -250,6 +250,44 @@ after.
 - Evidence class: recall-gate-style driver receipts + analysis over
   sealed per-convo JSON artifacts (grm_importance_g1g2_convo_v1).
 
+## 2026-07-16 — G1/G2 FINAL VERDICTS (all 18 registered probes): RED
+
+- WO-6 (Sol, first dispatch under the shim protocol, order e8ba4f9):
+  solo-user-turn handling, faithful add_turn-sequence mirroring for
+  solo deposits, 53 CPU tests, lead-verified. Leg 2 GREEN; analysis
+  over all 6 artifacts / 18 probes = THE registered gate.
+- G1 S1 (attention mass): median Spearman 0.4733 vs bar 0.5 — FAIL
+  (top-1 agreement 0.5000 met its bar exactly; the AND fails). The
+  15-probe partial (0.5071) flipped with convo_02 added — the
+  marginal-pass caution was warranted.
+- G1 S2 (self-report): Spearman 0.219, top-1 4/7, rankable on only
+  7/18 probes — FAIL.
+- G2 S2: median s2(STANDING_PREF) = 0.0 vs bar 2.0 — FAIL. The 4B
+  judge scores standing preferences as throwaway under the frozen
+  fact-worded rubric.
+- G2 S1 observation (no gate): STANDING_PREF 0.0626 vs FILLER 0.0274
+  (2.3×). NUANCE: this is PROBE-TIME mass (preference mounted while
+  being asked about) — it does not contradict the designed
+  deposit-time failure; S1 has no deposit-time value at all.
+- G3 DISPATCH CONDITION NOT MET (plan: G1 green for ≥1 signal OR G2
+  green). Consumer phase does not run. Verdict, evidence-classed
+  (recall-gate + teacher-forced A/B arbiter): under the registered
+  thresholds, on MiniCPM3-4B with these fixtures, neither
+  retrospective attention mass nor 4B self-report salience tracks
+  counterfactual importance well enough to drive memory management.
+  NOT DETECTED UNDER THESE LIMITS — not refuted. Un-searched space,
+  named for successor registration (fresh pre-registration each, no
+  retunes): (1) per-layer S1 aggregation (all-layer mean was the
+  registered metric; per-layer diagnostics sit unread in the sealed
+  artifacts); (2) KL-ranked S3 arbiter (KL separated 143× vs 4.24× at
+  G0b; ranks recomputable from sealed artifacts — deliberately NOT
+  computed post-hoc this round); (3) rubric-v2 arm (preference-aware
+  wording) and/or larger judge for S2; (4) richer probe replies
+  (longer generations widen S1's mass sample); (5) the silent-pass
+  ARCHITECTURE itself is untouched by this red — the idle-window
+  machinery (S2 pass, telemetry, fold guard) all landed and gate
+  green; what failed is these two SCORING functions at this scale.
+
 - REAL PRODUCTION BUG exposed by the leg-1 crash (not a harness
   artifact): fold-source selection never excludes payload-missing
   placeholder nodes. Any crash-recovered session (WAL replay,
