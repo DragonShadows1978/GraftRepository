@@ -1,0 +1,49 @@
+{
+  "schema": "grm_supersession_battery_v1",
+  "session_id": "multi_hop_a_b_c",
+  "scenario": "multi_hop_a_b_c",
+  "description": "Three explicit authoritative revisions form A to B to C under a value-bearing competitor.",
+  "nodes": [
+    {
+      "node_id": "lumen_a",
+      "role": "stale",
+      "value": "Amber-1-Atlas",
+      "text": "User: The current Lumen seal value is Amber-1-Atlas.\nAssistant: Recorded: Lumen seal is Amber-1-Atlas.",
+      "supersedes": []
+    },
+    {
+      "node_id": "lumen_b",
+      "role": "stale",
+      "value": "Birch-2-Beacon",
+      "text": "User: Correction: the current Lumen seal value is Birch-2-Beacon, replacing Amber-1-Atlas.\nAssistant: Updated: Lumen seal is Birch-2-Beacon.",
+      "supersedes": ["lumen_a"]
+    },
+    {
+      "node_id": "lumen_c",
+      "role": "correction",
+      "value": "Cobalt-3-Comet",
+      "text": "User: Final correction: the current Lumen seal value is Cobalt-3-Comet, replacing Birch-2-Beacon.\nAssistant: Updated: Lumen seal is Cobalt-3-Comet.",
+      "supersedes": ["lumen_b"]
+    },
+    {
+      "node_id": "delta_competitor",
+      "role": "competitor",
+      "value": "Delta-4-Drift",
+      "text": "User: The Lumen seal appears in this unrelated audit narrative because the indexer cross-linked every seal mentioned during the quarter. The audit team walked through inventory tables, packaging receipts, courier routes, badge assignments, loading windows, spare-part bins, vendor calls, and the contingency calendar before reaching the one value this record actually owns. The current Meridian docket value is Delta-4-Drift. Preserve Delta-4-Drift exactly for the Meridian docket; the surrounding Lumen seal reference is context only and does not revise that seal.\nAssistant: Archived Meridian docket as Delta-4-Drift and retained the audit context.",
+      "supersedes": []
+    }
+  ],
+  "probes": [
+    {
+      "probe_id": "lumen_head",
+      "question": "What is the current Lumen seal value?",
+      "target_node": "lumen_c",
+      "correction_node": "lumen_c",
+      "stale_nodes": ["lumen_a", "lumen_b"],
+      "competitor_node": "delta_competitor",
+      "expected_values": ["cobalt-3-comet"],
+      "stale_values": ["amber-1-atlas", "birch-2-beacon"],
+      "wrong_fact_values": ["delta-4-drift"]
+    }
+  ]
+}

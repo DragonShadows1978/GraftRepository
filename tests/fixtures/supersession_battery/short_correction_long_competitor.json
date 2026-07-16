@@ -1,0 +1,42 @@
+{
+  "schema": "grm_supersession_battery_v1",
+  "session_id": "short_correction_long_competitor",
+  "scenario": "short_correction_long_competitor",
+  "description": "A terse authoritative correction competes with a much longer, value-bearing turn that shares the probe label tokens.",
+  "nodes": [
+    {
+      "node_id": "orion_a",
+      "role": "stale",
+      "value": "Auric-4-Alpha",
+      "text": "User: The current Orion pin value is Auric-4-Alpha.\nAssistant: Recorded: Orion pin is Auric-4-Alpha.",
+      "supersedes": []
+    },
+    {
+      "node_id": "orion_b",
+      "role": "correction",
+      "value": "Kestrel-9-Tango",
+      "text": "User: Correction: the current Orion pin value is Kestrel-9-Tango, replacing Auric-4-Alpha.\nAssistant: Updated: Orion pin is Kestrel-9-Tango.",
+      "supersedes": ["orion_a"]
+    },
+    {
+      "node_id": "falcon_competitor",
+      "role": "competitor",
+      "value": "Vortex-3-Sierra",
+      "text": "User: This long archival note mentions the Orion pin only as a cross-reference, then records a separate operational fact. During the Tuesday migration review, the platform group checked the west bridge, compared the staging manifest, counted the sealed crates, discussed the overnight weather delay, confirmed the loading-bay schedule, reviewed the pager rotation, and read every checklist item aloud. None of those details changes the Orion pin. The actual fact owned by this note is that the current Falcon registry value is Vortex-3-Sierra, which the release crew must quote exactly on its paperwork.\nAssistant: Archived the Falcon registry value as Vortex-3-Sierra with the surrounding migration notes.",
+      "supersedes": []
+    }
+  ],
+  "probes": [
+    {
+      "probe_id": "orion_current",
+      "question": "What is the current Orion pin value?",
+      "target_node": "orion_b",
+      "correction_node": "orion_b",
+      "stale_nodes": ["orion_a"],
+      "competitor_node": "falcon_competitor",
+      "expected_values": ["kestrel-9-tango"],
+      "stale_values": ["auric-4-alpha"],
+      "wrong_fact_values": ["vortex-3-sierra"]
+    }
+  ]
+}

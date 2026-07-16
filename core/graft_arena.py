@@ -43,7 +43,8 @@ class ArenaCache:
                  arena_width=256, route_layer=44, topk=3, live_turns=2,
                  max_live=4096, cache_deposits=True,
                  ephemeral=False, recency_mounts=2, prompt_template=None,
-                 stop_sequences=None):
+                 stop_sequences=None, length_debias=False,
+                 revision_resolution=False):
         # EPHEMERAL MODE ("clear the boat"): the live cache is reset at the
         # START of every turn — each turn runs on [sink | mounts | turn]
         # alone, so resident seats are CONSTANT for a conversation of ANY
@@ -62,6 +63,11 @@ class ArenaCache:
         self.topk = topk
         self.live_turns = live_turns
         self.cache_deposits = cache_deposits
+        # SUP-WO1 feature flags. Both default OFF so one build can produce
+        # the unpatched G0 baseline, the L1-only arm, and the composed L1+L2
+        # arm without changing any repository or model state between runs.
+        self.length_debias = bool(length_debias)
+        self.revision_resolution = bool(revision_resolution)
         self.prompt_template = prompt_template
         self.stop_sequences = tuple(
             stop_sequences or
@@ -409,8 +415,13 @@ class ArenaCache:
         else:
             cand = cand_base
         # Native lexical channel is rare-key only (node indexes unchanged).
-        native_order = self._native_route_order(
-            p, qrare, cand, limit=route_limit, exclude=exclude)
+        # The native/CUDA route APIs expose only final ids, not the raw
+        # per-node score needed by L1. Debias therefore deliberately takes
+        # the Python scoring path. OFF preserves the old backend choice.
+        native_order = (None if getattr(self, "length_debias", False) else
+                        self._native_route_order(
+                            p, qrare, cand, limit=route_limit,
+                            exclude=exclude))
         if native_order is not None and not self._query_lex_needs_rescore(
                 content_extra, cand):
             return native_order
@@ -422,6 +433,7 @@ class ArenaCache:
                 score = self._cent_score(p, self.grafts[i])
                 if np.isfinite(score):
                     base[i] = score
+        base = self._length_debias_scores(base, cand)
         # dialect hook: a raw-score channel (GQA layer-0 |q.k|) rescales
         # per-route into the O(1) band the lexical bonus was calibrated
         # against. MLA cosine is already there — identity.
@@ -476,6 +488,146 @@ class ArenaCache:
 
     def _normalize_scores(self, base):
         return base
+
+    @staticmethod
+    def _route_key_length(g):
+        """Number of node-key opportunities represented by a graft.
+
+        GQA keeps its route key as (heads, key_tokens, dim), so the middle
+        dimension is authoritative. MLA stores one collapsed centroid; its
+        source token count is the only retained length witness and is used as
+        the dialect-transfer definition. Missing/malformed lengths fail to 1.
+        """
+        cent = g.get("cent")
+        if cent is not None:
+            shape = np.asarray(cent).shape
+            if len(shape) >= 2:
+                try:
+                    return max(1, int(shape[-2]))
+                except (TypeError, ValueError, OverflowError):
+                    pass
+        try:
+            return max(1, int(g.get("ntok", 1)))
+        except (TypeError, ValueError, OverflowError):
+            return 1
+
+    @staticmethod
+    def _length_debias_normalizer(key_length):
+        """Frozen L1 form: sqrt(log2(K + 1)), anchored to 1 at K=1."""
+        try:
+            key_length = max(1, int(key_length))
+        except (TypeError, ValueError, OverflowError):
+            key_length = 1
+        return float(np.sqrt(np.log2(key_length + 1.0)))
+
+    def _length_debias_scores(self, base, cand):
+        """Apply the SUP-WO1 L1 log-length-normalized latent score.
+
+        The 2026-07-08 E2E decomposition found that GQA ranks the maximum
+        absolute q·k pair: a longer node gets more chances to produce an
+        extreme even when it has zero lexical overlap. Extreme-value growth
+        is logarithmic in the number of opportunities, so the frozen form is
+        ``raw_score / sqrt(log2(K + 1))`` where K is node-key length. It keeps
+        the load-bearing max/salience statistic while removing its unbounded
+        reward for extra keys; it is intentionally milder than 1/sqrt(K).
+        MLA has already collapsed its key to a centroid, so source ``ntok``
+        supplies K for the plan's required dialect-transfer measurement.
+        This is latent-only: no kind, importance, or other prior enters it.
+        """
+        if not getattr(self, "length_debias", False) or not base:
+            return base
+        out = {}
+        for i in cand:
+            if i not in base:
+                continue
+            score = float(base[i])
+            norm = self._length_debias_normalizer(
+                self._route_key_length(self.grafts[i]))
+            # GQA's max-|q.k| score is non-negative. MLA cosine can be
+            # negative; multiplying a negative score prevents length from
+            # turning the penalty into an accidental boost toward zero.
+            out[i] = score / norm if score >= 0.0 else score * norm
+        return out
+
+    @staticmethod
+    def _metadata_node_ids(value, node_count):
+        """Parse an M5 metadata edge fail-closed at the graph boundary."""
+        if value is None:
+            return ()
+        if isinstance(value, (str, int, float)):
+            value = (value,)
+        out = []
+        try:
+            values = iter(value)
+        except TypeError:
+            return ()
+        for raw in values:
+            try:
+                idx = int(raw)
+            except (TypeError, ValueError, OverflowError):
+                continue
+            if 0 <= idx < node_count and idx not in out:
+                out.append(idx)
+        return tuple(out)
+
+    def _revision_mount_heads(self, picks):
+        """Return the revision heads present in one proposed mount set.
+
+        M5's existing authoritative edge is replacement metadata
+        ``supersedes=[older ids]``. Walk that edge transitively: an older
+        candidate is removed only when one of its explicit successors is
+        also present. Nodes remain in route results, and a descent/request
+        that presents an older node without its successor still mounts it.
+
+        Any cycle is corrupt revision metadata. Resolution fails open to the
+        original set rather than deleting every member of a cycle or hanging.
+        """
+        # The OFF arm is the byte-for-byte control path: preserve caller
+        # ordering and duplicates exactly, doing no graph parsing at all.
+        if not getattr(self, "revision_resolution", False):
+            return list(picks or ())
+
+        unique = []
+        for raw in picks or ():
+            try:
+                idx = int(raw)
+            except (TypeError, ValueError, OverflowError):
+                continue
+            if 0 <= idx < len(self.grafts) and idx not in unique:
+                unique.append(idx)
+        if len(unique) < 2:
+            return unique
+
+        present = set(unique)
+        superseded_present = set()
+        memo = {}
+
+        def ancestors(idx, visiting):
+            if idx in visiting:
+                raise ValueError("cycle in explicit supersedes metadata")
+            if idx in memo:
+                return memo[idx]
+            visiting.add(idx)
+            meta = self.grafts[idx].get("metadata") or {}
+            direct = self._metadata_node_ids(
+                meta.get("supersedes"), len(self.grafts))
+            found = set(direct)
+            for old in direct:
+                found.update(ancestors(old, visiting))
+            visiting.remove(idx)
+            memo[idx] = found
+            return found
+
+        try:
+            for idx in unique:
+                superseded_present.update(ancestors(idx, set()) & present)
+        except ValueError:
+            return unique
+        return [idx for idx in unique if idx not in superseded_present]
+
+    def _resolve_revision_mounts(self, picks):
+        """Feature-flagged L2 mount-set resolution entry point."""
+        return self._revision_mount_heads(picks)
 
     def _lex_bonus(self, qlex, g):
         """Fractional lexical bonus in [0, 1] — same scale as before
@@ -1979,6 +2131,11 @@ class ArenaCache:
             # "relevance" order kept prose digests and dropped the raw fact
             # turns inside budget-bound expansions. A workable version
             # needs a leaf bias — board item, not a one-liner.
+            # SUP-WO1 L2 sits after routing/descent expansion and before
+            # budget fitting/injection. Resolving first prevents a long stale
+            # revision from consuming seats and then disappearing only after
+            # it has already displaced a viable current candidate.
+            picks = self._resolve_revision_mounts(picks)
             rec_budget = 0 if qrare else sum(self.grafts[i]["ntok"]
                                              for i in rec)
             budget = self.width - rec_budget
@@ -2033,6 +2190,10 @@ class ArenaCache:
             # previous turns are echo sources that can swamp the mounted fact.
             use_rec = rec and not qrare and not clean and picks != precise
             mset = sorted(set(rec) | set(picks)) if use_rec else sorted(set(picks))
+            # Recency nodes join only at final mount-set assembly, so resolve
+            # once more here in case a recency graft and a routed graft are
+            # two explicit revisions of the same M5 lineage.
+            mset = sorted(self._resolve_revision_mounts(mset))
             txt, info = self._attempt(user_text, mset, ngen, deposit, stops)
             info["trip"] = trip
             if clean:
@@ -2064,6 +2225,10 @@ class ArenaCache:
         return txt, info
 
     def _attempt(self, user_text, picks, ngen, deposit, stops):
+        # Final assembly choke point: callers such as diagnostic/probe
+        # drivers may invoke _attempt directly instead of step(). Keep L2
+        # immediately before any payload is loaded, swapped, or injected.
+        picks = self._resolve_revision_mounts(picks)
         self._ensure_h(picks)
         # S1 telemetry (WO-1): reset the per-layer accumulator at the start
         # of EVERY attempt (including shuttling retries) so mass only ever
