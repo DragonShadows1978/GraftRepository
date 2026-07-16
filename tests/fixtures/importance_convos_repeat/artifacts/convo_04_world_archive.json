@@ -1,0 +1,274 @@
+{
+  "conversation_id": "convo_04_world_archive",
+  "late_probes": [
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 8.9599609375,
+          "s3_dep_kl": 1.9958265692947448,
+          "s4_grounded_through_early": 1,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.5605801669034092,
+          "s3_dep_kl": 0.008931190262613992,
+          "s4_grounded_through_early": 0,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.1349376331676135,
+          "s3_dep_kl": 0.006292060893656065,
+          "s4_grounded_through_early": 0,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 0.4058504971590909,
+          "s3_dep_kl": 0.001731277834667992,
+          "s4_grounded_through_early": 0,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.7130681818181818,
+          "s3_dep_kl": 0.0014394680535647136,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 2,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.5297463156960227,
+          "s3_dep_kl": 0.00265095700749091,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "ZEPHYR-563 is the sigil code guarding the eastern gate.",
+      "early_hit": true,
+      "early_probe_turn_id": 13,
+      "expected_answer_scripted": "ZEPHYR-563.",
+      "late_answer": "Eastern gate warding sigil ZEPHYR-563 is in the city archive.",
+      "late_hit": true,
+      "late_probe_turn_id": 29,
+      "probe_id": "convo_04_world_archive#29",
+      "target_turn_id": 1
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.666647518382353,
+          "s3_dep_kl": 0.005426467421847606,
+          "s4_grounded_through_early": 1,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 7.971004710477941,
+          "s3_dep_kl": 1.5289935480702213,
+          "s4_grounded_through_early": 1,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 1,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 0.5558363970588235,
+          "s3_dep_kl": 0.002926979469537758,
+          "s4_grounded_through_early": 0,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 0.6673943014705882,
+          "s3_dep_kl": 0.0009104811526718224,
+          "s4_grounded_through_early": 0,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 0,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.5029871323529411,
+          "s3_dep_kl": 0.0008260379049743769,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.3616727941176471,
+          "s3_dep_kl": 0.0010054303075032152,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "Captain Ilyan Orr reports to Regent Maela Thorn in the border campaign.",
+      "early_hit": true,
+      "early_probe_turn_id": 15,
+      "expected_answer_scripted": "Regent Maela Thorn.",
+      "late_answer": "Captain Ilyan Orr reports to Regent Maela Thorn.",
+      "late_hit": true,
+      "late_probe_turn_id": 31,
+      "probe_id": "convo_04_world_archive#31",
+      "target_turn_id": 3
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 2.0948486328125,
+          "s3_dep_kl": 0.021105798959909924,
+          "s4_grounded_through_early": 1,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.444091796875,
+          "s3_dep_kl": 0.021938550154384905,
+          "s4_grounded_through_early": 1,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 8.371826171875,
+          "s3_dep_kl": 2.5854811332375016,
+          "s4_grounded_through_early": 1,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 0.618896484375,
+          "s3_dep_kl": 0.0023075338994648373,
+          "s4_grounded_through_early": 0,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.638916015625,
+          "s3_dep_kl": 0.001589467382443873,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 2,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.682952880859375,
+          "s3_dep_kl": 0.0014418054571782401,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "Forbidden maps are in observatory archive vault NV-407.",
+      "early_hit": true,
+      "early_probe_turn_id": 17,
+      "expected_answer_scripted": "Archive vault NV-407.",
+      "late_answer": "Forbidden maps are in observatory archive vault NV-407.",
+      "late_hit": true,
+      "late_probe_turn_id": 33,
+      "probe_id": "convo_04_world_archive#33",
+      "target_turn_id": 5
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.60859375,
+          "s3_dep_kl": 0.021722882387074857,
+          "s4_grounded_through_early": 1,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 2.51875,
+          "s3_dep_kl": 0.01362041161023837,
+          "s4_grounded_through_early": 1,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 0.8734375,
+          "s3_dep_kl": 0.006635492514615589,
+          "s4_grounded_through_early": 1,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 12.3671875,
+          "s3_dep_kl": 5.959546476701393,
+          "s4_grounded_through_early": 1,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.5390625,
+          "s3_dep_kl": 0.0025191514588520708,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.6984375,
+          "s3_dep_kl": 0.0021893835627080846,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "Soren Pike mentors apprentice Asha Dren on every river survey.",
+      "early_hit": true,
+      "early_probe_turn_id": 19,
+      "expected_answer_scripted": "Asha Dren.",
+      "late_answer": "Asha Dren",
+      "late_hit": true,
+      "late_probe_turn_id": 35,
+      "probe_id": "convo_04_world_archive#35",
+      "target_turn_id": 7
+    }
+  ],
+  "schema": "grm_s4_grounding_ledger_convo_v1"
+}

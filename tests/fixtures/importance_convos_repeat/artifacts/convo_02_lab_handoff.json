@@ -1,0 +1,274 @@
+{
+  "conversation_id": "convo_02_lab_handoff",
+  "late_probes": [
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 8.133680555555555,
+          "s3_dep_kl": 2.9970552683944534,
+          "s4_grounded_through_early": 1,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.0162760416666667,
+          "s3_dep_kl": 0.010415046852020826,
+          "s4_grounded_through_early": 0,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 0.8294270833333334,
+          "s3_dep_kl": 0.004762008359125961,
+          "s4_grounded_through_early": 0,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 0.8375994364420573,
+          "s3_dep_kl": 0.0015557247639282925,
+          "s4_grounded_through_early": 0,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 2,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.5165744357638888,
+          "s3_dep_kl": 0.0007059291483471736,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.79541015625,
+          "s3_dep_kl": 0.004687139640558236,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "VELA-384",
+      "early_hit": true,
+      "early_probe_turn_id": 13,
+      "expected_answer_scripted": "VELA-384.",
+      "late_answer": "VELA-384.",
+      "late_hit": true,
+      "late_probe_turn_id": 25,
+      "probe_id": "convo_02_lab_handoff#25",
+      "target_turn_id": 1
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.517578125,
+          "s3_dep_kl": 0.004783199445203358,
+          "s4_grounded_through_early": 1,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 10.220703125,
+          "s3_dep_kl": 3.0932292524984697,
+          "s4_grounded_through_early": 1,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 0.8157009548611112,
+          "s3_dep_kl": 0.0054239167805352935,
+          "s4_grounded_through_early": 0,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 2.136935763888889,
+          "s3_dep_kl": 0.0011608101956975532,
+          "s4_grounded_through_early": 0,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.591796875,
+          "s3_dep_kl": 0.0006393942535874299,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 0,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.7171223958333334,
+          "s3_dep_kl": 0.002431569298777812,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "Dr. Imani Rook",
+      "early_hit": true,
+      "early_probe_turn_id": 15,
+      "expected_answer_scripted": "Dr. Imani Rook.",
+      "late_answer": "Dr. Imani Rook.",
+      "late_hit": true,
+      "late_probe_turn_id": 27,
+      "probe_id": "convo_02_lab_handoff#27",
+      "target_turn_id": 3
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.3605685763888888,
+          "s3_dep_kl": 0.010354363706502508,
+          "s4_grounded_through_early": 1,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.4346788194444444,
+          "s3_dep_kl": 0.012665118425027204,
+          "s4_grounded_through_early": 1,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 10.03628200954861,
+          "s3_dep_kl": 3.1720593326208397,
+          "s4_grounded_through_early": 1,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 1,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 0.8440890842013888,
+          "s3_dep_kl": 0.0032149806155145006,
+          "s4_grounded_through_early": 0,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.8524305555555556,
+          "s3_dep_kl": 0.002796786331053809,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 2,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.7807074652777778,
+          "s3_dep_kl": 0.007285372279799588,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "FJ-672",
+      "early_hit": true,
+      "early_probe_turn_id": 17,
+      "expected_answer_scripted": "Locker FJ-672.",
+      "late_answer": "In east-receiving locker FJ-672.\n>",
+      "late_hit": true,
+      "late_probe_turn_id": 29,
+      "probe_id": "convo_02_lab_handoff#29",
+      "target_turn_id": 5
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.611328125,
+          "s3_dep_kl": 0.017404981582748693,
+          "s4_grounded_through_early": 1,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.9796875,
+          "s3_dep_kl": 0.062400250974432324,
+          "s4_grounded_through_early": 1,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 1,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 0.995361328125,
+          "s3_dep_kl": 0.019198767265430926,
+          "s4_grounded_through_early": 1,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 9.10927734375,
+          "s3_dep_kl": 2.906246788831622,
+          "s4_grounded_through_early": 1,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 0,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.42939453125,
+          "s3_dep_kl": 0.0026446060092108698,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.67021484375,
+          "s3_dep_kl": 0.011897199866340278,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "Dr. Sera Quill",
+      "early_hit": true,
+      "early_probe_turn_id": 19,
+      "expected_answer_scripted": "Dr. Sera Quill.",
+      "late_answer": "Dr. Sera Quill.\n>",
+      "late_hit": true,
+      "late_probe_turn_id": 31,
+      "probe_id": "convo_02_lab_handoff#31",
+      "target_turn_id": 7
+    }
+  ],
+  "schema": "grm_s4_grounding_ledger_convo_v1"
+}

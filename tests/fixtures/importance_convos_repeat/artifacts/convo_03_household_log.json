@@ -1,0 +1,274 @@
+{
+  "conversation_id": "convo_03_household_log",
+  "late_probes": [
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 9.732865767045455,
+          "s3_dep_kl": 2.558906653087173,
+          "s4_grounded_through_early": 1,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.5186434659090908,
+          "s3_dep_kl": 0.012509655324020524,
+          "s4_grounded_through_early": 0,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 1,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.0738636363636365,
+          "s3_dep_kl": 0.010915578150244505,
+          "s4_grounded_through_early": 0,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 0.6161776455965909,
+          "s3_dep_kl": 0.002800491218998664,
+          "s4_grounded_through_early": 0,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 2,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.4858925559303977,
+          "s3_dep_kl": 0.0023583425994862417,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.4815340909090909,
+          "s3_dep_kl": 0.0016522729290283763,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "MINT-457 is the code for the orchard watering controller.",
+      "early_hit": true,
+      "early_probe_turn_id": 13,
+      "expected_answer_scripted": "MINT-457.",
+      "late_answer": "MINT-457 is the code for the orchard watering controller in the home dashboard.",
+      "late_hit": true,
+      "late_probe_turn_id": 29,
+      "probe_id": "convo_03_household_log#29",
+      "target_turn_id": 1
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.7534722222222223,
+          "s3_dep_kl": 0.003927803877142879,
+          "s4_grounded_through_early": 1,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 8.589111328125,
+          "s3_dep_kl": 2.7703565870635583,
+          "s4_grounded_through_early": 1,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.1378207736545138,
+          "s3_dep_kl": 0.0025115572268212443,
+          "s4_grounded_through_early": 0,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.6912434895833333,
+          "s3_dep_kl": 0.0015298838232344228,
+          "s4_grounded_through_early": 0,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.5049913194444444,
+          "s3_dep_kl": 0.00021293747032717178,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.6357693142361112,
+          "s3_dep_kl": 0.00039484919992722626,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "Rowan Hale handles Lyra Beck's late robotics-club pickup.",
+      "early_hit": true,
+      "early_probe_turn_id": 15,
+      "expected_answer_scripted": "Rowan Hale.",
+      "late_answer": "Rowan Hale handles Lyra Beck's late robotics-club pickup.",
+      "late_hit": true,
+      "late_probe_turn_id": 31,
+      "probe_id": "convo_03_household_log#31",
+      "target_turn_id": 3
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 1,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.7155877976190477,
+          "s3_dep_kl": 0.007620941903131981,
+          "s4_grounded_through_early": 1,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.2833891369047619,
+          "s3_dep_kl": 0.006585801954626955,
+          "s4_grounded_through_early": 1,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 8.858816964285714,
+          "s3_dep_kl": 2.373443810815021,
+          "s4_grounded_through_early": 1,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 0.7818777901785714,
+          "s3_dep_kl": 0.003606403720378013,
+          "s4_grounded_through_early": 0,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.8951590401785714,
+          "s3_dep_kl": 0.002342310511819024,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 2,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 1.6561976841517858,
+          "s3_dep_kl": 0.00127499171070058,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "The spare house key is in community-office locker KD-918.\n User",
+      "early_hit": true,
+      "early_probe_turn_id": 17,
+      "expected_answer_scripted": "Locker KD-918 at the community office.",
+      "late_answer": "The spare house key is sealed in locker KD-918 at the community office.",
+      "late_hit": true,
+      "late_probe_turn_id": 33,
+      "probe_id": "convo_03_household_log#33",
+      "target_turn_id": 5
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.581825657894737,
+          "s3_dep_kl": 0.006339152834649789,
+          "s4_grounded_through_early": 1,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 2.5270353618421053,
+          "s3_dep_kl": 0.008105106413584123,
+          "s4_grounded_through_early": 1,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.1980622944078947,
+          "s3_dep_kl": 0.0018165206383908001,
+          "s4_grounded_through_early": 1,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 10.611019736842104,
+          "s3_dep_kl": 3.4372835355747564,
+          "s4_grounded_through_early": 1,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.6319901315789473,
+          "s3_dep_kl": 0.0005418888245953121,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.575914884868421,
+          "s3_dep_kl": 0.0005839114275331394,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "Celia Frost sends renovation invoices to household-ledger reviewer Omar Venn.\n User",
+      "early_hit": true,
+      "early_probe_turn_id": 19,
+      "expected_answer_scripted": "Omar Venn.",
+      "late_answer": "Celia Frost sends renovation invoices to household-ledger reviewer Omar Venn.",
+      "late_hit": true,
+      "late_probe_turn_id": 35,
+      "probe_id": "convo_03_household_log#35",
+      "target_turn_id": 7
+    }
+  ],
+  "schema": "grm_s4_grounding_ledger_convo_v1"
+}

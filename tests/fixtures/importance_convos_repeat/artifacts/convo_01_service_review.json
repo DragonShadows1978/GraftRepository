@@ -1,0 +1,274 @@
+{
+  "conversation_id": "convo_01_service_review",
+  "late_probes": [
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 7.380170036764706,
+          "s3_dep_kl": 1.4161454499123185,
+          "s4_grounded_through_early": 1,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.485983455882353,
+          "s3_dep_kl": 0.040838968867889874,
+          "s4_grounded_through_early": 0,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.1642922794117647,
+          "s3_dep_kl": 0.02475837058706175,
+          "s4_grounded_through_early": 0,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 0.9118508731617647,
+          "s3_dep_kl": 0.008848615320175373,
+          "s4_grounded_through_early": 0,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.9389792049632353,
+          "s3_dep_kl": 0.015788385241954046,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 0,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 0.832763671875,
+          "s3_dep_kl": 0.008956563805334872,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "AXIOM-731 is the deploy token for Alder.",
+      "early_hit": true,
+      "early_probe_turn_id": 13,
+      "expected_answer_scripted": "AXIOM-731.",
+      "late_answer": "AXIOM-731 is the deploy token for Alder.",
+      "late_hit": true,
+      "late_probe_turn_id": 29,
+      "probe_id": "convo_01_service_review#29",
+      "target_turn_id": 1
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.898681640625,
+          "s3_dep_kl": 0.014785521201696482,
+          "s4_grounded_through_early": 2,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 6.73541259765625,
+          "s3_dep_kl": 1.8265980870226766,
+          "s4_grounded_through_early": 1,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 1,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.39739990234375,
+          "s3_dep_kl": 0.01135120592187588,
+          "s4_grounded_through_early": 1,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 1,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 2.1907958984375,
+          "s3_dep_kl": 0.007242680915622187,
+          "s4_grounded_through_early": 0,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 0,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 1.1832275390625,
+          "s3_dep_kl": 0.006268253163538418,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 0,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 1.00701904296875,
+          "s3_dep_kl": 0.004684951338088834,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "Mira Solano owns the rollback review for Alder.",
+      "early_hit": true,
+      "early_probe_turn_id": 15,
+      "expected_answer_scripted": "Mira Solano.",
+      "late_answer": "Mira Solano was the rollback-review owner for Alder.",
+      "late_hit": true,
+      "late_probe_turn_id": 31,
+      "probe_id": "convo_01_service_review#31",
+      "target_turn_id": 3
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.7563671875,
+          "s3_dep_kl": 0.010497001778771449,
+          "s4_grounded_through_early": 2,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 1,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.886953125,
+          "s3_dep_kl": 0.02891284528997303,
+          "s4_grounded_through_early": 1,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 7.956575927734375,
+          "s3_dep_kl": 2.404143976945312,
+          "s4_grounded_through_early": 2,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.0534375,
+          "s3_dep_kl": 0.0067320597855031975,
+          "s4_grounded_through_early": 0,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 1.52056640625,
+          "s3_dep_kl": 0.013381463242464713,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 2,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 1.3940625,
+          "s3_dep_kl": 0.006048673684086253,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "Alder's backup hardware is in rack bay CR-842.",
+      "early_hit": true,
+      "early_probe_turn_id": 17,
+      "expected_answer_scripted": "Rack bay CR-842.",
+      "late_answer": "Alder's backup hardware is seated in rack bay CR-842, across from the main switch row.",
+      "late_hit": true,
+      "late_probe_turn_id": 33,
+      "probe_id": "convo_01_service_review#33",
+      "target_turn_id": 5
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "1",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.7762129934210527,
+          "s3_dep_kl": 0.012640072703724983,
+          "s4_grounded_through_early": 2,
+          "turn_id": 1
+        },
+        {
+          "candidate_id": "3",
+          "ground_truth_grade": 2,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 2.233963815789474,
+          "s3_dep_kl": 0.029634681689605223,
+          "s4_grounded_through_early": 1,
+          "turn_id": 3
+        },
+        {
+          "candidate_id": "5",
+          "ground_truth_grade": 0,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 1.255859375,
+          "s3_dep_kl": 0.01335288647153146,
+          "s4_grounded_through_early": 2,
+          "turn_id": 5
+        },
+        {
+          "candidate_id": "7",
+          "ground_truth_grade": 3,
+          "node_class": "PROBED_LATER",
+          "s3_dep_dlogit": 7.894325657894737,
+          "s3_dep_kl": 1.8295895800727984,
+          "s4_grounded_through_early": 1,
+          "turn_id": 7
+        },
+        {
+          "candidate_id": "9",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 1.6201685855263157,
+          "s3_dep_kl": 0.015352668328794313,
+          "s4_grounded_through_early": 0,
+          "turn_id": 9
+        },
+        {
+          "candidate_id": "11",
+          "ground_truth_grade": 1,
+          "node_class": "FILLER",
+          "s3_dep_dlogit": 1.0234375,
+          "s3_dep_kl": 0.0077997815022564105,
+          "s4_grounded_through_early": 0,
+          "turn_id": 11
+        }
+      ],
+      "early_answer": "Tessa Maren receives incident status from Niko Vale.",
+      "early_hit": true,
+      "early_probe_turn_id": 19,
+      "expected_answer_scripted": "Tessa Maren.",
+      "late_answer": "Niko Vale reports status to Tessa Maren, who is the escalation lead.",
+      "late_hit": true,
+      "late_probe_turn_id": 35,
+      "probe_id": "convo_01_service_review#35",
+      "target_turn_id": 7
+    }
+  ],
+  "schema": "grm_s4_grounding_ledger_convo_v1"
+}
