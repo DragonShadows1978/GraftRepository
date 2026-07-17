@@ -38,6 +38,16 @@ from core.graft_quant import (
 )
 
 
+class GraftPayloadMissingError(RuntimeError):
+    """Requested graft payloads could not be restored for mounting."""
+
+    def __init__(self, node_ids):
+        self.node_ids = tuple(dict.fromkeys(int(i) for i in node_ids))
+        self.missing_node_ids = self.node_ids
+        ids = ", ".join(str(i) for i in self.node_ids)
+        super().__init__(f"graft payload unavailable for node ids: {ids}")
+
+
 class ArenaCache:
     def __init__(self, model, encode, decode, sink_text="<conversation>\n",
                  arena_width=256, route_layer=44, topk=3, live_turns=2,
@@ -1365,6 +1375,10 @@ class ArenaCache:
         descent. Returns (digest_idx, digest_text)."""
         if ngen is None:
             ngen = int(self.CONSOLIDATE_NGEN)
+        # Even extractive era folds retire their sources. Validate that every
+        # source has a recoverable payload before either folding path can
+        # alter cache state or make that lifecycle change.
+        self._ensure_h(idxs)        # sources may be paged out (cold storage)
         # standalone generation: arm device mounts directly, no live_shift
         for L in self.m.layers:
             L.self_attn.live_shift = None
@@ -1404,7 +1418,6 @@ class ArenaCache:
             return self._deposit_consolidation(idxs, text,
                                                prefix="ERA INDEX.")
 
-        self._ensure_h(idxs)        # sources may be paged out (cold storage)
         for li, layer in enumerate(self.m.layers):
             att = layer.self_attn
             hs = [self.grafts[i]["h"][li] for i in idxs]
@@ -1493,17 +1506,22 @@ class ArenaCache:
     def _ensure_h(self, idxs):
         """Re-load freed/retired nodes from cold storage before mounting
         (descent re-mounts children whose VRAM was reclaimed; the pager
-        frees least-recently-mounted nodes). Touches the LRU clock."""
+        frees least-recently-mounted nodes). Touches the LRU clock and
+        raises GraftPayloadMissingError when a requested payload cannot be
+        restored."""
         self.mount_clock = getattr(self, "mount_clock", 0) + 1
+        missing = []
         for i in idxs:
             g = self.grafts[i]
             g["last_used"] = self.mount_clock
             if g.get("h") is None:
-                if self.node_loader is None:
-                    raise RuntimeError(f"graft {i} has no tensors and no "
-                                       f"node_loader is set")
-                g["h"] = self.node_loader(i)
-                self.page_ins = getattr(self, "page_ins", 0) + 1
+                if self.node_loader is not None:
+                    g["h"] = self.node_loader(i)
+                    self.page_ins = getattr(self, "page_ins", 0) + 1
+                if g.get("h") is None:
+                    missing.append(i)
+        if missing:
+            raise GraftPayloadMissingError(missing)
 
     def _graft_block(self, picks, li):
         """Arena-slice tensors for layer li: the positional key component

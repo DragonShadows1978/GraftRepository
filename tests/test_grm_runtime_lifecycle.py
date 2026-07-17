@@ -126,6 +126,41 @@ class FakeArena:
     def unpack_index(self, z, i):
         return z["cents"][i].astype(np.float32)
 
+    def _bump_cuda_gqa_epoch(self):
+        pass
+
+    def _node_key(self, text, h_host=None):
+        return np.full((512,), float(len(self.encode(text))), dtype=np.float32)
+
+    def _clear_transients(self):
+        pass
+
+    def _ensure_h(self, idxs):
+        for i in idxs:
+            g = self.grafts[i]
+            if g.get("h") is None and self.node_loader is not None:
+                g["h"] = self.node_loader(i)
+            if g.get("h") is None:
+                raise RuntimeError(f"fake graft {i} has no payload")
+
+    def _set_inject(self, att, blk):
+        pass
+
+    def consolidate(self, idxs, ngen=None):
+        self._ensure_h(idxs)
+        text = " ".join(self.grafts[i]["text"] for i in idxs)
+        didx = self.deposit(f"ARCHIVE NOTE. {text}")
+        digest = self.grafts[didx]
+        digest["kind"] = "digest"
+        digest["sources"] = list(idxs)
+        digest["child_cents"] = [self.grafts[i]["cent"] for i in idxs]
+        for i in idxs:
+            self.grafts[i]["retired"] = True
+        self.last_consolidation_result = {"accepted": True}
+        self.last_consolidation_attempts = []
+        self._bump_cuda_gqa_epoch()
+        return didx, text
+
 
 class FakeSliceArena(FakeArena):
     PAYLOAD = (("tok", 0),)
