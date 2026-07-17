@@ -45,3 +45,26 @@ Plan: GRM_S4_GROUNDING_LEDGER_PLAN.md (immutable, b5428f9).
   note that S4 demotion is then free but not yet advantageous at
   this scale.
 - Non-goals unchanged: no routing integration, demotion only.
+
+## 2026-07-16 — G2-S4 VERDICT: FAIL (registered gate; result stands)
+
+- Receipts: artifacts/grm_s4_demotion/{grm_s4_demotion_lru.json,
+  grm_s4_demotion_s4.json, grm_s4_demotion_verdict.json}; overcommit
+  4.595× (≥3× prerequisite met), paging fired both arms, same session
+  fingerprint both arms.
+- Late-probe recall: LRU 14/16, S4 14/16 — non-inferiority met.
+- Page-ins: LRU 68, S4 112 (+65%) — FAIL on the second condition.
+- MECHANISM (interpretation, receipt-consistent): early in a session
+  the zero-hit class includes the just-deposited nodes routing is
+  about to want again; zero-hit-first spilling breaks recency
+  locality and thrashes exactly where LRU stays warm. The S4 signal
+  ranks importance (G1 GREEN, 0.756/0.875); as a PAGING KEY it lags
+  usage until hits accumulate. Signal ≠ policy; LRU is hard to beat.
+- PROGRAM VERDICT: S4 grounding-hit ledger = VALIDATED IMPORTANCE
+  SIGNAL (G0+G1 green, zero forward-pass cost) with NO consumer win
+  yet. spill_policy="s4" stays in-tree, flagged, default LRU.
+- Successor space (fresh registration each, no retunes): hit-
+  protected LRU hybrid (recency primary, hits as spill-protection
+  only); longer-horizon sessions where hit statistics are dense
+  before pressure; hits as DISK-tier demotion (cold→archive) where
+  recency is meaningless; hits feeding fold ORDER instead of paging.

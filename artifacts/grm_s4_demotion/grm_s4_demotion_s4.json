@@ -1,0 +1,830 @@
+{
+  "early_probe_recall": {
+    "hits": 13,
+    "rate": 0.8125,
+    "total": 16
+  },
+  "early_probes": [
+    {
+      "answer": "The deploy token for Alder is AXIOM-731.",
+      "conversation_id": "convo_01_service_review",
+      "expected_answer_tokens": [
+        "axiom-731"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        1,
+        2,
+        3,
+        5,
+        6
+      ],
+      "page_ins_delta": 0,
+      "page_outs_after_probe": 0,
+      "phase": "early",
+      "probe_turn_id": 13,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 0,
+      "target_turn_id": 1,
+      "trip": 0
+    },
+    {
+      "answer": "Alder's rollback review is owned by Mira Solano.",
+      "conversation_id": "convo_01_service_review",
+      "expected_answer_tokens": [
+        "mira",
+        "solano"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        1,
+        2,
+        3,
+        5,
+        6
+      ],
+      "page_ins_delta": 0,
+      "page_outs_after_probe": 0,
+      "phase": "early",
+      "probe_turn_id": 15,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 1,
+      "target_turn_id": 3,
+      "trip": 0
+    },
+    {
+      "answer": "Alder's backup hardware is in rack bay CR-842.",
+      "conversation_id": "convo_01_service_review",
+      "expected_answer_tokens": [
+        "cr-842"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        1,
+        2,
+        3,
+        5,
+        6
+      ],
+      "page_ins_delta": 0,
+      "page_outs_after_probe": 0,
+      "phase": "early",
+      "probe_turn_id": 17,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 2,
+      "target_turn_id": 5,
+      "trip": 0
+    },
+    {
+      "answer": "Tessa Maren receives incident status from Niko Vale.",
+      "conversation_id": "convo_01_service_review",
+      "expected_answer_tokens": [
+        "tessa",
+        "maren"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        1,
+        2,
+        4,
+        5,
+        6
+      ],
+      "page_ins_delta": 0,
+      "page_outs_after_probe": 0,
+      "phase": "early",
+      "probe_turn_id": 19,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 3,
+      "target_turn_id": 7,
+      "trip": 0
+    },
+    {
+      "answer": "VELA-384",
+      "conversation_id": "convo_02_lab_handoff",
+      "expected_answer_tokens": [
+        "vela-384"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        1,
+        11,
+        12,
+        15,
+        16
+      ],
+      "page_ins_delta": 3,
+      "page_outs_after_probe": 3,
+      "phase": "early",
+      "probe_turn_id": 13,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 10,
+      "target_turn_id": 1,
+      "trip": 0
+    },
+    {
+      "answer": "Mira Solano reviews the Northglass logs on Thursday.",
+      "conversation_id": "convo_02_lab_handoff",
+      "expected_answer_tokens": [
+        "imani",
+        "rook"
+      ],
+      "hit": false,
+      "mounts_one_based": [
+        2,
+        11,
+        12,
+        15,
+        16
+      ],
+      "page_ins_delta": 1,
+      "page_outs_after_probe": 1,
+      "phase": "early",
+      "probe_turn_id": 15,
+      "target_n_grounded_after": 0,
+      "target_n_grounded_before": 0,
+      "target_node": 11,
+      "target_turn_id": 3,
+      "trip": 0
+    },
+    {
+      "answer": "Locker FJ-672 holds the outbound courier crate.",
+      "conversation_id": "convo_02_lab_handoff",
+      "expected_answer_tokens": [
+        "fj-672"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        3,
+        6,
+        13,
+        15,
+        16
+      ],
+      "page_ins_delta": 2,
+      "page_outs_after_probe": 2,
+      "phase": "early",
+      "probe_turn_id": 17,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 12,
+      "target_turn_id": 5,
+      "trip": 0
+    },
+    {
+      "answer": "Dr. Sera Quill receives calibration exceptions from Pavo Lin.",
+      "conversation_id": "convo_02_lab_handoff",
+      "expected_answer_tokens": [
+        "sera",
+        "quill"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        1,
+        5,
+        14,
+        15,
+        16
+      ],
+      "page_ins_delta": 3,
+      "page_outs_after_probe": 3,
+      "phase": "early",
+      "probe_turn_id": 19,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 13,
+      "target_turn_id": 7,
+      "trip": 0
+    },
+    {
+      "answer": "The code MINT-457 identifies the orchard watering controller.",
+      "conversation_id": "convo_03_household_log",
+      "expected_answer_tokens": [
+        "mint-457"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        6,
+        11,
+        21,
+        25,
+        26
+      ],
+      "page_ins_delta": 4,
+      "page_outs_after_probe": 4,
+      "phase": "early",
+      "probe_turn_id": 13,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 20,
+      "target_turn_id": 1,
+      "trip": 0
+    },
+    {
+      "answer": "Rowan Hale picks Lyra Beck up after late robotics practice.",
+      "conversation_id": "convo_03_household_log",
+      "expected_answer_tokens": [
+        "rowan",
+        "hale"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        2,
+        19,
+        22,
+        25,
+        26
+      ],
+      "page_ins_delta": 4,
+      "page_outs_after_probe": 4,
+      "phase": "early",
+      "probe_turn_id": 15,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 21,
+      "target_turn_id": 3,
+      "trip": 0
+    },
+    {
+      "answer": "Locker KD-918 contains the spare house key.",
+      "conversation_id": "convo_03_household_log",
+      "expected_answer_tokens": [
+        "kd-918"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        13,
+        16,
+        23,
+        25,
+        26
+      ],
+      "page_ins_delta": 4,
+      "page_outs_after_probe": 4,
+      "phase": "early",
+      "probe_turn_id": 17,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 22,
+      "target_turn_id": 5,
+      "trip": 0
+    },
+    {
+      "answer": "Omar Venn receives renovation invoices from Celia Frost.",
+      "conversation_id": "convo_03_household_log",
+      "expected_answer_tokens": [
+        "omar",
+        "venn"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        2,
+        3,
+        24,
+        25,
+        26
+      ],
+      "page_ins_delta": 4,
+      "page_outs_after_probe": 4,
+      "phase": "early",
+      "probe_turn_id": 19,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 23,
+      "target_turn_id": 7,
+      "trip": 0
+    },
+    {
+      "answer": "VELA-563 wards the eastern gate.",
+      "conversation_id": "convo_04_world_archive",
+      "expected_answer_tokens": [
+        "zephyr-563"
+      ],
+      "hit": false,
+      "mounts_one_based": [
+        11,
+        21,
+        31,
+        35,
+        36
+      ],
+      "page_ins_delta": 7,
+      "page_outs_after_probe": 7,
+      "phase": "early",
+      "probe_turn_id": 13,
+      "target_n_grounded_after": 0,
+      "target_n_grounded_before": 0,
+      "target_node": 30,
+      "target_turn_id": 1,
+      "trip": 0
+    },
+    {
+      "answer": "Regent Maela Thorn commands Captain Ilyan Orr during the border campaign.",
+      "conversation_id": "convo_04_world_archive",
+      "expected_answer_tokens": [
+        "maela",
+        "thorn"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "page_ins_delta": 5,
+      "page_outs_after_probe": 5,
+      "phase": "early",
+      "probe_turn_id": 15,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 31,
+      "target_turn_id": 3,
+      "trip": 0
+    },
+    {
+      "answer": "The forbidden maps are stored in the archive vault.",
+      "conversation_id": "convo_04_world_archive",
+      "expected_answer_tokens": [
+        "nv-407"
+      ],
+      "hit": false,
+      "mounts_one_based": [
+        16,
+        31,
+        33,
+        35,
+        36
+      ],
+      "page_ins_delta": 5,
+      "page_outs_after_probe": 5,
+      "phase": "early",
+      "probe_turn_id": 17,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 32,
+      "target_turn_id": 5,
+      "trip": 0
+    },
+    {
+      "answer": "Soren Pike mentors apprentice Asha Dren.",
+      "conversation_id": "convo_04_world_archive",
+      "expected_answer_tokens": [
+        "asha",
+        "dren"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        1,
+        12,
+        34,
+        35,
+        36
+      ],
+      "page_ins_delta": 5,
+      "page_outs_after_probe": 5,
+      "phase": "early",
+      "probe_turn_id": 19,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 33,
+      "target_turn_id": 7,
+      "trip": 0
+    }
+  ],
+  "late_probe_recall": {
+    "hits": 14,
+    "rate": 0.875,
+    "total": 16
+  },
+  "late_probes": [
+    {
+      "answer": "The Alder deploy token is AXIOM-731, which is the identifier for release engineering.",
+      "conversation_id": "convo_01_service_review",
+      "expected_answer_tokens": [
+        "axiom-731"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        1,
+        2,
+        3,
+        39,
+        40
+      ],
+      "page_ins_delta": 4,
+      "page_outs_after_probe": 4,
+      "phase": "late",
+      "probe_turn_id": 29,
+      "target_n_grounded_after": 2,
+      "target_n_grounded_before": 1,
+      "target_node": 0,
+      "target_turn_id": 1,
+      "trip": 0
+    },
+    {
+      "answer": "Alder's rollback-review owner is Mira Solano.",
+      "conversation_id": "convo_01_service_review",
+      "expected_answer_tokens": [
+        "mira",
+        "solano"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        1,
+        2,
+        3,
+        39,
+        40
+      ],
+      "page_ins_delta": 2,
+      "page_outs_after_probe": 2,
+      "phase": "late",
+      "probe_turn_id": 31,
+      "target_n_grounded_after": 3,
+      "target_n_grounded_before": 2,
+      "target_node": 1,
+      "target_turn_id": 3,
+      "trip": 0
+    },
+    {
+      "answer": "Alder's backup hardware is seated in CR-842, across from the main switch row.",
+      "conversation_id": "convo_01_service_review",
+      "expected_answer_tokens": [
+        "cr-842"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        1,
+        2,
+        3,
+        39,
+        40
+      ],
+      "page_ins_delta": 2,
+      "page_outs_after_probe": 2,
+      "phase": "late",
+      "probe_turn_id": 33,
+      "target_n_grounded_after": 2,
+      "target_n_grounded_before": 1,
+      "target_node": 2,
+      "target_turn_id": 5,
+      "trip": 0
+    },
+    {
+      "answer": "Tessa Maren",
+      "conversation_id": "convo_01_service_review",
+      "expected_answer_tokens": [
+        "tessa",
+        "maren"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        1,
+        4,
+        14,
+        39,
+        40
+      ],
+      "page_ins_delta": 4,
+      "page_outs_after_probe": 4,
+      "phase": "late",
+      "probe_turn_id": 35,
+      "target_n_grounded_after": 2,
+      "target_n_grounded_before": 1,
+      "target_node": 3,
+      "target_turn_id": 7,
+      "trip": 0
+    },
+    {
+      "answer": "VELA-384",
+      "conversation_id": "convo_02_lab_handoff",
+      "expected_answer_tokens": [
+        "vela-384"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        11,
+        12,
+        21,
+        39,
+        40
+      ],
+      "page_ins_delta": 5,
+      "page_outs_after_probe": 5,
+      "phase": "late",
+      "probe_turn_id": 25,
+      "target_n_grounded_after": 2,
+      "target_n_grounded_before": 1,
+      "target_node": 10,
+      "target_turn_id": 1,
+      "trip": 0
+    },
+    {
+      "answer": "Dr. Imani Rook reviews the Northglass temperature logs.",
+      "conversation_id": "convo_02_lab_handoff",
+      "expected_answer_tokens": [
+        "imani",
+        "rook"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        2,
+        11,
+        12,
+        39,
+        40
+      ],
+      "page_ins_delta": 3,
+      "page_outs_after_probe": 3,
+      "phase": "late",
+      "probe_turn_id": 27,
+      "target_n_grounded_after": 1,
+      "target_n_grounded_before": 0,
+      "target_node": 11,
+      "target_turn_id": 3,
+      "trip": 0
+    },
+    {
+      "answer": "The outbound courier crate is waiting in locker FJ-672, across from the main switch row.",
+      "conversation_id": "convo_02_lab_handoff",
+      "expected_answer_tokens": [
+        "fj-672"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        3,
+        6,
+        13,
+        39,
+        40
+      ],
+      "page_ins_delta": 5,
+      "page_outs_after_probe": 5,
+      "phase": "late",
+      "probe_turn_id": 29,
+      "target_n_grounded_after": 2,
+      "target_n_grounded_before": 1,
+      "target_node": 12,
+      "target_turn_id": 5,
+      "trip": 0
+    },
+    {
+      "answer": "Tessa Maren is the methods lead who receives calibration exceptions from Pavo Lin.",
+      "conversation_id": "convo_02_lab_handoff",
+      "expected_answer_tokens": [
+        "sera",
+        "quill"
+      ],
+      "hit": false,
+      "mounts_one_based": [
+        2,
+        4,
+        14,
+        39,
+        40
+      ],
+      "page_ins_delta": 3,
+      "page_outs_after_probe": 3,
+      "phase": "late",
+      "probe_turn_id": 31,
+      "target_n_grounded_after": 2,
+      "target_n_grounded_before": 1,
+      "target_node": 13,
+      "target_turn_id": 7,
+      "trip": 0
+    },
+    {
+      "answer": "MINT-457",
+      "conversation_id": "convo_03_household_log",
+      "expected_answer_tokens": [
+        "mint-457"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        11,
+        21,
+        33,
+        39,
+        40
+      ],
+      "page_ins_delta": 4,
+      "page_outs_after_probe": 4,
+      "phase": "late",
+      "probe_turn_id": 29,
+      "target_n_grounded_after": 2,
+      "target_n_grounded_before": 1,
+      "target_node": 20,
+      "target_turn_id": 1,
+      "trip": 0
+    },
+    {
+      "answer": "Rowan Hale handles Lyra Beck's late robotics pickup.",
+      "conversation_id": "convo_03_household_log",
+      "expected_answer_tokens": [
+        "rowan",
+        "hale"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        22,
+        31,
+        33,
+        39,
+        40
+      ],
+      "page_ins_delta": 4,
+      "page_outs_after_probe": 4,
+      "phase": "late",
+      "probe_turn_id": 31,
+      "target_n_grounded_after": 2,
+      "target_n_grounded_before": 1,
+      "target_node": 21,
+      "target_turn_id": 3,
+      "trip": 0
+    },
+    {
+      "answer": "The spare house key was sealed in locker KD-918 at the community office.",
+      "conversation_id": "convo_03_household_log",
+      "expected_answer_tokens": [
+        "kd-918"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        16,
+        23,
+        35,
+        39,
+        40
+      ],
+      "page_ins_delta": 5,
+      "page_outs_after_probe": 5,
+      "phase": "late",
+      "probe_turn_id": 33,
+      "target_n_grounded_after": 2,
+      "target_n_grounded_before": 1,
+      "target_node": 22,
+      "target_turn_id": 5,
+      "trip": 0
+    },
+    {
+      "answer": "Omar Venn receives Celia Frost's renovation invoices.",
+      "conversation_id": "convo_03_household_log",
+      "expected_answer_tokens": [
+        "omar",
+        "venn"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        2,
+        12,
+        24,
+        39,
+        40
+      ],
+      "page_ins_delta": 5,
+      "page_outs_after_probe": 5,
+      "phase": "late",
+      "probe_turn_id": 35,
+      "target_n_grounded_after": 2,
+      "target_n_grounded_before": 1,
+      "target_node": 23,
+      "target_turn_id": 7,
+      "trip": 0
+    },
+    {
+      "answer": "EMBER-825",
+      "conversation_id": "convo_04_world_archive",
+      "expected_answer_tokens": [
+        "zephyr-563"
+      ],
+      "hit": false,
+      "mounts_one_based": [
+        31,
+        35,
+        38,
+        39,
+        40
+      ],
+      "page_ins_delta": 5,
+      "page_outs_after_probe": 5,
+      "phase": "late",
+      "probe_turn_id": 29,
+      "target_n_grounded_after": 0,
+      "target_n_grounded_before": 0,
+      "target_node": 30,
+      "target_turn_id": 1,
+      "trip": 0
+    },
+    {
+      "answer": "Captain Ilyan Orr reports to Regent Maela Thorn.",
+      "conversation_id": "convo_04_world_archive",
+      "expected_answer_tokens": [
+        "maela",
+        "thorn"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        14,
+        32,
+        34,
+        39,
+        40
+      ],
+      "page_ins_delta": 5,
+      "page_outs_after_probe": 5,
+      "phase": "late",
+      "probe_turn_id": 31,
+      "target_n_grounded_after": 2,
+      "target_n_grounded_before": 1,
+      "target_node": 31,
+      "target_turn_id": 3,
+      "trip": 0
+    },
+    {
+      "answer": "The forbidden maps are stored in archive vault NV-407 beneath the old observatory.",
+      "conversation_id": "convo_04_world_archive",
+      "expected_answer_tokens": [
+        "nv-407"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        3,
+        33,
+        37,
+        39,
+        40
+      ],
+      "page_ins_delta": 5,
+      "page_outs_after_probe": 5,
+      "phase": "late",
+      "probe_turn_id": 33,
+      "target_n_grounded_after": 2,
+      "target_n_grounded_before": 1,
+      "target_node": 32,
+      "target_turn_id": 5,
+      "trip": 0
+    },
+    {
+      "answer": "Asha Dren is the apprentice of Dr. Imani Rook.",
+      "conversation_id": "convo_04_world_archive",
+      "expected_answer_tokens": [
+        "asha",
+        "dren"
+      ],
+      "hit": true,
+      "mounts_one_based": [
+        2,
+        12,
+        34,
+        39,
+        40
+      ],
+      "page_ins_delta": 4,
+      "page_outs_after_probe": 4,
+      "phase": "late",
+      "probe_turn_id": 35,
+      "target_n_grounded_after": 2,
+      "target_n_grounded_before": 1,
+      "target_node": 33,
+      "target_turn_id": 7,
+      "trip": 0
+    }
+  ],
+  "overcommit": {
+    "budget_bytes": 12582912,
+    "minimum": 3.0,
+    "ratio": 4.594940185546875,
+    "total_node_bytes": 57817728
+  },
+  "page_ins": 112,
+  "page_ins_by_phase": {
+    "late_probes": 65,
+    "prefix_including_early": 47
+  },
+  "page_outs": 145,
+  "paging_fired": true,
+  "policy": "s4",
+  "schema": "grm_s4_demotion_policy_v1",
+  "session": {
+    "conversation_ids": [
+      "convo_01_service_review",
+      "convo_02_lab_handoff",
+      "convo_03_household_log",
+      "convo_04_world_archive"
+    ],
+    "driver_id": "four_repeat_prefixes_then_late_v1",
+    "fingerprint": "3da3c752f84ddf902d0cd410811901b0664c19a28151d4ec5538d7c1737ca483",
+    "n_conversations": 4,
+    "n_early_probes": 16,
+    "n_late_probes": 16,
+    "n_nodes": 40,
+    "repository_sessions": 1
+  }
+}
