@@ -2,11 +2,12 @@
 
 Pytest collects only CPU work from this module: fixture validation, the
 frozen L1 score math, and L2 mount-resolution graph cases. The real MiniCPM3
-battery is reachable only through this file's ``--run-gpu`` command-line
-entry point. A GPU run emits one JSON object per probe plus a machine-readable
-threshold-registration input summary; it intentionally asserts no G0/G1/G2
-performance verdict because the plan requires the lead to register numeric
-floors after the unpatched G0 measurement.
+battery (or its Qwen3-4B GQA port) is reachable only through this file's
+``--run-gpu`` command-line entry point. A GPU run emits one JSON object per
+probe plus a machine-readable threshold-registration input summary; it
+intentionally asserts no G0/G1/G2 performance verdict because the plan
+requires the lead to register numeric floors after the unpatched G0
+measurement.
 """
 import argparse
 import copy
@@ -28,6 +29,22 @@ from core.graft_arena import ArenaCache, GQAArenaCache
 
 
 SCHEMA = "grm_supersession_battery_v1"
+RECEIPT_SCHEMA = "grm_supersession_receipt_v1"
+DIALECTS = ("mla", "gqa")
+DIALECT_DEFAULTS = {
+    "mla": {
+        "model": "MiniCPM3",
+        "arena_type": ArenaCache,
+        "route_layer": 44,
+        "live_turns": 0,
+    },
+    "gqa": {
+        "model": "Qwen3-4B",
+        "arena_type": GQAArenaCache,
+        "route_layer": 0,
+        "live_turns": 2,
+    },
+}
 SCENARIOS = {
     "short_correction_long_competitor",
     "multi_hop_a_b_c",
@@ -39,6 +56,37 @@ NODE_ROLES = {"stale", "correction", "restatement", "competitor", "fresh"}
 
 class FixtureError(ValueError):
     pass
+
+
+def _dialect_config(args):
+    """Resolve the model/arena surface without importing or loading a model."""
+    dialect = args.dialect
+    if dialect not in DIALECT_DEFAULTS:
+        raise ValueError(f"unsupported supersession dialect {dialect!r}")
+    config = dict(DIALECT_DEFAULTS[dialect])
+    requested_layer = getattr(args, "route_layer", None)
+    config["route_layer"] = (
+        config["route_layer"] if requested_layer is None
+        else int(requested_layer)
+    )
+    if dialect == "gqa" and config["route_layer"] != 0:
+        raise ValueError(
+            "GQA supersession battery requires --route-layer 0: Qwen3's "
+            "layer-0 |q.k| router is part of the dialect contract")
+    config["dialect"] = dialect
+    return config
+
+
+def _receipt_row(record_type, dialect, **fields):
+    """Keep every emitted record on the registered receipt schema."""
+    if dialect not in DIALECTS:
+        raise ValueError(f"unsupported supersession receipt dialect {dialect!r}")
+    return {
+        "record_type": record_type,
+        "schema": RECEIPT_SCHEMA,
+        "dialect": dialect,
+        **fields,
+    }
 
 
 def _require(condition, message):
@@ -246,6 +294,58 @@ def test_fixture_validator_rejects_missing_probe_diagnostic_role():
 
 
 # ===========================================================================
+# CPU dialect/receipt tests
+# ===========================================================================
+
+def test_dialect_selection_keeps_existing_mla_defaults():
+    config = _dialect_config(parse_args([]))
+
+    assert config["dialect"] == "mla"
+    assert config["model"] == "MiniCPM3"
+    assert config["arena_type"] is ArenaCache
+    assert config["route_layer"] == 44
+    assert config["live_turns"] == 0
+
+
+def test_dialect_selection_uses_qwen_gqa_surface():
+    config = _dialect_config(parse_args(["--dialect", "gqa"]))
+
+    assert config["dialect"] == "gqa"
+    assert config["model"] == "Qwen3-4B"
+    assert config["arena_type"] is GQAArenaCache
+    assert config["route_layer"] == 0
+    assert config["live_turns"] == 2
+
+
+def test_gqa_dialect_rejects_nonzero_route_layer():
+    args = parse_args(["--dialect", "gqa", "--route-layer", "1"])
+
+    with pytest.raises(ValueError, match="requires --route-layer 0"):
+        _dialect_config(args)
+
+
+@pytest.mark.parametrize("dialect", DIALECTS)
+def test_receipt_schema_round_trip_preserves_dialect(tmp_path, capsys, dialect):
+    path = tmp_path / f"{dialect}.jsonl"
+    row = _receipt_row(
+        "supersession_battery_run", dialect,
+        mode="baseline", debias=False, resolve=False,
+    )
+    sink = _ReceiptSink(path)
+    try:
+        sink.emit(row)
+    finally:
+        sink.close()
+
+    persisted = json.loads(path.read_text(encoding="utf-8"))
+    printed = json.loads(capsys.readouterr().out)
+    assert persisted == row
+    assert printed == row
+    assert persisted["schema"] == RECEIPT_SCHEMA
+    assert persisted["dialect"] == dialect
+
+
+# ===========================================================================
 # CPU L1 score tests
 # ===========================================================================
 
@@ -428,36 +528,54 @@ def _mode(args):
     return "baseline"
 
 
-def run_gpu_battery(args, loaded, sink):
-    """Run measurement-only MiniCPM3 probes; never assert performance."""
-    from core.minicpm3_tc import MiniCPM3_TC, _snap
+def _load_dialect_model(config):
+    """Load only the model selected by the guarded real-battery entry point."""
     from tokenizers import Tokenizer as HFTok
 
-    tok = HFTok.from_file(os.path.join(_snap(), "tokenizer.json"))
-    model, model_info = MiniCPM3_TC.from_pretrained()
+    if config["dialect"] == "mla":
+        from core.minicpm3_tc import MiniCPM3_TC, _snap
+
+        tok = HFTok.from_file(os.path.join(_snap(), "tokenizer.json"))
+        model, model_info = MiniCPM3_TC.from_pretrained()
+    elif config["dialect"] == "gqa":
+        from core.qwen3_tc import Qwen3_TC, _snap
+
+        tok = HFTok.from_file(os.path.join(_snap(), "tokenizer.json"))
+        model, model_info = Qwen3_TC.from_pretrained()
+    else:  # _dialect_config keeps this fail-closed for normal callers.
+        raise ValueError(f"unsupported supersession dialect {config['dialect']!r}")
+    return model, tok, model_info
+
+
+def run_gpu_battery(args, loaded, sink):
+    """Run measurement-only probes for the selected dialect; never assert performance."""
+    config = _dialect_config(args)
+    model, tok, model_info = _load_dialect_model(config)
     mode = _mode(args)
-    sink.emit({
-        "record_type": "supersession_battery_run",
-        "schema": "grm_supersession_receipt_v1",
-        "mode": mode,
-        "debias": bool(args.debias),
-        "resolve": bool(args.resolve),
-        "model": "MiniCPM3",
-        "model_info": str(model_info),
-        "performance_status": "measurement_only_thresholds_unregistered",
-    })
+    sink.emit(_receipt_row(
+        "supersession_battery_run", config["dialect"],
+        mode=mode,
+        debias=bool(args.debias),
+        resolve=bool(args.resolve),
+        model=config["model"],
+        model_info=str(model_info),
+        performance_status="measurement_only_thresholds_unregistered",
+    ))
 
     receipts = []
     for path, fixture, _summary in loaded:
-        arena = ArenaCache(
+        # GQA inherits the same early-stop ``step`` path, but its dialect
+        # contract fixes the router at layer 0 and retains the gate's two
+        # live turns. MLA retains its original layer-44, no-live-turn setup.
+        arena = config["arena_type"](
             model,
             encode=lambda text: tok.encode(text).ids,
             decode=lambda ids: tok.decode(ids),
             sink_text="<conversation>\n",
             arena_width=int(args.arena_width),
-            route_layer=int(args.route_layer),
+            route_layer=config["route_layer"],
             topk=int(args.topk),
-            live_turns=0,
+            live_turns=config["live_turns"],
             cache_deposits=False,
             length_debias=bool(args.debias),
             revision_resolution=bool(args.resolve),
@@ -488,35 +606,34 @@ def run_gpu_battery(args, loaded, sink):
                                   if probe["stale_nodes"] else None)
             competitor_idx = node_to_idx[probe["competitor_node"]]
             classification, matched_value = _classify_answer(answer, probe)
-            row = {
-                "record_type": "supersession_probe_receipt",
-                "schema": "grm_supersession_receipt_v1",
-                "mode": mode,
-                "session_id": fixture["session_id"],
-                "scenario": fixture["scenario"],
-                "fixture": path.name,
-                "probe_id": probe["probe_id"],
-                "question": probe["question"],
-                "route_backend": route_backend,
-                "ranking_nodes": [idx_to_node.get(idx, f"graft:{idx}")
-                                  for idx in ranking],
-                "target_node": probe["target_node"],
-                "target_rank": _rank(ranking, target_idx),
-                "correction_node": probe["correction_node"],
-                "correction_rank": (_rank(ranking, correction_idx)
-                                    if correction_idx is not None else None),
-                "stale_nodes": list(probe["stale_nodes"]),
-                "stale_rank": primary_stale_rank,
-                "stale_ranks": stale_ranks,
-                "competitor_node": probe["competitor_node"],
-                "competitor_rank": _rank(ranking, competitor_idx),
-                "mounted_nodes": mounted_nodes,
-                "mounted_indices": mounted_indices,
-                "answer_text": answer,
-                "classification": classification,
-                "classification_match": matched_value,
-                "arena_info": info,
-            }
+            row = _receipt_row(
+                "supersession_probe_receipt", config["dialect"],
+                mode=mode,
+                session_id=fixture["session_id"],
+                scenario=fixture["scenario"],
+                fixture=path.name,
+                probe_id=probe["probe_id"],
+                question=probe["question"],
+                route_backend=route_backend,
+                ranking_nodes=[idx_to_node.get(idx, f"graft:{idx}")
+                               for idx in ranking],
+                target_node=probe["target_node"],
+                target_rank=_rank(ranking, target_idx),
+                correction_node=probe["correction_node"],
+                correction_rank=(_rank(ranking, correction_idx)
+                                 if correction_idx is not None else None),
+                stale_nodes=list(probe["stale_nodes"]),
+                stale_rank=primary_stale_rank,
+                stale_ranks=stale_ranks,
+                competitor_node=probe["competitor_node"],
+                competitor_rank=_rank(ranking, competitor_idx),
+                mounted_nodes=mounted_nodes,
+                mounted_indices=mounted_indices,
+                answer_text=answer,
+                classification=classification,
+                classification_match=matched_value,
+                arena_info=info,
+            )
             receipts.append(row)
             sink.emit(row)
 
@@ -529,13 +646,12 @@ def run_gpu_battery(args, loaded, sink):
         and row["correction_rank"] is not None
         and row["competitor_rank"] < row["correction_rank"]
         for row in competition)
-    summary = {
-        "record_type": "supersession_battery_summary",
-        "schema": "grm_supersession_receipt_v1",
-        "mode": mode,
-        "probe_count": len(receipts),
-        "classification_counts": counts,
-        "threshold_registration_inputs": {
+    summary = _receipt_row(
+        "supersession_battery_summary", config["dialect"],
+        mode=mode,
+        probe_count=len(receipts),
+        classification_counts=counts,
+        threshold_registration_inputs={
             "correction_rank_by_probe": {
                 row["probe_id"]: row["correction_rank"] for row in competition
             },
@@ -554,8 +670,8 @@ def run_gpu_battery(args, loaded, sink):
                 row["scenario"] == "fresh_fact_controls"
                 for row in receipts),
         },
-        "performance_status": "measurement_only_thresholds_unregistered",
-    }
+        performance_status="measurement_only_thresholds_unregistered",
+    )
     sink.emit(summary)
     return summary
 
@@ -564,8 +680,11 @@ def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--run-gpu", action="store_true",
-        help="Load MiniCPM3 and execute the real battery. Without this flag, "
-             "only fixture validation runs.")
+        help="Load the selected dialect's model and execute the real battery. "
+             "Without this flag, only fixture validation runs.")
+    parser.add_argument(
+        "--dialect", choices=DIALECTS, default="mla",
+        help="Arena/model dialect (default: mla; gqa selects Qwen3-4B).")
     parser.add_argument(
         "--debias", action="store_true",
         help="Enable the default-off L1 log-length-normalized route score.")
@@ -573,7 +692,9 @@ def parse_args(argv=None):
         "--resolve", action="store_true",
         help="Enable the default-off L2 revision-aware mount resolution.")
     parser.add_argument("--arena-width", type=int, default=256)
-    parser.add_argument("--route-layer", type=int, default=44)
+    parser.add_argument(
+        "--route-layer", type=int,
+        help="Override the dialect default (MLA: 44; GQA: fixed at 0).")
     parser.add_argument("--topk", type=int, default=3)
     parser.add_argument("--ngen", type=int, default=32)
     parser.add_argument(
@@ -584,26 +705,25 @@ def parse_args(argv=None):
 
 def main(argv=None):
     args = parse_args(argv)
+    config = _dialect_config(args)
     sink = _ReceiptSink(args.receipt_jsonl)
     try:
         loaded = load_battery_fixtures()
-        sink.emit({
-            "record_type": "supersession_fixture_validation",
-            "schema": "grm_supersession_receipt_v1",
-            "fixture_count": len(loaded),
-            "probe_count": sum(summary["probe_count"]
-                               for _, _, summary in loaded),
-            "scenarios": sorted(summary["scenario"]
-                                for _, _, summary in loaded),
-            "status": "ok",
-        })
+        sink.emit(_receipt_row(
+            "supersession_fixture_validation", config["dialect"],
+            fixture_count=len(loaded),
+            probe_count=sum(summary["probe_count"]
+                            for _, _, summary in loaded),
+            scenarios=sorted(summary["scenario"]
+                             for _, _, summary in loaded),
+            status="ok",
+        ))
         if not args.run_gpu:
-            sink.emit({
-                "record_type": "supersession_battery_skip",
-                "schema": "grm_supersession_receipt_v1",
-                "status": "gpu_gate_not_requested",
-                "gpu_work_done": False,
-            })
+            sink.emit(_receipt_row(
+                "supersession_battery_skip", config["dialect"],
+                status="gpu_gate_not_requested",
+                gpu_work_done=False,
+            ))
             return 0
         run_gpu_battery(args, loaded, sink)
         return 0
