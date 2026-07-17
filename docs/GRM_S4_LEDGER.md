@@ -84,3 +84,29 @@ Plan: GRM_S4_GROUNDING_LEDGER_PLAN.md (immutable, b5428f9).
   REGISTERED PASS = recall(s4_protect) ≥ recall(LRU) AND
   page-ins(s4_protect) ≤ page-ins(LRU). Ties-on-both = pass-by-
   equivalence with the free-but-not-yet-advantageous note.
+
+## 2026-07-17 — s4_protect VERDICT: FAIL — and an equivalence law
+
+- Receipts: grm_s4_demotion_s4_protect.json vs the fingerprint-matched
+  LRU arm. Recall tied 14/16; page-ins 112 vs 68 — FAIL on the
+  registered second condition, identical numbers to the zero-hit-first
+  policy.
+- BYTE-IDENTICAL RECEIPTS vs the s4 arm (every probe record, every
+  phase split). Plumbing verified engaged at source (_page dispatches
+  to _s4_protect_spill_order; distinct code, CPU-tested distinct where
+  nonzero hit counts differ). Verdict: BEHAVIORAL EQUIVALENCE on this
+  workload — with binary-sparse hits, protect-the-grounded and
+  spill-zero-hit-first select the same victims in the same order;
+  they diverge only when spilling among nodes with DIFFERING nonzero
+  hit counts, which this session never forces.
+- LAW (registered): EVICTION IS ZERO-SUM. Under a fixed budget,
+  protection is victim-relabeling: shielding hit-nodes IS evicting
+  the unhit, and early-session unhit = young. The s4_protect
+  registration's premise ("young zero-hit nodes get default LRU
+  treatment, not punishment") was arithmetically impossible — there
+  is no paging policy that both honors hits and spares the young when
+  the young are the zero-hit mass. S4-as-paging-signal is now closed
+  from BOTH directions (punish-zero-hit: G2-S4 FAIL; protect-nonzero:
+  equivalent, FAIL). Remaining live consumer bets: fold order
+  (G-FOLD, in flight) and disk-tier demotion (registered successor;
+  recency-free regime).

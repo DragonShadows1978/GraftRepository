@@ -7,7 +7,7 @@
       "overcommit_ratio": 4.594940185546875,
       "page_ins": 68
     },
-    "s4": {
+    "s4_protect": {
       "late_probe_hits": 14,
       "late_probe_recall": 0.875,
       "late_probe_total": 16,
@@ -15,13 +15,17 @@
       "page_ins": 112
     }
   },
+  "comparison": {
+    "baseline_policy": "lru",
+    "candidate_policy": "s4_protect"
+  },
   "conditions": {
     "late_probe_recall_noninferior": true,
     "page_ins_noninferior": false
   },
   "margins": {
-    "late_probe_hits_s4_minus_lru": 0,
-    "page_ins_lru_minus_s4": -44
+    "late_probe_hits_s4_protect_minus_lru": 0,
+    "page_ins_lru_minus_s4_protect": -44
   },
   "note": null,
   "pass": false,
@@ -29,11 +33,11 @@
   "prerequisites": {
     "overcommit_at_least_3x": {
       "lru": true,
-      "s4": true
+      "s4_protect": true
     },
     "paging_fired": {
       "lru": true,
-      "s4": true
+      "s4_protect": true
     },
     "pass": true,
     "same_budget": true,
@@ -41,9 +45,9 @@
     "same_session": true
   },
   "registered_gate": {
-    "late_probe_recall": "s4 >= lru",
+    "late_probe_recall": "s4_protect >= lru",
     "minimum_overcommit": 3.0,
-    "page_ins": "s4 <= lru"
+    "page_ins": "s4_protect <= lru"
   },
   "schema": "grm_s4_demotion_verdict_v1"
 }
