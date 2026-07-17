@@ -298,3 +298,19 @@ after.
   crash). Fix order dispatched (fold eligibility = resolvable
   payload only; both deferred and backpressure paths; counter-jam
   guard per 816a0a0 lesson). Queued in GRM_BUG_QUEUE.md as M11.
+
+## 2026-07-17 — CORRECTION + exploratory registration (successor 7a/7b)
+
+- CORRECTION: the 2026-07-16 close-out claimed per-layer S1
+  diagnostics "sit unread in the sealed artifacts." FALSE — lead
+  verified 2026-07-17: artifact schema carries headline s1_mass only
+  (candidate keys: s1_mass, s2_salience, s3_dep_dlogit, s3_dep_kl).
+  The per-layer study requires a driver extension (record
+  s1_mass(per_layer=True) per candidate) + GPU leg re-runs.
+- EXPLORATORY REGISTRATION (7a per-layer S1, 7b KL-ranked arbiter):
+  both are HYPOTHESIS-GENERATING analyses, not gates. No pass/fail
+  thresholds attached. Any metric change they motivate (e.g., KL as
+  S3 primary, single-layer S1) requires a FRESH gate registration
+  before any gate runs on it. 7b computes from sealed artifacts
+  (s3_dep_kl per candidate); 7a re-runs legs with per-layer capture
+  under the same fixtures + warm-up law.

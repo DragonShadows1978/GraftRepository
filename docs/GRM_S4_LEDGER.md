@@ -68,3 +68,19 @@ Plan: GRM_S4_GROUNDING_LEDGER_PLAN.md (immutable, b5428f9).
   only); longer-horizon sessions where hit statistics are dense
   before pressure; hits as DISK-tier demotion (cold→archive) where
   recency is meaningless; hits feeding fold ORDER instead of paging.
+
+## 2026-07-17 — s4_protect REGISTERED (successor #5, before any gate)
+
+- Policy: spill_policy="s4_protect" — LRU stays PRIMARY (recency
+  ordering untouched); nodes with n_grounded > 0 are PROTECTED from
+  spill while any unprotected candidate remains; protection yields
+  (pure LRU among protected) only when every resident node is
+  protected. The inverse of the failed zero-hit-first design: hits
+  shield, never accelerate eviction; the young-node confound is
+  structurally absent (young zero-hit nodes get default LRU
+  treatment, not punishment).
+- Gate: same A/B form and prerequisites as G2-S4 (4-convo combined
+  session, ≥3× overcommit, paging fired, same fingerprint).
+  REGISTERED PASS = recall(s4_protect) ≥ recall(LRU) AND
+  page-ins(s4_protect) ≤ page-ins(LRU). Ties-on-both = pass-by-
+  equivalence with the free-but-not-yet-advantageous note.
