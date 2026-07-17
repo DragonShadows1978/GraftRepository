@@ -128,9 +128,17 @@ class CudaGQARouteSidecar:
         self,
         keys: np.ndarray,
         node_ids: np.ndarray | None = None,
+        *,
+        signature: object | None = None,
     ) -> "CudaGQARouteBank":
         keys_np, ids_np = validate_gqa_route_bank(keys, node_ids)
-        signature = gqa_route_bank_signature(keys_np, ids_np)
+        # Direct/public callers retain the deterministic content hash. The
+        # arena bridge may pass its already-authoritative epoch/signature
+        # token: hashing a 512 MiB immutable bank again added ~720 ms to a
+        # cold attach while providing no extra staleness coverage (the bank
+        # was just built behind that same epoch token).
+        if signature is None:
+            signature = gqa_route_bank_signature(keys_np, ids_np)
         arena = self._probe.create_arena(keys_np)
         return CudaGQARouteBank(
             arena,
@@ -157,7 +165,7 @@ class CudaGQARouteBank:
         node_ids: np.ndarray,
         *,
         setup_wall_ms: float,
-        signature: str | None = None,
+        signature: object | None = None,
     ):
         self._arena = arena
         self.node_ids = np.ascontiguousarray(node_ids, dtype=np.uint64)

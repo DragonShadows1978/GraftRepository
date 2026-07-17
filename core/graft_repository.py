@@ -1675,7 +1675,7 @@ class GraftRepository:
             # retired flips outside any _mark_mutations call in this path
             # (apply_extraction_candidate's "expire" branch returns directly
             # after this helper) — signature field, bump explicitly.
-            self.arena._bump_cuda_gqa_epoch()
+            self._bump_cuda_route_epoch()
         return expired
 
     def _candidate_text(self, candidate, source_text=None):
@@ -2101,7 +2101,7 @@ class GraftRepository:
             # own _mark_mutations already ran for the new node — a separate
             # signature-field mutation this call path doesn't otherwise
             # bump.
-            self.arena._bump_cuda_gqa_epoch()
+            self._bump_cuda_route_epoch()
             self._native_apply_revision(idx, supersedes)
             self._append_wal("MEMORY_EXTRACT_SUPERSEDE",
                              node_id=idx, supersedes=list(supersedes))
@@ -2685,7 +2685,7 @@ class GraftRepository:
         # digest + sources; this "kind" overwrite runs after that bump
         # returned, so it needs its own (signature field, no _mark_mutations
         # in this call path).
-        self.arena._bump_cuda_gqa_epoch()
+        self._bump_cuda_route_epoch()
         self._free_retired()
         return True
 
@@ -3108,7 +3108,7 @@ class GraftRepository:
         # durable, _native_evict_device_copy, _sync_native_full, load()'s
         # replayed-node sync), so this bump is the single point of truth
         # for "a graft just got assigned its native id".
-        self.arena._bump_cuda_gqa_epoch()
+        self._bump_cuda_route_epoch()
         self._native_set_route(idx)
         self._native_set_metadata(idx)
         return int(node_id)
@@ -3739,7 +3739,7 @@ class GraftRepository:
         self.review_buffer = list(getattr(self, "recovered_reviews", []))
         # Full-list append with no _mark_mutations call in this path
         # (crash-recovery bootstrap, no manifest yet).
-        self.arena._bump_cuda_gqa_epoch()
+        self._bump_cuda_route_epoch()
         return len(self.arena.grafts)
 
     def _provenance(self, segment_type, node_id=None, **fields):
@@ -3878,6 +3878,18 @@ class GraftRepository:
         if metadata:
             self._native_set_metadata(idx)
 
+    def _bump_cuda_route_epoch(self):
+        """Invalidate an arena CUDA route snapshot when the arena supports it.
+
+        `arena_cls` is a public repository seam used by CPU-only/custom
+        arenas and the lifecycle test doubles. Production ArenaCache dialects
+        expose the epoch hook; unrelated implementations must remain valid
+        without having to grow a CUDA-specific method.
+        """
+        bump = getattr(self.arena, "_bump_cuda_gqa_epoch", None)
+        if callable(bump):
+            bump()
+
     def _mark_mutations(self, before):
         # Choke point: every top-level mutating call (add_document, remember,
         # cull_graft, forget, correct_memory, migrate, update_memory_metadata)
@@ -3888,7 +3900,7 @@ class GraftRepository:
         # bumps below at mutation paths that never call _mark_mutations
         # (WAL replay, load(), _fold_once, _native_sync_node, standalone
         # expire/supersede loops) — each of those bumps itself.
-        self.arena._bump_cuda_gqa_epoch()
+        self._bump_cuda_route_epoch()
         self._sync_lifecycle()
         for i, g in enumerate(self.arena.grafts):
             self._note_graft_text_ascii(g.get("text", ""))
@@ -4130,7 +4142,7 @@ class GraftRepository:
                 self._native_node_ids[int(i)] = int(i)
             # native_node_id assigned directly here (identity mapping from a
             # native checkpoint), bypassing _native_sync_node's own bump.
-            self.arena._bump_cuda_gqa_epoch()
+            self._bump_cuda_route_epoch()
         if native_loaded:
             for i in getattr(self, "replayed_wal_nodes", ()):
                 g = self.arena.grafts[int(i)]
@@ -4162,7 +4174,7 @@ class GraftRepository:
         # _apply_manifest_wal_records, load(), and migrate() — bump here
         # once so every caller is covered without duplicating the bump at
         # each call site.
-        self.arena._bump_cuda_gqa_epoch()
+        self._bump_cuda_route_epoch()
 
     def migrate(self, src_path):
         """Rebuild THIS (empty) repository from another repository's TEXTS.

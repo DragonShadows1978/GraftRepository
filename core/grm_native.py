@@ -151,6 +151,7 @@ def _default_lib_path():
 
 class NativeGraftStore:
     supports_multi_route_keys = True
+    supports_cuda_gqa_epoch_signature = True
 
     def __init__(self, lib_path=None, *, model_type="model",
                  num_layers=0, hidden_dim=0, vals_per_tok_layer=0,
@@ -1496,7 +1497,7 @@ class NativeGraftStore:
 
     def configure_cuda_gqa_route_bank(self, route_bank, node_ids=None, *,
                                       sidecar=None, build_dir=None,
-                                      nvcc="nvcc"):
+                                      nvcc="nvcc", signature=None):
         """Attach an explicit CUDA GQA route bank.
 
         The default `route_gqa()` path remains the dependency-free CPU C ABI.
@@ -1515,7 +1516,8 @@ class NativeGraftStore:
         if sidecar is None:
             sidecar = CudaGQARouteSidecar.build(build_dir=build_dir, nvcc=nvcc)
         try:
-            bank = sidecar.create_bank(route_bank, node_ids)
+            bank = sidecar.create_bank(
+                route_bank, node_ids, signature=signature)
         except Exception:
             if owns_sidecar:
                 sidecar.close()
