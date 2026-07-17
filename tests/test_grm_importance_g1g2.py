@@ -21,7 +21,8 @@ Three tiers:
      sweep (WO-2, tests/test_grm_importance_counterfactual.py: full-set
      reference warmed, then minus-one per candidate). Writes one JSON
      artifact per convo under tests/fixtures/importance_convos/artifacts/
-     (schema grm_importance_g1g2_convo_v1).
+     (schema grm_importance_g1g2_convo_v2; sealed v1 artifacts remain
+     readable by the CPU analysis loader).
 
   2. ANALYSIS (--analyze, CPU only, reads the artifacts written by the
      driver): registered G1 metrics (median Spearman vs S3 ranks per
@@ -77,7 +78,16 @@ FIXTURES_DIR = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "fixtures", "importance_convos")
 ARTIFACTS_DIR = os.path.join(FIXTURES_DIR, "artifacts")
 
-CONVO_ARTIFACT_SCHEMA = "grm_importance_g1g2_convo_v1"
+CONVO_ARTIFACT_SCHEMA_V1 = "grm_importance_g1g2_convo_v1"
+CONVO_ARTIFACT_SCHEMA_V2 = "grm_importance_g1g2_convo_v2"
+# New driver receipts are v2.  Keep the original name as the writer's
+# current schema so existing callers of make_convo_artifact() move forward
+# without an API change.
+CONVO_ARTIFACT_SCHEMA = CONVO_ARTIFACT_SCHEMA_V2
+SUPPORTED_CONVO_ARTIFACT_SCHEMAS = frozenset({
+    CONVO_ARTIFACT_SCHEMA_V1,
+    CONVO_ARTIFACT_SCHEMA_V2,
+})
 VERDICT_SCHEMA = "grm_importance_g1g2_verdict_v1"
 
 # Registered floors/thresholds (ledger, "G1/G2 THRESHOLDS REGISTERED",
@@ -283,7 +293,14 @@ def compute_g2(standing_pref_records, filler_records):
 def make_convo_artifact(conversation_id, probes):
     """probes: list of {"probe_id", "candidates": [...]} per the schema
     documented in compute_g1's docstring, PLUS each candidate carries
-    "node_class" (fixture label, carried through for G2 pooling)."""
+    "node_class" (fixture label, carried through for G2 pooling).
+
+    v2 additionally permits candidate["s1_mass_per_layer"], a mapping
+    {layer_idx_as_string: raw_mass}.  The values are transposed directly
+    from ArenaCache.s1_mass(per_layer=True)'s diagnostics dict: unlike the
+    registered headline share, each value is raw mass for that candidate in
+    that layer.  v1 artifacts have no such key and remain valid inputs.
+    """
     return {
         "schema": CONVO_ARTIFACT_SCHEMA,
         "conversation_id": conversation_id,
@@ -297,10 +314,10 @@ def load_convo_artifacts(artifacts_dir=ARTIFACTS_DIR):
     for path in paths:
         with open(path, "r", encoding="utf-8") as fh:
             data = json.load(fh)
-        if data.get("schema") != CONVO_ARTIFACT_SCHEMA:
+        if data.get("schema") not in SUPPORTED_CONVO_ARTIFACT_SCHEMAS:
             raise ValueError(
                 f"{path}: unexpected schema {data.get('schema')!r}, "
-                f"expected {CONVO_ARTIFACT_SCHEMA!r}")
+                f"expected one of {sorted(SUPPORTED_CONVO_ARTIFACT_SCHEMAS)!r}")
         artifacts.append(data)
     return artifacts
 
@@ -613,6 +630,10 @@ def test_make_convo_artifact_round_trips_through_json(tmp_path):
         ("t1", 3, 0.6, 3, 8.0, 1.0, "PROBED_LATER"),
         ("t2", 0, 0.05, 0, 0.2, 0.01, "FILLER"),
     ])]
+    probes[0]["candidates"][0]["s1_mass_per_layer"] = {
+        "0": 0.125,
+        "44": 0.375,
+    }
     artifact = make_convo_artifact("convo_99_test", probes)
     path = tmp_path / "convo_99_test.json"
     with open(path, "w", encoding="utf-8") as fh:
@@ -623,6 +644,10 @@ def test_make_convo_artifact_round_trips_through_json(tmp_path):
     assert loaded["schema"] == CONVO_ARTIFACT_SCHEMA
     assert loaded["conversation_id"] == "convo_99_test"
     assert loaded["probes"][0]["candidates"][0]["candidate_id"] == "t1"
+    assert loaded["probes"][0]["candidates"][0]["s1_mass_per_layer"] == {
+        "0": 0.125,
+        "44": 0.375,
+    }
 
 
 def test_load_convo_artifacts_rejects_wrong_schema(tmp_path):
@@ -642,6 +667,75 @@ def test_load_convo_artifacts_reads_multiple_files_sorted(tmp_path):
             json.dump(artifact, fh)
     loaded = load_convo_artifacts(str(tmp_path))
     assert [a["conversation_id"] for a in loaded] == ["a", "b"]
+
+
+def test_load_convo_artifacts_accepts_mixed_v1_v2_sets(tmp_path):
+    """The sealed headline-only v1 receipts and v2 layer receipts coexist.
+
+    This guards the re-run transition: an incomplete GPU batch must remain
+    analyzable without inventing per-layer values for its still-v1 legs.
+    """
+    legacy = {
+        "schema": CONVO_ARTIFACT_SCHEMA_V1,
+        "conversation_id": "legacy",
+        "probes": [_probe("legacy#1", [
+            ("1", 3, 0.6, 3, 8.0, 1.0, "PROBED_LATER"),
+            ("2", 0, 0.1, 0, 0.2, 0.01, "FILLER"),
+        ])],
+    }
+    modern_probes = [_probe("modern#1", [
+        ("1", 3, 0.7, 3, 9.0, 1.2, "PROBED_LATER"),
+        ("2", 0, 0.1, 0, 0.3, 0.02, "FILLER"),
+    ])]
+    for candidate, layer_zero in zip(
+            modern_probes[0]["candidates"], (0.8, 0.1)):
+        candidate["s1_mass_per_layer"] = {"0": layer_zero}
+    modern = make_convo_artifact("modern", modern_probes)
+
+    for name, artifact in (("convo_01_legacy.json", legacy),
+                           ("convo_02_modern.json", modern)):
+        with open(tmp_path / name, "w", encoding="utf-8") as fh:
+            json.dump(artifact, fh)
+
+    loaded = load_convo_artifacts(str(tmp_path))
+    assert [artifact["schema"] for artifact in loaded] == [
+        CONVO_ARTIFACT_SCHEMA_V1,
+        CONVO_ARTIFACT_SCHEMA_V2,
+    ]
+    assert "s1_mass_per_layer" not in loaded[0]["probes"][0]["candidates"][0]
+    assert loaded[1]["probes"][0]["candidates"][0]["s1_mass_per_layer"] == {
+        "0": 0.8,
+    }
+
+
+def test_exploratory_diagnostics_do_not_require_v1_layer_data():
+    """The new 7a/7b report reads a mixed batch without zero-filling v1."""
+    from scripts.grm_importance_diagnostics import build_diagnostics
+
+    legacy = {
+        "schema": CONVO_ARTIFACT_SCHEMA_V1,
+        "conversation_id": "legacy",
+        "probes": [_probe("legacy#1", [
+            ("1", 3, 0.6, 3, 8.0, 1.0, "PROBED_LATER"),
+            ("2", 0, 0.1, 0, 0.2, 0.01, "FILLER"),
+        ])],
+    }
+    modern_probes = [_probe("modern#1", [
+        ("1", 3, 0.7, 3, 9.0, 1.2, "PROBED_LATER"),
+        ("2", 0, 0.1, 0, 0.3, 0.02, "FILLER"),
+    ])]
+    for candidate, layer_zero in zip(
+            modern_probes[0]["candidates"], (0.8, 0.1)):
+        candidate["s1_mass_per_layer"] = {"0": layer_zero}
+    modern = make_convo_artifact("modern", modern_probes)
+
+    diagnostics = build_diagnostics([legacy, modern])
+    assert diagnostics["schema"] == "grm_importance_diag_v1"
+    assert diagnostics["exploratory"] is True
+    assert diagnostics["aggregate"]["s1_mass_vs_s3_dlogit"][
+        "n_probes_total"] == 2
+    layer_zero = diagnostics["per_layer_s1"]["layers"]["0"]
+    assert layer_zero["s1_mass_vs_s3_dlogit"]["n_probes_ranked"] == 1
 
 
 # ============================================================================
@@ -1246,7 +1340,10 @@ def _run_gpu_driver(convo_n):
             reply, attempt_info = arena._attempt(
                 probe["question"], picks, ngen=48, deposit=False,
                 stops=arena.stop_sequences)
-            s1 = arena.s1_mass()
+            # The headline S1 share remains the registered all-layer mean.
+            # v2 also records the per-layer raw diagnostics for successor
+            # 7a only; no layer selection happens inside this driver.
+            s1, s1_per_layer = arena.s1_mass(per_layer=True)
             print(f"    reply={reply[:80]!r} mounts={attempt_info['mounts']} "
                   f"s1_mass={s1}", flush=True)
             arena.set_telemetry(False)
@@ -1311,6 +1408,14 @@ def _run_gpu_driver(convo_n):
                 s2_val = (arena.grafts[cidx].get("metadata", {})
                          .get("importance", {}).get("s2_salience"))
                 s1_val = s1.get(cidx)
+                # ArenaCache returns {layer_idx: {graft_idx: raw_mass}}.
+                # Store its candidate-oriented transpose without inventing
+                # a zero for a layer that did not expose telemetry.
+                s1_per_layer_val = {
+                    str(layer_idx): raw_by_graft[cidx]
+                    for layer_idx, raw_by_graft in s1_per_layer.items()
+                    if cidx in raw_by_graft
+                }
                 node_class = turn_by_id[tid]["node_class"]
                 candidates.append({
                     "turn_id": tid,
@@ -1318,6 +1423,7 @@ def _run_gpu_driver(convo_n):
                     "node_class": node_class,
                     "ground_truth_grade": probe["relevance"][str(tid)],
                     "s1_mass": s1_val,
+                    "s1_mass_per_layer": s1_per_layer_val,
                     "s2_salience": s2_val,
                     "s3_dep_dlogit": dep["mean_abs_dlogit"],
                     "s3_dep_kl": dep["mean_kl"],
