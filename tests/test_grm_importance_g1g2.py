@@ -290,7 +290,7 @@ def compute_g2(standing_pref_records, filler_records):
 # Artifact schema helpers
 # ============================================================================
 
-def make_convo_artifact(conversation_id, probes):
+def make_convo_artifact(conversation_id, probes, rubric="v1"):
     """probes: list of {"probe_id", "candidates": [...]} per the schema
     documented in compute_g1's docstring, PLUS each candidate carries
     "node_class" (fixture label, carried through for G2 pooling).
@@ -304,6 +304,7 @@ def make_convo_artifact(conversation_id, probes):
     return {
         "schema": CONVO_ARTIFACT_SCHEMA,
         "conversation_id": conversation_id,
+        "rubric": rubric,
         "probes": probes,
     }
 
@@ -643,6 +644,7 @@ def test_make_convo_artifact_round_trips_through_json(tmp_path):
     assert loaded == artifact
     assert loaded["schema"] == CONVO_ARTIFACT_SCHEMA
     assert loaded["conversation_id"] == "convo_99_test"
+    assert loaded["rubric"] == "v1"
     assert loaded["probes"][0]["candidates"][0]["candidate_id"] == "t1"
     assert loaded["probes"][0]["candidates"][0]["s1_mass_per_layer"] == {
         "0": 0.125,
@@ -667,6 +669,26 @@ def test_load_convo_artifacts_reads_multiple_files_sorted(tmp_path):
             json.dump(artifact, fh)
     loaded = load_convo_artifacts(str(tmp_path))
     assert [a["conversation_id"] for a in loaded] == ["a", "b"]
+
+
+def test_cli_rubric_flag_reaches_mocked_gpu_artifact(monkeypatch):
+    """The GPU driver is replaced so this covers CLI plumbing on CPU only."""
+    observed = {}
+
+    def fake_run_gpu_driver(convo_n, *, rubric):
+        observed["convo_n"] = convo_n
+        observed["artifact"] = make_convo_artifact(
+            "convo_01_mock", [], rubric=rubric)
+
+    monkeypatch.setattr(sys.modules[__name__], "_run_gpu_driver",
+                        fake_run_gpu_driver)
+
+    assert _build_cli_parser().parse_args(
+        ["--run-gpu", "--convo", "1"]).rubric == "v1"
+    main(["--run-gpu", "--convo", "1", "--rubric", "v2"])
+
+    assert observed["convo_n"] == 1
+    assert observed["artifact"]["rubric"] == "v2"
 
 
 def test_load_convo_artifacts_accepts_mixed_v1_v2_sets(tmp_path):
@@ -1218,7 +1240,7 @@ def wipe_workspace(path):
     shutil.rmtree(path, ignore_errors=True)
 
 
-def _run_gpu_driver(convo_n):
+def _run_gpu_driver(convo_n, rubric="v1"):
     sys.path.insert(0, "/mnt/ForgeRealm/Project-Tensor/tensor_cuda")
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     import tensor_cuda as tc
@@ -1257,7 +1279,7 @@ def _run_gpu_driver(convo_n):
         autosave=False, librarian_mode="deferred",
         sink_text="<conversation>\n", arena_width=512, route_layer=44,
         topk=3, live_turns=2, ephemeral=False, recency_mounts=2,
-        s2_salience_enabled=True)
+        s2_salience_enabled=True, rubric=rubric)
     n_boot_nodes = len(repo.arena.grafts)
     print(f"post-construction node count: {n_boot_nodes}", flush=True)
     assert n_boot_nodes == 0, (
@@ -1472,7 +1494,7 @@ def _run_gpu_driver(convo_n):
 
     os.makedirs(ARTIFACTS_DIR, exist_ok=True)
     artifact = make_convo_artifact(fixture["conversation_id"],
-                                   all_probe_records)
+                                   all_probe_records, rubric=rubric)
     out_path = os.path.join(
         ARTIFACTS_DIR, f"{fixture['conversation_id']}.json")
     with open(out_path, "w", encoding="utf-8") as fh:
@@ -1485,7 +1507,7 @@ def _run_gpu_driver(convo_n):
     return artifact
 
 
-if __name__ == "__main__":
+def _build_cli_parser():
     parser = argparse.ArgumentParser(
         description="GRM-IMPORTANCE G1/G2 gate driver + analysis")
     parser.add_argument("--run-gpu", action="store_true",
@@ -1498,12 +1520,18 @@ if __name__ == "__main__":
     parser.add_argument("--analyze", action="store_true",
                         help="run the CPU-only G1/G2 analysis over "
                              "artifacts already written by --run-gpu legs")
-    args = parser.parse_args()
+    parser.add_argument("--rubric", choices=("v1", "v2"), default="v1",
+                        help="S2 salience rubric for --run-gpu (default: v1)")
+    return parser
+
+
+def main(argv=None):
+    args = _build_cli_parser().parse_args(argv)
     if args.run_gpu:
         if args.convo is None:
             print("--run-gpu requires --convo N (1-6)", flush=True)
             sys.exit(1)
-        _run_gpu_driver(args.convo)
+        _run_gpu_driver(args.convo, rubric=args.rubric)
     elif args.analyze:
         verdict = run_analysis()
         all_pass = (all(v["pass"] for v in verdict["g1"].values())
@@ -1518,3 +1546,7 @@ if __name__ == "__main__":
               "six artifacts exist): python3 tests/test_grm_importance_"
               "g1g2.py --analyze", flush=True)
         sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
