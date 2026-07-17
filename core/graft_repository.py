@@ -220,6 +220,7 @@ class GraftRepository:
     WAL_DURABILITY_MODES = {"session_safe", "project_safe", "durable_strict"}
     DURABILITY_MODES = WAL_DURABILITY_MODES | {"volatile", "volatile_fast"}
     SPILL_POLICIES = {"lru", "s4", "s4_protect"}
+    FOLD_ORDERS = {"age", "s4"}
 
     def __init__(self, model, encode, decode, path, autosave=True,
                  vram_budget_mb=None, librarian_mode="inline",
@@ -229,7 +230,7 @@ class GraftRepository:
                  extraction_write_threshold=0.95,
                  extraction_error_policy="record",
                  s2_salience_enabled=False, s2_salience_ngen=24,
-                 spill_policy="lru",
+                 spill_policy="lru", fold_order="age",
                  **arena_kw):
         self.path = path
         self.autosave = autosave
@@ -268,6 +269,11 @@ class GraftRepository:
         # The opt-in arm changes demotion order only; routing, deletion,
         # write-back, and page-in mechanics remain untouched.
         self.spill_policy = self._normalize_spill_policy(spill_policy)
+        # G-FOLD: keep the legacy age order unless explicitly opted into
+        # grounding-hit order.  This changes only source selection within an
+        # already eligible librarian window; it never alters eligibility or
+        # the native threshold plan.
+        self.fold_order = self._normalize_fold_order(fold_order)
         # "inline": folds run inside chat/add_turn when thresholds trip
         # (simple; a fold stalls that turn ~3s). "deferred": the hot path
         # NEVER folds — due work is computed statelessly and executed by
@@ -345,6 +351,13 @@ class GraftRepository:
         if policy in cls.SPILL_POLICIES:
             return policy
         raise ValueError(f"unknown spill policy {policy!r}")
+
+    @classmethod
+    def _normalize_fold_order(cls, order):
+        order = str(order or "age").strip().lower()
+        if order in cls.FOLD_ORDERS:
+            return order
+        raise ValueError(f"unknown fold order {order!r}")
 
     @classmethod
     def _wal_enabled_for_mode(cls, mode):
@@ -2629,12 +2642,40 @@ class GraftRepository:
                 jobs.append(("era", digests[:self.DIGESTS_FOLD]))
         return jobs
 
+    def _s4_fold_order_key(self, idx, age):
+        """Order a source by grounded-hit count, then its current age order.
+
+        ``_foldable()`` has already applied every eligibility rail before
+        this helper is reached (including M11 payload resolvability).  A
+        malformed historical counter is treated as the ledger's zero-count
+        state rather than letting an opt-in ordering policy jam the librarian.
+        """
+        s4 = (self.arena.grafts[idx].get("metadata", {})
+              .get("importance", {}).get("s4"))
+        n_grounded = s4.get("n_grounded", 0) if isinstance(s4, dict) else 0
+        if (not isinstance(n_grounded, int)
+                or isinstance(n_grounded, bool) or n_grounded < 0):
+            n_grounded = 0
+        return n_grounded, age
+
+    def _order_fold_sources_s4(self, sources):
+        """Return the existing eligible sources ordered by S4 then age."""
+        return [idx for age, idx in sorted(
+            enumerate(sources),
+            key=lambda item: self._s4_fold_order_key(item[1], item[0]))]
+
     def _librarian_jobs(self, *, deferred_backpressure=False):
         """Stateless fold plan. Documents are never folded — they are
         reference material, not history. Fold-exempt nodes (a prior fidelity
         abort) drop out so the window advances instead of looping."""
         turns = self._foldable(("turn",))
         digests = self._foldable(("digest",))
+        if getattr(self, "fold_order", "age") == "s4":
+            # Sort only after the existing eligible sets have been built.
+            # The age arm intentionally takes no new branch or sort so its
+            # source lists remain byte-identical to the pre-G-FOLD behavior.
+            turns = self._order_fold_sources_s4(turns)
+            digests = self._order_fold_sources_s4(digests)
         plan = self._native_librarian_plan(
             turns, digests, deferred_backpressure=deferred_backpressure)
         if plan is None:
