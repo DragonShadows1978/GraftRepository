@@ -71,6 +71,21 @@ S2_SALIENCE_PROMPT = (
     "reason.\n"
     "Assistant: Rating:"
 )
+# FROZEN pre-gate: S2-v2 registered arm 7c (2026-07-17).  Do not tune this
+# wording after its fresh G1-S2v2/G2-S2v2 gates run.
+S2_SALIENCE_PROMPT_V2 = (
+    "User: On a scale of 0 to 3, rate how important the turn above is to "
+    "remember for the long term. 0 = throwaway small talk, 1 = minor "
+    "detail, 2 = useful fact, preference, standing directive, or instruction "
+    "worth keeping, 3 = critical fact, preference, standing directive, or "
+    "instruction that must not be lost. Answer with the rating digit first, "
+    "then one short reason.\n"
+    "Assistant: Rating:"
+)
+S2_SALIENCE_PROMPTS = {
+    "v1": S2_SALIENCE_PROMPT,
+    "v2": S2_SALIENCE_PROMPT_V2,
+}
 # Strict single-position parse: the first standalone 0-3 digit after the
 # primer. No natural-language number words, no partial credit — a QC
 # mismatch is a parse failure, not a best-effort guess (spec: "parse the
@@ -221,6 +236,7 @@ class GraftRepository:
     DURABILITY_MODES = WAL_DURABILITY_MODES | {"volatile", "volatile_fast"}
     SPILL_POLICIES = {"lru", "s4", "s4_protect"}
     FOLD_ORDERS = {"age", "s4"}
+    S2_SALIENCE_RUBRICS = {"v1", "v2"}
 
     def __init__(self, model, encode, decode, path, autosave=True,
                  vram_budget_mb=None, librarian_mode="inline",
@@ -230,6 +246,7 @@ class GraftRepository:
                  extraction_write_threshold=0.95,
                  extraction_error_policy="record",
                  s2_salience_enabled=False, s2_salience_ngen=24,
+                 rubric="v1",
                  spill_policy="lru", fold_order="age",
                  **arena_kw):
         self.path = path
@@ -258,6 +275,7 @@ class GraftRepository:
         # own their own keys elsewhere in the plan and are untouched here.
         self.s2_salience_enabled = bool(s2_salience_enabled)
         self.s2_salience_ngen = int(s2_salience_ngen)
+        self.rubric = self._normalize_s2_rubric(rubric)
         self._s2_pending = ()
         self.last_extraction_results = []
         self.last_extraction_error = None
@@ -358,6 +376,13 @@ class GraftRepository:
         if order in cls.FOLD_ORDERS:
             return order
         raise ValueError(f"unknown fold order {order!r}")
+
+    @classmethod
+    def _normalize_s2_rubric(cls, rubric):
+        rubric = str(rubric or "v1").strip().lower()
+        if rubric in cls.S2_SALIENCE_RUBRICS:
+            return rubric
+        raise ValueError(f"unknown S2 salience rubric {rubric!r}")
 
     @classmethod
     def _wal_enabled_for_mode(cls, mode):
@@ -2866,7 +2891,7 @@ class GraftRepository:
                 hs = [arena.grafts[i]["h"][li]]
                 blk = {key: hs[0][key] for key, dim in arena.PAYLOAD}
                 arena._set_inject(att, blk)
-            text = self._s2_generate(S2_SALIENCE_PROMPT)
+            text = self._s2_generate(S2_SALIENCE_PROMPTS[self.rubric])
             score = self._parse_s2_score(text)
             if score is not None:
                 return score

@@ -31,7 +31,24 @@ import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.graft_repository import (
-    GraftRepository, S2_SALIENCE_PROMPT,
+    GraftRepository, S2_SALIENCE_PROMPT, S2_SALIENCE_PROMPT_V2,
+)
+
+
+_FROZEN_V1_SALIENCE_PROMPT = (
+    "User: On a scale of 0 to 3, rate how important the turn above is to "
+    "remember for the long term. 0 = throwaway small talk, 1 = minor "
+    "detail, 2 = useful fact worth keeping, 3 = critical fact that must "
+    "not be lost. Answer with the rating digit first, then one short "
+    "reason.\n"
+    "Assistant: Rating:"
+)
+_S2_RUBRIC_CASES = (
+    pytest.param({}, "v1", _FROZEN_V1_SALIENCE_PROMPT, id="default-v1"),
+    pytest.param({"rubric": "v1"}, "v1", _FROZEN_V1_SALIENCE_PROMPT,
+                 id="explicit-v1"),
+    pytest.param({"rubric": "v2"}, "v2", S2_SALIENCE_PROMPT_V2,
+                 id="v2"),
 )
 
 
@@ -190,8 +207,11 @@ def test_parse_s2_score_requires_leading_position():
 # 2. Retry ladder + double-failure -> None
 # ============================================================================
 
-def test_s2_score_node_retries_once_then_succeeds(tmp_path, monkeypatch):
-    repo = make_repo(tmp_path)
+@pytest.mark.parametrize(("repo_kwargs", "expected_rubric", "expected_prompt"),
+                         _S2_RUBRIC_CASES)
+def test_s2_score_node_retries_once_then_succeeds(
+        tmp_path, monkeypatch, repo_kwargs, expected_rubric, expected_prompt):
+    repo = make_repo(tmp_path, **repo_kwargs)
     idx = repo.arena.deposit("User: hi\nAssistant: hello\n")
     repo.arena.grafts[idx]["kind"] = "turn"
 
@@ -209,12 +229,15 @@ def test_s2_score_node_retries_once_then_succeeds(tmp_path, monkeypatch):
 
     assert score == 2
     assert len(calls) == 2
-    assert calls[0] == S2_SALIENCE_PROMPT
-    assert calls[1] == S2_SALIENCE_PROMPT
+    assert repo.rubric == expected_rubric
+    assert calls == [expected_prompt, expected_prompt]
 
 
-def test_s2_score_node_double_failure_returns_none(tmp_path, monkeypatch):
-    repo = make_repo(tmp_path)
+@pytest.mark.parametrize(("repo_kwargs", "expected_rubric", "expected_prompt"),
+                         _S2_RUBRIC_CASES)
+def test_s2_score_node_double_failure_returns_none(
+        tmp_path, monkeypatch, repo_kwargs, expected_rubric, expected_prompt):
+    repo = make_repo(tmp_path, **repo_kwargs)
     idx = repo.arena.deposit("User: hi\nAssistant: hello\n")
     repo.arena.grafts[idx]["kind"] = "turn"
 
@@ -230,10 +253,15 @@ def test_s2_score_node_double_failure_returns_none(tmp_path, monkeypatch):
 
     assert score is None
     assert len(calls) == 2        # one retry maximum, never more
+    assert repo.rubric == expected_rubric
+    assert calls == [expected_prompt, expected_prompt]
 
 
-def test_s2_score_node_succeeds_first_try_never_retries(tmp_path, monkeypatch):
-    repo = make_repo(tmp_path)
+@pytest.mark.parametrize(("repo_kwargs", "expected_rubric", "expected_prompt"),
+                         _S2_RUBRIC_CASES)
+def test_s2_score_node_succeeds_first_try_never_retries(
+        tmp_path, monkeypatch, repo_kwargs, expected_rubric, expected_prompt):
+    repo = make_repo(tmp_path, **repo_kwargs)
     idx = repo.arena.deposit("User: hi\nAssistant: hello\n")
     repo.arena.grafts[idx]["kind"] = "turn"
 
@@ -249,6 +277,26 @@ def test_s2_score_node_succeeds_first_try_never_retries(tmp_path, monkeypatch):
 
     assert score == 3
     assert len(calls) == 1
+    assert repo.rubric == expected_rubric
+    assert calls == [expected_prompt]
+
+
+def test_s2_v1_prompt_remains_byte_identical():
+    assert S2_SALIENCE_PROMPT == _FROZEN_V1_SALIENCE_PROMPT
+
+
+@pytest.mark.parametrize(("raw_rubric", "expected"), [
+    ("v1", "v1"),
+    (" V2 ", "v2"),
+])
+def test_s2_rubric_normalizes_like_other_policy_strings(
+        tmp_path, raw_rubric, expected):
+    assert make_repo(tmp_path, rubric=raw_rubric).rubric == expected
+
+
+def test_s2_rubric_rejects_unknown_value(tmp_path):
+    with pytest.raises(ValueError, match="unknown S2 salience rubric"):
+        make_repo(tmp_path, rubric="v3")
 
 
 # ============================================================================
