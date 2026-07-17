@@ -355,3 +355,22 @@ after.
   s3_dep_dlogit (test_grm_s4_ledger.py:383-385), the registered
   reference; S4's G1 PASS (0.7556/0.875) stands as measured. Only
   the g1g2 harness deviated.
+
+## 2026-07-17 — S2-v2 (rubric-v2) REGISTERED (campaign 7c, before any gate)
+
+- Arm: S2 with a reworded frozen rubric that explicitly names
+  preferences / standing directives / instructions as keep-worthy
+  classes alongside facts (v1's fact-only wording is the suspected
+  cause of the standing-pref 0.0 collapse). Everything else
+  byte-identical: primed prefix, strict parse, one retry, None on
+  double failure, recall-kind exclusion. Exact v2 wording FROZEN in
+  code at dispatch; opt-in rubric="v2" alongside default "v1".
+- Gate (inherits the registered semantics, fresh registration):
+  G1-S2v2 = median Spearman(S2v2 ranks, S3 ranks) ≥ 0.5 AND top-1 vs
+  S3 ≥ 50% over ALL 18 probes (unrankable probes count against, as
+  v1's did); G2-S2v2 = median s2(STANDING_PREF) ≥ 2 AND delta vs
+  FILLER ≥ 1. Measured from ONE fresh set of six v2 GPU legs (same
+  fixtures, warm-up law) that simultaneously capture s1_mass_per_layer
+  (7a) — shared legs, independent analyses.
+- Explicit rail: the G1 analysis for S2v2 uses the CORRECTED
+  registered semantics (vs S3 ranks), never fixture grades.
