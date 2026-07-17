@@ -1,4 +1,4 @@
-"""G2-S4 demotion A/B: CPU contracts and lead-run GPU harness.
+"""S4 paging A/B CPU contracts and lead-run GPU harness.
 
 Default pytest collection is CPU-only.  The GPU/model imports occur only
 behind ``--run-gpu``.  Each policy invocation replays the same four repeat-
@@ -10,9 +10,10 @@ Lead commands (one model process at a time)::
 
     python3 tests/test_grm_s4_demotion.py --run-gpu --policy lru \
         --vram-budget-mb 12
-    python3 tests/test_grm_s4_demotion.py --run-gpu --policy s4 \
+    python3 tests/test_grm_s4_demotion.py --run-gpu --policy s4_protect \
         --vram-budget-mb 12
-    python3 tests/test_grm_s4_demotion.py --analyze
+    python3 tests/test_grm_s4_demotion.py --analyze \
+        --baseline-policy lru --candidate-policy s4_protect
 
 Receipts default to ``/tmp/graftrepo_s4_demotion_receipts`` so the gate does
 not mutate the fixture tree.
@@ -46,7 +47,9 @@ FIXTURES_DIR = os.path.join(
 DEFAULT_RECEIPTS_DIR = "/tmp/graftrepo_s4_demotion_receipts"
 POLICY_RECEIPT_SCHEMA = "grm_s4_demotion_policy_v1"
 VERDICT_SCHEMA = "grm_s4_demotion_verdict_v1"
-POLICIES = ("lru", "s4")
+POLICIES = ("lru", "s4", "s4_protect")
+DEFAULT_BASELINE_POLICY = "lru"
+DEFAULT_CANDIDATE_POLICY = "s4_protect"
 MIN_OVERCOMMIT = 3.0
 DRIVER_ID = "four_repeat_prefixes_then_late_v1"
 NGEN = 48
@@ -96,6 +99,38 @@ def test_s4_spills_zero_hit_first_with_lru_tiebreak():
             if graft["h"] is not None] == [2]
 
 
+def test_s4_protect_spills_unprotected_in_lru_order_before_protected():
+    repo, evicted = _pager_double(
+        [8, 0, 1, 0], [1, 2, 3, 4], keep=2, policy="s4_protect")
+
+    assert repo._page() == 2
+    # Node 0 is the oldest resident but grounded, so it survives while the
+    # unprotected nodes leave in their own mount-LRU order.
+    assert evicted == [1, 3]
+    assert [i for i, graft in enumerate(repo.arena.grafts)
+            if graft["h"] is not None] == [0, 2]
+
+
+def test_s4_protect_all_protected_degrades_to_pure_lru():
+    repo, evicted = _pager_double(
+        [8, 1, 4, 2], [4, 1, 3, 2], keep=2, policy="s4_protect")
+
+    assert repo._page() == 2
+    assert evicted == [1, 3]
+
+
+def test_s4_protect_spills_protected_after_unprotected_are_exhausted():
+    repo, evicted = _pager_double(
+        [2, 0, 1, 0], [3, 4, 1, 2], keep=0, policy="s4_protect")
+
+    assert repo._page() == 4
+    # The unprotected pair goes first; once none remains, the protected
+    # residents spill in exactly the original LRU order.  No policy jam or
+    # permanent protection is possible under pressure.
+    assert evicted == [3, 1, 2, 0]
+    assert all(graft["h"] is None for graft in repo.arena.grafts)
+
+
 @pytest.mark.parametrize("policy", ["lru", None])
 def test_flag_off_is_pure_last_mounted_lru(policy):
     repo, evicted = _pager_double(
@@ -103,6 +138,19 @@ def test_flag_off_is_pure_last_mounted_lru(policy):
 
     assert repo._page() == 2
     assert evicted == [0, 1]
+
+
+@pytest.mark.parametrize(
+    "policy, expected",
+    [("lru", [0, 1]), (None, [0, 1]), ("s4", [1, 3])],
+    ids=["lru", "flag-absent", "existing-s4"],
+)
+def test_s4_protect_leaves_existing_policy_orders_unchanged(policy, expected):
+    repo, evicted = _pager_double(
+        [9, 0, 7, 0], [1, 2, 3, 4], keep=2, policy=policy)
+
+    assert repo._page() == 2
+    assert evicted == expected
 
 
 @pytest.mark.parametrize(
@@ -129,6 +177,7 @@ def test_spill_policy_normalization_is_opt_in_and_strict():
     assert GraftRepository._normalize_spill_policy(None) == "lru"
     assert GraftRepository._normalize_spill_policy("LRU") == "lru"
     assert GraftRepository._normalize_spill_policy("s4") == "s4"
+    assert GraftRepository._normalize_spill_policy("S4_PROTECT") == "s4_protect"
     with pytest.raises(ValueError, match="spill policy"):
         GraftRepository._normalize_spill_policy("grounded-score")
 
@@ -271,9 +320,30 @@ def write_policy_receipt(receipt, receipts_dir=DEFAULT_RECEIPTS_DIR):
     return path
 
 
-def load_policy_receipts(receipts_dir=DEFAULT_RECEIPTS_DIR):
+def _policy_pair(baseline_policy=DEFAULT_BASELINE_POLICY,
+                 candidate_policy=DEFAULT_CANDIDATE_POLICY):
+    if baseline_policy not in POLICIES:
+        raise ValueError(f"unknown baseline policy {baseline_policy!r}")
+    if candidate_policy not in POLICIES:
+        raise ValueError(f"unknown candidate policy {candidate_policy!r}")
+    if baseline_policy == candidate_policy:
+        raise ValueError("baseline and candidate policies must differ")
+    return baseline_policy, candidate_policy
+
+
+def load_policy_receipts(
+        receipts_dir=DEFAULT_RECEIPTS_DIR,
+        policies=(DEFAULT_BASELINE_POLICY, DEFAULT_CANDIDATE_POLICY)):
+    policies = tuple(policies)
+    if not policies:
+        raise ValueError("at least one receipt policy is required")
+    if len(set(policies)) != len(policies):
+        raise ValueError("receipt policies must be distinct")
+    unknown = [policy for policy in policies if policy not in POLICIES]
+    if unknown:
+        raise ValueError(f"unknown receipt policies {unknown!r}")
     receipts = {}
-    for policy in POLICIES:
+    for policy in policies:
         path = _receipt_path(receipts_dir, policy)
         try:
             with open(path, "r", encoding="utf-8") as handle:
@@ -289,26 +359,37 @@ def load_policy_receipts(receipts_dir=DEFAULT_RECEIPTS_DIR):
     return receipts
 
 
-def analyze_policy_receipts(receipts):
-    if set(receipts) != set(POLICIES):
-        raise ValueError("analysis requires exactly lru and s4 receipts")
-    lru = validate_policy_receipt(receipts["lru"])
-    s4 = validate_policy_receipt(receipts["s4"])
+def analyze_policy_receipts(
+        receipts, *, baseline_policy=DEFAULT_BASELINE_POLICY,
+        candidate_policy=DEFAULT_CANDIDATE_POLICY):
+    baseline_policy, candidate_policy = _policy_pair(
+        baseline_policy, candidate_policy)
+    if set(receipts) != {baseline_policy, candidate_policy}:
+        raise ValueError(
+            "analysis requires exactly the named baseline and candidate "
+            "receipts")
+    baseline = validate_policy_receipt(receipts[baseline_policy])
+    candidate = validate_policy_receipt(receipts[candidate_policy])
 
-    lru_contract = [_probe_contract(record) for record in lru["late_probes"]]
-    s4_contract = [_probe_contract(record) for record in s4["late_probes"]]
+    baseline_contract = [
+        _probe_contract(record) for record in baseline["late_probes"]]
+    candidate_contract = [
+        _probe_contract(record) for record in candidate["late_probes"]]
     same_session = bool(
-        lru["session"]["fingerprint"] == s4["session"]["fingerprint"]
-        and lru["session"]["driver_id"] == s4["session"]["driver_id"]
-        and lru["session"]["conversation_ids"]
-        == s4["session"]["conversation_ids"]
-        and lru["session"]["n_nodes"] == s4["session"]["n_nodes"]
-        and lru["overcommit"]["total_node_bytes"]
-        == s4["overcommit"]["total_node_bytes"])
+        baseline["session"]["fingerprint"]
+        == candidate["session"]["fingerprint"]
+        and baseline["session"]["driver_id"]
+        == candidate["session"]["driver_id"]
+        and baseline["session"]["conversation_ids"]
+        == candidate["session"]["conversation_ids"]
+        and baseline["session"]["n_nodes"]
+        == candidate["session"]["n_nodes"]
+        and baseline["overcommit"]["total_node_bytes"]
+        == candidate["overcommit"]["total_node_bytes"])
     same_budget = bool(
-        lru["overcommit"]["budget_bytes"]
-        == s4["overcommit"]["budget_bytes"])
-    same_probes = lru_contract == s4_contract
+        baseline["overcommit"]["budget_bytes"]
+        == candidate["overcommit"]["budget_bytes"])
+    same_probes = baseline_contract == candidate_contract
     overcommit_ok = {
         policy: receipt["overcommit"]["ratio"] >= MIN_OVERCOMMIT
         for policy, receipt in receipts.items()
@@ -322,24 +403,25 @@ def analyze_policy_receipts(receipts):
         and all(overcommit_ok.values()) and all(paging_fired.values()))
 
     recall_noninferior = bool(
-        s4["late_probe_recall"]["hits"]
-        >= lru["late_probe_recall"]["hits"]
-        and s4["late_probe_recall"]["total"]
-        == lru["late_probe_recall"]["total"])
-    page_ins_noninferior = s4["page_ins"] <= lru["page_ins"]
+        candidate["late_probe_recall"]["hits"]
+        >= baseline["late_probe_recall"]["hits"]
+        and candidate["late_probe_recall"]["total"]
+        == baseline["late_probe_recall"]["total"])
+    page_ins_noninferior = candidate["page_ins"] <= baseline["page_ins"]
     gate_pass = bool(
         prerequisites and recall_noninferior and page_ins_noninferior)
     equivalence = bool(
         gate_pass
-        and s4["late_probe_recall"]["hits"]
-        == lru["late_probe_recall"]["hits"]
-        and s4["page_ins"] == lru["page_ins"])
+        and candidate["late_probe_recall"]["hits"]
+        == baseline["late_probe_recall"]["hits"]
+        and candidate["page_ins"] == baseline["page_ins"])
     note = None
     if equivalence:
-        note = ("PASS-by-equivalence: S4 demotion is free but not yet "
-                "advantageous at this scale.")
+        note = (f"PASS-by-equivalence: {candidate_policy} is free but not "
+                "yet advantageous at this scale.")
     elif not prerequisites:
-        note = "INVALID gate prerequisites; G2-S4 is RED."
+        note = ("INVALID gate prerequisites; "
+                f"{candidate_policy} versus {baseline_policy} is RED.")
 
     def arm_summary(receipt):
         return {
@@ -352,14 +434,19 @@ def analyze_policy_receipts(receipts):
 
     return {
         "schema": VERDICT_SCHEMA,
+        "comparison": {
+            "baseline_policy": baseline_policy,
+            "candidate_policy": candidate_policy,
+        },
         "registered_gate": {
             "minimum_overcommit": MIN_OVERCOMMIT,
-            "late_probe_recall": "s4 >= lru",
-            "page_ins": "s4 <= lru",
+            "late_probe_recall": (
+                f"{candidate_policy} >= {baseline_policy}"),
+            "page_ins": f"{candidate_policy} <= {baseline_policy}",
         },
         "arms": {
-            "lru": arm_summary(lru),
-            "s4": arm_summary(s4),
+            baseline_policy: arm_summary(baseline),
+            candidate_policy: arm_summary(candidate),
         },
         "prerequisites": {
             "same_session": same_session,
@@ -374,10 +461,12 @@ def analyze_policy_receipts(receipts):
             "page_ins_noninferior": page_ins_noninferior,
         },
         "margins": {
-            "late_probe_hits_s4_minus_lru": (
-                s4["late_probe_recall"]["hits"]
-                - lru["late_probe_recall"]["hits"]),
-            "page_ins_lru_minus_s4": lru["page_ins"] - s4["page_ins"],
+            (f"late_probe_hits_{candidate_policy}_minus_"
+             f"{baseline_policy}"): (
+                candidate["late_probe_recall"]["hits"]
+                - baseline["late_probe_recall"]["hits"]),
+            (f"page_ins_{baseline_policy}_minus_{candidate_policy}"):
+                baseline["page_ins"] - candidate["page_ins"],
         },
         "pass_by_equivalence": equivalence,
         "note": note,
@@ -419,7 +508,12 @@ def test_policy_receipts_round_trip_and_reject_wrong_schema(tmp_path):
     }
     for receipt in expected.values():
         write_policy_receipt(receipt, str(tmp_path))
-    assert load_policy_receipts(str(tmp_path)) == expected
+    assert load_policy_receipts(str(tmp_path), policies=POLICIES) == expected
+    assert load_policy_receipts(
+        str(tmp_path), policies=("lru", "s4_protect")) == {
+            "lru": expected["lru"],
+            "s4_protect": expected["s4_protect"],
+        }
 
     path = _receipt_path(str(tmp_path), "s4")
     broken = dict(expected["s4"])
@@ -427,24 +521,71 @@ def test_policy_receipts_round_trip_and_reject_wrong_schema(tmp_path):
     path_obj = tmp_path / os.path.basename(path)
     path_obj.write_text(json.dumps(broken), encoding="utf-8")
     with pytest.raises(ValueError, match="schema"):
-        load_policy_receipts(str(tmp_path))
+        load_policy_receipts(str(tmp_path), policies=POLICIES)
 
 
 def test_registered_gate_has_no_unregistered_positive_margin():
     verdict = analyze_policy_receipts({
         "lru": _synthetic_receipt("lru", hits=3, page_ins=8),
-        "s4": _synthetic_receipt("s4", hits=3, page_ins=8),
+        "s4_protect": _synthetic_receipt(
+            "s4_protect", hits=3, page_ins=8),
     })
     assert verdict["pass"] is True
     assert verdict["pass_by_equivalence"] is True
+    assert verdict["comparison"] == {
+        "baseline_policy": "lru",
+        "candidate_policy": "s4_protect",
+    }
 
     red = analyze_policy_receipts({
         "lru": _synthetic_receipt("lru", hits=3, page_ins=8),
-        "s4": _synthetic_receipt("s4", hits=3, page_ins=9),
+        "s4_protect": _synthetic_receipt(
+            "s4_protect", hits=3, page_ins=9),
     })
     assert red["pass"] is False
     assert red["conditions"]["late_probe_recall_noninferior"] is True
     assert red["conditions"]["page_ins_noninferior"] is False
+
+
+def test_registered_gate_accepts_any_named_policy_pair():
+    verdict = analyze_policy_receipts(
+        {
+            "lru": _synthetic_receipt("lru", hits=3, page_ins=8),
+            "s4": _synthetic_receipt("s4", hits=3, page_ins=7),
+        },
+        candidate_policy="s4",
+    )
+
+    assert verdict["pass"] is True
+    assert verdict["comparison"] == {
+        "baseline_policy": "lru",
+        "candidate_policy": "s4",
+    }
+
+
+def test_cli_accepts_s4_protect_without_loading_a_model(monkeypatch, tmp_path):
+    seen = {}
+
+    def fake_run_gpu_policy(policy, vram_budget_mb, receipts_dir):
+        seen.update({
+            "policy": policy,
+            "vram_budget_mb": vram_budget_mb,
+            "receipts_dir": receipts_dir,
+        })
+        return _synthetic_receipt(policy, page_ins=1)
+
+    monkeypatch.setattr(sys.modules[__name__], "run_gpu_policy", fake_run_gpu_policy)
+
+    assert _main([
+        "--run-gpu",
+        "--policy", "s4_protect",
+        "--receipts-dir", str(tmp_path),
+    ]) == 0
+    assert seen == {
+        "policy": "s4_protect",
+        "vram_budget_mb": 12,
+        "receipts_dir": str(tmp_path),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -564,7 +705,7 @@ def _load_gpu_repository(workspace, policy, vram_budget_mb):
     )
     assert not repo.arena.grafts, (
         f"workspace hygiene failure: {workspace} did not boot empty")
-    # G2-S4 isolates the paging consumer.  Prevent deferred librarian
+    # The paging gate isolates the consumer.  Prevent deferred librarian
     # backpressure from folding nodes during this one long replay.
     repo.TURNS_HIGH = 10 ** 9
     repo.DIGESTS_HIGH = 10 ** 9
@@ -757,10 +898,10 @@ def run_gpu_policy(policy, vram_budget_mb,
     print(json.dumps(receipt, sort_keys=True), flush=True)
     print(f"wrote {out_path}", flush=True)
     if not receipt["paging_fired"]:
-        print("G2-S4 ARM INVALID: page-ins did not fire", flush=True)
+        print(f"{policy.upper()} ARM INVALID: page-ins did not fire", flush=True)
     else:
         print(
-            f"G2-S4 {policy.upper()} ARM COMPLETE: late recall "
+            f"{policy.upper()} ARM COMPLETE: late recall "
             f"{receipt['late_probe_recall']['hits']}/"
             f"{receipt['late_probe_recall']['total']}, "
             f"page-ins={receipt['page_ins']}",
@@ -769,10 +910,18 @@ def run_gpu_policy(policy, vram_budget_mb,
     return receipt
 
 
-def run_analysis(receipts_dir=DEFAULT_RECEIPTS_DIR):
-    receipts = load_policy_receipts(receipts_dir)
-    verdict = analyze_policy_receipts(receipts)
-    for policy in POLICIES:
+def run_analysis(receipts_dir=DEFAULT_RECEIPTS_DIR,
+                 baseline_policy=DEFAULT_BASELINE_POLICY,
+                 candidate_policy=DEFAULT_CANDIDATE_POLICY):
+    baseline_policy, candidate_policy = _policy_pair(
+        baseline_policy, candidate_policy)
+    receipts = load_policy_receipts(
+        receipts_dir, policies=(baseline_policy, candidate_policy))
+    verdict = analyze_policy_receipts(
+        receipts,
+        baseline_policy=baseline_policy,
+        candidate_policy=candidate_policy)
+    for policy in (baseline_policy, candidate_policy):
         arm = verdict["arms"][policy]
         print(
             f"{policy.upper()}: late recall={arm['late_probe_hits']}/"
@@ -782,7 +931,8 @@ def run_analysis(receipts_dir=DEFAULT_RECEIPTS_DIR):
             flush=True,
         )
     print(
-        "G2-S4 conditions: recall(B)>=recall(A)="
+        f"{candidate_policy.upper()} vs {baseline_policy.upper()} conditions: "
+        "recall(B)>=recall(A)="
         f"{verdict['conditions']['late_probe_recall_noninferior']}; "
         "page-ins(B)<=page-ins(A)="
         f"{verdict['conditions']['page_ins_noninferior']}; "
@@ -805,7 +955,7 @@ def run_analysis(receipts_dir=DEFAULT_RECEIPTS_DIR):
 
 def _main(argv=None):
     parser = argparse.ArgumentParser(
-        description="G2-S4 demotion A/B GPU arms and CPU analysis")
+        description="S4 paging A/B GPU arms and CPU analysis")
     parser.add_argument(
         "--run-gpu", action="store_true",
         help="authorize one lead-run GPU policy arm")
@@ -813,11 +963,19 @@ def _main(argv=None):
         "--policy", choices=POLICIES,
         help="pager arm to replay (requires --run-gpu)")
     parser.add_argument(
+        "--baseline-policy", choices=POLICIES,
+        help=("baseline arm for --analyze "
+              f"(default {DEFAULT_BASELINE_POLICY})"))
+    parser.add_argument(
+        "--candidate-policy", choices=POLICIES,
+        help=("candidate arm for --analyze "
+              f"(default {DEFAULT_CANDIDATE_POLICY})"))
+    parser.add_argument(
         "--vram-budget-mb", type=int, default=12,
         help="device-node budget; both arms must use the same value")
     parser.add_argument(
         "--receipts-dir", default=DEFAULT_RECEIPTS_DIR,
-        help="directory for lru/s4 policy receipts and verdict")
+        help="directory for policy receipts and verdict")
     parser.add_argument(
         "--analyze", action="store_true",
         help="CPU comparison of the two sealed policy receipts")
@@ -826,8 +984,11 @@ def _main(argv=None):
     if args.run_gpu:
         if args.analyze:
             parser.error("--analyze is CPU-only; omit --run-gpu")
+        if (args.baseline_policy is not None
+                or args.candidate_policy is not None):
+            parser.error("--baseline-policy/--candidate-policy require --analyze")
         if args.policy is None:
-            parser.error("--run-gpu requires --policy lru or --policy s4")
+            parser.error("--run-gpu requires --policy {lru,s4,s4_protect}")
         receipt = run_gpu_policy(
             args.policy, args.vram_budget_mb, args.receipts_dir)
         valid = bool(
@@ -837,12 +998,19 @@ def _main(argv=None):
     if args.policy is not None:
         parser.error("--policy requires --run-gpu")
     if args.analyze:
-        verdict = run_analysis(args.receipts_dir)
+        verdict = run_analysis(
+            args.receipts_dir,
+            baseline_policy=(args.baseline_policy or DEFAULT_BASELINE_POLICY),
+            candidate_policy=(args.candidate_policy
+                              or DEFAULT_CANDIDATE_POLICY))
         return 0 if verdict["pass"] else 1
+    if args.baseline_policy is not None or args.candidate_policy is not None:
+        parser.error("--baseline-policy/--candidate-policy require --analyze")
     print(
         "No action flag: run CPU units with `python3 -m pytest "
         "tests/test_grm_s4_demotion.py -q`. GPU: --run-gpu --policy "
-        "{lru,s4}. Analysis: --analyze.",
+        "{lru,s4,s4_protect}. Analysis: --analyze "
+        "[--baseline-policy POLICY --candidate-policy POLICY].",
         flush=True,
     )
     return 0

@@ -219,7 +219,7 @@ class GraftRepository:
     DIGESTS_HIGH, DIGESTS_FOLD = 6, 3
     WAL_DURABILITY_MODES = {"session_safe", "project_safe", "durable_strict"}
     DURABILITY_MODES = WAL_DURABILITY_MODES | {"volatile", "volatile_fast"}
-    SPILL_POLICIES = {"lru", "s4"}
+    SPILL_POLICIES = {"lru", "s4", "s4_protect"}
 
     def __init__(self, model, encode, decode, path, autosave=True,
                  vram_budget_mb=None, librarian_mode="inline",
@@ -3193,6 +3193,34 @@ class GraftRepository:
         hit_class = 0 if n_grounded == 0 else 1
         return hit_class, last_mounted
 
+    @staticmethod
+    def _s4_protect_spill_order(indexed_live):
+        """Keep mount LRU primary while shielding grounded residents.
+
+        ``s4_protect`` is deliberately not a grounding-score policy.  It
+        begins from the original last-mounted LRU order, then gives a
+        positive-grounding resident a spill shield while an unprotected
+        resident remains.  Thus a zero-hit resident gets ordinary LRU
+        treatment within the unprotected set, and a fully protected
+        population is exactly the original LRU order.
+        """
+        lru_order = sorted(indexed_live, key=lambda x: x[1])
+        unprotected = []
+        protected = []
+        for candidate in lru_order:
+            graft = candidate[2]
+            s4 = (graft.get("metadata", {}).get("importance", {}).get("s4"))
+            n_grounded = s4.get("n_grounded", 0) if isinstance(s4, dict) else 0
+            is_protected = (
+                isinstance(n_grounded, (int, float))
+                and not isinstance(n_grounded, bool)
+                and n_grounded > 0)
+            (protected if is_protected else unprotected).append(candidate)
+        # This direct return is the all-protected compatibility rail: no
+        # secondary order or score is introduced once protection has nobody
+        # left to shield against.
+        return unprotected + protected if unprotected else lru_order
+
     def _page(self):
         """Spill least-recently-mounted device tensors above the VRAM budget.
 
@@ -3211,9 +3239,12 @@ class GraftRepository:
                         and g.get("host_payload") is not None]
         used = sum(self._node_bytes(g) for _, _, g in indexed_live)
         freed = 0
-        if getattr(self, "spill_policy", "lru") == "s4":
+        spill_policy = getattr(self, "spill_policy", "lru")
+        if spill_policy == "s4":
             spill_order = sorted(
                 indexed_live, key=self._s4_spill_order_key)
+        elif spill_policy == "s4_protect":
+            spill_order = self._s4_protect_spill_order(indexed_live)
         else:
             # Hard compatibility rail: the flag-off arm is the original
             # pure last-mounted LRU ordering, byte-for-byte as a key.
