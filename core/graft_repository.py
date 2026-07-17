@@ -219,6 +219,7 @@ class GraftRepository:
     DIGESTS_HIGH, DIGESTS_FOLD = 6, 3
     WAL_DURABILITY_MODES = {"session_safe", "project_safe", "durable_strict"}
     DURABILITY_MODES = WAL_DURABILITY_MODES | {"volatile", "volatile_fast"}
+    SPILL_POLICIES = {"lru", "s4"}
 
     def __init__(self, model, encode, decode, path, autosave=True,
                  vram_budget_mb=None, librarian_mode="inline",
@@ -228,6 +229,7 @@ class GraftRepository:
                  extraction_write_threshold=0.95,
                  extraction_error_policy="record",
                  s2_salience_enabled=False, s2_salience_ngen=24,
+                 spill_policy="lru",
                  **arena_kw):
         self.path = path
         self.autosave = autosave
@@ -262,6 +264,10 @@ class GraftRepository:
         # nodes spill to cold storage above it (node_loader reloads on
         # demand — the descent machinery). None = unbounded.
         self.vram_budget = vram_budget_mb * 1024 * 1024 if vram_budget_mb else None
+        # GRM S4 consumer hook: default LRU preserves the pre-S4 pager.
+        # The opt-in arm changes demotion order only; routing, deletion,
+        # write-back, and page-in mechanics remain untouched.
+        self.spill_policy = self._normalize_spill_policy(spill_policy)
         # "inline": folds run inside chat/add_turn when thresholds trip
         # (simple; a fold stalls that turn ~3s). "deferred": the hot path
         # NEVER folds — due work is computed statelessly and executed by
@@ -332,6 +338,13 @@ class GraftRepository:
         if mode in cls.DURABILITY_MODES:
             return mode
         raise ValueError(f"unknown durability mode {mode!r}")
+
+    @classmethod
+    def _normalize_spill_policy(cls, policy):
+        policy = str(policy or "lru").strip().lower()
+        if policy in cls.SPILL_POLICIES:
+            return policy
+        raise ValueError(f"unknown spill policy {policy!r}")
 
     @classmethod
     def _wal_enabled_for_mode(cls, mode):
@@ -3164,6 +3177,22 @@ class GraftRepository:
             out.append(idx)
         return out
 
+    @staticmethod
+    def _s4_spill_order_key(candidate):
+        """Order a pager candidate by S4 hit class, then mount LRU.
+
+        Missing S4 metadata is the ledger's zero-count state.  Positive
+        counts deliberately form one shared hit class: S4 is a demotion
+        guard, not a score, so it never ranks one grounded node over another.
+        Python's stable sort preserves the legacy enumeration order if both
+        class and last-mounted clock tie.
+        """
+        _idx, last_mounted, graft = candidate
+        s4 = (graft.get("metadata", {}).get("importance", {}).get("s4"))
+        n_grounded = s4.get("n_grounded", 0) if isinstance(s4, dict) else 0
+        hit_class = 0 if n_grounded == 0 else 1
+        return hit_class, last_mounted
+
     def _page(self):
         """Spill least-recently-mounted device tensors above the VRAM budget.
 
@@ -3182,7 +3211,14 @@ class GraftRepository:
                         and g.get("host_payload") is not None]
         used = sum(self._node_bytes(g) for _, _, g in indexed_live)
         freed = 0
-        for i, _, g in sorted(indexed_live, key=lambda x: x[1]):
+        if getattr(self, "spill_policy", "lru") == "s4":
+            spill_order = sorted(
+                indexed_live, key=self._s4_spill_order_key)
+        else:
+            # Hard compatibility rail: the flag-off arm is the original
+            # pure last-mounted LRU ordering, byte-for-byte as a key.
+            spill_order = sorted(indexed_live, key=lambda x: x[1])
+        for i, _, g in spill_order:
             if used <= self.vram_budget:
                 break
             used -= self._node_bytes(g)
