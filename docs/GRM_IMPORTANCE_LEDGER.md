@@ -314,3 +314,44 @@ after.
   before any gate runs on it. 7b computes from sealed artifacts
   (s3_dep_kl per candidate); 7a re-runs legs with per-layer capture
   under the same fixtures + warm-up law.
+
+## 2026-07-17 — VERDICT CORRECTION: S1 G1 = PASS under the registered gate
+
+- The 7b diagnostics (CAMPAIGN-D) found a HARNESS DEVIATION in the
+  published G1 verdict: compute_g1 correlated signals against
+  ground_truth_grade (fixture labels), while the registered gate
+  (2026-07-16 threshold registration, verbatim) demands
+  "median Spearman(signal ranks, S3 ranks)". Lead verified at source
+  (spearman(gt, sig_vals)) AND independently re-ran the diagnostics.
+- CORRECTED VERDICT from the same sealed artifacts, registered
+  semantics: S1 median Spearman vs S3 = +0.8286 (bar 0.5), top-1
+  9/18 = 0.5000 (bar 0.5) → **S1 G1 PASS**. (Top-1 was computed vs
+  S3 all along — only the Spearman reference deviated.)
+- S2 remains FAIL: rankable on 7/18 probes; the registered gate spans
+  all 18; 11 probes have no S2 ranking (score collapse). G2 (0.0 vs
+  2.0) unaffected by any of this.
+- LEAD ACCOUNTABILITY: the deviation shipped because gate-time
+  verification checked that the harness ran and its numbers were
+  internally consistent — not that the Spearman reference matched
+  the registration text. New check for the discipline: verify the
+  MEASURED QUANTITY against the registration, not just the result.
+- RESEARCH OBSERVATION the error exposed: S1 tracks CAUSAL
+  dependence (0.83 vs S3) far better than HUMAN-LABELED importance
+  (0.47 vs fixture grades). The published "replicates Jain &
+  Wallace" claim attached to the wrong measurement and is WITHDRAWN
+  for the registered gate; attention mass vs counterfactual
+  dependence is strong here, not weak. The grade-vs-S3 gap is itself
+  a finding: what humans label important ≠ what the model causally
+  used.
+- 7b RESOLVED: S3 is metric-robust (dlogit vs KL ranks ρ 0.9429,
+  top-1 18/18 identical) — no arbiter change warranted; no fresh
+  registration needed.
+- DOWNSTREAM: the plan's G3 dispatch condition (G1 green for ≥1
+  signal) was retroactively MET. The G3 consumer question is already
+  in flight via superior receipts: fold-order (section 4, S4 signal)
+  and s4_protect paging; an S1-driven consumer remains an OPTION,
+  not auto-dispatched. AUDIT NOTE: the S4 harness was checked for
+  the same deviation and is CLEAN — its Spearman correlates against
+  s3_dep_dlogit (test_grm_s4_ledger.py:383-385), the registered
+  reference; S4's G1 PASS (0.7556/0.875) stands as measured. Only
+  the g1g2 harness deviated.

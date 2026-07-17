@@ -56,11 +56,16 @@ plans and ledgers live in `docs/`, sealed gate receipts in `artifacts/`
   stands (G1 green above); as a paging POLICY it doesn't pay yet.
   `spill_policy="s4"` remains in-tree, flagged, default LRU.
   docs/GRM_S4_LEDGER.md.
-- **Attention mass does not measure memory importance** (S1, RED):
-  median Spearman 0.473 vs the counterfactual arbiter, bar 0.5 — a
-  15-probe partial pass FLIPPED when the full 18-probe gate ran.
-  Independently reproduces Jain & Wallace 2019 ("Attention is not
-  Explanation") at KV-memory granularity. docs/GRM_IMPORTANCE_LEDGER.md.
+- **CORRECTED 2026-07-17 — S1 attention mass G1 verdict was
+  mismeasured, and PASSES under the registered gate**: the original
+  harness correlated against fixture grades (0.47, published as RED);
+  the registered gate demanded ranks vs the counterfactual arbiter,
+  where S1 scores median Spearman **0.83**. The earlier "replicates
+  Attention-is-not-Explanation" claim is withdrawn for the registered
+  gate. What survives as the finding: attention mass tracks what the
+  model CAUSALLY USED (0.83) far better than what humans LABELED
+  important (0.47) — the gap is the interesting part. Full correction
+  receipts: docs/GRM_IMPORTANCE_LEDGER.md 2026-07-17.
 - **4B self-report salience is dead** (S2, RED): rankable on 7/18
   probes; scores standing preferences 0.0 against a 2.0 bar under the
   frozen fact-worded rubric. The Generative-Agents-style importance
