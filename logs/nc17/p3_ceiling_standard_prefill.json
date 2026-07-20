@@ -1,0 +1,103 @@
+{
+  "mode": "standard",
+  "kind": "prefill",
+  "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "search_lo": 4096,
+  "search_hi": 10240,
+  "last_solid_ctx": 8320,
+  "first_oom_ctx": 8704,
+  "probe_timeout_s": 120,
+  "refine_percentile": 0.15,
+  "trace": [
+    {
+      "mode": "standard",
+      "kind": "prefill",
+      "ctx": 4096,
+      "status": "OK",
+      "smi_used_mb_after": 2239.0,
+      "elapsed_s": 32.68226981163025,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 33.273853063583374
+    },
+    {
+      "mode": "standard",
+      "kind": "prefill",
+      "ctx": 10240,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 22.70405602455139,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 23.44804310798645
+    },
+    {
+      "mode": "standard",
+      "kind": "prefill",
+      "ctx": 7168,
+      "status": "OK",
+      "smi_used_mb_after": 2307.0,
+      "elapsed_s": 41.38354468345642,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 42.006165742874146
+    },
+    {
+      "mode": "standard",
+      "kind": "prefill",
+      "ctx": 8704,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 22.882224321365356,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 23.621002674102783
+    },
+    {
+      "mode": "standard",
+      "kind": "prefill",
+      "ctx": 7936,
+      "status": "OK",
+      "smi_used_mb_after": 2331.0,
+      "elapsed_s": 43.27596879005432,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 43.8867506980896
+    },
+    {
+      "mode": "standard",
+      "kind": "prefill",
+      "ctx": 8320,
+      "status": "OK",
+      "smi_used_mb_after": 2349.0,
+      "elapsed_s": 44.59385442733765,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 45.203757762908936
+    }
+  ]
+}

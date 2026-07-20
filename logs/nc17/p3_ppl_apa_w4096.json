@@ -1,0 +1,27 @@
+{
+  "mode": "apa",
+  "window": 4096,
+  "stride": 512,
+  "status": "OK",
+  "error": "",
+  "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "refine_percentile": 0.15,
+  "n_windows": 8,
+  "scored_tokens": 7679,
+  "mean_nll": 2.8529173141375836,
+  "ppl": 17.338289368279625,
+  "elapsed_s": 294.509254693985,
+  "engagement": {
+    "apa_calls": 224,
+    "observed_calls": 56,
+    "engaged_calls": 56,
+    "all0_calls": 0,
+    "all1_calls": 0,
+    "mean_engaged_frac": 0.2921687731737373,
+    "min_engaged_frac": 0.27751733595084815,
+    "max_engaged_frac": 0.31551937059510005,
+    "refine_percentile": 0.15,
+    "z_threshold": 1.0364333894937898,
+    "APA_ENGAGED": true
+  }
+}

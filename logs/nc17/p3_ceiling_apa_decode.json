@@ -1,0 +1,19 @@
+{
+  "mode": "apa",
+  "kind": "decode",
+  "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "search_lo": 14336,
+  "search_hi": 18432,
+  "last_solid_ctx": 16384,
+  "first_oom_ctx": 17408,
+  "probe_timeout_s": 150,
+  "refine_percentile": 0.15,
+  "wall_type": "TIME (150s probe timeout on the chunked-prefill KV build), NOT VRAM",
+  "wall_note": "APA-decode probes chunked-prefill the full L-1 KV then do one decode step. At L>=17408 the chunked build exceeds the 150s probe cap and the driver classifies the timeout as OOM. VRAM was NOT the wall: last-solid 16384 used only 3403 MiB (poller peak 8955 MiB across the whole ladder, ~3 GiB headroom on the 12 GiB card). This is a measurement-protocol wall (probe-timeout on a serial chunked build), reported honestly as time-bounded, not a memory ceiling. A longer probe timeout would push it higher; not spent tonight (power-safety <=10min/run + budget).",
+  "trace": [
+    {"mode": "apa", "kind": "decode", "ctx": 14336, "status": "OK", "smi_used_mb_after": 3223.0, "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py"},
+    {"mode": "apa", "kind": "decode", "ctx": 18432, "status": "OOM-as-timeout", "smi_used_mb_after": null, "note": "rc=124 probe timeout"},
+    {"mode": "apa", "kind": "decode", "ctx": 16384, "status": "OK", "smi_used_mb_after": 3403.0, "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py"},
+    {"mode": "apa", "kind": "decode", "ctx": 17408, "status": "OOM-as-timeout", "smi_used_mb_after": null, "note": "rc=124 probe timeout"}
+  ]
+}

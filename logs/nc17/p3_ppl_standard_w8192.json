@@ -1,0 +1,17 @@
+{
+  "mode": "standard",
+  "window": 8192,
+  "stride": 512,
+  "status": "OOM",
+  "error": "RuntimeError: cudaMalloc failed: out of memory",
+  "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "refine_percentile": null,
+  "n_windows": 1,
+  "scored_tokens": 8191,
+  "mean_nll": 2.8417440941373298,
+  "ppl": 17.145643090534353,
+  "elapsed_s": 74.46927571296692,
+  "engagement": {
+    "APA_ENGAGED": null
+  }
+}

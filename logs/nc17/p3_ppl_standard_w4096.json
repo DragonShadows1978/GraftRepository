@@ -1,0 +1,17 @@
+{
+  "mode": "standard",
+  "window": 4096,
+  "stride": 512,
+  "status": "OK",
+  "error": "",
+  "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "refine_percentile": null,
+  "n_windows": 8,
+  "scored_tokens": 7679,
+  "mean_nll": 2.8501599790626853,
+  "ppl": 17.290547744939897,
+  "elapsed_s": 153.1453502178192,
+  "engagement": {
+    "APA_ENGAGED": null
+  }
+}

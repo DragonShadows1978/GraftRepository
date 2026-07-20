@@ -1,0 +1,1678 @@
+{
+  "stage": "NC17-P3",
+  "model": "Qwen3-1.7B tc-INT6 (self-quantized, SYMMETRIC g128)",
+  "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "engine_note": "INT6 ops exist ONLY in the Project-Tensor fork branch int6-weights; every P3 GPU run ran on this build (asserted per script + labeled per log line).",
+  "quant_config": {
+    "bits": 6,
+    "group_size": 128,
+    "quant_scheme": "symmetric per-group; code=(q-32); z=-32*scale (implicit); scale=max(max(w)/31, -min(w)/32); EMPTY fp16 zeros selects the kernel symmetric grid; 4 codes packed per 3 bytes \u2014 fork quantize_symmetric_per_group",
+    "symmetry": "symmetric",
+    "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+    "engine_note": "INT6 ops exist ONLY in Project-Tensor fork branch int6-weights; canonical tensor_cuda has NO int6 surface",
+    "vs_p2_int4_scheme": "P2 INT4 is ASYMMETRIC affine (zero=group-min, scale=(max-min)/15, nibble-packed); P3 INT6 is SYMMETRIC (kernel-native). Difference recorded, NOT an asymmetric INT6 variant (per order scope).",
+    "n_quantized_matrices": 196,
+    "quantized_tensors": "q/k/v/o_proj + gate/up/down_proj, all 28 layers",
+    "exempt_tensors": {
+      "embed_tokens": "bf16 (also serves tied head)",
+      "lm_head": "TIED to bf16 embedding (P1 resident decision), 0 extra VRAM",
+      "rmsnorm_all": "fp32 (input/post_attention/final)",
+      "qk_norm": "fp32 (per-head q_norm/k_norm)"
+    },
+    "sizes_bytes": {
+      "orig_bf16_proj_bytes": 2818572288,
+      "int6_packed_bytes": 1056964608,
+      "int6_scales_bytes": 22020096,
+      "int6_zeros_bytes": 0,
+      "int6_proj_total_bytes": 1078984704,
+      "npz_on_disk_bytes": 1079095326
+    },
+    "sizes_mib": {
+      "orig_bf16_proj_mib": 2688.0,
+      "int6_proj_total_mib": 1029.0,
+      "npz_on_disk_mib": 1029.1054973602295,
+      "compression_ratio_proj": 2.6122448979591835
+    },
+    "artifact_path": "/mnt/ForgeRealm/GraftRepository/weights_nc17/qwen3_1p7b_int6/int6_weights.npz",
+    "artifact_sha256": "2bde69448a0478f29607fbf8beb139661ec65c353c1ba50ee152765082c1cdd5",
+    "source_snapshot": "/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3-1.7B/snapshots/70d244cc86ccca08cf5af4e1e306ecf908b1ad5e"
+  },
+  "resident_vram_note": "measure_vram_int6: embedding 1187.0 MiB bf16 + INT6 projections 1029.0 MiB + norms 0.47 MiB + tied head 0 = 2216.47 MiB resident (vs P2 INT4 1901.47, P1 bf16 3875.5). INT6 saves ~1659 MiB of projection weight vs bf16; costs ~315 MiB more than INT4 (2.612x proj compression vs INT4 3.76x). Zeros tensor is EMPTY (symmetric grid) -> 0 resident bytes.",
+  "resident_vram_int6_mb": 2216.47,
+  "resident_vram_int4_mb": 1901.47,
+  "resident_vram_bf16_mb": 3875.5,
+  "parity": {
+    "int6_vs_gt": {
+      "n_positions": 715,
+      "n_top1_agree": 668,
+      "top1_agreement": 0.9342657342657342,
+      "n_flips": 47,
+      "n_near_tie_flips": 18,
+      "n_hard_flips": 29,
+      "max_abs_dlogit": 13.0625,
+      "mean_abs_dlogit": 0.45645540952682495,
+      "p50_abs_dlogit": 0.328125,
+      "p99_abs_dlogit": 2.15625,
+      "p999_abs_dlogit": 3.4375,
+      "flips": [
+        {
+          "prompt": 0,
+          "pos": "decode26",
+          "gt_top1": 8522,
+          "tc_top1": 3639,
+          "gt_margin": 0.5,
+          "near_tie": false,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 0,
+          "pos": "decode47",
+          "gt_top1": 5429,
+          "tc_top1": 8853,
+          "gt_margin": 2.875,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 1,
+          "pos": "decode0",
+          "gt_top1": 13,
+          "tc_top1": 11,
+          "gt_margin": 0.125,
+          "near_tie": true,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 1,
+          "pos": "decode5",
+          "gt_top1": 58137,
+          "tc_top1": 294,
+          "gt_margin": 0.375,
+          "near_tie": false,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 1,
+          "pos": "decode53",
+          "gt_top1": 135290,
+          "tc_top1": 3348,
+          "gt_margin": 0.75,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 2,
+          "pos": "decode0",
+          "gt_top1": 13,
+          "tc_top1": 11,
+          "gt_margin": 0.125,
+          "near_tie": true,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 2,
+          "pos": "decode3",
+          "gt_top1": 409,
+          "tc_top1": 264,
+          "gt_margin": 0.5,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 3,
+          "pos": "decode12",
+          "gt_top1": 10638,
+          "tc_top1": 572,
+          "gt_margin": 0.25,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 3,
+          "pos": "decode26",
+          "gt_top1": 13,
+          "tc_top1": 1785,
+          "gt_margin": 0.0,
+          "near_tie": true,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 3,
+          "pos": "decode34",
+          "gt_top1": 77327,
+          "tc_top1": 80940,
+          "gt_margin": 0.25,
+          "near_tie": false,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 3,
+          "pos": "decode37",
+          "gt_top1": 35439,
+          "tc_top1": 7281,
+          "gt_margin": 0.75,
+          "near_tie": false,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 3,
+          "pos": "decode39",
+          "gt_top1": 773,
+          "tc_top1": 1077,
+          "gt_margin": 0.25,
+          "near_tie": false,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 3,
+          "pos": "decode40",
+          "gt_top1": 304,
+          "tc_top1": 358,
+          "gt_margin": 0.0,
+          "near_tie": true,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 3,
+          "pos": "decode62",
+          "gt_top1": 39970,
+          "tc_top1": 59490,
+          "gt_margin": 0.125,
+          "near_tie": true,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 4,
+          "pos": "decode32",
+          "gt_top1": 103658,
+          "tc_top1": 104653,
+          "gt_margin": 0.25,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 4,
+          "pos": "decode38",
+          "gt_top1": 29524,
+          "tc_top1": 20412,
+          "gt_margin": 0.5,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 4,
+          "pos": "decode48",
+          "gt_top1": 104043,
+          "tc_top1": 91572,
+          "gt_margin": 1.0,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 4,
+          "pos": "decode53",
+          "gt_top1": 99876,
+          "tc_top1": 102280,
+          "gt_margin": 0.75,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 4,
+          "pos": "decode56",
+          "gt_top1": 101566,
+          "tc_top1": 100527,
+          "gt_margin": 1.625,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 4,
+          "pos": "decode58",
+          "gt_top1": 55502,
+          "tc_top1": 99682,
+          "gt_margin": 0.75,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 5,
+          "pos": "decode8",
+          "gt_top1": 131888,
+          "tc_top1": 102356,
+          "gt_margin": 0.75,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 6,
+          "pos": "decode3",
+          "gt_top1": 1802,
+          "tc_top1": 139591,
+          "gt_margin": 0.25,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 6,
+          "pos": "decode5",
+          "gt_top1": 93408,
+          "tc_top1": 68026,
+          "gt_margin": 0.25,
+          "near_tie": false,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 6,
+          "pos": "decode32",
+          "gt_top1": 5805,
+          "tc_top1": 73626,
+          "gt_margin": 0.5,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 6,
+          "pos": "decode33",
+          "gt_top1": 53161,
+          "tc_top1": 138433,
+          "gt_margin": 1.125,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 6,
+          "pos": "decode47",
+          "gt_top1": 22419,
+          "tc_top1": 79484,
+          "gt_margin": 0.125,
+          "near_tie": true,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 6,
+          "pos": "decode63",
+          "gt_top1": 26338,
+          "tc_top1": 73594,
+          "gt_margin": 0.75,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 7,
+          "pos": "decode2",
+          "gt_top1": 127853,
+          "tc_top1": 27490,
+          "gt_margin": 0.25,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 7,
+          "pos": "decode9",
+          "gt_top1": 129071,
+          "tc_top1": 68785,
+          "gt_margin": 4.75,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 8,
+          "pos": "decode49",
+          "gt_top1": 729,
+          "tc_top1": 8129,
+          "gt_margin": 0.0,
+          "near_tie": true,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 8,
+          "pos": "decode50",
+          "gt_top1": 311,
+          "tc_top1": 429,
+          "gt_margin": 0.125,
+          "near_tie": true,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 8,
+          "pos": "decode53",
+          "gt_top1": 79683,
+          "tc_top1": 55129,
+          "gt_margin": 0.125,
+          "near_tie": true,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 8,
+          "pos": "decode56",
+          "gt_top1": 198,
+          "tc_top1": 576,
+          "gt_margin": 0.375,
+          "near_tie": false,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 9,
+          "pos": "decode12",
+          "gt_top1": 39482,
+          "tc_top1": 6319,
+          "gt_margin": 0.75,
+          "near_tie": false,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 9,
+          "pos": "decode17",
+          "gt_top1": 323,
+          "tc_top1": 714,
+          "gt_margin": 0.0,
+          "near_tie": true,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 9,
+          "pos": "decode20",
+          "gt_top1": 264,
+          "tc_top1": 5109,
+          "gt_margin": 0.125,
+          "near_tie": true,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 9,
+          "pos": "decode35",
+          "gt_top1": 1576,
+          "tc_top1": 13,
+          "gt_margin": 0.25,
+          "near_tie": false,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 9,
+          "pos": "decode37",
+          "gt_top1": 1231,
+          "tc_top1": 594,
+          "gt_margin": 0.125,
+          "near_tie": true,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 9,
+          "pos": "decode56",
+          "gt_top1": 1231,
+          "tc_top1": 5610,
+          "gt_margin": 0.0,
+          "near_tie": true,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 10,
+          "pos": "decode0",
+          "gt_top1": 198,
+          "tc_top1": 271,
+          "gt_margin": 0.0,
+          "near_tie": true,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 10,
+          "pos": "decode7",
+          "gt_top1": 279,
+          "tc_top1": 264,
+          "gt_margin": 0.375,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 10,
+          "pos": "decode12",
+          "gt_top1": 3267,
+          "tc_top1": 3681,
+          "gt_margin": 0.0,
+          "near_tie": true,
+          "bf16_also_flipped": true
+        },
+        {
+          "prompt": 10,
+          "pos": "decode15",
+          "gt_top1": 829,
+          "tc_top1": 2781,
+          "gt_margin": 0.5,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 10,
+          "pos": "decode17",
+          "gt_top1": 537,
+          "tc_top1": 2669,
+          "gt_margin": 0.375,
+          "near_tie": false,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 10,
+          "pos": "decode20",
+          "gt_top1": 4710,
+          "tc_top1": 576,
+          "gt_margin": 0.125,
+          "near_tie": true,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 10,
+          "pos": "decode32",
+          "gt_top1": 374,
+          "tc_top1": 702,
+          "gt_margin": 0.0,
+          "near_tie": true,
+          "bf16_also_flipped": false
+        },
+        {
+          "prompt": 10,
+          "pos": "decode36",
+          "gt_top1": 432,
+          "tc_top1": 279,
+          "gt_margin": 0.125,
+          "near_tie": true,
+          "bf16_also_flipped": true
+        }
+      ],
+      "verdict": "FAIL"
+    },
+    "int6_vs_p1bf16_same_engine": {
+      "note": "cached-chain, same FORK engine, both chains drift identically -> isolates INT6 quantization noise (spec note)",
+      "per_position_maxabs_delta": {
+        "max": 9.0,
+        "mean": 1.9001556609894013,
+        "p50": 1.73828125,
+        "p99": 4.858125000000005
+      },
+      "full_vector_absdelta": {
+        "max": 9.0,
+        "mean": 0.34609949588775635,
+        "p50": 0.265625,
+        "p99": 1.4169921875,
+        "p999": 2.421875
+      }
+    },
+    "hard_flip_attribution": {
+      "n_hard_int6_vs_gt": 29,
+      "n_hard_shared_with_bf16": 9,
+      "n_hard_int6_only": 20,
+      "hard_int6_only_positions": [
+        {
+          "prompt": 0,
+          "pos": "decode47",
+          "gt_margin": 2.875
+        },
+        {
+          "prompt": 1,
+          "pos": "decode53",
+          "gt_margin": 0.75
+        },
+        {
+          "prompt": 2,
+          "pos": "decode3",
+          "gt_margin": 0.5
+        },
+        {
+          "prompt": 3,
+          "pos": "decode12",
+          "gt_margin": 0.25
+        },
+        {
+          "prompt": 4,
+          "pos": "decode32",
+          "gt_margin": 0.25
+        },
+        {
+          "prompt": 4,
+          "pos": "decode38",
+          "gt_margin": 0.5
+        },
+        {
+          "prompt": 4,
+          "pos": "decode48",
+          "gt_margin": 1.0
+        },
+        {
+          "prompt": 4,
+          "pos": "decode53",
+          "gt_margin": 0.75
+        },
+        {
+          "prompt": 4,
+          "pos": "decode56",
+          "gt_margin": 1.625
+        },
+        {
+          "prompt": 4,
+          "pos": "decode58",
+          "gt_margin": 0.75
+        },
+        {
+          "prompt": 5,
+          "pos": "decode8",
+          "gt_margin": 0.75
+        },
+        {
+          "prompt": 6,
+          "pos": "decode3",
+          "gt_margin": 0.25
+        },
+        {
+          "prompt": 6,
+          "pos": "decode32",
+          "gt_margin": 0.5
+        },
+        {
+          "prompt": 6,
+          "pos": "decode33",
+          "gt_margin": 1.125
+        },
+        {
+          "prompt": 6,
+          "pos": "decode63",
+          "gt_margin": 0.75
+        },
+        {
+          "prompt": 7,
+          "pos": "decode2",
+          "gt_margin": 0.25
+        },
+        {
+          "prompt": 7,
+          "pos": "decode9",
+          "gt_margin": 4.75
+        },
+        {
+          "prompt": 10,
+          "pos": "decode7",
+          "gt_margin": 0.375
+        },
+        {
+          "prompt": 10,
+          "pos": "decode15",
+          "gt_margin": 0.5
+        },
+        {
+          "prompt": 10,
+          "pos": "decode17",
+          "gt_margin": 0.375
+        }
+      ],
+      "note": "shared = flip already present in P1/fork bf16 (drift/port carried through, not INT6-introduced); int6_only = candidate quant-noise flips -> p3_adjudicate fresh-refeeds them"
+    },
+    "engine_build_int6_chain": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+    "engine_build_bf16_chain": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py"
+  },
+  "adjudication": {
+    "method": "fresh full-prefill of prompt+decode_tokens[0..s] through INT6 fork adapter at each INT6-ONLY HARD cached-chain flip; drift if it reverts, real quant-noise if it persists at >0.25 GT margin",
+    "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+    "n_int6_only_hard_candidates": 20,
+    "n_drift_explained": 13,
+    "n_real_quant_flips": 7,
+    "n_control": 10,
+    "n_control_ok": 10,
+    "headline": "7 REAL INT6 quant-noise flip(s) at non-near-tie GT margins (reported, not fixed \u2014 quantization is lossy)",
+    "real_quant_flip_rows": [
+      {
+        "prompt": 2,
+        "step": 3,
+        "gt_top1": 409,
+        "cached_top1": 264,
+        "fresh_top1": 264,
+        "gt_margin": 0.5,
+        "fresh_margin": 0.25,
+        "verdict": "REAL-QUANT-FLIP"
+      },
+      {
+        "prompt": 4,
+        "step": 32,
+        "gt_top1": 103658,
+        "cached_top1": 104653,
+        "fresh_top1": 104653,
+        "gt_margin": 0.25,
+        "fresh_margin": 0.25,
+        "verdict": "REAL-QUANT-FLIP"
+      },
+      {
+        "prompt": 4,
+        "step": 38,
+        "gt_top1": 29524,
+        "cached_top1": 20412,
+        "fresh_top1": 107273,
+        "gt_margin": 0.5,
+        "fresh_margin": 0.625,
+        "verdict": "REAL-QUANT-FLIP"
+      },
+      {
+        "prompt": 4,
+        "step": 53,
+        "gt_top1": 99876,
+        "cached_top1": 102280,
+        "fresh_top1": 102280,
+        "gt_margin": 0.75,
+        "fresh_margin": 0.375,
+        "verdict": "REAL-QUANT-FLIP"
+      },
+      {
+        "prompt": 4,
+        "step": 58,
+        "gt_top1": 55502,
+        "cached_top1": 99682,
+        "fresh_top1": 99682,
+        "gt_margin": 0.75,
+        "fresh_margin": 0.625,
+        "verdict": "REAL-QUANT-FLIP"
+      },
+      {
+        "prompt": 6,
+        "step": 3,
+        "gt_top1": 1802,
+        "cached_top1": 139591,
+        "fresh_top1": 139591,
+        "gt_margin": 0.25,
+        "fresh_margin": 0.25,
+        "verdict": "REAL-QUANT-FLIP"
+      },
+      {
+        "prompt": 7,
+        "step": 2,
+        "gt_top1": 127853,
+        "cached_top1": 27490,
+        "fresh_top1": 27490,
+        "gt_margin": 0.25,
+        "fresh_margin": 0.25,
+        "verdict": "REAL-QUANT-FLIP"
+      }
+    ]
+  },
+  "ppl_int6": {
+    "2048": {
+      "apa": {
+        "status": "OK",
+        "ppl": 17.206598358831155,
+        "mean_nll": 2.845292935767393,
+        "scored_tokens": 5631,
+        "n_windows": 8,
+        "engagement": {
+          "apa_calls": 224,
+          "observed_calls": 56,
+          "engaged_calls": 56,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": 0.29217145832431185,
+          "min_engaged_frac": 0.2736810448694485,
+          "max_engaged_frac": 0.3133126999355631,
+          "refine_percentile": 0.15,
+          "z_threshold": 1.0364333894937898,
+          "APA_ENGAGED": true
+        },
+        "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+        "poller_peak_mb": 4109.0
+      },
+      "standard": {
+        "status": "OK",
+        "ppl": 17.074175690106056,
+        "mean_nll": 2.837567128455875,
+        "scored_tokens": 5631,
+        "n_windows": 8,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+        "poller_peak_mb": 11318.0
+      }
+    },
+    "4096": {
+      "apa": {
+        "status": "OK",
+        "ppl": 17.338289368279625,
+        "mean_nll": 2.8529173141375836,
+        "scored_tokens": 7679,
+        "n_windows": 8,
+        "engagement": {
+          "apa_calls": 224,
+          "observed_calls": 56,
+          "engaged_calls": 56,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": 0.2921687731737373,
+          "min_engaged_frac": 0.27751733595084815,
+          "max_engaged_frac": 0.31551937059510005,
+          "refine_percentile": 0.15,
+          "z_threshold": 1.0364333894937898,
+          "APA_ENGAGED": true
+        },
+        "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+        "poller_peak_mb": 8559.0
+      },
+      "standard": {
+        "status": "OK",
+        "ppl": 17.290547744939897,
+        "mean_nll": 2.8501599790626853,
+        "scored_tokens": 7679,
+        "n_windows": 8,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+        "poller_peak_mb": 6025.0
+      }
+    },
+    "8192": {
+      "apa": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "apa_calls": 0,
+          "observed_calls": 0,
+          "engaged_calls": 0,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": null,
+          "min_engaged_frac": null,
+          "max_engaged_frac": null,
+          "refine_percentile": null,
+          "z_threshold": null,
+          "APA_ENGAGED": false
+        },
+        "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+        "poller_peak_mb": 8761.0
+      },
+      "standard": {
+        "status": "OOM",
+        "ppl": 17.145643090534353,
+        "mean_nll": 2.8417440941373298,
+        "scored_tokens": 8191,
+        "n_windows": 1,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+        "poller_peak_mb": 9911.0
+      }
+    }
+  },
+  "apa_engagement_ppl": [
+    [
+      2048,
+      true,
+      0.29217145832431185
+    ],
+    [
+      4096,
+      true,
+      0.2921687731737373
+    ],
+    [
+      8192,
+      false,
+      null
+    ]
+  ],
+  "p2_int4_ppl": {
+    "2048": {
+      "apa": {
+        "status": "OK",
+        "ppl": 22.33323452480072,
+        "mean_nll": 3.106075906450415,
+        "scored_tokens": 5631,
+        "n_windows": 8,
+        "engagement": {
+          "apa_calls": 224,
+          "observed_calls": 56,
+          "engaged_calls": 56,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": 0.2929616195507432,
+          "min_engaged_frac": 0.27488119442792214,
+          "max_engaged_frac": 0.31406311362821804,
+          "refine_percentile": 0.15,
+          "z_threshold": 1.0364333894937898,
+          "APA_ENGAGED": true
+        },
+        "poller_peak_mb": 3777.0
+      },
+      "standard": {
+        "status": "OK",
+        "ppl": 22.301849716948407,
+        "mean_nll": 3.1046696219745242,
+        "scored_tokens": 5631,
+        "n_windows": 8,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "poller_peak_mb": 3651.0
+      }
+    },
+    "4096": {
+      "apa": {
+        "status": "OK",
+        "ppl": 22.373352810279762,
+        "mean_nll": 3.1078706440333597,
+        "scored_tokens": 6655,
+        "n_windows": 6,
+        "engagement": {
+          "apa_calls": 168,
+          "observed_calls": 56,
+          "engaged_calls": 56,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": 0.2931990348634753,
+          "min_engaged_frac": 0.2787700389576214,
+          "max_engaged_frac": 0.317747146349463,
+          "refine_percentile": 0.15,
+          "z_threshold": 1.0364333894937898,
+          "APA_ENGAGED": true
+        },
+        "poller_peak_mb": 7671.0
+      },
+      "standard": {
+        "status": "OK",
+        "ppl": 22.492362299979867,
+        "mean_nll": 3.1131757982488217,
+        "scored_tokens": 6655,
+        "n_windows": 6,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "poller_peak_mb": 5571.0
+      }
+    },
+    "8192": {
+      "apa": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "apa_calls": 0,
+          "observed_calls": 0,
+          "engaged_calls": 0,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": null,
+          "min_engaged_frac": null,
+          "max_engaged_frac": null,
+          "refine_percentile": null,
+          "z_threshold": null,
+          "APA_ENGAGED": false
+        },
+        "poller_peak_mb": 1997.0
+      },
+      "standard": {
+        "status": "OOM",
+        "ppl": 22.790109424917674,
+        "mean_nll": 3.126326644690457,
+        "scored_tokens": 8191,
+        "n_windows": 1,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "poller_peak_mb": 10397.0
+      }
+    }
+  },
+  "p1_bf16_ppl": {
+    "16384": {
+      "apa": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "apa_calls": 0,
+          "observed_calls": 0,
+          "engaged_calls": 0,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": null,
+          "min_engaged_frac": null,
+          "max_engaged_frac": null,
+          "refine_percentile": null,
+          "z_threshold": null,
+          "APA_ENGAGED": false
+        },
+        "poller_peak_mb": 4218.0
+      },
+      "standard": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "poller_peak_mb": 3634.0
+      }
+    },
+    "2048": {
+      "apa": {
+        "status": "OK",
+        "ppl": 16.618618283196216,
+        "mean_nll": 2.8105236501828963,
+        "scored_tokens": 5631,
+        "n_windows": 8,
+        "engagement": {
+          "apa_calls": 224,
+          "observed_calls": 56,
+          "engaged_calls": 56,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": 0.2921519095633541,
+          "min_engaged_frac": 0.2732277046825433,
+          "max_engaged_frac": 0.3134577664123505,
+          "refine_percentile": 0.15,
+          "z_threshold": 1.0364333894937898,
+          "APA_ENGAGED": true
+        },
+        "poller_peak_mb": 5628.0
+      },
+      "standard": {
+        "status": "OK",
+        "ppl": 16.472233717426654,
+        "mean_nll": 2.8016761583952667,
+        "scored_tokens": 5631,
+        "n_windows": 8,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "poller_peak_mb": null
+      }
+    },
+    "32768": {
+      "apa": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "apa_calls": 0,
+          "observed_calls": 0,
+          "engaged_calls": 0,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": null,
+          "min_engaged_frac": null,
+          "max_engaged_frac": null,
+          "refine_percentile": null,
+          "z_threshold": null,
+          "APA_ENGAGED": false
+        },
+        "poller_peak_mb": 4714.0
+      },
+      "standard": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "poller_peak_mb": 3634.0
+      }
+    },
+    "4096": {
+      "apa": {
+        "status": "OK",
+        "ppl": 17.053540282476597,
+        "mean_nll": 2.8363578233760487,
+        "scored_tokens": 6655,
+        "n_windows": 6,
+        "engagement": {
+          "apa_calls": 168,
+          "observed_calls": 56,
+          "engaged_calls": 56,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": 0.2920868059320137,
+          "min_engaged_frac": 0.2774786619782768,
+          "max_engaged_frac": 0.3154218216072736,
+          "refine_percentile": 0.15,
+          "z_threshold": 1.0364333894937898,
+          "APA_ENGAGED": true
+        },
+        "poller_peak_mb": 10055.0
+      },
+      "standard": {
+        "status": "OK",
+        "ppl": 16.911443913261106,
+        "mean_nll": 2.8279905473941134,
+        "scored_tokens": 6655,
+        "n_windows": 6,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "poller_peak_mb": 7559.0
+      }
+    },
+    "8192": {
+      "apa": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "apa_calls": 0,
+          "observed_calls": 0,
+          "engaged_calls": 0,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": null,
+          "min_engaged_frac": null,
+          "max_engaged_frac": null,
+          "refine_percentile": null,
+          "z_threshold": null,
+          "APA_ENGAGED": false
+        },
+        "poller_peak_mb": 8098.0
+      },
+      "standard": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "poller_peak_mb": 3682.0
+      }
+    }
+  },
+  "p0_baseline_ppl": {
+    "2048": {
+      "ppl": 14.96245,
+      "oom": null,
+      "n_windows": 582,
+      "scored_tokens": 299077,
+      "poller_peak_mb": 6868.0
+    },
+    "4096": {
+      "ppl": 14.7008,
+      "oom": null,
+      "n_windows": 578,
+      "scored_tokens": 299077,
+      "poller_peak_mb": 9968.0
+    },
+    "8192": {
+      "ppl": null,
+      "oom": true,
+      "n_windows": null,
+      "scored_tokens": null,
+      "poller_peak_mb": 11439.0
+    },
+    "16384": {
+      "ppl": null,
+      "oom": true,
+      "n_windows": null,
+      "scored_tokens": null,
+      "poller_peak_mb": 9588.0
+    },
+    "32768": {
+      "ppl": null,
+      "oom": true,
+      "n_windows": null,
+      "scored_tokens": null,
+      "poller_peak_mb": null
+    }
+  },
+  "ppl_coverage_note": "tc-INT6 P3 ppl scored the same first N windows within the 590s cap as P1 tc-bf16 and P2 tc-INT4 (identical GT tokenization/stride) \u2014 so INT6-vs-INT4-vs-bf16 is a MATCHED delta at each window. P0 HF-bf16 scored the full corpus; the tc-vs-P0 gap stays coverage-confounded.",
+  "ceilings_int6": {
+    "apa_decode": {
+      "last_solid_ctx": 16384,
+      "first_oom_ctx": 17408,
+      "max_ok_smi_mb": 3403.0,
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "trace": [
+        {
+          "ctx": 14336,
+          "status": "OK",
+          "smi_used_mb": 3223.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 18432,
+          "status": "OOM-as-timeout",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 16384,
+          "status": "OK",
+          "smi_used_mb": 3403.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 17408,
+          "status": "OOM-as-timeout",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        }
+      ]
+    },
+    "apa_prefill": {
+      "last_solid_ctx": 5056,
+      "first_oom_ctx": 5248,
+      "max_ok_smi_mb": 2259.0,
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "trace": [
+        {
+          "ctx": 4096,
+          "status": "OK",
+          "smi_used_mb": 2241.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 7168,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": false
+        },
+        {
+          "ctx": 5632,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 4864,
+          "status": "OK",
+          "smi_used_mb": 2255.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 5248,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 5056,
+          "status": "OK",
+          "smi_used_mb": 2259.0,
+          "apa_engaged": true
+        }
+      ]
+    },
+    "standard_decode": {
+      "last_solid_ctx": 25600,
+      "first_oom_ctx": null,
+      "max_ok_smi_mb": 4081.0,
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "trace": [
+        {
+          "ctx": 23040,
+          "status": "OK",
+          "smi_used_mb": 3853.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 25600,
+          "status": "OK",
+          "smi_used_mb": 4081.0,
+          "apa_engaged": null
+        }
+      ]
+    },
+    "standard_prefill": {
+      "last_solid_ctx": 8320,
+      "first_oom_ctx": 8704,
+      "max_ok_smi_mb": 2349.0,
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "trace": [
+        {
+          "ctx": 4096,
+          "status": "OK",
+          "smi_used_mb": 2239.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 10240,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 7168,
+          "status": "OK",
+          "smi_used_mb": 2307.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 8704,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 7936,
+          "status": "OK",
+          "smi_used_mb": 2331.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 8320,
+          "status": "OK",
+          "smi_used_mb": 2349.0,
+          "apa_engaged": null
+        }
+      ]
+    }
+  },
+  "p2_int4_ceilings": {
+    "apa_decode": {
+      "last_solid_ctx": 23552,
+      "first_oom_ctx": 24576,
+      "max_ok_smi_mb": 3411.0,
+      "trace": [
+        {
+          "ctx": 8192,
+          "status": "OK",
+          "smi_used_mb": 2287.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 40960,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 24576,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 16384,
+          "status": "OK",
+          "smi_used_mb": 2951.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 20480,
+          "status": "OK",
+          "smi_used_mb": 3049.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 22528,
+          "status": "OK",
+          "smi_used_mb": 3249.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 23552,
+          "status": "OK",
+          "smi_used_mb": 3411.0,
+          "apa_engaged": true
+        }
+      ]
+    },
+    "apa_prefill": {
+      "last_solid_ctx": 5824,
+      "first_oom_ctx": 6016,
+      "max_ok_smi_mb": 1815.0,
+      "trace": [
+        {
+          "ctx": 4096,
+          "status": "OK",
+          "smi_used_mb": 1781.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 10240,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": false
+        },
+        {
+          "ctx": 7168,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": false
+        },
+        {
+          "ctx": 5632,
+          "status": "OK",
+          "smi_used_mb": 1811.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 6400,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": false
+        },
+        {
+          "ctx": 6016,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": false
+        },
+        {
+          "ctx": 5824,
+          "status": "OK",
+          "smi_used_mb": 1815.0,
+          "apa_engaged": true
+        }
+      ]
+    },
+    "standard_decode": {
+      "last_solid_ctx": 37888,
+      "first_oom_ctx": 38912,
+      "max_ok_smi_mb": 4375.0,
+      "trace": [
+        {
+          "ctx": 8192,
+          "status": "OK",
+          "smi_used_mb": 2285.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 40960,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 24576,
+          "status": "OK",
+          "smi_used_mb": 3463.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 32768,
+          "status": "OK",
+          "smi_used_mb": 4375.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 36864,
+          "status": "OK",
+          "smi_used_mb": 4098.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 38912,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 37888,
+          "status": "OK",
+          "smi_used_mb": 4279.0,
+          "apa_engaged": null
+        }
+      ]
+    },
+    "standard_prefill": {
+      "last_solid_ctx": 8448,
+      "first_oom_ctx": 8704,
+      "max_ok_smi_mb": 1893.0,
+      "trace": [
+        {
+          "ctx": 4096,
+          "status": "OK",
+          "smi_used_mb": 1779.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 12288,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 8192,
+          "status": "OK",
+          "smi_used_mb": 1883.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 10240,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 9216,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 8704,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 8448,
+          "status": "OK",
+          "smi_used_mb": 1893.0,
+          "apa_engaged": null
+        }
+      ]
+    }
+  },
+  "p1_bf16_ceilings": {
+    "apa_decode": {
+      "last_solid_ctx": 20224,
+      "first_oom_ctx": 20800,
+      "max_ok_smi_mb": 5018.0,
+      "trace": [
+        {
+          "ctx": 4096,
+          "status": "OK",
+          "smi_used_mb": 3972.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 40960,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 22528,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 13312,
+          "status": "OK",
+          "smi_used_mb": 4704.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 17920,
+          "status": "OK",
+          "smi_used_mb": 4808.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 20224,
+          "status": "OK",
+          "smi_used_mb": 5018.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 21376,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 20800,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": true
+        }
+      ]
+    },
+    "apa_prefill": {
+      "last_solid_ctx": 5120,
+      "first_oom_ctx": 5312,
+      "max_ok_smi_mb": 3774.0,
+      "trace": [
+        {
+          "ctx": 2048,
+          "status": "OK",
+          "smi_used_mb": 3730.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 8192,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": false
+        },
+        {
+          "ctx": 5120,
+          "status": "OK",
+          "smi_used_mb": 3774.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 6656,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": false
+        },
+        {
+          "ctx": 5888,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": false
+        },
+        {
+          "ctx": 5504,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": false
+        },
+        {
+          "ctx": 5312,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": true
+        }
+      ]
+    },
+    "standard_decode": {
+      "last_solid_ctx": 30592,
+      "first_oom_ctx": 31744,
+      "max_ok_smi_mb": 6102.0,
+      "trace": [
+        {
+          "ctx": 4096,
+          "status": "OK",
+          "smi_used_mb": 3972.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 40960,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 22528,
+          "status": "OK",
+          "smi_used_mb": 5230.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 31744,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 27136,
+          "status": "OK",
+          "smi_used_mb": 5794.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 29440,
+          "status": "OK",
+          "smi_used_mb": 6042.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 30592,
+          "status": "OK",
+          "smi_used_mb": 6102.0,
+          "apa_engaged": null
+        }
+      ]
+    },
+    "standard_prefill": {
+      "last_solid_ctx": 7616,
+      "first_oom_ctx": 7808,
+      "max_ok_smi_mb": 3836.0,
+      "trace": [
+        {
+          "ctx": 2048,
+          "status": "OK",
+          "smi_used_mb": 3728.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 8192,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 5120,
+          "status": "OK",
+          "smi_used_mb": 3774.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 6656,
+          "status": "OK",
+          "smi_used_mb": 3810.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 7424,
+          "status": "OK",
+          "smi_used_mb": 3830.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 7808,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 7616,
+          "status": "OK",
+          "smi_used_mb": 3836.0,
+          "apa_engaged": null
+        }
+      ]
+    }
+  }
+}

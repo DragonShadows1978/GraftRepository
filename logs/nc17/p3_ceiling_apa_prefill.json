@@ -1,0 +1,141 @@
+{
+  "mode": "apa",
+  "kind": "prefill",
+  "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "search_lo": 4096,
+  "search_hi": 7168,
+  "last_solid_ctx": 5056,
+  "first_oom_ctx": 5248,
+  "probe_timeout_s": 120,
+  "refine_percentile": 0.15,
+  "trace": [
+    {
+      "mode": "apa",
+      "kind": "prefill",
+      "ctx": 4096,
+      "status": "OK",
+      "smi_used_mb_after": 2241.0,
+      "elapsed_s": 84.70561528205872,
+      "engagement": {
+        "apa_calls": 28,
+        "observed_calls": 28,
+        "engaged_calls": 28,
+        "all0_calls": 0,
+        "all1_calls": 0,
+        "mean_engaged_frac": 0.29867181272834925,
+        "min_engaged_frac": 0.2825709932572614,
+        "max_engaged_frac": 0.3230883854611606,
+        "refine_percentile": 0.15,
+        "z_threshold": 1.0364333894937898,
+        "APA_ENGAGED": true
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 85.39043879508972
+    },
+    {
+      "mode": "apa",
+      "kind": "prefill",
+      "ctx": 7168,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 23.954010248184204,
+      "engagement": {
+        "apa_calls": 0,
+        "observed_calls": 0,
+        "engaged_calls": 0,
+        "all0_calls": 0,
+        "all1_calls": 0,
+        "mean_engaged_frac": null,
+        "min_engaged_frac": null,
+        "max_engaged_frac": null,
+        "refine_percentile": null,
+        "z_threshold": null,
+        "APA_ENGAGED": false
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 24.6553213596344
+    },
+    {
+      "mode": "apa",
+      "kind": "prefill",
+      "ctx": 5632,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 120.54254937171936,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "no RESULT line; rc=124; tail=''",
+      "_probe_rc": 124,
+      "_wall_s": 120.54255557060242
+    },
+    {
+      "mode": "apa",
+      "kind": "prefill",
+      "ctx": 4864,
+      "status": "OK",
+      "smi_used_mb_after": 2255.0,
+      "elapsed_s": 111.23244452476501,
+      "engagement": {
+        "apa_calls": 28,
+        "observed_calls": 28,
+        "engaged_calls": 28,
+        "all0_calls": 0,
+        "all1_calls": 0,
+        "mean_engaged_frac": 0.29890116815315204,
+        "min_engaged_frac": 0.2816985204129929,
+        "max_engaged_frac": 0.3215672668632012,
+        "refine_percentile": 0.15,
+        "z_threshold": 1.0364333894937898,
+        "APA_ENGAGED": true
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 111.9151303768158
+    },
+    {
+      "mode": "apa",
+      "kind": "prefill",
+      "ctx": 5248,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 120.56980848312378,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "no RESULT line; rc=124; tail=''",
+      "_probe_rc": 124,
+      "_wall_s": 120.56981635093689
+    },
+    {
+      "mode": "apa",
+      "kind": "prefill",
+      "ctx": 5056,
+      "status": "OK",
+      "smi_used_mb_after": 2259.0,
+      "elapsed_s": 118.22446918487549,
+      "engagement": {
+        "apa_calls": 28,
+        "observed_calls": 28,
+        "engaged_calls": 28,
+        "all0_calls": 0,
+        "all1_calls": 0,
+        "mean_engaged_frac": 0.29905875684466526,
+        "min_engaged_frac": 0.28171821848021167,
+        "max_engaged_frac": 0.32154135106619974,
+        "refine_percentile": 0.15,
+        "z_threshold": 1.0364333894937898,
+        "APA_ENGAGED": true
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 118.96152949333191
+    }
+  ]
+}

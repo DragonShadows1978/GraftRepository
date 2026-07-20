@@ -118,3 +118,28 @@ Receipts only. Plan: `QWEN3_1P7B_NAMECHECKER_PLAN.md` (immutable).
 - Deviation accepted: adapter extended with int4 load path (bf16 path
   verified untouched). Seat process-discipline corrected mid-run
   (waiter churn → foreground) — receipts unaffected.
+
+## 2026-07-20 ~10:1x — P3m COMPLETE (Opus seat, fork engine): INT6 = THE OPERATING POINT
+- Fork engine asserted per run (ENGINE=int6-fork on numeric lines);
+  sanity gate PASS (dequant 0.0, fused rel-fro 3.1e-7). Engine-path
+  shadowing hazard (mistral7b_tc sys.path insert) neutralized via
+  import order, no engine edits.
+- Quant: INT6 g128 SYMMETRIC (z=-32s, empty zeros), 196 matrices,
+  artifact sha 2bde6944… 1029.1 MiB disk; RESIDENT 2216.5 MiB
+  (INT4 1901.5 / bf16 3875.5).
+- QUALITY: ppl 17.07/17.29 @2K/4K (bf16 16.47/16.91; INT4
+  22.30/22.49) → +0.6 vs bf16, recovers ~5 ppl of INT4's loss. One 8K
+  window 17.15. Parity: cached-chain 93.4% (INT4 75.4%, bf16 95.4%);
+  FINALS 11/11 CLEAN; adjudicated real quant flips 7 (INT4: 92) —
+  ~13× cleaner. Same-engine Δ-vs-bf16 mean 0.346 / p99 1.42.
+- APA r0.15 on INT6: negligible ppl cost (+0.13/+0.05), engaged 0.292.
+- CEILINGS: std prefill 8320; std decode ≥25600 (bracket-exhausted,
+  not wall — deviation accepted); apa prefill 5056 (7168 = true OOM);
+  apa decode 16384 = TIME wall not VRAM (probe caps on serial chunked
+  prefill; VRAM 3.4GiB with 8+ free) — wall_type recorded in JSONs.
+- VERDICT (per P2's MARGINAL trigger): INT6 symmetric is the
+  clean-quality operating point for the name-checker; INT4's loss was
+  real and INT6 recovers it for +315 MiB resident.
+- P4 DISPATCHED on INT6/fork config (product-realistic), with
+  built-in bf16 re-run rule if any GRM gate fails (separate machinery
+  from quant).

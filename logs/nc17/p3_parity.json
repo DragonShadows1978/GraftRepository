@@ -1,0 +1,650 @@
+{
+  "stage": "NC17-P3",
+  "engine_build_int6_chain": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "engine_build_bf16_chain": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "gt_file": "/mnt/ForgeRealm/GraftRepository/logs/nc17/p0_gt.npz",
+  "gt_sha256": "0fc4099b3537083ec99478c9cdb969a5afca038609636499d64344a3303575fb",
+  "near_tie_margin": 0.25,
+  "int6_parity_vs_gt": {
+    "n_positions": 715,
+    "n_top1_agree": 668,
+    "top1_agreement": 0.9342657342657342,
+    "n_flips": 47,
+    "n_near_tie_flips": 18,
+    "n_hard_flips": 29,
+    "max_abs_dlogit": 13.0625,
+    "mean_abs_dlogit": 0.45645540952682495,
+    "p50_abs_dlogit": 0.328125,
+    "p99_abs_dlogit": 2.15625,
+    "p999_abs_dlogit": 3.4375,
+    "flips": [
+      {
+        "prompt": 0,
+        "pos": "decode26",
+        "gt_top1": 8522,
+        "tc_top1": 3639,
+        "gt_margin": 0.5,
+        "near_tie": false,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 0,
+        "pos": "decode47",
+        "gt_top1": 5429,
+        "tc_top1": 8853,
+        "gt_margin": 2.875,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 1,
+        "pos": "decode0",
+        "gt_top1": 13,
+        "tc_top1": 11,
+        "gt_margin": 0.125,
+        "near_tie": true,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 1,
+        "pos": "decode5",
+        "gt_top1": 58137,
+        "tc_top1": 294,
+        "gt_margin": 0.375,
+        "near_tie": false,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 1,
+        "pos": "decode53",
+        "gt_top1": 135290,
+        "tc_top1": 3348,
+        "gt_margin": 0.75,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 2,
+        "pos": "decode0",
+        "gt_top1": 13,
+        "tc_top1": 11,
+        "gt_margin": 0.125,
+        "near_tie": true,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 2,
+        "pos": "decode3",
+        "gt_top1": 409,
+        "tc_top1": 264,
+        "gt_margin": 0.5,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 3,
+        "pos": "decode12",
+        "gt_top1": 10638,
+        "tc_top1": 572,
+        "gt_margin": 0.25,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 3,
+        "pos": "decode26",
+        "gt_top1": 13,
+        "tc_top1": 1785,
+        "gt_margin": 0.0,
+        "near_tie": true,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 3,
+        "pos": "decode34",
+        "gt_top1": 77327,
+        "tc_top1": 80940,
+        "gt_margin": 0.25,
+        "near_tie": false,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 3,
+        "pos": "decode37",
+        "gt_top1": 35439,
+        "tc_top1": 7281,
+        "gt_margin": 0.75,
+        "near_tie": false,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 3,
+        "pos": "decode39",
+        "gt_top1": 773,
+        "tc_top1": 1077,
+        "gt_margin": 0.25,
+        "near_tie": false,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 3,
+        "pos": "decode40",
+        "gt_top1": 304,
+        "tc_top1": 358,
+        "gt_margin": 0.0,
+        "near_tie": true,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 3,
+        "pos": "decode62",
+        "gt_top1": 39970,
+        "tc_top1": 59490,
+        "gt_margin": 0.125,
+        "near_tie": true,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 4,
+        "pos": "decode32",
+        "gt_top1": 103658,
+        "tc_top1": 104653,
+        "gt_margin": 0.25,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 4,
+        "pos": "decode38",
+        "gt_top1": 29524,
+        "tc_top1": 20412,
+        "gt_margin": 0.5,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 4,
+        "pos": "decode48",
+        "gt_top1": 104043,
+        "tc_top1": 91572,
+        "gt_margin": 1.0,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 4,
+        "pos": "decode53",
+        "gt_top1": 99876,
+        "tc_top1": 102280,
+        "gt_margin": 0.75,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 4,
+        "pos": "decode56",
+        "gt_top1": 101566,
+        "tc_top1": 100527,
+        "gt_margin": 1.625,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 4,
+        "pos": "decode58",
+        "gt_top1": 55502,
+        "tc_top1": 99682,
+        "gt_margin": 0.75,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 5,
+        "pos": "decode8",
+        "gt_top1": 131888,
+        "tc_top1": 102356,
+        "gt_margin": 0.75,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 6,
+        "pos": "decode3",
+        "gt_top1": 1802,
+        "tc_top1": 139591,
+        "gt_margin": 0.25,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 6,
+        "pos": "decode5",
+        "gt_top1": 93408,
+        "tc_top1": 68026,
+        "gt_margin": 0.25,
+        "near_tie": false,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 6,
+        "pos": "decode32",
+        "gt_top1": 5805,
+        "tc_top1": 73626,
+        "gt_margin": 0.5,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 6,
+        "pos": "decode33",
+        "gt_top1": 53161,
+        "tc_top1": 138433,
+        "gt_margin": 1.125,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 6,
+        "pos": "decode47",
+        "gt_top1": 22419,
+        "tc_top1": 79484,
+        "gt_margin": 0.125,
+        "near_tie": true,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 6,
+        "pos": "decode63",
+        "gt_top1": 26338,
+        "tc_top1": 73594,
+        "gt_margin": 0.75,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 7,
+        "pos": "decode2",
+        "gt_top1": 127853,
+        "tc_top1": 27490,
+        "gt_margin": 0.25,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 7,
+        "pos": "decode9",
+        "gt_top1": 129071,
+        "tc_top1": 68785,
+        "gt_margin": 4.75,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 8,
+        "pos": "decode49",
+        "gt_top1": 729,
+        "tc_top1": 8129,
+        "gt_margin": 0.0,
+        "near_tie": true,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 8,
+        "pos": "decode50",
+        "gt_top1": 311,
+        "tc_top1": 429,
+        "gt_margin": 0.125,
+        "near_tie": true,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 8,
+        "pos": "decode53",
+        "gt_top1": 79683,
+        "tc_top1": 55129,
+        "gt_margin": 0.125,
+        "near_tie": true,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 8,
+        "pos": "decode56",
+        "gt_top1": 198,
+        "tc_top1": 576,
+        "gt_margin": 0.375,
+        "near_tie": false,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 9,
+        "pos": "decode12",
+        "gt_top1": 39482,
+        "tc_top1": 6319,
+        "gt_margin": 0.75,
+        "near_tie": false,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 9,
+        "pos": "decode17",
+        "gt_top1": 323,
+        "tc_top1": 714,
+        "gt_margin": 0.0,
+        "near_tie": true,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 9,
+        "pos": "decode20",
+        "gt_top1": 264,
+        "tc_top1": 5109,
+        "gt_margin": 0.125,
+        "near_tie": true,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 9,
+        "pos": "decode35",
+        "gt_top1": 1576,
+        "tc_top1": 13,
+        "gt_margin": 0.25,
+        "near_tie": false,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 9,
+        "pos": "decode37",
+        "gt_top1": 1231,
+        "tc_top1": 594,
+        "gt_margin": 0.125,
+        "near_tie": true,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 9,
+        "pos": "decode56",
+        "gt_top1": 1231,
+        "tc_top1": 5610,
+        "gt_margin": 0.0,
+        "near_tie": true,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 10,
+        "pos": "decode0",
+        "gt_top1": 198,
+        "tc_top1": 271,
+        "gt_margin": 0.0,
+        "near_tie": true,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 10,
+        "pos": "decode7",
+        "gt_top1": 279,
+        "tc_top1": 264,
+        "gt_margin": 0.375,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 10,
+        "pos": "decode12",
+        "gt_top1": 3267,
+        "tc_top1": 3681,
+        "gt_margin": 0.0,
+        "near_tie": true,
+        "bf16_also_flipped": true
+      },
+      {
+        "prompt": 10,
+        "pos": "decode15",
+        "gt_top1": 829,
+        "tc_top1": 2781,
+        "gt_margin": 0.5,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 10,
+        "pos": "decode17",
+        "gt_top1": 537,
+        "tc_top1": 2669,
+        "gt_margin": 0.375,
+        "near_tie": false,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 10,
+        "pos": "decode20",
+        "gt_top1": 4710,
+        "tc_top1": 576,
+        "gt_margin": 0.125,
+        "near_tie": true,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 10,
+        "pos": "decode32",
+        "gt_top1": 374,
+        "tc_top1": 702,
+        "gt_margin": 0.0,
+        "near_tie": true,
+        "bf16_also_flipped": false
+      },
+      {
+        "prompt": 10,
+        "pos": "decode36",
+        "gt_top1": 432,
+        "tc_top1": 279,
+        "gt_margin": 0.125,
+        "near_tie": true,
+        "bf16_also_flipped": true
+      }
+    ],
+    "verdict": "FAIL"
+  },
+  "int6_vs_p1bf16_same_engine": {
+    "note": "cached-chain, same FORK engine, both chains drift identically -> isolates INT6 quantization noise (spec note)",
+    "per_position_maxabs_delta": {
+      "max": 9.0,
+      "mean": 1.9001556609894013,
+      "p50": 1.73828125,
+      "p99": 4.858125000000005
+    },
+    "full_vector_absdelta": {
+      "max": 9.0,
+      "mean": 0.34609949588775635,
+      "p50": 0.265625,
+      "p99": 1.4169921875,
+      "p999": 2.421875
+    }
+  },
+  "hard_flip_attribution": {
+    "n_hard_int6_vs_gt": 29,
+    "n_hard_shared_with_bf16": 9,
+    "n_hard_int6_only": 20,
+    "hard_int6_only_positions": [
+      {
+        "prompt": 0,
+        "pos": "decode47",
+        "gt_margin": 2.875
+      },
+      {
+        "prompt": 1,
+        "pos": "decode53",
+        "gt_margin": 0.75
+      },
+      {
+        "prompt": 2,
+        "pos": "decode3",
+        "gt_margin": 0.5
+      },
+      {
+        "prompt": 3,
+        "pos": "decode12",
+        "gt_margin": 0.25
+      },
+      {
+        "prompt": 4,
+        "pos": "decode32",
+        "gt_margin": 0.25
+      },
+      {
+        "prompt": 4,
+        "pos": "decode38",
+        "gt_margin": 0.5
+      },
+      {
+        "prompt": 4,
+        "pos": "decode48",
+        "gt_margin": 1.0
+      },
+      {
+        "prompt": 4,
+        "pos": "decode53",
+        "gt_margin": 0.75
+      },
+      {
+        "prompt": 4,
+        "pos": "decode56",
+        "gt_margin": 1.625
+      },
+      {
+        "prompt": 4,
+        "pos": "decode58",
+        "gt_margin": 0.75
+      },
+      {
+        "prompt": 5,
+        "pos": "decode8",
+        "gt_margin": 0.75
+      },
+      {
+        "prompt": 6,
+        "pos": "decode3",
+        "gt_margin": 0.25
+      },
+      {
+        "prompt": 6,
+        "pos": "decode32",
+        "gt_margin": 0.5
+      },
+      {
+        "prompt": 6,
+        "pos": "decode33",
+        "gt_margin": 1.125
+      },
+      {
+        "prompt": 6,
+        "pos": "decode63",
+        "gt_margin": 0.75
+      },
+      {
+        "prompt": 7,
+        "pos": "decode2",
+        "gt_margin": 0.25
+      },
+      {
+        "prompt": 7,
+        "pos": "decode9",
+        "gt_margin": 4.75
+      },
+      {
+        "prompt": 10,
+        "pos": "decode7",
+        "gt_margin": 0.375
+      },
+      {
+        "prompt": 10,
+        "pos": "decode15",
+        "gt_margin": 0.5
+      },
+      {
+        "prompt": 10,
+        "pos": "decode17",
+        "gt_margin": 0.375
+      }
+    ],
+    "note": "shared = flip already present in P1/fork bf16 (drift/port carried through, not INT6-introduced); int6_only = candidate quant-noise flips -> p3_adjudicate fresh-refeeds them"
+  },
+  "per_prompt": [
+    {
+      "prompt": 0,
+      "n_positions": 65,
+      "top1_agree": 63,
+      "agree_frac": 0.9692307692307692,
+      "max_abs_dlogit": 5.40625
+    },
+    {
+      "prompt": 1,
+      "n_positions": 65,
+      "top1_agree": 62,
+      "agree_frac": 0.9538461538461539,
+      "max_abs_dlogit": 4.890625
+    },
+    {
+      "prompt": 2,
+      "n_positions": 65,
+      "top1_agree": 63,
+      "agree_frac": 0.9692307692307692,
+      "max_abs_dlogit": 9.375
+    },
+    {
+      "prompt": 3,
+      "n_positions": 65,
+      "top1_agree": 58,
+      "agree_frac": 0.8923076923076924,
+      "max_abs_dlogit": 7.859375
+    },
+    {
+      "prompt": 4,
+      "n_positions": 65,
+      "top1_agree": 59,
+      "agree_frac": 0.9076923076923077,
+      "max_abs_dlogit": 6.4375
+    },
+    {
+      "prompt": 5,
+      "n_positions": 65,
+      "top1_agree": 64,
+      "agree_frac": 0.9846153846153847,
+      "max_abs_dlogit": 7.2890625
+    },
+    {
+      "prompt": 6,
+      "n_positions": 65,
+      "top1_agree": 59,
+      "agree_frac": 0.9076923076923077,
+      "max_abs_dlogit": 6.0859375
+    },
+    {
+      "prompt": 7,
+      "n_positions": 65,
+      "top1_agree": 63,
+      "agree_frac": 0.9692307692307692,
+      "max_abs_dlogit": 13.0625
+    },
+    {
+      "prompt": 8,
+      "n_positions": 65,
+      "top1_agree": 61,
+      "agree_frac": 0.9384615384615385,
+      "max_abs_dlogit": 5.9453125
+    },
+    {
+      "prompt": 9,
+      "n_positions": 65,
+      "top1_agree": 59,
+      "agree_frac": 0.9076923076923077,
+      "max_abs_dlogit": 3.8203125
+    },
+    {
+      "prompt": 10,
+      "n_positions": 65,
+      "top1_agree": 57,
+      "agree_frac": 0.8769230769230769,
+      "max_abs_dlogit": 6.75
+    }
+  ]
+}

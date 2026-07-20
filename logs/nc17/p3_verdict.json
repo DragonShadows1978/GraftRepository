@@ -1,0 +1,306 @@
+{
+  "test": "nc17_p3_adjudicate",
+  "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "gt_file": "/mnt/ForgeRealm/GraftRepository/logs/nc17/p0_gt.npz",
+  "gt_sha256": "0fc4099b3537083ec99478c9cdb969a5afca038609636499d64344a3303575fb",
+  "adapter_info": {
+    "loaded": "int6",
+    "framework": "tensor_cuda INT6 (self-quantized, Qwen3-1.7B, fork int6-weights)",
+    "bits": 6,
+    "group_size": 128,
+    "quant_scheme": "symmetric per-group, code=(q-32), z=-32*s (empty zeros), 4-codes-per-3-bytes",
+    "symmetry": "symmetric (NB: INT4 P2 path is asymmetric affine)",
+    "tied_head": true,
+    "tied_head_vram_bytes": 0,
+    "exempt_tensors": [
+      "embed_tokens(bf16)",
+      "lm_head(tied bf16)",
+      "all_rmsnorm(fp32)",
+      "qk_norm(fp32)"
+    ]
+  },
+  "near_tie_margin": 0.25,
+  "method": "fresh full-prefill of prompt+decode_tokens[0..s] through INT6 fork adapter at each INT6-ONLY HARD cached-chain flip; drift if it reverts, real quant-noise if it persists at >0.25 GT margin",
+  "n_int6_only_hard_candidates": 20,
+  "n_shared_drift_flips_not_refed": 9,
+  "n_drift_explained": 13,
+  "n_real_quant_flips": 7,
+  "control_seed": 42,
+  "n_control": 10,
+  "n_control_ok": 10,
+  "headline": "7 REAL INT6 quant-noise flip(s) at non-near-tie GT margins (reported, not fixed \u2014 quantization is lossy)",
+  "flip_rows": [
+    {
+      "prompt": 0,
+      "step": 47,
+      "gt_top1": 5429,
+      "cached_top1": 8853,
+      "fresh_top1": 5429,
+      "gt_margin": 2.875,
+      "fresh_margin": 2.0,
+      "verdict": "DRIFT(agree)"
+    },
+    {
+      "prompt": 1,
+      "step": 53,
+      "gt_top1": 135290,
+      "cached_top1": 3348,
+      "fresh_top1": 3348,
+      "gt_margin": 0.75,
+      "fresh_margin": 0.125,
+      "verdict": "DRIFT(near-tie)"
+    },
+    {
+      "prompt": 2,
+      "step": 3,
+      "gt_top1": 409,
+      "cached_top1": 264,
+      "fresh_top1": 264,
+      "gt_margin": 0.5,
+      "fresh_margin": 0.25,
+      "verdict": "REAL-QUANT-FLIP"
+    },
+    {
+      "prompt": 3,
+      "step": 12,
+      "gt_top1": 10638,
+      "cached_top1": 572,
+      "fresh_top1": 10638,
+      "gt_margin": 0.25,
+      "fresh_margin": 0.125,
+      "verdict": "DRIFT(agree)"
+    },
+    {
+      "prompt": 4,
+      "step": 32,
+      "gt_top1": 103658,
+      "cached_top1": 104653,
+      "fresh_top1": 104653,
+      "gt_margin": 0.25,
+      "fresh_margin": 0.25,
+      "verdict": "REAL-QUANT-FLIP"
+    },
+    {
+      "prompt": 4,
+      "step": 38,
+      "gt_top1": 29524,
+      "cached_top1": 20412,
+      "fresh_top1": 107273,
+      "gt_margin": 0.5,
+      "fresh_margin": 0.625,
+      "verdict": "REAL-QUANT-FLIP"
+    },
+    {
+      "prompt": 4,
+      "step": 48,
+      "gt_top1": 104043,
+      "cached_top1": 91572,
+      "fresh_top1": 104043,
+      "gt_margin": 1.0,
+      "fresh_margin": 0.375,
+      "verdict": "DRIFT(agree)"
+    },
+    {
+      "prompt": 4,
+      "step": 53,
+      "gt_top1": 99876,
+      "cached_top1": 102280,
+      "fresh_top1": 102280,
+      "gt_margin": 0.75,
+      "fresh_margin": 0.375,
+      "verdict": "REAL-QUANT-FLIP"
+    },
+    {
+      "prompt": 4,
+      "step": 56,
+      "gt_top1": 101566,
+      "cached_top1": 100527,
+      "fresh_top1": 101566,
+      "gt_margin": 1.625,
+      "fresh_margin": 0.625,
+      "verdict": "DRIFT(agree)"
+    },
+    {
+      "prompt": 4,
+      "step": 58,
+      "gt_top1": 55502,
+      "cached_top1": 99682,
+      "fresh_top1": 99682,
+      "gt_margin": 0.75,
+      "fresh_margin": 0.625,
+      "verdict": "REAL-QUANT-FLIP"
+    },
+    {
+      "prompt": 5,
+      "step": 8,
+      "gt_top1": 131888,
+      "cached_top1": 102356,
+      "fresh_top1": 131888,
+      "gt_margin": 0.75,
+      "fresh_margin": 0.875,
+      "verdict": "DRIFT(agree)"
+    },
+    {
+      "prompt": 6,
+      "step": 3,
+      "gt_top1": 1802,
+      "cached_top1": 139591,
+      "fresh_top1": 139591,
+      "gt_margin": 0.25,
+      "fresh_margin": 0.25,
+      "verdict": "REAL-QUANT-FLIP"
+    },
+    {
+      "prompt": 6,
+      "step": 32,
+      "gt_top1": 5805,
+      "cached_top1": 73626,
+      "fresh_top1": 5805,
+      "gt_margin": 0.5,
+      "fresh_margin": 0.25,
+      "verdict": "DRIFT(agree)"
+    },
+    {
+      "prompt": 6,
+      "step": 33,
+      "gt_top1": 53161,
+      "cached_top1": 138433,
+      "fresh_top1": 53161,
+      "gt_margin": 1.125,
+      "fresh_margin": 0.75,
+      "verdict": "DRIFT(agree)"
+    },
+    {
+      "prompt": 6,
+      "step": 63,
+      "gt_top1": 26338,
+      "cached_top1": 73594,
+      "fresh_top1": 26338,
+      "gt_margin": 0.75,
+      "fresh_margin": 0.125,
+      "verdict": "DRIFT(agree)"
+    },
+    {
+      "prompt": 7,
+      "step": 2,
+      "gt_top1": 127853,
+      "cached_top1": 27490,
+      "fresh_top1": 27490,
+      "gt_margin": 0.25,
+      "fresh_margin": 0.25,
+      "verdict": "REAL-QUANT-FLIP"
+    },
+    {
+      "prompt": 7,
+      "step": 9,
+      "gt_top1": 129071,
+      "cached_top1": 68785,
+      "fresh_top1": 129071,
+      "gt_margin": 4.75,
+      "fresh_margin": 4.625,
+      "verdict": "DRIFT(agree)"
+    },
+    {
+      "prompt": 10,
+      "step": 7,
+      "gt_top1": 279,
+      "cached_top1": 264,
+      "fresh_top1": 279,
+      "gt_margin": 0.375,
+      "fresh_margin": 0.125,
+      "verdict": "DRIFT(agree)"
+    },
+    {
+      "prompt": 10,
+      "step": 15,
+      "gt_top1": 829,
+      "cached_top1": 2781,
+      "fresh_top1": 2781,
+      "gt_margin": 0.5,
+      "fresh_margin": 0.125,
+      "verdict": "DRIFT(near-tie)"
+    },
+    {
+      "prompt": 10,
+      "step": 17,
+      "gt_top1": 537,
+      "cached_top1": 2669,
+      "fresh_top1": 537,
+      "gt_margin": 0.375,
+      "fresh_margin": 0.5,
+      "verdict": "DRIFT(agree)"
+    }
+  ],
+  "control_rows": [
+    {
+      "prompt": 0,
+      "step": 25,
+      "gt_top1": 279,
+      "fresh_top1": 279,
+      "ok": true
+    },
+    {
+      "prompt": 1,
+      "step": 29,
+      "gt_top1": 4942,
+      "fresh_top1": 4942,
+      "ok": true
+    },
+    {
+      "prompt": 1,
+      "step": 44,
+      "gt_top1": 4151,
+      "fresh_top1": 4151,
+      "ok": true
+    },
+    {
+      "prompt": 1,
+      "step": 55,
+      "gt_top1": 92717,
+      "fresh_top1": 92717,
+      "ok": true
+    },
+    {
+      "prompt": 2,
+      "step": 21,
+      "gt_top1": 409,
+      "fresh_top1": 409,
+      "ok": true
+    },
+    {
+      "prompt": 3,
+      "step": 49,
+      "gt_top1": 30,
+      "fresh_top1": 30,
+      "ok": true
+    },
+    {
+      "prompt": 4,
+      "step": 8,
+      "gt_top1": 59975,
+      "fresh_top1": 59975,
+      "ok": true
+    },
+    {
+      "prompt": 4,
+      "step": 41,
+      "gt_top1": 105752,
+      "fresh_top1": 105752,
+      "ok": true
+    },
+    {
+      "prompt": 9,
+      "step": 16,
+      "gt_top1": 11,
+      "fresh_top1": 11,
+      "ok": true
+    },
+    {
+      "prompt": 10,
+      "step": 61,
+      "gt_top1": 374,
+      "fresh_top1": 374,
+      "ok": true
+    }
+  ]
+}

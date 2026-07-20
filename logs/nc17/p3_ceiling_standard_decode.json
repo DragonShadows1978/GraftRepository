@@ -1,0 +1,43 @@
+{
+  "mode": "standard",
+  "kind": "decode",
+  "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "search_lo": 23040,
+  "search_hi": 25600,
+  "last_solid_ctx": 25600,
+  "first_oom_ctx": null,
+  "probe_timeout_s": 150,
+  "refine_percentile": 0.15,
+  "trace": [
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 23040,
+      "status": "OK",
+      "smi_used_mb_after": 3853.0,
+      "elapsed_s": 141.67206645011902,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 142.3533375263214
+    },
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 25600,
+      "status": "OK",
+      "smi_used_mb_after": 4081.0,
+      "elapsed_s": 123.3191545009613,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 123.98065853118896
+    }
+  ]
+}

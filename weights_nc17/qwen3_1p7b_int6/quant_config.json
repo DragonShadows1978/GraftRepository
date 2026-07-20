@@ -1,0 +1,34 @@
+{
+  "bits": 6,
+  "group_size": 128,
+  "quant_scheme": "symmetric per-group; code=(q-32); z=-32*scale (implicit); scale=max(max(w)/31, -min(w)/32); EMPTY fp16 zeros selects the kernel symmetric grid; 4 codes packed per 3 bytes \u2014 fork quantize_symmetric_per_group",
+  "symmetry": "symmetric",
+  "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "engine_note": "INT6 ops exist ONLY in Project-Tensor fork branch int6-weights; canonical tensor_cuda has NO int6 surface",
+  "vs_p2_int4_scheme": "P2 INT4 is ASYMMETRIC affine (zero=group-min, scale=(max-min)/15, nibble-packed); P3 INT6 is SYMMETRIC (kernel-native). Difference recorded, NOT an asymmetric INT6 variant (per order scope).",
+  "n_quantized_matrices": 196,
+  "quantized_tensors": "q/k/v/o_proj + gate/up/down_proj, all 28 layers",
+  "exempt_tensors": {
+    "embed_tokens": "bf16 (also serves tied head)",
+    "lm_head": "TIED to bf16 embedding (P1 resident decision), 0 extra VRAM",
+    "rmsnorm_all": "fp32 (input/post_attention/final)",
+    "qk_norm": "fp32 (per-head q_norm/k_norm)"
+  },
+  "sizes_bytes": {
+    "orig_bf16_proj_bytes": 2818572288,
+    "int6_packed_bytes": 1056964608,
+    "int6_scales_bytes": 22020096,
+    "int6_zeros_bytes": 0,
+    "int6_proj_total_bytes": 1078984704,
+    "npz_on_disk_bytes": 1079095326
+  },
+  "sizes_mib": {
+    "orig_bf16_proj_mib": 2688.0,
+    "int6_proj_total_mib": 1029.0,
+    "npz_on_disk_mib": 1029.1054973602295,
+    "compression_ratio_proj": 2.6122448979591835
+  },
+  "artifact_path": "/mnt/ForgeRealm/GraftRepository/weights_nc17/qwen3_1p7b_int6/int6_weights.npz",
+  "artifact_sha256": "2bde69448a0478f29607fbf8beb139661ec65c353c1ba50ee152765082c1cdd5",
+  "source_snapshot": "/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3-1.7B/snapshots/70d244cc86ccca08cf5af4e1e306ecf908b1ad5e"
+}
