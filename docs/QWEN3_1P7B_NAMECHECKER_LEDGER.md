@@ -143,3 +143,20 @@ Receipts only. Plan: `QWEN3_1P7B_NAMECHECKER_PLAN.md` (immutable).
 - P4 DISPATCHED on INT6/fork config (product-realistic), with
   built-in bf16 re-run rule if any GRM gate fails (separate machinery
   from quant).
+
+## 2026-07-20 ~11:2x — P4 COMPLETE (Opus seat): ALL GATES PASS ON INT6
+- Gate A graft-vs-in-context @1.0: 0 top-1 flips, max|Δ| 1.0 =
+  bf16-cache noise floor; cached-stream at engine floor; graft_seats
+  persists cached decode.
+- Gate B STATE save/restore: bit-identical (max|Δ|=0) over 23 steps
+  with graft resident across boundary. Deviation fixed+disclosed:
+  bf16 dtype recorded on save, re-cast on restore (numpy has no bf16).
+- Gate C E4 20-turn: baseline 6/6 @ ~590 ctx; ARENA 6/6 @ max 209
+  seats (65% residency saving), 6 routed swaps, evictions 20-41/probe;
+  amnesia control 0/6. Router layer-0 |q·k| per GQA law.
+- bf16 adjudication rule not triggered (nothing failed). Peaks
+  2219-2427 MiB. FINDING: 1.7B graft surface = pure inheritance from
+  shared GQAAttentionTC — zero adapter graft code needed; "the 4B
+  pattern" is the attention module itself.
+- PLAN 2db1c58 FULLY EXECUTED: P0/P1(+P1b)/P2/P3(kernel+measurement)/
+  P4 all complete with receipts. Synthesis follows.

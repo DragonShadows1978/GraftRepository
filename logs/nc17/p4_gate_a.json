@@ -1,0 +1,83 @@
+{
+  "gate": "A_equivalence",
+  "engine": "int6-fork",
+  "tc_file": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "load_info": {
+    "loaded": "int6",
+    "framework": "tensor_cuda INT6 (self-quantized, Qwen3-1.7B, fork int6-weights)",
+    "bits": 6,
+    "group_size": 128,
+    "quant_scheme": "symmetric per-group, code=(q-32), z=-32*s (empty zeros), 4-codes-per-3-bytes",
+    "symmetry": "symmetric (NB: INT4 P2 path is asymmetric affine)",
+    "tied_head": true,
+    "tied_head_vram_bytes": 0,
+    "exempt_tensors": [
+      "embed_tokens(bf16)",
+      "lm_head(tied bf16)",
+      "all_rmsnorm(fp32)",
+      "qk_norm(fp32)"
+    ]
+  },
+  "near_tie_margin": 0.25,
+  "briefing_tokens": 43,
+  "prompt_tokens": 15,
+  "graft_mb_host": 9.863168,
+  "a1_equivalence": {
+    "max_dlogit": 1.0,
+    "mean_dlogit": 0.0760190412402153,
+    "top1_flips": 0,
+    "hard_flips": [],
+    "neartie_flips": [],
+    "pass": true
+  },
+  "a2_cached_stream": {
+    "plain_max_dlogit": 0.453125,
+    "graft_max_dlogit": 0.5390625,
+    "plain": [
+      {
+        "chunk": 0,
+        "max_dlogit": 0.0,
+        "all_top1_same": true
+      },
+      {
+        "chunk": 1,
+        "max_dlogit": 0.0,
+        "all_top1_same": true
+      },
+      {
+        "chunk": 2,
+        "max_dlogit": 0.453125,
+        "all_top1_same": true
+      },
+      {
+        "chunk": 3,
+        "max_dlogit": 0.4375,
+        "all_top1_same": true
+      }
+    ],
+    "graft": [
+      {
+        "chunk": 0,
+        "max_dlogit": 0.34375,
+        "all_top1_same": true
+      },
+      {
+        "chunk": 1,
+        "max_dlogit": 0.453125,
+        "all_top1_same": true
+      },
+      {
+        "chunk": 2,
+        "max_dlogit": 0.5390625,
+        "all_top1_same": true
+      },
+      {
+        "chunk": 3,
+        "max_dlogit": 0.390625,
+        "all_top1_same": true
+      }
+    ],
+    "pass": true
+  },
+  "pass": true
+}

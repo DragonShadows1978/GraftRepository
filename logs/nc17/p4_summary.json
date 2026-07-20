@@ -1,0 +1,423 @@
+{
+  "schema": "nc17_p4_grm_proof_v1",
+  "product_engine": "int6-fork",
+  "adjudication_engine": "bf16-canon",
+  "gates": {
+    "A_equivalence": {
+      "int6_pass": true,
+      "int6": {
+        "gate": "A_equivalence",
+        "engine": "int6-fork",
+        "tc_file": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+        "load_info": {
+          "loaded": "int6",
+          "framework": "tensor_cuda INT6 (self-quantized, Qwen3-1.7B, fork int6-weights)",
+          "bits": 6,
+          "group_size": 128,
+          "quant_scheme": "symmetric per-group, code=(q-32), z=-32*s (empty zeros), 4-codes-per-3-bytes",
+          "symmetry": "symmetric (NB: INT4 P2 path is asymmetric affine)",
+          "tied_head": true,
+          "tied_head_vram_bytes": 0,
+          "exempt_tensors": [
+            "embed_tokens(bf16)",
+            "lm_head(tied bf16)",
+            "all_rmsnorm(fp32)",
+            "qk_norm(fp32)"
+          ]
+        },
+        "near_tie_margin": 0.25,
+        "briefing_tokens": 43,
+        "prompt_tokens": 15,
+        "graft_mb_host": 9.863168,
+        "a1_equivalence": {
+          "max_dlogit": 1.0,
+          "mean_dlogit": 0.0760190412402153,
+          "top1_flips": 0,
+          "hard_flips": [],
+          "neartie_flips": [],
+          "pass": true
+        },
+        "a2_cached_stream": {
+          "plain_max_dlogit": 0.453125,
+          "graft_max_dlogit": 0.5390625,
+          "plain": [
+            {
+              "chunk": 0,
+              "max_dlogit": 0.0,
+              "all_top1_same": true
+            },
+            {
+              "chunk": 1,
+              "max_dlogit": 0.0,
+              "all_top1_same": true
+            },
+            {
+              "chunk": 2,
+              "max_dlogit": 0.453125,
+              "all_top1_same": true
+            },
+            {
+              "chunk": 3,
+              "max_dlogit": 0.4375,
+              "all_top1_same": true
+            }
+          ],
+          "graft": [
+            {
+              "chunk": 0,
+              "max_dlogit": 0.34375,
+              "all_top1_same": true
+            },
+            {
+              "chunk": 1,
+              "max_dlogit": 0.453125,
+              "all_top1_same": true
+            },
+            {
+              "chunk": 2,
+              "max_dlogit": 0.5390625,
+              "all_top1_same": true
+            },
+            {
+              "chunk": 3,
+              "max_dlogit": 0.390625,
+              "all_top1_same": true
+            }
+          ],
+          "pass": true
+        },
+        "pass": true
+      }
+    },
+    "B_state": {
+      "int6_pass": true,
+      "int6": {
+        "gate": "B_state_save_restore",
+        "engine": "int6-fork",
+        "tc_file": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+        "n_decode_compared": 23,
+        "snapshot_mb_host": 11.4688,
+        "graft_seats": 35,
+        "max_dlogit": 0.0,
+        "mean_dlogit": 0.0,
+        "top1_all_same": true,
+        "token_seq_identical": true,
+        "ref_ids": [
+          4541,
+          11727,
+          374,
+          4613,
+          10777,
+          12,
+          17,
+          17,
+          24,
+          16,
+          11,
+          892,
+          374,
+          1660,
+          12938,
+          553,
+          27785,
+          7755,
+          431,
+          33756,
+          359,
+          13981,
+          13
+        ],
+        "restored_ids": [
+          4541,
+          11727,
+          374,
+          4613,
+          10777,
+          12,
+          17,
+          17,
+          24,
+          16,
+          11,
+          892,
+          374,
+          1660,
+          12938,
+          553,
+          27785,
+          7755,
+          431,
+          33756,
+          359,
+          13981,
+          13
+        ],
+        "bit_identical": true,
+        "pass": true
+      }
+    },
+    "C_e4_arena": {
+      "int6_pass": true,
+      "int6": {
+        "gate": "C_e4_arena",
+        "engine": "int6-fork",
+        "tc_file": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+        "n_scripted": 14,
+        "n_probes": 6,
+        "recall": {
+          "baseline_A": 6,
+          "arena_B": 6,
+          "amnesia_C0": 0,
+          "total": 6
+        },
+        "residency": {
+          "ctx_A_max": 593,
+          "resident_B_max": 209,
+          "arena_width": 256,
+          "n_sink": 3
+        },
+        "arm_A": [
+          {
+            "q": "Remind me, what's our project codename?",
+            "ctx_tokens": 593,
+            "hit": true,
+            "ans": "Project NIGHTJAR."
+          },
+          {
+            "q": "What date and time is the stakeholder demo again?",
+            "ctx_tokens": 593,
+            "hit": true,
+            "ans": "June 26th at 10:30 \u2014 that's the date and time."
+          },
+          {
+            "q": "What was the name of the backend hire?",
+            "ctx_tokens": 591,
+            "hit": true,
+            "ans": "Priya Raghunathan."
+          },
+          {
+            "q": "Which rack unit is the build server in now?",
+            "ctx_tokens": 592,
+            "hit": true,
+            "ans": "BX-44, same as before."
+          },
+          {
+            "q": "What's our hardware budget for the quarter?",
+            "ctx_tokens": 591,
+            "hit": true,
+            "ans": "7,400 dollars \u2014 tight, but workable."
+          },
+          {
+            "q": "Where is the team offsite happening?",
+            "ctx_tokens": 590,
+            "hit": true,
+            "ans": "Lake Arrowhead lodge, two nights."
+          }
+        ],
+        "arm_B": [
+          {
+            "q": "Remind me, what's our project codename?",
+            "resident": 209,
+            "live_tokens": 65,
+            "evicted": 37,
+            "mounts": [
+              1,
+              4,
+              6
+            ],
+            "hit": true,
+            "ans": "The project is called NIGHTJAR."
+          },
+          {
+            "q": "What date and time is the stakeholder demo again?",
+            "resident": 192,
+            "live_tokens": 53,
+            "evicted": 41,
+            "mounts": [
+              2,
+              3,
+              10
+            ],
+            "hit": true,
+            "ans": "June 26th at 10:30."
+          },
+          {
+            "q": "What was the name of the backend hire?",
+            "resident": 200,
+            "live_tokens": 50,
+            "evicted": 24,
+            "mounts": [
+              1,
+              4,
+              7
+            ],
+            "hit": true,
+            "ans": "Priya Raghunathan."
+          },
+          {
+            "q": "Which rack unit is the build server in now?",
+            "resident": 186,
+            "live_tokens": 41,
+            "evicted": 29,
+            "mounts": [
+              4,
+              6,
+              7
+            ],
+            "hit": true,
+            "ans": "BX-44."
+          },
+          {
+            "q": "What's our hardware budget for the quarter?",
+            "resident": 194,
+            "live_tokens": 42,
+            "evicted": 21,
+            "mounts": [
+              1,
+              6,
+              7
+            ],
+            "hit": true,
+            "ans": "7,400 dollars."
+          },
+          {
+            "q": "Where is the team offsite happening?",
+            "resident": 183,
+            "live_tokens": 40,
+            "evicted": 20,
+            "mounts": [
+              1,
+              4,
+              8
+            ],
+            "hit": true,
+            "ans": "Lake Arrowhead.\nUser"
+          }
+        ],
+        "arm_C0": [
+          {
+            "q": "Remind me, what's our project codename?",
+            "live_tokens": 93,
+            "hit": false,
+            "ans": "The project is called \"The Great Escape.\" It's a fictional story about a group o"
+          },
+          {
+            "q": "What date and time is the stakeholder demo again?",
+            "live_tokens": 101,
+            "hit": false,
+            "ans": "The stakeholder demo is scheduled for 3:00 PM on Thursday, April 15th."
+          },
+          {
+            "q": "What was the name of the backend hire?",
+            "live_tokens": 95,
+            "hit": false,
+            "ans": "The backend hire was named Alex Carter."
+          },
+          {
+            "q": "Which rack unit is the build server in now?",
+            "live_tokens": 72,
+            "hit": false,
+            "ans": "The build server is in rack unit 2."
+          },
+          {
+            "q": "What's our hardware budget for the quarter?",
+            "live_tokens": 58,
+            "hit": false,
+            "ans": "The hardware budget for the quarter is $15,000."
+          },
+          {
+            "q": "Where is the team offsite happening?",
+            "live_tokens": 64,
+            "hit": false,
+            "ans": "The team is offsite at the hotel in San Francisco."
+          }
+        ],
+        "feed_residency": [
+          {
+            "turn": 1,
+            "resident": 54
+          },
+          {
+            "turn": 2,
+            "resident": 86
+          },
+          {
+            "turn": 3,
+            "resident": 97
+          },
+          {
+            "turn": 4,
+            "resident": 109
+          },
+          {
+            "turn": 5,
+            "resident": 80
+          },
+          {
+            "turn": 6,
+            "resident": 82
+          },
+          {
+            "turn": 7,
+            "resident": 101
+          },
+          {
+            "turn": 8,
+            "resident": 100
+          },
+          {
+            "turn": 9,
+            "resident": 78
+          },
+          {
+            "turn": 10,
+            "resident": 75
+          },
+          {
+            "turn": 11,
+            "resident": 73
+          },
+          {
+            "turn": 12,
+            "resident": 66
+          },
+          {
+            "turn": 13,
+            "resident": 75
+          },
+          {
+            "turn": 14,
+            "resident": 81
+          }
+        ],
+        "checks": {
+          "recall_parity_within_1": true,
+          "residency_bounded": true,
+          "amnesia_control_fails": true
+        },
+        "pass": true
+      }
+    }
+  },
+  "recall_table": {
+    "baseline_A": 6,
+    "arena_B": 6,
+    "amnesia_C0": 0,
+    "total": 6
+  },
+  "residency_table": {
+    "ctx_A_max": 593,
+    "resident_B_max": 209,
+    "arena_width": 256,
+    "n_sink": 3
+  },
+  "equivalence": {
+    "max_dlogit": 1.0,
+    "hard_flips": []
+  },
+  "state": {
+    "max_dlogit": 0.0,
+    "bit_identical": true
+  },
+  "all_gates_pass_int6": true
+}
