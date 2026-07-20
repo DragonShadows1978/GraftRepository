@@ -182,3 +182,19 @@ Receipts only. Plan: `QWEN3_1P7B_NAMECHECKER_PLAN.md` (immutable).
   verdict.
 - Receipts: p3x_replay_summary.json; ceiling JSONs appended in place
   with time-artifacts relabeled and superseded notes marked.
+
+## 2026-07-20 ~14:xx — P3y: 32K-WITH-APA RESOLVED GREEN (the product answer)
+- INT6 + APA r0.15, incremental chunk-512 build: 32,768 tokens
+  RESIDENT, 64 live APA decode steps. Steady 4,519 MiB post-build /
+  6,465 MiB during decode / poller peak 11,011 (headroom 1,271).
+  ms/token 2,418 mean at full 32K (throughput note, not correctness).
+  APA_ENGAGED true (decode-phase frac 0.161, non-degenerate);
+  bulk_bits=8 asserted uniform.
+- MECHANISM CONFIRMED: the (chunk × KV) score transient is the wall —
+  chunk 1024 OOMs at 22.5K, chunk 512 clears 32K outright. Steady
+  residency never binds (4.5 GB). Chunk size = the lever.
+- Cross-check: steady at 22,528 tokens (3,753) matches p3x's
+  independent 3,713 — instrumentation consistent.
+- PRODUCT ANSWER (David's 32K spec): 1.7B INT6 name-checker holds all
+  32K in VRAM with APA on the 12 GB card, alongside room for the 4B
+  dialog model at short sessions. Receipts: p3y_32k.json + logs.

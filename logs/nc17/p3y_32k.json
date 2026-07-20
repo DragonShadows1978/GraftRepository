@@ -1,0 +1,114 @@
+{
+  "probe": "p3y_incremental_32k",
+  "ctx_target": 32768,
+  "chunk_start": 512,
+  "chunk_floor": 64,
+  "refine_percentile": 0.15,
+  "decode_steps": 64,
+  "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "is_fork": true,
+  "int6": true,
+  "attention_mode": "apa",
+  "bulk_bits_assert": [
+    8
+  ],
+  "reached_ctx": 32768,
+  "status": "OK",
+  "growth_trace": [
+    {
+      "stage": 0,
+      "event": "GROW",
+      "tokens_resident": 2048,
+      "chunk": 512,
+      "last_chunk_ms": 1885.48,
+      "smi_used_mb": 2379.0
+    },
+    {
+      "stage": 1,
+      "event": "GROW",
+      "tokens_resident": 6144,
+      "chunk": 512,
+      "last_chunk_ms": 2905.65,
+      "smi_used_mb": 2637.0
+    },
+    {
+      "stage": 2,
+      "event": "GROW",
+      "tokens_resident": 10240,
+      "chunk": 512,
+      "last_chunk_ms": 3927.48,
+      "smi_used_mb": 2865.0
+    },
+    {
+      "stage": 3,
+      "event": "GROW",
+      "tokens_resident": 14336,
+      "chunk": 512,
+      "last_chunk_ms": 5589.21,
+      "smi_used_mb": 3197.0
+    },
+    {
+      "stage": 4,
+      "event": "GROW",
+      "tokens_resident": 18432,
+      "chunk": 512,
+      "last_chunk_ms": 6552.91,
+      "smi_used_mb": 3357.0
+    },
+    {
+      "stage": 5,
+      "event": "GROW",
+      "tokens_resident": 22528,
+      "chunk": 512,
+      "last_chunk_ms": 7584.06,
+      "smi_used_mb": 3753.0
+    },
+    {
+      "stage": 6,
+      "event": "GROW",
+      "tokens_resident": 26624,
+      "chunk": 512,
+      "last_chunk_ms": 8534.46,
+      "smi_used_mb": 3839.0
+    },
+    {
+      "stage": 7,
+      "event": "GROW",
+      "tokens_resident": 30720,
+      "chunk": 512,
+      "last_chunk_ms": 10758.5,
+      "smi_used_mb": 4295.0
+    },
+    {
+      "stage": 8,
+      "event": "GROW",
+      "tokens_resident": 32768,
+      "chunk": 512,
+      "last_chunk_ms": 11609.15,
+      "smi_used_mb": 4519.0
+    }
+  ],
+  "chunk_size_used_at_target": 512,
+  "steady_smi_mb": 6465.0,
+  "poller_peak_mb": 11011.0,
+  "ms_per_token": 2417.836,
+  "engagement": {
+    "apa_calls": 1792,
+    "observed_calls": 56,
+    "engaged_calls": 56,
+    "all0_calls": 0,
+    "all1_calls": 0,
+    "mean_engaged_frac": 0.16119460978683547,
+    "min_engaged_frac": 0.13161618858712237,
+    "max_engaged_frac": 0.1785588953310955,
+    "refine_percentile": 0.15,
+    "z_threshold": 1.0364333894937898,
+    "APA_ENGAGED": true
+  },
+  "error": "",
+  "steady_smi_after_build_mb": 4519.0,
+  "ms_per_token_median": 2400.326,
+  "decode_first_step_ms": 3557.115,
+  "total_elapsed_s": 573.93,
+  "_driver_rc": 0
+}

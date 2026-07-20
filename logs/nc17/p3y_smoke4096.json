@@ -1,0 +1,58 @@
+{
+  "probe": "p3y_incremental_32k",
+  "ctx_target": 4096,
+  "chunk_start": 512,
+  "chunk_floor": 64,
+  "refine_percentile": 0.15,
+  "decode_steps": 16,
+  "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "is_fork": true,
+  "int6": true,
+  "attention_mode": "apa",
+  "bulk_bits_assert": [
+    8
+  ],
+  "reached_ctx": 4096,
+  "status": "OK",
+  "growth_trace": [
+    {
+      "stage": 0,
+      "event": "GROW",
+      "tokens_resident": 2048,
+      "chunk": 512,
+      "last_chunk_ms": 1906.27,
+      "smi_used_mb": 2363.0
+    },
+    {
+      "stage": 1,
+      "event": "GROW",
+      "tokens_resident": 4096,
+      "chunk": 512,
+      "last_chunk_ms": 2466.4,
+      "smi_used_mb": 2481.0
+    }
+  ],
+  "chunk_size_used_at_target": 512,
+  "steady_smi_mb": 2821.0,
+  "poller_peak_mb": 3331.0,
+  "ms_per_token": 413.196,
+  "engagement": {
+    "apa_calls": 448,
+    "observed_calls": 56,
+    "engaged_calls": 56,
+    "all0_calls": 0,
+    "all1_calls": 0,
+    "mean_engaged_frac": 0.15363769986474632,
+    "min_engaged_frac": 0.14298133235724744,
+    "max_engaged_frac": 0.1684311691481572,
+    "refine_percentile": 0.15,
+    "z_threshold": 1.0364333894937898,
+    "APA_ENGAGED": true
+  },
+  "error": "",
+  "steady_smi_after_build_mb": 2481.0,
+  "ms_per_token_median": 400.72,
+  "decode_first_step_ms": 564.114,
+  "total_elapsed_s": 47.24,
+  "_driver_rc": 0
+}

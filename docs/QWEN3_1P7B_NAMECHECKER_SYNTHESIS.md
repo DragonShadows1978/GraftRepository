@@ -23,8 +23,11 @@ no capability claims.
 z=−32·s). ³ P0 = full 299k-token corpus; tc columns = 6–8-window
 subsets — tc-vs-P0 absolutes are coverage-confounded; within-engine
 deltas are clean. All INT6 ceilings re-measured to true cudaMalloc OOM (P3x,
-2026-07-20 morning, David-directed cap removal). 32K product target:
-INT6 std-decode session @32768 = 4831 MiB steady / 9001 peak.
+2026-07-20 morning, David-directed cap removal). 32K product target MET both modes:
+INT6 std @32768 = 4831 MiB steady / 9001 peak; INT6 + APA r0.15
+@32768 via chunk-512 incremental build = 4519 steady / 6465 decoding /
+11011 peak, 2.4 s/tok (P3y). Wall = prefill transient, lever = chunk
+size; residency never binds.
 
 ## Findings
 
