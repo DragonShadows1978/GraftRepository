@@ -1,0 +1,16 @@
+{
+  "mode": "standard",
+  "window": 2048,
+  "stride": 512,
+  "status": "OK",
+  "error": "",
+  "refine_percentile": null,
+  "n_windows": 8,
+  "scored_tokens": 5631,
+  "mean_nll": 3.1046696219745242,
+  "ppl": 22.301849716948407,
+  "elapsed_s": 58.963560819625854,
+  "engagement": {
+    "APA_ENGAGED": null
+  }
+}

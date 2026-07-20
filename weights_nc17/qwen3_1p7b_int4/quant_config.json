@@ -1,0 +1,31 @@
+{
+  "bits": 4,
+  "group_size": 128,
+  "quant_scheme": "affine per-group (asymmetric); zero=group min; scale=(max-min)/15; nibble-packed uint8 (N,K/2); scales/zeros fp16 \u2014 house _quantize_int4",
+  "symmetry": "asymmetric",
+  "n_quantized_matrices": 196,
+  "quantized_tensors": "q/k/v/o_proj + gate/up/down_proj, all 28 layers",
+  "exempt_tensors": {
+    "embed_tokens": "bf16 (also serves tied head)",
+    "lm_head": "TIED to bf16 embedding (P1 resident decision), 0 extra VRAM",
+    "rmsnorm_all": "fp32 (input/post_attention/final)",
+    "qk_norm": "fp32 (per-head q_norm/k_norm)"
+  },
+  "sizes_bytes": {
+    "orig_bf16_proj_bytes": 2818572288,
+    "int4_packed_bytes": 704643072,
+    "int4_scales_bytes": 22020096,
+    "int4_zeros_bytes": 22020096,
+    "int4_proj_total_bytes": 748683264,
+    "npz_on_disk_bytes": 748848794
+  },
+  "sizes_mib": {
+    "orig_bf16_proj_mib": 2688.0,
+    "int4_proj_total_mib": 714.0,
+    "npz_on_disk_mib": 714.1578617095947,
+    "compression_ratio_proj": 3.764705882352941
+  },
+  "artifact_path": "/mnt/ForgeRealm/GraftRepository/weights_nc17/qwen3_1p7b_int4/int4_weights.npz",
+  "artifact_sha256": "20a584603cff92e770e72235b5bdace7eddf7aa335cfc93b1f0c3d4d11dd1b87",
+  "source_snapshot": "/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3-1.7B/snapshots/70d244cc86ccca08cf5af4e1e306ecf908b1ad5e"
+}

@@ -1,0 +1,26 @@
+{
+  "mode": "apa",
+  "window": 8192,
+  "stride": 512,
+  "status": "OOM",
+  "error": "RuntimeError: cudaMalloc failed: out of memory",
+  "refine_percentile": 0.15,
+  "n_windows": 0,
+  "scored_tokens": 0,
+  "mean_nll": NaN,
+  "ppl": NaN,
+  "elapsed_s": 23.941500902175903,
+  "engagement": {
+    "apa_calls": 0,
+    "observed_calls": 0,
+    "engaged_calls": 0,
+    "all0_calls": 0,
+    "all1_calls": 0,
+    "mean_engaged_frac": null,
+    "min_engaged_frac": null,
+    "max_engaged_frac": null,
+    "refine_percentile": null,
+    "z_threshold": null,
+    "APA_ENGAGED": false
+  }
+}

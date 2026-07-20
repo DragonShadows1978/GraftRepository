@@ -30,7 +30,8 @@ import os
 import glob
 import numpy as np
 
-from core.mistral7b_tc import (Mistral7B_TC, LinearTC, BlockTC, F, tc)
+from core.mistral7b_tc import (Mistral7B_TC, LinearTC, QuantLinearTC, GROUP_SIZE,
+                               BlockTC, F, tc)
 from core.qwen_tc import _TiedLMHead
 
 
@@ -129,6 +130,129 @@ class Qwen3_1p7b_TC(Mistral7B_TC):
                 "tied_head": True,
                 "tied_head_vram_bytes": self.lm_head.vram_bytes()}
 
+    def load_weights_int4(self, model_dir=None, group_size=GROUP_SIZE):
+        """P2: INT4-quantize the projection + FFN matrices from the bf16 HF
+        snapshot with the HOUSE stack (QuantLinearTC INT4 == the same machinery
+        core/qwen3_tc.py's 4B adapter uses). Self-quantized from bf16 — NO GGUF
+        import.
+
+        HOUSE quant config (recorded in the receipt via int4_quant_config()):
+          bits=4, group_size=128 (default), per-group AFFINE (asymmetric) with
+          scale=(max-min)/15, zero-point=min, packed nibbles (uint8 N x K/2),
+          scales/zeros fp16. This is _quantize_int4 in core/mistral7b_tc.py —
+          byte-identical to QuantizedLinear; the exact scheme the 4B port loads.
+
+        Tensors kept HIGHER precision (NOT INT4):
+          - embed_tokens.weight: bf16 resident (also serves the tied head)
+          - lm_head: TIED to the bf16 embedding (P1 resident decision; 0 extra
+            VRAM). NOT quantized — matches P1's resident/host head decision.
+          - all RMSNorm weights (input/post_attention/final norm): fp32
+          - per-head qk-norm weights (q_norm/k_norm): fp32
+        Quantized (INT4): every layer's q/k/v/o_proj and gate/up/down_proj.
+        """
+        import torch
+        from safetensors.torch import load_file
+        d = model_dir or _snap()
+        W = {}
+        for f in sorted(glob.glob(os.path.join(d, "*.safetensors"))):
+            W.update(load_file(f))
+
+        def g(name):
+            return np.ascontiguousarray(W.pop(name).to(torch.float32).numpy())
+
+        cfg = self.config
+
+        # Tied-head handling identical to the bf16 path: ONE resident bf16 copy
+        # (the embedding); assert the on-disk tie so an untied checkpoint fails
+        # loud rather than silently degrading.
+        emb_t = W.pop("model.embed_tokens.weight")
+        if "lm_head.weight" in W:
+            lm_t = W.pop("lm_head.weight")
+            if not torch.equal(emb_t, lm_t):
+                md = (emb_t.float() - lm_t.float()).abs().max().item()
+                raise RuntimeError(
+                    f"Qwen3-1.7B expected TIED embeddings but lm_head.weight "
+                    f"differs (max|diff|={md}); tied-head assumption violated.")
+            del lm_t
+        emb = emb_t.to(torch.float32).numpy().astype(np.float32)
+        del emb_t
+        self.embed_tokens.weight = tc.tensor(
+            np.ascontiguousarray(emb)).astype("bfloat16")
+
+        self._int4_group_size = group_size
+        for i in range(cfg.num_layers):
+            p = f"model.layers.{i}"
+            L = self.layers[i]
+            L.input_layernorm.weight = tc.tensor(
+                g(f"{p}.input_layernorm.weight"), dtype="float32")
+            L.post_attention_layernorm.weight = tc.tensor(
+                g(f"{p}.post_attention_layernorm.weight"), dtype="float32")
+            # INT4-quantized projections (QuantLinearTC, bits=4, group_size). NO
+            # bias (Qwen3 attention_bias=false).
+            L.self_attn.q_proj = QuantLinearTC(g(f"{p}.self_attn.q_proj.weight"),
+                                               group_size=group_size, bits=4)
+            L.self_attn.k_proj = QuantLinearTC(g(f"{p}.self_attn.k_proj.weight"),
+                                               group_size=group_size, bits=4)
+            L.self_attn.v_proj = QuantLinearTC(g(f"{p}.self_attn.v_proj.weight"),
+                                               group_size=group_size, bits=4)
+            L.self_attn.o_proj = QuantLinearTC(g(f"{p}.self_attn.o_proj.weight"),
+                                               group_size=group_size, bits=4)
+            # per-head qk-norm weights (head_dim,) — kept fp32, tiny
+            L.self_attn._qk_w = tc.tensor(
+                g(f"{p}.self_attn.q_norm.weight"), dtype="float32")
+            L.self_attn._k_qk_w = tc.tensor(
+                g(f"{p}.self_attn.k_norm.weight"), dtype="float32")
+            L.self_attn._qk_eps = cfg.rms_norm_eps
+            L.mlp.gate_proj = QuantLinearTC(g(f"{p}.mlp.gate_proj.weight"),
+                                            group_size=group_size, bits=4)
+            L.mlp.up_proj = QuantLinearTC(g(f"{p}.mlp.up_proj.weight"),
+                                          group_size=group_size, bits=4)
+            L.mlp.down_proj = QuantLinearTC(g(f"{p}.mlp.down_proj.weight"),
+                                            group_size=group_size, bits=4)
+            import gc; gc.collect()
+
+        self.norm.weight = tc.tensor(g("model.norm.weight"), dtype="float32")
+        # TIED head: reuse the bf16 embedding; 0 extra VRAM (P1 decision).
+        self.lm_head = _TiedLMHead(self.embed_tokens.weight)
+        W.clear()
+        return {"loaded": "int4",
+                "framework": "tensor_cuda INT4 (self-quantized, Qwen3-1.7B)",
+                "bits": 4, "group_size": group_size,
+                "quant_scheme": "affine per-group (asymmetric), zero=min, "
+                                "scale=(max-min)/15, packed nibbles",
+                "tied_head": True,
+                "tied_head_vram_bytes": self.lm_head.vram_bytes(),
+                "exempt_tensors": ["embed_tokens(bf16)", "lm_head(tied bf16)",
+                                   "all_rmsnorm(fp32)", "qk_norm(fp32)"]}
+
+    def measure_vram_int4(self):
+        """INT4 resident VRAM accounting. Projections are QuantLinearTC (packed
+        INT4 + fp16 scales/zeros); embedding bf16; norms fp32; head tied (0)."""
+        embed = self.embed_tokens.weight.numpy().nbytes
+        proj = 0
+        norm = 0
+        for layer in self.layers:
+            for pj in (layer.self_attn.q_proj, layer.self_attn.k_proj,
+                       layer.self_attn.v_proj, layer.self_attn.o_proj,
+                       layer.mlp.gate_proj, layer.mlp.up_proj, layer.mlp.down_proj):
+                proj += pj.vram_bytes()
+            norm += layer.input_layernorm.weight.numpy().nbytes
+            norm += layer.post_attention_layernorm.weight.numpy().nbytes
+            norm += layer.self_attn._qk_w.numpy().nbytes
+            norm += layer.self_attn._k_qk_w.numpy().nbytes
+        norm += self.norm.weight.numpy().nbytes
+        lm = self.lm_head.vram_bytes()  # tied -> 0
+        total = embed + proj + norm + lm
+        return {
+            "embedding_mb": embed / 1024**2,
+            "projections_int4_mb": proj / 1024**2,
+            "norms_mb": norm / 1024**2,
+            "lm_head_mb": lm / 1024**2,
+            "lm_head_tied": True,
+            "group_size": getattr(self, "_int4_group_size", GROUP_SIZE),
+            "total_mb": total / 1024**2,
+        }
+
     def measure_vram_bf16(self):
         """bf16 resident VRAM accounting (measure_vram in the base assumes
         QuantLinearTC projections; here projections are bf16 LinearTC)."""
@@ -157,7 +281,12 @@ class Qwen3_1p7b_TC(Mistral7B_TC):
         }
 
     @classmethod
-    def from_pretrained(cls, model_dir=None, attention_mode="standard", config=None):
+    def from_pretrained(cls, model_dir=None, attention_mode="standard", config=None,
+                        int4=False, group_size=GROUP_SIZE):
+        """P1 default: bf16 (int4=False). P2: int4=True self-quantizes the
+        projection/FFN matrices to INT4 (house QuantLinearTC path). The residual
+        stream / RoPE / KV cache / embedding / head stay bf16 either way; only
+        the projection weights change format."""
         if config is None:
             config = Qwen3_1p7bConfig()
         # Qwen3 activations use bf16 (fp32 exponent range). Set BEFORE building so
@@ -173,7 +302,8 @@ class Qwen3_1p7b_TC(Mistral7B_TC):
                 att.q_norm = None
                 att.k_norm = None
                 att._use_qwen3_qknorm = True
-            info = m.load_weights_fp16(model_dir)
+            info = (m.load_weights_int4(model_dir, group_size=group_size)
+                    if int4 else m.load_weights_fp16(model_dir))
         # Qwen-family outlier keys: 2-bit bulk destroys them; 8-bit bulk recovers
         # (qwen_tc / qwen3_tc precedent). Applies to the apa_selective path's
         # key quantization; the pure `apa` path uses the engine's default

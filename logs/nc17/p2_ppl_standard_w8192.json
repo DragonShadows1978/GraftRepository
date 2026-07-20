@@ -1,0 +1,16 @@
+{
+  "mode": "standard",
+  "window": 8192,
+  "stride": 512,
+  "status": "OOM",
+  "error": "RuntimeError: cudaMalloc failed: out of memory",
+  "refine_percentile": null,
+  "n_windows": 1,
+  "scored_tokens": 8191,
+  "mean_nll": 3.126326644690457,
+  "ppl": 22.790109424917674,
+  "elapsed_s": 65.3971586227417,
+  "engagement": {
+    "APA_ENGAGED": null
+  }
+}

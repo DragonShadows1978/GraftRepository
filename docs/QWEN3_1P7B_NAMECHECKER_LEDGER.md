@@ -91,3 +91,30 @@ Receipts only. Plan: `QWEN3_1P7B_NAMECHECKER_PLAN.md` (immutable).
   cached-chain delta (both chains drift identically).
 - Artifacts: tests/nc17/p1b_adjudicate.py, logs/nc17/p1b_verdict.{json,log}.
   Peak 3721 MiB, rc=0. PIPELINE UNBLOCKED → P2 dispatched.
+
+## 2026-07-20 ~09:0x — P2 COMPLETE (Opus seat): INT4 MARGINAL — P3 triggered
+- Quant: house INT4 asymmetric g128 (196 proj matrices; embeds/norms/
+  qk-norm exempt; tied head 0-cost). Artifact weights_nc17/
+  qwen3_1p7b_int4/int4_weights.npz sha 20a58460… 714.2 MiB on disk
+  (3.76× vs bf16 proj); RESIDENT 1901.5 MiB (vs bf16 3875.5).
+- PARITY: cached-chain vs GT 75.4% (GATE RED, expected class);
+  adjudication BUILT-IN: 13 flips shared-with-bf16 (drift), 44
+  drift-explained, **92 REAL INT4 quant flips** (>0.25 GT margin,
+  persist under fresh refeed); fresh final-prefill 7/11 clean vs P1's
+  11/11 (4 HARD flips, margins to 4.125). Port SOUND (control 10/10);
+  loss is real INT4 accuracy loss. Same-engine Δ-vs-bf16: mean 1.63,
+  p99 6.14, max 19.03.
+- PPL matched-window: INT4 +5.6 to +5.8 vs bf16 (22.30/22.49 vs
+  16.47/16.91 std @2K/4K); APA r0.15 delta stays negligible on INT4
+  (+0.03/−0.12, ENGAGED, frac 0.293). INT4 scored ONE 8K window
+  (22.79) before OOM — partial lift of the 8K scoring wall.
+- CEILINGS: INT4 lifts all tc rungs — std prefill 8448 / decode 37888
+  (bf16: 7616/30592); APA 5824/23552 (APA still net ceiling cost).
+- DECISION (lead, per goal authority; plan gate = David's, exercised
+  in his sleep per "best judgement" directive): INT4 MARGINAL →
+  **P3m DISPATCHED** (INT6 battery on fork engine). Successor
+  registered, NOT run tonight: INT4 variants (g32 / symmetric-8) as
+  possible recovery of the asymmetric-g128 loss.
+- Deviation accepted: adapter extended with int4 load path (bf16 path
+  verified untouched). Seat process-discipline corrected mid-run
+  (waiter churn → foreground) — receipts unaffected.

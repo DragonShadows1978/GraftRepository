@@ -1,0 +1,110 @@
+{
+  "mode": "standard",
+  "kind": "prefill",
+  "search_lo": 4096,
+  "search_hi": 12288,
+  "last_solid_ctx": 8448,
+  "first_oom_ctx": 8704,
+  "probe_timeout_s": 540,
+  "refine_percentile": 0.15,
+  "trace": [
+    {
+      "mode": "standard",
+      "kind": "prefill",
+      "ctx": 4096,
+      "status": "OK",
+      "smi_used_mb_after": 1779.0,
+      "elapsed_s": 22.51899528503418,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 23.141189575195312
+    },
+    {
+      "mode": "standard",
+      "kind": "prefill",
+      "ctx": 12288,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 20.71944260597229,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 21.47079300880432
+    },
+    {
+      "mode": "standard",
+      "kind": "prefill",
+      "ctx": 8192,
+      "status": "OK",
+      "smi_used_mb_after": 1883.0,
+      "elapsed_s": 28.068304300308228,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 28.668172359466553
+    },
+    {
+      "mode": "standard",
+      "kind": "prefill",
+      "ctx": 10240,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 20.186326026916504,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 20.955833911895752
+    },
+    {
+      "mode": "standard",
+      "kind": "prefill",
+      "ctx": 9216,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 20.18919849395752,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 20.90349793434143
+    },
+    {
+      "mode": "standard",
+      "kind": "prefill",
+      "ctx": 8704,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 27.96702289581299,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 28.620296478271484
+    },
+    {
+      "mode": "standard",
+      "kind": "prefill",
+      "ctx": 8448,
+      "status": "OK",
+      "smi_used_mb_after": 1893.0,
+      "elapsed_s": 28.78696322441101,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 29.387834310531616
+    }
+  ]
+}
