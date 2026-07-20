@@ -32,3 +32,6 @@ Receipts only. Plan: `QWEN3_1P7B_NAMECHECKER_PLAN.md` (immutable).
 - Merge to canonical = DAVID'S CALL (plan-registered), pending his
   morning review + the P3 measurement half (INT6-quantized 1.7B
   battery, needs P2's adapter INT4 path as template).
+- 05:5x lead re-run receipt: acceptance gate PASS under lead harness,
+  all numbers identical to seat receipt (GEMV rel-fro 3.0-3.2e-4 all
+  four shapes; dequant 0.0). INT6 kernel half VERIFIED-GREEN.
