@@ -1,0 +1,1 @@
+{"window": 2048, "stride": 512, "ppl": 14.96245, "n_windows": 582, "n_scored_tokens": 299077, "n_corpus_tokens": 299078, "wall_s": 72.32, "max_mem_alloc_MiB": 5671.2, "max_mem_reserved_MiB": 6406.0, "poller_peak_MiB": 6868.0, "note": "frugal lm_head-on-tail path; identical to HF labels= path (nll_sum 809165.90)"}

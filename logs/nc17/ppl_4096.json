@@ -1,0 +1,1 @@
+{"window": 4096, "stride": 512, "ppl": 14.7008, "n_windows": 578, "n_scored_tokens": 299077, "n_corpus_tokens": 299078, "wall_s": 174.29, "max_mem_alloc_MiB": 9226.4, "max_mem_reserved_MiB": 9506.0, "poller_peak_MiB": 9968.0}

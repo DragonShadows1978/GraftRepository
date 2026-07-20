@@ -1,0 +1,1 @@
+{"window": 32768, "stride": 512, "oom": true, "skipped": true, "note": "SKIPPED: 32768 exceeds the measured prefill ceiling (last-solid 26880 / first-OOM 27392). Above the raw context ceiling; not attempted for ppl per order ('skip rungs above the measured ceiling and SAY so'). 8192 and 16384 already OOM on the scoring path."}

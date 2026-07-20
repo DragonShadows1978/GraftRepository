@@ -1,0 +1,133 @@
+{
+  "order": "NC17-P0",
+  "model": {
+    "repo_id": "Qwen/Qwen3-1.7B",
+    "revision_hash": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "download_size_bytes": 4079423234,
+    "download_size_gib": 3.7993,
+    "safetensors_files": [
+      "model-00001-of-00002.safetensors",
+      "model-00002-of-00002.safetensors"
+    ]
+  },
+  "config_facts": {
+    "layers": 28,
+    "n_q_heads": 16,
+    "n_kv_heads": 8,
+    "head_dim": 128,
+    "hidden": null,
+    "vocab": 151936,
+    "dtype": "bf16"
+  },
+  "kv_bytes_per_token": 114688,
+  "card_total_MiB": 12282,
+  "a_ceilings": {
+    "prefill": {
+      "last_solid_S": 26880,
+      "last_solid_poller_peak_MiB": 11774.0,
+      "last_solid_max_alloc_MiB": 11185.6,
+      "first_oom_S": 27392,
+      "first_oom_poller_peak_MiB": 5548.0,
+      "first_oom_tried_alloc": "CUDA OutOfMemoryError: CUDA out of memory. Tried to allocate 7.75 GiB. GPU 0 has a total capacity of 11.60 GiB of which 7.70 GiB is free. Including non-PyTorch memory, this process has 3.66 GiB memory in use. Of the allocated memory 3.32 GiB is allocated by PyTorch, and 128.42 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)"
+    },
+    "decode": {
+      "last_solid_S": 18176,
+      "last_solid_poller_peak_MiB": 11860.0,
+      "last_solid_max_alloc_MiB": 10624.5,
+      "first_oom_S": 18432,
+      "first_oom_poller_peak_MiB": 11834.0,
+      "first_oom_tried_alloc": "CUDA OutOfMemoryError: CUDA out of memory. Tried to allocate 38.00 MiB. GPU 0 has a total capacity of 11.60 GiB of which 40.25 MiB is free. Including non-PyTorch memory, this process has 11.33 GiB memory in use. Of the allocated memory 10.40 GiB is allocated by PyTorch, and 723.38 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)"
+    }
+  },
+  "b_ppl_by_window": [
+    {
+      "window": 2048,
+      "stride": 512,
+      "ppl": 14.96245,
+      "n_windows": 582,
+      "n_scored_tokens": 299077,
+      "wall_s": 72.32,
+      "max_mem_alloc_MiB": 5671.2,
+      "poller_peak_MiB": 6868.0,
+      "oom": null
+    },
+    {
+      "window": 4096,
+      "stride": 512,
+      "ppl": 14.7008,
+      "n_windows": 578,
+      "n_scored_tokens": 299077,
+      "wall_s": 174.29,
+      "max_mem_alloc_MiB": 9226.4,
+      "poller_peak_MiB": 9968.0,
+      "oom": null
+    },
+    {
+      "window": 8192,
+      "stride": 512,
+      "ppl": null,
+      "n_windows": null,
+      "n_scored_tokens": null,
+      "wall_s": null,
+      "max_mem_alloc_MiB": 10444.4,
+      "poller_peak_MiB": 11439.0,
+      "oom": true
+    },
+    {
+      "window": 16384,
+      "stride": 512,
+      "ppl": null,
+      "n_windows": null,
+      "n_scored_tokens": null,
+      "wall_s": null,
+      "max_mem_alloc_MiB": 8102.5,
+      "poller_peak_MiB": 9588.0,
+      "oom": true
+    },
+    {
+      "window": 32768,
+      "stride": 512,
+      "ppl": null,
+      "n_windows": null,
+      "n_scored_tokens": null,
+      "wall_s": null,
+      "max_mem_alloc_MiB": null,
+      "poller_peak_MiB": null,
+      "oom": true
+    }
+  ],
+  "c_memory_accounting_HF_bf16": [
+    {
+      "stage": "HF-bf16 (ppl-score)",
+      "ctx": 2048,
+      "weights_resident_MiB": 3890.4,
+      "KV_at_ctx_MiB": 224.0,
+      "framework_peak_alloc_MiB": 5671.2,
+      "poller_peak_MiB": 6868.0
+    },
+    {
+      "stage": "HF-bf16 (ppl-score)",
+      "ctx": 4096,
+      "weights_resident_MiB": 3890.4,
+      "KV_at_ctx_MiB": 448.0,
+      "framework_peak_alloc_MiB": 9226.4,
+      "poller_peak_MiB": 9968.0
+    },
+    {
+      "stage": "HF-bf16 (prefill last-solid)",
+      "ctx": 26880,
+      "weights_resident_MiB": 3890.4,
+      "KV_at_ctx_MiB": "n/a (prefill, no cache)",
+      "framework_peak_alloc_MiB": 11185.6,
+      "poller_peak_MiB": 11774.0
+    },
+    {
+      "stage": "HF-bf16 (decode last-solid)",
+      "ctx": 18176,
+      "weights_resident_MiB": 3890.4,
+      "KV_at_ctx_MiB": 1988.0,
+      "framework_peak_alloc_MiB": 10624.5,
+      "poller_peak_MiB": 11860.0
+    }
+  ]
+}

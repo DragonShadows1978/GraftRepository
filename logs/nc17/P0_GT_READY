@@ -1,0 +1,5 @@
+revision=70d244cc86ccca08cf5af4e1e306ecf908b1ad5e
+gt_npz=/mnt/ForgeRealm/GraftRepository/logs/nc17/p0_gt.npz
+ppl_tokens_npz=/mnt/ForgeRealm/GraftRepository/logs/nc17/p0_ppl_tokens.npz
+ppl_n_tokens=299078
+ppl_raw_sha256=696cca6b65a171b0a358a4be6732cdfdf2dd6164a32e20fd70e3c13fc4dfae83

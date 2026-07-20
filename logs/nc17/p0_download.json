@@ -1,0 +1,11 @@
+{
+  "repo_id": "Qwen/Qwen3-1.7B",
+  "revision_hash": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+  "local_dir": "/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3-1.7B/snapshots/70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+  "size_bytes": 4079423234,
+  "size_gib": 3.7993,
+  "safetensors_files": [
+    "model-00001-of-00002.safetensors",
+    "model-00002-of-00002.safetensors"
+  ]
+}

@@ -35,3 +35,21 @@ Receipts only. Plan: `QWEN3_1P7B_NAMECHECKER_PLAN.md` (immutable).
 - 05:5x lead re-run receipt: acceptance gate PASS under lead harness,
   all numbers identical to seat receipt (GEMV rel-fro 3.0-3.2e-4 all
   four shapes; dequant 0.0). INT6 kernel half VERIFIED-GREEN.
+
+## 2026-07-20 ~05:5x — P0 COMPLETE (Opus seat, clean)
+- Revision 70d244cc, 3.80 GiB bf16. Config confirmed (28L/16Q/8KV/
+  hd128, tied embeds).
+- CEILINGS stock-HF bf16 SDPA: prefill last-solid 26880 / OOM 27392
+  (fp32 score-matrix alloc); decode+64 last-solid 18176 / OOM 18432.
+  Poller peaks 11.77/11.86 GiB.
+- PPL (wikitext-2 stride 512, 299,077 tok): 2048=14.96245,
+  4096=14.70080; 8192+16384 OOM AT SCORING-FORWARD (fp32 SDPA scores
+  4.64/9.27 GiB — not fragmentation, verified as 8-window slice);
+  32768 above ceiling, skipped. Stock HF cannot SCORE >=8K on this
+  card — the baseline the engine battery is measured against.
+- Deviations (accepted): memory-frugal lm_head-on-tail loss path,
+  proven bit-identical @2048 before use; sibling-P1 concurrency
+  disclosed, flock held.
+- GT: p0_gt.npz (11 prompts incl. 8 coverage languages + 2
+  name-verdict shapes, final+64-step logits), ppl corpus sha
+  696cca6b…; sentinel written last.
