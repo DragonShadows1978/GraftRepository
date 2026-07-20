@@ -4,9 +4,19 @@
   "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
   "search_lo": 4096,
   "search_hi": 7168,
-  "last_solid_ctx": 5056,
-  "first_oom_ctx": 5248,
+  "last_solid_ctx": 5632,
+  "first_oom_ctx": 5824,
   "probe_timeout_s": 120,
+  "p3x_resume": {
+    "reason": "prior mid-rungs (5248, 5632) were recorded OOM via 120s probe-timeout (rc=124) = time artifacts, NOT VRAM. Only 7168 was a genuine cudaMalloc OOM (23s). Re-probed the 5056-7168 span under 3000s caps to establish the TRUE last-solid.",
+    "resume_probe_timeout_s": 3000,
+    "relabeled_time_artifacts": "prior 5248 & 5632 OOM entries relabeled SLOW-TIME-ARTIFACT (rc=124); 5632 then re-probed and proven OK at 139s.",
+    "resume_ladder": "5632=OK(139s,peak11477,smi2271,APA_ENGAGED=true 28/28) -> 6400=OOM(24s,peak3687,cudaMalloc) -> 6016=OOM(25s,peak6909,cudaMalloc) -> 5824=OOM(51s,peak9807,cudaMalloc,APA_ENGAGED=true for 6 layers before the wall)",
+    "converged": "last_solid=5632 (OK, APA engaged 28/28), first_oom=5824 (true cudaMalloc OOM, APA engaged 6 layers pre-wall); gap 192 <= stop-rule max(256, 5632/20=281)",
+    "correction": "true first_oom 5824 is HIGHER than the prior time-artifact 5248; true last_solid 5632 is HIGHER than the prior time-artifact 5056. Both corrected upward.",
+    "wall_type": "VRAM",
+    "apa_engagement_asserted": true
+  },
   "refine_percentile": 0.15,
   "trace": [
     {
@@ -63,7 +73,7 @@
       "mode": "apa",
       "kind": "prefill",
       "ctx": 5632,
-      "status": "OOM",
+      "status": "SLOW-TIME-ARTIFACT",
       "smi_used_mb_after": null,
       "elapsed_s": 120.54254937171936,
       "engagement": {
@@ -71,7 +81,8 @@
       },
       "error": "no RESULT line; rc=124; tail=''",
       "_probe_rc": 124,
-      "_wall_s": 120.54255557060242
+      "_wall_s": 120.54255557060242,
+      "_relabeled_by_p3x": "was OOM via 120s probe-timeout (rc=124); NOT a VRAM wall. Time caps do not conclude OOM (David's directive). Re-probed under 3000s caps."
     },
     {
       "mode": "apa",
@@ -102,7 +113,7 @@
       "mode": "apa",
       "kind": "prefill",
       "ctx": 5248,
-      "status": "OOM",
+      "status": "SLOW-TIME-ARTIFACT",
       "smi_used_mb_after": null,
       "elapsed_s": 120.56980848312378,
       "engagement": {
@@ -110,7 +121,8 @@
       },
       "error": "no RESULT line; rc=124; tail=''",
       "_probe_rc": 124,
-      "_wall_s": 120.56981635093689
+      "_wall_s": 120.56981635093689,
+      "_relabeled_by_p3x": "was OOM via 120s probe-timeout (rc=124); NOT a VRAM wall. Time caps do not conclude OOM (David's directive). Re-probed under 3000s caps."
     },
     {
       "mode": "apa",
@@ -136,6 +148,108 @@
       "error": "",
       "_probe_rc": 0,
       "_wall_s": 118.96152949333191
+    },
+    {
+      "mode": "apa",
+      "kind": "prefill",
+      "ctx": 5632,
+      "status": "OK",
+      "smi_used_mb_after": 2271.0,
+      "elapsed_s": 139.22050070762634,
+      "engagement": {
+        "apa_calls": 28,
+        "observed_calls": 28,
+        "engaged_calls": 28,
+        "all0_calls": 0,
+        "all1_calls": 0,
+        "mean_engaged_frac": 0.29966650244616033,
+        "min_engaged_frac": 0.2819967283903297,
+        "max_engaged_frac": 0.32112907854284006,
+        "refine_percentile": 0.15,
+        "z_threshold": 1.0364333894937898,
+        "APA_ENGAGED": true
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 139.92515349388123
+    },
+    {
+      "mode": "apa",
+      "kind": "prefill",
+      "ctx": 6400,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 23.97913384437561,
+      "engagement": {
+        "apa_calls": 0,
+        "observed_calls": 0,
+        "engaged_calls": 0,
+        "all0_calls": 0,
+        "all1_calls": 0,
+        "mean_engaged_frac": null,
+        "min_engaged_frac": null,
+        "max_engaged_frac": null,
+        "refine_percentile": null,
+        "z_threshold": null,
+        "APA_ENGAGED": false
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 24.710947275161743
+    },
+    {
+      "mode": "apa",
+      "kind": "prefill",
+      "ctx": 6016,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 24.797090768814087,
+      "engagement": {
+        "apa_calls": 0,
+        "observed_calls": 0,
+        "engaged_calls": 0,
+        "all0_calls": 0,
+        "all1_calls": 0,
+        "mean_engaged_frac": null,
+        "min_engaged_frac": null,
+        "max_engaged_frac": null,
+        "refine_percentile": null,
+        "z_threshold": null,
+        "APA_ENGAGED": false
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 25.589979648590088
+    },
+    {
+      "mode": "apa",
+      "kind": "prefill",
+      "ctx": 5824,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 51.31911754608154,
+      "engagement": {
+        "apa_calls": 6,
+        "observed_calls": 6,
+        "engaged_calls": 6,
+        "all0_calls": 0,
+        "all1_calls": 0,
+        "mean_engaged_frac": 0.30325912999732746,
+        "min_engaged_frac": 0.28388529925010614,
+        "max_engaged_frac": 0.32072648917606,
+        "refine_percentile": 0.15,
+        "z_threshold": 1.0364333894937898,
+        "APA_ENGAGED": true
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 52.103595495224
     }
-  ]
+  ],
+  "_p3x_note": "Relabeled 2 rc=124 time-artifact entries (5248,5632) from OOM to SLOW-TIME-ARTIFACT before re-probing. Genuine prior points kept: 4096/4864/5056 OK, 7168 real cudaMalloc OOM (23s).",
+  "wall_type": "VRAM (true cudaMalloc OOM)"
 }

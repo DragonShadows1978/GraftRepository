@@ -4,9 +4,16 @@
   "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
   "search_lo": 23040,
   "search_hi": 25600,
-  "last_solid_ctx": 25600,
-  "first_oom_ctx": null,
+  "last_solid_ctx": 36864,
+  "first_oom_ctx": 37888,
   "probe_timeout_s": 150,
+  "p3x_resume": {
+    "reason": "prior bracket exhausted at 25600-OK with no first_oom (both prior probes solid). Resumed the binary search upward under long 3000s probe caps per David's directive: measurement runs to true cudaMalloc OOM, time caps do not terminate.",
+    "resume_probe_timeout_s": 3000,
+    "resume_ladder": "32768=OK(peak9001,smi4831) -> 40960=OOM(peak11137) -> 36864=OK(peak11369,smi4559) -> 38912=OOM(peak10541) -> 37888=OOM(peak11407)",
+    "converged": "last_solid=36864 (OK), first_oom=37888 (true cudaMalloc OOM); gap 1024 <= stop-rule max(256, 36864/20=1843)",
+    "wall_type": "VRAM"
+  },
   "refine_percentile": 0.15,
   "trace": [
     {
@@ -38,6 +45,82 @@
       "error": "",
       "_probe_rc": 0,
       "_wall_s": 123.98065853118896
+    },
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 32768,
+      "status": "OK",
+      "smi_used_mb_after": 4831.0,
+      "elapsed_s": 163.14971542358398,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 163.8257441520691
+    },
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 40960,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 191.88299322128296,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 192.54604744911194
+    },
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 36864,
+      "status": "OK",
+      "smi_used_mb_after": 4559.0,
+      "elapsed_s": 188.0807831287384,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 188.78368997573853
+    },
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 38912,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 192.90785789489746,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 193.58494544029236
+    },
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 37888,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 193.33351945877075,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 194.02643823623657
     }
-  ]
+  ],
+  "wall_type": "VRAM (true cudaMalloc OOM)"
 }

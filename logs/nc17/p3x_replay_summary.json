@@ -1,0 +1,84 @@
+{
+  "battery": "NC17-P3 context-ceiling, INT6 weights on the fork engine (Project-Tensor-int6)",
+  "engine_build": "/mnt/ForgeRealm/Project-Tensor-int6/tensor_cuda/tensor_cuda/__init__.py",
+  "card": "12 GiB (12282 MiB total)",
+  "refine_percentile": 0.15,
+  "p3x_directive": "measurement runs until true cudaMalloc OOM; time caps (prior 120/150/540s) do NOT terminate the probe. Each probe = one FOREGROUND subprocess under flock -w 7200 /tmp/forge-gpu.lock, timeout 3000s, setsid 1s nvidia-smi poller.",
+  "all_cells_wall_type": "VRAM (every ceiling in this battery is now a genuine cudaMalloc-OOM boundary; no SLOW-with-progress remains)",
+  "ceiling_table": {
+    "standard_prefill": {
+      "last_solid_ctx": 8320,
+      "first_oom_ctx": 8704,
+      "wall_type": "VRAM",
+      "note": "prior-run, genuine cudaMalloc"
+    },
+    "standard_decode": {
+      "last_solid_ctx": 36864,
+      "first_oom_ctx": 37888,
+      "wall_type": "VRAM",
+      "note": "p3x resumed 25600->32768(OK)->40960(OOM)->36864(OK)->38912(OOM)->37888(OOM)"
+    },
+    "apa_prefill": {
+      "last_solid_ctx": 5632,
+      "first_oom_ctx": 5824,
+      "wall_type": "VRAM",
+      "apa_engaged": true,
+      "note": "p3x corrected time-artifact 5056/5248 upward; 5632(OK)->6400/6016/5824(OOM)"
+    },
+    "apa_decode": {
+      "last_solid_ctx": 22528,
+      "first_oom_ctx": 23552,
+      "wall_type": "VRAM",
+      "apa_engaged": true,
+      "note": "p3x corrected time-artifact 16384 ~6x upward; 32768/24576(OOM)->20480(OK)->22528(OK)->23552(OOM)"
+    }
+  },
+  "corrections_vs_prior": {
+    "standard_decode": "prior last_solid=25600 with NO first_oom (open); NOW 36864/37888 VRAM.",
+    "apa_prefill": "prior last_solid=5056/first_oom=5248 were TIME artifacts; NOW 5632/5824 VRAM (both higher).",
+    "apa_decode": "prior last_solid=16384/first_oom=17408 were TIME artifacts (recorded wall_type=TIME); NOW 22528/23552 VRAM (~6x higher; wall_type was WRONG).",
+    "standard_prefill": "unchanged 8320/8704; already genuine cudaMalloc in the prior run."
+  },
+  "cells_detail": {
+    "standard_prefill": {
+      "mode": "standard",
+      "kind": "prefill",
+      "last_solid_ctx": 8320,
+      "first_oom_ctx": 8704,
+      "wall_type": "VRAM",
+      "resume_probe_timeout_s": null,
+      "apa_engagement_asserted": "n/a",
+      "converged_note": "prior-run convergence (genuine cudaMalloc, no time artifacts)"
+    },
+    "standard_decode": {
+      "mode": "standard",
+      "kind": "decode",
+      "last_solid_ctx": 36864,
+      "first_oom_ctx": 37888,
+      "wall_type": "VRAM",
+      "resume_probe_timeout_s": 3000,
+      "apa_engagement_asserted": "n/a",
+      "converged_note": "last_solid=36864 (OK), first_oom=37888 (true cudaMalloc OOM); gap 1024 <= stop-rule max(256, 36864/20=1843)"
+    },
+    "apa_prefill": {
+      "mode": "apa",
+      "kind": "prefill",
+      "last_solid_ctx": 5632,
+      "first_oom_ctx": 5824,
+      "wall_type": "VRAM",
+      "resume_probe_timeout_s": 3000,
+      "apa_engagement_asserted": true,
+      "converged_note": "last_solid=5632 (OK, APA engaged 28/28), first_oom=5824 (true cudaMalloc OOM, APA engaged 6 layers pre-wall); gap 192 <= stop-rule max(256, 5632/20=281)"
+    },
+    "apa_decode": {
+      "mode": "apa",
+      "kind": "decode",
+      "last_solid_ctx": 22528,
+      "first_oom_ctx": 23552,
+      "wall_type": "VRAM",
+      "resume_probe_timeout_s": 3000,
+      "apa_engagement_asserted": true,
+      "converged_note": "last_solid=22528 (OK, APA engaged), first_oom=23552 (true cudaMalloc OOM, APA engaged); gap 1024 <= stop-rule max(256, 22528/20=1126)"
+    }
+  }
+}

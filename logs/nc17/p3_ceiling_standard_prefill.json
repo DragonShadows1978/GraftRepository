@@ -99,5 +99,7 @@
       "_probe_rc": 0,
       "_wall_s": 45.203757762908936
     }
-  ]
+  ],
+  "wall_type": "VRAM (true cudaMalloc OOM)",
+  "_p3x_note": "Cell already converged in the prior run with genuine cudaMalloc OOMs at 8704 & 10240 (~23s each, real allocation failures on the O(L^2) single-forward attention). No time artifacts here. wall_type set by p3x for cross-cell consistency; last_solid/first_oom unchanged."
 }

@@ -160,3 +160,25 @@ Receipts only. Plan: `QWEN3_1P7B_NAMECHECKER_PLAN.md` (immutable).
   pattern" is the attention module itself.
 - PLAN 2db1c58 FULLY EXECUTED: P0/P1(+P1b)/P2/P3(kernel+measurement)/
   P4 all complete with receipts. Synthesis follows.
+
+## 2026-07-20 ~13:xx — P3x RE-PROBE (David's correction): TRUE WALLS MEASURED
+- David overrode the lead-imported ≤10-min probe caps ("OOM is the
+  data; time caps are not walls") — correct call; the caps were MY
+  plan import from kernel-opt discipline, not his instruction. Three
+  cells re-driven to genuine cudaMalloc OOM (longest probe 235s —
+  power ceiling never approached):
+  - INT6 std decode: 36864 / 37888 (was ≥25600 bracket-exhausted)
+  - INT6 APA prefill: 5632 / 5824 (recorded 5056 was a time artifact)
+  - INT6 APA decode: 22528 / 23552 (recorded 16384 was a time
+    artifact; true wall 1.4× higher — seat receipt's "~6×" line is an
+    arithmetic slip, table values correct)
+- 32K TARGET (David's spec): INT6 std-decode session @32768 = 4831
+  MiB steady / 9001 peak — FITS with ~7GB free. APA @32768 single-shot
+  OOMs (transient); INCREMENTAL-GROWTH APA 32K session = dispatched
+  follow-up (P3y).
+- Measurement note (seat, good catch): poller high-water does not
+  decide verdicts near the wall (fragmentation boundary — 22528 OK
+  peaked HIGHER than 24576's OOM); the cudaMalloc outcome is the
+  verdict.
+- Receipts: p3x_replay_summary.json; ceiling JSONs appended in place
+  with time-artifacts relabeled and superseded notes marked.

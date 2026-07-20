@@ -15,16 +15,16 @@ no capability claims.
 | real quant flips (adjudicated) | — | 0 (port sound) | **92** | **7** |
 | fresh final-prefill agreement | ref | 11/11 | 7/11 | **11/11** |
 | prefill ceiling (std) | **26880** | 7616 | 8448 | 8320 |
-| decode ceiling (std) | 18176 | 30592 | **37888** | ≥25600⁴ |
+| decode ceiling (std) | 18176 | 30592 | **37888** | 36864 |
 | APA r0.15 ppl cost | — | +0.15 | +0.03 | +0.13 |
-| APA ceilings (prefill/decode) | — | 5120 / 20224 | 5824 / 23552 | 5056⁵ / 16384⁵ |
+| APA ceilings (prefill/decode) | — | 5120 / 20224 | 5824 / 23552 | 5632 / 22528 |
 
 ¹ asymmetric g128 (house default path). ² symmetric g128 (fork engine,
 z=−32·s). ³ P0 = full 299k-token corpus; tc columns = 6–8-window
 subsets — tc-vs-P0 absolutes are coverage-confounded; within-engine
-deltas are clean. ⁴ search bracket exhausted at OK, wall not reached.
-⁵ TIME walls (probe caps on serial chunked prefill), not VRAM — except
-apa-prefill 7168 which is a true OOM.
+deltas are clean. All INT6 ceilings re-measured to true cudaMalloc OOM (P3x,
+2026-07-20 morning, David-directed cap removal). 32K product target:
+INT6 std-decode session @32768 = 4831 MiB steady / 9001 peak.
 
 ## Findings
 
