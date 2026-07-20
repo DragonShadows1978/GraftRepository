@@ -1,0 +1,90 @@
+    layer 4/32
+    layer 8/32
+    layer 12/32
+    layer 16/32
+    layer 20/32
+    layer 24/32
+    layer 28/32
+    layer 32/32
+loaded: {'loaded': 'INT4 hybrid', 'framework': 'tensor_cuda Qwen3.5', 'weight_bits': 4, 'model_dir': '/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a', 'repository': 'Qwen/Qwen3.5-9B', 'revision': 'c202236235762e1c871ad0ccb60c8ee5ba337b9a', 'layers': 32, 'attention_layers': [3, 7, 11, 15, 19, 23, 27, 31], 'hidden_dim': 4096, 'num_heads': 16, 'num_kv_heads': 4, 'head_dim': 256, 'tie_word_embeddings': False}
+load wall-clock: 113.0s
+prompt prose: S=2048
+prompt code: S=2048
+prompt synthetic: S=1875
+GQA layers under study: [3, 7, 11, 15, 19, 23, 27, 31]
+PARITY (prompt 'prose', instrumented vs uninstrumented final-step logits): max|Δ|=0.000e+00 -> PASS
+
+=== qwen35 GQA attention distribution (mean over Q-heads x last-64 decode steps x 3 prompts) ===
+  layer  entropy eff_keys   top5%  top10%  top15%
+  L 3      4.882    241.6   0.730   0.825   0.875
+  L 7      4.132    110.1   0.840   0.907   0.939
+  L11      4.079     95.4   0.864   0.925   0.952
+  L15      4.260    113.9   0.842   0.913   0.945
+  L19      3.777     72.5   0.889   0.941   0.964
+  L23      4.352    108.1   0.838   0.910   0.942
+  L27      4.275    114.5   0.829   0.898   0.931
+  L31      3.740    100.0   0.838   0.900   0.931
+
+--- qwen35, prompt 'prose' (mean over heads x 64 steps) ---
+  layer  entropy eff_keys   top5%  top10%  top15%
+  L 3      5.425    364.5   0.629   0.746   0.814
+  L 7      4.299    146.2   0.801   0.876   0.914
+  L11      3.946    102.5   0.859   0.917   0.944
+  L15      4.148    124.5   0.835   0.902   0.933
+  L19      3.569     71.1   0.893   0.939   0.960
+  L23      4.389    122.4   0.817   0.890   0.926
+  L27      4.462    144.8   0.787   0.868   0.908
+  L31      3.877    118.8   0.809   0.876   0.912
+
+--- qwen35, prompt 'code' (mean over heads x 64 steps) ---
+  layer  entropy eff_keys   top5%  top10%  top15%
+  L 3      5.033    256.4   0.703   0.807   0.863
+  L 7      4.094     97.1   0.855   0.919   0.948
+  L11      4.034     82.6   0.882   0.941   0.965
+  L15      4.273    108.5   0.848   0.919   0.950
+  L19      3.772     67.3   0.895   0.947   0.968
+  L23      4.516    117.2   0.822   0.901   0.937
+  L27      4.577    136.5   0.796   0.877   0.916
+  L31      3.983    124.5   0.809   0.880   0.916
+
+--- qwen35, prompt 'synthetic' (mean over heads x 64 steps) ---
+  layer  entropy eff_keys   top5%  top10%  top15%
+  L 3      4.188    103.8   0.858   0.923   0.949
+  L 7      4.003     87.1   0.866   0.926   0.953
+  L11      4.257    101.2   0.852   0.918   0.946
+  L15      4.360    108.7   0.844   0.919   0.951
+  L19      3.990     79.1   0.877   0.938   0.963
+  L23      4.151     84.5   0.875   0.939   0.964
+  L27      3.785     62.1   0.903   0.949   0.968
+  L31      3.360     56.8   0.898   0.945   0.965
+
+wrote /mnt/ForgeRealm/GraftRepository-wt-e1/logs/ime_e1_qwen35.npz
+wrote /mnt/ForgeRealm/GraftRepository-wt-e1/logs/ime_e1_summary.json
+per-prompt decode wall-clock: {'prose': nan, 'code': 13.5, 'synthetic': 12.5}
+PARITY (prompt 'prose', instrumented vs uninstrumented final-step logits): max|Δ|=0.000e+00 -> PASS
+DONE
+	Command being timed: "timeout 590 python3 tests/qwen35_attn_dist.py"
+	User time (seconds): 92.81
+	System time (seconds): 101.85
+	Percent of CPU this job got: 112%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:52.83
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 20740000
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1313
+	Minor (reclaiming a frame) page faults: 43481401
+	Voluntary context switches: 21837
+	Involuntary context switches: 7439
+	Swaps: 0
+	File system inputs: 6930040
+	File system outputs: 1064
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+PYTHON_EXIT=0
+PEAK_VRAM_MiB=5558 MiB

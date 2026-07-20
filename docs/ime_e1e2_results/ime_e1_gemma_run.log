@@ -1,0 +1,93 @@
+    layer 6/48
+    layer 12/48
+    layer 18/48
+    layer 24/48
+    layer 30/48
+    layer 36/48
+    layer 42/48
+    layer 48/48
+loaded: {'loaded': 'QAT q4_0 exact (symmetric-8 g32)', 'framework': 'tensor_cuda Gemma4-12B (40 SWA + 8 global)'}
+load wall-clock: 87.8s
+prompt prose: S=2048
+prompt code: S=2048
+prompt synthetic: S=1868
+layers: 48 total = 40 sliding + 8 global (global at i%6==5)
+PARITY (prompt 'prose', instrumented vs uninstrumented final-step logits): max|Δ|=0.000e+00 -> PASS
+
+=== gemma4-12b attention distribution — E1 DENSE CONTROL (mean over Q-heads x last-64 decode steps x 3 prompts) ===
+
+--- SLIDING (40 layers, window 1024, GQA 16q/8kv hd256) ---
+  layer  n_keys  entropy eff_keys   top5%  top10%  top15%
+  L 0      1024    4.157    143.0   0.716   0.815   0.866
+  L 1      1024    3.693    110.2   0.766   0.839   0.879
+  L 2      1024    3.944     97.2   0.779   0.866   0.907
+  L 3      1024    4.334    130.6   0.731   0.813   0.859
+  L 4      1024    3.818    116.3   0.766   0.838   0.875
+  L 6      1024    3.576     77.1   0.847   0.903   0.928
+  L 7      1024    2.924     47.8   0.889   0.929   0.948
+  L 8      1024    3.265     56.9   0.882   0.923   0.943
+  L 9      1024    2.766     44.7   0.886   0.924   0.942
+  L10      1024    3.521     76.9   0.816   0.877   0.907
+  L12      1024    3.101     59.3   0.863   0.913   0.937
+  L13      1024    3.398     55.7   0.870   0.928   0.952
+  L14      1024    3.820     90.2   0.818   0.884   0.917
+  L15      1024    3.421     54.0   0.886   0.932   0.953
+  L16      1024    3.591     66.9   0.859   0.915   0.940
+  L18      1024    3.448     53.3   0.888   0.933   0.952
+  L19      1024    3.832     75.7   0.829   0.899   0.931
+  L20      1024    3.828     61.2   0.852   0.912   0.939
+  L21      1024    4.163     91.9   0.794   0.872   0.910
+  L22      1024    4.413    105.8   0.759   0.864   0.909
+  L24      1024    4.258     98.1   0.783   0.877   0.918
+  L25      1024    4.117     88.9   0.798   0.880   0.917
+  L26      1024    4.122     85.3   0.804   0.884   0.920
+  L27      1024    4.133     82.6   0.807   0.884   0.919
+  L28      1024    3.781     60.6   0.853   0.912   0.938
+  L30      1024    3.400     38.6   0.909   0.949   0.965
+  L31      1024    3.722     59.0   0.858   0.913   0.938
+  L32      1024    3.333     38.4   0.910   0.946   0.962
+  L33      1024    3.144     33.2   0.928   0.957   0.969
+  L34      1024    3.296     34.2   0.924   0.956   0.970
+  L36      1024    3.024     26.1   0.944   0.966   0.976
+  L37      1024    2.937     23.1   0.957   0.975   0.983
+  L38      1024    2.865     23.9   0.950   0.969   0.977
+  L39      1024    2.952     27.3   0.946   0.968   0.977
+  L40      1024    3.181     34.3   0.915   0.945   0.959
+  L42      1024    2.939     26.7   0.943   0.965   0.975
+  L43      1024    2.798     21.9   0.955   0.972   0.979
+  L44      1024    2.847     21.1   0.962   0.978   0.985
+  L45      1024    3.294     33.1   0.923   0.957   0.971
+  L46      1024    3.029     27.6   0.918   0.945   0.960
+  GROUP     1024    3.505     62.5   0.862   0.914   0.939
+
+--- GLOBAL (8 layers, full context, MQA 16q/1kv hd512) ---
+  layer  n_keys  entropy eff_keys   top5%  top10%  top15%
+  L 5      2020    4.593    159.1   0.790   0.856   0.892
+  L11      2020    4.529    245.2   0.743   0.815   0.857
+  L17      2020    4.018    151.0   0.817   0.879   0.911
+  L23      2020    4.744    223.1   0.744   0.834   0.882
+  L29      2020    4.374    136.1   0.814   0.886   0.921
+  L35      2020    3.987     97.0   0.858   0.915   0.941
+  L41      2020    3.967     86.5   0.863   0.920   0.946
+  L47      2020    3.047     97.2   0.831   0.877   0.906
+  GROUP     2020    4.157    149.4   0.807   0.873   0.907
+
+--- gemma4, prompt 'prose' (mean over heads x 64 steps) ---
+  sliding  entropy=  3.644 eff_keys=   74.2 top5= 0.836 top10= 0.894 top15= 0.923
+  global   entropy=  4.660 eff_keys=  221.8 top5= 0.741 top10= 0.823 top15= 0.868
+
+--- gemma4, prompt 'code' (mean over heads x 64 steps) ---
+  sliding  entropy=  3.467 eff_keys=   59.9 top5= 0.863 top10= 0.915 top15= 0.940
+  global   entropy=  4.345 eff_keys=  152.3 top5= 0.799 top10= 0.869 top15= 0.905
+
+--- gemma4, prompt 'synthetic' (mean over heads x 64 steps) ---
+  sliding  entropy=  3.403 eff_keys=   53.3 top5= 0.887 top10= 0.934 top15= 0.953
+  global   entropy=  3.468 eff_keys=   74.1 top5= 0.882 top10= 0.927 top15= 0.948
+
+wrote /mnt/ForgeRealm/GraftRepository-wt-e1/logs/ime_e1_gemma.npz
+wrote /mnt/ForgeRealm/GraftRepository-wt-e1/logs/ime_e1_gemma_summary.json
+per-prompt decode wall-clock: {'prose': nan, 'code': 39.9, 'synthetic': 37.3}
+PARITY (prompt 'prose', instrumented vs uninstrumented final-step logits): max|Δ|=0.000e+00 -> PASS
+DONE
+PYTHON_EXIT=0
+PEAK_VRAM_MiB=7540 MiB
