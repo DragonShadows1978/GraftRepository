@@ -53,3 +53,27 @@ Receipts only. Plan: `QWEN3_1P7B_NAMECHECKER_PLAN.md` (immutable).
 - GT: p0_gt.npz (11 prompts incl. 8 coverage languages + 2
   name-verdict shapes, final+64-step logits), ppl corpus sha
   696cca6b…; sentinel written last.
+
+## 2026-07-20 ~06:5x — P1 COMPLETE (Opus seat); parity gate RED-as-registered, adjudication dispatched
+- Adapter core/qwen3_1p7b_tc.py, bf16. Tied head RESIDENT at 0 bytes
+  (bit-identical tensors verified; separate load would waste 593.5MiB).
+  Resident bf16 3875.5 MB.
+- PARITY vs GT (sha 0fc4099b…): 682/715 top-1 (95.4%); final-prefill
+  position 11/11 CLEAN; 33 flips = 16 near-tie + 17 HARD (> registered
+  0.25 margin) → GATE RED. Seat hypothesis: bf16 cache-chain drift over
+  64-step teacher-forced decode (15/17 HARD at step ≥10, median 34).
+  HYPOTHESIS UNTESTED → P1b adjudication order dispatched (fresh-refeed
+  at flip positions). P2 HELD until verdict.
+- CEILINGS tc-bf16 (one-proc-per-probe): std prefill 7616 (engine
+  O(L²) fp32 scores — far below HF-SDPA 26880); std decode 30592
+  (beats HF 18176); APA r0.15 prefill 5120 / decode 20224 — APA COSTS
+  ceiling at bf16 (−33%), consistent with A0 net-cost finding.
+- PPL (matched-window clean delta): APA r0.15 costs +0.15 ppl @2048,
+  +0.14 @4096, engagement asserted (mean engaged fraction 0.292,
+  56/56 calls). ≥8K full-window scoring OOMs on BOTH stacks (inherent
+  fp32 logits+scores wall). tc-vs-HF absolute ppl coverage-confounded
+  (6-8 windows vs full corpus) — stated, not compared.
+- DEVIATION accepted after lead diff review: one-line bulk_bits fix in
+  core/mistral7b_tc.py pure-apa path (hardcoded 2 → self.bulk_bits;
+  default preserved; qwen3 family sets 8, qwen35 sets 4; fix took 1.7B
+  APA ppl 132 → 16.6). Other ports unaffected by inspection.

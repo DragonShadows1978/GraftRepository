@@ -69,6 +69,26 @@ def main():
         }
     summary["ppl"] = ppl
 
+    # P0 HF-bf16 baseline ppl per window (matched-reference: the same GT
+    # tokenization). Pulled from p0_summary.json for the vs-P0 comparison.
+    p0 = load(LOG / "p0_summary.json")
+    p0_ppl = {}
+    if p0:
+        for r in p0.get("b_ppl_by_window", []):
+            p0_ppl[str(r["window"])] = {
+                "ppl": r.get("ppl"), "oom": r.get("oom"),
+                "n_windows": r.get("n_windows"),
+                "scored_tokens": r.get("n_scored_tokens"),
+                "poller_peak_mb": r.get("poller_peak_MiB"),
+            }
+    summary["p0_baseline_ppl"] = p0_ppl
+    summary["ppl_coverage_note"] = (
+        "tc-bf16 P1 ppl scored only the first 6-8 windows (~5.6-6.7k tokens) "
+        "within the 590s GPU cap; P0 HF-bf16 scored the full corpus (299,077 "
+        "tokens, ~580 windows). The tc-vs-P0 ppl gap is therefore coverage-"
+        "confounded. The APA-on vs APA-off delta IS matched (identical tokens/"
+        "windows) and is the clean APA-cost measurement.")
+
     # --- ceilings ---
     ceil = {}
     for f in sorted(glob.glob(str(LOG / "p1_ceiling_*.json"))):
@@ -103,22 +123,28 @@ def main():
         print(f"  max|dlogit|={p['max_abs_dlogit']:.3f} mean={p['mean_abs_dlogit']:.3f} "
               f"p99={p['p99_abs_dlogit']:.3f}")
 
-    print("\n[PPL] window x mode  (P0 HF-bf16 baseline ppl: see p0 logs; these are tc)")
-    print(f"  {'window':>7} | {'standard':>12} | {'apa(r0.15)':>12} | {'apa_engaged':>11} | {'std_peak':>8} | {'apa_peak':>8}")
-    for W in sorted(ppl, key=int):
-        row = ppl[W]
+    print("\n[PPL] window x mode  (tc-bf16 P1 partial-corpus; P0 = HF-bf16 full corpus)")
+    print(f"  {'window':>7} | {'tc-standard':>12} | {'tc-apa r0.15':>12} | {'apa_eng':>7} | {'P0 HF-bf16':>11} | {'apa_peak':>8}")
+    for W in sorted(set(list(ppl) + list(p0_ppl)), key=int):
+        row = ppl.get(W, {})
         s = row.get("standard", {})
         a = row.get("apa", {})
         eng = (a.get("engagement") or {}).get("APA_ENGAGED")
-        sp = s.get("poller_peak_mb"); ap = a.get("poller_peak_mb")
+        ap = a.get("poller_peak_mb")
 
         def cell(x):
+            if not x:
+                return "-"
             if x.get("status", "OK") != "OK":
                 return x.get("status")
             v = x.get("ppl")
-            return f"{v:.3f}" if v == v else "nan"  # nan check
-        print(f"  {W:>7} | {cell(s):>12} | {cell(a):>12} | {str(eng):>11} | "
-              f"{(f'{sp:.0f}' if sp else '-'):>8} | {(f'{ap:.0f}' if ap else '-'):>8}")
+            return f"{v:.3f}" if (v is not None and v == v) else "nan"
+        p0c = p0_ppl.get(W, {})
+        p0s = "OOM" if p0c.get("oom") else (f"{p0c['ppl']:.3f}" if p0c.get("ppl") else "-")
+        print(f"  {W:>7} | {cell(s):>12} | {cell(a):>12} | {str(eng):>7} | "
+              f"{p0s:>11} | {(f'{ap:.0f}' if ap else '-'):>8}")
+    print("  NOTE: tc P1 ppl covers ~5.6-6.7k tokens/window; P0 covers 299k. "
+          "tc-vs-P0 gap is coverage-confounded; apa-vs-standard delta is matched.")
 
     print("\n[CEILINGS] last-solid / first-OOM (ctx tokens)")
     for k in sorted(ceil):

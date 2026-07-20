@@ -1,0 +1,696 @@
+{
+  "stage": "NC17-P1",
+  "model": "Qwen3-1.7B tc-bf16",
+  "parity": {
+    "gt_file": "/mnt/ForgeRealm/GraftRepository/logs/nc17/p0_gt.npz",
+    "gt_sha256": "0fc4099b3537083ec99478c9cdb969a5afca038609636499d64344a3303575fb",
+    "top1_agreement": 0.9538461538461539,
+    "n_positions": 715,
+    "n_flips": 33,
+    "n_near_tie_flips": 16,
+    "n_hard_flips": 17,
+    "max_abs_dlogit": 10.75,
+    "mean_abs_dlogit": 0.30031707882881165,
+    "p99_abs_dlogit": 1.6875,
+    "flips": [
+      {
+        "prompt": 0,
+        "pos": "decode26",
+        "gt_top1": 8522,
+        "tc_top1": 3639,
+        "gt_margin": 0.5,
+        "near_tie": false
+      },
+      {
+        "prompt": 1,
+        "pos": "decode0",
+        "gt_top1": 13,
+        "tc_top1": 11,
+        "gt_margin": 0.125,
+        "near_tie": true
+      },
+      {
+        "prompt": 1,
+        "pos": "decode5",
+        "gt_top1": 58137,
+        "tc_top1": 294,
+        "gt_margin": 0.375,
+        "near_tie": false
+      },
+      {
+        "prompt": 1,
+        "pos": "decode13",
+        "gt_top1": 48813,
+        "tc_top1": 19801,
+        "gt_margin": 0.625,
+        "near_tie": false
+      },
+      {
+        "prompt": 1,
+        "pos": "decode33",
+        "gt_top1": 435,
+        "tc_top1": 2778,
+        "gt_margin": 0.0,
+        "near_tie": true
+      },
+      {
+        "prompt": 2,
+        "pos": "decode0",
+        "gt_top1": 13,
+        "tc_top1": 11,
+        "gt_margin": 0.125,
+        "near_tie": true
+      },
+      {
+        "prompt": 3,
+        "pos": "decode26",
+        "gt_top1": 13,
+        "tc_top1": 1785,
+        "gt_margin": 0.0,
+        "near_tie": true
+      },
+      {
+        "prompt": 3,
+        "pos": "decode34",
+        "gt_top1": 77327,
+        "tc_top1": 80940,
+        "gt_margin": 0.25,
+        "near_tie": false
+      },
+      {
+        "prompt": 3,
+        "pos": "decode37",
+        "gt_top1": 35439,
+        "tc_top1": 7281,
+        "gt_margin": 0.75,
+        "near_tie": false
+      },
+      {
+        "prompt": 3,
+        "pos": "decode39",
+        "gt_top1": 773,
+        "tc_top1": 10638,
+        "gt_margin": 0.25,
+        "near_tie": false
+      },
+      {
+        "prompt": 3,
+        "pos": "decode40",
+        "gt_top1": 304,
+        "tc_top1": 358,
+        "gt_margin": 0.0,
+        "near_tie": true
+      },
+      {
+        "prompt": 3,
+        "pos": "decode43",
+        "gt_top1": 1128,
+        "tc_top1": 279,
+        "gt_margin": 0.25,
+        "near_tie": false
+      },
+      {
+        "prompt": 3,
+        "pos": "decode62",
+        "gt_top1": 39970,
+        "tc_top1": 19000,
+        "gt_margin": 0.125,
+        "near_tie": true
+      },
+      {
+        "prompt": 4,
+        "pos": "decode52",
+        "gt_top1": 100694,
+        "tc_top1": 99489,
+        "gt_margin": 0.5,
+        "near_tie": false
+      },
+      {
+        "prompt": 5,
+        "pos": "decode19",
+        "gt_top1": 99558,
+        "tc_top1": 101091,
+        "gt_margin": 1.125,
+        "near_tie": false
+      },
+      {
+        "prompt": 5,
+        "pos": "decode28",
+        "gt_top1": 70189,
+        "tc_top1": 129139,
+        "gt_margin": 0.625,
+        "near_tie": false
+      },
+      {
+        "prompt": 5,
+        "pos": "decode60",
+        "gt_top1": 138661,
+        "tc_top1": 52183,
+        "gt_margin": 0.75,
+        "near_tie": false
+      },
+      {
+        "prompt": 6,
+        "pos": "decode1",
+        "gt_top1": 34789,
+        "tc_top1": 22933,
+        "gt_margin": 0.125,
+        "near_tie": true
+      },
+      {
+        "prompt": 6,
+        "pos": "decode5",
+        "gt_top1": 93408,
+        "tc_top1": 70895,
+        "gt_margin": 0.25,
+        "near_tie": false
+      },
+      {
+        "prompt": 6,
+        "pos": "decode46",
+        "gt_top1": 3263,
+        "tc_top1": 1837,
+        "gt_margin": 0.25,
+        "near_tie": false
+      },
+      {
+        "prompt": 8,
+        "pos": "decode49",
+        "gt_top1": 729,
+        "tc_top1": 8129,
+        "gt_margin": 0.0,
+        "near_tie": true
+      },
+      {
+        "prompt": 8,
+        "pos": "decode53",
+        "gt_top1": 79683,
+        "tc_top1": 55129,
+        "gt_margin": 0.125,
+        "near_tie": true
+      },
+      {
+        "prompt": 8,
+        "pos": "decode56",
+        "gt_top1": 198,
+        "tc_top1": 576,
+        "gt_margin": 0.375,
+        "near_tie": false
+      },
+      {
+        "prompt": 9,
+        "pos": "decode12",
+        "gt_top1": 39482,
+        "tc_top1": 6319,
+        "gt_margin": 0.75,
+        "near_tie": false
+      },
+      {
+        "prompt": 9,
+        "pos": "decode17",
+        "gt_top1": 323,
+        "tc_top1": 714,
+        "gt_margin": 0.0,
+        "near_tie": true
+      },
+      {
+        "prompt": 9,
+        "pos": "decode20",
+        "gt_top1": 264,
+        "tc_top1": 5109,
+        "gt_margin": 0.125,
+        "near_tie": true
+      },
+      {
+        "prompt": 9,
+        "pos": "decode21",
+        "gt_top1": 1372,
+        "tc_top1": 6514,
+        "gt_margin": 0.0,
+        "near_tie": true
+      },
+      {
+        "prompt": 9,
+        "pos": "decode35",
+        "gt_top1": 1576,
+        "tc_top1": 13,
+        "gt_margin": 0.25,
+        "near_tie": false
+      },
+      {
+        "prompt": 9,
+        "pos": "decode37",
+        "gt_top1": 1231,
+        "tc_top1": 594,
+        "gt_margin": 0.125,
+        "near_tie": true
+      },
+      {
+        "prompt": 9,
+        "pos": "decode56",
+        "gt_top1": 1231,
+        "tc_top1": 5610,
+        "gt_margin": 0.0,
+        "near_tie": true
+      },
+      {
+        "prompt": 10,
+        "pos": "decode12",
+        "gt_top1": 3267,
+        "tc_top1": 3681,
+        "gt_margin": 0.0,
+        "near_tie": true
+      },
+      {
+        "prompt": 10,
+        "pos": "decode36",
+        "gt_top1": 432,
+        "tc_top1": 279,
+        "gt_margin": 0.125,
+        "near_tie": true
+      },
+      {
+        "prompt": 10,
+        "pos": "decode41",
+        "gt_top1": 1573,
+        "tc_top1": 13,
+        "gt_margin": 0.5,
+        "near_tie": false
+      }
+    ]
+  },
+  "ppl": {
+    "16384": {
+      "apa": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "apa_calls": 0,
+          "observed_calls": 0,
+          "engaged_calls": 0,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": null,
+          "min_engaged_frac": null,
+          "max_engaged_frac": null,
+          "refine_percentile": null,
+          "z_threshold": null,
+          "APA_ENGAGED": false
+        },
+        "poller_peak_mb": 4218.0
+      },
+      "standard": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "poller_peak_mb": 3634.0
+      }
+    },
+    "2048": {
+      "apa": {
+        "status": "OK",
+        "ppl": 16.618618283196216,
+        "mean_nll": 2.8105236501828963,
+        "scored_tokens": 5631,
+        "n_windows": 8,
+        "engagement": {
+          "apa_calls": 224,
+          "observed_calls": 56,
+          "engaged_calls": 56,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": 0.2921519095633541,
+          "min_engaged_frac": 0.2732277046825433,
+          "max_engaged_frac": 0.3134577664123505,
+          "refine_percentile": 0.15,
+          "z_threshold": 1.0364333894937898,
+          "APA_ENGAGED": true
+        },
+        "poller_peak_mb": 5628.0
+      },
+      "standard": {
+        "status": "OK",
+        "ppl": 16.472233717426654,
+        "mean_nll": 2.8016761583952667,
+        "scored_tokens": 5631,
+        "n_windows": 8,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "poller_peak_mb": null
+      }
+    },
+    "32768": {
+      "apa": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "apa_calls": 0,
+          "observed_calls": 0,
+          "engaged_calls": 0,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": null,
+          "min_engaged_frac": null,
+          "max_engaged_frac": null,
+          "refine_percentile": null,
+          "z_threshold": null,
+          "APA_ENGAGED": false
+        },
+        "poller_peak_mb": 4714.0
+      },
+      "standard": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "poller_peak_mb": 3634.0
+      }
+    },
+    "4096": {
+      "apa": {
+        "status": "OK",
+        "ppl": 17.053540282476597,
+        "mean_nll": 2.8363578233760487,
+        "scored_tokens": 6655,
+        "n_windows": 6,
+        "engagement": {
+          "apa_calls": 168,
+          "observed_calls": 56,
+          "engaged_calls": 56,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": 0.2920868059320137,
+          "min_engaged_frac": 0.2774786619782768,
+          "max_engaged_frac": 0.3154218216072736,
+          "refine_percentile": 0.15,
+          "z_threshold": 1.0364333894937898,
+          "APA_ENGAGED": true
+        },
+        "poller_peak_mb": 10055.0
+      },
+      "standard": {
+        "status": "OK",
+        "ppl": 16.911443913261106,
+        "mean_nll": 2.8279905473941134,
+        "scored_tokens": 6655,
+        "n_windows": 6,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "poller_peak_mb": 7559.0
+      }
+    },
+    "8192": {
+      "apa": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "apa_calls": 0,
+          "observed_calls": 0,
+          "engaged_calls": 0,
+          "all0_calls": 0,
+          "all1_calls": 0,
+          "mean_engaged_frac": null,
+          "min_engaged_frac": null,
+          "max_engaged_frac": null,
+          "refine_percentile": null,
+          "z_threshold": null,
+          "APA_ENGAGED": false
+        },
+        "poller_peak_mb": 8098.0
+      },
+      "standard": {
+        "status": "OOM",
+        "ppl": NaN,
+        "mean_nll": NaN,
+        "scored_tokens": 0,
+        "n_windows": 0,
+        "engagement": {
+          "APA_ENGAGED": null
+        },
+        "poller_peak_mb": 3682.0
+      }
+    }
+  },
+  "p0_baseline_ppl": {
+    "2048": {
+      "ppl": 14.96245,
+      "oom": null,
+      "n_windows": 582,
+      "scored_tokens": 299077,
+      "poller_peak_mb": 6868.0
+    },
+    "4096": {
+      "ppl": 14.7008,
+      "oom": null,
+      "n_windows": 578,
+      "scored_tokens": 299077,
+      "poller_peak_mb": 9968.0
+    },
+    "8192": {
+      "ppl": null,
+      "oom": true,
+      "n_windows": null,
+      "scored_tokens": null,
+      "poller_peak_mb": 11439.0
+    },
+    "16384": {
+      "ppl": null,
+      "oom": true,
+      "n_windows": null,
+      "scored_tokens": null,
+      "poller_peak_mb": 9588.0
+    },
+    "32768": {
+      "ppl": null,
+      "oom": true,
+      "n_windows": null,
+      "scored_tokens": null,
+      "poller_peak_mb": null
+    }
+  },
+  "ppl_coverage_note": "tc-bf16 P1 ppl scored only the first 6-8 windows (~5.6-6.7k tokens) within the 590s GPU cap; P0 HF-bf16 scored the full corpus (299,077 tokens, ~580 windows). The tc-vs-P0 ppl gap is therefore coverage-confounded. The APA-on vs APA-off delta IS matched (identical tokens/windows) and is the clean APA-cost measurement.",
+  "ceilings": {
+    "apa_decode": {
+      "last_solid_ctx": 20224,
+      "first_oom_ctx": 20800,
+      "max_ok_smi_mb": 5018.0,
+      "trace": [
+        {
+          "ctx": 4096,
+          "status": "OK",
+          "smi_used_mb": 3972.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 40960,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 22528,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 13312,
+          "status": "OK",
+          "smi_used_mb": 4704.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 17920,
+          "status": "OK",
+          "smi_used_mb": 4808.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 20224,
+          "status": "OK",
+          "smi_used_mb": 5018.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 21376,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 20800,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": true
+        }
+      ]
+    },
+    "apa_prefill": {
+      "last_solid_ctx": 5120,
+      "first_oom_ctx": 5312,
+      "max_ok_smi_mb": 3774.0,
+      "trace": [
+        {
+          "ctx": 2048,
+          "status": "OK",
+          "smi_used_mb": 3730.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 8192,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": false
+        },
+        {
+          "ctx": 5120,
+          "status": "OK",
+          "smi_used_mb": 3774.0,
+          "apa_engaged": true
+        },
+        {
+          "ctx": 6656,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": false
+        },
+        {
+          "ctx": 5888,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": false
+        },
+        {
+          "ctx": 5504,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": false
+        },
+        {
+          "ctx": 5312,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": true
+        }
+      ]
+    },
+    "standard_decode": {
+      "last_solid_ctx": 30592,
+      "first_oom_ctx": 31744,
+      "max_ok_smi_mb": 6102.0,
+      "trace": [
+        {
+          "ctx": 4096,
+          "status": "OK",
+          "smi_used_mb": 3972.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 40960,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 22528,
+          "status": "OK",
+          "smi_used_mb": 5230.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 31744,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 27136,
+          "status": "OK",
+          "smi_used_mb": 5794.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 29440,
+          "status": "OK",
+          "smi_used_mb": 6042.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 30592,
+          "status": "OK",
+          "smi_used_mb": 6102.0,
+          "apa_engaged": null
+        }
+      ]
+    },
+    "standard_prefill": {
+      "last_solid_ctx": 7616,
+      "first_oom_ctx": 7808,
+      "max_ok_smi_mb": 3836.0,
+      "trace": [
+        {
+          "ctx": 2048,
+          "status": "OK",
+          "smi_used_mb": 3728.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 8192,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 5120,
+          "status": "OK",
+          "smi_used_mb": 3774.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 6656,
+          "status": "OK",
+          "smi_used_mb": 3810.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 7424,
+          "status": "OK",
+          "smi_used_mb": 3830.0,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 7808,
+          "status": "OOM",
+          "smi_used_mb": null,
+          "apa_engaged": null
+        },
+        {
+          "ctx": 7616,
+          "status": "OK",
+          "smi_used_mb": 3836.0,
+          "apa_engaged": null
+        }
+      ]
+    }
+  }
+}

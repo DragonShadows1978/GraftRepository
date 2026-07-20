@@ -1,0 +1,24 @@
+{
+  "mode": "apa",
+  "window": 4096,
+  "stride": 512,
+  "refine_percentile": 0.15,
+  "n_windows": 6,
+  "scored_tokens": 6655,
+  "mean_nll": 2.8363578233760487,
+  "ppl": 17.053540282476597,
+  "elapsed_s": 209.61726999282837,
+  "engagement": {
+    "apa_calls": 168,
+    "observed_calls": 56,
+    "engaged_calls": 56,
+    "all0_calls": 0,
+    "all1_calls": 0,
+    "mean_engaged_frac": 0.2920868059320137,
+    "min_engaged_frac": 0.2774786619782768,
+    "max_engaged_frac": 0.3154218216072736,
+    "refine_percentile": 0.15,
+    "z_threshold": 1.0364333894937898,
+    "APA_ENGAGED": true
+  }
+}

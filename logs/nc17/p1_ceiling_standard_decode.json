@@ -1,0 +1,110 @@
+{
+  "mode": "standard",
+  "kind": "decode",
+  "search_lo": 4096,
+  "search_hi": 40960,
+  "last_solid_ctx": 30592,
+  "first_oom_ctx": 31744,
+  "probe_timeout_s": 540,
+  "refine_percentile": 0.15,
+  "trace": [
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 4096,
+      "status": "OK",
+      "smi_used_mb_after": 3972.0,
+      "elapsed_s": 23.051085948944092,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 23.705122709274292
+    },
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 40960,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 92.86744809150696,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 93.57161831855774
+    },
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 22528,
+      "status": "OK",
+      "smi_used_mb_after": 5230.0,
+      "elapsed_s": 62.565834760665894,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 63.24876594543457
+    },
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 31744,
+      "status": "OOM",
+      "smi_used_mb_after": null,
+      "elapsed_s": 93.15274596214294,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "RuntimeError: cudaMalloc failed: out of memory",
+      "_probe_rc": 0,
+      "_wall_s": 93.84038400650024
+    },
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 27136,
+      "status": "OK",
+      "smi_used_mb_after": 5794.0,
+      "elapsed_s": 79.23869776725769,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 79.95199084281921
+    },
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 29440,
+      "status": "OK",
+      "smi_used_mb_after": 6042.0,
+      "elapsed_s": 88.64315247535706,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 89.3293137550354
+    },
+    {
+      "mode": "standard",
+      "kind": "decode",
+      "ctx": 30592,
+      "status": "OK",
+      "smi_used_mb_after": 6102.0,
+      "elapsed_s": 93.92994165420532,
+      "engagement": {
+        "APA_ENGAGED": null
+      },
+      "error": "",
+      "_probe_rc": 0,
+      "_wall_s": 94.60971522331238
+    }
+  ]
+}

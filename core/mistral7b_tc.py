@@ -476,9 +476,15 @@ class GQAAttentionTC:
         elif self.attention_mode == "apa":
             k_r = _repeat_kv(k, self.num_heads_per_kv)
             v_r = _repeat_kv(v, self.num_heads_per_kv)
+            # bulk_bits from self.bulk_bits (default 2 — behavior-preserving for
+            # every model that doesn't override it). Outlier-key models (Qwen
+            # family) set 8 in their from_pretrained; a hardcoded 2 here destroyed
+            # their bulk keys (qwen_tc note: corr 0.03 -> ppl 555; NC17-P1 saw
+            # ppl 132 vs 16 standard on the 1.7B). The apa_selective path already
+            # read self.bulk_bits; this makes the pure-apa path consistent.
             attn = tc.apa_quant_attention(
-                q, k_r, v_r, bulk_bits=2, refine_percentile=self.refine_percentile,
-                is_causal=causal)
+                q, k_r, v_r, bulk_bits=self.bulk_bits,
+                refine_percentile=self.refine_percentile, is_causal=causal)
         else:
             k_r = _repeat_kv(k, self.num_heads_per_kv)
             v_r = _repeat_kv(v, self.num_heads_per_kv)
