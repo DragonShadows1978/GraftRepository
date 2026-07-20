@@ -1,0 +1,312 @@
+{
+  "test": "nc17_p1b_adjudicate",
+  "gt_file": "/mnt/ForgeRealm/GraftRepository/logs/nc17/p0_gt.npz",
+  "gt_sha256": "0fc4099b3537083ec99478c9cdb969a5afca038609636499d64344a3303575fb",
+  "adapter_info": {
+    "loaded": "bf16",
+    "framework": "tensor_cuda bf16 (unquantized, Qwen3-1.7B)",
+    "tied_head": true,
+    "tied_head_vram_bytes": 0
+  },
+  "near_tie_margin": 0.25,
+  "method": "fresh full-prefill of prompt+decode_tokens[0..s] per HARD flip; no cache reuse across steps; compare final-pos top1/margin vs GT decode_logits[s]",
+  "n_hard_flips": 17,
+  "n_explained": 17,
+  "n_unexplained": 0,
+  "control_seed": 42,
+  "n_control": 10,
+  "n_control_agree": 10,
+  "headline": "PORT SOUND, gate-fail explained",
+  "mechanism": "cache-chain drift CONFIRMED as mechanism",
+  "flip_rows": [
+    {
+      "prompt": 0,
+      "step": 26,
+      "gt_top1": 8522,
+      "cached_top1": 3639,
+      "fresh_top1": 8522,
+      "gt_margin": 0.5,
+      "fresh_margin": 0.375,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 1,
+      "step": 5,
+      "gt_top1": 58137,
+      "cached_top1": 294,
+      "fresh_top1": 58137,
+      "gt_margin": 0.375,
+      "fresh_margin": 0.5,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 1,
+      "step": 13,
+      "gt_top1": 48813,
+      "cached_top1": 19801,
+      "fresh_top1": 48813,
+      "gt_margin": 0.625,
+      "fresh_margin": 0.5,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 3,
+      "step": 34,
+      "gt_top1": 77327,
+      "cached_top1": 80940,
+      "fresh_top1": 77327,
+      "gt_margin": 0.25,
+      "fresh_margin": 0.375,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 3,
+      "step": 37,
+      "gt_top1": 35439,
+      "cached_top1": 7281,
+      "fresh_top1": 35439,
+      "gt_margin": 0.75,
+      "fresh_margin": 1.0,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 3,
+      "step": 39,
+      "gt_top1": 773,
+      "cached_top1": 10638,
+      "fresh_top1": 773,
+      "gt_margin": 0.25,
+      "fresh_margin": 0.375,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 3,
+      "step": 43,
+      "gt_top1": 1128,
+      "cached_top1": 279,
+      "fresh_top1": 1128,
+      "gt_margin": 0.25,
+      "fresh_margin": 0.125,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 4,
+      "step": 52,
+      "gt_top1": 100694,
+      "cached_top1": 99489,
+      "fresh_top1": 100694,
+      "gt_margin": 0.5,
+      "fresh_margin": 0.25,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 5,
+      "step": 19,
+      "gt_top1": 99558,
+      "cached_top1": 101091,
+      "fresh_top1": 99558,
+      "gt_margin": 1.125,
+      "fresh_margin": 1.375,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 5,
+      "step": 28,
+      "gt_top1": 70189,
+      "cached_top1": 129139,
+      "fresh_top1": 70189,
+      "gt_margin": 0.625,
+      "fresh_margin": 0.375,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 5,
+      "step": 60,
+      "gt_top1": 138661,
+      "cached_top1": 52183,
+      "fresh_top1": 138661,
+      "gt_margin": 0.75,
+      "fresh_margin": 0.625,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 6,
+      "step": 5,
+      "gt_top1": 93408,
+      "cached_top1": 70895,
+      "fresh_top1": 93408,
+      "gt_margin": 0.25,
+      "fresh_margin": 0.25,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 6,
+      "step": 46,
+      "gt_top1": 3263,
+      "cached_top1": 1837,
+      "fresh_top1": 3263,
+      "gt_margin": 0.25,
+      "fresh_margin": 0.25,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 8,
+      "step": 56,
+      "gt_top1": 198,
+      "cached_top1": 576,
+      "fresh_top1": 198,
+      "gt_margin": 0.375,
+      "fresh_margin": 0.375,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 9,
+      "step": 12,
+      "gt_top1": 39482,
+      "cached_top1": 6319,
+      "fresh_top1": 39482,
+      "gt_margin": 0.75,
+      "fresh_margin": 0.75,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 9,
+      "step": 35,
+      "gt_top1": 1576,
+      "cached_top1": 13,
+      "fresh_top1": 1576,
+      "gt_margin": 0.25,
+      "fresh_margin": 0.375,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    },
+    {
+      "prompt": 10,
+      "step": 41,
+      "gt_top1": 1573,
+      "cached_top1": 13,
+      "fresh_top1": 1573,
+      "gt_margin": 0.5,
+      "fresh_margin": 0.375,
+      "fresh_agrees": true,
+      "verdict": "EXPLAINED(agree)"
+    }
+  ],
+  "control_rows": [
+    {
+      "prompt": 0,
+      "step": 25,
+      "gt_top1": 279,
+      "fresh_top1": 279,
+      "gt_margin": 0.375,
+      "fresh_margin": 0.375,
+      "fresh_agrees": true,
+      "verdict": "OK(agree)"
+    },
+    {
+      "prompt": 1,
+      "step": 29,
+      "gt_top1": 4942,
+      "fresh_top1": 4942,
+      "gt_margin": 11.375,
+      "fresh_margin": 11.375,
+      "fresh_agrees": true,
+      "verdict": "OK(agree)"
+    },
+    {
+      "prompt": 1,
+      "step": 45,
+      "gt_top1": 2123,
+      "fresh_top1": 2123,
+      "gt_margin": 10.75,
+      "fresh_margin": 10.75,
+      "fresh_agrees": true,
+      "verdict": "OK(agree)"
+    },
+    {
+      "prompt": 1,
+      "step": 55,
+      "gt_top1": 92717,
+      "fresh_top1": 92717,
+      "gt_margin": 2.125,
+      "fresh_margin": 2.125,
+      "fresh_agrees": true,
+      "verdict": "OK(agree)"
+    },
+    {
+      "prompt": 2,
+      "step": 20,
+      "gt_top1": 7042,
+      "fresh_top1": 7042,
+      "gt_margin": 0.125,
+      "fresh_margin": 0.25,
+      "fresh_agrees": true,
+      "verdict": "OK(agree)"
+    },
+    {
+      "prompt": 3,
+      "step": 48,
+      "gt_top1": 9856,
+      "fresh_top1": 9856,
+      "gt_margin": 5.125,
+      "fresh_margin": 5.25,
+      "fresh_agrees": true,
+      "verdict": "OK(agree)"
+    },
+    {
+      "prompt": 4,
+      "step": 7,
+      "gt_top1": 105538,
+      "fresh_top1": 105538,
+      "gt_margin": 1.0,
+      "fresh_margin": 1.0,
+      "fresh_agrees": true,
+      "verdict": "OK(agree)"
+    },
+    {
+      "prompt": 4,
+      "step": 38,
+      "gt_top1": 29524,
+      "fresh_top1": 29524,
+      "gt_margin": 0.5,
+      "fresh_margin": 0.5,
+      "fresh_agrees": true,
+      "verdict": "OK(agree)"
+    },
+    {
+      "prompt": 9,
+      "step": 5,
+      "gt_top1": 13,
+      "fresh_top1": 13,
+      "gt_margin": 0.75,
+      "fresh_margin": 0.875,
+      "fresh_agrees": true,
+      "verdict": "OK(agree)"
+    },
+    {
+      "prompt": 10,
+      "step": 47,
+      "gt_top1": 5420,
+      "fresh_top1": 5420,
+      "gt_margin": 6.25,
+      "fresh_margin": 6.75,
+      "fresh_agrees": true,
+      "verdict": "OK(agree)"
+    }
+  ]
+}

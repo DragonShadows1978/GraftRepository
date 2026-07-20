@@ -77,3 +77,17 @@ Receipts only. Plan: `QWEN3_1P7B_NAMECHECKER_PLAN.md` (immutable).
   core/mistral7b_tc.py pure-apa path (hardcoded 2 → self.bulk_bits;
   default preserved; qwen3 family sets 8, qwen35 sets 4; fix took 1.7B
   APA ppl 132 → 16.6). Other ports unaffected by inspection.
+
+## 2026-07-20 ~07:1x — P1b ADJUDICATION: PORT SOUND (17/17 explained, control 10/10)
+- Fresh-prefill refeed at every HARD flip position: all 17 revert to GT
+  top-1 on the merits (none needed the near-tie clause); 10-position
+  agreeing control all clean. Cache-chain bf16 drift CONFIRMED as the
+  P1 RED's mechanism. Registered threshold ≥15/17; result 17/17.
+- P1 parity gate REMAINS RED as written (its cached-chain protocol
+  measures drift tolerance, not port correctness). SPEC NOTE REGISTERED
+  (lead): port-certification parity = fresh-prefill protocol (P1b
+  method); cached-chain parity = drift characterization, separate
+  question. P2's clean quant isolation = INT4-vs-P1-bf16 same-engine
+  cached-chain delta (both chains drift identically).
+- Artifacts: tests/nc17/p1b_adjudicate.py, logs/nc17/p1b_verdict.{json,log}.
+  Peak 3721 MiB, rc=0. PIPELINE UNBLOCKED → P2 dispatched.
