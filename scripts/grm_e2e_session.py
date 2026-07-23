@@ -239,6 +239,13 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     # Leg-1 proven / diagnosis: width 384 → live_shift≈387 collapses GPT-OSS.
     p.add_argument("--arena-width", type=int, default=96)
     p.add_argument("--max-live", type=int, default=4096)
+    # F-COLD (GRM3P-P4): bounded device-byte budget for saved graft tensors.
+    # Least-recently-mounted saved nodes spill to cold storage above it via the
+    # existing GraftRepository LRU pager (_page); step-1 prep pages them back in
+    # via node_loader. None = unbounded (registered default, prior frames).
+    p.add_argument("--vram-budget-mb", type=int, default=None,
+                   help="graft-tensor device byte budget in MB (LRU spill "
+                        "above it); None = unbounded (default)")
     # Fork A: production-realistic multi-mount (top-k 2-3, not argmax-only).
     # Arena.step already slices ranking into self.topk mounts; this flag is
     # the driver call-site width of that slice (default 3 for this receipt).
@@ -1009,6 +1016,9 @@ def load_model_and_repo(args: argparse.Namespace, session_dir: Path):
         arena_cls=GptOssGQAArenaCache,
         native_lib_path=str(args.native_lib) if args.native_lib else None,
         native_auto=False,
+        vram_budget_mb=(
+            int(args.vram_budget_mb)
+            if args.vram_budget_mb is not None else None),
         **arena_kw,
     )
     return model, tokenizer, repo, model_info
@@ -1772,6 +1782,8 @@ def maybe_restart(args: argparse.Namespace, session_dir: Path, paths: dict[str, 
         "--restart-after", str(args.restart_after),
         "--skip-gpu-idle-check",
     ]
+    if args.vram_budget_mb is not None:
+        argv += ["--vram-budget-mb", str(args.vram_budget_mb)]
     os.execvpe(sys.executable, argv, os.environ.copy())
 
 
@@ -1821,6 +1833,9 @@ def main(argv: list[str]) -> int:
             "ngen": int(args.ngen),
             "max_trips": int(args.max_trips),
             "turn_pipeline": args.turn_pipeline,
+            "vram_budget_mb": (
+                int(args.vram_budget_mb)
+                if args.vram_budget_mb is not None else None),
             "template_decision": (
                 "ArenaCache prompt_template + stop_sequences hook; "
                 "probe/filler use real GRMRuntime.chat()/ArenaCache.step(); "

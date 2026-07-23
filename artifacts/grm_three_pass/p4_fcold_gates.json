@@ -1,0 +1,288 @@
+{
+  "frame": "F-COLD",
+  "gate_lines": [
+    "G-E2E-RECALL PASS recall_three_pass=9/9 recall_single=9/9 three_pass_ge_single=True",
+    "G-E2E-IO PASS step1_page_ins=155 step2_page_ins=0 step3_page_ins=0 step2_uploads=0 positive_page_ins_in_steps_1_or_3=155 working_set_receipts=34/34",
+    "G-E2E-LEDGER PASS ledger_complete=True receipts=34/34 all_receipts_schema_valid=True"
+  ],
+  "gates": [
+    {
+      "checks": {
+        "three_pass_recall_ge_single": true
+      },
+      "evidence": {
+        "single_per_probe": [
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Auric-4-Alpha",
+            "fact_id": "orion pin",
+            "old_value": null,
+            "pass": true,
+            "route_backend": "python",
+            "source_rank": 1,
+            "turn": 5
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Vortex-3-Sierra",
+            "fact_id": "cypher bridge",
+            "old_value": null,
+            "pass": true,
+            "route_backend": "python",
+            "source_rank": 1,
+            "turn": 9
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Kestrel-9-Tango",
+            "fact_id": "orion pin",
+            "old_value": "Auric-4-Alpha",
+            "pass": true,
+            "route_backend": "python",
+            "source_rank": 2,
+            "turn": 13
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Zenith-2-Echo",
+            "fact_id": "lyra dock",
+            "old_value": "Nadir-1-Delta",
+            "pass": true,
+            "route_backend": "python",
+            "source_rank": 2,
+            "turn": 16
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Quartz-5-Bravo",
+            "fact_id": "nova key",
+            "old_value": null,
+            "pass": true,
+            "route_backend": "python",
+            "source_rank": 1,
+            "turn": 19
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Gold-7-Foxtrot",
+            "fact_id": "mira seal",
+            "old_value": "Silver-6-Charlie",
+            "pass": true,
+            "route_backend": "python",
+            "source_rank": 2,
+            "turn": 22
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Harbor-8-Golf",
+            "fact_id": "terra port",
+            "old_value": null,
+            "pass": true,
+            "route_backend": "python",
+            "source_rank": 1,
+            "turn": 24
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Violet-2-Hotel",
+            "fact_id": "ember code",
+            "old_value": null,
+            "pass": true,
+            "route_backend": "python",
+            "source_rank": 1,
+            "turn": 26
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Cobalt-1-India",
+            "fact_id": "atlas tone",
+            "old_value": null,
+            "pass": true,
+            "route_backend": "python",
+            "source_rank": 1,
+            "turn": 30
+          }
+        ],
+        "three_pass_per_probe": [
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Auric-4-Alpha",
+            "fact_id": "orion pin",
+            "old_value": null,
+            "pass": true,
+            "route_backend": "cuda",
+            "source_rank": 1,
+            "turn": 5
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Vortex-3-Sierra",
+            "fact_id": "cypher bridge",
+            "old_value": null,
+            "pass": true,
+            "route_backend": "cuda",
+            "source_rank": 1,
+            "turn": 9
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Kestrel-9-Tango",
+            "fact_id": "orion pin",
+            "old_value": "Auric-4-Alpha",
+            "pass": true,
+            "route_backend": "cuda",
+            "source_rank": 2,
+            "turn": 13
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Zenith-2-Echo",
+            "fact_id": "lyra dock",
+            "old_value": "Nadir-1-Delta",
+            "pass": true,
+            "route_backend": "cuda",
+            "source_rank": 2,
+            "turn": 16
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Quartz-5-Bravo",
+            "fact_id": "nova key",
+            "old_value": null,
+            "pass": true,
+            "route_backend": "cuda",
+            "source_rank": 1,
+            "turn": 19
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Gold-7-Foxtrot",
+            "fact_id": "mira seal",
+            "old_value": "Silver-6-Charlie",
+            "pass": true,
+            "route_backend": "cuda",
+            "source_rank": 2,
+            "turn": 22
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Harbor-8-Golf",
+            "fact_id": "terra port",
+            "old_value": null,
+            "pass": true,
+            "route_backend": "cuda",
+            "source_rank": 1,
+            "turn": 24
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Violet-2-Hotel",
+            "fact_id": "ember code",
+            "old_value": null,
+            "pass": true,
+            "route_backend": "cuda",
+            "source_rank": 1,
+            "turn": 26
+          },
+          {
+            "contains_expected": true,
+            "contains_stale": false,
+            "expected": "Cobalt-1-India",
+            "fact_id": "atlas tone",
+            "old_value": null,
+            "pass": true,
+            "route_backend": "cuda",
+            "source_rank": 1,
+            "turn": 30
+          }
+        ]
+      },
+      "gate": "G-E2E-RECALL",
+      "headline": {
+        "recall_single": "9/9",
+        "recall_three_pass": "9/9",
+        "three_pass_ge_single": true
+      },
+      "status": "PASS"
+    },
+    {
+      "checks": {
+        "step2_page_ins_zero": true,
+        "step2_uploads_zero": true,
+        "step_io_present_every_turn": true,
+        "working_set_receipt_per_turn": true
+      },
+      "evidence": {
+        "step_io_totals": {
+          "1_prep": {
+            "page_ins": 155,
+            "uploads": 188
+          },
+          "2_inference": {
+            "page_ins": 0,
+            "uploads": 0
+          },
+          "3_cleanup": {
+            "page_ins": 0,
+            "uploads": 0
+          }
+        }
+      },
+      "gate": "G-E2E-IO",
+      "headline": {
+        "positive_page_ins_in_steps_1_or_3": 155,
+        "step1_page_ins": 155,
+        "step2_page_ins": 0,
+        "step2_uploads": 0,
+        "step3_page_ins": 0,
+        "working_set_receipts": "34/34"
+      },
+      "status": "PASS"
+    },
+    {
+      "checks": {
+        "all_receipts_schema_valid": true,
+        "all_turn_audits_complete": true,
+        "expected_turns": 34,
+        "missing_target_count": 0,
+        "mutation_kind_counts": {
+          "deposit": 296,
+          "importance_bookkeeping": 79,
+          "supersession": 11
+        },
+        "one_receipt_per_turn": true,
+        "receipt_files": 34,
+        "supersession_command_inside_pass3": true
+      },
+      "gate": "G-E2E-LEDGER",
+      "headline": {
+        "all_receipts_schema_valid": true,
+        "ledger_complete": true,
+        "receipts": "34/34"
+      },
+      "status": "PASS"
+    }
+  ],
+  "schema": "grm.three_pass.p4.gates.v1",
+  "sessions": {
+    "single": "artifacts/grm_three_pass/p4_fcold_single",
+    "three_pass": "artifacts/grm_three_pass/p4_fcold_three_pass"
+  }
+}

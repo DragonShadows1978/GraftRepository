@@ -540,3 +540,38 @@ ABI top-16 fail-closed envelope; 4-node smoke never exercised cold
 page-ins (upload receipts only); F2 echo lens 0/2 as registered —
 staging correct, readout contaminated; enrichment delta 0 on a 2-probe
 fixture, no verdict licensed.
+
+## Lead verification — P4 (Fable, 2026-07-23)
+
+Receipts audit: both p4 gate JSONs match the report verbatim; step-3
+stats recomputed independently from raw instrumentation rows — exact
+match (F-FULL mean 936.1/p50 52.3/max 28475.2; F-COLD 979.8/114.6/
+27420.1). Lead rerun of the full F-COLD three_pass leg: transcript
+byte-identical to the seat's (f43582ad), 9/9 probes, 155 step-1
+page-ins and zero step-2 I/O reproduced exactly.
+
+**Verdict: P4 gates ALL PASS lead-verified.** All five (G-E2E-EQ,
+-SERVE, -RECALL, -IO, -LEDGER) + suites 446×2.
+
+**Finding (lead reading, supersedes the seat's "echo class" label):**
+F-FULL (unbounded) recalls 7/9 in BOTH pipelines with identical
+misses — the orion probes answer with the cypher-bridge VALUE
+(cross-fact contamination = the Corpus-100 co-mounted-collapse class,
+not live-window echo). Under the 4MB LRU budget the distractor is
+evicted and recall is 9/9. Bounded residency acts as read hygiene —
+"over-mounting is the other forgetting" (E1 law) reappearing at the
+paging layer. Observation, not a gate; registered for David.
+
+**P3 adjudication (lead recommendation; operator decides):** step-3
+cleanup p50 52–114ms, p95 ≤716ms — fits inside any real think-time
+gap; the sole breach is the ~27–28s librarian consolidation fold
+outlier (one turn per leg). Epoch-overlap machinery is NOT justified
+at this scale: P3 closes DEMOTED-CONTINGENCY per the canonical
+one-pass/three-step framing. Registered revive triggers: rapid-fire
+turns colliding with a fold; scale where folds become frequent.
+
+Standing residuals (seat's, confirmed): top-16 fail-closed untested
+(eligible base peaked 14/13 — supersession retirement keeps it
+bounded); cold tier exercised was RAM→device, not NVMe→device;
+canonical-arena equality is on the persisted projection per the
+frozen P0 law, not ephemeral LRU state.
