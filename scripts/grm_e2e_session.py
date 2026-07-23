@@ -8,6 +8,7 @@ the lead; use ``--mode smoke`` for the bounded 8-10 turn proof.
 from __future__ import annotations
 
 import argparse
+from contextlib import nullcontext
 from datetime import datetime
 import gc
 import json
@@ -32,10 +33,13 @@ from core.gpt_oss20b_tc import (  # noqa: E402
     gpt_oss_grm_dialect_kwargs,
 )
 from core.graft_arena import GQAArenaCache  # noqa: E402
+from core import kv_graft  # noqa: E402
 from core.graft_repository import GraftRepository  # noqa: E402
 from core.grm_three_pass import (  # noqa: E402
     MemoryLedgerBuilder,
     Pass2ReadOnlyGuard,
+    StagedWorkingSetResolver,
+    TurnStepIOTracker,
     arena_state_sha256,
 )
 
@@ -559,6 +563,356 @@ def _budget_fit_mounts(arena, picks: list[int]) -> list[int]:
     return out
 
 
+def recency_augmented_probe(
+    probe_text: str,
+    transcript: list[dict[str, Any]],
+    *,
+    live_turns: int,
+) -> str:
+    """Frozen exploratory construction: recent complete turns + bare query.
+
+    This probe is routing-only and is never fed to user-visible inference.
+    The main working-set probe remains the E4 bare message.
+    """
+    recent = transcript[-max(0, int(live_turns)):]
+    lines = ["Routing recency context (exploratory only)."]
+    for row in recent:
+        lines.append(f"Recent user: {row.get('user', '')}")
+        lines.append(f"Recent assistant: {row.get('assistant', '')}")
+    lines.append(f"Current user: {probe_text}")
+    return "\n".join(lines)
+
+
+def _route_backend_pair(
+    arena,
+    probe_text: str,
+    *,
+    exclude: set[int],
+    timers: TurnTimers,
+    semantic_only: bool = False,
+) -> dict[str, Any]:
+    """Capture one Q probe, then rank its identical fp32 values twice."""
+    eligible = [
+        int(i) for i in arena._route_cand_base() if int(i) not in exclude
+    ]
+    if not eligible:
+        return {
+            "routed": False,
+            "candidate_ids": [],
+            "candidate_count": 0,
+            "python_backend": None,
+            "cuda_backend": None,
+            "cuda_policy_backend": None,
+            "semantic_only": bool(semantic_only),
+            "python_ranking_ids": [],
+            "cuda_ranking_ids": [],
+            "ranking_ids_byte_equal": True,
+            "probe_capture_wall_ms": 0.0,
+            "pair_wall_ms": 0.0,
+        }
+    # The current exact CUDA top-k ABI is bounded at 16. The registered smoke
+    # repository stays below it; fail closed if that frame ever stops doing so.
+    if len(eligible) > 16:
+        raise RuntimeError(
+            "exact CUDA full-repository ranking requires <=16 eligible "
+            f"candidates in this registered frame, found {len(eligible)}")
+
+    pair_started = time.perf_counter()
+    capture_started = time.perf_counter()
+    probe_key = arena._probe_key(probe_text)
+    capture_wall_ms = (time.perf_counter() - capture_started) * 1000.0
+    # install_turn_timers wraps route(), while this deliberately shared probe
+    # capture sits outside route(); attribute it to the route stage explicitly.
+    timers.route_ms += capture_wall_ms
+
+    python_ranking = list(arena.route(
+        probe_text,
+        exclude=exclude,
+        limit=len(eligible),
+        route_backend="python",
+        query_lex=False if semantic_only else None,
+        semantic_only=semantic_only,
+        probe_key=probe_key,
+    ) or [])
+    python_backend = str(arena.last_route_backend)
+    cuda_ranking = list(arena.route(
+        probe_text,
+        exclude=exclude,
+        limit=len(eligible),
+        route_backend="cuda",
+        query_lex=False if semantic_only else None,
+        semantic_only=semantic_only,
+        probe_key=probe_key,
+    ) or [])
+    cuda_backend = str(arena.last_route_backend)
+    cuda_policy_backend = getattr(
+        arena, "last_route_policy_backend", None)
+    pair_wall_ms = (time.perf_counter() - pair_started) * 1000.0
+    return {
+        "routed": True,
+        "candidate_ids": eligible,
+        "candidate_count": len(eligible),
+        "python_backend": python_backend,
+        "cuda_backend": cuda_backend,
+        "cuda_policy_backend": cuda_policy_backend,
+        "semantic_only": bool(semantic_only),
+        "python_ranking_ids": [int(i) for i in python_ranking],
+        "cuda_ranking_ids": [int(i) for i in cuda_ranking],
+        "ranking_ids_byte_equal": (
+            [int(i) for i in python_ranking]
+            == [int(i) for i in cuda_ranking]),
+        "probe_capture_wall_ms": capture_wall_ms,
+        "pair_wall_ms": pair_wall_ms,
+    }
+
+
+def _ranking_rows(arena, ranking: list[int]) -> list[dict[str, Any]]:
+    rows = []
+    for rank, node_id in enumerate(ranking, start=1):
+        graft = arena.grafts[int(node_id)]
+        rows.append({
+            "rank": int(rank),
+            "node_id": int(node_id),
+            "text_prefix": str(graft.get("text", "") or "")[:120],
+        })
+    return rows
+
+
+def _source_rank(ranking: list[int], source_node_id: int | None) -> int | None:
+    if source_node_id is None:
+        return None
+    try:
+        return ranking.index(int(source_node_id)) + 1
+    except ValueError:
+        return None
+
+
+def _prep_primary_mounts(
+    arena,
+    event: dict[str, Any],
+    ranking: list[int],
+    *,
+    topk: int,
+) -> list[int]:
+    """Mirror the primary pass-2 mount plan without running inference."""
+    if event["kind"] in ("fact", "supersede"):
+        # Complete scripted turns historically do not route/mount. Staging is
+        # still performed, but changing seats would change their harvested KV
+        # and violate the registered equivalence gate.
+        return []
+    head = [int(i) for i in ranking[:max(1, int(topk))]]
+    if event["kind"] == "probe":
+        return sorted(_budget_fit_mounts(arena, head))
+
+    qrare = arena._rare_tokens(event["user"])
+    expanded = arena._descent_expand(
+        sorted(head), ("era",), qrare=qrare)
+    resolved = arena._resolve_revision_mounts(expanded)
+    budget = int(arena.width)
+    out = []
+    used = 0
+    for node_id in resolved:
+        ntok = int(arena.grafts[int(node_id)]["ntok"])
+        if used + ntok <= budget:
+            out.append(int(node_id))
+            used += ntok
+    return sorted(out)
+
+
+def _working_set_path(paths: dict[str, Path], turn_idx: int) -> Path:
+    return paths["working_set"] / f"turn_{turn_idx:04d}" / "working_set.json"
+
+
+def run_step1_prep(
+    repo: GraftRepository,
+    event: dict[str, Any],
+    turn_idx: int,
+    *,
+    transcript: list[dict[str, Any]],
+    source_node_id: int | None,
+    paths: dict[str, Path],
+    args: argparse.Namespace,
+    timers: TurnTimers,
+    io_tracker: TurnStepIOTracker,
+) -> tuple[dict[str, Any], Path]:
+    """Search, compare, page in, and prepare the primary working set."""
+    arena = repo.arena
+    started = time.perf_counter()
+    probe_text = str(event["user"])
+    live_excluded = {
+        int(g) for g, _ntok in arena.live_segs if g is not None
+    }
+    page_ins_before = int(getattr(arena, "page_ins", 0))
+    main_pair = _route_backend_pair(
+        arena,
+        probe_text,
+        exclude=set(),
+        timers=timers,
+        semantic_only=event["kind"] in ("fact", "supersede"),
+    )
+    repository_ranking = list(main_pair["cuda_ranking_ids"])
+    python_repository_ranking = list(main_pair["python_ranking_ids"])
+    ranking = [
+        int(i) for i in repository_ranking if int(i) not in live_excluded
+    ]
+    python_ranking = [
+        int(i) for i in python_repository_ranking
+        if int(i) not in live_excluded
+    ]
+    route_window = max(
+        int(args.topk), (int(args.max_trips) + 1) * int(args.topk))
+    staged_ids = [int(i) for i in ranking[:route_window]]
+
+    # Device materialization is complete before any mount surgery.
+    arena._ensure_h(staged_ids)
+    prepared_mount_ids = _prep_primary_mounts(
+        arena, event, ranking, topk=int(args.topk))
+    mount_surgery_prepped = False
+    mount_surgery_reason = None
+    if event["kind"] in ("fact", "supersede"):
+        mount_surgery_reason = "complete_turn_has_no_retrieval_mount"
+    elif arena.caches is None:
+        mount_surgery_reason = "cache_bootstrap_deferred_to_inference"
+    else:
+        arena.swap(prepared_mount_ids)
+        mount_surgery_prepped = True
+
+    enrichment = None
+    if event["kind"] == "probe":
+        augmented = recency_augmented_probe(
+            probe_text, transcript, live_turns=int(args.live_turns))
+        bare_exploratory_pair = _route_backend_pair(
+            arena,
+            probe_text,
+            exclude=set(),
+            timers=timers,
+            semantic_only=True,
+        )
+        augmented_pair = _route_backend_pair(
+            arena,
+            augmented,
+            exclude=set(),
+            timers=timers,
+            semantic_only=True,
+        )
+        bare_exploratory_ranking = [
+            int(i) for i in bare_exploratory_pair["cuda_ranking_ids"]
+            if int(i) not in live_excluded
+        ]
+        bare_exploratory_python_ranking = [
+            int(i) for i in bare_exploratory_pair["python_ranking_ids"]
+            if int(i) not in live_excluded
+        ]
+        augmented_ranking = [
+            int(i) for i in augmented_pair["cuda_ranking_ids"]
+            if int(i) not in live_excluded
+        ]
+        augmented_python_ranking = [
+            int(i) for i in augmented_pair["python_ranking_ids"]
+            if int(i) not in live_excluded
+        ]
+        enrichment = {
+            "status": "exploratory_report_only",
+            "construction": (
+                "last live_turns complete transcript turns, labelled Recent "
+                "user/assistant, followed by labelled Current user"),
+            "comparison_lexical_policy": "semantic_only_exact_cuda",
+            "bare_probe": probe_text,
+            "augmented_probe": augmented,
+            "bare_ranking_ids": bare_exploratory_ranking,
+            "augmented_ranking_ids": augmented_ranking,
+            "bare_source_rank": _source_rank(
+                bare_exploratory_ranking, source_node_id),
+            "augmented_source_rank": _source_rank(
+                augmented_ranking, source_node_id),
+            "bare_recall_at_3": bool(
+                source_node_id is not None
+                and int(source_node_id) in bare_exploratory_ranking[:3]),
+            "augmented_recall_at_3": bool(
+                source_node_id is not None
+                and int(source_node_id) in augmented_ranking[:3]),
+            "bare_python_ranking_ids": bare_exploratory_python_ranking,
+            "augmented_python_ranking_ids": (
+                augmented_python_ranking),
+            "bare_cuda_python_byte_equal": (
+                bare_exploratory_pair["ranking_ids_byte_equal"]),
+            "augmented_cuda_python_byte_equal": (
+                augmented_pair["ranking_ids_byte_equal"]),
+        }
+
+    prep_wall_ms = (time.perf_counter() - started) * 1000.0
+    page_in_count = (
+        int(getattr(arena, "page_ins", 0)) - page_ins_before)
+    step1_io = io_tracker.receipt()["steps"]["1_prep"]
+    source_rank = _source_rank(ranking, source_node_id)
+    receipt = {
+        "schema": "grm.three_pass.working_set.v1",
+        "turn": int(turn_idx),
+        "turn_pipeline": "three_pass",
+        "step": 1,
+        "event_kind": event["kind"],
+        "probe_policy": "bare_message_e4",
+        "probe_used": probe_text,
+        "lexical_policy": (
+            "semantic_only_exact_cuda"
+            if main_pair["semantic_only"]
+            else "existing_query_lex_exact_python_rescore"),
+        "live_excluded_ids": sorted(live_excluded),
+        "routed": bool(main_pair["routed"]),
+        "route_backend": main_pair["cuda_backend"],
+        "route_policy_backend": main_pair["cuda_policy_backend"],
+        "python_backend": main_pair["python_backend"],
+        "ranking_ids_byte_equal": main_pair["ranking_ids_byte_equal"],
+        "repository_ranking_ids": repository_ranking,
+        "python_repository_ranking_ids": python_repository_ranking,
+        "ranking_ids": ranking,
+        "python_ranking_ids": python_ranking,
+        "ranking": _ranking_rows(arena, ranking),
+        "repository_candidate_count": main_pair["candidate_count"],
+        "staged_ids": staged_ids,
+        "prepared_mount_ids": prepared_mount_ids,
+        "mount_surgery_prepped": mount_surgery_prepped,
+        "mount_surgery_reason": mount_surgery_reason,
+        "page_in_count": int(page_in_count),
+        "page_in_ids": [
+            int(row["node_id"]) for row in step1_io["events"]
+            if row.get("kind") == "graft_page_in"
+            and row.get("success") is True
+        ],
+        "upload_count": int(step1_io["upload_count"]),
+        "upload_events": [
+            row for row in step1_io["events"]
+            if row.get("kind") in (
+                "graft_payload_upload", "cuda_route_bank_upload")
+        ],
+        "prep_route_wall_ms": float(main_pair["pair_wall_ms"]),
+        "probe_capture_wall_ms": float(
+            main_pair["probe_capture_wall_ms"]),
+        "prep_wall_ms": float(prep_wall_ms),
+        "source_node_id": (
+            int(source_node_id) if source_node_id is not None else None),
+        "source_rank": source_rank,
+        "direct_route_recall_at_3": (
+            bool(source_node_id is not None
+                 and int(source_node_id) in ranking[:3])
+            if event["kind"] == "probe" else None),
+        "source_present_in_staged_set": (
+            bool(source_node_id is not None
+                 and int(source_node_id) in staged_ids)
+            if event["kind"] == "probe" else None),
+        "l1": {
+            "route_l1_calls": 0,
+            "payload_l1_resolutions": 0,
+            "l2_miss_count": 0,
+            "l2_misses": [],
+        },
+        "enrichment": enrichment,
+    }
+    receipt_path = _working_set_path(paths, turn_idx)
+    write_json(receipt_path, receipt)
+    return receipt, receipt_path
+
+
 def probe_multimount_chat(
     repo: GraftRepository,
     user_text: str,
@@ -689,6 +1043,7 @@ def stage_paths(session_dir: Path) -> dict[str, Path]:
         "stage_timing": session_dir / "stage_timing.json",
         "arena_state": session_dir / "arena_state.json",
         "memory_ledger": session_dir / "memory_ledger",
+        "working_set": session_dir / "working_set",
     }
 
 
@@ -745,6 +1100,59 @@ def plant_complete_turn(
     return answer, info, chat_node_id
 
 
+def infer_complete_turn_deferred(
+    repo: GraftRepository,
+    event: dict[str, Any],
+) -> tuple[str, dict[str, Any]]:
+    """Step 2 for scripted complete turns: build KV, defer persistence.
+
+    This is ``ArenaCache.feed`` split at its mutation boundary. The complete
+    turn is forwarded exactly once here; step 3 deposits the already-built
+    cache span, advances the persistent conversation ordinal, and performs
+    repository bookkeeping.
+    """
+    arena = repo.arena
+    answer = event.get("assistant") or plant_acceptance(event)
+    turn_text = harmony_turn(event["user"], answer)
+    for layer in arena.m.layers:
+        layer.self_attn.live_shift = arena.live_shift
+    ids = arena.encode(turn_text)
+    if arena.caches is None:
+        arena._set_injection_host(arena.sink_h)
+    arena._forward(ids)
+    kv_graft.clear_injection(arena.m)
+    route_key_token = int(
+        getattr(arena, "_deferred_route_key_token", 0)) + 1
+    arena._deferred_route_key_token = route_key_token
+    route_keys = getattr(arena, "_deferred_route_keys", None)
+    if not isinstance(route_keys, dict):
+        route_keys = {}
+        arena._deferred_route_keys = route_keys
+    route_keys[route_key_token] = arena._node_key(turn_text)
+    arena.live_segs.append((None, len(ids)))
+    evicted = arena.evict()
+    info = {
+        "plant_mode": "feed_complete",
+        "mounts": list(arena.cur_mounts),
+        "live_tokens": int(sum(n for _g, n in arena.live_segs)),
+        "evicted": int(evicted),
+        "_deferred_memory": {
+            "turn_text": turn_text,
+            "user_text": event["user"],
+            "seg_cache_ntok": int(len(ids)),
+            # feed() does not classify complete observed turns as derivative
+            # recalls, even when old mounts remain seated.
+            "picks": [],
+            "deposited": False,
+            "importance_committed": False,
+            "advance_s4_turn": True,
+            "route_key_prepared": True,
+            "route_key_token": int(route_key_token),
+        },
+    }
+    return answer, info
+
+
 def run_pass3_memory_management(
     repo: GraftRepository,
     event: dict[str, Any],
@@ -776,7 +1184,11 @@ def run_pass3_memory_management(
         turn_text = harmony_turn(event["user"], answer)
 
         def deposit_plant() -> None:
-            repo.arena.feed(turn_text, deposit=True)
+            repo.arena.deposit_deferred_turn(info)
+            if info["_deferred_memory"].get("advance_s4_turn"):
+                repo.arena._s4_turn = (
+                    int(getattr(repo.arena, "_s4_turn", 0)) + 1)
+                info["_deferred_memory"]["advance_s4_turn"] = False
             repo._set_new_node_provenance(before, "exchange_span")
 
         ledger.record_operation(
@@ -932,6 +1344,13 @@ def run_turn(
     pass2_arena_after_sha256 = None
     memory_ledger_audit = None
     memory_ledger_path = None
+    prep_receipt = None
+    working_set_path = None
+    prep_wall_ms = None
+    step_io_receipt = None
+    resolver_receipt = None
+    io_tracker = TurnStepIOTracker(repo.arena)
+    io_tracker.__enter__()
     try:
         if args.turn_pipeline == "single":
             # Registered legacy path. Fact/supersede plants use feed()
@@ -981,21 +1400,57 @@ def run_turn(
                 new_nodes = list(getattr(last, "new_nodes", ()) or ())
                 chat_node_id = int(new_nodes[0]) if new_nodes else None
         else:
+            source_node = None
+            if event["kind"] == "probe":
+                source_turn = int(event["source_turn"])
+                source_record = turn_records.get(source_turn, {})
+                source_node = source_record.get(
+                    "memory_node_id", source_record.get("chat_node_id"))
+
+            io_tracker.set_step("1_prep")
+            prep_receipt, working_set_path = run_step1_prep(
+                repo,
+                event,
+                turn_idx,
+                transcript=transcript,
+                source_node_id=source_node,
+                paths=paths,
+                args=args,
+                timers=timers,
+                io_tracker=io_tracker,
+            )
+            prep_wall_ms = float(prep_receipt["prep_wall_ms"])
+            if event["kind"] == "probe":
+                route_diag = {
+                    "top5": prep_receipt["ranking"][:5],
+                    "source_node_id": prep_receipt["source_node_id"],
+                    "source_rank": prep_receipt["source_rank"],
+                    "ranking_len": len(prep_receipt["ranking_ids"]),
+                    "route_backend": prep_receipt["route_backend"],
+                    "score_error": None,
+                    "live_excluded": prep_receipt["live_excluded_ids"],
+                    "ranking_ids": prep_receipt["ranking_ids"],
+                }
+
             before = repo._snapshot_state()
             guard = Pass2ReadOnlyGuard(repo)
+            resolver_context = (
+                StagedWorkingSetResolver(
+                    repo.arena,
+                    probe_text=prep_receipt["probe_used"],
+                    ranking_ids=prep_receipt["ranking_ids"],
+                    staged_ids=prep_receipt["staged_ids"],
+                    route_backend=str(prep_receipt["route_backend"]),
+                )
+                if prep_receipt.get("routed") else nullcontext(None)
+            )
+            io_tracker.set_step("2_inference")
             pass2_started = time.perf_counter()
-            with guard:
+            with guard, resolver_context as resolver:
                 if event["kind"] in ("fact", "supersede"):
-                    answer = event.get("assistant") or plant_acceptance(event)
-                    info = {}
-                    plant_mode = "feed_complete"
+                    answer, info = infer_complete_turn_deferred(repo, event)
+                    plant_mode = info.get("plant_mode")
                 elif event["kind"] == "probe":
-                    source_turn = int(event["source_turn"])
-                    source_record = turn_records.get(source_turn, {})
-                    source_node = source_record.get(
-                        "memory_node_id", source_record.get("chat_node_id"))
-                    route_diag = collect_route_diagnostics(
-                        repo.arena, event["user"], source_node, top_k=5)
                     answer, info = probe_multimount_chat(
                         repo,
                         event["user"],
@@ -1017,6 +1472,10 @@ def run_turn(
                         deposit=False,
                         defer_memory=True,
                     )
+            if resolver is not None:
+                resolver_receipt = resolver.receipt()
+                prep_receipt["l1"] = resolver_receipt
+                write_json(working_set_path, prep_receipt)
             pass2_wall_ms = (
                 time.perf_counter() - pass2_started) * 1000.0
             pass2_visible_memory_overhead_ms = guard.visible_overhead_ms
@@ -1024,6 +1483,7 @@ def run_turn(
             pass2_arena_before_sha256 = guard.before_sha256
             pass2_arena_after_sha256 = guard.after_sha256
 
+            io_tracker.set_step("3_cleanup")
             pass3_started = time.perf_counter()
             (info, chat_node_id, correction_result, memory_receipt,
              memory_ledger_audit) = run_pass3_memory_management(
@@ -1050,12 +1510,24 @@ def run_turn(
         info = info or {}
         exc = repr(err)
     finally:
+        step_io_receipt = io_tracker.receipt()
+        io_tracker.__exit__(None, None, None)
+        if prep_receipt is not None and working_set_path is not None:
+            prep_receipt["step_io"] = step_io_receipt
+            write_json(working_set_path, prep_receipt)
         restore()
 
     wall_ms = (time.perf_counter() - started) * 1000.0
     mounts_after = list(repo.arena.cur_mounts)
     nodes_after = repo_node_count(repo)
     live_after = live_node_ids(repo)
+    reported_route_backend = (
+        prep_receipt.get("route_backend")
+        if (args.turn_pipeline == "three_pass"
+            and prep_receipt is not None
+            and prep_receipt.get("routed"))
+        else repo.arena.last_route_backend
+    )
     transcript_row = {
         "turn": int(turn_idx),
         "kind": event["kind"],
@@ -1099,7 +1571,7 @@ def run_turn(
         mounted_ids = list(info.get("mount_fitted") or mounts_after)
         probe_score.update({
             "turn": int(turn_idx),
-            "route_backend": repo.arena.last_route_backend,
+            "route_backend": reported_route_backend,
             "mounts": info.get("mounts", []),
             "mounted_ids": [int(x) for x in mounted_ids],
             "mount_plan": info.get("mount_plan"),
@@ -1115,7 +1587,7 @@ def run_turn(
         "kind": event["kind"],
         "fact_id": event.get("fact_id"),
         "resumed": bool(resumed),
-        "route_backend": repo.arena.last_route_backend,
+        "route_backend": reported_route_backend,
         "plant_mode": plant_mode,
         "mounts_before": mounts_before,
         "mounts_after": mounts_after,
@@ -1136,6 +1608,12 @@ def run_turn(
         "pass2_arena_read_only": pass2_arena_read_only,
         "pass2_arena_before_sha256": pass2_arena_before_sha256,
         "pass2_arena_after_sha256": pass2_arena_after_sha256,
+        "prep_wall_ms": prep_wall_ms,
+        "prep_calls": 1 if prep_receipt is not None else 0,
+        "working_set_path": (
+            str(working_set_path) if working_set_path is not None else None),
+        "working_set": prep_receipt,
+        "step_io": step_io_receipt,
         "vram": vram_snapshot(),
         "info": info,
         "error": exc,
@@ -1189,6 +1667,7 @@ def write_stage_timing(
     args: argparse.Namespace,
 ) -> dict[str, Any]:
     stage_fields = (
+        ("prep", "prep_wall_ms", "prep_calls"),
         ("route", "route_wall_ms", "route_calls"),
         ("mount", "mount_wall_ms", "mount_calls"),
         ("infer", "infer_wall_ms", "infer_calls"),

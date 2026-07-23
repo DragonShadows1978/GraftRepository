@@ -1,0 +1,4904 @@
+{
+  "frame": "F1",
+  "gate_lines": [
+    "G-EQUIV-P2 PASS committed_transcript_sha256=68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f single_transcript_sha256=68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f three_pass_transcript_sha256=68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f canonical_arena_byte_equal=True",
+    "G-ROUTE PASS cuda_routed_turns=9/9 python_ranking_byte_equal_turns=9/9 working_set_receipts=10/10",
+    "G-PREP PASS staged_set_recall=2/2 direct_route_recall=2/2 fact_source_present=2/2 l1_misses=0 step2_page_ins=0 step2_uploads=0",
+    "G-SERVE-P2 PASS pass2_visible_memory_overhead_ms_max=2.8818630380555987 overhead_limit_ms=5.0 total_latency_ratio_vs_p0=1.1787213154116607 ratio_limit=1.25 route_wall_ms_mean_per_turn=2554.27087059943",
+    "G-COMPACT PASS ledger_complete=True receipts=10/10 decisive_supersession_probe_pass=True recall_three_pass=2/2 recall_single_inline=2/2"
+  ],
+  "gates": [
+    {
+      "checks": {
+        "reference_sha_is_committed": true,
+        "single_canonical_arena_equal_to_reference": true,
+        "single_frame_exact": true,
+        "single_transcript_byte_equal_to_reference": true,
+        "single_transcript_sha_is_committed": true,
+        "three_pass_canonical_arena_equal_to_single": true,
+        "three_pass_frame_exact": true,
+        "three_pass_transcript_byte_equal_to_single": true
+      },
+      "evidence": {
+        "reference_repository": {
+          "arrays": [
+            {
+              "fields": [
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0000",
+                  "sha256": "99b7f5e35dcdf3eb290bffc3bfcab5dd2cb4bd57944bad6df18792cc6adf12bc",
+                  "shape": [
+                    8,
+                    86,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0001",
+                  "sha256": "43ba3116f7f203373b8141d9f6ec145da503ea2818989e65b45fe38995677394",
+                  "shape": [
+                    8,
+                    51,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0002",
+                  "sha256": "9775527a0fe23716f2e4469d8d79b54ef3a039a10497d7c734de5e714bd4e6a7",
+                  "shape": [
+                    8,
+                    92,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0003",
+                  "sha256": "f4a3febce34e8b0ee50d86738d1b089de27179e23fcc7d11449b606b5a3b13ff",
+                  "shape": [
+                    8,
+                    15,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0004",
+                  "sha256": "28f3a6d423e46b849abea26e688e643ff72375671fcaa7310419cfecdb5de46a",
+                  "shape": [
+                    8,
+                    86,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0005",
+                  "sha256": "3b7959b6c3b0b241e5464117c1971c9329f634dfadf50dbf3f41415f4db86ca6",
+                  "shape": [
+                    8,
+                    51,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0006",
+                  "sha256": "2f7f8d4dbaa05fd91ea593b5b50fd7a5ecf3d10bb3a88ebcb7b45000811ce02d",
+                  "shape": [
+                    8,
+                    53,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0007",
+                  "sha256": "ba7c31251e23a8c6b0a54956d4f9221187d79979fd4ab79fdc0b6c05b594bdc8",
+                  "shape": [
+                    8,
+                    62,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0008",
+                  "sha256": "460271e4a484d9dfc9534b69ca0b37aad5f095c33ba6561ead9a8eb1ce70c74d",
+                  "shape": [
+                    8,
+                    48,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0009",
+                  "sha256": "278998849d8ab0d2a48f55cf85ec4d0a311d276d922184dcc33f260b1cda2331",
+                  "shape": [
+                    8,
+                    62,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0010",
+                  "sha256": "be382dc0ed4ac934d7602c6d6008ab9b247c274cc94cc4f140828a9a551642d3",
+                  "shape": [
+                    8,
+                    53,
+                    64
+                  ]
+                }
+              ],
+              "path": "index.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "b9feee0b8ce491178c5d98c7932e7906edb041ed8b39dd8a84039e3c6794adb8",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "4e0d8d782a8ead403eb5745f3b1634afc3c79064bce763c5e397484904c5584e",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "959b3b2488adc925aab1f28e7926a2f3524d0045db4842a060d5dcbe453051bc",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "b87f32463afc220e420f7934338f6f268df15d2a27ebad36b73de2296a5b1bef",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "9307bf39a349d625c797828d2dc519eec0e892c0c8ade68ea924a50213e6d642",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "959b3b2488adc925aab1f28e7926a2f3524d0045db4842a060d5dcbe453051bc",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0000.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "54df952ea392eb73967a164fd93688ce36f3202f5088f873c70bec02bc366fa6",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "312efdafb4c8a17e870f80b4744dda97e103746684a602667b74d3160f8edcd3",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "c2b673fc113257f61bed47edb2dddca80ff7ffc04bc1964970d5ea5fd52f6df4",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "79abe81992d584533fef666c2c6fe9c89464b0fe0799be8a5fc825837d9a3157",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "f524644a6e83855c258bb1d2d3575bd45b955b4cb77d7193f8af716d30f88d5a",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "c2b673fc113257f61bed47edb2dddca80ff7ffc04bc1964970d5ea5fd52f6df4",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0001.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "2e038ee24e77c14ea83f30b1544cba35f7acf1cb8765c9f2b72c836a26a94bb6",
+                  "shape": [
+                    24,
+                    8,
+                    92,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "fa5121814d8f82ea396e1771654a4cd2e5880425549e16d12317a55bccf33f22",
+                  "shape": [
+                    24,
+                    8,
+                    92,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "98fdf3a93f46fd4bc01c1d00a7cc2412158239d3bb97305e16111fed4fa965b5",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "fb9bec08be02dff90c109b3989dd2a31d597ba69801f1869a803b916b40d008b",
+                  "shape": [
+                    24,
+                    8,
+                    92,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "ca089901d402561032b9fcb084a47e20fb8595b90461773830a46d0d3a88de61",
+                  "shape": [
+                    24,
+                    8,
+                    92,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "98fdf3a93f46fd4bc01c1d00a7cc2412158239d3bb97305e16111fed4fa965b5",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0002.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "6c66a6cfe2f581ef8716d3fca17fd1597c4d8452e624f008ad01007e31251fcc",
+                  "shape": [
+                    24,
+                    8,
+                    15,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "24ea07972625557de980589e3ca80b24ca9ef7baea46786b1c28e35fd5466264",
+                  "shape": [
+                    24,
+                    8,
+                    15,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "5380bf9f2bd2243a7c7caf5888206ff23fb6b519bd0207dc0941cc40706bf12d",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "ea3f8cb7cdb1f4ae6f7b782defda27beb91735ae39f3b4b54fd66793d02d2343",
+                  "shape": [
+                    24,
+                    8,
+                    15,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "522e28ab356cbc2b1a8ff56daa323191e991680398c1ee038b3ade9268d78180",
+                  "shape": [
+                    24,
+                    8,
+                    15,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "5380bf9f2bd2243a7c7caf5888206ff23fb6b519bd0207dc0941cc40706bf12d",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0003.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "b0cee3f40f5a077b226ef0fad904701414d0409f521b3b24e2b415c939b671d1",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "25bd84584de6cbfefc7bbe93e04ed1d5daf6a5b121b41b752394a7721068bb78",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "959b3b2488adc925aab1f28e7926a2f3524d0045db4842a060d5dcbe453051bc",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "8b6b6a4fdf8da112a36323348ee275e83dd6e60f63902992ede5267d011c002f",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "488fac95d5d07d13b56ec89ad78bd95344a6a77027ddad75301102167de9f6c4",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "959b3b2488adc925aab1f28e7926a2f3524d0045db4842a060d5dcbe453051bc",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0004.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "8ea00e2373717e59a86c37548f18c35da89ff955cdd0e7a25dc182d1960a2cc9",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "ebade1ed4ecde43f6b376751cbb32d1cfff5f5280247cfbce06c2cc02d85dccb",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "c2b673fc113257f61bed47edb2dddca80ff7ffc04bc1964970d5ea5fd52f6df4",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "fa0ea830c42bf829804f518e683cd64b9ab423c56164c8c0dfb693c14462f14a",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "ef15b6e745f081e74162a4ff44beaa59299efbb2425b8e84e3e8825975bb5f2d",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "c2b673fc113257f61bed47edb2dddca80ff7ffc04bc1964970d5ea5fd52f6df4",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0005.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "8bc21e81d497c5fb587e35fa4ddbfc930ff98d9d0617434a8112a894b3d8d1ad",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "8c5bfbbc38cfa15063d344d189f7ae6479ce533ab53e841b60fea3c521d1eaab",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "cdf01a181ff37a7feb946805a7d259b1ca0d308636b93b7144801ee718f03259",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "ad1a0478e2d3b71de55a0b4db59e47f4318e6351aac8b6f5199642cef7164391",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "2130d9dce33610fe2b0c3f998a9004b8d6d0e7eb43893e15816feab7e27b205e",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "cdf01a181ff37a7feb946805a7d259b1ca0d308636b93b7144801ee718f03259",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0006.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "41ffcac9ce657c0e165ff89e0b0e6745acc2a9a6a15b68edee4aa6b585f81e15",
+                  "shape": [
+                    24,
+                    8,
+                    61,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "2d4979199a7d6fa7e0cc62cbaa1e1db8a3b2314b434784031b697fe5fff29606",
+                  "shape": [
+                    24,
+                    8,
+                    61,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "95133fb5badc8efd85f37170492fdaf005651505318d54fdeeaa7765502a152c",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "b4fb72aeb067af56fa75bf2131ac2eea2013c0c1ba286304fd9a9166f607d564",
+                  "shape": [
+                    24,
+                    8,
+                    61,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "fd9e98691ede3241be7047a73f0a907a14c37bc7b7f607083efe4860c241b69f",
+                  "shape": [
+                    24,
+                    8,
+                    61,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "95133fb5badc8efd85f37170492fdaf005651505318d54fdeeaa7765502a152c",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0007.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "07cf171e4fd2992fdfd9f1a46c4925e4953a10dbb2b74f20748d8e3da6efb9e1",
+                  "shape": [
+                    24,
+                    8,
+                    48,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "309b6b3df2c5471e2e310918852fc3ad36fcb3502739b5ee072f593e82b94f42",
+                  "shape": [
+                    24,
+                    8,
+                    48,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "7407ef8b1998288435ffdbe84641919d12a38e88ac0882a7703af852097af378",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "0e4cbd51e87142ce0973c3333b6bb6f9dc2193120b9352d3aa7bc3b3750e7b99",
+                  "shape": [
+                    24,
+                    8,
+                    48,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "88d6bc4f5a646af2f9b374599343f1356b0bbda1871758f9504b32b17ab88d73",
+                  "shape": [
+                    24,
+                    8,
+                    48,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "7407ef8b1998288435ffdbe84641919d12a38e88ac0882a7703af852097af378",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0008.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "62ce59b8229c1fa7cedfd856a80e5e35fa58a038e6053b29263f98a93699164f",
+                  "shape": [
+                    24,
+                    8,
+                    66,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "d52ba54aafc6b578aeaf654b22dcacae002450639ee14287d79a8518c7fc76de",
+                  "shape": [
+                    24,
+                    8,
+                    66,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "b6b1f0fe40082c096cdc06bcf57fd620a6bc79eae0d4cae121f049a264c0aade",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "4b2fd94f7f4da0869585cb7c7109f317430a49064e93f9a20be3d93315952022",
+                  "shape": [
+                    24,
+                    8,
+                    66,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "c0eaa28834ac1bce49b52455a860ea52d6ba75855fe87e9fb7c3a2b065432edc",
+                  "shape": [
+                    24,
+                    8,
+                    66,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "b6b1f0fe40082c096cdc06bcf57fd620a6bc79eae0d4cae121f049a264c0aade",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0009.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "43d755f474c8748a4856b8ed071682ec54b7361ea77c136ed299dfea1c6860f5",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "1e9ee3fc0415c436f960d442999fb2311d00502fca3af646a102030c452a9101",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "cdf01a181ff37a7feb946805a7d259b1ca0d308636b93b7144801ee718f03259",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "b14f334386d72fbef96a37c432469fca668bcbfd6493e14db851f7752d8df4aa",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "8d1c7cc78f259f45d753d6c7b394d0e485b6e0d0d35fedad5e42b9c12e3809f0",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "cdf01a181ff37a7feb946805a7d259b1ca0d308636b93b7144801ee718f03259",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0010.npz"
+            }
+          ],
+          "canonical_sha256": "a76d6c6ec57b700336324aa33768b1b200eca8c6540c20d74ea284f1723a8fb9",
+          "manifest": {
+            "dialect": "GptOss20B_TC:24x2880:g8x64",
+            "dialect_descriptor": {
+              "composition": "multi_mount",
+              "graftability": "seat_remountable",
+              "head_dim": 64,
+              "hidden_dim": 2880,
+              "latent_rank": 0,
+              "model_type": "GptOss20B_TC",
+              "num_kv_heads": 8,
+              "num_layers": 24,
+              "payload_kind": "gqa",
+              "position_law": "rope_full_yarn",
+              "remountable": true,
+              "rope_dim": 0,
+              "route_layer": 1,
+              "state_kind": "kv",
+              "vals_per_tok_layer": 1024
+            },
+            "durability_mode": "session_safe",
+            "native_checkpoint": "native/grm_store.bin",
+            "nodes": [
+              {
+                "cold_only": true,
+                "device_present": false,
+                "dirty": false,
+                "durable": true,
+                "host_present": false,
+                "kind": "turn",
+                "metadata": {
+                  "active": false,
+                  "confidence": 1.0,
+                  "durability": "session",
+                  "importance": {},
+                  "kind": "turn",
+                  "mutability": "ephemeral",
+                  "scope": "conversation",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "superseded_by": [
+                    3
+                  ],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 0,
+                "no_fold": false,
+                "ntok": 86,
+                "payload_pending": false,
+                "provenance": [
+                  {
+                    "node_id": 0,
+                    "segment_id": 0,
+                    "segment_type": "exchange_span"
+                  }
+                ],
+                "rare": [
+                  "auric-4-alpha"
+                ],
+                "retired": true,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "turn",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "session",
+                  "importance": {
+                    "s4": {
+                      "last_grounded_turn": null,
+                      "n_grounded": 0,
+                      "n_mounted": 4,
+                      "n_routed": 4
+                    }
+                  },
+                  "kind": "turn",
+                  "mutability": "ephemeral",
+                  "scope": "conversation",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 1,
+                "no_fold": false,
+                "ntok": 50,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke alpha. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Got it.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "turn",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "session",
+                  "importance": {
+                    "s4": {
+                      "last_grounded_turn": null,
+                      "n_grounded": 0,
+                      "n_mounted": 0,
+                      "n_routed": 4
+                    }
+                  },
+                  "kind": "turn",
+                  "mutability": "ephemeral",
+                  "scope": "conversation",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 2,
+                "no_fold": false,
+                "ntok": 92,
+                "payload_pending": false,
+                "provenance": [
+                  {
+                    "node_id": 2,
+                    "segment_id": 1,
+                    "segment_type": "exchange_span"
+                  }
+                ],
+                "rare": [
+                  "kestrel-9-tango"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact orion pin. The current orion pin value is Kestrel-9-Tango. This is the current value. If asked later, answer Kestrel-9-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Kestrel-9-Tango.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "fact",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {
+                    "s4": {
+                      "last_grounded_turn": null,
+                      "n_grounded": 0,
+                      "n_mounted": 1,
+                      "n_routed": 4
+                    }
+                  },
+                  "kind": "fact",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [
+                    0
+                  ],
+                  "write_intent": "user_asserted"
+                },
+                "native_node_id": 3,
+                "no_fold": false,
+                "ntok": 15,
+                "payload_pending": false,
+                "provenance": [
+                  {
+                    "node_id": 3,
+                    "segment_id": 2,
+                    "segment_type": "fact_span"
+                  }
+                ],
+                "rare": [
+                  "kestrel-9-tango"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "The current orion pin value is Kestrel-9-Tango."
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "turn",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "session",
+                  "importance": {
+                    "s4": {
+                      "last_grounded_turn": null,
+                      "n_grounded": 0,
+                      "n_mounted": 0,
+                      "n_routed": 3
+                    }
+                  },
+                  "kind": "turn",
+                  "mutability": "ephemeral",
+                  "scope": "conversation",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 4,
+                "no_fold": false,
+                "ntok": 86,
+                "payload_pending": false,
+                "provenance": [
+                  {
+                    "node_id": 4,
+                    "segment_id": 3,
+                    "segment_type": "exchange_span"
+                  }
+                ],
+                "rare": [
+                  "vortex-3-sierra"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 5,
+                "no_fold": false,
+                "ntok": 50,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke beta. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Understood.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 6,
+                "no_fold": false,
+                "ntok": 52,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [
+                  "vortex-3-sierra"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current cypher bridge value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Vortex-3-Sierra<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 7,
+                "no_fold": false,
+                "ntok": 61,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [
+                  "kestrel-9-tango"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>The current orion pin value is Kestrel-9-Tango.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 8,
+                "no_fold": false,
+                "ntok": 48,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke gamma. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|><|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 9,
+                "no_fold": false,
+                "ntok": 66,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke delta. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>I will not.\n\nSure!\n\nSure.\n\nSure!\n\nYour ChatGPT<|message|><|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 10,
+                "no_fold": false,
+                "ntok": 52,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke epsilon. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>(Note: No changes.<|end|>"
+              }
+            ],
+            "review_buffer": [],
+            "route_layer": 1,
+            "wal_lsn": 31
+          },
+          "native_checkpoint_sha256": "f1e2a169d33b820a9716158b28e182d60073daea5e0d77e3d1ccd786bd3a1564"
+        },
+        "single_frame": {
+          "arena_width_default_96": true,
+          "cuda_env_1": true,
+          "gpu_idle_check_skipped": true,
+          "live_turns_default_1": true,
+          "max_trips_default_1": true,
+          "mode_smoke": true,
+          "ngen_default_24": true,
+          "restart_after_5": true,
+          "resume_exercised": true,
+          "storage_env_8": true,
+          "topk_default_3": true,
+          "turn_pipeline": true
+        },
+        "single_repository": {
+          "arrays": [
+            {
+              "fields": [
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0000",
+                  "sha256": "99b7f5e35dcdf3eb290bffc3bfcab5dd2cb4bd57944bad6df18792cc6adf12bc",
+                  "shape": [
+                    8,
+                    86,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0001",
+                  "sha256": "43ba3116f7f203373b8141d9f6ec145da503ea2818989e65b45fe38995677394",
+                  "shape": [
+                    8,
+                    51,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0002",
+                  "sha256": "9775527a0fe23716f2e4469d8d79b54ef3a039a10497d7c734de5e714bd4e6a7",
+                  "shape": [
+                    8,
+                    92,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0003",
+                  "sha256": "f4a3febce34e8b0ee50d86738d1b089de27179e23fcc7d11449b606b5a3b13ff",
+                  "shape": [
+                    8,
+                    15,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0004",
+                  "sha256": "28f3a6d423e46b849abea26e688e643ff72375671fcaa7310419cfecdb5de46a",
+                  "shape": [
+                    8,
+                    86,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0005",
+                  "sha256": "3b7959b6c3b0b241e5464117c1971c9329f634dfadf50dbf3f41415f4db86ca6",
+                  "shape": [
+                    8,
+                    51,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0006",
+                  "sha256": "2f7f8d4dbaa05fd91ea593b5b50fd7a5ecf3d10bb3a88ebcb7b45000811ce02d",
+                  "shape": [
+                    8,
+                    53,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0007",
+                  "sha256": "ba7c31251e23a8c6b0a54956d4f9221187d79979fd4ab79fdc0b6c05b594bdc8",
+                  "shape": [
+                    8,
+                    62,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0008",
+                  "sha256": "460271e4a484d9dfc9534b69ca0b37aad5f095c33ba6561ead9a8eb1ce70c74d",
+                  "shape": [
+                    8,
+                    48,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0009",
+                  "sha256": "278998849d8ab0d2a48f55cf85ec4d0a311d276d922184dcc33f260b1cda2331",
+                  "shape": [
+                    8,
+                    62,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0010",
+                  "sha256": "be382dc0ed4ac934d7602c6d6008ab9b247c274cc94cc4f140828a9a551642d3",
+                  "shape": [
+                    8,
+                    53,
+                    64
+                  ]
+                }
+              ],
+              "path": "index.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "b9feee0b8ce491178c5d98c7932e7906edb041ed8b39dd8a84039e3c6794adb8",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "4e0d8d782a8ead403eb5745f3b1634afc3c79064bce763c5e397484904c5584e",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "959b3b2488adc925aab1f28e7926a2f3524d0045db4842a060d5dcbe453051bc",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "b87f32463afc220e420f7934338f6f268df15d2a27ebad36b73de2296a5b1bef",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "9307bf39a349d625c797828d2dc519eec0e892c0c8ade68ea924a50213e6d642",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "959b3b2488adc925aab1f28e7926a2f3524d0045db4842a060d5dcbe453051bc",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0000.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "54df952ea392eb73967a164fd93688ce36f3202f5088f873c70bec02bc366fa6",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "312efdafb4c8a17e870f80b4744dda97e103746684a602667b74d3160f8edcd3",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "c2b673fc113257f61bed47edb2dddca80ff7ffc04bc1964970d5ea5fd52f6df4",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "79abe81992d584533fef666c2c6fe9c89464b0fe0799be8a5fc825837d9a3157",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "f524644a6e83855c258bb1d2d3575bd45b955b4cb77d7193f8af716d30f88d5a",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "c2b673fc113257f61bed47edb2dddca80ff7ffc04bc1964970d5ea5fd52f6df4",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0001.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "2e038ee24e77c14ea83f30b1544cba35f7acf1cb8765c9f2b72c836a26a94bb6",
+                  "shape": [
+                    24,
+                    8,
+                    92,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "fa5121814d8f82ea396e1771654a4cd2e5880425549e16d12317a55bccf33f22",
+                  "shape": [
+                    24,
+                    8,
+                    92,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "98fdf3a93f46fd4bc01c1d00a7cc2412158239d3bb97305e16111fed4fa965b5",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "fb9bec08be02dff90c109b3989dd2a31d597ba69801f1869a803b916b40d008b",
+                  "shape": [
+                    24,
+                    8,
+                    92,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "ca089901d402561032b9fcb084a47e20fb8595b90461773830a46d0d3a88de61",
+                  "shape": [
+                    24,
+                    8,
+                    92,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "98fdf3a93f46fd4bc01c1d00a7cc2412158239d3bb97305e16111fed4fa965b5",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0002.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "6c66a6cfe2f581ef8716d3fca17fd1597c4d8452e624f008ad01007e31251fcc",
+                  "shape": [
+                    24,
+                    8,
+                    15,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "24ea07972625557de980589e3ca80b24ca9ef7baea46786b1c28e35fd5466264",
+                  "shape": [
+                    24,
+                    8,
+                    15,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "5380bf9f2bd2243a7c7caf5888206ff23fb6b519bd0207dc0941cc40706bf12d",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "ea3f8cb7cdb1f4ae6f7b782defda27beb91735ae39f3b4b54fd66793d02d2343",
+                  "shape": [
+                    24,
+                    8,
+                    15,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "522e28ab356cbc2b1a8ff56daa323191e991680398c1ee038b3ade9268d78180",
+                  "shape": [
+                    24,
+                    8,
+                    15,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "5380bf9f2bd2243a7c7caf5888206ff23fb6b519bd0207dc0941cc40706bf12d",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0003.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "b0cee3f40f5a077b226ef0fad904701414d0409f521b3b24e2b415c939b671d1",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "25bd84584de6cbfefc7bbe93e04ed1d5daf6a5b121b41b752394a7721068bb78",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "959b3b2488adc925aab1f28e7926a2f3524d0045db4842a060d5dcbe453051bc",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "8b6b6a4fdf8da112a36323348ee275e83dd6e60f63902992ede5267d011c002f",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "488fac95d5d07d13b56ec89ad78bd95344a6a77027ddad75301102167de9f6c4",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "959b3b2488adc925aab1f28e7926a2f3524d0045db4842a060d5dcbe453051bc",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0004.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "8ea00e2373717e59a86c37548f18c35da89ff955cdd0e7a25dc182d1960a2cc9",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "ebade1ed4ecde43f6b376751cbb32d1cfff5f5280247cfbce06c2cc02d85dccb",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "c2b673fc113257f61bed47edb2dddca80ff7ffc04bc1964970d5ea5fd52f6df4",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "fa0ea830c42bf829804f518e683cd64b9ab423c56164c8c0dfb693c14462f14a",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "ef15b6e745f081e74162a4ff44beaa59299efbb2425b8e84e3e8825975bb5f2d",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "c2b673fc113257f61bed47edb2dddca80ff7ffc04bc1964970d5ea5fd52f6df4",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0005.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "8bc21e81d497c5fb587e35fa4ddbfc930ff98d9d0617434a8112a894b3d8d1ad",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "8c5bfbbc38cfa15063d344d189f7ae6479ce533ab53e841b60fea3c521d1eaab",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "cdf01a181ff37a7feb946805a7d259b1ca0d308636b93b7144801ee718f03259",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "ad1a0478e2d3b71de55a0b4db59e47f4318e6351aac8b6f5199642cef7164391",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "2130d9dce33610fe2b0c3f998a9004b8d6d0e7eb43893e15816feab7e27b205e",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "cdf01a181ff37a7feb946805a7d259b1ca0d308636b93b7144801ee718f03259",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0006.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "41ffcac9ce657c0e165ff89e0b0e6745acc2a9a6a15b68edee4aa6b585f81e15",
+                  "shape": [
+                    24,
+                    8,
+                    61,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "2d4979199a7d6fa7e0cc62cbaa1e1db8a3b2314b434784031b697fe5fff29606",
+                  "shape": [
+                    24,
+                    8,
+                    61,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "95133fb5badc8efd85f37170492fdaf005651505318d54fdeeaa7765502a152c",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "b4fb72aeb067af56fa75bf2131ac2eea2013c0c1ba286304fd9a9166f607d564",
+                  "shape": [
+                    24,
+                    8,
+                    61,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "fd9e98691ede3241be7047a73f0a907a14c37bc7b7f607083efe4860c241b69f",
+                  "shape": [
+                    24,
+                    8,
+                    61,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "95133fb5badc8efd85f37170492fdaf005651505318d54fdeeaa7765502a152c",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0007.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "07cf171e4fd2992fdfd9f1a46c4925e4953a10dbb2b74f20748d8e3da6efb9e1",
+                  "shape": [
+                    24,
+                    8,
+                    48,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "309b6b3df2c5471e2e310918852fc3ad36fcb3502739b5ee072f593e82b94f42",
+                  "shape": [
+                    24,
+                    8,
+                    48,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "7407ef8b1998288435ffdbe84641919d12a38e88ac0882a7703af852097af378",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "0e4cbd51e87142ce0973c3333b6bb6f9dc2193120b9352d3aa7bc3b3750e7b99",
+                  "shape": [
+                    24,
+                    8,
+                    48,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "88d6bc4f5a646af2f9b374599343f1356b0bbda1871758f9504b32b17ab88d73",
+                  "shape": [
+                    24,
+                    8,
+                    48,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "7407ef8b1998288435ffdbe84641919d12a38e88ac0882a7703af852097af378",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0008.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "62ce59b8229c1fa7cedfd856a80e5e35fa58a038e6053b29263f98a93699164f",
+                  "shape": [
+                    24,
+                    8,
+                    66,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "d52ba54aafc6b578aeaf654b22dcacae002450639ee14287d79a8518c7fc76de",
+                  "shape": [
+                    24,
+                    8,
+                    66,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "b6b1f0fe40082c096cdc06bcf57fd620a6bc79eae0d4cae121f049a264c0aade",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "4b2fd94f7f4da0869585cb7c7109f317430a49064e93f9a20be3d93315952022",
+                  "shape": [
+                    24,
+                    8,
+                    66,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "c0eaa28834ac1bce49b52455a860ea52d6ba75855fe87e9fb7c3a2b065432edc",
+                  "shape": [
+                    24,
+                    8,
+                    66,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "b6b1f0fe40082c096cdc06bcf57fd620a6bc79eae0d4cae121f049a264c0aade",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0009.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "43d755f474c8748a4856b8ed071682ec54b7361ea77c136ed299dfea1c6860f5",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "1e9ee3fc0415c436f960d442999fb2311d00502fca3af646a102030c452a9101",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "cdf01a181ff37a7feb946805a7d259b1ca0d308636b93b7144801ee718f03259",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "b14f334386d72fbef96a37c432469fca668bcbfd6493e14db851f7752d8df4aa",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "8d1c7cc78f259f45d753d6c7b394d0e485b6e0d0d35fedad5e42b9c12e3809f0",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "cdf01a181ff37a7feb946805a7d259b1ca0d308636b93b7144801ee718f03259",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0010.npz"
+            }
+          ],
+          "canonical_sha256": "a76d6c6ec57b700336324aa33768b1b200eca8c6540c20d74ea284f1723a8fb9",
+          "manifest": {
+            "dialect": "GptOss20B_TC:24x2880:g8x64",
+            "dialect_descriptor": {
+              "composition": "multi_mount",
+              "graftability": "seat_remountable",
+              "head_dim": 64,
+              "hidden_dim": 2880,
+              "latent_rank": 0,
+              "model_type": "GptOss20B_TC",
+              "num_kv_heads": 8,
+              "num_layers": 24,
+              "payload_kind": "gqa",
+              "position_law": "rope_full_yarn",
+              "remountable": true,
+              "rope_dim": 0,
+              "route_layer": 1,
+              "state_kind": "kv",
+              "vals_per_tok_layer": 1024
+            },
+            "durability_mode": "session_safe",
+            "native_checkpoint": "native/grm_store.bin",
+            "nodes": [
+              {
+                "cold_only": true,
+                "device_present": false,
+                "dirty": false,
+                "durable": true,
+                "host_present": false,
+                "kind": "turn",
+                "metadata": {
+                  "active": false,
+                  "confidence": 1.0,
+                  "durability": "session",
+                  "importance": {},
+                  "kind": "turn",
+                  "mutability": "ephemeral",
+                  "scope": "conversation",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "superseded_by": [
+                    3
+                  ],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 0,
+                "no_fold": false,
+                "ntok": 86,
+                "payload_pending": false,
+                "provenance": [
+                  {
+                    "node_id": 0,
+                    "segment_id": 0,
+                    "segment_type": "exchange_span"
+                  }
+                ],
+                "rare": [
+                  "auric-4-alpha"
+                ],
+                "retired": true,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "turn",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "session",
+                  "importance": {
+                    "s4": {
+                      "last_grounded_turn": null,
+                      "n_grounded": 0,
+                      "n_mounted": 4,
+                      "n_routed": 4
+                    }
+                  },
+                  "kind": "turn",
+                  "mutability": "ephemeral",
+                  "scope": "conversation",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 1,
+                "no_fold": false,
+                "ntok": 50,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke alpha. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Got it.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "turn",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "session",
+                  "importance": {
+                    "s4": {
+                      "last_grounded_turn": null,
+                      "n_grounded": 0,
+                      "n_mounted": 0,
+                      "n_routed": 4
+                    }
+                  },
+                  "kind": "turn",
+                  "mutability": "ephemeral",
+                  "scope": "conversation",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 2,
+                "no_fold": false,
+                "ntok": 92,
+                "payload_pending": false,
+                "provenance": [
+                  {
+                    "node_id": 2,
+                    "segment_id": 1,
+                    "segment_type": "exchange_span"
+                  }
+                ],
+                "rare": [
+                  "kestrel-9-tango"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact orion pin. The current orion pin value is Kestrel-9-Tango. This is the current value. If asked later, answer Kestrel-9-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Kestrel-9-Tango.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "fact",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {
+                    "s4": {
+                      "last_grounded_turn": null,
+                      "n_grounded": 0,
+                      "n_mounted": 1,
+                      "n_routed": 4
+                    }
+                  },
+                  "kind": "fact",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [
+                    0
+                  ],
+                  "write_intent": "user_asserted"
+                },
+                "native_node_id": 3,
+                "no_fold": false,
+                "ntok": 15,
+                "payload_pending": false,
+                "provenance": [
+                  {
+                    "node_id": 3,
+                    "segment_id": 2,
+                    "segment_type": "fact_span"
+                  }
+                ],
+                "rare": [
+                  "kestrel-9-tango"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "The current orion pin value is Kestrel-9-Tango."
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "turn",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "session",
+                  "importance": {
+                    "s4": {
+                      "last_grounded_turn": null,
+                      "n_grounded": 0,
+                      "n_mounted": 0,
+                      "n_routed": 3
+                    }
+                  },
+                  "kind": "turn",
+                  "mutability": "ephemeral",
+                  "scope": "conversation",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 4,
+                "no_fold": false,
+                "ntok": 86,
+                "payload_pending": false,
+                "provenance": [
+                  {
+                    "node_id": 4,
+                    "segment_id": 3,
+                    "segment_type": "exchange_span"
+                  }
+                ],
+                "rare": [
+                  "vortex-3-sierra"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 5,
+                "no_fold": false,
+                "ntok": 50,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke beta. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Understood.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 6,
+                "no_fold": false,
+                "ntok": 52,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [
+                  "vortex-3-sierra"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current cypher bridge value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Vortex-3-Sierra<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 7,
+                "no_fold": false,
+                "ntok": 61,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [
+                  "kestrel-9-tango"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>The current orion pin value is Kestrel-9-Tango.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 8,
+                "no_fold": false,
+                "ntok": 48,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke gamma. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|><|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 9,
+                "no_fold": false,
+                "ntok": 66,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke delta. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>I will not.\n\nSure!\n\nSure.\n\nSure!\n\nYour ChatGPT<|message|><|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 10,
+                "no_fold": false,
+                "ntok": 52,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke epsilon. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>(Note: No changes.<|end|>"
+              }
+            ],
+            "review_buffer": [],
+            "route_layer": 1,
+            "wal_lsn": 31
+          },
+          "native_checkpoint_sha256": "3e9b5997505a580e9732d4f93d2d7d85e348f11c3c6ee9d3473844071aa9ab53"
+        },
+        "three_pass_frame": {
+          "arena_width_default_96": true,
+          "cuda_env_1": true,
+          "gpu_idle_check_skipped": true,
+          "live_turns_default_1": true,
+          "max_trips_default_1": true,
+          "mode_smoke": true,
+          "ngen_default_24": true,
+          "restart_after_5": true,
+          "resume_exercised": true,
+          "storage_env_8": true,
+          "topk_default_3": true,
+          "turn_pipeline": true
+        },
+        "three_pass_repository": {
+          "arrays": [
+            {
+              "fields": [
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0000",
+                  "sha256": "99b7f5e35dcdf3eb290bffc3bfcab5dd2cb4bd57944bad6df18792cc6adf12bc",
+                  "shape": [
+                    8,
+                    86,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0001",
+                  "sha256": "43ba3116f7f203373b8141d9f6ec145da503ea2818989e65b45fe38995677394",
+                  "shape": [
+                    8,
+                    51,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0002",
+                  "sha256": "9775527a0fe23716f2e4469d8d79b54ef3a039a10497d7c734de5e714bd4e6a7",
+                  "shape": [
+                    8,
+                    92,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0003",
+                  "sha256": "f4a3febce34e8b0ee50d86738d1b089de27179e23fcc7d11449b606b5a3b13ff",
+                  "shape": [
+                    8,
+                    15,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0004",
+                  "sha256": "28f3a6d423e46b849abea26e688e643ff72375671fcaa7310419cfecdb5de46a",
+                  "shape": [
+                    8,
+                    86,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0005",
+                  "sha256": "3b7959b6c3b0b241e5464117c1971c9329f634dfadf50dbf3f41415f4db86ca6",
+                  "shape": [
+                    8,
+                    51,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0006",
+                  "sha256": "2f7f8d4dbaa05fd91ea593b5b50fd7a5ecf3d10bb3a88ebcb7b45000811ce02d",
+                  "shape": [
+                    8,
+                    53,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0007",
+                  "sha256": "ba7c31251e23a8c6b0a54956d4f9221187d79979fd4ab79fdc0b6c05b594bdc8",
+                  "shape": [
+                    8,
+                    62,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0008",
+                  "sha256": "460271e4a484d9dfc9534b69ca0b37aad5f095c33ba6561ead9a8eb1ce70c74d",
+                  "shape": [
+                    8,
+                    48,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0009",
+                  "sha256": "278998849d8ab0d2a48f55cf85ec4d0a311d276d922184dcc33f260b1cda2331",
+                  "shape": [
+                    8,
+                    62,
+                    64
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "rkey_0010",
+                  "sha256": "be382dc0ed4ac934d7602c6d6008ab9b247c274cc94cc4f140828a9a551642d3",
+                  "shape": [
+                    8,
+                    53,
+                    64
+                  ]
+                }
+              ],
+              "path": "index.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "b9feee0b8ce491178c5d98c7932e7906edb041ed8b39dd8a84039e3c6794adb8",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "4e0d8d782a8ead403eb5745f3b1634afc3c79064bce763c5e397484904c5584e",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "959b3b2488adc925aab1f28e7926a2f3524d0045db4842a060d5dcbe453051bc",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "b87f32463afc220e420f7934338f6f268df15d2a27ebad36b73de2296a5b1bef",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "9307bf39a349d625c797828d2dc519eec0e892c0c8ade68ea924a50213e6d642",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "959b3b2488adc925aab1f28e7926a2f3524d0045db4842a060d5dcbe453051bc",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0000.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "54df952ea392eb73967a164fd93688ce36f3202f5088f873c70bec02bc366fa6",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "312efdafb4c8a17e870f80b4744dda97e103746684a602667b74d3160f8edcd3",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "c2b673fc113257f61bed47edb2dddca80ff7ffc04bc1964970d5ea5fd52f6df4",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "79abe81992d584533fef666c2c6fe9c89464b0fe0799be8a5fc825837d9a3157",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "f524644a6e83855c258bb1d2d3575bd45b955b4cb77d7193f8af716d30f88d5a",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "c2b673fc113257f61bed47edb2dddca80ff7ffc04bc1964970d5ea5fd52f6df4",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0001.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "2e038ee24e77c14ea83f30b1544cba35f7acf1cb8765c9f2b72c836a26a94bb6",
+                  "shape": [
+                    24,
+                    8,
+                    92,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "fa5121814d8f82ea396e1771654a4cd2e5880425549e16d12317a55bccf33f22",
+                  "shape": [
+                    24,
+                    8,
+                    92,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "98fdf3a93f46fd4bc01c1d00a7cc2412158239d3bb97305e16111fed4fa965b5",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "fb9bec08be02dff90c109b3989dd2a31d597ba69801f1869a803b916b40d008b",
+                  "shape": [
+                    24,
+                    8,
+                    92,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "ca089901d402561032b9fcb084a47e20fb8595b90461773830a46d0d3a88de61",
+                  "shape": [
+                    24,
+                    8,
+                    92,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "98fdf3a93f46fd4bc01c1d00a7cc2412158239d3bb97305e16111fed4fa965b5",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0002.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "6c66a6cfe2f581ef8716d3fca17fd1597c4d8452e624f008ad01007e31251fcc",
+                  "shape": [
+                    24,
+                    8,
+                    15,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "24ea07972625557de980589e3ca80b24ca9ef7baea46786b1c28e35fd5466264",
+                  "shape": [
+                    24,
+                    8,
+                    15,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "5380bf9f2bd2243a7c7caf5888206ff23fb6b519bd0207dc0941cc40706bf12d",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "ea3f8cb7cdb1f4ae6f7b782defda27beb91735ae39f3b4b54fd66793d02d2343",
+                  "shape": [
+                    24,
+                    8,
+                    15,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "522e28ab356cbc2b1a8ff56daa323191e991680398c1ee038b3ade9268d78180",
+                  "shape": [
+                    24,
+                    8,
+                    15,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "5380bf9f2bd2243a7c7caf5888206ff23fb6b519bd0207dc0941cc40706bf12d",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0003.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "b0cee3f40f5a077b226ef0fad904701414d0409f521b3b24e2b415c939b671d1",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "25bd84584de6cbfefc7bbe93e04ed1d5daf6a5b121b41b752394a7721068bb78",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "959b3b2488adc925aab1f28e7926a2f3524d0045db4842a060d5dcbe453051bc",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "8b6b6a4fdf8da112a36323348ee275e83dd6e60f63902992ede5267d011c002f",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "488fac95d5d07d13b56ec89ad78bd95344a6a77027ddad75301102167de9f6c4",
+                  "shape": [
+                    24,
+                    8,
+                    86,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "959b3b2488adc925aab1f28e7926a2f3524d0045db4842a060d5dcbe453051bc",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0004.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "8ea00e2373717e59a86c37548f18c35da89ff955cdd0e7a25dc182d1960a2cc9",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "ebade1ed4ecde43f6b376751cbb32d1cfff5f5280247cfbce06c2cc02d85dccb",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "c2b673fc113257f61bed47edb2dddca80ff7ffc04bc1964970d5ea5fd52f6df4",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "fa0ea830c42bf829804f518e683cd64b9ab423c56164c8c0dfb693c14462f14a",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "ef15b6e745f081e74162a4ff44beaa59299efbb2425b8e84e3e8825975bb5f2d",
+                  "shape": [
+                    24,
+                    8,
+                    50,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "c2b673fc113257f61bed47edb2dddca80ff7ffc04bc1964970d5ea5fd52f6df4",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0005.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "8bc21e81d497c5fb587e35fa4ddbfc930ff98d9d0617434a8112a894b3d8d1ad",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "8c5bfbbc38cfa15063d344d189f7ae6479ce533ab53e841b60fea3c521d1eaab",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "cdf01a181ff37a7feb946805a7d259b1ca0d308636b93b7144801ee718f03259",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "ad1a0478e2d3b71de55a0b4db59e47f4318e6351aac8b6f5199642cef7164391",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "2130d9dce33610fe2b0c3f998a9004b8d6d0e7eb43893e15816feab7e27b205e",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "cdf01a181ff37a7feb946805a7d259b1ca0d308636b93b7144801ee718f03259",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0006.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "41ffcac9ce657c0e165ff89e0b0e6745acc2a9a6a15b68edee4aa6b585f81e15",
+                  "shape": [
+                    24,
+                    8,
+                    61,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "2d4979199a7d6fa7e0cc62cbaa1e1db8a3b2314b434784031b697fe5fff29606",
+                  "shape": [
+                    24,
+                    8,
+                    61,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "95133fb5badc8efd85f37170492fdaf005651505318d54fdeeaa7765502a152c",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "b4fb72aeb067af56fa75bf2131ac2eea2013c0c1ba286304fd9a9166f607d564",
+                  "shape": [
+                    24,
+                    8,
+                    61,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "fd9e98691ede3241be7047a73f0a907a14c37bc7b7f607083efe4860c241b69f",
+                  "shape": [
+                    24,
+                    8,
+                    61,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "95133fb5badc8efd85f37170492fdaf005651505318d54fdeeaa7765502a152c",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0007.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "07cf171e4fd2992fdfd9f1a46c4925e4953a10dbb2b74f20748d8e3da6efb9e1",
+                  "shape": [
+                    24,
+                    8,
+                    48,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "309b6b3df2c5471e2e310918852fc3ad36fcb3502739b5ee072f593e82b94f42",
+                  "shape": [
+                    24,
+                    8,
+                    48,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "7407ef8b1998288435ffdbe84641919d12a38e88ac0882a7703af852097af378",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "0e4cbd51e87142ce0973c3333b6bb6f9dc2193120b9352d3aa7bc3b3750e7b99",
+                  "shape": [
+                    24,
+                    8,
+                    48,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "88d6bc4f5a646af2f9b374599343f1356b0bbda1871758f9504b32b17ab88d73",
+                  "shape": [
+                    24,
+                    8,
+                    48,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "7407ef8b1998288435ffdbe84641919d12a38e88ac0882a7703af852097af378",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0008.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "62ce59b8229c1fa7cedfd856a80e5e35fa58a038e6053b29263f98a93699164f",
+                  "shape": [
+                    24,
+                    8,
+                    66,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "d52ba54aafc6b578aeaf654b22dcacae002450639ee14287d79a8518c7fc76de",
+                  "shape": [
+                    24,
+                    8,
+                    66,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "b6b1f0fe40082c096cdc06bcf57fd620a6bc79eae0d4cae121f049a264c0aade",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "4b2fd94f7f4da0869585cb7c7109f317430a49064e93f9a20be3d93315952022",
+                  "shape": [
+                    24,
+                    8,
+                    66,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "c0eaa28834ac1bce49b52455a860ea52d6ba75855fe87e9fb7c3a2b065432edc",
+                  "shape": [
+                    24,
+                    8,
+                    66,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "b6b1f0fe40082c096cdc06bcf57fd620a6bc79eae0d4cae121f049a264c0aade",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0009.npz"
+            },
+            {
+              "fields": [
+                {
+                  "dtype": "int64",
+                  "key": "format_version",
+                  "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "group_size",
+                  "sha256": "9d4ac218fb54041e3a70a8e14db1ea1af9f570f4842b4702ef9323f1ad8f0ec4",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "k_codes",
+                  "sha256": "43d755f474c8748a4856b8ed071682ec54b7361ea77c136ed299dfea1c6860f5",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "k_scales",
+                  "sha256": "1e9ee3fc0415c436f960d442999fb2311d00502fca3af646a102030c452a9101",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "k_shape",
+                  "sha256": "cdf01a181ff37a7feb946805a7d259b1ca0d308636b93b7144801ee718f03259",
+                  "shape": [
+                    4
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "storage_bits",
+                  "sha256": "6cc16abd70eefb90dc0ba0d14fb088630873b2c6ad943f7442356735984c35a3",
+                  "shape": [
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int8",
+                  "key": "v_codes",
+                  "sha256": "b14f334386d72fbef96a37c432469fca668bcbfd6493e14db851f7752d8df4aa",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    32
+                  ]
+                },
+                {
+                  "dtype": "float32",
+                  "key": "v_scales",
+                  "sha256": "8d1c7cc78f259f45d753d6c7b394d0e485b6e0d0d35fedad5e42b9c12e3809f0",
+                  "shape": [
+                    24,
+                    8,
+                    52,
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "dtype": "int64",
+                  "key": "v_shape",
+                  "sha256": "cdf01a181ff37a7feb946805a7d259b1ca0d308636b93b7144801ee718f03259",
+                  "shape": [
+                    4
+                  ]
+                }
+              ],
+              "path": "nodes/0010.npz"
+            }
+          ],
+          "canonical_sha256": "a76d6c6ec57b700336324aa33768b1b200eca8c6540c20d74ea284f1723a8fb9",
+          "manifest": {
+            "dialect": "GptOss20B_TC:24x2880:g8x64",
+            "dialect_descriptor": {
+              "composition": "multi_mount",
+              "graftability": "seat_remountable",
+              "head_dim": 64,
+              "hidden_dim": 2880,
+              "latent_rank": 0,
+              "model_type": "GptOss20B_TC",
+              "num_kv_heads": 8,
+              "num_layers": 24,
+              "payload_kind": "gqa",
+              "position_law": "rope_full_yarn",
+              "remountable": true,
+              "rope_dim": 0,
+              "route_layer": 1,
+              "state_kind": "kv",
+              "vals_per_tok_layer": 1024
+            },
+            "durability_mode": "session_safe",
+            "native_checkpoint": "native/grm_store.bin",
+            "nodes": [
+              {
+                "cold_only": true,
+                "device_present": false,
+                "dirty": false,
+                "durable": true,
+                "host_present": false,
+                "kind": "turn",
+                "metadata": {
+                  "active": false,
+                  "confidence": 1.0,
+                  "durability": "session",
+                  "importance": {},
+                  "kind": "turn",
+                  "mutability": "ephemeral",
+                  "scope": "conversation",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "superseded_by": [
+                    3
+                  ],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 0,
+                "no_fold": false,
+                "ntok": 86,
+                "payload_pending": false,
+                "provenance": [
+                  {
+                    "node_id": 0,
+                    "segment_id": 0,
+                    "segment_type": "exchange_span"
+                  }
+                ],
+                "rare": [
+                  "auric-4-alpha"
+                ],
+                "retired": true,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "turn",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "session",
+                  "importance": {
+                    "s4": {
+                      "last_grounded_turn": null,
+                      "n_grounded": 0,
+                      "n_mounted": 4,
+                      "n_routed": 4
+                    }
+                  },
+                  "kind": "turn",
+                  "mutability": "ephemeral",
+                  "scope": "conversation",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 1,
+                "no_fold": false,
+                "ntok": 50,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke alpha. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Got it.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "turn",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "session",
+                  "importance": {
+                    "s4": {
+                      "last_grounded_turn": null,
+                      "n_grounded": 0,
+                      "n_mounted": 0,
+                      "n_routed": 4
+                    }
+                  },
+                  "kind": "turn",
+                  "mutability": "ephemeral",
+                  "scope": "conversation",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 2,
+                "no_fold": false,
+                "ntok": 92,
+                "payload_pending": false,
+                "provenance": [
+                  {
+                    "node_id": 2,
+                    "segment_id": 1,
+                    "segment_type": "exchange_span"
+                  }
+                ],
+                "rare": [
+                  "kestrel-9-tango"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact orion pin. The current orion pin value is Kestrel-9-Tango. This is the current value. If asked later, answer Kestrel-9-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Kestrel-9-Tango.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "fact",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {
+                    "s4": {
+                      "last_grounded_turn": null,
+                      "n_grounded": 0,
+                      "n_mounted": 1,
+                      "n_routed": 4
+                    }
+                  },
+                  "kind": "fact",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [
+                    0
+                  ],
+                  "write_intent": "user_asserted"
+                },
+                "native_node_id": 3,
+                "no_fold": false,
+                "ntok": 15,
+                "payload_pending": false,
+                "provenance": [
+                  {
+                    "node_id": 3,
+                    "segment_id": 2,
+                    "segment_type": "fact_span"
+                  }
+                ],
+                "rare": [
+                  "kestrel-9-tango"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "The current orion pin value is Kestrel-9-Tango."
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "turn",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "session",
+                  "importance": {
+                    "s4": {
+                      "last_grounded_turn": null,
+                      "n_grounded": 0,
+                      "n_mounted": 0,
+                      "n_routed": 3
+                    }
+                  },
+                  "kind": "turn",
+                  "mutability": "ephemeral",
+                  "scope": "conversation",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 4,
+                "no_fold": false,
+                "ntok": 86,
+                "payload_pending": false,
+                "provenance": [
+                  {
+                    "node_id": 4,
+                    "segment_id": 3,
+                    "segment_type": "exchange_span"
+                  }
+                ],
+                "rare": [
+                  "vortex-3-sierra"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 5,
+                "no_fold": false,
+                "ntok": 50,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke beta. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>Understood.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 6,
+                "no_fold": false,
+                "ntok": 52,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [
+                  "vortex-3-sierra"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current cypher bridge value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Vortex-3-Sierra<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 7,
+                "no_fold": false,
+                "ntok": 61,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [
+                  "kestrel-9-tango"
+                ],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>The current orion pin value is Kestrel-9-Tango.<|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 8,
+                "no_fold": false,
+                "ntok": 48,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke gamma. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|><|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 9,
+                "no_fold": false,
+                "ntok": 66,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke delta. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>I will not.\n\nSure!\n\nSure.\n\nSure!\n\nYour ChatGPT<|message|><|end|>"
+              },
+              {
+                "cold_only": false,
+                "device_present": true,
+                "dirty": false,
+                "durable": true,
+                "host_present": true,
+                "kind": "recall",
+                "metadata": {
+                  "active": true,
+                  "confidence": 1.0,
+                  "durability": "project",
+                  "importance": {},
+                  "kind": "recall",
+                  "mutability": "stable",
+                  "scope": "project",
+                  "source_grafts": [],
+                  "source_turns": [],
+                  "supersedes": [],
+                  "write_intent": "observed"
+                },
+                "native_node_id": 10,
+                "no_fold": false,
+                "ntok": 52,
+                "payload_pending": false,
+                "provenance": [],
+                "rare": [],
+                "retired": false,
+                "sources": [],
+                "tags": [],
+                "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler smoke epsilon. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>(Note: No changes.<|end|>"
+              }
+            ],
+            "review_buffer": [],
+            "route_layer": 1,
+            "wal_lsn": 31
+          },
+          "native_checkpoint_sha256": "90cde9830eb5f8cb87615e4c802023fa9192d734a46cce5e6d4ed8f138c56daa"
+        }
+      },
+      "gate": "G-EQUIV-P2",
+      "headline": {
+        "canonical_arena_byte_equal": true,
+        "committed_transcript_sha256": "68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f",
+        "single_transcript_sha256": "68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f",
+        "three_pass_transcript_sha256": "68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f"
+      },
+      "status": "PASS"
+    },
+    {
+      "checks": {
+        "non_vacuous_routed_turns": true,
+        "one_working_set_receipt_per_turn": true,
+        "ranking_ids_equal_python_every_routed_turn": true,
+        "route_backend_cuda_every_routed_turn": true
+      },
+      "gate": "G-ROUTE",
+      "headline": {
+        "cuda_routed_turns": "9/9",
+        "python_ranking_byte_equal_turns": "9/9",
+        "working_set_receipts": "10/10"
+      },
+      "status": "PASS"
+    },
+    {
+      "checks": {
+        "direct_recall_2_of_2": true,
+        "l1_misses_zero": true,
+        "source_present_every_probe": true,
+        "staged_recall_equals_direct": true,
+        "step2_page_ins_zero": true,
+        "step2_uploads_zero": true,
+        "two_probe_fixture": true
+      },
+      "gate": "G-PREP",
+      "headline": {
+        "direct_route_recall": "2/2",
+        "fact_source_present": "2/2",
+        "l1_misses": 0,
+        "staged_set_recall": "2/2",
+        "step2_page_ins": 0,
+        "step2_uploads": 0
+      },
+      "status": "PASS"
+    },
+    {
+      "checks": {
+        "overhead_within_limit": true,
+        "pass2_all_arena_read_only": true,
+        "total_within_ratio": true
+      },
+      "evidence": {
+        "p0_baseline_turn_wall_ms_total": 69813.49788798252,
+        "prep_stage": {
+          "calls": 10,
+          "wall_ms_max_turn": 4724.260121991392,
+          "wall_ms_mean_per_turn": 2602.8993927000556,
+          "wall_ms_total": 26028.993927000556
+        },
+        "route_stage": {
+          "calls": 26,
+          "wall_ms_max_turn": 4603.327888005879,
+          "wall_ms_mean_per_turn": 2554.27087059943,
+          "wall_ms_total": 25542.7087059943
+        },
+        "three_pass_turn_wall_ms_total": 82290.65806401195
+      },
+      "gate": "G-SERVE-P2",
+      "headline": {
+        "overhead_limit_ms": 5.0,
+        "pass2_visible_memory_overhead_ms_max": 2.8818630380555987,
+        "ratio_limit": 1.25,
+        "route_wall_ms_mean_per_turn": 2554.27087059943,
+        "total_latency_ratio_vs_p0": 1.1787213154116607
+      },
+      "status": "PASS"
+    },
+    {
+      "checks": {
+        "all_receipts_schema_valid": true,
+        "all_turn_audits_complete": true,
+        "expected_turns": 10,
+        "missing_target_count": 0,
+        "mutation_kind_counts": {
+          "deposit": 40,
+          "importance_bookkeeping": 20,
+          "supersession": 3
+        },
+        "one_receipt_per_turn": true,
+        "receipt_files": 10,
+        "supersession_command_inside_pass3": true
+      },
+      "gate": "G-COMPACT",
+      "headline": {
+        "decisive_supersession_probe_pass": true,
+        "ledger_complete": true,
+        "recall_single_inline": "2/2",
+        "recall_three_pass": "2/2",
+        "receipts": "10/10"
+      },
+      "status": "PASS"
+    }
+  ],
+  "schema": "grm.three_pass.p2.gates.v1",
+  "sessions": {
+    "reference": "artifacts/grm_three_pass/lead_verify_single",
+    "single": "artifacts/grm_three_pass/p2_f1_single",
+    "three_pass": "artifacts/grm_three_pass/p2_f1_three_pass"
+  }
+}

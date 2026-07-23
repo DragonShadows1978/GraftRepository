@@ -353,7 +353,7 @@ class ArenaCache:
         self._bump_cuda_gqa_epoch()
         return len(self.grafts) - 1
 
-    def deposit_from_cache(self, text, seg_ntok):
+    def deposit_from_cache(self, text, seg_ntok, route_key=None):
         """Harvest-on-generate: the live cache ALREADY holds the turn's
         (c_n, k_pe) — slice the span instead of re-forwarding. c_n is
         position-free as-is; k_pe un-RoPEs by rotation composition
@@ -376,19 +376,62 @@ class ArenaCache:
             if li == self.route_layer and cent is None:
                 cent = self._cache_key_of(seg)
         if cent is None:
-            cent = self._node_key(text)
+            cent = (
+                np.asarray(route_key, dtype=np.float32)
+                if route_key is not None else self._node_key(text)
+            )
         self.grafts.append({"h": dev, "cent": cent,
                             "ntok": seg_ntok, "text": text})
         self._bump_cuda_gqa_epoch()
         return len(self.grafts) - 1
 
-    def route(self, bare_text, exclude, limit=None):
+    def route(
+        self,
+        bare_text,
+        exclude,
+        limit=None,
+        *,
+        route_backend=None,
+        query_lex=None,
+        probe_key=None,
+        semantic_only=False,
+    ):
+        """Rank repository grafts for one query.
+
+        ``route_backend`` and ``query_lex`` are explicit orchestration seams
+        for staged/preflight routing.  Their default ``None`` values preserve
+        the production selector byte-for-byte:
+
+        - ``route_backend=None`` keeps the native/CUDA-then-Python fallback.
+        - ``route_backend="python"`` bypasses native/CUDA scoring so a gate
+          can compare the exact reference ranking against an accelerated run.
+        - ``route_backend="cuda"`` requires the opt-in CUDA scorer to engage
+          and fails closed instead of silently relabelling a fallback. If
+          query-side lexical policy then requires an exact Python rescore,
+          ``last_route_backend`` remains ``"cuda"`` (the search engine) and
+          ``last_route_policy_backend`` names that rescore explicitly.
+        - ``query_lex=None`` keeps ``GRM_ROUTE_QUERY_LEX`` authoritative;
+          an explicit bool changes only the query-side content-word extension
+          for this call.  The established rare-token channel is unchanged.
+        - ``semantic_only=True`` disables both lexical channels for the call.
+          This is the exact-ragged CUDA contract: model-native fp32 Q/K
+          evidence only, with lexical policy reported separately.
+
+        ``probe_key`` lets prep capture the model query once and feed those
+        identical fp32 values to both backends.  It is intentionally a
+        keyword-only flag-plumbing hook; router kernels and score laws are
+        untouched.
+        """
+        if route_backend not in (None, "python", "cuda"):
+            raise ValueError(
+                "route_backend must be None, 'python', or 'cuda'")
+        self.last_route_policy_backend = None
         if not self.grafts:
             return []
         route_limit = None if limit is None else max(0, int(limit))
         if route_limit == 0:
             return []
-        p = self._probe_key(bare_text)
+        p = self._probe_key(bare_text) if probe_key is None else probe_key
 
         # Lexical channel: identifier tokens in the probe (codes, numbers,
         # ALL-CAPS) are exact-match keys. Mean centroids CANNOT separate
@@ -406,9 +449,17 @@ class ArenaCache:
         # unchanged). Native/CUDA stores only rare keys, so content hits
         # force a Python rescore; when content words hit no candidate the
         # native/CUDA order is kept (lex silent → latent ordering intact).
-        qrare = self._rare_tokens(bare_text)
-        qlex = (self._query_lex_tokens(bare_text)
-                if self._route_query_lex_enabled() else qrare)
+        qrare = set() if semantic_only else self._rare_tokens(bare_text)
+        query_lex_enabled = (
+            self._route_query_lex_enabled()
+            if query_lex is None else bool(query_lex)
+        )
+        qlex = (
+            set()
+            if semantic_only
+            else (self._query_lex_tokens(bare_text)
+                  if query_lex_enabled else qrare)
+        )
         content_extra = qlex - qrare
 
         # P1 follow-on (profile-named): the eligible BASE (retired/kind
@@ -428,14 +479,26 @@ class ArenaCache:
         # The native/CUDA route APIs expose only final ids, not the raw
         # per-node score needed by L1. Debias therefore deliberately takes
         # the Python scoring path. OFF preserves the old backend choice.
-        native_order = (None if getattr(self, "length_debias", False) else
-                        self._native_route_order(
-                            p, qrare, cand, limit=route_limit,
-                            exclude=exclude))
+        native_order = (
+            None
+            if (route_backend == "python"
+                or getattr(self, "length_debias", False))
+            else self._native_route_order(
+                p, qrare, cand, limit=route_limit, exclude=exclude)
+        )
+        cuda_engaged = (
+            native_order is not None and self.last_route_backend == "cuda")
+        if route_backend == "cuda" and not cuda_engaged:
+            self.last_route_policy_backend = "fallback_rejected"
+            raise RuntimeError(
+                "requested CUDA route did not engage; the query may require "
+                "lexical/native policy or the CUDA bank may be unavailable")
         if native_order is not None and not self._query_lex_needs_rescore(
                 content_extra, cand):
             return native_order
         self.last_route_backend = "python"
+        if cuda_engaged:
+            self.last_route_policy_backend = "python_query_lex_rescore"
         base = self._vector_route_scores(p, cand)
         if base is None:
             base = {}
@@ -458,7 +521,9 @@ class ArenaCache:
         scored.sort(key=lambda item: -item[0])
         ranking = [i for _, i in scored]          # best first
         if route_limit is not None:
-            return ranking[:route_limit]
+            ranking = ranking[:route_limit]
+        if route_backend == "cuda" and cuda_engaged:
+            self.last_route_backend = "cuda"
         return ranking
 
     def _vector_route_scores(self, p, cand):
@@ -2354,6 +2419,20 @@ class ArenaCache:
         txt = txt.strip()
         turn_text = self._format_step_turn(user_text, txt)
         seg_cache_ntok = seg_start_ntok + cached_out
+        if defer_memory:
+            # Canonical step 2 is the only KV-building step. GQA cannot
+            # derive its standalone route key from the contextualized cache,
+            # so capture that key now and keep it as a one-turn transient.
+            # Step 3 consumes it during deposit_from_cache without another
+            # model forward.
+            route_key_token = int(
+                getattr(self, "_deferred_route_key_token", 0)) + 1
+            self._deferred_route_key_token = route_key_token
+            route_keys = getattr(self, "_deferred_route_keys", None)
+            if not isinstance(route_keys, dict):
+                route_keys = {}
+                self._deferred_route_keys = route_keys
+            route_keys[route_key_token] = self._node_key(turn_text)
         gidx = None
         if deposit:
             # cache-deposit span covers prompt + ALL generated tokens (incl.
@@ -2393,6 +2472,8 @@ class ArenaCache:
                 "picks": [int(i) for i in picks],
                 "deposited": False,
                 "importance_committed": False,
+                "route_key_prepared": True,
+                "route_key_token": int(route_key_token),
             }
         return txt, info
 
@@ -2413,8 +2494,20 @@ class ArenaCache:
         user_text = str(pending["user_text"])
         seg_cache_ntok = int(pending["seg_cache_ntok"])
         picks = [int(i) for i in pending.get("picks", ())]
-        gidx = (self.deposit_from_cache(turn_text, seg_cache_ntok)
-                if self.cache_deposits else self.deposit(turn_text))
+        route_key = None
+        if pending.get("route_key_prepared"):
+            route_key_token = int(pending.get("route_key_token", -1))
+            route_keys = getattr(self, "_deferred_route_keys", {})
+            route_key = route_keys.get(route_key_token)
+            if route_key is None:
+                raise RuntimeError("prepared deferred route key is missing")
+        gidx = (
+            self.deposit_from_cache(
+                turn_text, seg_cache_ntok, route_key=route_key)
+            if self.cache_deposits else self.deposit(turn_text)
+        )
+        if pending.get("route_key_prepared"):
+            self._deferred_route_keys = {}
         if picks:
             new_rare = (self._rare_tokens(turn_text)
                         - self._rare_tokens(user_text))

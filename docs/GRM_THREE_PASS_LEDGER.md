@@ -334,3 +334,209 @@ remain echo-vulnerable — converges with the pass-1 clean-room design (step 1
 stages fresh; live-window echo is the failure class it kills). Session
 `repository/` dumps (~31MB each) stay machine-local; gate JSONs + per-turn
 receipts commit.
+
+## 2026-07-22 — ORDER GRM3P-P2 results
+
+Implementation and all registered runs stayed in the authorized worktree.
+Production was read-only. No git command, commit, push, network action,
+package installation, service action, subagent, detached GPU process, or
+router-kernel modification was performed. GPU work ran foregrounded under
+`flock -w 3600 /tmp/forge-gpu.lock`.
+
+### Delivered surface
+
+- `core/graft_arena.py`: keyword-only prep routing controls select an exact
+  Python reference or require CUDA engagement while reusing one captured fp32
+  probe; default calls are unchanged. A separately receipted
+  `python_query_lex_rescore` preserves the existing query-side lexical policy.
+  Deferred route-key construction now happens in step 2, so step 3 deposits
+  the already-built cache span without another KV-building forward.
+- `core/grm_three_pass.py`: staged L1 resolver with counted repository L2
+  fallback, plus per-step graft page-in/payload-upload/CUDA-bank-upload
+  instrumentation.
+- `scripts/grm_e2e_session.py`: sequential step-1 prep, full eligible
+  repository ranking, staged device working set, primary mount surgery before
+  inference, one `working_set.json` per turn, and report-only bare versus
+  recency-context probe comparison.
+- `scripts/grm_three_pass_p2_gate.py`: artifact-backed F1 assembler for the
+  five registered gates and exact frame checks.
+- `tests/test_grm_three_pass.py` and `tests/test_gqa_ragged_cuda_bank.py`:
+  prepared route-key consumption, L1/L2 accounting, step-I/O attribution, and
+  explicit CUDA/Python same-probe parity coverage.
+
+### Route-backend diagnosis
+
+`GRM_GQA_CUDA_ROUTE=1` selected the exact CUDA Q/K scorer, but
+`GRM_ROUTE_QUERY_LEX` is independently default-on. Smoke query content words
+such as `cypher`, `bridge`, `orion`, and `pin` hit stored node text, so
+`ArenaCache.route()` correctly entered its exact Python query-lex rescore and
+overwrote `last_route_backend` with `python`. The environment flag was not
+missing; backend selection and lexical policy were conflated in the receipt.
+
+Prep now captures the model probe once and runs both explicit backends over
+those identical fp32 values. The accelerated arm fails closed unless the CUDA
+scorer actually engages. Its receipt keeps `route_backend=cuda` and separately
+names `route_policy_backend=python_query_lex_rescore` when the established
+lexical policy must finish the ranking. The final ranking is compared verbatim
+with the explicit Python reference before it is staged. The router CUDA/C++
+kernels are unchanged.
+
+### Registered frames
+
+- F1: `--mode smoke --skip-gpu-idle-check`, default `restart_after=5`,
+  `turn_pipeline=single` and `turn_pipeline=three_pass`, environment exactly
+  `GRM_GQA_CUDA_ROUTE=1 GRM_GRAFT_STORAGE_BITS=8`.
+- F2: the same three-pass frame plus only `--restart-after 99`.
+- Reference transcript:
+  `68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f`.
+
+### F1 gate table (verbatim generator output)
+
+Artifact: `artifacts/grm_three_pass/p2_f1_gates.json`.
+
+```text
+G-EQUIV-P2 PASS committed_transcript_sha256=68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f single_transcript_sha256=68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f three_pass_transcript_sha256=68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f canonical_arena_byte_equal=True
+G-ROUTE PASS cuda_routed_turns=9/9 python_ranking_byte_equal_turns=9/9 working_set_receipts=10/10
+G-PREP PASS staged_set_recall=2/2 direct_route_recall=2/2 fact_source_present=2/2 l1_misses=0 step2_page_ins=0 step2_uploads=0
+G-SERVE-P2 PASS pass2_visible_memory_overhead_ms_max=2.8818630380555987 overhead_limit_ms=5.0 total_latency_ratio_vs_p0=1.1787213154116607 ratio_limit=1.25 route_wall_ms_mean_per_turn=2554.27087059943
+G-COMPACT PASS ledger_complete=True receipts=10/10 decisive_supersession_probe_pass=True recall_three_pass=2/2 recall_single_inline=2/2
+```
+
+### Stage timing
+
+| frame | stage | wall ms total | mean/turn | max/turn | calls |
+|---|---|---:|---:|---:|---:|
+| F1 | prep | 26028.993927000556 | 2602.8993927000556 | 4724.260121991392 | 10 |
+| F1 | route | 25542.7087059943 | 2554.27087059943 | 4603.327888005879 | 26 |
+| F2 | prep | 24874.922525021248 | 2487.4922525021248 | 4536.936171003617 | 10 |
+| F2 | route | 24395.43236902682 | 2439.543236902682 | 4417.201024945825 | 26 |
+
+F1 three-pass `turn_wall_ms_total=82290.65806401195` versus the frozen P0
+baseline `69813.49788798252`, ratio `1.1787213154116607`. The route row includes
+the required per-turn Python parity arm and, on the two probe turns, both
+report-only enrichment arms; it is not a 512-node resident-kernel microbench.
+
+Step-I/O totals were:
+
+```text
+F1 step1: page_ins=0 uploads=9; step2: page_ins=0 uploads=0; step3: page_ins=0 uploads=0
+F2 step1: page_ins=0 uploads=9; step2: page_ins=0 uploads=0; step3: page_ins=0 uploads=0
+```
+
+All nine positive uploads were immutable CUDA route-bank attachments in prep.
+The unbounded smoke repository had no cold graft payload, so no positive
+payload page-in fired.
+
+Representative probe receipt:
+`artifacts/grm_three_pass/p2_f1_three_pass/working_set/turn_0005/working_set.json`.
+It records CUDA/Python rank `[4,2,1,3]`, staged ids `[4,2,1,3]`, prepared mount
+`[4]`, source node 4 at rank 1, one L1 payload resolution, zero L2 misses, zero
+step-2 I/O, and one 753664-byte CUDA-bank upload in step 1.
+
+### F2 probe results (verbatim extracted rows)
+
+```text
+{"answer": "Sure!", "fact_id": "cypher bridge", "mounted_ids": [4], "pass": false, "ranking_ids": [4, 2, 1, 3], "route_backend": "cuda", "source_node_id": 4, "source_rank": 1, "turn": 5}
+{"answer": "", "fact_id": "orion pin", "mounted_ids": [2], "pass": false, "ranking_ids": [2, 3, 4, 1], "route_backend": "cuda", "source_node_id": 3, "source_rank": 2, "turn": 6}
+```
+
+F2 is informational and remains the registered no-restart echo failure:
+correct search/staging did not remove the live-window readout contamination.
+No tuning or gate claim was made from F2.
+
+### Probe enrichment comparison — exploratory, report-only
+
+Both arms disable lexical policy so the only independent variable is probe
+construction. The augmented construction is the last `live_turns` complete
+user/assistant pair with fixed `Recent user`, `Recent assistant`, and
+`Current user` labels.
+
+| frame | probe | bare ranking / source rank / R@3 | augmented ranking / source rank / R@3 | delta |
+|---|---|---|---|---|
+| F1 | cypher bridge | `[4,2,1,3]` / 1 / hit | `[4,2,1,3]` / 1 / hit | 0 |
+| F1 | orion pin | `[4,2,1,3]` / 4 / miss | `[4,2,1,3]` / 4 / miss | 0 |
+| F2 | cypher bridge | `[4,2,1,3]` / 1 / hit | `[4,2,1,3]` / 1 / hit | 0 |
+| F2 | orion pin | `[4,2,1,3]` / 4 / miss | `[4,2,1,3]` / 4 / miss | 0 |
+
+Aggregate semantic recall@3 was `1/2` bare and `1/2` augmented in each frame.
+The two-probe fixture is too thin to license a verdict; this comparison is not
+a gate and does not establish enrichment equivalence.
+
+### Suite lines (verbatim)
+
+Focused prep/router coverage:
+
+```text
+33 passed, 110 deselected, 2 warnings in 9.24s
+```
+
+The prior full-suite scope was `tests/test_grm_*.py` at 443 tests. Three P2
+tests raise the current count to 446:
+
+```text
+GRM_TURN_PIPELINE=single: 446 passed, 2 warnings in 479.97s (0:07:59)
+GRM_TURN_PIPELINE=three_pass: 446 passed, 2 warnings in 484.16s (0:08:04)
+```
+
+JUnit artifacts:
+`artifacts/grm_three_pass/p2_suite_single.xml` and
+`artifacts/grm_three_pass/p2_suite_three_pass.xml`.
+
+### Preserved negative receipts and honest residuals
+
+1. The initial sandbox launch failed before model load with:
+
+   ```text
+   RuntimeError: cudaMalloc failed: no CUDA-capable device is detected
+   ```
+
+   Its config is preserved at
+   `artifacts/grm_three_pass/p2_f1_three_pass_sandbox_cuda_red/`.
+2. The first complete implementation run incorrectly staged a semantic-only
+   rank for user-visible inference, violating the already-registered Python
+   ranking/equivalence requirement. It returned the orion source at rank 4
+   and recall `1/2`. Preserved:
+   `artifacts/grm_three_pass/p2_f1_three_pass_semantic_red/`. The correction
+   restored the existing lexical policy; no threshold, fixture, or frame
+   parameter changed.
+3. A subsequent partial run let the report-only augmented probe inherit a
+   rare code from recency, so the exact CUDA request correctly failed closed
+   at turn 6. Preserved:
+   `artifacts/grm_three_pass/p2_f1_three_pass_augmented_lex_red/`. The final
+   exploratory comparison holds semantic-only policy constant on both arms;
+   the gated staged ranking remains the existing policy.
+4. CUDA is the exact Q/K search engine on 9/9 routed F1 turns, but seven
+   retrieval/filler turns still require the existing exact Python query-lex
+   rescore. Thus the 512-node 1.59ms resident-kernel headroom is engaged but
+   not yet an end-to-end prep latency claim. The required dual-backend and
+   exploratory arms also intentionally raise this gate frame's route row.
+5. The smoke repository has at most four eligible nodes. The present CUDA ABI
+   returns at most top-16; prep fails closed if a requested full-ranking gate
+   exceeds 16 eligible nodes. Scaling the full-rank parity audit beyond this
+   bounded frame is separate work.
+6. No positive cold graft payload page-in occurred in either registered
+   frame. The receipt proves all observed uploads were in step 1 and step 2
+   had zero I/O; it does not claim a positive NVMe/RAM page-in timing sample.
+7. F2 remains `0/2` on readout despite correct CUDA ranks. This is the
+   registered live-window echo lens, not a routing or staging miss.
+
+## Lead verification — P2 (Fable, 2026-07-23)
+
+Receipts audit: p2_f1_gates.json matches report verbatim; both `446
+passed` suite lines at genuine pytest positions in the raw shim log;
+no git activity by the seat; no router kernel changes (diff = additions
+in arena/session/tests only).
+
+Lead rerun, F1 frame, `three_pass`: transcript byte-identical to the
+committed hash (`68da84b8…` — G-EQUIV holds through the P2 changes),
+routed backends {cuda} on all routed turns, step-2 page-ins/uploads 0,
+L2 misses 0, probes 2/2. Unit suite: 7 passed (test_grm_three_pass.py).
+
+**Verdict: P2 gates ALL PASS lead-verified.** Standing residuals
+(seat's, confirmed honest): query-lex exact rescore still python-side
+(prep is NOT a 1.59ms end-to-end claim; route mean rose to 2554ms/turn
+under the parity double-run, ratio 1.179 still under rail); CUDA route
+ABI top-16 fail-closed envelope; 4-node smoke never exercised cold
+page-ins (upload receipts only); F2 echo lens 0/2 as registered —
+staging correct, readout contaminated; enrichment delta 0 on a 2-probe
+fixture, no verdict licensed.

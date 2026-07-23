@@ -222,6 +222,219 @@ class Pass2ReadOnlyGuard:
         return False
 
 
+class TurnStepIOTracker:
+    """Attribute graft page-ins and device uploads to one turn step.
+
+    The tracker deliberately covers repository payload materialization and
+    immutable CUDA route-bank attachment: the two upload classes controlled
+    by prep staging.  Ordinary model-token transfers are inference traffic,
+    not graft page-ins, and are outside this receipt.
+    """
+
+    STEP_NAMES = ("1_prep", "2_inference", "3_cleanup")
+
+    def __init__(self, arena: Any):
+        self.arena = arena
+        self.current_step: str | None = None
+        self.events: dict[str, list[dict[str, Any]]] = {
+            step: [] for step in self.STEP_NAMES
+        }
+        self._node_loader = None
+        self._configure_cuda_gqa_route_bank = None
+        self._store = None
+
+    def set_step(self, step: str | None) -> None:
+        if step is not None and step not in self.STEP_NAMES:
+            raise ValueError(f"unknown turn step {step!r}")
+        self.current_step = step
+
+    def _append(self, event: dict[str, Any]) -> None:
+        if self.current_step is not None:
+            self.events[self.current_step].append(event)
+
+    def __enter__(self) -> "TurnStepIOTracker":
+        loader = getattr(self.arena, "node_loader", None)
+        if callable(loader):
+            self._node_loader = loader
+
+            def tracked_loader(node_id):
+                graft = self.arena.grafts[int(node_id)]
+                source = (
+                    "ram_host_payload"
+                    if graft.get("host_payload") is not None else "nvme"
+                )
+                started = time.perf_counter()
+                result = loader(node_id)
+                wall_ms = (time.perf_counter() - started) * 1000.0
+                success = result is not None
+                self._append({
+                    "kind": "graft_page_in",
+                    "node_id": int(node_id),
+                    "source": source,
+                    "success": success,
+                    "wall_ms": wall_ms,
+                })
+                if success:
+                    self._append({
+                        "kind": "graft_payload_upload",
+                        "node_id": int(node_id),
+                        "source": source,
+                        "success": True,
+                        "wall_ms": wall_ms,
+                    })
+                return result
+
+            self.arena.node_loader = tracked_loader
+
+        store = getattr(self.arena, "native_store", None)
+        configure = getattr(store, "configure_cuda_gqa_route_bank", None)
+        if callable(configure):
+            self._store = store
+            self._configure_cuda_gqa_route_bank = configure
+
+            def tracked_configure(route_bank, node_ids=None, **kwargs):
+                started = time.perf_counter()
+                bank = configure(route_bank, node_ids, **kwargs)
+                self._append({
+                    "kind": "cuda_route_bank_upload",
+                    "success": True,
+                    "node_count": int(
+                        len(node_ids) if node_ids is not None
+                        else getattr(route_bank, "shape", (0,))[0]),
+                    "bytes": int(getattr(route_bank, "nbytes", 0)),
+                    "wall_ms": (time.perf_counter() - started) * 1000.0,
+                })
+                return bank
+
+            store.configure_cuda_gqa_route_bank = tracked_configure
+        return self
+
+    def __exit__(self, exc_type, exc, traceback) -> bool:
+        if self._node_loader is not None:
+            self.arena.node_loader = self._node_loader
+        if (self._store is not None
+                and self._configure_cuda_gqa_route_bank is not None):
+            self._store.configure_cuda_gqa_route_bank = (
+                self._configure_cuda_gqa_route_bank)
+        self.current_step = None
+        return False
+
+    def receipt(self) -> dict[str, Any]:
+        steps = {}
+        for step in self.STEP_NAMES:
+            events = list(self.events[step])
+            steps[step] = {
+                "page_in_count": sum(
+                    event.get("kind") == "graft_page_in"
+                    and event.get("success") is True
+                    for event in events
+                ),
+                "upload_count": sum(
+                    event.get("kind") in (
+                        "graft_payload_upload", "cuda_route_bank_upload")
+                    and event.get("success") is True
+                    for event in events
+                ),
+                "events": events,
+            }
+        return {
+            "schema": "grm.three_pass.step_io.v1",
+            "steps": steps,
+        }
+
+
+class StagedWorkingSetResolver:
+    """Resolve pass-2 routes and mount payloads from a pre-staged set.
+
+    A miss falls back to the repository through the original methods and is
+    always counted.  The registered smoke gate expects no such fallback; the
+    fallback exists so a production miss is observable rather than fatal or
+    silently truncated.
+    """
+
+    def __init__(
+        self,
+        arena: Any,
+        *,
+        probe_text: str,
+        ranking_ids: list[int] | tuple[int, ...],
+        staged_ids: list[int] | tuple[int, ...],
+        route_backend: str = "cuda",
+    ) -> None:
+        self.arena = arena
+        self.probe_text = str(probe_text)
+        self.ranking_ids = [int(i) for i in ranking_ids]
+        self.staged_ids = {int(i) for i in staged_ids}
+        self.route_backend = str(route_backend)
+        self.route_l1_calls = 0
+        self.payload_l1_resolutions = 0
+        self.l2_misses: list[dict[str, Any]] = []
+        self._route = None
+        self._ensure_h = None
+
+    def __enter__(self) -> "StagedWorkingSetResolver":
+        self._route = self.arena.route
+        self._ensure_h = self.arena._ensure_h
+
+        def staged_route(bare_text, exclude, limit=None, **kwargs):
+            if str(bare_text) != self.probe_text:
+                self.l2_misses.append({
+                    "kind": "route_probe_mismatch",
+                    "probe": str(bare_text),
+                })
+                return self._route(bare_text, exclude, limit, **kwargs)
+            excluded = {int(i) for i in (exclude or ())}
+            available = [
+                i for i in self.ranking_ids if i not in excluded
+            ]
+            want = len(available) if limit is None else min(
+                max(0, int(limit)), len(available))
+            requested = available[:want]
+            missing = [i for i in requested if i not in self.staged_ids]
+            if missing:
+                self.l2_misses.extend({
+                    "kind": "route_id_not_staged",
+                    "node_id": int(i),
+                } for i in missing)
+                return self._route(bare_text, exclude, limit, **kwargs)
+            self.route_l1_calls += 1
+            self.arena.last_route_backend = self.route_backend
+            return requested
+
+        def staged_ensure_h(idxs):
+            requested = [int(i) for i in idxs]
+            for node_id in requested:
+                graft = self.arena.grafts[node_id]
+                if node_id in self.staged_ids and graft.get("h") is not None:
+                    self.payload_l1_resolutions += 1
+                else:
+                    self.l2_misses.append({
+                        "kind": "payload_not_staged",
+                        "node_id": node_id,
+                        "device_resident": graft.get("h") is not None,
+                    })
+            return self._ensure_h(requested)
+
+        self.arena.route = staged_route
+        self.arena._ensure_h = staged_ensure_h
+        return self
+
+    def __exit__(self, exc_type, exc, traceback) -> bool:
+        if self._route is not None:
+            self.arena.route = self._route
+        if self._ensure_h is not None:
+            self.arena._ensure_h = self._ensure_h
+        return False
+
+    def receipt(self) -> dict[str, Any]:
+        return {
+            "route_l1_calls": int(self.route_l1_calls),
+            "payload_l1_resolutions": int(self.payload_l1_resolutions),
+            "l2_miss_count": len(self.l2_misses),
+            "l2_misses": list(self.l2_misses),
+        }
+
+
 class MemoryLedgerBuilder:
     """Record every observed pass-3 target mutation in frozen-schema form."""
 

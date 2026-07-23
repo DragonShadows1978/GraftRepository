@@ -1,0 +1,166 @@
+{
+  "direct_route_recall_at_3": true,
+  "enrichment": {
+    "augmented_cuda_python_byte_equal": true,
+    "augmented_probe": "Routing recency context (exploratory only).\nRecent user: Session continuity filler smoke beta. Acknowledge briefly. Do not change any stored fact values.\nRecent assistant: Understood.\nCurrent user: Recall probe. What is the current cypher bridge value? Reply with only the value.",
+    "augmented_python_ranking_ids": [
+      4,
+      2,
+      1,
+      3
+    ],
+    "augmented_ranking_ids": [
+      4,
+      2,
+      1,
+      3
+    ],
+    "augmented_recall_at_3": true,
+    "augmented_source_rank": 1,
+    "bare_cuda_python_byte_equal": true,
+    "bare_probe": "Recall probe. What is the current cypher bridge value? Reply with only the value.",
+    "bare_python_ranking_ids": [
+      4,
+      2,
+      1,
+      3
+    ],
+    "bare_ranking_ids": [
+      4,
+      2,
+      1,
+      3
+    ],
+    "bare_recall_at_3": true,
+    "bare_source_rank": 1,
+    "comparison_lexical_policy": "semantic_only_exact_cuda",
+    "construction": "last live_turns complete transcript turns, labelled Recent user/assistant, followed by labelled Current user",
+    "status": "exploratory_report_only"
+  },
+  "event_kind": "probe",
+  "l1": {
+    "l2_miss_count": 0,
+    "l2_misses": [],
+    "payload_l1_resolutions": 1,
+    "route_l1_calls": 1
+  },
+  "lexical_policy": "existing_query_lex_exact_python_rescore",
+  "live_excluded_ids": [
+    5
+  ],
+  "mount_surgery_prepped": true,
+  "mount_surgery_reason": null,
+  "page_in_count": 0,
+  "page_in_ids": [],
+  "prep_route_wall_ms": 1999.1453170077875,
+  "prep_wall_ms": 4565.0744220474735,
+  "prepared_mount_ids": [
+    4
+  ],
+  "probe_capture_wall_ms": 596.7232789844275,
+  "probe_policy": "bare_message_e4",
+  "probe_used": "Recall probe. What is the current cypher bridge value? Reply with only the value.",
+  "python_backend": "python",
+  "python_ranking_ids": [
+    4,
+    2,
+    1,
+    3
+  ],
+  "python_repository_ranking_ids": [
+    4,
+    2,
+    1,
+    3
+  ],
+  "ranking": [
+    {
+      "node_id": 4,
+      "rank": 1,
+      "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+    },
+    {
+      "node_id": 2,
+      "rank": 2,
+      "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+    },
+    {
+      "node_id": 1,
+      "rank": 3,
+      "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session c"
+    },
+    {
+      "node_id": 3,
+      "rank": 4,
+      "text_prefix": "The current orion pin value is Kestrel-9-Tango."
+    }
+  ],
+  "ranking_ids": [
+    4,
+    2,
+    1,
+    3
+  ],
+  "ranking_ids_byte_equal": true,
+  "repository_candidate_count": 4,
+  "repository_ranking_ids": [
+    4,
+    2,
+    1,
+    3
+  ],
+  "route_backend": "cuda",
+  "route_policy_backend": "python_query_lex_rescore",
+  "routed": true,
+  "schema": "grm.three_pass.working_set.v1",
+  "source_node_id": 4,
+  "source_present_in_staged_set": true,
+  "source_rank": 1,
+  "staged_ids": [
+    4,
+    2,
+    1,
+    3
+  ],
+  "step": 1,
+  "step_io": {
+    "schema": "grm.three_pass.step_io.v1",
+    "steps": {
+      "1_prep": {
+        "events": [
+          {
+            "bytes": 753664,
+            "kind": "cuda_route_bank_upload",
+            "node_count": 4,
+            "success": true,
+            "wall_ms": 1389.5392729900777
+          }
+        ],
+        "page_in_count": 0,
+        "upload_count": 1
+      },
+      "2_inference": {
+        "events": [],
+        "page_in_count": 0,
+        "upload_count": 0
+      },
+      "3_cleanup": {
+        "events": [],
+        "page_in_count": 0,
+        "upload_count": 0
+      }
+    }
+  },
+  "turn": 5,
+  "turn_pipeline": "three_pass",
+  "upload_count": 1,
+  "upload_events": [
+    {
+      "bytes": 753664,
+      "kind": "cuda_route_bank_upload",
+      "node_count": 4,
+      "success": true,
+      "wall_ms": 1389.5392729900777
+    }
+  ]
+}

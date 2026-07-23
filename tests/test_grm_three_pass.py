@@ -6,6 +6,8 @@ from core.grm_three_pass import (
     MemoryLedgerBuilder,
     Pass2ArenaMutationError,
     Pass2ReadOnlyGuard,
+    StagedWorkingSetResolver,
+    TurnStepIOTracker,
     arena_state_bytes,
 )
 
@@ -142,6 +144,114 @@ def test_deferred_turn_deposit_and_importance_match_legacy_blocks():
         "n_grounded": 1,
         "last_grounded_turn": 1,
     }
+
+
+def test_deferred_cache_deposit_consumes_prepared_route_key():
+    arena = ArenaCache.__new__(ArenaCache)
+    arena.cache_deposits = True
+    arena.grafts = []
+    arena.live_segs = [(None, 3)]
+    route_key = object()
+    arena._deferred_route_keys = {7: route_key}
+    seen = {}
+
+    def deposit_from_cache(text, ntok, route_key=None):
+        seen.update(text=text, ntok=ntok, route_key=route_key)
+        arena.grafts.append(_node(text))
+        return 0
+
+    arena.deposit_from_cache = deposit_from_cache
+    info = {
+        "_deferred_memory": {
+            "turn_text": "complete turn",
+            "user_text": "complete",
+            "seg_cache_ntok": 3,
+            "picks": [],
+            "deposited": False,
+            "importance_committed": False,
+            "route_key_prepared": True,
+            "route_key_token": 7,
+        }
+    }
+
+    assert arena.deposit_deferred_turn(info) == 0
+    assert seen == {
+        "text": "complete turn",
+        "ntok": 3,
+        "route_key": route_key,
+    }
+    assert arena.live_segs == [(0, 3)]
+    assert arena._deferred_route_keys == {}
+
+
+def test_staged_working_set_resolves_l1_and_counts_repository_fallback():
+    class Arena:
+        def __init__(self):
+            self.grafts = [{"h": object()}, {"h": object()}, {"h": object()}]
+            self.last_route_backend = "python"
+            self.route_fallbacks = 0
+            self.ensure_calls = []
+
+        def route(self, _text, _exclude, limit=None, **_kwargs):
+            self.route_fallbacks += 1
+            return [2, 1, 0][:limit]
+
+        def _ensure_h(self, ids):
+            self.ensure_calls.append(list(ids))
+
+    arena = Arena()
+    with StagedWorkingSetResolver(
+        arena,
+        probe_text="probe",
+        ranking_ids=[2, 1, 0],
+        staged_ids=[2, 1],
+    ) as resolver:
+        assert arena.route("probe", exclude=set(), limit=2) == [2, 1]
+        arena._ensure_h([2, 1])
+        assert arena.route("probe", exclude=set(), limit=3) == [2, 1, 0]
+
+    receipt = resolver.receipt()
+    assert receipt["route_l1_calls"] == 1
+    assert receipt["payload_l1_resolutions"] == 2
+    assert receipt["l2_miss_count"] == 1
+    assert receipt["l2_misses"][0] == {
+        "kind": "route_id_not_staged",
+        "node_id": 0,
+    }
+    assert arena.route_fallbacks == 1
+    assert arena.ensure_calls == [[2, 1]]
+
+
+def test_step_io_tracker_attributes_payload_and_route_bank_uploads():
+    class Store:
+        def configure_cuda_gqa_route_bank(
+                self, route_bank, node_ids=None, **_kwargs):
+            return (route_bank, node_ids)
+
+    class Arena:
+        def __init__(self):
+            self.grafts = [{"h": None, "host_payload": {"k": "fixture"}}]
+            self.native_store = Store()
+            self.node_loader = self.load
+
+        def load(self, node_id):
+            payload = object()
+            self.grafts[int(node_id)]["h"] = payload
+            return payload
+
+    arena = Arena()
+    with TurnStepIOTracker(arena) as tracker:
+        tracker.set_step("1_prep")
+        arena.node_loader(0)
+        arena.native_store.configure_cuda_gqa_route_bank(
+            [[1.0]], [11])
+        tracker.set_step("2_inference")
+
+    receipt = tracker.receipt()
+    assert receipt["steps"]["1_prep"]["page_in_count"] == 1
+    assert receipt["steps"]["1_prep"]["upload_count"] == 2
+    assert receipt["steps"]["2_inference"]["page_in_count"] == 0
+    assert receipt["steps"]["2_inference"]["upload_count"] == 0
 
 
 def _deposit(repo, text):
