@@ -2084,13 +2084,15 @@ class ArenaCache:
         return out
 
     def step(self, user_text, ngen=48, deposit=True,
-             stops=None, max_trips=0):
+             stops=None, max_trips=0, defer_memory=False):
         """One conversation turn through the arena. max_trips > 0 enables
         SHUTTLING: if the answer fails the grounding check, restore the
         pre-attempt cache (snapshot = the old tensor list + position —
         cache tensors are immutable), swap in the NEXT ranking slice, and
         retry. Failed attempts never enter the live cache. Returns
         (answer, info)."""
+        if defer_memory and deposit:
+            raise ValueError("defer_memory requires deposit=False")
         if stops is None:
             stops = self.stop_sequences
         for L in self.m.layers:
@@ -2195,8 +2197,14 @@ class ArenaCache:
                 (self.caches, self.pos, self.live_segs, self.cur_mounts,
                  self.cur_mount_n) = (snap[0], snap[1], list(snap[2]),
                                       snap[3], snap[4])
+                had_appended_grafts = len(self.grafts) > snap[5]
                 del self.grafts[snap[5]:]
-                self._bump_cuda_gqa_epoch()
+                # The three-pass output path never deposits during an
+                # attempt, so an empty rollback must not mutate the arena
+                # epoch in pass 2.  The default path preserves the legacy
+                # unconditional invalidation byte-for-byte.
+                if not defer_memory or had_appended_grafts:
+                    self._bump_cuda_gqa_epoch()
             if clean:
                 # fresh mini-cache: _attempt's bootstrap path rebuilds
                 # [sink | mounts | question] via injection — no surgery on
@@ -2212,15 +2220,29 @@ class ArenaCache:
             # once more here in case a recency graft and a routed graft are
             # two explicit revisions of the same M5 lineage.
             mset = sorted(self._resolve_revision_mounts(mset))
-            txt, info = self._attempt(user_text, mset, ngen, deposit, stops)
+            if defer_memory:
+                txt, info = self._attempt(
+                    user_text, mset, ngen, deposit, stops,
+                    defer_memory=True)
+            else:
+                txt, info = self._attempt(
+                    user_text, mset, ngen, deposit, stops)
             info["trip"] = trip
             if clean:
                 info["clean_room"] = True
             grounded, contributors = self._grounding_attribution(
                 txt, mset, user_text)
             if grounded:
-                self._commit_s4_attempt(
-                    ranking, mset, contributors, turn=s4_turn)
+                if defer_memory:
+                    info["_deferred_memory"]["importance_bookkeeping"] = {
+                        "routed": [int(i) for i in ranking],
+                        "mounted": [int(i) for i in mset],
+                        "grounded_mounts": [int(i) for i in contributors],
+                        "turn": int(s4_turn),
+                    }
+                else:
+                    self._commit_s4_attempt(
+                        ranking, mset, contributors, turn=s4_turn)
                 return txt, info
             if best is None:
                 best = (txt, info, (self.caches, self.pos, list(self.live_segs),
@@ -2228,21 +2250,44 @@ class ArenaCache:
                                     list(self.grafts)), tuple(mset))
         # nothing grounded — keep the FIRST attempt's answer and state
         if best is None:
-            txt, info = self._attempt(user_text, [], ngen, deposit, stops)
+            if defer_memory:
+                txt, info = self._attempt(
+                    user_text, [], ngen, deposit, stops,
+                    defer_memory=True)
+            else:
+                txt, info = self._attempt(
+                    user_text, [], ngen, deposit, stops)
             info["trip"] = 0
             info["no_mount_fit"] = True
-            self._commit_s4_attempt(ranking, (), (), turn=s4_turn)
+            if defer_memory:
+                info["_deferred_memory"]["importance_bookkeeping"] = {
+                    "routed": [int(i) for i in ranking],
+                    "mounted": [],
+                    "grounded_mounts": [],
+                    "turn": int(s4_turn),
+                }
+            else:
+                self._commit_s4_attempt(ranking, (), (), turn=s4_turn)
             return txt, info
         txt, info, st, accepted_mounts = best
         (self.caches, self.pos, self.live_segs,
          self.cur_mounts, self.cur_mount_n) = st[0], st[1], st[2], st[3], st[4]
         self.grafts[:] = st[5]
-        self._bump_cuda_gqa_epoch()
-        self._commit_s4_attempt(
-            ranking, accepted_mounts, (), turn=s4_turn)
+        if not defer_memory:
+            self._bump_cuda_gqa_epoch()
+            self._commit_s4_attempt(
+                ranking, accepted_mounts, (), turn=s4_turn)
+        else:
+            info["_deferred_memory"]["importance_bookkeeping"] = {
+                "routed": [int(i) for i in ranking],
+                "mounted": [int(i) for i in accepted_mounts],
+                "grounded_mounts": [],
+                "turn": int(s4_turn),
+            }
         return txt, info
 
-    def _attempt(self, user_text, picks, ngen, deposit, stops):
+    def _attempt(self, user_text, picks, ngen, deposit, stops,
+                 defer_memory=False):
         # Final assembly choke point: callers such as diagnostic/probe
         # drivers may invoke _attempt directly instead of step(). Keep L2
         # immediately before any payload is loaded, swapped, or injected.
@@ -2337,8 +2382,80 @@ class ArenaCache:
         self.live_segs.append((gidx, seg_cache_ntok))
         evicted = self.evict()
         S = self._cache_len()
-        return txt, {"mounts": [i + 1 for i in picks], "resident": S,
-                     "evicted": evicted, "live_tokens": sum(n for _, n in self.live_segs)}
+        info = {"mounts": [i + 1 for i in picks], "resident": S,
+                "evicted": evicted,
+                "live_tokens": sum(n for _, n in self.live_segs)}
+        if defer_memory:
+            info["_deferred_memory"] = {
+                "turn_text": turn_text,
+                "user_text": user_text,
+                "seg_cache_ntok": int(seg_cache_ntok),
+                "picks": [int(i) for i in picks],
+                "deposited": False,
+                "importance_committed": False,
+            }
+        return txt, info
+
+    def deposit_deferred_turn(self, info):
+        """Pass 3: deposit the accepted pass-2 output from its live cache.
+
+        This is the deposit/classification block from ``_attempt`` executed
+        after output.  It requires the accepted cache to remain current and
+        replaces the pass-2 ``(None, ntok)`` live-segment marker when that
+        segment still resides in the live window.
+        """
+        pending = (info or {}).get("_deferred_memory")
+        if not isinstance(pending, dict):
+            raise ValueError("missing deferred-memory payload")
+        if pending.get("deposited"):
+            raise RuntimeError("deferred turn already deposited")
+        turn_text = str(pending["turn_text"])
+        user_text = str(pending["user_text"])
+        seg_cache_ntok = int(pending["seg_cache_ntok"])
+        picks = [int(i) for i in pending.get("picks", ())]
+        gidx = (self.deposit_from_cache(turn_text, seg_cache_ntok)
+                if self.cache_deposits else self.deposit(turn_text))
+        if picks:
+            new_rare = (self._rare_tokens(turn_text)
+                        - self._rare_tokens(user_text))
+            for i in picks:
+                g = self.grafts[i]
+                if "rare" not in g:
+                    g["rare"] = self._rare_tokens(g["text"])
+                new_rare -= g["rare"]
+            if not new_rare:
+                self.grafts[gidx]["kind"] = "recall"
+                self._bump_cuda_gqa_epoch()
+        for idx in range(len(self.live_segs) - 1, -1, -1):
+            live_gidx, live_ntok = self.live_segs[idx]
+            if live_gidx is None and int(live_ntok) == seg_cache_ntok:
+                self.live_segs[idx] = (int(gidx), int(live_ntok))
+                break
+        pending["deposit_node_id"] = int(gidx)
+        pending["deposited"] = True
+        return int(gidx)
+
+    def commit_deferred_importance(self, info):
+        """Pass 3: commit the S4 accounting selected by ``step`` in pass 2."""
+        pending = (info or {}).get("_deferred_memory")
+        if not isinstance(pending, dict):
+            raise ValueError("missing deferred-memory payload")
+        importance = pending.get("importance_bookkeeping")
+        if importance is None:
+            return ()
+        if pending.get("importance_committed"):
+            raise RuntimeError("deferred importance already committed")
+        self._commit_s4_attempt(
+            importance.get("routed", ()),
+            importance.get("mounted", ()),
+            importance.get("grounded_mounts", ()),
+            turn=int(importance["turn"]),
+        )
+        pending["importance_committed"] = True
+        return tuple(sorted({
+            int(i) for key in ("routed", "mounted", "grounded_mounts")
+            for i in importance.get(key, ())
+        }))
 
 
 class GQAArenaCache(ArenaCache):

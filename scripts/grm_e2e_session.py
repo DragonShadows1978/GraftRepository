@@ -33,6 +33,11 @@ from core.gpt_oss20b_tc import (  # noqa: E402
 )
 from core.graft_arena import GQAArenaCache  # noqa: E402
 from core.graft_repository import GraftRepository  # noqa: E402
+from core.grm_three_pass import (  # noqa: E402
+    MemoryLedgerBuilder,
+    Pass2ReadOnlyGuard,
+    arena_state_sha256,
+)
 
 
 SNAPSHOT = (
@@ -237,6 +242,12 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
                    help="route multi-mount count (arena.topk); Fork-A default 3")
     p.add_argument("--restart-after", type=int, default=None)
     p.add_argument("--skip-gpu-idle-check", action="store_true")
+    p.add_argument(
+        "--turn-pipeline",
+        choices=("single", "three_pass"),
+        default="single",
+        help="turn scheduler (default single preserves the registered path)",
+    )
     return p.parse_args(argv)
 
 
@@ -327,6 +338,12 @@ class TurnTimers:
         self.deposit_calls = 0
         self.mount_ms = 0.0
         self.mount_calls = 0
+        self.infer_ms = 0.0
+        self.infer_calls = 0
+        self.importance_ms = 0.0
+        self.importance_calls = 0
+        self.supersession_ms = 0.0
+        self.supersession_calls = 0
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -336,6 +353,12 @@ class TurnTimers:
             "deposit_calls": self.deposit_calls,
             "mount_wall_ms": self.mount_ms,
             "mount_calls": self.mount_calls,
+            "infer_wall_ms": self.infer_ms,
+            "infer_calls": self.infer_calls,
+            "importance_bookkeeping_wall_ms": self.importance_ms,
+            "importance_bookkeeping_calls": self.importance_calls,
+            "supersession_wall_ms": self.supersession_ms,
+            "supersession_calls": self.supersession_calls,
         }
 
 
@@ -346,6 +369,8 @@ def install_turn_timers(arena) -> tuple[TurnTimers, Any]:
         "swap": arena.swap,
         "deposit": arena.deposit,
         "deposit_from_cache": arena.deposit_from_cache,
+        "forward": arena._forward,
+        "importance": arena._commit_s4_attempt,
     }
 
     def route_wrapper(*args, **kwargs):
@@ -380,16 +405,36 @@ def install_turn_timers(arena) -> tuple[TurnTimers, Any]:
             timers.deposit_ms += (time.perf_counter() - t0) * 1000.0
             timers.deposit_calls += 1
 
+    def forward_wrapper(*args, **kwargs):
+        t0 = time.perf_counter()
+        try:
+            return original["forward"](*args, **kwargs)
+        finally:
+            timers.infer_ms += (time.perf_counter() - t0) * 1000.0
+            timers.infer_calls += 1
+
+    def importance_wrapper(*args, **kwargs):
+        t0 = time.perf_counter()
+        try:
+            return original["importance"](*args, **kwargs)
+        finally:
+            timers.importance_ms += (time.perf_counter() - t0) * 1000.0
+            timers.importance_calls += 1
+
     arena.route = route_wrapper
     arena.swap = swap_wrapper
     arena.deposit = deposit_wrapper
     arena.deposit_from_cache = deposit_from_cache_wrapper
+    arena._forward = forward_wrapper
+    arena._commit_s4_attempt = importance_wrapper
 
     def restore() -> None:
         arena.route = original["route"]
         arena.swap = original["swap"]
         arena.deposit = original["deposit"]
         arena.deposit_from_cache = original["deposit_from_cache"]
+        arena._forward = original["forward"]
+        arena._commit_s4_attempt = original["importance"]
 
     return timers, restore
 
@@ -520,6 +565,7 @@ def probe_multimount_chat(
     *,
     topk: int,
     ngen: int,
+    defer_memory: bool = False,
 ) -> tuple[str, dict[str, Any]]:
     """Probe path: mount route top-k via arena multi-mount, not argmax-only.
 
@@ -541,7 +587,11 @@ def probe_multimount_chat(
     for layer in arena.m.layers:
         layer.self_attn.live_shift = arena.live_shift
     stops = arena.stop_sequences or ()
-    ans, info = arena._attempt(user_text, picks, int(ngen), True, stops)
+    if defer_memory:
+        ans, info = arena._attempt(
+            user_text, picks, int(ngen), False, stops, defer_memory=True)
+    else:
+        ans, info = arena._attempt(user_text, picks, int(ngen), True, stops)
     info = dict(info or {})
     info["trip"] = 0
     info["driver_probe_multimount"] = True
@@ -550,18 +600,19 @@ def probe_multimount_chat(
     info["mount_fitted"] = picks
     info["mount_dropped_for_width"] = [
         i for i in planned if i not in set(picks)]
-    extracted = repo._extract_from_new_turns(
-        before,
-        context={
-            "event": "chat",
-            "user_text": user_text,
-            "assistant_text": ans,
-        },
-    )
-    if extracted:
-        info["extraction"] = extracted
-    repo.runtime._finish_turn_event(
-        "chat", before, extraction=extracted, autosave=True)
+    if not defer_memory:
+        extracted = repo._extract_from_new_turns(
+            before,
+            context={
+                "event": "chat",
+                "user_text": user_text,
+                "assistant_text": ans,
+            },
+        )
+        if extracted:
+            info["extraction"] = extracted
+        repo.runtime._finish_turn_event(
+            "chat", before, extraction=extracted, autosave=True)
     return ans, info
 
 
@@ -635,6 +686,9 @@ def stage_paths(session_dir: Path) -> dict[str, Path]:
         "scorecard": session_dir / "probe_scorecard.json",
         "summary": session_dir / "summary.json",
         "restart": session_dir / "restart.json",
+        "stage_timing": session_dir / "stage_timing.json",
+        "arena_state": session_dir / "arena_state.json",
+        "memory_ledger": session_dir / "memory_ledger",
     }
 
 
@@ -691,6 +745,160 @@ def plant_complete_turn(
     return answer, info, chat_node_id
 
 
+def run_pass3_memory_management(
+    repo: GraftRepository,
+    event: dict[str, Any],
+    answer: str,
+    info: dict[str, Any],
+    before: list[Any],
+    *,
+    turn_idx: int,
+    session_id: str,
+    timers: TurnTimers,
+) -> tuple[
+    dict[str, Any], int | None, dict[str, Any] | None,
+    dict[str, Any], dict[str, Any],
+]:
+    """Execute all persistent turn mutation after output and receipt it."""
+    ledger = MemoryLedgerBuilder(
+        repo,
+        session_id=session_id,
+        turn_id=str(turn_idx),
+        request_text=event["user"],
+        output_text=answer,
+    )
+    nodes_before = len(repo.arena.grafts)
+    chat_node_id = None
+    correction_result = None
+    extracted: list[Any] = []
+
+    if event["kind"] in ("fact", "supersede"):
+        turn_text = harmony_turn(event["user"], answer)
+
+        def deposit_plant() -> None:
+            repo.arena.feed(turn_text, deposit=True)
+            repo._set_new_node_provenance(before, "exchange_span")
+
+        ledger.record_operation(
+            "deposit",
+            reason_code="complete_turn_deposit",
+            reason_detail="deposit scripted complete plant after output",
+            source_text=turn_text,
+            operation=deposit_plant,
+        )
+
+        result_box: dict[str, Any] = {}
+
+        def finish_plant() -> None:
+            extracted.extend(repo._extract_from_new_turns(
+                before,
+                context={
+                    "event": "plant_feed",
+                    "user_text": event["user"],
+                    "assistant_text": answer,
+                },
+            ))
+            result_box["result"] = repo.runtime._finish_turn_event(
+                "add_turn", before, extraction=extracted, autosave=False)
+
+        ledger.record_operation(
+            "deposit",
+            reason_code="turn_deposit_bookkeeping",
+            reason_detail="provenance, extraction, lifecycle, and paging",
+            source_text=turn_text,
+            operation=finish_plant,
+        )
+        result = result_box["result"]
+        new_nodes = list(getattr(result, "new_nodes", ()) or ())
+        chat_node_id = int(new_nodes[0]) if new_nodes else None
+        if repo.arena.live_segs:
+            gidx, _ntok = repo.arena.live_segs[-1]
+            if gidx is not None:
+                chat_node_id = int(gidx)
+        deposited_text = ""
+        if (chat_node_id is not None
+                and 0 <= chat_node_id < len(repo.arena.grafts)):
+            deposited_text = str(
+                repo.arena.grafts[chat_node_id].get("text", "") or "")
+        value = str(event.get("value") or "")
+        phrase = str(event.get("fact_phrase") or "")
+        info.update({
+            "plant_mode": "feed_complete",
+            "mounts": list(repo.arena.cur_mounts),
+            "live_tokens": int(sum(n for _g, n in repo.arena.live_segs)),
+            "new_nodes": [int(x) for x in new_nodes],
+            "nodes_before": int(nodes_before),
+            "nodes_after": int(len(repo.arena.grafts)),
+            "deposit_contains_value": bool(value and value in deposited_text),
+            "deposit_contains_phrase": bool(phrase and phrase in deposited_text),
+            "deposit_text_prefix": deposited_text[:200],
+            "extraction": list(extracted or ()),
+        })
+    else:
+        ledger.record_operation(
+            "deposit",
+            reason_code="generated_turn_deposit",
+            reason_detail="deposit accepted pass-2 output from live cache",
+            source_text=str(
+                info.get("_deferred_memory", {}).get("turn_text", "")),
+            operation=lambda: repo.arena.deposit_deferred_turn(info),
+        )
+        if info.get("_deferred_memory", {}).get("importance_bookkeeping") is not None:
+            ledger.record_operation(
+                "importance_bookkeeping",
+                reason_code="accepted_route_grounding",
+                reason_detail="commit deferred S4 route/mount/grounding counters",
+                source_text=event["user"],
+                operation=lambda: repo.arena.commit_deferred_importance(info),
+            )
+
+        result_box = {}
+
+        def finish_generated() -> None:
+            extracted.extend(repo._extract_from_new_turns(
+                before,
+                context={
+                    "event": "chat",
+                    "user_text": event["user"],
+                    "assistant_text": answer,
+                },
+            ))
+            if extracted:
+                info["extraction"] = extracted
+            result_box["result"] = repo.runtime._finish_turn_event(
+                "chat", before, extraction=extracted, autosave=True)
+
+        ledger.record_operation(
+            "deposit",
+            reason_code="turn_deposit_bookkeeping",
+            reason_detail="extraction, lifecycle, librarian, and paging",
+            source_text=event["user"],
+            operation=finish_generated,
+        )
+        result = result_box["result"]
+        new_nodes = list(getattr(result, "new_nodes", ()) or ())
+        chat_node_id = int(new_nodes[0]) if new_nodes else None
+
+    if event["kind"] == "supersede":
+        started = time.perf_counter()
+        try:
+            correction_result = ledger.record_operation(
+                "supersession",
+                reason_code="authoritative_correction_command",
+                reason_detail="retire stale fact and write current replacement",
+                source_text=event["correction_command"],
+                operation=lambda: repo.apply_memory_command(
+                    event["correction_command"]),
+            )
+        finally:
+            timers.supersession_ms += (
+                time.perf_counter() - started) * 1000.0
+            timers.supersession_calls += 1
+
+    receipt, audit = ledger.finalize()
+    return info, chat_node_id, correction_result, receipt, audit
+
+
 def run_turn(
     repo: GraftRepository,
     event: dict[str, Any],
@@ -716,48 +924,128 @@ def run_turn(
     route_diag = None
     exc = None
     info: dict[str, Any] = {}
+    pass2_wall_ms = None
+    pass3_wall_ms = None
+    pass2_visible_memory_overhead_ms = None
+    pass2_arena_read_only = None
+    pass2_arena_before_sha256 = None
+    pass2_arena_after_sha256 = None
+    memory_ledger_audit = None
+    memory_ledger_path = None
     try:
-        # Fact/supersede plants: feed() COMPLETE (Leg-1). Probe/filler keep
-        # production chat()→step() so the receipt measures real recall path.
-        if event["kind"] in ("fact", "supersede"):
-            answer, info, chat_node_id = plant_complete_turn(repo, event)
-            plant_mode = info.get("plant_mode")
-            if event["kind"] == "supersede":
-                t0 = time.perf_counter()
-                correction_result = repo.apply_memory_command(
-                    event["correction_command"])
-                correction_wall_ms = (time.perf_counter() - t0) * 1000.0
-        else:
-            if event["kind"] == "probe":
-                source_turn = int(event["source_turn"])
-                source_record = turn_records.get(source_turn, {})
-                source_node = source_record.get(
-                    "memory_node_id", source_record.get("chat_node_id"))
-                route_diag = collect_route_diagnostics(
-                    repo.arena, event["user"], source_node, top_k=5)
-                # Fork A: widen probe mount from argmax to top-k at driver
-                # call site (arena multi-mount picks list), not product patch.
-                answer, info = probe_multimount_chat(
-                    repo,
-                    event["user"],
-                    topk=int(args.topk),
-                    ngen=int(args.ngen),
-                )
-                if route_diag is not None:
-                    route_diag = dict(route_diag)
-                    route_diag["mount_plan"] = info.get("mount_plan")
-                    route_diag["mount_fitted"] = info.get("mount_fitted")
-                    route_diag["mount_dropped_for_width"] = info.get(
-                        "mount_dropped_for_width")
+        if args.turn_pipeline == "single":
+            # Registered legacy path. Fact/supersede plants use feed()
+            # COMPLETE; probe/filler keep production chat()→step().
+            if event["kind"] in ("fact", "supersede"):
+                answer, info, chat_node_id = plant_complete_turn(repo, event)
+                plant_mode = info.get("plant_mode")
+                if event["kind"] == "supersede":
+                    t0 = time.perf_counter()
+                    try:
+                        correction_result = repo.apply_memory_command(
+                            event["correction_command"])
+                    finally:
+                        correction_wall_ms = (
+                            time.perf_counter() - t0) * 1000.0
+                        timers.supersession_ms += correction_wall_ms
+                        timers.supersession_calls += 1
             else:
-                answer, info = repo.runtime.chat(
-                    event["user"],
-                    ngen=int(args.ngen),
-                    max_trips=int(args.max_trips),
-                )
-            last = repo.runtime.last_result
-            new_nodes = list(getattr(last, "new_nodes", ()) or ())
-            chat_node_id = int(new_nodes[0]) if new_nodes else None
+                if event["kind"] == "probe":
+                    source_turn = int(event["source_turn"])
+                    source_record = turn_records.get(source_turn, {})
+                    source_node = source_record.get(
+                        "memory_node_id", source_record.get("chat_node_id"))
+                    route_diag = collect_route_diagnostics(
+                        repo.arena, event["user"], source_node, top_k=5)
+                    # Fork A: widen probe mount from argmax to top-k at driver
+                    # call site (arena multi-mount picks list), not product patch.
+                    answer, info = probe_multimount_chat(
+                        repo,
+                        event["user"],
+                        topk=int(args.topk),
+                        ngen=int(args.ngen),
+                    )
+                    if route_diag is not None:
+                        route_diag = dict(route_diag)
+                        route_diag["mount_plan"] = info.get("mount_plan")
+                        route_diag["mount_fitted"] = info.get("mount_fitted")
+                        route_diag["mount_dropped_for_width"] = info.get(
+                            "mount_dropped_for_width")
+                else:
+                    answer, info = repo.runtime.chat(
+                        event["user"],
+                        ngen=int(args.ngen),
+                        max_trips=int(args.max_trips),
+                    )
+                last = repo.runtime.last_result
+                new_nodes = list(getattr(last, "new_nodes", ()) or ())
+                chat_node_id = int(new_nodes[0]) if new_nodes else None
+        else:
+            before = repo._snapshot_state()
+            guard = Pass2ReadOnlyGuard(repo)
+            pass2_started = time.perf_counter()
+            with guard:
+                if event["kind"] in ("fact", "supersede"):
+                    answer = event.get("assistant") or plant_acceptance(event)
+                    info = {}
+                    plant_mode = "feed_complete"
+                elif event["kind"] == "probe":
+                    source_turn = int(event["source_turn"])
+                    source_record = turn_records.get(source_turn, {})
+                    source_node = source_record.get(
+                        "memory_node_id", source_record.get("chat_node_id"))
+                    route_diag = collect_route_diagnostics(
+                        repo.arena, event["user"], source_node, top_k=5)
+                    answer, info = probe_multimount_chat(
+                        repo,
+                        event["user"],
+                        topk=int(args.topk),
+                        ngen=int(args.ngen),
+                        defer_memory=True,
+                    )
+                    if route_diag is not None:
+                        route_diag = dict(route_diag)
+                        route_diag["mount_plan"] = info.get("mount_plan")
+                        route_diag["mount_fitted"] = info.get("mount_fitted")
+                        route_diag["mount_dropped_for_width"] = info.get(
+                            "mount_dropped_for_width")
+                else:
+                    answer, info = repo.arena.step(
+                        event["user"],
+                        ngen=int(args.ngen),
+                        max_trips=int(args.max_trips),
+                        deposit=False,
+                        defer_memory=True,
+                    )
+            pass2_wall_ms = (
+                time.perf_counter() - pass2_started) * 1000.0
+            pass2_visible_memory_overhead_ms = guard.visible_overhead_ms
+            pass2_arena_read_only = guard.read_only
+            pass2_arena_before_sha256 = guard.before_sha256
+            pass2_arena_after_sha256 = guard.after_sha256
+
+            pass3_started = time.perf_counter()
+            (info, chat_node_id, correction_result, memory_receipt,
+             memory_ledger_audit) = run_pass3_memory_management(
+                repo,
+                event,
+                answer,
+                info,
+                before,
+                turn_idx=turn_idx,
+                session_id=paths["memory_ledger"].parent.name,
+                timers=timers,
+            )
+            correction_wall_ms = timers.supersession_ms
+            plant_mode = info.get("plant_mode", plant_mode)
+            memory_ledger_path = paths["memory_ledger"] / f"turn_{turn_idx:04d}.json"
+            write_json(memory_ledger_path, memory_receipt)
+            pass3_wall_ms = (
+                time.perf_counter() - pass3_started) * 1000.0
+            if not memory_ledger_audit.get("complete"):
+                raise RuntimeError(
+                    "memory-ledger completeness audit failed: "
+                    f"{memory_ledger_audit['missing_targets']}")
     except Exception as err:  # receipt scripts should persist the failure row
         info = info or {}
         exc = repr(err)
@@ -841,6 +1129,13 @@ def run_turn(
         "new_node_count": int(nodes_after - nodes_before),
         "turn_wall_ms": wall_ms,
         "correction_wall_ms": correction_wall_ms,
+        "turn_pipeline": args.turn_pipeline,
+        "pass2_wall_ms": pass2_wall_ms,
+        "pass3_wall_ms": pass3_wall_ms,
+        "pass2_visible_memory_overhead_ms": pass2_visible_memory_overhead_ms,
+        "pass2_arena_read_only": pass2_arena_read_only,
+        "pass2_arena_before_sha256": pass2_arena_before_sha256,
+        "pass2_arena_after_sha256": pass2_arena_after_sha256,
         "vram": vram_snapshot(),
         "info": info,
         "error": exc,
@@ -854,6 +1149,9 @@ def run_turn(
         row["route_ranking"] = route_diag
     if probe_score is not None:
         row["probe_score"] = probe_score
+    if memory_ledger_audit is not None:
+        row["memory_ledger_audit"] = memory_ledger_audit
+        row["memory_ledger_path"] = str(memory_ledger_path)
     append_jsonl(paths["instrumentation"], row)
     print(json.dumps({
         "turn": turn_idx,
@@ -883,6 +1181,78 @@ def write_scorecard(paths: dict[str, Path], probe_rows: list[dict[str, Any]]) ->
         "all_passed": bool(passed == len(probe_rows)),
         "probes": probe_rows,
     })
+
+
+def write_stage_timing(
+    paths: dict[str, Path],
+    rows: list[dict[str, Any]],
+    args: argparse.Namespace,
+) -> dict[str, Any]:
+    stage_fields = (
+        ("route", "route_wall_ms", "route_calls"),
+        ("mount", "mount_wall_ms", "mount_calls"),
+        ("infer", "infer_wall_ms", "infer_calls"),
+        ("deposit", "deposit_wall_ms", "deposit_calls"),
+        ("supersession", "supersession_wall_ms", "supersession_calls"),
+        ("importance_bookkeeping", "importance_bookkeeping_wall_ms",
+         "importance_bookkeeping_calls"),
+    )
+    stages = {}
+    for name, wall_field, calls_field in stage_fields:
+        values = [float(row.get(wall_field, 0.0) or 0.0) for row in rows]
+        stages[name] = {
+            "wall_ms_total": sum(values),
+            "wall_ms_mean_per_turn": sum(values) / len(values) if values else 0.0,
+            "wall_ms_max_turn": max(values) if values else 0.0,
+            "calls": sum(int(row.get(calls_field, 0) or 0) for row in rows),
+        }
+    turn_values = [float(row.get("turn_wall_ms", 0.0) or 0.0) for row in rows]
+    pass2_values = [float(row.get("pass2_wall_ms", 0.0) or 0.0)
+                    for row in rows if row.get("pass2_wall_ms") is not None]
+    pass3_values = [float(row.get("pass3_wall_ms", 0.0) or 0.0)
+                    for row in rows if row.get("pass3_wall_ms") is not None]
+    payload = {
+        "schema": "grm.three_pass.stage_timing.v1",
+        "turn_pipeline": args.turn_pipeline,
+        "frame": {
+            "mode": args.mode,
+            "turns": len(rows),
+            "arena_width": int(args.arena_width),
+            "topk": int(args.topk),
+            "ngen": int(args.ngen),
+            "max_trips": int(args.max_trips),
+            "live_turns": int(args.live_turns),
+            "storage_bits": 8,
+        },
+        "stages": stages,
+        "turn_wall_ms_total": sum(turn_values),
+        "turn_wall_ms_mean": (
+            sum(turn_values) / len(turn_values) if turn_values else 0.0),
+        "pass2_wall_ms_total": sum(pass2_values) if pass2_values else None,
+        "pass3_wall_ms_total": sum(pass3_values) if pass3_values else None,
+        "pass2_visible_memory_overhead_ms_max": max(
+            (float(row.get("pass2_visible_memory_overhead_ms", 0.0) or 0.0)
+             for row in rows
+             if row.get("pass2_visible_memory_overhead_ms") is not None),
+            default=None,
+        ),
+        "pass2_all_arena_read_only": (
+            all(row.get("pass2_arena_read_only") is True for row in rows)
+            if args.turn_pipeline == "three_pass" else None),
+        "turns": [{
+            "turn": int(row["turn"]),
+            "kind": row["kind"],
+            "turn_wall_ms": float(row["turn_wall_ms"]),
+            **{
+                name: float(row.get(wall_field, 0.0) or 0.0)
+                for name, wall_field, _calls_field in stage_fields
+            },
+            "pass2_wall_ms": row.get("pass2_wall_ms"),
+            "pass3_wall_ms": row.get("pass3_wall_ms"),
+        } for row in rows],
+    }
+    write_json(paths["stage_timing"], payload)
+    return payload
 
 
 def maybe_restart(args: argparse.Namespace, session_dir: Path, paths: dict[str, Path],
@@ -919,6 +1289,7 @@ def maybe_restart(args: argparse.Namespace, session_dir: Path, paths: dict[str, 
         "--arena-width", str(args.arena_width),
         "--max-live", str(args.max_live),
         "--topk", str(args.topk),
+        "--turn-pipeline", args.turn_pipeline,
         "--restart-after", str(args.restart_after),
         "--skip-gpu-idle-check",
     ]
@@ -970,6 +1341,7 @@ def main(argv: list[str]) -> int:
             "topk": int(args.topk),
             "ngen": int(args.ngen),
             "max_trips": int(args.max_trips),
+            "turn_pipeline": args.turn_pipeline,
             "template_decision": (
                 "ArenaCache prompt_template + stop_sequences hook; "
                 "probe/filler use real GRMRuntime.chat()/ArenaCache.step(); "
@@ -1024,6 +1396,7 @@ def main(argv: list[str]) -> int:
                 corr["node_id"])
 
     started = time.perf_counter()
+    final_arena_state = None
     try:
         for turn_idx in range(start_turn, len(script)):
             run_turn(
@@ -1043,6 +1416,14 @@ def main(argv: list[str]) -> int:
     finally:
         try:
             repo.flush_now()
+            final_arena_state = {
+                "schema": "grm.three_pass.arena_state.v1",
+                "turn_pipeline": args.turn_pipeline,
+                "node_count": len(repo.arena.grafts),
+                "canonical_sha256": arena_state_sha256(repo),
+                "canonical_with_payload_sha256": arena_state_sha256(
+                    repo, include_payload=True),
+            }
             repo.close()
         except Exception:
             pass
@@ -1054,10 +1435,14 @@ def main(argv: list[str]) -> int:
 
     all_rows = read_jsonl(paths["instrumentation"])
     write_scorecard(paths, probe_rows)
+    stage_timing = write_stage_timing(paths, all_rows, args)
+    if final_arena_state is not None:
+        write_json(paths["arena_state"], final_arena_state)
     summary = {
         "schema": "grm_e2e_session_summary_v1",
         "status": "ok" if all(row.get("pass") for row in probe_rows) else "probe_failures",
         "mode": args.mode,
+        "turn_pipeline": args.turn_pipeline,
         "session_dir": str(session_dir),
         "turns_completed": len(all_rows),
         "turns_expected": len(script),
@@ -1071,6 +1456,8 @@ def main(argv: list[str]) -> int:
         "load_wall_ms_last_process": load_ms,
         "run_wall_ms_this_process": (time.perf_counter() - started) * 1000.0,
         "sample_instrumentation": all_rows[-1] if all_rows else None,
+        "stage_timing": stage_timing,
+        "arena_state": final_arena_state,
     }
     write_json(paths["summary"], summary)
     print(f"summary={paths['summary']}", flush=True)
