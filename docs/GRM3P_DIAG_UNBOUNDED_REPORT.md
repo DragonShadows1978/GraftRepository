@@ -317,3 +317,299 @@ tap to the GPT-OSS fused-kernel path (default-off) to run the ARM D witness;
 S-D2 — add a rehydrate-without-renumber restart mode to give turn 13 an
 invariant-ranking test; S-D3 — characterize the restart-induced turn-24
 refusal (recall vs pure generation).
+
+---
+
+## GRM3P-DIAG-DOSE — budget dose-response + payload diff
+
+Date: 2026-07-23  
+Order: `orders/GRM3P_DIAG_DOSE.md`  
+Scope: diagnosis only; no production fix; no git; no subagents.
+
+### Pre-registration (frozen before any dose run)
+
+Copied from the order; not adjusted after rows:
+
+Under H-REHYDRATE, per-probe recall is predicted by the source node's
+lifecycle, NOT the budget size: a probe passes **iff** its source node was
+packed→evicted→rehydrated at least once before the probe turn ("washed").
+A miss on a washed node, or a pass on a never-washed node at any budget,
+counts **AGAINST** H-REHYDRATE and must be reported as such.
+
+Baseline anchors already on disk:
+
+- unbounded = 7/9 with misses t5/t13 = never-washed sources  
+  (`artifacts/grm_three_pass/diag_unbounded_arm_b_single_r2`)
+- 4MB = 9/9 all-washed  
+  (`artifacts/grm_three_pass/p4_fcold_single`, same F-FULL single frame,
+  `vram_budget_mb=4`)
+
+### Wash determination method (receipt constraint)
+
+`--turn-pipeline single` leaves `step_io` events empty: `TurnStepIOTracker`
+is entered but `current_step` is never set on the single path, so
+`graft_page_in` events are not recorded (contrast `p4_fcold_three_pass`,
+which has 186 page-in events). Wash is therefore reconstructed offline from
+pager physics + instrumentation mounts/rankings (not invented live counters):
+
+- Node device bytes = `ntok * vals_per_tok_layer * 2 * n_layers` with
+  GPT-OSS descriptor values `vals_per_tok_layer=1024`, `n_layers=24`
+  → **4.03125 MB** for the 86-token turn-0 orion node.
+- After each deposit / turn, simulate repository `_page()` LRU spill under
+  the session's `vram_budget_mb` (None = no spill).
+- Restart boundary (`resumed` flips True): all pre-existing nodes marked
+  packed+evicted (host durable; device cleared).
+- Mount/`_ensure_h` candidates taken from `route_ranking.ranking_ids`,
+  `mount_fitted`, and 1-indexed `info.mounts` (fillers).
+- **washed** (lifecycle) = source node is in the ever-spilled set at probe
+  start (packed+evicted at least once; mount therefore uses rehydrate path
+  if cold, or already holds dequant tensors if warm after a prior
+  rehydrate). This is the operational reading of "pack→evict→rehydrate
+  lifecycle" when single-path page-in receipts are absent.
+- Evidence strings record whether the source was cold at probe start and
+  any prior rehydrate turn under the same simulation.
+
+This is **pager-state reconstruction**, not a live `graft_page_in` receipt.
+Where it disagrees with a future live capture, the live capture wins.
+
+### ARM E — dose-response sweep
+
+Frame (identical except budget): `--mode full --turn-pipeline single`, env
+`GRM_GQA_CUDA_ROUTE=1 GRM_GRAFT_STORAGE_BITS=8`, defaults
+(`topk=3`, `live_turns=2`, `arena_width=96`, `restart_after=17`, `ngen=32`),
+sole variable `--vram-budget-mb ∈ {8, 16, 32}`. GPU held under
+`flock -w 7200 /tmp/forge-gpu.lock`.
+
+#### Probe scorecard lines (verbatim)
+
+```text
+E-8MB: 9/9; PASS turns 5, 9, 13, 16, 19, 22, 24, 26, 30.
+```
+
+Transcript SHA-256:
+`f43582ad5de8f4c643fbfa7eb2cadf6d10a63c3757f10f38d12913c53db7d8e9`.  
+Session: `artifacts/grm_three_pass/diag_dose_e_8mb_single`.
+
+```text
+E-16MB: 7/9; FAIL turn 5 orion pin -> 'The current Orion PIN value is Vortex-3-Sierra.'; FAIL turn 13 orion pin -> 'Vortex-3-Sierra.'; PASS turns 9, 16, 19, 22, 24, 26, 30.
+```
+
+Transcript SHA-256:
+`4160c8d073abfb8b850baaecd998c5df79a16e415a945057aca24ee33caebb71`.  
+Session: `artifacts/grm_three_pass/diag_dose_e_16mb_single`.
+
+```text
+E-32MB: 7/9; FAIL turn 5 orion pin -> 'The current Orion PIN value is Vortex-3-Sierra.'; FAIL turn 13 orion pin -> 'Vortex-3-Sierra.'; PASS turns 9, 16, 19, 22, 24, 26, 30.
+```
+
+Transcript SHA-256:
+`06ef1fd2e18680238d241dc7d972d0b269924b43d77e20f2e9f7d997b5731dc5`
+(**byte-identical** to ARM B unbounded transcript).  
+Session: `artifacts/grm_three_pass/diag_dose_e_32mb_single`.
+
+Dose summary (score only): **4MB 9/9 · 8MB 9/9 · 16MB 7/9 · 32MB 7/9 · unbounded 7/9**.
+The failure mode is not a smooth function of budget size; it is a step from
+full pass (≤8MB) to the same two CYPHER-BRIDGE contamination misses as
+unbounded (≥16MB), with 32MB collapsing onto unbounded bytes.
+
+#### Per-probe tables (washed from pager reconstruction)
+
+**E-8MB** (`diag_dose_e_8mb_single`)
+
+| turn | fact | pass | src | washed | rank | evidence |
+|------|------|------|-----|--------|------|----------|
+| 5 | orion pin | True | 0 | True | 1 | spilled_cold_at_probe_start+rehydrate_before@t3 |
+| 9 | cypher bridge | True | 4 | True | 1 | spilled_cold_at_probe_start |
+| 13 | orion pin | True | 7 | True | 2 | spilled_cold_at_probe_start+rehydrate_before@t9 |
+| 16 | lyra dock | True | 13 | True | 2 | spilled_cold_at_probe_start |
+| 19 | nova key | True | 8 | True | 1 | spilled_cold+rehydrate_before@t13+post_restart |
+| 22 | mira seal | True | 20 | True | 2 | spilled_cold+post_restart_or_prior_spill |
+| 24 | terra port | True | 16 | True | 1 | spilled_cold+rehydrate_before@t19+post_restart |
+| 26 | ember code | True | 23 | True | 1 | spilled_cold+rehydrate_before@t24+post_restart |
+| 30 | atlas tone | True | 30 | True | 1 | spilled_cold+post_restart_or_prior_spill |
+
+**E-16MB** (`diag_dose_e_16mb_single`)
+
+| turn | fact | pass | src | washed | rank | evidence |
+|------|------|------|-----|--------|------|----------|
+| 5 | orion pin | False | 0 | False | 1 | never_spilled_device_original |
+| 9 | cypher bridge | True | 4 | True | 1 | spilled_cold_at_probe_start |
+| 13 | orion pin | False | 7 | **True** | 3 | spilled_cold_at_probe_start (**AGAINST: miss on washed**) |
+| 16 | lyra dock | True | 13 | False | 2 | never_spilled_device_original (**AGAINST: pass on never-washed**) |
+| 19 | nova key | True | 8 | True | 1 | rehydrate_before@t13+post_restart |
+| 22 | mira seal | True | 21 | False | 2 | never_spilled_device_original (**AGAINST**) |
+| 24 | terra port | True | 16 | True | 1 | spilled_cold+rehydrate_before@t19+post_restart |
+| 26 | ember code | True | 24 | True | 1 | rehydrate_before@t24+post_restart |
+| 30 | atlas tone | True | 31 | False | 1 | never_spilled_device_original (**AGAINST**) |
+
+**E-32MB** (`diag_dose_e_32mb_single`)
+
+| turn | fact | pass | src | washed | rank | evidence |
+|------|------|------|-----|--------|------|----------|
+| 5 | orion pin | False | 0 | False | 1 | never_spilled_device_original |
+| 9 | cypher bridge | True | 4 | False | 1 | never_spilled_device_original (**AGAINST**) |
+| 13 | orion pin | False | 7 | False | 3 | never_spilled_device_original |
+| 16 | lyra dock | True | 13 | False | 2 | never_spilled_device_original (**AGAINST**) |
+| 19 | nova key | True | 8 | True | 1 | spilled_cold+rehydrate_before@t13+post_restart |
+| 22 | mira seal | True | 20 | False | 2 | never_spilled_device_original (**AGAINST**) |
+| 24 | terra port | True | 16 | True | 1 | rehydrate_before@t19+post_restart |
+| 26 | ember code | True | 23 | True | 1 | rehydrate_before@t24+post_restart |
+| 30 | atlas tone | True | 30 | False | 1 | never_spilled_device_original (**AGAINST**) |
+
+**ANCHOR-unbounded** (`diag_unbounded_arm_b_single_r2`, 7/9)
+
+| turn | fact | pass | src | washed | rank | evidence |
+|------|------|------|-----|--------|------|----------|
+| 5 | orion pin | False | 0 | False | 1 | never_spilled_device_original |
+| 9 | cypher bridge | True | 4 | False | 1 | never_spilled_device_original (**AGAINST**) |
+| 13 | orion pin | False | 7 | False | 3 | never_spilled_device_original |
+| 16 | lyra dock | True | 13 | False | 2 | never_spilled_device_original (**AGAINST**) |
+| 19 | nova key | True | 8 | True | 1 | spilled_cold+post_restart |
+| 22 | mira seal | True | 20 | False | 2 | never_spilled_device_original (**AGAINST**) |
+| 24 | terra port | True | 16 | True | 1 | rehydrate_before@t19+post_restart |
+| 26 | ember code | True | 23 | False | 1 | never_spilled_device_original (**AGAINST**) |
+| 30 | atlas tone | True | 30 | False | 1 | never_spilled_device_original (**AGAINST**) |
+
+**ANCHOR-4MB** (`p4_fcold_single`, 9/9)
+
+| turn | fact | pass | src | washed | rank | evidence |
+|------|------|------|-----|--------|------|----------|
+| 5 | orion pin | True | 0 | True | 1 | spilled_cold+rehydrate_before@t3 |
+| 9 | cypher bridge | True | 4 | True | 1 | spilled_cold_at_probe_start |
+| 13 | orion pin | True | 7 | True | 2 | spilled_cold+rehydrate_before@t9 |
+| 16 | lyra dock | True | 13 | True | 2 | spilled_cold+rehydrate_before@t13 |
+| 19 | nova key | True | 8 | True | 1 | spilled_cold+rehydrate_before@t13+post_restart |
+| 22 | mira seal | True | 20 | True | 2 | spilled_cold+rehydrate_before@t19+post_restart |
+| 24 | terra port | True | 16 | True | 1 | spilled_cold+rehydrate_before@t19+post_restart |
+| 26 | ember code | True | 23 | True | 1 | spilled_cold+rehydrate_before@t24+post_restart |
+| 30 | atlas tone | True | 30 | True | 1 | spilled_cold+post_restart_or_prior_spill |
+
+#### Cross-budget correlation (45 probe rows = 27 dose + 18 anchors)
+
+| washed \ pass | FAIL | PASS | row total |
+|---------------|------|------|-----------|
+| never_washed  | 5    | 12   | 17        |
+| washed        | 1    | 27   | 28        |
+| col total     | 6    | 39   | **45**    |
+
+Frozen prediction agreement (pass iff washed): **32/45**.  
+**AGAINST** rows: **13/45**.
+
+- **miss on washed (1):** E-16MB turn 13 src=7 (spilled cold at probe start; still answers Vortex-3-Sierra).
+- **pass on never-washed (12):** E-16MB t16/t22/t30; E-32MB t9/t16/t22/t30; unbounded t9/t16/t22/t26/t30.
+
+#### ARM E verdict (frozen prediction, unadjusted)
+
+**H-REHYDRATE as a biconditional (pass iff washed) is FALSIFIED** under the
+registered counting rule: 13 AGAINST rows, including one miss-on-washed and
+twelve pass-on-never-washed.
+
+What remains as **partial, non-biconditional support** (descriptive, not a
+redefinition of the frozen claim):
+
+1. Tight budgets that force wash of the t5/t13 sources (4MB, 8MB) are 9/9;
+   budgets that leave t5's source never-washed (16MB, 32MB, unbounded) miss
+   t5 with the same CYPHER-BRIDGE contamination.
+2. 32MB is not an intermediate phenotype: its transcript is byte-identical to
+   unbounded ARM B, so above ~one-to-few node residency the budget knob is
+   idle for this script.
+3. Wash is **not sufficient** (16MB t13 washed+FAIL) and **not necessary**
+   (many never-washed PASSes, especially non-orion probes and post-deposit
+   nodes that never spill).
+
+Per the order: the falsification arm is as reportable as confirmation. The
+frozen biconditional does not hold.
+
+### ARM F — payload diff (turn-5 source node 0; ARM B vs C3)
+
+Sessions:
+
+- unbounded ARM B: `artifacts/grm_three_pass/diag_unbounded_arm_b_single_r2`
+- C3 early-rehydrate: `artifacts/grm_three_pass/diag_unbounded_c3_early_rehydrate_r3`
+
+#### On-disk packed payload (end-of-session `repository/nodes/0000.npz`)
+
+| field | ARM B | C3 | equal? |
+|-------|-------|-----|--------|
+| file SHA-256 | `4860e405f69e8099a028fd380b6ad1da3f6f2faed149e45cb4cbf40785f9f22c` | same | **YES (byte-identical file)** |
+| format_version / storage_bits / group_size | 1 / 8 / 32 | same | YES |
+| k_codes / v_codes shape, dtype | (24,8,86,2,32) int8 | same | YES, n_diff=0 |
+| k_scales / v_scales | (24,8,86,2,1) float32 | same | YES, maxdiff=0 |
+| k_shape / v_shape | [24,8,86,64] | same | YES |
+| dequantized K max\|Δ\| / mean\|Δ\| | 0 / 0 | — | identical |
+| dequantized V max\|Δ\| / mean\|Δ\| | 0 / 0 | — | identical |
+| index `rkey_0000` | float32 (8,86,64) | same | maxdiff=0 |
+| dialect_descriptor | GQA, rope_full_yarn, seat_remountable, 8×64 | same | YES |
+| manifest ntok / native_node_id / retired | 86 / 0 / true | same | YES |
+| host_present / device_present (end state) | False / False | True / True | end-of-session only; not turn-5 |
+
+Quant-grid scale (from packed scales; **not** a measured original-vs-dequant
+diff, because the original device deposit is not on disk):
+
+- mean k_scale ≈ 0.1986 → typical code step scale/127 ≈ **1.56e-3**
+- mean v_scale ≈ 0.0465 → typical step ≈ **3.66e-4**
+- dequant K range ≈ [-236, 174], mean|K|≈2.90; V range ≈ [-61.5, 38.5], mean|V|≈1.98
+
+#### Classification
+
+**INSUFFICIENT ARTIFACTS to classify NUMERIC-ONLY / STRUCTURAL / BOTH** for
+the registered comparison (device-resident deposit payload **at turn 5** vs
+rehydrated payload **at turn 5**).
+
+Reason (receipt-level):
+
+1. Both sessions only persist the **packed** `storage_bits=8` host form at
+   flush/end. ARM B's never-washed turn-5 mount used the **original device
+   `h` tensors** produced at deposit; those tensors are never snapshotted to
+   disk. After the session, B and C3 node 0 packs are **byte-identical**, so
+   end-state packs cannot separate "what B mounted at t5" from "what C3
+   mounted at t5 after rehydrate."
+2. No on-disk capture of un-RoPE seating positions, arena seat indices, or
+   per-layer device dtypes at probe time exists in either session's
+   instrumentation (only route/mount IDs and token-level `evicted`/`resident`
+   live-window counters).
+3. Manifest `host_present`/`device_present` differ only as **end-of-session**
+   residency bookkeeping, not as a turn-5 payload diff.
+
+Therefore ARM F cannot measure dequantized value max/mean per layer between
+device-resident deposit and rehydrated forms from artifacts alone.
+
+#### Live capture required (do not build; listed only)
+
+To complete the registered ARM F comparison, a future instrumented run must
+capture, for node 0:
+
+1. **T0+ deposit snapshot:** per-layer device K/V tensors (or fp16 host
+   clone) immediately after turn-0 plant, **before** any
+   `pack_node`/`_ensure_host_payload`/`_page` (true device-resident original).
+2. **T5 mount snapshot (ARM B unbounded):** the exact `h` tensor object (or
+   byte clone) used at turn-5 `_ensure_h`/`swap` for node 0, plus arena seat
+   positions, RoPE/un-RoPE flags, mount_plan/fitted, and whether
+   `node_loader` ran.
+3. **T5 mount snapshot (C3 after restart):** same fields after
+   pack→evict→`unpack_node` rehydrate, still with route invariants held.
+4. Optional: packed intermediate `host_payload` bytes at the C3 restart
+   flush for node 0 (should match end-state pack if no further mutation).
+5. Then compute per-layer max/mean |B_device − C3_rehyd| on K and V and
+   classify NUMERIC-ONLY vs STRUCTURAL vs BOTH against those two live
+   tensors — not against end-of-session packs.
+
+### Dose + F residuals
+
+- Single-path `step_io` page-in receipts are empty by construction; wash
+  tables are offline LRU reconstructions. Cross-check against
+  `p4_fcold_three_pass` page-ins is consistent for the 4MB all-washed claim
+  but is not a substitute for live single-path page-in IDs.
+- 16MB t13 miss-on-washed is a hard AGAINST under the frozen rule; mechanism
+  for that row is not identified here (could be ranking/mount
+  confounds — source_rank 3, fitted `[5,7]` — rather than payload path).
+- Pass-on-never-washed rows show many facts are recallable from original
+  device deposits; the t5/t13 orion+CYPHER pattern is special, not universal.
+- ARM F cannot close the numeric-vs-structural question without live capture.
+- No `core/` or `scripts/` edits; no git; GPU under flock; diagnostic only.
+
+Named successors (one-liners, no fixes): S-E1 — enable single-path step_io
+`current_step` attribution so wash is a live receipt not a reconstruction;
+S-E2 — live ARM F dual snapshot (deposit h vs post-rehydrate h) on node 0 at
+t5; S-E3 — isolate 16MB t13 washed-miss (rank-3 / multi-mount) from pure
+payload-path effects.
