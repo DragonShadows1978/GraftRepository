@@ -235,6 +235,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     # the driver call-site width of that slice (default 3 for this receipt).
     p.add_argument("--topk", type=int, default=3,
                    help="route multi-mount count (arena.topk); Fork-A default 3")
+    p.add_argument("--revision-aware-resolver", action="store_true",
+                   help="opt in to exact active fact-family resolution")
     p.add_argument("--restart-after", type=int, default=None)
     p.add_argument("--skip-gpu-idle-check", action="store_true")
     return p.parse_args(argv)
@@ -495,6 +497,8 @@ def collect_route_diagnostics(
         "route_backend": backend,
         "score_error": score_err,
         "live_excluded": sorted(int(x) for x in live_idx),
+        "route_resolution": dict(getattr(
+            arena, "last_route_resolution", {}) or {}),
         # Full rank order kept so max-pool length bias stays visible even
         # when the mount slice is wider than 1 (Fork A: do not hide bias).
         "ranking_ids": [int(x) for x in ranking],
@@ -534,7 +538,12 @@ def probe_multimount_chat(
     live_idx = {g for g, _ in arena.live_segs if g is not None}
     want = max(int(topk), 1)
     ranking = list(arena.route(user_text, exclude=live_idx, limit=want) or [])
-    planned = [int(x) for x in ranking[:want]]
+    resolution = dict(getattr(arena, "last_route_resolution", {}) or {})
+    pinned = list(resolution.get("pinned_node_ids", ()))
+    if resolution.get("state") == "exact" and len(pinned) == 1:
+        planned = [int(pinned[0])]
+    else:
+        planned = [int(x) for x in ranking[:want]]
     fitted = _budget_fit_mounts(arena, planned)
     # Seat in sorted order (matches arena._attempt / swap convention).
     picks = sorted(fitted)
@@ -546,6 +555,9 @@ def probe_multimount_chat(
     info["trip"] = 0
     info["driver_probe_multimount"] = True
     info["driver_topk"] = int(want)
+    info["route_resolution"] = resolution
+    info["driver_exact_fact_mount"] = bool(
+        resolution.get("state") == "exact" and len(pinned) == 1)
     info["mount_plan"] = planned
     info["mount_fitted"] = picks
     info["mount_dropped_for_width"] = [
@@ -604,6 +616,7 @@ def load_model_and_repo(args: argparse.Namespace, session_dir: Path):
         arena_cls=GptOssGQAArenaCache,
         native_lib_path=str(args.native_lib) if args.native_lib else None,
         native_auto=False,
+        revision_aware_resolver=bool(args.revision_aware_resolver),
         **arena_kw,
     )
     return model, tokenizer, repo, model_info
@@ -922,6 +935,8 @@ def maybe_restart(args: argparse.Namespace, session_dir: Path, paths: dict[str, 
         "--restart-after", str(args.restart_after),
         "--skip-gpu-idle-check",
     ]
+    if args.revision_aware_resolver:
+        argv.append("--revision-aware-resolver")
     os.execvpe(sys.executable, argv, os.environ.copy())
 
 
@@ -968,6 +983,7 @@ def main(argv: list[str]) -> int:
             "live_turns": int(args.live_turns),
             "arena_width": int(args.arena_width),
             "topk": int(args.topk),
+            "revision_aware_resolver": bool(args.revision_aware_resolver),
             "ngen": int(args.ngen),
             "max_trips": int(args.max_trips),
             "template_decision": (

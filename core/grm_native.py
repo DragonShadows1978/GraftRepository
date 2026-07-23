@@ -51,6 +51,14 @@ class _GraphEdgesInfoC(ctypes.Structure):
     ]
 
 
+class _FactResolutionInfoC(ctypes.Structure):
+    _fields_ = [
+        ("state", ctypes.c_uint64),
+        ("candidate_count", ctypes.c_uint64),
+        ("inactive_rejected", ctypes.c_uint64),
+    ]
+
+
 class _ArenaSwapPlanC(ctypes.Structure):
     _fields_ = [
         ("sink_tokens", ctypes.c_uint64),
@@ -117,6 +125,13 @@ class GraphEdges:
     source_grafts: tuple
     supersedes: tuple
     superseded_by: tuple
+
+
+@dataclass(frozen=True)
+class FactQueryResolution:
+    state: str
+    candidate_node_ids: tuple
+    inactive_rejected: int
 
 
 @dataclass(frozen=True)
@@ -379,6 +394,14 @@ class NativeGraftStore:
                     ctypes.POINTER(ctypes.c_uint64), ctypes.c_uint64,
                     ctypes.POINTER(ctypes.c_uint64)]
                 lib.grm_store_fact_matches_ex.restype = ctypes.c_int
+        self._has_fact_resolver = hasattr(lib, "grm_store_resolve_fact_query")
+        if self._has_fact_resolver:
+            u64p = ctypes.POINTER(ctypes.c_uint64)
+            lib.grm_store_resolve_fact_query.argtypes = [
+                ctypes.c_void_p, ctypes.c_char_p, u64p, ctypes.c_uint64,
+                u64p, ctypes.c_uint64,
+                ctypes.POINTER(_FactResolutionInfoC)]
+            lib.grm_store_resolve_fact_query.restype = ctypes.c_int
         self._has_filter_active_nodes = hasattr(
             lib, "grm_store_filter_active_nodes")
         if self._has_filter_active_nodes:
@@ -955,6 +978,29 @@ class NativeGraftStore:
                 self._handle, *args, int(value_mode), out, int(needed.value),
                 ctypes.byref(got)))
         return tuple(int(out[i]) for i in range(int(got.value)))
+
+    def resolve_fact_query(self, query_keys, candidate_node_ids):
+        if not getattr(self, "_has_fact_resolver", False):
+            raise RuntimeError("native GRM fact resolver is unavailable")
+        candidates, candidate_count = self._u64_array(candidate_node_ids)
+        info = _FactResolutionInfoC()
+        out = None
+        if candidate_count:
+            out_t = ctypes.c_uint64 * candidate_count
+            out = out_t()
+        self._check(self._lib.grm_store_resolve_fact_query(
+            self._handle, self._lexical_blob(query_keys), candidates,
+            candidate_count, out, candidate_count, ctypes.byref(info)))
+        count = int(info.candidate_count)
+        if count > candidate_count:
+            raise RuntimeError("native GRM fact resolver output overflow")
+        values = tuple(int(out[i]) for i in range(count)) if out is not None \
+            else ()
+        states = {0: "no_match", 1: "exact", 2: "ambiguous"}
+        return FactQueryResolution(
+            state=states.get(int(info.state), "failed"),
+            candidate_node_ids=values,
+            inactive_rejected=int(info.inactive_rejected))
 
     def filter_active_nodes(self, node_ids):
         if not getattr(self, "_has_filter_active_nodes", False):

@@ -87,6 +87,14 @@ class ArenaCache:
         self.live_segs = []             # [(graft_idx or None, ntok), ...]
         self.grafts = []                # {h, cent, ntok, text}
         self.last_route_backend = "python"
+        self.route_resolver = None      # optional repository policy callback
+        self.last_route_resolution = {
+            "state": "disabled", "backend": "none",
+            "query_family_keys": [], "matched_subject": "",
+            "predicate": "", "scope": "", "pinned_node_ids": [],
+            "candidate_node_ids": [], "inactive_rejected": 0,
+            "reason": "revision-aware resolver disabled",
+        }
 
     def _format_step_prompt(self, user_text):
         if self.prompt_template is None:
@@ -361,6 +369,13 @@ class ArenaCache:
         return len(self.grafts) - 1
 
     def route(self, bare_text, exclude, limit=None):
+        self.last_route_resolution = {
+            "state": "disabled", "backend": "none",
+            "query_family_keys": [], "matched_subject": "",
+            "predicate": "", "scope": "", "pinned_node_ids": [],
+            "candidate_node_ids": [], "inactive_rejected": 0,
+            "reason": "revision-aware resolver disabled",
+        }
         if not self.grafts:
             return []
         route_limit = None if limit is None else max(0, int(limit))
@@ -407,7 +422,8 @@ class ArenaCache:
             p, qrare, cand, limit=route_limit, exclude=exclude)
         if native_order is not None and not self._query_lex_needs_rescore(
                 content_extra, cand):
-            return native_order
+            return self._apply_route_resolution(
+                bare_text, qlex, cand, native_order, route_limit)
         self.last_route_backend = "python"
         base = self._vector_route_scores(p, cand)
         if base is None:
@@ -429,9 +445,31 @@ class ArenaCache:
                 scored.append((score, i))
         scored.sort(key=lambda item: -item[0])
         ranking = [i for _, i in scored]          # best first
-        if route_limit is not None:
-            return ranking[:route_limit]
-        return ranking
+        return self._apply_route_resolution(
+            bare_text, qlex, cand, ranking, route_limit)
+
+    def _apply_route_resolution(self, bare_text, qlex, cand, ranking, limit):
+        resolver = getattr(self, "route_resolver", None)
+        if resolver is None:
+            return ranking if limit is None else ranking[:limit]
+        try:
+            result = resolver(
+                bare_text=bare_text, query_keys=set(qlex),
+                candidate_ids=list(cand), semantic_ranking=list(ranking),
+                limit=limit)
+            resolved = list(result.pop("ranking"))
+            self.last_route_resolution = result
+        except Exception as exc:
+            resolved = list(ranking)
+            self.last_route_resolution = {
+                "state": "failed", "backend": "python",
+                "query_family_keys": sorted(str(k) for k in qlex),
+                "matched_subject": "", "predicate": "", "scope": "",
+                "pinned_node_ids": [], "candidate_node_ids": [],
+                "inactive_rejected": 0,
+                "reason": f"resolver failed closed: {exc}",
+            }
+        return resolved if limit is None else resolved[:limit]
 
     def _vector_route_scores(self, p, cand):
         if (type(self)._key_score is not ArenaCache._key_score
@@ -1744,6 +1782,7 @@ class ArenaCache:
         live_idx = {g for g, _ in self.live_segs if g is not None} | set(rec)
         route_limit = max(1, (int(max_trips) + 1) * int(self.topk))
         ranking = self.route(user_text, exclude=live_idx, limit=route_limit)
+        route_resolution = dict(self.last_route_resolution)
         snap = (self.caches, self.pos, list(self.live_segs),
                 self.cur_mounts, self.cur_mount_n, len(self.grafts))
         # PRECISE-MOUNT policy (corpus-100 lesson): an identifier query is a
@@ -1755,7 +1794,12 @@ class ArenaCache:
         attempts = []                # (picks, clean_room)
         qrare = self._rare_tokens(user_text)
         precise = None
-        if ranking and qrare:
+        pinned = route_resolution.get("pinned_node_ids", [])
+        if (route_resolution.get("state") == "exact" and len(pinned) == 1
+                and pinned[0] in ranking):
+            precise = [int(pinned[0])]
+            attempts.append((precise, False))
+        elif ranking and qrare:
             g0 = self.grafts[ranking[0]]
             if "rare" not in g0:
                 g0["rare"] = self._rare_tokens(g0["text"])
@@ -1840,6 +1884,7 @@ class ArenaCache:
             mset = sorted(set(rec) | set(picks)) if use_rec else sorted(set(picks))
             txt, info = self._attempt(user_text, mset, ngen, deposit, stops)
             info["trip"] = trip
+            info["route_resolution"] = route_resolution
             if clean:
                 info["clean_room"] = True
             if self._grounded(txt, mset, user_text):
@@ -1853,6 +1898,7 @@ class ArenaCache:
             txt, info = self._attempt(user_text, [], ngen, deposit, stops)
             info["trip"] = 0
             info["no_mount_fit"] = True
+            info["route_resolution"] = route_resolution
             return txt, info
         txt, info, st = best
         (self.caches, self.pos, self.live_segs,

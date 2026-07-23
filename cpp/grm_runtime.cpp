@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <limits>
 #include <memory>
+#include <map>
 #include <mutex>
 #include <set>
 #include <shared_mutex>
@@ -627,6 +628,37 @@ std::string norm_fact_field(const std::string& value) {
 std::string norm_fact_scope(const std::string& value) {
   const auto out = norm_fact_field(value);
   return out.empty() ? "project" : out;
+}
+
+std::vector<std::string> fact_subject_tokens(const std::string& value) {
+  std::vector<std::string> out;
+  std::string token;
+  const auto normalized = norm_fact_field(value);
+  for (const unsigned char c : normalized) {
+    if (std::isalnum(c) != 0 || c == '-' || c == '_') {
+      token.push_back(static_cast<char>(c));
+    } else if (!token.empty()) {
+      out.push_back(std::move(token));
+      token.clear();
+    }
+  }
+  if (!token.empty()) {
+    out.push_back(std::move(token));
+  }
+  std::sort(out.begin(), out.end());
+  out.erase(std::unique(out.begin(), out.end()), out.end());
+  return out;
+}
+
+std::string fact_subject_signature(const std::vector<std::string>& tokens) {
+  std::string out;
+  for (std::size_t i = 0; i < tokens.size(); ++i) {
+    if (i > 0) {
+      out.push_back('\x1e');
+    }
+    out += tokens[i];
+  }
+  return out;
 }
 
 bool parse_int_span(const std::string& s,
@@ -1876,6 +1908,7 @@ std::uint64_t HostGraftStore::add_node(HostGraftNode node) {
   node.lifecycle.durable = false;
   node.lifecycle.cold_only = false;
   nodes_[id] = std::move(node);
+  add_fact_subject_index(id, nodes_.at(id).metadata.subject);
   dirty_.mark(id, true, true);
   return id;
 }
@@ -2206,9 +2239,12 @@ void HostGraftStore::set_fact_identity(std::uint64_t node_id,
     throw std::out_of_range("unknown GRM node id");
   }
   bool changed = false;
+  const auto old_subject = n->metadata.subject;
+  bool subject_changed = false;
   if (n->metadata.subject != identity.subject) {
     n->metadata.subject = std::move(identity.subject);
     changed = true;
+    subject_changed = true;
   }
   if (n->metadata.predicate != identity.predicate) {
     n->metadata.predicate = std::move(identity.predicate);
@@ -2231,7 +2267,56 @@ void HostGraftStore::set_fact_identity(std::uint64_t node_id,
     changed = true;
   }
   if (changed) {
+    if (subject_changed) {
+      remove_fact_subject_index(node_id, old_subject);
+      add_fact_subject_index(node_id, n->metadata.subject);
+    }
     mark_dirty(node_id, false, true);
+  }
+}
+
+void HostGraftStore::remove_fact_subject_index(
+    std::uint64_t node_id, const std::string& subject) {
+  const auto tokens = fact_subject_tokens(subject);
+  for (const auto& token : tokens) {
+    const auto it = fact_subject_token_index_.find(token);
+    if (it == fact_subject_token_index_.end()) {
+      continue;
+    }
+    it->second.erase(node_id);
+    if (it->second.empty()) {
+      fact_subject_token_index_.erase(it);
+    }
+  }
+  if (!tokens.empty()) {
+    const auto signature = fact_subject_signature(tokens);
+    const auto it = fact_subject_signature_index_.find(signature);
+    if (it != fact_subject_signature_index_.end()) {
+      it->second.erase(node_id);
+      if (it->second.empty()) {
+        fact_subject_signature_index_.erase(it);
+      }
+    }
+  }
+}
+
+void HostGraftStore::add_fact_subject_index(
+    std::uint64_t node_id, const std::string& subject) {
+  const auto tokens = fact_subject_tokens(subject);
+  for (const auto& token : tokens) {
+    fact_subject_token_index_[token].insert(node_id);
+  }
+  if (!tokens.empty()) {
+    fact_subject_signature_index_[fact_subject_signature(tokens)].insert(
+        node_id);
+  }
+}
+
+void HostGraftStore::rebuild_fact_subject_index() {
+  fact_subject_token_index_.clear();
+  fact_subject_signature_index_.clear();
+  for (const auto& pair : nodes_) {
+    add_fact_subject_index(pair.first, pair.second.metadata.subject);
   }
 }
 
@@ -2289,6 +2374,139 @@ std::vector<std::uint64_t> HostGraftStore::fact_matches(
     out.push_back(id);
   }
   return out;
+}
+
+FactQueryResolution HostGraftStore::resolve_fact_query(
+    const std::vector<std::string>& query_keys,
+    const std::vector<std::uint64_t>& candidate_node_ids) const {
+  FactQueryResolution result;
+  std::unordered_set<std::string> query;
+  for (const auto& key : query_keys) {
+    for (const auto& token : fact_subject_tokens(key)) {
+      query.insert(token);
+    }
+  }
+  if (query.empty() || candidate_node_ids.empty()) {
+    return result;
+  }
+
+  std::unordered_set<std::uint64_t> allowed(candidate_node_ids.begin(),
+                                             candidate_node_ids.end());
+  std::set<std::uint64_t> indexed;
+  if (query.size() <= 8) {
+    std::vector<std::string> query_vector(query.begin(), query.end());
+    std::sort(query_vector.begin(), query_vector.end());
+    const std::uint64_t combinations =
+        std::uint64_t{1} << query_vector.size();
+    for (std::uint64_t mask = 1; mask < combinations; ++mask) {
+      std::vector<std::string> subset;
+      subset.reserve(query_vector.size());
+      for (std::size_t i = 0; i < query_vector.size(); ++i) {
+        if ((mask & (std::uint64_t{1} << i)) != 0) {
+          subset.push_back(query_vector[i]);
+        }
+      }
+      const auto it = fact_subject_signature_index_.find(
+          fact_subject_signature(subset));
+      if (it == fact_subject_signature_index_.end()) {
+        continue;
+      }
+      for (const auto node_id : it->second) {
+        if (allowed.count(node_id) != 0) {
+          indexed.insert(node_id);
+        }
+      }
+    }
+  } else {
+    for (const auto& token : query) {
+      const auto it = fact_subject_token_index_.find(token);
+      if (it == fact_subject_token_index_.end()) {
+        continue;
+      }
+      for (const auto node_id : it->second) {
+        if (allowed.count(node_id) != 0) {
+          indexed.insert(node_id);
+        }
+      }
+    }
+  }
+
+  struct Family {
+    std::size_t specificity = 0;
+    std::vector<std::uint64_t> active;
+  };
+  std::map<std::string, Family> families;
+  for (const auto node_id : indexed) {
+    const auto* node = get(node_id);
+    if (node == nullptr) {
+      continue;
+    }
+    const auto& meta = node->metadata;
+    if (norm_fact_field(meta.kind) != "fact" ||
+        norm_fact_field(meta.predicate).empty()) {
+      continue;
+    }
+    const auto subject = norm_fact_field(meta.subject);
+    const auto subject_tokens = fact_subject_tokens(subject);
+    if (subject_tokens.empty()) {
+      continue;
+    }
+    bool exact_subject = true;
+    for (const auto& token : subject_tokens) {
+      if (query.count(token) == 0) {
+        exact_subject = false;
+        break;
+      }
+    }
+    if (!exact_subject) {
+      continue;
+    }
+    if (!meta.active) {
+      ++result.inactive_rejected;
+      continue;
+    }
+    const auto family_key = subject + "\x1f" +
+                            norm_fact_field(meta.predicate) + "\x1f" +
+                            norm_fact_scope(meta.scope);
+    auto& family = families[family_key];
+    family.specificity = subject_tokens.size();
+    family.active.push_back(node_id);
+  }
+
+  std::size_t best_specificity = 0;
+  std::vector<const Family*> best;
+  for (auto& pair : families) {
+    auto& family = pair.second;
+    std::sort(family.active.begin(), family.active.end());
+    family.active.erase(
+        std::unique(family.active.begin(), family.active.end()),
+        family.active.end());
+    if (family.specificity > best_specificity) {
+      best_specificity = family.specificity;
+      best.clear();
+      best.push_back(&family);
+    } else if (family.specificity == best_specificity) {
+      best.push_back(&family);
+    }
+  }
+  if (best.empty()) {
+    return result;
+  }
+  for (const auto* family : best) {
+    result.candidate_node_ids.insert(result.candidate_node_ids.end(),
+                                     family->active.begin(),
+                                     family->active.end());
+  }
+  std::sort(result.candidate_node_ids.begin(),
+            result.candidate_node_ids.end());
+  result.candidate_node_ids.erase(
+      std::unique(result.candidate_node_ids.begin(),
+                  result.candidate_node_ids.end()),
+      result.candidate_node_ids.end());
+  result.state = (best.size() == 1 && best.front()->active.size() == 1)
+                     ? 1
+                     : 2;
+  return result;
 }
 
 std::vector<std::uint64_t> HostGraftStore::filter_active_nodes(
@@ -2738,6 +2956,7 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
   }
   nodes_ = std::move(loaded);
   next_id_ = count == 0 ? 0 : max_id + 1;
+  rebuild_fact_subject_index();
   dirty_.clear_all();
 }
 
@@ -5165,6 +5384,7 @@ struct grm_store_handle {
   std::atomic<std::uint64_t> router_epoch{0};
   std::atomic<bool> router_snapshot_dirty{true};
   std::shared_mutex router_mutex;
+  std::shared_mutex fact_mutex;
   bool router_needs_prepare = true;
   grm::DeviceArena arena;
   std::mutex error_mutex;
@@ -5456,6 +5676,7 @@ int grm_store_add_node(grm_store_handle* handle,
       auto& bytes = node.payload.tensors.back().bytes;
       bytes.assign(payload, payload + payload_len);
     }
+    std::unique_lock<std::shared_mutex> fact_lock(handle->fact_mutex);
     *out_node_id = handle->store->add_node(std::move(node));
     return 0;
   } catch (const std::exception& exc) {
@@ -5678,6 +5899,7 @@ int grm_store_set_active(grm_store_handle* handle,
       return grm_fail_msg(handle, "invalid set_active arguments");
     }
     const bool is_active = active != 0;
+    std::unique_lock<std::shared_mutex> fact_lock(handle->fact_mutex);
     handle->store->set_active(node_id, is_active);
     std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->router.set_active(node_id, is_active);
@@ -5747,6 +5969,7 @@ int grm_store_set_route_metadata(grm_store_handle* handle,
     if (handle == nullptr || handle->store == nullptr) {
       return grm_fail_msg(handle, "invalid set_route_metadata arguments");
     }
+    std::unique_lock<std::shared_mutex> fact_lock(handle->fact_mutex);
     handle->store->set_route_metadata(node_id, kind == nullptr ? "" : kind,
                                       scope == nullptr ? "" : scope,
                                       durability == nullptr ? "" : durability,
@@ -5782,6 +6005,7 @@ int grm_store_set_fact_identity(grm_store_handle* handle,
     identity.scope = safe_cstr(scope, "project");
     identity.valid_from = safe_cstr(valid_from, "");
     identity.expires_at = safe_cstr(expires_at, "");
+    std::unique_lock<std::shared_mutex> fact_lock(handle->fact_mutex);
     handle->store->set_fact_identity(node_id, std::move(identity));
     return 0;
   } catch (const std::exception& exc) {
@@ -5865,6 +6089,45 @@ int grm_store_fact_matches_ex(grm_store_handle* handle,
       out_node_ids[i] = matches[static_cast<std::size_t>(i)];
     }
     *out_count = n;
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_resolve_fact_query(grm_store_handle* handle,
+                                 const char* query_keys,
+                                 const uint64_t* candidate_node_ids,
+                                 uint64_t candidate_count,
+                                 uint64_t* out_node_ids,
+                                 uint64_t out_cap,
+                                 grm_fact_resolution_info_c* out) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out == nullptr) {
+      return grm_fail_msg(handle, "invalid resolve_fact_query arguments");
+    }
+    if (candidate_node_ids == nullptr && candidate_count > 0) {
+      return grm_fail_msg(handle, "null resolve_fact_query candidates");
+    }
+    if (out_node_ids == nullptr && out_cap > 0) {
+      return grm_fail_msg(handle, "null resolve_fact_query output buffer");
+    }
+    std::shared_lock<std::shared_mutex> fact_lock(handle->fact_mutex);
+    const auto resolution = handle->store->resolve_fact_query(
+        split_lexical_keys(query_keys),
+        read_u64_array(candidate_node_ids, candidate_count,
+                       "resolve_fact_query candidates"));
+    out->state = resolution.state;
+    out->candidate_count = static_cast<uint64_t>(
+        resolution.candidate_node_ids.size());
+    out->inactive_rejected = resolution.inactive_rejected;
+    if (out_node_ids != nullptr && out_cap > 0) {
+      const auto n = std::min<uint64_t>(out->candidate_count, out_cap);
+      for (uint64_t i = 0; i < n; ++i) {
+        out_node_ids[i] = resolution.candidate_node_ids[
+            static_cast<std::size_t>(i)];
+      }
+    }
     return 0;
   } catch (const std::exception& exc) {
     return grm_fail(handle, exc);
@@ -6075,6 +6338,7 @@ int grm_store_apply_revision(grm_store_handle* handle,
     }
     auto superseded = read_u64_array(
         supersedes, supersedes_count, "supersedes");
+    std::unique_lock<std::shared_mutex> fact_lock(handle->fact_mutex);
     handle->store->apply_revision(replacement_node_id, superseded);
     std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->router.set_active(replacement_node_id, true);
@@ -6096,6 +6360,7 @@ int grm_store_apply_expire(grm_store_handle* handle,
       return grm_fail_msg(handle, "invalid apply_expire arguments");
     }
     auto expired = read_u64_array(node_ids, node_count, "expired");
+    std::unique_lock<std::shared_mutex> fact_lock(handle->fact_mutex);
     handle->store->apply_expire(expired);
     std::set<std::uint64_t> seen;
     std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
@@ -7218,6 +7483,7 @@ int grm_store_load_checkpoint(grm_store_handle* handle, const char* root) {
     if (handle == nullptr || handle->store == nullptr || root == nullptr) {
       return grm_fail_msg(handle, "invalid load_checkpoint arguments");
     }
+    std::unique_lock<std::shared_mutex> fact_lock(handle->fact_mutex);
     handle->store->load_checkpoint(root);
     rebuild_router_from_store(handle);
     return 0;

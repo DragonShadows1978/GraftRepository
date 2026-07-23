@@ -37,6 +37,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 import json
 import os
+import re
 import threading
 import time
 
@@ -194,7 +195,8 @@ class GraftRepository:
                  wal_enabled=None, native_store=None, native_lib_path=None,
                  native_enabled=False, native_auto=True, extractor=None,
                  extraction_write_threshold=0.95,
-                 extraction_error_policy="record", **arena_kw):
+                 extraction_error_policy="record",
+                 revision_aware_resolver=False, **arena_kw):
         self.path = path
         self.autosave = autosave
         self.durability_mode = self._normalize_durability_mode(durability_mode)
@@ -214,6 +216,8 @@ class GraftRepository:
         self.extractor = extractor
         self.extraction_write_threshold = float(extraction_write_threshold)
         self.extraction_error_policy = extraction_error_policy
+        self.revision_aware_resolver = bool(revision_aware_resolver)
+        self._last_route_resolution = None
         self.last_extraction_results = []
         self.last_extraction_error = None
         # device-byte budget for node tensors; least-recently-MOUNTED saved
@@ -244,6 +248,8 @@ class GraftRepository:
             self.native_store = self._open_native_store(native_lib_path)
             self._own_native_store = True
         self.arena.native_store = self.native_store
+        if self.revision_aware_resolver:
+            self.arena.route_resolver = self._resolve_route_family
         if self.native_store is not None:
             self._native_configure_arena()
         # descent re-mounts retired children from cold storage on demand
@@ -1318,6 +1324,9 @@ class GraftRepository:
             g["retired"] = True
             self._mark_dirty(i, payload=False, metadata=True)
         meta = dict(metadata)
+        if self.revision_aware_resolver:
+            meta = self._derive_correction_fact_identity(
+                query, replacement, supersedes, meta)
         meta["supersedes"] = supersedes
         idx = self.remember(replacement, metadata=meta,
                             write_intent="user_asserted")
@@ -1331,6 +1340,235 @@ class GraftRepository:
                          supersedes=supersedes, node_id=idx)
         self._mark_mutations(before)
         return idx
+
+    @staticmethod
+    def _fact_subject_tokens(value):
+        normalized = str(value or "").strip().lower()
+        out = []
+        for token in re.findall(r"[\w-]+", normalized, flags=re.UNICODE):
+            if token.strip("_-") and token not in out:
+                out.append(token)
+        return tuple(out)
+
+    @staticmethod
+    def _correction_value(text):
+        match = re.search(
+            r"\bvalue\s+is\s+(.+?)(?:[.!?]\s*)?$", str(text or ""),
+            flags=re.IGNORECASE)
+        return match.group(1).strip() if match else ""
+
+    @staticmethod
+    def _correction_family_label(text):
+        match = re.search(
+            r"\b(?:the\s+)?current\s+(.+?)\s+value\s+is\b",
+            str(text or ""), flags=re.IGNORECASE)
+        return " ".join(match.group(1).strip().lower().split()) if match else ""
+
+    def _derive_correction_fact_identity(self, query, replacement,
+                                         supersedes, metadata):
+        out = dict(metadata or {})
+        if out.get("subject") and out.get("predicate"):
+            out.setdefault("fact_identity_source", "explicit")
+            return out
+
+        families = {}
+        for idx in supersedes:
+            if idx < 0 or idx >= len(self.arena.grafts):
+                continue
+            meta = self.arena.grafts[idx].get("metadata", {})
+            subject = self._norm_fact_field(meta.get("subject"))
+            predicate = self._norm_fact_field(meta.get("predicate"))
+            if not (subject and predicate):
+                continue
+            key = (subject, predicate,
+                   self._norm_fact_scope(meta.get("scope", "project")))
+            families[key] = meta
+        if len(families) == 1:
+            (subject, predicate, scope), _source = next(iter(families.items()))
+            out.setdefault("subject", subject)
+            out.setdefault("predicate", predicate)
+            out.setdefault("scope", scope)
+            value = self._correction_value(replacement)
+            if value:
+                out.setdefault("value", value)
+            out["fact_identity_source"] = "inherited_supersession"
+            out["fact_identity_source_nodes"] = sorted(int(i)
+                                                        for i in supersedes)
+            return out
+
+        query_label = self._correction_family_label(query)
+        replacement_label = self._correction_family_label(replacement)
+        if not query_label or not replacement_label:
+            return out
+        query_tokens = self._fact_subject_tokens(query_label)
+        replacement_tokens = self._fact_subject_tokens(replacement_label)
+        shared = tuple(token for token in query_tokens
+                       if token in set(replacement_tokens))
+        if not shared or set(shared) != set(query_tokens) \
+                or set(shared) != set(replacement_tokens):
+            return out
+        out.setdefault("subject", " ".join(shared))
+        out.setdefault("predicate", "value")
+        out.setdefault("scope", "project")
+        value = self._correction_value(replacement)
+        if value:
+            out.setdefault("value", value)
+        out["fact_identity_source"] = "grounded_correction_grammar"
+        out["fact_identity_evidence"] = {
+            "query_label": query_label,
+            "replacement_label": replacement_label,
+        }
+        return out
+
+    def _python_fact_resolution(self, bare_text, query_keys, candidate_ids):
+        query_tokens = set(self._norm_fact_field(k) for k in query_keys)
+        query_tokens.update(
+            token for token in self._fact_subject_tokens(bare_text)
+            if token not in ArenaCache._QUERY_LEX_STOP)
+        query_tokens.discard("")
+        families = {}
+        inactive_rejected = 0
+        for idx in candidate_ids:
+            if idx < 0 or idx >= len(self.arena.grafts):
+                continue
+            graft = self.arena.grafts[idx]
+            meta = graft.get("metadata", self._default_metadata(graft))
+            if self._norm_fact_field(
+                    meta.get("kind", graft.get("kind", "turn"))) != "fact":
+                continue
+            subject = self._norm_fact_field(meta.get("subject"))
+            predicate = self._norm_fact_field(meta.get("predicate"))
+            subject_tokens = set(self._fact_subject_tokens(subject))
+            if not subject_tokens or not predicate \
+                    or not subject_tokens <= query_tokens:
+                continue
+            if (graft.get("retired") or not meta.get("active", True)
+                    or not self._fact_effective_now(meta)):
+                inactive_rejected += 1
+                continue
+            family = (subject, predicate,
+                      self._norm_fact_scope(meta.get("scope", "project")))
+            families.setdefault(family, []).append(int(idx))
+
+        if not families:
+            return {
+                "state": "no_match", "candidate_node_ids": [],
+                "inactive_rejected": inactive_rejected,
+                "query_tokens": sorted(query_tokens),
+                "reason": "no fully addressed active fact family",
+            }
+        specificity = {
+            family: len(self._fact_subject_tokens(family[0]))
+            for family in families
+        }
+        best_n = max(specificity.values())
+        best = sorted(family for family, n in specificity.items()
+                      if n == best_n)
+        nodes = sorted(set(node for family in best
+                           for node in families[family]))
+        exact = len(best) == 1 and len(nodes) == 1
+        return {
+            "state": "exact" if exact else "ambiguous",
+            "candidate_node_ids": nodes,
+            "inactive_rejected": inactive_rejected,
+            "query_tokens": sorted(query_tokens),
+            "family": best[0] if exact else None,
+            "reason": ("unique active fact family" if exact else
+                       "multiple equally specific families or active leaves"),
+        }
+
+    def _native_fact_resolution(self, bare_text, query_keys, candidate_ids):
+        store = getattr(self, "native_store", None)
+        if store is None or not hasattr(store, "resolve_fact_query"):
+            return None
+        if not str(bare_text or "").isascii():
+            return None
+        if any(not str(key).isascii() for key in query_keys):
+            return None
+        local_to_native = getattr(self, "_native_node_ids", {})
+        native_to_local = {}
+        native_candidates = []
+        for idx in candidate_ids:
+            graft = self.arena.grafts[int(idx)]
+            meta = graft.get("metadata", {})
+            for key in ("subject", "predicate", "scope"):
+                if not str(meta.get(key) or "").isascii():
+                    return None
+            if meta.get("valid_from") or meta.get("expires_at"):
+                return None
+            native_id = local_to_native.get(int(idx))
+            if native_id is None:
+                return None
+            native_id = int(native_id)
+            native_candidates.append(native_id)
+            native_to_local[native_id] = int(idx)
+        try:
+            resolution = store.resolve_fact_query(
+                sorted(query_keys), native_candidates)
+        except RuntimeError:
+            return None
+        nodes = []
+        for native_id in resolution.candidate_node_ids:
+            idx = native_to_local.get(int(native_id))
+            if idx is None:
+                return None
+            nodes.append(idx)
+        family = None
+        if resolution.state == "exact" and len(nodes) == 1:
+            meta = self.arena.grafts[nodes[0]].get("metadata", {})
+            family = (
+                self._norm_fact_field(meta.get("subject")),
+                self._norm_fact_field(meta.get("predicate")),
+                self._norm_fact_scope(meta.get("scope", "project")),
+            )
+        return {
+            "state": resolution.state,
+            "candidate_node_ids": sorted(set(nodes)),
+            "inactive_rejected": int(resolution.inactive_rejected),
+            "query_tokens": sorted(query_keys),
+            "family": family,
+            "reason": ("unique active fact family" if resolution.state == "exact"
+                       else "native resolver found no unique fact family"),
+        }
+
+    def _resolve_route_family(self, *, bare_text, query_keys, candidate_ids,
+                              semantic_ranking, limit=None):
+        query_keys = set(str(key).lower() for key in query_keys)
+        native = self._native_fact_resolution(
+            bare_text, query_keys, candidate_ids)
+        backend = "native" if native is not None else "python"
+        result = native or self._python_fact_resolution(
+            bare_text, query_keys, candidate_ids)
+        nodes = list(result.get("candidate_node_ids", ()))
+        pinned = nodes if result.get("state") == "exact" and len(nodes) == 1 \
+            else []
+        ranking = list(semantic_ranking)
+        if pinned:
+            ranking = pinned + [idx for idx in ranking if idx not in pinned]
+        family = result.get("family") or ("", "", "")
+        receipt = {
+            "state": result.get("state", "failed"),
+            "backend": backend,
+            "query_family_keys": list(result.get(
+                "query_tokens", sorted(query_keys))),
+            "matched_subject": family[0],
+            "predicate": family[1],
+            "scope": family[2],
+            "pinned_node_ids": pinned,
+            "candidate_node_ids": nodes,
+            "inactive_rejected": int(result.get("inactive_rejected", 0)),
+            "reason": result.get("reason", "resolver failed closed"),
+            "ranking": ranking,
+        }
+        self._last_route_resolution = {
+            key: value for key, value in receipt.items() if key != "ranking"}
+        return receipt
+
+    def inspect_last_route_resolution(self):
+        receipt = getattr(self.arena, "last_route_resolution", None)
+        if receipt is None:
+            receipt = self._last_route_resolution
+        return None if receipt is None else json.loads(json.dumps(receipt))
 
     @staticmethod
     def _norm_fact_field(value):

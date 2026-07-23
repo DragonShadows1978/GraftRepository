@@ -43,6 +43,12 @@ typedef struct grm_graph_edges_info_c {
   uint64_t superseded_by;
 } grm_graph_edges_info_c;
 
+typedef struct grm_fact_resolution_info_c {
+  uint64_t state;
+  uint64_t candidate_count;
+  uint64_t inactive_rejected;
+} grm_fact_resolution_info_c;
+
 typedef struct grm_arena_swap_plan_c {
   uint64_t sink_tokens;
   uint64_t arena_width;
@@ -208,6 +214,13 @@ int grm_store_fact_matches_ex(grm_store_handle* handle,
                               uint64_t* out_node_ids,
                               uint64_t out_cap,
                               uint64_t* out_count);
+int grm_store_resolve_fact_query(grm_store_handle* handle,
+                                 const char* query_keys,
+                                 const uint64_t* candidate_node_ids,
+                                 uint64_t candidate_count,
+                                 uint64_t* out_node_ids,
+                                 uint64_t out_cap,
+                                 grm_fact_resolution_info_c* out);
 int grm_store_filter_active_nodes(grm_store_handle* handle,
                                   const uint64_t* node_ids,
                                   uint64_t node_count,

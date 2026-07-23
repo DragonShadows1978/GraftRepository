@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -134,6 +135,13 @@ struct FactIdentity {
   std::string scope = "project";
   std::string valid_from;
   std::string expires_at;
+};
+
+struct FactQueryResolution {
+  // 0 = no_match, 1 = exact, 2 = ambiguous.
+  std::uint64_t state = 0;
+  std::vector<std::uint64_t> candidate_node_ids;
+  std::uint64_t inactive_rejected = 0;
 };
 
 struct ArenaSwapPlan {
@@ -410,6 +418,9 @@ class HostGraftStore {
   std::vector<std::uint64_t> fact_matches(const FactIdentity& identity,
                                           std::uint64_t value_mode,
                                           std::uint64_t temporal_mode = 0) const;
+  FactQueryResolution resolve_fact_query(
+      const std::vector<std::string>& query_keys,
+      const std::vector<std::uint64_t>& candidate_node_ids) const;
   std::vector<std::uint64_t> filter_active_nodes(
       const std::vector<std::uint64_t>& node_ids) const;
   std::vector<std::uint64_t> active_text_matches(
@@ -436,10 +447,20 @@ class HostGraftStore {
   DirtyQueue& dirty_queue() { return dirty_; }
 
  private:
+  void remove_fact_subject_index(std::uint64_t node_id,
+                                 const std::string& subject);
+  void add_fact_subject_index(std::uint64_t node_id,
+                              const std::string& subject);
+  void rebuild_fact_subject_index();
+
   DialectDescriptor dialect_;
   DirtyQueue dirty_;
   std::uint64_t next_id_ = 0;
   std::unordered_map<std::uint64_t, HostGraftNode> nodes_;
+  std::unordered_map<std::string, std::unordered_set<std::uint64_t>>
+      fact_subject_token_index_;
+  std::unordered_map<std::string, std::unordered_set<std::uint64_t>>
+      fact_subject_signature_index_;
 };
 
 class RouterIndex {

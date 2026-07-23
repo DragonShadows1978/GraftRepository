@@ -184,3 +184,27 @@ Hierarchy remains deliberately unresolved and CPU-routed. This is not an
 adoption result: default behavior stays CPU/dependency-free, CUDA stays
 opt-in, and fresh dual-GQA quality/restart/concurrency evidence is still the
 operator gate.
+
+## Wing Continuation V: Revision-Aware Fact Resolution (stopped 2026-07-12)
+
+The next branch tested whether explicit fact-family and supersession metadata
+could close the composed-session gap left after routing became fast. A native
+exact resolver succeeded mechanically: 12/12 competition probes moved the
+active fact to rank 1 and a single-node first mount, 100/100 native queries and
+restart agreed, resolver p95 was 0.133 ms at 512 facts, and the exact-ragged
+CUDA regression remained green at 1.830 ms p95.
+
+The GPT-OSS development smoke nevertheless failed the decisive read. After a
+real checkpoint/restart, the resolver selected the unique active
+`orion pin/value/project` fact, ranked it first, and mounted it alone. The node
+stored `Kestrel-9-Tango`; the model returned only `The current orion value is
+Kestrel.` No stale or competing value was emitted, but exact current-revision
+readback failed, so the line stopped before fresh evidence.
+
+The failure separates authority from readability. Correction had produced a
+15-token bare fact graft, while the corresponding completed Harmony update was
+a separate 92-token evidence-bearing exchange. Metadata could identify the
+authoritative record but could not make its compact KV payload read like the
+full serving-dialect exchange. The next defensible concept is therefore an
+explicit authority-to-evidence binding, not another semantic score or resolver
+heuristic.
