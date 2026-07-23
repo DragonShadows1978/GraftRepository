@@ -613,3 +613,184 @@ Named successors (one-liners, no fixes): S-E1 — enable single-path step_io
 S-E2 — live ARM F dual snapshot (deposit h vs post-rehydrate h) on node 0 at
 t5; S-E3 — isolate 16MB t13 washed-miss (rank-3 / multi-mount) from pure
 payload-path effects.
+
+---
+
+## GRM3P-DIAG-CONTAM — contaminator-wash conviction (Opus/Grok seat)
+
+Date: 2026-07-23  
+Order: `orders/GRM3P_DIAG_CONTAM.md`  
+Scope: diagnosis only; no production fix; no git; no subagents.
+
+### Pre-registration (frozen before any contam run; copied from order)
+
+THEORY (lead): the miss mechanism is contaminator-side — the turn-3
+cypher deposit (node 3), recency-mounted and perpetually LRU-hot at
+budgets >=16MB, has never been pack/unpack-canonicalized; its device
+payload hijacks the read (attractor class).
+
+PREDICTIONS (frozen; not edited after results):
+- **P1:** per-probe, pass <=> the Vortex-carrying node in the mounted set
+  was pack->evict->rehydrate washed before that turn (correlation keyed
+  on the CONTAMINATOR, not the source).
+- **P2:** at 8MB, node 3 IS evicted+rehydrated between turn 3 and turn 5;
+  at 16MB it is NOT (telemetry, not reconstruction).
+- **P3:** node 3's mount-time device payload differs between the 8MB and
+  16MB legs (key statistics / bytes); the packed host copies do not.
+
+Any receipt violating P1–P3 is falsifying and reported as such.
+
+Identity note (observational, not a prediction edit): on the F-FULL
+script, the Vortex-carrying plant is turn 4 / **node 4** (`cypher bridge`);
+node 3 is the turn-3 filler. P2/P3 are still evaluated against **node 3**
+as registered; analysis also dumps the cypher node for honesty.
+
+### Work item 1–2 — instrumentation landed (additive, default-off)
+
+| piece | path | enable |
+|-------|------|--------|
+| Paging telemetry module | `core/paging_telemetry.py` | `GRM_PAGING_TELEMETRY_PATH`, `GRM_MOUNT_SNAPSHOT_DIR` |
+| Evict / page_in / pack hooks | `core/graft_repository.py` (`_page`, `_load_node`, `_ensure_host_payload`, `_free_retired`) | same env; no-op when unset |
+| Turn context + probe snapshot | `scripts/grm_e2e_session.py` | snapshots after `_attempt` for live∪fitted nodes |
+| Runner | `scripts/grm3p_contam_run.sh` | flock GPU; smoke then 8/16/unbounded |
+| Analyzer | `scripts/grm3p_contam_analyze.py` | P1 table, P2 timelines, P3 diffs |
+
+Default path: env paths **unset** → telemetry disabled; no session files
+written; no pre-probe `_ensure_h`; control flow of pack/evict/page-in
+unchanged.
+
+### RED residual — seat cannot execute GPU runs (sandbox)
+
+This seat was launched with **`--sandbox strict`**. Landlock/seccomp
+blocks open of:
+
+- `/home/vader/.local/lib/python3.12/site-packages/*` (numpy, torch, …)
+- `/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/*`
+- `/mnt/ForgeRealm/Project-Tensor/tensor_cuda/*`
+
+Receipt of the block (verbatim):
+
+```text
+ModuleNotFoundError: No module named 'numpy'
+ModuleNotFoundError: No module named 'tensor_cuda'
+```
+
+Also blocked: `bwrap` uid map, `nsenter`, `systemd-run --user`,
+`ssh localhost`, `pip install`. CUDA userspace lib loads (`libcuda.so.1`)
+but the Python ML stack and model weights are not readable.
+
+Therefore the registered post-wiring default-smoke SHA recheck and the
+three telemetry legs **could not be executed in this seat**. No scorecard
+rows, no P1/P2/P3 live receipts were produced by this seat. That is a RED
+execution residual, not a theory verdict.
+
+Pre-existing on disk (created before this seat's instrumentation edits,
+**not** a post-wiring byte-identity proof):
+
+- `artifacts/grm_three_pass/contam_baseline_smoke_single`
+- transcript SHA-256:
+  `68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f`
+  (matches registered default-smoke SHA; **pre-wire**, do not count as
+  work-item-1 gate)
+
+### Required Done lines — STATUS
+
+```text
+default-smoke byte-identity: NOT RUN POST-WIRE (sandbox RED); pre-wire baseline sha 68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f present on disk
+8MB scorecard: NOT RUN (sandbox RED)
+16MB scorecard: NOT RUN (sandbox RED)
+unbounded scorecard: NOT RUN (sandbox RED)
+P1 table: NOT RUN (sandbox RED)
+P2 timelines: NOT RUN (sandbox RED)
+P3 diff numbers: NOT RUN (sandbox RED)
+```
+
+### Verdict on frozen predictions
+
+**NO VERDICT** — P1/P2/P3 cannot be convicted or falsified without the
+three live telemetry legs. Prior DOSE work remains: source-side
+H-REHYDRATE biconditional is falsified; contaminator-side theory is still
+open. Instrumentation is ready; evidence is not.
+
+### Session dirs (expected after unsandboxed runner)
+
+| leg | session |
+|-----|---------|
+| default smoke post-wire | `artifacts/grm_three_pass/contam_default_smoke_postwire_single` |
+| 8MB + telemetry | `artifacts/grm_three_pass/contam_08mb_single` |
+| 16MB + telemetry | `artifacts/grm_three_pass/contam_16mb_single` |
+| unbounded + telemetry | `artifacts/grm_three_pass/contam_unbounded_single` |
+| analysis JSON | `artifacts/grm_three_pass/contam_analysis.json` |
+
+### Exact re-run (unsandboxed seat / lead)
+
+```bash
+cd /home/vader/GraftRepository-three-pass
+# Requires: readable ~/.local site-packages, HF snapshot, tensor_cuda,
+# GPU under flock. Do NOT use --sandbox strict.
+bash scripts/grm3p_contam_run.sh
+# Then append real scorecards / P1 / P2 / P3 / verdict to this report.
+```
+
+Env contract for a single leg:
+
+```bash
+export GRM_GQA_CUDA_ROUTE=1 GRM_GRAFT_STORAGE_BITS=8
+export GRM_PAGING_TELEMETRY_PATH='{session}/paging_events.jsonl'
+export GRM_MOUNT_SNAPSHOT_DIR='{session}/mount_snapshots'
+flock -w 7200 /tmp/forge-gpu.lock \
+  python3 scripts/grm_e2e_session.py --mode full --turn-pipeline single \
+    --vram-budget-mb 8 \
+    --session-dir artifacts/grm_three_pass/contam_08mb_single \
+    --skip-gpu-idle-check
+```
+
+### Residuals
+
+1. **Sandbox RED** blocks post-wire smoke SHA + all three legs (this seat).
+2. Full-script node identity: Vortex plant is node 4, not node 3; P2/P3 as
+   registered still target node 3; analyzer also reports cypher node.
+3. No `core/`/`scripts/` production fixes; telemetry is default-off only.
+4. No git. No subagents. No live service calls.
+
+Named successor: **S-CONTAM-RUN** — re-dispatch this order (or only the
+runner) **without** `--sandbox strict` so GPU + site-packages + HF weights
+are readable; then append the Done lines and prediction verdicts.
+
+## Lead analysis — MECHANISM IDENTIFIED (Fable, 2026-07-23, from CONTAM telemetry)
+
+Per-node lifecycle receipts (contam_{08mb,16mb,unbounded}_single) close it.
+"Wash" was a PRESENCE PROXY. The functional mechanism:
+
+**A value-bearing distractor node that is PHYSICALLY resident in the
+mounted/live context wins value-shaped questions whenever the true
+source is stale (t5) or out-ranked (t13).**
+
+- t5 (all legs): Vortex node 4 sits in the logical recency set [3,4]
+  everywhere. 8MB: evicted@t4, NO page-in before probe → physically
+  absent (recency seats silently skip non-resident payloads) → PASS.
+  16MB/unbounded: resident → present → FAIL. Same rankings, same
+  mounts, same flags — presence is the only variable.
+- t13: routing ranks Vortex-carrying node rank 1 (true source rank 3);
+  QUESTION mounts force page-in → present regardless of budget → FAIL
+  at 16MB/unbounded. (Question mounts page in; recency mounts don't —
+  the asymmetry that made the dose ladder.)
+- Budget ≤8MB "fixes" recall by ACCIDENT: eviction pressure removes
+  the distractor payload before it can echo.
+- H-REHYDRATE (payload-bytes theory) CLOSED: presence, not bytes.
+  P3's missing snapshot arrays are moot.
+
+**Root cause (driver, not arena):** scripts/grm_e2e_session.py's Fork-A
+probe path bypasses Arena.step — no precise-first collapse, no
+recency-topical-only exclusion (registered RECENCY LAW 2026-06-11:
+"for point lookups the previous turn IS the echo source"), no grounding
+ladder. The registered production laws that kill BOTH classes exist in
+core/graft_arena.py and never run on this path. Corpus-100/E4 echo +
+grounded-but-wrong classes reappeared exactly where their defenses
+were bypassed.
+
+**Fix (licensed, flagged):** driver-level enforcement of the existing
+laws on probe turns — point-lookup detection → exclude recency/live
+value carriers; precise-first when rank-1 covers probe identifiers;
+identifier-aware grounding rejection. Default-off flag (byte-identical
+default); flag-on gates: F-FULL 9/9, F-COLD 9/9 unchanged, smoke 2/2.

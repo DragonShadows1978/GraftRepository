@@ -1,0 +1,2321 @@
+{
+  "legs": {
+    "16MB": {
+      "all_passed": false,
+      "cypher_node_ids": [
+        4,
+        10
+      ],
+      "cypher_timelines": {
+        "10": [
+          {
+            "kind": "upload",
+            "packed": true,
+            "reason": null,
+            "rehydrate": null,
+            "source": "device_pack",
+            "step": "turn",
+            "success": true,
+            "turn": 9
+          },
+          {
+            "kind": "evict",
+            "packed": null,
+            "reason": "vram_budget_spill",
+            "rehydrate": null,
+            "source": null,
+            "step": "turn",
+            "success": null,
+            "turn": 10
+          },
+          {
+            "kind": "evict",
+            "packed": null,
+            "reason": "vram_budget_spill",
+            "rehydrate": null,
+            "source": null,
+            "step": "turn",
+            "success": null,
+            "turn": 18
+          }
+        ],
+        "4": [
+          {
+            "kind": "upload",
+            "packed": true,
+            "reason": null,
+            "rehydrate": null,
+            "source": "device_pack",
+            "step": "turn",
+            "success": true,
+            "turn": 4
+          },
+          {
+            "kind": "evict",
+            "packed": null,
+            "reason": "vram_budget_spill",
+            "rehydrate": null,
+            "source": null,
+            "step": "turn",
+            "success": null,
+            "turn": 7
+          },
+          {
+            "kind": "page_in",
+            "packed": null,
+            "reason": null,
+            "rehydrate": true,
+            "source": "ram_host_payload",
+            "step": "turn",
+            "success": true,
+            "turn": 9
+          },
+          {
+            "kind": "evict",
+            "packed": null,
+            "reason": "retired_free",
+            "rehydrate": null,
+            "source": null,
+            "step": "turn",
+            "success": null,
+            "turn": 16
+          }
+        ]
+      },
+      "n_paging_events": 106,
+      "node3_timeline": [
+        {
+          "kind": "upload",
+          "packed": true,
+          "reason": null,
+          "rehydrate": null,
+          "source": "device_pack",
+          "step": "turn",
+          "success": true,
+          "turn": 3
+        },
+        {
+          "kind": "evict",
+          "packed": null,
+          "reason": "vram_budget_spill",
+          "rehydrate": null,
+          "source": null,
+          "step": "turn",
+          "success": null,
+          "turn": 6
+        },
+        {
+          "kind": "evict",
+          "packed": null,
+          "reason": "vram_budget_spill",
+          "rehydrate": null,
+          "source": null,
+          "step": "turn",
+          "success": null,
+          "turn": 17
+        }
+      ],
+      "p1_agree_count": 8,
+      "p1_disagree_count": 1,
+      "p1_unknown_count": 0,
+      "passed": 7,
+      "probes": [
+        {
+          "answer": "The current Orion PIN value is Vortex-3-Sierra.",
+          "contaminator_node_id": 4,
+          "contaminator_washed": false,
+          "fact_id": "orion pin",
+          "live": [
+            3,
+            4
+          ],
+          "mount_plan": [
+            0,
+            2,
+            1
+          ],
+          "mounted_ids": [
+            0
+          ],
+          "p1_agree": true,
+          "pass": false,
+          "source_node_id": 0,
+          "source_rank": 1,
+          "turn": 5,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [],
+            "evidence": "never_evicted",
+            "first_wash_turn": null,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "never_evicted"
+        },
+        {
+          "answer": "Vortex-3-Sierra",
+          "contaminator_node_id": 4,
+          "contaminator_washed": false,
+          "fact_id": "cypher bridge",
+          "live": [
+            8,
+            9
+          ],
+          "mount_plan": [
+            4,
+            5,
+            6
+          ],
+          "mounted_ids": [
+            4
+          ],
+          "p1_agree": false,
+          "pass": true,
+          "source_node_id": 4,
+          "source_rank": 1,
+          "turn": 9,
+          "vortex_in_present": [
+            4,
+            5
+          ],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              7
+            ],
+            "evidence": "packed@t4+evict@t7 but no page_in before probe",
+            "first_wash_turn": null,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "packed@t4+evict@t7 but no page_in before probe"
+        },
+        {
+          "answer": "Vortex-3-Sierra.",
+          "contaminator_node_id": 5,
+          "contaminator_washed": false,
+          "fact_id": "orion pin",
+          "live": [
+            12,
+            14
+          ],
+          "mount_plan": [
+            5,
+            6,
+            7
+          ],
+          "mounted_ids": [
+            5,
+            7
+          ],
+          "p1_agree": true,
+          "pass": false,
+          "source_node_id": 7,
+          "source_rank": 3,
+          "turn": 13,
+          "vortex_in_present": [
+            5,
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              8
+            ],
+            "evidence": "packed@t5+evict@t8 but no page_in before probe",
+            "first_wash_turn": null,
+            "packed_turns": [
+              5
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "packed@t5+evict@t8 but no page_in before probe"
+        },
+        {
+          "answer": "Zenith-2-Echo",
+          "contaminator_node_id": 4,
+          "contaminator_washed": true,
+          "fact_id": "lyra dock",
+          "live": [
+            16,
+            17
+          ],
+          "mount_plan": [
+            12,
+            13,
+            4
+          ],
+          "mounted_ids": [
+            12
+          ],
+          "p1_agree": true,
+          "pass": true,
+          "source_node_id": 13,
+          "source_rank": 2,
+          "turn": 16,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              7
+            ],
+            "evidence": "evict@t7+page_in@t9",
+            "first_wash_turn": 7,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [
+              9
+            ],
+            "washed": true
+          },
+          "wash_evidence": "evict@t7+page_in@t9"
+        },
+        {
+          "answer": "Quartz-5-Bravo",
+          "contaminator_node_id": 4,
+          "contaminator_washed": true,
+          "fact_id": "nova key",
+          "live": [
+            20,
+            22
+          ],
+          "mount_plan": [
+            8,
+            19,
+            12
+          ],
+          "mounted_ids": [
+            8
+          ],
+          "p1_agree": true,
+          "pass": true,
+          "source_node_id": 8,
+          "source_rank": 1,
+          "turn": 19,
+          "vortex_in_present": [],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              7,
+              16
+            ],
+            "evidence": "evict@t7+page_in@t9",
+            "first_wash_turn": 7,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [
+              9
+            ],
+            "washed": true
+          },
+          "wash_evidence": "evict@t7+page_in@t9"
+        },
+        {
+          "answer": "Gold-7-Foxtrot.",
+          "contaminator_node_id": 4,
+          "contaminator_washed": true,
+          "fact_id": "mira seal",
+          "live": [
+            24,
+            25
+          ],
+          "mount_plan": [
+            20,
+            21,
+            19
+          ],
+          "mounted_ids": [
+            20
+          ],
+          "p1_agree": true,
+          "pass": true,
+          "source_node_id": 21,
+          "source_rank": 2,
+          "turn": 22,
+          "vortex_in_present": [],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              7,
+              16
+            ],
+            "evidence": "evict@t7+page_in@t9",
+            "first_wash_turn": 7,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [
+              9
+            ],
+            "washed": true
+          },
+          "wash_evidence": "evict@t7+page_in@t9"
+        },
+        {
+          "answer": "Harbor-8-Golf.",
+          "contaminator_node_id": 4,
+          "contaminator_washed": true,
+          "fact_id": "terra port",
+          "live": [
+            26,
+            27
+          ],
+          "mount_plan": [
+            16,
+            19,
+            20
+          ],
+          "mounted_ids": [
+            16
+          ],
+          "p1_agree": true,
+          "pass": true,
+          "source_node_id": 16,
+          "source_rank": 1,
+          "turn": 24,
+          "vortex_in_present": [],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              7,
+              16
+            ],
+            "evidence": "evict@t7+page_in@t9",
+            "first_wash_turn": 7,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [
+              9
+            ],
+            "washed": true
+          },
+          "wash_evidence": "evict@t7+page_in@t9"
+        },
+        {
+          "answer": "Violet-2-Hotel",
+          "contaminator_node_id": 4,
+          "contaminator_washed": true,
+          "fact_id": "ember code",
+          "live": [
+            28,
+            29
+          ],
+          "mount_plan": [
+            24,
+            19,
+            20
+          ],
+          "mounted_ids": [
+            24
+          ],
+          "p1_agree": true,
+          "pass": true,
+          "source_node_id": 24,
+          "source_rank": 1,
+          "turn": 26,
+          "vortex_in_present": [],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              7,
+              16
+            ],
+            "evidence": "evict@t7+page_in@t9",
+            "first_wash_turn": 7,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [
+              9
+            ],
+            "washed": true
+          },
+          "wash_evidence": "evict@t7+page_in@t9"
+        },
+        {
+          "answer": "Cobalt-1-India",
+          "contaminator_node_id": 4,
+          "contaminator_washed": true,
+          "fact_id": "atlas tone",
+          "live": [
+            32,
+            33
+          ],
+          "mount_plan": [
+            31,
+            19,
+            20
+          ],
+          "mounted_ids": [
+            31
+          ],
+          "p1_agree": true,
+          "pass": true,
+          "source_node_id": 31,
+          "source_rank": 1,
+          "turn": 30,
+          "vortex_in_present": [],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              7,
+              16
+            ],
+            "evidence": "evict@t7+page_in@t9",
+            "first_wash_turn": 7,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [
+              9
+            ],
+            "washed": true
+          },
+          "wash_evidence": "evict@t7+page_in@t9"
+        }
+      ],
+      "session": "/home/vader/GraftRepository-three-pass/artifacts/grm_three_pass/contam_16mb_single",
+      "total": 9,
+      "vortex_node_ids": [
+        4,
+        5,
+        10,
+        15
+      ]
+    },
+    "8MB": {
+      "all_passed": true,
+      "cypher_node_ids": [
+        4,
+        10
+      ],
+      "cypher_timelines": {
+        "10": [
+          {
+            "kind": "evict",
+            "packed": null,
+            "reason": "vram_budget_spill",
+            "rehydrate": null,
+            "source": null,
+            "step": "turn",
+            "success": null,
+            "turn": 9
+          },
+          {
+            "kind": "upload",
+            "packed": true,
+            "reason": null,
+            "rehydrate": null,
+            "source": "device_pack",
+            "step": "turn",
+            "success": true,
+            "turn": 9
+          }
+        ],
+        "4": [
+          {
+            "kind": "evict",
+            "packed": null,
+            "reason": "vram_budget_spill",
+            "rehydrate": null,
+            "source": null,
+            "step": "turn",
+            "success": null,
+            "turn": 4
+          },
+          {
+            "kind": "upload",
+            "packed": true,
+            "reason": null,
+            "rehydrate": null,
+            "source": "device_pack",
+            "step": "turn",
+            "success": true,
+            "turn": 4
+          },
+          {
+            "kind": "page_in",
+            "packed": null,
+            "reason": null,
+            "rehydrate": true,
+            "source": "ram_host_payload",
+            "step": "turn",
+            "success": true,
+            "turn": 9
+          },
+          {
+            "kind": "evict",
+            "packed": null,
+            "reason": "vram_budget_spill",
+            "rehydrate": null,
+            "source": null,
+            "step": "turn",
+            "success": null,
+            "turn": 13
+          },
+          {
+            "kind": "evict",
+            "packed": null,
+            "reason": "vram_budget_spill",
+            "rehydrate": null,
+            "source": null,
+            "step": "turn",
+            "success": null,
+            "turn": 17
+          },
+          {
+            "kind": "evict",
+            "packed": null,
+            "reason": "vram_budget_spill",
+            "rehydrate": null,
+            "source": null,
+            "step": "turn",
+            "success": null,
+            "turn": 22
+          },
+          {
+            "kind": "page_in",
+            "packed": null,
+            "reason": null,
+            "rehydrate": true,
+            "source": "ram_host_payload",
+            "step": "turn",
+            "success": true,
+            "turn": 22
+          }
+        ]
+      },
+      "n_paging_events": 111,
+      "node3_timeline": [
+        {
+          "kind": "upload",
+          "packed": true,
+          "reason": null,
+          "rehydrate": null,
+          "source": "device_pack",
+          "step": "turn",
+          "success": true,
+          "turn": 3
+        },
+        {
+          "kind": "evict",
+          "packed": null,
+          "reason": "vram_budget_spill",
+          "rehydrate": null,
+          "source": null,
+          "step": "turn",
+          "success": null,
+          "turn": 4
+        }
+      ],
+      "p1_agree_count": 7,
+      "p1_disagree_count": 2,
+      "p1_unknown_count": 0,
+      "passed": 9,
+      "probes": [
+        {
+          "answer": "The current Orion pin value is Auric-4-Alpha.",
+          "contaminator_node_id": 4,
+          "contaminator_washed": false,
+          "fact_id": "orion pin",
+          "live": [
+            3,
+            4
+          ],
+          "mount_plan": [
+            0,
+            2,
+            1
+          ],
+          "mounted_ids": [
+            0
+          ],
+          "p1_agree": false,
+          "pass": true,
+          "source_node_id": 0,
+          "source_rank": 1,
+          "turn": 5,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            10
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              4
+            ],
+            "evidence": "packed@t4+evict@t4 but no page_in before probe",
+            "first_wash_turn": null,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "packed@t4+evict@t4 but no page_in before probe"
+        },
+        {
+          "answer": "Vortex-3-Sierra",
+          "contaminator_node_id": 4,
+          "contaminator_washed": false,
+          "fact_id": "cypher bridge",
+          "live": [
+            8,
+            9
+          ],
+          "mount_plan": [
+            4,
+            6,
+            2
+          ],
+          "mounted_ids": [
+            4
+          ],
+          "p1_agree": false,
+          "pass": true,
+          "source_node_id": 4,
+          "source_rank": 1,
+          "turn": 9,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            10
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              4
+            ],
+            "evidence": "packed@t4+evict@t4 but no page_in before probe",
+            "first_wash_turn": null,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "packed@t4+evict@t4 but no page_in before probe"
+        },
+        {
+          "answer": "Kestrel-9-Tango",
+          "contaminator_node_id": 4,
+          "contaminator_washed": true,
+          "fact_id": "orion pin",
+          "live": [
+            12,
+            14
+          ],
+          "mount_plan": [
+            6,
+            7,
+            4
+          ],
+          "mounted_ids": [
+            6
+          ],
+          "p1_agree": true,
+          "pass": true,
+          "source_node_id": 7,
+          "source_rank": 2,
+          "turn": 13,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            10
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              4
+            ],
+            "evidence": "evict@t4+page_in@t9",
+            "first_wash_turn": 4,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [
+              9
+            ],
+            "washed": true
+          },
+          "wash_evidence": "evict@t4+page_in@t9"
+        },
+        {
+          "answer": "Zenith-2-Echo",
+          "contaminator_node_id": 4,
+          "contaminator_washed": true,
+          "fact_id": "lyra dock",
+          "live": [
+            16,
+            17
+          ],
+          "mount_plan": [
+            12,
+            13,
+            4
+          ],
+          "mounted_ids": [
+            12
+          ],
+          "p1_agree": true,
+          "pass": true,
+          "source_node_id": 13,
+          "source_rank": 2,
+          "turn": 16,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            10
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              4,
+              13
+            ],
+            "evidence": "evict@t4+page_in@t9",
+            "first_wash_turn": 4,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [
+              9
+            ],
+            "washed": true
+          },
+          "wash_evidence": "evict@t4+page_in@t9"
+        },
+        {
+          "answer": "Quartz-5-Bravo",
+          "contaminator_node_id": 4,
+          "contaminator_washed": true,
+          "fact_id": "nova key",
+          "live": [
+            19,
+            21
+          ],
+          "mount_plan": [
+            8,
+            4,
+            12
+          ],
+          "mounted_ids": [
+            8
+          ],
+          "p1_agree": true,
+          "pass": true,
+          "source_node_id": 8,
+          "source_rank": 1,
+          "turn": 19,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            10
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              4,
+              13,
+              17
+            ],
+            "evidence": "evict@t4+page_in@t9",
+            "first_wash_turn": 4,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [
+              9
+            ],
+            "washed": true
+          },
+          "wash_evidence": "evict@t4+page_in@t9"
+        },
+        {
+          "answer": "Gold-7-Foxtrot.",
+          "contaminator_node_id": 4,
+          "contaminator_washed": true,
+          "fact_id": "mira seal",
+          "live": [
+            23,
+            24
+          ],
+          "mount_plan": [
+            19,
+            20,
+            4
+          ],
+          "mounted_ids": [
+            19
+          ],
+          "p1_agree": true,
+          "pass": true,
+          "source_node_id": 20,
+          "source_rank": 2,
+          "turn": 22,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            10
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              4,
+              13,
+              17
+            ],
+            "evidence": "evict@t4+page_in@t9",
+            "first_wash_turn": 4,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [
+              9
+            ],
+            "washed": true
+          },
+          "wash_evidence": "evict@t4+page_in@t9"
+        },
+        {
+          "answer": "Harbor-8-Golf.",
+          "contaminator_node_id": 4,
+          "contaminator_washed": true,
+          "fact_id": "terra port",
+          "live": [
+            25,
+            26
+          ],
+          "mount_plan": [
+            16,
+            4,
+            19
+          ],
+          "mounted_ids": [
+            16
+          ],
+          "p1_agree": true,
+          "pass": true,
+          "source_node_id": 16,
+          "source_rank": 1,
+          "turn": 24,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            10
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              4,
+              13,
+              17,
+              22
+            ],
+            "evidence": "evict@t4+page_in@t9;evict@t13+page_in@t22;evict@t17+page_in@t22;evict@t22+page_in@t22",
+            "first_wash_turn": 4,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [
+              9,
+              22
+            ],
+            "washed": true
+          },
+          "wash_evidence": "evict@t4+page_in@t9;evict@t13+page_in@t22;evict@t17+page_in@t22;evict@t22+page_in@t22"
+        },
+        {
+          "answer": "Violet-2-Hotel",
+          "contaminator_node_id": 4,
+          "contaminator_washed": true,
+          "fact_id": "ember code",
+          "live": [
+            27,
+            28
+          ],
+          "mount_plan": [
+            23,
+            4,
+            19
+          ],
+          "mounted_ids": [
+            23
+          ],
+          "p1_agree": true,
+          "pass": true,
+          "source_node_id": 23,
+          "source_rank": 1,
+          "turn": 26,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            10
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              4,
+              13,
+              17,
+              22
+            ],
+            "evidence": "evict@t4+page_in@t9;evict@t13+page_in@t22;evict@t17+page_in@t22;evict@t22+page_in@t22",
+            "first_wash_turn": 4,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [
+              9,
+              22
+            ],
+            "washed": true
+          },
+          "wash_evidence": "evict@t4+page_in@t9;evict@t13+page_in@t22;evict@t17+page_in@t22;evict@t22+page_in@t22"
+        },
+        {
+          "answer": "Cobalt-1-India",
+          "contaminator_node_id": 4,
+          "contaminator_washed": true,
+          "fact_id": "atlas tone",
+          "live": [
+            31,
+            32
+          ],
+          "mount_plan": [
+            30,
+            4,
+            19
+          ],
+          "mounted_ids": [
+            30
+          ],
+          "p1_agree": true,
+          "pass": true,
+          "source_node_id": 30,
+          "source_rank": 1,
+          "turn": 30,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            10
+          ],
+          "wash_detail": {
+            "evict_turns": [
+              4,
+              13,
+              17,
+              22
+            ],
+            "evidence": "evict@t4+page_in@t9;evict@t13+page_in@t22;evict@t17+page_in@t22;evict@t22+page_in@t22",
+            "first_wash_turn": 4,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [
+              9,
+              22
+            ],
+            "washed": true
+          },
+          "wash_evidence": "evict@t4+page_in@t9;evict@t13+page_in@t22;evict@t17+page_in@t22;evict@t22+page_in@t22"
+        }
+      ],
+      "session": "/home/vader/GraftRepository-three-pass/artifacts/grm_three_pass/contam_08mb_single",
+      "total": 9,
+      "vortex_node_ids": [
+        4,
+        10
+      ]
+    },
+    "unbounded": {
+      "all_passed": false,
+      "cypher_node_ids": [
+        4,
+        10
+      ],
+      "cypher_timelines": {
+        "10": [
+          {
+            "kind": "upload",
+            "packed": true,
+            "reason": null,
+            "rehydrate": null,
+            "source": "device_pack",
+            "step": "turn",
+            "success": true,
+            "turn": 9
+          }
+        ],
+        "4": [
+          {
+            "kind": "upload",
+            "packed": true,
+            "reason": null,
+            "rehydrate": null,
+            "source": "device_pack",
+            "step": "turn",
+            "success": true,
+            "turn": 4
+          }
+        ]
+      },
+      "n_paging_events": 46,
+      "node3_timeline": [
+        {
+          "kind": "upload",
+          "packed": true,
+          "reason": null,
+          "rehydrate": null,
+          "source": "device_pack",
+          "step": "turn",
+          "success": true,
+          "turn": 3
+        }
+      ],
+      "p1_agree_count": 2,
+      "p1_disagree_count": 7,
+      "p1_unknown_count": 0,
+      "passed": 7,
+      "probes": [
+        {
+          "answer": "The current Orion PIN value is Vortex-3-Sierra.",
+          "contaminator_node_id": 4,
+          "contaminator_washed": false,
+          "fact_id": "orion pin",
+          "live": [
+            3,
+            4
+          ],
+          "mount_plan": [
+            0,
+            2,
+            1
+          ],
+          "mounted_ids": [
+            0
+          ],
+          "p1_agree": true,
+          "pass": false,
+          "source_node_id": 0,
+          "source_rank": 1,
+          "turn": 5,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [],
+            "evidence": "never_evicted",
+            "first_wash_turn": null,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "never_evicted"
+        },
+        {
+          "answer": "Vortex-3-Sierra",
+          "contaminator_node_id": 4,
+          "contaminator_washed": false,
+          "fact_id": "cypher bridge",
+          "live": [
+            8,
+            9
+          ],
+          "mount_plan": [
+            4,
+            5,
+            6
+          ],
+          "mounted_ids": [
+            4
+          ],
+          "p1_agree": false,
+          "pass": true,
+          "source_node_id": 4,
+          "source_rank": 1,
+          "turn": 9,
+          "vortex_in_present": [
+            4,
+            5
+          ],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [],
+            "evidence": "never_evicted",
+            "first_wash_turn": null,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "never_evicted"
+        },
+        {
+          "answer": "Vortex-3-Sierra.",
+          "contaminator_node_id": 5,
+          "contaminator_washed": false,
+          "fact_id": "orion pin",
+          "live": [
+            12,
+            14
+          ],
+          "mount_plan": [
+            5,
+            6,
+            7
+          ],
+          "mounted_ids": [
+            5,
+            7
+          ],
+          "p1_agree": true,
+          "pass": false,
+          "source_node_id": 7,
+          "source_rank": 3,
+          "turn": 13,
+          "vortex_in_present": [
+            5,
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [],
+            "evidence": "never_evicted",
+            "first_wash_turn": null,
+            "packed_turns": [
+              5
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "never_evicted"
+        },
+        {
+          "answer": "Zenith-2-Echo",
+          "contaminator_node_id": 4,
+          "contaminator_washed": false,
+          "fact_id": "lyra dock",
+          "live": [
+            16,
+            17
+          ],
+          "mount_plan": [
+            12,
+            13,
+            4
+          ],
+          "mounted_ids": [
+            12
+          ],
+          "p1_agree": false,
+          "pass": true,
+          "source_node_id": 13,
+          "source_rank": 2,
+          "turn": 16,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [],
+            "evidence": "never_evicted",
+            "first_wash_turn": null,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "never_evicted"
+        },
+        {
+          "answer": "Quartz-5-Bravo",
+          "contaminator_node_id": 4,
+          "contaminator_washed": false,
+          "fact_id": "nova key",
+          "live": [
+            19,
+            21
+          ],
+          "mount_plan": [
+            8,
+            4,
+            5
+          ],
+          "mounted_ids": [
+            8
+          ],
+          "p1_agree": false,
+          "pass": true,
+          "source_node_id": 8,
+          "source_rank": 1,
+          "turn": 19,
+          "vortex_in_present": [
+            4,
+            5
+          ],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [],
+            "evidence": "never_evicted",
+            "first_wash_turn": null,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "never_evicted"
+        },
+        {
+          "answer": "Gold-7-Foxtrot.",
+          "contaminator_node_id": 4,
+          "contaminator_washed": false,
+          "fact_id": "mira seal",
+          "live": [
+            23,
+            24
+          ],
+          "mount_plan": [
+            19,
+            20,
+            4
+          ],
+          "mounted_ids": [
+            19
+          ],
+          "p1_agree": false,
+          "pass": true,
+          "source_node_id": 20,
+          "source_rank": 2,
+          "turn": 22,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [],
+            "evidence": "never_evicted",
+            "first_wash_turn": null,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "never_evicted"
+        },
+        {
+          "answer": "Harbor-8-Golf.",
+          "contaminator_node_id": 4,
+          "contaminator_washed": false,
+          "fact_id": "terra port",
+          "live": [
+            25,
+            26
+          ],
+          "mount_plan": [
+            16,
+            4,
+            19
+          ],
+          "mounted_ids": [
+            16
+          ],
+          "p1_agree": false,
+          "pass": true,
+          "source_node_id": 16,
+          "source_rank": 1,
+          "turn": 24,
+          "vortex_in_present": [
+            4
+          ],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [],
+            "evidence": "never_evicted",
+            "first_wash_turn": null,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "never_evicted"
+        },
+        {
+          "answer": "Violet-2-Hotel",
+          "contaminator_node_id": 4,
+          "contaminator_washed": false,
+          "fact_id": "ember code",
+          "live": [
+            27,
+            28
+          ],
+          "mount_plan": [
+            23,
+            4,
+            19
+          ],
+          "mounted_ids": [
+            23
+          ],
+          "p1_agree": false,
+          "pass": true,
+          "source_node_id": 23,
+          "source_rank": 1,
+          "turn": 26,
+          "vortex_in_present": [
+            4,
+            5
+          ],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [],
+            "evidence": "never_evicted",
+            "first_wash_turn": null,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "never_evicted"
+        },
+        {
+          "answer": "Cobalt-1-India",
+          "contaminator_node_id": 4,
+          "contaminator_washed": false,
+          "fact_id": "atlas tone",
+          "live": [
+            31,
+            32
+          ],
+          "mount_plan": [
+            30,
+            4,
+            19
+          ],
+          "mounted_ids": [
+            30
+          ],
+          "p1_agree": false,
+          "pass": true,
+          "source_node_id": 30,
+          "source_rank": 1,
+          "turn": 30,
+          "vortex_in_present": [
+            4,
+            5
+          ],
+          "vortex_node_ids_global": [
+            4,
+            5,
+            10,
+            15
+          ],
+          "wash_detail": {
+            "evict_turns": [],
+            "evidence": "never_evicted",
+            "first_wash_turn": null,
+            "packed_turns": [
+              4
+            ],
+            "pagein_turns": [],
+            "washed": false
+          },
+          "wash_evidence": "never_evicted"
+        }
+      ],
+      "session": "/home/vader/GraftRepository-three-pass/artifacts/grm_three_pass/contam_unbounded_single",
+      "total": 9,
+      "vortex_node_ids": [
+        4,
+        5,
+        10,
+        15
+      ]
+    }
+  },
+  "p1_rows": [
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": false,
+      "fact_id": "orion pin",
+      "leg": "8MB",
+      "live": [
+        3,
+        4
+      ],
+      "mounted_ids": [
+        0
+      ],
+      "p1_agree": false,
+      "pass": true,
+      "turn": 5,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "packed@t4+evict@t4 but no page_in before probe"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": false,
+      "fact_id": "cypher bridge",
+      "leg": "8MB",
+      "live": [
+        8,
+        9
+      ],
+      "mounted_ids": [
+        4
+      ],
+      "p1_agree": false,
+      "pass": true,
+      "turn": 9,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "packed@t4+evict@t4 but no page_in before probe"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": true,
+      "fact_id": "orion pin",
+      "leg": "8MB",
+      "live": [
+        12,
+        14
+      ],
+      "mounted_ids": [
+        6
+      ],
+      "p1_agree": true,
+      "pass": true,
+      "turn": 13,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "evict@t4+page_in@t9"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": true,
+      "fact_id": "lyra dock",
+      "leg": "8MB",
+      "live": [
+        16,
+        17
+      ],
+      "mounted_ids": [
+        12
+      ],
+      "p1_agree": true,
+      "pass": true,
+      "turn": 16,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "evict@t4+page_in@t9"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": true,
+      "fact_id": "nova key",
+      "leg": "8MB",
+      "live": [
+        19,
+        21
+      ],
+      "mounted_ids": [
+        8
+      ],
+      "p1_agree": true,
+      "pass": true,
+      "turn": 19,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "evict@t4+page_in@t9"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": true,
+      "fact_id": "mira seal",
+      "leg": "8MB",
+      "live": [
+        23,
+        24
+      ],
+      "mounted_ids": [
+        19
+      ],
+      "p1_agree": true,
+      "pass": true,
+      "turn": 22,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "evict@t4+page_in@t9"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": true,
+      "fact_id": "terra port",
+      "leg": "8MB",
+      "live": [
+        25,
+        26
+      ],
+      "mounted_ids": [
+        16
+      ],
+      "p1_agree": true,
+      "pass": true,
+      "turn": 24,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "evict@t4+page_in@t9;evict@t13+page_in@t22;evict@t17+page_in@t22;evict@t22+page_in@t22"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": true,
+      "fact_id": "ember code",
+      "leg": "8MB",
+      "live": [
+        27,
+        28
+      ],
+      "mounted_ids": [
+        23
+      ],
+      "p1_agree": true,
+      "pass": true,
+      "turn": 26,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "evict@t4+page_in@t9;evict@t13+page_in@t22;evict@t17+page_in@t22;evict@t22+page_in@t22"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": true,
+      "fact_id": "atlas tone",
+      "leg": "8MB",
+      "live": [
+        31,
+        32
+      ],
+      "mounted_ids": [
+        30
+      ],
+      "p1_agree": true,
+      "pass": true,
+      "turn": 30,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "evict@t4+page_in@t9;evict@t13+page_in@t22;evict@t17+page_in@t22;evict@t22+page_in@t22"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": false,
+      "fact_id": "orion pin",
+      "leg": "16MB",
+      "live": [
+        3,
+        4
+      ],
+      "mounted_ids": [
+        0
+      ],
+      "p1_agree": true,
+      "pass": false,
+      "turn": 5,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "never_evicted"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": false,
+      "fact_id": "cypher bridge",
+      "leg": "16MB",
+      "live": [
+        8,
+        9
+      ],
+      "mounted_ids": [
+        4
+      ],
+      "p1_agree": false,
+      "pass": true,
+      "turn": 9,
+      "vortex_in_present": [
+        4,
+        5
+      ],
+      "wash_evidence": "packed@t4+evict@t7 but no page_in before probe"
+    },
+    {
+      "contaminator_node_id": 5,
+      "contaminator_washed": false,
+      "fact_id": "orion pin",
+      "leg": "16MB",
+      "live": [
+        12,
+        14
+      ],
+      "mounted_ids": [
+        5,
+        7
+      ],
+      "p1_agree": true,
+      "pass": false,
+      "turn": 13,
+      "vortex_in_present": [
+        5,
+        4
+      ],
+      "wash_evidence": "packed@t5+evict@t8 but no page_in before probe"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": true,
+      "fact_id": "lyra dock",
+      "leg": "16MB",
+      "live": [
+        16,
+        17
+      ],
+      "mounted_ids": [
+        12
+      ],
+      "p1_agree": true,
+      "pass": true,
+      "turn": 16,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "evict@t7+page_in@t9"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": true,
+      "fact_id": "nova key",
+      "leg": "16MB",
+      "live": [
+        20,
+        22
+      ],
+      "mounted_ids": [
+        8
+      ],
+      "p1_agree": true,
+      "pass": true,
+      "turn": 19,
+      "vortex_in_present": [],
+      "wash_evidence": "evict@t7+page_in@t9"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": true,
+      "fact_id": "mira seal",
+      "leg": "16MB",
+      "live": [
+        24,
+        25
+      ],
+      "mounted_ids": [
+        20
+      ],
+      "p1_agree": true,
+      "pass": true,
+      "turn": 22,
+      "vortex_in_present": [],
+      "wash_evidence": "evict@t7+page_in@t9"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": true,
+      "fact_id": "terra port",
+      "leg": "16MB",
+      "live": [
+        26,
+        27
+      ],
+      "mounted_ids": [
+        16
+      ],
+      "p1_agree": true,
+      "pass": true,
+      "turn": 24,
+      "vortex_in_present": [],
+      "wash_evidence": "evict@t7+page_in@t9"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": true,
+      "fact_id": "ember code",
+      "leg": "16MB",
+      "live": [
+        28,
+        29
+      ],
+      "mounted_ids": [
+        24
+      ],
+      "p1_agree": true,
+      "pass": true,
+      "turn": 26,
+      "vortex_in_present": [],
+      "wash_evidence": "evict@t7+page_in@t9"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": true,
+      "fact_id": "atlas tone",
+      "leg": "16MB",
+      "live": [
+        32,
+        33
+      ],
+      "mounted_ids": [
+        31
+      ],
+      "p1_agree": true,
+      "pass": true,
+      "turn": 30,
+      "vortex_in_present": [],
+      "wash_evidence": "evict@t7+page_in@t9"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": false,
+      "fact_id": "orion pin",
+      "leg": "unbounded",
+      "live": [
+        3,
+        4
+      ],
+      "mounted_ids": [
+        0
+      ],
+      "p1_agree": true,
+      "pass": false,
+      "turn": 5,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "never_evicted"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": false,
+      "fact_id": "cypher bridge",
+      "leg": "unbounded",
+      "live": [
+        8,
+        9
+      ],
+      "mounted_ids": [
+        4
+      ],
+      "p1_agree": false,
+      "pass": true,
+      "turn": 9,
+      "vortex_in_present": [
+        4,
+        5
+      ],
+      "wash_evidence": "never_evicted"
+    },
+    {
+      "contaminator_node_id": 5,
+      "contaminator_washed": false,
+      "fact_id": "orion pin",
+      "leg": "unbounded",
+      "live": [
+        12,
+        14
+      ],
+      "mounted_ids": [
+        5,
+        7
+      ],
+      "p1_agree": true,
+      "pass": false,
+      "turn": 13,
+      "vortex_in_present": [
+        5,
+        4
+      ],
+      "wash_evidence": "never_evicted"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": false,
+      "fact_id": "lyra dock",
+      "leg": "unbounded",
+      "live": [
+        16,
+        17
+      ],
+      "mounted_ids": [
+        12
+      ],
+      "p1_agree": false,
+      "pass": true,
+      "turn": 16,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "never_evicted"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": false,
+      "fact_id": "nova key",
+      "leg": "unbounded",
+      "live": [
+        19,
+        21
+      ],
+      "mounted_ids": [
+        8
+      ],
+      "p1_agree": false,
+      "pass": true,
+      "turn": 19,
+      "vortex_in_present": [
+        4,
+        5
+      ],
+      "wash_evidence": "never_evicted"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": false,
+      "fact_id": "mira seal",
+      "leg": "unbounded",
+      "live": [
+        23,
+        24
+      ],
+      "mounted_ids": [
+        19
+      ],
+      "p1_agree": false,
+      "pass": true,
+      "turn": 22,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "never_evicted"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": false,
+      "fact_id": "terra port",
+      "leg": "unbounded",
+      "live": [
+        25,
+        26
+      ],
+      "mounted_ids": [
+        16
+      ],
+      "p1_agree": false,
+      "pass": true,
+      "turn": 24,
+      "vortex_in_present": [
+        4
+      ],
+      "wash_evidence": "never_evicted"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": false,
+      "fact_id": "ember code",
+      "leg": "unbounded",
+      "live": [
+        27,
+        28
+      ],
+      "mounted_ids": [
+        23
+      ],
+      "p1_agree": false,
+      "pass": true,
+      "turn": 26,
+      "vortex_in_present": [
+        4,
+        5
+      ],
+      "wash_evidence": "never_evicted"
+    },
+    {
+      "contaminator_node_id": 4,
+      "contaminator_washed": false,
+      "fact_id": "atlas tone",
+      "leg": "unbounded",
+      "live": [
+        31,
+        32
+      ],
+      "mounted_ids": [
+        30
+      ],
+      "p1_agree": false,
+      "pass": true,
+      "turn": 30,
+      "vortex_in_present": [
+        4,
+        5
+      ],
+      "wash_evidence": "never_evicted"
+    }
+  ],
+  "p1_summary": {
+    "agree": 17,
+    "disagree": 10,
+    "total": 27,
+    "unknown": 0,
+    "verdict": "PARTIAL"
+  },
+  "p2_node3": {
+    "16MB": {
+      "evict_events": [],
+      "evicted_between_t3_t5": false,
+      "full_timeline": [
+        {
+          "kind": "upload",
+          "packed": true,
+          "reason": null,
+          "rehydrate": null,
+          "source": "device_pack",
+          "step": "turn",
+          "success": true,
+          "turn": 3
+        },
+        {
+          "kind": "evict",
+          "packed": null,
+          "reason": "vram_budget_spill",
+          "rehydrate": null,
+          "source": null,
+          "step": "turn",
+          "success": null,
+          "turn": 6
+        },
+        {
+          "kind": "evict",
+          "packed": null,
+          "reason": "vram_budget_spill",
+          "rehydrate": null,
+          "source": null,
+          "step": "turn",
+          "success": null,
+          "turn": 17
+        }
+      ],
+      "pagein_between_t3_t5": false,
+      "pagein_events": [],
+      "washed_before_t5": {
+        "evict_turns": [],
+        "evidence": "never_evicted",
+        "first_wash_turn": null,
+        "packed_turns": [
+          3
+        ],
+        "pagein_turns": [],
+        "washed": false
+      }
+    },
+    "8MB": {
+      "evict_events": [
+        {
+          "kind": "evict",
+          "packed": null,
+          "reason": "vram_budget_spill",
+          "rehydrate": null,
+          "source": null,
+          "step": "turn",
+          "success": null,
+          "turn": 4
+        }
+      ],
+      "evicted_between_t3_t5": true,
+      "full_timeline": [
+        {
+          "kind": "upload",
+          "packed": true,
+          "reason": null,
+          "rehydrate": null,
+          "source": "device_pack",
+          "step": "turn",
+          "success": true,
+          "turn": 3
+        },
+        {
+          "kind": "evict",
+          "packed": null,
+          "reason": "vram_budget_spill",
+          "rehydrate": null,
+          "source": null,
+          "step": "turn",
+          "success": null,
+          "turn": 4
+        }
+      ],
+      "pagein_between_t3_t5": false,
+      "pagein_events": [],
+      "washed_before_t5": {
+        "evict_turns": [
+          4
+        ],
+        "evidence": "packed@t3+evict@t4 but no page_in before probe",
+        "first_wash_turn": null,
+        "packed_turns": [
+          3
+        ],
+        "pagein_turns": [],
+        "washed": false
+      }
+    },
+    "unbounded": {
+      "evict_events": [],
+      "evicted_between_t3_t5": false,
+      "full_timeline": [
+        {
+          "kind": "upload",
+          "packed": true,
+          "reason": null,
+          "rehydrate": null,
+          "source": "device_pack",
+          "step": "turn",
+          "success": true,
+          "turn": 3
+        }
+      ],
+      "pagein_between_t3_t5": false,
+      "pagein_events": [],
+      "washed_before_t5": {
+        "evict_turns": [],
+        "evidence": "never_evicted",
+        "first_wash_turn": null,
+        "packed_turns": [
+          3
+        ],
+        "pagein_turns": [],
+        "washed": false
+      }
+    }
+  },
+  "p2_verdict": "PARTIAL",
+  "p3_cypher": {
+    "device_present": {
+      "16MB": false,
+      "8MB": false,
+      "unbounded": false
+    },
+    "host_control": {
+      "16MB": null,
+      "8MB": null,
+      "unbounded": null
+    },
+    "host_equal": {},
+    "metas_device_stats": {
+      "16MB": null,
+      "8MB": null,
+      "unbounded": null
+    },
+    "node_id": 4,
+    "pairs": [
+      {
+        "a_present": false,
+        "b_present": false,
+        "pair": "8MB_vs_16MB",
+        "status": "missing_arrays"
+      },
+      {
+        "a_present": false,
+        "b_present": false,
+        "pair": "8MB_vs_unbounded",
+        "status": "missing_arrays"
+      },
+      {
+        "a_present": false,
+        "b_present": false,
+        "pair": "16MB_vs_unbounded",
+        "status": "missing_arrays"
+      }
+    ],
+    "turn": 5
+  },
+  "p3_node3": {
+    "device_present": {
+      "16MB": false,
+      "8MB": false,
+      "unbounded": false
+    },
+    "host_control": {
+      "16MB": null,
+      "8MB": null,
+      "unbounded": null
+    },
+    "host_equal": {},
+    "metas_device_stats": {
+      "16MB": null,
+      "8MB": null,
+      "unbounded": null
+    },
+    "node_id": 3,
+    "pairs": [
+      {
+        "a_present": false,
+        "b_present": false,
+        "pair": "8MB_vs_16MB",
+        "status": "missing_arrays"
+      },
+      {
+        "a_present": false,
+        "b_present": false,
+        "pair": "8MB_vs_unbounded",
+        "status": "missing_arrays"
+      },
+      {
+        "a_present": false,
+        "b_present": false,
+        "pair": "16MB_vs_unbounded",
+        "status": "missing_arrays"
+      }
+    ],
+    "turn": 5
+  },
+  "p3_verdict": "INSUFFICIENT_ARTIFACTS",
+  "schema": "grm3p.diag.contam.analysis.v1",
+  "scorecard_lines": {
+    "16MB": "16MB: 7/9; FAIL turn 5 orion pin -> 'The current Orion PIN value is Vortex-3-Sierra.'; FAIL turn 13 orion pin -> 'Vortex-3-Sierra.'; PASS turns 9, 16, 19, 22, 24, 26, 30.",
+    "8MB": "8MB: 9/9; PASS turns 5, 9, 13, 16, 19, 22, 24, 26, 30.",
+    "unbounded": "unbounded: 7/9; FAIL turn 5 orion pin -> 'The current Orion PIN value is Vortex-3-Sierra.'; FAIL turn 13 orion pin -> 'Vortex-3-Sierra.'; PASS turns 9, 16, 19, 22, 24, 26, 30."
+  }
+}

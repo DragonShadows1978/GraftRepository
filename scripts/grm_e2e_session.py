@@ -42,6 +42,7 @@ from core.grm_three_pass import (  # noqa: E402
     TurnStepIOTracker,
     arena_state_sha256,
 )
+from core import paging_telemetry as _paging_telemetry  # noqa: E402
 
 
 SNAPSHOT = (
@@ -927,6 +928,7 @@ def probe_multimount_chat(
     topk: int,
     ngen: int,
     defer_memory: bool = False,
+    turn_idx: int | None = None,
 ) -> tuple[str, dict[str, Any]]:
     """Probe path: mount route top-k via arena multi-mount, not argmax-only.
 
@@ -953,6 +955,35 @@ def probe_multimount_chat(
             user_text, picks, int(ngen), False, stops, defer_memory=True)
     else:
         ans, info = arena._attempt(user_text, picks, int(ngen), True, stops)
+    # GRM3P-DIAG-CONTAM dual mount-time snapshot (opt-in). Taken AFTER
+    # _attempt so fitted nodes are already device-resident via the normal
+    # mount path; no extra pre-probe _ensure_h (avoids LRU/clock side
+    # effects on the registered probe). RECENCY = live-window ids at
+    # probe start, plus fitted mounts.
+    tel = getattr(repo, "_paging_tel", None) or _paging_telemetry.get_telemetry()
+    if tel.snapshot_enabled and turn_idx is not None:
+        try:
+            snap_ids = sorted({int(i) for i in live_idx} | {int(i) for i in picks})
+            tel.snapshot_nodes(
+                arena,
+                snap_ids,
+                turn=int(turn_idx),
+                label="probe_mount",
+                extra={
+                    "live_ids": sorted(int(i) for i in live_idx),
+                    "mount_fitted": [int(i) for i in picks],
+                    "mount_plan": [int(i) for i in planned],
+                },
+            )
+        except Exception as snap_err:
+            # Snapshot must never abort the registered probe path.
+            if tel.enabled:
+                tel.log(
+                    "mount_snapshot_error",
+                    -1,
+                    error=repr(snap_err),
+                    turn=int(turn_idx),
+                )
     info = dict(info or {})
     info["trip"] = 0
     info["driver_probe_multimount"] = True
@@ -1333,6 +1364,9 @@ def run_turn(
     args: argparse.Namespace,
     resumed: bool,
 ) -> None:
+    # Opt-in paging telemetry context (no-op when disabled).
+    tel = getattr(repo, "_paging_tel", None) or _paging_telemetry.get_telemetry()
+    tel.set_context(turn=int(turn_idx), step="turn")
     mounts_before = list(repo.arena.cur_mounts)
     nodes_before = repo_node_count(repo)
     live_before = live_node_ids(repo)
@@ -1393,6 +1427,7 @@ def run_turn(
                         event["user"],
                         topk=int(args.topk),
                         ngen=int(args.ngen),
+                        turn_idx=int(turn_idx),
                     )
                     if route_diag is not None:
                         route_diag = dict(route_diag)
@@ -1467,6 +1502,7 @@ def run_turn(
                         topk=int(args.topk),
                         ngen=int(args.ngen),
                         defer_memory=True,
+                        turn_idx=int(turn_idx),
                     )
                     if route_diag is not None:
                         route_diag = dict(route_diag)
@@ -1805,6 +1841,16 @@ def main(argv: list[str]) -> int:
 
     os.environ["GRM_GQA_CUDA_ROUTE"] = "1"
     os.environ["GRM_GRAFT_STORAGE_BITS"] = "8"
+    # Contam diag: if the caller enabled telemetry via env with the literal
+    # token "{session}", expand it to this session directory. Empty/unset
+    # keeps the default path completely dark.
+    for env_key in (
+        "GRM_PAGING_TELEMETRY_PATH",
+        "GRM_MOUNT_SNAPSHOT_DIR",
+    ):
+        raw = os.environ.get(env_key, "")
+        if "{session}" in raw:
+            os.environ[env_key] = raw.replace("{session}", str(session_dir))
 
     if not args.skip_gpu_idle_check:
         idle = wait_for_idle_gpu()
@@ -1845,6 +1891,10 @@ def main(argv: list[str]) -> int:
             "env": {
                 "GRM_GQA_CUDA_ROUTE": os.environ["GRM_GQA_CUDA_ROUTE"],
                 "GRM_GRAFT_STORAGE_BITS": os.environ["GRM_GRAFT_STORAGE_BITS"],
+                "GRM_PAGING_TELEMETRY_PATH": os.environ.get(
+                    "GRM_PAGING_TELEMETRY_PATH", ""),
+                "GRM_MOUNT_SNAPSHOT_DIR": os.environ.get(
+                    "GRM_MOUNT_SNAPSHOT_DIR", ""),
             },
             "gpu_idle_check": idle,
             "script": script,
