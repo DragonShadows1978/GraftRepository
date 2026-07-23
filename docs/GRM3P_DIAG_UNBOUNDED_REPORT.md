@@ -159,3 +159,161 @@ of the original two misses is not identified by this control. Proceed to
 C3-EARLY-REHYDRATE.
 Session:
 `artifacts/grm_three_pass/diag_unbounded_c2_live1`.
+
+### ARM C3-EARLY-REHYDRATE — restart-after 5 (r3 seat)
+
+Provenance note (not an arm result): an earlier launch of this arm exists on
+disk at `artifacts/grm_three_pass/diag_unbounded_c3_early_rehydrate`. That
+session is TRUNCATED — 24 transcript rows / 6 probes only (it stopped at
+turn 23; transcript sha
+`d6be965f40c2e89fc8349f2a58e7002d02e6f5f47fea70c8fb96d95d442a74f7`), so it is
+NOT a valid C3 receipt and is excluded. C3 was re-run to completion into a
+fresh session dir; that complete run is the receipt below.
+
+Frame: ARM B with the sole change `--restart-after 5` (flush/reload after
+turn 4, before the first miss probe; session remains unbounded), env
+`GRM_GQA_CUDA_ROUTE=1 GRM_GRAFT_STORAGE_BITS=8`, all other registered
+defaults.
+
+Probe scorecard line:
+
+```text
+C3 --restart-after 5: 8/9; PASS turn 5 orion pin -> "Auric-4-Alpha" (FLIP from ARM B FAIL); PASS turn 13 orion pin -> "Kestrel-9-Tango" (FLIP from ARM B FAIL); FAIL turn 24 terra port -> "I'm sorry, but I can't comply with that." (NEW refusal, was PASS in ARM B); PASS turns 9, 16, 19, 22, 26, and 30.
+```
+
+Both original misses flipped to PASS, but only one flip meets the frozen
+invariant condition, and a new failure appeared:
+
+- Turn 5 (source_turn 0, pre-restart-boundary): FLIP FAIL->PASS with EVERY
+  route invariant held identical to ARM B — source_rank 1, ranking `[0,2,1]`,
+  mount_plan `[0,2,1]`, fitted/mounted `[0]`, logical live IDs `[3,4]`. The
+  sole differing variable versus ARM B is the payload lifecycle flag
+  (`resumed` False->True): the turn-5 orion node was packed to
+  `storage_bits=8`, evicted at the restart, and rehydrated before mounting.
+  The on-disk node receipt confirms the pack: `repository/nodes/0000.npz`
+  carries `storage_bits=8`, `group_size=32`, INT8 `k_codes`/`v_codes`. This
+  is exactly the invariant-preserving repair the frozen C3 rule names as the
+  H-REHYDRATE signature.
+- Turn 13 (supersession): FLIP FAIL->PASS but the route CHANGED — source_rank
+  3->2, ranking `[5,6,7,...]`->`[6,7,4,...]`, fitted/mounted `[5,7]`->`[6]`.
+  The restart renumbers downstream native node IDs, so turn 13 cannot be
+  repaired "with invariant ranking" by construction; its flip is confounded
+  by that route change and does NOT satisfy the frozen invariant condition.
+- Turn 24 (terra port): NEW FAIL — a model-level refusal
+  (`"I'm sorry, but I can't comply with that."`), not a recall contamination,
+  absent in ARM B. This holds the overall score at 8/9.
+
+Transcript SHA-256:
+`5a3be671f8442da6377e39ba2e753cb3ec4c1825afa03de4dbcb1ab77ff23652`.
+Session:
+`artifacts/grm_three_pass/diag_unbounded_c3_early_rehydrate_r3`.
+
+Decision (frozen rule applied verbatim, not adjusted post-hoc): the
+pre-registered conviction condition is "9/9 (or the two misses flipping) WITH
+invariant rankings/source-rank/mount ids, plus the storage_bits=8 node
+receipt." The result is 8/9, not 9/9. Turn 5's flip satisfies the invariant
+sub-condition AND the storage_bits=8 receipt; turn 13's flip does not (route
+changed); and turn 24 introduces a new refusal. Full conviction to the frozen
+9/9 bar therefore does NOT fire. What DOES fire is a decisive, single-probe,
+invariant-preserving H-REHYDRATE receipt on turn 5 (same route, same mounts,
+same live window; only the rehydration lifecycle differs). Proceed to CONFIRM,
+then — because C3 leaves ambiguity at the arm level — to ARM D.
+
+### CONFIRM — repeat C3 exactly once
+
+Frame: byte-identical to C3 (`--restart-after 5`, same env, fresh session
+dir).
+
+Probe scorecard line:
+
+```text
+CONFIRM (repeat C3): 8/9; identical scorecard to C3 — PASS turn 5 "Auric-4-Alpha", PASS turn 13 "Kestrel-9-Tango", FAIL turn 24 refusal, PASS turns 9, 16, 19, 22, 26, 30.
+```
+
+The scorecard, every route invariant, the miss/pass identities, and the
+transcript SHA-256 all matched C3 byte-for-byte:
+`5a3be671f8442da6377e39ba2e753cb3ec4c1825afa03de4dbcb1ab77ff23652`. The C3
+result — including the turn-5 invariant-preserving flip, the turn-13 route
+change, and the turn-24 refusal — is deterministic and confirmed.
+Session:
+`artifacts/grm_three_pass/diag_unbounded_c3_confirm_r3`.
+
+### ARM D pre-registration
+
+Registered here BEFORE its result. ARM D fires because C3+CONFIRM leave
+arm-level ambiguity (8/9, not 9/9; turn 13 route-confounded; turn 24 a new
+refusal). Registered witness: on the ARM B frame (where turns 5 and 13 still
+MISS), a per-mounted-node vs live-window attention-mass readout on the two
+miss turns, additive and default-off, with the default smoke transcript SHA-256
+required to stay
+`68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f`. Sharpest
+question (per r3 order): during the wrong answer, does attention mass sit on
+the LIVE-WINDOW cypher-turn tokens rather than the mounted orion node? A
+decisive live-window-dominant reading on both miss turns would convict the
+live-window echo path; a mounted-node-dominant reading would exonerate it.
+
+### ARM D — witness not available on this stack (honest non-result)
+
+The registered S1-style attention-mass tap
+(`ArenaCache.set_telemetry`/`s1_mass`, `MLAAttentionTC._telemetry_mass`/
+`reset_telemetry`) exists only on the MLA attention path
+(`core/minicpm3_tc.py`). The GRM3P diagnostic runs the GPT-OSS-20B stack
+(`core/gpt_oss20b_tc.py`), whose attention layers carry no telemetry
+accumulator: `set_telemetry(True)` would set a `.telemetry` flag on layers
+that never populate `_telemetry_mass`, so `s1_mass()` returns zeros. GPT-OSS
+attention is computed inside FUSED kernels (`sink_attention_tc`,
+`apa_blend_softmax_sink`/`sink_apa_blend_attention_tc`,
+`sliding_sink_attention_tc`); the per-position softmax weights are never
+materialized in Python and are not returned by any kernel. Producing the
+per-mounted-node vs live-window mass readout therefore requires new
+attention-mass instrumentation inside the model forward / fused kernels — a
+change to the default forward path with real byte-identity risk, which the
+additive/default-off/`68da84b8...`-preserving rail and the no-fix diagnostic
+scope forbid. No forward-path code was written; `git diff --stat` for `core/`
+and `scripts/` is empty, so the default smoke SHA-256 is preserved trivially,
+but the registered witness could not be executed. ARM D yields no reading on
+this stack.
+
+### Verdict and residuals
+
+Verdict — H-REHYDRATE is POSITIVELY SUPPORTED but NOT convicted to the frozen
+9/9 bar; the mechanism is not fully identified under the available instruments.
+
+Decisive receipt in hand: C3+CONFIRM (deterministic, transcript sha
+`5a3be671...`) repair the turn-5 miss FAIL->PASS with the orion node's route
+held fully invariant to ARM B (source_rank 1, ranking/plan `[0,2,1]`,
+fitted/mounted `[0]`, live IDs `[3,4]`), the sole changed variable being the
+pack(`storage_bits=8`, receipt `nodes/0000.npz`)->evict->rehydrate lifecycle.
+That isolates the payload rehydration path — the same path the 4 MB budget
+forces — as sufficient to flip the read on the pre-restart-boundary probe,
+without changing route width or eligibility (unlike the confounded C2-LIVE1).
+This is a positive H-REHYDRATE receipt for turn 5.
+
+Why not a full conviction (frozen rule, un-adjusted): the pre-registered bar is
+9/9 or both misses flipping WITH invariant ranking. C3 is 8/9. Turn 13's flip
+is route-confounded (the restart renumbers downstream nodes, so an
+invariant-ranking repair of turn 13 is impossible by construction), and a new
+turn-24 refusal appeared. The registered ARM D tiebreaker (live-window vs
+mounted-node attention mass) is unavailable on the GPT-OSS fused-kernel stack.
+
+Un-searched space (named, per honesty rail): (1) the fused-kernel
+attention-mass witness — whether, during the ARM B wrong answer, mass sits on
+the live-window cypher tokens vs the mounted orion node — requires
+kernel-level instrumentation not present on the GPT-OSS path and out of scope
+for a no-fix diagnostic seat; (2) an unconfounded turn-13 test would need a
+restart scheme that rehydrates WITHOUT renumbering downstream native node IDs
+(not exposed by the current CLI); (3) the turn-24 restart-induced refusal is
+uncharacterized — it is a generation-level refusal, not shown to be a
+recall/mount effect.
+
+Residuals: prior-seat C3 dir
+`artifacts/grm_three_pass/diag_unbounded_c3_early_rehydrate` is truncated
+(6/24, sha `d6be965f...`) and excluded — left on disk untouched for the lead.
+No git actions taken; no `core/`/`scripts/` edits; GPU runs all held
+`flock -w 7200 /tmp/forge-gpu.lock`.
+
+Named successors (one-liners, no fixes): S-D1 — port the MLA S1 attention-mass
+tap to the GPT-OSS fused-kernel path (default-off) to run the ARM D witness;
+S-D2 — add a rehydrate-without-renumber restart mode to give turn 13 an
+invariant-ranking test; S-D3 — characterize the restart-induced turn-24
+refusal (recall vs pure generation).
