@@ -291,3 +291,165 @@ def test_arena_passes_epoch_signature_only_to_capable_native_store():
     assert arena._ensure_cuda_route_bank(store, bank_inputs)
     assert store.got_signature is signature
     assert store._cuda_gqa_bank_signature is signature
+
+
+class _ExactRaggedCudaStore:
+    """CPU stand-in for the sidecar's stable raw-GQA rank contract."""
+
+    def __init__(self):
+        self._cuda_gqa_bank = None
+        self._cuda_gqa_bank_signature = None
+        self.node_ids = None
+        self.configure_calls = 0
+
+    def configure_cuda_gqa_route_bank(self, route_bank, node_ids, **_kwargs):
+        self._cuda_gqa_bank = np.asarray(route_bank, np.float32).copy()
+        self.node_ids = np.asarray(node_ids, np.uint64).copy()
+        self.configure_calls += 1
+
+    def route_gqa_cuda(self, query, *, topk=3, **_kwargs):
+        ref = GQAArenaCache.__new__(GQAArenaCache)
+        query = np.asarray(query, np.float32)
+        scores = [ref._key_score(query, self._cuda_gqa_bank[idx])
+                  for idx in range(self._cuda_gqa_bank.shape[0])]
+        # Explicit node-row tie order mirrors the CUDA development gate.
+        order = sorted(range(len(scores)), key=lambda idx: (-scores[idx], idx))
+        return [int(self.node_ids[idx]) for idx in order[:int(topk)]]
+
+    def route_gqa(self, *_args, **_kwargs):
+        raise AssertionError("exact CUDA-eligible route used the native CPU path")
+
+
+def test_route_backend_python_forces_the_unchanged_python_gqa_path(
+        monkeypatch):
+    """The explicit control arm must bypass both native and CUDA routing."""
+    monkeypatch.setenv("GRM_ROUTE_QUERY_LEX", "0")
+    rows = [
+        np.asarray([[[0.2, 0.0]]], np.float32),
+        np.asarray([[[2.0, 0.0], [0.3, 0.0]]], np.float32),
+        np.asarray([[[0.5, 0.0]]], np.float32),
+    ]
+    query = np.asarray([[[1.0, 0.0]]], np.float32)
+    arena = _arena(rows)
+    arena.native_store = _ExactRaggedCudaStore()
+    arena.route_backend = "python"
+    arena._probe_key = lambda _text: query
+
+    expected = arena._python_gqa_exact_order(query, [0, 1, 2], 3)
+    got = arena.route("plain probe", exclude=set(), limit=3)
+
+    assert got == expected == [1, 2, 0]
+    assert arena.last_route_backend == "python"
+    assert arena.native_store.configure_calls == 0
+
+
+def test_explicit_cuda_ragged_selector_preserves_stable_ties_and_receipt(
+        monkeypatch):
+    monkeypatch.delenv("GRM_GQA_CUDA_ROUTE", raising=False)
+    monkeypatch.setenv("GRM_ROUTE_QUERY_LEX", "0")
+    row = np.asarray([[[1.0, 0.0], [0.0, 0.5]]], np.float32)
+    rows = [row.copy(), row.copy(), row.copy()]
+    query = np.asarray([[[1.0, 0.0]]], np.float32)
+    arena = _arena(rows)
+    arena._cuda_gqa_epoch = 0
+    arena.native_store = _ExactRaggedCudaStore()
+    arena.route_backend = "cuda_ragged"
+    arena.route_profile = True
+    arena.route_parity_check = True
+    arena._probe_key = lambda _text: query
+
+    got = arena.route("plain probe", exclude=set(), limit=3)
+
+    assert got == [0, 1, 2]
+    assert arena.last_route_backend == "cuda"
+    assert arena.last_route_receipt["requested_backend"] == "cuda_ragged"
+    assert arena.last_route_receipt["parity"] == {
+        "checked": True,
+        "ok": True,
+        "reference": "python_raw_gqa_key_score_stable_ties",
+    }
+    assert arena.last_route_receipt["ranking_prefix"] == [0, 1, 2]
+    assert arena.last_route_receipt["rebuilds"]["cuda_bank"]["status"] == "rebuilt"
+    assert arena.last_route_receipt["rebuilds"]["cuda_reverse_map"]["status"] == "rebuilt"
+
+
+def test_ragged_cuda_reverse_map_reuses_until_epoch_changes(monkeypatch):
+    monkeypatch.setenv("GRM_ROUTE_QUERY_LEX", "0")
+    rows = [
+        np.asarray([[[0.1, 0.0]]], np.float32),
+        np.asarray([[[1.0, 0.0], [2.0, 0.0]]], np.float32),
+    ]
+    query = np.asarray([[[1.0, 0.0]]], np.float32)
+    arena = _arena(rows)
+    arena._cuda_gqa_epoch = 0
+    arena.native_store = _ExactRaggedCudaStore()
+    arena.route_backend = "cuda_ragged"
+    arena.route_profile = True
+    arena._probe_key = lambda _text: query
+
+    assert arena.route("plain probe", exclude=set(), limit=2) == [1, 0]
+    first_bank = arena._cuda_gqa_bank_cache
+    first_map = arena._cuda_gqa_native_to_idx_cache
+    assert arena.native_store.configure_calls == 1
+
+    assert arena.route("plain probe", exclude=set(), limit=2) == [1, 0]
+    assert arena._cuda_gqa_bank_cache is first_bank
+    assert arena._cuda_gqa_native_to_idx_cache is first_map
+    assert arena.last_route_receipt["rebuilds"]["cuda_bank"]["status"] == "reused"
+    assert (arena.last_route_receipt["rebuilds"]
+            ["cuda_reverse_map"]["status"] == "reused")
+
+    arena.grafts[0]["cent"] = np.asarray(
+        [[[3.0, 0.0], [0.2, 0.0], [0.1, 0.0]]], np.float32)
+    arena._bump_cuda_gqa_epoch()
+
+    assert arena.route("plain probe", exclude=set(), limit=2) == [0, 1]
+    assert arena._cuda_gqa_bank_cache is not first_bank
+    assert arena._cuda_gqa_native_to_idx_cache is not first_map
+    assert arena.native_store.configure_calls == 2
+    assert arena.last_route_receipt["rebuilds"]["cuda_bank"]["status"] == "rebuilt"
+    assert (arena.last_route_receipt["rebuilds"]
+            ["cuda_reverse_map"]["status"] == "rebuilt")
+
+
+def test_ragged_bank_native_id_marshaling_round_trips_to_graft_indices():
+    rows = [
+        np.ones((1, 1, 2), np.float32),
+        np.ones((1, 3, 2), np.float32),
+        np.ones((1, 2, 2), np.float32),
+    ]
+    arena = _arena(rows, node_ids=[9001, 42, 7007])
+    arena._cuda_gqa_epoch = 0
+
+    bank_inputs = arena._cuda_route_bank_inputs()
+    native_to_idx, graft_idx_set = arena._cuda_gqa_native_to_idx(bank_inputs)
+
+    assert bank_inputs[1].tolist() == [9001, 42, 7007]
+    assert native_to_idx == {9001: 0, 42: 1, 7007: 2}
+    assert graft_idx_set == frozenset((0, 1, 2))
+    # This is the exact return path used after CUDA top-k: no row-order or
+    # native-id transformation can silently remap a candidate.
+    assert [native_to_idx[node_id] for node_id in (7007, 9001, 42)] == [2, 0, 1]
+
+
+def test_ineligible_ragged_bank_is_cached_until_the_epoch_moves(monkeypatch):
+    row = np.ones((1, 2, 2), np.float32)
+    arena = _arena([row])
+    arena._cuda_gqa_epoch = 0
+    arena.grafts[0]["child_cents"] = [row]
+    calls = []
+    original = arena._cuda_route_bank_signature
+
+    def counted_signature():
+        calls.append(1)
+        return original()
+
+    monkeypatch.setattr(arena, "_cuda_route_bank_signature", counted_signature)
+
+    assert arena._cuda_route_bank_inputs() is None
+    assert arena._cuda_route_bank_inputs() is None
+    assert len(calls) == 1
+
+    arena._bump_cuda_gqa_epoch()
+    assert arena._cuda_route_bank_inputs() is None
+    assert len(calls) == 2

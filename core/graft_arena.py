@@ -28,6 +28,7 @@ live_shift = n_sink + arena_width is FIXED for the cache's lifetime (the
 import gc
 import os
 import re
+import time
 
 import numpy as np
 
@@ -54,7 +55,8 @@ class ArenaCache:
                  max_live=4096, cache_deposits=True,
                  ephemeral=False, recency_mounts=2, prompt_template=None,
                  stop_sequences=None, length_debias=False,
-                 revision_resolution=False):
+                 revision_resolution=False, route_backend="auto",
+                 route_profile=False, route_parity_check=False):
         # EPHEMERAL MODE ("clear the boat"): the live cache is reset at the
         # START of every turn — each turn runs on [sink | mounts | turn]
         # alone, so resident seats are CONSTANT for a conversation of ANY
@@ -78,6 +80,21 @@ class ArenaCache:
         # arm without changing any repository or model state between runs.
         self.length_debias = bool(length_debias)
         self.revision_resolution = bool(revision_resolution)
+        # Route backend is intentionally an operator opt-in.  ``auto`` is
+        # the historical behavior (the existing dialect-specific environment
+        # toggles still decide whether an optional CUDA bridge may engage),
+        # ``python`` is a comparison/control arm, and ``cuda_ragged`` asks
+        # the GQA dialect to try the exact padded ragged bank.  The latter
+        # always retains the existing fail-closed fallback when a lexical,
+        # hierarchy, or geometry rule cannot be represented by the bank.
+        self.route_backend = self._normalize_route_backend(route_backend)
+        # Profiling and the expensive Python-vs-CUDA rank assertion are
+        # independently opt-in.  The E3 harness enables them for its parity
+        # sample, then leaves both off while timing the resident hot path.
+        self.route_profile = bool(route_profile)
+        self.route_parity_check = bool(route_parity_check)
+        self.last_route_receipt = None
+        self.route_receipt_history = []
         self.prompt_template = prompt_template
         self.stop_sequences = tuple(
             stop_sequences or
@@ -109,6 +126,134 @@ class ArenaCache:
         # counters still update in-memory and the callback is simply absent.
         self._s4_turn = 0
         self.s4_metadata_callback = None
+
+    _ROUTE_BACKENDS = frozenset(("auto", "python", "cuda_ragged"))
+
+    @classmethod
+    def _normalize_route_backend(cls, value):
+        if value is None:
+            value = "auto"
+        value = str(value).strip().lower()
+        if value not in cls._ROUTE_BACKENDS:
+            raise ValueError(
+                "route_backend must be one of "
+                f"{sorted(cls._ROUTE_BACKENDS)}, got {value!r}")
+        return value
+
+    def set_route_backend(self, value):
+        """Select a route backend without changing any epoch-owned data.
+
+        Backend selection changes execution policy only; it must not mutate
+        a route key, candidate set, or the immutable CUDA bank.  Therefore no
+        epoch bump belongs here.  This small mutator keeps the GPU E3 harness
+        from reaching into a private attribute between its Python and flagged
+        comparison arms.
+        """
+        self.route_backend = self._normalize_route_backend(value)
+
+    def _route_backend_request(self):
+        # ``__new__`` arena fixtures predate this field.  Treating their
+        # missing field as ``auto`` preserves every old CPU test by
+        # construction.
+        return self._normalize_route_backend(
+            getattr(self, "route_backend", "auto"))
+
+    def _route_profile_enabled(self):
+        if bool(getattr(self, "route_profile", False)):
+            return True
+        return os.environ.get("GRM_ROUTE_SEAMS_PROFILE", "").strip().lower() in (
+            "1", "true", "yes", "on")
+
+    def _begin_route_receipt(self):
+        if not self._route_profile_enabled():
+            # Do not let a previous profiled turn be misreported as the
+            # receipt for a later unprofiled step.
+            self.last_route_receipt = None
+            return None
+        receipt = {
+            "schema": "grm_route_seams_route_v1",
+            "requested_backend": self._route_backend_request(),
+            "epoch": int(getattr(self, "_cuda_gqa_epoch", 0)),
+            "terms_ms": {},
+            "rebuilds": {},
+            "parity": {"checked": False, "ok": None},
+            "fallbacks": [],
+            "_started_ns": time.perf_counter_ns(),
+        }
+        self._active_route_receipt = receipt
+        return receipt
+
+    def _route_receipt_term(self, name, elapsed_ns):
+        receipt = getattr(self, "_active_route_receipt", None)
+        if receipt is None:
+            return
+        terms = receipt["terms_ms"]
+        terms[name] = terms.get(name, 0.0) + (float(elapsed_ns) / 1.0e6)
+
+    def _route_profile_start(self):
+        """Return a clock sample only while a receipt is actively requested."""
+        if getattr(self, "_active_route_receipt", None) is None:
+            return None
+        return time.perf_counter_ns()
+
+    def _route_profile_end(self, name, started_ns):
+        if started_ns is not None:
+            self._route_receipt_term(
+                name, time.perf_counter_ns() - started_ns)
+
+    def _route_receipt_rebuild(self, name, value):
+        receipt = getattr(self, "_active_route_receipt", None)
+        if receipt is None:
+            return
+        # Every event producer emits plain Python dict/list/scalar values so
+        # this remains directly JSON-serializable in the E3 receipt.
+        receipt["rebuilds"][name] = value
+
+    def _route_receipt_fallback(self, reason):
+        receipt = getattr(self, "_active_route_receipt", None)
+        if receipt is None:
+            return
+        if reason not in receipt["fallbacks"]:
+            receipt["fallbacks"].append(str(reason))
+
+    def _route_receipt_parity(self, *, checked, ok=None, reference=None):
+        receipt = getattr(self, "_active_route_receipt", None)
+        if receipt is None:
+            return
+        receipt["parity"] = {
+            "checked": bool(checked),
+            "ok": None if ok is None else bool(ok),
+            "reference": reference,
+        }
+
+    def _route_receipt_result(self, ranking):
+        receipt = getattr(self, "_active_route_receipt", None)
+        if receipt is not None:
+            values = list(ranking or ())
+            receipt["ranking_count"] = len(values)
+            # E3 compares at k <= 16. Keeping only that prefix makes an
+            # optional profile safe even for a deliberately unlimited route.
+            receipt["ranking_prefix"] = [int(idx) for idx in values[:16]]
+        return ranking
+
+    def _finish_route_receipt(self, receipt, *, candidate_count=None):
+        if receipt is None:
+            return
+        receipt["route_backend"] = getattr(self, "last_route_backend", "python")
+        if candidate_count is not None:
+            receipt["candidate_count"] = int(candidate_count)
+        started_ns = receipt.pop("_started_ns", None)
+        if started_ns is not None:
+            receipt["terms_ms"]["route_wall_ms"] = (
+                time.perf_counter_ns() - started_ns) / 1.0e6
+        self.last_route_receipt = receipt
+        history = getattr(self, "route_receipt_history", None)
+        if history is None:
+            history = []
+            self.route_receipt_history = history
+        history.append(receipt)
+        if getattr(self, "_active_route_receipt", None) is receipt:
+            self._active_route_receipt = None
 
     def _format_step_prompt(self, user_text):
         if self.prompt_template is None:
@@ -383,83 +528,160 @@ class ArenaCache:
         return len(self.grafts) - 1
 
     def route(self, bare_text, exclude, limit=None):
-        if not self.grafts:
-            return []
-        route_limit = None if limit is None else max(0, int(limit))
-        if route_limit == 0:
-            return []
-        p = self._probe_key(bare_text)
+        receipt = self._begin_route_receipt()
+        profiling = receipt is not None
+        candidate_count = 0
+        try:
+            if not self.grafts:
+                return self._route_receipt_result([])
+            route_limit = None if limit is None else max(0, int(limit))
+            if route_limit == 0:
+                return self._route_receipt_result([])
 
-        # Lexical channel: identifier tokens in the probe (codes, numbers,
-        # ALL-CAPS) are exact-match keys. Mean centroids CANNOT separate
-        # sibling chunks that differ only in a code token (corpus-100:
-        # @1 4/20 latent-only — family right, instance random); an exact
-        # identifier hit must dominate. _key_score lives in O(1) cosine
-        # range (every dialect must keep it there), so +1 per full match
-        # wins outright, partial matches rank between.
-        #
-        # OPTION 1 (query-side lex extension, 2026-07-08): when enabled
-        # (default ON; set GRM_ROUTE_QUERY_LEX=0 to disable), content-word
-        # tokens from the query also participate — lowercase labels like
-        # "orion"/"pin" that never enter _rare_tokens. Match is against
-        # candidate NODE TEXT (query-side only; node rare keys / indexes
-        # unchanged). Native/CUDA stores only rare keys, so content hits
-        # force a Python rescore; when content words hit no candidate the
-        # native/CUDA order is kept (lex silent → latent ordering intact).
-        qrare = self._rare_tokens(bare_text)
-        qlex = (self._query_lex_tokens(bare_text)
-                if self._route_query_lex_enabled() else qrare)
-        content_extra = qlex - qrare
+            started = self._route_profile_start()
+            p = self._probe_key(bare_text)
+            self._route_profile_end("probe_key_ms", started)
+            # A probe is necessarily turn-specific.  Node keys are a
+            # different class: on the flagged GQA path they live in the
+            # immutable epoch bank and are not re-marshaled here.
+            if profiling:
+                self._route_receipt_rebuild(
+                    "probe_key", {"status": "per_turn", "shape": tuple(
+                        int(dim) for dim in np.asarray(p).shape)})
 
-        # P1 follow-on (profile-named): the eligible BASE (retired/kind
-        # filter) depends only on graft state, so it is epoch-cached in
-        # _route_cand_base(); only the per-call `exclude` filter runs here.
-        # Byte-identical to the old single comprehension: same ascending
-        # order, same three membership conditions. When `exclude` is empty
-        # the cached base list itself is used — every downstream consumer
-        # (_native_route_order, _vector_route_scores, the Python-fallback
-        # scoring loops) reads cand without mutating it.
-        cand_base = self._route_cand_base()
-        if exclude:
-            cand = [i for i in cand_base if i not in exclude]
-        else:
-            cand = cand_base
-        # Native lexical channel is rare-key only (node indexes unchanged).
-        # The native/CUDA route APIs expose only final ids, not the raw
-        # per-node score needed by L1. Debias therefore deliberately takes
-        # the Python scoring path. OFF preserves the old backend choice.
-        native_order = (None if getattr(self, "length_debias", False) else
-                        self._native_route_order(
-                            p, qrare, cand, limit=route_limit,
-                            exclude=exclude))
-        if native_order is not None and not self._query_lex_needs_rescore(
-                content_extra, cand):
-            return native_order
-        self.last_route_backend = "python"
-        base = self._vector_route_scores(p, cand)
-        if base is None:
-            base = {}
+            # Lexical channel: identifier tokens in the probe (codes, numbers,
+            # ALL-CAPS) are exact-match keys. Mean centroids CANNOT separate
+            # sibling chunks that differ only in a code token (corpus-100:
+            # @1 4/20 latent-only — family right, instance random); an exact
+            # identifier hit must dominate. _key_score lives in O(1) cosine
+            # range (every dialect must keep it there), so +1 per full match
+            # wins outright, partial matches rank between.
+            #
+            # OPTION 1 (query-side lex extension, 2026-07-08): when enabled
+            # (default ON; set GRM_ROUTE_QUERY_LEX=0 to disable), content-word
+            # tokens from the query also participate — lowercase labels like
+            # "orion"/"pin" that never enter _rare_tokens. Match is against
+            # candidate NODE TEXT (query-side only; node rare keys / indexes
+            # unchanged). Native/CUDA stores only rare keys, so content hits
+            # force a Python rescore; when content words hit no candidate the
+            # native/CUDA order is kept (lex silent → latent ordering intact).
+            started = self._route_profile_start()
+            qrare = self._rare_tokens(bare_text)
+            qlex = (self._query_lex_tokens(bare_text)
+                    if self._route_query_lex_enabled() else qrare)
+            content_extra = qlex - qrare
+            self._route_profile_end("lexical_keys_ms", started)
+            if profiling:
+                self._route_receipt_rebuild(
+                    "lexical_keys", {
+                        "status": "per_turn",
+                        "rare_count": len(qrare),
+                        "query_lex_count": len(qlex),
+                        "content_extra_count": len(content_extra),
+                    })
+
+            # P1 follow-on (profile-named): the eligible BASE (retired/kind
+            # filter) depends only on graft state, so it is epoch-cached in
+            # _route_cand_base(); only the per-call `exclude` filter runs here.
+            # Byte-identical to the old single comprehension: same ascending
+            # order, same three membership conditions. When `exclude` is empty
+            # the cached base list itself is used — every downstream consumer
+            # (_native_route_order, _vector_route_scores, the Python-fallback
+            # scoring loops) reads cand without mutating it.
+            started = self._route_profile_start()
+            cand_base = self._route_cand_base()
+            self._route_profile_end("candidate_base_ms", started)
+            if profiling:
+                self._route_receipt_rebuild(
+                    "candidate_base", getattr(
+                        self, "_last_route_cand_base_event", {
+                            "status": "unknown", "epoch": int(getattr(
+                                self, "_cuda_gqa_epoch", 0))}))
+            started = self._route_profile_start()
+            if exclude:
+                cand = [i for i in cand_base if i not in exclude]
+            else:
+                cand = cand_base
+            candidate_count = len(cand)
+            self._route_profile_end("candidate_exclude_ms", started)
+
+            # Native lexical channel is rare-key only (node indexes unchanged).
+            # The native/CUDA route APIs expose only final ids, not the raw
+            # per-node score needed by L1. Debias deliberately takes the
+            # Python scoring path.  ``route_backend=python`` is an explicit
+            # comparison arm; it has no effect on candidate ordering or
+            # scoring once this fallback path is entered.
+            backend_request = self._route_backend_request()
+            native_order = None
+            if getattr(self, "length_debias", False):
+                self._route_receipt_fallback("length_debias")
+            elif backend_request == "python":
+                self._route_receipt_fallback("route_backend_python")
+            else:
+                started = self._route_profile_start()
+                native_order = self._native_route_order(
+                    p, qrare, cand, limit=route_limit, exclude=exclude)
+                # CUDA writes its own non-overlapping bank/marshal/kernel/
+                # remap terms. Keep this enclosing timer only for the CPU
+                # native attempt or a fail-closed fallback, so receipt users
+                # never add a parent CUDA total to its child decomposition.
+                if (native_order is None
+                        or getattr(self, "last_route_backend", None) != "cuda"):
+                    self._route_profile_end("native_backend_attempt_ms", started)
+            if native_order is not None:
+                started = self._route_profile_start()
+                needs_rescore = self._query_lex_needs_rescore(
+                    content_extra, cand)
+                self._route_profile_end("lex_rescore_check_ms", started)
+                if not needs_rescore:
+                    return self._route_receipt_result(native_order)
+                self._route_receipt_fallback("query_lex_rescore")
+            elif backend_request == "cuda_ragged":
+                # Exact CUDA eligibility is intentionally narrow.  A missing
+                # bank or sidecar falls through to the authoritative Python
+                # law; the GQA helper records the concrete reason when it can.
+                self._route_receipt_fallback("cuda_ragged_unavailable")
+
+            self.last_route_backend = "python"
+            started = self._route_profile_start()
+            base = self._vector_route_scores(p, cand)
+            if base is None:
+                base = {}
+                for i in cand:
+                    score = self._cent_score(p, self.grafts[i])
+                    if np.isfinite(score):
+                        base[i] = score
+            self._route_profile_end("python_centroid_score_ms", started)
+            if profiling:
+                self._route_receipt_rebuild(
+                    "node_centroids", {
+                        "status": "python_per_candidate",
+                        "candidate_count": int(candidate_count),
+                    })
+            started = self._route_profile_start()
+            base = self._length_debias_scores(base, cand)
+            # dialect hook: a raw-score channel (GQA layer-0 |q.k|) rescales
+            # per-route into the O(1) band the lexical bonus was calibrated
+            # against. MLA cosine is already there — identity.
+            base = self._normalize_scores(base)
+            self._route_profile_end("score_normalize_ms", started)
+            started = self._route_profile_start()
+            scored = []
             for i in cand:
-                score = self._cent_score(p, self.grafts[i])
+                if i not in base:
+                    continue
+                score = base[i] + self._lex_bonus(qlex, self.grafts[i])
                 if np.isfinite(score):
-                    base[i] = score
-        base = self._length_debias_scores(base, cand)
-        # dialect hook: a raw-score channel (GQA layer-0 |q.k|) rescales
-        # per-route into the O(1) band the lexical bonus was calibrated
-        # against. MLA cosine is already there — identity.
-        base = self._normalize_scores(base)
-        scored = []
-        for i in cand:
-            if i not in base:
-                continue
-            score = base[i] + self._lex_bonus(qlex, self.grafts[i])
-            if np.isfinite(score):
-                scored.append((score, i))
-        scored.sort(key=lambda item: -item[0])
-        ranking = [i for _, i in scored]          # best first
-        if route_limit is not None:
-            return ranking[:route_limit]
-        return ranking
+                    scored.append((score, i))
+            scored.sort(key=lambda item: -item[0])
+            self._route_profile_end("lex_rescore_apply_ms", started)
+            ranking = [i for _, i in scored]          # best first
+            if route_limit is not None:
+                return self._route_receipt_result(ranking[:route_limit])
+            return self._route_receipt_result(ranking)
+        finally:
+            self._finish_route_receipt(
+                receipt, candidate_count=candidate_count)
 
     def _vector_route_scores(self, p, cand):
         if (type(self)._key_score is not ArenaCache._key_score
@@ -740,12 +962,20 @@ class ArenaCache:
         cached = getattr(self, "_route_cand_base_cache", None)
         cache_epoch = getattr(self, "_route_cand_base_epoch", None)
         if cached is not None and cache_epoch == epoch:
+            self._last_route_cand_base_event = {
+                "status": "reused", "epoch": int(epoch),
+                "candidate_count": len(cached),
+            }
             return cached
         base = [i for i, g in enumerate(self.grafts)
                 if not g.get("retired")
                 and g.get("kind", "turn") != "recall"]
         self._route_cand_base_cache = base
         self._route_cand_base_epoch = epoch
+        self._last_route_cand_base_event = {
+            "status": "rebuilt", "epoch": int(epoch),
+            "candidate_count": len(base),
+        }
         return base
 
     def _native_to_idx_map(self):
@@ -2108,6 +2338,19 @@ class ArenaCache:
         live_idx = {g for g, _ in self.live_segs if g is not None} | set(rec)
         route_limit = max(1, (int(max_trips) + 1) * int(self.topk))
         ranking = self.route(user_text, exclude=live_idx, limit=route_limit)
+        # `route()` finalizes this before returning.  Attach the immutable
+        # per-turn profile to whichever attempt becomes authoritative; this
+        # makes step() receipts describe the route that actually chose the
+        # mount ladder, not later decode/deposit work.
+        route_receipt = getattr(self, "last_route_receipt", None)
+
+        def attach_route_receipt(info):
+            if route_receipt is not None:
+                info["route_receipt"] = route_receipt
+                info["route_backend"] = getattr(
+                    self, "last_route_backend", "python")
+            return info
+
         s4_turn = self._next_s4_turn()
         snap = (self.caches, self.pos, list(self.live_segs),
                 self.cur_mounts, self.cur_mount_n, len(self.grafts))
@@ -2221,7 +2464,7 @@ class ArenaCache:
             if grounded:
                 self._commit_s4_attempt(
                     ranking, mset, contributors, turn=s4_turn)
-                return txt, info
+                return txt, attach_route_receipt(info)
             if best is None:
                 best = (txt, info, (self.caches, self.pos, list(self.live_segs),
                                     self.cur_mounts, self.cur_mount_n,
@@ -2232,7 +2475,7 @@ class ArenaCache:
             info["trip"] = 0
             info["no_mount_fit"] = True
             self._commit_s4_attempt(ranking, (), (), turn=s4_turn)
-            return txt, info
+            return txt, attach_route_receipt(info)
         txt, info, st, accepted_mounts = best
         (self.caches, self.pos, self.live_segs,
          self.cur_mounts, self.cur_mount_n) = st[0], st[1], st[2], st[3], st[4]
@@ -2240,7 +2483,7 @@ class ArenaCache:
         self._bump_cuda_gqa_epoch()
         self._commit_s4_attempt(
             ranking, accepted_mounts, (), turn=s4_turn)
-        return txt, info
+        return txt, attach_route_receipt(info)
 
     def _attempt(self, user_text, picks, ngen, deposit, stops):
         # Final assembly choke point: callers such as diagnostic/probe
@@ -2430,6 +2673,12 @@ class GQAArenaCache(ArenaCache):
         return {i: v / mx for i, v in base.items()}
 
     def _cuda_route_enabled(self):
+        request = self._route_backend_request()
+        if request == "python":
+            return False
+        if request == "cuda_ragged":
+            return True
+        # ``auto`` retains the historic, default-off environment toggle.
         return os.environ.get("GRM_GQA_CUDA_ROUTE", "").lower() in (
             "1", "true", "yes", "on")
 
@@ -2590,9 +2839,20 @@ class GQAArenaCache(ArenaCache):
         cached = getattr(self, "_cuda_gqa_bank_cache", None)
         cache_epoch = getattr(self, "_cuda_gqa_cache_epoch", None)
         paranoid = self._cuda_gqa_bridge_paranoid()
-        epoch_says_fresh = cached is not None and cache_epoch == epoch
+        # ``None`` is an epoch-owned result too: a live session containing a
+        # hierarchy, a missing native id, or malformed key must not repeat an
+        # O(N) eligibility/signature walk on every turn merely because there
+        # is no attachable bank.  The epoch is the cache-valid bit for both
+        # the positive bank and the fail-closed negative result.
+        epoch_says_fresh = cache_epoch == epoch
 
         if epoch_says_fresh and not paranoid:
+            self._last_cuda_gqa_bank_event = {
+                "status": "reused" if cached is not None else "ineligible_reused",
+                "epoch": int(epoch),
+                "signature_walk": False,
+                "bank_materialized": False,
+            }
             return cached
 
         sig = self._cuda_route_bank_signature()
@@ -2603,18 +2863,27 @@ class GQAArenaCache(ArenaCache):
                     "fresh but the signature walk finds no eligible bank — "
                     "epoch under-invalidation")
             self._cuda_gqa_bank_cache = None
+            self._cuda_gqa_cache_epoch = epoch
             self._cuda_gqa_padding_receipt = None
+            self._cuda_gqa_native_to_idx_cache = None
+            self._last_cuda_gqa_bank_event = {
+                "status": "ineligible",
+                "epoch": int(epoch),
+                "signature_walk": True,
+                "bank_materialized": False,
+            }
             return None
         node_ids_np, signature, rows = sig
 
         if paranoid and epoch_says_fresh:
-            assert cached[2] == signature, (
+            assert cached is not None and cached[2] == signature, (
                 "GRM_GQA_BRIDGE_PARANOID: epoch says the cached bank is "
                 "fresh but the signature walk disagrees — epoch under-"
                 "invalidation (a mutation changed the signature without "
                 "bumping _cuda_gqa_epoch)")
 
-        if cached is not None and cached[2] == signature:
+        if (cached is not None and (cached[2] is signature
+                                    or cached[2] == signature)):
             # Signature-identical even though the epoch moved (e.g. a
             # metadata-only mutation bumped epoch but didn't touch anything
             # the bank cares about) — over-invalidation is fine, just skip
@@ -2622,6 +2891,13 @@ class GQAArenaCache(ArenaCache):
             # take the fast path again.
             self._cuda_gqa_bank_cache = cached
             self._cuda_gqa_cache_epoch = epoch
+            self._last_cuda_gqa_bank_event = {
+                "status": "signature_reused",
+                "epoch": int(epoch),
+                "signature_walk": True,
+                "bank_materialized": False,
+                "node_count": int(node_ids_np.shape[0]),
+            }
             return cached
 
         route_bank, layout_receipt = self._cuda_build_dense_route_bank(rows)
@@ -2629,18 +2905,44 @@ class GQAArenaCache(ArenaCache):
         self._cuda_gqa_bank_cache = bank_inputs
         self._cuda_gqa_cache_epoch = epoch
         self._cuda_gqa_padding_receipt = layout_receipt
+        # A different bank object means the cached O(N) native-id reverse map
+        # no longer describes its rows.  Metadata-only epoch bumps take the
+        # signature-reused branch above and deliberately retain that map.
+        self._cuda_gqa_native_to_idx_cache = None
+        self._last_cuda_gqa_bank_event = {
+            "status": "rebuilt",
+            "epoch": int(epoch),
+            "signature_walk": True,
+            "bank_materialized": True,
+            "node_count": int(node_ids_np.shape[0]),
+            "layout": layout_receipt["layout"],
+            "raw_bytes": int(layout_receipt["raw_bytes"]),
+            "padded_bytes": int(layout_receipt["padded_bytes"]),
+        }
         return bank_inputs
 
     def _ensure_cuda_route_bank(self, store, bank_inputs):
         if getattr(self, "_cuda_gqa_route_unavailable", False):
+            self._last_cuda_gqa_upload_event = {
+                "status": "unavailable_cached"}
             return False
         if not hasattr(store, "configure_cuda_gqa_route_bank"):
+            self._last_cuda_gqa_upload_event = {
+                "status": "store_unsupported"}
             return False
         if bank_inputs is None:
+            self._last_cuda_gqa_upload_event = {"status": "no_bank"}
             return False
         route_bank, node_ids, signature = bank_inputs
+        # This method runs for every flagged route. The bank signature has
+        # one entry per resident node, so equality alone is an O(N) re-prep
+        # tax even when the arena handed us the identical tuple object.
+        stored_signature = getattr(store, "_cuda_gqa_bank_signature", None)
         if (getattr(store, "_cuda_gqa_bank", None) is not None
-                and getattr(store, "_cuda_gqa_bank_signature", None) == signature):
+                and (stored_signature is signature
+                     or stored_signature == signature)):
+            self._last_cuda_gqa_upload_event = {
+                "status": "reused", "node_count": int(node_ids.shape[0])}
             return True
         try:
             configure_kwargs = (
@@ -2651,70 +2953,231 @@ class GQAArenaCache(ArenaCache):
             store.configure_cuda_gqa_route_bank(
                 route_bank, node_ids, **configure_kwargs)
             store._cuda_gqa_bank_signature = signature
-        except Exception:
+        except Exception as exc:
             self._cuda_gqa_route_unavailable = True
+            self._last_cuda_gqa_upload_event = {
+                "status": "failed", "error_type": type(exc).__name__}
             return False
+        self._last_cuda_gqa_upload_event = {
+            "status": "uploaded",
+            "node_count": int(node_ids.shape[0]),
+            "bytes": int(route_bank.nbytes),
+        }
         return True
 
-    def _cuda_route_order(self, pkey, cand, limit):
+    def _cuda_gqa_native_to_idx(self, bank_inputs):
+        """Return the exact bank-row native-id -> graft-index map.
+
+        The old GQA bridge rebuilt this map from ``cand`` on every route.
+        The ragged bank already fixes row order at its epoch-bound attach, so
+        the map and its graft-index membership set are invariant until that
+        bank object changes. Caching them removes an O(N) Python dictionary
+        build from the resident route path without changing mapping or ties.
+        """
+        cached = getattr(self, "_cuda_gqa_native_to_idx_cache", None)
+        if cached is not None and cached[0] is bank_inputs:
+            self._last_cuda_gqa_reverse_map_event = {
+                "status": "reused", "node_count": len(cached[1])}
+            return cached[1], cached[2]
+
+        node_ids_np = bank_inputs[1]
+        row_to_graft_idx = []
+        for idx, graft in enumerate(self.grafts):
+            if (graft.get("retired")
+                    or graft.get("kind", "turn") == "recall"):
+                continue
+            # These are exactly the reasons the signature walk declines a
+            # complete bank. Re-checking them on an attach is fail-closed;
+            # an unchanged epoch never reaches this branch again.
+            if (graft.get("native_node_id") is None
+                    or graft.get("child_cents") or "cent" not in graft):
+                self._last_cuda_gqa_reverse_map_event = {
+                    "status": "ineligible"}
+                return None
+            row_to_graft_idx.append(int(idx))
+
+        if len(row_to_graft_idx) != int(node_ids_np.shape[0]):
+            self._last_cuda_gqa_reverse_map_event = {
+                "status": "row_count_mismatch",
+                "graft_rows": len(row_to_graft_idx),
+                "bank_rows": int(node_ids_np.shape[0]),
+            }
+            return None
+        if any(int(self.grafts[idx]["native_node_id"]) != int(node_ids_np[row])
+               for row, idx in enumerate(row_to_graft_idx)):
+            self._last_cuda_gqa_reverse_map_event = {
+                "status": "node_id_order_mismatch"}
+            return None
+
+        native_to_idx = {
+            int(node_ids_np[row]): row_to_graft_idx[row]
+            for row in range(len(row_to_graft_idx))
+        }
+        if len(native_to_idx) != len(row_to_graft_idx):
+            self._last_cuda_gqa_reverse_map_event = {
+                "status": "duplicate_native_id"}
+            return None
+        graft_idx_set = frozenset(row_to_graft_idx)
+        self._cuda_gqa_native_to_idx_cache = (
+            bank_inputs, native_to_idx, graft_idx_set)
+        self._last_cuda_gqa_reverse_map_event = {
+            "status": "rebuilt", "node_count": len(native_to_idx)}
+        return native_to_idx, graft_idx_set
+
+    def _python_gqa_exact_order(self, pkey, cand, limit):
+        """Stable raw-GQA reference used only by the opt-in parity gate."""
+        scored = []
+        for idx in cand:
+            score = self._key_score(pkey, self.grafts[idx]["cent"])
+            if np.isfinite(score):
+                scored.append((score, idx))
+        # `cand` is ascending. Python's stable sort is therefore the exact
+        # production tie policy; CUDA must preserve this same bank-row order.
+        scored.sort(key=lambda item: -item[0])
+        want = min(max(0, int(limit)), len(cand))
+        return [idx for _, idx in scored[:want]]
+
+    def _cuda_route_order(self, pkey, cand, limit, exclude=()):
         if limit is None:
+            self._route_receipt_fallback("cuda_requires_limited_route")
             return None
         store = getattr(self, "native_store", None)
         if store is None or not hasattr(store, "route_gqa_cuda"):
+            self._route_receipt_fallback("cuda_store_unavailable")
             return None
         if not self._cuda_route_enabled():
+            self._route_receipt_fallback("cuda_disabled")
             return None
+        started = self._route_profile_start()
         bank_inputs = self._cuda_route_bank_inputs()
+        self._route_profile_end("cuda_bank_inputs_ms", started)
+        self._route_receipt_rebuild(
+            "cuda_bank", dict(getattr(
+                self, "_last_cuda_gqa_bank_event", {"status": "unknown"})))
         if bank_inputs is None:
+            self._route_receipt_rebuild(
+                "node_centroids", {"status": "cuda_bank_ineligible"})
+            self._route_receipt_rebuild(
+                "candidate_key_marshal", {"status": "cuda_bank_ineligible"})
+            self._route_receipt_fallback("cuda_bank_ineligible")
             return None
+        self._route_receipt_rebuild(
+            "node_centroids", {
+                "status": "epoch_bank",
+                "node_count": int(bank_inputs[1].shape[0]),
+                "bytes": int(bank_inputs[0].nbytes),
+            })
+        self._route_receipt_rebuild(
+            "candidate_key_marshal", {
+                "status": getattr(
+                    self, "_last_cuda_gqa_bank_event", {}).get("status", "unknown"),
+                "bytes": int(bank_inputs[0].nbytes),
+                "node_count": int(bank_inputs[1].shape[0]),
+            })
+        started = self._route_profile_start()
         if not self._ensure_cuda_route_bank(store, bank_inputs):
+            self._route_profile_end("cuda_bank_upload_ms", started)
+            self._route_receipt_rebuild(
+                "cuda_bank_upload", dict(getattr(
+                    self, "_last_cuda_gqa_upload_event", {"status": "unknown"})))
+            self._route_receipt_fallback("cuda_bank_attach_failed")
             return None
-        native_to_idx = {
-            int(self.grafts[i]["native_node_id"]): int(i)
-            for i in cand
-            if self.grafts[i].get("native_node_id") is not None
-        }
-        if len(native_to_idx) != len(cand):
-            return None
+        self._route_profile_end("cuda_bank_upload_ms", started)
+        self._route_receipt_rebuild(
+            "cuda_bank_upload", dict(getattr(
+                self, "_last_cuda_gqa_upload_event", {"status": "unknown"})))
+
+        # `cand` is route()'s epoch-cached eligible base minus its small
+        # current exclude set. Prove that invariant with O(len(exclude)) work
+        # rather than rebuilding an O(len(cand)) dict every turn.
         bank_size = int(bank_inputs[1].shape[0])
+        cand_base = self._route_cand_base()
+        if bank_size != len(cand_base):
+            self._route_receipt_fallback("cuda_candidate_base_mismatch")
+            return None
+        started = self._route_profile_start()
+        cached_map = self._cuda_gqa_native_to_idx(bank_inputs)
+        self._route_profile_end("cuda_reverse_map_ms", started)
+        self._route_receipt_rebuild(
+            "cuda_reverse_map", dict(getattr(
+                self, "_last_cuda_gqa_reverse_map_event", {"status": "unknown"})))
+        if cached_map is None:
+            self._route_receipt_fallback("cuda_reverse_map_ineligible")
+            return None
+        native_to_idx, bank_idx_set = cached_map
+        exclude_set = set(exclude) if exclude else None
+        excludes_in_bank = (
+            sum(1 for idx in exclude_set if idx in bank_idx_set)
+            if exclude_set is not None else 0)
+        if len(cand) != bank_size - excludes_in_bank:
+            self._route_receipt_fallback("cuda_candidate_subset_mismatch")
+            return None
         want = min(max(0, int(limit)), len(cand))
         if want <= 0:
             return []
-        excluded = max(0, bank_size - len(cand))
-        topk = min(16, bank_size, want + excluded)
+        topk = min(16, bank_size, want + excludes_in_bank)
         if topk < want:
+            self._route_receipt_fallback("cuda_topk_cap")
             return None
+        started = self._route_profile_start()
+        query = np.ascontiguousarray(pkey, dtype=np.float32)
+        self._route_profile_end("query_key_marshal_ms", started)
+        self._route_receipt_rebuild(
+            "query_key_marshal", {
+                "status": "per_turn", "bytes": int(query.nbytes),
+                "shape": tuple(int(dim) for dim in query.shape),
+            })
         try:
-            routed_native = store.route_gqa_cuda(
-                np.asarray(pkey, dtype=np.float32), topk=topk)
+            started = self._route_profile_start()
+            routed_native = store.route_gqa_cuda(query, topk=topk)
         except Exception:
+            self._route_receipt_fallback("cuda_route_exception")
             return None
+        self._route_profile_end("cuda_route_call_ms", started)
+        started = self._route_profile_start()
         routed = []
         for node_id in routed_native:
             idx = native_to_idx.get(int(node_id))
-            if idx is not None:
-                routed.append(idx)
+            if idx is None:
+                self._route_receipt_fallback("cuda_unknown_native_id")
+                return None
+            if exclude_set is not None and idx in exclude_set:
+                continue
+            routed.append(idx)
             if len(routed) >= want:
                 break
+        self._route_profile_end("cuda_result_remap_ms", started)
         if len(routed) < want:
+            self._route_receipt_fallback("cuda_short_result")
             return None
+        if bool(getattr(self, "route_parity_check", False)):
+            started = self._route_profile_start()
+            expected = self._python_gqa_exact_order(pkey, cand, want)
+            self._route_profile_end("cuda_python_parity_ms", started)
+            parity_ok = routed == expected
+            self._route_receipt_parity(
+                checked=True, ok=parity_ok,
+                reference="python_raw_gqa_key_score_stable_ties")
+            if not parity_ok:
+                raise AssertionError(
+                    "cuda_ragged rank/tie parity mismatch: "
+                    f"expected {expected}, got {routed}")
         self.last_route_backend = "cuda"
         return routed
 
     def _native_route_order(self, pkey, qrare, cand, limit=None, exclude=()):
         # `exclude` accepted for base-class call-site compatibility
         # (route() passes it positionally-by-keyword to every dialect's
-        # _native_route_order since the P2 MLA CUDA route fix); GQA's own
-        # _cuda_route_order below does not yet consume it -- out of scope
-        # for this work order, GQA's bridge was not re-profiled at 1M-node
-        # scale here.
+        # _native_route_order since the P2 MLA CUDA route fix). The ragged
+        # GQA bridge consumes it too: the epoch-cached native-id map lets the
+        # resident route path price only current exclusions, not all nodes.
         store = getattr(self, "native_store", None)
         if store is None or not hasattr(store, "route_gqa"):
             return None
         if not cand:
             return []
         if not qrare:
-            cuda_order = self._cuda_route_order(pkey, cand, limit)
+            cuda_order = self._cuda_route_order(pkey, cand, limit, exclude)
             if cuda_order is not None:
                 return cuda_order
         native_to_idx = {}
