@@ -1,0 +1,182 @@
+{
+  "all_passed": true,
+  "passed": 2,
+  "probes": [
+    {
+      "accepts": [
+        "Vortex-3-Sierra"
+      ],
+      "answer": "Vortex-3-Sierra",
+      "contains_expected": true,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          5
+        ],
+        "live_turns": 1,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 4,
+        "source_node_live_before": false,
+        "source_turn": 3
+      },
+      "expected": "Vortex-3-Sierra",
+      "fact_id": "cypher bridge",
+      "mount_plan": [
+        4
+      ],
+      "mounted_ids": [
+        4
+      ],
+      "mounts": [
+        5
+      ],
+      "old_value": null,
+      "pass": true,
+      "resumed": true,
+      "route_backend": "python",
+      "route_ranking": {
+        "live_excluded": [
+          5
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [
+          4
+        ],
+        "mount_plan": [
+          4
+        ],
+        "ranking_ids": [
+          4,
+          2,
+          1,
+          3
+        ],
+        "ranking_len": 4,
+        "route_backend": "python",
+        "score_error": null,
+        "source_node_id": 4,
+        "source_rank": 1,
+        "top5": [
+          {
+            "contains_value_hint": true,
+            "node_id": 4,
+            "rank": 1,
+            "score": 0.9999999983708072,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 2,
+            "rank": 2,
+            "score": 0.9397690008147679,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          },
+          {
+            "contains_value_hint": false,
+            "node_id": 1,
+            "rank": 3,
+            "score": 0.8978960272732368,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session c"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 3,
+            "rank": 4,
+            "score": 0.8501244475572457,
+            "text_prefix": "The current orion pin value is Kestrel-9-Tango."
+          }
+        ]
+      },
+      "turn": 5
+    },
+    {
+      "accepts": [
+        "Kestrel-9-Tango"
+      ],
+      "answer": "Kestrel-9-Tango.",
+      "contains_expected": true,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          6
+        ],
+        "live_turns": 1,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 3,
+        "source_node_live_before": false,
+        "source_turn": 2
+      },
+      "expected": "Kestrel-9-Tango",
+      "fact_id": "orion pin",
+      "mount_plan": [
+        2
+      ],
+      "mounted_ids": [
+        2
+      ],
+      "mounts": [
+        3
+      ],
+      "old_value": "Auric-4-Alpha",
+      "pass": true,
+      "resumed": true,
+      "route_backend": "python",
+      "route_ranking": {
+        "live_excluded": [
+          6
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [
+          2
+        ],
+        "mount_plan": [
+          2
+        ],
+        "ranking_ids": [
+          2,
+          3,
+          4,
+          1
+        ],
+        "ranking_len": 4,
+        "route_backend": "python",
+        "score_error": null,
+        "source_node_id": 3,
+        "source_rank": 2,
+        "top5": [
+          {
+            "contains_value_hint": true,
+            "node_id": 2,
+            "rank": 1,
+            "score": 0.9455695849473437,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 3,
+            "rank": 2,
+            "score": 0.865784508009247,
+            "text_prefix": "The current orion pin value is Kestrel-9-Tango."
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 4,
+            "rank": 3,
+            "score": 0.9999999983770004,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": false,
+            "node_id": 1,
+            "rank": 4,
+            "score": 0.9037718530984077,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session c"
+          }
+        ]
+      },
+      "turn": 6
+    }
+  ],
+  "schema": "grm_e2e_probe_scorecard_v1",
+  "total": 2
+}
