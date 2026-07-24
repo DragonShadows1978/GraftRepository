@@ -3,6 +3,10 @@
 Driver-level enforcement of registered production laws on the e2e probe
 path. Scoring and grounding stay in ``core.graft_arena``; this module only
 decides mount plans and clean-room flags.
+
+GRM3P-LADDER-ON (2026-07-23): probe ladder is DEFAULT-ON permanently.
+Escape to the legacy multimount path: CLI ``--no-probe-ladder`` or
+env ``GRM_PROBE_LADDER=0`` (also false/off/no).
 """
 
 from __future__ import annotations
@@ -10,17 +14,62 @@ from __future__ import annotations
 import os
 from typing import Any, Iterable
 
+_ENV_TRUE = ("1", "true", "yes", "on")
+_ENV_FALSE = ("0", "false", "no", "off", "")
+
+
+def env_probe_ladder_override() -> bool | None:
+    """Return True/False if ``GRM_PROBE_LADDER`` is set; None if unset.
+
+    Unset means "use the permanent default" (ON). Explicit ``0``/false/off/no
+    (or empty string) is the registered escape to the legacy path.
+    """
+    if "GRM_PROBE_LADDER" not in os.environ:
+        return None
+    v = os.environ.get("GRM_PROBE_LADDER", "").strip().lower()
+    if v in _ENV_TRUE:
+        return True
+    if v in _ENV_FALSE:
+        return False
+    # Unknown token: treat as escape-off (do not silently enable).
+    return False
+
 
 def env_probe_ladder_enabled() -> bool:
-    v = os.environ.get("GRM_PROBE_LADDER", "").strip().lower()
-    return v in ("1", "true", "yes", "on")
+    """True only when env explicitly requests ON (``1``/true/yes/on).
+
+    Unset env is NOT enabled under this helper — callers that want the
+    permanent default must use :func:`probe_ladder_enabled`.
+    """
+    return env_probe_ladder_override() is True
 
 
 def probe_ladder_enabled(args: Any = None) -> bool:
-    """CLI ``--probe-ladder`` or env ``GRM_PROBE_LADDER=1`` (default OFF)."""
-    if args is not None and bool(getattr(args, "probe_ladder", False)):
-        return True
-    return env_probe_ladder_enabled()
+    """Resolve probe-ladder: default ON; escape restores legacy path.
+
+    Priority:
+      1. Explicit CLI (``args.probe_ladder`` is True/False, not None)
+      2. Explicit env ``GRM_PROBE_LADDER`` (0/false/off/no → off; 1/… → on)
+      3. Permanent default ON
+    """
+    if args is not None and hasattr(args, "probe_ladder"):
+        cli = getattr(args, "probe_ladder")
+        if cli is not None:
+            return bool(cli)
+    override = env_probe_ladder_override()
+    if override is not None:
+        return override
+    return True
+
+
+def probe_ladder_cli_argv(enabled: bool) -> list[str]:
+    """CLI tokens that re-lock the resolved value across restart re-exec.
+
+    Always returns an explicit flag so re-exec does not re-resolve against a
+    changed env (default-ON parent → ``--probe-ladder``; escape-off parent →
+    ``--no-probe-ladder``).
+    """
+    return ["--probe-ladder"] if enabled else ["--no-probe-ladder"]
 
 
 def identifier_tokens_from_parts(

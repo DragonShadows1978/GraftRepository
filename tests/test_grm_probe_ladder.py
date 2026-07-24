@@ -1,7 +1,8 @@
-"""Unit tests for GRM3P-FIX-LADDER probe-path planning (no GPU).
+"""Unit tests for GRM3P probe-ladder planning + LADDER-ON default (no GPU).
 
-Covers flag default-off, precise-first, point-lookup clean-room, and the
-one-retry attempt ladder. Does not reimplement arena scoring.
+Covers permanent default-ON resolution, escape-off (CLI + env), restart
+re-exec argv persistence, precise-first / clean-room attempt plans.
+Does not reimplement arena scoring.
 """
 
 from __future__ import annotations
@@ -12,26 +13,81 @@ from types import SimpleNamespace
 from scripts.grm_probe_ladder import (
     build_probe_ladder_attempts,
     env_probe_ladder_enabled,
+    env_probe_ladder_override,
     identifier_tokens_from_parts,
+    probe_ladder_cli_argv,
     probe_ladder_enabled,
     rank1_covers_identifiers,
 )
 
 
-def test_probe_ladder_default_off(monkeypatch):
+def test_probe_ladder_default_on(monkeypatch):
+    """Unset env + no CLI → permanent default ON (GRM3P-LADDER-ON)."""
     monkeypatch.delenv("GRM_PROBE_LADDER", raising=False)
-    assert env_probe_ladder_enabled() is False
+    assert env_probe_ladder_override() is None
+    assert env_probe_ladder_enabled() is False  # env alone not set
+    assert probe_ladder_enabled(None) is True
+    assert probe_ladder_enabled(SimpleNamespace(probe_ladder=None)) is True
+    # Missing attribute treated as no CLI override → default ON.
+    assert probe_ladder_enabled(SimpleNamespace()) is True
+
+
+def test_probe_ladder_escape_off_env(monkeypatch):
+    """GRM_PROBE_LADDER=0/false/off/no restores legacy path."""
+    monkeypatch.delenv("GRM_PROBE_LADDER", raising=False)
+    for token in ("0", "false", "off", "no", ""):
+        monkeypatch.setenv("GRM_PROBE_LADDER", token)
+        assert env_probe_ladder_override() is False
+        assert probe_ladder_enabled(None) is False
+        assert probe_ladder_enabled(SimpleNamespace(probe_ladder=None)) is False
+
+
+def test_probe_ladder_escape_off_cli(monkeypatch):
+    """CLI --no-probe-ladder (probe_ladder=False) escapes even if env on."""
+    monkeypatch.setenv("GRM_PROBE_LADDER", "1")
     assert probe_ladder_enabled(SimpleNamespace(probe_ladder=False)) is False
-    assert probe_ladder_enabled(None) is False
+    monkeypatch.delenv("GRM_PROBE_LADDER", raising=False)
+    assert probe_ladder_enabled(SimpleNamespace(probe_ladder=False)) is False
 
 
-def test_probe_ladder_cli_and_env(monkeypatch):
+def test_probe_ladder_cli_and_env_on(monkeypatch):
     monkeypatch.delenv("GRM_PROBE_LADDER", raising=False)
     assert probe_ladder_enabled(SimpleNamespace(probe_ladder=True)) is True
     monkeypatch.setenv("GRM_PROBE_LADDER", "1")
-    assert probe_ladder_enabled(SimpleNamespace(probe_ladder=False)) is True
-    monkeypatch.setenv("GRM_PROBE_LADDER", "off")
-    assert probe_ladder_enabled(SimpleNamespace(probe_ladder=False)) is False
+    # Explicit CLI None → env wins → ON.
+    assert probe_ladder_enabled(SimpleNamespace(probe_ladder=None)) is True
+    # Explicit CLI True beats env escape.
+    monkeypatch.setenv("GRM_PROBE_LADDER", "0")
+    assert probe_ladder_enabled(SimpleNamespace(probe_ladder=True)) is True
+
+
+def test_probe_ladder_restart_persistence_default_on(monkeypatch):
+    """Resolved ON re-locks as --probe-ladder on restart argv."""
+    monkeypatch.delenv("GRM_PROBE_LADDER", raising=False)
+    enabled = probe_ladder_enabled(SimpleNamespace(probe_ladder=None))
+    assert enabled is True
+    argv = probe_ladder_cli_argv(enabled)
+    assert argv == ["--probe-ladder"]
+    # Re-resolve as if re-exec received only that flag (env unset).
+    re_args = SimpleNamespace(probe_ladder=True)
+    assert probe_ladder_enabled(re_args) is True
+
+
+def test_probe_ladder_restart_persistence_escape_off(monkeypatch):
+    """Resolved OFF re-locks as --no-probe-ladder; survives env flip to ON."""
+    monkeypatch.setenv("GRM_PROBE_LADDER", "0")
+    enabled = probe_ladder_enabled(SimpleNamespace(probe_ladder=None))
+    assert enabled is False
+    argv = probe_ladder_cli_argv(enabled)
+    assert argv == ["--no-probe-ladder"]
+    # Parent used CLI escape; re-exec gets --no-probe-ladder even if env=1.
+    monkeypatch.setenv("GRM_PROBE_LADDER", "1")
+    re_args = SimpleNamespace(probe_ladder=False)  # from --no-probe-ladder
+    assert probe_ladder_enabled(re_args) is False
+    # CLI escape without env also freezes off.
+    monkeypatch.delenv("GRM_PROBE_LADDER", raising=False)
+    enabled_cli = probe_ladder_enabled(SimpleNamespace(probe_ladder=False))
+    assert probe_ladder_cli_argv(enabled_cli) == ["--no-probe-ladder"]
 
 
 def test_identifier_tokens_prefer_rare_over_qlex():

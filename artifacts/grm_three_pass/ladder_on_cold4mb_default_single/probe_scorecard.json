@@ -1,0 +1,899 @@
+{
+  "all_passed": true,
+  "passed": 9,
+  "probes": [
+    {
+      "accepts": [
+        "Auric-4-Alpha"
+      ],
+      "answer": "The current orion pin value is Auric-4-Alpha.",
+      "contains_expected": true,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          3,
+          4
+        ],
+        "live_turns": 2,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 0,
+        "source_node_live_before": false,
+        "source_turn": 0
+      },
+      "expected": "Auric-4-Alpha",
+      "fact_id": "orion pin",
+      "mount_plan": [
+        0
+      ],
+      "mounted_ids": [
+        0
+      ],
+      "mounts": [
+        1
+      ],
+      "old_value": null,
+      "pass": true,
+      "resumed": false,
+      "route_backend": "python",
+      "route_ranking": {
+        "live_excluded": [
+          3,
+          4
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [
+          0
+        ],
+        "mount_plan": [
+          0
+        ],
+        "ranking_ids": [
+          0,
+          2,
+          1
+        ],
+        "ranking_len": 3,
+        "route_backend": "python",
+        "score_error": null,
+        "source_node_id": 0,
+        "source_rank": 1,
+        "top5": [
+          {
+            "contains_value_hint": true,
+            "node_id": 0,
+            "rank": 1,
+            "score": 0.9999999982892513,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 2,
+            "rank": 2,
+            "score": 0.9834455880612153,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": false,
+            "node_id": 1,
+            "rank": 3,
+            "score": 0.9557014333685626,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session c"
+          }
+        ]
+      },
+      "turn": 5
+    },
+    {
+      "accepts": [
+        "Vortex-3-Sierra"
+      ],
+      "answer": "Vortex-3-Sierra",
+      "contains_expected": true,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          8,
+          9
+        ],
+        "live_turns": 2,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 4,
+        "source_node_live_before": false,
+        "source_turn": 4
+      },
+      "expected": "Vortex-3-Sierra",
+      "fact_id": "cypher bridge",
+      "mount_plan": [
+        4
+      ],
+      "mounted_ids": [
+        4
+      ],
+      "mounts": [
+        5
+      ],
+      "old_value": null,
+      "pass": true,
+      "resumed": false,
+      "route_backend": "python",
+      "route_ranking": {
+        "live_excluded": [
+          8,
+          9
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [
+          4
+        ],
+        "mount_plan": [
+          4
+        ],
+        "ranking_ids": [
+          4,
+          6,
+          2,
+          3,
+          1,
+          7
+        ],
+        "ranking_len": 6,
+        "route_backend": "python",
+        "score_error": null,
+        "source_node_id": 4,
+        "source_rank": 1,
+        "top5": [
+          {
+            "contains_value_hint": true,
+            "node_id": 4,
+            "rank": 1,
+            "score": 0.9999999983708072,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 6,
+            "rank": 2,
+            "score": 0.9397690008147679,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 2,
+            "rank": 3,
+            "score": 0.939529020976075,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 3,
+            "rank": 4,
+            "score": 0.9128606190506823,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session c"
+          },
+          {
+            "contains_value_hint": false,
+            "node_id": 1,
+            "rank": 5,
+            "score": 0.8986082431049227,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session c"
+          }
+        ]
+      },
+      "turn": 9
+    },
+    {
+      "accepts": [
+        "Kestrel-9-Tango"
+      ],
+      "answer": "Kestrel-9-Tango.",
+      "contains_expected": true,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          12,
+          14
+        ],
+        "live_turns": 2,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 7,
+        "source_node_live_before": false,
+        "source_turn": 6
+      },
+      "expected": "Kestrel-9-Tango",
+      "fact_id": "orion pin",
+      "mount_plan": [
+        6
+      ],
+      "mounted_ids": [
+        6
+      ],
+      "mounts": [
+        7
+      ],
+      "old_value": "Auric-4-Alpha",
+      "pass": true,
+      "resumed": false,
+      "route_backend": "python",
+      "route_ranking": {
+        "live_excluded": [
+          12,
+          14
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [
+          6
+        ],
+        "mount_plan": [
+          6
+        ],
+        "ranking_ids": [
+          6,
+          7,
+          4,
+          11,
+          8,
+          1,
+          13
+        ],
+        "ranking_len": 7,
+        "route_backend": "python",
+        "score_error": null,
+        "source_node_id": 7,
+        "source_rank": 2,
+        "top5": [
+          {
+            "contains_value_hint": true,
+            "node_id": 6,
+            "rank": 1,
+            "score": 0.9455695849473437,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 7,
+            "rank": 2,
+            "score": 0.865784508009247,
+            "text_prefix": "The current orion pin value is Kestrel-9-Tango."
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 4,
+            "rank": 3,
+            "score": 0.9999999983770004,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 11,
+            "rank": 4,
+            "score": 0.9946182893670363,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 8,
+            "rank": 5,
+            "score": 0.9536308926571341,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          }
+        ]
+      },
+      "turn": 13
+    },
+    {
+      "accepts": [
+        "Zenith-2-Echo"
+      ],
+      "answer": "Zenith-2-Echo",
+      "contains_expected": true,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          16,
+          17
+        ],
+        "live_turns": 2,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 13,
+        "source_node_live_before": false,
+        "source_turn": 11
+      },
+      "expected": "Zenith-2-Echo",
+      "fact_id": "lyra dock",
+      "mount_plan": [
+        12
+      ],
+      "mounted_ids": [
+        12
+      ],
+      "mounts": [
+        13
+      ],
+      "old_value": "Nadir-1-Delta",
+      "pass": true,
+      "resumed": false,
+      "route_backend": "python",
+      "route_ranking": {
+        "live_excluded": [
+          16,
+          17
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [
+          12
+        ],
+        "mount_plan": [
+          12
+        ],
+        "ranking_ids": [
+          12,
+          13,
+          4,
+          11,
+          8,
+          6,
+          1,
+          7
+        ],
+        "ranking_len": 8,
+        "route_backend": "python",
+        "score_error": null,
+        "source_node_id": 13,
+        "source_rank": 2,
+        "top5": [
+          {
+            "contains_value_hint": true,
+            "node_id": 12,
+            "rank": 1,
+            "score": 0.9581544708689997,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 13,
+            "rank": 2,
+            "score": 0.8735750464793903,
+            "text_prefix": "The current lyra dock value is Zenith-2-Echo."
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 4,
+            "rank": 3,
+            "score": 0.9999999983774339,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 11,
+            "rank": 4,
+            "score": 0.9937964896387976,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 8,
+            "rank": 5,
+            "score": 0.965226558585528,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          }
+        ]
+      },
+      "turn": 16
+    },
+    {
+      "accepts": [
+        "Quartz-5-Bravo"
+      ],
+      "answer": "Quartz-5-Bravo",
+      "contains_expected": true,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          19,
+          21
+        ],
+        "live_turns": 2,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 8,
+        "source_node_live_before": false,
+        "source_turn": 7
+      },
+      "expected": "Quartz-5-Bravo",
+      "fact_id": "nova key",
+      "mount_plan": [
+        8
+      ],
+      "mounted_ids": [
+        8
+      ],
+      "mounts": [
+        9
+      ],
+      "old_value": null,
+      "pass": true,
+      "resumed": true,
+      "route_backend": "python",
+      "route_ranking": {
+        "live_excluded": [
+          19,
+          21
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [
+          8
+        ],
+        "mount_plan": [
+          8
+        ],
+        "ranking_ids": [
+          8,
+          4,
+          12,
+          6,
+          16,
+          1,
+          13,
+          20,
+          7
+        ],
+        "ranking_len": 9,
+        "route_backend": "python",
+        "score_error": null,
+        "source_node_id": 8,
+        "source_rank": 1,
+        "top5": [
+          {
+            "contains_value_hint": true,
+            "node_id": 8,
+            "rank": 1,
+            "score": 0.9384493333550873,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 4,
+            "rank": 2,
+            "score": 0.999999998312013,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 12,
+            "rank": 3,
+            "score": 0.9558991635883269,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 6,
+            "rank": 4,
+            "score": 0.9410641482469373,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 16,
+            "rank": 5,
+            "score": 0.9297925950371742,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          }
+        ]
+      },
+      "turn": 19
+    },
+    {
+      "accepts": [
+        "Gold-7-Foxtrot"
+      ],
+      "answer": "Gold-7-Foxtrot.",
+      "contains_expected": true,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          23,
+          24
+        ],
+        "live_turns": 2,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 20,
+        "source_node_live_before": false,
+        "source_turn": 17
+      },
+      "expected": "Gold-7-Foxtrot",
+      "fact_id": "mira seal",
+      "mount_plan": [
+        19
+      ],
+      "mounted_ids": [
+        19
+      ],
+      "mounts": [
+        20
+      ],
+      "old_value": "Silver-6-Charlie",
+      "pass": true,
+      "resumed": true,
+      "route_backend": "python",
+      "route_ranking": {
+        "live_excluded": [
+          23,
+          24
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [
+          19
+        ],
+        "mount_plan": [
+          19
+        ],
+        "ranking_ids": [
+          19,
+          20,
+          4,
+          8,
+          12,
+          6,
+          16,
+          1,
+          13,
+          7
+        ],
+        "ranking_len": 10,
+        "route_backend": "python",
+        "score_error": null,
+        "source_node_id": 20,
+        "source_rank": 2,
+        "top5": [
+          {
+            "contains_value_hint": true,
+            "node_id": 19,
+            "rank": 1,
+            "score": 0.9667935807860829,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 20,
+            "rank": 2,
+            "score": 0.8539578489947298,
+            "text_prefix": "The current mira seal value is Gold-7-Foxtrot."
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 4,
+            "rank": 3,
+            "score": 0.9999999983787913,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 8,
+            "rank": 4,
+            "score": 0.9694652348148899,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 12,
+            "rank": 5,
+            "score": 0.9610553962604994,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          }
+        ]
+      },
+      "turn": 22
+    },
+    {
+      "accepts": [
+        "Harbor-8-Golf"
+      ],
+      "answer": "Harbor-8-Golf",
+      "contains_expected": true,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          25,
+          26
+        ],
+        "live_turns": 2,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 16,
+        "source_node_live_before": false,
+        "source_turn": 14
+      },
+      "expected": "Harbor-8-Golf",
+      "fact_id": "terra port",
+      "mount_plan": [
+        16
+      ],
+      "mounted_ids": [
+        16
+      ],
+      "mounts": [
+        17
+      ],
+      "old_value": null,
+      "pass": true,
+      "resumed": true,
+      "route_backend": "python",
+      "route_ranking": {
+        "live_excluded": [
+          25,
+          26
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [
+          16
+        ],
+        "mount_plan": [
+          16
+        ],
+        "ranking_ids": [
+          16,
+          4,
+          19,
+          23,
+          12,
+          8,
+          6,
+          1,
+          13,
+          20,
+          7
+        ],
+        "ranking_len": 11,
+        "route_backend": "python",
+        "score_error": null,
+        "source_node_id": 16,
+        "source_rank": 1,
+        "top5": [
+          {
+            "contains_value_hint": true,
+            "node_id": 16,
+            "rank": 1,
+            "score": 0.945447348254367,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 4,
+            "rank": 2,
+            "score": 0.999999998342606,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 19,
+            "rank": 3,
+            "score": 0.9723811227457874,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 23,
+            "rank": 4,
+            "score": 0.9653686532017961,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 12,
+            "rank": 5,
+            "score": 0.9638160839408059,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          }
+        ]
+      },
+      "turn": 24
+    },
+    {
+      "accepts": [
+        "Violet-2-Hotel"
+      ],
+      "answer": "Violet-2-Hotel",
+      "contains_expected": true,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          27,
+          28
+        ],
+        "live_turns": 2,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 23,
+        "source_node_live_before": false,
+        "source_turn": 20
+      },
+      "expected": "Violet-2-Hotel",
+      "fact_id": "ember code",
+      "mount_plan": [
+        23
+      ],
+      "mounted_ids": [
+        23
+      ],
+      "mounts": [
+        24
+      ],
+      "old_value": null,
+      "pass": true,
+      "resumed": true,
+      "route_backend": "python",
+      "route_ranking": {
+        "live_excluded": [
+          27,
+          28
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [
+          23
+        ],
+        "mount_plan": [
+          23
+        ],
+        "ranking_ids": [
+          23,
+          4,
+          19,
+          12,
+          6,
+          8,
+          16,
+          1,
+          13,
+          20,
+          7
+        ],
+        "ranking_len": 11,
+        "route_backend": "python",
+        "score_error": null,
+        "source_node_id": 23,
+        "source_rank": 1,
+        "top5": [
+          {
+            "contains_value_hint": true,
+            "node_id": 23,
+            "rank": 1,
+            "score": 0.9561805252814948,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 4,
+            "rank": 2,
+            "score": 0.9999999983389045,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 19,
+            "rank": 3,
+            "score": 0.969870030164625,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 12,
+            "rank": 4,
+            "score": 0.956744427977688,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 6,
+            "rank": 5,
+            "score": 0.9512468799340136,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          }
+        ]
+      },
+      "turn": 26
+    },
+    {
+      "accepts": [
+        "Cobalt-1-India"
+      ],
+      "answer": "Cobalt-1-India",
+      "contains_expected": true,
+      "contains_stale": false,
+      "eviction_check": {
+        "live_node_ids_before": [
+          31,
+          32
+        ],
+        "live_turns": 2,
+        "policy_evicted_before_probe": true,
+        "source_node_id": 30,
+        "source_node_live_before": false,
+        "source_turn": 27
+      },
+      "expected": "Cobalt-1-India",
+      "fact_id": "atlas tone",
+      "mount_plan": [
+        30
+      ],
+      "mounted_ids": [
+        30
+      ],
+      "mounts": [
+        31
+      ],
+      "old_value": null,
+      "pass": true,
+      "resumed": true,
+      "route_backend": "python",
+      "route_ranking": {
+        "live_excluded": [
+          31,
+          32
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [
+          30
+        ],
+        "mount_plan": [
+          30
+        ],
+        "ranking_ids": [
+          30,
+          4,
+          19,
+          12,
+          23,
+          8,
+          6,
+          16,
+          1,
+          13,
+          20,
+          7
+        ],
+        "ranking_len": 12,
+        "route_backend": "python",
+        "score_error": null,
+        "source_node_id": 30,
+        "source_rank": 1,
+        "top5": [
+          {
+            "contains_value_hint": true,
+            "node_id": 30,
+            "rank": 1,
+            "score": 0.9199761122690762,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 4,
+            "rank": 2,
+            "score": 0.9999999983332287,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 19,
+            "rank": 3,
+            "score": 0.9697266630475745,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 12,
+            "rank": 4,
+            "score": 0.9572925333995406,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+          },
+          {
+            "contains_value_hint": true,
+            "node_id": 23,
+            "rank": 5,
+            "score": 0.9568734218778094,
+            "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+          }
+        ]
+      },
+      "turn": 30
+    }
+  ],
+  "schema": "grm_e2e_probe_scorecard_v1",
+  "total": 9
+}

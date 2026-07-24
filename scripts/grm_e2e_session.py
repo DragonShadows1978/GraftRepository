@@ -46,6 +46,7 @@ from core import paging_telemetry as _paging_telemetry  # noqa: E402
 from scripts.grm_probe_ladder import (  # noqa: E402
     build_probe_ladder_attempts,
     identifier_tokens_from_parts,
+    probe_ladder_cli_argv,
     probe_ladder_enabled,
     rank1_covers_identifiers,
 )
@@ -266,15 +267,15 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         default="single",
         help="turn scheduler (default single preserves the registered path)",
     )
-    # GRM3P-FIX-LADDER: default-OFF. When set, Fork-A probe path enforces
-    # production laws (precise-first, recency exclusion, grounding retry).
-    # Env GRM_PROBE_LADDER=1 is equivalent. Flag OFF = byte-identical legacy.
+    # GRM3P-LADDER-ON: probe ladder is DEFAULT-ON permanently. Escape to the
+    # legacy multimount path with --no-probe-ladder or GRM_PROBE_LADDER=0.
+    # BooleanOptionalAction: None = unset on CLI → fall through to env/default.
     p.add_argument(
         "--probe-ladder",
-        action="store_true",
-        default=False,
-        help="enforce Arena laws on Fork-A probe turns (default off; "
-             "also GRM_PROBE_LADDER=1)",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="enforce Arena laws on Fork-A probe turns (default ON; "
+             "escape with --no-probe-ladder or GRM_PROBE_LADDER=0)",
     )
     return p.parse_args(argv)
 
@@ -1229,7 +1230,7 @@ def probe_multimount_chat(
     ngen: int,
     defer_memory: bool = False,
     turn_idx: int | None = None,
-    probe_ladder: bool = False,
+    probe_ladder: bool = True,
     max_trips: int = 1,
 ) -> tuple[str, dict[str, Any]]:
     """Probe path: mount route top-k via arena multi-mount, not argmax-only.
@@ -1240,10 +1241,11 @@ def probe_multimount_chat(
     ranks 2-3 is present even when rank-1 is a length-biased distractor.
     Diagnostics still record full ranking / source_rank separately.
 
-    When ``probe_ladder`` is True (CLI ``--probe-ladder`` /
-    ``GRM_PROBE_LADDER=1``), enforce the registered production laws on this
-    path: point-lookup clean context, precise-first, grounding + one retry.
-    Default OFF keeps the legacy multimount path byte-identical.
+    When ``probe_ladder`` is True (default under GRM3P-LADDER-ON; CLI
+    ``--probe-ladder`` / env truthy), enforce the registered production laws
+    on this path: point-lookup clean context, precise-first, grounding + one
+    retry. Escape ``--no-probe-ladder`` / ``GRM_PROBE_LADDER=0`` restores the
+    legacy multimount path exactly.
     """
     if probe_ladder:
         return _probe_ladder_chat(
@@ -1708,7 +1710,8 @@ def run_turn(
                         repo.arena, event["user"], source_node, top_k=5)
                     # Fork A: widen probe mount from argmax to top-k at driver
                     # call site (arena multi-mount picks list), not product patch.
-                    # --probe-ladder enforces production laws on this path.
+                    # Probe ladder (default ON) enforces production laws here;
+                    # --no-probe-ladder / GRM_PROBE_LADDER=0 restores legacy.
                     answer, info = probe_multimount_chat(
                         repo,
                         event["user"],
@@ -2111,8 +2114,10 @@ def maybe_restart(args: argparse.Namespace, session_dir: Path, paths: dict[str, 
     ]
     if args.vram_budget_mb is not None:
         argv += ["--vram-budget-mb", str(args.vram_budget_mb)]
-    if probe_ladder_enabled(args):
-        argv.append("--probe-ladder")
+    # Always freeze the resolved ladder decision on re-exec (default-on means
+    # an escape-off parent must re-assert --no-probe-ladder; env alone is not
+    # enough when the parent used only the CLI escape).
+    argv += probe_ladder_cli_argv(probe_ladder_enabled(args))
     os.execvpe(sys.executable, argv, os.environ.copy())
 
 

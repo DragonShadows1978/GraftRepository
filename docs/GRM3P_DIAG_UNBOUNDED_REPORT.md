@@ -794,3 +794,125 @@ laws on probe turns — point-lookup detection → exclude recency/live
 value carriers; precise-first when rank-1 covers probe identifiers;
 identifier-aware grounding rejection. Default-off flag (byte-identical
 default); flag-on gates: F-FULL 9/9, F-COLD 9/9 unchanged, smoke 2/2.
+
+
+---
+
+## DEFAULT FLIP — probe ladder permanent default-ON (GRM3P-LADDER-ON)
+
+Date: 2026-07-23  
+Order: `orders/GRM3P_LADDER_DEFAULT_ON.md`  
+Operator decision (David, 2026-07-23): the probe ladder (@e26f98f, all
+gates green under GRM3P-FIX-LADDER) becomes **DEFAULT-ON permanently**.
+
+### Baseline supersession (registered)
+
+| role | value |
+|------|--------|
+| **OLD baseline (SUPERSEDED)** | smoke transcript SHA-256 `68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f` — legacy multimount path (probe ladder OFF). Retained only as the G-ON-ESCAPE identity target under explicit escape. |
+| **NEW baseline (REGISTERED after G-ON-BASELINE)** | default-ON smoke transcript SHA-256 — **TBD by lead** on unsandboxed GPU re-gate. Pre-existing ladder-ON smoke at `artifacts/grm_three_pass/fix_ladder_smoke_on_single` has SHA `58eca587dab8349e839be206bf8db2e2e07a3ab4cfcf9795ee1cb21284dba201` (G-FIX-LADDER flag-ON receipt); lead must re-record under default-ON (no env) before treating it as the permanent registered baseline. |
+
+The old byte-identity contract ("default smoke == 68da84b8…") is **no
+longer** the default-path gate. It is the **escape-path** gate only
+(G-ON-ESCAPE).
+
+### What flipped
+
+- `scripts/grm_probe_ladder.py`: `probe_ladder_enabled` default **ON**;
+  escape via `GRM_PROBE_LADDER=0`/`false`/`off`/`no` (or empty); CLI
+  explicit wins over env; `probe_ladder_cli_argv` freezes resolved value
+  for restart re-exec.
+- `scripts/grm_e2e_session.py`: `--probe-ladder` /
+  `--no-probe-ladder` (`BooleanOptionalAction`, default `None` →
+  env/default); `run_config.json` stores resolved `probe_ladder` bool;
+  restart re-exec always appends `--probe-ladder` or `--no-probe-ladder`.
+- Unit tests: default-on, escape-off (env+CLI), restart persistence
+  (`tests/test_grm_probe_ladder.py`).
+
+### Gates (lead / unsandboxed GPU)
+
+- **G-ON-ESCAPE:** escape-off smoke transcript sha == `68da84b8…`
+- **G-ON-BASELINE:** default (no env) smoke — record NEW sha; `three_pass`
+  transcript byte-equal to `single` at the new default
+- **G-ON-FULL:** default (no env) F-FULL unbounded 9/9; 4MB 9/9
+- **G-ON-SUITE:** both-pipeline suites green
+
+### Residuals (this seat)
+
+- GPU re-gates **not run** here (sandbox expected blocked). Implementation
+  + unit resolution checks only. Lead owns G-ON-*.
+
+### Lead re-gate (one command or four)
+
+One-command runner (writes sessions under `artifacts/grm_three_pass/ladder_on_*`):
+
+```bash
+cd /home/vader/GraftRepository-three-pass
+bash scripts/grm3p_ladder_on_run.sh
+```
+
+Or the four registered gates as explicit commands (env contract:
+`GRM_GQA_CUDA_ROUTE=1 GRM_GRAFT_STORAGE_BITS=8`; flock GPU):
+
+```bash
+cd /home/vader/GraftRepository-three-pass
+export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
+export GRM_GQA_CUDA_ROUTE=1 GRM_GRAFT_STORAGE_BITS=8
+unset GRM_PROBE_LADDER
+
+# G-ON-SUITE
+python3 -m pytest -q tests/test_grm_*.py tests/test_gqa_ragged_cuda_bank.py
+
+# G-ON-ESCAPE (legacy path byte-identical)
+rm -rf artifacts/grm_three_pass/ladder_on_escape_smoke_single
+flock -w 7200 /tmp/forge-gpu.lock \
+  env GRM_PROBE_LADDER=0 python3 scripts/grm_e2e_session.py \
+    --mode smoke --turn-pipeline single --no-probe-ladder \
+    --session-dir artifacts/grm_three_pass/ladder_on_escape_smoke_single \
+    --skip-gpu-idle-check
+# expect: sha256(transcript.jsonl) == 68da84b8824eb79a14f65a692a602215bc53d84232cd041002410f51657bba4f
+
+# G-ON-BASELINE (default-ON; record NEW sha; single == three_pass)
+rm -rf artifacts/grm_three_pass/ladder_on_default_smoke_single \
+       artifacts/grm_three_pass/ladder_on_default_smoke_three_pass
+flock -w 7200 /tmp/forge-gpu.lock \
+  python3 scripts/grm_e2e_session.py \
+    --mode smoke --turn-pipeline single \
+    --session-dir artifacts/grm_three_pass/ladder_on_default_smoke_single \
+    --skip-gpu-idle-check
+flock -w 7200 /tmp/forge-gpu.lock \
+  python3 scripts/grm_e2e_session.py \
+    --mode smoke --turn-pipeline three_pass \
+    --session-dir artifacts/grm_three_pass/ladder_on_default_smoke_three_pass \
+    --skip-gpu-idle-check
+# expect: single transcript sha == three_pass transcript sha; both scorecards 2/2
+# REGISTER the single sha as the new permanent default baseline.
+
+# G-ON-FULL (default no-env; unbounded 9/9 + 4MB 9/9)
+rm -rf artifacts/grm_three_pass/ladder_on_full_default_single \
+       artifacts/grm_three_pass/ladder_on_cold4mb_default_single
+flock -w 7200 /tmp/forge-gpu.lock \
+  python3 scripts/grm_e2e_session.py \
+    --mode full --turn-pipeline single \
+    --session-dir artifacts/grm_three_pass/ladder_on_full_default_single \
+    --skip-gpu-idle-check
+flock -w 7200 /tmp/forge-gpu.lock \
+  python3 scripts/grm_e2e_session.py \
+    --mode full --turn-pipeline single --vram-budget-mb 4 \
+    --session-dir artifacts/grm_three_pass/ladder_on_cold4mb_default_single \
+    --skip-gpu-idle-check
+# expect: both probe_scorecard all_passed True (9/9)
+```
+
+## DEFAULT FLIP — lead gate results (Fable, 2026-07-23)
+
+Operator decision executed: probe ladder DEFAULT-ON permanently.
+- G-ON-ESCAPE PASS: GRM_PROBE_LADDER=0 smoke sha == 68da84b8… (legacy
+  path intact under escape).
+- G-ON-BASELINE PASS: NEW REGISTERED default smoke baseline =
+  58eca587dab8349e839be206bf8db2e2e07a3ab4cfcf9795ee1cb21284dba201
+  (single == three_pass byte-equal at the new default; probes 2/2).
+  Supersedes 68da84b8… as the default-path baseline; old→new recorded
+  here per the amendment convention.
+- G-ON-FULL PASS: default (no env) unbounded full 9/9; 4MB full 9/9.
+- G-ON-SUITE PASS: 476 passed ×2 (single, three_pass).
