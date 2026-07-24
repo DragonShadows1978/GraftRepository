@@ -1,0 +1,142 @@
+{
+  "mutation_count": 7,
+  "mutations": [
+    {
+      "after_sha256": "2cfad935d17801d77e8b5b4eb77cc51abe12675a709ea5401df2adc2e8ed6f40",
+      "before_sha256": "c35df860740da66b00ef35fb098bf1123141ff364ca3f1811cd45e64ff6724a6",
+      "kind": "deposit",
+      "provenance": {
+        "decision_sha256": "e8c60b32128f05c6c3fe34f75ee4406f171f5341012851a0cdc9dfc5ae637d49",
+        "source_sha256": "3845f168540e3b8b927cafd5a0ba36d55ada0cf78c20e0cd43049358fabcf1eb"
+      },
+      "reason": {
+        "code": "complete_turn_deposit",
+        "detail": "deposit scripted complete plant after output"
+      },
+      "sequence": 0,
+      "target": {
+        "arena": "arena_control",
+        "record_id": "@arena"
+      }
+    },
+    {
+      "after_sha256": "7fab8b5a553258ec4a49f74928f497666ecf1721b9d4a161b5fc9d11437ab865",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "deposit",
+      "provenance": {
+        "decision_sha256": "add639dd6eafcf030ee502ff69271ba1d50a6d9671abb860f28a72d294a91133",
+        "source_sha256": "3845f168540e3b8b927cafd5a0ba36d55ada0cf78c20e0cd43049358fabcf1eb"
+      },
+      "reason": {
+        "code": "complete_turn_deposit",
+        "detail": "deposit scripted complete plant after output"
+      },
+      "sequence": 1,
+      "target": {
+        "arena": "grafts",
+        "record_id": "2"
+      }
+    },
+    {
+      "after_sha256": "cf1515526328ef32b4e139c6fe6f9f2a8d8191ea97ce1b48d9ab9a4610bbcdec",
+      "before_sha256": "2cfad935d17801d77e8b5b4eb77cc51abe12675a709ea5401df2adc2e8ed6f40",
+      "kind": "deposit",
+      "provenance": {
+        "decision_sha256": "fa43e709def3eaa5ef821f03a0b9554e727c01e2779b224c208cc53b16f123df",
+        "source_sha256": "3845f168540e3b8b927cafd5a0ba36d55ada0cf78c20e0cd43049358fabcf1eb"
+      },
+      "reason": {
+        "code": "turn_deposit_bookkeeping",
+        "detail": "provenance, extraction, lifecycle, and paging"
+      },
+      "sequence": 2,
+      "target": {
+        "arena": "arena_control",
+        "record_id": "@arena"
+      }
+    },
+    {
+      "after_sha256": "16ef139407ddb40feadb9534ae16055015cbc261e25abcf90084aa1f592f523a",
+      "before_sha256": "7fab8b5a553258ec4a49f74928f497666ecf1721b9d4a161b5fc9d11437ab865",
+      "kind": "deposit",
+      "provenance": {
+        "decision_sha256": "f6c2d998d1699ae3da0ce6ccf674d68d39b1c38e90a55c08a3b4c9c57684ff50",
+        "source_sha256": "3845f168540e3b8b927cafd5a0ba36d55ada0cf78c20e0cd43049358fabcf1eb"
+      },
+      "reason": {
+        "code": "turn_deposit_bookkeeping",
+        "detail": "provenance, extraction, lifecycle, and paging"
+      },
+      "sequence": 3,
+      "target": {
+        "arena": "grafts",
+        "record_id": "2"
+      }
+    },
+    {
+      "after_sha256": "4f900fd32ca40fe79958d0bc9f15c02721aebc3d841438b9e391b612befc8eab",
+      "before_sha256": "cf1515526328ef32b4e139c6fe6f9f2a8d8191ea97ce1b48d9ab9a4610bbcdec",
+      "kind": "supersession",
+      "provenance": {
+        "decision_sha256": "9a7cc5ccac60b739fa3779e5e572709c9263d04db56e3f1d6b9e37fd245adc28",
+        "source_sha256": "7b4fc28079118e201282787554b95ada5543673563ac513d2b4e23d6a8194231"
+      },
+      "reason": {
+        "code": "authoritative_correction_command",
+        "detail": "retire stale fact and write current replacement"
+      },
+      "sequence": 4,
+      "target": {
+        "arena": "arena_control",
+        "record_id": "@arena"
+      }
+    },
+    {
+      "after_sha256": "2d3a535698fc5a3e5a4ee253ce34e7e841bd802943e3414393651d44bba60974",
+      "before_sha256": "3c0c42bc583d0f6542bcc481382321b72384245a61a14518eeec3c213d499e54",
+      "kind": "supersession",
+      "provenance": {
+        "decision_sha256": "df3ddbc513cf68a015d60644ec27a495b220fe2b7291b33c2e57ab64c6af299f",
+        "source_sha256": "7b4fc28079118e201282787554b95ada5543673563ac513d2b4e23d6a8194231"
+      },
+      "reason": {
+        "code": "authoritative_correction_command",
+        "detail": "retire stale fact and write current replacement"
+      },
+      "sequence": 5,
+      "target": {
+        "arena": "grafts",
+        "record_id": "0"
+      }
+    },
+    {
+      "after_sha256": "c43693bca849181dc9c6abffe1a30d39d31943b6edd16795884db5898a0f7643",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "supersession",
+      "provenance": {
+        "decision_sha256": "d2ff513b4b41c89ee8e6172ec60dc3ddf8b548a8750394f3091c4013fcf22da9",
+        "source_sha256": "7b4fc28079118e201282787554b95ada5543673563ac513d2b4e23d6a8194231"
+      },
+      "reason": {
+        "code": "authoritative_correction_command",
+        "detail": "retire stale fact and write current replacement"
+      },
+      "sequence": 6,
+      "target": {
+        "arena": "grafts",
+        "record_id": "3"
+      }
+    }
+  ],
+  "pass": 3,
+  "provenance": {
+    "arena_after_sha256": "7664240de158f38417cca372aa51a1280caaf23a7cd16a79d826c0a60de479f1",
+    "arena_before_sha256": "61db129284fe23316a3d0bc367ecfc9f57b5c8b68c14feea7a6a940b419975ea",
+    "output_sha256": "ad3accac9dcfc25c17c5041a2b36338f8904bd2668584167c5308e3466b2c9e1",
+    "request_sha256": "41092ec56574122539601e8b83e796c22f1d8e2288b6398cbb6605ac50186f2d"
+  },
+  "schema": "grm.memory_ledger.turn.v1",
+  "session_id": "p1_three_pass_final",
+  "turn_id": "2",
+  "turn_pipeline": "three_pass"
+}

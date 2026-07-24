@@ -1,0 +1,190 @@
+{
+  "frame": {
+    "arena_width": 96,
+    "live_turns": 1,
+    "max_trips": 1,
+    "mode": "smoke",
+    "ngen": 24,
+    "storage_bits": 8,
+    "topk": 3,
+    "turns": 10
+  },
+  "pass2_all_arena_read_only": null,
+  "pass2_visible_memory_overhead_ms_max": null,
+  "pass2_wall_ms_total": null,
+  "pass3_wall_ms_total": null,
+  "schema": "grm.three_pass.stage_timing.v1",
+  "stages": {
+    "deposit": {
+      "calls": 15,
+      "wall_ms_max_turn": 3370.6647240323946,
+      "wall_ms_mean_per_turn": 2605.2496223070193,
+      "wall_ms_total": 26052.496223070193
+    },
+    "importance_bookkeeping": {
+      "calls": 5,
+      "wall_ms_max_turn": 6.797375972382724,
+      "wall_ms_mean_per_turn": 2.177049097372219,
+      "wall_ms_total": 21.77049097372219
+    },
+    "infer": {
+      "calls": 54,
+      "wall_ms_max_turn": 3585.6195390224457,
+      "wall_ms_mean_per_turn": 2641.9134326046333,
+      "wall_ms_total": 26419.134326046333
+    },
+    "mount": {
+      "calls": 7,
+      "wall_ms_max_turn": 121.13451701588929,
+      "wall_ms_mean_per_turn": 48.041586205363274,
+      "wall_ms_total": 480.41586205363274
+    },
+    "route": {
+      "calls": 9,
+      "wall_ms_max_turn": 2662.01574500883,
+      "wall_ms_mean_per_turn": 1420.7537936919834,
+      "wall_ms_total": 14207.537936919834
+    },
+    "supersession": {
+      "calls": 1,
+      "wall_ms_max_turn": 544.1159440088086,
+      "wall_ms_mean_per_turn": 54.41159440088086,
+      "wall_ms_total": 544.1159440088086
+    }
+  },
+  "turn_pipeline": "single",
+  "turn_wall_ms_mean": 6981.349788798252,
+  "turn_wall_ms_total": 69813.49788798252,
+  "turns": [
+    {
+      "deposit": 2682.119650009554,
+      "importance_bookkeeping": 0.0,
+      "infer": 2611.102765018586,
+      "kind": "fact",
+      "mount": 0.0,
+      "pass2_wall_ms": null,
+      "pass3_wall_ms": null,
+      "route": 0.0,
+      "supersession": 0.0,
+      "turn": 0,
+      "turn_wall_ms": 5339.456913003232
+    },
+    {
+      "deposit": 1582.8099180362187,
+      "importance_bookkeeping": 0.016411009710282087,
+      "infer": 1650.4809170146473,
+      "kind": "filler",
+      "mount": 0.0017129932530224323,
+      "pass2_wall_ms": null,
+      "pass3_wall_ms": null,
+      "route": 615.2450839872472,
+      "supersession": 0.0,
+      "turn": 1,
+      "turn_wall_ms": 3997.6145660039037
+    },
+    {
+      "deposit": 3370.6647240323946,
+      "importance_bookkeeping": 0.0,
+      "infer": 2830.6218330399133,
+      "kind": "supersede",
+      "mount": 0.0,
+      "pass2_wall_ms": null,
+      "pass3_wall_ms": null,
+      "route": 0.0,
+      "supersession": 544.1159440088086,
+      "turn": 2,
+      "turn_wall_ms": 6392.2452090191655
+    },
+    {
+      "deposit": 2646.163280995097,
+      "importance_bookkeeping": 0.0,
+      "infer": 2607.6917240279727,
+      "kind": "fact",
+      "mount": 0.0,
+      "pass2_wall_ms": null,
+      "pass3_wall_ms": null,
+      "route": 0.0,
+      "supersession": 0.0,
+      "turn": 3,
+      "turn_wall_ms": 5418.49401401123
+    },
+    {
+      "deposit": 3085.359361022711,
+      "importance_bookkeeping": 4.295721999369562,
+      "infer": 3335.350056993775,
+      "kind": "filler",
+      "mount": 121.13451701588929,
+      "pass2_wall_ms": null,
+      "pass3_wall_ms": null,
+      "route": 2068.0387560278177,
+      "supersession": 0.0,
+      "turn": 4,
+      "turn_wall_ms": 8757.877430005465
+    },
+    {
+      "deposit": 1521.4307620190084,
+      "importance_bookkeeping": 0.0,
+      "infer": 1528.087934013456,
+      "kind": "probe",
+      "mount": 119.05399803072214,
+      "pass2_wall_ms": null,
+      "pass3_wall_ms": null,
+      "route": 2655.399134964682,
+      "supersession": 0.0,
+      "turn": 5,
+      "turn_wall_ms": 6566.159461974166
+    },
+    {
+      "deposit": 1447.4346079514362,
+      "importance_bookkeeping": 0.0,
+      "infer": 1444.2350269528106,
+      "kind": "probe",
+      "mount": 120.73587300255895,
+      "pass2_wall_ms": null,
+      "pass3_wall_ms": null,
+      "route": 2662.01574500883,
+      "supersession": 0.0,
+      "turn": 6,
+      "turn_wall_ms": 6432.195328990929
+    },
+    {
+      "deposit": 3122.908421966713,
+      "importance_bookkeeping": 5.199147970415652,
+      "infer": 3248.0110919568688,
+      "kind": "filler",
+      "mount": 119.48691500583664,
+      "pass2_wall_ms": null,
+      "pass3_wall_ms": null,
+      "route": 2051.6458999481983,
+      "supersession": 0.0,
+      "turn": 7,
+      "turn_wall_ms": 8692.519497999456
+    },
+    {
+      "deposit": 3270.4357820330188,
+      "importance_bookkeeping": 6.797375972382724,
+      "infer": 3577.933438005857,
+      "kind": "filler",
+      "mount": 0.001502980012446642,
+      "pass2_wall_ms": null,
+      "pass3_wall_ms": null,
+      "route": 2052.7348420000635,
+      "supersession": 0.0,
+      "turn": 8,
+      "turn_wall_ms": 9055.167551967315
+    },
+    {
+      "deposit": 3323.169715004042,
+      "importance_bookkeeping": 5.46183402184397,
+      "infer": 3585.6195390224457,
+      "kind": "filler",
+      "mount": 0.0013430253602564335,
+      "pass2_wall_ms": null,
+      "pass3_wall_ms": null,
+      "route": 2102.4584749829955,
+      "supersession": 0.0,
+      "turn": 9,
+      "turn_wall_ms": 9161.767915007658
+    }
+  ]
+}

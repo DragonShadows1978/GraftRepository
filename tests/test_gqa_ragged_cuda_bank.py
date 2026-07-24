@@ -230,6 +230,97 @@ def test_mixed_length_route_attaches_padded_bank_and_uses_cuda(monkeypatch):
     assert arena.native_store.configure_calls == 1
 
 
+def test_prep_backend_flags_compare_identical_probe_and_fail_closed(monkeypatch):
+    class ExactCudaStore:
+        def __init__(self):
+            self._cuda_gqa_bank = None
+            self._cuda_gqa_bank_signature = None
+            self.node_ids = None
+
+        def configure_cuda_gqa_route_bank(self, route_bank, node_ids):
+            self._cuda_gqa_bank = np.asarray(route_bank, np.float32).copy()
+            self.node_ids = np.asarray(node_ids, np.uint64).copy()
+
+        def route_gqa_cuda(self, query, *, topk=3, **_kwargs):
+            query = np.asarray(query, np.float32)
+            repeated = np.repeat(
+                self._cuda_gqa_bank,
+                query.shape[0] // self._cuda_gqa_bank.shape[1],
+                axis=1,
+            )
+            scores = np.abs(np.einsum(
+                "hqd,nhkd->nhqk", query, repeated
+            ) / np.sqrt(query.shape[2])).max(axis=(2, 3)).mean(axis=1)
+            order = sorted(
+                range(len(scores)), key=lambda idx: (-scores[idx], idx))
+            return [int(self.node_ids[idx]) for idx in order[:int(topk)]]
+
+        def route_gqa(self, *_args, **_kwargs):
+            raise AssertionError("explicit prep selector used native CPU")
+
+    monkeypatch.setenv("GRM_GQA_CUDA_ROUTE", "1")
+    rows = [
+        np.asarray([[[0.1, 0.0]]], np.float32),
+        np.asarray([[[0.2, 0.0], [2.0, 0.0]]], np.float32),
+        np.asarray([[[0.5, 0.0]]], np.float32),
+    ]
+    query = np.asarray([[[1.0, 0.0]]], np.float32)
+    arena = _arena(rows)
+    arena.native_store = ExactCudaStore()
+    arena.grafts[0]["text"] = "alpha memory"
+
+    python = arena.route(
+        "node probe",
+        exclude=set(),
+        limit=3,
+        route_backend="python",
+        query_lex=False,
+        semantic_only=True,
+        probe_key=query,
+    )
+    assert arena.last_route_backend == "python"
+    cuda = arena.route(
+        "node probe",
+        exclude=set(),
+        limit=3,
+        route_backend="cuda",
+        query_lex=False,
+        semantic_only=True,
+        probe_key=query,
+    )
+    assert arena.last_route_backend == "cuda"
+    assert cuda == python == [1, 2, 0]
+
+    accelerated_policy = arena.route(
+        "alpha probe",
+        exclude=set(),
+        limit=3,
+        route_backend="cuda",
+        query_lex=True,
+        probe_key=query,
+    )
+    reference_policy = arena.route(
+        "alpha probe",
+        exclude=set(),
+        limit=3,
+        route_backend="python",
+        query_lex=True,
+        probe_key=query,
+    )
+    assert accelerated_policy == reference_policy
+    # Re-run accelerated last so both telemetry fields can be asserted.
+    assert arena.route(
+        "alpha probe",
+        exclude=set(),
+        limit=3,
+        route_backend="cuda",
+        query_lex=True,
+        probe_key=query,
+    ) == reference_policy
+    assert arena.last_route_backend == "cuda"
+    assert arena.last_route_policy_backend == "python_query_lex_rescore"
+
+
 def test_sidecar_accepts_epoch_signature_without_rehashing(monkeypatch):
     class FakeDeviceArena:
         setup_wall_ms = 1.25
