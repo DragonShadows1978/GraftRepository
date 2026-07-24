@@ -42,6 +42,14 @@ from core.grm_three_pass import (  # noqa: E402
     TurnStepIOTracker,
     arena_state_sha256,
 )
+from core import paging_telemetry as _paging_telemetry  # noqa: E402
+from scripts.grm_probe_ladder import (  # noqa: E402
+    build_probe_ladder_attempts,
+    identifier_tokens_from_parts,
+    probe_ladder_cli_argv,
+    probe_ladder_enabled,
+    rank1_covers_identifiers,
+)
 
 
 SNAPSHOT = (
@@ -258,6 +266,16 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         choices=("single", "three_pass"),
         default="single",
         help="turn scheduler (default single preserves the registered path)",
+    )
+    # GRM3P-LADDER-ON: probe ladder is DEFAULT-ON permanently. Escape to the
+    # legacy multimount path with --no-probe-ladder or GRM_PROBE_LADDER=0.
+    # BooleanOptionalAction: None = unset on CLI → fall through to env/default.
+    p.add_argument(
+        "--probe-ladder",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="enforce Arena laws on Fork-A probe turns (default ON; "
+             "escape with --no-probe-ladder or GRM_PROBE_LADDER=0)",
     )
     return p.parse_args(argv)
 
@@ -568,6 +586,37 @@ def _budget_fit_mounts(arena, picks: list[int]) -> list[int]:
             out.append(int(i))
             used += n
     return out
+
+
+def _probe_identifier_tokens(arena, user_text: str) -> set[str]:
+    """Identifier tokens for point-lookup / precise-first (reuse arena lex)."""
+    return identifier_tokens_from_parts(
+        arena._rare_tokens(user_text),
+        arena._query_lex_tokens(user_text),
+    )
+
+
+def _probe_is_point_lookup(arena, user_text: str) -> bool:
+    """Identifier-shaped probe ⇒ RECENCY LAW applies (exclude live seats)."""
+    return bool(_probe_identifier_tokens(arena, user_text))
+
+
+def _probe_rank1_covers_identifiers(
+    arena, ranking: list[int], id_tokens: set[str]
+) -> list[int] | None:
+    """Precise-first: rank-1 alone when it covers all probe identifiers."""
+    if not ranking or not id_tokens:
+        return None
+    g0 = arena.grafts[int(ranking[0])]
+    if "rare" not in g0:
+        g0["rare"] = arena._rare_tokens(g0.get("text", ""))
+    if rank1_covers_identifiers(
+        id_tokens,
+        g0.get("rare") or (),
+        arena._node_text_tokens(g0.get("text", "")),
+    ):
+        return [int(ranking[0])]
+    return None
 
 
 def recency_augmented_probe(
@@ -920,6 +969,259 @@ def run_step1_prep(
     return receipt, receipt_path
 
 
+def _probe_finish_deposit(
+    repo: GraftRepository,
+    before: dict[str, Any],
+    user_text: str,
+    ans: str,
+    info: dict[str, Any],
+    *,
+    defer_memory: bool,
+) -> dict[str, Any]:
+    """Repository deposit bookkeeping shared by legacy and ladder probe paths."""
+    info = dict(info or {})
+    if not defer_memory:
+        extracted = repo._extract_from_new_turns(
+            before,
+            context={
+                "event": "chat",
+                "user_text": user_text,
+                "assistant_text": ans,
+            },
+        )
+        if extracted:
+            info["extraction"] = extracted
+        repo.runtime._finish_turn_event(
+            "chat", before, extraction=extracted, autosave=True)
+    return info
+
+
+def _probe_mount_snapshot(
+    repo: GraftRepository,
+    arena,
+    *,
+    live_idx: set,
+    picks: list[int],
+    planned: list[int],
+    turn_idx: int | None,
+) -> None:
+    """Opt-in contam mount snapshot; never aborts the probe path."""
+    tel = getattr(repo, "_paging_tel", None) or _paging_telemetry.get_telemetry()
+    if not (tel.snapshot_enabled and turn_idx is not None):
+        return
+    try:
+        snap_ids = sorted({int(i) for i in live_idx} | {int(i) for i in picks})
+        tel.snapshot_nodes(
+            arena,
+            snap_ids,
+            turn=int(turn_idx),
+            label="probe_mount",
+            extra={
+                "live_ids": sorted(int(i) for i in live_idx),
+                "mount_fitted": [int(i) for i in picks],
+                "mount_plan": [int(i) for i in planned],
+            },
+        )
+    except Exception as snap_err:
+        if tel.enabled:
+            tel.log(
+                "mount_snapshot_error",
+                -1,
+                error=repr(snap_err),
+                turn=int(turn_idx),
+            )
+
+
+def _probe_ladder_chat(
+    repo: GraftRepository,
+    user_text: str,
+    *,
+    topk: int,
+    ngen: int,
+    max_trips: int = 1,
+    defer_memory: bool = False,
+    turn_idx: int | None = None,
+) -> tuple[str, dict[str, Any]]:
+    """Fork-A probe path with production laws enforced (flag-on only).
+
+    Reuses arena.route / _rare_tokens / _query_lex_tokens / _node_text_tokens /
+    _attempt / _grounding_attribution. Does not reimplement scoring.
+    """
+    arena = repo.arena
+    before = repo._snapshot_state()
+    live_idx = {g for g, _ in arena.live_segs if g is not None}
+    want = max(int(topk), 1)
+    route_limit = max(want, (int(max_trips) + 1) * want)
+    ranking = list(
+        arena.route(user_text, exclude=live_idx, limit=route_limit) or [])
+    id_tokens = _probe_identifier_tokens(arena, user_text)
+    point_lookup = bool(id_tokens)
+    precise = _probe_rank1_covers_identifiers(arena, ranking, id_tokens)
+    attempts = build_probe_ladder_attempts(
+        ranking=ranking,
+        topk=want,
+        precise=precise,
+        point_lookup=point_lookup,
+        max_trips=int(max_trips),
+    )
+
+    for layer in arena.m.layers:
+        layer.self_attn.live_shift = arena.live_shift
+    stops = arena.stop_sequences or ()
+
+    # Snapshot pre-attempt state for shuttling rollback (mirrors Arena.step).
+    snap = (
+        arena.caches,
+        arena.pos,
+        list(arena.live_segs),
+        arena.cur_mounts,
+        arena.cur_mount_n,
+        len(arena.grafts),
+    )
+    best: tuple[str, dict[str, Any], tuple, list[int], list[int]] | None = None
+    last_planned: list[int] = []
+    last_picks: list[int] = []
+
+    for trip, (planned, clean) in enumerate(attempts):
+        last_planned = list(planned)
+        if trip:
+            (arena.caches, arena.pos, arena.live_segs, arena.cur_mounts,
+             arena.cur_mount_n) = (
+                snap[0], snap[1], list(snap[2]), snap[3], snap[4])
+            had_appended = len(arena.grafts) > snap[5]
+            del arena.grafts[snap[5]:]
+            if not defer_memory or had_appended:
+                arena._bump_cuda_gqa_epoch()
+        if clean:
+            # RECENCY LAW: point lookups exclude live/recency seats.
+            arena.caches, arena.pos, arena.live_segs = None, 0, []
+            arena.cur_mounts, arena.cur_mount_n = [], 0
+
+        fitted = _budget_fit_mounts(arena, planned)
+        picks = sorted(fitted)
+        last_picks = list(picks)
+        if not picks and planned:
+            # Nothing fits — treat as empty attempt.
+            continue
+        if defer_memory:
+            ans, info = arena._attempt(
+                user_text, picks, int(ngen), False, stops, defer_memory=True)
+        else:
+            ans, info = arena._attempt(
+                user_text, picks, int(ngen), True, stops)
+        info = dict(info or {})
+        info["trip"] = int(trip)
+        if clean:
+            info["clean_room"] = True
+        grounded, _contributors = arena._grounding_attribution(
+            ans, picks, user_text)
+        state = (
+            arena.caches, arena.pos, list(arena.live_segs),
+            arena.cur_mounts, arena.cur_mount_n, list(arena.grafts),
+        )
+        if grounded:
+            _probe_mount_snapshot(
+                repo, arena, live_idx=live_idx, picks=picks,
+                planned=planned, turn_idx=turn_idx)
+            info["driver_probe_multimount"] = True
+            info["driver_probe_ladder"] = True
+            info["driver_topk"] = int(want)
+            info["point_lookup"] = bool(point_lookup)
+            info["precise_first"] = bool(
+                precise is not None and list(planned) == list(precise))
+            info["mount_plan"] = list(planned)
+            info["mount_fitted"] = list(picks)
+            info["mount_dropped_for_width"] = [
+                i for i in planned if i not in set(picks)]
+            info["ranking_ids"] = [int(x) for x in ranking]
+            info = _probe_finish_deposit(
+                repo, before, user_text, ans, info, defer_memory=defer_memory)
+            return ans, info
+        if best is None:
+            best = (ans, info, state, list(picks), list(planned))
+
+    # Nothing grounded — keep FIRST attempt (arena.step convention).
+    if best is None:
+        ans, info = "", {
+            "trip": 0,
+            "no_mount_fit": True,
+            "driver_probe_multimount": True,
+            "driver_probe_ladder": True,
+            "driver_topk": int(want),
+            "point_lookup": bool(point_lookup),
+            "precise_first": False,
+            "mount_plan": list(last_planned),
+            "mount_fitted": list(last_picks),
+            "mount_dropped_for_width": [
+                i for i in last_planned if i not in set(last_picks)],
+            "ranking_ids": [int(x) for x in ranking],
+        }
+        if defer_memory:
+            # Empty attempt still needs a deferred shell for pass-3.
+            ans, info_att = arena._attempt(
+                user_text, [], int(ngen), False, stops, defer_memory=True)
+            info = dict(info_att or {})
+            info.update({
+                "trip": 0,
+                "no_mount_fit": True,
+                "driver_probe_multimount": True,
+                "driver_probe_ladder": True,
+                "driver_topk": int(want),
+                "point_lookup": bool(point_lookup),
+                "precise_first": False,
+                "mount_plan": list(last_planned),
+                "mount_fitted": [],
+                "mount_dropped_for_width": list(last_planned),
+                "ranking_ids": [int(x) for x in ranking],
+            })
+        else:
+            ans, info_att = arena._attempt(
+                user_text, [], int(ngen), True, stops)
+            info = dict(info_att or {})
+            info.update({
+                "trip": 0,
+                "no_mount_fit": True,
+                "driver_probe_multimount": True,
+                "driver_probe_ladder": True,
+                "driver_topk": int(want),
+                "point_lookup": bool(point_lookup),
+                "precise_first": False,
+                "mount_plan": list(last_planned),
+                "mount_fitted": [],
+                "mount_dropped_for_width": list(last_planned),
+                "ranking_ids": [int(x) for x in ranking],
+            })
+        info = _probe_finish_deposit(
+            repo, before, user_text, ans, info, defer_memory=defer_memory)
+        return ans, info
+
+    ans, info, st, picks, planned = best
+    (arena.caches, arena.pos, arena.live_segs,
+     arena.cur_mounts, arena.cur_mount_n) = st[0], st[1], st[2], st[3], st[4]
+    arena.grafts[:] = st[5]
+    if not defer_memory:
+        arena._bump_cuda_gqa_epoch()
+    info = dict(info or {})
+    info["driver_probe_multimount"] = True
+    info["driver_probe_ladder"] = True
+    info["driver_topk"] = int(want)
+    info["point_lookup"] = bool(point_lookup)
+    info["precise_first"] = bool(
+        precise is not None and list(planned) == list(precise))
+    info["mount_plan"] = list(planned)
+    info["mount_fitted"] = list(picks)
+    info["mount_dropped_for_width"] = [
+        i for i in planned if i not in set(picks)]
+    info["ranking_ids"] = [int(x) for x in ranking]
+    info["ungrounded_kept_first"] = True
+    _probe_mount_snapshot(
+        repo, arena, live_idx=live_idx, picks=picks,
+        planned=planned, turn_idx=turn_idx)
+    info = _probe_finish_deposit(
+        repo, before, user_text, ans, info, defer_memory=defer_memory)
+    return ans, info
+
+
 def probe_multimount_chat(
     repo: GraftRepository,
     user_text: str,
@@ -927,6 +1229,9 @@ def probe_multimount_chat(
     topk: int,
     ngen: int,
     defer_memory: bool = False,
+    turn_idx: int | None = None,
+    probe_ladder: bool = True,
+    max_trips: int = 1,
 ) -> tuple[str, dict[str, Any]]:
     """Probe path: mount route top-k via arena multi-mount, not argmax-only.
 
@@ -935,7 +1240,24 @@ def probe_multimount_chat(
     production multi-mount slice (top-k) seated so a correct memory at
     ranks 2-3 is present even when rank-1 is a length-biased distractor.
     Diagnostics still record full ranking / source_rank separately.
+
+    When ``probe_ladder`` is True (default under GRM3P-LADDER-ON; CLI
+    ``--probe-ladder`` / env truthy), enforce the registered production laws
+    on this path: point-lookup clean context, precise-first, grounding + one
+    retry. Escape ``--no-probe-ladder`` / ``GRM_PROBE_LADDER=0`` restores the
+    legacy multimount path exactly.
     """
+    if probe_ladder:
+        return _probe_ladder_chat(
+            repo,
+            user_text,
+            topk=topk,
+            ngen=ngen,
+            max_trips=max_trips,
+            defer_memory=defer_memory,
+            turn_idx=turn_idx,
+        )
+
     arena = repo.arena
     before = repo._snapshot_state()
     live_idx = {g for g, _ in arena.live_segs if g is not None}
@@ -953,6 +1275,14 @@ def probe_multimount_chat(
             user_text, picks, int(ngen), False, stops, defer_memory=True)
     else:
         ans, info = arena._attempt(user_text, picks, int(ngen), True, stops)
+    # GRM3P-DIAG-CONTAM dual mount-time snapshot (opt-in). Taken AFTER
+    # _attempt so fitted nodes are already device-resident via the normal
+    # mount path; no extra pre-probe _ensure_h (avoids LRU/clock side
+    # effects on the registered probe). RECENCY = live-window ids at
+    # probe start, plus fitted mounts.
+    _probe_mount_snapshot(
+        repo, arena, live_idx=live_idx, picks=picks,
+        planned=planned, turn_idx=turn_idx)
     info = dict(info or {})
     info["trip"] = 0
     info["driver_probe_multimount"] = True
@@ -961,19 +1291,8 @@ def probe_multimount_chat(
     info["mount_fitted"] = picks
     info["mount_dropped_for_width"] = [
         i for i in planned if i not in set(picks)]
-    if not defer_memory:
-        extracted = repo._extract_from_new_turns(
-            before,
-            context={
-                "event": "chat",
-                "user_text": user_text,
-                "assistant_text": ans,
-            },
-        )
-        if extracted:
-            info["extraction"] = extracted
-        repo.runtime._finish_turn_event(
-            "chat", before, extraction=extracted, autosave=True)
+    info = _probe_finish_deposit(
+        repo, before, user_text, ans, info, defer_memory=defer_memory)
     return ans, info
 
 
@@ -1333,6 +1652,9 @@ def run_turn(
     args: argparse.Namespace,
     resumed: bool,
 ) -> None:
+    # Opt-in paging telemetry context (no-op when disabled).
+    tel = getattr(repo, "_paging_tel", None) or _paging_telemetry.get_telemetry()
+    tel.set_context(turn=int(turn_idx), step="turn")
     mounts_before = list(repo.arena.cur_mounts)
     nodes_before = repo_node_count(repo)
     live_before = live_node_ids(repo)
@@ -1388,11 +1710,16 @@ def run_turn(
                         repo.arena, event["user"], source_node, top_k=5)
                     # Fork A: widen probe mount from argmax to top-k at driver
                     # call site (arena multi-mount picks list), not product patch.
+                    # Probe ladder (default ON) enforces production laws here;
+                    # --no-probe-ladder / GRM_PROBE_LADDER=0 restores legacy.
                     answer, info = probe_multimount_chat(
                         repo,
                         event["user"],
                         topk=int(args.topk),
                         ngen=int(args.ngen),
+                        turn_idx=int(turn_idx),
+                        probe_ladder=probe_ladder_enabled(args),
+                        max_trips=int(args.max_trips),
                     )
                     if route_diag is not None:
                         route_diag = dict(route_diag)
@@ -1467,6 +1794,9 @@ def run_turn(
                         topk=int(args.topk),
                         ngen=int(args.ngen),
                         defer_memory=True,
+                        turn_idx=int(turn_idx),
+                        probe_ladder=probe_ladder_enabled(args),
+                        max_trips=int(args.max_trips),
                     )
                     if route_diag is not None:
                         route_diag = dict(route_diag)
@@ -1784,6 +2114,10 @@ def maybe_restart(args: argparse.Namespace, session_dir: Path, paths: dict[str, 
     ]
     if args.vram_budget_mb is not None:
         argv += ["--vram-budget-mb", str(args.vram_budget_mb)]
+    # Always freeze the resolved ladder decision on re-exec (default-on means
+    # an escape-off parent must re-assert --no-probe-ladder; env alone is not
+    # enough when the parent used only the CLI escape).
+    argv += probe_ladder_cli_argv(probe_ladder_enabled(args))
     os.execvpe(sys.executable, argv, os.environ.copy())
 
 
@@ -1805,6 +2139,16 @@ def main(argv: list[str]) -> int:
 
     os.environ["GRM_GQA_CUDA_ROUTE"] = "1"
     os.environ["GRM_GRAFT_STORAGE_BITS"] = "8"
+    # Contam diag: if the caller enabled telemetry via env with the literal
+    # token "{session}", expand it to this session directory. Empty/unset
+    # keeps the default path completely dark.
+    for env_key in (
+        "GRM_PAGING_TELEMETRY_PATH",
+        "GRM_MOUNT_SNAPSHOT_DIR",
+    ):
+        raw = os.environ.get(env_key, "")
+        if "{session}" in raw:
+            os.environ[env_key] = raw.replace("{session}", str(session_dir))
 
     if not args.skip_gpu_idle_check:
         idle = wait_for_idle_gpu()
@@ -1833,6 +2177,7 @@ def main(argv: list[str]) -> int:
             "ngen": int(args.ngen),
             "max_trips": int(args.max_trips),
             "turn_pipeline": args.turn_pipeline,
+            "probe_ladder": bool(probe_ladder_enabled(args)),
             "vram_budget_mb": (
                 int(args.vram_budget_mb)
                 if args.vram_budget_mb is not None else None),
@@ -1845,6 +2190,11 @@ def main(argv: list[str]) -> int:
             "env": {
                 "GRM_GQA_CUDA_ROUTE": os.environ["GRM_GQA_CUDA_ROUTE"],
                 "GRM_GRAFT_STORAGE_BITS": os.environ["GRM_GRAFT_STORAGE_BITS"],
+                "GRM_PAGING_TELEMETRY_PATH": os.environ.get(
+                    "GRM_PAGING_TELEMETRY_PATH", ""),
+                "GRM_MOUNT_SNAPSHOT_DIR": os.environ.get(
+                    "GRM_MOUNT_SNAPSHOT_DIR", ""),
+                "GRM_PROBE_LADDER": os.environ.get("GRM_PROBE_LADDER", ""),
             },
             "gpu_idle_check": idle,
             "script": script,

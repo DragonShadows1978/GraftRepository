@@ -47,6 +47,7 @@ from core.graft_arena import ArenaCache
 from core.grm_runtime import GRMRuntime
 from core.mistral7b_tc import tc
 from core import kv_graft
+from core import paging_telemetry as _paging_telemetry
 
 
 # --------------------------------------------------------------- GRM-IMPORTANCE
@@ -320,6 +321,10 @@ class GraftRepository:
             self._native_configure_arena()
         # descent re-mounts retired children from cold storage on demand
         self.arena.node_loader = self._load_node
+        # GRM3P-DIAG-CONTAM: opt-in paging telemetry (default-off; env paths).
+        # Disabled sink is a process-wide no-op — no file I/O, no control-flow
+        # change on the registered default path.
+        self._paging_tel = _paging_telemetry.configure_from_env()
         self._ensure_repo_dirs()
         if os.path.exists(os.path.join(path, "manifest.json")):
             self.load()
@@ -3322,6 +3327,17 @@ class GraftRepository:
             g["h"] = None
             self._ensure_lifecycle(i, g)
             self._native_evict_device_copy(i)
+            tel = getattr(self, "_paging_tel", None)
+            if tel is not None and tel.enabled:
+                tel.log(
+                    "evict",
+                    int(i),
+                    reason="vram_budget_spill",
+                    spill_policy=str(spill_policy),
+                    last_used=g.get("last_used"),
+                    ntok=g.get("ntok"),
+                    host_present=g.get("host_payload") is not None,
+                )
             freed += 1
         return freed
 
@@ -3337,20 +3353,53 @@ class GraftRepository:
                     and g.get("host_payload") is not None):
                 g["h"] = None
                 self._ensure_lifecycle(i, g)
+                tel = getattr(self, "_paging_tel", None)
+                if tel is not None and tel.enabled:
+                    tel.log(
+                        "evict",
+                        int(i),
+                        reason="retired_free",
+                        last_used=g.get("last_used"),
+                        ntok=g.get("ntok"),
+                        host_present=True,
+                    )
 
     # --------------------------------------------------------- persistence
     def _load_node(self, i):
         """RAM-first loader: host payload -> device, NVMe only as fallback."""
         g = self.arena.grafts[i]
+        source = (
+            "ram_host_payload"
+            if g.get("host_payload") is not None else "nvme"
+        )
         if g.get("host_payload") is None:
             try:
                 g["host_payload"] = self._read_payload_file(i)
             except FileNotFoundError:
                 self._mark_payload_missing(i, g)
+                tel = getattr(self, "_paging_tel", None)
+                if tel is not None and tel.enabled:
+                    tel.log(
+                        "page_in",
+                        int(i),
+                        source=source,
+                        success=False,
+                        reason="payload_missing",
+                    )
                 return None
         h = self.arena.unpack_node(g["host_payload"])
         g["h"] = h
         self._ensure_lifecycle(i, g)
+        tel = getattr(self, "_paging_tel", None)
+        if tel is not None and tel.enabled:
+            tel.log(
+                "page_in",
+                int(i),
+                source=source,
+                success=True,
+                ntok=g.get("ntok"),
+                rehydrate=True,
+            )
         return h
 
     def _mark_payload_missing(self, i, g):
@@ -3896,11 +3945,31 @@ class GraftRepository:
             if g.get("durable"):
                 g["host_payload"] = self._read_payload_file(i)
                 self._ensure_lifecycle(i, g)
+                tel = getattr(self, "_paging_tel", None)
+                if tel is not None and tel.enabled:
+                    tel.log(
+                        "upload",
+                        int(i),
+                        source="nvme_to_host",
+                        success=True,
+                        packed=False,
+                    )
                 return True
             raise RuntimeError(f"graft {i} has no RAM payload and no device "
                                "payload to snapshot")
         g["host_payload"] = self._payload_to_ram(self.arena.pack_node(g["h"]))
         self._ensure_lifecycle(i, g)
+        tel = getattr(self, "_paging_tel", None)
+        if tel is not None and tel.enabled:
+            tel.log(
+                "upload",
+                int(i),
+                source="device_pack",
+                success=True,
+                packed=True,
+                storage_bits=getattr(self.arena, "storage_bits", None),
+                ntok=g.get("ntok"),
+            )
         return True
 
     def _default_metadata(self, g):

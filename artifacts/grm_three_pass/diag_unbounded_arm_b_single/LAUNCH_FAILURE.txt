@@ -1,0 +1,23 @@
+GRM3P-DIAG infrastructure receipt, 2026-07-23
+
+This is not an ARM B result. No model load or scripted turn completed.
+
+Locked invocation:
+flock -w 7200 /tmp/forge-gpu.lock env GRM_GQA_CUDA_ROUTE=1 GRM_GRAFT_STORAGE_BITS=8 python3 scripts/grm_e2e_session.py --mode full --turn-pipeline single --session-dir /home/vader/GraftRepository-three-pass/artifacts/grm_three_pass/diag_unbounded_arm_b_single --skip-gpu-idle-check
+
+Failure:
+RuntimeError: cudaMalloc failed: no CUDA-capable device is detected
+
+Locked device check:
+flock -w 7200 /tmp/forge-gpu.lock nvidia-smi
+
+Result:
+NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver.
+
+Host observations:
+- NVIDIA kernel modules were loaded.
+- PCI 06:00.0 was present and bound to the nvidia kernel driver.
+- /dev/nvidia0, /dev/nvidiactl, /dev/nvidia-uvm, and
+  /dev/nvidia-uvm-tools were absent.
+- No probe scorecard, transcript, summary, or turn instrumentation was
+  produced.
