@@ -12,5 +12,11 @@ inv_*/
 GRM_Stack.zip
 artifacts/
 
+# local planning inbox
+Inbox/
+
 # local CMake build outputs
 cpp/build/
+
+# seat dispatch logs (local)
+logs/
