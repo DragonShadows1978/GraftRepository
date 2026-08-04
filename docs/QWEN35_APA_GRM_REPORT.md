@@ -6,9 +6,10 @@ decode measured on this machine)
 
 **Outcome in one line:** the APA+GRM-equipped tensor_cuda stack now
 serves the same workload the baseline served, *faster per token and
-much faster per request*, with infinite-context economics the
-baseline structurally cannot match — verified end-to-end by the
-consumer's own acceptance loop.
+much faster per request*, with bounded active-residency economics the
+baseline structurally cannot match — verified end-to-end by the consumer's
+own acceptance loop. Bounded active residency does not mean zero host/disk
+growth, universal recall, or unlimited addressable storage.
 
 ---
 

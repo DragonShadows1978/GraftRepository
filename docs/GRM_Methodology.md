@@ -3,8 +3,10 @@
 **A routed, hierarchical, tokenless memory for frozen LLMs.**
 
 This document explains how GRM works, why it gives effectively unbounded
-context at bounded VRAM, and the full record of experiments run against
-it. It is a synthesis of the primary sources — do not treat it as the
+conversation history only with bounded active residency, and the full record
+of experiments run against it. Bounded active residency does not mean zero
+host/disk growth, universal recall, or unlimited addressable storage. This is a
+synthesis of the primary sources — do not treat it as the
 authority where it disagrees with them:
 
 - `core/graft_repository.py` — the implementation (329 lines)
@@ -22,12 +24,16 @@ sources.
 
 ## 1. The one-line thesis
 
-> "store every turn and document as harvested K/V ('grafts'), route into
-> them per turn with APA's own scoring, mount only the winners into a
-> fixed positional arena, and let a background librarian consolidate old
-> memory into hierarchical digests — unbounded memory at bounded
-> residency, zero training, on a frozen model."
-> — `GraftRepository_Memory_Architecture.md:8-11`
+> One line: store every turn and document as harvested K/V ("grafts"), route into
+> them per turn with APA's own scoring, mount only the winners into a fixed
+> positional arena, and let a background librarian consolidate old memory into
+> hierarchical digests — unbounded memory at bounded residency, zero training,
+> on a frozen model.
+> — `GraftRepository_Memory_Architecture.md:6-10`
+
+The "unbounded" in this design statement means bounded active residency: it
+does not mean zero host/disk growth, universal recall, or unlimited addressable
+storage.
 
 Every clause is a mechanism. The rest of this document is those clauses.
 
@@ -82,7 +88,7 @@ whole design rests on (`KV-Graft_Document-Injection.md`).
 **The four kinds** (`graft_repository.py`):
 - **`turn`** — a verbatim conversation turn (default; `add_turn`, `:97`).
 - **`doc`** — knowledge ingest (`add_document`, `:101`). *Never folded* —
-  "reference material, not history" (`:118-119`).
+  "reference material, not history" (`graft_repository.py:2699`).
 - **`digest`** — a consolidation of folded turns (`:124`).
 - **`era`** — a digest-of-digests, a consolidation of folded digests
   (`:128`).
@@ -103,7 +109,8 @@ The math that makes a position-free graft seatable anywhere
 
 So grafts are **harvested pre-RoPE** (position-free) and **re-RoPE'd at
 whatever arena seat they land in**. The harvest hook is "post-qk-norm /
-pre-RoPE" (`:29`). For MLA, only the 32-dim `k_pe` is re-rotated; the
+pre-RoPE" (`GraftRepository_Memory_Architecture.md:28`). For MLA, only the
+32-dim `k_pe` is re-rotated; the
 latent `c_n` is position-free (`:49`, `:191`).
 
 **Why there is no re-prefill** (`:180-184`): injection is prefill-only —
@@ -113,9 +120,9 @@ reads correctly at every later decode step without being re-attended.
 
 **Certification of the seated graft** (`:35`):
 
-> "Prefill-only injection + persistent `graft_seats` shift: 5/5 recall
+> Prefill-only injection + persistent `graft_seats` shift: 5/5 recall
 > across turns; teacher-forced A-vs-C logit diff 0.5-1.5 = the plain
-> cache's own bf16 noise floor … top-1 identical at every position."
+> cache's own bf16 noise floor (0.75-0.9), top-1 identical at every position
 
 Eviction/swap is also cache surgery, and free to roll back because cache
 tensors are immutable: "Failed attempts roll back entirely (immutable
@@ -156,7 +163,8 @@ address is the payload", `:88-92`).
 
 **The per-turn signal:** the prompt's own queries. E1 resolved the depth
 dial to **layer 0 only** — "The router costs ONE layer-0 q-projection"
-(`:228`). The scoring law for QK-normed GQA models (`:222`):
+(`GraftRepository_Memory_Architecture.md:280`). The scoring law for QK-normed
+GQA models (`GraftRepository_Memory_Architecture.md:275-276`):
 
 > "Score = mean over q-heads of max over (probe-q, graft-k) pairs of
 > |q·k|/√Dh, pre-RoPE both sides (position-free)."
@@ -165,14 +173,17 @@ The law **forks by dialect**: MLA models have no qk-norm, so the key-space
 router fails (outlier-key-norm pollution) and routing switches to
 **latent-centroid cosine** — `cos(mean c_n_probe, mean c_n_graft)`
 (`:238-252`). "The routing index is part of the dialect."
+(`GraftRepository_Memory_Architecture.md:305`)
 
 **Routed beats mount-all.** This is not just a residency saving — over-
-mounting actively hurts (`:37`, `:222-226`): co-mounted grafts interfere
-("rumination spirals, digit corruption: '07:40' for 07:42"). E1 measured
-**routed top-3 = 10/10 vs mount-all = 4/10** on Qwen3. "Over-mounting is
-the other forgetting."
+mounting actively hurts (`:37`, `:222-226`): co-mounted grafts interfere,
+causing rumination spirals and digit corruption (for example, `07:40` for
+07:42). E1 measured **routed top-3 = 10/10 vs mount-all = 4/10** on Qwen3.
+The architecture record calls this "over-mounting is the other forgetting."
+(`GraftRepository_Memory_Architecture.md:279`)
 
-**The three-channel hybrid index** (from CORPUS-100, `:310-316`):
+**The three-channel hybrid index** (from CORPUS-100,
+`GraftRepository_Memory_Architecture.md:365-369`):
 
 > "the routing index is a THREE-channel hybrid — latent centroid
 > (topical) + rare-token lexical keys (identifiers; exact match dominates
@@ -186,16 +197,18 @@ added).
 
 ---
 
-## 6. Why context is effectively infinite
+## 6. Why the INFINITE-CONTEXT gate keeps active residency bounded
 
-Unboundedness here is **structural, not a bigger buffer.** The mechanism
-is the **ephemeral boat** (`test_graft_infinite.py`, verbatim):
+The result is **structural, not a bigger buffer.** The mechanism is the
+**ephemeral boat** (`tests/test_graft_infinite.py:1-4`, verbatim):
 
-> "INFINITE-CONTEXT gate: ephemeral boat ('clear the memory window at the
-> start of each turn'). Every turn runs on [sink | mounts | turn] alone —
-> resident seats CONSTANT for any conversation length; history exists only
-> as repository nodes; recency is a MOUNT (last 2 turn-grafts) for
-> anaphora."
+> INFINITE-CONTEXT gate: ephemeral boat ("clear the memory window at the
+> start of each turn"). Every turn runs on [sink | mounts | turn] alone —
+> resident seats CONSTANT for any conversation length; history exists only as
+> repository nodes; recency is a MOUNT (last 2 turn-grafts) for anaphora.
+
+The "infinite context" gate name means bounded active residency: it does not
+mean zero host/disk growth, universal recall, or unlimited addressable storage.
 
 Each turn the live cache is cleared and rebuilt as `[SINK | routed mounts
 | current turn]`. History is **never** retained in the live window — it
@@ -215,7 +228,7 @@ Four supporting pillars:
    2,048→32,768, resident flat ~2,856MB."
 4. **VRAM decoupled from corpus size** — the paging result (§8).
 
-The infinite gate result: **8/8 recall at ≤456 resident seats, flat,**
+The INFINITE-CONTEXT gate result: **8/8 recall at ≤456 resident seats, flat,**
 across 42 turns — including era-folded facts (recall through *double*
 consolidation, turn→digest→era) and an anaphora probe ("And what time
 exactly?" → 10:30).
@@ -244,12 +257,12 @@ Hard rule: "Digests must spell facts in their own tokens" (`:33`).
 
 The single most important safety rule (`:46`):
 
-> "FIDELITY GATE on EVERY fold: fact set = identifier tokens + multi-word
+> FIDELITY GATE on EVERY fold: fact set = identifier tokens + multi-word
 > named entities; the best candidate must cover >=0.70 of it or the fold
 > ABORTS and sources are marked `no_fold` (persisted), permanently
-> resident — root cause: a digest dropped '$7,400'+'Lake Arrowhead' at
+> resident — root cause: a digest dropped "$7,400"+"Lake Arrowhead" at
 > GENERATION; the facts then existed in NO node text -> unroutable,
-> unrecoverable (recall > compression)."
+> unrecoverable (**recall > compression**).
 
 Code (`:139-146`): if `consolidate()` returns no digest, the sources are
 flagged `no_fold` (persisted, restored on load) and the planner moves on.
@@ -258,11 +271,13 @@ routable forever rather than compress into something unrecoverable.
 
 ### Eras as index nodes, never readers
 
-The central era rule (`:43-50`):
+The central era rule (`graft_repository.py:228-233`):
 
-> "Era folding is ON and safe BY CONSTRUCTION: eras are INDEX nodes — the
+> Era folding is ON and safe BY CONSTRUCTION: eras are INDEX nodes — the
 > trips ladder expands them to their child digests at the primary attempt,
-> so era text is routed into but never read."
+> so era text is routed into but never read (2026-06-10 it was read, and both
+> list-form and prose-form era texts corrupted relations; descent + relational
+> first-gen digests took the era-folded 42-turn gate from 3/8 to 8/8).
 
 Era *text* is unsafe to read because multi-source re-synthesis either
 strips relations (list-form) or invents them (prose-form: "Project
@@ -304,7 +319,7 @@ spikes of 3-9s; recall **8/8** unchanged; 9 folds ~3.9s each, off-turn.
 | **E4-TRIPS — shuttling** | small arena + trips ≈ topk=3 | arena starved to ONE mount 5/6; +max_trips=2 **6/6** = the 3-mount arena |
 | **DESCENT** | era-folded recall recovers via child-digest expansion | **8/8** (from 3/8 without descent — see §9) |
 | **LIBRARIAN** | deferred folding keeps hot path flat, recall intact | hot path **0.27s FLAT**, recall **8/8** = inline reference |
-| **INFINITE** | constant residency over long history | **8/8 at ≤456 seats FLAT** over 42 turns incl. era-folded + anaphora |
+| **INFINITE-CONTEXT** | constant residency over long history; bounded active residency does not imply zero host/disk growth, universal recall, or unlimited addressable storage | **8/8 at ≤456 seats FLAT** over 42 turns incl. era-folded + anaphora |
 | **CORPUS-100** | routing under 100 near-duplicate siblings | **20/20**; 416MB grafts, 50KB index, 1.3s/probe (took 4 fixes incl. lexical channel) |
 | **PAGING** | recall under a tiny VRAM budget | **20/20** at a **64MB** budget over 100 docs; ~66MB resident, +0.1s/probe |
 | **MLA-GATE** | harvested graft ≡ in-context (falsifiable) | G1 graft-vs-in-context max diff **0.41, top-1 IDENTICAL**; G3 recall 3/3 |
@@ -328,7 +343,7 @@ era-folded 42-turn recall climbing as each fix landed (`:391-417`):
    filtered, cold-storage reloaded, budget-fitted to the arena.
 3. **6/8 → 8/8 — relational first-gen digests.** Digest prompts demand
    complete sentences naming each fact's referent (bare-bullet QC on all
-   folds). 8/8 became the standing reference for the infinite, descent,
+   folds). 8/8 became the standing reference for the INFINITE-CONTEXT, descent,
    and librarian gates.
 
 Two "improvements" were tested and **REFUTED** (each regressed 8/8 →
@@ -341,7 +356,8 @@ Two "improvements" were tested and **REFUTED** (each regressed 8/8 →
 
 - **Frozen / zero training.** Model weights are never touched. The router
   is APA's bulk quant pass, not a learned component — "no router training
-  exists anywhere in this design" (`:92`).
+  exists anywhere in this design"
+  (`GraftRepository_Memory_Architecture.md:90-91`).
 - **Tokenless.** The hot memory path pays no token cost — no
   tokenization, no prefill — because what is stored *is* the post-attention
   K/V, mounted by cache surgery (§4).
@@ -349,8 +365,8 @@ Two "improvements" were tested and **REFUTED** (each regressed 8/8 →
   stream basis. The dialect string is built from K/V geometry
   (`:73-78`: `{ModelName}:{layers}x{hidden}:{r<rank>|g<heads>x<dim>}`),
   and `load()` refuses a repository harvested on a different model
-  (`:246-254`): "K/V artifacts never transfer across models (texts
-  survive; re-harvest to migrate)." `migrate()` (`:283-315`) is the escape
+  (`:246-254`): K/V artifacts do not transfer across models; texts survive and
+  must be re-harvested to migrate. `migrate()` (`:283-315`) is the escape
   hatch — it carries **texts only** and re-harvests every node under the
   new model's weights; lineage, kinds, tags, and fold-exemption flags are
   preserved so descent keys rebuild exactly. (This path is the
@@ -367,9 +383,8 @@ On the **GQA (Qwen3) dialect**, the arena/trips/E4-C gates pass (6/6), but:
   early-stop fix, never re-run. Not a landed number.
 - **Cross-model migrate gate was never run** — no pass number exists.
 
-These are the two places the "infinite context across any model" claim is
-not yet closed by measurement. Everything else in the ledger is recorded
-green.
+These are the two places where universal cross-model long-history recall is
+not closed by measurement. Everything else in the ledger is recorded green.
 
 ---
 

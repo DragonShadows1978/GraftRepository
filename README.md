@@ -1,142 +1,101 @@
 # Graft Repository
 
-**Routed, hierarchical, tokenless memory for frozen LLMs — effectively
-unbounded conversation context at constant VRAM residency, zero training,
-on consumer hardware.**
+> **GRM gives a frozen local model persistent, routed memory without replaying
+> the full conversation into its context window.** It captures the model's own
+> attention state once, stores that state as a graft, routes relevant grafts for
+> each request, and mounts them into a bounded live cache. The model weights are
+> unchanged, old history does not repay tokenization or prefill, and the active
+> VRAM budget remains bounded by the configured arena.
 
-Documents and conversation turns are harvested ONCE as the model's own
-attention K/V ("grafts"), stored off-context, routed per turn with the
-model's own representations, and mounted into a fixed positional arena by
-cache surgery. History never re-pays tokenization or prefill; the live
-context stays permanently small; nothing is silently dropped.
+Graft Repository is the research runtime for **Graft Repository Memory (GRM)**.
+It stores model-native attention state outside the live context and restores
+only the memories selected for the current request. The current implementation
+runs on the [Project-Tensor](https://github.com/DragonShadows1978/Project-Tensor)
+CUDA engine and uses model-specific cache dialects.
 
-Built and measured starting 2026-06-10 on MiniCPM3-4B (MLA latent
-attention, INT4) over the
-[tensor_cuda](https://github.com/DragonShadows1978/Project-Tensor) engine,
-RTX 3070 8GB / RTX 4070 SUPER 12GB. Every claim below names its receipt;
-plans and ledgers live in `docs/`, sealed gate receipts in `artifacts/`
-(receipt-class files committed; bulk payloads stay local).
+**The named models below are validation points, not a compatibility
+whitelist.** TensorCUDA execution, APA evaluation, and GRM end-to-end
+certification are separate claims.
 
-## WHAT WORKS (every row gated; docs/ + artifacts/ hold the receipts)
+## How it works
 
-| Result | Number |
+1. Keep the model frozen; GRM does not train or modify its weights.
+2. Run a document or prior turn once and capture its native attention state.
+3. Store that state and provenance as a persistent graft outside live context.
+4. Score the current prompt against the repository and route relevant grafts.
+5. Mount the selected grafts into fixed seats in a bounded live arena.
+6. Generate from the frozen model, then deposit the new turn for later routing.
+
+```text
+document / prior turn
+        │ harvest once
+        ▼
+model-native K/V graft ──► persistent repository
+                                  │ route relevant memories
+                                  ▼
+current prompt ──────────► bounded live arena ──► frozen model response
+```
+
+The user-visible result is persistent recall without replaying old history as
+prompt text. GRM can provide **effectively unbounded conversation history only
+in the operational sense that active residency stays bounded; bounded active
+residency does not mean zero host/disk growth, universal recall, or unlimited
+addressable storage.** Retrieval quality, trained context geometry, repository
+capacity, and storage policy remain real limits.
+
+## Representative receipts
+
+| Receipt | Result | Source |
+|---|---|---|
+| Lossless mounting | MiniCPM3 graft vs in-context: top-1 identical; max logit difference 0.41 | [Methodology](docs/GRM_Methodology.md#8-experiment-ledger) |
+| Bounded active residency | 42 turns, 8/8 recall, at most 456 resident seats | [Methodology](docs/GRM_Methodology.md#8-experiment-ledger) |
+| Persistence and restart | Fresh-process resume reached 7/7 from disk artifacts | [Architecture receipts](docs/GraftRepository_Memory_Architecture.md) |
+| MLA lifecycle result | MiniCPM3 conversation recall 6/6 at about 25% residency; amnesia 0/6 | [Methodology](docs/GRM_Methodology.md#8-experiment-ledger) |
+| GQA result | Qwen3 arena, starved trips, and consolidation each reached 6/6; later repository re-gates were not closed in that receipt | [Architecture receipts](docs/GraftRepository_Memory_Architecture.md) |
+| GPT-OSS composed E2E | Deposit → evict → route → mount → recall, 7/7 exact across process restart | [E2E ledger](docs/GRM_E2E_RECEIPT_LEDGER.md) |
+| Honest negative | S4-aware paging tied LRU recall at 14/16 but required 112 vs 68 page-ins | [S4 ledger](docs/GRM_S4_LEDGER.md) |
+
+The [complete results index](docs/RESULTS_INDEX.md) preserves every result,
+failure, correction, and open receipt formerly listed here.
+
+## GRM certification matrix
+
+These labels follow the repository-wide public vocabulary. In particular,
+**GRM adapter** means dialect code exists; it does not imply the lifecycle gates
+required for **GRM certified**.
+
+| Label | Meaning |
 |---|---|
-| Graft ≡ in-context (lossless mounting) | logit-level: top-1 identical, diff = bf16 noise floor |
-| MLA latent graft size | 288 values/token/layer (~22× smaller than full K/V) |
-| E1 router recall | routed top-3 **beats mount-all** (10/10 vs 4/10 Qwen3; latent-centroid router on MiniCPM3) |
-| E2 digest fidelity, chained | step decay: ~0.89 once, then digests are **fixed points** |
-| E4 conversation memory | 6/6 = full-transcript baseline at ~25% residency; amnesia control 0/6 |
-| Persistent arena | 6/6 on one never-rebuilt cache; swap/evict = cache surgery |
-| Consolidation (E4-C) | 6/6 through QC'd digest grafts; routing pool 14→8 |
-| Shuttling | 1-mount arena + grounded trips = 3-mount arena (6/6) |
-| CORPUS-100 | 20/20 against 100 near-duplicate docs; 50KB index; 1.3s/probe |
-| Cross-session resume | fresh process, **7/7** from disk artifacts alone (26.4MB) |
-| Ephemeral boat ("infinite context") | 42-turn history at ≤456 resident seats, flat, 8/8 recall incl. era-folded facts + anaphora |
-| Decode speed (fast stack) | 675 → **21.6 ms/token** (31×), parity-gated |
-| Deferred librarian | 42 turns: hot path **0.27s max, flat**; folds drain in idle(); recall 8/8 unchanged |
-| Fidelity-gated folding | a fold keeping <70% of source FACTS aborts; sources stay resident — recall > compression |
-| GQA arena (Qwen3-4B), unified dialect surface | MLA suite bit-identical; GQA arena 6/6, trips 6/6, E4-C 6/6 |
-| VRAM paging | LRU write-back pager: 100 docs at 64MB budget, 20/20, +0.1s/probe |
-| **Composed E2E receipt (GPT-OSS-20B)** | 34-turn live session through production chat()→step(): witnessed deposit→evict→route→mount→recall **7/7 exact across a process restart**; VRAM flat 10.8→11.0GB (docs/GRM_E2E_RECEIPT_LEDGER.md) |
-| **CUDA route (MLA)** | 1M-node route **2.22 ms** (from 925.6 ms — 417×); ≤100k byte-exact vs python (docs/GRM_MLA_CUDA_ROUTE_*) |
-| **GQA CUDA bridge** | route entry 0.19–0.97 ms = 1.26–1.44× direct (was 25–50×) |
-| **Exact ragged GQA CUDA router** | 175/175 four-way parity (numpy/CPU/CUDA/bridge), 512 nodes p50 **1.59 ms**; disabled by default (docs/GRM_GQA_EXACT_RAGGED_CUDA_*) |
-| **Graft storage quantization** | INT8 free (1.88× disk), INT6 last green (2.46×); packed on-disk format landed (docs/GRM_GRAFT_QUANT_LEDGER.md) |
-| **Trinity NoPE grafts** | NoPE dissolves the arena position-hole law: recall at live_shift 789 = 2× GPT-OSS's salad depth, controls prove carriage (fdc478c) |
-| **Supersession fix (L2 revision-aware mount resolution)** | stale readback 2/5 → **0/5**; multi-hop mounts lineage head only; 100% of effect attributed to L2 by resolve-only diagnostic; **flag, default OFF** (docs/GRM_SUPERSESSION_LEDGER.md) |
-| **S4 grounding-hit importance signal** | vs teacher-forced counterfactual arbiter: median Spearman **0.756**, top-1 **87.5%** (bars 0.5/0.5) at ZERO extra forward passes (docs/GRM_S4_LEDGER.md) |
-| **M11 fold-after-recovery guard** | crash-recovered sessions no longer brick the librarian; 11 regressions crash pre-fix (docs/GRM_BUG_QUEUE.md) |
+| **Engine port** | Model or pipeline loads and executes through TensorCUDA. |
+| **Parity-gated** | Engine output was compared against a registered reference under a stated tolerance. |
+| **APA evaluated** | APA was actually engaged and measured on the named target. |
+| **APA positive** | The registered quality/cost gate passed at a stated operating point. |
+| **APA boundary** | The experiment is informative but exposes a cost, quality, or geometry limit. |
+| **APA negative** | The registered gate failed or the mode was abandoned. |
+| **GRM adapter** | Model-specific capture/restore dialect code exists. |
+| **GRM certified** | Deposit, route, mount, recall, persistence/restart, and relevant controls passed. |
+| **External receipt** | Result was collaborator-reported and is not a locally reproduced gate. |
+| **Planned / unconfirmed** | Code or a plan exists, but the required evaluation has not closed. |
 
-## WHAT DOESN'T WORK (stated plainly; same receipt discipline)
+| Model / dialect | GRM status | Receipt and boundary |
+|---|---|---|
+| MiniCPM3-4B / MLA | **GRM certified** | Full foundational lifecycle, disk resume, controls, and regressions in [architecture receipts](docs/GraftRepository_Memory_Architecture.md) and [methodology](docs/GRM_Methodology.md) |
+| Qwen3-4B / GQA | **GRM adapter** | Arena, route, mount, trips, and consolidation passed; the cited receipt leaves repository resume and descent re-gates open in [architecture receipts](docs/GraftRepository_Memory_Architecture.md) |
+| Qwen3-1.7B / GQA | **GRM adapter** | Mount equivalence, state save/restore, E4 recall, and amnesia control passed; no process-restart lifecycle receipt in [name-checker ledger](docs/QWEN3_1P7B_NAMECHECKER_LEDGER.md) |
+| Qwen3.5-9B / GQA + DeltaNet | **GRM adapter** | Prefix state restore passed; multi-graft arena composition remains open in [Qwen3.5 report](docs/QWEN35_APA_GRM_REPORT.md) |
+| GPT-OSS-20B / GQA + sliding | **GRM adapter** | Production `chat()` → `step()` fresh-fact lifecycle reached 7/7 across restart, but supersession-under-competition and route-wall controls were RED in the [E2E ledger](docs/GRM_E2E_RECEIPT_LEDGER.md) |
+| Gemma-4 12B / MQA + sliding | **GRM adapter** | Prefix mount/state evidence exists, but no full lifecycle receipt in [port ledger](docs/GEMMA4_PORT_LEDGER.md). APA is **APA negative** under the operative [MQA adjudication](https://github.com/DragonShadows1978/Project-Tensor/blob/main/docs/GEMMA4_MQA_ADJUDICATION.md): one shared KV head and at-most-1024-key sliding windows fail the statistics and economics axes. |
+| DeepSeek-V2-Lite / MLA | **Planned / unconfirmed** | The [latent INT4 report](docs/DeepSeek-V2-Lite_APA_Latent_INT4.md) does not close the GRM lifecycle |
+| Mistral-7B / GQA | **Planned / unconfirmed** | No in-repository documentation receipt closes adapter or lifecycle status |
 
-- **S4-aware paging loses to LRU** (G2-S4, RED): recall tied 14/16
-  but +65% page-ins (112 vs 68) at 4.6× overcommit — early-session
-  zero-hit nodes include the just-deposited ones routing wants next;
-  zero-hit-first spilling breaks recency locality. The S4 SIGNAL
-  stands (G1 green above); as a paging POLICY it doesn't pay yet.
-  `spill_policy="s4"` remains in-tree, flagged, default LRU.
-  docs/GRM_S4_LEDGER.md.
-- **CORRECTED 2026-07-17 — S1 attention mass G1 verdict was
-  mismeasured, and PASSES under the registered gate**: the original
-  harness correlated against fixture grades (0.47, published as RED);
-  the registered gate demanded ranks vs the counterfactual arbiter,
-  where S1 scores median Spearman **0.83**. The earlier "replicates
-  Attention-is-not-Explanation" claim is withdrawn for the registered
-  gate. What survives as the finding: attention mass tracks what the
-  model CAUSALLY USED (0.83) far better than what humans LABELED
-  important (0.47) — the gap is the interesting part. Full correction
-  receipts: docs/GRM_IMPORTANCE_LEDGER.md 2026-07-17.
-- **4B self-report salience is dead** (S2, RED): rankable on 7/18
-  probes; scores standing preferences 0.0 against a 2.0 bar under the
-  frozen fact-worded rubric. The Generative-Agents-style importance
-  channel, validated causally, fails at this scale.
-- **Co-mount confusion** (open, pre-existing): routed right, mounted
-  right, answered from the co-mounted sibling — corpus-100 class,
-  fresh receipt in the supersession battery's fresh-fact control (1/2).
-- **L1 route length-debias is undecidable on MLA** (open): the
-  GQA-characterized max-pool length bias has NO MLA analogue (0
-  inversions at baseline; battery identical with debias on). Its
-  decisive test is the GQA dialect — registered successor.
-- **Route latency at session scale** (open): ~756 ms at 37 nodes on the
-  GPT-OSS python path (per-turn arena re-prep + lex rescore + ragged
-  CUDA bank non-engagement). Registered seams 2/3/4 in
-  docs/GRM_E2E_RECEIPT_LEDGER.md.
-- **Lifecycle test suite RED since 2026-07-08** (M10, open): FakeArena
-  test double lacks `_bump_cuda_gqa_epoch`; 91/101 fail — the bug
-  queue's rule-2 gate was silently dead for a week.
-- **`_ensure_h` silent fall-through** (open): an unbacked payload
-  downgrades instead of raising a named error; the M11 guard keeps the
-  fold path clear of it, other callers can still index None.
-- **GQA re-gates pending** (open, paused): repository resume (6/7
-  pre-early-stop-fix), descent 42-turn (5/8); cross-model migrate gate
-  written, NEVER RUN. Qwen3 first-gen digests fail the 0.70 fidelity
-  bar (gate holds; prompt tuning needed).
-- **Era-depth at 4B** (refuted, default respects it): multi-digest eras
-  strip or invent relations; era folding is fidelity-gated and eras
-  route but are never read; descent expands them at the primary attempt.
+## MiniCPM3 developer example
 
-## Measurement laws the gates enforce (learned the hard way)
-
-- **First-run effect**: the first forward of a process differs ≤0.5
-  logit from all subsequent runs (warm runs bit-identical) — every
-  same-process A/B warms up before capturing side A.
-- **Seating-epoch invariant**: per-seat attention telemetry is valid
-  only within a stable seating epoch; cache surgery discards the
-  accumulator (under-attribute, never misattribute).
-- **Teacher-force any cache-equivalence comparison**; generation-based
-  A/B is garbage past the first greedy divergence.
-- **K/V-irreducibility** (four independent instances: SCRIBE, sub-floor
-  storage quant, route cards, BABEL): compressed proxies of
-  contextualized K/V don't degrade — they vanish. Keep exact payloads;
-  engineer the scale.
-
-## Layout
-
-- `core/kv_graft.py` — harvest / inject / routing primitives (GQA + MLA)
-- `core/graft_arena.py` — ArenaCache: persistent arena, 3-channel routing
-  (latent centroid + lexical identifier keys + hierarchical descent),
-  grounded trips with clean-room retry and rollback, consolidate(),
-  S1 telemetry tap, supersession-aware mount resolution (flagged)
-- `core/graft_repository.py` — GraftRepository: chat / add_turn /
-  add_document API, auto-librarian (deferred mode, fold-recovery guard),
-  disk persistence, dialect wall, cross-session resume, ephemeral mode,
-  S2 salience pass (flagged), S4 grounding-hit ledger, spill policies
-- `core/{minicpm3,mistral7b,qwen,qwen3,qwen35,gpt_oss20b,deepseek_v2_lite,gemma4}_tc.py`
-  — model adapters
-- `core/grm_cuda_router.py`, `core/grm_native.py`, `core/grm_runtime.py`,
-  `cpp/` — CUDA/native route + runtime
-- `tests/` — every gate above, self-contained harnesses
-- `docs/` — plans (immutable) + ledgers (receipts) per program; design doc
-- `artifacts/` — sealed gate receipts (≤1MB receipt-class committed;
-  payloads machine-local)
-- `orders/` — implementation work orders as dispatched (committed before
-  dispatch)
-
-## Quickstart
+This example exercises the current native integration; it is not a
+backend-neutral facade.
 
 ```python
 import sys
-sys.path.insert(0, "/path/to/Project-Tensor/tensor_cuda")  # engine
+sys.path.insert(0, "/path/to/Project-Tensor/tensor_cuda")
 sys.path.insert(0, "/path/to/GraftRepository")
 
 import tensor_cuda as tc
@@ -145,44 +104,57 @@ from core.mistral7b_tc import QuantLinearTC, RMSNormTC
 from core.graft_repository import GraftRepository
 from tokenizers import Tokenizer
 
-# fast stack (all parity-gated, default-off)
 QuantLinearTC.FUSED_DECODE = True
 RMSNormTC.USE_FUSED = True
-tok = Tokenizer.from_file(f"{_snap()}/tokenizer.json")
+tokenizer = Tokenizer.from_file(f"{_snap()}/tokenizer.json")
 model, _ = MiniCPM3_TC.from_pretrained()
 tc.set_alloc_pooling(True)
-for L in model.layers:
-    L.self_attn.absorbed_decode = True
+for layer in model.layers:
+    layer.self_attn.absorbed_decode = True
 
-repo = GraftRepository(model,
-                       encode=lambda t: tok.encode(t).ids,
-                       decode=lambda i: tok.decode(i),
-                       path="~/graft-repo",
-                       ephemeral=True)          # constant residency
-repo.add_document("RUNBOOK. The ingest replacement listens on port 7443.")
-answer, info = repo.chat("What port does the ingest replacement use?")
+memory = GraftRepository(
+    model,
+    encode=lambda text: tokenizer.encode(text).ids,
+    decode=lambda ids: tokenizer.decode(ids),
+    path="~/graft-repo",
+    ephemeral=True,
+)
+memory.add_document("RUNBOOK. The ingest replacement listens on port 7443.")
+answer, info = memory.chat("What port does the ingest replacement use?")
 ```
 
-All new capabilities are opt-in flags with byte-identical default paths:
-`set_telemetry()` (S1 tap), `s2_salience_enabled`, supersession
-`--resolve` semantics, `spill_policy="s4"`, ragged CUDA router.
+Other in-tree integrations include
+[Qwen3](core/qwen3_tc.py), [Qwen3.5](core/qwen35_tc.py),
+[GPT-OSS-20B](core/gpt_oss20b_tc.py), [Gemma-4](core/gemma4_tc.py), and
+[DeepSeek-V2-Lite](core/deepseek_v2_lite_tc.py). Their certification status is
+the matrix above, not the existence of these files.
 
-## Dependencies
+## Current limitations
 
-- the tensor_cuda engine (Project-Tensor repo) built for your GPU arch
-- `numpy`, `tokenizers`
-- MiniCPM3-4B weights in the HuggingFace cache (per-model adapters have
-  their own weight expectations)
+- GRM depends on the sibling Project-Tensor runtime, normally checked out at
+  `/mnt/ForgeRealm/Project-Tensor`; build `tensor_cuda` for the target NVIDIA
+  GPU before running this example.
+- It is **not** a drop-in memory layer for arbitrary Hugging Face,
+  llama.cpp, MLX, or vLLM models. Cache capture, routing geometry, position
+  handling, and restore semantics are dialect-specific.
+- Active VRAM can be bounded while repository payloads and metadata continue
+  growing in host memory or on disk. Operators must set retention, paging, and
+  durability policy.
+- Recall is model- and routing-dependent. Fidelity gates can refuse a fold,
+  co-mounted memories can interfere, and several advanced policies remain
+  opt-in or experimental.
+- Receipts are primarily from Linux, local consumer NVIDIA GPUs, and a
+  research-grade setup. Broader hardware and OS coverage is unconfirmed.
 
-## License
+## Documentation
 
-Copyright (C) 2026 David Perry.
+- [Complete results, failures, corrections, and receipt map](docs/RESULTS_INDEX.md)
+- [GRM methodology and experiment ledger](docs/GRM_Methodology.md)
+- [Architecture record](docs/GraftRepository_Memory_Architecture.md)
+- [GRM research paper draft](docs/GRM_PAPER_DRAFT.md)
+- [Project-Tensor APA overview](https://github.com/DragonShadows1978/Project-Tensor/blob/main/docs/APA.md)
+- [Project-Tensor status matrix](https://github.com/DragonShadows1978/Project-Tensor/blob/main/docs/SUPPORT_MATRIX.md)
+- [License](LICENSE): GNU AGPL v3.0; research papers are CC BY 4.0 via their Zenodo records
 
-This repository is licensed under the GNU Affero General Public License
-v3.0 — see [LICENSE](LICENSE). Any software derived from this code,
-including software served over a network, must be released under the same
-terms. **Commercial licensing outside the AGPL terms is available** —
-contact `dave@ai-storyforge.com`.
-
-The associated research papers are licensed CC BY 4.0 via their Zenodo
-records.
+Copyright (C) 2026 David Perry. Commercial licensing outside the AGPL terms is
+available from `dave@ai-storyforge.com`.

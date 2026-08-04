@@ -54,19 +54,26 @@ conversation turns as *evidence* and fact records as *memory*, with
 revision-instead-of-overwrite semantics, a review buffer for uncertain
 writes, and fidelity-gated consolidation (folds that lose facts must abort).
 A dialect layer makes the same repository semantics run across attention
-architectures — MLA latent caches, GQA, MQA with sliding windows — with a
-*graftability profile* governing which cache families may be re-seated at
-all (validated at construction on the native plane; §2.4). On consumer GPUs, gated evaluations show:
+families — MLA latent caches and GQA multi-mount arenas, plus adapter-level
+MQA prefix mounting with sliding windows — with a *graftability profile*
+governing which cache families may be re-seated at all (validated at
+construction on the native plane; §2.4). Adapter presence is not GRM
+lifecycle certification. Gemma-4 12B's engine port is parity-gated, but APA is
+**APA negative** under the operative 2026-07-04 adjudication: APA is a
+multi-KV-head mechanism, while one shared KV head and at-most-1024-key sliding
+windows fail the statistics and economics axes and the engaged measurement had
+net cost. On consumer GPUs, gated evaluations show:
 50-turn conversational recall through routed mounts with the live context
 cleared every turn (DeepSeek-V2-Lite INT4); two-generation consolidation (40
 turns → 10 digests → 2 era nodes) with recall through the folded structure;
-42-turn infinite-context gates at flat device memory on MiniCPM3 (8/8 probes,
-40 MB active device) and Qwen3-4B (8/8, with descent through digest
+42-turn bounded-active-residency gates on MiniCPM3 (8/8 probes, 40 MB active
+device) and Qwen3-4B (8/8, with descent through digest
 lineage); and warm-memory serving on Gemma-4 12B that replaces a 15.2 s
 cold prefill with a 0.2 s mount (690 of 691 prompt tokens restored from
 memory) and carries a 10-template job at 4.7 s that took the program's
 previous production stack (Qwen3.5-9B, cold) 38 s — an 8× cross-stack
-job-throughput gain. We position
+job-throughput gain. Bounded active residency does not mean zero host/disk
+growth, universal recall, or unlimited addressable storage. We position
 GRM against prefix caching, position-independent cache fusion, and trained
 KV-retrieval, and argue the conjunction it occupies — content-routed,
 re-seatable, durable, *revisable* attention-state memory on frozen models,
@@ -181,11 +188,13 @@ consumer GPU afford the long contexts GRM fills.)
 1. **The graft abstraction**: position-free K/V payloads with text,
    metadata, routing keys, and lineage — memory as the model's own state
    (§2.1–2.3).
-2. **A cross-architecture dialect system** with graftability
-   profiles: the same repository semantics on MLA latent caches
-   (DeepSeek-V2-Lite, MiniCPM3), GQA (Qwen3-4B), and MQA+sliding-window
+2. **A cross-attention-family dialect system** with graftability profiles:
+   repository semantics on MLA latent caches (DeepSeek-V2-Lite, MiniCPM3),
+   GQA (Qwen3-4B), and adapter-level MQA+sliding-window prefix mounting
    (Gemma-4 12B); fixed/learned-absolute position families are structurally
-   refused re-seating at construction on the native plane (§2.4).
+   refused re-seating at construction on the native plane (§2.4). The Gemma
+   mount is not a GRM lifecycle certification, and its operative APA verdict is
+   **APA negative** under the multi-KV-head selection law stated above.
 3. **A four-plane runtime** — VRAM disposable / RAM authoritative / NVMe
    durable / policy — with an opt-in native (C++) mirror whose boundary
    discipline we state as a design law: *plans cross the ABI; policy does
@@ -361,6 +370,14 @@ durability, native-mirror parity, crash simulation).
 | Descent | Qwen3-4B (BF16, GQA) | 42-turn gate **8/8 probes** incl. digest descent; 429 seats; 266 MB device; 13 RAM page-ins |
 | Warm serving | Gemma-4 12B (QAT q4_0) | 690/691 prompt tokens restored from memory at 0.2 s prefill (same-model cold: 15.2 s); warm 10-template job 4.7 s vs 38 s on the prior Qwen3.5 production stack — **8×** cross-stack job throughput |
 
+[Adjudication 2026-08-04: The historical gate label "Infinite context" means
+bounded active residency; it does not mean zero host/disk growth, universal
+recall, or unlimited addressable storage.]
+
+[Adjudication 2026-08-04: The Gemma-4 warm-serving row is adapter-level prefix
+mounting evidence, not GRM lifecycle certification. Its operative APA verdict
+is APA negative under the 2026-07-04 MQA adjudication.]
+
 Three observations the table compresses:
 
 - **Memory decouples context from residency.** The MiniCPM3 gate holds
@@ -373,7 +390,7 @@ Three observations the table compresses:
   recalled *after* its turn has been retired into a digest, through
   descent — the property that makes folding a memory policy rather than
   lossy deletion.
-- **Memory is a throughput feature.** The Gemma-4 result is not a recall
+- **Memory is a throughput feature.** The Gemma-4 adapter-level prefix result is not a recall
   gate but a serving one: re-seating remembered K/V replaces prefill on
   the same model (15.2 s cold → 0.2 s mounted), and the resulting warm
   stack carries templated jobs at 8× the throughput of the program's
