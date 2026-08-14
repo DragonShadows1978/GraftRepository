@@ -70,6 +70,17 @@ _QAT_GGUF = ("/mnt/ForgeRealm/models/gemma-4-12B-it-qat/"
 _band_cache = {}
 
 
+def _apa_decode_fused_enabled():
+    """Decode-only rollout switch; fused is the serving default."""
+    return os.environ.get("GEMMA4_APA_DECODE_FUSED", "1") != "0"
+
+
+def _apa_int4_enabled():
+    """INT4 ring-drop is live only after the matching engine ABI lands."""
+    return (os.environ.get("GEMMA4_APA_INT4", "0") == "1"
+            and hasattr(tc, "apa_selective_attention_int4"))
+
+
 def _q40_repack(raw, N, K):
     """GGUF q4_0 blocks -> engine packed layout, EXACT (no requant).
 
@@ -466,9 +477,8 @@ class Gemma4AttentionTC:
         self.qkv_proj = None      # concat [q|k(|v)] — one GEMV launch
         self.q_norm_w = self.k_norm_w = None     # fp32 PLAIN w
         # APA dials (qk-norm family -> bulk_bits 4 per the measured law;
-        # 6th architecture test). cuBLAS blend path only — fused kernel's
-        # head_dim templates stop at 128, global layers are 512. Sliding
-        # layers never need APA: their keys are bounded at 1024.
+        # 6th architecture test). Global D=512 is legal in the fused kernel.
+        # Sliding layers never need APA: their keys are bounded at 1024.
         self.attention_mode = "standard"
         self.refine_percentile = 0.15
         self.bulk_bits = 4
@@ -557,24 +567,42 @@ class Gemma4AttentionTC:
                 # the new key (O(D)) instead of re-quantizing the whole
                 # O(S*D) cache every step — the measured 8K-decode OOM
                 # driver. kb/vb are the unexpanded MQA cache (globals
-                # never wrap, so slice(0,count) is logical order). The
-                # blend folds q-heads into rows, no 16x expansion.
-                from tensor_cuda.quant import (_norm_ppf, _quantize_keys,
-                                               _tables)
-                from core.mistral7b_tc import _cublas_blend_attention
-                dev = q.device.split(":")[0]
-                R_t, C_t, B_t = _tables(D, self.bulk_bits, KV, True, dev)
-                kq = kv_cache.quantized_keys(
-                    lambda ks: _quantize_keys(ks, R_t, C_t, B_t))
+                # never wrap, so slice(0,count) is logical order). Both
+                # fused and blend paths consume MQA without 16x expansion.
+                from tensor_cuda.quant import _norm_ppf
                 kk = kv_cache._k_get(0, kv_cache.count)   # dequant under q4
                 vv = kv_cache._v_get(0, kv_cache.count)
                 z_ = _norm_ppf(1.0 - max(0.0, min(1.0,
                                                   self.refine_percentile)))
-                S_a = kv_cache.count
-                blk = max(64, min(self.attn_block,
-                                  int(300 * 1024 * 1024 // (H * S_a * 2))))
-                attn = _cublas_blend_attention(
-                    q, kk, kq, vv, H // KV, 1.0, float(z_), False, blk)
+                fused = (S_all > self.fast_max_seq
+                         and _apa_decode_fused_enabled())
+                if fused and _apa_int4_enabled():
+                    # F-A ABI: K is packed internally, so no derived kq ring
+                    # is allocated or populated in this mode.
+                    attn = tc.apa_selective_attention_int4(
+                        q, kk, vv, 1.0, float(z_), False)
+                else:
+                    # Today's fused kernel still consumes the incremental
+                    # pre-quantized ring. Keep the June OOM fix: only newly
+                    # appended rows are quantized here.
+                    from tensor_cuda.quant import _quantize_keys, _tables
+                    dev = q.device.split(":")[0]
+                    R_t, C_t, B_t = _tables(
+                        D, self.bulk_bits, KV, True, dev)
+                    kq = kv_cache.quantized_keys(
+                        lambda ks: _quantize_keys(ks, R_t, C_t, B_t))
+                    if fused:
+                        attn = tc.apa_selective_attention(
+                            q, kk, kq, vv, 1.0, float(z_), False)
+                    else:
+                        from core.mistral7b_tc import _cublas_blend_attention
+                        S_a = kv_cache.count
+                        blk = max(64, min(
+                            self.attn_block,
+                            int(300 * 1024 * 1024 // (H * S_a * 2))))
+                        attn = _cublas_blend_attention(
+                            q, kk, kq, vv, H // KV, 1.0, float(z_), False,
+                            blk)
                 attn = attn.transpose(1, 2).reshape([B, L, H * D])
                 return self.o_proj(_cast(attn)), kv_cache
             else:
@@ -620,30 +648,38 @@ class Gemma4AttentionTC:
         if self.is_global:
             new_kv = ring_cache if ring_cache is not None else (k, v)
             if apa_active:
-                from tensor_cuda.quant import (_norm_ppf, _quantize_keys,
-                                               _tables)
-                from core.mistral7b_tc import _cublas_blend_attention
-                dev = q.device.split(":")[0]
-                R_t, C_t, B_t = _tables(D, self.bulk_bits, KV, True, dev)
-                # CHUNK the whole-span quantize: _quantize_keys on the
-                # full S materializes ~5 fp32 (B,KV,S,D) tensors (~140MB
-                # at 12K) — the prefill OOM the fused kernel does NOT
-                # touch (it takes pre-quantized kq). Row-independent
-                # (proven bit-exact), so slice-quantize-concat is
-                # identical and caps the transient to O(chunk*D).
-                if S_all > 4096:
-                    parts = []
-                    for s0 in range(0, S_all, 2048):
-                        n = min(2048, S_all - s0)
-                        parts.append(_quantize_keys(
-                            k.slice(2, s0, n), R_t, C_t, B_t))
-                        tc.empty_cache()
-                    kq = tc.cat(parts, dim=2)
-                else:
-                    kq = _quantize_keys(k, R_t, C_t, B_t)
+                from tensor_cuda.quant import _norm_ppf
                 z_ = _norm_ppf(1.0 - max(0.0, min(1.0,
                                                   self.refine_percentile)))
-                if S_all > self.fast_max_seq:
+                fused = S_all > self.fast_max_seq
+                int4_fused = fused and _apa_int4_enabled()
+                if int4_fused:
+                    # F-A packs K internally. In particular, bypass the
+                    # cold-start whole-span/chunked kq quantization below.
+                    attn = tc.apa_selective_attention_int4(
+                        q, k, v, 1.0, float(z_), L > 1)
+                else:
+                    from tensor_cuda.quant import _quantize_keys, _tables
+                    dev = q.device.split(":")[0]
+                    R_t, C_t, B_t = _tables(
+                        D, self.bulk_bits, KV, True, dev)
+                    # CHUNK the whole-span quantize: _quantize_keys on the
+                    # full S materializes ~5 fp32 (B,KV,S,D) tensors (~140MB
+                    # at 12K) — the prefill OOM the fused kernel does NOT
+                    # touch (it takes pre-quantized kq). Row-independent
+                    # (proven bit-exact), so slice-quantize-concat is
+                    # identical and caps the transient to O(chunk*D).
+                    if S_all > 4096:
+                        parts = []
+                        for s0 in range(0, S_all, 2048):
+                            n = min(2048, S_all - s0)
+                            parts.append(_quantize_keys(
+                                k.slice(2, s0, n), R_t, C_t, B_t))
+                            tc.empty_cache()
+                        kq = tc.cat(parts, dim=2)
+                    else:
+                        kq = _quantize_keys(k, R_t, C_t, B_t)
+                if fused and not int4_fused:
                     # FUSED O(L)-memory path: streams keys with online
                     # softmax, never materializes the S-sized bulk/rank/w
                     # score matrices the blend allocates (~0.9GB/global-
@@ -652,7 +688,8 @@ class Gemma4AttentionTC:
                     # best case; bottom-right causal handles S>L.
                     attn = tc.apa_selective_attention(
                         q, k, kq, v, 1.0, float(z_), L > 1)
-                else:
+                elif not fused:
+                    from core.mistral7b_tc import _cublas_blend_attention
                     blk = max(64, min(self.attn_block,
                                       int(300 * 1024 * 1024 //
                                           (H * S_all * 2))))
