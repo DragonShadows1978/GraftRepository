@@ -7,6 +7,9 @@ and timing only; it does not make quality or perplexity claims.
 One invocation runs exactly one attention mode and one context length.  The
 caller is responsible for taking /tmp/forge-gpu.lock around the process.
 The script never modifies core/ or the TensorCUDA engine.
+
+Use --mode apa with --decode-fused for G-B1, or --int4 for G-B2. The INT4
+toggle implies fused decode and remains inert when the engine ABI is absent.
 """
 
 from __future__ import annotations
@@ -31,7 +34,9 @@ import numpy as np
 
 
 REPO = Path(__file__).resolve().parents[1]
-TC_ROOT = Path("/mnt/ForgeRealm/Project-Tensor/tensor_cuda")
+TC_ROOT = Path(os.environ.get(
+    "TENSOR_CUDA_ROOT", "/mnt/ForgeRealm/Project-Tensor/tensor_cuda"
+)).expanduser().resolve()
 CORE_GEMMA = REPO / "core/gemma4_tc.py"
 CORE_MISTRAL = REPO / "core/mistral7b_tc.py"
 KERNELS = TC_ROOT / "src/kernels.cu"
@@ -80,7 +85,8 @@ def tensor_desc(t: Any) -> dict[str, Any] | None:
     }
 
 
-def prefill_chunks(target: int, chunk: int = 512) -> list[dict[str, Any]]:
+def prefill_chunks(target: int, chunk: int = 512, *,
+                   int4: bool = False) -> list[dict[str, Any]]:
     """Mirror Gemma4_TC.__call__ adaptive chunking at core lines 789-829."""
     out: list[dict[str, Any]] = []
     off = 0
@@ -104,7 +110,7 @@ def prefill_chunks(target: int, chunk: int = 512) -> list[dict[str, Any]]:
                 if s_all_global <= 2048 else
                 "apa_cublas_blend"
                 if s_all_global <= 4096 else
-                "apa_fused_selective"
+                "apa_fused_int4" if int4 else "apa_fused_selective"
             ),
             "standard_global_branch": "standard_mqa_deexpanded",
             "sliding_branch": (
@@ -117,10 +123,11 @@ def prefill_chunks(target: int, chunk: int = 512) -> list[dict[str, Any]]:
     return out
 
 
-def branch_audit() -> dict[str, Any]:
+def branch_audit(*, decode_fused: bool = False,
+                 int4: bool = False) -> dict[str, Any]:
     rows: dict[str, Any] = {}
     for target in (4096, 8192, 16384, 32768):
-        chunks = prefill_chunks(target)
+        chunks = prefill_chunks(target, int4=int4)
         counts: dict[str, int] = {}
         for c in chunks:
             for key in ("apa_global_branch", "standard_global_branch", "sliding_branch"):
@@ -131,7 +138,13 @@ def branch_audit() -> dict[str, Any]:
             "prefill_chunks": chunks,
             "branch_counts": counts,
             "decode_standard": "L==1 standard ring matmul/causal_softmax",
-            "decode_apa": "L==1 APA cuBLAS blend; fused kernel is legal at D=512 but unwired",
+            "decode_apa": (
+                "L==1 APA INT4 fused when engine-capable; no kqb ring"
+                if int4 else
+                "L==1 APA fused selective above fast_max_seq"
+                if decode_fused else
+                "L==1 APA cuBLAS blend attribution baseline"
+            ),
         }
     return {
         "evidence_class": "static live-source path audit",
@@ -154,7 +167,9 @@ def branch_audit() -> dict[str, Any]:
             "global_head_dim": 512,
             "TC_APA_MAXD": 512,
             "fused_decode_legal": True,
-            "fused_decode_wired": False,
+            "fused_decode_wired": True,
+            "decode_fused_requested": decode_fused,
+            "int4_requested": int4,
         },
         "targets": rows,
     }
@@ -437,6 +452,7 @@ def install_instrumentation(tc: Any, gemma: Any, mistral: Any, quant: Any,
     orig_quant = quant._quantize_keys
     orig_blend = mistral._cublas_blend_attention
     orig_fused = tc.apa_selective_attention
+    orig_int4 = getattr(tc, "apa_selective_attention_int4", None)
     orig_blend_softmax = tc.apa_blend_softmax
     orig_causal_softmax = tc.causal_softmax
 
@@ -479,6 +495,13 @@ def install_instrumentation(tc: Any, gemma: Any, mistral: Any, quant: Any,
                             "kq": tensor_desc(kq), "v": tensor_desc(v),
                             "causal": bool(causal)})
 
+    def int4_call(q: Any, k: Any, v: Any, scale: float,
+                  z: float, causal: bool) -> Any:
+        return tracer.call("component.apa_int4",
+                           lambda: orig_int4(q, k, v, scale, z, causal),
+                           {"q": tensor_desc(q), "k": tensor_desc(k),
+                            "v": tensor_desc(v), "causal": bool(causal)})
+
     def blend_softmax_call(bulk: Any, rank: Any, z: float, Lq: int = 0,
                            row0: int = 0, window: int = 0) -> Any:
         return tracer.call("component.apa_refine_softmax",
@@ -496,6 +519,8 @@ def install_instrumentation(tc: Any, gemma: Any, mistral: Any, quant: Any,
     quant._quantize_keys = quant_call
     mistral._cublas_blend_attention = blend_call
     tc.apa_selective_attention = fused_call
+    if orig_int4 is not None:
+        tc.apa_selective_attention_int4 = int4_call
     tc.apa_blend_softmax = blend_softmax_call
     tc.causal_softmax = causal_softmax_call
 
@@ -505,6 +530,8 @@ def install_instrumentation(tc: Any, gemma: Any, mistral: Any, quant: Any,
         quant._quantize_keys = orig_quant
         mistral._cublas_blend_attention = orig_blend
         tc.apa_selective_attention = orig_fused
+        if orig_int4 is not None:
+            tc.apa_selective_attention_int4 = orig_int4
         tc.apa_blend_softmax = orig_blend_softmax
         tc.causal_softmax = orig_causal_softmax
 
@@ -526,7 +553,26 @@ def assert_apa_kqb(caches: list[Any], KVRing: type) -> dict[str, Any]:
             "total_bytes": sum(r["bytes"] for r in rows)}
 
 
+def assert_apa_no_kqb(caches: list[Any], KVRing: type) -> dict[str, Any]:
+    rows = []
+    for i in range(5, 48, 6):
+        c = caches[i]
+        assert isinstance(c, KVRing), (
+            f"global layer {i}: expected KVRing, got {type(c)}")
+        assert c.kqb is None, (
+            f"global layer {i}: INT4 mode allocated forbidden kqb")
+        assert int(c.kq_count) == 0, (i, c.kq_count, c.count)
+        rows.append({"layer": i, "kqb": None, "count": int(c.count),
+                     "kq_count": int(c.kq_count), "assertion": "PASS"})
+    return {"assertion": "PASS", "layers": rows, "total_bytes": 0}
+
+
 def run_gpu(args: argparse.Namespace, receipt: dict[str, Any]) -> None:
+    # The harness makes each attribution leg explicit even though the serving
+    # port defaults fused decode on. --int4 implies the fused-decode leg.
+    os.environ["GEMMA4_APA_DECODE_FUSED"] = (
+        "1" if args.decode_fused or args.int4 else "0")
+    os.environ["GEMMA4_APA_INT4"] = "1" if args.int4 else "0"
     sys.path.insert(0, str(TC_ROOT))
     sys.path.insert(0, str(REPO))
     import tensor_cuda as tc
@@ -534,6 +580,17 @@ def run_gpu(args: argparse.Namespace, receipt: dict[str, Any]) -> None:
     import tensor_cuda.quant as quant
     import core.gemma4_tc as gemma
     import core.mistral7b_tc as mistral
+
+    int4_capable = hasattr(tc, "apa_selective_attention_int4")
+    int4_active = bool(args.int4 and int4_capable)
+    receipt["feature_resolution"] = {
+        "decode_fused_env": os.environ["GEMMA4_APA_DECODE_FUSED"],
+        "int4_env": os.environ["GEMMA4_APA_INT4"],
+        "engine_has_apa_selective_attention_int4": int4_capable,
+        "int4_active": int4_active,
+        "int4_inert_reason": (None if not args.int4 or int4_capable else
+                               "engine entry point absent"),
+    }
 
     runtime: dict[str, Any] = {"phase": "startup", "prefill_chunk_index": None,
                                "decode_step": None, "attention_class": None}
@@ -567,7 +624,7 @@ def run_gpu(args: argparse.Namespace, receipt: dict[str, Any]) -> None:
 
         tracer = TraceManager(tc, pool, runtime)
         restore = install_instrumentation(tc, gemma, mistral, quant, F, tracer, runtime)
-        chunks = prefill_chunks(args.seq_len)
+        chunks = prefill_chunks(args.seq_len, int4=int4_active)
         receipt["actual_prefill_chunks"] = chunks
         rng = np.random.default_rng(args.seed)
         ids = rng.integers(1000, 200000, size=(1, args.seq_len), dtype=np.int64)
@@ -621,7 +678,10 @@ def run_gpu(args: argparse.Namespace, receipt: dict[str, Any]) -> None:
                 tc.synchronize()
                 times_ms.append(1000.0 * (time.perf_counter() - t0))
                 if step == 0 and args.mode == "apa":
-                    kqb_assertion = assert_apa_kqb(caches, gemma.KVRing)
+                    kqb_assertion = (
+                        assert_apa_no_kqb(caches, gemma.KVRing)
+                        if int4_active else
+                        assert_apa_kqb(caches, gemma.KVRing))
         decode_event = tracer.exit(phase_ctx)
         receipt["decode"] = {
             "status": "ok", "steps": args.decode_steps,
@@ -654,12 +714,19 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--mode", choices=("standard", "apa"), default="standard")
     p.add_argument("--seq-len", type=int, default=4096)
     p.add_argument("--decode-steps", type=int, default=64)
+    p.add_argument("--decode-fused", action="store_true",
+                   help="measure the fused APA decode leg (otherwise blend)")
+    p.add_argument("--int4", action="store_true",
+                   help="request engine-packed INT4 APA; implies fused decode")
     p.add_argument("--refine", type=float, default=0.15)
     p.add_argument("--seed", type=int, default=20260813)
     p.add_argument("--nvml-interval", type=float, default=1.0)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--audit-only", action="store_true")
-    return p.parse_args()
+    args = p.parse_args()
+    if (args.decode_fused or args.int4) and args.mode != "apa":
+        p.error("--decode-fused/--int4 require --mode apa")
+    return args
 
 
 def main() -> int:
@@ -678,7 +745,11 @@ def main() -> int:
         "seq_len": args.seq_len,
         "decode_steps": args.decode_steps,
         "refine_percentile": args.refine,
-        "branch_audit": branch_audit(),
+        "decode_fused_requested": args.decode_fused,
+        "int4_requested": args.int4,
+        "one_mode_per_process": True,
+        "branch_audit": branch_audit(
+            decode_fused=args.decode_fused or args.int4, int4=args.int4),
         "protected_sha256_before": protected_before,
         "status": "running",
     }
