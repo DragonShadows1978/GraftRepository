@@ -201,7 +201,7 @@ class GatedDeltaNetTC:
         self.cfg = cfg
         self.in_proj_qkv = self.in_proj_z = self.out_proj = None
         self.in_proj_a = self.in_proj_b = None
-        self.conv_w = None               # list of 4 (1,1,8192) fp32
+        self.conv_w = None               # kernel-sized list of (1,1,C) fp32
         self.neg_A = None                # (1,1,32) fp32: -exp(A_log)
         self.dt_bias = None              # (1,1,32) fp32
         self.norm_w = None               # (128,) fp32 PLAIN-w gated norm
@@ -219,18 +219,19 @@ class GatedDeltaNetTC:
         a = self.in_proj_a(x)                            # (B,L,32) fp32
         b = self.in_proj_b(x)
 
-        # ---- causal depthwise conv (k=4, no bias) + SiLU, fp32.
-        # conv state = last 3 RAW (pre-conv) token rows.
+        # ---- causal depthwise conv (config k, no bias) + SiLU, fp32.
+        # conv state = last (k-1) RAW (pre-conv) token rows.
+        pad = cfg.conv_kernel - 1
         if state is None:
-            conv_prev = tc.tensor(np.zeros((B, 3, 2 * K + H * Dv), np.float32))
+            conv_prev = tc.tensor(np.zeros((B, pad, 2 * K + H * Dv), np.float32))
         else:
             conv_prev = state[0]
-        x_cat = tc.cat([conv_prev, qkv], dim=1)          # (B, L+3, 8192)
-        conv = (x_cat.slice(1, 0, L) * self.conv_w[0]
-                + x_cat.slice(1, 1, L) * self.conv_w[1]
-                + x_cat.slice(1, 2, L) * self.conv_w[2]
-                + x_cat.slice(1, 3, L) * self.conv_w[3]).silu()
-        new_conv = x_cat.slice(1, L, 3)                  # last 3 raw rows
+        x_cat = tc.cat([conv_prev, qkv], dim=1)
+        conv = x_cat.slice(1, 0, L) * self.conv_w[0]
+        for j in range(1, cfg.conv_kernel):
+            conv = conv + x_cat.slice(1, j, L) * self.conv_w[j]
+        conv = conv.silu()
+        new_conv = x_cat.slice(1, L, pad)                # last k-1 raw rows
 
         if (self.USE_FUSED_STEP and L == 1 and state is not None
                 and hasattr(tc, "gated_delta_step")):
@@ -254,7 +255,7 @@ class GatedDeltaNetTC:
         k = conv.slice(2, K, K).reshape([B, L, cfg.n_k_heads, Dk])
         v = conv.slice(2, 2 * K, H * Dv).reshape([B, L, H, Dv])
 
-        # v-heads 2i and 2i+1 share k/q head i (repeat_interleave x2)
+        # Config-derived v/kq grouping (x2 on 9B; x3 on 27B).
         rep = H // cfg.n_k_heads
         q = q.reshape([B, L, cfg.n_k_heads, 1, Dk]).expand(
             [B, L, cfg.n_k_heads, rep, Dk]).reshape([B, L, H, Dk])
@@ -308,6 +309,14 @@ class Qwen35AttentionTC:
         self.attn_block = 1024
         self.inject_kv = None
         self.graft_seats = 0
+
+    def _apply_output_gate(self, attn, gate):
+        """Qwen3.5-9B attention output gate.
+
+        Kept as a method so later qwen3_5 checkpoints can select a different
+        configured gate without changing the validated 9B operation sequence.
+        """
+        return attn * gate.sigmoid()
 
     def __call__(self, x, cos, sin, position_offset=0, kv_cache=None):
         cfg = self.cfg
@@ -388,7 +397,7 @@ class Qwen35AttentionTC:
                 q, _repeat_kv(k, H // KV), _repeat_kv(v, H // KV),
                 is_causal=(L > 1))
         attn = attn.transpose(1, 2).reshape([B, L, H * D])
-        attn = attn * gate.sigmoid()                     # elementwise out-gate
+        attn = self._apply_output_gate(attn, gate)       # elementwise out-gate
         return self.o_proj(_cast(attn)), new_kv
 
 
