@@ -105,3 +105,10 @@ Final message MUST contain verbatim:
    coherence smoke, and the 262K-capable `--kv-host` invocation.
 4. LC1.0 ceiling map (the file:line citation list).
 5. Residuals/risks you did not address, stated plainly.
+
+## Addendum (registered 2026-08-19, before any gate results)
+
+David's directive clarified: reliability/functionality only, wall-clock
+irrelevant. G-LC2 32K is UPGRADED from report-only to a real gate:
+3 depths × 1 seed, pass ≥2/3. If the day allows, lead deepens seeds at all
+rungs (extra runs strengthen, never replace, the registered thresholds).
