@@ -1,10 +1,10 @@
 # ORDER QWEN38-LC1-F4 — make the default path BIT-IDENTICAL (evidence attached)
 
-YOUR WRITABLE TARGET is `/mnt/ForgeRealm/GraftRepository` — edits/builds/test
+YOUR WRITABLE TARGET is `/mnt/ForgeRealm/wt/lc1-f4` (a git worktree of GraftRepository at the LC1 WIP commit) — edits/builds/test
 runs AUTHORIZED. Continuation of LC1+F1+F2+F3 (boundaries unchanged). Lead
 runs GPU gates.
 
-## Evidence you must explain (all receipts in logs/)
+## Evidence you must explain (all receipts in /mnt/ForgeRealm/GraftRepository/logs/ — READ-ONLY)
 
 1. `lc1_determinism_control.log`: pre-LC1 code (LC1 stack stashed) reproduces
    the 2026-08-19 baseline token_ids EXACTLY, all 3 prompts. The engine is
