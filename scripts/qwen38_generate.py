@@ -18,8 +18,11 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from core.qwen38_tc import (DEFAULT_CACHE_DIR, DEFAULT_MODEL_DIR, INT3PackCache,
-                            DEFAULT_LM_HEAD_CHUNK_ROWS, Qwen38Config, Qwen38_TC,
-                            compute_qwen38_memory_budget)
+                            DEFAULT_KV_BLOCK, DEFAULT_LM_HEAD_CHUNK_ROWS,
+                            DEFAULT_MAX_CONTEXT, DEFAULT_PREFILL_CHUNK,
+                            Qwen38Config, Qwen38_TC,
+                            compute_qwen38_memory_budget,
+                            validate_qwen38_memory_budget)
 
 
 DEMO_PROMPTS = {
@@ -119,7 +122,12 @@ def greedy(model, tokenizer, input_ids, max_new_tokens, sampler=None,
     if sampler is not None:
         sampler.set_phase(f"prefill:{phase_label}")
     start = time.perf_counter()
-    logits, caches = model(input_ids, caches=None, position_offset=0,
+    if input_ids.shape[1] + max_new_tokens > model.max_context:
+        raise ValueError(
+            f"prompt+decode needs {input_ids.shape[1] + max_new_tokens} tokens, "
+            f"configured --max-context is {model.max_context}")
+    caches = model.take_preallocated_caches(input_ids.shape[0])
+    logits, caches = model(input_ids, caches=caches, position_offset=0,
                            last_token_only=True)
     tc.synchronize()
     prefill = time.perf_counter() - start
@@ -149,7 +157,7 @@ def greedy(model, tokenizer, input_ids, max_new_tokens, sampler=None,
             sampler.sample_now("decode_step")
     decode = time.perf_counter() - decode_start
     text = tokenizer.decode(generated, skip_special_tokens=False)
-    return {
+    result = {
         "text": text,
         "token_ids": generated,
         "prompt_tokens": int(input_ids.shape[1]),
@@ -159,15 +167,49 @@ def greedy(model, tokenizer, input_ids, max_new_tokens, sampler=None,
         "decode_steps": decode_steps,
         "decode_tok_s": decode_steps / decode if decode else float("inf"),
     }
+    if model.kv_int8:
+        result["kv_key_stats_first_prefill_chunk"] = [
+            {"attention_layer": i, **cache.key_stats}
+            for i, cache in enumerate(caches)
+            if getattr(cache, "key_stats", None) is not None
+        ]
+    return result
 
 
-def print_budget(model_dir):
-    budget = compute_qwen38_memory_budget(model_dir)
+def print_budget(model_dir, max_context=DEFAULT_MAX_CONTEXT, kv_int8=False,
+                 kv_host=False,
+                 lm_head_chunk_rows=DEFAULT_LM_HEAD_CHUNK_ROWS,
+                 prefill_chunk=DEFAULT_PREFILL_CHUNK,
+                 kv_block_rows=DEFAULT_KV_BLOCK):
+    budget = compute_qwen38_memory_budget(
+        model_dir, context_tokens=max_context, kv_int8=kv_int8,
+        kv_host=kv_host, lm_head_chunk_rows=lm_head_chunk_rows,
+        prefill_chunk=prefill_chunk, kv_block_rows=kv_block_rows)
     print("PER-COMPONENT MEMORY MAP (GiB; computed from checkpoint shapes)")
     for name, value in budget.items():
         location = "HOST" if name.startswith("host_") else "VRAM"
         print(f"  {name:42s} {value / 2**30:9.4f} GiB  {location}")
     return budget
+
+
+def validate_budget_for_load(budget, *, force_alloc=False,
+                             max_context=DEFAULT_MAX_CONTEXT,
+                             kv_mode="device_bf16"):
+    """Validate the load budget, with one explicit descent-only override."""
+    try:
+        validate_qwen38_memory_budget(budget)
+    except MemoryError as exc:
+        if not force_alloc:
+            raise
+        print("BUDGET_OVERRIDE " + json.dumps({
+            "status": "WARNING", "error": f"MemoryError: {exc}",
+            "max_context": max_context, "kv_mode": kv_mode,
+            "projected_peak_mib": (
+                budget["projected_whole_device_peak"] / 2**20),
+            "force_alloc": True,
+        }, sort_keys=True), flush=True)
+        return False
+    return True
 
 
 def main():
@@ -180,6 +222,18 @@ def main():
     ap.add_argument("--benchmark", action="store_true",
                     help="use an exactly 128-token prompt")
     ap.add_argument("--max-new-tokens", type=int, default=64)
+    ap.add_argument("--max-context", type=int, default=DEFAULT_MAX_CONTEXT,
+                    help="preallocated KV/RoPE capacity (checkpoint max 262144)")
+    ap.add_argument("--prefill-chunk", type=int, default=DEFAULT_PREFILL_CHUNK,
+                    help="maximum query rows processed by one model prefill call")
+    ap.add_argument("--kv-block-rows", type=int, default=DEFAULT_KV_BLOCK,
+                    help="fixed standard-attention KV staging window")
+    ap.add_argument("--kv-int8", action="store_true",
+                    help="symmetric per-token/per-head INT8 device KV")
+    ap.add_argument("--kv-host", action="store_true",
+                    help="raw-BF16 host KV streamed through a fixed device window")
+    ap.add_argument("--force-alloc", action="store_true",
+                    help="override the predicted VRAM wall and attempt allocation")
     ap.add_argument("--lm-head-chunk-rows", type=int,
                     default=int(os.environ.get("QWEN38_LM_HEAD_CHUNK_ROWS",
                                                DEFAULT_LM_HEAD_CHUNK_ROWS)))
@@ -200,8 +254,32 @@ def main():
         cfg.output_gate_type = args.output_gate_type
         cfg._validate_qwen38()
     print("QWEN38_CONFIG " + json.dumps(cfg.as_printable_dict(), sort_keys=True))
+    if args.kv_int8 and args.kv_host:
+        ap.error("--kv-int8 and --kv-host are mutually exclusive")
+    budget = print_budget(
+        args.model_dir, args.max_context, args.kv_int8, args.kv_host,
+        args.lm_head_chunk_rows, args.prefill_chunk, args.kv_block_rows)
+    kv_mode = ("host_bf16" if args.kv_host else
+               ("device_int8" if args.kv_int8 else "device_bf16"))
+    try:
+        budget_ok = validate_budget_for_load(
+            budget, force_alloc=args.force_alloc,
+            max_context=args.max_context, kv_mode=kv_mode)
+    except MemoryError as exc:
+        print("BUDGET_RESULT " + json.dumps({
+            "status": "RED", "error": str(exc),
+            "max_context": args.max_context,
+            "kv_mode": kv_mode,
+        }, sort_keys=True), flush=True)
+        raise
+    if budget_ok:
+        print("BUDGET_RESULT " + json.dumps({
+            "status": "PASS", "ceiling_mib": 12000,
+            "projected_peak_mib": (
+                budget["projected_whole_device_peak"] / 2**20),
+            "max_context": args.max_context, "kv_mode": kv_mode,
+        }, sort_keys=True), flush=True)
     if args.budget_only:
-        print_budget(args.model_dir)
         return
     if args.build_cache_only:
         manifest = INT3PackCache(args.model_dir, args.cache_dir).build()
@@ -226,6 +304,10 @@ def main():
         model, info = Qwen38_TC.from_pretrained(
             args.model_dir, args.cache_dir, run_fused_gate=args.run_fused_gate,
             lm_head_chunk_rows=args.lm_head_chunk_rows,
+            max_context=args.max_context, kv_int8=args.kv_int8,
+            kv_host=args.kv_host, prefill_chunk=args.prefill_chunk,
+            kv_block_rows=args.kv_block_rows,
+            cache_read_only=args.force_alloc,
             output_gate_type=args.output_gate_type)
         sampler.sample_now("after_load")
         print("LOAD_RESULT " + json.dumps(info, sort_keys=True))

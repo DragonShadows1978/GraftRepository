@@ -25,18 +25,33 @@ from pathlib import Path
 
 import numpy as np
 
-from core.mistral7b_tc import (BlockTC, LinearTC, QuantLinearTC, RMSNormTC,
+from core.mistral7b_tc import (BlockTC, F, LinearTC, QuantLinearTC, RMSNormTC,
                                GROUP_SIZE, tc)
 from core.qwen35_tc import (F32Linear, GatedDeltaNetTC, Qwen35AttentionTC,
                             Qwen35BlockTC, Qwen35Config, Qwen35_TC, SwiGLUTC,
-                            _cast)
+                            _cast, _per_head_rmsnorm, _repeat_kv)
 
 
 DEFAULT_MODEL_DIR = "/mnt/ForgeRealm/models/Qwen3.8-27B"
 DEFAULT_CACHE_DIR = "artifacts/qwen38_int3_cache"
-DEFAULT_LM_HEAD_CHUNK_ROWS = 31040
+DEFAULT_MAX_CONTEXT = 4096
+DEFAULT_PREFILL_CHUNK = 64
+DEFAULT_KV_BLOCK = 256
+# The pre-LC1 single-shot SDPA path was registered at this context capacity.
+# Larger configured windows use bounded tiled attention so their transient does
+# not scale with the total KV length.
+LEGACY_ATTENTION_MAX_CONTEXT = DEFAULT_MAX_CONTEXT
+# 6,208 rows divide the 248,320-row vocabulary exactly into 40 chunks and
+# bound the two-stage BF16 dequantized weight to 60.625 MiB at hidden=5,120.
+DEFAULT_LM_HEAD_CHUNK_ROWS = 6208
 DEFAULT_ATTENTION_OUTPUT_GATE = "sigmoid"
 CACHE_SCHEMA = 1
+VRAM_CEILING_MIB = 12000
+# Calibrated from the 2026-08-19 whole-device receipt after subtracting the
+# computed resident tensors, DeltaNet state, seq=160 BF16 KV, and the old
+# 317,849,600-byte lm-head dequant buffer.  It deliberately includes the
+# ~350 MiB desktop plus allocator/activation/kernel workspace high-water.
+CALIBRATED_FIXED_PEAK_OVERHEAD_MIB = 1185
 
 
 def pack_int3_vectorized(codes: np.ndarray) -> np.ndarray:
@@ -104,6 +119,155 @@ def gate_int3_pack(seed: int = 3801) -> dict:
             )
         checked += q.size
     return {"cases": len(cases), "codes_checked": checked, "max_byte_diff": 0}
+
+
+def quantize_kv_int8_np(x: np.ndarray):
+    """Symmetric per-token, per-head INT8 reference packer.
+
+    ``x`` is ``(..., head_dim)``. Codes use uint8 storage with zero-point 128;
+    one float32 scale is returned for every vector. This CPU reference is the
+    bit-exact contract tested independently of CUDA.
+    """
+    a = np.asarray(x, dtype=np.float32)
+    if a.ndim < 1 or a.shape[-1] <= 0:
+        raise ValueError(f"bad KV shape {a.shape}")
+    scale = np.max(np.abs(a), axis=-1, keepdims=True) / np.float32(127.0)
+    scale = np.maximum(scale, np.float32(1e-8))
+    signed = np.clip(np.rint(a / scale), -127, 127).astype(np.int16)
+    return (signed + 128).astype(np.uint8), scale.astype(np.float32)
+
+
+def dequantize_kv_int8_np(packed: np.ndarray, scale: np.ndarray):
+    """Exact inverse arithmetic for :func:`quantize_kv_int8_np`."""
+    q = np.asarray(packed, dtype=np.uint8)
+    s = np.asarray(scale, dtype=np.float32)
+    if s.shape != q.shape[:-1] + (1,):
+        raise ValueError(f"KV scale shape {s.shape} does not match codes {q.shape}")
+    return (q.astype(np.int16).astype(np.float32) - 128.0) * s
+
+
+def gate_kv_int8_pack(seed: int = 3811) -> dict:
+    """CPU-only bit-exact pack/unpack gate for the INT8 KV format."""
+    rng = np.random.default_rng(seed)
+    cases = [(1, 4, 1, 256), (2, 3, 7, 64), (1, 1, 19, 8)]
+    values = 0
+    for shape in cases:
+        x = rng.standard_normal(shape).astype(np.float32)
+        # Exercise both ordinary and deliberately massive-activation vectors.
+        x.reshape(-1, shape[-1])[0, 0] *= np.float32(4096.0)
+        packed, scale = quantize_kv_int8_np(x)
+        expected_codes = (np.clip(np.rint(x / scale), -127, 127)
+                          .astype(np.int16) + 128).astype(np.uint8)
+        np.testing.assert_array_equal(packed, expected_codes)
+        expected = (expected_codes.astype(np.int16).astype(np.float32) - 128.0) * scale
+        np.testing.assert_array_equal(dequantize_kv_int8_np(packed, scale), expected)
+        values += x.size
+    return {"cases": len(cases), "values_checked": values,
+            "code_byte_mismatches": 0, "unpack_bit_exact": True}
+
+
+def select_qwen38_attn_path(max_context: int, kv_int8: bool = False,
+                            kv_host: bool = False,
+                            force_tiled: bool = False) -> str:
+    """Select one attention arithmetic path for the complete model load."""
+    if force_tiled or kv_int8 or kv_host:
+        return "tiled"
+    return ("legacy" if int(max_context) <= LEGACY_ATTENTION_MAX_CONTEXT
+            else "tiled")
+
+
+def online_softmax_tiled_np(q: np.ndarray, k: np.ndarray, v: np.ndarray,
+                            tile_rows: int, position_offset: int = 0):
+    """FP32 NumPy oracle for the TensorCUDA tiled online-softmax recurrence."""
+    q = np.asarray(q, dtype=np.float32)
+    k = np.asarray(k, dtype=np.float32)
+    v = np.asarray(v, dtype=np.float32)
+    if (q.ndim != 4 or k.ndim != 4 or v.ndim != 4
+            or q.shape[:2] != k.shape[:2] or k.shape != v.shape
+            or q.shape[-1] != k.shape[-1]):
+        raise ValueError(f"incompatible q/k/v shapes: {q.shape}, {k.shape}, {v.shape}")
+    if tile_rows <= 0:
+        raise ValueError("tile_rows must be positive")
+    _, _, query_rows, head_dim = q.shape
+    key_rows = k.shape[2]
+    if key_rows <= 0:
+        raise ValueError("attention cache is empty")
+    q_positions = np.arange(
+        int(position_offset), int(position_offset) + query_rows)[:, None]
+    m = denom = accum = None
+    scale = np.float32(head_dim ** -0.5)
+    for lo in range(0, key_rows, int(tile_rows)):
+        hi = min(lo + int(tile_rows), key_rows)
+        scores = np.matmul(q, np.swapaxes(k[:, :, lo:hi], -1, -2)) * scale
+        if query_rows > 1:
+            key_positions = np.arange(lo, hi)[None, :]
+            scores = scores + np.where(
+                key_positions <= q_positions, np.float32(0.0),
+                np.float32(-1e30)).reshape(1, 1, query_rows, hi - lo)
+        block_max = scores.max(axis=-1, keepdims=True)
+        weights = np.exp(scores - block_max)
+        block_denom = weights.sum(axis=-1, keepdims=True)
+        block_accum = np.matmul(weights, v[:, :, lo:hi])
+        if m is None:
+            m, denom, accum = block_max, block_denom, block_accum
+        else:
+            merged = np.maximum(m, block_max)
+            old_scale = np.exp(m - merged)
+            new_scale = np.exp(block_max - merged)
+            denom = denom * old_scale + block_denom * new_scale
+            accum = accum * old_scale + block_accum * new_scale
+            m = merged
+    return (accum / denom).astype(np.float32, copy=False)
+
+
+def gate_online_softmax_tiled_np(seed: int = 3821) -> dict:
+    """Prove the tiled recurrence against ordinary FP32 stable softmax."""
+    rng = np.random.default_rng(seed)
+    specs = [
+        # (batch, heads, query rows, key rows, head dim, tile rows)
+        (1, 2, 4, 4, 7, 4),       # one tile
+        (2, 3, 5, 9, 8, 5),       # two tiles, four-row remainder
+        (1, 4, 7, 20, 11, 3),     # seven tiles, two-row remainder
+    ]
+    results = []
+    for batch, heads, query_rows, key_rows, head_dim, tile_rows in specs:
+        q = rng.standard_normal(
+            (batch, heads, query_rows, head_dim), dtype=np.float32)
+        k = rng.standard_normal(
+            (batch, heads, key_rows, head_dim), dtype=np.float32)
+        v = rng.standard_normal(
+            (batch, heads, key_rows, head_dim), dtype=np.float32)
+        position_offset = key_rows - query_rows
+        scores = (np.matmul(q, np.swapaxes(k, -1, -2))
+                  * np.float32(head_dim ** -0.5))
+        key_positions = np.arange(key_rows)[None, :]
+        query_positions = np.arange(
+            position_offset, position_offset + query_rows)[:, None]
+        scores = scores + np.where(
+            key_positions <= query_positions, np.float32(0.0),
+            np.float32(-1e30)).reshape(1, 1, query_rows, key_rows)
+        weights = np.exp(scores - scores.max(axis=-1, keepdims=True))
+        expected = np.matmul(weights / weights.sum(axis=-1, keepdims=True), v)
+        got = online_softmax_tiled_np(
+            q, k, v, tile_rows, position_offset=position_offset)
+        delta = got - expected
+        rel_l2 = float(np.linalg.norm(delta) /
+                       max(float(np.linalg.norm(expected)), 1e-30))
+        max_abs = float(np.max(np.abs(delta), initial=0.0))
+        if not np.isfinite(rel_l2) or rel_l2 > 1e-6:
+            raise AssertionError(
+                f"online softmax mismatch tiles={math.ceil(key_rows / tile_rows)} "
+                f"rel_l2={rel_l2:.9g} max_abs={max_abs:.9g}")
+        results.append({
+            "shape": [batch, heads, query_rows, key_rows, head_dim],
+            "tile_rows": tile_rows,
+            "tiles": math.ceil(key_rows / tile_rows),
+            "remainder": key_rows % tile_rows,
+            "rel_l2": rel_l2,
+            "max_abs": max_abs,
+        })
+    return {"status": "PASS", "tolerance_rel_l2": 1e-6,
+            "defect_caught": None, "cases": results}
 
 
 class Qwen38Config(Qwen35Config):
@@ -189,6 +353,135 @@ class Qwen38Config(Qwen35Config):
         }
 
 
+def _device_zeros(*shape, dtype="bfloat16"):
+    """Allocate zero storage without TensorCUDA's FP32 BF16 staging path."""
+    zeros = tc.zeros(*shape, dtype="uint8")
+    return zeros if dtype == "uint8" else zeros.astype(dtype)
+
+
+def _float_to_bf16_u16(x):
+    """Preserve already-BF16 values as their raw host uint16 representation."""
+    a = np.ascontiguousarray(np.asarray(x, dtype=np.float32))
+    return (a.view(np.uint32) >> 16).astype(np.uint16)
+
+
+def _bf16_u16_to_float(x):
+    a = np.ascontiguousarray(np.asarray(x, dtype=np.uint16))
+    return (a.astype(np.uint32) << 16).view(np.float32)
+
+
+class Qwen38DeviceKVCache:
+    """Fixed-capacity device KV cache with BF16 or symmetric INT8 storage."""
+
+    def __init__(self, batch_size, cfg, capacity, int8=False):
+        self.capacity = int(capacity)
+        self.count = 0
+        self.int8 = bool(int8)
+        self.key_stats = None
+        shape = (int(batch_size), cfg.num_kv_heads, self.capacity, cfg.head_dim)
+        if self.int8:
+            self.kb = _device_zeros(*shape, dtype="uint8")
+            self.vb = _device_zeros(*shape, dtype="uint8")
+            scale_shape = shape[:-1] + (1,)
+            self.ks = _device_zeros(*scale_shape)
+            self.vs = _device_zeros(*scale_shape)
+        else:
+            self.kb = _device_zeros(*shape)
+            self.vb = _device_zeros(*shape)
+            self.ks = self.vs = None
+
+    @staticmethod
+    def _pack(x):
+        scale = x.abs().max([-1], True) * (1.0 / 127.0) + 1e-8
+        q = (x / scale).round().clamp(-127.0, 127.0) + 128.0
+        return q.astype("uint8"), _cast(scale)
+
+    @staticmethod
+    def _unpack(q, scale):
+        return (q.astype("bfloat16") - 128.0) * scale
+
+    def append(self, k, v):
+        n = int(k.shape[2])
+        if self.count + n > self.capacity:
+            raise MemoryError(
+                f"KV cache capacity exceeded: need={self.count + n} "
+                f"capacity={self.capacity}")
+        with tc.no_grad():
+            if self.int8:
+                if self.key_stats is None:
+                    kn = k.float().numpy().astype(np.float32, copy=False)
+                    flat = kn.reshape(-1, kn.shape[-1])
+                    vmax = np.max(np.abs(flat), axis=-1)
+                    vrms = np.sqrt(np.mean(flat * flat, axis=-1))
+                    ratio = vmax / np.maximum(vrms, np.float32(1e-12))
+                    self.key_stats = {
+                        "vectors": int(flat.shape[0]),
+                        "abs_p99": float(np.percentile(np.abs(flat), 99.0)),
+                        "abs_p999": float(np.percentile(np.abs(flat), 99.9)),
+                        "abs_max": float(vmax.max(initial=0.0)),
+                        "max_over_rms_p99": float(np.percentile(ratio, 99.0)),
+                        "max_over_rms_max": float(ratio.max(initial=0.0)),
+                    }
+                pk, sk = self._pack(k)
+                pv, sv = self._pack(v)
+                tc.write_rows(self.kb, pk, self.count)
+                tc.write_rows(self.ks, sk, self.count)
+                tc.write_rows(self.vb, pv, self.count)
+                tc.write_rows(self.vs, sv, self.count)
+            else:
+                tc.write_rows(self.kb, k, self.count)
+                tc.write_rows(self.vb, v, self.count)
+        self.count += n
+
+    def block(self, lo, n):
+        if self.int8:
+            return (self._unpack(self.kb.slice(2, lo, n), self.ks.slice(2, lo, n)),
+                    self._unpack(self.vb.slice(2, lo, n), self.vs.slice(2, lo, n)))
+        return self.kb.slice(2, lo, n), self.vb.slice(2, lo, n)
+
+    def all(self):
+        return self.block(0, self.count)
+
+    @property
+    def storage_bytes(self):
+        B, KV, _, D = self.kb.shape
+        per_token = B * KV * ((2 * D + 4) if self.int8 else (4 * D))
+        return self.capacity * per_token
+
+
+class Qwen38HostKVCache:
+    """Raw-BF16 host KV with a fixed-size device staging window at attention."""
+
+    def __init__(self, batch_size, cfg, capacity):
+        self.capacity = int(capacity)
+        self.count = 0
+        shape = (int(batch_size), cfg.num_kv_heads, self.capacity, cfg.head_dim)
+        # np.empty reserves virtual address space; pages commit only as tokens
+        # are appended. Values are raw BF16 so host storage is lossless.
+        self.kh = np.empty(shape, dtype=np.uint16)
+        self.vh = np.empty(shape, dtype=np.uint16)
+
+    def append(self, k, v):
+        n = int(k.shape[2])
+        if self.count + n > self.capacity:
+            raise MemoryError(
+                f"host KV capacity exceeded: need={self.count + n} "
+                f"capacity={self.capacity}")
+        lo = self.count
+        self.kh[:, :, lo:lo + n] = _float_to_bf16_u16(k.float().numpy())
+        self.vh[:, :, lo:lo + n] = _float_to_bf16_u16(v.float().numpy())
+        self.count += n
+
+    def block(self, lo, n):
+        k = _cast(tc.tensor(_bf16_u16_to_float(self.kh[:, :, lo:lo + n])))
+        v = _cast(tc.tensor(_bf16_u16_to_float(self.vh[:, :, lo:lo + n])))
+        return k, v
+
+    @property
+    def storage_bytes(self):
+        return self.kh.nbytes + self.vh.nbytes
+
+
 class Qwen38AttentionTC(Qwen35AttentionTC):
     def __init__(self, cfg):
         super().__init__(cfg)
@@ -203,6 +496,89 @@ class Qwen38AttentionTC(Qwen35AttentionTC):
         if kind in ("swish", "silu"):
             return attn * gate.silu()
         raise ValueError(f"unsupported output gate {kind!r}")
+
+    def _streaming_standard_attention(self, q, cache, position_offset, block_rows):
+        """Exact standard GQA attention with fixed-size KV/score staging.
+
+        This is an online log-sum-exp decomposition of the same softmax used by
+        standard attention. It changes storage/reduction tiling, not the causal
+        attention definition, and never materializes repeated full-context KV.
+        """
+        B, H, L, D = q.shape
+        KV = self.cfg.num_kv_heads
+        rep = H // KV
+        # Fold query heads and query rows into GEMM M so the unexpanded
+        # (B,KV,S,D) cache shares exactly the (B,KV) batch dimensions.
+        qg = q.reshape([B, KV, rep * L, D])
+        m = denom = accum = None
+        q_positions = np.arange(position_offset, position_offset + L)[:, None]
+        for lo in range(0, cache.count, block_rows):
+            n = min(block_rows, cache.count - lo)
+            k, v = cache.block(lo, n)
+            scores = tc.matmul(qg, k, alpha=D ** -0.5, trans_b=True)
+            scores = scores.reshape([B, KV, rep, L, n]).float()
+            if L > 1:
+                key_positions = np.arange(lo, lo + n)[None, :]
+                bias = np.where(key_positions <= q_positions, 0.0, -1e30)
+                bias = bias.astype(np.float32).reshape(1, 1, 1, L, n)
+                scores = scores + tc.tensor(np.ascontiguousarray(bias))
+            block_max = scores.max([-1], True)
+            weights = (scores - block_max).exp()
+            block_denom = weights.sum([-1], True)
+            block_accum = tc.matmul(
+                weights.reshape([B, KV, rep * L, n]), v.float())
+            block_accum = block_accum.reshape([B, KV, rep, L, D])
+            if m is None:
+                m, denom, accum = block_max, block_denom, block_accum
+            else:
+                merged = m.maximum(block_max)
+                old_scale = (m - merged).exp()
+                new_scale = (block_max - merged).exp()
+                denom = denom * old_scale + block_denom * new_scale
+                accum = accum * old_scale + block_accum * new_scale
+                m = merged
+            del k, v, scores, weights, block_accum
+        if accum is None:
+            raise RuntimeError("attention cache is empty")
+        return _cast((accum / denom).reshape([B, H, L, D]))
+
+    def __call__(self, x, cos, sin, position_offset=0, kv_cache=None):
+        if not isinstance(kv_cache, (Qwen38DeviceKVCache, Qwen38HostKVCache)):
+            return super().__call__(x, cos, sin, position_offset, kv_cache)
+        cfg = self.cfg
+        B, L, _ = x.shape
+        H, KV, D, R = (cfg.num_heads, cfg.num_kv_heads, cfg.head_dim,
+                       cfg.partial_rotary_dim)
+        qg = self.q_proj(x).reshape([B, L, H, 2 * D])
+        q = qg.slice(3, 0, D).reshape([B, L, H * D])
+        gate = qg.slice(3, D, D).reshape([B, L, H * D])
+        q = _per_head_rmsnorm(q, self.q_norm_w, cfg.rms_norm_eps, B, L, H, D)
+        k = _per_head_rmsnorm(self.k_proj(x), self.k_norm_w,
+                              cfg.rms_norm_eps, B, L, KV, D)
+        q = q.reshape([B, L, H, D]).transpose(1, 2)
+        k = k.reshape([B, L, KV, D]).transpose(1, 2)
+        v = self.v_proj(x).reshape([B, L, KV, D]).transpose(1, 2)
+        cseg = cos.slice(0, position_offset, L)
+        sseg = sin.slice(0, position_offset, L)
+        q = tc.cat([F.apply_rotary(q.slice(3, 0, R), cseg, sseg),
+                    q.slice(3, R, D - R)], dim=3)
+        k = tc.cat([F.apply_rotary(k.slice(3, 0, R), cseg, sseg),
+                    k.slice(3, R, D - R)], dim=3)
+        kv_cache.append(k, v)
+        # Original pre-LC1 code path. Keep this block bit-for-bit arithmetic:
+        # full cache slices, head expansion, then the functional SDPA call.
+        if self.attn_path == "legacy":
+            ka, va = kv_cache.all()
+            attn = F.scaled_dot_product_attention(
+                q, _repeat_kv(ka, H // KV), _repeat_kv(va, H // KV),
+                is_causal=(L > 1))
+        else:
+            block_rows = int(getattr(self, "kv_block_rows", DEFAULT_KV_BLOCK))
+            attn = self._streaming_standard_attention(
+                q, kv_cache, position_offset, block_rows)
+        attn = attn.transpose(1, 2).reshape([B, L, H * D])
+        attn = self._apply_output_gate(attn, gate)
+        return self.o_proj(_cast(attn)), kv_cache
 
 
 class Qwen38BlockTC(Qwen35BlockTC):
@@ -558,24 +934,98 @@ class PackedRowChunkedQuantLinearTC:
 
 
 class Qwen38_TC(Qwen35_TC):
-    def __init__(self, cfg=None, lm_head_chunk_rows=DEFAULT_LM_HEAD_CHUNK_ROWS):
+    def __init__(self, cfg=None, lm_head_chunk_rows=DEFAULT_LM_HEAD_CHUNK_ROWS,
+                 max_context=DEFAULT_MAX_CONTEXT, kv_int8=False, kv_host=False,
+                 prefill_chunk=DEFAULT_PREFILL_CHUNK,
+                 kv_block_rows=DEFAULT_KV_BLOCK, force_tiled_attention=False):
         self.config = cfg or Qwen38Config.from_model_dir(DEFAULT_MODEL_DIR)
         self.lm_head_chunk_rows = int(lm_head_chunk_rows)
         if self.lm_head_chunk_rows <= 0:
             raise ValueError("lm_head_chunk_rows must be positive")
+        self.max_context = int(max_context)
+        self.kv_int8 = bool(kv_int8)
+        self.kv_host = bool(kv_host)
+        self.attn_path = select_qwen38_attn_path(
+            self.max_context, self.kv_int8, self.kv_host,
+            force_tiled=force_tiled_attention)
+        self.prefill_chunk = int(prefill_chunk)
+        self.kv_block_rows = int(kv_block_rows)
+        if not 1 <= self.max_context <= self.config.max_position_embeddings:
+            raise ValueError(
+                f"max_context must be in [1,{self.config.max_position_embeddings}], "
+                f"got {self.max_context}")
+        if self.kv_int8 and self.kv_host:
+            raise ValueError("--kv-int8 and --kv-host are mutually exclusive")
+        if self.prefill_chunk <= 0 or self.kv_block_rows <= 0:
+            raise ValueError("prefill_chunk and kv_block_rows must be positive")
         self.embed_tokens = HostBFloat16Embedding()
         self.layers = [Qwen38BlockTC(self.config, i)
                        for i in range(self.config.num_layers)]
+        for layer in self.layers:
+            if layer.is_attn:
+                layer.mixer.kv_block_rows = self.kv_block_rows
+                layer.mixer.attn_path = self.attn_path
         self.norm = RMSNormTC(self.config.hidden_dim, self.config.rms_norm_eps)
         self.lm_head = None
         self._rope_len = 0
-        self.extend_rope(4096)
+        self.extend_rope(self.max_context)
         self.vram_map = None
+        self._preallocated_caches = None
+
+    def new_caches(self, batch_size=1):
+        """Preallocate the configured KV capacity before prompt execution."""
+        cache_cls = Qwen38HostKVCache if self.kv_host else Qwen38DeviceKVCache
+        out = []
+        for layer in self.layers:
+            if layer.is_attn:
+                if self.kv_host:
+                    out.append(cache_cls(batch_size, self.config, self.max_context))
+                else:
+                    out.append(cache_cls(batch_size, self.config, self.max_context,
+                                         int8=self.kv_int8))
+            else:
+                out.append(None)
+        return out
+
+    def take_preallocated_caches(self, batch_size=1):
+        """Consume the load-time batch-1 cache allocation, then allocate fresh."""
+        if batch_size == 1 and self._preallocated_caches is not None:
+            caches = self._preallocated_caches
+            self._preallocated_caches = None
+            return caches
+        return self.new_caches(batch_size)
 
     def __call__(self, input_ids_np, caches=None, position_offset=0,
                  last_token_only=False, max_layers=None):
-        """Run Qwen3.8, slicing the final hidden position before lm_head."""
+        """Run Qwen3.8 with bounded prefill and final-position logits."""
+        _, total = input_ids_np.shape
+        if position_offset + total > self.max_context:
+            raise ValueError(
+                f"request exceeds configured context: offset={position_offset} "
+                f"tokens={total} max_context={self.max_context}")
+        if max_layers is None and total > self.prefill_chunk:
+            if caches is None:
+                caches = self.new_caches(input_ids_np.shape[0])
+            logits = None
+            outputs = []
+            for s0 in range(0, total, self.prefill_chunk):
+                seg = np.ascontiguousarray(
+                    input_ids_np[:, s0:s0 + self.prefill_chunk])
+                logits, caches = self._forward(
+                    seg, caches, position_offset + s0,
+                    last_token_only=last_token_only)
+                if not last_token_only:
+                    outputs.append(logits)
+                tc.empty_cache()
+            return (logits if last_token_only else tc.cat(outputs, dim=1)), caches
+        return self._forward(input_ids_np, caches, position_offset,
+                             last_token_only, max_layers)
+
+    def _forward(self, input_ids_np, caches=None, position_offset=0,
+                 last_token_only=False, max_layers=None):
         _, L = input_ids_np.shape
+        if caches is None:
+            caches = self.new_caches(input_ids_np.shape[0])
         shift = 0
         for layer in self.layers:
             if not getattr(layer, "is_attn", False):
@@ -585,7 +1035,8 @@ class Qwen38_TC(Qwen35_TC):
             if live_shift is None:
                 live_shift = getattr(att, "graft_seats", 0)
             shift = max(shift, int(live_shift or 0))
-        self.extend_rope(position_offset + shift + L)
+        if position_offset + shift + L > self.max_context:
+            raise ValueError("graft position shift exceeds configured max_context")
         h = self.embed_tokens(input_ids_np)
         new_caches = []
         run = self.layers if max_layers is None else self.layers[:max_layers]
@@ -623,25 +1074,36 @@ class Qwen38_TC(Qwen35_TC):
             + 3 * cfg.n_v_heads * 4
             + cfg.d_v * 4
         )
-        rope = 2 * 4096 * cfg.partial_rotary_dim * 2
+        rope = 2 * self.max_context * cfg.partial_rotary_dim * 2
         recurrent = (batch_size * delta_layers * cfg.n_v_heads
                      * cfg.d_k * cfg.d_v * 4)
         conv_state = (batch_size * delta_layers * (cfg.conv_kernel - 1)
                       * (2 * cfg.n_k_heads * cfg.d_k + cfg.n_v_heads * cfg.d_v) * 4)
-        kv = (batch_size * len(cfg.attention_layer_indices()) * 2
-              * cfg.num_kv_heads * context_tokens * cfg.head_dim * 2)
+        kv_tokens = self.max_context
+        if self.kv_host:
+            kv = 0
+        elif self.kv_int8:
+            kv = (batch_size * len(cfg.attention_layer_indices()) * 2
+                  * cfg.num_kv_heads * kv_tokens * (cfg.head_dim + 2))
+        else:
+            kv = (batch_size * len(cfg.attention_layer_indices()) * 2
+                  * cfg.num_kv_heads * kv_tokens * cfg.head_dim * 2)
+        host_kv = (batch_size * len(cfg.attention_layer_indices()) * 2
+                   * cfg.num_kv_heads * kv_tokens * cfg.head_dim * 2
+                   if self.kv_host else 0)
         resident = body + lm + standard_norms + qk_norms + delta_aux + rope
         runtime = recurrent + conv_state + kv
         return {
             "int3_body": body,
             "int3_lm_head": lm,
             "fp32_norms_qknorm_delta_aux": standard_norms + qk_norms + delta_aux,
-            "bf16_rope_4096": rope,
+            f"bf16_rope_seq{self.max_context}": rope,
             "host_bf16_embedding_ram": int(self.embed_tokens.weight_u16.nbytes),
+            f"host_bf16_kv_seq{self.max_context}": host_kv,
             "fp32_deltanet_state_batch1": recurrent + conv_state,
-            f"bf16_kv_batch1_seq{context_tokens}": kv,
+            f"device_kv_prealloc_seq{self.max_context}": kv,
             "resident_vram": resident,
-            f"total_vram_batch1_seq{context_tokens}": resident + runtime,
+            f"total_vram_batch1_seq{self.max_context}": resident + runtime,
         }
 
     @staticmethod
@@ -651,13 +1113,18 @@ class Qwen38_TC(Qwen35_TC):
             location = "HOST" if name.startswith("host_") else "VRAM"
             print(f"  {name:42s} {value / 2**30:9.4f} GiB  {location}")
 
-    def load_weights(self, model_dir=None, cache_dir=DEFAULT_CACHE_DIR, progress=True):
+    def load_weights(self, model_dir=None, cache_dir=DEFAULT_CACHE_DIR, progress=True,
+                     cache_read_only=False):
         from safetensors import safe_open
 
         d = os.path.abspath(model_dir or DEFAULT_MODEL_DIR)
         cfg = self.config
         cache = INT3PackCache(d, cache_dir, bits=3, group_size=GROUP_SIZE)
-        manifest = cache.ensure_complete(progress=progress)
+        # Gate/receipt runs must never enter the resumable cache builder: an
+        # empirical CUDA OOM may interrupt model loading, but the pack cache is
+        # already complete and is opened read-only for these runs.
+        manifest = (cache.load_manifest() if cache_read_only else
+                    cache.ensure_complete(progress=progress))
         where = {n: os.path.join(d, rel) for n, rel in cache.weight_map.items()}
 
         def gf(name):
@@ -722,14 +1189,12 @@ class Qwen38_TC(Qwen35_TC):
         self.lm_head = qlinear("lm_head.weight")
         self.vram_map = self._computed_vram_map()
         self.print_vram_map(self.vram_map)
-        ceiling = int(11.5 * 2**30)
-        if self.vram_map["total_vram_batch1_seq128"] > ceiling:
-            raise MemoryError("computed Qwen3.8 resident+state+KV exceeds 11.5 GiB")
         return {
             "loaded": "INT3 Qwen3.8 hybrid from pack cache",
             "framework": "tensor_cuda Qwen3.8",
             "weight_bits": 3,
             "cache_dir": str(cache.cache_dir),
+            "cache_access": "read_only" if cache_read_only else "read_or_build",
             "model_dir": d,
             "layers": cfg.num_layers,
             "attention_layers": cfg.attention_layer_indices(),
@@ -737,6 +1202,12 @@ class Qwen38_TC(Qwen35_TC):
             "lm_head_chunk_rows": self.lm_head_chunk_rows,
             "lm_head_chunks": len(self.lm_head.chunks),
             "lm_head_dequant_transient_bytes": self.lm_head.dequant_transient_bytes(),
+            "max_context": self.max_context,
+            "prefill_chunk": self.prefill_chunk,
+            "kv_block_rows": self.kv_block_rows,
+            "kv_mode": "host_bf16" if self.kv_host else
+                       ("device_int8" if self.kv_int8 else "device_bf16"),
+            "attn_path": self.attn_path,
             "vram_map": self.vram_map,
         }
 
@@ -744,6 +1215,11 @@ class Qwen38_TC(Qwen35_TC):
     def from_pretrained(cls, model_dir=DEFAULT_MODEL_DIR,
                         cache_dir=DEFAULT_CACHE_DIR, run_fused_gate=False,
                         lm_head_chunk_rows=DEFAULT_LM_HEAD_CHUNK_ROWS,
+                        max_context=DEFAULT_MAX_CONTEXT, kv_int8=False,
+                        kv_host=False, prefill_chunk=DEFAULT_PREFILL_CHUNK,
+                        kv_block_rows=DEFAULT_KV_BLOCK,
+                        force_tiled_attention=False,
+                        cache_read_only=False,
                         output_gate_type=None):
         BlockTC.COMPUTE_DTYPE = "bfloat16"
         LinearTC.DTYPE = "bfloat16"
@@ -765,8 +1241,17 @@ class Qwen38_TC(Qwen35_TC):
             if output_gate_type is not None:
                 cfg.output_gate_type = output_gate_type
                 cfg._validate_qwen38()
-            model = cls(cfg, lm_head_chunk_rows=lm_head_chunk_rows)
-            info = model.load_weights(model_dir, cache_dir)
+            model = cls(
+                cfg, lm_head_chunk_rows=lm_head_chunk_rows,
+                max_context=max_context, kv_int8=kv_int8, kv_host=kv_host,
+                prefill_chunk=prefill_chunk, kv_block_rows=kv_block_rows,
+                force_tiled_attention=force_tiled_attention)
+            info = model.load_weights(
+                model_dir, cache_dir, cache_read_only=cache_read_only)
+            # LC1 contract: a successful load has already reserved the complete
+            # configured KV capacity; prompt execution consumes this first set.
+            model._preallocated_caches = model.new_caches(1)
+            info["kv_preallocated"] = True
         info["fused_decode"] = fused_status
         return model, info
 
@@ -828,9 +1313,12 @@ def dequantized_cache_linear(x, cache: INT3PackCache, name, manifest=None,
     return out.reshape(np.asarray(x).shape[:-1] + (rows,))
 
 
-def compute_qwen38_memory_budget(model_dir=DEFAULT_MODEL_DIR, context_tokens=128,
-                                 batch_size=1, group_size=GROUP_SIZE):
-    """Compute the exact persistent INT3/state budget from checkpoint shapes."""
+def compute_qwen38_memory_budget(
+        model_dir=DEFAULT_MODEL_DIR, context_tokens=DEFAULT_MAX_CONTEXT,
+        batch_size=1, group_size=GROUP_SIZE, kv_int8=False, kv_host=False,
+        lm_head_chunk_rows=DEFAULT_LM_HEAD_CHUNK_ROWS,
+        prefill_chunk=DEFAULT_PREFILL_CHUNK, kv_block_rows=DEFAULT_KV_BLOCK):
+    """Compute persistent storage and a receipt-calibrated whole-device peak."""
     from safetensors import safe_open
 
     cache = INT3PackCache(model_dir, DEFAULT_CACHE_DIR, 3, group_size)
@@ -860,23 +1348,68 @@ def compute_qwen38_memory_budget(model_dir=DEFAULT_MODEL_DIR, context_tokens=128
         + (2 * cfg.n_k_heads * cfg.d_k + cfg.n_v_heads * cfg.d_v)
           * cfg.conv_kernel * 4
         + 3 * cfg.n_v_heads * 4 + cfg.d_v * 4)
-    rope = 2 * 4096 * cfg.partial_rotary_dim * 2
+    context_tokens = int(context_tokens)
+    if not 1 <= context_tokens <= cfg.max_position_embeddings:
+        raise ValueError(
+            f"max context {context_tokens} outside checkpoint window "
+            f"[1,{cfg.max_position_embeddings}]")
+    if kv_int8 and kv_host:
+        raise ValueError("kv_int8 and kv_host are mutually exclusive")
+    if lm_head_chunk_rows <= 0 or prefill_chunk <= 0 or kv_block_rows <= 0:
+        raise ValueError("chunk sizes must be positive")
+    rope = 2 * context_tokens * cfg.partial_rotary_dim * 2
     recurrent = (batch_size * delta_layers * cfg.n_v_heads
                  * cfg.d_k * cfg.d_v * 4)
     conv_state = (batch_size * delta_layers * (cfg.conv_kernel - 1)
                   * (2 * cfg.n_k_heads * cfg.d_k + cfg.n_v_heads * cfg.d_v) * 4)
-    kv = (batch_size * attn_layers * 2 * cfg.num_kv_heads * context_tokens
-          * cfg.head_dim * 2)
+    bf16_kv = (batch_size * attn_layers * 2 * cfg.num_kv_heads * context_tokens
+               * cfg.head_dim * 2)
+    int8_kv = (batch_size * attn_layers * 2 * cfg.num_kv_heads * context_tokens
+               * (cfg.head_dim + 2))
+    device_kv = 0 if kv_host else (int8_kv if kv_int8 else bf16_kv)
+    host_kv = bf16_kv if kv_host else 0
     host = math.prod(shapes[cache.embedding_name]) * 2
     resident = body + lm + standard_norms + qk_norms + delta_aux + rope
+    lm_transient = min(int(lm_head_chunk_rows), cfg.vocab_size) * cfg.hidden_dim * 2
+    # The online standard-attention implementation stages one KV block and a
+    # fixed query-block score tile. Use fp32 score/accumulator bytes here.
+    qrows = min(int(prefill_chunk), context_tokens)
+    brows = min(int(kv_block_rows), context_tokens)
+    streaming_workspace = (
+        2 * batch_size * cfg.num_kv_heads * brows * cfg.head_dim * 2
+        + batch_size * cfg.num_heads * qrows * brows * 4
+        + batch_size * cfg.num_heads * qrows * cfg.head_dim * 4
+    )
+    fixed_overhead = CALIBRATED_FIXED_PEAK_OVERHEAD_MIB * 2**20
+    projected_peak = (resident + recurrent + conv_state + device_kv
+                      + lm_transient + streaming_workspace + fixed_overhead)
+    kv_mode = "host_bf16" if kv_host else ("device_int8" if kv_int8 else
+                                             "device_bf16")
     return {
         "int3_body": body,
         "int3_lm_head": lm,
         "fp32_norms_qknorm_delta_aux": standard_norms + qk_norms + delta_aux,
-        "bf16_rope_4096": rope,
+        f"bf16_rope_seq{context_tokens}": rope,
         "host_bf16_embedding_ram": host,
+        f"host_bf16_kv_seq{context_tokens}": host_kv,
         "fp32_deltanet_state_batch1": recurrent + conv_state,
-        f"bf16_kv_batch1_seq{context_tokens}": kv,
+        f"{kv_mode}_kv_seq{context_tokens}": device_kv,
+        "lm_head_bf16_dequant_transient": lm_transient,
+        "bounded_attention_workspace": streaming_workspace,
+        "calibrated_fixed_peak_overhead_including_desktop": fixed_overhead,
         "resident_vram": resident,
-        f"total_vram_batch1_seq{context_tokens}": resident + recurrent + conv_state + kv,
+        f"persistent_vram_batch1_seq{context_tokens}": (
+            resident + recurrent + conv_state + device_kv),
+        "projected_whole_device_peak": projected_peak,
     }
+
+
+def validate_qwen38_memory_budget(budget, ceiling_mib=VRAM_CEILING_MIB):
+    peak = int(budget["projected_whole_device_peak"])
+    ceiling = int(ceiling_mib) * 2**20
+    if peak > ceiling:
+        raise MemoryError(
+            f"projected whole-device peak {peak / 2**20:.1f} MiB exceeds "
+            f"fixed ceiling {ceiling_mib} MiB; select --kv-int8 or --kv-host, "
+            f"or reduce --max-context")
+    return peak
