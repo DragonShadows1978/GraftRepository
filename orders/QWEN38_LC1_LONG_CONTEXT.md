@@ -112,3 +112,18 @@ David's directive clarified: reliability/functionality only, wall-clock
 irrelevant. G-LC2 32K is UPGRADED from report-only to a real gate:
 3 depths × 1 seed, pass ≥2/3. If the day allows, lead deepens seeds at all
 rungs (extra runs strengthen, never replace, the registered thresholds).
+
+## Addendum 2 (registered 2026-08-19, before any gate results) — DESCENT protocol
+
+David's directive: NO ascending ladder. Discovery runs TOP-DOWN:
+start at 128K and observe where it OOMs, then step/bisect DOWN to the
+largest N that allocates and completes a short generation. Run the descent
+per KV mode: (A) on-device bf16 KV → N_bf16; (B) --kv-int8 → N_int8;
+(C) --kv-host → expect 128K to fit (KV in host RAM; lead checks free RAM
+first). Every attempt logs the alloc/budget print and the OOM or survival
+receipt — where it dies IS a result.
+G-LC2 recall then runs AT the discovered caps plus at 16K (the StoryScope
+requirement): 3 depths × 1 seed, pass ≥2/3 per point, deepened with seeds
+as the day allows. G-LC1 VRAM and G-LC4 coherence apply at the caps.
+8K-rung thresholds from the original G-LC2 are retired unrun (superseded
+by cap-point testing, registered here before any result existed).
