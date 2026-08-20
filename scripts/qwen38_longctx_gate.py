@@ -20,9 +20,11 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from core.qwen38_tc import (DEFAULT_CACHE_DIR, DEFAULT_KV_BLOCK,
-                            DEFAULT_LM_HEAD_CHUNK_ROWS, DEFAULT_MODEL_DIR,
-                            DEFAULT_MAX_CONTEXT, DEFAULT_PREFILL_CHUNK,
-                            Qwen38_TC, tc)
+                            DEFAULT_MODEL_DIR, DEFAULT_MAX_CONTEXT,
+                            DEFAULT_PREFILL_CHUNK,
+                            Qwen38_TC,
+                            resolve_qwen38_lm_head_chunk_rows,
+                            select_qwen38_kv_cache, tc)
 from scripts.qwen38_generate import (DEMO_PROMPTS, VramSampler, chat_ids,
                                      greedy, print_budget,
                                      validate_budget_for_load)
@@ -117,6 +119,7 @@ def load_model(args, sampler):
         kv_block_rows=args.kv_block_rows,
         force_tiled_attention=getattr(args, "tf_margin", False),
         cache_read_only=True)
+    info["force_alloc"] = bool(getattr(args, "force_alloc", False))
     sampler.sample_now("after_load")
     print("LOAD_RESULT " + json.dumps(info, sort_keys=True), flush=True)
     return model
@@ -260,7 +263,7 @@ def parse_args():
     ap.add_argument("--prefill-chunk", type=int, default=DEFAULT_PREFILL_CHUNK)
     ap.add_argument("--kv-block-rows", type=int, default=DEFAULT_KV_BLOCK)
     ap.add_argument("--lm-head-chunk-rows", type=int,
-                    default=DEFAULT_LM_HEAD_CHUNK_ROWS)
+                    default=None)
     ap.add_argument("--kv-int8", action="store_true")
     ap.add_argument("--kv-host", action="store_true")
     ap.add_argument("--force-alloc", action="store_true",
@@ -280,6 +283,11 @@ def parse_args():
         args.max_context = (DEFAULT_MAX_CONTEXT
                             if args.baseline_check or args.tf_margin else
                             args.length + args.max_new_tokens)
+    requested_kv_cache = select_qwen38_kv_cache(
+        args.max_context, args.kv_int8, args.kv_host,
+        force_tiled=args.tf_margin)
+    args.lm_head_chunk_rows = resolve_qwen38_lm_head_chunk_rows(
+        args.lm_head_chunk_rows, requested_kv_cache)
     return args
 
 

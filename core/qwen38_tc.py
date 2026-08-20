@@ -41,9 +41,12 @@ DEFAULT_KV_BLOCK = 256
 # Larger configured windows use bounded tiled attention so their transient does
 # not scale with the total KV length.
 LEGACY_ATTENTION_MAX_CONTEXT = DEFAULT_MAX_CONTEXT
+# The registered pre-LC1 lm_head split.  This remains the ordinary/default
+# mechanism; the smaller split is selected only with an LC cache route.
+DEFAULT_LM_HEAD_CHUNK_ROWS = 31040
 # 6,208 rows divide the 248,320-row vocabulary exactly into 40 chunks and
 # bound the two-stage BF16 dequantized weight to 60.625 MiB at hidden=5,120.
-DEFAULT_LM_HEAD_CHUNK_ROWS = 6208
+DEFAULT_LC_LM_HEAD_CHUNK_ROWS = 6208
 DEFAULT_ATTENTION_OUTPUT_GATE = "sigmoid"
 CACHE_SCHEMA = 1
 VRAM_CEILING_MIB = 12000
@@ -174,6 +177,26 @@ def select_qwen38_attn_path(max_context: int, kv_int8: bool = False,
         return "tiled"
     return ("legacy" if int(max_context) <= LEGACY_ATTENTION_MAX_CONTEXT
             else "tiled")
+
+
+def select_qwen38_kv_cache(max_context: int, kv_int8: bool = False,
+                           kv_host: bool = False,
+                           force_tiled: bool = False) -> str:
+    """Keep the pre-LC1 concat cache unless an LC mechanism needs storage."""
+    return ("prealloc" if (force_tiled or kv_int8 or kv_host
+                            or int(max_context) > DEFAULT_MAX_CONTEXT)
+            else "concat")
+
+
+def resolve_qwen38_lm_head_chunk_rows(chunk_rows, kv_cache: str) -> int:
+    """Use the original split by default and the bounded split for LC loads."""
+    if chunk_rows is None:
+        return (DEFAULT_LC_LM_HEAD_CHUNK_ROWS if kv_cache == "prealloc"
+                else DEFAULT_LM_HEAD_CHUNK_ROWS)
+    rows = int(chunk_rows)
+    if rows <= 0:
+        raise ValueError("lm_head_chunk_rows must be positive")
+    return rows
 
 
 def online_softmax_tiled_np(q: np.ndarray, k: np.ndarray, v: np.ndarray,
@@ -435,8 +458,13 @@ class Qwen38DeviceKVCache:
 
     def block(self, lo, n):
         if self.int8:
-            return (self._unpack(self.kb.slice(2, lo, n), self.ks.slice(2, lo, n)),
-                    self._unpack(self.vb.slice(2, lo, n), self.vs.slice(2, lo, n)))
+            # TensorCUDA's generic slice is float-only.  export_rows is the
+            # inference-only raw-byte cache reader and preserves uint8 exactly.
+            with tc.no_grad():
+                kb = tc.export_rows(self.kb, 2, lo, n)
+                vb = tc.export_rows(self.vb, 2, lo, n)
+                return (self._unpack(kb, self.ks.slice(2, lo, n)),
+                        self._unpack(vb, self.vs.slice(2, lo, n)))
         return self.kb.slice(2, lo, n), self.vb.slice(2, lo, n)
 
     def all(self):
@@ -934,20 +962,22 @@ class PackedRowChunkedQuantLinearTC:
 
 
 class Qwen38_TC(Qwen35_TC):
-    def __init__(self, cfg=None, lm_head_chunk_rows=DEFAULT_LM_HEAD_CHUNK_ROWS,
+    def __init__(self, cfg=None, lm_head_chunk_rows=None,
                  max_context=DEFAULT_MAX_CONTEXT, kv_int8=False, kv_host=False,
                  prefill_chunk=DEFAULT_PREFILL_CHUNK,
                  kv_block_rows=DEFAULT_KV_BLOCK, force_tiled_attention=False):
         self.config = cfg or Qwen38Config.from_model_dir(DEFAULT_MODEL_DIR)
-        self.lm_head_chunk_rows = int(lm_head_chunk_rows)
-        if self.lm_head_chunk_rows <= 0:
-            raise ValueError("lm_head_chunk_rows must be positive")
         self.max_context = int(max_context)
         self.kv_int8 = bool(kv_int8)
         self.kv_host = bool(kv_host)
         self.attn_path = select_qwen38_attn_path(
             self.max_context, self.kv_int8, self.kv_host,
             force_tiled=force_tiled_attention)
+        self.kv_cache = select_qwen38_kv_cache(
+            self.max_context, self.kv_int8, self.kv_host,
+            force_tiled=force_tiled_attention)
+        self.lm_head_chunk_rows = resolve_qwen38_lm_head_chunk_rows(
+            lm_head_chunk_rows, self.kv_cache)
         self.prefill_chunk = int(prefill_chunk)
         self.kv_block_rows = int(kv_block_rows)
         if not 1 <= self.max_context <= self.config.max_position_embeddings:
@@ -974,6 +1004,8 @@ class Qwen38_TC(Qwen35_TC):
 
     def new_caches(self, batch_size=1):
         """Preallocate the configured KV capacity before prompt execution."""
+        if self.kv_cache != "prealloc":
+            raise RuntimeError("fixed-capacity caches are inactive on the concat route")
         cache_cls = Qwen38HostKVCache if self.kv_host else Qwen38DeviceKVCache
         out = []
         for layer in self.layers:
@@ -989,6 +1021,8 @@ class Qwen38_TC(Qwen35_TC):
 
     def take_preallocated_caches(self, batch_size=1):
         """Consume the load-time batch-1 cache allocation, then allocate fresh."""
+        if self.kv_cache != "prealloc":
+            return None
         if batch_size == 1 and self._preallocated_caches is not None:
             caches = self._preallocated_caches
             self._preallocated_caches = None
@@ -998,6 +1032,10 @@ class Qwen38_TC(Qwen35_TC):
     def __call__(self, input_ids_np, caches=None, position_offset=0,
                  last_token_only=False, max_layers=None):
         """Run Qwen3.8 with bounded prefill and final-position logits."""
+        if self.kv_cache == "concat":
+            return self._forward_concat(
+                input_ids_np, caches, position_offset, last_token_only,
+                max_layers)
         _, total = input_ids_np.shape
         if position_offset + total > self.max_context:
             raise ValueError(
@@ -1020,6 +1058,36 @@ class Qwen38_TC(Qwen35_TC):
             return (logits if last_token_only else tc.cat(outputs, dim=1)), caches
         return self._forward(input_ids_np, caches, position_offset,
                              last_token_only, max_layers)
+
+    def _forward_concat(self, input_ids_np, caches=None, position_offset=0,
+                        last_token_only=False, max_layers=None):
+        """The pre-LC1 forward path, including concat-grown attention KV."""
+        _, L = input_ids_np.shape
+        shift = 0
+        for layer in self.layers:
+            if not getattr(layer, "is_attn", False):
+                continue
+            att = layer.mixer
+            live_shift = getattr(att, "live_shift", None)
+            if live_shift is None:
+                live_shift = getattr(att, "graft_seats", 0)
+            shift = max(shift, int(live_shift or 0))
+        self.extend_rope(position_offset + shift + L)
+        h = self.embed_tokens(input_ids_np)
+        new_caches = []
+        run = self.layers if max_layers is None else self.layers[:max_layers]
+        for i, layer in enumerate(run):
+            cache = caches[i] if caches is not None else None
+            h, c = layer(h, self.rope_cos, self.rope_sin, position_offset, cache)
+            new_caches.append(c)
+        if max_layers is not None:
+            return None, new_caches, h
+        h = _cast(self.norm(h))
+        if last_token_only and h.shape[1] > 1:
+            # Prefill and greedy decode consume only next-token logits.  Slice
+            # before lm_head so prompt length never multiplies vocab logits.
+            h = h.slice(1, h.shape[1] - 1, 1)
+        return self.lm_head(h), new_caches
 
     def _forward(self, input_ids_np, caches=None, position_offset=0,
                  last_token_only=False, max_layers=None):
@@ -1079,7 +1147,7 @@ class Qwen38_TC(Qwen35_TC):
                      * cfg.d_k * cfg.d_v * 4)
         conv_state = (batch_size * delta_layers * (cfg.conv_kernel - 1)
                       * (2 * cfg.n_k_heads * cfg.d_k + cfg.n_v_heads * cfg.d_v) * 4)
-        kv_tokens = self.max_context
+        kv_tokens = self.max_context if self.kv_cache == "prealloc" else 128
         if self.kv_host:
             kv = 0
         elif self.kv_int8:
@@ -1093,18 +1161,22 @@ class Qwen38_TC(Qwen35_TC):
                    if self.kv_host else 0)
         resident = body + lm + standard_norms + qk_norms + delta_aux + rope
         runtime = recurrent + conv_state + kv
-        return {
+        result = {
             "int3_body": body,
             "int3_lm_head": lm,
             "fp32_norms_qknorm_delta_aux": standard_norms + qk_norms + delta_aux,
             f"bf16_rope_seq{self.max_context}": rope,
             "host_bf16_embedding_ram": int(self.embed_tokens.weight_u16.nbytes),
-            f"host_bf16_kv_seq{self.max_context}": host_kv,
+            f"host_bf16_kv_seq{kv_tokens}": host_kv,
             "fp32_deltanet_state_batch1": recurrent + conv_state,
-            f"device_kv_prealloc_seq{self.max_context}": kv,
             "resident_vram": resident,
-            f"total_vram_batch1_seq{self.max_context}": resident + runtime,
+            f"total_vram_batch1_seq{kv_tokens}": resident + runtime,
         }
+        if self.kv_cache == "prealloc":
+            result[f"device_kv_prealloc_seq{kv_tokens}"] = kv
+        else:
+            result[f"bf16_kv_batch1_seq{kv_tokens}"] = kv
+        return result
 
     @staticmethod
     def print_vram_map(vram_map):
@@ -1205,6 +1277,7 @@ class Qwen38_TC(Qwen35_TC):
             "max_context": self.max_context,
             "prefill_chunk": self.prefill_chunk,
             "kv_block_rows": self.kv_block_rows,
+            "kv_cache": self.kv_cache,
             "kv_mode": "host_bf16" if self.kv_host else
                        ("device_int8" if self.kv_int8 else "device_bf16"),
             "attn_path": self.attn_path,
@@ -1214,7 +1287,7 @@ class Qwen38_TC(Qwen35_TC):
     @classmethod
     def from_pretrained(cls, model_dir=DEFAULT_MODEL_DIR,
                         cache_dir=DEFAULT_CACHE_DIR, run_fused_gate=False,
-                        lm_head_chunk_rows=DEFAULT_LM_HEAD_CHUNK_ROWS,
+                        lm_head_chunk_rows=None,
                         max_context=DEFAULT_MAX_CONTEXT, kv_int8=False,
                         kv_host=False, prefill_chunk=DEFAULT_PREFILL_CHUNK,
                         kv_block_rows=DEFAULT_KV_BLOCK,
@@ -1248,10 +1321,11 @@ class Qwen38_TC(Qwen35_TC):
                 force_tiled_attention=force_tiled_attention)
             info = model.load_weights(
                 model_dir, cache_dir, cache_read_only=cache_read_only)
-            # LC1 contract: a successful load has already reserved the complete
-            # configured KV capacity; prompt execution consumes this first set.
-            model._preallocated_caches = model.new_caches(1)
-            info["kv_preallocated"] = True
+            if model.kv_cache == "prealloc":
+                # LC loads reserve the complete configured capacity before the
+                # prompt; the ordinary concat route performs no fixed allocation.
+                model._preallocated_caches = model.new_caches(1)
+            info["kv_preallocated"] = model.kv_cache == "prealloc"
         info["fused_decode"] = fused_status
         return model, info
 
@@ -1316,7 +1390,7 @@ def dequantized_cache_linear(x, cache: INT3PackCache, name, manifest=None,
 def compute_qwen38_memory_budget(
         model_dir=DEFAULT_MODEL_DIR, context_tokens=DEFAULT_MAX_CONTEXT,
         batch_size=1, group_size=GROUP_SIZE, kv_int8=False, kv_host=False,
-        lm_head_chunk_rows=DEFAULT_LM_HEAD_CHUNK_ROWS,
+        lm_head_chunk_rows=None,
         prefill_chunk=DEFAULT_PREFILL_CHUNK, kv_block_rows=DEFAULT_KV_BLOCK):
     """Compute persistent storage and a receipt-calibrated whole-device peak."""
     from safetensors import safe_open
@@ -1355,6 +1429,9 @@ def compute_qwen38_memory_budget(
             f"[1,{cfg.max_position_embeddings}]")
     if kv_int8 and kv_host:
         raise ValueError("kv_int8 and kv_host are mutually exclusive")
+    kv_cache = select_qwen38_kv_cache(context_tokens, kv_int8, kv_host)
+    lm_head_chunk_rows = resolve_qwen38_lm_head_chunk_rows(
+        lm_head_chunk_rows, kv_cache)
     if lm_head_chunk_rows <= 0 or prefill_chunk <= 0 or kv_block_rows <= 0:
         raise ValueError("chunk sizes must be positive")
     rope = 2 * context_tokens * cfg.partial_rotary_dim * 2

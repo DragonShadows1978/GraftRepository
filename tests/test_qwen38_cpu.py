@@ -2,6 +2,7 @@ import inspect
 import json
 import sys
 import tempfile
+from contextlib import nullcontext
 from types import SimpleNamespace
 
 import numpy as np
@@ -10,7 +11,9 @@ import pytest
 import core.qwen38_tc as q38
 import scripts.qwen38_generate as q38_generate
 import scripts.qwen38_longctx_gate as longctx
-from core.qwen38_tc import (DEFAULT_MODEL_DIR, INT3PackCache, Qwen38Config,
+from core.qwen38_tc import (DEFAULT_LC_LM_HEAD_CHUNK_ROWS,
+                            DEFAULT_LM_HEAD_CHUNK_ROWS, DEFAULT_MODEL_DIR,
+                            INT3PackCache, Qwen38Config,
                             Qwen38DeviceKVCache, Qwen38HostKVCache,
                             Qwen38AttentionTC, Qwen38_TC,
                             PackedRowChunkedQuantLinearTC,
@@ -20,7 +23,9 @@ from core.qwen38_tc import (DEFAULT_MODEL_DIR, INT3PackCache, Qwen38Config,
                             gate_int3_pack, gate_kv_int8_pack,
                             gate_online_softmax_tiled_np,
                             online_softmax_tiled_np, quantize_kv_int8_np,
+                            resolve_qwen38_lm_head_chunk_rows,
                             select_qwen38_attn_path,
+                            select_qwen38_kv_cache,
                             validate_qwen38_memory_budget)
 
 
@@ -47,8 +52,17 @@ def test_qwen38_computed_budget_is_below_order_ceiling():
     validate_qwen38_memory_budget(budget)
 
 
-def test_qwen38_lm_head_default_caps_dequant_below_64_mib():
+def test_qwen38_lm_head_default_restores_original_split():
     ranges = PackedRowChunkedQuantLinearTC.row_ranges(248320)
+    assert DEFAULT_LM_HEAD_CHUNK_ROWS == 31040
+    assert len(ranges) == 8
+    assert ranges[0] == (0, 31040)
+    assert ranges[-1] == (217280, 248320)
+
+
+def test_qwen38_lc_lm_head_split_caps_dequant_below_64_mib():
+    ranges = PackedRowChunkedQuantLinearTC.row_ranges(
+        248320, DEFAULT_LC_LM_HEAD_CHUNK_ROWS)
     assert len(ranges) == 40
     assert ranges[0] == (0, 6208)
     assert ranges[-1] == (242112, 248320)
@@ -83,6 +97,39 @@ def test_qwen38_attention_path_dispatch_is_configuration_level():
     assert select_qwen38_attn_path(4096, force_tiled=True) == "tiled"
 
 
+def test_qwen38_cache_and_lm_head_mechanism_selection():
+    assert select_qwen38_kv_cache(4096) == "concat"
+    assert resolve_qwen38_lm_head_chunk_rows(None, "concat") == 31040
+    for kwargs in (
+            {"max_context": 4097},
+            {"max_context": 4096, "kv_int8": True},
+            {"max_context": 4096, "kv_host": True},
+            {"max_context": 4096, "force_tiled": True}):
+        assert select_qwen38_kv_cache(**kwargs) == "prealloc"
+    assert resolve_qwen38_lm_head_chunk_rows(None, "prealloc") == 6208
+    assert resolve_qwen38_lm_head_chunk_rows(777, "concat") == 777
+
+
+def test_qwen38_model_defaults_and_lc_flags_select_complete_mechanisms(
+        monkeypatch):
+    cfg = SimpleNamespace(num_layers=0, hidden_dim=8, rms_norm_eps=1e-6,
+                          max_position_embeddings=262144)
+    monkeypatch.setattr(q38, "HostBFloat16Embedding", lambda: object())
+    monkeypatch.setattr(q38, "RMSNormTC", lambda *args: object())
+    monkeypatch.setattr(Qwen38_TC, "extend_rope",
+                        lambda self, length: setattr(self, "_rope_len", length))
+
+    default = Qwen38_TC(cfg)
+    assert (default.kv_cache, default.attn_path,
+            default.lm_head_chunk_rows) == ("concat", "legacy", 31040)
+
+    for kwargs in ({"max_context": 4097}, {"kv_int8": True},
+                   {"kv_host": True}, {"force_tiled_attention": True}):
+        lc = Qwen38_TC(cfg, **kwargs)
+        assert (lc.kv_cache, lc.attn_path,
+                lc.lm_head_chunk_rows) == ("prealloc", "tiled", 6208)
+
+
 def test_qwen38_budget_selects_long_context_rungs_before_load():
     bf16_16k = compute_qwen38_memory_budget(DEFAULT_MODEL_DIR, 16384)
     int8_16k = compute_qwen38_memory_budget(
@@ -114,6 +161,8 @@ def test_qwen38_lc1_function_signatures_are_importable_and_bindable():
           np.zeros((1, 1, 1, 2), np.float32), 1), {}),
         (gate_online_softmax_tiled_np, (), {"seed": 1}),
         (select_qwen38_attn_path, (4096,), {}),
+        (select_qwen38_kv_cache, (4096,), {}),
+        (resolve_qwen38_lm_head_chunk_rows, (None, "concat"), {}),
         (_device_zeros, (1, 2), {"dtype": "uint8"}),
         (_float_to_bf16_u16, (np.zeros(1, np.float32),), {}),
         (_bf16_u16_to_float, (np.zeros(1, np.uint16),), {}),
@@ -232,6 +281,59 @@ def test_qwen38_device_kv_storage_bookkeeping_counts_k_and_v():
     assert int8.storage_bytes == 1 * 2 * 3 * (2 * 4 + 4)
 
 
+def test_qwen38_int8_block_uses_raw_byte_export_not_uint8_slice(monkeypatch):
+    calls = []
+
+    class PackedBytes:
+        def __init__(self, value):
+            self.value = np.asarray(value, np.uint8)
+
+        def slice(self, *_args):
+            raise AssertionError("packed uint8 cache must not use float-only slice")
+
+    class Scales:
+        def __init__(self, value):
+            self.value = np.asarray(value, np.float32)
+
+        def slice(self, dim, start, length):
+            calls.append(("scale_slice", dim, start, length))
+            return self.value[:, :, start:start + length]
+
+    class FakeTC:
+        @staticmethod
+        def no_grad():
+            return nullcontext()
+
+        @staticmethod
+        def export_rows(buf, dim, start, length):
+            calls.append(("export_rows", dim, start, length))
+            return buf.value[:, :, start:start + length].copy()
+
+    packed_k = np.arange(1 * 2 * 5 * 4, dtype=np.uint8).reshape(1, 2, 5, 4)
+    packed_v = 255 - packed_k
+    scale_k = np.arange(1 * 2 * 5, dtype=np.float32).reshape(1, 2, 5, 1) + 1
+    scale_v = scale_k + 10
+    cache = Qwen38DeviceKVCache.__new__(Qwen38DeviceKVCache)
+    cache.int8 = True
+    cache.kb, cache.vb = PackedBytes(packed_k), PackedBytes(packed_v)
+    cache.ks, cache.vs = Scales(scale_k), Scales(scale_v)
+    cache._unpack = lambda packed, scale: (packed, scale)
+    monkeypatch.setattr(q38, "tc", FakeTC)
+
+    (got_k, got_ks), (got_v, got_vs) = cache.block(1, 3)
+
+    np.testing.assert_array_equal(got_k, packed_k[:, :, 1:4])
+    np.testing.assert_array_equal(got_v, packed_v[:, :, 1:4])
+    np.testing.assert_array_equal(got_ks, scale_k[:, :, 1:4])
+    np.testing.assert_array_equal(got_vs, scale_v[:, :, 1:4])
+    assert calls == [
+        ("export_rows", 2, 1, 3),
+        ("export_rows", 2, 1, 3),
+        ("scale_slice", 2, 1, 3),
+        ("scale_slice", 2, 1, 3),
+    ]
+
+
 def test_qwen38_last_token_is_sliced_before_lm_head():
     from core.qwen38_tc import Qwen38_TC
 
@@ -257,6 +359,7 @@ def test_qwen38_last_token_is_sliced_before_lm_head():
     model._rope_len = 4096
     model.max_context = 4096
     model.prefill_chunk = 64
+    model.kv_cache = "prealloc"
     model.kv_host = False
     model.kv_int8 = False
     model.embed_tokens = lambda ids: FakeTensor((*ids.shape, 5120))
@@ -274,6 +377,7 @@ def test_qwen38_chunked_prefill_control_flow_and_cache_consumption(monkeypatch):
     model = Qwen38_TC.__new__(Qwen38_TC)
     model.max_context = 16
     model.prefill_chunk = 2
+    model.kv_cache = "prealloc"
     model._preallocated_caches = ["reserved"]
     calls = []
 
@@ -380,6 +484,22 @@ def test_qwen38_attention_baseline_path_resolves_functional_api(monkeypatch):
     assert FakeF.sdpa_calls == 1
 
 
+def test_qwen38_concat_cache_delegates_to_inherited_attention_unchanged(
+        monkeypatch):
+    calls = []
+    sentinel = object()
+
+    def inherited(self, x, cos, sin, position_offset=0, kv_cache=None):
+        calls.append((self, x, cos, sin, position_offset, kv_cache))
+        return sentinel
+
+    monkeypatch.setattr(q38.Qwen35AttentionTC, "__call__", inherited)
+    attn = Qwen38AttentionTC.__new__(Qwen38AttentionTC)
+    concat_cache = (object(), object())
+    assert attn("x", "cos", "sin", 7, concat_cache) is sentinel
+    assert calls == [(attn, "x", "cos", "sin", 7, concat_cache)]
+
+
 def test_qwen38_streaming_attention_empty_cache_is_fail_loud():
     attn = Qwen38AttentionTC.__new__(Qwen38AttentionTC)
     attn.cfg = SimpleNamespace(num_kv_heads=1)
@@ -448,9 +568,17 @@ def test_qwen38_longctx_parse_args_branches(monkeypatch):
     monkeypatch.setattr(sys, "argv", ["gate", "--baseline-check"])
     args = longctx.parse_args()
     assert args.max_context == q38.DEFAULT_MAX_CONTEXT
+    assert args.lm_head_chunk_rows == 31040
     monkeypatch.setattr(sys, "argv", [
         "gate", "--length", "128", "--max-new-tokens", "3"])
-    assert longctx.parse_args().max_context == 131
+    short = longctx.parse_args()
+    assert short.max_context == 131
+    assert short.lm_head_chunk_rows == 31040
+    monkeypatch.setattr(sys, "argv", ["gate"])
+    assert longctx.parse_args().lm_head_chunk_rows == 6208
+    monkeypatch.setattr(sys, "argv", ["gate", "--kv-int8",
+                                      "--max-context", "4096"])
+    assert longctx.parse_args().lm_head_chunk_rows == 6208
     monkeypatch.setattr(sys, "argv", ["gate", "--force-alloc"])
     assert longctx.parse_args().force_alloc is True
     monkeypatch.setattr(sys, "argv", ["gate"])
@@ -535,6 +663,7 @@ def test_qwen38_int8_teacher_forced_control_flow(monkeypatch):
             return out
 
     class FakeModel:
+        kv_cache = "prealloc"
         kv_host = True
         kv_int8 = False
 
@@ -784,6 +913,7 @@ def test_qwen38_generate_greedy_context_and_int8_receipt(monkeypatch):
             return out
 
     class FakeModel:
+        kv_cache = "prealloc"
         max_context = 8
         kv_int8 = True
         config = SimpleNamespace(eos_token_id=7)

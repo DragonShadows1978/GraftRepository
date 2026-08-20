@@ -18,10 +18,12 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from core.qwen38_tc import (DEFAULT_CACHE_DIR, DEFAULT_MODEL_DIR, INT3PackCache,
-                            DEFAULT_KV_BLOCK, DEFAULT_LM_HEAD_CHUNK_ROWS,
+                            DEFAULT_KV_BLOCK,
                             DEFAULT_MAX_CONTEXT, DEFAULT_PREFILL_CHUNK,
                             Qwen38Config, Qwen38_TC,
                             compute_qwen38_memory_budget,
+                            resolve_qwen38_lm_head_chunk_rows,
+                            select_qwen38_kv_cache,
                             validate_qwen38_memory_budget)
 
 
@@ -126,7 +128,8 @@ def greedy(model, tokenizer, input_ids, max_new_tokens, sampler=None,
         raise ValueError(
             f"prompt+decode needs {input_ids.shape[1] + max_new_tokens} tokens, "
             f"configured --max-context is {model.max_context}")
-    caches = model.take_preallocated_caches(input_ids.shape[0])
+    caches = (model.take_preallocated_caches(input_ids.shape[0])
+              if model.kv_cache == "prealloc" else None)
     logits, caches = model(input_ids, caches=caches, position_offset=0,
                            last_token_only=True)
     tc.synchronize()
@@ -178,7 +181,7 @@ def greedy(model, tokenizer, input_ids, max_new_tokens, sampler=None,
 
 def print_budget(model_dir, max_context=DEFAULT_MAX_CONTEXT, kv_int8=False,
                  kv_host=False,
-                 lm_head_chunk_rows=DEFAULT_LM_HEAD_CHUNK_ROWS,
+                 lm_head_chunk_rows=None,
                  prefill_chunk=DEFAULT_PREFILL_CHUNK,
                  kv_block_rows=DEFAULT_KV_BLOCK):
     budget = compute_qwen38_memory_budget(
@@ -223,11 +226,11 @@ def main():
                     help="use an exactly 128-token prompt")
     ap.add_argument("--max-new-tokens", type=int, default=64)
     ap.add_argument("--max-context", type=int, default=DEFAULT_MAX_CONTEXT,
-                    help="preallocated KV/RoPE capacity (checkpoint max 262144)")
+                    help="context/RoPE limit; values above 4096 enable LC preallocation")
     ap.add_argument("--prefill-chunk", type=int, default=DEFAULT_PREFILL_CHUNK,
-                    help="maximum query rows processed by one model prefill call")
+                    help="LC path: maximum query rows per prefill call")
     ap.add_argument("--kv-block-rows", type=int, default=DEFAULT_KV_BLOCK,
-                    help="fixed standard-attention KV staging window")
+                    help="LC tiled path: fixed attention KV staging window")
     ap.add_argument("--kv-int8", action="store_true",
                     help="symmetric per-token/per-head INT8 device KV")
     ap.add_argument("--kv-host", action="store_true",
@@ -235,8 +238,9 @@ def main():
     ap.add_argument("--force-alloc", action="store_true",
                     help="override the predicted VRAM wall and attempt allocation")
     ap.add_argument("--lm-head-chunk-rows", type=int,
-                    default=int(os.environ.get("QWEN38_LM_HEAD_CHUNK_ROWS",
-                                               DEFAULT_LM_HEAD_CHUNK_ROWS)))
+                    default=(int(os.environ["QWEN38_LM_HEAD_CHUNK_ROWS"])
+                             if "QWEN38_LM_HEAD_CHUNK_ROWS" in os.environ
+                             else None))
     ap.add_argument("--output-gate-type", choices=("swish", "silu", "sigmoid"),
                     default=None,
                     help="diagnostic override; 27B attention defaults to sigmoid")
@@ -256,6 +260,10 @@ def main():
     print("QWEN38_CONFIG " + json.dumps(cfg.as_printable_dict(), sort_keys=True))
     if args.kv_int8 and args.kv_host:
         ap.error("--kv-int8 and --kv-host are mutually exclusive")
+    requested_kv_cache = select_qwen38_kv_cache(
+        args.max_context, args.kv_int8, args.kv_host)
+    args.lm_head_chunk_rows = resolve_qwen38_lm_head_chunk_rows(
+        args.lm_head_chunk_rows, requested_kv_cache)
     budget = print_budget(
         args.model_dir, args.max_context, args.kv_int8, args.kv_host,
         args.lm_head_chunk_rows, args.prefill_chunk, args.kv_block_rows)
@@ -309,6 +317,7 @@ def main():
             kv_block_rows=args.kv_block_rows,
             cache_read_only=args.force_alloc,
             output_gate_type=args.output_gate_type)
+        info["force_alloc"] = bool(args.force_alloc)
         sampler.sample_now("after_load")
         print("LOAD_RESULT " + json.dumps(info, sort_keys=True))
         if args.load_only:
