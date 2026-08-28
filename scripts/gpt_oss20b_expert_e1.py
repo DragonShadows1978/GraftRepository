@@ -57,11 +57,15 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 ORDER_PATH = REPO_ROOT / "orders" / "MOE_E1_NARRATIVE_EXPERT.md"
+E11_ORDER_PATH = REPO_ROOT / "orders" / "MOE_E1_1_AMENDED_ADDRESS_GATE.md"
 RT1_DIR = REPO_ROOT / "artifacts" / "moe_rt1"
 RT2_DIR = REPO_ROOT / "artifacts" / "moe_rt2"
 RT2_1_DIR = REPO_ROOT / "artifacts" / "moe_rt2_1"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "artifacts" / "moe_e1"
 EXPERTPACK_DIRNAME = "expertpack_narrative_v0"
+ADDRESS_RULE_E1 = "e1"
+ADDRESS_RULE_E11 = "e11"
+ADDRESS_RULES = (ADDRESS_RULE_E1, ADDRESS_RULE_E11)
 SNAPSHOT = Path(
     "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/"
     "snapshots/6cee5e81ee83917806bbde320786a8fb61efebee"
@@ -118,6 +122,7 @@ G3_IMPROVEMENT_FLOOR = 0.10
 G4_RECOVERY_FLOOR = 0.25
 G5_WIKITEXT_PPL_DELTA_CAP_PCT = 0.5
 G5_FIRE_CAPS = {"generic": 0.02, "code": 0.05}
+E11_HIGH_FIRING_WIKITEXT_WINDOWS = (5, 13, 11, 15)
 DEFAULT_SEED = 20260827
 DEFAULT_BOOTSTRAP_RESAMPLES = 2000
 
@@ -137,6 +142,7 @@ def parse_args() -> argparse.Namespace:
         "mode",
         choices=(
             "prepare",
+            "self-test",
             "capture-keys",
             "fit-key",
             "capture-pairs",
@@ -146,6 +152,15 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument(
+        "--address-rule",
+        choices=ADDRESS_RULES,
+        default=ADDRESS_RULE_E1,
+        help=(
+            "address/non-interference registration; e1 is the original default, "
+            "e11 opts into ORDER MOE-E1.1"
+        ),
+    )
     parser.add_argument("--model-dir", type=Path, default=SNAPSHOT)
     parser.add_argument("--chunk-index", type=int)
     parser.add_argument("--pair-index", type=int)
@@ -169,6 +184,81 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--train-tokens-per-window", type=int, default=128)
     parser.add_argument("--overwrite", action="store_true")
     return parser.parse_args()
+
+
+def order_path_for_rule(address_rule: str) -> Path:
+    return E11_ORDER_PATH if address_rule == ADDRESS_RULE_E11 else ORDER_PATH
+
+
+def expertpack_dirname(address_rule: str) -> str:
+    return (
+        f"{EXPERTPACK_DIRNAME}_e11"
+        if address_rule == ADDRESS_RULE_E11
+        else EXPERTPACK_DIRNAME
+    )
+
+
+def fit_key_paths(output: Path, address_rule: str) -> tuple[Path, Path]:
+    suffix = "_e11" if address_rule == ADDRESS_RULE_E11 else ""
+    return output / f"fit_key{suffix}.json", output / f"narrative_k4_keys{suffix}.npz"
+
+
+def cpu_validation_path(output: Path, address_rule: str) -> Path:
+    suffix = "_e11" if address_rule == ADDRESS_RULE_E11 else ""
+    return output / f"cpu_validation{suffix}.json"
+
+
+def pair_root(output: Path, address_rule: str) -> Path:
+    return output / ("pairs_e11" if address_rule == ADDRESS_RULE_E11 else "pairs")
+
+
+def train_path(output: Path, address_rule: str) -> Path:
+    suffix = "_e11" if address_rule == ADDRESS_RULE_E11 else ""
+    return output / f"train{suffix}.json"
+
+
+def eval_root(output: Path, address_rule: str) -> Path:
+    return output / ("eval_e11" if address_rule == ADDRESS_RULE_E11 else "eval")
+
+
+def analysis_path(output: Path, address_rule: str) -> Path:
+    suffix = "_e11" if address_rule == ADDRESS_RULE_E11 else ""
+    return output / f"analysis{suffix}.json"
+
+
+def report_path(output: Path, address_rule: str) -> Path:
+    return output / (
+        "MOE_E1_1_REPORT.md"
+        if address_rule == ADDRESS_RULE_E11
+        else "MOE_E1_REPORT.md"
+    )
+
+
+def blocked_path(output: Path, address_rule: str) -> Path:
+    suffix = "_e11" if address_rule == ADDRESS_RULE_E11 else ""
+    return output / f"blocked{suffix}.json"
+
+
+def threshold_constraint_corpora(address_rule: str) -> tuple[str, ...]:
+    if address_rule == ADDRESS_RULE_E11:
+        return ("code", "grm")
+    return NEGATIVE_CORPORA
+
+
+def g5_qualifies(
+    *,
+    address_rule: str,
+    wikitext_ppl_delta_percent: float,
+    generic_fire_rate: float,
+    code_fire_rate: float,
+) -> bool:
+    fire_ok = code_fire_rate <= G5_FIRE_CAPS["code"]
+    if address_rule == ADDRESS_RULE_E1:
+        fire_ok = fire_ok and generic_fire_rate <= G5_FIRE_CAPS["generic"]
+    return bool(
+        wikitext_ppl_delta_percent <= G5_WIKITEXT_PPL_DELTA_CAP_PCT
+        and fire_ok
+    )
 
 
 def now_iso() -> str:
@@ -662,7 +752,9 @@ def bootstrap_recovery(
     }
 
 
-def run_cpu_validation(seed: int) -> dict[str, Any]:
+def run_cpu_validation(
+    seed: int, address_rule: str = ADDRESS_RULE_E1
+) -> dict[str, Any]:
     checks: list[dict[str, Any]] = []
     rng = np.random.default_rng(seed)
     h = rng.normal(size=(2, 7, 12)).astype(np.float32)
@@ -736,7 +828,10 @@ def run_cpu_validation(seed: int) -> dict[str, Any]:
     )
     fixture_scores = score_four(hidden_fixture, fixture_key)
     fixture_metrics = analyze_key_scores(
-        fixture_scores, resamples=200, seed=seed + 100
+        fixture_scores,
+        resamples=200,
+        seed=seed + 100,
+        address_rule=address_rule,
     )
     add_check(
         checks,
@@ -753,8 +848,10 @@ def run_cpu_validation(seed: int) -> dict[str, Any]:
     key_after_eval_mutation, meta_after_eval_mutation = fit_k4_direction(
         mutated, cg_rtol=1.0e-6, cg_maxiter=200
     )
-    tau_before = select_tau_four(fixture_scores)["selected_tau"]
-    tau_after = select_tau_four(score_four(mutated, key_after_eval_mutation))[
+    tau_before = select_tau_four(fixture_scores, address_rule)["selected_tau"]
+    tau_after = select_tau_four(
+        score_four(mutated, key_after_eval_mutation), address_rule
+    )[
         "selected_tau"
     ]
     add_check(
@@ -775,6 +872,140 @@ def run_cpu_validation(seed: int) -> dict[str, Any]:
         fixture_meta["selected_alpha"],
         meta_after_eval_mutation["selected_alpha"],
     )
+
+    if address_rule == ADDRESS_RULE_E11:
+        # Deliberately make generic text fire everywhere while code/GRM remain
+        # silent.  E1 must reject this fixture; E1.1 must accept it without
+        # changing the frozen pooled-negative quantile construction.
+        amended_scores = {
+            "narrative": np.full((N_KEY_WINDOWS, 8), 2.0, dtype=np.float32),
+            "generic": np.full((N_KEY_WINDOWS, 8), 1.0, dtype=np.float32),
+            "code": np.zeros((N_KEY_WINDOWS, 8), dtype=np.float32),
+            "grm": np.zeros((N_KEY_WINDOWS, 8), dtype=np.float32),
+        }
+        original_metrics = analyze_key_scores(
+            amended_scores,
+            resamples=200,
+            seed=seed + 201,
+            address_rule=ADDRESS_RULE_E1,
+        )
+        amended_metrics = analyze_key_scores(
+            amended_scores,
+            resamples=200,
+            seed=seed + 202,
+            address_rule=ADDRESS_RULE_E11,
+        )
+        add_check(
+            checks,
+            "e11_fixture_original_rule_rejects_generic_fire",
+            False,
+            original_metrics["qualifies"],
+        )
+        add_check(
+            checks,
+            "e11_fixture_code_grm_fit_feasible",
+            True,
+            amended_metrics["fit_fpr_feasible"],
+        )
+        add_check(
+            checks,
+            "e11_fixture_qualifies_with_descriptive_generic",
+            True,
+            amended_metrics["qualifies"],
+        )
+        add_check(
+            checks,
+            "e11_fixture_generic_per_window_reported",
+            list(EVAL_INDICES),
+            [
+                item["window_index"]
+                for item in amended_metrics["eval"]["generic_fire_rate"][
+                    "per_window"
+                ]
+            ],
+        )
+        add_check(
+            checks,
+            "e11_g5_ignores_descriptive_generic_fire",
+            True,
+            g5_qualifies(
+                address_rule=ADDRESS_RULE_E11,
+                wikitext_ppl_delta_percent=0.1,
+                generic_fire_rate=0.8,
+                code_fire_rate=0.01,
+            ),
+        )
+        add_check(
+            checks,
+            "e11_g5_enforces_code_fire",
+            False,
+            g5_qualifies(
+                address_rule=ADDRESS_RULE_E11,
+                wikitext_ppl_delta_percent=0.1,
+                generic_fire_rate=0.0,
+                code_fire_rate=0.051,
+            ),
+        )
+        add_check(
+            checks,
+            "e11_g5_enforces_wikitext_ppl_delta",
+            False,
+            g5_qualifies(
+                address_rule=ADDRESS_RULE_E11,
+                wikitext_ppl_delta_percent=0.501,
+                generic_fire_rate=0.0,
+                code_fire_rate=0.0,
+            ),
+        )
+        window_fixture = wikitext_window_summary(
+            {
+                "window_index": 5,
+                "arms": {
+                    "base": {"ppl": 10.0},
+                    "expert": {"ppl": 9.5},
+                },
+                "fire": {
+                    "fire_count": 64,
+                    "token_count": 128,
+                    "fire_rate": 0.5,
+                },
+                "_path": "synthetic",
+                "_sha256": "synthetic",
+            }
+        )
+        add_check(
+            checks,
+            "e11_g5_high_window_labeled",
+            True,
+            window_fixture["registered_high_firing_narrativeish"],
+        )
+        add_check(
+            checks,
+            "e11_g5_window_ppl_delta",
+            True,
+            bool(abs(window_fixture["ppl_delta_percent"] + 5.0) <= 1.0e-12),
+        )
+        resume_fixture = gpu_resume_commands(ADDRESS_RULE_E11)
+        add_check(
+            checks,
+            "e11_resume_preserves_gpu_wrapper",
+            True,
+            bool(
+                "flock -w 7200 /tmp/forge-gpu.lock" in resume_fixture
+                and "timeout --signal=TERM --kill-after=5s 590s" in resume_fixture
+                and "sleep 30" in resume_fixture
+            ),
+        )
+        add_check(
+            checks,
+            "e11_resume_starts_after_fit_key",
+            True,
+            bool(
+                "capture-pairs --address-rule e11" in resume_fixture
+                and "capture-keys" not in resume_fixture
+                and "fit-key" not in resume_fixture
+            ),
+        )
 
     # Tiny CPU consolidation fixture: B begins at exact zero and a fixed
     # nonlinear A feature bank learns a known residual target.  This is a
@@ -823,8 +1054,14 @@ def run_cpu_validation(seed: int) -> dict[str, Any]:
         )
     failed = [item for item in checks if not item["passed"]]
     return {
-        "schema": "moe_e1_cpu_validation_v1",
+        "schema": (
+            "moe_e1_1_cpu_validation_v1"
+            if address_rule == ADDRESS_RULE_E11
+            else "moe_e1_cpu_validation_v1"
+        ),
         "created_at": now_iso(),
+        "address_rule": address_rule,
+        "order": str(order_path_for_rule(address_rule)),
         "status": "passed" if not failed else "failed",
         "synthetic_only_not_gate_evidence": True,
         "checks_passed": len(checks) - len(failed),
@@ -844,13 +1081,73 @@ def run_cpu_validation(seed: int) -> dict[str, Any]:
     }
 
 
+def self_test(args: argparse.Namespace) -> int:
+    output = ensure_output_dir(args.output_dir)
+    target = cpu_validation_path(output, args.address_rule)
+    if target.is_file():
+        prior = read_json(target)
+        print(
+            json.dumps(
+                {
+                    "status": "already_complete",
+                    "validation_status": prior.get("status"),
+                    "cpu_validation": str(target),
+                }
+            ),
+            flush=True,
+        )
+        return 0 if prior.get("status") == "passed" else 2
+    manifest, _prepared = load_prepared(output)
+    validation = run_cpu_validation(args.seed, args.address_rule)
+    original_fit_path, original_keys_path = fit_key_paths(output, ADDRESS_RULE_E1)
+    validation.update(
+        {
+            "corpus_integrity_passed": manifest.get("status") == "passed",
+            "corpus_manifest": str(output / "corpus_manifest.json"),
+            "corpus_manifest_sha256": sha256_file(output / "corpus_manifest.json"),
+            "original_rule_default_invocation": (
+                f"python3 {SCRIPT_PATH} <mode> (equivalent to "
+                "--address-rule e1)"
+            ),
+            "preserved_original_key_receipts": {
+                "fit_key": {
+                    "path": str(original_fit_path),
+                    "sha256": sha256_file(original_fit_path),
+                },
+                "keys": {
+                    "path": str(original_keys_path),
+                    "sha256": sha256_file(original_keys_path),
+                },
+            },
+        }
+    )
+    write_json(target, validation)
+    print(
+        json.dumps(
+            {
+                "status": validation["status"],
+                "checks_passed": validation["checks_passed"],
+                "checks_total": validation["checks_total"],
+                "cpu_validation": str(target),
+            }
+        ),
+        flush=True,
+    )
+    return 0 if validation["status"] == "passed" else 2
+
+
 def pending_expertpack_manifest(
-    *, output: Path, corpus_manifest: Path, windows_path: Path
+    *,
+    output: Path,
+    corpus_manifest: Path,
+    windows_path: Path,
+    address_rule: str = ADDRESS_RULE_E1,
 ) -> dict[str, Any]:
-    pack = output / EXPERTPACK_DIRNAME
+    pack = output / expertpack_dirname(address_rule)
     return {
         "schema": "expertpack_narrative_v0",
         "created_at": now_iso(),
+        "address_rule": address_rule,
         "status": "blocked_pending_gpu_captures",
         "abi": {
             "score": "s = h dot key (float32)",
@@ -885,7 +1182,7 @@ def pending_expertpack_manifest(
             },
         },
         "provenance": {
-            "order": str(ORDER_PATH),
+            "order": str(order_path_for_rule(address_rule)),
             "script": str(SCRIPT_PATH),
             "script_sha256": sha256_file(SCRIPT_PATH),
             "corpus_manifest": str(corpus_manifest),
@@ -1593,12 +1890,25 @@ def score_four(hidden: dict[str, np.ndarray], key: np.ndarray) -> dict[str, np.n
 
 
 def bootstrap_rate(
-    indicator: np.ndarray, *, resamples: int, seed: int
+    indicator: np.ndarray,
+    *,
+    resamples: int,
+    seed: int,
+    window_indices: Sequence[int] | None = None,
 ) -> dict[str, Any]:
     per_window = np.asarray(indicator, dtype=np.float64).mean(axis=1)
+    indices = (
+        list(range(per_window.size))
+        if window_indices is None
+        else [int(index) for index in window_indices]
+    )
+    if len(indices) != per_window.size:
+        raise ValueError("window index count does not match rate rows")
     rng = np.random.default_rng(seed)
-    indices = rng.integers(0, per_window.size, size=(resamples, per_window.size))
-    boot = per_window[indices].mean(axis=1)
+    bootstrap_indices = rng.integers(
+        0, per_window.size, size=(resamples, per_window.size)
+    )
+    boot = per_window[bootstrap_indices].mean(axis=1)
     low, high = np.quantile(boot, [0.025, 0.975], method="linear")
     return {
         "value": float(per_window.mean()),
@@ -1606,11 +1916,18 @@ def bootstrap_rate(
         "ci95_high": float(high),
         "bootstrap_unit": "windows",
         "bootstrap_resamples": int(resamples),
+        "per_window": [
+            {"window_index": index, "rate": float(rate)}
+            for index, rate in zip(indices, per_window)
+        ],
     }
 
 
-def select_tau_four(scores: dict[str, np.ndarray]) -> dict[str, Any]:
+def select_tau_four(
+    scores: dict[str, np.ndarray], address_rule: str = ADDRESS_RULE_E1
+) -> dict[str, Any]:
     fit = np.asarray(FIT_INDICES, dtype=np.int64)
+    constraint_corpora = threshold_constraint_corpora(address_rule)
     pooled_negative = np.concatenate(
         [scores[corpus][fit].reshape(-1) for corpus in NEGATIVE_CORPORA]
     )
@@ -1624,7 +1941,10 @@ def select_tau_four(scores: dict[str, np.ndarray]) -> dict[str, Any]:
                 for corpus in NEGATIVE_CORPORA
             },
         }
-        feasible = all(rates[f"{corpus}_fpr"] <= FPR_CAPS[corpus] for corpus in NEGATIVE_CORPORA)
+        feasible = all(
+            rates[f"{corpus}_fpr"] <= FPR_CAPS[corpus]
+            for corpus in constraint_corpora
+        )
         curve.append(
             {
                 "quantile_label": label,
@@ -1641,7 +1961,7 @@ def select_tau_four(scores: dict[str, np.ndarray]) -> dict[str, Any]:
         key=lambda item: (
             item["fit"]["narrative_recall"] if feasible else -max(
                 item["fit"][f"{corpus}_fpr"] / FPR_CAPS[corpus]
-                for corpus in NEGATIVE_CORPORA
+                for corpus in constraint_corpora
             ),
             -item["fit"]["grm_fpr"],
             -item["fit"]["code_fpr"],
@@ -1652,9 +1972,13 @@ def select_tau_four(scores: dict[str, np.ndarray]) -> dict[str, Any]:
     return {
         "tau_definition": (
             "linear p90/p95/p99/p99.5 over pooled generic+code+grm FIT scores; "
-            "maximize narrative FIT recall subject to all three FIT FPR caps; "
+            f"maximize narrative FIT recall subject to {'+'.join(constraint_corpora)} "
+            "FIT FPR caps; "
             "ties lower grm/code/generic FPR then higher quantile"
         ),
+        "address_rule": address_rule,
+        "fit_constraint_corpora": list(constraint_corpora),
+        "fit_generic_fire_rate_descriptive": address_rule == ADDRESS_RULE_E11,
         "fire_comparison": "score >= tau",
         "fit_negative_token_count": int(pooled_negative.size),
         "fit_fpr_feasible": bool(feasible),
@@ -1667,22 +1991,33 @@ def select_tau_four(scores: dict[str, np.ndarray]) -> dict[str, Any]:
 
 
 def analyze_key_scores(
-    scores: dict[str, np.ndarray], *, resamples: int, seed: int
+    scores: dict[str, np.ndarray],
+    *,
+    resamples: int,
+    seed: int,
+    address_rule: str = ADDRESS_RULE_E1,
 ) -> dict[str, Any]:
-    threshold = select_tau_four(scores)
+    threshold = select_tau_four(scores, address_rule)
     tau = float(threshold["selected_tau"])
     evaluation = np.asarray(EVAL_INDICES, dtype=np.int64)
+    constraint_corpora = threshold_constraint_corpora(address_rule)
     fired = {corpus: scores[corpus][evaluation] >= tau for corpus in scores}
     metrics: dict[str, Any] = {
         **threshold,
         "eval_window_indices": list(EVAL_INDICES),
         "eval": {
             "narrative_recall": bootstrap_rate(
-                fired["narrative"], resamples=resamples, seed=seed + 1
+                fired["narrative"],
+                resamples=resamples,
+                seed=seed + 1,
+                window_indices=EVAL_INDICES,
             ),
             **{
                 f"{corpus}_fpr": bootstrap_rate(
-                    fired[corpus], resamples=resamples, seed=seed + 10 + index
+                    fired[corpus],
+                    resamples=resamples,
+                    seed=seed + 10 + index,
+                    window_indices=EVAL_INDICES,
                 )
                 for index, corpus in enumerate(NEGATIVE_CORPORA)
             },
@@ -1699,14 +2034,30 @@ def analyze_key_scores(
         and metrics["eval"]["narrative_recall"]["value"] >= RECALL_FLOOR
         and all(
             metrics["eval"][f"{corpus}_fpr"]["value"] <= FPR_CAPS[corpus]
-            for corpus in NEGATIVE_CORPORA
+            for corpus in constraint_corpora
         )
     )
-    metrics["registered_criteria"] = {
-        "eval_narrative_recall_gte": RECALL_FLOOR,
-        **{f"eval_{corpus}_fpr_lte": cap for corpus, cap in FPR_CAPS.items()},
-        "fit_threshold_frozen_before_eval": True,
-    }
+    if address_rule == ADDRESS_RULE_E11:
+        metrics["eval"]["generic_fire_rate"] = dict(
+            metrics["eval"]["generic_fpr"]
+        )
+        metrics["registered_criteria"] = {
+            "eval_narrative_recall_gte": RECALL_FLOOR,
+            "eval_code_fpr_lte": FPR_CAPS["code"],
+            "eval_grm_fpr_lte": FPR_CAPS["grm"],
+            "generic_fire_rate": "descriptive_no_pass_fail_bound",
+            "fit_constraint_corpora": list(constraint_corpora),
+            "fit_threshold_frozen_before_eval": True,
+        }
+    else:
+        metrics["registered_criteria"] = {
+            "eval_narrative_recall_gte": RECALL_FLOOR,
+            **{
+                f"eval_{corpus}_fpr_lte": cap
+                for corpus, cap in FPR_CAPS.items()
+            },
+            "fit_threshold_frozen_before_eval": True,
+        }
     return metrics
 
 
@@ -1820,6 +2171,20 @@ def fit_key(args: argparse.Namespace) -> int:
         raise ValueError("--threads must be positive")
     output = ensure_output_dir(args.output_dir)
     manifest, _prepared = load_prepared(output)
+    analysis_file, keys_path = fit_key_paths(output, args.address_rule)
+    pack_dir = output / expertpack_dirname(args.address_rule)
+    pack_path = pack_dir / "manifest.json"
+    if args.address_rule == ADDRESS_RULE_E11:
+        existing = [
+            path
+            for path in (analysis_file, keys_path, pack_path)
+            if path.exists()
+        ]
+        if existing:
+            raise FileExistsError(
+                "E1.1 receipts are append-only; refusing to overwrite: "
+                + ", ".join(str(path) for path in existing)
+            )
     started = time.perf_counter()
     captures, integrity = load_key_fit_captures(output)
     rows: list[dict[str, Any]] = []
@@ -1847,6 +2212,7 @@ def fit_key(args: argparse.Namespace) -> int:
                 scores,
                 resamples=args.bootstrap_resamples,
                 seed=args.seed + 1000 * layer,
+                address_rule=args.address_rule,
             )
             row = {
                 "layer": layer,
@@ -1864,9 +2230,14 @@ def fit_key(args: argparse.Namespace) -> int:
                 json.dumps(
                     {
                         "layer": layer,
+                        "address_rule": args.address_rule,
                         "qualifies": metrics["qualifies"],
                         "recall": metrics["eval"]["narrative_recall"]["value"],
-                        "generic_fpr": metrics["eval"]["generic_fpr"]["value"],
+                        (
+                            "generic_fire_rate"
+                            if args.address_rule == ADDRESS_RULE_E11
+                            else "generic_fpr"
+                        ): metrics["eval"]["generic_fpr"]["value"],
                         "code_fpr": metrics["eval"]["code_fpr"]["value"],
                         "grm_fpr": metrics["eval"]["grm_fpr"]["value"],
                     }
@@ -1876,7 +2247,6 @@ def fit_key(args: argparse.Namespace) -> int:
             del hidden, scores, key
             gc.collect()
 
-    keys_path = output / "narrative_k4_keys.npz"
     save_npz(
         keys_path,
         K4=np.stack(keys).astype(np.float32),
@@ -1889,6 +2259,9 @@ def fit_key(args: argparse.Namespace) -> int:
     selected = qualifiers_fit_ranked[0] if qualifiers_fit_ranked else None
     decision = {
         "g2_green": bool(selected),
+        "g2_prime_green": (
+            bool(selected) if args.address_rule == ADDRESS_RULE_E11 else None
+        ),
         "qualifying_layer_count": len(qualifiers),
         "qualifying_layers": [int(row["layer"]) for row in qualifiers_fit_ranked],
         "selection_uses_eval_only_as_registered_qualification_filter": True,
@@ -1902,12 +2275,25 @@ def fit_key(args: argparse.Namespace) -> int:
         ],
     }
     analysis = {
-        "schema": "moe_e1_fit_key_v1",
+        "schema": (
+            "moe_e1_1_fit_key_v1"
+            if args.address_rule == ADDRESS_RULE_E11
+            else "moe_e1_fit_key_v1"
+        ),
         "created_at": now_iso(),
         "status": "complete_g2_green" if selected else "complete_g2_red_stop",
-        "order": str(ORDER_PATH),
+        "address_rule": args.address_rule,
+        "order": str(order_path_for_rule(args.address_rule)),
         "script": str(SCRIPT_PATH),
         "script_sha256": sha256_file(SCRIPT_PATH),
+        "original_rule_path": {
+            "preserved": True,
+            "default_address_rule": ADDRESS_RULE_E1,
+            "invocation": f"python3 {SCRIPT_PATH} fit-key",
+            "explicit_equivalent": (
+                f"python3 {SCRIPT_PATH} fit-key --address-rule e1"
+            ),
+        },
         "cpu_only": True,
         "seed": int(args.seed),
         "bootstrap_resamples": int(args.bootstrap_resamples),
@@ -1921,11 +2307,28 @@ def fit_key(args: argparse.Namespace) -> int:
             "eval_used_for_key_tau_or_hyperparameter_selection": False,
             "heldout_file_text_used": False,
         },
-        "registered_rule": {
-            "eval_recall_gte": RECALL_FLOOR,
-            **{f"eval_{corpus}_fpr_lte": cap for corpus, cap in FPR_CAPS.items()},
-            "frozen_fit_side_tau": True,
-        },
+        "registered_rule": (
+            {
+                "gate": "G2'",
+                "eval_recall_gte": RECALL_FLOOR,
+                "eval_code_fpr_lte": FPR_CAPS["code"],
+                "eval_grm_fpr_lte": FPR_CAPS["grm"],
+                "generic_fire_rate": "descriptive_per_layer_and_eval_window",
+                "fit_feasibility_constraints": ["code", "grm"],
+                "tau_candidate_pool": ["generic", "code", "grm"],
+                "frozen_fit_side_tau": True,
+            }
+            if args.address_rule == ADDRESS_RULE_E11
+            else {
+                "gate": "G2",
+                "eval_recall_gte": RECALL_FLOOR,
+                **{
+                    f"eval_{corpus}_fpr_lte": cap
+                    for corpus, cap in FPR_CAPS.items()
+                },
+                "frozen_fit_side_tau": True,
+            }
+        ),
         "rows": rows,
         "decision": decision,
         "keys_artifact": {"path": str(keys_path), "sha256": sha256_file(keys_path)},
@@ -1939,19 +2342,30 @@ def fit_key(args: argparse.Namespace) -> int:
             "wall_seconds": float(time.perf_counter() - started),
         },
     }
-    analysis_path = output / "fit_key.json"
-    write_json(analysis_path, analysis)
-    pack_dir = output / EXPERTPACK_DIRNAME
-    pack_path = pack_dir / "manifest.json"
+    write_json(analysis_file, analysis)
+    if not pack_path.is_file():
+        pack_dir.mkdir(parents=True, exist_ok=True)
+        write_json(
+            pack_path,
+            pending_expertpack_manifest(
+                output=output,
+                corpus_manifest=output / "corpus_manifest.json",
+                windows_path=output / "prepared_windows.npz",
+                address_rule=args.address_rule,
+            ),
+        )
     pack = read_json(pack_path)
     pack["updated_at"] = now_iso()
-    pack["provenance"]["fit_key"] = str(analysis_path)
-    pack["provenance"]["fit_key_sha256"] = sha256_file(analysis_path)
+    pack["provenance"]["fit_key"] = str(analysis_file)
+    pack["provenance"]["fit_key_sha256"] = sha256_file(analysis_file)
     pack["provenance"]["keys_artifact"] = str(keys_path)
     pack["provenance"]["keys_artifact_sha256"] = sha256_file(keys_path)
     if selected is None:
         pack["status"] = "g2_red_no_installable_address"
-        pack["limitations"] = ["G2 RED: no qualifying K4 narrative address"]
+        gate_name = "G2'" if args.address_rule == ADDRESS_RULE_E11 else "G2"
+        pack["limitations"] = [
+            f"{gate_name} RED: no qualifying K4 narrative address"
+        ]
     else:
         layer = int(selected["layer"])
         selected_key = np.asarray(keys[layer], dtype=np.float32)
@@ -1967,6 +2381,9 @@ def fit_key(args: argparse.Namespace) -> int:
                 "key_metrics": {
                     "eval_recall": eval_metrics["narrative_recall"]["value"],
                     "eval_generic_fpr": eval_metrics["generic_fpr"]["value"],
+                    "eval_generic_fire_rate_descriptive": eval_metrics[
+                        "generic_fpr"
+                    ]["value"],
                     "eval_code_fpr": eval_metrics["code_fpr"]["value"],
                     "eval_grm_fpr": eval_metrics["grm_fpr"]["value"],
                     "selected_alpha": selected["key_metadata"]["selected_alpha"],
@@ -1983,13 +2400,21 @@ def fit_key(args: argparse.Namespace) -> int:
         }
         pack["limitations"] = ["adapter A/B pending capture-pairs and train"]
     write_json(pack_path, pack)
+    if args.address_rule == ADDRESS_RULE_E11:
+        resume_path = output / "GPU_RESUME_COMMANDS.sh"
+        write_text(resume_path, gpu_resume_commands(args.address_rule))
+        try:
+            resume_path.chmod(0o755)
+        except OSError:
+            pass
     print(
         json.dumps(
             {
                 "status": analysis["status"],
+                "address_rule": args.address_rule,
                 "qualifying_layers": decision["qualifying_layers"],
                 "install_layer": decision["install_layer"],
-                "analysis": str(analysis_path),
+                "analysis": str(analysis_file),
                 "expertpack_manifest": str(pack_path),
             }
         ),
@@ -1998,8 +2423,13 @@ def fit_key(args: argparse.Namespace) -> int:
     return 0 if selected is not None else 3
 
 
-def load_addressed_pack(output: Path, *, require_adapter: bool = False) -> dict[str, Any]:
-    pack_path = output / EXPERTPACK_DIRNAME / "manifest.json"
+def load_addressed_pack(
+    output: Path,
+    *,
+    address_rule: str = ADDRESS_RULE_E1,
+    require_adapter: bool = False,
+) -> dict[str, Any]:
+    pack_path = output / expertpack_dirname(address_rule) / "manifest.json"
     if not pack_path.is_file():
         raise FileNotFoundError(f"missing ExpertPack manifest: {pack_path}")
     pack = read_json(pack_path)
@@ -2020,8 +2450,12 @@ def load_addressed_pack(output: Path, *, require_adapter: bool = False) -> dict[
     return pack
 
 
-def pair_paths(output: Path, pair_index: int) -> tuple[Path, Path]:
-    root = output / "pairs"
+def pair_paths(
+    output: Path,
+    pair_index: int,
+    address_rule: str = ADDRESS_RULE_E1,
+) -> tuple[Path, Path]:
+    root = pair_root(output, address_rule)
     return root / f"pair_{pair_index:03d}.npz", root / f"pair_{pair_index:03d}_receipt.json"
 
 
@@ -2030,7 +2464,7 @@ def capture_pairs(args: argparse.Namespace) -> int:
         raise ValueError(f"capture-pairs requires --pair-index 0..{N_PAIR_WINDOWS - 1}")
     output = ensure_output_dir(args.output_dir)
     manifest, arrays = load_prepared(output)
-    pack = load_addressed_pack(output)
+    pack = load_addressed_pack(output, address_rule=args.address_rule)
     cuda_probe = require_cuda()
     index = int(args.pair_index)
     pair_ids = np.ascontiguousarray(arrays["pair_ids"][index], dtype=np.int64)
@@ -2040,7 +2474,7 @@ def capture_pairs(args: argparse.Namespace) -> int:
     if not np.array_equal(teacher_ids[0, -WINDOW_TOKENS:], student_ids[0]):
         raise RuntimeError("G1 RED: teacher/student shared token ids are not identical")
     layer_target = int(pack["layer"])
-    data_path, receipt_path = pair_paths(output, index)
+    data_path, receipt_path = pair_paths(output, index, args.address_rule)
     if data_path.is_file() and receipt_path.is_file() and not args.overwrite:
         prior = read_json(receipt_path)
         if prior.get("status") == "complete" and prior.get("pair_file_sha256") == sha256_file(data_path):
@@ -2059,6 +2493,7 @@ def capture_pairs(args: argparse.Namespace) -> int:
     receipt: dict[str, Any] = {
         "schema": "moe_e1_activation_pair_v1",
         "created_at": now_iso(),
+        "address_rule": args.address_rule,
         "status": "starting",
         "argv": sys.argv,
         "required_shell_wrapper": GPU_WRAPPER,
@@ -2209,9 +2644,12 @@ def capture_pairs(args: argparse.Namespace) -> int:
 
 
 def load_pair_capture(
-    output: Path, pair_index: int, expected_ids: np.ndarray
+    output: Path,
+    pair_index: int,
+    expected_ids: np.ndarray,
+    address_rule: str = ADDRESS_RULE_E1,
 ) -> tuple[dict[str, np.ndarray], dict[str, Any]]:
-    data_path, receipt_path = pair_paths(output, pair_index)
+    data_path, receipt_path = pair_paths(output, pair_index, address_rule)
     if not data_path.is_file() or not receipt_path.is_file():
         raise FileNotFoundError(f"missing pair {pair_index}: {data_path}, {receipt_path}")
     receipt = read_json(receipt_path)
@@ -2259,7 +2697,35 @@ def train(args: argparse.Namespace) -> int:
         raise ValueError("--train-tokens-per-window must be 1..512")
     output = ensure_output_dir(args.output_dir)
     _manifest, prepared = load_prepared(output)
-    pack = load_addressed_pack(output)
+    pack = load_addressed_pack(output, address_rule=args.address_rule)
+    pack_dir = output / expertpack_dirname(args.address_rule)
+    A_path = pack_dir / "A_fp16.npy"
+    B_path = pack_dir / "B_fp16.npy"
+    training_path = train_path(output, args.address_rule)
+    if args.address_rule == ADDRESS_RULE_E11:
+        if training_path.is_file():
+            prior = read_json(training_path)
+            if prior.get("status") in {
+                "complete_g3_green",
+                "complete_g3_red_stop",
+            }:
+                print(
+                    json.dumps(
+                        {
+                            "status": "already_complete",
+                            "g3": prior.get("g3_verdict"),
+                            "training": str(training_path),
+                        }
+                    ),
+                    flush=True,
+                )
+                return 0 if prior.get("g3_verdict") == "GREEN" else 3
+        existing = [path for path in (training_path, A_path, B_path) if path.exists()]
+        if existing:
+            raise FileExistsError(
+                "E1.1 training receipts are append-only; inspect partial outputs: "
+                + ", ".join(str(path) for path in existing)
+            )
     key = np.load(pack["components"]["key"]["path"], allow_pickle=False).astype(np.float32)
     if key.shape != (HIDDEN_DIM,):
         raise RuntimeError("ExpertPack key shape mismatch")
@@ -2269,7 +2735,12 @@ def train(args: argparse.Namespace) -> int:
     # reopens one shard at a time so the ~0.6 GB pair set is never duplicated.
     pair_receipts: list[dict[str, Any]] = []
     for index in range(N_PAIR_WINDOWS):
-        _data, record = load_pair_capture(output, index, prepared["pair_ids"][index])
+        _data, record = load_pair_capture(
+            output,
+            index,
+            prepared["pair_ids"][index],
+            args.address_rule,
+        )
         pair_receipts.append(record)
         del _data
 
@@ -2310,7 +2781,10 @@ def train(args: argparse.Namespace) -> int:
         with torch.no_grad():
             for index in range(N_PAIR_TRAIN, N_PAIR_WINDOWS):
                 data, _record = load_pair_capture(
-                    output, index, prepared["pair_ids"][index]
+                    output,
+                    index,
+                    prepared["pair_ids"][index],
+                    args.address_rule,
                 )
                 hidden = torch.from_numpy(data["h_student_fp16"].astype(np.float32))
                 target = torch.from_numpy(
@@ -2345,7 +2819,12 @@ def train(args: argparse.Namespace) -> int:
         epoch_elements = 0
         epoch_fires = 0
         for index in order:
-            data, _record = load_pair_capture(output, index, prepared["pair_ids"][index])
+            data, _record = load_pair_capture(
+                output,
+                index,
+                prepared["pair_ids"][index],
+                args.address_rule,
+            )
             hidden_np = data["h_student_fp16"].astype(np.float32)
             target_np = (
                 data["out_teacher_fp16"].astype(np.float32)
@@ -2404,8 +2883,6 @@ def train(args: argparse.Namespace) -> int:
     model.load_state_dict(best_state)
     A_fp16 = model.A.detach().numpy().astype(np.float16)
     B_fp16 = model.B.detach().numpy().astype(np.float16)
-    A_path = output / EXPERTPACK_DIRNAME / "A_fp16.npy"
-    B_path = output / EXPERTPACK_DIRNAME / "B_fp16.npy"
     save_npy(A_path, A_fp16)
     save_npy(B_path, B_fp16)
 
@@ -2423,9 +2900,10 @@ def train(args: argparse.Namespace) -> int:
     training = {
         "schema": "moe_e1_adapter_training_v1",
         "created_at": now_iso(),
+        "address_rule": args.address_rule,
         "status": "complete_g3_green" if g3_green else "complete_g3_red_stop",
         "cpu_only": True,
-        "order": str(ORDER_PATH),
+        "order": str(order_path_for_rule(args.address_rule)),
         "script": str(SCRIPT_PATH),
         "script_sha256": sha256_file(SCRIPT_PATH),
         "model_snapshot": str(args.model_dir.resolve()),
@@ -2491,9 +2969,8 @@ def train(args: argparse.Namespace) -> int:
             "wall_seconds": float(time.perf_counter() - started),
         },
     }
-    training_path = output / "train.json"
     write_json(training_path, training)
-    pack_path = output / EXPERTPACK_DIRNAME / "manifest.json"
+    pack_path = pack_dir / "manifest.json"
     pack = read_json(pack_path)
     pack["updated_at"] = now_iso()
     pack["rank"] = int(args.rank)
@@ -2540,8 +3017,12 @@ def train(args: argparse.Namespace) -> int:
     return 0 if g3_green else 3
 
 
-def load_expert_arrays(output: Path) -> tuple[dict[str, Any], np.ndarray, np.ndarray, np.ndarray]:
-    pack = load_addressed_pack(output, require_adapter=True)
+def load_expert_arrays(
+    output: Path, address_rule: str = ADDRESS_RULE_E1
+) -> tuple[dict[str, Any], np.ndarray, np.ndarray, np.ndarray]:
+    pack = load_addressed_pack(
+        output, address_rule=address_rule, require_adapter=True
+    )
     key = np.load(pack["components"]["key"]["path"], allow_pickle=False)
     A = np.load(pack["components"]["A"]["path"], allow_pickle=False)
     B = np.load(pack["components"]["B"]["path"], allow_pickle=False)
@@ -2726,8 +3207,13 @@ def rt1_eval_window(corpus: str, window_index: int) -> tuple[np.ndarray, dict[st
     }
 
 
-def eval_receipt_path(output: Path, kind: str, window_index: int | None) -> Path:
-    root = output / "eval"
+def eval_receipt_path(
+    output: Path,
+    kind: str,
+    window_index: int | None,
+    address_rule: str = ADDRESS_RULE_E1,
+) -> Path:
+    root = eval_root(output, address_rule)
     if kind == "abi":
         return root / "abi.json"
     if window_index is None:
@@ -2743,7 +3229,7 @@ def initialize_eval_receipt(
     window_index: int | None,
     cuda_probe: dict[str, Any],
 ) -> tuple[Path, dict[str, Any], float]:
-    path = eval_receipt_path(output, kind, window_index)
+    path = eval_receipt_path(output, kind, window_index, args.address_rule)
     if path.is_file() and not args.overwrite:
         prior = read_json(path)
         if prior.get("status") == "complete":
@@ -2754,6 +3240,7 @@ def initialize_eval_receipt(
     receipt = {
         "schema": "moe_e1_eval_unit_v1",
         "created_at": now_iso(),
+        "address_rule": args.address_rule,
         "status": "starting",
         "kind": kind,
         "window_index": window_index,
@@ -2763,9 +3250,11 @@ def initialize_eval_receipt(
         "install_layer": int(pack["layer"]),
         "rank": int(pack["rank"]),
         "tau": float(pack["tau"]),
-        "expertpack_manifest": str(output / EXPERTPACK_DIRNAME / "manifest.json"),
+        "expertpack_manifest": str(
+            output / expertpack_dirname(args.address_rule) / "manifest.json"
+        ),
         "expertpack_manifest_sha256_at_run": sha256_file(
-            output / EXPERTPACK_DIRNAME / "manifest.json"
+            output / expertpack_dirname(args.address_rule) / "manifest.json"
         ),
         "script_sha256_at_run": sha256_file(SCRIPT_PATH),
         "cuda_environment": cuda_probe,
@@ -3357,7 +3846,7 @@ def eval_gates(args: argparse.Namespace) -> int:
     if args.eval_kind is None:
         raise ValueError("eval-gates requires --eval-kind abi|narrative|generic|code")
     output = ensure_output_dir(args.output_dir)
-    pack, key, A, B = load_expert_arrays(output)
+    pack, key, A, B = load_expert_arrays(output, args.address_rule)
     cuda_probe = require_cuda()
     if args.eval_kind == "abi":
         return eval_abi(args, output, pack, key, A, B, cuda_probe)
@@ -3370,8 +3859,61 @@ def eval_gates(args: argparse.Namespace) -> int:
     raise AssertionError(args.eval_kind)
 
 
-def gpu_resume_commands() -> str:
+def gpu_resume_commands(address_rule: str = ADDRESS_RULE_E1) -> str:
     script = str(SCRIPT_PATH)
+    if address_rule == ADDRESS_RULE_E11:
+        return f"""#!/usr/bin/env bash
+set -euo pipefail
+
+repo_e1={str(REPO_ROOT)!r}
+script_e1={script!r}
+cd "$repo_e1"
+
+run_gpu_e1() {{
+  local rc_e1=0
+  flock -w 7200 /tmp/forge-gpu.lock \\
+    timeout --signal=TERM --kill-after=5s 590s \\
+    env CUDA_VISIBLE_DEVICES=0 PYTHONDONTWRITEBYTECODE=1 \\
+      HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \\
+      python3 "$script_e1" "$@" || rc_e1=$?
+  sleep 30
+  return "$rc_e1"
+}}
+
+# E1.1 Stage 3: one teacher/student window per bounded GPU invocation at L*.
+for pair_e1 in $(seq 0 63); do
+  run_gpu_e1 capture-pairs --address-rule e11 --pair-index "$pair_e1"
+done
+
+# E1.1 Stage 4: CPU rank-64 consolidation.  G3 RED is a registered STOP.
+if ! env CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 \\
+  python3 "$script_e1" train --address-rule e11 --rank 64 --threads 6; then
+  env CUDA_VISIBLE_DEVICES='' python3 "$script_e1" analyze --address-rule e11
+  exit 3
+fi
+
+# E1.1 Stage 5a: ABI identity and all 16 held-out narrative windows.
+run_gpu_e1 eval-gates --address-rule e11 --eval-kind abi
+for window_e1 in $(seq 0 15); do
+  run_gpu_e1 eval-gates --address-rule e11 --eval-kind narrative --window-index "$window_e1"
+done
+env CUDA_VISIBLE_DEVICES='' python3 "$script_e1" analyze --address-rule e11 || true
+
+# Registered premise STOP: do not run G5' if TRAIN prefixes did not help heldout PPL.
+python3 -c 'import json,sys; x=json.load(open("artifacts/moe_e1/analysis_e11.json")); sys.exit(0 if x.get("g4",{{}}).get("teacher_gap",0)>0 else 4)'
+
+# E1.1 Stage 5b: WikiText base/expert PPL and per-window fire rates, plus code fire.
+for window_e1 in 1 3 5 7 9 11 13 15; do
+  run_gpu_e1 eval-gates --address-rule e11 --eval-kind generic --window-index "$window_e1"
+done
+for window_e1 in 1 3 5 7 9 11 13 15; do
+  run_gpu_e1 eval-gates --address-rule e11 --eval-kind code --window-index "$window_e1"
+done
+
+# E1.1 Stage 6: CPU bootstrap/tables/final registered verdict and G5' split report.
+env CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 \\
+  python3 "$script_e1" analyze --address-rule e11 --bootstrap-resamples 2000
+"""
     return f"""#!/usr/bin/env bash
 set -euo pipefail
 
@@ -3450,13 +3992,16 @@ def gate_line(name: str, verdict: str, details: str) -> str:
 
 
 def completed_eval_receipts(
-    output: Path, kind: str, indices: Sequence[int]
+    output: Path,
+    kind: str,
+    indices: Sequence[int],
+    address_rule: str = ADDRESS_RULE_E1,
 ) -> tuple[list[dict[str, Any]], list[int], list[int]]:
     receipts: list[dict[str, Any]] = []
     missing: list[int] = []
     errors: list[int] = []
     for index in indices:
-        path = eval_receipt_path(output, kind, index)
+        path = eval_receipt_path(output, kind, index, address_rule)
         if not path.is_file():
             missing.append(int(index))
             continue
@@ -3483,12 +4028,37 @@ def aggregate_nll(receipts: Sequence[dict[str, Any]], arm: str) -> dict[str, Any
     }
 
 
+def wikitext_window_summary(receipt: dict[str, Any]) -> dict[str, Any]:
+    base_ppl = float(receipt["arms"]["base"]["ppl"])
+    expert_ppl = float(receipt["arms"]["expert"]["ppl"])
+    index = int(receipt["window_index"])
+    return {
+        "window_index": index,
+        "registered_high_firing_narrativeish": (
+            index in E11_HIGH_FIRING_WIKITEXT_WINDOWS
+        ),
+        "fire_count": int(receipt["fire"]["fire_count"]),
+        "token_count": int(receipt["fire"]["token_count"]),
+        "fire_rate": float(receipt["fire"]["fire_rate"]),
+        "ppl_base": base_ppl,
+        "ppl_expert": expert_ppl,
+        "ppl_delta_percent": (expert_ppl - base_ppl) / base_ppl * 100.0,
+        "receipt": receipt["_path"],
+        "receipt_sha256": receipt["_sha256"],
+    }
+
+
 def render_report(analysis: dict[str, Any]) -> str:
     gates = analysis["gates"]
     install = analysis["install_row"]
     g4 = analysis["g4_row"]
+    is_e11 = analysis.get("address_rule") == ADDRESS_RULE_E11
     lines = [
-        "# MOE-E1 NarrativeForge Expert Report",
+        (
+            "# MOE-E1.1 NarrativeForge Expert Report"
+            if is_e11
+            else "# MOE-E1 NarrativeForge Expert Report"
+        ),
         "",
         f"Generated: `{analysis['created_at']}`",
         "",
@@ -3503,6 +4073,38 @@ def render_report(analysis: dict[str, Any]) -> str:
         "",
     ]
     lines.extend(gates[name]["report_line"] for name in ("G0", "G1", "G2", "G3", "G4", "G5"))
+    if is_e11:
+        lines.extend(["", "## G5' per-window WikiText split", ""])
+        high = analysis["g5"].get("high_firing_narrativeish_windows", [])
+        other = analysis["g5"].get("other_wikitext_windows", [])
+        if high:
+            lines.append("Registered high-firing narrative-ish windows:")
+            lines.append("")
+            lines.extend(
+                (
+                    f"- Window {item['window_index']}: fire="
+                    f"{item['fire_rate']:.6f}, ppl_base={item['ppl_base']:.6f}, "
+                    f"ppl_expert={item['ppl_expert']:.6f}, delta="
+                    f"{item['ppl_delta_percent']:.4f}%"
+                )
+                for item in high
+            )
+        else:
+            lines.append("Windows 5, 13, 11, and 15 are not yet measured.")
+        if other:
+            lines.extend(["", "Other WikiText windows:", ""])
+            lines.extend(
+                (
+                    f"- Window {item['window_index']}: fire="
+                    f"{item['fire_rate']:.6f}, ppl_base={item['ppl_base']:.6f}, "
+                    f"ppl_expert={item['ppl_expert']:.6f}, delta="
+                    f"{item['ppl_delta_percent']:.4f}%"
+                )
+                for item in sorted(
+                    other,
+                    key=lambda item: (-item["fire_rate"], item["window_index"]),
+                )
+            )
     lines.extend(
         [
             "",
@@ -3546,8 +4148,8 @@ def analyze(args: argparse.Namespace) -> int:
         raise ValueError("analyze requires at least 2000 bootstrap resamples")
     output = ensure_output_dir(args.output_dir)
     manifest, _prepared = load_prepared(output)
-    cpu_validation_path = output / "cpu_validation.json"
-    cpu_validation = read_json(cpu_validation_path)
+    cpu_validation_file = cpu_validation_path(output, args.address_rule)
+    cpu_validation = read_json(cpu_validation_file)
     cuda_probe = cuda_environment_probe()
     gpu_available = bool(
         {"/dev/nvidia0", "/dev/nvidiactl"}.issubset(
@@ -3558,7 +4160,7 @@ def analyze(args: argparse.Namespace) -> int:
     gates: dict[str, dict[str, Any]] = {}
 
     # G0
-    abi_path = eval_receipt_path(output, "abi", None)
+    abi_path = eval_receipt_path(output, "abi", None, args.address_rule)
     if abi_path.is_file() and read_json(abi_path).get("status") == "complete":
         abi = read_json(abi_path)
         verdict = abi.get("g0_verdict", "RED")
@@ -3588,7 +4190,7 @@ def analyze(args: argparse.Namespace) -> int:
     pair_truth: list[dict[str, Any]] = []
     pair_errors: list[int] = []
     for index in range(N_PAIR_WINDOWS):
-        _data_path, receipt_path = pair_paths(output, index)
+        _data_path, receipt_path = pair_paths(output, index, args.address_rule)
         if not receipt_path.is_file():
             continue
         receipt = read_json(receipt_path)
@@ -3625,13 +4227,20 @@ def analyze(args: argparse.Namespace) -> int:
     }
 
     # G2 and install row
-    fit_path = output / "fit_key.json"
-    pack_path = output / EXPERTPACK_DIRNAME / "manifest.json"
+    fit_path, _keys_path = fit_key_paths(output, args.address_rule)
+    pack_path = output / expertpack_dirname(args.address_rule) / "manifest.json"
     pack = read_json(pack_path)
-    install_row = (
-        "INSTALL row: layer L*=n/a, r=64, recall=n/a, generic FPR=n/a, "
-        "code FPR=n/a, grm FPR=n/a, tau=n/a"
-    )
+    g2_label = "G2'" if args.address_rule == ADDRESS_RULE_E11 else "G2"
+    if args.address_rule == ADDRESS_RULE_E11:
+        install_row = (
+            "INSTALL row (G2'): L*=n/a, r=64, recall=n/a, code FPR=n/a, "
+            "GRM FPR=n/a, tau=n/a, descriptive generic fire rate=n/a"
+        )
+    else:
+        install_row = (
+            "INSTALL row: layer L*=n/a, r=64, recall=n/a, generic FPR=n/a, "
+            "code FPR=n/a, grm FPR=n/a, tau=n/a"
+        )
     if fit_path.is_file():
         fit = read_json(fit_path)
         decision = fit["decision"]
@@ -3641,47 +4250,78 @@ def analyze(args: argparse.Namespace) -> int:
             metrics = row["metrics"]
             evaluated = metrics["eval"]
             verdict = "GREEN"
-            details = (
-                f"qualifying layers={decision['qualifying_layers']}; L*={selected_layer}; "
-                f"recall={evaluated['narrative_recall']['value']:.6f}, generic FPR="
-                f"{evaluated['generic_fpr']['value']:.6f}, code FPR="
-                f"{evaluated['code_fpr']['value']:.6f}, grm FPR="
-                f"{evaluated['grm_fpr']['value']:.6f}, tau={metrics['selected_tau']:.9g}"
-            )
-            install_row = (
-                f"INSTALL row: layer L*={selected_layer}, r={pack.get('rank', 64)}, "
-                f"recall={evaluated['narrative_recall']['value']:.6f}, "
-                f"generic FPR={evaluated['generic_fpr']['value']:.6f}, "
-                f"code FPR={evaluated['code_fpr']['value']:.6f}, "
-                f"grm FPR={evaluated['grm_fpr']['value']:.6f}, "
-                f"tau={metrics['selected_tau']:.9g}"
-            )
+            if args.address_rule == ADDRESS_RULE_E11:
+                details = (
+                    f"qualifying layers={decision['qualifying_layers']}; "
+                    f"L*={selected_layer}; recall="
+                    f"{evaluated['narrative_recall']['value']:.6f}, code FPR="
+                    f"{evaluated['code_fpr']['value']:.6f}, GRM FPR="
+                    f"{evaluated['grm_fpr']['value']:.6f}, tau="
+                    f"{metrics['selected_tau']:.9g}, descriptive generic fire rate="
+                    f"{evaluated['generic_fpr']['value']:.6f}"
+                )
+                install_row = (
+                    f"INSTALL row (G2'): L*={selected_layer}, "
+                    f"r={pack.get('rank', 64)}, recall="
+                    f"{evaluated['narrative_recall']['value']:.6f}, code FPR="
+                    f"{evaluated['code_fpr']['value']:.6f}, GRM FPR="
+                    f"{evaluated['grm_fpr']['value']:.6f}, tau="
+                    f"{metrics['selected_tau']:.9g}, descriptive generic fire rate="
+                    f"{evaluated['generic_fpr']['value']:.6f}"
+                )
+            else:
+                details = (
+                    f"qualifying layers={decision['qualifying_layers']}; "
+                    f"L*={selected_layer}; recall="
+                    f"{evaluated['narrative_recall']['value']:.6f}, generic FPR="
+                    f"{evaluated['generic_fpr']['value']:.6f}, code FPR="
+                    f"{evaluated['code_fpr']['value']:.6f}, grm FPR="
+                    f"{evaluated['grm_fpr']['value']:.6f}, "
+                    f"tau={metrics['selected_tau']:.9g}"
+                )
+                install_row = (
+                    f"INSTALL row: layer L*={selected_layer}, "
+                    f"r={pack.get('rank', 64)}, recall="
+                    f"{evaluated['narrative_recall']['value']:.6f}, "
+                    f"generic FPR={evaluated['generic_fpr']['value']:.6f}, "
+                    f"code FPR={evaluated['code_fpr']['value']:.6f}, "
+                    f"grm FPR={evaluated['grm_fpr']['value']:.6f}, "
+                    f"tau={metrics['selected_tau']:.9g}"
+                )
         else:
             verdict = "RED"
-            details = (
-                "qualifying layers=0/24 under recall>=0.50, generic FPR<=0.02, "
-                "code FPR<=0.05, grm FPR<=0.05 with frozen FIT tau; STOP"
-            )
+            if args.address_rule == ADDRESS_RULE_E11:
+                details = (
+                    "qualifying layers=0/24 under recall>=0.50, code FPR<=0.05, "
+                    "GRM FPR<=0.05 with frozen FIT tau; generic fire rate is "
+                    "descriptive; STOP"
+                )
+            else:
+                details = (
+                    "qualifying layers=0/24 under recall>=0.50, generic FPR<=0.02, "
+                    "code FPR<=0.05, grm FPR<=0.05 with frozen FIT tau; STOP"
+                )
         gates["G2"] = {
             "verdict": verdict,
-            "report_line": gate_line("G2", verdict, details),
+            "report_line": gate_line(g2_label, verdict, details),
             "fit_key": str(fit_path),
             "fit_key_sha256": sha256_file(fit_path),
+            "qualifying_layers": decision["qualifying_layers"],
         }
     else:
         gates["G2"] = {
             "verdict": "NOT_MEASURED",
             "report_line": gate_line(
-                "G2",
+                g2_label,
                 "NOT_MEASURED",
                 "narrative K4 captures/fit absent; recall/FPRs/tau/L*=n/a",
             ),
         }
 
     # G3
-    train_path = output / "train.json"
-    if train_path.is_file():
-        training = read_json(train_path)
+    training_path = train_path(output, args.address_rule)
+    if training_path.is_file():
+        training = read_json(training_path)
         stored = training["stored_fp16_validation"]
         verdict = training["g3_verdict"]
         details = (
@@ -3692,8 +4332,8 @@ def analyze(args: argparse.Namespace) -> int:
         gates["G3"] = {
             "verdict": verdict,
             "report_line": gate_line("G3", verdict, details),
-            "training": str(train_path),
-            "training_sha256": sha256_file(train_path),
+            "training": str(training_path),
+            "training_sha256": sha256_file(training_path),
         }
     else:
         gates["G3"] = {
@@ -3705,7 +4345,10 @@ def analyze(args: argparse.Namespace) -> int:
 
     # G4
     narrative, narrative_missing, narrative_errors = completed_eval_receipts(
-        output, "narrative", range(N_BEHAVIORAL_WINDOWS)
+        output,
+        "narrative",
+        range(N_BEHAVIORAL_WINDOWS),
+        args.address_rule,
     )
     g4_payload: dict[str, Any] = {
         "complete_windows": len(narrative),
@@ -3770,10 +4413,13 @@ def analyze(args: argparse.Namespace) -> int:
 
     # G5
     generic, generic_missing, generic_errors = completed_eval_receipts(
-        output, "generic", EVAL_INDICES
+        output, "generic", EVAL_INDICES, args.address_rule
     )
-    code, code_missing, code_errors = completed_eval_receipts(output, "code", EVAL_INDICES)
+    code, code_missing, code_errors = completed_eval_receipts(
+        output, "code", EVAL_INDICES, args.address_rule
+    )
     g5_payload: dict[str, Any] = {
+        "gate": "G5'" if args.address_rule == ADDRESS_RULE_E11 else "G5",
         "generic_complete_windows": len(generic),
         "code_complete_windows": len(code),
         "generic_missing": generic_missing,
@@ -3781,6 +4427,39 @@ def analyze(args: argparse.Namespace) -> int:
         "generic_errors": generic_errors,
         "code_errors": code_errors,
     }
+    if args.address_rule == ADDRESS_RULE_E11:
+        per_window_wikitext = [wikitext_window_summary(item) for item in generic]
+        by_index = {
+            int(item["window_index"]): item for item in per_window_wikitext
+        }
+        g5_payload.update(
+            {
+                "registered_rule": {
+                    "wikitext_overall_ppl_delta_percent_lte": (
+                        G5_WIKITEXT_PPL_DELTA_CAP_PCT
+                    ),
+                    "code_fire_rate_lte": G5_FIRE_CAPS["code"],
+                    "generic_fire_rate": "descriptive_no_pass_fail_bound",
+                },
+                "registered_high_firing_narrativeish_window_indices": list(
+                    E11_HIGH_FIRING_WIKITEXT_WINDOWS
+                ),
+                "per_window_wikitext_by_descending_fire_rate": sorted(
+                    per_window_wikitext,
+                    key=lambda item: (-item["fire_rate"], item["window_index"]),
+                ),
+                "high_firing_narrativeish_windows": [
+                    by_index[index]
+                    for index in E11_HIGH_FIRING_WIKITEXT_WINDOWS
+                    if index in by_index
+                ],
+                "other_wikitext_windows": [
+                    item
+                    for item in per_window_wikitext
+                    if not item["registered_high_firing_narrativeish"]
+                ],
+            }
+        )
     if (
         len(generic) == len(EVAL_INDICES)
         and len(code) == len(EVAL_INDICES)
@@ -3800,18 +4479,28 @@ def analyze(args: argparse.Namespace) -> int:
         code_tokens = sum(int(item["fire"]["token_count"]) for item in code)
         generic_rate = generic_fires / generic_tokens
         code_rate = code_fires / code_tokens
-        g5_green = bool(
-            ppl_delta_pct <= G5_WIKITEXT_PPL_DELTA_CAP_PCT
-            and generic_rate <= G5_FIRE_CAPS["generic"]
-            and code_rate <= G5_FIRE_CAPS["code"]
+        g5_green = g5_qualifies(
+            address_rule=args.address_rule,
+            wikitext_ppl_delta_percent=ppl_delta_pct,
+            generic_fire_rate=generic_rate,
+            code_fire_rate=code_rate,
         )
         verdict = "GREEN" if g5_green else "RED"
-        details = (
-            f"WikiText ppl base={generic_base['ppl']:.6f}, expert="
-            f"{generic_expert['ppl']:.6f}, delta={ppl_delta_pct:.4f}% (cap 0.5%); "
-            f"generic fire={generic_rate:.6f} (cap 0.02), code fire="
-            f"{code_rate:.6f} (cap 0.05)"
-        )
+        if args.address_rule == ADDRESS_RULE_E11:
+            details = (
+                f"WikiText ppl base={generic_base['ppl']:.6f}, expert="
+                f"{generic_expert['ppl']:.6f}, delta={ppl_delta_pct:.4f}% "
+                f"(cap 0.5%); code fire={code_rate:.6f} (cap 0.05); "
+                f"descriptive generic fire={generic_rate:.6f}; high-firing "
+                "windows 5,13,11,15 reported individually"
+            )
+        else:
+            details = (
+                f"WikiText ppl base={generic_base['ppl']:.6f}, expert="
+                f"{generic_expert['ppl']:.6f}, delta={ppl_delta_pct:.4f}% "
+                f"(cap 0.5%); generic fire={generic_rate:.6f} (cap 0.02), "
+                f"code fire={code_rate:.6f} (cap 0.05)"
+            )
         g5_payload.update(
             {
                 "wikitext_base": generic_base,
@@ -3827,37 +4516,57 @@ def analyze(args: argparse.Namespace) -> int:
         )
     else:
         verdict = "NOT_MEASURED"
-        details = (
-            f"WikiText windows={len(generic)}/8, code windows={len(code)}/8; "
-            "ppl delta/generic fire/code fire=n/a"
-        )
+        if args.address_rule == ADDRESS_RULE_E11:
+            details = (
+                f"WikiText windows={len(generic)}/8, code windows={len(code)}/8; "
+                "overall ppl delta/code fire=n/a; generic fire is descriptive"
+            )
+        else:
+            details = (
+                f"WikiText windows={len(generic)}/8, code windows={len(code)}/8; "
+                "ppl delta/generic fire/code fire=n/a"
+            )
     gates["G5"] = {
         "verdict": verdict,
-        "report_line": gate_line("G5", verdict, details),
+        "report_line": gate_line(
+            "G5'" if args.address_rule == ADDRESS_RULE_E11 else "G5",
+            verdict,
+            details,
+        ),
     }
 
     if premise_finding:
         registered_verdict = (
-            "E1 PREMISE FINDING: TRAIN-file guide prefixes did not improve perplexity "
+            f"{'E1.1' if args.address_rule == ADDRESS_RULE_E11 else 'E1'} "
+            "PREMISE FINDING: TRAIN-file guide prefixes did not improve perplexity "
             "on HELDOUT guide text; expert recovery is undefined and evaluation stops."
         )
     elif gates["G4"]["verdict"] == "GREEN":
-        registered_verdict = "E1 SUPPORTED."
+        registered_verdict = (
+            "E1.1 SUPPORTED."
+            if args.address_rule == ADDRESS_RULE_E11
+            else "E1 SUPPORTED."
+        )
     elif gates["G4"]["verdict"] == "RED":
         registered_verdict = (
-            "E1 NOT SUPPORTED: the expert recovered less than 25% of the positive "
+            f"{'E1.1' if args.address_rule == ADDRESS_RULE_E11 else 'E1'} "
+            "NOT SUPPORTED: the expert recovered less than 25% of the positive "
             "teacher perplexity gap under the registered behavioral gate."
         )
     elif not gpu_available:
         registered_verdict = (
-            "E1 NOT MEASURED — CUDA device nodes are unavailable; no registered "
+            f"{'E1.1' if args.address_rule == ADDRESS_RULE_E11 else 'E1'} "
+            "NOT MEASURED — CUDA device nodes are unavailable; no registered "
             "behavioral verdict can be issued."
         )
     else:
-        registered_verdict = "E1 NOT MEASURED — required GPU receipts are incomplete."
+        registered_verdict = (
+            f"{'E1.1' if args.address_rule == ADDRESS_RULE_E11 else 'E1'} "
+            "NOT MEASURED — required GPU receipts are incomplete."
+        )
 
     resume_path = output / "GPU_RESUME_COMMANDS.sh"
-    write_text(resume_path, gpu_resume_commands())
+    write_text(resume_path, gpu_resume_commands(args.address_rule))
     try:
         resume_path.chmod(0o755)
     except OSError:
@@ -3866,9 +4575,13 @@ def analyze(args: argparse.Namespace) -> int:
     limitations: list[str] = [
         "The 20B model remains frozen and is used for inference only.",
         "Evidence is limited to one model, one sealed domain corpus, and the registered windows.",
-        "CPU synthetic checks validate machinery only and are not G0-G5 evidence.",
+        (
+            "CPU synthetic checks validate machinery only and are not G0-G5' evidence."
+            if args.address_rule == ADDRESS_RULE_E11
+            else "CPU synthetic checks validate machinery only and are not G0-G5 evidence."
+        ),
     ]
-    blocked_path = output / "blocked.json"
+    blocked_file = blocked_path(output, args.address_rule)
     if incomplete and not gpu_available:
         blocked = {
             "schema": "moe_e1_cuda_blocked_v1",
@@ -3883,44 +4596,86 @@ def analyze(args: argparse.Namespace) -> int:
                 manifest.get("status") == "passed" and cpu_validation.get("status") == "passed"
             ),
         }
-        write_json(blocked_path, blocked)
+        write_json(blocked_file, blocked)
         limitations.append(
-            "GPU-dependent capture, fitting dependent on those captures, training, and behavioral gates could not run because /dev/nvidia0 and /dev/nvidiactl are absent."
+            (
+                "GPU-dependent pair captures, training, and behavioral gates could "
+                "not run because /dev/nvidia0 and /dev/nvidiactl are absent."
+                if args.address_rule == ADDRESS_RULE_E11
+                else "GPU-dependent capture, fitting dependent on those captures, "
+                "training, and behavioral gates could not run because /dev/nvidia0 "
+                "and /dev/nvidiactl are absent."
+            )
         )
     elif incomplete:
         limitations.append(f"Incomplete gate receipts: {', '.join(incomplete)}.")
 
     intended = {
         SCRIPT_PATH,
-        output / "analysis.json",
-        output / "MOE_E1_REPORT.md",
+        analysis_path(output, args.address_rule),
+        report_path(output, args.address_rule),
         resume_path,
     }
-    if blocked_path.exists() or (incomplete and not gpu_available):
-        intended.add(blocked_path)
-    current_files = {path.resolve() for path in output.rglob("*") if path.is_file()}
+    if blocked_file.exists() or (incomplete and not gpu_available):
+        intended.add(blocked_file)
+    if args.address_rule == ADDRESS_RULE_E11:
+        current_files = {
+            path.resolve()
+            for root in (
+                pair_root(output, args.address_rule),
+                eval_root(output, args.address_rule),
+                output / expertpack_dirname(args.address_rule),
+            )
+            if root.exists()
+            for path in root.rglob("*")
+            if path.is_file()
+        }
+        current_files.update(
+            path.resolve()
+            for path in (
+                cpu_validation_file,
+                fit_path,
+                _keys_path,
+                training_path,
+                analysis_path(output, args.address_rule),
+                report_path(output, args.address_rule),
+                resume_path,
+                blocked_file,
+            )
+            if path.exists()
+        )
+    else:
+        current_files = {
+            path.resolve() for path in output.rglob("*") if path.is_file()
+        }
     created_paths = sorted(str(path) for path in (current_files | intended))
     analysis = {
-        "schema": "moe_e1_analysis_v1",
+        "schema": (
+            "moe_e1_1_analysis_v1"
+            if args.address_rule == ADDRESS_RULE_E11
+            else "moe_e1_analysis_v1"
+        ),
         "created_at": now_iso(),
         "status": (
             "blocked_environment"
             if incomplete and not gpu_available
             else "complete" if not incomplete else "incomplete"
         ),
-        "order": str(ORDER_PATH),
+        "address_rule": args.address_rule,
+        "order": str(order_path_for_rule(args.address_rule)),
         "script": str(SCRIPT_PATH),
         "script_sha256": sha256_file(SCRIPT_PATH),
         "registered_verdict_sentence": registered_verdict,
         "evidence_class": "behavioral inference measurement on one model and one domain",
         "cuda_environment": cuda_probe,
         "cpu_validation": {
-            "path": str(cpu_validation_path),
-            "sha256": sha256_file(cpu_validation_path),
+            "path": str(cpu_validation_file),
+            "sha256": sha256_file(cpu_validation_file),
             "status": cpu_validation.get("status"),
             "synthetic_only_not_gate_evidence": True,
         },
         "gates": gates,
+        "qualifying_layers": gates["G2"].get("qualifying_layers", []),
         "g4": g4_payload,
         "g5": g5_payload,
         "install_row": install_row,
@@ -3934,18 +4689,18 @@ def analyze(args: argparse.Namespace) -> int:
         "bootstrap_resamples": int(args.bootstrap_resamples),
         "seed": int(args.seed),
     }
-    analysis_path = output / "analysis.json"
-    report_path = output / "MOE_E1_REPORT.md"
-    write_json(analysis_path, analysis)
-    write_text(report_path, render_report(analysis))
+    analysis_file = analysis_path(output, args.address_rule)
+    report_file = report_path(output, args.address_rule)
+    write_json(analysis_file, analysis)
+    write_text(report_file, render_report(analysis))
     print(
         json.dumps(
             {
                 "status": analysis["status"],
                 "verdict": registered_verdict,
                 "gates": {name: gate["verdict"] for name, gate in gates.items()},
-                "analysis": str(analysis_path),
-                "report": str(report_path),
+                "analysis": str(analysis_file),
+                "report": str(report_file),
                 "resume_commands": str(resume_path),
             }
         ),
@@ -3960,8 +4715,20 @@ def main() -> int:
     args = parse_args()
     try:
         ensure_registered_model_dir(args.model_dir)
+        if args.address_rule == ADDRESS_RULE_E11 and args.overwrite:
+            raise ValueError("E1.1 receipts are append-only; --overwrite is forbidden")
+        if args.address_rule == ADDRESS_RULE_E11 and args.mode in {
+            "prepare",
+            "capture-keys",
+        }:
+            raise ValueError(
+                "E1.1 reuses the frozen E1 preparation and key captures; this mode "
+                "is available only under the default --address-rule e1 path"
+            )
         if args.mode == "prepare":
             return prepare(args)
+        if args.mode == "self-test":
+            return self_test(args)
         if args.mode == "capture-keys":
             return capture_keys(args)
         if args.mode == "fit-key":
