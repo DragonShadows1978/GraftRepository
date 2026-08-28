@@ -59,6 +59,7 @@ if str(SCRIPT_DIR) not in sys.path:
 ORDER_PATH = REPO_ROOT / "orders" / "MOE_E1_NARRATIVE_EXPERT.md"
 E11_ORDER_PATH = REPO_ROOT / "orders" / "MOE_E1_1_AMENDED_ADDRESS_GATE.md"
 E13_ORDER_PATH = REPO_ROOT / "orders" / "MOE_E1_3_TEACHER_REDESIGN.md"
+E14_ORDER_PATH = REPO_ROOT / "orders" / "MOE_E1_4_BACKEND_FIX.md"
 RT1_DIR = REPO_ROOT / "artifacts" / "moe_rt1"
 RT2_DIR = REPO_ROOT / "artifacts" / "moe_rt2"
 RT2_1_DIR = REPO_ROOT / "artifacts" / "moe_rt2_1"
@@ -69,6 +70,11 @@ E13_PREFIX_MANIFEST_PATH = E13_OUTPUT_DIR / "prefix_manifest.json"
 E13_PREFIX_ARRAYS_PATH = E13_OUTPUT_DIR / "teacher_prefixes.npz"
 E13_SELECTION_PATH = E13_OUTPUT_DIR / "selection.json"
 E13_RESUME_PATH = E13_OUTPUT_DIR / "GPU_E13_RESUME_COMMANDS.sh"
+E14_OUTPUT_DIR = REPO_ROOT / "artifacts" / "moe_e1_4"
+E14_PREFIX_MANIFEST_PATH = E14_OUTPUT_DIR / "teacher_prefix_manifest_e14.json"
+E14_PREFIX_ARRAYS_PATH = E14_OUTPUT_DIR / "teacher_prefixes_e14.npz"
+E14_SELECTION_PATH = E14_OUTPUT_DIR / "teacher_selection_e14.json"
+E14_CHAIN_PATH = E14_OUTPUT_DIR / "GPU_E14_CHAIN_COMMANDS.sh"
 EXPERTPACK_DIRNAME = "expertpack_narrative_v0"
 ADDRESS_RULE_E1 = "e1"
 ADDRESS_RULE_E11 = "e11"
@@ -78,7 +84,14 @@ EVAL_FIX_E12 = "e12"
 EVAL_FIXES = (EVAL_FIX_ORIGINAL, EVAL_FIX_E12)
 TEACHER_RULE_ORIGINAL = "original"
 TEACHER_RULE_E13 = "e13"
-TEACHER_RULES = (TEACHER_RULE_ORIGINAL, TEACHER_RULE_E13)
+TEACHER_RULE_E14 = "e14"
+TEACHER_RULES = (TEACHER_RULE_ORIGINAL, TEACHER_RULE_E13, TEACHER_RULE_E14)
+BACKEND_HISTORICAL = "historical-standard"
+BACKEND_E14_APA = "e14-apa"
+BACKENDS = (BACKEND_HISTORICAL, BACKEND_E14_APA)
+E14_APA_LAYER_SCOPE = "full"
+E14_APA_REFINE_PERCENTILE = 0.15
+E14_APA_BULK_BITS = 8
 SNAPSHOT = Path(
     "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/"
     "snapshots/6cee5e81ee83917806bbde320786a8fb61efebee"
@@ -189,7 +202,18 @@ def parse_args() -> argparse.Namespace:
         default=TEACHER_RULE_ORIGINAL,
         help=(
             "teacher construction registration; original preserves E1/E1.1, "
-            "e13 opts into the positive-gap winner sealed by ORDER MOE-E1.3"
+            "e13 opts into ORDER MOE-E1.3, and e14 reads the fixed-backend "
+            "P0-P4 winner sealed by ORDER MOE-E1.4"
+        ),
+    )
+    parser.add_argument(
+        "--backend",
+        choices=BACKENDS,
+        default=BACKEND_HISTORICAL,
+        help=(
+            "forward backend registration; historical-standard preserves every "
+            "E1/E1.1/E1.3 receipt, while e14-apa opts into ORDER MOE-E1.4's "
+            "proven full-layer APA path"
         ),
     )
     parser.add_argument("--model-dir", type=Path, default=SNAPSHOT)
@@ -222,6 +246,8 @@ def order_path_for_rule(address_rule: str) -> Path:
 
 
 def order_path_for_experiment(address_rule: str, teacher_rule: str) -> Path:
+    if teacher_rule == TEACHER_RULE_E14:
+        return E14_ORDER_PATH
     if teacher_rule == TEACHER_RULE_E13:
         return E13_ORDER_PATH
     return order_path_for_rule(address_rule)
@@ -236,6 +262,8 @@ def expertpack_dirname(address_rule: str) -> str:
 
 
 def experiment_output(output: Path, teacher_rule: str) -> Path:
+    if teacher_rule == TEACHER_RULE_E14:
+        return E14_OUTPUT_DIR
     if teacher_rule == TEACHER_RULE_E13:
         return E13_OUTPUT_DIR
     return output
@@ -246,6 +274,8 @@ def expertpack_path(
     address_rule: str,
     teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> Path:
+    if teacher_rule == TEACHER_RULE_E14:
+        return E14_OUTPUT_DIR / "expertpack_narrative_v0_e14" / "manifest.json"
     if teacher_rule == TEACHER_RULE_E13:
         return E13_OUTPUT_DIR / "expertpack_narrative_v0_e13" / "manifest.json"
     return output / expertpack_dirname(address_rule) / "manifest.json"
@@ -274,6 +304,8 @@ def pair_root(
     address_rule: str,
     teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> Path:
+    if teacher_rule == TEACHER_RULE_E14:
+        return E14_OUTPUT_DIR / "pairs_e14"
     if teacher_rule == TEACHER_RULE_E13:
         return E13_OUTPUT_DIR / "pairs_e13"
     return output / ("pairs_e11" if address_rule == ADDRESS_RULE_E11 else "pairs")
@@ -284,6 +316,8 @@ def train_path(
     address_rule: str,
     teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> Path:
+    if teacher_rule == TEACHER_RULE_E14:
+        return E14_OUTPUT_DIR / "train_e14.json"
     if teacher_rule == TEACHER_RULE_E13:
         return E13_OUTPUT_DIR / "train_e13.json"
     suffix = "_e11" if address_rule == ADDRESS_RULE_E11 else ""
@@ -295,6 +329,8 @@ def eval_root(
     address_rule: str,
     teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> Path:
+    if teacher_rule == TEACHER_RULE_E14:
+        return E14_OUTPUT_DIR / "eval_e14"
     if teacher_rule == TEACHER_RULE_E13:
         return E13_OUTPUT_DIR / "eval_e13"
     return output / ("eval_e11" if address_rule == ADDRESS_RULE_E11 else "eval")
@@ -306,6 +342,10 @@ def eval_root_for_fix(
     eval_fix: str = EVAL_FIX_ORIGINAL,
     teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> Path:
+    if teacher_rule == TEACHER_RULE_E14:
+        if eval_fix != EVAL_FIX_ORIGINAL:
+            raise ValueError("E1.4 preserves the original established evaluation schedule")
+        return eval_root(output, address_rule, teacher_rule)
     if teacher_rule == TEACHER_RULE_E13:
         if eval_fix != EVAL_FIX_ORIGINAL:
             raise ValueError("E1.3 preserves the original established evaluation path")
@@ -324,6 +364,8 @@ def analysis_path(
     address_rule: str,
     teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> Path:
+    if teacher_rule == TEACHER_RULE_E14:
+        return E14_OUTPUT_DIR / "analysis_chain_e14.json"
     if teacher_rule == TEACHER_RULE_E13:
         return E13_OUTPUT_DIR / "analysis_e13.json"
     suffix = "_e11" if address_rule == ADDRESS_RULE_E11 else ""
@@ -335,6 +377,8 @@ def report_path(
     address_rule: str,
     teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> Path:
+    if teacher_rule == TEACHER_RULE_E14:
+        return E14_OUTPUT_DIR / "MOE_E1_4_CHAIN_REPORT.md"
     if teacher_rule == TEACHER_RULE_E13:
         return E13_OUTPUT_DIR / "MOE_E1_3_EXPERT_REPORT.md"
     return output / (
@@ -349,6 +393,8 @@ def blocked_path(
     address_rule: str,
     teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> Path:
+    if teacher_rule == TEACHER_RULE_E14:
+        return E14_OUTPUT_DIR / "blocked_chain_e14.json"
     if teacher_rule == TEACHER_RULE_E13:
         return E13_OUTPUT_DIR / "blocked_e13.json"
     suffix = "_e11" if address_rule == ADDRESS_RULE_E11 else ""
@@ -1639,6 +1685,71 @@ def load_e13_teacher_prefix(
     return prefix, provenance, selection
 
 
+def load_e14_selection() -> dict[str, Any]:
+    """Load the fixed-backend teacher decision sealed by ORDER MOE-E1.4."""
+
+    if not E14_SELECTION_PATH.is_file():
+        raise FileNotFoundError(
+            "ORDER MOE-E1.4 requires FG0 PASS and a completed positive-gap "
+            "P0-P4 selection before capture-pairs; run the E1.4 resweep first"
+        )
+    selection = read_json(E14_SELECTION_PATH)
+    if selection.get("status") != "selected_positive_gap":
+        raise RuntimeError(
+            "E1.4 has no positive teacher construction; downstream expert work "
+            f"must stop (selection status={selection.get('status')!r})"
+        )
+    if selection.get("backend") != BACKEND_E14_APA:
+        raise RuntimeError("E1.4 teacher selection is not bound to --backend e14-apa")
+    if selection.get("fg0_verdict") != "PASS":
+        raise RuntimeError("E1.4 teacher selection lacks the registered FG0 PASS")
+    winner = selection.get("winning_construction")
+    if winner not in {"p0", "p1", "p2", "p3", "p4"}:
+        raise RuntimeError(f"invalid E1.4 winning construction {winner!r}")
+    for key, path in (
+        ("prefix_manifest_sha256", E14_PREFIX_MANIFEST_PATH),
+        ("prefix_arrays_sha256", E14_PREFIX_ARRAYS_PATH),
+    ):
+        if not path.is_file() or selection.get(key) != sha256_file(path):
+            raise RuntimeError(f"E1.4 selected teacher dependency changed: {path}")
+    return selection
+
+
+def load_e14_teacher_prefix(
+    role: str,
+    index: int,
+) -> tuple[np.ndarray, dict[str, Any], dict[str, Any]]:
+    if role not in {"pair", "behavioral"}:
+        raise ValueError(f"invalid E1.4 prefix role {role!r}")
+    selection = load_e14_selection()
+    winner = selection["winning_construction"]
+    manifest = read_json(E14_PREFIX_MANIFEST_PATH)
+    if manifest.get("status") != "passed":
+        raise RuntimeError("E1.4 prefix manifest is not passed")
+    array_name = f"{role}_{winner}"
+    with np.load(E14_PREFIX_ARRAYS_PATH, allow_pickle=False) as stored:
+        if array_name not in stored.files:
+            raise RuntimeError(f"missing E1.4 prefix array {array_name}")
+        prefixes = np.ascontiguousarray(stored[array_name], dtype=np.int64)
+    expected_count = N_PAIR_WINDOWS if role == "pair" else N_BEHAVIORAL_WINDOWS
+    if prefixes.ndim != 2 or prefixes.shape[0] != expected_count:
+        raise RuntimeError(f"E1.4 prefix array {array_name} shape {prefixes.shape}")
+    if index not in range(expected_count):
+        raise ValueError(f"E1.4 {role} prefix index {index} is out of range")
+    declared_array = manifest["prefix_arrays"]["arrays"][array_name]
+    if (
+        list(prefixes.shape) != declared_array["shape"]
+        or str(prefixes.dtype) != declared_array["dtype"]
+        or sha256_array(prefixes) != declared_array["sha256"]
+    ):
+        raise RuntimeError(f"E1.4 prefix array {array_name} hash/shape mismatch")
+    prefix = np.ascontiguousarray(prefixes[index], dtype=np.int64)
+    provenance = manifest["prefixes"][role][winner][index]
+    if provenance["token_ids_sha256"] != sha256_array(prefix):
+        raise RuntimeError(f"E1.4 {role}/{winner}/{index} provenance hash mismatch")
+    return prefix, provenance, selection
+
+
 def key_capture_paths(output: Path, chunk_index: int) -> tuple[Path, Path, Path]:
     stem = f"narrative_chunk{chunk_index:02d}_router_inputs_fp16"
     return (
@@ -2680,6 +2791,101 @@ def initialize_e13_expertpack(
     return pack
 
 
+def initialize_e14_expertpack(
+    output: Path,
+    *,
+    address_rule: str,
+) -> dict[str, Any]:
+    """Create ExpertPack v0_e14 from the still-valid E1.1 address payload."""
+
+    if address_rule != ADDRESS_RULE_E11:
+        raise ValueError("ORDER MOE-E1.4 reuses the E1.1 G2' address")
+    selection = load_e14_selection()
+    source_path = expertpack_path(
+        output, address_rule, TEACHER_RULE_ORIGINAL
+    )
+    if not source_path.is_file():
+        raise FileNotFoundError(f"missing E1.1 addressed ExpertPack: {source_path}")
+    source = read_json(source_path)
+    if source.get("layer") is None or source.get("tau") is None:
+        raise RuntimeError("E1.1 G2' did not produce an addressed ExpertPack")
+    key_info = source.get("components", {}).get("key", {})
+    key_path = Path(key_info.get("path", ""))
+    if not key_path.is_file() or key_info.get("sha256") != sha256_file(key_path):
+        raise RuntimeError("E1.1 key component is missing or changed")
+    target_path = expertpack_path(output, address_rule, TEACHER_RULE_E14)
+    if target_path.is_file():
+        pack = read_json(target_path)
+        if (
+            pack.get("teacher_rule") != TEACHER_RULE_E14
+            or pack.get("backend") != BACKEND_E14_APA
+            or pack.get("winning_construction")
+            != selection["winning_construction"]
+            or pack.get("components", {}).get("key", {}).get("sha256")
+            != key_info.get("sha256")
+        ):
+            raise RuntimeError("existing E1.4 ExpertPack conflicts with selection/key")
+        return pack
+    target_root = target_path.parent
+    target_root.mkdir(parents=True, exist_ok=True)
+    pack = json.loads(json.dumps(source))
+    pack.update(
+        {
+            "schema": "expertpack_narrative_v0_e14",
+            "created_at": now_iso(),
+            "updated_at": now_iso(),
+            "address_rule": ADDRESS_RULE_E11,
+            "teacher_rule": TEACHER_RULE_E14,
+            "backend": BACKEND_E14_APA,
+            "attention_registration": {
+                "requested_mode": "apa_selective",
+                "apa_layer_scope": E14_APA_LAYER_SCOPE,
+                "refine_percentile": E14_APA_REFINE_PERCENTILE,
+                "bulk_bits": E14_APA_BULK_BITS,
+                "full_layer_kernel": "apa_selective_attention_sink",
+                "sliding_layer_backend": "standard_sink_sliding_chunked",
+            },
+            "winning_construction": selection["winning_construction"],
+            "winning_mean_gap": selection["winning_mean_gap"],
+            "status": "addressed_pending_e14_adapter_training",
+            "rank": 64,
+        }
+    )
+    pack["components"]["A"] = {
+        "path": str(target_root / "A_fp16.npy"),
+        "shape": [64, HIDDEN_DIM],
+        "storage_dtype": "float16",
+        "status": "missing",
+    }
+    pack["components"]["B"] = {
+        "path": str(target_root / "B_fp16.npy"),
+        "shape": [HIDDEN_DIM, 64],
+        "storage_dtype": "float16",
+        "initialization": "all zeros before training",
+        "status": "missing",
+    }
+    pack.pop("g3", None)
+    pack["provenance"].update(
+        {
+            "order": str(E14_ORDER_PATH),
+            "order_sha256": sha256_file(E14_ORDER_PATH),
+            "source_e11_expertpack": str(source_path),
+            "source_e11_expertpack_sha256": sha256_file(source_path),
+            "e14_selection": str(E14_SELECTION_PATH),
+            "e14_selection_sha256": sha256_file(E14_SELECTION_PATH),
+            "e14_prefix_manifest": str(E14_PREFIX_MANIFEST_PATH),
+            "e14_prefix_manifest_sha256": sha256_file(E14_PREFIX_MANIFEST_PATH),
+            "e14_prefix_arrays": str(E14_PREFIX_ARRAYS_PATH),
+            "e14_prefix_arrays_sha256": sha256_file(E14_PREFIX_ARRAYS_PATH),
+            "script": str(SCRIPT_PATH),
+            "script_sha256_at_e14_initialization": sha256_file(SCRIPT_PATH),
+        }
+    )
+    pack["limitations"] = ["E1.4 adapter A/B pending capture-pairs and train"]
+    write_json(target_path, pack)
+    return pack
+
+
 def load_addressed_pack(
     output: Path,
     *,
@@ -2727,7 +2933,9 @@ def capture_pairs(args: argparse.Namespace) -> int:
     cuda_probe = require_cuda()
     index = int(args.pair_index)
     pair_ids = np.ascontiguousarray(arrays["pair_ids"][index], dtype=np.int64)
-    if args.teacher_rule == TEACHER_RULE_E13:
+    if args.teacher_rule == TEACHER_RULE_E14:
+        prefix_ids, prefix_source, selection = load_e14_teacher_prefix("pair", index)
+    elif args.teacher_rule == TEACHER_RULE_E13:
         prefix_ids, prefix_source, selection = load_e13_teacher_prefix("pair", index)
     else:
         prefix_ids = np.ascontiguousarray(
@@ -2758,8 +2966,18 @@ def capture_pairs(args: argparse.Namespace) -> int:
 
     split = "TRAIN" if index < N_PAIR_TRAIN else "VALIDATION"
     started = time.perf_counter()
+    backend_contract = backend_receipt_contract(args.backend)
+    selection_path = (
+        E14_SELECTION_PATH
+        if args.teacher_rule == TEACHER_RULE_E14
+        else E13_SELECTION_PATH
+    )
     receipt: dict[str, Any] = {
-        "schema": "moe_e1_activation_pair_v1",
+        "schema": (
+            "moe_e1_4_activation_pair_v1"
+            if args.teacher_rule == TEACHER_RULE_E14
+            else "moe_e1_activation_pair_v1"
+        ),
         "created_at": now_iso(),
         "address_rule": args.address_rule,
         "teacher_rule": args.teacher_rule,
@@ -2786,19 +3004,22 @@ def capture_pairs(args: argparse.Namespace) -> int:
             None
             if selection is None
             else {
-                "path": str(E13_SELECTION_PATH),
-                "sha256": sha256_file(E13_SELECTION_PATH),
+                "path": str(selection_path),
+                "sha256": sha256_file(selection_path),
                 "winning_mean_gap": selection["winning_mean_gap"],
             }
         ),
         "model_dir": str(args.model_dir.resolve()),
-        "attention_mode": "standard",
+        "backend": args.backend,
+        "attention_mode": backend_contract["requested_attention_mode"],
+        "attention_registration": backend_contract,
         "expert_mode": "resident_packed_mxfp4",
         "compute_dtype": "bfloat16",
         "cuda_environment": cuda_probe,
         "gpu_before": nvidia_smi(),
         "completed_layers": 0,
         "layer_wall_seconds": [],
+        "attention_backends": [],
         "script_sha256_at_run": sha256_file(SCRIPT_PATH),
     }
     write_json(receipt_path, receipt)
@@ -2824,19 +3045,19 @@ def capture_pairs(args: argparse.Namespace) -> int:
                 block = runtime["GptOssDiagnosticBlockTC"].from_safetensors(
                     cfg, where, layer, expert_mode="resident_packed_mxfp4"
                 )
-                block.self_attn.attention_mode = "standard"
-                block.mlp.route_detail = "summary"
-                block.mlp.empty_cache_interval = 0
+                configure_block(block, args.backend)
                 h_teacher, kv_teacher, _route_teacher = block(h_teacher, cos, sin)
                 capture: dict[str, np.ndarray] = {}
                 if layer == layer_target:
                     rt1.install_router_capture(block.mlp, capture, capture_input=True)
                 h_student, kv_student, _route_student = block(h_student, cos, sin)
                 tc.synchronize()
+                observed_backend = verify_block_attention_backend(block, args.backend)
                 receipt["completed_layers"] = layer + 1
                 receipt["layer_wall_seconds"].append(
                     float(time.perf_counter() - layer_started)
                 )
+                receipt["attention_backends"].append(observed_backend)
                 receipt["status"] = "running"
                 receipt["wall_seconds"] = float(time.perf_counter() - started)
                 write_json(receipt_path, receipt)
@@ -2982,7 +3203,9 @@ def train(args: argparse.Namespace) -> int:
         raise ValueError("--train-tokens-per-window must be 1..512")
     output = ensure_output_dir(args.output_dir)
     _manifest, prepared = load_prepared(output)
-    if args.teacher_rule == TEACHER_RULE_E13:
+    if args.teacher_rule == TEACHER_RULE_E14:
+        pack = initialize_e14_expertpack(output, address_rule=args.address_rule)
+    elif args.teacher_rule == TEACHER_RULE_E13:
         pack = initialize_e13_expertpack(output, address_rule=args.address_rule)
     else:
         pack = load_addressed_pack(output, address_rule=args.address_rule)
@@ -2990,7 +3213,10 @@ def train(args: argparse.Namespace) -> int:
     A_path = pack_dir / "A_fp16.npy"
     B_path = pack_dir / "B_fp16.npy"
     training_path = train_path(output, args.address_rule, args.teacher_rule)
-    if args.address_rule == ADDRESS_RULE_E11 or args.teacher_rule == TEACHER_RULE_E13:
+    if args.address_rule == ADDRESS_RULE_E11 or args.teacher_rule in {
+        TEACHER_RULE_E13,
+        TEACHER_RULE_E14,
+    }:
         if training_path.is_file():
             prior = read_json(training_path)
             if prior.get("status") in {
@@ -3011,7 +3237,7 @@ def train(args: argparse.Namespace) -> int:
         existing = [path for path in (training_path, A_path, B_path) if path.exists()]
         if existing:
             raise FileExistsError(
-                "E1.1 training receipts are append-only; inspect partial outputs: "
+                "E1.1+ training receipts are append-only; inspect partial outputs: "
                 + ", ".join(str(path) for path in existing)
             )
     key = np.load(pack["components"]["key"]["path"], allow_pickle=False).astype(np.float32)
@@ -3189,15 +3415,25 @@ def train(args: argparse.Namespace) -> int:
     )
     g3_green = bool(np.isfinite(improvement) and improvement >= G3_IMPROVEMENT_FLOOR)
     training = {
-        "schema": "moe_e1_adapter_training_v1",
+        "schema": (
+            "moe_e1_4_adapter_training_v1"
+            if args.teacher_rule == TEACHER_RULE_E14
+            else "moe_e1_adapter_training_v1"
+        ),
         "created_at": now_iso(),
         "address_rule": args.address_rule,
         "teacher_rule": args.teacher_rule,
         "winning_construction": (
-            load_e13_selection()["winning_construction"]
-            if args.teacher_rule == TEACHER_RULE_E13
-            else None
+            load_e14_selection()["winning_construction"]
+            if args.teacher_rule == TEACHER_RULE_E14
+            else (
+                load_e13_selection()["winning_construction"]
+                if args.teacher_rule == TEACHER_RULE_E13
+                else None
+            )
         ),
+        "backend": args.backend,
+        "attention_registration": backend_receipt_contract(args.backend),
         "status": "complete_g3_green" if g3_green else "complete_g3_red_stop",
         "cpu_only": True,
         "order": str(order_path_for_experiment(args.address_rule, args.teacher_rule)),
@@ -3337,10 +3573,68 @@ def load_expert_arrays(
     return pack, np.ascontiguousarray(key), np.ascontiguousarray(A), np.ascontiguousarray(B)
 
 
-def configure_block(block) -> None:
-    block.self_attn.attention_mode = "standard"
+def backend_receipt_contract(backend: str) -> dict[str, Any]:
+    if backend == BACKEND_HISTORICAL:
+        return {
+            "backend": BACKEND_HISTORICAL,
+            "requested_attention_mode": "standard",
+            "apa_layer_scope": None,
+            "refine_percentile": None,
+            "bulk_bits": None,
+            "full_layer_kernel": "standard_sink",
+            "sliding_layer_backend": "standard_sink_sliding_chunked",
+        }
+    if backend == BACKEND_E14_APA:
+        return {
+            "backend": BACKEND_E14_APA,
+            "requested_attention_mode": "apa_selective",
+            "apa_layer_scope": E14_APA_LAYER_SCOPE,
+            "refine_percentile": E14_APA_REFINE_PERCENTILE,
+            "bulk_bits": E14_APA_BULK_BITS,
+            "full_layer_kernel": "apa_selective_attention_sink",
+            "full_layer_observed_backend": "apa_selective_sink_fused",
+            "sliding_layer_backend": "standard_sink_sliding_chunked",
+        }
+    raise ValueError(f"unsupported E1 backend {backend!r}")
+
+
+def configure_block(block, backend: str = BACKEND_HISTORICAL) -> None:
+    """Apply the registered E1 attention backend without changing the MoE ABI."""
+
+    if backend == BACKEND_HISTORICAL:
+        block.self_attn.attention_mode = "standard"
+    elif backend == BACKEND_E14_APA:
+        # This is the context-ladder/96K registration: APA is requested only
+        # on unbounded full-attention layers; bounded sliding layers retain
+        # their proven chunked standard path.
+        is_full = getattr(block.self_attn, "sliding_window", None) is None
+        block.self_attn.attention_mode = "apa_selective" if is_full else "standard"
+        block.self_attn.refine_percentile = E14_APA_REFINE_PERCENTILE
+        block.self_attn.bulk_bits = E14_APA_BULK_BITS
+    else:
+        raise ValueError(f"unsupported E1 backend {backend!r}")
     block.mlp.route_detail = "summary"
     block.mlp.empty_cache_interval = 0
+
+
+def verify_block_attention_backend(block, backend: str) -> str:
+    """Fail closed if e14-apa did not enter the exact proven kernel lineage."""
+
+    observed = str(getattr(block.self_attn, "last_attention_backend", ""))
+    if backend == BACKEND_E14_APA:
+        is_full = getattr(block.self_attn, "sliding_window", None) is None
+        expected = (
+            "apa_selective_sink_fused"
+            if is_full
+            else "standard_sink_sliding_chunked"
+        )
+        if observed != expected:
+            raise RuntimeError(
+                "E1.4 backend contract failed: expected "
+                f"{expected!r}, observed {observed!r}; the proven fused sink "
+                "kernel is mandatory on every full-attention layer"
+            )
+    return observed
 
 
 def block_forward_with_expert(
@@ -3549,7 +3843,11 @@ def initialize_eval_receipt(
         raise FileExistsError(f"stale eval receipt: {path}")
     started = time.perf_counter()
     receipt = {
-        "schema": "moe_e1_eval_unit_v1",
+        "schema": (
+            "moe_e1_4_eval_unit_v1"
+            if args.teacher_rule == TEACHER_RULE_E14
+            else "moe_e1_eval_unit_v1"
+        ),
         "created_at": now_iso(),
         "address_rule": args.address_rule,
         "eval_fix": args.eval_fix,
@@ -3573,7 +3871,11 @@ def initialize_eval_receipt(
         "script_sha256_at_run": sha256_file(SCRIPT_PATH),
         "cuda_environment": cuda_probe,
         "gpu_before": nvidia_smi(),
-        "attention_mode": "standard",
+        "backend": args.backend,
+        "attention_mode": backend_receipt_contract(args.backend)[
+            "requested_attention_mode"
+        ],
+        "attention_registration": backend_receipt_contract(args.backend),
         "expert_mode": "resident_packed_mxfp4",
         "compute_dtype": "bfloat16",
     }
@@ -3590,6 +3892,7 @@ def isolated_eval_arm_forward(
     arm_name: str,
     receipt: dict[str, Any],
     receipt_path: Path,
+    backend: str = BACKEND_HISTORICAL,
     expert: dict[str, Any] | None = None,
 ):
     """E1.2 opt-in arm isolation using the established streamed schedule.
@@ -3607,7 +3910,7 @@ def isolated_eval_arm_forward(
         block = runtime["GptOssDiagnosticBlockTC"].from_safetensors(
             cfg, where, layer, expert_mode="resident_packed_mxfp4"
         )
-        configure_block(block)
+        configure_block(block, backend)
         if expert is not None and layer == int(expert["install_layer"]):
             hidden, kv, route, fire_info = block_forward_with_expert(
                 block,
@@ -3624,11 +3927,12 @@ def isolated_eval_arm_forward(
         else:
             hidden, kv, route = block(hidden, cos, sin)
         tc.synchronize()
+        observed_backend = verify_block_attention_backend(block, backend)
         rows.append(
             {
                 "arm": arm_name,
                 "layer": layer,
-                "attention_backend": block.self_attn.last_attention_backend,
+                "attention_backend": observed_backend,
                 "wall_seconds": float(time.perf_counter() - layer_started),
             }
         )
@@ -3664,7 +3968,11 @@ def eval_narrative(
     manifest, prepared = load_prepared(output)
     index = int(args.window_index)
     window = prepared["behavioral_ids"][index]
-    if args.teacher_rule == TEACHER_RULE_E13:
+    if args.teacher_rule == TEACHER_RULE_E14:
+        prefix, prefix_source, selection = load_e14_teacher_prefix(
+            "behavioral", index
+        )
+    elif args.teacher_rule == TEACHER_RULE_E13:
         prefix, prefix_source, selection = load_e13_teacher_prefix(
             "behavioral", index
         )
@@ -3690,8 +3998,16 @@ def eval_narrative(
                 None
                 if selection is None
                 else {
-                    "path": str(E13_SELECTION_PATH),
-                    "sha256": sha256_file(E13_SELECTION_PATH),
+                    "path": str(
+                        E14_SELECTION_PATH
+                        if args.teacher_rule == TEACHER_RULE_E14
+                        else E13_SELECTION_PATH
+                    ),
+                    "sha256": sha256_file(
+                        E14_SELECTION_PATH
+                        if args.teacher_rule == TEACHER_RULE_E14
+                        else E13_SELECTION_PATH
+                    ),
                     "winning_mean_gap": selection["winning_mean_gap"],
                 }
             ),
@@ -3738,6 +4054,7 @@ def eval_narrative(
                     arm_name="teacher",
                     receipt=receipt,
                     receipt_path=path,
+                    backend=args.backend,
                 )
                 h_base, _ = isolated_eval_arm_forward(
                     runtime=runtime,
@@ -3747,6 +4064,7 @@ def eval_narrative(
                     arm_name="base",
                     receipt=receipt,
                     receipt_path=path,
+                    backend=args.backend,
                 )
                 h_expert, fire_info = isolated_eval_arm_forward(
                     runtime=runtime,
@@ -3756,6 +4074,7 @@ def eval_narrative(
                     arm_name="expert",
                     receipt=receipt,
                     receipt_path=path,
+                    backend=args.backend,
                     expert=expert_context,
                 )
             else:
@@ -3771,7 +4090,7 @@ def eval_narrative(
                     block = runtime["GptOssDiagnosticBlockTC"].from_safetensors(
                         cfg, where, layer, expert_mode="resident_packed_mxfp4"
                     )
-                    configure_block(block)
+                    configure_block(block, args.backend)
                     h_teacher, kv_t, _route_t = block(h_teacher, cos, sin)
                     h_base, kv_b, _route_b = block(h_base, cos, sin)
                     if layer == install_layer:
@@ -3792,10 +4111,13 @@ def eval_narrative(
                     else:
                         h_expert, kv_e, _route_e = block(h_expert, cos, sin)
                     tc.synchronize()
+                    observed_backend = verify_block_attention_backend(
+                        block, args.backend
+                    )
                     receipt["layers"].append(
                         {
                             "layer": layer,
-                            "attention_backend": block.self_attn.last_attention_backend,
+                            "attention_backend": observed_backend,
                             "wall_seconds": float(
                                 time.perf_counter() - layer_started
                             ),
@@ -3919,6 +4241,7 @@ def eval_generic(
                     arm_name="base",
                     receipt=receipt,
                     receipt_path=path,
+                    backend=args.backend,
                 )
                 h_expert, fire_info = isolated_eval_arm_forward(
                     runtime=runtime,
@@ -3928,6 +4251,7 @@ def eval_generic(
                     arm_name="expert",
                     receipt=receipt,
                     receipt_path=path,
+                    backend=args.backend,
                     expert=expert_context,
                 )
             else:
@@ -3942,7 +4266,7 @@ def eval_generic(
                     block = runtime["GptOssDiagnosticBlockTC"].from_safetensors(
                         cfg, where, layer, expert_mode="resident_packed_mxfp4"
                     )
-                    configure_block(block)
+                    configure_block(block, args.backend)
                     h_base, kv_b, _route_b = block(h_base, cos, sin)
                     if layer == install_layer:
                         h_expert, kv_e, _route_e, fire_info = (
@@ -3961,6 +4285,18 @@ def eval_generic(
                         )
                     else:
                         h_expert, kv_e, _route_e = block(h_expert, cos, sin)
+                    observed_backend = verify_block_attention_backend(
+                        block, args.backend
+                    )
+                    receipt.setdefault("layers", []).append(
+                        {
+                            "layer": layer,
+                            "attention_backend": observed_backend,
+                            "wall_seconds": float(
+                                time.perf_counter() - layer_started
+                            ),
+                        }
+                    )
                     receipt["completed_layers"] = layer + 1
                     receipt["status"] = "running_layers"
                     receipt["last_layer_wall_seconds"] = float(
@@ -4053,7 +4389,7 @@ def eval_code(
                 block = runtime["GptOssDiagnosticBlockTC"].from_safetensors(
                     cfg, where, layer, expert_mode="resident_packed_mxfp4"
                 )
-                configure_block(block)
+                configure_block(block, args.backend)
                 if layer == install_layer:
                     hidden, kv, _route, fire_info = block_forward_with_expert(
                         block,
@@ -4069,6 +4405,15 @@ def eval_code(
                     )
                 else:
                     hidden, kv, _route = block(hidden, cos, sin)
+                observed_backend = verify_block_attention_backend(
+                    block, args.backend
+                )
+                receipt.setdefault("layers", []).append(
+                    {
+                        "layer": layer,
+                        "attention_backend": observed_backend,
+                    }
+                )
                 receipt["completed_layers"] = layer + 1
                 receipt["status"] = "running_layers"
                 receipt["wall_seconds"] = float(time.perf_counter() - started)
@@ -4163,7 +4508,7 @@ def eval_abi(
                 block = runtime["GptOssDiagnosticBlockTC"].from_safetensors(
                     cfg, where, layer, expert_mode="resident_packed_mxfp4"
                 )
-                configure_block(block)
+                configure_block(block, args.backend)
                 h_zero_a, kv_za, _route_za = block(h_zero_a, cos, sin)
                 if layer == install_layer:
                     h_zero_b, kv_zb, _route_zb, empty_dispatch_info = (
@@ -4233,6 +4578,15 @@ def eval_abi(
                         mixed_info = candidate_info
                         mixed_base_np = h_mix_base.float().numpy().astype(np.float32, copy=True)
                         mixed_expert_np = h_mix.float().numpy().astype(np.float32, copy=True)
+                observed_backend = verify_block_attention_backend(
+                    block, args.backend
+                )
+                receipt.setdefault("layers", []).append(
+                    {
+                        "layer": layer,
+                        "attention_backend": observed_backend,
+                    }
+                )
                 receipt["completed_layers"] = layer + 1
                 receipt["status"] = "running_layers"
                 receipt["wall_seconds"] = float(time.perf_counter() - started)
@@ -4559,14 +4913,19 @@ def render_report(analysis: dict[str, Any]) -> str:
     g4 = analysis["g4_row"]
     is_e11 = analysis.get("address_rule") == ADDRESS_RULE_E11
     is_e13 = analysis.get("teacher_rule") == TEACHER_RULE_E13
+    is_e14 = analysis.get("teacher_rule") == TEACHER_RULE_E14
     lines = [
         (
-            "# MOE-E1.3 NarrativeForge Expert Report"
-            if is_e13
+            "# MOE-E1.4 NarrativeForge Expert Report"
+            if is_e14
             else (
-                "# MOE-E1.1 NarrativeForge Expert Report"
-                if is_e11
-                else "# MOE-E1 NarrativeForge Expert Report"
+                "# MOE-E1.3 NarrativeForge Expert Report"
+                if is_e13
+                else (
+                    "# MOE-E1.1 NarrativeForge Expert Report"
+                    if is_e11
+                    else "# MOE-E1 NarrativeForge Expert Report"
+                )
             )
         ),
         "",
@@ -4752,7 +5111,7 @@ def analyze(args: argparse.Namespace) -> int:
     pack_path = expertpack_path(output, args.address_rule, args.teacher_rule)
     if pack_path.is_file():
         pack = read_json(pack_path)
-    elif args.teacher_rule == TEACHER_RULE_E13:
+    elif args.teacher_rule in {TEACHER_RULE_E13, TEACHER_RULE_E14}:
         pack = read_json(
             expertpack_path(output, args.address_rule, TEACHER_RULE_ORIGINAL)
         )
@@ -5066,35 +5425,47 @@ def analyze(args: argparse.Namespace) -> int:
 
     if premise_finding:
         experiment_label = (
-            "E1.3"
-            if args.teacher_rule == TEACHER_RULE_E13
-            else "E1.1" if args.address_rule == ADDRESS_RULE_E11 else "E1"
+            "E1.4"
+            if args.teacher_rule == TEACHER_RULE_E14
+            else (
+                "E1.3"
+                if args.teacher_rule == TEACHER_RULE_E13
+                else "E1.1" if args.address_rule == ADDRESS_RULE_E11 else "E1"
+            )
         )
         registered_verdict = (
             f"{experiment_label} "
             + (
-                "PREMISE FINDING: the selected E1.3 teacher construction did not "
+                "PREMISE FINDING: the selected fixed-backend teacher construction did not "
                 "improve perplexity "
-                if args.teacher_rule == TEACHER_RULE_E13
+                if args.teacher_rule in {TEACHER_RULE_E13, TEACHER_RULE_E14}
                 else "PREMISE FINDING: TRAIN-file guide prefixes did not improve perplexity "
             )
             + "on HELDOUT guide text; expert recovery is undefined and evaluation stops."
         )
     elif gates["G4"]["verdict"] == "GREEN":
         registered_verdict = (
-            "E1.3 SUPPORTED."
-            if args.teacher_rule == TEACHER_RULE_E13
+            "E1.4 SUPPORTED."
+            if args.teacher_rule == TEACHER_RULE_E14
             else (
-                "E1.1 SUPPORTED."
-                if args.address_rule == ADDRESS_RULE_E11
-                else "E1 SUPPORTED."
+                "E1.3 SUPPORTED."
+                if args.teacher_rule == TEACHER_RULE_E13
+                else (
+                    "E1.1 SUPPORTED."
+                    if args.address_rule == ADDRESS_RULE_E11
+                    else "E1 SUPPORTED."
+                )
             )
         )
     elif gates["G4"]["verdict"] == "RED":
         experiment_label = (
-            "E1.3"
-            if args.teacher_rule == TEACHER_RULE_E13
-            else "E1.1" if args.address_rule == ADDRESS_RULE_E11 else "E1"
+            "E1.4"
+            if args.teacher_rule == TEACHER_RULE_E14
+            else (
+                "E1.3"
+                if args.teacher_rule == TEACHER_RULE_E13
+                else "E1.1" if args.address_rule == ADDRESS_RULE_E11 else "E1"
+            )
         )
         registered_verdict = (
             f"{experiment_label} "
@@ -5103,9 +5474,13 @@ def analyze(args: argparse.Namespace) -> int:
         )
     elif not gpu_available:
         experiment_label = (
-            "E1.3"
-            if args.teacher_rule == TEACHER_RULE_E13
-            else "E1.1" if args.address_rule == ADDRESS_RULE_E11 else "E1"
+            "E1.4"
+            if args.teacher_rule == TEACHER_RULE_E14
+            else (
+                "E1.3"
+                if args.teacher_rule == TEACHER_RULE_E13
+                else "E1.1" if args.address_rule == ADDRESS_RULE_E11 else "E1"
+            )
         )
         registered_verdict = (
             f"{experiment_label} "
@@ -5114,16 +5489,26 @@ def analyze(args: argparse.Namespace) -> int:
         )
     else:
         experiment_label = (
-            "E1.3"
-            if args.teacher_rule == TEACHER_RULE_E13
-            else "E1.1" if args.address_rule == ADDRESS_RULE_E11 else "E1"
+            "E1.4"
+            if args.teacher_rule == TEACHER_RULE_E14
+            else (
+                "E1.3"
+                if args.teacher_rule == TEACHER_RULE_E13
+                else "E1.1" if args.address_rule == ADDRESS_RULE_E11 else "E1"
+            )
         )
         registered_verdict = (
             f"{experiment_label} "
             "NOT MEASURED — required GPU receipts are incomplete."
         )
 
-    if args.teacher_rule == TEACHER_RULE_E13:
+    if args.teacher_rule == TEACHER_RULE_E14:
+        resume_path = E14_CHAIN_PATH
+        if not resume_path.is_file():
+            raise FileNotFoundError(
+                "E1.4 chain script is absent; run the E1.4 CPU prepare first"
+            )
+    elif args.teacher_rule == TEACHER_RULE_E13:
         resume_path = E13_RESUME_PATH
         if not resume_path.is_file():
             raise FileNotFoundError(
@@ -5184,7 +5569,18 @@ def analyze(args: argparse.Namespace) -> int:
     }
     if blocked_file.exists() or (incomplete and not gpu_available):
         intended.add(blocked_file)
-    if args.teacher_rule == TEACHER_RULE_E13:
+    if args.teacher_rule == TEACHER_RULE_E14:
+        current_files = {
+            path.resolve()
+            for path in E14_OUTPUT_DIR.rglob("*")
+            if path.is_file()
+        }
+        current_files.update(
+            path.resolve()
+            for path in (cpu_validation_file, fit_path, _keys_path)
+            if path.exists()
+        )
+    elif args.teacher_rule == TEACHER_RULE_E13:
         current_files = {
             path.resolve()
             for path in E13_OUTPUT_DIR.rglob("*")
@@ -5228,12 +5624,16 @@ def analyze(args: argparse.Namespace) -> int:
     created_paths = sorted(str(path) for path in (current_files | intended))
     analysis = {
         "schema": (
-            "moe_e1_3_expert_analysis_v1"
-            if args.teacher_rule == TEACHER_RULE_E13
+            "moe_e1_4_expert_analysis_v1"
+            if args.teacher_rule == TEACHER_RULE_E14
             else (
-                "moe_e1_1_analysis_v1"
-                if args.address_rule == ADDRESS_RULE_E11
-                else "moe_e1_analysis_v1"
+                "moe_e1_3_expert_analysis_v1"
+                if args.teacher_rule == TEACHER_RULE_E13
+                else (
+                    "moe_e1_1_analysis_v1"
+                    if args.address_rule == ADDRESS_RULE_E11
+                    else "moe_e1_analysis_v1"
+                )
             )
         ),
         "created_at": now_iso(),
@@ -5244,10 +5644,16 @@ def analyze(args: argparse.Namespace) -> int:
         ),
         "address_rule": args.address_rule,
         "teacher_rule": args.teacher_rule,
+        "backend": args.backend,
+        "attention_registration": backend_receipt_contract(args.backend),
         "winning_construction": (
-            load_e13_selection()["winning_construction"]
-            if args.teacher_rule == TEACHER_RULE_E13
-            else None
+            load_e14_selection()["winning_construction"]
+            if args.teacher_rule == TEACHER_RULE_E14
+            else (
+                load_e13_selection()["winning_construction"]
+                if args.teacher_rule == TEACHER_RULE_E13
+                else None
+            )
         ),
         "order": str(order_path_for_experiment(args.address_rule, args.teacher_rule)),
         "script": str(SCRIPT_PATH),
@@ -5302,6 +5708,19 @@ def main() -> int:
     args = parse_args()
     try:
         ensure_registered_model_dir(args.model_dir)
+        if args.teacher_rule == TEACHER_RULE_E14:
+            if args.address_rule != ADDRESS_RULE_E11:
+                raise ValueError("--teacher-rule e14 requires --address-rule e11")
+            if args.backend != BACKEND_E14_APA:
+                raise ValueError("--teacher-rule e14 requires --backend e14-apa")
+            if args.eval_fix != EVAL_FIX_ORIGINAL:
+                raise ValueError("--teacher-rule e14 preserves --eval-fix original")
+            if args.mode not in {"capture-pairs", "train", "eval-gates", "analyze"}:
+                raise ValueError(
+                    "--teacher-rule e14 begins at capture-pairs and supports only "
+                    "capture-pairs/train/eval-gates/analyze"
+                )
+            load_e14_selection()
         if args.teacher_rule == TEACHER_RULE_E13:
             if args.address_rule != ADDRESS_RULE_E11:
                 raise ValueError("--teacher-rule e13 requires --address-rule e11")
@@ -5313,6 +5732,10 @@ def main() -> int:
                     "capture-pairs/train/eval-gates/analyze"
                 )
             load_e13_selection()
+        if args.backend == BACKEND_E14_APA and args.teacher_rule != TEACHER_RULE_E14:
+            raise ValueError(
+                "--backend e14-apa is append-only and requires --teacher-rule e14"
+            )
         if args.eval_fix == EVAL_FIX_E12 and (
             args.address_rule != ADDRESS_RULE_E11 or args.mode != "eval-gates"
         ):
