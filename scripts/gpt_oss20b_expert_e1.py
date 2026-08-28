@@ -62,10 +62,14 @@ RT1_DIR = REPO_ROOT / "artifacts" / "moe_rt1"
 RT2_DIR = REPO_ROOT / "artifacts" / "moe_rt2"
 RT2_1_DIR = REPO_ROOT / "artifacts" / "moe_rt2_1"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "artifacts" / "moe_e1"
+E12_DIAG_ANALYSIS_PATH = REPO_ROOT / "artifacts" / "moe_e1_diag" / "analysis.json"
 EXPERTPACK_DIRNAME = "expertpack_narrative_v0"
 ADDRESS_RULE_E1 = "e1"
 ADDRESS_RULE_E11 = "e11"
 ADDRESS_RULES = (ADDRESS_RULE_E1, ADDRESS_RULE_E11)
+EVAL_FIX_ORIGINAL = "original"
+EVAL_FIX_E12 = "e12"
+EVAL_FIXES = (EVAL_FIX_ORIGINAL, EVAL_FIX_E12)
 SNAPSHOT = Path(
     "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/"
     "snapshots/6cee5e81ee83917806bbde320786a8fb61efebee"
@@ -161,6 +165,15 @@ def parse_args() -> argparse.Namespace:
             "e11 opts into ORDER MOE-E1.1"
         ),
     )
+    parser.add_argument(
+        "--eval-fix",
+        choices=EVAL_FIXES,
+        default=EVAL_FIX_ORIGINAL,
+        help=(
+            "evaluation execution schedule; original preserves E1/E1.1 receipts, "
+            "e12 opts into isolated arm forwards for ORDER MOE-E1.2"
+        ),
+    )
     parser.add_argument("--model-dir", type=Path, default=SNAPSHOT)
     parser.add_argument("--chunk-index", type=int)
     parser.add_argument("--pair-index", type=int)
@@ -219,6 +232,20 @@ def train_path(output: Path, address_rule: str) -> Path:
 
 def eval_root(output: Path, address_rule: str) -> Path:
     return output / ("eval_e11" if address_rule == ADDRESS_RULE_E11 else "eval")
+
+
+def eval_root_for_fix(
+    output: Path,
+    address_rule: str,
+    eval_fix: str = EVAL_FIX_ORIGINAL,
+) -> Path:
+    if eval_fix == EVAL_FIX_E12:
+        if address_rule != ADDRESS_RULE_E11:
+            raise ValueError("--eval-fix e12 requires --address-rule e11")
+        return output / "eval_e11_e12"
+    if eval_fix != EVAL_FIX_ORIGINAL:
+        raise ValueError(f"unsupported eval fix {eval_fix!r}")
+    return eval_root(output, address_rule)
 
 
 def analysis_path(output: Path, address_rule: str) -> Path:
@@ -3212,8 +3239,9 @@ def eval_receipt_path(
     kind: str,
     window_index: int | None,
     address_rule: str = ADDRESS_RULE_E1,
+    eval_fix: str = EVAL_FIX_ORIGINAL,
 ) -> Path:
-    root = eval_root(output, address_rule)
+    root = eval_root_for_fix(output, address_rule, eval_fix)
     if kind == "abi":
         return root / "abi.json"
     if window_index is None:
@@ -3229,7 +3257,13 @@ def initialize_eval_receipt(
     window_index: int | None,
     cuda_probe: dict[str, Any],
 ) -> tuple[Path, dict[str, Any], float]:
-    path = eval_receipt_path(output, kind, window_index, args.address_rule)
+    path = eval_receipt_path(
+        output,
+        kind,
+        window_index,
+        args.address_rule,
+        args.eval_fix,
+    )
     if path.is_file() and not args.overwrite:
         prior = read_json(path)
         if prior.get("status") == "complete":
@@ -3241,6 +3275,7 @@ def initialize_eval_receipt(
         "schema": "moe_e1_eval_unit_v1",
         "created_at": now_iso(),
         "address_rule": args.address_rule,
+        "eval_fix": args.eval_fix,
         "status": "starting",
         "kind": kind,
         "window_index": window_index,
@@ -3265,6 +3300,75 @@ def initialize_eval_receipt(
     }
     write_json(path, receipt)
     return path, receipt, started
+
+
+def isolated_eval_arm_forward(
+    *,
+    runtime,
+    cfg,
+    where,
+    hidden,
+    arm_name: str,
+    receipt: dict[str, Any],
+    receipt_path: Path,
+    expert: dict[str, Any] | None = None,
+):
+    """E1.2 opt-in arm isolation using the established streamed schedule.
+
+    Each loaded block is called exactly once and synchronized before release.
+    The original multi-arm schedule remains the default path.
+    """
+
+    tc = runtime["tc"]
+    cos, sin = runtime["gpt_oss_yarn_rope_tables"](cfg, int(hidden.shape[1]))
+    rows: list[dict[str, Any]] = []
+    fire_info: dict[str, Any] | None = None
+    for layer in range(N_LAYERS):
+        layer_started = time.perf_counter()
+        block = runtime["GptOssDiagnosticBlockTC"].from_safetensors(
+            cfg, where, layer, expert_mode="resident_packed_mxfp4"
+        )
+        configure_block(block)
+        if expert is not None and layer == int(expert["install_layer"]):
+            hidden, kv, route, fire_info = block_forward_with_expert(
+                block,
+                hidden,
+                cos,
+                sin,
+                tc=tc,
+                compute_dtype=expert["compute_dtype"],
+                key=expert["key"],
+                tau=float(expert["tau"]),
+                A_device=expert["A_device"],
+                B_device=expert["B_device"],
+            )
+        else:
+            hidden, kv, route = block(hidden, cos, sin)
+        tc.synchronize()
+        rows.append(
+            {
+                "arm": arm_name,
+                "layer": layer,
+                "attention_backend": block.self_attn.last_attention_backend,
+                "wall_seconds": float(time.perf_counter() - layer_started),
+            }
+        )
+        receipt.setdefault("layers_by_arm", {})[arm_name] = rows
+        receipt["completed_layers"] = layer + 1
+        receipt["completed_arm_layers"] = sum(
+            len(arm_rows)
+            for arm_rows in receipt.get("layers_by_arm", {}).values()
+        )
+        receipt["status"] = f"running_{arm_name}_layers"
+        write_json(receipt_path, receipt)
+        del block, kv, route
+        gc.collect()
+        if hasattr(tc, "empty_cache"):
+            tc.empty_cache()
+    del cos, sin
+    if expert is not None and fire_info is None:
+        raise RuntimeError(f"isolated expert arm {arm_name} missed install layer")
+    return hidden, fire_info
 
 
 def eval_narrative(
@@ -3314,48 +3418,101 @@ def eval_narrative(
             h_teacher = embed(teacher_ids)
             h_base = embed(base_ids)
             h_expert = embed(base_ids)
-            cos, sin = runtime["gpt_oss_yarn_rope_tables"](cfg, teacher_ids.shape[1])
             fire_info: dict[str, Any] | None = None
-            receipt["layers"] = []
-            for layer in range(N_LAYERS):
-                layer_started = time.perf_counter()
-                block = runtime["GptOssDiagnosticBlockTC"].from_safetensors(
-                    cfg, where, layer, expert_mode="resident_packed_mxfp4"
+            if args.eval_fix == EVAL_FIX_E12:
+                receipt["execution_schedule"] = (
+                    "e12_isolated_arms_one_call_per_block_synchronize_each_call"
                 )
-                configure_block(block)
-                h_teacher, kv_t, _route_t = block(h_teacher, cos, sin)
-                h_base, kv_b, _route_b = block(h_base, cos, sin)
-                if layer == install_layer:
-                    h_expert, kv_e, _route_e, fire_info = block_forward_with_expert(
-                        block,
-                        h_expert,
-                        cos,
-                        sin,
-                        tc=tc,
-                        compute_dtype=compute_dtype,
-                        key=key,
-                        tau=float(pack["tau"]),
-                        A_device=A_device,
-                        B_device=B_device,
+                expert_context = {
+                    "install_layer": install_layer,
+                    "compute_dtype": compute_dtype,
+                    "key": key,
+                    "tau": float(pack["tau"]),
+                    "A_device": A_device,
+                    "B_device": B_device,
+                }
+                h_teacher, _ = isolated_eval_arm_forward(
+                    runtime=runtime,
+                    cfg=cfg,
+                    where=where,
+                    hidden=h_teacher,
+                    arm_name="teacher",
+                    receipt=receipt,
+                    receipt_path=path,
+                )
+                h_base, _ = isolated_eval_arm_forward(
+                    runtime=runtime,
+                    cfg=cfg,
+                    where=where,
+                    hidden=h_base,
+                    arm_name="base",
+                    receipt=receipt,
+                    receipt_path=path,
+                )
+                h_expert, fire_info = isolated_eval_arm_forward(
+                    runtime=runtime,
+                    cfg=cfg,
+                    where=where,
+                    hidden=h_expert,
+                    arm_name="expert",
+                    receipt=receipt,
+                    receipt_path=path,
+                    expert=expert_context,
+                )
+            else:
+                receipt["execution_schedule"] = (
+                    "original_shared_block_teacher_base_expert_then_synchronize"
+                )
+                cos, sin = runtime["gpt_oss_yarn_rope_tables"](
+                    cfg, teacher_ids.shape[1]
+                )
+                receipt["layers"] = []
+                for layer in range(N_LAYERS):
+                    layer_started = time.perf_counter()
+                    block = runtime["GptOssDiagnosticBlockTC"].from_safetensors(
+                        cfg, where, layer, expert_mode="resident_packed_mxfp4"
                     )
-                else:
-                    h_expert, kv_e, _route_e = block(h_expert, cos, sin)
-                tc.synchronize()
-                receipt["layers"].append(
-                    {
-                        "layer": layer,
-                        "attention_backend": block.self_attn.last_attention_backend,
-                        "wall_seconds": float(time.perf_counter() - layer_started),
-                    }
-                )
-                receipt["completed_layers"] = layer + 1
-                receipt["status"] = "running_layers"
-                receipt["wall_seconds"] = float(time.perf_counter() - started)
-                write_json(path, receipt)
-                del block, kv_t, kv_b, kv_e, _route_t, _route_b, _route_e
-                gc.collect()
-                if hasattr(tc, "empty_cache"):
-                    tc.empty_cache()
+                    configure_block(block)
+                    h_teacher, kv_t, _route_t = block(h_teacher, cos, sin)
+                    h_base, kv_b, _route_b = block(h_base, cos, sin)
+                    if layer == install_layer:
+                        h_expert, kv_e, _route_e, fire_info = (
+                            block_forward_with_expert(
+                                block,
+                                h_expert,
+                                cos,
+                                sin,
+                                tc=tc,
+                                compute_dtype=compute_dtype,
+                                key=key,
+                                tau=float(pack["tau"]),
+                                A_device=A_device,
+                                B_device=B_device,
+                            )
+                        )
+                    else:
+                        h_expert, kv_e, _route_e = block(h_expert, cos, sin)
+                    tc.synchronize()
+                    receipt["layers"].append(
+                        {
+                            "layer": layer,
+                            "attention_backend": block.self_attn.last_attention_backend,
+                            "wall_seconds": float(
+                                time.perf_counter() - layer_started
+                            ),
+                        }
+                    )
+                    receipt["completed_layers"] = layer + 1
+                    receipt["status"] = "running_layers"
+                    receipt["wall_seconds"] = float(
+                        time.perf_counter() - started
+                    )
+                    write_json(path, receipt)
+                    del block, kv_t, kv_b, kv_e, _route_t, _route_b, _route_e
+                    gc.collect()
+                    if hasattr(tc, "empty_cache"):
+                        tc.empty_cache()
+                del cos, sin
             if fire_info is None:
                 raise RuntimeError("install layer did not execute expert gate")
             teacher_tail = h_teacher.slice(
@@ -3442,39 +3599,83 @@ def eval_generic(
             embed = runtime["GptOssRowEmbedding"](where)
             h_base = embed(input_ids)
             h_expert = embed(input_ids)
-            cos, sin = runtime["gpt_oss_yarn_rope_tables"](cfg, input_ids.shape[1])
             fire_info: dict[str, Any] | None = None
-            for layer in range(N_LAYERS):
-                layer_started = time.perf_counter()
-                block = runtime["GptOssDiagnosticBlockTC"].from_safetensors(
-                    cfg, where, layer, expert_mode="resident_packed_mxfp4"
+            if args.eval_fix == EVAL_FIX_E12:
+                receipt["execution_schedule"] = (
+                    "e12_isolated_arms_one_call_per_block_synchronize_each_call"
                 )
-                configure_block(block)
-                h_base, kv_b, _route_b = block(h_base, cos, sin)
-                if layer == install_layer:
-                    h_expert, kv_e, _route_e, fire_info = block_forward_with_expert(
-                        block,
-                        h_expert,
-                        cos,
-                        sin,
-                        tc=tc,
-                        compute_dtype=compute_dtype,
-                        key=key,
-                        tau=float(pack["tau"]),
-                        A_device=A_device,
-                        B_device=B_device,
+                expert_context = {
+                    "install_layer": install_layer,
+                    "compute_dtype": compute_dtype,
+                    "key": key,
+                    "tau": float(pack["tau"]),
+                    "A_device": A_device,
+                    "B_device": B_device,
+                }
+                h_base, _ = isolated_eval_arm_forward(
+                    runtime=runtime,
+                    cfg=cfg,
+                    where=where,
+                    hidden=h_base,
+                    arm_name="base",
+                    receipt=receipt,
+                    receipt_path=path,
+                )
+                h_expert, fire_info = isolated_eval_arm_forward(
+                    runtime=runtime,
+                    cfg=cfg,
+                    where=where,
+                    hidden=h_expert,
+                    arm_name="expert",
+                    receipt=receipt,
+                    receipt_path=path,
+                    expert=expert_context,
+                )
+            else:
+                receipt["execution_schedule"] = (
+                    "original_shared_block_base_expert_without_per_call_synchronize"
+                )
+                cos, sin = runtime["gpt_oss_yarn_rope_tables"](
+                    cfg, input_ids.shape[1]
+                )
+                for layer in range(N_LAYERS):
+                    layer_started = time.perf_counter()
+                    block = runtime["GptOssDiagnosticBlockTC"].from_safetensors(
+                        cfg, where, layer, expert_mode="resident_packed_mxfp4"
                     )
-                else:
-                    h_expert, kv_e, _route_e = block(h_expert, cos, sin)
-                receipt["completed_layers"] = layer + 1
-                receipt["status"] = "running_layers"
-                receipt["last_layer_wall_seconds"] = float(time.perf_counter() - layer_started)
-                receipt["wall_seconds"] = float(time.perf_counter() - started)
-                write_json(path, receipt)
-                del block, kv_b, kv_e, _route_b, _route_e
-                gc.collect()
-                if hasattr(tc, "empty_cache"):
-                    tc.empty_cache()
+                    configure_block(block)
+                    h_base, kv_b, _route_b = block(h_base, cos, sin)
+                    if layer == install_layer:
+                        h_expert, kv_e, _route_e, fire_info = (
+                            block_forward_with_expert(
+                                block,
+                                h_expert,
+                                cos,
+                                sin,
+                                tc=tc,
+                                compute_dtype=compute_dtype,
+                                key=key,
+                                tau=float(pack["tau"]),
+                                A_device=A_device,
+                                B_device=B_device,
+                            )
+                        )
+                    else:
+                        h_expert, kv_e, _route_e = block(h_expert, cos, sin)
+                    receipt["completed_layers"] = layer + 1
+                    receipt["status"] = "running_layers"
+                    receipt["last_layer_wall_seconds"] = float(
+                        time.perf_counter() - layer_started
+                    )
+                    receipt["wall_seconds"] = float(
+                        time.perf_counter() - started
+                    )
+                    write_json(path, receipt)
+                    del block, kv_b, kv_e, _route_b, _route_e
+                    gc.collect()
+                    if hasattr(tc, "empty_cache"):
+                        tc.empty_cache()
+                del cos, sin
             if fire_info is None:
                 raise RuntimeError("install layer did not execute expert gate")
             h_base_norm = final_norm(runtime, cfg, where, h_base)
@@ -4715,6 +4916,25 @@ def main() -> int:
     args = parse_args()
     try:
         ensure_registered_model_dir(args.model_dir)
+        if args.eval_fix == EVAL_FIX_E12 and (
+            args.address_rule != ADDRESS_RULE_E11 or args.mode != "eval-gates"
+        ):
+            raise ValueError(
+                "--eval-fix e12 is diagnosis-only and requires "
+                "--address-rule e11 eval-gates"
+            )
+        if args.eval_fix == EVAL_FIX_E12:
+            if not E12_DIAG_ANALYSIS_PATH.is_file():
+                raise RuntimeError(
+                    "--eval-fix e12 requires the completed MOE-E1.2 diagnostic "
+                    f"analysis at {E12_DIAG_ANALYSIS_PATH}"
+                )
+            diagnostic = read_json(E12_DIAG_ANALYSIS_PATH)
+            if diagnostic.get("mechanism") != "BUG":
+                raise RuntimeError(
+                    "--eval-fix e12 is authorized only after MECHANISM=BUG; "
+                    f"diagnostic currently says {diagnostic.get('mechanism')!r}"
+                )
         if args.address_rule == ADDRESS_RULE_E11 and args.overwrite:
             raise ValueError("E1.1 receipts are append-only; --overwrite is forbidden")
         if args.address_rule == ADDRESS_RULE_E11 and args.mode in {
