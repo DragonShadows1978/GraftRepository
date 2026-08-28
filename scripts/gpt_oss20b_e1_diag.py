@@ -24,6 +24,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import stat
 import subprocess
 import sys
@@ -50,8 +51,10 @@ import gpt_oss20b_expert_e1 as e1
 
 
 ORDER_PATH = REPO_ROOT / "orders" / "MOE_E1_2_DIAG_TEACHER_ARM.md"
+E13_ORDER_PATH = REPO_ROOT / "orders" / "MOE_E1_3_TEACHER_REDESIGN.md"
 E1_OUTPUT = REPO_ROOT / "artifacts" / "moe_e1"
 OUTPUT = REPO_ROOT / "artifacts" / "moe_e1_diag"
+E13_OUTPUT = REPO_ROOT / "artifacts" / "moe_e1_3"
 RT1_MANIFEST = REPO_ROOT / "artifacts" / "moe_rt1" / "corpora_manifest.json"
 RT1_WINDOWS = REPO_ROOT / "artifacts" / "moe_rt1" / "corpus_windows.npz"
 CONTEXT_LADDER_PATH = SCRIPT_DIR / "gpt_oss20b_context_ladder.py"
@@ -66,6 +69,30 @@ SAMPLE_POSITIONS = (1, 74, 146, 219, 291, 364, 436, 509)
 N_TARGETS = e1.WINDOW_TOKENS - 1
 MEAN_NLL_AGREEMENT_ATOL = 0.02
 PROFILE_NLL_P99_ATOL = 0.10
+
+E13_WINDOWS = (11, 13, 15, 1)
+E13_CONSTRUCTIONS = ("p1", "p2", "p3", "p4")
+E13_C0_WINDOW = 11
+E13_SEED = e1.DEFAULT_SEED
+E13_FRAME_OPEN = "The following are writing-craft guidelines...\n\n"
+E13_FRAME_CLOSE = "\n\nPassage:\n"
+E13_P1_CONTENT_TOKENS = 2048
+E13_P4_CONTENT_TOKENS = 512
+E13_C0_EXPLOSION_PPL_RATIO = 10.0
+E13_PREFIX_MANIFEST = E13_OUTPUT / "prefix_manifest.json"
+E13_PREFIX_ARRAYS = E13_OUTPUT / "teacher_prefixes.npz"
+E13_SELECTION = E13_OUTPUT / "selection.json"
+E13_REPORT = E13_OUTPUT / "MOE_E1_3_REPORT.md"
+E13_SWEEP_SCRIPT = E13_OUTPUT / "GPU_E13_SWEEP_COMMANDS.sh"
+E13_RESUME_SCRIPT = E13_OUTPUT / "GPU_E13_RESUME_COMMANDS.sh"
+
+E13_LIST_LINE_RE = re.compile(
+    r"^(?:[-+*•‣◦–—]|\d{1,4}[.)]|[A-Za-z][.)])\s+"
+)
+E13_ATX_HEADER_RE = re.compile(r"^#{1,6}(?:\s+|$)")
+E13_SETEXT_OR_RULE_RE = re.compile(r"^(?:=+|-{3,}|\*{3,}|_{3,})$")
+E13_SENTENCE_END_RE = re.compile(r"[.!?]+(?:[\"'”’)]*)?(?=\s|$)")
+E13_WORD_RE = re.compile(r"[A-Za-z]+(?:[-'’][A-Za-z]+)*")
 
 GPU_WRAPPER = (
     "flock -w 7200 /tmp/forge-gpu.lock "
@@ -102,7 +129,17 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "mode",
-        choices=("self-test", "audit", "score", "analyze", "analyze-e12"),
+        choices=(
+            "self-test",
+            "audit",
+            "score",
+            "analyze",
+            "analyze-e12",
+            "prepare-e13",
+            "self-test-e13",
+            "score-e13",
+            "analyze-e13",
+        ),
     )
     parser.add_argument("--output-dir", type=Path, default=OUTPUT)
     parser.add_argument("--model-dir", type=Path, default=e1.SNAPSHOT)
@@ -110,6 +147,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--prefix-kind", choices=PREFIX_KINDS)
     parser.add_argument("--path-kind", choices=PATH_KINDS)
     parser.add_argument("--attempt", type=int, default=0)
+    parser.add_argument("--e13-output-dir", type=Path, default=E13_OUTPUT)
+    parser.add_argument("--e13-window-index", type=int, choices=E13_WINDOWS)
+    parser.add_argument("--construction", choices=E13_CONSTRUCTIONS)
+    parser.add_argument(
+        "--score-kind",
+        choices=("c0", "sweep"),
+        help="E1.3 score unit; c0 is the contiguous control, sweep is one P cell",
+    )
+    parser.add_argument("--require-c0", action="store_true")
+    parser.add_argument("--require-complete", action="store_true")
     return parser.parse_args()
 
 
@@ -167,6 +214,37 @@ def ensure_model(path: Path) -> Path:
     if resolved != e1.SNAPSHOT.resolve():
         raise ValueError(f"diagnosis is sealed to {e1.SNAPSHOT.resolve()}")
     return resolved
+
+
+def ensure_e13_output(path: Path) -> Path:
+    resolved = path.expanduser().resolve()
+    if resolved != E13_OUTPUT.resolve():
+        raise ValueError(f"E1.3 artifacts are restricted to {E13_OUTPUT.resolve()}")
+    resolved.mkdir(parents=True, exist_ok=True)
+    return resolved
+
+
+def append_text_once(path: Path, marker: str, text: str) -> bool:
+    """Append one immutable synthesis snapshot, identified by an exact marker."""
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.is_file() and marker in path.read_text(encoding="utf-8"):
+        return False
+    with path.open("a", encoding="utf-8") as handle:
+        if path.stat().st_size:
+            handle.write("\n")
+        handle.write(text)
+        if not text.endswith("\n"):
+            handle.write("\n")
+    return True
+
+
+def write_once_exact(path: Path, text: str) -> None:
+    if path.is_file():
+        if path.read_text(encoding="utf-8") != text:
+            raise FileExistsError(f"append-only artifact differs from requested content: {path}")
+        return
+    write_text(path, text)
 
 
 def cuda_probe() -> dict[str, Any]:
@@ -358,6 +436,1879 @@ def diagnostic_inputs(
         "prefix_source": prefix_source,
         "prepared_windows": manifest["prepared_windows"],
     }
+
+
+def tokenizer_ids(tokenizer, text: str) -> np.ndarray:
+    ids = tokenizer(text, add_special_tokens=False).input_ids
+    if ids and isinstance(ids[0], list):
+        ids = ids[0]
+    return np.asarray(ids, dtype=np.int64)
+
+
+def prose_only_sentences(text: str) -> tuple[list[str], dict[str, int]]:
+    """Apply the registered E1.3 deterministic Markdown prose filter.
+
+    Filtering is deliberately physical-line based before sentence extraction:
+    fenced/indented code, headings, rules, tables, quotes, HTML-only lines, and
+    list items are removed wholesale.  Remaining adjacent lines form a prose
+    paragraph.  Only complete ``.``, ``?``, or ``!`` terminated spans with at
+    least five alphabetic words and 24 characters survive.
+    """
+
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+    counts = {
+        "physical_lines": 0,
+        "blank_lines": 0,
+        "fence_lines": 0,
+        "fenced_content_lines": 0,
+        "indented_code_lines": 0,
+        "header_lines": 0,
+        "rule_lines": 0,
+        "table_lines": 0,
+        "list_lines": 0,
+        "quote_lines": 0,
+        "html_only_lines": 0,
+        "candidate_lines": 0,
+        "candidate_paragraphs": 0,
+        "complete_sentence_spans": 0,
+        "kept_sentences": 0,
+    }
+    paragraphs: list[str] = []
+    pending: list[str] = []
+    fence_marker: str | None = None
+
+    def flush() -> None:
+        if pending:
+            paragraphs.append(" ".join(pending))
+            pending.clear()
+
+    for raw_line in normalized.split("\n"):
+        counts["physical_lines"] += 1
+        stripped = raw_line.strip()
+        if stripped.startswith("```") or stripped.startswith("~~~"):
+            flush()
+            marker = stripped[:3]
+            if fence_marker is None:
+                fence_marker = marker
+            elif marker == fence_marker:
+                fence_marker = None
+            counts["fence_lines"] += 1
+            continue
+        if fence_marker is not None:
+            flush()
+            counts["fenced_content_lines"] += 1
+            continue
+        if not stripped:
+            flush()
+            counts["blank_lines"] += 1
+            continue
+        if raw_line.startswith("    ") or raw_line.startswith("\t"):
+            flush()
+            counts["indented_code_lines"] += 1
+            continue
+        if E13_ATX_HEADER_RE.match(stripped):
+            flush()
+            counts["header_lines"] += 1
+            continue
+        if E13_SETEXT_OR_RULE_RE.fullmatch(stripped):
+            flush()
+            counts["rule_lines"] += 1
+            continue
+        if "|" in stripped:
+            flush()
+            counts["table_lines"] += 1
+            continue
+        if E13_LIST_LINE_RE.match(stripped):
+            flush()
+            counts["list_lines"] += 1
+            continue
+        if stripped.startswith(">"):
+            flush()
+            counts["quote_lines"] += 1
+            continue
+        if stripped.startswith("<") and stripped.endswith(">"):
+            flush()
+            counts["html_only_lines"] += 1
+            continue
+        pending.append(" ".join(stripped.split()))
+        counts["candidate_lines"] += 1
+    flush()
+    counts["candidate_paragraphs"] = len(paragraphs)
+
+    sentences: list[str] = []
+    for paragraph in paragraphs:
+        start = 0
+        for match in E13_SENTENCE_END_RE.finditer(paragraph):
+            sentence = paragraph[start : match.end()].strip()
+            start = match.end()
+            counts["complete_sentence_spans"] += 1
+            if len(sentence) < 24 or len(E13_WORD_RE.findall(sentence)) < 5:
+                continue
+            sentences.append(sentence)
+    counts["kept_sentences"] = len(sentences)
+    return sentences, counts
+
+
+def prose_stream_record(path: Path, tokenizer) -> dict[str, Any]:
+    sentences, filter_counts = prose_only_sentences(
+        path.read_text(encoding="utf-8", errors="strict")
+    )
+    chunks: list[np.ndarray] = []
+    starts: list[int] = []
+    offset = 0
+    for sentence in sentences:
+        starts.append(offset)
+        chunk = tokenizer_ids(tokenizer, sentence + "\n")
+        if chunk.size:
+            chunks.append(chunk)
+            offset += int(chunk.size)
+        else:
+            starts.pop()
+    stream = (
+        np.concatenate(chunks).astype(np.int64, copy=False)
+        if chunks
+        else np.empty(0, dtype=np.int64)
+    )
+    valid_starts = [
+        int(item) for item in starts if int(stream.size) - int(item) >= E13_P1_CONTENT_TOKENS
+    ]
+    return {
+        "path": path,
+        "stream": np.ascontiguousarray(stream),
+        "sentence_start_tokens": valid_starts,
+        "filter_counts": filter_counts,
+        "filtered_token_count": int(stream.size),
+        "filtered_token_ids_sha256": sha256_array(stream),
+    }
+
+
+def e13_bound_corpus() -> tuple[
+    dict[str, Any],
+    dict[str, np.ndarray],
+    list[Path],
+    list[Path],
+]:
+    manifest, prepared = e1.load_prepared(E1_OUTPUT)
+    files = e1.discover_corpus_files()
+    train_files, heldout_files = e1.deterministic_file_split(files)
+    declared_train = [Path(item["path"]).resolve() for item in manifest["file_split"]["train"]]
+    declared_heldout = [
+        Path(item["path"]).resolve() for item in manifest["file_split"]["heldout"]
+    ]
+    if train_files != declared_train or heldout_files != declared_heldout:
+        raise RuntimeError("live corpus split differs from the sealed E1 manifest")
+    declared_by_path = {
+        Path(item["path"]).resolve(): item
+        for split in ("train", "heldout")
+        for item in manifest["file_split"][split]
+    }
+    for path in files:
+        record = declared_by_path[path]
+        if record["content_sha256"] != sha256_file(path):
+            raise RuntimeError(f"sealed guide file changed: {path}")
+    return manifest, prepared, train_files, heldout_files
+
+
+def p1_content_prefixes(
+    targets: Sequence[dict[str, Any]],
+    prose_records: dict[Path, dict[str, Any]],
+    *,
+    role: str,
+    avoid_same_source: bool,
+) -> tuple[np.ndarray, list[dict[str, Any]]]:
+    eligible = sorted(
+        [
+            path
+            for path, record in prose_records.items()
+            if record["sentence_start_tokens"]
+        ],
+        key=lambda path: (e1.sha256_bytes(path.name.encode("utf-8")), path.name),
+    )
+    if not eligible:
+        raise RuntimeError("P1 filter left no TRAIN file with 2,048 prose tokens")
+    rotation_start = int.from_bytes(
+        hashlib.sha256(
+            f"{E13_SEED}|e13|{role}|p1-prose-rotation".encode("utf-8")
+        ).digest()[:8],
+        "big",
+    ) % len(eligible)
+    arrays: list[np.ndarray] = []
+    provenance: list[dict[str, Any]] = []
+    for index, target in enumerate(targets):
+        target_path = Path(target["source_path"]).resolve()
+        offset = 0
+        while True:
+            source = eligible[(rotation_start + index + offset) % len(eligible)]
+            if not avoid_same_source or source != target_path:
+                break
+            offset += 1
+            if offset >= len(eligible):
+                raise RuntimeError("P1 cannot choose a distinct prose source")
+        record = prose_records[source]
+        starts = record["sentence_start_tokens"]
+        choice_hash = hashlib.sha256(
+            (
+                f"{E13_SEED}|e13|{role}|p1|{index}|"
+                f"{e1.corpus_relative(source)}"
+            ).encode("utf-8")
+        ).digest()
+        sentence_start_rank = int.from_bytes(choice_hash[:8], "big") % len(starts)
+        start = int(starts[sentence_start_rank])
+        stop = start + E13_P1_CONTENT_TOKENS
+        excerpt = np.ascontiguousarray(record["stream"][start:stop], dtype=np.int64)
+        if excerpt.shape != (E13_P1_CONTENT_TOKENS,):
+            raise RuntimeError(f"P1 prefix {role}/{index} shape {excerpt.shape}")
+        arrays.append(excerpt)
+        provenance.append(
+            {
+                "index": int(index),
+                "role": role,
+                "construction": "p1",
+                "source": e1.corpus_relative(source),
+                "source_path": str(source),
+                "source_split": "TRAIN",
+                "filtered_stream_start_token": start,
+                "filtered_stream_stop_token_exclusive": stop,
+                "starts_at_kept_sentence_boundary": True,
+                "final_sentence_may_be_token_budget_truncated": True,
+                "token_count": int(excerpt.size),
+                "token_ids_sha256": sha256_array(excerpt),
+                "rotation_start": int(rotation_start),
+                "rotation_offset": int(index + offset),
+                "sentence_start_rank": int(sentence_start_rank),
+                "same_file_as_target": bool(source == target_path),
+            }
+        )
+    return np.stack(arrays), provenance
+
+
+def p3_same_file_prefixes(
+    targets: Sequence[dict[str, Any]],
+    tokenized: dict[Path, np.ndarray],
+    split_files: Sequence[Path],
+    *,
+    role: str,
+    split_label: str,
+    secondary_files: Sequence[Path] = (),
+    secondary_split_label: str | None = None,
+) -> tuple[np.ndarray, list[dict[str, Any]]]:
+    allowed = set(split_files)
+    split_by_path = {path: split_label for path in split_files}
+    if secondary_files:
+        if secondary_split_label is None:
+            raise ValueError("secondary P3 fallback files require a split label")
+        split_by_path.update({path: secondary_split_label for path in secondary_files})
+    arrays: list[np.ndarray] = []
+    provenance: list[dict[str, Any]] = []
+    for index, target in enumerate(targets):
+        target_path = Path(target["source_path"]).resolve()
+        start = int(target["start_token"])
+        if target_path not in allowed:
+            raise RuntimeError(f"P3 target escapes its sealed split: {target_path}")
+        if start >= e1.PREFIX_TOKENS:
+            source = target_path
+            source_paths = [source]
+            excerpt_start = start - e1.PREFIX_TOKENS
+            construction = "same_file_preceding"
+            contiguous = True
+            fallback_rank = None
+            coordinate_space = "source_file_tokens"
+            excerpt = np.ascontiguousarray(
+                tokenized[source][excerpt_start : excerpt_start + e1.PREFIX_TOKENS],
+                dtype=np.int64,
+            )
+        else:
+            pools = [
+                (
+                    "same_split",
+                    [
+                        path
+                        for path in split_files
+                        if path != target_path
+                        and path.parent == target_path.parent
+                        and tokenized[path].size > 0
+                    ],
+                )
+            ]
+            if secondary_files:
+                pools.append(
+                    (
+                        "secondary_split",
+                        [
+                            path
+                            for path in secondary_files
+                            if path != target_path
+                            and path.parent == target_path.parent
+                            and tokenized[path].size > 0
+                        ],
+                    )
+                )
+            chosen: tuple[
+                Path | None,
+                list[Path],
+                np.ndarray,
+                str,
+                str,
+            ] | None = None
+            for pool_name, folder_candidates in pools:
+                if not folder_candidates:
+                    continue
+                ranked = sorted(
+                    folder_candidates,
+                    key=lambda path: (
+                        e1.sha256_bytes(
+                            (
+                                f"{E13_SEED}|e13|{role}|p3-fallback|{pool_name}|"
+                                f"{index}|{e1.corpus_relative(path)}"
+                            ).encode("utf-8")
+                        ),
+                        path.name,
+                    ),
+                )
+                long_sources = [
+                    path
+                    for path in ranked
+                    if tokenized[path].size >= e1.PREFIX_TOKENS
+                ]
+                if long_sources:
+                    source = long_sources[0]
+                    chosen = (
+                        source,
+                        [source],
+                        tokenized[source],
+                        f"same_folder_{pool_name}_file_fallback",
+                        "source_file_tokens",
+                    )
+                    break
+                virtual = np.concatenate([tokenized[path] for path in ranked]).astype(
+                    np.int64, copy=False
+                )
+                if virtual.size >= e1.PREFIX_TOKENS:
+                    chosen = (
+                        None,
+                        ranked,
+                        virtual,
+                        f"same_folder_{pool_name}_file_stream_fallback",
+                        "sha_ranked_file_stream_tokens",
+                    )
+                    break
+            if chosen is None:
+                raise RuntimeError(
+                    "P3 same-folder fallback sources total fewer than 2,048 tokens "
+                    f"for {target_path}"
+                )
+            source, source_paths, fallback_stream, construction, coordinate_space = chosen
+            fallback_rank = (
+                e1.sha256_bytes(
+                    (
+                        f"{E13_SEED}|e13|{role}|p3-selected-file|{index}|"
+                        f"{e1.corpus_relative(source)}"
+                    ).encode("utf-8")
+                )
+                if source is not None
+                else sha256_array(fallback_stream)
+            )
+            span = int(fallback_stream.size - e1.PREFIX_TOKENS + 1)
+            excerpt_start = int.from_bytes(
+                hashlib.sha256(
+                    (
+                        f"{E13_SEED}|e13|{role}|p3-fallback-start|{index}|"
+                        f"{construction}|{target_path.parent.name}"
+                    ).encode("utf-8")
+                ).digest()[:8],
+                "big",
+            ) % span
+            excerpt = np.ascontiguousarray(
+                fallback_stream[excerpt_start : excerpt_start + e1.PREFIX_TOKENS],
+                dtype=np.int64,
+            )
+            contiguous = False
+        if excerpt.shape != (e1.PREFIX_TOKENS,):
+            raise RuntimeError(f"P3 prefix {role}/{index} shape {excerpt.shape}")
+        arrays.append(excerpt)
+        provenance.append(
+            {
+                "index": int(index),
+                "role": role,
+                "construction": "p3",
+                "source": (
+                    e1.corpus_relative(source)
+                    if source is not None
+                    else f"{target_path.parent.name}/<seeded-same-folder-file-stream>"
+                ),
+                "source_path": None if source is None else str(source),
+                "source_paths": [str(path) for path in source_paths],
+                "source_split": (
+                    split_by_path[source_paths[0]]
+                    if len({split_by_path[path] for path in source_paths}) == 1
+                    else "MIXED"
+                ),
+                "source_splits": [split_by_path[path] for path in source_paths],
+                "source_start_token": int(excerpt_start),
+                "source_stop_token_exclusive": int(excerpt_start + e1.PREFIX_TOKENS),
+                "source_coordinate_space": coordinate_space,
+                "target_source": target["source"],
+                "target_start_token": start,
+                "recipe_branch": construction,
+                "contiguous_with_target": contiguous,
+                "fallback_selection_rank_sha256": fallback_rank,
+                "token_count": int(excerpt.size),
+                "token_ids_sha256": sha256_array(excerpt),
+            }
+        )
+    return np.stack(arrays), provenance
+
+
+def framed_prefixes(
+    p1: np.ndarray,
+    p1_provenance: Sequence[dict[str, Any]],
+    tokenizer,
+    *,
+    role: str,
+) -> tuple[np.ndarray, list[dict[str, Any]], np.ndarray, list[dict[str, Any]]]:
+    open_ids = tokenizer_ids(tokenizer, E13_FRAME_OPEN)
+    close_ids = tokenizer_ids(tokenizer, E13_FRAME_CLOSE)
+    p2_rows: list[np.ndarray] = []
+    p4_rows: list[np.ndarray] = []
+    p2_provenance: list[dict[str, Any]] = []
+    p4_provenance: list[dict[str, Any]] = []
+    for index in range(p1.shape[0]):
+        long_ids = np.concatenate([open_ids, p1[index], close_ids]).astype(
+            np.int64, copy=False
+        )
+        short_content = p1[index, -E13_P4_CONTENT_TOKENS:]
+        short_ids = np.concatenate([open_ids, short_content, close_ids]).astype(
+            np.int64, copy=False
+        )
+        p2_rows.append(np.ascontiguousarray(long_ids))
+        p4_rows.append(np.ascontiguousarray(short_ids))
+        common = {
+            "index": int(index),
+            "role": role,
+            "source": p1_provenance[index]["source"],
+            "source_path": p1_provenance[index]["source_path"],
+            "source_split": "TRAIN",
+            "frame_template": E13_FRAME_OPEN + "<prefix>" + E13_FRAME_CLOSE,
+            "frame_open_token_count": int(open_ids.size),
+            "frame_close_token_count": int(close_ids.size),
+        }
+        p2_provenance.append(
+            {
+                **common,
+                "construction": "p2",
+                "content_recipe": "the exact P1 2048-token content",
+                "content_token_count": E13_P1_CONTENT_TOKENS,
+                "token_count": int(long_ids.size),
+                "token_ids_sha256": sha256_array(long_ids),
+                "p1_token_ids_sha256": sha256_array(p1[index]),
+            }
+        )
+        p4_provenance.append(
+            {
+                **common,
+                "construction": "p4",
+                "content_recipe": "final 512 tokens of the exact P1 content",
+                "content_token_count": E13_P4_CONTENT_TOKENS,
+                "token_count": int(short_ids.size),
+                "token_ids_sha256": sha256_array(short_ids),
+                "parent_p1_token_ids_sha256": sha256_array(p1[index]),
+            }
+        )
+    return (
+        np.stack(p2_rows),
+        p2_provenance,
+        np.stack(p4_rows),
+        p4_provenance,
+    )
+
+
+def e13_sweep_commands() -> str:
+    return f"""#!/usr/bin/env bash
+set -euo pipefail
+
+repo_e13={str(REPO_ROOT)!r}
+diag_e13={str(SCRIPT_PATH)!r}
+cd "$repo_e13"
+
+run_gpu_e13() {{
+  local rc_e13=0
+  flock -w 7200 /tmp/forge-gpu.lock \\
+    timeout --signal=TERM --kill-after=5s 590s \\
+    env CUDA_VISIBLE_DEVICES=0 PYTHONDONTWRITEBYTECODE=1 \\
+      HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \\
+      python3 "$diag_e13" "$@" || rc_e13=$?
+  sleep 30
+  return "$rc_e13"
+}}
+
+# CPU preflight is idempotent and never rewrites a completed E1.3 artifact.
+env CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 \\
+  HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \\
+  python3 "$diag_e13" prepare-e13
+env CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 \\
+  HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \\
+  python3 "$diag_e13" self-test-e13
+
+# CG0: one contiguous 2,560-token HELDOUT control.  Explosion is a hard STOP.
+run_gpu_e13 score-e13 --score-kind c0
+env CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 \\
+  python3 "$diag_e13" analyze-e13 --require-c0
+
+# CG1: exactly 4 constructions x 4 registered HELDOUT windows = 16 GPU units.
+for construction_e13 in p1 p2 p3 p4; do
+  for window_e13 in 11 13 15 1; do
+    run_gpu_e13 score-e13 --score-kind sweep \\
+      --construction "$construction_e13" \\
+      --e13-window-index "$window_e13"
+  done
+done
+
+# CG2/CG3: registered winner selection or exact premise-stands STOP.
+env CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 \\
+  python3 "$diag_e13" analyze-e13 --require-complete
+"""
+
+
+def e13_resume_commands(winner: str) -> str:
+    if winner not in E13_CONSTRUCTIONS:
+        raise ValueError(f"invalid E1.3 winner {winner!r}")
+    return f"""#!/usr/bin/env bash
+set -euo pipefail
+
+repo_e13={str(REPO_ROOT)!r}
+expert_e13={str(e1.SCRIPT_PATH)!r}
+cd "$repo_e13"
+
+run_gpu_e13() {{
+  local rc_e13=0
+  flock -w 7200 /tmp/forge-gpu.lock \\
+    timeout --signal=TERM --kill-after=5s 590s \\
+    env CUDA_VISIBLE_DEVICES=0 PYTHONDONTWRITEBYTECODE=1 \\
+      HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \\
+      python3 "$expert_e13" "$@" || rc_e13=$?
+  sleep 30
+  return "$rc_e13"
+}}
+
+# Registered E1.3 teacher: {winner.upper()}.  E1.1 G2' key/address is reused unchanged.
+# Stage 3: append-only _e13 teacher/student activation-pair captures.
+for pair_e13 in $(seq 0 63); do
+  run_gpu_e13 capture-pairs --address-rule e11 --teacher-rule e13 \\
+    --pair-index "$pair_e13"
+done
+
+# Stage 4: unchanged G3 rank-64 consolidation semantics; RED is a STOP.
+if ! env CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 \\
+  python3 "$expert_e13" train --address-rule e11 --teacher-rule e13 \\
+    --rank 64 --threads 6; then
+  env CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 \\
+    python3 "$expert_e13" analyze --address-rule e11 --teacher-rule e13 || true
+  exit 3
+fi
+
+# Stage 5a: unchanged G0/G4 semantics with the selected E1.3 teacher.
+run_gpu_e13 eval-gates --address-rule e11 --teacher-rule e13 --eval-kind abi
+for window_e13 in $(seq 0 15); do
+  run_gpu_e13 eval-gates --address-rule e11 --teacher-rule e13 \\
+    --eval-kind narrative --window-index "$window_e13"
+done
+env CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 \\
+  python3 "$expert_e13" analyze --address-rule e11 --teacher-rule e13 || true
+
+# Registered premise STOP across all 16 HELDOUT windows remains unchanged.
+python3 -c 'import json,sys; x=json.load(open("artifacts/moe_e1_3/analysis_e13.json")); sys.exit(0 if x.get("g4",{{}}).get("teacher_gap",0)>0 else 4)'
+
+# Stage 5b: unchanged G5' WikiText/code measurements.
+for window_e13 in 1 3 5 7 9 11 13 15; do
+  run_gpu_e13 eval-gates --address-rule e11 --teacher-rule e13 \\
+    --eval-kind generic --window-index "$window_e13"
+done
+for window_e13 in 1 3 5 7 9 11 13 15; do
+  run_gpu_e13 eval-gates --address-rule e11 --teacher-rule e13 \\
+    --eval-kind code --window-index "$window_e13"
+done
+
+# Stage 6: unchanged bootstrap, G4 recovery, and G5' decision semantics.
+env CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 \\
+  python3 "$expert_e13" analyze --address-rule e11 --teacher-rule e13 \\
+    --bootstrap-resamples 2000
+"""
+
+
+def prepare_e13(args: argparse.Namespace) -> int:
+    output = ensure_e13_output(args.e13_output_dir)
+    ensure_model(args.model_dir)
+    manifest_path = output / E13_PREFIX_MANIFEST.name
+    arrays_path = output / E13_PREFIX_ARRAYS.name
+    sweep_path = output / E13_SWEEP_SCRIPT.name
+    existing = [path for path in (manifest_path, arrays_path) if path.exists()]
+    if existing:
+        if len(existing) != 2:
+            raise FileExistsError(
+                "partial append-only E1.3 preparation exists: "
+                + ", ".join(str(path) for path in existing)
+            )
+        manifest = read_json(manifest_path)
+        if (
+            manifest.get("status") != "passed"
+            or manifest.get("prefix_arrays", {}).get("sha256") != sha256_file(arrays_path)
+        ):
+            raise RuntimeError("existing E1.3 preparation failed its sealed hash")
+        write_once_exact(sweep_path, e13_sweep_commands())
+        try:
+            sweep_path.chmod(0o755)
+        except OSError:
+            pass
+        print(
+            json.dumps(
+                {
+                    "status": "already_complete",
+                    "manifest": str(manifest_path),
+                    "prefix_arrays": str(arrays_path),
+                    "sweep_commands": str(sweep_path),
+                }
+            ),
+            flush=True,
+        )
+        return 0
+
+    started = time.perf_counter()
+    base_manifest, prepared, train_files, heldout_files = e13_bound_corpus()
+    from transformers import AutoTokenizer
+
+    tokenizer = AutoTokenizer.from_pretrained(
+        str(args.model_dir.resolve()), local_files_only=True
+    )
+    all_files = train_files + heldout_files
+    raw_tokenized = e1.tokenize_files(all_files, tokenizer)
+    prose_records = {
+        path: prose_stream_record(path, tokenizer) for path in train_files
+    }
+    pair_targets = base_manifest["windows"]["pairs"]
+    behavioral_targets = base_manifest["windows"]["behavioral_heldout"]
+
+    pair_p1, pair_p1_meta = p1_content_prefixes(
+        pair_targets,
+        prose_records,
+        role="pair",
+        avoid_same_source=True,
+    )
+    behavioral_p1, behavioral_p1_meta = p1_content_prefixes(
+        behavioral_targets,
+        prose_records,
+        role="behavioral",
+        avoid_same_source=False,
+    )
+    pair_p2, pair_p2_meta, pair_p4, pair_p4_meta = framed_prefixes(
+        pair_p1, pair_p1_meta, tokenizer, role="pair"
+    )
+    behavioral_p2, behavioral_p2_meta, behavioral_p4, behavioral_p4_meta = (
+        framed_prefixes(
+            behavioral_p1, behavioral_p1_meta, tokenizer, role="behavioral"
+        )
+    )
+    pair_p3, pair_p3_meta = p3_same_file_prefixes(
+        pair_targets,
+        raw_tokenized,
+        train_files,
+        role="pair",
+        split_label="TRAIN",
+    )
+    behavioral_p3, behavioral_p3_meta = p3_same_file_prefixes(
+        behavioral_targets,
+        raw_tokenized,
+        heldout_files,
+        role="behavioral",
+        split_label="HELDOUT",
+        secondary_files=train_files,
+        secondary_split_label="TRAIN",
+    )
+
+    for index, target in enumerate(pair_targets):
+        path = Path(target["source_path"]).resolve()
+        observed = raw_tokenized[path][
+            int(target["start_token"]) : int(target["stop_token_exclusive"])
+        ]
+        if not np.array_equal(observed, prepared["pair_ids"][index]):
+            raise RuntimeError(f"pair window {index} no longer matches source tokenization")
+    for index, target in enumerate(behavioral_targets):
+        path = Path(target["source_path"]).resolve()
+        observed = raw_tokenized[path][
+            int(target["start_token"]) : int(target["stop_token_exclusive"])
+        ]
+        if not np.array_equal(observed, prepared["behavioral_ids"][index]):
+            raise RuntimeError(
+                f"behavioral window {index} no longer matches source tokenization"
+            )
+
+    c0_prefix = behavioral_p3[E13_C0_WINDOW]
+    c0_window = prepared["behavioral_ids"][E13_C0_WINDOW]
+    c0_stream = np.concatenate([c0_prefix, c0_window]).astype(np.int64, copy=False)
+    c0_meta = behavioral_p3_meta[E13_C0_WINDOW]
+    if not c0_meta["contiguous_with_target"] or c0_stream.shape != (2560,):
+        raise RuntimeError("registered C0 window is not an exact contiguous 2,560-token stream")
+    c0_source = Path(c0_meta["source_path"])
+    source_start = int(c0_meta["source_start_token"])
+    if not np.array_equal(
+        c0_stream,
+        raw_tokenized[c0_source][source_start : source_start + 2560],
+    ):
+        raise RuntimeError("C0 stream failed the no-splice source-token equality check")
+
+    arrays = {
+        "pair_p1": pair_p1,
+        "pair_p2": pair_p2,
+        "pair_p3": pair_p3,
+        "pair_p4": pair_p4,
+        "behavioral_p1": behavioral_p1,
+        "behavioral_p2": behavioral_p2,
+        "behavioral_p3": behavioral_p3,
+        "behavioral_p4": behavioral_p4,
+        "c0_stream": np.ascontiguousarray(c0_stream),
+    }
+    e1.save_npz(arrays_path, **arrays)
+    array_records = {
+        name: {
+            "shape": list(value.shape),
+            "dtype": str(value.dtype),
+            "sha256": sha256_array(value),
+        }
+        for name, value in arrays.items()
+    }
+    eligible_prose_files = [
+        path for path, record in prose_records.items() if record["sentence_start_tokens"]
+    ]
+    checks = [
+        {
+            "name": "c0_exact_contiguous_source_slice",
+            "passed": True,
+            "observed": True,
+        },
+        {
+            "name": "p1_train_sources_only",
+            "passed": all(
+                Path(item["source_path"]) in set(train_files)
+                for item in pair_p1_meta + behavioral_p1_meta
+            ),
+            "observed": True,
+        },
+        {
+            "name": "pair_p3_fallbacks_remain_train_only",
+            "passed": all(
+                item["source_split"] == "TRAIN"
+                and all(Path(path) in set(train_files) for path in item["source_paths"])
+                for item in pair_p3_meta
+            ),
+            "observed": True,
+        },
+        {
+            "name": "behavioral_p3_sources_stay_in_sealed_corpus",
+            "passed": all(
+                all(
+                    Path(path) in (set(heldout_files) | set(train_files))
+                    for path in item["source_paths"]
+                )
+                for item in behavioral_p3_meta
+            ),
+            "observed": True,
+        },
+        {
+            "name": "four_sweep_windows_registered",
+            "passed": all(index in range(e1.N_BEHAVIORAL_WINDOWS) for index in E13_WINDOWS),
+            "observed": list(E13_WINDOWS),
+        },
+    ]
+    failures = [item["name"] for item in checks if not item["passed"]]
+    manifest = {
+        "schema": "moe_e1_3_prefix_manifest_v1",
+        "created_at": now_iso(),
+        "status": "passed" if not failures else "failed_stop",
+        "order": str(E13_ORDER_PATH),
+        "order_sha256": sha256_file(E13_ORDER_PATH),
+        "script": str(SCRIPT_PATH),
+        "script_sha256_at_prepare": sha256_file(SCRIPT_PATH),
+        "expert_script": str(e1.SCRIPT_PATH),
+        "expert_script_sha256_at_prepare": sha256_file(e1.SCRIPT_PATH),
+        "model_dir": str(args.model_dir.resolve()),
+        "seed": E13_SEED,
+        "registered_windows_in_order": list(E13_WINDOWS),
+        "selection_rule": (
+            "highest arithmetic mean of (mean_nll_base - mean_nll_teacher) "
+            "over windows [11,13,15,1]; require mean > 0; exact ties break "
+            "by lower P number"
+        ),
+        "base_e1_manifest": str(E1_OUTPUT / "corpus_manifest.json"),
+        "base_e1_manifest_sha256": sha256_file(E1_OUTPUT / "corpus_manifest.json"),
+        "base_prepared_windows": str(E1_OUTPUT / "prepared_windows.npz"),
+        "base_prepared_windows_sha256": sha256_file(E1_OUTPUT / "prepared_windows.npz"),
+        "prose_filter": {
+            "algorithm": (
+                "UTF-8 strict; normalize CRLF/CR to LF; discard blank, fenced or "
+                "four-space/tab-indented code, ATX headings, setext/thematic rules, "
+                "any pipe-containing table line, Markdown list/task/ordered lines, "
+                "blockquotes, and HTML-only lines; join adjacent surviving physical "
+                "lines; retain only punctuation-terminated spans of at least five "
+                "alphabetic words and 24 characters; append LF per kept sentence"
+            ),
+            "sentence_boundary_policy": (
+                "prefix start is a kept-sentence boundary; exact token budget may "
+                "truncate only the final kept sentence"
+            ),
+            "eligible_train_file_count": len(eligible_prose_files),
+            "files": [
+                {
+                    "source": e1.corpus_relative(path),
+                    "source_path": str(path),
+                    "source_sha256": sha256_file(path),
+                    "filtered_token_count": prose_records[path]["filtered_token_count"],
+                    "filtered_token_ids_sha256": prose_records[path][
+                        "filtered_token_ids_sha256"
+                    ],
+                    "eligible_sentence_start_count": len(
+                        prose_records[path]["sentence_start_tokens"]
+                    ),
+                    "filter_counts": prose_records[path]["filter_counts"],
+                }
+                for path in train_files
+            ],
+        },
+        "frame": {
+            "exact_template": E13_FRAME_OPEN + "<prefix>" + E13_FRAME_CLOSE,
+            "open_text_repr": repr(E13_FRAME_OPEN),
+            "close_text_repr": repr(E13_FRAME_CLOSE),
+            "open_token_ids": tokenizer_ids(tokenizer, E13_FRAME_OPEN).tolist(),
+            "close_token_ids": tokenizer_ids(tokenizer, E13_FRAME_CLOSE).tolist(),
+            "token_concatenation": (
+                "frame-open IDs + exact P1 content IDs + frame-close IDs"
+            ),
+        },
+        "recipes": {
+            "p1": (
+                "2,048-token slice of a TRAIN-file prose-filter stream; seeded "
+                "file rotation and seeded kept-sentence-boundary start; pair source "
+                "must differ from its target file"
+            ),
+            "p2": "exact P1 content wrapped by the recorded instruction frame",
+            "p3": (
+                "exact 2,048 tokens immediately preceding target start in the same "
+                "file; if unavailable, seeded excerpt from the SHA-ranked first "
+                "same-folder, same-split file with >=2,048 tokens; if no single "
+                "same-split file is long enough, use a seeded slice of the SHA-ranked "
+                "same-folder same-split file stream; if that stream is also short, "
+                "use the same procedure on same-folder files from the other split. "
+                "Pair fallbacks never admit HELDOUT; behavioral fallbacks may use "
+                "TRAIN only after HELDOUT same-folder sources are insufficient"
+            ),
+            "p4": (
+                "P2 frame around the final 512 content tokens of the exact P1 "
+                "slice; 512 is the guide-content budget and frame IDs are additional"
+            ),
+        },
+        "prefixes": {
+            "pair": {
+                "p1": pair_p1_meta,
+                "p2": pair_p2_meta,
+                "p3": pair_p3_meta,
+                "p4": pair_p4_meta,
+            },
+            "behavioral": {
+                "p1": behavioral_p1_meta,
+                "p2": behavioral_p2_meta,
+                "p3": behavioral_p3_meta,
+                "p4": behavioral_p4_meta,
+            },
+        },
+        "c0": {
+            "window_index": E13_C0_WINDOW,
+            "construction_source": c0_meta,
+            "stream_token_count": int(c0_stream.size),
+            "stream_token_ids_sha256": sha256_array(c0_stream),
+            "scored_target_tokens": N_TARGETS,
+            "reference_base_receipt": str(
+                E1_OUTPUT / "eval_e11" / f"narrative_{E13_C0_WINDOW:03d}.json"
+            ),
+            "explosion_operationalization": (
+                "reopen MECHANISM=BUG iff contiguous PPL exceeds the same-target "
+                f"512-token base PPL by more than {E13_C0_EXPLOSION_PPL_RATIO:g}x; "
+                "a lower long-context PPL is sane rather than an explosion"
+            ),
+        },
+        "prefix_arrays": {
+            "path": str(arrays_path),
+            "sha256": sha256_file(arrays_path),
+            "arrays": array_records,
+        },
+        "integrity": {
+            "passed": not failures,
+            "failed_check_names": failures,
+            "checks": checks,
+        },
+        "wall_seconds": float(time.perf_counter() - started),
+    }
+    write_json(manifest_path, manifest)
+    write_once_exact(sweep_path, e13_sweep_commands())
+    try:
+        sweep_path.chmod(0o755)
+    except OSError:
+        pass
+    print(
+        json.dumps(
+            {
+                "status": manifest["status"],
+                "eligible_prose_train_files": len(eligible_prose_files),
+                "manifest": str(manifest_path),
+                "prefix_arrays": str(arrays_path),
+                "sweep_commands": str(sweep_path),
+            }
+        ),
+        flush=True,
+    )
+    return 0 if not failures else 2
+
+
+def load_e13_prepared(
+    output: Path = E13_OUTPUT,
+) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
+    output = ensure_e13_output(output)
+    manifest_path = output / E13_PREFIX_MANIFEST.name
+    arrays_path = output / E13_PREFIX_ARRAYS.name
+    if not manifest_path.is_file() or not arrays_path.is_file():
+        raise FileNotFoundError("run prepare-e13 before E1.3 scoring")
+    manifest = read_json(manifest_path)
+    if manifest.get("status") != "passed":
+        raise RuntimeError("E1.3 prefix preparation did not pass")
+    if manifest["prefix_arrays"]["sha256"] != sha256_file(arrays_path):
+        raise RuntimeError("E1.3 prefix array artifact hash changed")
+    with np.load(arrays_path, allow_pickle=False) as stored:
+        arrays = {name: np.ascontiguousarray(stored[name]) for name in stored.files}
+    expected_names = {
+        *(f"pair_{construction}" for construction in E13_CONSTRUCTIONS),
+        *(f"behavioral_{construction}" for construction in E13_CONSTRUCTIONS),
+        "c0_stream",
+    }
+    if set(arrays) != expected_names:
+        raise RuntimeError(
+            f"E1.3 prefix array names {sorted(arrays)} != {sorted(expected_names)}"
+        )
+    for name, array in arrays.items():
+        declared = manifest["prefix_arrays"]["arrays"][name]
+        if (
+            list(array.shape) != declared["shape"]
+            or str(array.dtype) != declared["dtype"]
+            or sha256_array(array) != declared["sha256"]
+        ):
+            raise RuntimeError(f"E1.3 prefix array contract mismatch: {name}")
+    return manifest, arrays
+
+
+def e13_score_receipt_path(
+    output: Path,
+    score_kind: str,
+    *,
+    construction: str | None = None,
+    window_index: int | None = None,
+    attempt: int = 0,
+) -> Path:
+    suffix = "" if attempt == 0 else f"_attempt{attempt:02d}"
+    if score_kind == "c0":
+        return output / "runs" / f"c0_contiguous{suffix}.json"
+    if score_kind != "sweep" or construction is None or window_index is None:
+        raise ValueError("sweep receipt path requires construction and window")
+    return (
+        output
+        / "runs"
+        / f"window_{window_index:03d}"
+        / f"{construction}{suffix}.json"
+    )
+
+
+def e13_score_inputs(
+    score_kind: str,
+    *,
+    construction: str | None,
+    window_index: int | None,
+    output: Path,
+) -> dict[str, Any]:
+    prefix_manifest, prefix_arrays = load_e13_prepared(output)
+    base_manifest, prepared = e1.load_prepared(E1_OUTPUT)
+    if score_kind == "c0":
+        index = int(prefix_manifest["c0"]["window_index"])
+        stream = np.ascontiguousarray(prefix_arrays["c0_stream"], dtype=np.int64)
+        prefix = np.ascontiguousarray(stream[: e1.PREFIX_TOKENS], dtype=np.int64)
+        window = np.ascontiguousarray(stream[-e1.WINDOW_TOKENS :], dtype=np.int64)
+        if not np.array_equal(window, prepared["behavioral_ids"][index]):
+            raise RuntimeError("C0 tail differs from the sealed behavioral window")
+        source = prefix_manifest["c0"]["construction_source"]
+        construction_name = "c0_contiguous"
+    elif score_kind == "sweep":
+        if construction not in E13_CONSTRUCTIONS or window_index not in E13_WINDOWS:
+            raise ValueError("sweep requires a registered construction and window")
+        index = int(window_index)
+        prefix = np.ascontiguousarray(
+            prefix_arrays[f"behavioral_{construction}"][index], dtype=np.int64
+        )
+        window = np.ascontiguousarray(prepared["behavioral_ids"][index], dtype=np.int64)
+        stream = np.concatenate([prefix, window]).astype(np.int64, copy=False)
+        source = prefix_manifest["prefixes"]["behavioral"][construction][index]
+        construction_name = construction
+    else:
+        raise AssertionError(score_kind)
+    inputs = np.ascontiguousarray(stream[:-1][None, :], dtype=np.int64)
+    targets = np.ascontiguousarray(window[1:], dtype=np.int64)
+    reference_path = E1_OUTPUT / "eval_e11" / f"narrative_{index:03d}.json"
+    reference = read_json(reference_path)
+    if reference.get("status") != "complete":
+        raise RuntimeError(f"base reference receipt is incomplete: {reference_path}")
+    if reference["target_ids_sha256"] != sha256_array(targets):
+        raise RuntimeError("E1.3 target IDs differ from the E1.1 base reference")
+    return {
+        "score_kind": score_kind,
+        "construction": construction_name,
+        "window_index": index,
+        "prefix": prefix,
+        "window": window,
+        "stream": np.ascontiguousarray(stream),
+        "inputs": inputs,
+        "targets": targets,
+        "prefix_source": source,
+        "source_window": base_manifest["windows"]["behavioral_heldout"][index],
+        "reference_path": reference_path,
+        "reference": reference,
+        "prefix_manifest": prefix_manifest,
+    }
+
+
+def run_e13_isolated(
+    *,
+    args: argparse.Namespace,
+    data: dict[str, Any],
+    receipt: dict[str, Any],
+    path: Path,
+) -> dict[str, Any]:
+    """One established-path sequence call per loaded block, teacher only."""
+
+    runtime = e1.load_runtime()
+    tc = runtime["tc"]
+    cfg = runtime["GptOss20BConfig"].from_model_dir(args.model_dir.resolve())
+    e1.validate_model_contract(cfg)
+    where = runtime["build_safetensors_map"](args.model_dir.resolve())
+    with tc.no_grad():
+        embed = runtime["GptOssRowEmbedding"](where)
+        hidden = embed(data["inputs"])
+        cos, sin = runtime["gpt_oss_yarn_rope_tables"](
+            cfg, int(data["inputs"].shape[1])
+        )
+        receipt["layers"] = []
+        for layer in range(e1.N_LAYERS):
+            layer_started = time.perf_counter()
+            block = runtime["GptOssDiagnosticBlockTC"].from_safetensors(
+                cfg,
+                where,
+                layer,
+                expert_mode="resident_packed_mxfp4",
+            )
+            e1.configure_block(block)
+            hidden, kv, route = block(hidden, cos, sin)
+            tc.synchronize()
+            receipt["layers"].append(
+                {
+                    "layer": int(layer),
+                    "attention_backend": block.self_attn.last_attention_backend,
+                    "wall_seconds": float(time.perf_counter() - layer_started),
+                }
+            )
+            receipt["completed_layers"] = layer + 1
+            receipt["status"] = "running_layers"
+            write_json(path, receipt)
+            del block, kv, route
+            gc.collect()
+            if hasattr(tc, "empty_cache"):
+                tc.empty_cache()
+        tail = hidden.slice(1, int(hidden.shape[1]) - N_TARGETS, N_TARGETS)
+        normalized = e1.final_norm(runtime, cfg, where, tail)
+        del hidden, tail, cos, sin
+        if hasattr(tc, "empty_cache"):
+            tc.empty_cache()
+        lm_head = e1.load_lm_head(runtime, cfg, where)
+        logits = logits_from_hidden(lm_head, normalized)
+        arm = aggregate_from_logits(logits, data["targets"])
+        del logits, normalized
+        tc.synchronize()
+    return arm
+
+
+def score_e13(args: argparse.Namespace) -> int:
+    if args.score_kind is None:
+        raise ValueError("score-e13 requires --score-kind c0|sweep")
+    if args.attempt < 0:
+        raise ValueError("--attempt must be nonnegative")
+    if args.score_kind == "c0":
+        if args.construction is not None or args.e13_window_index is not None:
+            raise ValueError("C0 does not accept construction/window selectors")
+    elif args.construction is None or args.e13_window_index is None:
+        raise ValueError("sweep scoring requires --construction and --e13-window-index")
+    output = ensure_e13_output(args.e13_output_dir)
+    ensure_model(args.model_dir)
+    path = e13_score_receipt_path(
+        output,
+        args.score_kind,
+        construction=args.construction,
+        window_index=args.e13_window_index,
+        attempt=args.attempt,
+    )
+    if path.is_file():
+        prior = read_json(path)
+        if prior.get("status") == "complete":
+            print(json.dumps({"status": "already_complete", "receipt": str(path)}))
+            return 0
+        raise FileExistsError(
+            f"append-only E1.3 attempt exists at {path}; select a new --attempt"
+        )
+    data = e13_score_inputs(
+        args.score_kind,
+        construction=args.construction,
+        window_index=args.e13_window_index,
+        output=output,
+    )
+    probe = require_cuda()
+    started = time.perf_counter()
+    reference = data["reference"]
+    receipt: dict[str, Any] = {
+        "schema": "moe_e1_3_score_v1",
+        "created_at": now_iso(),
+        "status": "starting",
+        "argv": sys.argv,
+        "required_shell_wrapper": GPU_WRAPPER,
+        "order": str(E13_ORDER_PATH),
+        "score_kind": args.score_kind,
+        "construction": data["construction"],
+        "window_index": int(data["window_index"]),
+        "attempt": int(args.attempt),
+        "model_dir": str(args.model_dir.resolve()),
+        "compute_dtype": "bfloat16",
+        "attention_mode": "standard",
+        "expert_mode": "resident_packed_mxfp4",
+        "execution_schedule": "established_one_sequence_call_per_block",
+        "input_tokens": int(data["inputs"].shape[1]),
+        "full_sequence_tokens": int(data["stream"].size),
+        "prefix_tokens": int(data["prefix"].size),
+        "scored_target_tokens": int(data["targets"].size),
+        "input_ids_sha256": sha256_array(data["inputs"]),
+        "full_sequence_ids_sha256": sha256_array(data["stream"]),
+        "prefix_ids_sha256": sha256_array(data["prefix"]),
+        "target_ids_sha256": sha256_array(data["targets"]),
+        "source_window": data["source_window"],
+        "prefix_source": data["prefix_source"],
+        "reference_base_receipt": str(data["reference_path"]),
+        "reference_base_receipt_sha256": sha256_file(data["reference_path"]),
+        "reference_base": reference["arms"]["base"],
+        "teacher_scores_prefix_tokens": False,
+        "prefix_manifest": str(output / E13_PREFIX_MANIFEST.name),
+        "prefix_manifest_sha256": sha256_file(output / E13_PREFIX_MANIFEST.name),
+        "prefix_arrays": str(output / E13_PREFIX_ARRAYS.name),
+        "prefix_arrays_sha256": sha256_file(output / E13_PREFIX_ARRAYS.name),
+        "cuda_environment": probe,
+        "gpu_before": nvidia_smi(),
+        "script_sha256_at_run": sha256_file(SCRIPT_PATH),
+        "e1_script_sha256_at_run": sha256_file(e1.SCRIPT_PATH),
+        "core_script_sha256_at_run": sha256_file(CORE_PATH),
+        "completed_layers": 0,
+    }
+    write_json(path, receipt)
+    try:
+        arm = run_e13_isolated(args=args, data=data, receipt=receipt, path=path)
+        receipt.update(
+            {
+                "status": "complete",
+                "arm": arm,
+                "wall_seconds": float(time.perf_counter() - started),
+                "gpu_after": nvidia_smi(),
+            }
+        )
+        write_json(path, receipt)
+        print(
+            json.dumps(
+                {
+                    "status": "complete",
+                    "receipt": str(path),
+                    "score_kind": args.score_kind,
+                    "construction": data["construction"],
+                    "window_index": data["window_index"],
+                    "score": arm,
+                }
+            ),
+            flush=True,
+        )
+        return 0
+    except Exception as exc:
+        receipt.update(
+            {
+                "status": "error",
+                "error_type": type(exc).__name__,
+                "error": str(exc),
+                "traceback": traceback.format_exc(),
+                "wall_seconds": float(time.perf_counter() - started),
+                "gpu_after": nvidia_smi(),
+            }
+        )
+        write_json(path, receipt)
+        raise
+
+
+def add_e13_check(
+    checks: list[dict[str, Any]], name: str, passed: bool, observed: Any
+) -> None:
+    checks.append(
+        {
+            "name": name,
+            "passed": bool(passed),
+            "observed": observed,
+        }
+    )
+
+
+def self_test_e13(args: argparse.Namespace) -> int:
+    output = ensure_e13_output(args.e13_output_dir)
+    ensure_model(args.model_dir)
+    path = output / "cpu_self_test_e13_v2.json"
+    if path.is_file():
+        prior = read_json(path)
+        if (
+            prior.get("status") == "passed"
+            and prior.get("script_sha256") == sha256_file(SCRIPT_PATH)
+            and prior.get("expert_script_sha256") == sha256_file(e1.SCRIPT_PATH)
+        ):
+            print(json.dumps({"status": "already_complete", "artifact": str(path)}))
+            return 0
+        raise FileExistsError(f"append-only E1.3 self-test is stale: {path}")
+    manifest, arrays = load_e13_prepared(output)
+    checks: list[dict[str, Any]] = []
+
+    synthetic = """# Header
+
+- A listed sentence has enough words but must be removed entirely.
+
+This ordinary prose sentence has enough alphabetic words to remain intact. A second ordinary sentence also remains after filtering!
+
+| column | value |
+| --- | --- |
+
+```text
+This fenced sentence has enough words but must disappear.
+```
+"""
+    sentences, filter_counts = prose_only_sentences(synthetic)
+    add_e13_check(
+        checks,
+        "synthetic_filter_keeps_only_two_prose_sentences",
+        len(sentences) == 2,
+        sentences,
+    )
+    add_e13_check(
+        checks,
+        "synthetic_filter_strips_header_list_table_fence",
+        bool(
+            filter_counts["header_lines"] == 1
+            and filter_counts["list_lines"] == 1
+            and filter_counts["table_lines"] == 2
+            and filter_counts["fence_lines"] == 2
+            and filter_counts["fenced_content_lines"] == 1
+        ),
+        filter_counts,
+    )
+
+    open_count = len(manifest["frame"]["open_token_ids"])
+    close_count = len(manifest["frame"]["close_token_ids"])
+    for role, count in (("pair", e1.N_PAIR_WINDOWS), ("behavioral", e1.N_BEHAVIORAL_WINDOWS)):
+        p1 = arrays[f"{role}_p1"]
+        p2 = arrays[f"{role}_p2"]
+        p3 = arrays[f"{role}_p3"]
+        p4 = arrays[f"{role}_p4"]
+        add_e13_check(
+            checks,
+            f"{role}_p1_shape",
+            p1.shape == (count, E13_P1_CONTENT_TOKENS),
+            list(p1.shape),
+        )
+        add_e13_check(
+            checks,
+            f"{role}_p2_embeds_exact_p1_ids",
+            bool(np.array_equal(p2[:, open_count : open_count + 2048], p1)),
+            list(p2.shape),
+        )
+        add_e13_check(
+            checks,
+            f"{role}_p3_shape",
+            p3.shape == (count, e1.PREFIX_TOKENS),
+            list(p3.shape),
+        )
+        add_e13_check(
+            checks,
+            f"{role}_p4_embeds_p1_tail512",
+            bool(
+                np.array_equal(
+                    p4[:, open_count : p4.shape[1] - close_count],
+                    p1[:, -E13_P4_CONTENT_TOKENS:],
+                )
+            ),
+            list(p4.shape),
+        )
+
+    _base_manifest, prepared = e1.load_prepared(E1_OUTPUT)
+    c0 = arrays["c0_stream"]
+    add_e13_check(checks, "c0_shape", c0.shape == (2560,), list(c0.shape))
+    add_e13_check(
+        checks,
+        "c0_tail_is_registered_window_11",
+        bool(np.array_equal(c0[-512:], prepared["behavioral_ids"][E13_C0_WINDOW])),
+        sha256_array(c0[-512:]),
+    )
+    add_e13_check(
+        checks,
+        "c0_manifest_marks_no_splice",
+        bool(manifest["c0"]["construction_source"]["contiguous_with_target"]),
+        manifest["c0"]["construction_source"]["recipe_branch"],
+    )
+
+    sweep_text = E13_SWEEP_SCRIPT.read_text(encoding="utf-8")
+    for name, needle in (
+        ("sweep_flock", "flock -w 7200 /tmp/forge-gpu.lock"),
+        ("sweep_590s", "590s"),
+        ("sweep_single_gpu", "CUDA_VISIBLE_DEVICES=0"),
+        ("sweep_sleep_gap", "sleep 30"),
+        ("sweep_c0_first", "score-e13 --score-kind c0"),
+        ("sweep_registered_windows", "11 13 15 1"),
+        ("sweep_registered_constructions", "p1 p2 p3 p4"),
+    ):
+        add_e13_check(checks, name, needle in sweep_text, needle)
+
+    saved_argv = sys.argv[:]
+    try:
+        sys.argv = [str(e1.SCRIPT_PATH), "capture-pairs"]
+        original_args = e1.parse_args()
+    finally:
+        sys.argv = saved_argv
+    add_e13_check(
+        checks,
+        "original_teacher_path_remains_default",
+        getattr(original_args, "teacher_rule", None) == e1.TEACHER_RULE_ORIGINAL,
+        getattr(original_args, "teacher_rule", None),
+    )
+    add_e13_check(
+        checks,
+        "e13_pair_receipts_are_sibling_artifacts",
+        str(e1.pair_root(E1_OUTPUT, e1.ADDRESS_RULE_E11, e1.TEACHER_RULE_E13))
+        == str(E13_OUTPUT / "pairs_e13"),
+        str(e1.pair_root(E1_OUTPUT, e1.ADDRESS_RULE_E11, e1.TEACHER_RULE_E13)),
+    )
+
+    failures = [item["name"] for item in checks if not item["passed"]]
+    payload = {
+        "schema": "moe_e1_3_cpu_self_test_v2",
+        "created_at": now_iso(),
+        "status": "passed" if not failures else "failed",
+        "synthetic_only_not_behavioral_evidence": True,
+        "checks_total": len(checks),
+        "checks_passed": len(checks) - len(failures),
+        "failed_check_names": failures,
+        "checks": checks,
+        "prefix_manifest": str(E13_PREFIX_MANIFEST),
+        "prefix_manifest_sha256": sha256_file(E13_PREFIX_MANIFEST),
+        "script": str(SCRIPT_PATH),
+        "script_sha256": sha256_file(SCRIPT_PATH),
+        "expert_script": str(e1.SCRIPT_PATH),
+        "expert_script_sha256": sha256_file(e1.SCRIPT_PATH),
+    }
+    write_json(path, payload)
+    print(
+        json.dumps(
+            {
+                "status": payload["status"],
+                "checks_passed": payload["checks_passed"],
+                "checks_total": payload["checks_total"],
+                "artifact": str(path),
+            }
+        ),
+        flush=True,
+    )
+    return 0 if not failures else 2
+
+
+def completed_e13_receipt(path: Path) -> dict[str, Any] | None:
+    if not path.is_file():
+        return None
+    payload = read_json(path)
+    if payload.get("status") != "complete":
+        return None
+    payload["_path"] = str(path)
+    payload["_sha256"] = sha256_file(path)
+    return payload
+
+
+def e13_gap_table(rows: Sequence[dict[str, Any]]) -> str:
+    lines = [
+        "| Construction | Window | mean_nll_base | mean_nll_teacher | gap (base - teacher) | ppl_base | ppl_teacher |",
+        "|---|---:|---:|---:|---:|---:|---:|",
+    ]
+    by_key = {(item["construction"], item["window_index"]): item for item in rows}
+    for construction in E13_CONSTRUCTIONS:
+        for window_index in E13_WINDOWS:
+            item = by_key[(construction, window_index)]
+            if item["status"] == "complete":
+                lines.append(
+                    f"| {construction.upper()} | {window_index} | "
+                    f"{item['mean_nll_base']:.9f} | {item['mean_nll_teacher']:.9f} | "
+                    f"{item['gap']:+.9f} | {item['ppl_base']:.6f} | "
+                    f"{item['ppl_teacher']:.6f} |"
+                )
+            else:
+                lines.append(
+                    f"| {construction.upper()} | {window_index} | n/a | n/a | n/a | n/a | n/a |"
+                )
+    return "\n".join(lines)
+
+
+def render_e13_report_snapshot(analysis: dict[str, Any]) -> str:
+    c0 = analysis["c0"]
+    lines = [
+        f"<!-- E13_SNAPSHOT:{analysis['snapshot_id']} -->",
+        "# MOE-E1.3 Teacher-Arm Redesign Report",
+        "",
+        f"Snapshot generated: `{analysis['created_at']}`",
+        "",
+        "Evidence class: behavioral inference measurement on one model and one corpus. "
+        "CPU checks are synthetic construction checks, not behavioral evidence.",
+        "",
+        "## CG verdicts",
+        "",
+        analysis["gates"]["CG0"]["report_line"],
+        analysis["gates"]["CG1"]["report_line"],
+        analysis["gates"]["CG2"]["report_line"],
+        analysis["gates"]["CG3"]["report_line"],
+        "",
+        "## C0 contiguity control",
+        "",
+    ]
+    if c0.get("status") == "complete":
+        lines.extend(
+            [
+                f"- Window: {c0['window_index']}",
+                f"- 512-token base: mean_nll={c0['base_mean_nll']:.9f}, ppl={c0['base_ppl']:.6f}",
+                f"- Contiguous 2,560-token stream: mean_nll={c0['contiguous_mean_nll']:.9f}, ppl={c0['contiguous_ppl']:.6f}",
+                f"- Delta: mean_nll={c0['mean_nll_delta']:+.9f}, ppl ratio={c0['ppl_ratio']:.9f}x",
+                f"- Classification: {c0['classification']}",
+            ]
+        )
+    else:
+        lines.append("C0 GPU receipt is not yet measured; all numeric fields are n/a.")
+    lines.extend(
+        [
+            "",
+            "## Registered 16-cell gap table",
+            "",
+            analysis["gap_table_markdown"],
+            "",
+            "## Construction means and registered selection",
+            "",
+        ]
+    )
+    for construction in E13_CONSTRUCTIONS:
+        mean_gap = analysis["construction_mean_gaps"].get(construction)
+        rendered = "n/a" if mean_gap is None else f"{mean_gap:+.9f}"
+        lines.append(f"- {construction.upper()}: mean gap={rendered}")
+    lines.extend(["", analysis["selection_sentence"], ""])
+    if analysis.get("winner_recipe"):
+        lines.extend(
+            [
+                f"Winning construction: `{analysis['winner'].upper()}`",
+                "",
+                f"Exact recipe: {analysis['winner_recipe']}",
+                "",
+                f"Filter: {analysis['prose_filter_algorithm']}",
+                "",
+                f"Frame template: `{analysis['frame_template_repr']}`",
+                "",
+                f"Seed: `{analysis['seed']}`",
+                "",
+            ]
+        )
+    lines.extend(
+        [
+            "## Files present in the E1.3 artifact root",
+            "",
+            *(f"- `{path}`" for path in analysis["artifact_files"]),
+            "",
+            "## Limitations and unmeasured work",
+            "",
+            *(f"- {item}" for item in analysis["limitations"]),
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def analyze_e13(args: argparse.Namespace) -> int:
+    output = ensure_e13_output(args.e13_output_dir)
+    ensure_model(args.model_dir)
+    prefix_manifest, _arrays = load_e13_prepared(output)
+    c0_path = e13_score_receipt_path(output, "c0")
+    c0_receipt = completed_e13_receipt(c0_path)
+    if c0_receipt is None:
+        c0 = {"status": "not_measured"}
+        cg0_verdict = "NOT_MEASURED"
+        cg0_line = "CG0 NOT_MEASURED — contiguous 2,560-token HELDOUT control numbers are n/a."
+        c0_explosion = False
+    else:
+        base = c0_receipt["reference_base"]
+        arm = c0_receipt["arm"]
+        ratio = float(arm["ppl"]) / float(base["ppl"])
+        c0_explosion = bool(ratio > E13_C0_EXPLOSION_PPL_RATIO)
+        same_order = bool(0.1 <= ratio <= E13_C0_EXPLOSION_PPL_RATIO)
+        classification = (
+            "EXPLOSION — MECHANISM=BUG reopened; registered sweep STOP"
+            if c0_explosion
+            else (
+                "SANE — within one decimal order of the same-target 512-token base"
+                if same_order
+                else "SANE — long contiguous context improves by more than one decimal order"
+            )
+        )
+        c0 = {
+            "status": "complete",
+            "window_index": int(c0_receipt["window_index"]),
+            "base_mean_nll": float(base["mean_nll"]),
+            "base_ppl": float(base["ppl"]),
+            "contiguous_mean_nll": float(arm["mean_nll"]),
+            "contiguous_ppl": float(arm["ppl"]),
+            "mean_nll_delta": float(arm["mean_nll"]) - float(base["mean_nll"]),
+            "ppl_ratio": ratio,
+            "same_decimal_order": same_order,
+            "explosion": c0_explosion,
+            "classification": classification,
+            "receipt": c0_receipt["_path"],
+            "receipt_sha256": c0_receipt["_sha256"],
+        }
+        cg0_verdict = "RED" if c0_explosion else "GREEN"
+        cg0_line = (
+            f"CG0 {cg0_verdict} — window {c0['window_index']}: 512-token base "
+            f"mean_nll={c0['base_mean_nll']:.9f}, ppl={c0['base_ppl']:.6f}; "
+            f"contiguous mean_nll={c0['contiguous_mean_nll']:.9f}, "
+            f"ppl={c0['contiguous_ppl']:.6f}; ratio={ratio:.9f}x; {classification}."
+        )
+
+    rows: list[dict[str, Any]] = []
+    complete_count = 0
+    receipt_inventory: list[dict[str, Any]] = [
+        {
+            "unit": "c0",
+            "status": None if c0_receipt is None else "complete",
+            "sha256": None if c0_receipt is None else c0_receipt["_sha256"],
+        }
+    ]
+    for construction in E13_CONSTRUCTIONS:
+        for window_index in E13_WINDOWS:
+            path = e13_score_receipt_path(
+                output,
+                "sweep",
+                construction=construction,
+                window_index=window_index,
+            )
+            receipt = completed_e13_receipt(path)
+            receipt_inventory.append(
+                {
+                    "unit": f"{construction}:{window_index}",
+                    "status": None if receipt is None else "complete",
+                    "sha256": None if receipt is None else receipt["_sha256"],
+                }
+            )
+            if receipt is None:
+                rows.append(
+                    {
+                        "construction": construction,
+                        "window_index": window_index,
+                        "status": "not_measured",
+                        "receipt": str(path),
+                    }
+                )
+                continue
+            if receipt["target_ids_sha256"] != receipt["reference_base"]["target_ids_sha256"]:
+                raise RuntimeError(f"target hash mismatch in {path}")
+            base = receipt["reference_base"]
+            teacher = receipt["arm"]
+            complete_count += 1
+            rows.append(
+                {
+                    "construction": construction,
+                    "window_index": window_index,
+                    "status": "complete",
+                    "mean_nll_base": float(base["mean_nll"]),
+                    "mean_nll_teacher": float(teacher["mean_nll"]),
+                    "gap": float(base["mean_nll"]) - float(teacher["mean_nll"]),
+                    "ppl_base": float(base["ppl"]),
+                    "ppl_teacher": float(teacher["ppl"]),
+                    "target_ids_sha256": receipt["target_ids_sha256"],
+                    "receipt": receipt["_path"],
+                    "receipt_sha256": receipt["_sha256"],
+                }
+            )
+
+    sweep_complete = complete_count == len(E13_CONSTRUCTIONS) * len(E13_WINDOWS)
+    construction_means: dict[str, float | None] = {}
+    for construction in E13_CONSTRUCTIONS:
+        construction_rows = [
+            item
+            for item in rows
+            if item["construction"] == construction and item["status"] == "complete"
+        ]
+        construction_means[construction] = (
+            float(np.mean([item["gap"] for item in construction_rows]))
+            if len(construction_rows) == len(E13_WINDOWS)
+            else None
+        )
+
+    winner: str | None = None
+    selection_sentence: str
+    winner_recipe: str | None = None
+    if c0_explosion:
+        selection_sentence = (
+            "MECHANISM=BUG REOPENED: the contiguous forward-sanity control exploded; "
+            "the registered prefix sweep stops before selection."
+        )
+        cg1_verdict = "NOT_MEASURED"
+        cg1_line = (
+            f"CG1 NOT_MEASURED — {complete_count}/16 sweep cells complete; C0 explosion is a registered STOP."
+        )
+        cg2_verdict = "NOT_MEASURED"
+        cg2_line = "CG2 NOT_MEASURED — no teacher construction may be selected after C0 explosion."
+    elif not sweep_complete:
+        selection_sentence = "Registered selection is pending all 16 GPU sweep cells."
+        cg1_verdict = "NOT_MEASURED"
+        cg1_line = f"CG1 NOT_MEASURED — {complete_count}/16 teacher scores and gaps are complete."
+        cg2_verdict = "NOT_MEASURED"
+        cg2_line = "CG2 NOT_MEASURED — registered highest-positive-mean selection awaits 16/16 cells."
+    elif c0_receipt is None:
+        selection_sentence = (
+            "Registered selection is blocked until the C0 contiguity receipt is complete and sane."
+        )
+        cg1_verdict = "GREEN"
+        cg1_line = "CG1 GREEN — 4 constructions x 4 windows = 16 teacher scores and gaps are complete."
+        cg2_verdict = "NOT_MEASURED"
+        cg2_line = (
+            "CG2 NOT_MEASURED — 16/16 sweep cells exist, but registered selection "
+            "is forbidden until C0 is complete and sane."
+        )
+    else:
+        cg1_verdict = "GREEN"
+        cg1_line = "CG1 GREEN — 4 constructions x 4 windows = 16 teacher scores and gaps are complete."
+        ranked = sorted(
+            E13_CONSTRUCTIONS,
+            key=lambda construction: (
+                -float(construction_means[construction]),
+                E13_CONSTRUCTIONS.index(construction),
+            ),
+        )
+        best = ranked[0]
+        best_gap = float(construction_means[best])
+        if best_gap > 0.0:
+            winner = best
+            winner_recipe = prefix_manifest["recipes"][winner]
+            selection_sentence = (
+                f"E1.3 registered selection: {winner.upper()} has the highest mean "
+                f"gap ({best_gap:+.9f} > 0) and becomes the E1.3 teacher."
+            )
+            cg2_verdict = "GREEN"
+            cg2_line = (
+                f"CG2 GREEN — selected {winner.upper()} by highest four-window mean "
+                f"gap={best_gap:+.9f}; exact recipe/filter/frame/seed are recorded."
+            )
+        else:
+            selection_sentence = "The E1.1 premise finding STANDS for this model+corpus."
+            cg2_verdict = "GREEN"
+            cg2_line = (
+                f"CG2 GREEN — no construction has positive mean gap; best is "
+                f"{best.upper()} at {best_gap:+.9f}. {selection_sentence}"
+            )
+
+    if sweep_complete and c0_receipt is not None and not c0_explosion:
+        selection_payload = {
+            "schema": "moe_e1_3_selection_v1",
+            "created_at": now_iso(),
+            "status": (
+                "selected_positive_gap"
+                if winner is not None
+                else "premise_stands_no_positive_construction"
+            ),
+            "order": str(E13_ORDER_PATH),
+            "seed": E13_SEED,
+            "registered_windows_in_order": list(E13_WINDOWS),
+            "construction_mean_gaps": construction_means,
+            "winning_construction": winner,
+            "winning_mean_gap": None if winner is None else construction_means[winner],
+            "selection_sentence": selection_sentence,
+            "winning_recipe": winner_recipe,
+            "prose_filter_algorithm": prefix_manifest["prose_filter"]["algorithm"],
+            "frame": prefix_manifest["frame"],
+            "prefix_manifest": str(E13_PREFIX_MANIFEST),
+            "prefix_manifest_sha256": sha256_file(E13_PREFIX_MANIFEST),
+            "prefix_arrays": str(E13_PREFIX_ARRAYS),
+            "prefix_arrays_sha256": sha256_file(E13_PREFIX_ARRAYS),
+            "score_receipts": [
+                {
+                    "construction": item["construction"],
+                    "window_index": item["window_index"],
+                    "receipt": item["receipt"],
+                    "receipt_sha256": item["receipt_sha256"],
+                    "gap": item["gap"],
+                }
+                for item in rows
+            ],
+        }
+        if E13_SELECTION.is_file():
+            prior = read_json(E13_SELECTION)
+            comparable_keys = (
+                "status",
+                "construction_mean_gaps",
+                "winning_construction",
+                "winning_mean_gap",
+                "selection_sentence",
+            )
+            if any(prior.get(key) != selection_payload.get(key) for key in comparable_keys):
+                raise RuntimeError("append-only E1.3 selection conflicts with live receipts")
+        else:
+            write_json(E13_SELECTION, selection_payload)
+        if winner is not None:
+            write_once_exact(E13_RESUME_SCRIPT, e13_resume_commands(winner))
+            try:
+                E13_RESUME_SCRIPT.chmod(0o755)
+            except OSError:
+                pass
+        elif E13_RESUME_SCRIPT.exists():
+            raise RuntimeError("no-winner decision conflicts with an existing E1.3 resume script")
+
+    if c0_explosion:
+        cg3_verdict = "GREEN"
+        cg3_line = "CG3 GREEN — append-only report records the C0 RED stop; no downstream resume script is authorized."
+    elif sweep_complete and c0_receipt is not None:
+        cg3_verdict = "GREEN"
+        cg3_line = (
+            f"CG3 GREEN — report complete; downstream resume script={E13_RESUME_SCRIPT}."
+            if winner is not None
+            else "CG3 GREEN — report complete; no resume script emitted because the premise stands."
+        )
+    else:
+        cg3_verdict = "NOT_MEASURED"
+        cg3_line = "CG3 NOT_MEASURED — preflight report exists, but final selection/reporting awaits GPU receipts."
+
+    snapshot_material = {
+        "prefix_manifest_sha256": sha256_file(E13_PREFIX_MANIFEST),
+        "script_sha256": sha256_file(SCRIPT_PATH),
+        "expert_script_sha256": sha256_file(e1.SCRIPT_PATH),
+        "receipts": receipt_inventory,
+        "c0_explosion": c0_explosion,
+        "complete_count": complete_count,
+    }
+    snapshot_id = hashlib.sha256(
+        json.dumps(snapshot_material, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()[:16]
+    limitations = [
+        "Evidence is bounded to frozen GPT-OSS-20B and the sealed NarrativeForge guide corpus.",
+        "CPU self-tests validate construction, hashing, and selection machinery only.",
+    ]
+    if c0_receipt is None:
+        limitations.append("C0 and all GPU sweep scores remain unmeasured in this sandbox.")
+    elif not sweep_complete and not c0_explosion:
+        limitations.append(f"Only {complete_count}/16 registered sweep cells are complete.")
+    if c0_explosion:
+        limitations.append("The registered C0 stop forbids running or selecting from the P-sweep.")
+    artifact_files_before = sorted(
+        str(path) for path in output.rglob("*") if path.is_file()
+    )
+    analysis = {
+        "schema": "moe_e1_3_analysis_snapshot_v1",
+        "snapshot_id": snapshot_id,
+        "created_at": now_iso(),
+        "status": (
+            "c0_red_stop"
+            if c0_explosion
+            else (
+                "complete"
+                if sweep_complete and c0_receipt is not None
+                else "incomplete_gpu"
+            )
+        ),
+        "order": str(E13_ORDER_PATH),
+        "evidence_class": "behavioral inference measurement, one model, one corpus",
+        "seed": E13_SEED,
+        "registered_windows_in_order": list(E13_WINDOWS),
+        "gates": {
+            "CG0": {"verdict": cg0_verdict, "report_line": cg0_line},
+            "CG1": {"verdict": cg1_verdict, "report_line": cg1_line},
+            "CG2": {"verdict": cg2_verdict, "report_line": cg2_line},
+            "CG3": {"verdict": cg3_verdict, "report_line": cg3_line},
+        },
+        "c0": c0,
+        "rows": rows,
+        "gap_table_markdown": e13_gap_table(rows),
+        "construction_mean_gaps": construction_means,
+        "winner": winner,
+        "winner_recipe": winner_recipe,
+        "selection_sentence": selection_sentence,
+        "prose_filter_algorithm": prefix_manifest["prose_filter"]["algorithm"],
+        "frame_template_repr": repr(prefix_manifest["frame"]["exact_template"]),
+        "prefix_manifest": str(E13_PREFIX_MANIFEST),
+        "prefix_manifest_sha256": sha256_file(E13_PREFIX_MANIFEST),
+        "sweep_resume_script": str(E13_SWEEP_SCRIPT),
+        "downstream_resume_script": str(E13_RESUME_SCRIPT) if winner else None,
+        "limitations": limitations,
+        "artifact_files": artifact_files_before,
+    }
+    snapshot_path = output / "analysis" / f"analysis_{snapshot_id}.json"
+    if snapshot_path.is_file():
+        prior = read_json(snapshot_path)
+        if prior.get("snapshot_id") != snapshot_id:
+            raise RuntimeError(f"analysis snapshot collision: {snapshot_path}")
+    else:
+        write_json(snapshot_path, analysis)
+    artifact_files = sorted(
+        {
+            *(str(path) for path in output.rglob("*") if path.is_file()),
+            str(E13_REPORT),
+        }
+    )
+    analysis["artifact_files"] = artifact_files
+    report_snapshot = render_e13_report_snapshot(analysis)
+    marker = f"<!-- E13_SNAPSHOT:{snapshot_id} -->"
+    append_text_once(E13_REPORT, marker, report_snapshot)
+    print(
+        json.dumps(
+            {
+                "status": analysis["status"],
+                "snapshot": str(snapshot_path),
+                "report": str(E13_REPORT),
+                "gates": {
+                    name: gate["verdict"] for name, gate in analysis["gates"].items()
+                },
+                "complete_sweep_cells": complete_count,
+                "winner": winner,
+                "selection_sentence": selection_sentence,
+                "downstream_resume": str(E13_RESUME_SCRIPT) if winner else None,
+            }
+        ),
+        flush=True,
+    )
+    if args.require_c0:
+        if c0_receipt is None:
+            return 3
+        return 4 if c0_explosion else 0
+    if args.require_complete:
+        if c0_explosion:
+            return 4
+        if c0_receipt is None:
+            return 3
+        if not sweep_complete:
+            return 3
+        return 0 if winner is not None else 4
+    return 0
 
 
 def stable_nlls(logits: np.ndarray, targets: np.ndarray) -> np.ndarray:
@@ -2065,6 +4016,17 @@ def main() -> int:
             for value in (args.window_index, args.prefix_kind, args.path_kind)
         ):
             raise ValueError("window/prefix/path selectors are valid only for score")
+        if args.mode != "score-e13" and any(
+            value is not None
+            for value in (args.e13_window_index, args.construction, args.score_kind)
+        ):
+            raise ValueError(
+                "E1.3 window/construction/score-kind selectors are valid only for score-e13"
+            )
+        if args.mode != "analyze-e13" and (args.require_c0 or args.require_complete):
+            raise ValueError(
+                "--require-c0/--require-complete are valid only for analyze-e13"
+            )
         if args.mode == "self-test":
             return self_test(args)
         if args.mode == "audit":
@@ -2075,6 +4037,14 @@ def main() -> int:
             return analyze(args)
         if args.mode == "analyze-e12":
             return analyze_e12(args)
+        if args.mode == "prepare-e13":
+            return prepare_e13(args)
+        if args.mode == "self-test-e13":
+            return self_test_e13(args)
+        if args.mode == "score-e13":
+            return score_e13(args)
+        if args.mode == "analyze-e13":
+            return analyze_e13(args)
         raise AssertionError(args.mode)
     except SystemExit:
         raise

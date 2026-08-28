@@ -58,11 +58,17 @@ if str(SCRIPT_DIR) not in sys.path:
 
 ORDER_PATH = REPO_ROOT / "orders" / "MOE_E1_NARRATIVE_EXPERT.md"
 E11_ORDER_PATH = REPO_ROOT / "orders" / "MOE_E1_1_AMENDED_ADDRESS_GATE.md"
+E13_ORDER_PATH = REPO_ROOT / "orders" / "MOE_E1_3_TEACHER_REDESIGN.md"
 RT1_DIR = REPO_ROOT / "artifacts" / "moe_rt1"
 RT2_DIR = REPO_ROOT / "artifacts" / "moe_rt2"
 RT2_1_DIR = REPO_ROOT / "artifacts" / "moe_rt2_1"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "artifacts" / "moe_e1"
 E12_DIAG_ANALYSIS_PATH = REPO_ROOT / "artifacts" / "moe_e1_diag" / "analysis.json"
+E13_OUTPUT_DIR = REPO_ROOT / "artifacts" / "moe_e1_3"
+E13_PREFIX_MANIFEST_PATH = E13_OUTPUT_DIR / "prefix_manifest.json"
+E13_PREFIX_ARRAYS_PATH = E13_OUTPUT_DIR / "teacher_prefixes.npz"
+E13_SELECTION_PATH = E13_OUTPUT_DIR / "selection.json"
+E13_RESUME_PATH = E13_OUTPUT_DIR / "GPU_E13_RESUME_COMMANDS.sh"
 EXPERTPACK_DIRNAME = "expertpack_narrative_v0"
 ADDRESS_RULE_E1 = "e1"
 ADDRESS_RULE_E11 = "e11"
@@ -70,6 +76,9 @@ ADDRESS_RULES = (ADDRESS_RULE_E1, ADDRESS_RULE_E11)
 EVAL_FIX_ORIGINAL = "original"
 EVAL_FIX_E12 = "e12"
 EVAL_FIXES = (EVAL_FIX_ORIGINAL, EVAL_FIX_E12)
+TEACHER_RULE_ORIGINAL = "original"
+TEACHER_RULE_E13 = "e13"
+TEACHER_RULES = (TEACHER_RULE_ORIGINAL, TEACHER_RULE_E13)
 SNAPSHOT = Path(
     "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/"
     "snapshots/6cee5e81ee83917806bbde320786a8fb61efebee"
@@ -174,6 +183,15 @@ def parse_args() -> argparse.Namespace:
             "e12 opts into isolated arm forwards for ORDER MOE-E1.2"
         ),
     )
+    parser.add_argument(
+        "--teacher-rule",
+        choices=TEACHER_RULES,
+        default=TEACHER_RULE_ORIGINAL,
+        help=(
+            "teacher construction registration; original preserves E1/E1.1, "
+            "e13 opts into the positive-gap winner sealed by ORDER MOE-E1.3"
+        ),
+    )
     parser.add_argument("--model-dir", type=Path, default=SNAPSHOT)
     parser.add_argument("--chunk-index", type=int)
     parser.add_argument("--pair-index", type=int)
@@ -203,12 +221,42 @@ def order_path_for_rule(address_rule: str) -> Path:
     return E11_ORDER_PATH if address_rule == ADDRESS_RULE_E11 else ORDER_PATH
 
 
+def order_path_for_experiment(address_rule: str, teacher_rule: str) -> Path:
+    if teacher_rule == TEACHER_RULE_E13:
+        return E13_ORDER_PATH
+    return order_path_for_rule(address_rule)
+
+
 def expertpack_dirname(address_rule: str) -> str:
     return (
         f"{EXPERTPACK_DIRNAME}_e11"
         if address_rule == ADDRESS_RULE_E11
         else EXPERTPACK_DIRNAME
     )
+
+
+def experiment_output(output: Path, teacher_rule: str) -> Path:
+    if teacher_rule == TEACHER_RULE_E13:
+        return E13_OUTPUT_DIR
+    return output
+
+
+def expertpack_path(
+    output: Path,
+    address_rule: str,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
+) -> Path:
+    if teacher_rule == TEACHER_RULE_E13:
+        return E13_OUTPUT_DIR / "expertpack_narrative_v0_e13" / "manifest.json"
+    return output / expertpack_dirname(address_rule) / "manifest.json"
+
+
+def expertpack_root(
+    output: Path,
+    address_rule: str,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
+) -> Path:
+    return expertpack_path(output, address_rule, teacher_rule).parent
 
 
 def fit_key_paths(output: Path, address_rule: str) -> tuple[Path, Path]:
@@ -221,16 +269,34 @@ def cpu_validation_path(output: Path, address_rule: str) -> Path:
     return output / f"cpu_validation{suffix}.json"
 
 
-def pair_root(output: Path, address_rule: str) -> Path:
+def pair_root(
+    output: Path,
+    address_rule: str,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
+) -> Path:
+    if teacher_rule == TEACHER_RULE_E13:
+        return E13_OUTPUT_DIR / "pairs_e13"
     return output / ("pairs_e11" if address_rule == ADDRESS_RULE_E11 else "pairs")
 
 
-def train_path(output: Path, address_rule: str) -> Path:
+def train_path(
+    output: Path,
+    address_rule: str,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
+) -> Path:
+    if teacher_rule == TEACHER_RULE_E13:
+        return E13_OUTPUT_DIR / "train_e13.json"
     suffix = "_e11" if address_rule == ADDRESS_RULE_E11 else ""
     return output / f"train{suffix}.json"
 
 
-def eval_root(output: Path, address_rule: str) -> Path:
+def eval_root(
+    output: Path,
+    address_rule: str,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
+) -> Path:
+    if teacher_rule == TEACHER_RULE_E13:
+        return E13_OUTPUT_DIR / "eval_e13"
     return output / ("eval_e11" if address_rule == ADDRESS_RULE_E11 else "eval")
 
 
@@ -238,22 +304,39 @@ def eval_root_for_fix(
     output: Path,
     address_rule: str,
     eval_fix: str = EVAL_FIX_ORIGINAL,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> Path:
+    if teacher_rule == TEACHER_RULE_E13:
+        if eval_fix != EVAL_FIX_ORIGINAL:
+            raise ValueError("E1.3 preserves the original established evaluation path")
+        return eval_root(output, address_rule, teacher_rule)
     if eval_fix == EVAL_FIX_E12:
         if address_rule != ADDRESS_RULE_E11:
             raise ValueError("--eval-fix e12 requires --address-rule e11")
         return output / "eval_e11_e12"
     if eval_fix != EVAL_FIX_ORIGINAL:
         raise ValueError(f"unsupported eval fix {eval_fix!r}")
-    return eval_root(output, address_rule)
+    return eval_root(output, address_rule, teacher_rule)
 
 
-def analysis_path(output: Path, address_rule: str) -> Path:
+def analysis_path(
+    output: Path,
+    address_rule: str,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
+) -> Path:
+    if teacher_rule == TEACHER_RULE_E13:
+        return E13_OUTPUT_DIR / "analysis_e13.json"
     suffix = "_e11" if address_rule == ADDRESS_RULE_E11 else ""
     return output / f"analysis{suffix}.json"
 
 
-def report_path(output: Path, address_rule: str) -> Path:
+def report_path(
+    output: Path,
+    address_rule: str,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
+) -> Path:
+    if teacher_rule == TEACHER_RULE_E13:
+        return E13_OUTPUT_DIR / "MOE_E1_3_EXPERT_REPORT.md"
     return output / (
         "MOE_E1_1_REPORT.md"
         if address_rule == ADDRESS_RULE_E11
@@ -261,7 +344,13 @@ def report_path(output: Path, address_rule: str) -> Path:
     )
 
 
-def blocked_path(output: Path, address_rule: str) -> Path:
+def blocked_path(
+    output: Path,
+    address_rule: str,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
+) -> Path:
+    if teacher_rule == TEACHER_RULE_E13:
+        return E13_OUTPUT_DIR / "blocked_e13.json"
     suffix = "_e11" if address_rule == ADDRESS_RULE_E11 else ""
     return output / f"blocked{suffix}.json"
 
@@ -1492,6 +1581,64 @@ def load_prepared(output: Path) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
     return manifest, arrays
 
 
+def load_e13_selection() -> dict[str, Any]:
+    if not E13_SELECTION_PATH.is_file():
+        raise FileNotFoundError(
+            "ORDER MOE-E1.3 requires a completed positive-gap selection before "
+            "capture-pairs; run the E1.3 sweep/analyzer first"
+        )
+    selection = read_json(E13_SELECTION_PATH)
+    if selection.get("status") != "selected_positive_gap":
+        raise RuntimeError(
+            "E1.3 has no positive teacher construction; downstream expert work "
+            f"must stop (selection status={selection.get('status')!r})"
+        )
+    winner = selection.get("winning_construction")
+    if winner not in {"p1", "p2", "p3", "p4"}:
+        raise RuntimeError(f"invalid E1.3 winning construction {winner!r}")
+    for key, path in (
+        ("prefix_manifest_sha256", E13_PREFIX_MANIFEST_PATH),
+        ("prefix_arrays_sha256", E13_PREFIX_ARRAYS_PATH),
+    ):
+        if not path.is_file() or selection.get(key) != sha256_file(path):
+            raise RuntimeError(f"E1.3 selected teacher dependency changed: {path}")
+    return selection
+
+
+def load_e13_teacher_prefix(
+    role: str,
+    index: int,
+) -> tuple[np.ndarray, dict[str, Any], dict[str, Any]]:
+    if role not in {"pair", "behavioral"}:
+        raise ValueError(f"invalid E1.3 prefix role {role!r}")
+    selection = load_e13_selection()
+    winner = selection["winning_construction"]
+    manifest = read_json(E13_PREFIX_MANIFEST_PATH)
+    if manifest.get("status") != "passed":
+        raise RuntimeError("E1.3 prefix manifest is not passed")
+    array_name = f"{role}_{winner}"
+    with np.load(E13_PREFIX_ARRAYS_PATH, allow_pickle=False) as stored:
+        if array_name not in stored.files:
+            raise RuntimeError(f"missing E1.3 prefix array {array_name}")
+        prefixes = np.ascontiguousarray(stored[array_name], dtype=np.int64)
+    expected_count = N_PAIR_WINDOWS if role == "pair" else N_BEHAVIORAL_WINDOWS
+    if prefixes.ndim != 2 or prefixes.shape[0] != expected_count:
+        raise RuntimeError(f"E1.3 prefix array {array_name} shape {prefixes.shape}")
+    if index not in range(expected_count):
+        raise ValueError(f"E1.3 {role} prefix index {index} is out of range")
+    declared_array = manifest["prefix_arrays"]["arrays"][array_name]
+    if (
+        list(prefixes.shape) != declared_array["shape"]
+        or sha256_array(prefixes) != declared_array["sha256"]
+    ):
+        raise RuntimeError(f"E1.3 prefix array {array_name} hash/shape mismatch")
+    prefix = np.ascontiguousarray(prefixes[index], dtype=np.int64)
+    provenance = manifest["prefixes"][role][winner][index]
+    if provenance["token_ids_sha256"] != sha256_array(prefix):
+        raise RuntimeError(f"E1.3 {role}/{winner}/{index} provenance hash mismatch")
+    return prefix, provenance, selection
+
+
 def key_capture_paths(output: Path, chunk_index: int) -> tuple[Path, Path, Path]:
     stem = f"narrative_chunk{chunk_index:02d}_router_inputs_fp16"
     return (
@@ -2450,13 +2597,97 @@ def fit_key(args: argparse.Namespace) -> int:
     return 0 if selected is not None else 3
 
 
+def initialize_e13_expertpack(
+    output: Path,
+    *,
+    address_rule: str,
+) -> dict[str, Any]:
+    if address_rule != ADDRESS_RULE_E11:
+        raise ValueError("ORDER MOE-E1.3 reuses the E1.1 G2' address")
+    selection = load_e13_selection()
+    source_path = expertpack_path(
+        output, address_rule, TEACHER_RULE_ORIGINAL
+    )
+    if not source_path.is_file():
+        raise FileNotFoundError(f"missing E1.1 addressed ExpertPack: {source_path}")
+    source = read_json(source_path)
+    if source.get("layer") is None or source.get("tau") is None:
+        raise RuntimeError("E1.1 G2' did not produce an addressed ExpertPack")
+    key_info = source.get("components", {}).get("key", {})
+    key_path = Path(key_info.get("path", ""))
+    if not key_path.is_file() or key_info.get("sha256") != sha256_file(key_path):
+        raise RuntimeError("E1.1 key component is missing or changed")
+    target_path = expertpack_path(output, address_rule, TEACHER_RULE_E13)
+    if target_path.is_file():
+        pack = read_json(target_path)
+        if (
+            pack.get("teacher_rule") != TEACHER_RULE_E13
+            or pack.get("winning_construction")
+            != selection["winning_construction"]
+            or pack.get("components", {}).get("key", {}).get("sha256")
+            != key_info.get("sha256")
+        ):
+            raise RuntimeError("existing E1.3 ExpertPack conflicts with sealed selection/key")
+        return pack
+    target_root = target_path.parent
+    target_root.mkdir(parents=True, exist_ok=True)
+    pack = json.loads(json.dumps(source))
+    pack.update(
+        {
+            "schema": "expertpack_narrative_v0_e13",
+            "created_at": now_iso(),
+            "updated_at": now_iso(),
+            "address_rule": ADDRESS_RULE_E11,
+            "teacher_rule": TEACHER_RULE_E13,
+            "winning_construction": selection["winning_construction"],
+            "winning_mean_gap": selection["winning_mean_gap"],
+            "status": "addressed_pending_e13_adapter_training",
+            "rank": 64,
+        }
+    )
+    pack["components"]["A"] = {
+        "path": str(target_root / "A_fp16.npy"),
+        "shape": [64, HIDDEN_DIM],
+        "storage_dtype": "float16",
+        "status": "missing",
+    }
+    pack["components"]["B"] = {
+        "path": str(target_root / "B_fp16.npy"),
+        "shape": [HIDDEN_DIM, 64],
+        "storage_dtype": "float16",
+        "initialization": "all zeros before training",
+        "status": "missing",
+    }
+    pack.pop("g3", None)
+    pack["provenance"].update(
+        {
+            "order": str(E13_ORDER_PATH),
+            "order_sha256": sha256_file(E13_ORDER_PATH),
+            "source_e11_expertpack": str(source_path),
+            "source_e11_expertpack_sha256": sha256_file(source_path),
+            "e13_selection": str(E13_SELECTION_PATH),
+            "e13_selection_sha256": sha256_file(E13_SELECTION_PATH),
+            "e13_prefix_manifest": str(E13_PREFIX_MANIFEST_PATH),
+            "e13_prefix_manifest_sha256": sha256_file(E13_PREFIX_MANIFEST_PATH),
+            "e13_prefix_arrays": str(E13_PREFIX_ARRAYS_PATH),
+            "e13_prefix_arrays_sha256": sha256_file(E13_PREFIX_ARRAYS_PATH),
+            "script": str(SCRIPT_PATH),
+            "script_sha256_at_e13_initialization": sha256_file(SCRIPT_PATH),
+        }
+    )
+    pack["limitations"] = ["E1.3 adapter A/B pending capture-pairs and train"]
+    write_json(target_path, pack)
+    return pack
+
+
 def load_addressed_pack(
     output: Path,
     *,
     address_rule: str = ADDRESS_RULE_E1,
     require_adapter: bool = False,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> dict[str, Any]:
-    pack_path = output / expertpack_dirname(address_rule) / "manifest.json"
+    pack_path = expertpack_path(output, address_rule, teacher_rule)
     if not pack_path.is_file():
         raise FileNotFoundError(f"missing ExpertPack manifest: {pack_path}")
     pack = read_json(pack_path)
@@ -2481,8 +2712,9 @@ def pair_paths(
     output: Path,
     pair_index: int,
     address_rule: str = ADDRESS_RULE_E1,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> tuple[Path, Path]:
-    root = pair_root(output, address_rule)
+    root = pair_root(output, address_rule, teacher_rule)
     return root / f"pair_{pair_index:03d}.npz", root / f"pair_{pair_index:03d}_receipt.json"
 
 
@@ -2495,13 +2727,22 @@ def capture_pairs(args: argparse.Namespace) -> int:
     cuda_probe = require_cuda()
     index = int(args.pair_index)
     pair_ids = np.ascontiguousarray(arrays["pair_ids"][index], dtype=np.int64)
-    prefix_ids = np.ascontiguousarray(arrays["pair_prefix_ids"][index], dtype=np.int64)
+    if args.teacher_rule == TEACHER_RULE_E13:
+        prefix_ids, prefix_source, selection = load_e13_teacher_prefix("pair", index)
+    else:
+        prefix_ids = np.ascontiguousarray(
+            arrays["pair_prefix_ids"][index], dtype=np.int64
+        )
+        prefix_source = manifest["windows"]["pair_prefixes"][index]
+        selection = None
     teacher_ids = np.concatenate([prefix_ids, pair_ids])[None, :]
     student_ids = pair_ids[None, :]
     if not np.array_equal(teacher_ids[0, -WINDOW_TOKENS:], student_ids[0]):
         raise RuntimeError("G1 RED: teacher/student shared token ids are not identical")
     layer_target = int(pack["layer"])
-    data_path, receipt_path = pair_paths(output, index, args.address_rule)
+    data_path, receipt_path = pair_paths(
+        output, index, args.address_rule, args.teacher_rule
+    )
     if data_path.is_file() and receipt_path.is_file() and not args.overwrite:
         prior = read_json(receipt_path)
         if prior.get("status") == "complete" and prior.get("pair_file_sha256") == sha256_file(data_path):
@@ -2521,13 +2762,18 @@ def capture_pairs(args: argparse.Namespace) -> int:
         "schema": "moe_e1_activation_pair_v1",
         "created_at": now_iso(),
         "address_rule": args.address_rule,
+        "teacher_rule": args.teacher_rule,
+        "winning_construction": (
+            None if selection is None else selection["winning_construction"]
+        ),
         "status": "starting",
+        "order": str(order_path_for_experiment(args.address_rule, args.teacher_rule)),
         "argv": sys.argv,
         "required_shell_wrapper": GPU_WRAPPER,
         "pair_index": index,
         "split": split,
         "install_layer": layer_target,
-        "teacher_prefix_tokens": PREFIX_TOKENS,
+        "teacher_prefix_tokens": int(prefix_ids.size),
         "shared_window_tokens": WINDOW_TOKENS,
         "teacher_input_shape": list(teacher_ids.shape),
         "student_input_shape": list(student_ids.shape),
@@ -2535,7 +2781,16 @@ def capture_pairs(args: argparse.Namespace) -> int:
         "shared_token_ids_sha256": sha256_array(pair_ids),
         "token_alignment_exact": True,
         "source_window": manifest["windows"]["pairs"][index],
-        "prefix_source": manifest["windows"]["pair_prefixes"][index],
+        "prefix_source": prefix_source,
+        "teacher_selection": (
+            None
+            if selection is None
+            else {
+                "path": str(E13_SELECTION_PATH),
+                "sha256": sha256_file(E13_SELECTION_PATH),
+                "winning_mean_gap": selection["winning_mean_gap"],
+            }
+        ),
         "model_dir": str(args.model_dir.resolve()),
         "attention_mode": "standard",
         "expert_mode": "resident_packed_mxfp4",
@@ -2562,7 +2817,7 @@ def capture_pairs(args: argparse.Namespace) -> int:
             h_teacher = embed(teacher_ids)
             h_student = embed(student_ids)
             cos, sin = runtime["gpt_oss_yarn_rope_tables"](
-                cfg, PREFIX_TOKENS + WINDOW_TOKENS
+                cfg, int(teacher_ids.shape[1])
             )
             for layer in range(layer_target + 1):
                 layer_started = time.perf_counter()
@@ -2675,8 +2930,11 @@ def load_pair_capture(
     pair_index: int,
     expected_ids: np.ndarray,
     address_rule: str = ADDRESS_RULE_E1,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> tuple[dict[str, np.ndarray], dict[str, Any]]:
-    data_path, receipt_path = pair_paths(output, pair_index, address_rule)
+    data_path, receipt_path = pair_paths(
+        output, pair_index, address_rule, teacher_rule
+    )
     if not data_path.is_file() or not receipt_path.is_file():
         raise FileNotFoundError(f"missing pair {pair_index}: {data_path}, {receipt_path}")
     receipt = read_json(receipt_path)
@@ -2724,12 +2982,15 @@ def train(args: argparse.Namespace) -> int:
         raise ValueError("--train-tokens-per-window must be 1..512")
     output = ensure_output_dir(args.output_dir)
     _manifest, prepared = load_prepared(output)
-    pack = load_addressed_pack(output, address_rule=args.address_rule)
-    pack_dir = output / expertpack_dirname(args.address_rule)
+    if args.teacher_rule == TEACHER_RULE_E13:
+        pack = initialize_e13_expertpack(output, address_rule=args.address_rule)
+    else:
+        pack = load_addressed_pack(output, address_rule=args.address_rule)
+    pack_dir = expertpack_root(output, args.address_rule, args.teacher_rule)
     A_path = pack_dir / "A_fp16.npy"
     B_path = pack_dir / "B_fp16.npy"
-    training_path = train_path(output, args.address_rule)
-    if args.address_rule == ADDRESS_RULE_E11:
+    training_path = train_path(output, args.address_rule, args.teacher_rule)
+    if args.address_rule == ADDRESS_RULE_E11 or args.teacher_rule == TEACHER_RULE_E13:
         if training_path.is_file():
             prior = read_json(training_path)
             if prior.get("status") in {
@@ -2767,6 +3028,7 @@ def train(args: argparse.Namespace) -> int:
             index,
             prepared["pair_ids"][index],
             args.address_rule,
+            args.teacher_rule,
         )
         pair_receipts.append(record)
         del _data
@@ -2812,6 +3074,7 @@ def train(args: argparse.Namespace) -> int:
                     index,
                     prepared["pair_ids"][index],
                     args.address_rule,
+                    args.teacher_rule,
                 )
                 hidden = torch.from_numpy(data["h_student_fp16"].astype(np.float32))
                 target = torch.from_numpy(
@@ -2851,6 +3114,7 @@ def train(args: argparse.Namespace) -> int:
                 index,
                 prepared["pair_ids"][index],
                 args.address_rule,
+                args.teacher_rule,
             )
             hidden_np = data["h_student_fp16"].astype(np.float32)
             target_np = (
@@ -2928,9 +3192,15 @@ def train(args: argparse.Namespace) -> int:
         "schema": "moe_e1_adapter_training_v1",
         "created_at": now_iso(),
         "address_rule": args.address_rule,
+        "teacher_rule": args.teacher_rule,
+        "winning_construction": (
+            load_e13_selection()["winning_construction"]
+            if args.teacher_rule == TEACHER_RULE_E13
+            else None
+        ),
         "status": "complete_g3_green" if g3_green else "complete_g3_red_stop",
         "cpu_only": True,
-        "order": str(order_path_for_rule(args.address_rule)),
+        "order": str(order_path_for_experiment(args.address_rule, args.teacher_rule)),
         "script": str(SCRIPT_PATH),
         "script_sha256": sha256_file(SCRIPT_PATH),
         "model_snapshot": str(args.model_dir.resolve()),
@@ -3045,10 +3315,15 @@ def train(args: argparse.Namespace) -> int:
 
 
 def load_expert_arrays(
-    output: Path, address_rule: str = ADDRESS_RULE_E1
+    output: Path,
+    address_rule: str = ADDRESS_RULE_E1,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> tuple[dict[str, Any], np.ndarray, np.ndarray, np.ndarray]:
     pack = load_addressed_pack(
-        output, address_rule=address_rule, require_adapter=True
+        output,
+        address_rule=address_rule,
+        require_adapter=True,
+        teacher_rule=teacher_rule,
     )
     key = np.load(pack["components"]["key"]["path"], allow_pickle=False)
     A = np.load(pack["components"]["A"]["path"], allow_pickle=False)
@@ -3240,8 +3515,9 @@ def eval_receipt_path(
     window_index: int | None,
     address_rule: str = ADDRESS_RULE_E1,
     eval_fix: str = EVAL_FIX_ORIGINAL,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> Path:
-    root = eval_root_for_fix(output, address_rule, eval_fix)
+    root = eval_root_for_fix(output, address_rule, eval_fix, teacher_rule)
     if kind == "abi":
         return root / "abi.json"
     if window_index is None:
@@ -3263,6 +3539,7 @@ def initialize_eval_receipt(
         window_index,
         args.address_rule,
         args.eval_fix,
+        args.teacher_rule,
     )
     if path.is_file() and not args.overwrite:
         prior = read_json(path)
@@ -3276,6 +3553,7 @@ def initialize_eval_receipt(
         "created_at": now_iso(),
         "address_rule": args.address_rule,
         "eval_fix": args.eval_fix,
+        "teacher_rule": args.teacher_rule,
         "status": "starting",
         "kind": kind,
         "window_index": window_index,
@@ -3286,11 +3564,12 @@ def initialize_eval_receipt(
         "rank": int(pack["rank"]),
         "tau": float(pack["tau"]),
         "expertpack_manifest": str(
-            output / expertpack_dirname(args.address_rule) / "manifest.json"
+            expertpack_path(output, args.address_rule, args.teacher_rule)
         ),
         "expertpack_manifest_sha256_at_run": sha256_file(
-            output / expertpack_dirname(args.address_rule) / "manifest.json"
+            expertpack_path(output, args.address_rule, args.teacher_rule)
         ),
+        "order": str(order_path_for_experiment(args.address_rule, args.teacher_rule)),
         "script_sha256_at_run": sha256_file(SCRIPT_PATH),
         "cuda_environment": cuda_probe,
         "gpu_before": nvidia_smi(),
@@ -3385,7 +3664,14 @@ def eval_narrative(
     manifest, prepared = load_prepared(output)
     index = int(args.window_index)
     window = prepared["behavioral_ids"][index]
-    prefix = prepared["behavioral_prefix_ids"][index]
+    if args.teacher_rule == TEACHER_RULE_E13:
+        prefix, prefix_source, selection = load_e13_teacher_prefix(
+            "behavioral", index
+        )
+    else:
+        prefix = prepared["behavioral_prefix_ids"][index]
+        prefix_source = manifest["windows"]["behavioral_prefixes"][index]
+        selection = None
     base_ids = window[:-1][None, :]
     teacher_ids = np.concatenate([prefix, window[:-1]])[None, :]
     targets = window[1:]
@@ -3395,7 +3681,20 @@ def eval_narrative(
     receipt.update(
         {
             "source_window": manifest["windows"]["behavioral_heldout"][index],
-            "teacher_prefix_source": manifest["windows"]["behavioral_prefixes"][index],
+            "teacher_prefix_source": prefix_source,
+            "teacher_prefix_tokens": int(prefix.size),
+            "winning_construction": (
+                None if selection is None else selection["winning_construction"]
+            ),
+            "teacher_selection": (
+                None
+                if selection is None
+                else {
+                    "path": str(E13_SELECTION_PATH),
+                    "sha256": sha256_file(E13_SELECTION_PATH),
+                    "winning_mean_gap": selection["winning_mean_gap"],
+                }
+            ),
             "base_input_ids_sha256": sha256_array(base_ids),
             "teacher_input_ids_sha256": sha256_array(teacher_ids),
             "target_ids_sha256": sha256_array(targets),
@@ -4047,7 +4346,9 @@ def eval_gates(args: argparse.Namespace) -> int:
     if args.eval_kind is None:
         raise ValueError("eval-gates requires --eval-kind abi|narrative|generic|code")
     output = ensure_output_dir(args.output_dir)
-    pack, key, A, B = load_expert_arrays(output, args.address_rule)
+    pack, key, A, B = load_expert_arrays(
+        output, args.address_rule, args.teacher_rule
+    )
     cuda_probe = require_cuda()
     if args.eval_kind == "abi":
         return eval_abi(args, output, pack, key, A, B, cuda_probe)
@@ -4197,12 +4498,15 @@ def completed_eval_receipts(
     kind: str,
     indices: Sequence[int],
     address_rule: str = ADDRESS_RULE_E1,
+    teacher_rule: str = TEACHER_RULE_ORIGINAL,
 ) -> tuple[list[dict[str, Any]], list[int], list[int]]:
     receipts: list[dict[str, Any]] = []
     missing: list[int] = []
     errors: list[int] = []
     for index in indices:
-        path = eval_receipt_path(output, kind, index, address_rule)
+        path = eval_receipt_path(
+            output, kind, index, address_rule, EVAL_FIX_ORIGINAL, teacher_rule
+        )
         if not path.is_file():
             missing.append(int(index))
             continue
@@ -4254,11 +4558,16 @@ def render_report(analysis: dict[str, Any]) -> str:
     install = analysis["install_row"]
     g4 = analysis["g4_row"]
     is_e11 = analysis.get("address_rule") == ADDRESS_RULE_E11
+    is_e13 = analysis.get("teacher_rule") == TEACHER_RULE_E13
     lines = [
         (
-            "# MOE-E1.1 NarrativeForge Expert Report"
-            if is_e11
-            else "# MOE-E1 NarrativeForge Expert Report"
+            "# MOE-E1.3 NarrativeForge Expert Report"
+            if is_e13
+            else (
+                "# MOE-E1.1 NarrativeForge Expert Report"
+                if is_e11
+                else "# MOE-E1 NarrativeForge Expert Report"
+            )
         ),
         "",
         f"Generated: `{analysis['created_at']}`",
@@ -4349,6 +4658,8 @@ def analyze(args: argparse.Namespace) -> int:
         raise ValueError("analyze requires at least 2000 bootstrap resamples")
     output = ensure_output_dir(args.output_dir)
     manifest, _prepared = load_prepared(output)
+    experiment_root = experiment_output(output, args.teacher_rule)
+    experiment_root.mkdir(parents=True, exist_ok=True)
     cpu_validation_file = cpu_validation_path(output, args.address_rule)
     cpu_validation = read_json(cpu_validation_file)
     cuda_probe = cuda_environment_probe()
@@ -4361,7 +4672,14 @@ def analyze(args: argparse.Namespace) -> int:
     gates: dict[str, dict[str, Any]] = {}
 
     # G0
-    abi_path = eval_receipt_path(output, "abi", None, args.address_rule)
+    abi_path = eval_receipt_path(
+        output,
+        "abi",
+        None,
+        args.address_rule,
+        EVAL_FIX_ORIGINAL,
+        args.teacher_rule,
+    )
     if abi_path.is_file() and read_json(abi_path).get("status") == "complete":
         abi = read_json(abi_path)
         verdict = abi.get("g0_verdict", "RED")
@@ -4391,7 +4709,9 @@ def analyze(args: argparse.Namespace) -> int:
     pair_truth: list[dict[str, Any]] = []
     pair_errors: list[int] = []
     for index in range(N_PAIR_WINDOWS):
-        _data_path, receipt_path = pair_paths(output, index, args.address_rule)
+        _data_path, receipt_path = pair_paths(
+            output, index, args.address_rule, args.teacher_rule
+        )
         if not receipt_path.is_file():
             continue
         receipt = read_json(receipt_path)
@@ -4429,8 +4749,15 @@ def analyze(args: argparse.Namespace) -> int:
 
     # G2 and install row
     fit_path, _keys_path = fit_key_paths(output, args.address_rule)
-    pack_path = output / expertpack_dirname(args.address_rule) / "manifest.json"
-    pack = read_json(pack_path)
+    pack_path = expertpack_path(output, args.address_rule, args.teacher_rule)
+    if pack_path.is_file():
+        pack = read_json(pack_path)
+    elif args.teacher_rule == TEACHER_RULE_E13:
+        pack = read_json(
+            expertpack_path(output, args.address_rule, TEACHER_RULE_ORIGINAL)
+        )
+    else:
+        pack = read_json(pack_path)
     g2_label = "G2'" if args.address_rule == ADDRESS_RULE_E11 else "G2"
     if args.address_rule == ADDRESS_RULE_E11:
         install_row = (
@@ -4520,7 +4847,7 @@ def analyze(args: argparse.Namespace) -> int:
         }
 
     # G3
-    training_path = train_path(output, args.address_rule)
+    training_path = train_path(output, args.address_rule, args.teacher_rule)
     if training_path.is_file():
         training = read_json(training_path)
         stored = training["stored_fp16_validation"]
@@ -4550,6 +4877,7 @@ def analyze(args: argparse.Namespace) -> int:
         "narrative",
         range(N_BEHAVIORAL_WINDOWS),
         args.address_rule,
+        args.teacher_rule,
     )
     g4_payload: dict[str, Any] = {
         "complete_windows": len(narrative),
@@ -4614,10 +4942,10 @@ def analyze(args: argparse.Namespace) -> int:
 
     # G5
     generic, generic_missing, generic_errors = completed_eval_receipts(
-        output, "generic", EVAL_INDICES, args.address_rule
+        output, "generic", EVAL_INDICES, args.address_rule, args.teacher_rule
     )
     code, code_missing, code_errors = completed_eval_receipts(
-        output, "code", EVAL_INDICES, args.address_rule
+        output, "code", EVAL_INDICES, args.address_rule, args.teacher_rule
     )
     g5_payload: dict[str, Any] = {
         "gate": "G5'" if args.address_rule == ADDRESS_RULE_E11 else "G5",
@@ -4737,41 +5065,78 @@ def analyze(args: argparse.Namespace) -> int:
     }
 
     if premise_finding:
+        experiment_label = (
+            "E1.3"
+            if args.teacher_rule == TEACHER_RULE_E13
+            else "E1.1" if args.address_rule == ADDRESS_RULE_E11 else "E1"
+        )
         registered_verdict = (
-            f"{'E1.1' if args.address_rule == ADDRESS_RULE_E11 else 'E1'} "
-            "PREMISE FINDING: TRAIN-file guide prefixes did not improve perplexity "
-            "on HELDOUT guide text; expert recovery is undefined and evaluation stops."
+            f"{experiment_label} "
+            + (
+                "PREMISE FINDING: the selected E1.3 teacher construction did not "
+                "improve perplexity "
+                if args.teacher_rule == TEACHER_RULE_E13
+                else "PREMISE FINDING: TRAIN-file guide prefixes did not improve perplexity "
+            )
+            + "on HELDOUT guide text; expert recovery is undefined and evaluation stops."
         )
     elif gates["G4"]["verdict"] == "GREEN":
         registered_verdict = (
-            "E1.1 SUPPORTED."
-            if args.address_rule == ADDRESS_RULE_E11
-            else "E1 SUPPORTED."
+            "E1.3 SUPPORTED."
+            if args.teacher_rule == TEACHER_RULE_E13
+            else (
+                "E1.1 SUPPORTED."
+                if args.address_rule == ADDRESS_RULE_E11
+                else "E1 SUPPORTED."
+            )
         )
     elif gates["G4"]["verdict"] == "RED":
+        experiment_label = (
+            "E1.3"
+            if args.teacher_rule == TEACHER_RULE_E13
+            else "E1.1" if args.address_rule == ADDRESS_RULE_E11 else "E1"
+        )
         registered_verdict = (
-            f"{'E1.1' if args.address_rule == ADDRESS_RULE_E11 else 'E1'} "
+            f"{experiment_label} "
             "NOT SUPPORTED: the expert recovered less than 25% of the positive "
             "teacher perplexity gap under the registered behavioral gate."
         )
     elif not gpu_available:
+        experiment_label = (
+            "E1.3"
+            if args.teacher_rule == TEACHER_RULE_E13
+            else "E1.1" if args.address_rule == ADDRESS_RULE_E11 else "E1"
+        )
         registered_verdict = (
-            f"{'E1.1' if args.address_rule == ADDRESS_RULE_E11 else 'E1'} "
+            f"{experiment_label} "
             "NOT MEASURED — CUDA device nodes are unavailable; no registered "
             "behavioral verdict can be issued."
         )
     else:
+        experiment_label = (
+            "E1.3"
+            if args.teacher_rule == TEACHER_RULE_E13
+            else "E1.1" if args.address_rule == ADDRESS_RULE_E11 else "E1"
+        )
         registered_verdict = (
-            f"{'E1.1' if args.address_rule == ADDRESS_RULE_E11 else 'E1'} "
+            f"{experiment_label} "
             "NOT MEASURED — required GPU receipts are incomplete."
         )
 
-    resume_path = output / "GPU_RESUME_COMMANDS.sh"
-    write_text(resume_path, gpu_resume_commands(args.address_rule))
-    try:
-        resume_path.chmod(0o755)
-    except OSError:
-        pass
+    if args.teacher_rule == TEACHER_RULE_E13:
+        resume_path = E13_RESUME_PATH
+        if not resume_path.is_file():
+            raise FileNotFoundError(
+                "E1.3 downstream resume script is absent; the registered sweep "
+                "has not selected a positive teacher"
+            )
+    else:
+        resume_path = output / "GPU_RESUME_COMMANDS.sh"
+        write_text(resume_path, gpu_resume_commands(args.address_rule))
+        try:
+            resume_path.chmod(0o755)
+        except OSError:
+            pass
     incomplete = [name for name, gate in gates.items() if gate["verdict"] == "NOT_MEASURED"]
     limitations: list[str] = [
         "The 20B model remains frozen and is used for inference only.",
@@ -4782,7 +5147,7 @@ def analyze(args: argparse.Namespace) -> int:
             else "CPU synthetic checks validate machinery only and are not G0-G5 evidence."
         ),
     ]
-    blocked_file = blocked_path(output, args.address_rule)
+    blocked_file = blocked_path(output, args.address_rule, args.teacher_rule)
     if incomplete and not gpu_available:
         blocked = {
             "schema": "moe_e1_cuda_blocked_v1",
@@ -4813,13 +5178,24 @@ def analyze(args: argparse.Namespace) -> int:
 
     intended = {
         SCRIPT_PATH,
-        analysis_path(output, args.address_rule),
-        report_path(output, args.address_rule),
+        analysis_path(output, args.address_rule, args.teacher_rule),
+        report_path(output, args.address_rule, args.teacher_rule),
         resume_path,
     }
     if blocked_file.exists() or (incomplete and not gpu_available):
         intended.add(blocked_file)
-    if args.address_rule == ADDRESS_RULE_E11:
+    if args.teacher_rule == TEACHER_RULE_E13:
+        current_files = {
+            path.resolve()
+            for path in E13_OUTPUT_DIR.rglob("*")
+            if path.is_file()
+        }
+        current_files.update(
+            path.resolve()
+            for path in (cpu_validation_file, fit_path, _keys_path)
+            if path.exists()
+        )
+    elif args.address_rule == ADDRESS_RULE_E11:
         current_files = {
             path.resolve()
             for root in (
@@ -4838,8 +5214,8 @@ def analyze(args: argparse.Namespace) -> int:
                 fit_path,
                 _keys_path,
                 training_path,
-                analysis_path(output, args.address_rule),
-                report_path(output, args.address_rule),
+                analysis_path(output, args.address_rule, args.teacher_rule),
+                report_path(output, args.address_rule, args.teacher_rule),
                 resume_path,
                 blocked_file,
             )
@@ -4852,9 +5228,13 @@ def analyze(args: argparse.Namespace) -> int:
     created_paths = sorted(str(path) for path in (current_files | intended))
     analysis = {
         "schema": (
-            "moe_e1_1_analysis_v1"
-            if args.address_rule == ADDRESS_RULE_E11
-            else "moe_e1_analysis_v1"
+            "moe_e1_3_expert_analysis_v1"
+            if args.teacher_rule == TEACHER_RULE_E13
+            else (
+                "moe_e1_1_analysis_v1"
+                if args.address_rule == ADDRESS_RULE_E11
+                else "moe_e1_analysis_v1"
+            )
         ),
         "created_at": now_iso(),
         "status": (
@@ -4863,7 +5243,13 @@ def analyze(args: argparse.Namespace) -> int:
             else "complete" if not incomplete else "incomplete"
         ),
         "address_rule": args.address_rule,
-        "order": str(order_path_for_rule(args.address_rule)),
+        "teacher_rule": args.teacher_rule,
+        "winning_construction": (
+            load_e13_selection()["winning_construction"]
+            if args.teacher_rule == TEACHER_RULE_E13
+            else None
+        ),
+        "order": str(order_path_for_experiment(args.address_rule, args.teacher_rule)),
         "script": str(SCRIPT_PATH),
         "script_sha256": sha256_file(SCRIPT_PATH),
         "registered_verdict_sentence": registered_verdict,
@@ -4890,8 +5276,8 @@ def analyze(args: argparse.Namespace) -> int:
         "bootstrap_resamples": int(args.bootstrap_resamples),
         "seed": int(args.seed),
     }
-    analysis_file = analysis_path(output, args.address_rule)
-    report_file = report_path(output, args.address_rule)
+    analysis_file = analysis_path(output, args.address_rule, args.teacher_rule)
+    report_file = report_path(output, args.address_rule, args.teacher_rule)
     write_json(analysis_file, analysis)
     write_text(report_file, render_report(analysis))
     print(
@@ -4916,6 +5302,17 @@ def main() -> int:
     args = parse_args()
     try:
         ensure_registered_model_dir(args.model_dir)
+        if args.teacher_rule == TEACHER_RULE_E13:
+            if args.address_rule != ADDRESS_RULE_E11:
+                raise ValueError("--teacher-rule e13 requires --address-rule e11")
+            if args.eval_fix != EVAL_FIX_ORIGINAL:
+                raise ValueError("--teacher-rule e13 preserves --eval-fix original")
+            if args.mode not in {"capture-pairs", "train", "eval-gates", "analyze"}:
+                raise ValueError(
+                    "--teacher-rule e13 begins at capture-pairs and supports only "
+                    "capture-pairs/train/eval-gates/analyze"
+                )
+            load_e13_selection()
         if args.eval_fix == EVAL_FIX_E12 and (
             args.address_rule != ADDRESS_RULE_E11 or args.mode != "eval-gates"
         ):
@@ -4936,7 +5333,9 @@ def main() -> int:
                     f"diagnostic currently says {diagnostic.get('mechanism')!r}"
                 )
         if args.address_rule == ADDRESS_RULE_E11 and args.overwrite:
-            raise ValueError("E1.1 receipts are append-only; --overwrite is forbidden")
+            raise ValueError(
+                "E1.1/E1.3 receipts are append-only; --overwrite is forbidden"
+            )
         if args.address_rule == ADDRESS_RULE_E11 and args.mode in {
             "prepare",
             "capture-keys",
