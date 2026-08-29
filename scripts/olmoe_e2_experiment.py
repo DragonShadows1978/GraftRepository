@@ -4,8 +4,9 @@
 The script is intentionally self-contained and has no GPT-OSS imports.  It
 implements the registered stages as resumable modes:
 
-  prepare / self-test / load-check / bringup / capture-keys / fit-key /
-  capture-pairs / train / eval-gates / fallback-check / analyze
+  prepare / self-test / validate-provenance / load-check / bringup /
+  capture-keys / fit-key / capture-pairs / train / eval-gates /
+  fallback-check / analyze
 
 Model and dataset access is local-only.  CUDA runs first complete Transformers'
 fused-expert conversion on CPU, hard-gate
@@ -28,11 +29,12 @@ import platform
 import re
 import resource
 import sys
+import tempfile
 import time
 import traceback
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Iterable, Sequence
+from typing import Any, Callable, Iterable, Sequence
 
 import numpy as np
 
@@ -48,6 +50,7 @@ os.environ["HF_DEACTIVATE_ASYNC_LOAD"] = "1"
 SCRIPT_PATH = Path(__file__).resolve()
 REPO_ROOT = SCRIPT_PATH.parents[1]
 ORDER_PATH = REPO_ROOT / "orders" / "MOE_E2_OLMOE_TESTBED.md"
+F4_ORDER_PATH = REPO_ROOT / "orders" / "MOE_E2_F4_CONTENT_PROVENANCE.md"
 GLC_PATH = REPO_ROOT / "docs" / "GLC_LONG_CONTEXT_SYNTHESIS.md"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "artifacts" / "moe_e2"
 DEFAULT_MODEL_DIR = Path(
@@ -123,6 +126,24 @@ BRINGUP_LONG_MINUS_SHORT_NLL_CAP = 0.15
 DEFAULT_SEED = 20260829
 DEFAULT_BOOTSTRAP_RESAMPLES = 2000
 EXPERTPACK_NAME = "expertpack_narrative_olmoe_v0"
+PREPARED_CONTENT_ALGORITHM = (
+    "moe_e2_prepared_arrays_v1:sha256(canonical-json(name,shape,dtype,sha256("
+    "C-contiguous-little-endian-values)))"
+)
+PROVENANCE_VALIDATION_DIR = "provenance_validation"
+
+PREPARED_ARRAY_SHAPES = {
+    "narrative_key_ids": (16, 512),
+    "pair_ids": (64, 512),
+    "heldout_ids": (16, 512),
+    "pair_p0_prefix_ids": (64, 2048),
+    "heldout_p0_prefix_ids": (16, 2048),
+    "heldout_p1_prefix_ids": (16, 2048),
+    "wikitext_ids": (16, 512),
+    "code_ids": (16, 512),
+    "grm_ids": (16, 512),
+    "bringup_ids": (2048,),
+}
 
 GPU_PREAMBLE = (
     "flock -w 7200 /tmp/forge-gpu.lock "
@@ -140,6 +161,7 @@ def parse_args() -> argparse.Namespace:
         choices=(
             "prepare",
             "self-test",
+            "validate-provenance",
             "load-check",
             "bringup",
             "capture-keys",
@@ -179,6 +201,25 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=0.0)
     parser.add_argument("--token-batch-size", type=int, default=256)
     parser.add_argument("--train-tokens-per-window", type=int, default=128)
+    parser.add_argument(
+        "--legacy-script-snapshot",
+        type=Path,
+        help=(
+            "validate-provenance only: exact historical harness used to rebuild "
+            "a legacy prepared-content lineage"
+        ),
+    )
+    parser.add_argument(
+        "--legacy-archive-sha256",
+        help=(
+            "validate-provenance only: historical prepared_windows.npz byte SHA "
+            "recorded by the immutable receipts"
+        ),
+    )
+    parser.add_argument(
+        "--legacy-source-commit",
+        help="validate-provenance only: source commit label for the legacy snapshot",
+    )
     return parser.parse_args()
 
 
@@ -198,8 +239,49 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def canonical_array(array: np.ndarray) -> np.ndarray:
+    """Return content-hash bytes in C order with an explicit little-endian dtype."""
+
+    observed = np.asarray(array)
+    dtype = observed.dtype
+    if dtype.hasobject or dtype.fields is not None or dtype.subdtype is not None:
+        raise TypeError(f"unsupported array dtype for content provenance: {dtype}")
+    normalized_dtype = dtype.newbyteorder("<")
+    normalized = observed.astype(normalized_dtype, copy=False)
+    return np.ascontiguousarray(normalized)
+
+
 def sha256_array(array: np.ndarray) -> str:
-    return sha256_bytes(np.ascontiguousarray(array).tobytes())
+    """SHA-256 of dtype-normalized logical values, independent of array layout."""
+
+    return sha256_bytes(canonical_array(array).tobytes(order="C"))
+
+
+def array_content_record(array: np.ndarray) -> dict[str, Any]:
+    canonical = canonical_array(array)
+    return {
+        "shape": [int(value) for value in canonical.shape],
+        "dtype": canonical.dtype.str,
+        "sha256": sha256_bytes(canonical.tobytes(order="C")),
+    }
+
+
+def prepared_content_record(arrays: dict[str, np.ndarray]) -> dict[str, Any]:
+    records = {
+        name: array_content_record(arrays[name]) for name in sorted(arrays)
+    }
+    envelope = {
+        "algorithm": PREPARED_CONTENT_ALGORITHM,
+        "arrays": records,
+    }
+    canonical_json = json.dumps(
+        envelope, sort_keys=True, separators=(",", ":"), ensure_ascii=True
+    ).encode("utf-8")
+    return {
+        "algorithm": PREPARED_CONTENT_ALGORITHM,
+        "sha256": sha256_bytes(canonical_json),
+        "arrays": records,
+    }
 
 
 def ensure_output(path: Path) -> Path:
@@ -265,6 +347,19 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
     )
 
 
+def write_json_if_changed(path: Path, payload: dict[str, Any]) -> bool:
+    """Write canonical JSON only when its bytes differ; return whether it changed."""
+
+    require_finite_json_values(payload)
+    encoded = (
+        json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n"
+    ).encode("utf-8")
+    if path.is_file() and path.read_bytes() == encoded:
+        return False
+    atomic_write_bytes(path, encoded)
+    return True
+
+
 def read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -292,6 +387,115 @@ def save_npz(path: Path, *, compressed: bool = False, **arrays: np.ndarray) -> N
         handle.flush()
         os.fsync(handle.fileno())
     os.replace(temporary, path)
+
+
+def validate_prepared_array_contracts(arrays: dict[str, np.ndarray]) -> None:
+    observed_names = set(arrays)
+    expected_names = set(PREPARED_ARRAY_SHAPES)
+    if observed_names != expected_names:
+        raise RuntimeError(
+            "prepared array names changed: "
+            f"missing={sorted(expected_names - observed_names)}, "
+            f"extra={sorted(observed_names - expected_names)}"
+        )
+    for name, expected_shape in PREPARED_ARRAY_SHAPES.items():
+        value = arrays[name]
+        if value.shape != expected_shape or value.dtype != np.int64:
+            raise RuntimeError(
+                f"prepared {name} contract {value.shape}/{value.dtype} "
+                f"!= {expected_shape}/int64"
+            )
+
+
+def validate_declared_prepared_content(
+    declared: dict[str, Any],
+    arrays: dict[str, np.ndarray],
+    *,
+    require_combined: bool,
+) -> dict[str, Any]:
+    """Validate v1 or v2 manifest declarations using array content only."""
+
+    validate_prepared_array_contracts(arrays)
+    actual = prepared_content_record(arrays)
+    declared_arrays = declared.get("arrays")
+    if not isinstance(declared_arrays, dict):
+        raise RuntimeError("prepared manifest has no per-array content records")
+    if set(declared_arrays) != set(actual["arrays"]):
+        raise RuntimeError("prepared manifest array-name set does not match archive")
+    for name, observed in actual["arrays"].items():
+        record = declared_arrays[name]
+        if record.get("shape") != observed["shape"]:
+            raise RuntimeError(f"prepared array shape changed: {name}")
+        if require_combined and "dtype" not in record:
+            raise RuntimeError(f"v2 prepared array dtype is missing: {name}")
+        if "dtype" in record and record.get("dtype") != observed["dtype"]:
+            raise RuntimeError(f"prepared array dtype changed: {name}")
+        if record.get("sha256") != observed["sha256"]:
+            raise RuntimeError(f"prepared array content hash mismatch: {name}")
+    declared_digest = declared.get("content_sha256")
+    declared_algorithm = declared.get("content_digest_algorithm")
+    if (declared_digest is None) != (declared_algorithm is None):
+        raise RuntimeError("prepared combined content provenance is incomplete")
+    if require_combined and declared_digest is None:
+        raise RuntimeError("v2 prepared manifest lacks combined content provenance")
+    if declared_digest is not None and declared_digest != actual["sha256"]:
+        raise RuntimeError("prepared combined content digest mismatch")
+    if declared_algorithm is not None and declared_algorithm != actual["algorithm"]:
+        raise RuntimeError("prepared content digest algorithm mismatch")
+    return actual
+
+
+def augment_manifest_content(
+    manifest: dict[str, Any], content: dict[str, Any]
+) -> dict[str, Any]:
+    """Return an in-memory v2 view without rewriting a legacy manifest."""
+
+    augmented = dict(manifest)
+    prepared = dict(manifest["prepared_windows"])
+    prepared["content_digest_algorithm"] = content["algorithm"]
+    prepared["content_sha256"] = content["sha256"]
+    prepared["arrays"] = content["arrays"]
+    augmented["prepared_windows"] = prepared
+    return augmented
+
+
+def prepared_content_provenance(manifest: dict[str, Any]) -> dict[str, Any]:
+    prepared = manifest["prepared_windows"]
+    return {
+        "path": prepared["path"],
+        "content_digest_algorithm": prepared["content_digest_algorithm"],
+        "content_sha256": prepared["content_sha256"],
+        "arrays": prepared["arrays"],
+    }
+
+
+def prepared_content_fields(manifest: dict[str, Any]) -> dict[str, Any]:
+    prepared = manifest["prepared_windows"]
+    return {
+        "prepared_windows_content_digest_algorithm": prepared[
+            "content_digest_algorithm"
+        ],
+        "prepared_windows_content_sha256": prepared["content_sha256"],
+    }
+
+
+def content_fields_from_binding(binding: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "prepared_windows_content_digest_algorithm": binding[
+            "content_digest_algorithm"
+        ],
+        "prepared_windows_content_sha256": binding["content_sha256"],
+    }
+
+
+def content_provenance_from_binding(binding: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "content_digest_algorithm": binding["content_digest_algorithm"],
+        "content_sha256": binding["content_sha256"],
+        "arrays": binding["arrays"],
+        "content_label": binding["content_label"],
+        "content_metadata_path": binding.get("content_metadata_path"),
+    }
 
 
 def source_record(path: Path, *, rows: int | None = None) -> dict[str, Any]:
@@ -664,25 +868,43 @@ def build_wikitext_corpus() -> tuple[str, list[dict[str, Any]]]:
     return concatenate_plain_text(parts), sources
 
 
-def build_file_corpus(paths: Sequence[Path]) -> tuple[str, list[dict[str, Any]]]:
+def build_file_corpus(
+    paths: Sequence[Path], *, replacements: dict[Path, Path] | None = None
+) -> tuple[str, list[dict[str, Any]]]:
     parts: list[str] = []
     sources: list[dict[str, Any]] = []
+    normalized_replacements = {
+        source.resolve(): replacement.resolve()
+        for source, replacement in (replacements or {}).items()
+    }
     for path in paths:
-        parts.append(path.read_text(encoding="utf-8", errors="strict"))
-        record = source_record(path)
+        content_path = normalized_replacements.get(path.resolve(), path)
+        parts.append(content_path.read_text(encoding="utf-8", errors="strict"))
+        record = source_record(content_path)
+        record["path"] = str(path.resolve())
         record["repo_relative_path"] = path.relative_to(REPO_ROOT).as_posix()
+        if content_path.resolve() != path.resolve():
+            record["content_reconstructed_from"] = str(content_path.resolve())
         sources.append(record)
     return concatenate_plain_text(parts), sources
 
 
-def build_code_corpus() -> tuple[str, list[dict[str, Any]]]:
+def build_code_corpus(
+    *, script_snapshot: Path | None = None
+) -> tuple[str, list[dict[str, Any]]]:
     paths: list[Path] = []
     for directory in (REPO_ROOT / "core", REPO_ROOT / "scripts", REPO_ROOT / "cpp"):
         for path in directory.rglob("*"):
             if path.is_file() and path.suffix in {".py", ".cpp", ".h"}:
                 paths.append(path)
     paths.sort(key=lambda path: path.relative_to(REPO_ROOT).as_posix())
-    return build_file_corpus(paths)
+    replacements = None
+    if script_snapshot is not None:
+        snapshot = script_snapshot.resolve()
+        if not snapshot.is_file():
+            raise FileNotFoundError(snapshot)
+        replacements = {SCRIPT_PATH: snapshot}
+    return build_file_corpus(paths, replacements=replacements)
 
 
 def build_grm_corpus() -> tuple[str, list[dict[str, Any]]]:
@@ -738,28 +960,24 @@ def prepare(args: argparse.Namespace) -> int:
     model_dir = validate_model_dir(args.model_dir)
     existing_manifest_path = output / "corpus_manifest.json"
     if existing_manifest_path.is_file():
-        existing = read_json(existing_manifest_path)
-        existing_windows = Path(existing.get("prepared_windows", {}).get("path", ""))
-        if (
-            existing.get("status") == "passed"
-            and existing.get("script_sha256") == sha256_file(SCRIPT_PATH)
-            and existing.get("model_revision") == MODEL_REVISION
-            and existing_windows.is_file()
-            and existing.get("prepared_windows", {}).get("sha256")
-            == sha256_file(existing_windows)
-        ):
-            write_gpu_scripts(output)
-            print(
-                json.dumps(
-                    {
-                        "status": "existing",
-                        "manifest": str(existing_manifest_path),
-                        "windows": str(existing_windows),
-                    }
-                ),
-                flush=True,
-            )
-            return 0
+        existing, _arrays = load_prepared(output)
+        if existing.get("model_dir") != str(model_dir):
+            raise RuntimeError("existing prepared corpus is bound to a different model path")
+        print(
+            json.dumps(
+                {
+                    "status": "existing",
+                    "manifest": str(existing_manifest_path),
+                    "windows": existing["prepared_windows"]["path"],
+                    "content_sha256": existing["prepared_windows"][
+                        "content_sha256"
+                    ],
+                    "npz_and_manifest_rewritten": False,
+                }
+            ),
+            flush=True,
+        )
+        return 0
     tokenizer = load_tokenizer(model_dir)
     files = discover_guide_files()
     train_files, heldout_files = deterministic_file_split(files)
@@ -849,21 +1067,7 @@ def prepare(args: argparse.Namespace) -> int:
         "grm_ids": negative_arrays["grm"],
         "bringup_ids": bringup_ids,
     }
-    expected_shapes = {
-        "narrative_key_ids": (16, 512),
-        "pair_ids": (64, 512),
-        "heldout_ids": (16, 512),
-        "pair_p0_prefix_ids": (64, 2048),
-        "heldout_p0_prefix_ids": (16, 2048),
-        "heldout_p1_prefix_ids": (16, 2048),
-        "wikitext_ids": (16, 512),
-        "code_ids": (16, 512),
-        "grm_ids": (16, 512),
-        "bringup_ids": (2048,),
-    }
-    for name, expected in expected_shapes.items():
-        if arrays[name].shape != expected or arrays[name].dtype != np.int64:
-            raise RuntimeError(f"prepared {name} contract {arrays[name].shape}/{arrays[name].dtype}")
+    validate_prepared_array_contracts(arrays)
     train_set = {str(path) for path in train_files}
     heldout_set = {str(path) for path in heldout_files}
     if train_set & heldout_set:
@@ -877,8 +1081,9 @@ def prepare(args: argparse.Namespace) -> int:
 
     windows_path = output / "prepared_windows.npz"
     save_npz(windows_path, compressed=True, **arrays)
+    content = prepared_content_record(arrays)
     manifest = {
-        "schema": "moe_e2_corpus_manifest_v1",
+        "schema": "moe_e2_corpus_manifest_v2",
         "status": "passed",
         "created_at": now_iso(),
         "order": str(ORDER_PATH),
@@ -957,11 +1162,9 @@ def prepare(args: argparse.Namespace) -> int:
         },
         "prepared_windows": {
             "path": str(windows_path),
-            "sha256": sha256_file(windows_path),
-            "arrays": {
-                name: {"shape": list(value.shape), "sha256": sha256_array(value)}
-                for name, value in arrays.items()
-            },
+            "content_digest_algorithm": content["algorithm"],
+            "content_sha256": content["sha256"],
+            "arrays": content["arrays"],
         },
         "wall_seconds": time.perf_counter() - started,
     }
@@ -988,15 +1191,416 @@ def load_prepared(output: Path) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
     if not manifest_path.is_file():
         raise FileNotFoundError(f"run prepare first: {manifest_path}")
     manifest = read_json(manifest_path)
+    manifest_schema = manifest.get("schema")
+    if manifest_schema not in {
+        "moe_e2_corpus_manifest_v1",
+        "moe_e2_corpus_manifest_v2",
+    }:
+        raise RuntimeError("prepared corpus manifest schema is unsupported")
+    if manifest.get("status") != "passed":
+        raise RuntimeError("prepared corpus manifest is not passed")
+    if manifest.get("model_revision") != MODEL_REVISION:
+        raise RuntimeError("prepared corpus model revision changed")
+    if int(manifest.get("seed", -1)) != DEFAULT_SEED:
+        raise RuntimeError("prepared corpus seed changed")
     windows_path = Path(manifest["prepared_windows"]["path"])
-    if sha256_file(windows_path) != manifest["prepared_windows"]["sha256"]:
-        raise RuntimeError("prepared window archive changed after manifest sealing")
+    if windows_path.resolve() != (output / "prepared_windows.npz").resolve():
+        raise RuntimeError("prepared window archive path escapes its output directory")
+    if not windows_path.is_file():
+        raise FileNotFoundError(windows_path)
     with np.load(windows_path, allow_pickle=False) as archive:
         arrays = {name: archive[name].copy() for name in archive.files}
-    for name, record in manifest["prepared_windows"]["arrays"].items():
-        if sha256_array(arrays[name]) != record["sha256"]:
-            raise RuntimeError(f"prepared array hash mismatch: {name}")
-    return manifest, arrays
+    content = validate_declared_prepared_content(
+        manifest["prepared_windows"],
+        arrays,
+        require_combined=manifest_schema == "moe_e2_corpus_manifest_v2",
+    )
+    return augment_manifest_content(manifest, content), arrays
+
+
+def provenance_validation_root(output: Path) -> Path:
+    return output / PROVENANCE_VALIDATION_DIR
+
+
+def content_set_from_arrays(
+    *,
+    label: str,
+    arrays: dict[str, np.ndarray],
+    content: dict[str, Any],
+    legacy_archive_sha256: str | None,
+    metadata_path: Path | None,
+) -> dict[str, Any]:
+    return {
+        "label": label,
+        "arrays": arrays,
+        "content": content,
+        "legacy_archive_sha256": legacy_archive_sha256,
+        "metadata_path": None if metadata_path is None else str(metadata_path),
+    }
+
+
+def validate_content_set_registry(content_sets: Sequence[dict[str, Any]]) -> None:
+    for field in ("label",):
+        values = [item[field] for item in content_sets]
+        if len(set(values)) != len(values):
+            raise RuntimeError(f"duplicate prepared-content registry {field}")
+    digests = [item["content"]["sha256"] for item in content_sets]
+    if len(set(digests)) != len(digests):
+        raise RuntimeError("duplicate prepared-content lineages are registered")
+    legacy_hashes = [
+        item["legacy_archive_sha256"]
+        for item in content_sets
+        if item.get("legacy_archive_sha256") is not None
+    ]
+    if len(set(legacy_hashes)) != len(legacy_hashes):
+        raise RuntimeError("one legacy archive SHA maps to multiple content lineages")
+
+
+def load_prepared_content_sets(
+    output: Path, manifest: dict[str, Any], prepared: dict[str, np.ndarray]
+) -> list[dict[str, Any]]:
+    current_record = manifest["prepared_windows"]
+    sets = [
+        content_set_from_arrays(
+            label="current_manifest",
+            arrays=prepared,
+            content={
+                "algorithm": current_record["content_digest_algorithm"],
+                "sha256": current_record["content_sha256"],
+                "arrays": current_record["arrays"],
+            },
+            legacy_archive_sha256=current_record.get("sha256"),
+            metadata_path=output / "corpus_manifest.json",
+        )
+    ]
+    root = provenance_validation_root(output)
+    if not root.is_dir():
+        return sets
+    for metadata_path in sorted(root.glob("legacy_prepared_content_*.json")):
+        metadata = read_json(metadata_path)
+        if (
+            metadata.get("schema") != "moe_e2_legacy_prepared_content_v1"
+            or metadata.get("status") != "passed"
+            or metadata.get("model_revision") != MODEL_REVISION
+            or int(metadata.get("seed", -1)) != DEFAULT_SEED
+        ):
+            raise RuntimeError(f"invalid legacy prepared-content metadata: {metadata_path}")
+        archive_path = Path(metadata["reconstructed_archive"]["path"])
+        try:
+            archive_path.resolve().relative_to(root.resolve())
+        except ValueError as exc:
+            raise RuntimeError(
+                f"legacy prepared-content archive escapes validation root: {archive_path}"
+            ) from exc
+        if not archive_path.is_file():
+            raise FileNotFoundError(archive_path)
+        with np.load(archive_path, allow_pickle=False) as archive:
+            arrays = {name: archive[name].copy() for name in archive.files}
+        content = prepared_content_record(arrays)
+        validate_prepared_array_contracts(arrays)
+        if content != metadata.get("content"):
+            raise RuntimeError(
+                f"legacy prepared-content archive no longer matches metadata: {metadata_path}"
+            )
+        sets.append(
+            content_set_from_arrays(
+                label=str(metadata["label"]),
+                arrays=arrays,
+                content=content,
+                legacy_archive_sha256=metadata.get("legacy_archive_sha256"),
+                metadata_path=metadata_path,
+            )
+        )
+    validate_content_set_registry(sets)
+    return sets
+
+
+def reconstruct_legacy_prepared_content(
+    args: argparse.Namespace,
+    output: Path,
+    manifest: dict[str, Any],
+    prepared: dict[str, np.ndarray],
+) -> Path | None:
+    snapshot = args.legacy_script_snapshot
+    legacy_archive_sha256 = args.legacy_archive_sha256
+    if snapshot is None and legacy_archive_sha256 is None:
+        return None
+    if snapshot is None or legacy_archive_sha256 is None:
+        raise ValueError(
+            "--legacy-script-snapshot and --legacy-archive-sha256 must be supplied together"
+        )
+    if not re.fullmatch(r"[0-9a-f]{64}", legacy_archive_sha256):
+        raise ValueError("--legacy-archive-sha256 must be a lowercase SHA-256 hex digest")
+    snapshot = snapshot.resolve()
+    if not snapshot.is_file():
+        raise FileNotFoundError(snapshot)
+
+    tokenizer = load_tokenizer(validate_model_dir(args.model_dir))
+    code_text, code_sources = build_code_corpus(script_snapshot=snapshot)
+    canonical = code_text.encode("utf-8")
+    code_ids_all = tokenizer_ids(tokenizer, code_text)
+    offsets = evenly_spaced_disjoint_offsets(
+        code_ids_all.size, N_KEY_WINDOWS, WINDOW_TOKENS
+    )
+    code_ids = np.ascontiguousarray(
+        np.stack(
+            [code_ids_all[start : start + WINDOW_TOKENS] for start in offsets]
+        ),
+        dtype=np.int64,
+    )
+    legacy_arrays = {name: value.copy() for name, value in prepared.items()}
+    legacy_arrays["code_ids"] = code_ids
+    validate_prepared_array_contracts(legacy_arrays)
+    content = prepared_content_record(legacy_arrays)
+    if content["sha256"] == manifest["prepared_windows"]["content_sha256"]:
+        raise RuntimeError("legacy reconstruction did not produce a distinct content lineage")
+
+    root = provenance_validation_root(output)
+    root.mkdir(parents=True, exist_ok=True)
+    archive_path = root / f"legacy_prepared_windows_{content['sha256']}.npz"
+    snapshot_sha256 = sha256_file(snapshot)
+    snapshot_copy = root / f"legacy_harness_{snapshot_sha256}.py.txt"
+    metadata_path = root / f"legacy_prepared_content_{content['sha256']}.json"
+    existing = read_json(metadata_path) if metadata_path.is_file() else {}
+    if existing:
+        existing_source = existing.get("source_reconstruction", {})
+        if (
+            existing.get("legacy_archive_sha256") != legacy_archive_sha256
+            or existing.get("legacy_source_commit") != args.legacy_source_commit
+            or existing.get("content") != content
+            or existing_source.get("historical_harness_sha256")
+            != snapshot_sha256
+        ):
+            raise RuntimeError(
+                "existing legacy content metadata conflicts with this registration: "
+                f"{metadata_path}"
+            )
+    else:
+        proposed = content_set_from_arrays(
+            label=f"legacy_archive_{legacy_archive_sha256[:16]}",
+            arrays=legacy_arrays,
+            content=content,
+            legacy_archive_sha256=legacy_archive_sha256,
+            metadata_path=metadata_path,
+        )
+        validate_content_set_registry(
+            load_prepared_content_sets(output, manifest, prepared) + [proposed]
+        )
+
+    if archive_path.is_file():
+        with np.load(archive_path, allow_pickle=False) as archive:
+            existing_arrays = {name: archive[name].copy() for name in archive.files}
+        if prepared_content_record(existing_arrays) != content:
+            raise RuntimeError(f"existing legacy content archive conflicts: {archive_path}")
+    else:
+        save_npz(archive_path, compressed=True, **legacy_arrays)
+
+    snapshot_bytes = snapshot.read_bytes()
+    if snapshot_copy.is_file() and snapshot_copy.read_bytes() != snapshot_bytes:
+        raise RuntimeError(f"historical harness sidecar changed: {snapshot_copy}")
+    if not snapshot_copy.is_file():
+        atomic_write_bytes(snapshot_copy, snapshot_bytes)
+
+    metadata = {
+        "schema": "moe_e2_legacy_prepared_content_v1",
+        "status": "passed",
+        "created_at": existing.get("created_at", now_iso()),
+        "label": f"legacy_archive_{legacy_archive_sha256[:16]}",
+        "order": str(F4_ORDER_PATH),
+        "order_sha256": sha256_file(F4_ORDER_PATH),
+        "model_id": MODEL_ID,
+        "model_revision": MODEL_REVISION,
+        "seed": DEFAULT_SEED,
+        "legacy_archive_sha256": legacy_archive_sha256,
+        "legacy_source_commit": args.legacy_source_commit,
+        "source_reconstruction": {
+            "method": (
+                "current internally-sealed prepared arrays with code_ids rebuilt from "
+                "the exact historical harness substituted at its original corpus path"
+            ),
+            "historical_harness_copy": str(snapshot_copy),
+            "historical_harness_sha256": sha256_file(snapshot_copy),
+            "code_corpus_source_count": len(code_sources),
+            "code_corpus_byte_count": len(canonical),
+            "code_corpus_sha256": sha256_bytes(canonical),
+            "code_corpus_token_count": int(code_ids_all.size),
+            "code_window_offsets": offsets,
+            "code_ids_content_sha256": sha256_array(code_ids),
+            "current_code_ids_content_sha256": sha256_array(prepared["code_ids"]),
+            "only_code_ids_replaced": True,
+        },
+        "content": content,
+        "reconstructed_archive": existing.get(
+            "reconstructed_archive",
+            {
+                "path": str(archive_path),
+                "sha256_at_registration": sha256_file(archive_path),
+                "byte_count_at_registration": int(archive_path.stat().st_size),
+                "byte_identical_to_recorded_legacy_archive_at_registration": (
+                    sha256_file(archive_path) == legacy_archive_sha256
+                ),
+                "archive_bytes_are_diagnostic_not_provenance": True,
+            },
+        ),
+        "original_receipts_mutated": False,
+    }
+    if existing and existing != metadata:
+        raise RuntimeError(
+            "existing legacy content metadata conflicts with this registration: "
+            f"{metadata_path}"
+        )
+    write_json_if_changed(metadata_path, metadata)
+    return metadata_path
+
+
+def bind_receipt_to_prepared_content(
+    receipt: dict[str, Any],
+    content_sets: Sequence[dict[str, Any]],
+    checks_for_arrays: Callable[[dict[str, np.ndarray]], list[dict[str, Any]]],
+    *,
+    allow_unregistered_legacy: bool = False,
+    require_declared_content: bool = False,
+) -> dict[str, Any]:
+    """Bind a receipt to one content lineage without trusting NPZ container bytes."""
+
+    declared_content = receipt.get("prepared_windows_content_sha256")
+    declared_algorithm = receipt.get("prepared_windows_content_digest_algorithm")
+    legacy_archive = receipt.get("prepared_windows_sha256")
+    if (declared_content is None) != (declared_algorithm is None):
+        raise RuntimeError("receipt prepared-content provenance is incomplete")
+    if require_declared_content and declared_content is None:
+        raise RuntimeError("modern receipt lacks combined content provenance")
+    if (
+        declared_algorithm is not None
+        and declared_algorithm != PREPARED_CONTENT_ALGORITHM
+    ):
+        raise RuntimeError("receipt prepared-content algorithm is unknown")
+
+    candidates: list[tuple[int, dict[str, Any], list[dict[str, Any]], str]] = []
+    failures: list[dict[str, Any]] = []
+    for content_set in content_sets:
+        checks = checks_for_arrays(content_set["arrays"])
+        arrays_match = bool(checks) and all(item.get("passed") for item in checks)
+        failures.append(
+            {
+                "content_label": content_set["label"],
+                "content_sha256": content_set["content"]["sha256"],
+                "array_checks": checks,
+            }
+        )
+        if not arrays_match:
+            continue
+        if declared_content is not None:
+            if content_set["content"]["sha256"] != declared_content:
+                continue
+            candidates.append((40, content_set, checks, "native_content_digest"))
+            continue
+        if legacy_archive is not None:
+            if content_set.get("legacy_archive_sha256") == legacy_archive:
+                candidates.append(
+                    (30, content_set, checks, "registered_legacy_archive_to_content")
+                )
+            elif allow_unregistered_legacy:
+                score = 11 if content_set["label"] == "current_manifest" else 10
+                candidates.append(
+                    (score, content_set, checks, "recorded_arrays_only_migration")
+                )
+            continue
+        score = 21 if content_set["label"] == "current_manifest" else 20
+        candidates.append((score, content_set, checks, "recorded_arrays_only_migration"))
+
+    if not candidates:
+        if declared_content is not None:
+            reason = "declared prepared-content digest did not validate"
+        elif legacy_archive is not None and not allow_unregistered_legacy:
+            reason = "legacy archive SHA has no registered content lineage"
+        else:
+            reason = "recorded prepared-array hashes did not validate"
+        raise RuntimeError(f"{reason}: {failures}")
+    candidates.sort(key=lambda item: item[0], reverse=True)
+    _score, selected, checks, mode = candidates[0]
+    return {
+        "status": "passed",
+        "mode": mode,
+        "content_label": selected["label"],
+        "content_digest_algorithm": selected["content"]["algorithm"],
+        "content_sha256": selected["content"]["sha256"],
+        "arrays": selected["content"]["arrays"],
+        "content_metadata_path": selected["metadata_path"],
+        "legacy_archive_sha256_recorded": legacy_archive,
+        "array_checks": checks,
+        "original_receipt_mutated": False,
+    }
+
+
+def receipt_array_check(
+    *,
+    receipt_field: str,
+    recorded_sha256: Any,
+    array_name: str,
+    selection: str,
+    value: np.ndarray,
+) -> dict[str, Any]:
+    observed = array_content_record(np.asarray(value))
+    return {
+        "receipt_field": receipt_field,
+        "array_name": array_name,
+        "selection": selection,
+        "recorded_sha256": recorded_sha256,
+        "observed": observed,
+        "passed": recorded_sha256 == observed["sha256"],
+    }
+
+
+def bind_transitive_receipt_content(
+    receipt: dict[str, Any],
+    dependency_bindings: Sequence[dict[str, Any]],
+    *,
+    dependency_kind: str,
+    require_declared_content: bool = False,
+) -> dict[str, Any]:
+    if not dependency_bindings:
+        raise RuntimeError(f"no {dependency_kind} bindings for transitive provenance")
+    content_digests = {item["content_sha256"] for item in dependency_bindings}
+    algorithms = {item["content_digest_algorithm"] for item in dependency_bindings}
+    labels = {item["content_label"] for item in dependency_bindings}
+    if len(content_digests) != 1 or len(algorithms) != 1 or len(labels) != 1:
+        raise RuntimeError(
+            f"{dependency_kind} dependencies span multiple prepared-content lineages"
+        )
+    content_sha256 = next(iter(content_digests))
+    algorithm = next(iter(algorithms))
+    arrays = dependency_bindings[0].get("arrays")
+    if arrays is None or any(item.get("arrays") != arrays for item in dependency_bindings):
+        raise RuntimeError(f"{dependency_kind} dependency array records changed")
+    declared = receipt.get("prepared_windows_content_sha256")
+    declared_algorithm = receipt.get("prepared_windows_content_digest_algorithm")
+    if (declared is None) != (declared_algorithm is None):
+        raise RuntimeError("transitive receipt prepared-content provenance is incomplete")
+    if require_declared_content and declared is None:
+        raise RuntimeError("modern transitive receipt lacks combined content provenance")
+    if declared is not None and declared != content_sha256:
+        raise RuntimeError("transitive receipt prepared-content digest mismatch")
+    if declared_algorithm is not None and declared_algorithm != algorithm:
+        raise RuntimeError("transitive receipt prepared-content algorithm mismatch")
+    return {
+        "status": "passed",
+        "mode": (
+            "native_content_digest_transitively_revalidated"
+            if declared is not None
+            else f"legacy_transitive_{dependency_kind}_migration"
+        ),
+        "content_label": next(iter(labels)),
+        "content_digest_algorithm": algorithm,
+        "content_sha256": content_sha256,
+        "arrays": arrays,
+        "content_metadata_path": dependency_bindings[0].get(
+            "content_metadata_path"
+        ),
+        "dependency_kind": dependency_kind,
+        "dependency_count": len(dependency_bindings),
+        "original_receipt_mutated": False,
+    }
 
 
 def initialize_pending_expertpack(output: Path, manifest: dict[str, Any]) -> None:
@@ -1037,7 +1641,7 @@ def initialize_pending_expertpack(output: Path, manifest: dict[str, Any]) -> Non
             "glc_sha256": sha256_file(GLC_PATH),
             "corpus_manifest": str(output / "corpus_manifest.json"),
             "corpus_manifest_sha256": sha256_file(output / "corpus_manifest.json"),
-            "prepared_windows": manifest["prepared_windows"],
+            "prepared_windows_content": prepared_content_provenance(manifest),
             "script": str(SCRIPT_PATH),
             "script_sha256": sha256_file(SCRIPT_PATH),
         },
@@ -1048,10 +1652,15 @@ def initialize_pending_expertpack(output: Path, manifest: dict[str, Any]) -> Non
     for key in ("g3", "behavioral"):
         if key in existing:
             pack[key] = existing[key]
+    pack["provenance"].pop("prepared_windows", None)
     write_json(path, pack)
 
 
-def require_bringup_green(output: Path) -> dict[str, Any]:
+def require_bringup_green(
+    output: Path,
+    manifest: dict[str, Any] | None = None,
+    prepared: dict[str, np.ndarray] | None = None,
+) -> dict[str, Any]:
     path = output / "bringup.json"
     if not path.is_file():
         raise RuntimeError(f"E2-G-1 is NOT_MEASURED; run bringup first: {path}")
@@ -1060,6 +1669,11 @@ def require_bringup_green(output: Path) -> dict[str, Any]:
         raise RuntimeError(
             f"E2-G-1 is {receipt.get('gate', {}).get('verdict', 'NOT_MEASURED')}; STOP"
         )
+    if manifest is None or prepared is None:
+        manifest, prepared = load_prepared(output)
+    validate_consolidated_bringup_receipt(
+        output, manifest, prepared, receipt=receipt
+    )
     return receipt
 
 
@@ -1521,37 +2135,181 @@ def bringup_cell_path(output: Path, name: str) -> Path:
     return output / f"bringup_{name}_{length}.json"
 
 
+def validate_bringup_cell_receipt(
+    path: Path,
+    manifest: dict[str, Any],
+    prepared: dict[str, np.ndarray],
+    *,
+    name: str,
+) -> dict[str, Any]:
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    receipt = read_json(path)
+    receipt_schema = receipt.get("schema")
+    length = BRINGUP_SHORT_TOKENS if name == "short" else BRINGUP_LONG_TOKENS
+    if (
+        receipt_schema
+        not in {"moe_e2_bringup_cell_v1", "moe_e2_bringup_cell_v2"}
+        or receipt.get("status") != "complete"
+        or receipt.get("cell") != name
+        or receipt.get("length") != length
+        or receipt.get("model_revision") != MODEL_REVISION
+    ):
+        raise RuntimeError(f"bringup cell contract failed: {path}")
+    content_sets = load_prepared_content_sets(path.parent, manifest, prepared)
+
+    def checks(arrays: dict[str, np.ndarray]) -> list[dict[str, Any]]:
+        ids = arrays["bringup_ids"][:length]
+        return [
+            receipt_array_check(
+                receipt_field="input_ids_sha256",
+                recorded_sha256=receipt.get("input_ids_sha256"),
+                array_name="bringup_ids",
+                selection=f"[:{length}]",
+                value=ids,
+            ),
+            receipt_array_check(
+                receipt_field="measurement.target_ids_sha256",
+                recorded_sha256=receipt.get("measurement", {}).get(
+                    "target_ids_sha256"
+                ),
+                array_name="bringup_ids",
+                selection=f"[1:{length}]",
+                value=ids[1:],
+            ),
+        ]
+
+    binding = bind_receipt_to_prepared_content(
+        receipt,
+        content_sets,
+        checks,
+        require_declared_content=receipt_schema == "moe_e2_bringup_cell_v2",
+    )
+    return {"receipt": receipt, "binding": binding}
+
+
 def valid_bringup_cell(
-    path: Path, manifest: dict[str, Any], *, name: str
+    path: Path,
+    manifest: dict[str, Any],
+    prepared: dict[str, np.ndarray],
+    *,
+    name: str,
 ) -> dict[str, Any] | None:
     if not path.is_file():
         return None
-    receipt = read_json(path)
-    length = BRINGUP_SHORT_TOKENS if name == "short" else BRINGUP_LONG_TOKENS
+    if read_json(path).get("status") == "running":
+        return None
+    return validate_bringup_cell_receipt(
+        path, manifest, prepared, name=name
+    )["receipt"]
+
+
+def validate_consolidated_bringup_receipt(
+    output: Path,
+    manifest: dict[str, Any],
+    prepared: dict[str, np.ndarray],
+    *,
+    receipt: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    path = output / "bringup.json"
+    receipt = read_json(path) if receipt is None else receipt
+    receipt_schema = receipt.get("schema")
     if (
-        receipt.get("status") == "complete"
-        and receipt.get("cell") == name
-        and receipt.get("length") == length
-        and receipt.get("prepared_windows_sha256")
-        == manifest["prepared_windows"]["sha256"]
-        and receipt.get("script_sha256") == sha256_file(SCRIPT_PATH)
-        and receipt.get("model_revision") == MODEL_REVISION
+        receipt_schema not in {"moe_e2_bringup_v2", "moe_e2_bringup_v3"}
+        or receipt.get("status") != "complete"
+        or receipt.get("model_revision") != MODEL_REVISION
+        or receipt.get("gate", {}).get("verdict") not in {"GREEN", "RED"}
     ):
-        return receipt
-    return None
+        raise RuntimeError(f"consolidated bringup contract failed: {path}")
+    cells = {
+        name: validate_bringup_cell_receipt(
+            bringup_cell_path(output, name), manifest, prepared, name=name
+        )
+        for name in ("short", "long")
+    }
+    for name in ("short", "long"):
+        cell_path = bringup_cell_path(output, name)
+        recorded = receipt.get("cell_receipts", {}).get(name, {})
+        if (
+            recorded.get("path") != str(cell_path)
+            or recorded.get("sha256") != sha256_file(cell_path)
+        ):
+            raise RuntimeError(f"consolidated bringup cell linkage failed: {name}")
+    content_sets = load_prepared_content_sets(output, manifest, prepared)
+
+    def checks(arrays: dict[str, np.ndarray]) -> list[dict[str, Any]]:
+        ids = arrays["bringup_ids"]
+        return [
+            receipt_array_check(
+                receipt_field="short_512.target_ids_sha256",
+                recorded_sha256=receipt.get("short_512", {}).get(
+                    "target_ids_sha256"
+                ),
+                array_name="bringup_ids",
+                selection="[1:512]",
+                value=ids[1:BRINGUP_SHORT_TOKENS],
+            ),
+            receipt_array_check(
+                receipt_field="long_2048.target_ids_sha256",
+                recorded_sha256=receipt.get("long_2048", {}).get(
+                    "target_ids_sha256"
+                ),
+                array_name="bringup_ids",
+                selection="[1:2048]",
+                value=ids[1:BRINGUP_LONG_TOKENS],
+            ),
+        ]
+
+    binding = bind_receipt_to_prepared_content(
+        receipt,
+        content_sets,
+        checks,
+        require_declared_content=receipt_schema == "moe_e2_bringup_v3",
+    )
+    composite_binding = bind_transitive_receipt_content(
+        {},
+        [binding] + [cells[name]["binding"] for name in ("short", "long")],
+        dependency_kind="consolidated_bringup_and_cells",
+    )
+    return {
+        "receipt": receipt,
+        "binding": composite_binding,
+        "receipt_binding": binding,
+        "cells": cells,
+    }
 
 
 def consolidate_bringup(
-    output: Path, manifest: dict[str, Any]
+    output: Path, manifest: dict[str, Any], prepared: dict[str, np.ndarray]
 ) -> dict[str, Any] | None:
+    existing_path = output / "bringup.json"
+    if existing_path.is_file():
+        existing = read_json(existing_path)
+        if existing.get("status") != "running_cells":
+            return validate_consolidated_bringup_receipt(
+                output, manifest, prepared, receipt=existing
+            )["receipt"]
     short_receipt = valid_bringup_cell(
-        bringup_cell_path(output, "short"), manifest, name="short"
+        bringup_cell_path(output, "short"), manifest, prepared, name="short"
     )
     long_receipt = valid_bringup_cell(
-        bringup_cell_path(output, "long"), manifest, name="long"
+        bringup_cell_path(output, "long"), manifest, prepared, name="long"
     )
     if short_receipt is None or long_receipt is None:
         return None
+    cell_input_binding = bind_transitive_receipt_content(
+        {},
+        [
+            validate_bringup_cell_receipt(
+                bringup_cell_path(output, name),
+                manifest,
+                prepared,
+                name=name,
+            )["binding"]
+            for name in ("short", "long")
+        ],
+        dependency_kind="bringup_cells",
+    )
     short = short_receipt["measurement"]
     long = long_receipt["measurement"]
     delta = float(long["mean_nll"] - short["mean_nll"])
@@ -1559,7 +2317,7 @@ def consolidate_bringup(
     context_ok = delta <= BRINGUP_LONG_MINUS_SHORT_NLL_CAP
     green = bool(plausible and context_ok)
     receipt = {
-        "schema": "moe_e2_bringup_v2",
+        "schema": "moe_e2_bringup_v3",
         "status": "complete",
         "created_at": now_iso(),
         "order": str(ORDER_PATH),
@@ -1568,7 +2326,7 @@ def consolidate_bringup(
         "model_id": MODEL_ID,
         "model_dir": str(DEFAULT_MODEL_DIR),
         "model_revision": MODEL_REVISION,
-        "prepared_windows_sha256": manifest["prepared_windows"]["sha256"],
+        **content_fields_from_binding(cell_input_binding),
         "registered_gate": {
             "short_ppl_plausible_range_inclusive": [BRINGUP_PPL_MIN, BRINGUP_PPL_MAX],
             "long_minus_short_mean_nll_lte": BRINGUP_LONG_MINUS_SHORT_NLL_CAP,
@@ -1617,7 +2375,7 @@ def consolidate_bringup(
 def bringup(args: argparse.Namespace) -> int:
     output = ensure_output(args.output_dir)
     manifest, prepared = load_prepared(output)
-    existing = consolidate_bringup(output, manifest)
+    existing = consolidate_bringup(output, manifest, prepared)
     if existing is not None:
         print(json.dumps({"status": "existing", "receipt": str(output / "bringup.json")}))
         return 0 if existing["gate"]["verdict"] == "GREEN" else 3
@@ -1627,21 +2385,23 @@ def bringup(args: argparse.Namespace) -> int:
     missing = [
         name
         for name in requested
-        if valid_bringup_cell(bringup_cell_path(output, name), manifest, name=name)
+        if valid_bringup_cell(
+            bringup_cell_path(output, name), manifest, prepared, name=name
+        )
         is None
     ]
     if not missing:
         print(json.dumps({"status": "partial_existing", "cells": requested}), flush=True)
         return 0
     aggregate_running = {
-        "schema": "moe_e2_bringup_v2",
+        "schema": "moe_e2_bringup_v3",
         "status": "running_cells",
         "created_at": now_iso(),
         "requested_cells": requested,
         "missing_cells_at_start": missing,
         "script_sha256": sha256_file(SCRIPT_PATH),
         "model_revision": MODEL_REVISION,
-        "prepared_windows_sha256": manifest["prepared_windows"]["sha256"],
+        **prepared_content_fields(manifest),
     }
     write_json(output / "bringup.json", aggregate_running)
     started = time.perf_counter()
@@ -1652,7 +2412,7 @@ def bringup(args: argparse.Namespace) -> int:
             length = BRINGUP_SHORT_TOKENS if name == "short" else BRINGUP_LONG_TOKENS
             cell_path = bringup_cell_path(output, name)
             cell: dict[str, Any] = {
-                "schema": "moe_e2_bringup_cell_v1",
+                "schema": "moe_e2_bringup_cell_v2",
                 "status": "running",
                 "created_at": now_iso(),
                 "cell": name,
@@ -1662,7 +2422,7 @@ def bringup(args: argparse.Namespace) -> int:
                 "model_id": MODEL_ID,
                 "model_dir": str(validate_model_dir(args.model_dir)),
                 "model_revision": MODEL_REVISION,
-                "prepared_windows_sha256": manifest["prepared_windows"]["sha256"],
+                **prepared_content_fields(manifest),
                 "input_ids_sha256": sha256_array(ids[:length]),
                 "runtime": runtime,
             }
@@ -1708,7 +2468,7 @@ def bringup(args: argparse.Namespace) -> int:
     finally:
         del model
         gc.collect()
-    consolidated = consolidate_bringup(output, manifest)
+    consolidated = consolidate_bringup(output, manifest, prepared)
     if consolidated is None:
         write_json(
             output / "bringup.json",
@@ -2442,6 +3202,353 @@ def self_test(args: argparse.Namespace) -> int:
     )
     json.dumps(abi_mimic, allow_nan=False)
 
+    digest_fixture = np.arange(24, dtype=np.int64).reshape(4, 6)
+    layout_variants = (
+        digest_fixture,
+        np.asfortranarray(digest_fixture),
+        digest_fixture[:, ::-1][:, ::-1],
+        digest_fixture.astype(">i8"),
+    )
+    layout_records = [array_content_record(value) for value in layout_variants]
+    check(
+        "prepared_array_digest_normalizes_layout_and_endian",
+        all(record == layout_records[0] for record in layout_records[1:]),
+        layout_records,
+    )
+    check(
+        "prepared_array_digest_binds_shape_and_dtype",
+        array_content_record(digest_fixture.reshape(2, 12)) != layout_records[0]
+        and array_content_record(digest_fixture.astype(np.int32)) != layout_records[0],
+        {
+            "base": layout_records[0],
+            "reshaped": array_content_record(digest_fixture.reshape(2, 12)),
+            "int32": array_content_record(digest_fixture.astype(np.int32)),
+        },
+    )
+    digest_arrays = {
+        "alpha": digest_fixture,
+        "beta": digest_fixture + 100,
+    }
+    combined = prepared_content_record(digest_arrays)
+    combined_reversed = prepared_content_record(
+        {"beta": digest_arrays["beta"], "alpha": digest_arrays["alpha"]}
+    )
+    check(
+        "prepared_combined_digest_is_name_order_independent",
+        combined["sha256"] == combined_reversed["sha256"],
+        [combined["sha256"], combined_reversed["sha256"]],
+    )
+    one_value_changed = digest_arrays["beta"].copy()
+    one_value_changed[0, 0] += 1
+    check(
+        "prepared_combined_digest_changes_with_content_name_shape_or_dtype",
+        len(
+            {
+                combined["sha256"],
+                prepared_content_record(
+                    {"alpha": digest_fixture, "beta": one_value_changed}
+                )["sha256"],
+                prepared_content_record(
+                    {"renamed": digest_fixture, "beta": digest_arrays["beta"]}
+                )["sha256"],
+                prepared_content_record(
+                    {
+                        "alpha": digest_fixture.reshape(2, 12),
+                        "beta": digest_arrays["beta"],
+                    }
+                )["sha256"],
+                prepared_content_record(
+                    {
+                        "alpha": digest_fixture.astype(np.int32),
+                        "beta": digest_arrays["beta"],
+                    }
+                )["sha256"],
+            }
+        )
+        == 5,
+        "five distinct combined content digests",
+    )
+    with tempfile.TemporaryDirectory(prefix="olmoe-e2-f4-content-") as temporary:
+        temporary_root = Path(temporary)
+        plain_path = temporary_root / "plain.npz"
+        compressed_path = temporary_root / "compressed.npz"
+        save_npz(plain_path, compressed=False, **digest_arrays)
+        save_npz(compressed_path, compressed=True, **digest_arrays)
+        with np.load(plain_path, allow_pickle=False) as archive:
+            plain_arrays = {name: archive[name].copy() for name in archive.files}
+        with np.load(compressed_path, allow_pickle=False) as archive:
+            compressed_arrays = {
+                name: archive[name].copy() for name in archive.files
+            }
+        check(
+            "prepared_content_ignores_npz_container_bytes",
+            sha256_file(plain_path) != sha256_file(compressed_path)
+            and prepared_content_record(plain_arrays)
+            == prepared_content_record(compressed_arrays),
+            {
+                "plain_archive_sha256": sha256_file(plain_path),
+                "compressed_archive_sha256": sha256_file(compressed_path),
+                "content_sha256": prepared_content_record(plain_arrays)["sha256"],
+            },
+        )
+
+    prepared_fixture = {
+        name: np.zeros(shape, dtype=np.int64)
+        for name, shape in PREPARED_ARRAY_SHAPES.items()
+    }
+    prepared_fixture_content = prepared_content_record(prepared_fixture)
+    legacy_declaration = {
+        "sha256": "container-bytes-are-not-provenance",
+        "arrays": {
+            name: {
+                "shape": record["shape"],
+                "sha256": record["sha256"],
+            }
+            for name, record in prepared_fixture_content["arrays"].items()
+        },
+    }
+    modern_declaration = {
+        "content_digest_algorithm": prepared_fixture_content["algorithm"],
+        "content_sha256": prepared_fixture_content["sha256"],
+        "arrays": prepared_fixture_content["arrays"],
+    }
+    check(
+        "legacy_manifest_ignores_container_sha_but_v2_requires_full_content",
+        validate_declared_prepared_content(
+            legacy_declaration, prepared_fixture, require_combined=False
+        )
+        == prepared_fixture_content
+        and validate_declared_prepared_content(
+            modern_declaration, prepared_fixture, require_combined=True
+        )
+        == prepared_fixture_content,
+        prepared_fixture_content["sha256"],
+    )
+    stripped_v2_rejected = False
+    missing_dtype_v2_rejected = False
+    try:
+        validate_declared_prepared_content(
+            {"arrays": modern_declaration["arrays"]},
+            prepared_fixture,
+            require_combined=True,
+        )
+    except RuntimeError:
+        stripped_v2_rejected = True
+    try:
+        dtype_stripped = json.loads(json.dumps(modern_declaration))
+        dtype_stripped["arrays"]["code_ids"].pop("dtype")
+        validate_declared_prepared_content(
+            dtype_stripped, prepared_fixture, require_combined=True
+        )
+    except RuntimeError:
+        missing_dtype_v2_rejected = True
+    check(
+        "v2_manifest_cannot_downgrade_to_legacy_array_records",
+        stripped_v2_rejected and missing_dtype_v2_rejected,
+        {
+            "combined_fields_stripped_rejected": stripped_v2_rejected,
+            "dtype_stripped_rejected": missing_dtype_v2_rejected,
+        },
+    )
+
+    synthetic_set = content_set_from_arrays(
+        label="synthetic_registered_legacy",
+        arrays=digest_arrays,
+        content=combined,
+        legacy_archive_sha256="a" * 64,
+        metadata_path=None,
+    )
+
+    def synthetic_checks(
+        arrays: dict[str, np.ndarray], receipt: dict[str, Any]
+    ) -> list[dict[str, Any]]:
+        return [
+            receipt_array_check(
+                receipt_field="input_ids_sha256",
+                recorded_sha256=receipt.get("input_ids_sha256"),
+                array_name="alpha",
+                selection="[all]",
+                value=arrays["alpha"],
+            )
+        ]
+
+    legacy_receipt = {
+        "prepared_windows_sha256": "a" * 64,
+        "input_ids_sha256": sha256_array(digest_arrays["alpha"]),
+    }
+    legacy_binding = bind_receipt_to_prepared_content(
+        legacy_receipt,
+        [synthetic_set],
+        lambda arrays: synthetic_checks(arrays, legacy_receipt),
+    )
+    check(
+        "legacy_receipt_uses_registered_content_not_container_bytes",
+        legacy_binding["mode"] == "registered_legacy_archive_to_content",
+        legacy_binding,
+    )
+    unknown_legacy_rejected = False
+    try:
+        unknown = dict(legacy_receipt, prepared_windows_sha256="b" * 64)
+        bind_receipt_to_prepared_content(
+            unknown,
+            [synthetic_set],
+            lambda arrays: synthetic_checks(arrays, unknown),
+        )
+    except RuntimeError:
+        unknown_legacy_rejected = True
+    check(
+        "unknown_legacy_archive_sha_is_rejected",
+        unknown_legacy_rejected,
+        "no unregistered byte-SHA fallback",
+    )
+    wrong_modern_digest_rejected = False
+    try:
+        wrong_modern = {
+            **legacy_receipt,
+            "prepared_windows_content_digest_algorithm": PREPARED_CONTENT_ALGORITHM,
+            "prepared_windows_content_sha256": "c" * 64,
+        }
+        bind_receipt_to_prepared_content(
+            wrong_modern,
+            [synthetic_set],
+            lambda arrays: synthetic_checks(arrays, wrong_modern),
+        )
+    except RuntimeError:
+        wrong_modern_digest_rejected = True
+    check(
+        "wrong_modern_content_digest_cannot_downgrade_to_legacy",
+        wrong_modern_digest_rejected,
+        "present modern digest fails closed",
+    )
+    partial_modern_provenance_rejected = False
+    try:
+        partial_modern = {
+            **legacy_receipt,
+            "prepared_windows_content_digest_algorithm": PREPARED_CONTENT_ALGORITHM,
+        }
+        bind_receipt_to_prepared_content(
+            partial_modern,
+            [synthetic_set],
+            lambda arrays: synthetic_checks(arrays, partial_modern),
+        )
+    except RuntimeError:
+        partial_modern_provenance_rejected = True
+    check(
+        "partial_modern_content_provenance_cannot_downgrade_to_legacy",
+        partial_modern_provenance_rejected,
+        "algorithm and combined digest are an indivisible provenance pair",
+    )
+    stripped_modern_receipt_rejected = False
+    try:
+        stripped_modern = {
+            "input_ids_sha256": legacy_receipt["input_ids_sha256"]
+        }
+        bind_receipt_to_prepared_content(
+            stripped_modern,
+            [synthetic_set],
+            lambda arrays: synthetic_checks(arrays, stripped_modern),
+            require_declared_content=True,
+        )
+    except RuntimeError:
+        stripped_modern_receipt_rejected = True
+    check(
+        "modern_receipt_cannot_strip_both_content_fields",
+        stripped_modern_receipt_rejected,
+        "modern schema requires the combined digest and algorithm",
+    )
+    derived_binding = bind_transitive_receipt_content(
+        {}, [legacy_binding], dependency_kind="synthetic_dependency"
+    )
+    modern_transitive_receipt = content_fields_from_binding(derived_binding)
+    modern_transitive_binding = bind_transitive_receipt_content(
+        modern_transitive_receipt,
+        [legacy_binding],
+        dependency_kind="synthetic_dependency",
+        require_declared_content=True,
+    )
+    stripped_transitive_rejected = False
+    try:
+        bind_transitive_receipt_content(
+            {},
+            [legacy_binding],
+            dependency_kind="synthetic_dependency",
+            require_declared_content=True,
+        )
+    except RuntimeError:
+        stripped_transitive_rejected = True
+    check(
+        "transitive_content_is_derived_and_modern_receipts_fail_closed",
+        modern_transitive_binding["content_sha256"] == combined["sha256"]
+        and stripped_transitive_rejected,
+        modern_transitive_binding,
+    )
+    duplicate_registry_rejected = False
+    try:
+        validate_content_set_registry(
+            [
+                synthetic_set,
+                {
+                    **synthetic_set,
+                    "label": "different_lineage",
+                    "content": {
+                        **synthetic_set["content"],
+                        "sha256": "f" * 64,
+                    },
+                },
+            ]
+        )
+    except RuntimeError:
+        duplicate_registry_rejected = True
+    check(
+        "legacy_archive_sha_maps_to_only_one_content_lineage",
+        duplicate_registry_rejected,
+        "duplicate legacy archive mapping rejected",
+    )
+    pair_fixture = {
+        "prepared_windows_sha256": "a" * 64,
+        "student_ids_sha256": sha256_array(digest_arrays["alpha"]),
+        "teacher_shared_ids_sha256": sha256_array(digest_arrays["alpha"]),
+        "teacher_prefix_ids_sha256": "d" * 64,
+    }
+
+    def pair_fixture_checks(arrays: dict[str, np.ndarray]) -> list[dict[str, Any]]:
+        return [
+            receipt_array_check(
+                receipt_field="student_ids_sha256",
+                recorded_sha256=pair_fixture["student_ids_sha256"],
+                array_name="alpha",
+                selection="[all]",
+                value=arrays["alpha"],
+            ),
+            receipt_array_check(
+                receipt_field="teacher_shared_ids_sha256",
+                recorded_sha256=pair_fixture["teacher_shared_ids_sha256"],
+                array_name="alpha",
+                selection="[all]",
+                value=arrays["alpha"],
+            ),
+            receipt_array_check(
+                receipt_field="teacher_prefix_ids_sha256",
+                recorded_sha256=pair_fixture["teacher_prefix_ids_sha256"],
+                array_name="beta",
+                selection="[all]",
+                value=arrays["beta"],
+            ),
+        ]
+
+    pair_prefix_mismatch_rejected = False
+    try:
+        bind_receipt_to_prepared_content(
+            pair_fixture, [synthetic_set], pair_fixture_checks
+        )
+    except RuntimeError:
+        pair_prefix_mismatch_rejected = True
+    check(
+        "legacy_pair_requires_student_shared_and_prefix_hashes",
+        pair_prefix_mismatch_rejected,
+        "prefix-only mismatch rejected",
+    )
+
     synthetic: dict[str, np.ndarray] = {}
     direction = unit_vector(rng.standard_normal(dimension), name="fixture direction")[0]
     for corpus, shift in (("narrative", 1.0), ("wikitext", 0.0), ("code", -0.3), ("grm", -0.5)):
@@ -2508,23 +3615,117 @@ def key_capture_paths(output: Path, corpus: str, window_index: int) -> tuple[Pat
     return root / f"{stem}_router_inputs_fp16.npy", root / f"{stem}_receipt.json"
 
 
+def validate_key_capture_receipt(
+    output: Path,
+    manifest: dict[str, Any],
+    prepared: dict[str, np.ndarray],
+    corpus: str,
+    window_index: int,
+    *,
+    data_path: Path | None = None,
+    receipt_path: Path | None = None,
+    classification: str = "active",
+    content_sets: Sequence[dict[str, Any]] | None = None,
+    allow_unregistered_legacy: bool = False,
+) -> dict[str, Any]:
+    expected_data_path, expected_receipt_path = key_capture_paths(
+        output, corpus, window_index
+    )
+    data_path = expected_data_path if data_path is None else data_path
+    receipt_path = expected_receipt_path if receipt_path is None else receipt_path
+    if not data_path.is_file() or not receipt_path.is_file():
+        raise FileNotFoundError(f"missing key capture payload/receipt: {receipt_path}")
+    receipt = read_json(receipt_path)
+    receipt_schema = receipt.get("schema")
+    if (
+        receipt_schema
+        not in {
+            "moe_e2_router_input_capture_v1",
+            "moe_e2_router_input_capture_v2",
+        }
+        or receipt.get("status") != "complete"
+        or receipt.get("corpus") != corpus
+        or int(receipt.get("window_index", -1)) != window_index
+        or receipt.get("model_revision") != MODEL_REVISION
+    ):
+        raise RuntimeError(f"key capture receipt contract failed: {receipt_path}")
+    observed_file_sha = sha256_file(data_path)
+    if receipt.get("capture_file_sha256") != observed_file_sha:
+        raise RuntimeError(f"key capture file hash failed: {data_path}")
+    payload = np.load(data_path, mmap_mode="r", allow_pickle=False)
+    if payload.shape != (N_LAYERS, WINDOW_TOKENS, HIDDEN_DIM) or payload.dtype != np.float16:
+        raise RuntimeError(f"key capture payload contract failed: {data_path}")
+    array_name = "narrative_key_ids" if corpus == "narrative" else f"{corpus}_ids"
+    content_sets = list(content_sets or load_prepared_content_sets(output, manifest, prepared))
+
+    def checks(arrays: dict[str, np.ndarray]) -> list[dict[str, Any]]:
+        return [
+            receipt_array_check(
+                receipt_field="input_ids_sha256",
+                recorded_sha256=receipt.get("input_ids_sha256"),
+                array_name=array_name,
+                selection=f"[{window_index}]",
+                value=arrays[array_name][window_index],
+            )
+        ]
+
+    binding = bind_receipt_to_prepared_content(
+        receipt,
+        content_sets,
+        checks,
+        allow_unregistered_legacy=allow_unregistered_legacy,
+        require_declared_content=(
+            receipt_schema == "moe_e2_router_input_capture_v2"
+        ),
+    )
+    recorded_capture_path = Path(receipt.get("capture_path", ""))
+    relocated = recorded_capture_path.resolve() != data_path.resolve()
+    if classification == "active" and relocated:
+        raise RuntimeError(f"active key capture path linkage failed: {receipt_path}")
+    return {
+        "kind": "key_capture",
+        "classification": classification,
+        "status": "passed",
+        "corpus": corpus,
+        "window_index": window_index,
+        "receipt_path": str(receipt_path),
+        "receipt_sha256": sha256_file(receipt_path),
+        "payload_path": str(data_path),
+        "payload_sha256": observed_file_sha,
+        "payload_shape": list(payload.shape),
+        "payload_dtype": str(payload.dtype),
+        "recorded_payload_path_relocated": relocated,
+        "binding": binding,
+        "receipt": receipt,
+        "payload": payload,
+    }
+
+
 def capture_keys(args: argparse.Namespace) -> int:
     if args.corpus is None:
         raise ValueError("capture-keys requires --corpus")
     if args.start_window < 0 or args.count < 1 or args.start_window + args.count > N_KEY_WINDOWS:
         raise ValueError("capture-keys window range must stay within 0..15")
     output = ensure_output(args.output_dir)
-    require_bringup_green(output)
     manifest, prepared = load_prepared(output)
+    require_bringup_green(output, manifest, prepared)
+    content_sets = load_prepared_content_sets(output, manifest, prepared)
     array_name = "narrative_key_ids" if args.corpus == "narrative" else f"{args.corpus}_ids"
     requested = list(range(args.start_window, args.start_window + args.count))
     missing: list[int] = []
     for index in requested:
-        data_path, receipt_path = key_capture_paths(output, args.corpus, index)
-        if data_path.is_file() and receipt_path.is_file():
-            receipt = read_json(receipt_path)
-            if receipt.get("status") == "complete" and receipt.get("capture_file_sha256") == sha256_file(data_path):
-                continue
+        _data_path, receipt_path = key_capture_paths(output, args.corpus, index)
+        if receipt_path.exists():
+            validate_key_capture_receipt(
+                output,
+                manifest,
+                prepared,
+                args.corpus,
+                index,
+                content_sets=content_sets,
+            )
+            continue
+        # A payload is written before its receipt; payload-only is recoverable scratch.
         missing.append(index)
     if not missing:
         print(json.dumps({"status": "existing", "corpus": args.corpus, "windows": requested}))
@@ -2570,13 +3771,13 @@ def capture_keys(args: argparse.Namespace) -> int:
         data_path, receipt_path = key_capture_paths(output, args.corpus, window_index)
         save_npy(data_path, payload)
         receipt = {
-            "schema": "moe_e2_router_input_capture_v1",
+            "schema": "moe_e2_router_input_capture_v2",
             "status": "complete",
             "created_at": now_iso(),
             "corpus": args.corpus,
             "window_index": window_index,
             "input_ids_sha256": sha256_array(prepared[array_name][window_index]),
-            "prepared_windows_sha256": manifest["prepared_windows"]["sha256"],
+            **prepared_content_fields(manifest),
             "model_id": MODEL_ID,
             "model_revision": MODEL_REVISION,
             "hook": "OlmoeDecoderLayer.mlp forward_pre_hook; exact native router input",
@@ -2612,6 +3813,7 @@ def verified_key_captures(
 ) -> tuple[dict[str, list[np.ndarray]], list[dict[str, Any]]]:
     arrays: dict[str, list[np.ndarray]] = {corpus: [] for corpus in KEY_CORPORA}
     provenance: list[dict[str, Any]] = []
+    content_sets = load_prepared_content_sets(output, manifest, prepared)
     for corpus in KEY_CORPORA:
         array_name = "narrative_key_ids" if corpus == "narrative" else f"{corpus}_ids"
         for window_index in range(N_KEY_WINDOWS):
@@ -2620,21 +3822,17 @@ def verified_key_captures(
                 raise FileNotFoundError(
                     f"missing {corpus} key capture window {window_index}: {data_path}"
                 )
-            receipt = read_json(receipt_path)
-            observed_hash = sha256_file(data_path)
-            expected_ids_hash = sha256_array(prepared[array_name][window_index])
-            if (
-                receipt.get("status") != "complete"
-                or receipt.get("capture_file_sha256") != observed_hash
-                or receipt.get("input_ids_sha256") != expected_ids_hash
-                or receipt.get("prepared_windows_sha256")
-                != manifest["prepared_windows"]["sha256"]
-                or receipt.get("model_revision") != MODEL_REVISION
-            ):
-                raise RuntimeError(f"key capture provenance failed: {receipt_path}")
-            array = np.load(data_path, mmap_mode="r", allow_pickle=False)
-            if array.shape != (N_LAYERS, WINDOW_TOKENS, HIDDEN_DIM) or array.dtype != np.float16:
-                raise RuntimeError(f"key capture payload failed: {data_path}")
+            validation = validate_key_capture_receipt(
+                output,
+                manifest,
+                prepared,
+                corpus,
+                window_index,
+                content_sets=content_sets,
+            )
+            receipt = validation["receipt"]
+            observed_hash = validation["payload_sha256"]
+            array = validation["payload"]
             arrays[corpus].append(array)
             provenance.append(
                 {
@@ -2644,6 +3842,7 @@ def verified_key_captures(
                     "capture_sha256": observed_hash,
                     "receipt_path": str(receipt_path),
                     "receipt_sha256": sha256_file(receipt_path),
+                    "prepared_content_binding": validation["binding"],
                 }
             )
     return arrays, provenance
@@ -2663,6 +3862,222 @@ def materialize_key_layer(
             raise RuntimeError(f"{corpus} L{layer_index} contains invalid capture values")
         hidden[corpus] = np.ascontiguousarray(combined)
     return hidden
+
+
+def declared_arrays_match_content(
+    declared_arrays: Any, content_arrays: dict[str, Any]
+) -> bool:
+    if not isinstance(declared_arrays, dict) or set(declared_arrays) != set(
+        content_arrays
+    ):
+        return False
+    for name, expected in content_arrays.items():
+        declared = declared_arrays[name]
+        if not isinstance(declared, dict):
+            return False
+        if (
+            declared.get("shape") != expected["shape"]
+            or declared.get("sha256") != expected["sha256"]
+            or (
+                "dtype" in declared
+                and declared.get("dtype") != expected["dtype"]
+            )
+        ):
+            return False
+    return True
+
+
+def validate_expertpack_content_binding(
+    output: Path,
+    pack: dict[str, Any],
+    dependency_binding: dict[str, Any],
+    *,
+    dependency_kind: str,
+    dependency_receipt_path: Path,
+    content_sets: Sequence[dict[str, Any]],
+) -> dict[str, Any]:
+    """Recover mutable ExpertPack provenance through an immutable stage receipt."""
+
+    if (
+        pack.get("schema") != EXPERTPACK_NAME
+        or pack.get("model_revision") != MODEL_REVISION
+    ):
+        raise RuntimeError("ExpertPack schema/model contract failed")
+    if dependency_kind not in {"fit_key", "training"}:
+        raise ValueError(f"unsupported ExpertPack dependency: {dependency_kind}")
+    expected_dependency_path = output / (
+        "fit_key.json" if dependency_kind == "fit_key" else "train.json"
+    )
+    if dependency_receipt_path.resolve() != expected_dependency_path.resolve():
+        raise RuntimeError("ExpertPack dependency receipt path is outside its output")
+    provenance = pack.get("provenance", {})
+    if not isinstance(provenance, dict):
+        raise RuntimeError("ExpertPack provenance record is missing")
+    path_field = "fit_key" if dependency_kind == "fit_key" else "training"
+    sha_field = f"{path_field}_sha256"
+    if (
+        provenance.get(path_field) != str(dependency_receipt_path)
+        or provenance.get(sha_field) != sha256_file(dependency_receipt_path)
+    ):
+        raise RuntimeError(
+            f"ExpertPack {dependency_kind} immutable receipt linkage changed"
+        )
+
+    native = provenance.get("prepared_windows_content")
+    legacy = provenance.get("prepared_windows")
+    declared: dict[str, Any]
+    if native is not None:
+        if not isinstance(native, dict):
+            raise RuntimeError("ExpertPack canonical prepared provenance is malformed")
+        if (
+            native.get("content_digest_algorithm")
+            != dependency_binding["content_digest_algorithm"]
+            or native.get("content_sha256")
+            != dependency_binding["content_sha256"]
+            or native.get("arrays") != dependency_binding["arrays"]
+        ):
+            raise RuntimeError(
+                "ExpertPack canonical content differs from its immutable dependency"
+            )
+        mode = "native_content_digest_transitively_revalidated"
+        declared = {
+            "kind": "canonical_content",
+            "content_sha256": native["content_sha256"],
+            "content_label": dependency_binding["content_label"],
+            "conflicts_with_component_lineage": False,
+        }
+    else:
+        if not isinstance(legacy, dict):
+            raise RuntimeError("ExpertPack has no prepared-content provenance")
+        matching_sets = [
+            item
+            for item in content_sets
+            if declared_arrays_match_content(
+                legacy.get("arrays"), item["content"]["arrays"]
+            )
+        ]
+        if len(matching_sets) != 1:
+            raise RuntimeError(
+                "ExpertPack legacy prepared arrays do not identify one content lineage"
+            )
+        legacy_set = matching_sets[0]
+        mode = "legacy_mutable_expertpack_transitive_migration"
+        declared = {
+            "kind": "legacy_npz_byte_and_array_record",
+            "legacy_archive_sha256": legacy.get("sha256"),
+            "content_sha256": legacy_set["content"]["sha256"],
+            "content_label": legacy_set["label"],
+            "conflicts_with_component_lineage": (
+                legacy_set["content"]["sha256"]
+                != dependency_binding["content_sha256"]
+            ),
+        }
+
+    return {
+        "status": "passed",
+        "mode": mode,
+        "content_label": dependency_binding["content_label"],
+        "content_digest_algorithm": dependency_binding[
+            "content_digest_algorithm"
+        ],
+        "content_sha256": dependency_binding["content_sha256"],
+        "arrays": dependency_binding["arrays"],
+        "content_metadata_path": dependency_binding.get("content_metadata_path"),
+        "dependency_kind": dependency_kind,
+        "dependency_receipt_path": str(dependency_receipt_path),
+        "dependency_receipt_sha256": sha256_file(dependency_receipt_path),
+        "expertpack_declared_prepared_provenance": declared,
+        "original_receipt_mutated": False,
+    }
+
+
+def validate_fit_key_artifacts(
+    output: Path, manifest: dict[str, Any], prepared: dict[str, np.ndarray]
+) -> dict[str, Any]:
+    fit_path = output / "fit_key.json"
+    if not fit_path.is_file():
+        raise FileNotFoundError(fit_path)
+    receipt = read_json(fit_path)
+    receipt_schema = receipt.get("schema")
+    if (
+        receipt_schema not in {"moe_e2_fit_key_v1", "moe_e2_fit_key_v2"}
+        or receipt.get("status")
+        not in {"complete_g2_green", "complete_g2_red_stop"}
+        or receipt.get("model_revision") != MODEL_REVISION
+    ):
+        raise RuntimeError(f"fit-key receipt contract failed: {fit_path}")
+    captures, observed_provenance = verified_key_captures(
+        output, manifest, prepared
+    )
+    recorded_provenance = receipt.get("input_integrity", {}).get("captures", [])
+    if len(recorded_provenance) != len(observed_provenance):
+        raise RuntimeError("fit-key capture provenance count changed")
+    for recorded, observed in zip(recorded_provenance, observed_provenance):
+        for key in (
+            "corpus",
+            "window_index",
+            "capture_path",
+            "capture_sha256",
+            "receipt_path",
+            "receipt_sha256",
+        ):
+            if recorded.get(key) != observed.get(key):
+                raise RuntimeError(f"fit-key capture linkage changed: {key}")
+    dependency_bindings = [
+        item["prepared_content_binding"] for item in observed_provenance
+    ]
+    binding = bind_transitive_receipt_content(
+        receipt,
+        dependency_bindings,
+        dependency_kind="key_captures",
+        require_declared_content=receipt_schema == "moe_e2_fit_key_v2",
+    )
+    keys_record = receipt.get("keys_artifact", {})
+    keys_path = Path(keys_record.get("path", ""))
+    if not keys_path.is_file() or keys_record.get("sha256") != sha256_file(keys_path):
+        raise RuntimeError("fit-key all-layer key artifact changed")
+    with np.load(keys_path, allow_pickle=False) as archive:
+        keys_arrays = {name: archive[name].copy() for name in archive.files}
+    if (
+        set(keys_arrays)
+        != {"K4", "tau", "selected_alpha", "selected_lambda"}
+        or keys_arrays["K4"].shape != (N_LAYERS, HIDDEN_DIM)
+        or keys_arrays["K4"].dtype != np.float32
+    ):
+        raise RuntimeError("fit-key all-layer key payload contract failed")
+    pack_path = output / EXPERTPACK_NAME / "manifest.json"
+    pack = read_json(pack_path)
+    decision = receipt.get("decision", {})
+    install_layer = decision.get("install_layer")
+    if install_layer is not None:
+        if int(pack.get("layer", -1)) != int(install_layer):
+            raise RuntimeError("fit-key install layer differs from ExpertPack")
+        key_record = pack.get("components", {}).get("key", {})
+        key_path = Path(key_record.get("path", ""))
+        if not key_path.is_file() or key_record.get("sha256") != sha256_file(key_path):
+            raise RuntimeError("fit-key selected key artifact changed")
+    pack_binding = validate_expertpack_content_binding(
+        output,
+        pack,
+        binding,
+        dependency_kind="fit_key",
+        dependency_receipt_path=fit_path,
+        content_sets=load_prepared_content_sets(output, manifest, prepared),
+    )
+    del captures
+    return {
+        "kind": "fit_key",
+        "status": "passed",
+        "receipt_path": str(fit_path),
+        "receipt_sha256": sha256_file(fit_path),
+        "capture_count": len(observed_provenance),
+        "keys_artifact_path": str(keys_path),
+        "keys_artifact_sha256": sha256_file(keys_path),
+        "verdict": receipt.get("decision", {}).get("verdict"),
+        "binding": binding,
+        "expertpack_binding": pack_binding,
+        "receipt": receipt,
+    }
 
 
 def fit_side_layer_rank(row: dict[str, Any]) -> tuple[float, ...]:
@@ -2693,10 +4108,31 @@ def fit_key(args: argparse.Namespace) -> int:
     if args.rank != 64:
         raise ValueError("MOE-E2 primary rank is frozen at r=64")
     output = ensure_output(args.output_dir)
-    require_bringup_green(output)
     manifest, prepared = load_prepared(output)
+    require_bringup_green(output, manifest, prepared)
+    existing_fit_path = output / "fit_key.json"
+    if existing_fit_path.is_file():
+        validation = validate_fit_key_artifacts(output, manifest, prepared)
+        print(
+            json.dumps(
+                {
+                    "status": "existing",
+                    "gate": "E2-G2",
+                    "verdict": validation["verdict"],
+                    "receipt": str(existing_fit_path),
+                    "content_sha256": validation["binding"]["content_sha256"],
+                }
+            ),
+            flush=True,
+        )
+        return 0 if validation["verdict"] == "GREEN" else 3
     started = time.perf_counter()
     captures, capture_provenance = verified_key_captures(output, manifest, prepared)
+    input_binding = bind_transitive_receipt_content(
+        {},
+        [item["prepared_content_binding"] for item in capture_provenance],
+        dependency_kind="key_captures",
+    )
     rows: list[dict[str, Any]] = []
     keys: list[np.ndarray] = []
     taus: list[float] = []
@@ -2773,7 +4209,7 @@ def fit_key(args: argparse.Namespace) -> int:
         ),
     }
     analysis = {
-        "schema": "moe_e2_fit_key_v1",
+        "schema": "moe_e2_fit_key_v2",
         "status": "complete_g2_green" if selected else "complete_g2_red_stop",
         "created_at": now_iso(),
         "gate": "E2-G2",
@@ -2782,6 +4218,7 @@ def fit_key(args: argparse.Namespace) -> int:
         "script_sha256": sha256_file(SCRIPT_PATH),
         "model_id": MODEL_ID,
         "model_revision": MODEL_REVISION,
+        **content_fields_from_binding(input_binding),
         "seed": args.seed,
         "bootstrap_resamples": args.bootstrap_resamples,
         "input_integrity": {
@@ -2831,6 +4268,10 @@ def fit_key(args: argparse.Namespace) -> int:
     pack["provenance"]["fit_key_sha256"] = sha256_file(fit_path)
     pack["provenance"]["all_layer_keys"] = str(keys_path)
     pack["provenance"]["all_layer_keys_sha256"] = sha256_file(keys_path)
+    pack["provenance"]["prepared_windows_content"] = (
+        content_provenance_from_binding(input_binding)
+    )
+    pack["provenance"].pop("prepared_windows", None)
     if selected is None:
         pack["status"] = "g2_red_no_installable_address"
         pack["limitations"] = ["E2-G2 RED: no qualifying K4 narrative address; STOP"]
@@ -2885,6 +4326,11 @@ def load_addressed_pack(output: Path, *, require_adapter: bool = False) -> dict[
     if not path.is_file():
         raise FileNotFoundError(f"missing ExpertPack manifest: {path}")
     pack = read_json(path)
+    if (
+        pack.get("schema") != EXPERTPACK_NAME
+        or pack.get("model_revision") != MODEL_REVISION
+    ):
+        raise RuntimeError("ExpertPack schema/model contract failed")
     if pack.get("layer") is None or pack.get("tau") is None:
         raise RuntimeError("E2-G2 did not produce an installable address; STOP")
     key_record = pack.get("components", {}).get("key", {})
@@ -2905,21 +4351,158 @@ def pair_paths(output: Path, window_index: int) -> tuple[Path, Path]:
     return root / f"pair_{window_index:03d}.npz", root / f"pair_{window_index:03d}_receipt.json"
 
 
+def validate_pair_capture_receipt(
+    output: Path,
+    manifest: dict[str, Any],
+    prepared: dict[str, np.ndarray],
+    window_index: int,
+    *,
+    content_sets: Sequence[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    data_path, receipt_path = pair_paths(output, window_index)
+    if not data_path.is_file() or not receipt_path.is_file():
+        raise FileNotFoundError(f"missing pair capture {window_index}")
+    receipt = read_json(receipt_path)
+    receipt_schema = receipt.get("schema")
+    expected_split = "TRAIN" if window_index < N_PAIR_TRAIN else "VALIDATION"
+    if (
+        receipt_schema
+        not in {
+            "moe_e2_teacher_student_pair_v1",
+            "moe_e2_teacher_student_pair_v2",
+        }
+        or receipt.get("status") != "complete"
+        or int(receipt.get("pair_index", -1)) != window_index
+        or receipt.get("split") != expected_split
+        or receipt.get("model_revision") != MODEL_REVISION
+        or not receipt.get("shared_window_token_ids_exact")
+    ):
+        raise RuntimeError(f"pair receipt contract failed: {receipt_path}")
+    if Path(receipt.get("pair_path", "")).resolve() != data_path.resolve():
+        raise RuntimeError(f"pair payload path linkage failed: {receipt_path}")
+    observed_file_sha = sha256_file(data_path)
+    if receipt.get("pair_file_sha256") != observed_file_sha:
+        raise RuntimeError(f"pair file hash failed: {data_path}")
+    with np.load(data_path, allow_pickle=False) as archive:
+        data = {name: archive[name].copy() for name in archive.files}
+    expected_names = {
+        "h_student_fp16",
+        "out_student_fp16",
+        "out_teacher_fp16",
+    }
+    if set(data) != expected_names:
+        raise RuntimeError(f"pair payload keys failed: {data_path}")
+    for name, value in data.items():
+        if value.shape != (WINDOW_TOKENS, HIDDEN_DIM) or value.dtype != np.float16:
+            raise RuntimeError(f"pair {window_index} {name} contract failed")
+    payload_hash_fields = {
+        "h_student_fp16": "student_router_input_sha256",
+        "out_student_fp16": "student_block_output_sha256",
+        "out_teacher_fp16": "teacher_block_output_sha256",
+    }
+    payload_checks = [
+        {
+            "array": name,
+            "receipt_field": field,
+            "recorded_sha256": receipt.get(field),
+            "observed_sha256": sha256_array(data[name]),
+            "passed": receipt.get(field) == sha256_array(data[name]),
+        }
+        for name, field in payload_hash_fields.items()
+    ]
+    if not all(item["passed"] for item in payload_checks):
+        raise RuntimeError(f"pair payload content hashes failed: {receipt_path}")
+    content_sets = list(content_sets or load_prepared_content_sets(output, manifest, prepared))
+
+    def checks(arrays: dict[str, np.ndarray]) -> list[dict[str, Any]]:
+        student = arrays["pair_ids"][window_index]
+        prefix = arrays["pair_p0_prefix_ids"][window_index]
+        return [
+            receipt_array_check(
+                receipt_field="student_ids_sha256",
+                recorded_sha256=receipt.get("student_ids_sha256"),
+                array_name="pair_ids",
+                selection=f"[{window_index}]",
+                value=student,
+            ),
+            receipt_array_check(
+                receipt_field="teacher_shared_ids_sha256",
+                recorded_sha256=receipt.get("teacher_shared_ids_sha256"),
+                array_name="pair_ids",
+                selection=f"[{window_index}]",
+                value=student,
+            ),
+            receipt_array_check(
+                receipt_field="teacher_prefix_ids_sha256",
+                recorded_sha256=receipt.get("teacher_prefix_ids_sha256"),
+                array_name="pair_p0_prefix_ids",
+                selection=f"[{window_index}]",
+                value=prefix,
+            ),
+        ]
+
+    binding = bind_receipt_to_prepared_content(
+        receipt,
+        content_sets,
+        checks,
+        require_declared_content=(
+            receipt_schema == "moe_e2_teacher_student_pair_v2"
+        ),
+    )
+    return {
+        "kind": "pair_capture",
+        "classification": "active",
+        "status": "passed",
+        "pair_index": window_index,
+        "split": expected_split,
+        "receipt_path": str(receipt_path),
+        "receipt_sha256": sha256_file(receipt_path),
+        "payload_path": str(data_path),
+        "payload_sha256": observed_file_sha,
+        "payload_checks": payload_checks,
+        "binding": binding,
+        "receipt": receipt,
+        "data": data,
+    }
+
+
 def capture_pairs(args: argparse.Namespace) -> int:
     if args.start_window < 0 or args.count < 1 or args.start_window + args.count > N_PAIR_WINDOWS:
         raise ValueError("capture-pairs window range must stay within 0..63")
     output = ensure_output(args.output_dir)
-    require_bringup_green(output)
     manifest, prepared = load_prepared(output)
+    require_bringup_green(output, manifest, prepared)
+    content_sets = load_prepared_content_sets(output, manifest, prepared)
+    fit_validation = validate_fit_key_artifacts(output, manifest, prepared)
+    fit_content_sets = [
+        item
+        for item in content_sets
+        if item["content"]["sha256"]
+        == fit_validation["binding"]["content_sha256"]
+    ]
+    if len(fit_content_sets) != 1:
+        raise RuntimeError("fit-key content lineage is not uniquely registered")
+    pair_prepared = fit_content_sets[0]["arrays"]
     pack = load_addressed_pack(output)
     requested = list(range(args.start_window, args.start_window + args.count))
     missing: list[int] = []
     for index in requested:
-        data_path, receipt_path = pair_paths(output, index)
-        if data_path.is_file() and receipt_path.is_file():
-            receipt = read_json(receipt_path)
-            if receipt.get("status") == "complete" and receipt.get("pair_file_sha256") == sha256_file(data_path):
-                continue
+        _data_path, receipt_path = pair_paths(output, index)
+        if receipt_path.exists():
+            validation = validate_pair_capture_receipt(
+                output,
+                manifest,
+                prepared,
+                index,
+                content_sets=content_sets,
+            )
+            bind_transitive_receipt_content(
+                {},
+                [fit_validation["binding"], validation["binding"]],
+                dependency_kind="fit_key_and_pair_capture",
+            )
+            continue
+        # A payload is written before its receipt; payload-only is recoverable scratch.
         missing.append(index)
     if not missing:
         print(json.dumps({"status": "existing", "pairs": requested}))
@@ -2958,8 +4541,8 @@ def capture_pairs(args: argparse.Namespace) -> int:
     try:
         for window_index in missing:
             window_started = time.perf_counter()
-            student_ids = prepared["pair_ids"][window_index]
-            prefix_ids = prepared["pair_p0_prefix_ids"][window_index]
+            student_ids = pair_prepared["pair_ids"][window_index]
+            prefix_ids = pair_prepared["pair_p0_prefix_ids"][window_index]
             teacher_ids = np.concatenate([prefix_ids, student_ids])
             if teacher_ids.size != PREFIX_TOKENS + WINDOW_TOKENS or teacher_ids.size > MAX_CONTEXT:
                 raise RuntimeError("teacher context length contract failed")
@@ -2984,7 +4567,7 @@ def capture_pairs(args: argparse.Namespace) -> int:
             )
             split = "TRAIN" if window_index < N_PAIR_TRAIN else "VALIDATION"
             receipt = {
-                "schema": "moe_e2_teacher_student_pair_v1",
+                "schema": "moe_e2_teacher_student_pair_v2",
                 "status": "complete",
                 "created_at": now_iso(),
                 "pair_index": window_index,
@@ -3009,7 +4592,7 @@ def capture_pairs(args: argparse.Namespace) -> int:
                 "target_delta_max_abs": float(np.abs(delta.astype(np.float64)).max()),
                 "pair_path": str(data_path),
                 "pair_file_sha256": sha256_file(data_path),
-                "prepared_windows_sha256": manifest["prepared_windows"]["sha256"],
+                **content_fields_from_binding(fit_validation["binding"]),
                 "model_id": MODEL_ID,
                 "model_revision": MODEL_REVISION,
                 "runtime": runtime,
@@ -3052,34 +4635,122 @@ def capture_pairs(args: argparse.Namespace) -> int:
     return 0
 
 
-def load_pair_capture(
-    output: Path,
-    prepared: dict[str, np.ndarray],
-    window_index: int,
-    *,
-    verify_file_hash: bool = True,
-) -> tuple[dict[str, np.ndarray], dict[str, Any]]:
-    data_path, receipt_path = pair_paths(output, window_index)
-    if not data_path.is_file() or not receipt_path.is_file():
-        raise FileNotFoundError(f"missing pair capture {window_index}")
-    receipt = read_json(receipt_path)
-    observed_hash = sha256_file(data_path) if verify_file_hash else receipt.get("pair_file_sha256")
+def validate_training_artifacts(
+    output: Path, manifest: dict[str, Any], prepared: dict[str, np.ndarray]
+) -> dict[str, Any]:
+    training_path = output / "train.json"
+    if not training_path.is_file():
+        raise FileNotFoundError(training_path)
+    receipt = read_json(training_path)
+    receipt_schema = receipt.get("schema")
     if (
-        receipt.get("status") != "complete"
-        or receipt.get("pair_file_sha256") != observed_hash
-        or receipt.get("student_ids_sha256") != sha256_array(prepared["pair_ids"][window_index])
-        or not receipt.get("shared_window_token_ids_exact")
+        receipt_schema
+        not in {
+            "moe_e2_adapter_training_v1",
+            "moe_e2_adapter_training_v2",
+        }
+        or receipt.get("status")
+        not in {"complete_g3_green", "complete_g3_red_stop"}
+        or receipt.get("model_revision") != MODEL_REVISION
+        or receipt.get("verdict") not in {"GREEN", "RED"}
     ):
-        raise RuntimeError(f"pair provenance failed: {receipt_path}")
-    with np.load(data_path, allow_pickle=False) as archive:
-        data = {name: archive[name].copy() for name in archive.files}
-    expected = {"h_student_fp16", "out_student_fp16", "out_teacher_fp16"}
-    if set(data) != expected:
-        raise RuntimeError(f"pair payload keys failed: {data_path}")
-    for name, value in data.items():
-        if value.shape != (WINDOW_TOKENS, HIDDEN_DIM) or value.dtype != np.float16:
-            raise RuntimeError(f"pair {window_index} {name} contract failed")
-    return data, receipt
+        raise RuntimeError(f"training receipt contract failed: {training_path}")
+    content_sets = load_prepared_content_sets(output, manifest, prepared)
+    fit_validation = validate_fit_key_artifacts(output, manifest, prepared)
+    recorded_pairs = receipt.get("data", {}).get("pair_receipts", [])
+    if len(recorded_pairs) != N_PAIR_WINDOWS:
+        raise RuntimeError("training receipt does not bind all 64 pairs")
+    pair_validations: list[dict[str, Any]] = []
+    for index in range(N_PAIR_WINDOWS):
+        validation = validate_pair_capture_receipt(
+            output,
+            manifest,
+            prepared,
+            index,
+            content_sets=content_sets,
+        )
+        recorded = recorded_pairs[index]
+        expected_receipt_path = pair_paths(output, index)[1]
+        expected = {
+            "pair_index": index,
+            "receipt_path": str(expected_receipt_path),
+            "receipt_sha256": sha256_file(expected_receipt_path),
+            "pair_sha256": validation["payload_sha256"],
+            "alignment": True,
+        }
+        if any(recorded.get(key) != value for key, value in expected.items()):
+            raise RuntimeError(f"training pair linkage changed: {index}")
+        pair_validations.append(validation)
+    binding = bind_transitive_receipt_content(
+        receipt,
+        [fit_validation["binding"]]
+        + [item["binding"] for item in pair_validations],
+        dependency_kind="fit_key_and_pair_captures",
+        require_declared_content=(
+            receipt_schema == "moe_e2_adapter_training_v2"
+        ),
+    )
+    artifact_results: dict[str, Any] = {}
+    for name in ("A", "B"):
+        record = receipt.get("artifacts", {}).get(name, {})
+        path = Path(record.get("path", ""))
+        if not path.is_file() or record.get("sha256") != sha256_file(path):
+            raise RuntimeError(f"training {name} artifact changed")
+        array = np.load(path, mmap_mode="r", allow_pickle=False)
+        expected_shape = (
+            (int(receipt["rank"]), HIDDEN_DIM)
+            if name == "A"
+            else (HIDDEN_DIM, int(receipt["rank"]))
+        )
+        if array.shape != expected_shape or array.dtype != np.float16:
+            raise RuntimeError(f"training {name} payload contract failed")
+        artifact_results[name] = {
+            "path": str(path),
+            "sha256": sha256_file(path),
+            "shape": list(array.shape),
+            "dtype": str(array.dtype),
+        }
+    pack = load_addressed_pack(output, require_adapter=True)
+    if (
+        int(receipt.get("install_layer", -1)) != int(pack["layer"])
+        or int(receipt.get("rank", -1)) != int(pack["rank"])
+        or float(receipt.get("tau", math.nan)) != float(pack["tau"])
+    ):
+        raise RuntimeError("training key/layer/rank contract differs from ExpertPack")
+    if receipt_schema == "moe_e2_adapter_training_v2":
+        fit_link = receipt.get("data", {}).get("fit_key_receipt", {})
+        fit_path = output / "fit_key.json"
+        if (
+            fit_link.get("path") != str(fit_path)
+            or fit_link.get("sha256") != sha256_file(fit_path)
+        ):
+            raise RuntimeError("training fit-key receipt linkage changed")
+    for name in ("A", "B"):
+        if pack["components"][name].get("sha256") != artifact_results[name]["sha256"]:
+            raise RuntimeError(f"ExpertPack {name} differs from training receipt")
+    if pack.get("g3", {}).get("verdict") != receipt.get("verdict"):
+        raise RuntimeError("ExpertPack G3 verdict differs from training receipt")
+    pack_binding = validate_expertpack_content_binding(
+        output,
+        pack,
+        binding,
+        dependency_kind="training",
+        dependency_receipt_path=training_path,
+        content_sets=content_sets,
+    )
+    return {
+        "kind": "train",
+        "status": "passed",
+        "receipt_path": str(training_path),
+        "receipt_sha256": sha256_file(training_path),
+        "verdict": receipt["verdict"],
+        "pair_count": len(pair_validations),
+        "pair_validations": pair_validations,
+        "artifacts": artifact_results,
+        "binding": binding,
+        "expertpack_binding": pack_binding,
+        "receipt": receipt,
+    }
 
 
 def train(args: argparse.Namespace) -> int:
@@ -3090,9 +4761,27 @@ def train(args: argparse.Namespace) -> int:
     if args.threads < 1 or args.token_batch_size < 1 or args.epochs < 1 or args.patience < 1:
         raise ValueError("training resource/epoch arguments must be positive")
     output = ensure_output(args.output_dir)
-    require_bringup_green(output)
-    _manifest, prepared = load_prepared(output)
+    manifest, prepared = load_prepared(output)
+    require_bringup_green(output, manifest, prepared)
+    content_sets = load_prepared_content_sets(output, manifest, prepared)
+    fit_validation = validate_fit_key_artifacts(output, manifest, prepared)
     pack = load_addressed_pack(output)
+    existing_training_path = output / "train.json"
+    if existing_training_path.is_file():
+        validation = validate_training_artifacts(output, manifest, prepared)
+        print(
+            json.dumps(
+                {
+                    "status": "existing",
+                    "gate": "E2-G3",
+                    "verdict": validation["verdict"],
+                    "receipt": str(existing_training_path),
+                    "content_sha256": validation["binding"]["content_sha256"],
+                }
+            ),
+            flush=True,
+        )
+        return 0 if validation["verdict"] == "GREEN" else 3
     started = time.perf_counter()
     torch = configure_torch(args.threads, cuda_possible=False)
     import torch.nn as nn
@@ -3124,8 +4813,19 @@ def train(args: argparse.Namespace) -> int:
     )
 
     pair_receipts: list[dict[str, Any]] = []
+    pair_bindings: list[dict[str, Any]] = []
+    validated_pair_data: list[dict[str, np.ndarray]] = []
     for index in range(N_PAIR_WINDOWS):
-        _data, receipt = load_pair_capture(output, prepared, index)
+        validation = validate_pair_capture_receipt(
+            output,
+            manifest,
+            prepared,
+            index,
+            content_sets=content_sets,
+        )
+        receipt = validation["receipt"]
+        pair_bindings.append(validation["binding"])
+        validated_pair_data.append(validation["data"])
         pair_receipts.append(
             {
                 "pair_index": index,
@@ -3135,7 +4835,12 @@ def train(args: argparse.Namespace) -> int:
                 "alignment": receipt["shared_window_token_ids_exact"],
             }
         )
-        del _data
+        del validation
+    input_binding = bind_transitive_receipt_content(
+        {},
+        [fit_validation["binding"]] + pair_bindings,
+        dependency_kind="fit_key_and_pair_captures",
+    )
 
     def evaluate_validation(model: Any) -> tuple[float, float, int, int]:
         model.eval()
@@ -3145,9 +4850,7 @@ def train(args: argparse.Namespace) -> int:
         fired_count = 0
         with torch.no_grad():
             for index in range(N_PAIR_TRAIN, N_PAIR_WINDOWS):
-                data, _receipt = load_pair_capture(
-                    output, prepared, index, verify_file_hash=False
-                )
+                data = validated_pair_data[index]
                 hidden = torch.from_numpy(data["h_student_fp16"].astype(np.float32))
                 target = torch.from_numpy(
                     data["out_teacher_fp16"].astype(np.float32)
@@ -3162,7 +4865,7 @@ def train(args: argparse.Namespace) -> int:
                     zero_squared += float(torch.sum(target_batch**2).item())
                     elements += int(target_batch.numel())
                     fired_count += int(fire.sum().item())
-                del data, hidden, target
+                del hidden, target
         return squared / elements, zero_squared / elements, fired_count, elements // HIDDEN_DIM
 
     zero_validation_mse, zero_again, _initial_fires, validation_tokens = evaluate_validation(adapter)
@@ -3181,9 +4884,7 @@ def train(args: argparse.Namespace) -> int:
         epoch_elements = 0
         epoch_fires = 0
         for index in order:
-            data, _receipt = load_pair_capture(
-                output, prepared, index, verify_file_hash=False
-            )
+            data = validated_pair_data[index]
             hidden_np = data["h_student_fp16"].astype(np.float32)
             target_np = (
                 data["out_teacher_fp16"].astype(np.float32)
@@ -3213,7 +4914,7 @@ def train(args: argparse.Namespace) -> int:
                 epoch_squared += float(loss.item()) * int(target_batch.numel())
                 epoch_elements += int(target_batch.numel())
                 epoch_fires += int(fire.sum().item())
-            del data, hidden, target
+            del hidden, target
         validation_mse, _zero_mse, validation_fires, _tokens = evaluate_validation(adapter)
         improved = validation_mse < best_mse - max(1.0e-12, abs(best_mse) * 1.0e-6)
         if improved:
@@ -3258,13 +4959,14 @@ def train(args: argparse.Namespace) -> int:
     )
     green = bool(np.isfinite(improvement) and improvement >= G3_IMPROVEMENT_FLOOR)
     training = {
-        "schema": "moe_e2_adapter_training_v1",
+        "schema": "moe_e2_adapter_training_v2",
         "status": "complete_g3_green" if green else "complete_g3_red_stop",
         "created_at": now_iso(),
         "gate": "E2-G3",
         "verdict": "GREEN" if green else "RED",
         "model_id": MODEL_ID,
         "model_revision": MODEL_REVISION,
+        **content_fields_from_binding(input_binding),
         "install_layer": int(pack["layer"]),
         "rank": args.rank,
         "tau": tau,
@@ -3276,6 +4978,10 @@ def train(args: argparse.Namespace) -> int:
             "B_initial_sha256": sha256_array(initial_B),
         },
         "data": {
+            "fit_key_receipt": {
+                "path": str(output / "fit_key.json"),
+                "sha256": sha256_file(output / "fit_key.json"),
+            },
             "train_pair_indices": list(range(N_PAIR_TRAIN)),
             "validation_pair_indices": list(range(N_PAIR_TRAIN, N_PAIR_WINDOWS)),
             "train_pair_count": N_PAIR_TRAIN,
@@ -3340,6 +5046,10 @@ def train(args: argparse.Namespace) -> int:
     }
     pack["provenance"]["training"] = str(training_path)
     pack["provenance"]["training_sha256"] = sha256_file(training_path)
+    pack["provenance"]["prepared_windows_content"] = (
+        content_provenance_from_binding(input_binding)
+    )
+    pack["provenance"].pop("prepared_windows", None)
     pack["g3"] = training["stored_fp16_validation"] | {"verdict": training["verdict"]}
     pack["status"] = "complete_g3_green" if green else "g3_red_not_installable"
     pack["limitations"] = (
@@ -3364,7 +5074,10 @@ def train(args: argparse.Namespace) -> int:
 
 def load_expert_arrays(
     output: Path,
-) -> tuple[dict[str, Any], np.ndarray, np.ndarray, np.ndarray]:
+    manifest: dict[str, Any],
+    prepared: dict[str, np.ndarray],
+) -> tuple[dict[str, Any], np.ndarray, np.ndarray, np.ndarray, dict[str, Any]]:
+    training_validation = validate_training_artifacts(output, manifest, prepared)
     pack = load_addressed_pack(output, require_adapter=True)
     key = np.load(pack["components"]["key"]["path"], allow_pickle=False)
     A = np.load(pack["components"]["A"]["path"], allow_pickle=False)
@@ -3376,7 +5089,13 @@ def load_expert_arrays(
         raise RuntimeError(f"A contract failed: {A.shape}/{A.dtype}")
     if B.shape != (HIDDEN_DIM, rank) or B.dtype != np.float16:
         raise RuntimeError(f"B contract failed: {B.shape}/{B.dtype}")
-    return pack, np.ascontiguousarray(key), np.ascontiguousarray(A), np.ascontiguousarray(B)
+    return (
+        pack,
+        np.ascontiguousarray(key),
+        np.ascontiguousarray(A),
+        np.ascontiguousarray(B),
+        training_validation["binding"],
+    )
 
 
 class ExpertMount:
@@ -3534,6 +5253,156 @@ def eval_receipt_path(
     return root / f"{kind}_{window_index:03d}.json"
 
 
+def validate_eval_receipt(
+    output: Path,
+    manifest: dict[str, Any],
+    prepared: dict[str, np.ndarray],
+    kind: str,
+    *,
+    window_index: int | None = None,
+    prefix_arm: str = "p0",
+    content_sets: Sequence[dict[str, Any]] | None = None,
+    expert_binding: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    path = eval_receipt_path(output, kind, window_index, prefix_arm)
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    receipt = read_json(path)
+    expected_schemas = {
+        "abi": {"moe_e2_abi_identity_v1", "moe_e2_abi_identity_v2"},
+        "narrative": {"moe_e2_narrative_eval_v1", "moe_e2_narrative_eval_v2"},
+        "wikitext": {
+            "moe_e2_wikitext_noninterference_v1",
+            "moe_e2_wikitext_noninterference_v2",
+        },
+        "code": {"moe_e2_code_fire_v1", "moe_e2_code_fire_v2"},
+    }
+    receipt_schema = receipt.get("schema")
+    if (
+        receipt_schema not in expected_schemas[kind]
+        or receipt.get("status") != "complete"
+        or receipt.get("model_revision") != MODEL_REVISION
+    ):
+        raise RuntimeError(f"eval receipt contract failed: {path}")
+    if kind != "abi" and int(receipt.get("window_index", -1)) != window_index:
+        raise RuntimeError(f"eval receipt window index failed: {path}")
+    if kind == "narrative" and receipt.get("prefix_arm") != prefix_arm:
+        raise RuntimeError(f"narrative eval prefix arm failed: {path}")
+    content_sets = list(content_sets or load_prepared_content_sets(output, manifest, prepared))
+
+    def checks(arrays: dict[str, np.ndarray]) -> list[dict[str, Any]]:
+        if kind == "abi":
+            ids = np.concatenate(
+                [
+                    arrays["narrative_key_ids"][0, :64],
+                    arrays["code_ids"][0, :64],
+                ]
+            )
+            return [
+                receipt_array_check(
+                    receipt_field="input_ids_sha256",
+                    recorded_sha256=receipt.get("input_ids_sha256"),
+                    array_name="narrative_key_ids+code_ids",
+                    selection="narrative[0,:64] || code[0,:64]",
+                    value=ids,
+                )
+            ]
+        assert window_index is not None
+        if kind == "narrative":
+            target = arrays["heldout_ids"][window_index]
+            prefix_name = (
+                "heldout_p0_prefix_ids"
+                if prefix_arm == "p0"
+                else "heldout_p1_prefix_ids"
+            )
+            prefix = arrays[prefix_name][window_index]
+            result = [
+                receipt_array_check(
+                    receipt_field="target_ids_sha256",
+                    recorded_sha256=receipt.get("target_ids_sha256"),
+                    array_name="heldout_ids",
+                    selection=f"[{window_index}]",
+                    value=target,
+                ),
+                receipt_array_check(
+                    receipt_field="teacher_prefix_ids_sha256",
+                    recorded_sha256=receipt.get("teacher_prefix_ids_sha256"),
+                    array_name=prefix_name,
+                    selection=f"[{window_index}]",
+                    value=prefix,
+                ),
+            ]
+            for arm in ("base", "teacher", "expert"):
+                result.append(
+                    receipt_array_check(
+                        receipt_field=f"arms.{arm}.target_ids_sha256",
+                        recorded_sha256=receipt.get("arms", {})
+                        .get(arm, {})
+                        .get("target_ids_sha256"),
+                        array_name="heldout_ids",
+                        selection=f"[{window_index},1:]",
+                        value=target[1:],
+                    )
+                )
+            return result
+        array_name = "wikitext_ids" if kind == "wikitext" else "code_ids"
+        target = arrays[array_name][window_index]
+        result = [
+            receipt_array_check(
+                receipt_field="input_ids_sha256",
+                recorded_sha256=receipt.get("input_ids_sha256"),
+                array_name=array_name,
+                selection=f"[{window_index}]",
+                value=target,
+            )
+        ]
+        if kind == "wikitext":
+            for arm in ("base", "expert"):
+                result.append(
+                    receipt_array_check(
+                        receipt_field=f"arms.{arm}.target_ids_sha256",
+                        recorded_sha256=receipt.get("arms", {})
+                        .get(arm, {})
+                        .get("target_ids_sha256"),
+                        array_name=array_name,
+                        selection=f"[{window_index},1:]",
+                        value=target[1:],
+                    )
+                )
+        return result
+
+    binding = bind_receipt_to_prepared_content(
+        receipt,
+        content_sets,
+        checks,
+        require_declared_content=str(receipt_schema).endswith("_v2"),
+    )
+    if str(receipt_schema).endswith("_v2"):
+        if expert_binding is None:
+            expert_binding = validate_training_artifacts(
+                output, manifest, prepared
+            )["binding"]
+        expected_expert_provenance = content_provenance_from_binding(
+            expert_binding
+        )
+        if receipt.get("expertpack_prepared_content") != expected_expert_provenance:
+            raise RuntimeError(
+                f"eval ExpertPack content provenance changed: {path}"
+            )
+    return {
+        "kind": "eval",
+        "eval_kind": kind,
+        "window_index": window_index,
+        "prefix_arm": prefix_arm if kind == "narrative" else None,
+        "status": "passed",
+        "receipt_path": str(path),
+        "receipt_sha256": sha256_file(path),
+        "binding": binding,
+        "expertpack_binding": expert_binding,
+        "receipt": receipt,
+    }
+
+
 def ensure_g3_green(pack: dict[str, Any]) -> None:
     if pack.get("g3", {}).get("verdict") != "GREEN":
         raise RuntimeError("E2-G3 is not GREEN; behavioral evaluation must STOP")
@@ -3541,14 +5410,25 @@ def ensure_g3_green(pack: dict[str, Any]) -> None:
 
 def eval_abi(args: argparse.Namespace) -> int:
     output = ensure_output(args.output_dir)
-    require_bringup_green(output)
-    _manifest, prepared = load_prepared(output)
-    pack, key, A, B = load_expert_arrays(output)
+    manifest, prepared = load_prepared(output)
+    require_bringup_green(output, manifest, prepared)
+    content_sets = load_prepared_content_sets(output, manifest, prepared)
+    pack, key, A, B, expert_content_binding = load_expert_arrays(
+        output, manifest, prepared
+    )
     ensure_g3_green(pack)
     receipt_path = eval_receipt_path(output, "abi")
-    if receipt_path.is_file() and read_json(receipt_path).get("status") == "complete":
+    if receipt_path.is_file():
+        validation = validate_eval_receipt(
+            output,
+            manifest,
+            prepared,
+            "abi",
+            content_sets=content_sets,
+            expert_binding=expert_content_binding,
+        )
         print(json.dumps({"status": "existing", "receipt": str(receipt_path)}))
-        return 0 if read_json(receipt_path).get("verdict") == "GREEN" else 3
+        return 0 if validation["receipt"].get("verdict") == "GREEN" else 3
     started = time.perf_counter()
     torch, model, runtime = load_model(args)
     layer = model.model.layers[int(pack["layer"])]
@@ -3605,13 +5485,17 @@ def eval_abi(args: argparse.Namespace) -> int:
     live_nonfire_ok = bool(live["nonfire_count"] > 0 and live["nonfired_rows_bit_equal"])
     green = bool(zero_install_equal and zero_B_equal and nofire_equal and live_nonfire_ok)
     receipt = {
-        "schema": "moe_e2_abi_identity_v1",
+        "schema": "moe_e2_abi_identity_v2",
         "status": "complete",
         "created_at": now_iso(),
         "gate": "E2-G0",
         "verdict": "GREEN" if green else "RED",
         "model_id": MODEL_ID,
         "model_revision": MODEL_REVISION,
+        **prepared_content_fields(manifest),
+        "expertpack_prepared_content": content_provenance_from_binding(
+            expert_content_binding
+        ),
         "install_layer": int(pack["layer"]),
         "rank": int(pack["rank"]),
         "tau": float(pack["tau"]),
@@ -3663,26 +5547,34 @@ def eval_abi(args: argparse.Namespace) -> int:
     return 0 if green else 3
 
 
-def complete_existing_receipt(path: Path) -> bool:
-    return path.is_file() and read_json(path).get("status") == "complete"
-
-
 def eval_narrative(args: argparse.Namespace) -> int:
     if args.start_window < 0 or args.count < 1 or args.start_window + args.count > N_BEHAVIORAL_WINDOWS:
         raise ValueError("narrative eval range must stay within 0..15")
     output = ensure_output(args.output_dir)
-    require_bringup_green(output)
     manifest, prepared = load_prepared(output)
-    pack, key, A, B = load_expert_arrays(output)
+    require_bringup_green(output, manifest, prepared)
+    content_sets = load_prepared_content_sets(output, manifest, prepared)
+    pack, key, A, B, expert_content_binding = load_expert_arrays(
+        output, manifest, prepared
+    )
     ensure_g3_green(pack)
     requested = list(range(args.start_window, args.start_window + args.count))
-    missing = [
-        index
-        for index in requested
-        if not complete_existing_receipt(
-            eval_receipt_path(output, "narrative", index, args.prefix_arm)
-        )
-    ]
+    missing: list[int] = []
+    for index in requested:
+        path = eval_receipt_path(output, "narrative", index, args.prefix_arm)
+        if path.is_file():
+            validate_eval_receipt(
+                output,
+                manifest,
+                prepared,
+                "narrative",
+                window_index=index,
+                prefix_arm=args.prefix_arm,
+                content_sets=content_sets,
+                expert_binding=expert_content_binding,
+            )
+        else:
+            missing.append(index)
     if not missing:
         print(json.dumps({"status": "existing", "kind": "narrative", "arm": args.prefix_arm, "windows": requested}))
         return 0
@@ -3717,7 +5609,7 @@ def eval_narrative(args: argparse.Namespace) -> int:
         if len(mount.calls) != 1:
             raise RuntimeError("narrative eval expected one install-layer gate call")
         receipt = {
-            "schema": "moe_e2_narrative_eval_v1",
+            "schema": "moe_e2_narrative_eval_v2",
             "status": "complete",
             "created_at": now_iso(),
             "window_index": window_index,
@@ -3735,6 +5627,10 @@ def eval_narrative(args: argparse.Namespace) -> int:
             "fire": mount.calls[0],
             "model_id": MODEL_ID,
             "model_revision": MODEL_REVISION,
+            **prepared_content_fields(manifest),
+            "expertpack_prepared_content": content_provenance_from_binding(
+                expert_content_binding
+            ),
             "install_layer": int(pack["layer"]),
             "runtime": runtime,
             "window_wall_seconds": time.perf_counter() - window_started,
@@ -3767,12 +5663,29 @@ def eval_wikitext(args: argparse.Namespace) -> int:
     if args.start_window < 0 or args.count < 1 or args.start_window + args.count > N_KEY_WINDOWS:
         raise ValueError("WikiText eval range must stay within 0..15")
     output = ensure_output(args.output_dir)
-    require_bringup_green(output)
-    _manifest, prepared = load_prepared(output)
-    pack, key, A, B = load_expert_arrays(output)
+    manifest, prepared = load_prepared(output)
+    require_bringup_green(output, manifest, prepared)
+    content_sets = load_prepared_content_sets(output, manifest, prepared)
+    pack, key, A, B, expert_content_binding = load_expert_arrays(
+        output, manifest, prepared
+    )
     ensure_g3_green(pack)
     requested = list(range(args.start_window, args.start_window + args.count))
-    missing = [index for index in requested if not complete_existing_receipt(eval_receipt_path(output, "wikitext", index))]
+    missing: list[int] = []
+    for index in requested:
+        path = eval_receipt_path(output, "wikitext", index)
+        if path.is_file():
+            validate_eval_receipt(
+                output,
+                manifest,
+                prepared,
+                "wikitext",
+                window_index=index,
+                content_sets=content_sets,
+                expert_binding=expert_content_binding,
+            )
+        else:
+            missing.append(index)
     if not missing:
         print(json.dumps({"status": "existing", "kind": "wikitext", "windows": requested}))
         return 0
@@ -3795,7 +5708,7 @@ def eval_wikitext(args: argparse.Namespace) -> int:
             raise RuntimeError("WikiText eval expected one install-layer gate call")
         delta_percent = (expert["ppl"] - base["ppl"]) / base["ppl"] * 100.0
         receipt = {
-            "schema": "moe_e2_wikitext_noninterference_v1",
+            "schema": "moe_e2_wikitext_noninterference_v2",
             "status": "complete",
             "created_at": now_iso(),
             "window_index": window_index,
@@ -3805,6 +5718,10 @@ def eval_wikitext(args: argparse.Namespace) -> int:
             "fire": mount.calls[0],
             "model_id": MODEL_ID,
             "model_revision": MODEL_REVISION,
+            **prepared_content_fields(manifest),
+            "expertpack_prepared_content": content_provenance_from_binding(
+                expert_content_binding
+            ),
             "install_layer": int(pack["layer"]),
             "runtime": runtime,
             "script": str(SCRIPT_PATH),
@@ -3821,12 +5738,29 @@ def eval_code(args: argparse.Namespace) -> int:
     if args.start_window < 0 or args.count < 1 or args.start_window + args.count > N_KEY_WINDOWS:
         raise ValueError("code eval range must stay within 0..15")
     output = ensure_output(args.output_dir)
-    require_bringup_green(output)
-    _manifest, prepared = load_prepared(output)
-    pack, key, A, B = load_expert_arrays(output)
+    manifest, prepared = load_prepared(output)
+    require_bringup_green(output, manifest, prepared)
+    content_sets = load_prepared_content_sets(output, manifest, prepared)
+    pack, key, A, B, expert_content_binding = load_expert_arrays(
+        output, manifest, prepared
+    )
     ensure_g3_green(pack)
     requested = list(range(args.start_window, args.start_window + args.count))
-    missing = [index for index in requested if not complete_existing_receipt(eval_receipt_path(output, "code", index))]
+    missing: list[int] = []
+    for index in requested:
+        path = eval_receipt_path(output, "code", index)
+        if path.is_file():
+            validate_eval_receipt(
+                output,
+                manifest,
+                prepared,
+                "code",
+                window_index=index,
+                content_sets=content_sets,
+                expert_binding=expert_content_binding,
+            )
+        else:
+            missing.append(index)
     if not missing:
         print(json.dumps({"status": "existing", "kind": "code", "windows": requested}))
         return 0
@@ -3850,7 +5784,7 @@ def eval_code(args: argparse.Namespace) -> int:
         if len(mount.calls) != 1:
             raise RuntimeError("code eval expected one install-layer gate call")
         receipt = {
-            "schema": "moe_e2_code_fire_v1",
+            "schema": "moe_e2_code_fire_v2",
             "status": "complete",
             "created_at": now_iso(),
             "window_index": window_index,
@@ -3858,6 +5792,10 @@ def eval_code(args: argparse.Namespace) -> int:
             "fire": mount.calls[0],
             "model_id": MODEL_ID,
             "model_revision": MODEL_REVISION,
+            **prepared_content_fields(manifest),
+            "expertpack_prepared_content": content_provenance_from_binding(
+                expert_content_binding
+            ),
             "install_layer": int(pack["layer"]),
             "runtime": runtime,
             "script": str(SCRIPT_PATH),
@@ -3882,19 +5820,62 @@ def eval_gates(args: argparse.Namespace) -> int:
     return eval_code(args)
 
 
-def load_eval_sequence(
-    output: Path, kind: str, *, prefix_arm: str = "p0", count: int = 16
+def load_eval_validations(
+    output: Path,
+    kind: str,
+    *,
+    prefix_arm: str = "p0",
+    count: int = 16,
+    manifest: dict[str, Any] | None = None,
+    prepared: dict[str, np.ndarray] | None = None,
+    expert_binding: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
-    receipts: list[dict[str, Any]] = []
+    if manifest is None or prepared is None:
+        manifest, prepared = load_prepared(output)
+    content_sets = load_prepared_content_sets(output, manifest, prepared)
+    validations: list[dict[str, Any]] = []
     for index in range(count):
         path = eval_receipt_path(output, kind, index, prefix_arm)
         if not path.is_file():
             return []
-        receipt = read_json(path)
-        if receipt.get("status") != "complete" or int(receipt.get("window_index", -1)) != index:
-            return []
-        receipts.append(receipt)
-    return receipts
+        validation = validate_eval_receipt(
+            output,
+            manifest,
+            prepared,
+            kind,
+            window_index=index,
+            prefix_arm=prefix_arm,
+            content_sets=content_sets,
+            expert_binding=expert_binding,
+        )
+        if validation.get("expertpack_binding") is not None:
+            expert_binding = validation["expertpack_binding"]
+        validations.append(validation)
+    return validations
+
+
+def load_eval_sequence(
+    output: Path,
+    kind: str,
+    *,
+    prefix_arm: str = "p0",
+    count: int = 16,
+    manifest: dict[str, Any] | None = None,
+    prepared: dict[str, np.ndarray] | None = None,
+    expert_binding: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
+    return [
+        item["receipt"]
+        for item in load_eval_validations(
+            output,
+            kind,
+            prefix_arm=prefix_arm,
+            count=count,
+            manifest=manifest,
+            prepared=prepared,
+            expert_binding=expert_binding,
+        )
+    ]
 
 
 def aggregate_nll(receipts: Sequence[dict[str, Any]], arm: str) -> dict[str, Any]:
@@ -3913,7 +5894,14 @@ def aggregate_nll(receipts: Sequence[dict[str, Any]], arm: str) -> dict[str, Any
 
 def fallback_check(args: argparse.Namespace) -> int:
     output = ensure_output(args.output_dir)
-    receipts = load_eval_sequence(output, "narrative", prefix_arm="p0")
+    manifest, prepared = load_prepared(output)
+    receipts = load_eval_sequence(
+        output,
+        "narrative",
+        prefix_arm="p0",
+        manifest=manifest,
+        prepared=prepared,
+    )
     if len(receipts) != N_BEHAVIORAL_WINDOWS:
         raise RuntimeError("P0 fallback check requires all 16 primary narrative receipts")
     base = aggregate_nll(receipts, "base")
@@ -3947,11 +5935,19 @@ def analyze(args: argparse.Namespace) -> int:
     if args.bootstrap_resamples < 2000:
         raise ValueError("analyze requires at least 2,000 bootstrap resamples")
     output = ensure_output(args.output_dir)
-    manifest, _prepared = load_prepared(output)
+    manifest, prepared = load_prepared(output)
+    content_sets = load_prepared_content_sets(output, manifest, prepared)
     gates: dict[str, dict[str, Any]] = {}
 
     bringup_path = output / "bringup.json"
-    bringup = read_json(bringup_path) if bringup_path.is_file() else None
+    bringup_validation = (
+        validate_consolidated_bringup_receipt(output, manifest, prepared)
+        if bringup_path.is_file()
+        else None
+    )
+    bringup = (
+        None if bringup_validation is None else bringup_validation["receipt"]
+    )
     if bringup and bringup.get("status") == "complete" and bringup.get("gate", {}).get("verdict") in {"GREEN", "RED"}:
         verdict = bringup["gate"]["verdict"]
         short_ppl = float(bringup["short_512"]["ppl"])
@@ -3972,7 +5968,18 @@ def analyze(args: argparse.Namespace) -> int:
     bringup_green = gates["E2-G-1"]["verdict"] == "GREEN"
 
     abi_path = eval_receipt_path(output, "abi")
-    abi = read_json(abi_path) if abi_path.is_file() else None
+    abi_validation = (
+        validate_eval_receipt(
+            output,
+            manifest,
+            prepared,
+            "abi",
+            content_sets=content_sets,
+        )
+        if abi_path.is_file()
+        else None
+    )
+    abi = None if abi_validation is None else abi_validation["receipt"]
     if bringup_green and abi and abi.get("status") == "complete":
         verdict = str(abi.get("verdict", "RED"))
         live = abi["live_gate"]["mount"]
@@ -3996,7 +6003,12 @@ def analyze(args: argparse.Namespace) -> int:
         )
 
     fit_path = output / "fit_key.json"
-    fit = read_json(fit_path) if fit_path.is_file() else None
+    fit_validation = (
+        validate_fit_key_artifacts(output, manifest, prepared)
+        if fit_path.is_file()
+        else None
+    )
+    fit = None if fit_validation is None else fit_validation["receipt"]
     install: dict[str, Any] = {
         "layer": None,
         "rank": 64,
@@ -4047,7 +6059,14 @@ def analyze(args: argparse.Namespace) -> int:
         )
 
     train_path = output / "train.json"
-    training = read_json(train_path) if train_path.is_file() else None
+    training_validation = (
+        validate_training_artifacts(output, manifest, prepared)
+        if train_path.is_file()
+        else None
+    )
+    training = (
+        None if training_validation is None else training_validation["receipt"]
+    )
     if gates["E2-G2"]["verdict"] == "GREEN" and training and training.get("status") in {"complete_g3_green", "complete_g3_red_stop"}:
         verdict = training["verdict"]
         stored = training["stored_fp16_validation"]
@@ -4073,17 +6092,27 @@ def analyze(args: argparse.Namespace) -> int:
         "aligned_pairs": 0,
         "hidden_different_pairs": 0,
         "first_two_receipts": [],
+        "content_lineages": {},
     }
     for index in range(N_PAIR_WINDOWS):
-        _data_path, receipt_path = pair_paths(output, index)
-        if not receipt_path.is_file():
+        data_path, receipt_path = pair_paths(output, index)
+        if not data_path.exists() and not receipt_path.exists():
             continue
-        receipt = read_json(receipt_path)
-        if receipt.get("status") != "complete":
-            continue
+        validation = validate_pair_capture_receipt(
+            output,
+            manifest,
+            prepared,
+            index,
+            content_sets=content_sets,
+        )
+        receipt = validation["receipt"]
         pair_truth["complete_pairs"] += 1
         pair_truth["aligned_pairs"] += int(bool(receipt.get("shared_window_token_ids_exact")))
         pair_truth["hidden_different_pairs"] += int(bool(receipt.get("router_input_hidden_states_differ")))
+        content_label = validation["binding"]["content_label"]
+        pair_truth["content_lineages"][content_label] = (
+            pair_truth["content_lineages"].get(content_label, 0) + 1
+        )
         if len(pair_truth["first_two_receipts"]) < 2:
             pair_truth["first_two_receipts"].append(str(receipt_path))
 
@@ -4092,8 +6121,46 @@ def analyze(args: argparse.Namespace) -> int:
         "G4 row: ppl_base=NOT_MEASURED, ppl_teacher=NOT_MEASURED, "
         "ppl_expert=NOT_MEASURED, recovery=NOT_MEASURED, CI95=NOT_MEASURED"
     )
-    p0_receipts = load_eval_sequence(output, "narrative", prefix_arm="p0")
-    p1_receipts = load_eval_sequence(output, "narrative", prefix_arm="p1")
+    p0_validations = load_eval_validations(
+        output,
+        "narrative",
+        prefix_arm="p0",
+        manifest=manifest,
+        prepared=prepared,
+        expert_binding=(
+            None if training_validation is None else training_validation["binding"]
+        ),
+    )
+    p0_receipts = [item["receipt"] for item in p0_validations]
+    p0_content_binding = (
+        bind_transitive_receipt_content(
+            {},
+            [item["binding"] for item in p0_validations],
+            dependency_kind="narrative_p0_eval_receipts",
+        )
+        if p0_validations
+        else None
+    )
+    p1_validations = load_eval_validations(
+        output,
+        "narrative",
+        prefix_arm="p1",
+        manifest=manifest,
+        prepared=prepared,
+        expert_binding=(
+            None if training_validation is None else training_validation["binding"]
+        ),
+    )
+    p1_receipts = [item["receipt"] for item in p1_validations]
+    p1_content_binding = (
+        bind_transitive_receipt_content(
+            {},
+            [item["binding"] for item in p1_validations],
+            dependency_kind="narrative_p1_eval_receipts",
+        )
+        if p1_validations
+        else None
+    )
     fallback_state = "not_evaluated"
     if gates["E2-G3"]["verdict"] == "GREEN" and len(p0_receipts) == N_BEHAVIORAL_WINDOWS:
         p0_base = aggregate_nll(p0_receipts, "base")
@@ -4180,8 +6247,44 @@ def analyze(args: argparse.Namespace) -> int:
             fallback_state=fallback_state,
         )
 
-    wikitext_receipts = load_eval_sequence(output, "wikitext")
-    code_receipts = load_eval_sequence(output, "code")
+    wikitext_validations = load_eval_validations(
+        output,
+        "wikitext",
+        manifest=manifest,
+        prepared=prepared,
+        expert_binding=(
+            None if training_validation is None else training_validation["binding"]
+        ),
+    )
+    wikitext_receipts = [item["receipt"] for item in wikitext_validations]
+    wikitext_content_binding = (
+        bind_transitive_receipt_content(
+            {},
+            [item["binding"] for item in wikitext_validations],
+            dependency_kind="wikitext_eval_receipts",
+        )
+        if wikitext_validations
+        else None
+    )
+    code_validations = load_eval_validations(
+        output,
+        "code",
+        manifest=manifest,
+        prepared=prepared,
+        expert_binding=(
+            None if training_validation is None else training_validation["binding"]
+        ),
+    )
+    code_receipts = [item["receipt"] for item in code_validations]
+    code_content_binding = (
+        bind_transitive_receipt_content(
+            {},
+            [item["binding"] for item in code_validations],
+            dependency_kind="code_eval_receipts",
+        )
+        if code_validations
+        else None
+    )
     g5_measurement: dict[str, Any] | None = None
     if gates["E2-G3"]["verdict"] == "GREEN" and len(wikitext_receipts) == 16 and len(code_receipts) == 16:
         wiki_base = aggregate_nll(wikitext_receipts, "base")
@@ -4237,6 +6340,37 @@ def analyze(args: argparse.Namespace) -> int:
         f"code FPR={format_number(install['code_fpr'])}, "
         f"GRM FPR={format_number(install['grm_fpr'])}, tau={format_number(install['tau'], 9)}"
     )
+    stage_bindings = {
+        "bringup": (
+            None if bringup_validation is None else bringup_validation["binding"]
+        ),
+        "abi_input": None if abi_validation is None else abi_validation["binding"],
+        "fit_key": None if fit_validation is None else fit_validation["binding"],
+        "training": (
+            None if training_validation is None else training_validation["binding"]
+        ),
+        "expertpack": (
+            training_validation["expertpack_binding"]
+            if training_validation is not None
+            else (
+                fit_validation["expertpack_binding"]
+                if fit_validation is not None
+                else None
+            )
+        ),
+        "narrative_p0_eval": p0_content_binding,
+        "narrative_p1_eval": p1_content_binding,
+        "wikitext_eval": wikitext_content_binding,
+        "code_eval": code_content_binding,
+    }
+    validated_stage_content = {
+        name: {
+            **content_provenance_from_binding(binding),
+            "validation_mode": binding["mode"],
+        }
+        for name, binding in stage_bindings.items()
+        if binding is not None
+    }
     analysis = {
         "schema": "moe_e2_analysis_v1",
         "created_at": now_iso(),
@@ -4255,6 +6389,8 @@ def analyze(args: argparse.Namespace) -> int:
         "g5": g5_measurement,
         "fallback_state": fallback_state,
         "pair_truth": pair_truth,
+        "prepared_windows_content": prepared_content_provenance(manifest),
+        "validated_stage_content": validated_stage_content,
         "corpus_split_receipt": {
             "manifest": str(output / "corpus_manifest.json"),
             "manifest_sha256": sha256_file(output / "corpus_manifest.json"),
@@ -4404,6 +6540,594 @@ def analyze(args: argparse.Namespace) -> int:
     return 0 if analysis["status"] == "complete_all_green" else 3
 
 
+def receipt_validation_sidecar_path(receipt_path: Path) -> Path:
+    return receipt_path.with_name(
+        f"{receipt_path.stem}.provenance_validation.json"
+    )
+
+
+def public_validation_summary(validation: dict[str, Any]) -> dict[str, Any]:
+    excluded = {
+        "receipt",
+        "payload",
+        "data",
+        "pair_validations",
+        "cells",
+    }
+    return {key: value for key, value in validation.items() if key not in excluded}
+
+
+def write_receipt_validation_sidecar(
+    receipt_path: Path,
+    validation: dict[str, Any] | None,
+    *,
+    error: Exception | None = None,
+) -> dict[str, Any]:
+    if not receipt_path.is_file():
+        raise FileNotFoundError(receipt_path)
+    original_sha = sha256_file(receipt_path)
+    original_stat = receipt_path.stat()
+    sidecar_path = receipt_validation_sidecar_path(receipt_path)
+    existing = read_json(sidecar_path) if sidecar_path.is_file() else {}
+    if existing:
+        sealed_original = existing.get("original_receipt", {})
+        if (
+            sealed_original.get("sha256") != original_sha
+            or int(sealed_original.get("byte_count", -1)) != original_stat.st_size
+            or int(sealed_original.get("mtime_ns_before_validation", -1))
+            != original_stat.st_mtime_ns
+        ):
+            raise RuntimeError(
+                "original receipt differs from its immutable validation sidecar: "
+                f"{receipt_path}"
+            )
+    binding = None if validation is None else validation.get("binding")
+    try:
+        original_receipt = read_json(receipt_path)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        original_receipt = {}
+    legacy_field = original_receipt.get("prepared_windows_sha256")
+    if legacy_field is None:
+        provenance = original_receipt.get("provenance", {})
+        prepared_record = (
+            provenance.get("prepared_windows", {})
+            if isinstance(provenance, dict)
+            else {}
+        )
+        legacy_field = (
+            prepared_record.get("sha256")
+            if isinstance(prepared_record, dict)
+            else None
+        )
+    if error is None:
+        mode = None if binding is None else binding.get("mode")
+        if mode and mode.startswith("native_content"):
+            migration_note = (
+                "Original receipt already records the canonical combined content digest."
+            )
+        elif mode and "transitive" in mode:
+            migration_note = (
+                "Original receipt is immutable. Prepared provenance was recovered "
+                "transitively through its exact immutable dependency receipts."
+            )
+        elif legacy_field is not None:
+            migration_note = (
+                "Original receipt is immutable. Its legacy NPZ byte SHA was not used "
+                "as content; every recorded consumed-array hash was revalidated "
+                "against the selected canonical content lineage."
+            )
+        else:
+            migration_note = (
+                "Original receipt is immutable; all recorded prepared-array content "
+                "was revalidated."
+            )
+        status = "passed"
+        summary = public_validation_summary(validation or {})
+        error_record = None
+    else:
+        status = "failed"
+        migration_note = (
+            "Original receipt was not mutated. Content migration was rejected because "
+            "its recorded dependencies did not validate."
+        )
+        summary = None
+        error_record = {"type": type(error).__name__, "message": str(error)}
+    payload = {
+        "schema": "moe_e2_receipt_provenance_validation_v1",
+        "status": status,
+        "created_at": existing.get("created_at", now_iso()),
+        "order": str(F4_ORDER_PATH),
+        "order_sha256": sha256_file(F4_ORDER_PATH),
+        "validator_script": str(SCRIPT_PATH),
+        "validator_script_sha256": sha256_file(SCRIPT_PATH),
+        "original_receipt": {
+            "path": str(receipt_path),
+            "sha256": original_sha,
+            "byte_count": int(original_stat.st_size),
+            "mtime_ns_before_validation": int(original_stat.st_mtime_ns),
+        },
+        "migration": {
+            "note": migration_note,
+            "legacy_prepared_windows_byte_sha256": legacy_field,
+            "original_receipt_mutated": False,
+        },
+        "validation": summary,
+        "error": error_record,
+    }
+    write_json_if_changed(sidecar_path, payload)
+    after_stat = receipt_path.stat()
+    if (
+        sha256_file(receipt_path) != original_sha
+        or after_stat.st_mtime_ns != original_stat.st_mtime_ns
+        or after_stat.st_size != original_stat.st_size
+    ):
+        raise RuntimeError(f"original receipt changed during sidecar write: {receipt_path}")
+    return {
+        "status": status,
+        "original_receipt_path": str(receipt_path),
+        "original_receipt_sha256": original_sha,
+        "sidecar_path": str(sidecar_path),
+        "sidecar_sha256": sha256_file(sidecar_path),
+        "content_binding": binding,
+        "error": error_record,
+    }
+
+
+def file_identity(path: Path) -> dict[str, Any]:
+    stat = path.stat()
+    return {
+        "path": str(path),
+        "sha256": sha256_file(path),
+        "byte_count": int(stat.st_size),
+        "inode": int(stat.st_ino),
+        "mtime_ns": int(stat.st_mtime_ns),
+    }
+
+
+def validate_provenance(args: argparse.Namespace) -> int:
+    output = ensure_output(args.output_dir)
+    manifest_path = output / "corpus_manifest.json"
+    windows_path = output / "prepared_windows.npz"
+    manifest, prepared = load_prepared(output)
+    reconstruct_legacy_prepared_content(args, output, manifest, prepared)
+    content_sets = load_prepared_content_sets(output, manifest, prepared)
+
+    root = provenance_validation_root(output)
+    root.mkdir(parents=True, exist_ok=True)
+    content_sidecar_path = root / "prepared_windows_content_validation.json"
+    existing_content_sidecar = (
+        read_json(content_sidecar_path) if content_sidecar_path.is_file() else {}
+    )
+    content_sidecar = {
+        "schema": "moe_e2_prepared_content_validation_v1",
+        "status": "passed",
+        "created_at": existing_content_sidecar.get("created_at", now_iso()),
+        "order": str(F4_ORDER_PATH),
+        "order_sha256": sha256_file(F4_ORDER_PATH),
+        "manifest": file_identity(manifest_path),
+        "archive_bytes_informational_only": file_identity(windows_path),
+        "current_content": {
+            "algorithm": manifest["prepared_windows"]["content_digest_algorithm"],
+            "sha256": manifest["prepared_windows"]["content_sha256"],
+            "arrays": manifest["prepared_windows"]["arrays"],
+        },
+        "registered_content_lineages": [
+            {
+                "label": item["label"],
+                "content_sha256": item["content"]["sha256"],
+                "legacy_archive_sha256": item["legacy_archive_sha256"],
+                "metadata_path": item["metadata_path"],
+            }
+            for item in content_sets
+        ],
+        "manifest_and_archive_mutated": False,
+    }
+    write_json_if_changed(content_sidecar_path, content_sidecar)
+
+    validations: list[tuple[Path, dict[str, Any] | None, Exception | None]] = []
+
+    def collect(receipt_path: Path, callback: Callable[[], dict[str, Any]]) -> None:
+        try:
+            validations.append((receipt_path, callback(), None))
+        except Exception as exc:
+            validations.append((receipt_path, None, exc))
+
+    for name in ("short", "long"):
+        path = bringup_cell_path(output, name)
+        if path.is_file():
+            collect(
+                path,
+                lambda name=name, path=path: {
+                    "kind": "bringup_cell",
+                    "status": "passed",
+                    "cell": name,
+                    **validate_bringup_cell_receipt(
+                        path, manifest, prepared, name=name
+                    ),
+                },
+            )
+    consolidated_path = output / "bringup.json"
+    if consolidated_path.is_file():
+        collect(
+            consolidated_path,
+            lambda: {
+                "kind": "bringup",
+                "status": "passed",
+                **validate_consolidated_bringup_receipt(
+                    output, manifest, prepared
+                ),
+            },
+        )
+
+    active_key_paths: set[Path] = set()
+    key_results: list[dict[str, Any]] = []
+    for corpus in KEY_CORPORA:
+        for index in range(N_KEY_WINDOWS):
+            data_path, receipt_path = key_capture_paths(output, corpus, index)
+            active_key_paths.add(receipt_path.resolve())
+
+            def validate_active_key(
+                corpus: str = corpus,
+                index: int = index,
+            ) -> dict[str, Any]:
+                result = validate_key_capture_receipt(
+                    output,
+                    manifest,
+                    prepared,
+                    corpus,
+                    index,
+                    content_sets=content_sets,
+                )
+                key_results.append(result)
+                return result
+
+            collect(receipt_path, validate_active_key)
+
+    key_root = output / "key_captures"
+    if key_root.is_dir():
+        for receipt_path in sorted(key_root.rglob("*_receipt.json")):
+            if receipt_path.resolve() in active_key_paths:
+                continue
+            receipt = read_json(receipt_path)
+            corpus = str(receipt.get("corpus"))
+            index = int(receipt.get("window_index", -1))
+            stem = receipt_path.name.removesuffix("_receipt.json")
+            data_path = receipt_path.parent / f"{stem}_router_inputs_fp16.npy"
+            collect(
+                receipt_path,
+                lambda corpus=corpus, index=index, data_path=data_path, receipt_path=receipt_path: validate_key_capture_receipt(
+                    output,
+                    manifest,
+                    prepared,
+                    corpus,
+                    index,
+                    data_path=data_path,
+                    receipt_path=receipt_path,
+                    classification="superseded_relocated",
+                    content_sets=content_sets,
+                    allow_unregistered_legacy=True,
+                ),
+            )
+
+    fit_path = output / "fit_key.json"
+    fit_result: dict[str, Any] | None = None
+    if fit_path.is_file():
+        def validate_fit() -> dict[str, Any]:
+            nonlocal fit_result
+            fit_result = validate_fit_key_artifacts(output, manifest, prepared)
+            return fit_result
+
+        collect(fit_path, validate_fit)
+
+    pair_results: list[dict[str, Any]] = []
+    for index in range(N_PAIR_WINDOWS):
+        _data_path, receipt_path = pair_paths(output, index)
+
+        def validate_pair(index: int = index) -> dict[str, Any]:
+            result = validate_pair_capture_receipt(
+                output,
+                manifest,
+                prepared,
+                index,
+                content_sets=content_sets,
+            )
+            pair_results.append(result)
+            return result
+
+        collect(receipt_path, validate_pair)
+
+    training_path = output / "train.json"
+    training_result: dict[str, Any] | None = None
+    if training_path.is_file():
+        def validate_training() -> dict[str, Any]:
+            nonlocal training_result
+            training_result = validate_training_artifacts(output, manifest, prepared)
+            return training_result
+
+        collect(training_path, validate_training)
+
+    expertpack_path = output / EXPERTPACK_NAME / "manifest.json"
+    expertpack_result: dict[str, Any] | None = None
+    expertpack_validation_entry: dict[str, Any] | None = None
+    if expertpack_path.is_file() and (
+        training_result is not None or fit_result is not None
+    ):
+        dependency_result = (
+            training_result if training_result is not None else fit_result
+        )
+        assert dependency_result is not None
+        expertpack_result = {
+            "kind": "expertpack",
+            "status": "passed",
+            "receipt_path": str(expertpack_path),
+            "receipt_sha256": sha256_file(expertpack_path),
+            "binding": dependency_result["expertpack_binding"],
+        }
+        expertpack_ledger_path = root / (
+            f"expertpack_manifest_{sha256_file(expertpack_path)}."
+            "provenance_validation.json"
+        )
+        existing_expertpack_ledger = (
+            read_json(expertpack_ledger_path)
+            if expertpack_ledger_path.is_file()
+            else {}
+        )
+        expertpack_ledger = {
+            "schema": "moe_e2_mutable_expertpack_provenance_validation_v1",
+            "status": "passed",
+            "created_at": existing_expertpack_ledger.get("created_at", now_iso()),
+            "order": str(F4_ORDER_PATH),
+            "order_sha256": sha256_file(F4_ORDER_PATH),
+            "validator_script": str(SCRIPT_PATH),
+            "validator_script_sha256": sha256_file(SCRIPT_PATH),
+            "expertpack_manifest": file_identity(expertpack_path),
+            "mutable_manifest_not_a_receipt": True,
+            "validation": public_validation_summary(expertpack_result),
+            "original_manifest_mutated": False,
+        }
+        write_json_if_changed(expertpack_ledger_path, expertpack_ledger)
+        expertpack_validation_entry = {
+            "path": str(expertpack_ledger_path),
+            "sha256": sha256_file(expertpack_ledger_path),
+        }
+
+    eval_results: list[dict[str, Any]] = []
+    eval_dir = output / "eval"
+    if eval_dir.is_dir():
+        for path in sorted(eval_dir.glob("*.json")):
+            if path.name.endswith(".provenance_validation.json"):
+                continue
+            kind: str | None = None
+            index: int | None = None
+            arm = "p0"
+            if path.name == "abi.json":
+                kind = "abi"
+            else:
+                match = re.fullmatch(r"narrative_(p[01])_(\d{3})\.json", path.name)
+                if match:
+                    kind, arm, index = "narrative", match.group(1), int(match.group(2))
+                else:
+                    match = re.fullmatch(r"(wikitext|code)_(\d{3})\.json", path.name)
+                    if match:
+                        kind, index = match.group(1), int(match.group(2))
+            if kind is None:
+                continue
+
+            def validate_one_eval(
+                kind: str = kind, index: int | None = index, arm: str = arm
+            ) -> dict[str, Any]:
+                result = validate_eval_receipt(
+                    output,
+                    manifest,
+                    prepared,
+                    kind,
+                    window_index=index,
+                    prefix_arm=arm,
+                    content_sets=content_sets,
+                    expert_binding=(
+                        None
+                        if training_result is None
+                        else training_result["binding"]
+                    ),
+                )
+                eval_results.append(result)
+                return result
+
+            collect(path, validate_one_eval)
+
+    sidecar_entries: list[dict[str, Any]] = []
+    for path, result, error in validations:
+        if path.is_file():
+            sidecar_entries.append(
+                write_receipt_validation_sidecar(path, result, error=error)
+            )
+        else:
+            missing_error = error or FileNotFoundError(path)
+            sidecar_entries.append(
+                {
+                    "status": "failed",
+                    "original_receipt_path": str(path),
+                    "original_receipt_sha256": None,
+                    "sidecar_path": None,
+                    "sidecar_sha256": None,
+                    "content_binding": None,
+                    "error": {
+                        "type": type(missing_error).__name__,
+                        "message": str(missing_error),
+                    },
+                }
+            )
+
+    before_prepare = {
+        "manifest": file_identity(manifest_path),
+        "prepared_windows": file_identity(windows_path),
+    }
+    prepare_result = prepare(args)
+    after_prepare = {
+        "manifest": file_identity(manifest_path),
+        "prepared_windows": file_identity(windows_path),
+    }
+    prepare_idempotent = before_prepare == after_prepare and prepare_result == 0
+    if not prepare_idempotent:
+        raise RuntimeError("prepare rewrote the sealed manifest or archive")
+
+    current_arrays = content_sets[0]["arrays"]
+    current_compatible_keys: list[str] = []
+    current_incompatible_keys: list[str] = []
+    for corpus in KEY_CORPORA:
+        array_name = "narrative_key_ids" if corpus == "narrative" else f"{corpus}_ids"
+        for index in range(N_KEY_WINDOWS):
+            label = f"{corpus}_{index:02d}"
+            receipt_path = key_capture_paths(output, corpus, index)[1]
+            if not receipt_path.is_file():
+                current_incompatible_keys.append(label)
+                continue
+            receipt = read_json(receipt_path)
+            if receipt.get("input_ids_sha256") == sha256_array(
+                current_arrays[array_name][index]
+            ):
+                current_compatible_keys.append(label)
+            else:
+                current_incompatible_keys.append(label)
+
+    failed = [item for item in sidecar_entries if item["status"] != "passed"]
+    legacy_sets = [item for item in content_sets if item["label"] != "current_manifest"]
+    legacy_array_differences: dict[str, list[str]] = {}
+    for item in legacy_sets:
+        legacy_array_differences[item["label"]] = [
+            name
+            for name in PREPARED_ARRAY_SHAPES
+            if sha256_array(item["arrays"][name])
+            != sha256_array(current_arrays[name])
+        ]
+    narrative_00 = next(
+        (
+            item
+            for item in sidecar_entries
+            if item["original_receipt_path"]
+            == str(key_capture_paths(output, "narrative", 0)[1])
+        ),
+        None,
+    )
+    pair_000 = next(
+        (
+            item
+            for item in sidecar_entries
+            if item["original_receipt_path"] == str(pair_paths(output, 0)[1])
+        ),
+        None,
+    )
+    ledger_path = output / "f4_provenance_validation.json"
+    existing_ledger = read_json(ledger_path) if ledger_path.is_file() else {}
+    ledger = {
+        "schema": "moe_e2_f4_provenance_validation_v1",
+        "status": "passed" if not failed else "failed",
+        "created_at": existing_ledger.get("created_at", now_iso()),
+        "order": str(F4_ORDER_PATH),
+        "order_sha256": sha256_file(F4_ORDER_PATH),
+        "validator_script": str(SCRIPT_PATH),
+        "validator_script_sha256": sha256_file(SCRIPT_PATH),
+        "mechanism": {
+            "npz_container_bytes_are_provenance": False,
+            "content_digest_algorithm": PREPARED_CONTENT_ALGORITHM,
+            "current_archive_sha256_informational": sha256_file(windows_path),
+            "reported_timestamp_only_hypothesis_confirmed": False,
+            "observed_root_cause": (
+                "F3 edited scripts/olmoe_e2_experiment.py, which is itself part "
+                "of build_code_corpus; 14 interior code windows changed while "
+                "nine other prepared arrays stayed equal"
+            ),
+            "legacy_array_differences_from_current": legacy_array_differences,
+        },
+        "current_content": prepared_content_provenance(manifest),
+        "registered_content_lineages": [
+            {
+                "label": item["label"],
+                "content_sha256": item["content"]["sha256"],
+                "legacy_archive_sha256": item["legacy_archive_sha256"],
+                "metadata_path": item["metadata_path"],
+            }
+            for item in content_sets
+        ],
+        "prepare_idempotence_proof": {
+            "passed": prepare_idempotent,
+            "before": before_prepare,
+            "after": after_prepare,
+            "npz_and_manifest_rewritten": False,
+            "chain_scripts_regenerated": False,
+        },
+        "salvage": {
+            "active_key_receipts_valid": len(key_results),
+            "active_key_receipts_expected": len(KEY_CORPORA) * N_KEY_WINDOWS,
+            "active_keys_matching_current_content": len(current_compatible_keys),
+            "active_keys_not_matching_current_content": current_incompatible_keys,
+            "active_keys_valid_against_registered_historical_content": sum(
+                1
+                for item in key_results
+                if item["binding"]["content_label"] != "current_manifest"
+            ),
+            "pair_receipts_valid": len(pair_results),
+            "pair_receipts_expected": N_PAIR_WINDOWS,
+            "fit_key_valid": fit_result is not None,
+            "fit_key_verdict": None if fit_result is None else fit_result["verdict"],
+            "training_valid": training_result is not None,
+            "training_verdict": (
+                None if training_result is None else training_result["verdict"]
+            ),
+            "expertpack_valid": expertpack_result is not None,
+            "expertpack_validation_ledger": expertpack_validation_entry,
+            "expertpack_legacy_provenance_conflicts_with_component_lineage": (
+                None
+                if expertpack_result is None
+                else expertpack_result["binding"]
+                ["expertpack_declared_prepared_provenance"]
+                ["conflicts_with_component_lineage"]
+            ),
+            "eval_receipts_valid": len(eval_results),
+            "eval_receipts": [
+                {
+                    "kind": item["eval_kind"],
+                    "window_index": item["window_index"],
+                    "receipt_path": item["receipt_path"],
+                }
+                for item in eval_results
+            ],
+            "behavioral_eval_receipts_absent": not any(
+                item["eval_kind"] != "abi" for item in eval_results
+            ),
+            "narrative_00_proof": narrative_00,
+            "pair_000_proof": pair_000,
+        },
+        "sidecar_count": len(sidecar_entries),
+        "sidecars": sidecar_entries,
+        "failed_validations": failed,
+        "original_receipts_mutated": False,
+        "anything_not_done": [
+            "No GPU work was run.",
+            "No missing narrative, WikiText, or code behavioral evaluations were fabricated.",
+        ],
+    }
+    write_json_if_changed(ledger_path, ledger)
+    print(
+        json.dumps(
+            {
+                "status": ledger["status"],
+                "ledger": str(ledger_path),
+                "sidecars": len(sidecar_entries),
+                "active_keys": len(key_results),
+                "pairs": len(pair_results),
+                "eval_receipts": len(eval_results),
+                "current_compatible_keys": len(current_compatible_keys),
+                "historical_lineage_keys": ledger["salvage"][
+                    "active_keys_valid_against_registered_historical_content"
+                ],
+            }
+        ),
+        flush=True,
+    )
+    return 0 if ledger["status"] == "passed" else 3
+
+
 def gpu_script_text(output: Path) -> str:
     script = SCRIPT_PATH.relative_to(REPO_ROOT).as_posix()
     lines = [
@@ -4529,6 +7253,8 @@ def main() -> int:
         return prepare(args)
     if args.mode == "self-test":
         return self_test(args)
+    if args.mode == "validate-provenance":
+        return validate_provenance(args)
     if args.mode == "load-check":
         return load_check(args)
     if args.mode == "bringup":
