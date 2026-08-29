@@ -1274,6 +1274,7 @@ def dispatch_loaded_model(
             "post-load dispatch plan lacks room to swap its largest CPU module: "
             f"{swap_peak_bytes} > {cuda_budget_bytes}"
         )
+    torch.cuda.init()
     torch.cuda.empty_cache()
     torch.cuda.reset_peak_memory_stats(0)
     started = time.perf_counter()
