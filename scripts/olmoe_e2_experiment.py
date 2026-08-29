@@ -4,13 +4,15 @@
 The script is intentionally self-contained and has no GPT-OSS imports.  It
 implements the registered stages as resumable modes:
 
-  prepare / self-test / bringup / capture-keys / fit-key / capture-pairs /
-  train / eval-gates / fallback-check / analyze
+  prepare / self-test / load-check / bringup / capture-keys / fit-key /
+  capture-pairs / train / eval-gates / fallback-check / analyze
 
-Model and dataset access is local-only.  Heavy inference modes can use an
-Accelerate ``device_map=auto`` placement capped at 11 GiB on CUDA device 0;
-no quantized model path is accepted.  Each invocation writes an independent
-receipt so the lead-side shell scripts can keep every GPU lease below 590 s.
+Model and dataset access is local-only.  CUDA runs first complete Transformers'
+fused-expert conversion on CPU, hard-gate
+the finalized checkpoint load report, and only then apply Accelerate placement
+capped at 11 GiB on CUDA device 0.  No quantized model path is accepted.  Each
+invocation writes an independent receipt so the lead-side shell scripts can keep
+every GPU lease below 590 s.
 """
 
 from __future__ import annotations
@@ -41,6 +43,7 @@ os.environ.setdefault("PYTHONPYCACHEPREFIX", "/tmp/olmoe_e2_pycache")
 os.environ.setdefault("HF_HUB_OFFLINE", "1")
 os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+os.environ["HF_DEACTIVATE_ASYNC_LOAD"] = "1"
 
 SCRIPT_PATH = Path(__file__).resolve()
 REPO_ROOT = SCRIPT_PATH.parents[1]
@@ -75,6 +78,7 @@ FORBIDDEN_DIRECTORY_TERMS = ("consciousness", "rcft", "thesis")
 
 MODEL_REVISION = "6d84c48581ece794365f2b8e9cfb043c68ade9c5"
 MODEL_ID = "allenai/OLMoE-1B-7B-0924"
+TRANSFORMERS_LOAD_REPORT_VERSION = "5.12.0"
 N_FILES = 35
 N_TRAIN_FILES = 25
 N_HELDOUT_FILES = 10
@@ -124,7 +128,7 @@ GPU_PREAMBLE = (
     "flock -w 7200 /tmp/forge-gpu.lock "
     "timeout --signal=TERM --kill-after=5s 590s "
     "env CUDA_VISIBLE_DEVICES=0 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 "
-    "TOKENIZERS_PARALLELISM=false PYTHONDONTWRITEBYTECODE=1 "
+    "HF_DEACTIVATE_ASYNC_LOAD=1 TOKENIZERS_PARALLELISM=false PYTHONDONTWRITEBYTECODE=1 "
     "PYTHONPYCACHEPREFIX=/tmp/olmoe_e2_pycache PYTHONUNBUFFERED=1"
 )
 
@@ -136,6 +140,7 @@ def parse_args() -> argparse.Namespace:
         choices=(
             "prepare",
             "self-test",
+            "load-check",
             "bringup",
             "capture-keys",
             "fit-key",
@@ -1046,10 +1051,285 @@ def configure_torch(cpu_threads: int, *, cuda_possible: bool) -> Any:
     return torch
 
 
+LOAD_REPORT_FIELDS = (
+    "missing_keys",
+    "unexpected_keys",
+    "mismatched_keys",
+    "error_msgs",
+)
+
+
+def canonical_loading_info(loading_info: Any) -> dict[str, list[Any]]:
+    if not isinstance(loading_info, dict):
+        raise RuntimeError(
+            "checkpoint load-report gate failed: Transformers did not return a report dictionary"
+        )
+    missing_fields = sorted(set(LOAD_REPORT_FIELDS) - set(loading_info))
+    if missing_fields:
+        raise RuntimeError(
+            "checkpoint load-report gate failed: missing report fields "
+            f"{missing_fields}"
+        )
+    canonical: dict[str, list[Any]] = {}
+    for field in LOAD_REPORT_FIELDS:
+        values = list(loading_info[field])
+        if field == "mismatched_keys":
+            canonical[field] = sorted(
+                (
+                    {
+                        "key": str(item[0]),
+                        "checkpoint_shape": [int(value) for value in item[1]],
+                        "model_shape": [int(value) for value in item[2]],
+                    }
+                    for item in values
+                ),
+                key=lambda item: item["key"],
+            )
+        else:
+            canonical[field] = sorted(str(value) for value in values)
+    return canonical
+
+
+def checkpoint_tensor_manifest(model_dir: Path) -> dict[str, Any]:
+    from safetensors import safe_open
+
+    index_path = model_dir / "model.safetensors.index.json"
+    if not index_path.is_file():
+        raise RuntimeError(f"checkpoint load-report gate failed: missing {index_path}")
+    index = read_json(index_path)
+    weight_map = index.get("weight_map")
+    if not isinstance(weight_map, dict) or not weight_map:
+        raise RuntimeError(
+            "checkpoint load-report gate failed: safetensors index has no weight_map"
+        )
+    expected_by_shard: dict[str, set[str]] = {}
+    for tensor_name, shard_name in weight_map.items():
+        if not isinstance(tensor_name, str) or not isinstance(shard_name, str):
+            raise RuntimeError(
+                "checkpoint load-report gate failed: malformed safetensors weight_map"
+            )
+        expected_by_shard.setdefault(shard_name, set()).add(tensor_name)
+    actual_keys: set[str] = set()
+    shard_records: list[dict[str, Any]] = []
+    for shard_name in sorted(expected_by_shard):
+        shard_path = model_dir / shard_name
+        if not shard_path.is_file():
+            raise RuntimeError(
+                f"checkpoint load-report gate failed: missing shard {shard_path}"
+            )
+        with safe_open(str(shard_path), framework="pt", device="cpu") as handle:
+            shard_keys = set(handle.keys())
+        expected_keys = expected_by_shard[shard_name]
+        if shard_keys != expected_keys:
+            raise RuntimeError(
+                "checkpoint load-report gate failed: index/shard key mismatch for "
+                f"{shard_name}; absent={sorted(expected_keys - shard_keys)}, "
+                f"unindexed={sorted(shard_keys - expected_keys)}"
+            )
+        if actual_keys & shard_keys:
+            raise RuntimeError(
+                "checkpoint load-report gate failed: duplicate tensors across shards"
+            )
+        actual_keys.update(shard_keys)
+        shard_records.append(
+            {
+                "filename": shard_name,
+                "tensor_count": len(shard_keys),
+                "byte_count": int(shard_path.stat().st_size),
+            }
+        )
+    total_size = index.get("metadata", {}).get("total_size")
+    if not isinstance(total_size, int) or total_size <= 0:
+        raise RuntimeError(
+            "checkpoint load-report gate failed: missing safetensors metadata.total_size"
+        )
+    return {
+        "index": str(index_path),
+        "index_sha256": sha256_file(index_path),
+        "tensor_count": len(actual_keys),
+        "total_size_bytes": total_size,
+        "shards": shard_records,
+    }
+
+
+def assert_checkpoint_load_complete(
+    model: Any, loading_info: Any, model_dir: Path
+) -> dict[str, Any]:
+    report = canonical_loading_info(loading_info)
+    failures = {field: values for field, values in report.items() if values}
+    meta_parameters = sorted(
+        name for name, value in model.named_parameters() if value.device.type == "meta"
+    )
+    meta_buffers = sorted(
+        name for name, value in model.named_buffers() if value.device.type == "meta"
+    )
+    ignored_missing = list(getattr(model, "_keys_to_ignore_on_load_missing", None) or [])
+    ignored_unexpected = list(
+        getattr(model, "_keys_to_ignore_on_load_unexpected", None) or []
+    )
+    if failures or meta_parameters or meta_buffers or ignored_missing or ignored_unexpected:
+        raise RuntimeError(
+            "checkpoint load-report gate failed before forward: "
+            f"report={failures}, meta_parameters={meta_parameters}, "
+            f"meta_buffers={meta_buffers}, ignored_missing={ignored_missing}, "
+            f"ignored_unexpected={ignored_unexpected}"
+        )
+    checkpoint = checkpoint_tensor_manifest(model_dir)
+    parameter_count = int(sum(value.numel() for value in model.parameters()))
+    parameter_bytes = int(
+        sum(value.numel() * value.element_size() for value in model.parameters())
+    )
+    if parameter_bytes != checkpoint["total_size_bytes"]:
+        raise RuntimeError(
+            "checkpoint load-report gate failed before forward: converted model byte "
+            f"ledger {parameter_bytes} != checkpoint {checkpoint['total_size_bytes']}"
+        )
+    return {
+        "status": "passed",
+        "report": report,
+        "missing_count": 0,
+        "unexpected_count": 0,
+        "mismatched_count": 0,
+        "error_count": 0,
+        "conversion_count": 0,
+        "conversion_semantics": (
+            f"Transformers {TRANSFORMERS_LOAD_REPORT_VERSION} raises on any "
+            "CONVERSION entry before "
+            "output_loading_info can return"
+        ),
+        "meta_parameter_count": 0,
+        "meta_buffer_count": 0,
+        "ignored_missing_patterns": [],
+        "ignored_unexpected_patterns": [],
+        "checkpoint": checkpoint,
+        "loaded_parameter_count": parameter_count,
+        "loaded_parameter_bytes": parameter_bytes,
+        "model_state_tensor_count": len(model.state_dict()),
+        "every_checkpoint_tensor_consumed": True,
+        "every_model_tensor_present": True,
+    }
+
+
+def device_label(device: Any) -> str:
+    if device == 0:
+        return "cuda:0"
+    return str(device)
+
+
+def dispatch_loaded_model(
+    torch: Any, model: Any, args: argparse.Namespace
+) -> tuple[Any, dict[str, Any]]:
+    from accelerate import dispatch_model, infer_auto_device_map
+    from accelerate.utils import compute_module_sizes, get_balanced_memory
+
+    requested_max_memory = {0: args.max_gpu_memory, "cpu": args.cpu_max_memory}
+    no_split_modules = sorted(getattr(model, "_no_split_modules", None) or [])
+    balanced_max_memory = get_balanced_memory(
+        model,
+        max_memory=requested_max_memory,
+        no_split_module_classes=no_split_modules,
+        dtype=torch.bfloat16,
+        low_zero=False,
+    )
+    device_map = infer_auto_device_map(
+        model,
+        max_memory=balanced_max_memory,
+        no_split_module_classes=no_split_modules,
+        dtype=torch.bfloat16,
+        clean_result=True,
+        offload_buffers=False,
+        fallback_allocation=False,
+    )
+    mapped_devices = {device_label(device) for device in device_map.values()}
+    if "disk" in mapped_devices:
+        raise RuntimeError(
+            "post-load dispatch refused disk placement; raise --cpu-max-memory instead"
+        )
+    if "cuda:0" not in mapped_devices:
+        raise RuntimeError("post-load dispatch produced no CUDA placement")
+    if "cpu" not in mapped_devices:
+        raise RuntimeError(
+            "post-load dispatch unexpectedly mapped the full 13.8 GB model to CUDA"
+        )
+    module_sizes = compute_module_sizes(model, dtype=torch.bfloat16)
+    planned_bytes: dict[str, int] = {}
+    planned_root_sizes: dict[str, list[int]] = {}
+    for module_name, device in device_map.items():
+        label = device_label(device)
+        module_bytes = int(module_sizes[module_name])
+        planned_bytes[label] = planned_bytes.get(label, 0) + module_bytes
+        planned_root_sizes.setdefault(label, []).append(module_bytes)
+    cuda_budget_bytes = int(balanced_max_memory[0])
+    if planned_bytes.get("cuda:0", 0) > cuda_budget_bytes:
+        raise RuntimeError(
+            "post-load dispatch plan exceeds CUDA budget: "
+            f"{planned_bytes['cuda:0']} > {cuda_budget_bytes}"
+        )
+    largest_cpu_module_bytes = max(planned_root_sizes.get("cpu", [0]))
+    swap_peak_bytes = (
+        planned_bytes.get("cuda:0", 0) + largest_cpu_module_bytes
+    )
+    if swap_peak_bytes > cuda_budget_bytes:
+        raise RuntimeError(
+            "post-load dispatch plan lacks room to swap its largest CPU module: "
+            f"{swap_peak_bytes} > {cuda_budget_bytes}"
+        )
+    torch.cuda.empty_cache()
+    torch.cuda.reset_peak_memory_stats(0)
+    started = time.perf_counter()
+    model = dispatch_model(
+        model,
+        device_map=device_map,
+        main_device=0,
+        offload_buffers=False,
+        skip_keys=getattr(model, "_skip_keys_device_placement", None),
+    )
+    allocated_bytes = int(torch.cuda.memory_allocated(0))
+    peak_allocated_bytes = int(torch.cuda.max_memory_allocated(0))
+    if max(allocated_bytes, peak_allocated_bytes) > cuda_budget_bytes:
+        raise RuntimeError(
+            "post-load dispatch CUDA allocation exceeds budget: "
+            f"resident={allocated_bytes}, peak={peak_allocated_bytes}, "
+            f"budget={cuda_budget_bytes}"
+        )
+    free_bytes, total_bytes = torch.cuda.mem_get_info(0)
+    return model, {
+        "strategy": "full_cpu_bf16_load_then_balanced_dispatch",
+        "dispatch_seconds": time.perf_counter() - started,
+        "requested_max_memory": {
+            "cuda:0": args.max_gpu_memory,
+            "cpu": args.cpu_max_memory,
+        },
+        "resolved_max_memory_bytes": {
+            device_label(device): int(value)
+            for device, value in balanced_max_memory.items()
+        },
+        "no_split_module_classes": no_split_modules,
+        "device_map": {
+            name: device_label(device) for name, device in device_map.items()
+        },
+        "planned_module_bytes_by_device": planned_bytes,
+        "largest_cpu_module_bytes": largest_cpu_module_bytes,
+        "planned_cuda_plus_largest_cpu_module_bytes": swap_peak_bytes,
+        "planned_swap_headroom_bytes": cuda_budget_bytes - swap_peak_bytes,
+        "cuda_allocated_bytes_after_dispatch": allocated_bytes,
+        "cuda_peak_allocated_bytes_during_dispatch": peak_allocated_bytes,
+        "cuda_free_bytes_after_dispatch": int(free_bytes),
+        "cuda_total_bytes": int(total_bytes),
+        "disk_offload": False,
+    }
+
+
 def load_model(args: argparse.Namespace) -> tuple[Any, Any, dict[str, Any]]:
+    import transformers
     from transformers import AutoModelForCausalLM
 
     model_dir = validate_model_dir(args.model_dir)
+    if transformers.__version__ != TRANSFORMERS_LOAD_REPORT_VERSION:
+        raise RuntimeError(
+            "checkpoint load-report gate requires Transformers "
+            f"{TRANSFORMERS_LOAD_REPORT_VERSION}; observed {transformers.__version__}"
+        )
     cuda_possible = args.device == "auto"
     torch = configure_torch(args.cpu_threads, cuda_possible=cuda_possible)
     if args.device == "auto" and not torch.cuda.is_available():
@@ -1058,14 +1338,24 @@ def load_model(args: argparse.Namespace) -> tuple[Any, Any, dict[str, Any]]:
         "local_files_only": True,
         "trust_remote_code": False,
         "dtype": torch.bfloat16,
-        "low_cpu_mem_usage": True,
         "attn_implementation": "sdpa",
+        "output_loading_info": True,
     }
-    if args.device == "auto":
-        kwargs["device_map"] = "auto"
-        kwargs["max_memory"] = {0: args.max_gpu_memory, "cpu": args.cpu_max_memory}
     started = time.perf_counter()
-    model = AutoModelForCausalLM.from_pretrained(str(model_dir), **kwargs)
+    cpu_load_started = time.perf_counter()
+    try:
+        model, loading_info = AutoModelForCausalLM.from_pretrained(
+            str(model_dir), **kwargs
+        )
+    except Exception as exc:
+        raise RuntimeError(
+            "checkpoint load-report gate failed before forward; CPU fused-expert "
+            f"conversion did not return cleanly ({type(exc).__name__}): {exc}"
+        ) from exc
+    cpu_load_seconds = time.perf_counter() - cpu_load_started
+    load_report_gate = assert_checkpoint_load_complete(
+        model, loading_info, model_dir
+    )
     model.eval()
     model.config.use_cache = False
     validate_model_contract(model.config)
@@ -1075,19 +1365,33 @@ def load_model(args: argparse.Namespace) -> tuple[Any, Any, dict[str, Any]]:
     for parameter in model.parameters():
         name = str(parameter.dtype)
         dtype_counts[name] = dtype_counts.get(name, 0) + parameter.numel()
-    disallowed = [name for name in dtype_counts if "int" in name or "float8" in name]
-    if disallowed:
-        raise RuntimeError(f"quantized/integer parameter dtypes detected: {disallowed}")
+    if set(dtype_counts) != {"torch.bfloat16"}:
+        raise RuntimeError(
+            f"non-BF16 parameter dtypes detected after load: {sorted(dtype_counts)}"
+        )
+    dispatch = {
+        "strategy": "cpu_only",
+        "dispatch_seconds": 0.0,
+        "device_map": None,
+        "disk_offload": False,
+    }
+    if args.device == "auto":
+        model, dispatch = dispatch_loaded_model(torch, model, args)
     first_parameter = next(model.parameters())
     input_device = model.model.embed_tokens.weight.device
     runtime = {
         "device_request": args.device,
+        "load_strategy": dispatch["strategy"],
         "input_device": str(input_device),
         "first_parameter_device": str(first_parameter.device),
-        "hf_device_map": getattr(model, "hf_device_map", None),
+        "hf_device_map": dispatch["device_map"],
         "max_gpu_memory": args.max_gpu_memory if args.device == "auto" else None,
         "cpu_max_memory": args.cpu_max_memory if args.device == "auto" else None,
         "model_load_seconds": time.perf_counter() - started,
+        "cpu_fused_conversion_load_seconds": cpu_load_seconds,
+        "transformers_load_report_version": transformers.__version__,
+        "load_report_gate": load_report_gate,
+        "dispatch": dispatch,
         "parameter_dtype_counts": dtype_counts,
         "parameter_count": int(sum(parameter.numel() for parameter in model.parameters())),
         "is_quantized": bool(getattr(model, "is_quantized", False)),
@@ -1898,6 +2202,69 @@ def bootstrap_recovery(
         "bootstrap_resamples": resamples,
         "finite_bootstrap_replicates": int(finite.size),
     }
+
+
+def load_check(args: argparse.Namespace) -> int:
+    import accelerate
+    import transformers
+
+    output = ensure_output(args.output_dir)
+    receipt_path = output / (
+        "load_report_cpu_mimic.json"
+        if args.device == "cpu"
+        else "load_report_gpu_dispatch.json"
+    )
+    started = time.perf_counter()
+    torch, model, runtime = load_model(args)
+    try:
+        gate = runtime["load_report_gate"]
+        if gate["status"] != "passed":
+            raise RuntimeError("load-check observed a non-passing load-report gate")
+        receipt = {
+            "schema": "moe_e2_f1_load_report_v1",
+            "status": "passed",
+            "created_at": now_iso(),
+            "order": str(REPO_ROOT / "orders" / "MOE_E2_F1_GPU_LOAD_FIX.md"),
+            "script": str(SCRIPT_PATH),
+            "script_sha256": sha256_file(SCRIPT_PATH),
+            "model_id": MODEL_ID,
+            "model_dir": str(validate_model_dir(args.model_dir)),
+            "model_revision": MODEL_REVISION,
+            "device_request": args.device,
+            "no_forward_executed": True,
+            "runtime": runtime,
+            "software": {
+                "python": platform.python_version(),
+                "torch": torch.__version__,
+                "transformers": transformers.__version__,
+                "accelerate": accelerate.__version__,
+            },
+            "wall_seconds": time.perf_counter() - started,
+            "peak_rss_bytes": peak_rss_bytes(),
+        }
+        write_json(receipt_path, receipt)
+        print(
+            json.dumps(
+                {
+                    "status": "passed",
+                    "receipt": str(receipt_path),
+                    "missing": gate["missing_count"],
+                    "unexpected": gate["unexpected_count"],
+                    "mismatched": gate["mismatched_count"],
+                    "conversion": gate["conversion_count"],
+                    "checkpoint_tensors": gate["checkpoint"]["tensor_count"],
+                    "loaded_parameter_bytes": gate["loaded_parameter_bytes"],
+                    "no_forward_executed": True,
+                }
+            ),
+            flush=True,
+        )
+    finally:
+        del model
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+    return 0
 
 
 def self_test(args: argparse.Namespace) -> int:
@@ -3895,9 +4262,10 @@ def gpu_script_text(output: Path) -> str:
         "}",
         "",
         "run_cpu_e2() {",
-        "  timeout --signal=TERM --kill-after=5s 7200s env HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 TOKENIZERS_PARALLELISM=false PYTHONDONTWRITEBYTECODE=1 PYTHONPYCACHEPREFIX=/tmp/olmoe_e2_pycache PYTHONUNBUFFERED=1 \"$@\"",
+        "  timeout --signal=TERM --kill-after=5s 7200s env HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DEACTIVATE_ASYNC_LOAD=1 TOKENIZERS_PARALLELISM=false PYTHONDONTWRITEBYTECODE=1 PYTHONPYCACHEPREFIX=/tmp/olmoe_e2_pycache PYTHONUNBUFFERED=1 \"$@\"",
         "}",
         "",
+        "# --device auto: full BF16 CPU conversion + clean load-report gate, then 11 GiB dispatch.",
         f"run_cpu_e2 python3 {script} prepare",
         f"run_gpu_e2 python3 {script} bringup --device auto --max-gpu-memory 11GiB",
         "",
@@ -3926,7 +4294,7 @@ def gpu_script_text(output: Path) -> str:
             f"run_cpu_e2 python3 {script} train --threads 8 --rank 64 --train-tokens-per-window 128",
             "",
             "# Exact identity is intentionally CPU BF16 to avoid CUDA reduction nondeterminism.",
-            f"timeout --signal=TERM --kill-after=5s 590s env HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 TOKENIZERS_PARALLELISM=false PYTHONDONTWRITEBYTECODE=1 PYTHONPYCACHEPREFIX=/tmp/olmoe_e2_pycache PYTHONUNBUFFERED=1 python3 {script} eval-gates --device cpu --eval-kind abi",
+            f"timeout --signal=TERM --kill-after=5s 590s env HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DEACTIVATE_ASYNC_LOAD=1 TOKENIZERS_PARALLELISM=false PYTHONDONTWRITEBYTECODE=1 PYTHONPYCACHEPREFIX=/tmp/olmoe_e2_pycache PYTHONUNBUFFERED=1 python3 {script} eval-gates --device cpu --eval-kind abi",
             "",
             "# Primary P0 held-out behavioral arm.",
         ]
@@ -3968,6 +4336,7 @@ def fallback_script_text(output: Path) -> str:
         "  sleep 30",
         "}",
         "",
+        "# --device auto: full BF16 CPU conversion + clean load-report gate, then 11 GiB dispatch.",
         f"python3 {script} fallback-check",
         "# The check above refuses P1 unless the complete P0 aggregate gap is <= 0.",
     ]
@@ -4005,6 +4374,8 @@ def main() -> int:
         return prepare(args)
     if args.mode == "self-test":
         return self_test(args)
+    if args.mode == "load-check":
+        return load_check(args)
     if args.mode == "bringup":
         return bringup(args)
     if args.mode == "capture-keys":
