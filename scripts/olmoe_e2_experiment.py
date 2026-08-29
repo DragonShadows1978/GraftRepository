@@ -223,7 +223,40 @@ def atomic_write_bytes(path: Path, payload: bytes) -> None:
     os.replace(temporary, path)
 
 
+def find_non_finite_json_values(
+    value: Any, path: str = "$"
+) -> list[tuple[str, str]]:
+    """Return JSON paths and spellings for every nested non-finite float."""
+
+    if isinstance(value, (float, np.floating)):
+        number = float(value)
+        return [] if math.isfinite(number) else [(path, repr(number))]
+    if isinstance(value, dict):
+        found: list[tuple[str, str]] = []
+        for key, item in value.items():
+            if isinstance(key, str) and re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", key):
+                child_path = f"{path}.{key}"
+            else:
+                child_path = f"{path}[{json.dumps(str(key))}]"
+            found.extend(find_non_finite_json_values(item, child_path))
+        return found
+    if isinstance(value, (list, tuple)):
+        found = []
+        for index, item in enumerate(value):
+            found.extend(find_non_finite_json_values(item, f"{path}[{index}]"))
+        return found
+    return []
+
+
+def require_finite_json_values(payload: Any) -> None:
+    offenders = find_non_finite_json_values(payload)
+    if offenders:
+        named = ", ".join(f"{path}={spelling}" for path, spelling in offenders)
+        raise ValueError(f"refusing to serialize non-finite JSON value(s): {named}")
+
+
 def write_json(path: Path, payload: dict[str, Any]) -> None:
+    require_finite_json_values(payload)
     atomic_write_bytes(
         path,
         (json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n").encode(
@@ -2293,6 +2326,122 @@ def self_test(args: argparse.Namespace) -> int:
     zero, _scores, _fired = numpy_expert_add(native, hidden, key, tau, A, np.zeros_like(B))
     check("abi_zero_B_bit_identity", np.array_equal(zero, native), "np.array_equal")
 
+    nonfinite_fixture = {
+        "forced_no_fire_mounted": {"mount": {"tau": float("inf")}},
+        "live_gate": {"mount": {"score_max": float("nan")}},
+    }
+    expected_nonfinite = [
+        ("$.forced_no_fire_mounted.mount.tau", "inf"),
+        ("$.live_gate.mount.score_max", "nan"),
+    ]
+    observed_nonfinite = find_non_finite_json_values(nonfinite_fixture)
+    check(
+        "json_nonfinite_walker_names_all_paths",
+        observed_nonfinite == expected_nonfinite,
+        observed_nonfinite,
+    )
+    named_failure = ""
+    try:
+        require_finite_json_values(nonfinite_fixture)
+    except ValueError as exc:
+        named_failure = str(exc)
+    check(
+        "json_nonfinite_validation_fails_loud_and_named",
+        all(path in named_failure for path, _spelling in expected_nonfinite),
+        named_failure,
+    )
+    rejection_probe = output / f"nonfinite_rejection_probe_{os.getpid()}.json"
+    write_failure = ""
+    try:
+        write_json(rejection_probe, nonfinite_fixture)
+    except ValueError as exc:
+        write_failure = str(exc)
+    check(
+        "write_json_rejects_before_write_with_named_paths",
+        not rejection_probe.exists()
+        and all(path in write_failure for path, _spelling in expected_nonfinite),
+        {"error": write_failure, "path_exists": rejection_probe.exists()},
+    )
+
+    # CPU-only structural mimic of eval_abi's zero-B, forced-no-fire, and live
+    # mount snapshots. This exercises the same ExpertMount telemetry without
+    # loading the 7B checkpoint.
+    import torch
+
+    mount_module = torch.nn.Identity()
+    mount_hidden = torch.zeros((1, 4, dimension), dtype=torch.bfloat16)
+    mount_hidden[0, :, 0] = torch.tensor([-2.0, -1.0, 1.0, 2.0])
+    mount_key = np.zeros(dimension, dtype=np.float32)
+    mount_key[0] = 1.0
+    mount_A = np.zeros((4, dimension), dtype=np.float16)
+    mount_A[:, 0] = 1.0
+    mount_B = np.zeros((dimension, 4), dtype=np.float16)
+    mount_B[0, :] = 0.25
+    baseline_mount_output = mount_module(mount_hidden)
+    with ExpertMount(
+        mount_module,
+        torch_module=torch,
+        key=mount_key,
+        tau=0.0,
+        A=mount_A,
+        B=np.zeros_like(mount_B),
+        label="zero_B",
+    ) as zero_mount:
+        zero_mount_output = mount_module(mount_hidden)
+    with ExpertMount(
+        mount_module,
+        torch_module=torch,
+        key=mount_key,
+        tau=float("inf"),
+        A=mount_A,
+        B=mount_B,
+        label="forced_no_fire",
+    ) as nofire_mount:
+        nofire_mount_output = mount_module(mount_hidden)
+    with ExpertMount(
+        mount_module,
+        torch_module=torch,
+        key=mount_key,
+        tau=0.0,
+        A=mount_A,
+        B=mount_B,
+        label="live",
+    ) as live_mount:
+        live_mount_output = mount_module(mount_hidden)
+    abi_mimic = {
+        "zero_initialized_B_mounted": {"mount": zero_mount.calls[0]},
+        "forced_no_fire_mounted": {"mount": nofire_mount.calls[0]},
+        "live_gate": {"mount": live_mount.calls[0]},
+    }
+    check(
+        "abi_mount_mimic_zero_and_nofire_bit_identity",
+        torch.equal(zero_mount_output, baseline_mount_output)
+        and torch.equal(nofire_mount_output, baseline_mount_output),
+        {
+            "zero_B": torch.equal(zero_mount_output, baseline_mount_output),
+            "forced_no_fire": torch.equal(nofire_mount_output, baseline_mount_output),
+        },
+    )
+    check(
+        "abi_mount_mimic_forced_tau_uses_json_sentinel",
+        nofire_mount.calls[0]["tau"] == "inf",
+        nofire_mount.calls[0],
+    )
+    check(
+        "abi_mount_mimic_live_gate_mixed_and_exact_nonfire",
+        live_mount.calls[0]["fire_count"] == 2
+        and live_mount.calls[0]["nonfire_count"] == 2
+        and live_mount.calls[0]["nonfired_rows_bit_equal"]
+        and not torch.equal(live_mount_output, baseline_mount_output),
+        live_mount.calls[0],
+    )
+    check(
+        "abi_mount_mimic_strict_json_finite",
+        not find_non_finite_json_values(abi_mimic),
+        find_non_finite_json_values(abi_mimic),
+    )
+    json.dumps(abi_mimic, allow_nan=False)
+
     synthetic: dict[str, np.ndarray] = {}
     direction = unit_vector(rng.standard_normal(dimension), name="fixture direction")[0]
     for corpus, shift in (("narrative", 1.0), ("wikitext", 0.0), ("code", -0.3), ("grm", -0.5)):
@@ -3279,7 +3428,12 @@ class ExpertMount:
         token_count = int(fired.numel())
         call: dict[str, Any] = {
             "label": self.label,
-            "tau": self.tau,
+            # Positive infinity is the registered forced-no-fire threshold in
+            # eval_abi. Keep it numeric for the comparison above, but spell
+            # that intentional telemetry value as strict-JSON sentinel text.
+            # Score/delta telemetry remains numeric so real overflow is caught
+            # and named by write_json instead of being sanitized here.
+            "tau": "inf" if self.tau == math.inf else self.tau,
             "token_count": token_count,
             "fire_count": fire_count,
             "fire_rate": fire_count / token_count,
