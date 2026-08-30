@@ -143,14 +143,16 @@ def changed_probe_fields(
 
 
 def coordination_pin_acceptance() -> dict[str, Any]:
-    """Require every in-flight CMC/ADM ArenaCache frame to pin legacy OFF."""
+    """Require every in-flight CMC/ADM ArenaCache frame to pin L1/L2."""
     sources = {
         "cmc1_1": ROOT / "scripts" / "grm_cmc1_gpu_arms.py",
         "adm1": ROOT / "scripts" / "grm_adm1_gpu.py",
     }
     result = {}
+    trees = {}
     for label, path in sources.items():
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        trees[label] = tree
         calls = [
             node for node in ast.walk(tree)
             if isinstance(node, ast.Call)
@@ -160,28 +162,57 @@ def coordination_pin_acceptance() -> dict[str, Any]:
         if not calls:
             raise GateError(f"{label} has no auditable ArenaCache constructor")
         pinned_lines = []
+        revision_resolution_pins = []
         for call in calls:
             keywords = {item.arg: item.value for item in call.keywords if item.arg}
             for key in ("length_debias", "revision_resolution"):
                 value = keywords.get(key)
                 if not (
-                    isinstance(value, ast.Constant) and value.value is False
-                ):
-                    raise GateError(
-                        f"{path}:{call.lineno}: {key} is not explicitly False"
+                    isinstance(value, ast.Constant)
+                    and (
+                        value.value is False
+                        or (key == "revision_resolution" and value.value is True)
                     )
+                ):
+                    required = "False" if key == "length_debias" else "True or False"
+                    raise GateError(
+                        f"{path}:{call.lineno}: {key} is not explicitly {required}"
+                    )
+                if key == "revision_resolution":
+                    revision_resolution_pins.append(bool(value.value))
             pinned_lines.append(int(call.lineno))
         result[label] = {
             "path": str(path.relative_to(ROOT)),
             "arena_constructor_lines": pinned_lines,
             "length_debias": False,
-            "revision_resolution": False,
+            "revision_resolution": (
+                revision_resolution_pins[0]
+                if len(set(revision_resolution_pins)) == 1
+                else revision_resolution_pins
+            ),
         }
 
-    adm_source = sources["adm1"].read_text(encoding="utf-8")
-    if '"--no-sup-resolve"' not in adm_source:
-        raise GateError("ADM1 e2e subprocess does not pin --no-sup-resolve")
-    result["adm1"]["e2e_cli"] = "--no-sup-resolve"
+    adm_e2e_pins = [
+        item.value
+        for function in trees["adm1"].body
+        if isinstance(function, ast.FunctionDef)
+        and function.name == "run_e2e_frame"
+        for node in ast.walk(function)
+        if isinstance(node, ast.Assign)
+        and isinstance(node.value, ast.List)
+        and any(
+            isinstance(target, ast.Name) and target.id == "command"
+            for target in node.targets
+        )
+        for item in node.value.elts
+        if isinstance(item, ast.Constant)
+        and item.value in ("--no-sup-resolve", "--sup-resolve")
+    ]
+    if len(adm_e2e_pins) != 1:
+        raise GateError(
+            "ADM1 e2e subprocess does not have exactly one explicit L2 pin"
+        )
+    result["adm1"]["e2e_cli"] = adm_e2e_pins[0]
     return result
 
 
