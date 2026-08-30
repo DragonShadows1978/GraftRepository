@@ -26,6 +26,11 @@ sys.path.insert(0, "/mnt/ForgeRealm/Project-Tensor/tensor_cuda")
 sys.path.insert(0, str(REPO_ROOT))
 
 from core.graft_arena import ArenaCache, GQAArenaCache
+from core.grm_supersession import (
+    env_sup_resolve_override,
+    sup_resolve_cli_argv,
+    sup_resolve_enabled,
+)
 
 
 SCHEMA = "grm_supersession_battery_v1"
@@ -346,6 +351,62 @@ def test_receipt_schema_round_trip_preserves_dialect(tmp_path, capsys, dialect):
 
 
 # ===========================================================================
+# CPU default-on / escape resolution tests
+# ===========================================================================
+
+def test_revision_resolution_default_on(monkeypatch):
+    monkeypatch.delenv("GRM_SUP_RESOLVE", raising=False)
+    assert env_sup_resolve_override() is None
+    assert sup_resolve_enabled() is True
+    assert parse_args([]).resolve is None
+    assert _mode(parse_args([])) == "l2_resolution_only"
+
+
+def test_revision_resolution_escape_off_env(monkeypatch):
+    for token in ("0", "false", "off", "no", "", "malformed"):
+        monkeypatch.setenv("GRM_SUP_RESOLVE", token)
+        assert env_sup_resolve_override() is False
+        assert sup_resolve_enabled() is False
+        assert _mode(parse_args([])) == "baseline"
+
+
+def test_revision_resolution_explicit_cli_precedes_env(monkeypatch):
+    monkeypatch.setenv("GRM_SUP_RESOLVE", "1")
+    assert sup_resolve_enabled(parse_args(["--no-resolve"]).resolve) is False
+    monkeypatch.setenv("GRM_SUP_RESOLVE", "0")
+    assert sup_resolve_enabled(parse_args(["--resolve"]).resolve) is True
+
+
+def test_revision_resolution_restart_cli_tokens():
+    assert sup_resolve_cli_argv(True) == ["--sup-resolve"]
+    assert sup_resolve_cli_argv(False) == ["--no-sup-resolve"]
+
+
+def test_arena_constructor_uses_default_and_escape(monkeypatch):
+    class StubModel:
+        def extend_rope(self, _length):
+            pass
+
+    class StubArena(ArenaCache):
+        def _harvest(self, _ids):
+            return ()
+
+    make = lambda **kw: StubArena(  # noqa: E731 - compact constructor probe
+        StubModel(), encode=lambda _text: [1], decode=lambda _ids: "", **kw)
+
+    monkeypatch.delenv("GRM_SUP_RESOLVE", raising=False)
+    default_arena = make()
+    assert default_arena.revision_resolution is True
+    assert default_arena.length_debias is False
+    monkeypatch.setenv("GRM_SUP_RESOLVE", "0")
+    assert make().revision_resolution is False
+    # Explicit harness pins win in both directions.
+    assert make(revision_resolution=True).revision_resolution is True
+    monkeypatch.setenv("GRM_SUP_RESOLVE", "1")
+    assert make(revision_resolution=False).revision_resolution is False
+
+
+# ===========================================================================
 # CPU L1 score tests
 # ===========================================================================
 
@@ -519,11 +580,12 @@ def _classify_answer(answer, probe):
 
 
 def _mode(args):
-    if args.debias and args.resolve:
+    resolve = sup_resolve_enabled(getattr(args, "resolve", None))
+    if args.debias and resolve:
         return "l1_debias_l2_resolution"
     if args.debias:
         return "l1_debias"
-    if args.resolve:
+    if resolve:
         return "l2_resolution_only"
     return "baseline"
 
@@ -551,12 +613,13 @@ def run_gpu_battery(args, loaded, sink):
     """Run measurement-only probes for the selected dialect; never assert performance."""
     config = _dialect_config(args)
     model, tok, model_info = _load_dialect_model(config)
+    resolve = sup_resolve_enabled(getattr(args, "resolve", None))
     mode = _mode(args)
     sink.emit(_receipt_row(
         "supersession_battery_run", config["dialect"],
         mode=mode,
         debias=bool(args.debias),
-        resolve=bool(args.resolve),
+        resolve=resolve,
         model=config["model"],
         model_info=str(model_info),
         performance_status="measurement_only_thresholds_unregistered",
@@ -578,7 +641,7 @@ def run_gpu_battery(args, loaded, sink):
             live_turns=config["live_turns"],
             cache_deposits=False,
             length_debias=bool(args.debias),
-            revision_resolution=bool(args.resolve),
+            revision_resolution=resolve,
         )
         node_to_idx = _install_fixture_nodes(arena, fixture)
         idx_to_node = {idx: node_id for node_id, idx in node_to_idx.items()}
@@ -689,8 +752,9 @@ def parse_args(argv=None):
         "--debias", action="store_true",
         help="Enable the default-off L1 log-length-normalized route score.")
     parser.add_argument(
-        "--resolve", action="store_true",
-        help="Enable the default-off L2 revision-aware mount resolution.")
+        "--resolve", action=argparse.BooleanOptionalAction, default=None,
+        help="L2 revision-aware mount resolution (default ON; escape with "
+             "--no-resolve or GRM_SUP_RESOLVE=0).")
     parser.add_argument("--arena-width", type=int, default=256)
     parser.add_argument(
         "--route-layer", type=int,

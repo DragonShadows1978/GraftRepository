@@ -37,6 +37,7 @@ from core import kv_graft
 from core.graft_quant import (
     SUPPORTED_BITS, is_packed_payload, pack_kv_arrays, unpack_kv_arrays,
 )
+from core.grm_supersession import sup_resolve_enabled
 
 
 class GraftPayloadMissingError(RuntimeError):
@@ -55,7 +56,7 @@ class ArenaCache:
                  max_live=4096, cache_deposits=True,
                  ephemeral=False, recency_mounts=2, prompt_template=None,
                  stop_sequences=None, length_debias=False,
-                 revision_resolution=False, route_backend="auto",
+                 revision_resolution=None, route_backend="auto",
                  route_profile=False, route_parity_check=False):
         # EPHEMERAL MODE ("clear the boat"): the live cache is reset at the
         # START of every turn — each turn runs on [sink | mounts | turn]
@@ -75,11 +76,12 @@ class ArenaCache:
         self.topk = topk
         self.live_turns = live_turns
         self.cache_deposits = cache_deposits
-        # SUP-WO1 feature flags. Both default OFF so one build can produce
-        # the unpatched G0 baseline, the L1-only arm, and the composed L1+L2
-        # arm without changing any repository or model state between runs.
+        # SUP-WO1 L1 remains default OFF: its MLA receipt was undecidable.
+        # GRM-SUP-L2-ON (operator decision 2026-08-30) makes M5-edge mount
+        # resolution default ON. GRM_SUP_RESOLVE=0 restores the exact legacy
+        # pass-through; an explicit bool pins experimental harness frames.
         self.length_debias = bool(length_debias)
-        self.revision_resolution = bool(revision_resolution)
+        self.revision_resolution = sup_resolve_enabled(revision_resolution)
         # Route backend is intentionally an operator opt-in.  ``auto`` is
         # the historical behavior (the existing dialect-specific environment
         # toggles still decide whether an optional CUDA bridge may engage),
@@ -2409,7 +2411,7 @@ class ArenaCache:
              stops=None, max_trips=0, defer_memory=False):
         """One conversation turn through the arena. max_trips > 0 enables
         SHUTTLING: if the answer fails the grounding check, restore the
-        pre-attempt cache (snapshot = the old tensor list + position —
+        pre-attempt cache (snapshot = a private outer-list copy + position —
         cache tensors are immutable), swap in the NEXT ranking slice, and
         retry. Failed attempts never enter the live cache. Returns
         (answer, info)."""
@@ -2446,7 +2448,12 @@ class ArenaCache:
             return info
 
         s4_turn = self._next_s4_turn()
-        snap = (self.caches, self.pos, list(self.live_segs),
+        # Some backends consume the mutable outer cache list in-place while
+        # building its successor.  Snapshot that container; tensor entries
+        # remain shared because they are immutable.
+        snap = (list(self.caches) if isinstance(self.caches, list)
+                else self.caches,
+                self.pos, list(self.live_segs),
                 self.cur_mounts, self.cur_mount_n, len(self.grafts))
         # PRECISE-MOUNT policy (corpus-100 lesson): an identifier query is a
         # point lookup. With the right doc at rank 1 but its near-identical
@@ -2530,8 +2537,9 @@ class ArenaCache:
                 break
             if trip:        # roll back the failed attempt entirely
                 (self.caches, self.pos, self.live_segs, self.cur_mounts,
-                 self.cur_mount_n) = (snap[0], snap[1], list(snap[2]),
-                                      snap[3], snap[4])
+                 self.cur_mount_n) = (
+                    list(snap[0]) if isinstance(snap[0], list) else snap[0],
+                    snap[1], list(snap[2]), snap[3], snap[4])
                 had_appended_grafts = len(self.grafts) > snap[5]
                 del self.grafts[snap[5]:]
                 # The three-pass output path never deposits during an

@@ -360,6 +360,20 @@ def build_fixture_manifest(*, supersedes: Path | None = None) -> dict[str, Any]:
                 "threshold breaks ties"
             ),
         },
+        "supersession_alignment": {
+            "frame": "production_l2_on_explicit",
+            "registration": file_record(
+                ROOT / "artifacts" / "grm_supersession"
+                / "l2_default_on_registration_20260830.json"),
+            "default_anchor": file_record(
+                ROOT / "artifacts" / "grm_supersession"
+                / "diag_resolve_only.jsonl"),
+            "legacy_comparison_anchor": file_record(
+                ROOT / "artifacts" / "grm_supersession" / "g0_baseline.jsonl"),
+            "fresh_control_contract": (
+                "non-lineage fresh controls are byte-identical across the L2 flip"
+            ),
+        },
         "probes": probes,
         "source_provenance": {
             str(path.relative_to(ROOT)): file_record(path)
@@ -377,6 +391,9 @@ def build_fixture_manifest(*, supersedes: Path | None = None) -> dict[str, Any]:
                 ROOT / "artifacts" / "grm_three_pass"
                 / "diag_unbounded_arm_b_single_r2" / "probe_scorecard.json",
                 ROOT / "artifacts" / "grm_supersession" / "g0_baseline.jsonl",
+                ROOT / "artifacts" / "grm_supersession" / "diag_resolve_only.jsonl",
+                ROOT / "artifacts" / "grm_supersession"
+                / "l2_default_on_registration_20260830.json",
             )
         },
         "production_inventory_before": production_inventory(),
@@ -1020,6 +1037,7 @@ def run_cpu_gate(manifest_path: Path) -> dict[str, Any]:
             "scripts/grm_adm1_analysis.py",
             "scripts/grm_adm1_gpu.py",
             "scripts/grm_adm1_e2e.py",
+            "scripts/grm_adm1_probe_adjudication.py",
         ],
         [sys.executable, "scripts/grm_adm1_gpu.py", "--stage", "selftest"],
         [sys.executable, "scripts/grm_adm1_e2e.py", "--selftest"],
@@ -1028,6 +1046,8 @@ def run_cpu_gate(manifest_path: Path) -> dict[str, Any]:
             "-m",
             "pytest",
             "-q",
+            "tests/test_grm_adm1_snapshot.py",
+            "tests/test_grm_adm1_probe_adjudication.py",
             "tests/test_grm_probe_ladder.py",
             "tests/test_grm_supersession_battery.py",
             "tests/test_grm_three_pass.py",
@@ -1066,6 +1086,7 @@ def run_cpu_gate(manifest_path: Path) -> dict[str, Any]:
                 ROOT / "scripts" / "grm_adm1_analysis.py",
                 ROOT / "scripts" / "grm_adm1_gpu.py",
                 ROOT / "scripts" / "grm_adm1_e2e.py",
+                ROOT / "scripts" / "grm_adm1_probe_adjudication.py",
             )
         },
         "production_inventory_byte_identical": bool(inventory_match),
