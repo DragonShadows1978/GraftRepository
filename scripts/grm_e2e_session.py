@@ -43,6 +43,10 @@ from core.grm_three_pass import (  # noqa: E402
     arena_state_sha256,
 )
 from core import paging_telemetry as _paging_telemetry  # noqa: E402
+from core.grm_supersession import (  # noqa: E402
+    sup_resolve_cli_argv,
+    sup_resolve_enabled,
+)
 from scripts.grm_probe_ladder import (  # noqa: E402
     build_probe_ladder_attempts,
     identifier_tokens_from_parts,
@@ -276,6 +280,16 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         default=None,
         help="enforce Arena laws on Fork-A probe turns (default ON; "
              "escape with --no-probe-ladder or GRM_PROBE_LADDER=0)",
+    )
+    # GRM-SUP-L2-ON: M5-edge mount resolution is permanently DEFAULT ON.
+    # The CLI is primarily for frozen experiment frames and restart locking;
+    # operators can restore the legacy path with GRM_SUP_RESOLVE=0.
+    p.add_argument(
+        "--sup-resolve",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="resolve M5 supersession lineages at mount time (default ON; "
+             "escape with --no-sup-resolve or GRM_SUP_RESOLVE=0)",
     )
     return p.parse_args(argv)
 
@@ -1325,6 +1339,7 @@ def load_model_and_repo(args: argparse.Namespace, session_dir: Path):
         "prompt_template": harmony_turn,
         "stop_sequences": HARMONY_STOPS,
         "storage_bits": 8,
+        "revision_resolution": sup_resolve_enabled(args.sup_resolve),
     }
     repo = GraftRepository(
         model,
@@ -2118,6 +2133,9 @@ def maybe_restart(args: argparse.Namespace, session_dir: Path, paths: dict[str, 
     # an escape-off parent must re-assert --no-probe-ladder; env alone is not
     # enough when the parent used only the CLI escape).
     argv += probe_ladder_cli_argv(probe_ladder_enabled(args))
+    # Freeze L2 independently too: a restart must not re-resolve against an
+    # env change made after the parent process established its frame.
+    argv += sup_resolve_cli_argv(sup_resolve_enabled(args.sup_resolve))
     os.execvpe(sys.executable, argv, os.environ.copy())
 
 
@@ -2178,6 +2196,7 @@ def main(argv: list[str]) -> int:
             "max_trips": int(args.max_trips),
             "turn_pipeline": args.turn_pipeline,
             "probe_ladder": bool(probe_ladder_enabled(args)),
+            "sup_resolve": bool(sup_resolve_enabled(args.sup_resolve)),
             "vram_budget_mb": (
                 int(args.vram_budget_mb)
                 if args.vram_budget_mb is not None else None),
@@ -2195,6 +2214,7 @@ def main(argv: list[str]) -> int:
                 "GRM_MOUNT_SNAPSHOT_DIR": os.environ.get(
                     "GRM_MOUNT_SNAPSHOT_DIR", ""),
                 "GRM_PROBE_LADDER": os.environ.get("GRM_PROBE_LADDER", ""),
+                "GRM_SUP_RESOLVE": os.environ.get("GRM_SUP_RESOLVE", ""),
             },
             "gpu_idle_check": idle,
             "script": script,
