@@ -6,6 +6,8 @@ child holds a flock-protected single-GPU lease capped below 590 seconds; the
 orchestrator leaves a 30-second gap between stages.  G0 is written before any
 arm and every later child refuses to run unless that live receipt says the
 supersession fresh control still reproduces 1/2.
+Lead rerun is a bare invocation (no tee or pipeline):
+``PYTHONPATH=/mnt/ForgeRealm/GraftRepository python3 scripts/grm_cmc1_gpu_arms.py``
 
 All intervention code is local to this script.  The production runtime is not
 edited: T1 calls the arena's existing final assembly choke point with explicit
@@ -44,7 +46,6 @@ from grm_cmc1_mechanism import (  # noqa: E402
     CMCError,
     adjudicate_position,
     canonical_json_bytes,
-    materialized_softmax,
     sha256_file,
     softmax_fp32,
     summarize_attention_capture,
@@ -348,6 +349,7 @@ class SDPAInterceptor:
         self.identifier_receipt: dict[str, Any] = {}
         self.queries: dict[int, list[np.ndarray]] = {}
         self.keys: dict[int, np.ndarray] = {}
+        self.softmax_operands: dict[int, list[np.ndarray]] = {}
         self.clip_stats: dict[int, dict[str, Any]] = {}
         self.clipped_keys: dict[int, Any] = {}
         self.bonus_masks: dict[tuple[Any, ...], Any] = {}
@@ -366,6 +368,7 @@ class SDPAInterceptor:
         self.local_ranges = fixture.mount_ranges(order, absolute=False)
         self.queries = {}
         self.keys = {}
+        self.softmax_operands = {}
         self.clip_stats = {}
         self.clipped_keys = {}
         self.bonus_masks = {}
@@ -404,6 +407,9 @@ class SDPAInterceptor:
             for layer in self.queries:
                 if self.queries[layer]:
                     self.queries[layer].pop()
+            for layer in self.softmax_operands:
+                if self.softmax_operands[layer]:
+                    self.softmax_operands[layer].pop()
 
     def _wrapped(self, query, key, value, *args, **kwargs):
         if self.fixture is None or self._original is None:
@@ -414,8 +420,7 @@ class SDPAInterceptor:
             self.forward_count += 1
         self.calls += 1
         if self.mode == "capture":
-            self._capture(layer, query, key)
-            return self._original(query, key, value, *args, **kwargs)
+            return self._capture(layer, query, key, value, *args, **kwargs)
         if self.mode == "clip":
             clipped = self._clip(layer, key)
             return self._original(query, clipped, value, *args, **kwargs)
@@ -423,8 +428,45 @@ class SDPAInterceptor:
             return self._bonus(query, key, value, *args, **kwargs)
         raise LiveError(f"unknown SDPA interception mode {self.mode!r}")
 
-    def _capture(self, layer: int, query, key) -> None:
-        q_last = query.slice(2, query.shape[2] - 1, 1).float().numpy()
+    def _capture(self, layer: int, query, key, value, *args, **kwargs):
+        from core.mistral7b_tc import tc
+
+        # Tap the exact compute-dtype tensor that the unmodified standard path
+        # passes into causal_softmax. This retains the original matmul shape,
+        # algorithm, scale, causal mask, and BF16 score materialization.
+        original_softmax = tc.causal_softmax
+        tapped: dict[str, Any] = {}
+
+        def capture_softmax(operand):
+            weights = original_softmax(operand)
+            if "operand" in tapped:
+                raise LiveError("standard SDPA invoked causal_softmax more than once")
+            tapped["operand"] = operand
+            tapped["weights"] = weights
+            return weights
+
+        tc.causal_softmax = capture_softmax
+        try:
+            result = self._original(query, key, value, *args, **kwargs)
+        finally:
+            tc.causal_softmax = original_softmax
+        if set(tapped) != {"operand", "weights"}:
+            raise LiveError("standard SDPA did not expose its softmax operand")
+
+        batch, heads, query_rows = (int(query.shape[i]) for i in range(3))
+        key_rows = int(key.shape[2])
+        expected_numel = batch * heads * query_rows * key_rows
+        operand_numel = math.prod(int(dim) for dim in tapped["operand"].shape)
+        if operand_numel != expected_numel:
+            raise LiveError("standard SDPA softmax operand shape is incompatible")
+        operand = tapped["operand"].reshape(
+            [batch, heads, query_rows, key_rows])
+        weights = tapped["weights"].reshape(
+            [batch, heads, query_rows, key_rows])
+        operand_last = operand.slice(2, query_rows - 1, 1)
+        weights_last = weights.slice(2, query_rows - 1, 1)
+        q_last_tensor = query.slice(2, query.shape[2] - 1, 1)
+        q_last = q_last_tensor.float().numpy()
         q_np = np.asarray(q_last, dtype=np.float32)[0, :, 0, :]
         self.queries.setdefault(layer, []).append(q_np)
         mount_start = min(start for start, _ in self.absolute_ranges.values())
@@ -433,19 +475,16 @@ class SDPAInterceptor:
             mounted = key.slice(2, mount_start, mount_end - mount_start)
             self.keys[layer] = np.asarray(
                 mounted.float().numpy(), dtype=np.float32)[0]
+        mounted_scores = operand_last.slice(
+            3, mount_start, mount_end - mount_start)
+        self.softmax_operands.setdefault(layer, []).append(np.asarray(
+            mounted_scores.float().numpy(), dtype=np.float32)[0, :, 0, :])
         if self.g2 is None:
-            from core.mistral7b_tc import tc
-
-            scale = float(query.shape[-1] ** -0.5)
-            direct_scores = tc.matmul(
-                query.slice(2, query.shape[2] - 1, 1), key,
-                alpha=scale, trans_b=True)
-            direct_weights = tc.causal_softmax(direct_scores)
             direct = np.asarray(
-                direct_weights.float().numpy(), dtype=np.float32)[0, :, 0, :]
-            q_full = np.asarray(q_last, dtype=np.float32)[0]
-            k_full = np.asarray(key.float().numpy(), dtype=np.float32)[0]
-            offline = materialized_softmax(q_full, k_full)[:, 0, :]
+                weights_last.float().numpy(), dtype=np.float32)[0, :, 0, :]
+            score_operand = np.asarray(
+                operand_last.float().numpy(), dtype=np.float32)[0]
+            offline = softmax_fp32(score_operand)[:, 0, :]
             diff = np.abs(direct - offline)
             self.g2 = {
                 "case": "live_praxis_short_standard_path_layer0_last_prompt_row",
@@ -453,13 +492,15 @@ class SDPAInterceptor:
                 "query_rows": 1,
                 "key_count": int(key.shape[2]),
                 "head_count": int(key.shape[1]),
-                "direct": "tensor_cuda_materialized_qk_causal_softmax",
-                "offline": "numpy_fp32_materialized_qk_softmax",
+                "direct": "tensor_cuda_standard_path_causal_softmax",
+                "offline": "numpy_fp32_softmax_on_exported_engine_operand",
+                "score_operand_dtype": str(operand.dtype),
                 "max_abs": float(diff.max()),
                 "mean_abs": float(diff.mean()),
                 "tolerance": G2_TOLERANCE,
                 "pass": bool(float(diff.max()) <= G2_TOLERANCE),
             }
+        return result
 
     def _clip(self, layer: int, key):
         from core.mistral7b_tc import tc
@@ -702,10 +743,15 @@ def run_t2(live: LiveFixture) -> dict[str, Any]:
         layer: np.stack(values, axis=0)
         for layer, values in interceptor.queries.items()
     }
+    softmax_operands = {
+        layer: np.stack(values, axis=0)
+        for layer, values in interceptor.softmax_operands.items()
+    }
     attention = summarize_attention_capture(
         queries,
         interceptor.keys,
         live.mount_ranges(live.baseline_order, absolute=False),
+        softmax_operands_by_layer=softmax_operands,
         target="praxis_fact",
         sibling="solace_fact",
     )

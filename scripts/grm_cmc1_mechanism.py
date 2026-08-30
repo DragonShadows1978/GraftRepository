@@ -154,6 +154,7 @@ def summarize_attention_capture(
     keys_by_layer: Mapping[int, np.ndarray],
     graft_ranges: Mapping[str, tuple[int, int]],
     *,
+    softmax_operands_by_layer: Mapping[int, np.ndarray],
     target: str,
     sibling: str,
     decisive_limit: int = DECISIVE_HEAD_LIMIT,
@@ -161,17 +162,26 @@ def summarize_attention_capture(
     """Reduce answer-readout Q and every mounted K into the T2 receipt.
 
     Each query array is (readout_positions,H,D); each key array is
-    (H,mounted_tokens,D).  Softmax normalization is deliberately over the
-    complete captured arena (target, sibling, and competitor), not just the
-    target/sibling pair.  A decisive head is one of the fixed top eight
-    layer/head rows by sibling-minus-target captured mass.  T2's registered
-    concentration leg passes only when at least half of those heads put at
-    least 50% of sibling mass on keys strictly above that head's own sibling
-    p99 norm.
+    (H,mounted_tokens,D); each softmax-operand array is
+    (readout_positions,H,mounted_tokens).  The scores must be the engine's
+    scaled-QK output values after its compute-dtype store, which are the actual
+    operands consumed by its softmax kernel.  The offline fp32 work starts at
+    those values rather than silently replacing the engine's materialization
+    with an idealized fp32 QK contraction.
+
+    Softmax normalization is deliberately over the complete captured arena
+    (target, sibling, and competitor), not just the target/sibling pair.  A
+    decisive head is one of the fixed top eight layer/head rows by
+    sibling-minus-target captured mass.  T2's registered concentration leg
+    passes only when at least half of those heads put at least 50% of sibling
+    mass on keys strictly above that head's own sibling p99 norm.
     """
     if target not in graft_ranges or sibling not in graft_ranges:
         raise CMCError("target/sibling range missing")
-    layers = sorted(set(queries_by_layer) & set(keys_by_layer))
+    layers = sorted(
+        set(queries_by_layer) & set(keys_by_layer)
+        & set(softmax_operands_by_layer)
+    )
     if not layers:
         raise CMCError("attention capture contains no common layers")
 
@@ -183,17 +193,22 @@ def summarize_attention_capture(
     for layer in layers:
         q = np.asarray(queries_by_layer[layer], dtype=np.float32)
         k = np.asarray(keys_by_layer[layer], dtype=np.float32)
+        scores = np.asarray(
+            softmax_operands_by_layer[layer], dtype=np.float32)
         if q.ndim != 3 or k.ndim != 3:
             raise CMCError(f"layer {layer}: expected rank-3 Q/K")
         if q.shape[1] != k.shape[0] or q.shape[2] != k.shape[2]:
             raise CMCError(f"layer {layer}: incompatible Q/K shapes {q.shape}/{k.shape}")
+        expected_scores = (q.shape[0], k.shape[0], k.shape[1])
+        if scores.shape != expected_scores:
+            raise CMCError(
+                f"layer {layer}: softmax operand shape {scores.shape} "
+                f"!= {expected_scores}")
         if total_readouts is None:
             total_readouts = int(q.shape[0])
         elif total_readouts != int(q.shape[0]):
             raise CMCError("every captured layer must have the same readout count")
 
-        scores = np.einsum("rhd,hmd->rhm", q, k, dtype=np.float32)
-        scores *= np.float32(q.shape[-1] ** -0.5)
         weights = softmax_fp32(scores)
         norms = np.linalg.norm(k, axis=-1).astype(np.float32)  # (H,M)
         for name, (start, end) in graft_ranges.items():
@@ -250,6 +265,8 @@ def summarize_attention_capture(
     }
     result = {
         "normalization": "softmax_over_all_captured_mounted_arena_keys",
+        "score_operand": "engine_softmax_input_compute_dtype_values",
+        "softmax_recompute": "numpy_fp32_from_engine_softmax_operand",
         "percentile_method": "numpy_linear",
         "layers": len(layers),
         "heads_per_layer": int(keys_by_layer[layers[0]].shape[0]),
@@ -647,15 +664,53 @@ def cpu_self_test() -> dict[str, Any]:
     if g2_max_abs > 2e-6:
         raise CMCError(f"synthetic G2 algebra mismatch: {g2_max_abs}")
 
+    # MiniCPM3's standard path is BF16. TensorCUDA accumulates the scaled QK
+    # contraction in fp32, then stores the score tensor in BF16 before softmax.
+    # This exact near-tie reproduces the live failure signature: idealized fp32
+    # QK differs from the actual BF16 score operand by ~0.375 probability mass.
+    def bf16_roundtrip_fp32(values: np.ndarray) -> np.ndarray:
+        values = np.ascontiguousarray(values, dtype=np.float32)
+        bits = values.view(np.uint32)
+        bias = np.uint32(0x7FFF) + (
+            (bits >> np.uint32(16)) & np.uint32(1))
+        return ((bits + bias) & np.uint32(0xFFFF0000)).view(np.float32)
+
+    boundary_q = np.asarray([[[1.0, 1.0]]], dtype=np.float32)
+    boundary_k = np.asarray(
+        [[[1000.0, 1.375], [1000.0, -1.375]]], dtype=np.float32)
+    ideal_weights = materialized_softmax(boundary_q, boundary_k)
+    boundary_scores = np.einsum(
+        "hqd,hsd->hqs", boundary_q, boundary_k, dtype=np.float32)
+    boundary_scores *= np.float32(boundary_q.shape[-1] ** -0.5)
+    engine_scores = bf16_roundtrip_fp32(boundary_scores)
+    engine_weights = softmax_fp32(engine_scores)
+    idealized_operand_error = float(
+        np.max(np.abs(ideal_weights - engine_weights)))
+    gate_operand = np.asarray([[[8.0, 4.0, 2.0, 0.0]]], dtype=np.float32)
+    gate_offline = softmax_fp32(gate_operand)
+    gate_direct = bf16_roundtrip_fp32(gate_offline)
+    actual_operand_error = float(
+        np.max(np.abs(gate_offline - gate_direct)))
+    if idealized_operand_error <= 0.37:
+        raise CMCError(
+            "synthetic BF16 score boundary did not reproduce G2 divergence")
+    if actual_operand_error > 2.0e-3:
+        raise CMCError(
+            f"synthetic actual-score G2 mismatch: {actual_operand_error}")
+
     # One sibling key is a deliberate p99 outlier and captures the query.
     keys = np.zeros((1, 12, 2), dtype=np.float32)
     keys[0, 0:4, 0] = 0.2
     keys[0, 4:8, 0] = [0.1, 0.1, 0.1, 8.0]
     keys[0, 8:12, 1] = 0.1
     queries = np.asarray([[[1.0, 0.0]], [[1.0, 0.0]]], dtype=np.float32)
+    scores = np.einsum(
+        "rhd,hmd->rhm", queries, keys, dtype=np.float32)
+    scores *= np.float32(queries.shape[-1] ** -0.5)
     summary = summarize_attention_capture(
         {0: queries}, {0: keys},
         {"target": (0, 4), "sibling": (4, 8), "competitor": (8, 12)},
+        softmax_operands_by_layer={0: scores},
         target="target", sibling="sibling", decisive_limit=1,
     )
     if not summary["t2_outlier_concentration_condition"]:
@@ -706,6 +761,9 @@ def cpu_self_test() -> dict[str, Any]:
         "status": "PASS",
         "g2_latent_vs_materialized_max_abs": g2_max_abs,
         "g2_tolerance": 2e-6,
+        "g2_bf16_idealized_qk_max_abs": idealized_operand_error,
+        "g2_bf16_actual_score_max_abs": actual_operand_error,
+        "g2_registered_live_tolerance": 2.0e-3,
         "t2_outlier_fixture": "PASS",
         "composed_outlier_adjudication_fixture": "PASS",
         "inner_channel_adjudication_fixture": "PASS",
