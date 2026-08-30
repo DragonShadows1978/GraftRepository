@@ -306,7 +306,10 @@ def fit_plan(arena, rank_plan: Sequence[int]) -> list[int]:
 
 def snapshot_arena(arena) -> dict[str, Any]:
     return {
-        "caches": arena.caches,
+        # GPT-OSS consumes the mutable outer cache list in-place while it
+        # builds the successor caches.  Preserve that container for the next
+        # counterfactual arm; the tensor tuples themselves are immutable.
+        "caches": None if arena.caches is None else list(arena.caches),
         "pos": int(arena.pos),
         "live_segs": list(arena.live_segs),
         "cur_mounts": list(arena.cur_mounts),
