@@ -44,11 +44,16 @@ from grm_adm1_analysis import (  # noqa: E402
     policy_plan,
     production_inventory,
     read_json,
+    read_jsonl,
     sha256_file,
     supersession_fixture_rows,
     write_content_addressed,
     write_exclusive_json,
     _extract_assignment,
+)
+from grm_adm1_probe_adjudication import (  # noqa: E402
+    completed_capture_available,
+    validate_frame_receipts,
 )
 
 
@@ -481,7 +486,9 @@ def _corpus_bank(model, tokenizer):
         live_turns=2,
         cache_deposits=False,
         length_debias=False,
-        revision_resolution=False,
+        # ADM1.2: L2 is production-default ON.  This corpus has no revision
+        # edges, so the migration is an identity while keeping the frame pinned.
+        revision_resolution=True,
     )
     meta = []
     for family, mk_text, _mk_probe, mk_values in families:
@@ -617,7 +624,9 @@ def _run_supersession_eval(
         live_turns=0,
         cache_deposits=False,
         length_debias=False,
-        revision_resolution=False,
+        # The registered fresh controls contain no lineage edges and are byte-
+        # identical across the L2 flip; pin the production setting explicitly.
+        revision_resolution=True,
     )
     node_to_idx = {}
     values = {}
@@ -772,6 +781,30 @@ def run_e2e_frame(
         print(f"stage={frame} status=already_complete", flush=True)
         return
     session_dir = frame_dir / "session"
+    # ADM1.2: a complete capture must be adjudicated from disk, not replayed.
+    # The validator proves exact fixed-A-k3 anchor identity and exhaustively
+    # projects every recorded candidate set through L2 before authorizing reuse.
+    if completed_capture_available(run_dir, frame):
+        alignment = validate_frame_receipts(run_dir, frame)
+        alignment_path = write_content_addressed(
+            frame_dir, "baseline_alignment", alignment)
+        rows_path = frame_dir / "adm_rows.jsonl"
+        write_exclusive_json(marker, {
+            "schema": "grm.adm1.stage_complete.v1",
+            "stage": frame,
+            "completed_unix_ns": time.time_ns(),
+            "row_count": len(read_jsonl(rows_path)),
+            "rows_sha256": sha256_file(rows_path),
+            "scorecard": file_record(session_dir / "probe_scorecard.json"),
+            "baseline_alignment": file_record(alignment_path),
+            "capture_reused_without_model_replay": True,
+        })
+        print(
+            f"stage={frame} status=reused_complete_capture "
+            f"alignment={alignment_path}",
+            flush=True,
+        )
+        return
     command = [
         sys.executable,
         str(ROOT / "scripts" / "grm_adm1_e2e.py"),
@@ -787,7 +820,9 @@ def run_e2e_frame(
         "--live-turns", "2",
         "--restart-after", "17",
         "--no-probe-ladder",
-        "--no-sup-resolve",
+        # ADM1.2 migration: L2 is production now.  Pin it explicitly so an
+        # ambient escape env cannot silently return this frame to legacy mode.
+        "--sup-resolve",
         "--skip-gpu-idle-check",
     ]
     if session_dir.exists():
@@ -820,13 +855,19 @@ def run_e2e_frame(
                 pass
             process.wait()
         raise
-    if returncode != 0:
+    # The generic E2E driver returns 2 for any semantic miss.  ADM frames have
+    # a registered 7/9 fixed-A-k3 control, so status 2 is adjudicated below;
+    # any other nonzero status remains an execution failure.
+    if returncode not in (0, 2):
         raise LiveError(f"{frame} replay failed with status {returncode}")
     rows_path = frame_dir / "adm_rows.jsonl"
     rows = [json.loads(line) for line in rows_path.read_text(encoding="utf-8").splitlines() if line]
     expected = 9 if frame == "diag" else 11
     if len(rows) != expected:
         raise LiveError(f"{frame} expected {expected} ADM rows, found {len(rows)}")
+    alignment = validate_frame_receipts(run_dir, frame)
+    alignment_path = write_content_addressed(
+        frame_dir, "baseline_alignment", alignment)
     write_exclusive_json(marker, {
         "schema": "grm.adm1.stage_complete.v1",
         "stage": frame,
@@ -834,6 +875,9 @@ def run_e2e_frame(
         "row_count": len(rows),
         "rows_sha256": sha256_file(rows_path),
         "scorecard": file_record(session_dir / "probe_scorecard.json"),
+        "baseline_alignment": file_record(alignment_path),
+        "replay_process_returncode": int(returncode),
+        "capture_reused_without_model_replay": False,
     })
 
 
@@ -899,7 +943,7 @@ def orchestrate(args: argparse.Namespace) -> int:
             "lease_seconds": int(args.lease_seconds),
             "lock_wait_seconds": int(args.lock_wait_seconds),
             "lock_path": str(LOCK_PATH),
-            "supersession_frame": "legacy_off_explicit",
+            "supersession_frame": "production_l2_on_explicit",
             "source_provenance": {
                 str(path.relative_to(ROOT)): file_record(path)
                 for path in (
@@ -979,15 +1023,24 @@ def main(argv: Sequence[str] | None = None) -> int:
     run_dir = args.run_dir.resolve()
     manifest = _one_manifest(args.manifest)
     assert_production_frozen(manifest)
+    if args.stage != "minicpm" and completed_capture_available(run_dir, args.stage):
+        # Receipt-only reconciliation is CPU-safe and should not queue behind a
+        # GPU job or reload a model merely to rediscover a complete session.
+        run_e2e_frame(
+            run_dir,
+            args.stage,
+            rule_path=_one_rule(run_dir),
+            lease_seconds=int(args.lease_seconds),
+        )
+        return 0
     with gpu_lease(int(args.lease_seconds), int(args.lock_wait_seconds)):
         if args.stage == "minicpm":
             run_minicpm(run_dir, manifest)
         else:
-            rule_path = _one_rule(run_dir)
             run_e2e_frame(
                 run_dir,
                 args.stage,
-                rule_path=rule_path,
+                rule_path=_one_rule(run_dir),
                 lease_seconds=int(args.lease_seconds),
             )
     return 0
