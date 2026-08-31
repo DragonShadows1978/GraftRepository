@@ -26,12 +26,20 @@ if str(ROOT) not in sys.path:
 from scripts.grm_det1_common import (  # noqa: E402
     DetectorObserver,
     DETError,
+    MECHANISTIC,
     VERBAL_QUESTION,
     append_jsonl_once,
     contains_value,
     read_json,
     route_fixture_profile,
     verbal_result,
+    write_content_addressed,
+)
+from scripts.grm_det1_baseline_registry import (  # noqa: E402
+    BaselineRegistryError,
+    CROSS_MODEL_SUP_COMPARATOR,
+    EXACT_COMPARATOR,
+    compare_served_to_live_registry,
 )
 
 
@@ -60,6 +68,39 @@ def _answer_correct(answer: str, expected: Sequence[str], stale: Sequence[str]) 
         any(contains_value(answer, value) for value in expected)
         and not any(contains_value(answer, value) for value in stale)
     )
+
+
+def baseline_guard_policy(
+    comparison: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Separate task acceptance from a same-model behavioral baseline.
+
+    The supersession registration is intentionally cross-model: MiniCPM3 is
+    the producer and GPT-OSS is the DET consumer.  Its semantic comparator is
+    useful for DET-G0 task acceptance, but a mismatch cannot prove that
+    instrumentation changed GPT-OSS bytes.  The exact same-model comparator
+    is still only answer/mount behavior; DET1.3 state-byte purity is a
+    separate dual-snapshot gate.
+    """
+    comparator = comparison.get("comparator")
+    if comparator == EXACT_COMPARATOR:
+        return {
+            "schema": "grm.det1.baseline_guard_policy.v1",
+            "role": "same_model_behavioral_baseline",
+            "enforce_before_same_run_behavioral_differential": False,
+            "can_diagnose_instrumentation_leak": False,
+            "task_acceptance": bool(comparison.get("live_match")),
+        }
+    if comparator == CROSS_MODEL_SUP_COMPARATOR:
+        return {
+            "schema": "grm.det1.baseline_guard_policy.v1",
+            "role": "cross_model_task_acceptance_only",
+            "enforce_before_same_run_behavioral_differential": False,
+            "can_diagnose_instrumentation_leak": False,
+            "task_acceptance": bool(comparison.get("live_match")),
+        }
+    raise DETError(
+        "live baseline comparison has no supported behavioral/acceptance role")
 
 
 def _snapshot_counterfactual(arena) -> dict[str, Any]:
@@ -205,9 +246,19 @@ class _PredictionObserver:
 class _LadderObserver:
     """Isolate signals per production ladder attempt, then select its winner."""
 
-    def __init__(self, arena, aliases: set[int]):
+    def __init__(
+        self,
+        arena,
+        aliases: set[int],
+        *,
+        active_detectors: Sequence[str] = MECHANISTIC,
+        ngh_schedule: str = "legacy_inline",
+    ):
         self.arena = arena
         self.aliases = {int(value) for value in aliases}
+        self.active_detectors = frozenset(
+            str(value) for value in active_detectors)
+        self.ngh_schedule = str(ngh_schedule)
         self.original = None
         self.attempts: list[dict[str, Any]] = []
 
@@ -216,7 +267,13 @@ class _LadderObserver:
         outer = self
 
         def wrapped(user_text, picks, ngen, deposit, stops, *args, **kwargs):
-            with DetectorObserver(outer.arena, outer.aliases, int(ngen)) as observer:
+            with DetectorObserver(
+                outer.arena,
+                outer.aliases,
+                int(ngen),
+                active_detectors=outer.active_detectors,
+                ngh_schedule=outer.ngh_schedule,
+            ) as observer:
                 answer, info = outer.original(
                     user_text, picks, ngen, deposit, stops, *args, **kwargs)
             outer.attempts.append({
@@ -322,7 +379,15 @@ def _mechanistic_counterfactual(
     turn_idx: int | None,
     expected: Sequence[str],
     stale: Sequence[str],
+    active_detectors: Sequence[str] | None = None,
+    ngh_schedule: str = "legacy_inline",
+    observer_shell: bool = False,
 ) -> dict[str, Any]:
+    if _truthy(os.environ.get("GRM_DET1_FORK_FROM_SNAPSHOT_REQUIRED")):
+        raise DETError(
+            "DET1.4 forbids the reconstructed _mechanistic_counterfactual path; "
+            "capture the lived prefill and resume directly at _forward(prompt_ids)"
+        )
     arena = repo.arena
     snapshot = _snapshot_counterfactual(arena)
     admission_context = (
@@ -331,7 +396,34 @@ def _mechanistic_counterfactual(
     )
     try:
         with admission_context:
-            with _LadderObserver(arena, aliases) as observer:
+            selected = (
+                tuple(MECHANISTIC)
+                if active_detectors is None else
+                tuple(str(value) for value in active_detectors)
+            )
+            if selected or observer_shell:
+                with _LadderObserver(
+                    arena,
+                    aliases,
+                    active_detectors=selected,
+                    ngh_schedule=str(ngh_schedule),
+                ) as observer:
+                    answer, info = original(
+                        repo,
+                        question,
+                        topk=int(topk),
+                        ngen=int(ngen),
+                        defer_memory=True,
+                        turn_idx=turn_idx,
+                        probe_ladder=True,
+                        max_trips=int(max_trips),
+                    )
+                signals = observer.finish(
+                    answer=answer,
+                    info=info,
+                    mounted_ids=arena.cur_mounts,
+                )
+            else:
                 answer, info = original(
                     repo,
                     question,
@@ -342,11 +434,16 @@ def _mechanistic_counterfactual(
                     probe_ladder=True,
                     max_trips=int(max_trips),
                 )
-            signals = observer.finish(
-                answer=answer,
-                info=info,
-                mounted_ids=arena.cur_mounts,
-            )
+                signals = {
+                    "schema": "grm.det1.signals.v1",
+                    "active_detectors": [],
+                    "ngh_schedule": None,
+                    "token_indexing": "zero_based_generated_prediction",
+                    "tokens": [],
+                    "prediction_token_ids": [],
+                    "unused_final_cache_flush_dropped": False,
+                    "observer_shell": False,
+                }
         if not bool((info or {}).get("driver_probe_ladder")):
             raise DETError("counterfactual escaped the production probe ladder")
         return _attempt_result(
@@ -408,6 +505,7 @@ def _row(
     verbal: Mapping[str, Any] | None,
     runtime_frame: Mapping[str, Any],
     registration_path: Path,
+    baseline_comparison: Mapping[str, Any],
     started_ns: int,
 ) -> dict[str, Any]:
     aliases = {int(value) for value in profile["logical_alias_ids"]}
@@ -535,6 +633,13 @@ def _row(
         },
         "runtime_frame": dict(runtime_frame),
         "registration_path": str(registration_path),
+        "baseline_anchor": dict(baseline_comparison["anchor"]),
+        # The baseline comparison always describes the instrumented served
+        # path.  Planted rows carry it only as a provenance reference; they
+        # are deliberately not expected to match production.
+        "served_baseline_comparison": dict(baseline_comparison),
+        "baseline_comparison_role": (
+            "this_served_row" if not planted else "served_path_reference"),
     }
 
 
@@ -596,7 +701,14 @@ def evaluate_registered_probe(
         expected=expected,
         stale=stale,
     )
-
+    try:
+        baseline_comparison = compare_served_to_live_registry(fixture, served)
+    except BaselineRegistryError as exc:
+        raise DETError(
+            f"live registered-baseline lookup failed for "
+            f"{fixture['fixture_id']}: {exc}") from exc
+    guard_policy = baseline_guard_policy(baseline_comparison)
+    baseline_comparison["guard_policy"] = guard_policy
     planted = None
     served_verbal = None
     planted_verbal = None
@@ -638,14 +750,59 @@ def evaluate_registered_probe(
         probe_ladder=True,
         max_trips=int(max_trips),
     )
-    canonical_mounts = [int(value) for value in (canonical_info.get("mount_fitted") or arena.cur_mounts)]
-    if (
-        str(canonical_answer) != str(served["answer"])
-        or canonical_mounts != [int(value) for value in served["mounted_ids"]]
-    ):
+    # DET1.1 retires the private rerun as the baseline oracle.  A live
+    # same-run differential remains useful as a behavioral alarm, but the
+    # counterfactual restore is not a byte snapshot.  A mismatch cannot by
+    # itself distinguish observer perturbation from replay-state drift.
+    authoritative_private_rerun = {
+        "answer": str(canonical_answer),
+        "mounted_ids": [int(value) for value in arena.cur_mounts],
+    }
+    instrumented_projection = {
+        "answer": str(served["answer"]),
+        "mounted_ids": [int(value) for value in served["mounted_ids"]],
+    }
+    instrumented_matches_authoritative_rerun = (
+        authoritative_private_rerun == instrumented_projection)
+    baseline_comparison["authoritative_private_rerun_projection"] = (
+        authoritative_private_rerun)
+    baseline_comparison["instrumented_matches_authoritative_rerun"] = bool(
+        instrumented_matches_authoritative_rerun)
+
+    # The old guard used ``mount_fitted``, the pre-L2 plan (Harbor: [0, 1]),
+    # whereas the
+    # authoritative served path and live ADM2 registration record the resolved
+    # physical mounts (Harbor: [1]). Keep the rerun only to advance the real
+    # certified session and receipt the old-vs-authoritative distinction.
+    baseline_comparison["retired_private_guard_projection"] = {
+        "answer": str(canonical_answer),
+        "mount_fitted_pre_resolution": [
+            int(value) for value in canonical_info.get("mount_fitted", ())],
+        "mounted_ids_authoritative": [
+            int(value) for value in arena.cur_mounts],
+    }
+    if not instrumented_matches_authoritative_rerun:
+        failure_path = write_content_addressed(rows_path.parent, "det1_1_guard_failure", {
+            "schema": "grm.det1.baseline_guard_failure.v1",
+            "status": "STOPPED",
+            "failure_class": "same_run_behavioral_divergence_unadjudicated",
+            "candidate_classes": [
+                "observer_perturbation",
+                "counterfactual_restore_or_path_state_divergence",
+            ],
+            "fixture_id": str(fixture["fixture_id"]),
+            "stage": str(stage),
+            "baseline_anchor": dict(baseline_comparison["anchor"]),
+            "served_baseline_comparison": dict(baseline_comparison),
+            "registration_path": str(registration_path),
+        })
         raise DETError(
-            "instrumented served counterfactual differs from canonical production "
-            f"path for {fixture['fixture_id']}")
+            "counterfactual/observed path differs from the later same-run path; "
+            "observer versus restore/path-state cause is unadjudicated "
+            f"path for {fixture['fixture_id']}; "
+            f"instrumented={instrumented_projection} "
+            f"authoritative={authoritative_private_rerun}; "
+            f"failure_receipt={failure_path}")
 
     served_row = _row(
         fixture=fixture,
@@ -656,6 +813,7 @@ def evaluate_registered_probe(
         verbal=served_verbal,
         runtime_frame=runtime_frame,
         registration_path=registration_path,
+        baseline_comparison=baseline_comparison,
         started_ns=started_ns,
     )
     append_jsonl_once(rows_path, served_row, key="row_id")
@@ -669,6 +827,7 @@ def evaluate_registered_probe(
             verbal=planted_verbal,
             runtime_frame=runtime_frame,
             registration_path=registration_path,
+            baseline_comparison=baseline_comparison,
             started_ns=started_ns,
         )
         append_jsonl_once(rows_path, planted_row, key="row_id")
@@ -679,6 +838,9 @@ def evaluate_registered_probe(
         "served_mounts": served["mounted_ids"],
         "planted_mounts": None if planted is None else planted["mounted_ids"],
         "logical_aliases": sorted(aliases),
+        "baseline_registration_hash": (
+            baseline_comparison["anchor"]["registration_hash"]),
+        "live_baseline_match": baseline_comparison["live_match"],
     }, sort_keys=True), flush=True)
     return canonical_answer, canonical_info
 
@@ -811,12 +973,33 @@ def selftest() -> dict[str, Any]:
         or fake._budget_fit_mounts is not fit_fn
     ):
         raise DETError("planted admission hooks were not restored")
+    prior_fork_required = os.environ.get("GRM_DET1_FORK_FROM_SNAPSHOT_REQUIRED")
+    os.environ["GRM_DET1_FORK_FROM_SNAPSHOT_REQUIRED"] = "1"
+    try:
+        try:
+            _mechanistic_counterfactual(
+                None, None, lambda *_args, **_kwargs: ("", {}),
+                question="q", aliases=set(), planted_miss=False,
+                topk=1, ngen=1, max_trips=0, turn_idx=None,
+                expected=["x"], stale=[],
+            )
+        except DETError as exc:
+            if "forbids the reconstructed" not in str(exc):
+                raise
+        else:
+            raise DETError("DET1.4 reconstructed-path guard did not fire")
+    finally:
+        if prior_fork_required is None:
+            os.environ.pop("GRM_DET1_FORK_FROM_SNAPSHOT_REQUIRED", None)
+        else:
+            os.environ["GRM_DET1_FORK_FROM_SNAPSHOT_REQUIRED"] = prior_fork_required
     return {
         "schema": "grm.det1.e2e_selftest.v1",
         "status": "PASS",
         "checks": {
             "flags_off_no_patch_identity": "PASS",
             "planted_plan_only_filter_and_restore": "PASS",
+            "det1_4_reconstruction_guard": "PASS",
         },
     }
 

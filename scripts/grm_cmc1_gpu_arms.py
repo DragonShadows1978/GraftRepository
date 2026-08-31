@@ -208,6 +208,8 @@ class LiveFixture:
             cache_deposits=False,
             length_debias=False,
             revision_resolution=False,
+            # CMC's causal arms require the convicted legacy k=3 co-mount.
+            decisive_admission=False,
         )
         self.node_to_idx = self.harness._install_fixture_nodes(
             self.arena, self.fixture)

@@ -489,6 +489,9 @@ def _corpus_bank(model, tokenizer):
         # ADM1.2: L2 is production-default ON.  This corpus has no revision
         # edges, so the migration is an identity while keeping the frame pinned.
         revision_resolution=True,
+        # ADM1 is a fixed-k counterfactual experiment. Keep its arm selector
+        # authoritative after the ADM2 production-default flip.
+        decisive_admission=False,
     )
     meta = []
     for family, mk_text, _mk_probe, mk_values in families:
@@ -627,6 +630,7 @@ def _run_supersession_eval(
         # The registered fresh controls contain no lineage edges and are byte-
         # identical across the L2 flip; pin the production setting explicitly.
         revision_resolution=True,
+        decisive_admission=False,
     )
     node_to_idx = {}
     values = {}
@@ -823,6 +827,7 @@ def run_e2e_frame(
         # ADM1.2 migration: L2 is production now.  Pin it explicitly so an
         # ambient escape env cannot silently return this frame to legacy mode.
         "--sup-resolve",
+        "--no-adm-decisive",
         "--skip-gpu-idle-check",
     ]
     if session_dir.exists():

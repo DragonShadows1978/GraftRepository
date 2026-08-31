@@ -170,12 +170,125 @@ def source_inventory(paths: Iterable[Path]) -> dict[str, dict[str, Any]]:
 
 
 def whole_word(text: str, word: str) -> bool:
-    return bool(re.search(rf"(?<![A-Za-z0-9_-]){re.escape(word)}(?![A-Za-z0-9_-])",
-                          str(text), flags=re.IGNORECASE))
+    normalized_text = normalize_value_text(text)
+    normalized_word = normalize_value_text(word)
+    return bool(re.search(
+        rf"(?<![A-Za-z0-9_-]){re.escape(normalized_word)}(?![A-Za-z0-9_-])",
+        normalized_text,
+        flags=re.IGNORECASE,
+    ))
+
+
+def normalize_value_text(value: str) -> str:
+    """Normalize DET value semantics without changing raw answer receipts.
+
+    DET1.4 registers Markdown emphasis and U+2010/U+2011 hyphens as glyph
+    presentation, not value differences.  Callers must retain the original
+    answer for byte/behavior comparisons and use this projection only for
+    expected/stale/wrong-value classification.
+    """
+    text = str(value).replace("\u2010", "-").replace("\u2011", "-")
+    # Remove paired Markdown emphasis delimiters while leaving their payload
+    # byte order unchanged.  Iterate so nested bold/italic is also projected.
+    emphasis = re.compile(r"(\*\*|__|\*|_)([^\n]+?)\1")
+    previous = None
+    while previous != text:
+        previous = text
+        text = emphasis.sub(r"\2", text)
+    return text.casefold()
 
 
 def contains_value(text: str, value: str) -> bool:
     return whole_word(text, value)
+
+
+def routing_index_digest(arena: Any) -> dict[str, Any]:
+    """Digest every field that can affect the registered D-LQR index.
+
+    Mounted K/V is intentionally excluded: DET1.4 verifies it through the
+    lived snapshot.  This projection binds candidate membership, centroids,
+    length debias inputs, text identity, and revision metadata so planted
+    withholding cannot silently delete or rebuild the full detector index.
+    """
+    candidates = [int(value) for value in arena._route_cand_base()]
+
+    def stable(value: Any) -> Any:
+        if isinstance(value, Mapping):
+            return {str(key): stable(item) for key, item in value.items()}
+        if isinstance(value, (list, tuple)):
+            return [stable(item) for item in value]
+        if isinstance(value, set):
+            return sorted(stable(item) for item in value)
+        if isinstance(value, np.integer):
+            return int(value)
+        if isinstance(value, np.floating):
+            return float(value)
+        if isinstance(value, np.bool_):
+            return bool(value)
+        return value
+
+    def array_record(value: Any) -> dict[str, Any] | None:
+        if value is None:
+            return None
+        if isinstance(value, np.ndarray):
+            array = value
+        elif hasattr(value, "numpy"):
+            array = value.numpy()
+        else:
+            array = np.asarray(value)
+        array = np.ascontiguousarray(array)
+        return {
+            "shape": [int(item) for item in array.shape],
+            "dtype": array.dtype.str,
+            "sha256": hashlib.sha256(array.tobytes(order="C")).hexdigest(),
+        }
+
+    rows = []
+    for index in candidates:
+        graft = arena.grafts[index]
+        child_cents = graft.get("child_cents") or ()
+        row = {
+            "index": index,
+            "native_node_id": graft.get("native_node_id"),
+            "kind": str(graft.get("kind", "turn")),
+            "retired": bool(graft.get("retired")),
+            "ntok": int(graft.get("ntok", 0) or 0),
+            "text_sha256": hashlib.sha256(
+                str(graft.get("text", "") or "").encode("utf-8")
+            ).hexdigest(),
+            "cent": array_record(graft.get("cent")),
+            "child_cents": [array_record(value) for value in child_cents],
+            "metadata": stable(graft.get("metadata")),
+            "sources": stable(graft.get("sources")),
+        }
+        payload = json.dumps(
+            row, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+        ).encode("utf-8")
+        rows.append({
+            "index": index,
+            "sha256": hashlib.sha256(payload).hexdigest(),
+        })
+    projection = {
+        "candidate_ids": candidates,
+        "candidate_rows": rows,
+        "length_debias": bool(getattr(arena, "length_debias", False)),
+        "revision_resolution": bool(
+            getattr(arena, "revision_resolution", False)),
+    }
+    payload = json.dumps(
+        projection, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+    ).encode("utf-8")
+    return {
+        "schema": "grm.det1_4.routing_index_digest.v1",
+        "candidate_count": len(candidates),
+        "candidate_ids": candidates,
+        "projection_sha256": hashlib.sha256(payload).hexdigest(),
+        "candidate_row_sha256": rows,
+        "scope": (
+            "active route candidates, centroid/child-centroid values, text/length, "
+            "and revision metadata; excludes mounted K/V snapshot fields"
+        ),
+    }
 
 
 def verbal_result(answer: str, token_ids: Sequence[int], decode) -> dict[str, Any]:
@@ -395,9 +508,17 @@ class DetectorObserver:
     arena: Any
     logical_alias_ids: set[int]
     ngen: int
+    active_detectors: frozenset[str] = frozenset(MECHANISTIC)
+    ngh_schedule: str = "legacy_inline"
 
     def __post_init__(self) -> None:
         self.logical_alias_ids = {int(i) for i in self.logical_alias_ids}
+        self.active_detectors = frozenset(str(value) for value in self.active_detectors)
+        unknown = self.active_detectors - frozenset(MECHANISTIC)
+        if unknown:
+            raise DETError(f"unknown mechanistic detector hook(s): {sorted(unknown)}")
+        if self.ngh_schedule != "legacy_inline":
+            raise DETError(f"unsupported D-NGH schedule: {self.ngh_schedule}")
         self.records: list[dict[str, Any]] = []
         self._original_forward = None
         self._gpt = None
@@ -416,32 +537,34 @@ class DetectorObserver:
     def __enter__(self):
         from core import gpt_oss20b_tc as gpt
 
-        full = [
-            layer for layer in self.arena.m.layers
-            if layer.self_attn.layer_type == "full_attention"
-        ]
-        bad = [
-            int(layer.self_attn.layer_idx) for layer in full
-            if str(layer.self_attn.attention_mode) != "standard"
-        ]
-        if bad:
-            raise DETError(
-                "D-NGH observer supports the current standard GPT-OSS path only; "
-                f"non-standard full layers: {bad}")
-        self.expected_full_layers = len(full)
-        if self.expected_full_layers <= 0:
-            raise DETError("D-NGH found no GPT-OSS full-attention layers")
+        if "D-NGH" in self.active_detectors:
+            full = [
+                layer for layer in self.arena.m.layers
+                if layer.self_attn.layer_type == "full_attention"
+            ]
+            bad = [
+                int(layer.self_attn.layer_idx) for layer in full
+                if str(layer.self_attn.attention_mode) != "standard"
+            ]
+            if bad:
+                raise DETError(
+                    "D-NGH observer supports the current standard GPT-OSS path only; "
+                    f"non-standard full layers: {bad}")
+            self.expected_full_layers = len(full)
+            if self.expected_full_layers <= 0:
+                raise DETError("D-NGH found no GPT-OSS full-attention layers")
 
         self._gpt = gpt
         self._original_sink = gpt.sink_attention_tc
         self._original_sliding = gpt.sliding_sink_attention_tc
         self._original_forward = self.arena._forward
-        self._route_attn = self.arena.m.layers[int(self.arena.route_layer)].self_attn
-        self._route_capture_present = hasattr(self._route_attn, "_capture_q")
-        self._route_capture_value = getattr(self._route_attn, "_capture_q", None)
-        self._route_captured_present = hasattr(self._route_attn, "_captured_q")
-        self._route_captured_value = getattr(self._route_attn, "_captured_q", None)
-        self._route_attn._capture_q = True
+        if "D-LQR" in self.active_detectors:
+            self._route_attn = self.arena.m.layers[int(self.arena.route_layer)].self_attn
+            self._route_capture_present = hasattr(self._route_attn, "_capture_q")
+            self._route_capture_value = getattr(self._route_attn, "_capture_q", None)
+            self._route_captured_present = hasattr(self._route_attn, "_captured_q")
+            self._route_captured_value = getattr(self._route_attn, "_captured_q", None)
+            self._route_attn._capture_q = True
 
         observer = self
 
@@ -454,16 +577,17 @@ class DetectorObserver:
                 num_heads_per_kv=num_heads_per_kv,
             )
             if observer._inside_forward and not observer._suppress_sink:
-                observer._capture_full_mass(
+                observer._mass_rows.append(observer._full_mass(
                     query, key, sinks,
                     scale=float(scale),
                     attention_mask=attention_mask,
                     num_heads_per_kv=int(num_heads_per_kv),
-                )
+                ))
             return result
 
         def sliding_wrapper(query, key, value, sinks, *, scale,
-                            sliding_window, num_heads_per_kv=1, attn_block=128):
+                            sliding_window, num_heads_per_kv=1, attn_block=128,
+                            allowed_mask=None):
             previous = observer._suppress_sink
             observer._suppress_sink = True
             try:
@@ -473,6 +597,7 @@ class DetectorObserver:
                     sliding_window=sliding_window,
                     num_heads_per_kv=num_heads_per_kv,
                     attn_block=attn_block,
+                    allowed_mask=allowed_mask,
                 )
             finally:
                 observer._suppress_sink = previous
@@ -482,47 +607,48 @@ class DetectorObserver:
             # The preceding production route capture clears this opt-in flag.
             # Re-arm at each answer-position forward so D-LQR sees the live
             # contextual stream and not the route probe (or ``None``).
-            observer._route_attn._capture_q = True
-            observer._route_attn._captured_q = None
-            observer._inside_forward = True
+            if "D-LQR" in observer.active_detectors:
+                observer._route_attn._capture_q = True
+                observer._route_attn._captured_q = None
+            observer._inside_forward = "D-NGH" in observer.active_detectors
             try:
                 logits = observer._original_forward(ids, last_only=last_only)
             finally:
                 observer._inside_forward = False
-            q = np.asarray(observer._route_attn._captured_q, dtype=np.float32)
-            if q.ndim != 4 or q.shape[0] != 1:
-                raise DETError(f"unexpected live query capture shape: {q.shape}")
-            q_last = q[0, :, -1:, :]
-            lqr = _lqr_token(observer.arena, q_last, observer.logical_alias_ids)
-            entropy, margin = _entropy_and_margin(logits)
-            if len(observer._mass_rows) != observer.expected_full_layers:
-                raise DETError(
-                    "D-NGH full-layer capture count mismatch: "
-                    f"expected {observer.expected_full_layers}, "
-                    f"observed {len(observer._mass_rows)}")
-            mass = {
-                name: float(np.mean([row[name] for row in observer._mass_rows]))
-                for name in ("physical_sink_mass", "mounted_mass", "live_mass", "learned_sink_mass")
-            }
-            total = sum(mass.values())
-            if not (0.98 <= total <= 1.02):
-                raise DETError(f"D-NGH mass partition does not sum to one: {mass}")
+            lqr = None
+            if "D-LQR" in observer.active_detectors:
+                q = np.asarray(observer._route_attn._captured_q, dtype=np.float32)
+                if q.ndim != 4 or q.shape[0] != 1:
+                    raise DETError(f"unexpected live query capture shape: {q.shape}")
+                q_last = q[0, :, -1:, :]
+                lqr = _lqr_token(observer.arena, q_last, observer.logical_alias_ids)
+            ent = None
+            prediction_token_id = int(np.asarray(logits).argmax())
+            if "D-ENT" in observer.active_detectors:
+                entropy, margin = _entropy_and_margin(logits)
+                ent = {"entropy_nats": entropy, "top1_top2_margin": margin}
+
+            mass = None
+            if "D-NGH" in observer.active_detectors:
+                mass = observer._summarize_mass(observer._mass_rows)
             observer.records.append({
                 "token_index": len(observer.records),
-                "prediction_token_id": int(np.asarray(logits).argmax()),
+                "prediction_token_id": prediction_token_id,
                 "lqr": lqr,
                 "ngh": mass,
-                "ent": {"entropy_nats": entropy, "top1_top2_margin": margin},
-                "full_attention_layers": len(observer._mass_rows),
+                "ent": ent,
+                "full_attention_layers": (
+                    observer.expected_full_layers if mass is not None else 0),
             })
             return logits
 
-        gpt.sink_attention_tc = sink_wrapper
-        gpt.sliding_sink_attention_tc = sliding_wrapper
+        if "D-NGH" in self.active_detectors:
+            gpt.sink_attention_tc = sink_wrapper
+            gpt.sliding_sink_attention_tc = sliding_wrapper
         self.arena._forward = forward_wrapper
         return self
 
-    def _capture_full_mass(
+    def _full_mass(
         self,
         query,
         key,
@@ -531,7 +657,7 @@ class DetectorObserver:
         scale: float,
         attention_mask,
         num_heads_per_kv: int,
-    ) -> None:
+    ) -> dict[str, float]:
         gpt = self._gpt
         q_rows = int(query.shape[2])
         key_rows = int(key.shape[2])
@@ -550,12 +676,34 @@ class DetectorObserver:
         mounted = values[:, start:end].sum(axis=1) if end > start else np.zeros(heads)
         live = values[:, end:key_rows].sum(axis=1)
         learned = values[:, key_rows]
-        self._mass_rows.append({
+        return {
             "physical_sink_mass": float(np.mean(physical_sink)),
             "mounted_mass": float(np.mean(mounted)),
             "live_mass": float(np.mean(live)),
             "learned_sink_mass": float(np.mean(learned)),
-        })
+        }
+
+    def _validate_mass_count(self, values: Sequence[Any]) -> None:
+        if len(values) != self.expected_full_layers:
+            raise DETError(
+                "D-NGH full-layer capture count mismatch: "
+                f"expected {self.expected_full_layers}, observed {len(values)}")
+
+    def _summarize_mass(
+        self, rows: Sequence[Mapping[str, float]],
+    ) -> dict[str, float]:
+        self._validate_mass_count(rows)
+        mass = {
+            name: float(np.mean([float(row[name]) for row in rows]))
+            for name in (
+                "physical_sink_mass", "mounted_mass", "live_mass",
+                "learned_sink_mass",
+            )
+        }
+        total = sum(mass.values())
+        if not (0.98 <= total <= 1.02):
+            raise DETError(f"D-NGH mass partition does not sum to one: {mass}")
+        return mass
 
     def __exit__(self, exc_type, exc, tb):
         if self._original_forward is not None:
@@ -590,9 +738,14 @@ class DetectorObserver:
             row["token_index"] = int(index)
         return {
             "schema": "grm.det1.signals.v1",
+            "active_detectors": sorted(self.active_detectors),
+            "ngh_schedule": (
+                self.ngh_schedule if "D-NGH" in self.active_detectors else None),
             "token_indexing": "zero_based_generated_prediction",
             "tokens": kept,
-            "prediction_token_ids": [int(row["prediction_token_id"]) for row in kept],
+            "prediction_token_ids": [
+                int(row["prediction_token_id"]) for row in kept
+            ],
             "unused_final_cache_flush_dropped": dropped_flush,
             "lqr_semantics": "contextual_pre_rope_q_semantic_only_post_l2_logical_index",
             "ngh_semantics": "actual_standard_attention_operands_full_layers_only_absolute_mounted_probability",

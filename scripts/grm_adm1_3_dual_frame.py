@@ -639,6 +639,8 @@ def _supersession_arena(model, tokenizer):
         cache_deposits=False,
         length_debias=False,
         revision_resolution=True,
+        # This harness supplies each A-k1/k2/k3/A-DEC plan itself.
+        decisive_admission=False,
     )
     node_to_idx = {}
     values = {}
@@ -814,6 +816,7 @@ def run_e2e_stage(
         "--restart-after", "17",
         "--probe-ladder",
         "--sup-resolve",
+        "--no-adm-decisive",
         "--skip-gpu-idle-check",
     ]
     if session_dir.exists():
@@ -836,6 +839,7 @@ def run_e2e_stage(
         "GRM_ADM1_3_ENABLED": "1",
         "GRM_PROBE_LADDER": "1",
         "GRM_SUP_RESOLVE": "1",
+        "GRM_ADM_DECISIVE": "0",
         "PYTHONPATH": str(ROOT) + (os.pathsep + prior_path if prior_path else ""),
         "PYTHONUNBUFFERED": "1",
     })

@@ -382,6 +382,8 @@ class RevisionFixture:
             cache_deposits=False,
             length_debias=False,
             revision_resolution=True,
+            # Preserve the registered CMC co-mount depth-sweep frame.
+            decisive_admission=False,
         )
         self.node_to_idx = self.harness._install_fixture_nodes(
             self.arena, self.fixture)

@@ -16,10 +16,13 @@ a GPT-OSS GQA replay snapshot.
 from __future__ import annotations
 
 import argparse
+from collections import Counter
+import copy
 from contextlib import contextmanager
 from dataclasses import asdict, is_dataclass
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 from typing import Any, Callable, Iterator, Mapping, Sequence
@@ -33,6 +36,7 @@ CAPTURE_PHASE = "before_probe_prefill"
 ARM_PROTOCOLS = {
     "lived": "same_model_chronological_harmony_feed_v1",
     "replay": "det1_independent_deposit_counterfactual_replay_v1",
+    "fork": "det1_lived_snapshot_fork_v1",
 }
 BYTE_SEMANTICS = {
     "comparison_bytes": "C_contiguous_host_value_bytes",
@@ -903,10 +907,24 @@ def stop_at_next_forward(
     sink_text: str | None,
     sink_token_ids: Sequence[int] | None,
     explicit_identity: Mapping[str, Any],
+    fork_callback: Callable[
+        [Path, list[int], Callable[[Sequence[int]], dict[str, Any]]], Any
+    ] | None = None,
 ) -> Iterator[dict[str, Any]]:
-    """Capture the next prefill, then continue that exact process to its answer."""
+    """Capture the next prefill, optionally fork inline, then continue lived.
+
+    The callback runs with the production ``_forward`` temporarily restored.
+    Its ``restore(withheld_aliases)`` closure always hydrates from the just-made
+    lived snapshot in the same process.  After the callback, ZERO is restored
+    once more and the original lived prefill runs exactly once.
+    """
     original = arena._forward
-    result: dict[str, Any] = {"manifest_path": None, "capture_count": 0}
+    result: dict[str, Any] = {
+        "manifest_path": None,
+        "capture_count": 0,
+        "fork_result": None,
+        "canonical_zero_restore": None,
+    }
 
     def resolve(value):
         return value() if callable(value) else value
@@ -928,6 +946,33 @@ def stop_at_next_forward(
             )
             result["manifest_path"] = path
             result["capture_count"] = 1
+            if fork_callback is not None:
+                manifest_path = Path(path)
+
+                def restore(withheld: Sequence[int] = ()) -> dict[str, Any]:
+                    return restore_prefill_fork(
+                        arena,
+                        manifest_path,
+                        withheld_mounts=withheld,
+                        target_identity=explicit_identity,
+                        require_same_process_index=True,
+                        require_finalized_source=False,
+                    )
+
+                # Branches resume at the captured _forward boundary; routing,
+                # L2, fit, mount, and admission must never be rerun here.
+                arena._forward = original
+                try:
+                    result["fork_result"] = fork_callback(
+                        manifest_path,
+                        [int(value) for value in ids],
+                        restore,
+                    )
+                    result["canonical_zero_restore"] = restore(())
+                finally:
+                    # Whether successful or fatal, never leave the interception
+                    # wrapper installed for decode or a later turn.
+                    arena._forward = original
         return original(ids, *args, **kwargs)
 
     arena._forward = wrapped
@@ -954,8 +999,15 @@ def load_snapshot(path: Path) -> dict[str, Any]:
     frame_digest = identity.pop("frame_sha256", None)
     if frame_digest != _sha256_bytes(_canonical_json(identity)):
         raise SnapshotError(f"snapshot frame digest mismatch: {manifest_path}")
+    blob_root = (manifest_path.parent / "blobs").resolve()
     for field, record in (value.get("arrays") or {}).items():
-        blob = manifest_path.parent / str(record.get("blob"))
+        blob = (manifest_path.parent / str(record.get("blob"))).resolve()
+        try:
+            blob.relative_to(blob_root)
+        except ValueError as exc:
+            raise SnapshotError(
+                f"snapshot blob escapes content-addressed root for {field}: {blob}"
+            ) from exc
         if not blob.is_file():
             raise SnapshotError(f"snapshot blob is missing for {field}: {blob}")
         if blob.stat().st_size != int(record.get("bytes", -1)):
@@ -964,6 +1016,815 @@ def load_snapshot(path: Path) -> dict[str, Any]:
             raise SnapshotError(f"snapshot blob digest mismatch for {field}")
     value["_manifest_path"] = str(manifest_path.resolve())
     return value
+
+
+def load_snapshot_array(
+    snapshot: Path | Mapping[str, Any], field: str,
+) -> np.ndarray:
+    """Load one validated snapshot blob as a private C-contiguous array."""
+    if isinstance(snapshot, Mapping):
+        shown = dict(snapshot)
+        manifest_path = Path(str(shown.get("_manifest_path", "")))
+        value = load_snapshot(manifest_path)
+        shown_without_path = dict(shown)
+        shown_without_path.pop("_manifest_path", None)
+        loaded_without_path = dict(value)
+        loaded_without_path.pop("_manifest_path", None)
+        if _canonical_json(_jsonable(shown_without_path)) != _canonical_json(
+            _jsonable(loaded_without_path)
+        ):
+            raise SnapshotError("snapshot mapping differs from its signed manifest")
+    else:
+        value = load_snapshot(Path(snapshot))
+    manifest_path = Path(str(value.get("_manifest_path", "")))
+    if not manifest_path.is_file():
+        raise SnapshotError("snapshot mapping lacks a validated manifest path")
+    record = (value.get("arrays") or {}).get(str(field))
+    if not isinstance(record, Mapping):
+        raise SnapshotError(f"snapshot array is missing: {field}")
+    blob = (manifest_path.parent / str(record.get("blob", ""))).resolve()
+    blob_root = (manifest_path.parent / "blobs").resolve()
+    try:
+        blob.relative_to(blob_root)
+    except ValueError as exc:
+        raise SnapshotError(
+            f"snapshot blob escapes the content-addressed blob root for {field}: {blob}"
+        ) from exc
+    payload = blob.read_bytes()
+    if len(payload) != int(record.get("bytes", -1)):
+        raise SnapshotError(f"snapshot blob size mismatch for {field}")
+    if _sha256_bytes(payload) != record.get("sha256"):
+        raise SnapshotError(f"snapshot blob digest mismatch for {field}")
+    try:
+        dtype = np.dtype(str(record["host_dtype"]))
+        shape = tuple(int(value) for value in record["shape"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise SnapshotError(f"invalid array metadata for {field}") from exc
+    if dtype.hasobject:
+        raise SnapshotError(f"object dtype is forbidden for snapshot array {field}")
+    if record.get("order") not in (None, "C"):
+        raise SnapshotError(f"snapshot array is not C-contiguous for {field}")
+    expected = int(dtype.itemsize)
+    for dimension in shape:
+        if dimension < 0:
+            raise SnapshotError(f"negative snapshot dimension for {field}: {shape}")
+        expected *= dimension
+        if expected > len(payload) and dimension != 0:
+            raise SnapshotError(
+                f"snapshot array byte geometry exceeds blob for {field}")
+    if expected != len(payload):
+        raise SnapshotError(
+            f"snapshot array byte geometry mismatch for {field}: "
+            f"metadata={expected} blob={len(payload)}")
+    array = np.frombuffer(payload, dtype=dtype).reshape(shape)
+    return np.ascontiguousarray(array.copy())
+
+
+def compare_fork_substrate(
+    lived_path: Path,
+    fork_path: Path,
+) -> dict[str, Any]:
+    """Compare the model-visible substrate while excluding arm provenance.
+
+    A fork is expected to run in a different execution branch, so its label,
+    process provenance, and linked answer cannot be byte-equal to the lived
+    capture.  DET1.4's ZERO gate instead requires exact identity, state, byte
+    semantics, and canonical array value bytes.  This comparator deliberately
+    has no delta allowlist; any intervention belongs in a separate G0 receipt.
+    """
+    lived = load_snapshot(Path(lived_path))
+    fork = load_snapshot(Path(fork_path))
+    lived_manifest = Path(lived.pop("_manifest_path"))
+    fork_manifest = Path(fork.pop("_manifest_path"))
+    rows: list[dict[str, Any]] = []
+
+    def scalar_row(field: str, left: Any, right: Any, group: str) -> None:
+        equal = _canonical_json(_jsonable(left)) == _canonical_json(_jsonable(right))
+        rows.append({
+            "group": group,
+            "field": field,
+            "status": "EQUAL" if equal else "DIVERGENT",
+            "lived": _jsonable(left),
+            "fork": _jsonable(right),
+        })
+
+    scalar_row("metadata.phase", lived.get("phase"), fork.get("phase"), "metadata")
+    scalar_row("metadata.complete", lived.get("complete"), fork.get("complete"), "metadata")
+    scalar_row("identity", lived.get("identity"), fork.get("identity"), "identity")
+    scalar_row(
+        "byte_semantics", lived.get("byte_semantics"), fork.get("byte_semantics"),
+        "byte_semantics",
+    )
+    lived_state = lived.get("state") or {}
+    fork_state = fork.get("state") or {}
+    for field in sorted(set(lived_state) | set(fork_state)):
+        if field not in lived_state:
+            rows.append({
+                "group": "state",
+                "field": f"state.{field}",
+                "status": "MISSING_LIVED",
+                "lived": None,
+                "fork": _jsonable(fork_state[field]),
+            })
+        elif field not in fork_state:
+            rows.append({
+                "group": "state",
+                "field": f"state.{field}",
+                "status": "MISSING_FORK",
+                "lived": _jsonable(lived_state[field]),
+                "fork": None,
+            })
+        else:
+            scalar_row(
+                f"state.{field}", lived_state[field], fork_state[field], "state")
+
+    lived_arrays = lived.get("arrays") or {}
+    fork_arrays = fork.get("arrays") or {}
+    for field in sorted(set(lived_arrays) | set(fork_arrays)):
+        left = lived_arrays.get(field)
+        right = fork_arrays.get(field)
+        if left is None or right is None:
+            rows.append({
+                "group": "arrays",
+                "field": f"arrays.{field}",
+                "status": "MISSING_LIVED" if left is None else "MISSING_FORK",
+                "lived": None if left is None else _jsonable(left),
+                "fork": None if right is None else _jsonable(right),
+            })
+            continue
+        projection = ("group", "source_dtype", "host_dtype", "shape", "bytes", "sha256")
+        left_projection = {key: left.get(key) for key in projection}
+        right_projection = {key: right.get(key) for key in projection}
+        equal = left_projection == right_projection
+        rows.append({
+            "group": "arrays",
+            "field": f"arrays.{field}",
+            "status": "EQUAL" if equal else "DIVERGENT",
+            "lived": left_projection,
+            "fork": right_projection,
+        })
+
+    counts = dict(Counter(row["status"] for row in rows))
+    passed = bool(rows) and counts.get("EQUAL", 0) == len(rows)
+    return {
+        "schema": "grm.det1_4.zero_fork_substrate_comparison.v1",
+        "status": "PASS_EXACT_CANONICAL_VALUE_BYTES" if passed else "DIVERGENT",
+        "gate_pass": passed,
+        "intervention": "ZERO",
+        "lived_manifest": {
+            "path": str(lived_manifest),
+            "bytes": lived_manifest.stat().st_size,
+            "sha256": _sha256_file(lived_manifest),
+        },
+        "fork_manifest": {
+            "path": str(fork_manifest),
+            "bytes": fork_manifest.stat().st_size,
+            "sha256": _sha256_file(fork_manifest),
+        },
+        "counts": counts,
+        "rows": rows,
+        "excluded_by_design": [
+            "label",
+            "provenance",
+            "linked_answer",
+            "capture_finalized",
+            "manifest_payload_sha256",
+            "blob_relative_paths",
+        ],
+        "byte_claim": (
+            "exact C-contiguous canonical exported value-byte equality under "
+            "the DET1.3 snapshot qualification; not literal device-storage bytes"
+        ),
+        "race_resume_authorized": False,
+    }
+
+
+def _fork_upload(array: np.ndarray, source_dtype: str, tensor_factory=None):
+    array = np.ascontiguousarray(array)
+    if tensor_factory is not None:
+        return tensor_factory(array, str(source_dtype))
+    try:
+        import tensor_cuda as tc
+    except Exception as exc:  # pragma: no cover - exercised only on GPU hosts
+        raise SnapshotError(
+            "TensorCUDA is required to hydrate a device fork; pass a "
+            "tensor_factory only for a controlled CPU test") from exc
+    try:
+        value = tc.tensor(array)
+        if str(getattr(value, "dtype", "")) != str(source_dtype):
+            value = value.astype(str(source_dtype))
+        return value
+    except Exception as exc:  # pragma: no cover - device-specific failure
+        raise SnapshotError(
+            f"failed to upload fork array as {source_dtype}: {array.shape}") from exc
+
+
+def _fork_export(value: Any) -> np.ndarray:
+    if isinstance(value, np.ndarray):
+        array = value
+    elif hasattr(value, "numpy"):
+        array = value.numpy()
+    else:
+        array = np.asarray(value)
+    return np.ascontiguousarray(np.asarray(array))
+
+
+def _remove_ranges(array: np.ndarray, axis: int, ranges: Sequence[tuple[int, int]]) -> np.ndarray:
+    if not ranges:
+        return np.ascontiguousarray(array.copy())
+    length = int(array.shape[int(axis)])
+    keep = np.ones(length, dtype=bool)
+    for start, end in ranges:
+        if not (0 <= int(start) <= int(end) <= length):
+            raise SnapshotError(
+                f"withholding range {(start, end)} exceeds axis length {length}")
+        keep[int(start):int(end)] = False
+    return np.ascontiguousarray(np.compress(keep, array, axis=int(axis)))
+
+
+_PLANTED_DELTA_PATTERNS = tuple(re.compile(value) for value in (
+    r"arrays\.(?:cache|injection)\.layer_\d{2}\.(?:k|v)",
+    r"arrays\.mask\.layer_\d{2}\.allowed",
+    r"state\.arena\.cur_mounts",
+    r"state\.arena\.cur_mount_n",
+    r"state\.attention\.layer_\d{2}\.graft_seats",
+    r"state\.positions\.physical_sections\.mounted_payload",
+    r"state\.cache\.lengths_by_layer",
+    r"state\.mask\.layer_\d{2}\.inputs\.(?:cache_length|injection_length|key_length)",
+    r"state\.admission\.(?:authoritative_mounts|rank_plan|current_planned|current_fitted|current_dropped|final_mounts)",
+    r"state\.admission\.ladder_attempts\[\d+\]\.planned",
+))
+
+
+def _assert_registered_planted_deltas(deltas: Sequence[Mapping[str, Any]]) -> None:
+    unexpected = sorted({
+        str(row.get("field")) for row in deltas
+        if not any(pattern.fullmatch(str(row.get("field")))
+                   for pattern in _PLANTED_DELTA_PATTERNS)
+    })
+    if unexpected:
+        raise SnapshotError(
+            "fork attempted non-registered state deltas: " + ", ".join(unexpected))
+
+
+def _fork_mount_ranges(
+    snapshot: Mapping[str, Any],
+    mounts: Sequence[int],
+    n_sink: int,
+    payload: Sequence[tuple[str, int]],
+    layer_count: int,
+) -> tuple[dict[int, tuple[int, int]], dict[int, int]]:
+    arrays = snapshot.get("arrays") or {}
+    ranges: dict[int, tuple[int, int]] = {}
+    lengths: dict[int, int] = {}
+    cursor = int(n_sink)
+    for mount in mounts:
+        records = []
+        for layer_index in range(int(layer_count)):
+            for name, dim in payload:
+                field = (
+                    f"mounted_graft.{int(mount)}."
+                    f"layer_{layer_index:02d}.{name}"
+                )
+                record = arrays.get(field)
+                if not isinstance(record, Mapping):
+                    raise SnapshotError(
+                        f"snapshot lacks mounted payload for graft {mount}: {field}")
+                shape = tuple(int(value) for value in record.get("shape", ()))
+                if not (0 <= int(dim) < len(shape)):
+                    raise SnapshotError(
+                        f"mounted payload has invalid sequence axis for {field}: "
+                        f"axis={dim} shape={shape}")
+                records.append((record, int(dim)))
+        observed = {
+            int(record["shape"][dim]) for record, dim in records
+        }
+        if len(observed) != 1:
+            raise SnapshotError(
+                f"mounted graft {mount} has inconsistent sequence lengths: {observed}")
+        length = observed.pop()
+        ranges[int(mount)] = (cursor, cursor + length)
+        lengths[int(mount)] = length
+        cursor += length
+    return ranges, lengths
+
+
+def restore_prefill_fork(
+    arena: Any,
+    snapshot_path: Path,
+    *,
+    withheld_mounts: Sequence[int] = (),
+    target_identity: Mapping[str, Any],
+    expected_frame_sha256: str | None = None,
+    require_same_process_index: bool = True,
+    require_finalized_source: bool = True,
+    tensor_factory=None,
+) -> dict[str, Any]:
+    """Hydrate the next prefill from a lived DET1.3 snapshot.
+
+    ZERO intervention restores canonical exported values verbatim.  The only
+    supported mutation is registered planted-miss withholding: exact mounted
+    seat ranges are deleted from cache/injection K/V and from the captured
+    canonical allowed masks.  Routing/index state is deliberately not rebuilt;
+    callers must use the same lived process/repository for D-LQR.
+    """
+    snapshot = load_snapshot(Path(snapshot_path))
+    manifest_path = Path(snapshot["_manifest_path"])
+    if not snapshot.get("complete"):
+        raise SnapshotError("fork source must be a complete lived snapshot")
+    if require_finalized_source and not snapshot.get("capture_finalized"):
+        raise SnapshotError("fork source must be finalized before cross-process use")
+    if not require_finalized_source and not require_same_process_index:
+        raise SnapshotError(
+            "an unfinalized lived capture may only fork inline in its same process")
+    if snapshot.get("phase") != CAPTURE_PHASE:
+        raise SnapshotError(f"fork source is not at {CAPTURE_PHASE}")
+    provenance = snapshot.get("provenance") or {}
+    if not (
+        snapshot.get("label") == "lived"
+        and provenance.get("arm") == "lived"
+        and provenance.get("protocol") == ARM_PROTOCOLS["lived"]
+        and provenance.get("capture_boundary") == CAPTURE_PHASE
+    ):
+        raise SnapshotError(
+            "fork source must be a registered lived capture, never a replay capture")
+    identity = snapshot.get("identity") or {}
+    observed_identity = infer_frame_identity(arena, target_identity)
+    if observed_identity.get("frame_sha256") != identity.get("frame_sha256"):
+        raise SnapshotError(
+            "fork target arena frame differs from the lived snapshot: "
+            f"target={observed_identity.get('frame_sha256')} "
+            f"snapshot={identity.get('frame_sha256')}")
+    if (
+        expected_frame_sha256 is not None
+        and identity.get("frame_sha256") != str(expected_frame_sha256)
+    ):
+        raise SnapshotError(
+            "fork target frame differs from lived snapshot: "
+            f"expected={expected_frame_sha256} "
+            f"snapshot={identity.get('frame_sha256')}")
+    if require_same_process_index:
+        pid = os.getpid()
+        stat_text = Path(f"/proc/{pid}/stat").read_text(encoding="utf-8")
+        close = stat_text.rfind(")")
+        if close < 0:
+            raise SnapshotError("cannot parse current process start time")
+        start_ticks = int(stat_text[close + 2:].split()[19])
+        boot_id = Path("/proc/sys/kernel/random/boot_id").read_text(
+            encoding="utf-8").strip()
+        current_process = process_instance_sha256(pid, start_ticks, boot_id)
+        if provenance.get("process_instance_sha256") != current_process:
+            raise SnapshotError(
+                "forked detector execution requires the full lived repository/index "
+                "from the same process; the snapshot captures mounted payload only")
+    layers = list(getattr(getattr(arena, "m", None), "layers", ()) or ())
+    if len(layers) != int(identity.get("layer_count", -1)):
+        raise SnapshotError(
+            f"fork layer-count mismatch: arena={len(layers)} "
+            f"snapshot={identity.get('layer_count')}")
+    payload = [(str(name), int(dim)) for name, dim in getattr(arena, "PAYLOAD", ())]
+    if not payload:
+        raise SnapshotError("fork target arena has no payload descriptor")
+    routing_index = None
+    if require_same_process_index:
+        from scripts.grm_det1_common import routing_index_digest
+
+        routing_index = routing_index_digest(arena)
+
+    state = copy.deepcopy(snapshot.get("state") or {})
+    source_mounts = [int(value) for value in state.get("arena.cur_mounts", ())]
+    if len(set(source_mounts)) != len(source_mounts):
+        raise SnapshotError("fork source contains duplicate mounted graft indices")
+    withheld = {int(value) for value in withheld_mounts}
+    kept_mounts = [value for value in source_mounts if value not in withheld]
+    n_sink = int(state.get("arena.n_sink", 0))
+    mount_ranges, mount_lengths = _fork_mount_ranges(
+        snapshot, source_mounts, n_sink, payload, len(layers))
+    removed_ranges = [mount_ranges[value] for value in source_mounts if value in withheld]
+    if withheld and not removed_ranges:
+        raise SnapshotError(
+            "registered planted-miss withholding would be a model-state no-op: "
+            f"withheld={sorted(withheld)} mounted={source_mounts}")
+    removed_rows = sum(end - start for start, end in removed_ranges)
+    source_mount_n = int(state.get("arena.cur_mount_n", -1))
+    if source_mount_n != sum(mount_lengths.values()):
+        raise SnapshotError(
+            "snapshot cur_mount_n differs from mounted payload lengths: "
+            f"state={source_mount_n} payload={sum(mount_lengths.values())}")
+
+    live_count = int(state.get("live.segment_token_count", 0))
+    caches_present = state.get("arena.caches_present") is True
+    active_lengths = []
+    for layer_index in range(len(layers)):
+        component_lengths = []
+        for name, dim in payload:
+            field = (
+                f"cache.layer_{layer_index:02d}.{name}"
+                if caches_present else
+                f"injection.layer_{layer_index:02d}.{name}"
+            )
+            record = (snapshot.get("arrays") or {}).get(field)
+            if not isinstance(record, Mapping):
+                raise SnapshotError(f"fork source lacks active K/V field {field}")
+            shape = tuple(int(value) for value in record.get("shape", ()))
+            if not (0 <= dim < len(shape)):
+                raise SnapshotError(
+                    f"fork active K/V sequence axis is invalid for {field}")
+            component_lengths.append(int(shape[dim]))
+        if len(set(component_lengths)) != 1:
+            raise SnapshotError(
+                f"fork active K/V components disagree at layer {layer_index}: "
+                f"{component_lengths}")
+        active_length = component_lengths[0]
+        expected_active = (
+            n_sink + source_mount_n + live_count
+            if caches_present else n_sink + source_mount_n
+        )
+        if active_length != expected_active:
+            raise SnapshotError(
+                f"fork active K/V length mismatch at layer {layer_index}: "
+                f"observed={active_length} expected={expected_active}")
+        active_lengths.append(active_length)
+        mask_inputs = state.get(f"mask.layer_{layer_index:02d}.inputs") or {}
+        if (
+            mask_inputs.get("attention_mode") != "standard"
+            or mask_inputs.get("representation")
+            != "uint8_canonical_allowed_equivalent"
+        ):
+            raise SnapshotError(
+                f"fork source mask semantics are unsupported at layer {layer_index}")
+        prompt_count = int(state.get("tokens.prompt_count", -1))
+        expected_inputs = {
+            "query_length": prompt_count,
+            "cache_length": active_length if caches_present else 0,
+            "injection_length": 0 if caches_present else active_length,
+            "key_length": active_length + prompt_count,
+        }
+        for key, expected_value in expected_inputs.items():
+            if int(mask_inputs.get(key, -1)) != expected_value:
+                raise SnapshotError(
+                    f"fork mask input {key} disagrees at layer {layer_index}: "
+                    f"observed={mask_inputs.get(key)} expected={expected_value}")
+        mask_record = (snapshot.get("arrays") or {}).get(
+            f"mask.layer_{layer_index:02d}.allowed") or {}
+        if tuple(mask_record.get("shape") or ()) != (
+            1, 1, prompt_count, active_length + prompt_count,
+        ):
+            raise SnapshotError(
+                f"fork mask record geometry disagrees at layer {layer_index}")
+        if int(state.get(
+            f"attention.layer_{layer_index:02d}.graft_seats", -1
+        )) != n_sink + source_mount_n:
+            raise SnapshotError(
+                f"fork graft-seat geometry disagrees at layer {layer_index}")
+    expected_cache_lengths = active_lengths if caches_present else [0] * len(layers)
+    if state.get("cache.lengths_by_layer") != expected_cache_lengths:
+        raise SnapshotError(
+            "fork cache-length ledger differs from active K/V geometry")
+    physical = state.get("positions.physical_sections") or {}
+    if physical.get("textual_sink") != [0, n_sink] or physical.get(
+        "mounted_payload"
+    ) != [n_sink, n_sink + source_mount_n]:
+        raise SnapshotError("fork physical-section geometry is inconsistent")
+
+    verification: dict[str, dict[str, Any]] = {}
+    deltas: list[dict[str, Any]] = []
+
+    def record_delta(field: str, source: Any, fork: Any) -> None:
+        if _canonical_json(_jsonable(source)) == _canonical_json(_jsonable(fork)):
+            return
+        deltas.append({
+            "field": str(field),
+            "reason": "registered_planted_miss_withholding",
+            "source": _jsonable(source),
+            "fork": _jsonable(fork),
+        })
+
+    def restored_array(field: str, *, axis: int | None = None):
+        source = load_snapshot_array(snapshot, field)
+        value = source if axis is None else _remove_ranges(source, axis, removed_ranges)
+        if value.tobytes(order="C") != source.tobytes(order="C"):
+            deltas.append({
+                "field": f"arrays.{field}",
+                "reason": "registered_planted_miss_withholding",
+                "source_sha256": _sha256_bytes(source.tobytes(order="C")),
+                "fork_sha256": _sha256_bytes(value.tobytes(order="C")),
+                "removed_ranges": [[int(a), int(b)] for a, b in removed_ranges],
+            })
+        return value
+
+    def upload_checked(field: str, array: np.ndarray):
+        record = snapshot["arrays"][field]
+        uploaded = _fork_upload(array, str(record["source_dtype"]), tensor_factory)
+        observed = _fork_export(uploaded)
+        payload_bytes = observed.tobytes(order="C")
+        expected_bytes = np.ascontiguousarray(array).tobytes(order="C")
+        if payload_bytes != expected_bytes:
+            raise SnapshotError(
+                f"fork upload/re-export changed canonical values for {field}")
+        verification[field] = {
+            "source_dtype": record["source_dtype"],
+            "host_dtype": observed.dtype.str,
+            "shape": [int(value) for value in observed.shape],
+            "sha256": _sha256_bytes(payload_bytes),
+            "bytes_equal_expected_fork_value": True,
+        }
+        return uploaded
+
+    # Model-owned position tables and learned sinks are part of the lived
+    # model-visible substrate and are restored before any forked forward.
+    model = arena.m
+    for name in ("rope_cos", "rope_sin"):
+        field = f"model.{name}"
+        array = restored_array(field)
+        setattr(model, name, upload_checked(field, array))
+    model._rope_len = int(state["model.rope_len"])
+    for layer_index, layer in enumerate(layers):
+        att = layer.self_attn
+        field = f"learned_sink.layer_{layer_index:02d}"
+        att.sinks = upload_checked(field, restored_array(field))
+
+    # Restore host textual sink payload and mounted device payloads.  The
+    # direct injection/cache below remains the authoritative next-forward K/V.
+    sink_h = []
+    for layer_index in range(len(layers)):
+        values = {}
+        for name, _dim in payload:
+            field = f"textual_sink.layer_{layer_index:02d}.{name}"
+            values[name] = restored_array(field)
+            verification[field] = {
+                "source_dtype": snapshot["arrays"][field]["source_dtype"],
+                "host_dtype": values[name].dtype.str,
+                "shape": [int(value) for value in values[name].shape],
+                "sha256": _sha256_bytes(values[name].tobytes(order="C")),
+                "bytes_equal_expected_fork_value": True,
+            }
+        sink_h.append(values)
+    arena.sink_h = sink_h
+    grafts = list(getattr(arena, "grafts", ()) or ())
+    invalid_withheld = sorted(value for value in withheld if not (0 <= value < len(grafts)))
+    if invalid_withheld:
+        raise SnapshotError(
+            "fork target lacks planted logical aliases: "
+            f"{invalid_withheld}")
+    for mount in source_mounts:
+        if not (0 <= mount < len(grafts)):
+            raise SnapshotError(
+                "same-process fork target lacks mounted graft index "
+                f"{mount}; reconstruction is forbidden")
+        if int(grafts[mount].get("ntok", -1)) != int(mount_lengths[mount]):
+            raise SnapshotError(
+                "same-process fork target mounted-graft length differs from "
+                f"the lived snapshot: graft={mount} "
+                f"target={grafts[mount].get('ntok')} "
+                f"snapshot={mount_lengths[mount]}")
+        mounted_layers = []
+        for layer_index in range(len(layers)):
+            values = {}
+            for name, _dim in payload:
+                field = f"mounted_graft.{mount}.layer_{layer_index:02d}.{name}"
+                values[name] = upload_checked(field, restored_array(field))
+            mounted_layers.append(values)
+        grafts[mount]["h"] = mounted_layers
+
+    if caches_present:
+        caches = []
+        for layer_index in range(len(layers)):
+            values = []
+            for name, dim in payload:
+                field = f"cache.layer_{layer_index:02d}.{name}"
+                array = restored_array(field, axis=dim)
+                values.append(upload_checked(field, array))
+            caches.append(tuple(values))
+        arena.caches = caches
+        for layer in layers:
+            layer.self_attn.inject_kv = None
+    else:
+        arena.caches = None
+        for layer_index, layer in enumerate(layers):
+            values = []
+            for name, dim in payload:
+                field = f"injection.layer_{layer_index:02d}.{name}"
+                array = restored_array(field, axis=dim)
+                values.append(upload_checked(field, array))
+            scale = state.get(f"injection.layer_{layer_index:02d}.component_2", 1.0)
+            layer.self_attn.inject_kv = (*values, float(scale))
+
+    prompt_ids = load_snapshot_array(snapshot, "tokens.prompt_ids").astype(
+        np.int64, copy=False).reshape(-1)
+    sink_ids = load_snapshot_array(snapshot, "tokens.sink_ids").astype(
+        np.int64, copy=False).reshape(-1)
+    live_ids = load_snapshot_array(snapshot, "tokens.live_ids").astype(
+        np.int64, copy=False).reshape(-1)
+    if len(sink_ids) != n_sink:
+        raise SnapshotError("fork sink-token ledger disagrees with n_sink")
+    live_segs = [
+        (None if value[0] is None else int(value[0]), int(value[1]))
+        for value in state.get("live.segments", ())
+    ]
+    if sum(count for _graft, count in live_segs) != len(live_ids):
+        raise SnapshotError("fork live-token ledger disagrees with live segments")
+
+    for name in (
+        "pos", "n_sink", "live_shift", "width", "topk", "live_turns",
+        "max_live", "cache_deposits", "revision_resolution",
+        "decisive_admission", "length_debias", "route_layer", "route_backend",
+    ):
+        if f"arena.{name}" in state:
+            setattr(arena, name, copy.deepcopy(state[f"arena.{name}"]))
+    arena.live_segs = live_segs
+    arena.cur_mounts = kept_mounts
+    arena.cur_mount_n = source_mount_n - removed_rows
+    if withheld:
+        record_delta("state.arena.cur_mounts", source_mounts, kept_mounts)
+        record_delta(
+            "state.arena.cur_mount_n", source_mount_n, arena.cur_mount_n)
+        source_sections = state.get("positions.physical_sections") or {}
+        record_delta(
+            "state.positions.physical_sections.mounted_payload",
+            source_sections.get("mounted_payload"),
+            [n_sink, n_sink + int(arena.cur_mount_n)],
+        )
+        if caches_present:
+            record_delta(
+                "state.cache.lengths_by_layer",
+                state.get("cache.lengths_by_layer"),
+                [int(value) - removed_rows for value in active_lengths],
+            )
+    for layer_index, layer in enumerate(layers):
+        att = layer.self_attn
+        if str(getattr(att, "attention_mode", "unknown")) != "standard":
+            raise SnapshotError(
+                "DET1.4 captured-mask consumption is implemented only for "
+                f"the registered standard attention path; layer={layer_index} "
+                f"mode={getattr(att, 'attention_mode', None)!r}")
+        source_graft_seats = int(
+            state[f"attention.layer_{layer_index:02d}.graft_seats"])
+        att.graft_seats = source_graft_seats - removed_rows
+        if withheld:
+            record_delta(
+                f"state.attention.layer_{layer_index:02d}.graft_seats",
+                source_graft_seats,
+                att.graft_seats,
+            )
+        att.live_shift = copy.deepcopy(
+            state[f"attention.layer_{layer_index:02d}.live_shift"])
+        mask_field = f"mask.layer_{layer_index:02d}.allowed"
+        mask = restored_array(mask_field, axis=3)
+        expected_keys = (
+            int(arena.caches[layer_index][0].shape[payload[0][1]])
+            if caches_present else
+            int(att.inject_kv[0].shape[payload[0][1]])
+        ) + int(prompt_ids.size)
+        if mask.shape != (1, 1, int(prompt_ids.size), expected_keys):
+            raise SnapshotError(
+                f"fork mask geometry mismatch for layer {layer_index}: "
+                f"mask={mask.shape} expected={(1, 1, int(prompt_ids.size), expected_keys)}")
+        if withheld:
+            source_inputs = state[f"mask.layer_{layer_index:02d}.inputs"]
+            fork_inputs = dict(source_inputs)
+            active_key = "cache_length" if caches_present else "injection_length"
+            fork_inputs[active_key] = int(fork_inputs[active_key]) - removed_rows
+            fork_inputs["key_length"] = int(fork_inputs["key_length"]) - removed_rows
+            for key in (active_key, "key_length"):
+                record_delta(
+                    f"state.mask.layer_{layer_index:02d}.inputs.{key}",
+                    source_inputs[key],
+                    fork_inputs[key],
+                )
+        att._det1_fork_allowed_mask = mask
+        att._det1_fork_mask_consumed = False
+        verification[mask_field] = {
+            "source_dtype": snapshot["arrays"][mask_field]["source_dtype"],
+            "host_dtype": mask.dtype.str,
+            "shape": [int(value) for value in mask.shape],
+            "sha256": _sha256_bytes(mask.tobytes(order="C")),
+            "bytes_equal_expected_fork_value": True,
+            "semantics": "canonical_uint8_allowed_equivalent_consumed_once",
+        }
+
+    admission = copy.deepcopy(state.get("admission.full_plan") or {})
+    if not admission:
+        admission = {
+            key.removeprefix("admission."): copy.deepcopy(value)
+            for key, value in state.items() if key.startswith("admission.")
+        }
+    if withheld:
+        for key in (
+            "rank_plan", "current_planned", "current_fitted",
+            "current_dropped", "final_mounts",
+        ):
+            if isinstance(admission.get(key), list):
+                before = list(admission[key])
+                admission[key] = [
+                    int(value) for value in before if int(value) not in withheld]
+                if before != admission[key]:
+                    record_delta(
+                        f"state.admission.{key}", before, admission[key])
+        for attempt in admission.get("ladder_attempts", ()):
+            if isinstance(attempt, dict) and isinstance(attempt.get("planned"), list):
+                before = list(attempt["planned"])
+                attempt["planned"] = [
+                    int(value) for value in before if int(value) not in withheld]
+                if before != attempt["planned"]:
+                    record_delta(
+                        "state.admission.ladder_attempts"
+                        f"[{int(attempt.get('ordinal', -1))}].planned",
+                        before,
+                        attempt["planned"],
+                    )
+    admission["final_mounts"] = list(kept_mounts)
+    if withheld:
+        record_delta(
+            "state.admission.authoritative_mounts", source_mounts, kept_mounts)
+        _assert_registered_planted_deltas(deltas)
+    if callable(getattr(arena, "_commit_native_mount", None)):
+        arena._commit_native_mount(arena.cur_mounts, arena.cur_mount_n)
+    if require_same_process_index:
+        observed_index = routing_index_digest(arena)
+        if observed_index != routing_index:
+            raise SnapshotError(
+                "fork hydration changed the full D-LQR routing-index projection")
+
+    return {
+        "schema": "grm.det1_4.prefill_fork_restore.v1",
+        "source_manifest": str(manifest_path),
+        "source_manifest_sha256": _sha256_file(manifest_path),
+        "frame_sha256": identity.get("frame_sha256"),
+        "byte_semantics": copy.deepcopy(snapshot.get("byte_semantics")),
+        "intervention": (
+            "ZERO" if not withheld else "REGISTERED_PLANTED_MISS_WITHHOLDING"),
+        "withheld_logical_aliases": sorted(withheld),
+        "source_mounts": source_mounts,
+        "fork_mounts": kept_mounts,
+        "removed_seat_ranges": [
+            [int(start), int(end)] for start, end in removed_ranges],
+        "prompt_ids": [int(value) for value in prompt_ids],
+        "sink_token_ids": [int(value) for value in sink_ids],
+        "live_token_ids": [int(value) for value in live_ids],
+        "admission_state": admission,
+        "admission_projection": {
+            "full_plan": copy.deepcopy(admission),
+            "authoritative_mounts": list(kept_mounts),
+            "mirrors": {
+                key: copy.deepcopy(admission.get(key))
+                for key in REQUIRED_ADMISSION_FIELDS
+            },
+        },
+        "array_verification": verification,
+        "field_deltas": deltas,
+        "zero_intervention_no_deltas": not deltas,
+        "mask_semantics": (
+            "DET1.3 canonical uint8 allowed-equivalent bytes are installed "
+            "as a one-shot prefill override; literal device mask storage was "
+            "not available in the source format"
+        ),
+        "routing_index_contract": (
+            "same-process lived repository required for detector execution; "
+            "snapshot restoration does not reconstruct the full unmounted index"
+        ),
+        "same_process_index_verified": bool(require_same_process_index),
+        "routing_index": (
+            routing_index if require_same_process_index else {
+                "status": "NOT_VERIFIED_CROSS_PROCESS_ZERO_GATE_ONLY",
+            }
+        ),
+        "source_finalized_at_restore": bool(snapshot.get("capture_finalized")),
+        "failure_contract": (
+            "any restore exception is process-fatal; a partially hydrated arena "
+            "must never continue to a forward or emit gate evidence"
+        ),
+    }
+
+
+def verify_fork_masks_consumed(arena: Any) -> dict[str, Any]:
+    """Fail closed unless every installed lived prefill mask fired once."""
+    rows = []
+    for layer_index, layer in enumerate(
+        list(getattr(getattr(arena, "m", None), "layers", ()) or ())
+    ):
+        attention = layer.self_attn
+        installed = getattr(attention, "_det1_fork_allowed_mask", None)
+        consumed = getattr(attention, "_det1_fork_mask_consumed", False) is True
+        passed = installed is None and consumed
+        rows.append({
+            "layer": int(layer_index),
+            "installed_mask_cleared": installed is None,
+            "consumed_exactly_once": consumed,
+            "status": "PASS" if passed else "FAIL",
+        })
+    gate_pass = bool(rows) and all(row["status"] == "PASS" for row in rows)
+    result = {
+        "schema": "grm.det1_4.fork_mask_consumption.v1",
+        "status": "PASS" if gate_pass else "FAIL",
+        "gate_pass": gate_pass,
+        "layer_count": len(rows),
+        "rows": rows,
+    }
+    if not gate_pass:
+        raise SnapshotError(
+            "fork prefill did not consume every lived allowed-mask exactly once")
+    return result
 
 
 def finalize_snapshot_with_answer(

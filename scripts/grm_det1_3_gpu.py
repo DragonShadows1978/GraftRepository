@@ -34,6 +34,7 @@ if str(ROOT) not in sys.path:
 
 from scripts.grm_det1_common import (  # noqa: E402
     DETError,
+    contains_value,
     file_record,
     read_json,
     sha256_file,
@@ -396,15 +397,14 @@ def _is_refusal(answer: str) -> bool:
 
 def _fixture_answer_correct(answer: str, fixture: Mapping[str, Any]) -> bool:
     probe = fixture["probes"][0]
-    expected = [str(value).casefold() for value in probe["expected_values"]]
+    expected = [str(value) for value in probe["expected_values"]]
     rejected = [
-        *[str(value).casefold() for value in probe["stale_values"]],
-        *[str(value).casefold() for value in probe["wrong_fact_values"]],
+        *[str(value) for value in probe["stale_values"]],
+        *[str(value) for value in probe["wrong_fact_values"]],
     ]
-    lowered = str(answer).casefold()
     return bool(
-        any(value in lowered for value in expected)
-        and not any(value in lowered for value in rejected)
+        any(contains_value(answer, value) for value in expected)
+        and not any(contains_value(answer, value) for value in rejected)
     )
 
 
@@ -501,19 +501,22 @@ def compare_with_observer_controls(
     lived_premise_checks = {
         "linked_answer_correct_recomputed": _fixture_answer_correct(
             str(lived_linked.get("probe_answer", "")), fixture),
-        "linked_answer_receipted_correct": lived_linked.get(
-            "probe_answer_correct") is True,
         "linked_answer_not_refusal": (
             lived_linked.get("probe_refusal") is False
             and not _is_refusal(str(lived_linked.get("probe_answer", "")))
         ),
         "bare_control_correct_recomputed": _fixture_answer_correct(
             str(lived_control.get("answer", "")), fixture),
-        "bare_control_receipted_correct": lived_control.get("answer_correct") is True,
         "bare_control_not_refusal": (
             lived_control.get("answer_refusal") is False
             and not _is_refusal(str(lived_control.get("answer", "")))
         ),
+    }
+    legacy_correctness = {
+        "linked_answer_receipted_correct": lived_linked.get(
+            "probe_answer_correct") is True,
+        "bare_control_receipted_correct": lived_control.get(
+            "answer_correct") is True,
     }
     for field, passed in lived_premise_checks.items():
         comparison["rows"].append({
@@ -525,6 +528,16 @@ def compare_with_observer_controls(
         })
     if not all(lived_premise_checks.values()):
         errors.append("LIVED_ANSWERING_PREMISE_NOT_REPRODUCED")
+    comparison["normalization_adjudication"] = {
+        "schema": "grm.det1_4.value_normalization_adjudication.v1",
+        "rule": (
+            "strip Markdown emphasis and map U+2010/U+2011 to ASCII hyphen "
+            "for expected/stale/wrong-value comparison only"
+        ),
+        "raw_answer_behavior_comparison_unchanged": True,
+        "normalized_recomputation_authoritative": True,
+        "legacy_receipted_correctness": legacy_correctness,
+    }
     comparison["behavioral_control_errors"] = errors
     comparison["lived_answering_premise"] = lived_premise_checks
     comparison["capture_behavioral_nonperturbation_pass"] = not errors
@@ -922,8 +935,8 @@ def _run_protocol(
                 "selected_attempt": selected_attempt,
                 "answer_refusal": _is_refusal(answer),
                 "answer_correct": bool(
-                    any(value.casefold() in answer.casefold() for value in expected)
-                    and not any(value.casefold() in answer.casefold() for value in rejected)
+                    any(contains_value(answer, value) for value in expected)
+                    and not any(contains_value(answer, value) for value in rejected)
                 ),
                 "model_info": model_info,
                 "order": file_record(ORDER),
@@ -1092,16 +1105,16 @@ def _run_protocol(
             "attempt_answer": attempt_answer,
             "attempt_mounts": [int(value) for value in captured["mounts"]],
             "attempt_answer_correct": bool(
-                any(value.casefold() in attempt_answer.casefold() for value in expected)
-                and not any(value.casefold() in attempt_answer.casefold() for value in rejected)
+                any(contains_value(attempt_answer, value) for value in expected)
+                and not any(contains_value(attempt_answer, value) for value in rejected)
             ),
             "attempt_refusal": _is_refusal(attempt_answer),
             "probe_answer": probe_answer,
             "probe_selected_attempt": int(probe_selected_attempt),
             "probe_mounts": probe_mounts,
             "probe_answer_correct": bool(
-                any(value.casefold() in probe_answer.casefold() for value in expected)
-                and not any(value.casefold() in probe_answer.casefold() for value in rejected)
+                any(contains_value(probe_answer, value) for value in expected)
+                and not any(contains_value(probe_answer, value) for value in rejected)
             ),
             "probe_refusal": _is_refusal(probe_answer),
         }

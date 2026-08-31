@@ -353,6 +353,9 @@ def gpu_acceptance(args: argparse.Namespace) -> dict[str, Any]:
     default_receipt = run_dir / "default_on.jsonl"
     default_env = env.copy()
     default_env.pop("GRM_SUP_RESOLVE", None)
+    # This historical L2-only registration predates ADM2. Keep admission at
+    # fixed k=3 so the gate continues to test only its named lever.
+    default_env["GRM_ADM_DECISIVE"] = "0"
     legs.append(run_locked(
         "battery_default_on",
         [
@@ -370,6 +373,10 @@ def gpu_acceptance(args: argparse.Namespace) -> dict[str, Any]:
     escape_receipt = run_dir / "escape_off.jsonl"
     escape_env = env.copy()
     escape_env["GRM_SUP_RESOLVE"] = "0"
+    # This is the opposite L2 arm of the same historical L2-only frame.
+    # Pin ADM2 off here as well; otherwise its fresh-control answer would
+    # change for a reason outside the gate's named lever.
+    escape_env["GRM_ADM_DECISIVE"] = "0"
     legs.append(run_locked(
         "battery_escape_off",
         [

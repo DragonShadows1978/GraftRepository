@@ -27,6 +27,10 @@ from scripts.grm_det1_common import (  # noqa: E402
     write_content_addressed,
     write_json_exclusive,
 )
+from scripts.grm_det1_baseline_registry import (  # noqa: E402
+    BaselineRegistryError,
+    load_live_registry,
+)
 
 
 def _one(directory: Path, pattern: str) -> Path:
@@ -47,6 +51,66 @@ def _valid_file_record(record: Mapping[str, Any]) -> bool:
         return path.is_file() and file_record(path) == dict(record)
     except (KeyError, OSError, TypeError, ValueError):
         return False
+
+
+def _current_reanchor(
+    run_dir: Path,
+    baseline_anchor: Mapping[str, Any],
+) -> tuple[Path, dict[str, Any]]:
+    candidates = []
+    for path in sorted(Path(run_dir).glob("det1_1_reanchor_*.json")):
+        value = read_json(path)
+        if value.get("baseline_anchor") != dict(baseline_anchor):
+            continue
+        if not (
+            value.get("schema") == "grm.det1.reanchor.v1"
+            and value.get("status") == "READY_TO_RESUME"
+            and _valid_file_record(value.get("order") or {})
+        ):
+            raise DETError(f"invalid current-anchor reanchor receipt: {path}")
+        amendment = value.get("source_amendment")
+        if amendment is not None and not _valid_file_record(amendment):
+            raise DETError(f"reanchor source amendment no longer validates: {path}")
+        frozen = value.get("frozen_artifacts_unchanged") or []
+        if not frozen or not all(_valid_file_record(record) for record in frozen):
+            raise DETError(f"reanchor frozen-artifact inventory drifted: {path}")
+        audit = value.get("historical_row_audit") or {}
+        if int(audit.get("comparison_count", -1)) != len(
+            audit.get("comparisons") or []
+        ):
+            raise DETError(f"reanchor historical audit is incomplete: {path}")
+        candidates.append((len(frozen), path, value))
+    if not candidates:
+        raise DETError("no validated DET1.1 reanchor receipt matches live registry")
+    _count, path, value = max(candidates, key=lambda item: (item[0], str(item[1])))
+    return path, value
+
+
+def _current_harbor_adjudication(
+    run_dir: Path,
+    baseline_anchor: Mapping[str, Any],
+) -> tuple[Path, dict[str, Any]]:
+    fixture_marker_path = (
+        Path(run_dir) / "eval" / "sup_fixtures"
+        / "correction_then_restatement" / "complete.json")
+    fixture_marker = read_json(fixture_marker_path)
+    record = fixture_marker.get("harbor_adjudication") or {}
+    if not _valid_file_record(record):
+        raise DETError("Harbor fixture marker lacks a valid adjudication binding")
+    path = _record_path(record)
+    value = read_json(path)
+    if not (
+        value.get("baseline_anchor") == dict(baseline_anchor)
+        and value.get("status")
+            == "PASS_STALE_CANONICAL_NOT_INSTRUMENTATION_LEAK"
+        and value.get("instrumented_matches_live_registration") is True
+        and value.get("instrumented_matches_live_harbor_raw_projection") is True
+        and value.get("instrumented_matches_authoritative_private_rerun") is True
+        and value.get("retired_guard_matches_instrumented_served") is False
+        and _valid_file_record(value.get("served_rows") or {})
+    ):
+        raise DETError(f"Harbor adjudication did not validate: {path}")
+    return path, value
 
 
 def fit(run_dir: Path) -> Path:
@@ -390,6 +454,43 @@ def report(run_dir: Path) -> Path:
         raise DETError(f"expected 24 unique eval rows, observed {len(rows)}")
     table, winners, verdict = race_metrics(rows, thresholds)
     g0_status, g0_detail = _gate_g0(rows, registration)
+    try:
+        _registry, baseline_anchor = load_live_registry()
+    except BaselineRegistryError as exc:
+        raise DETError(f"final live baseline registry is invalid: {exc}") from exc
+    reanchor_path, reanchor = _current_reanchor(run_dir, baseline_anchor)
+    harbor_path, harbor_adjudication = _current_harbor_adjudication(
+        run_dir, baseline_anchor)
+    sup_rows = read_jsonl(sup_rows_path)
+    sup_anchor_bad = [
+        str(row["row_id"]) for row in sup_rows
+        if row.get("baseline_anchor") != baseline_anchor
+        or (
+            row.get("variant") == "served"
+            and (
+                (row.get("served_baseline_comparison") or {}).get(
+                    "live_match") is not True
+                or (row.get("served_baseline_comparison") or {}).get(
+                    "instrumented_matches_authoritative_rerun") is not True
+            )
+        )
+        or (
+            row.get("variant") == "planted_miss"
+            and row.get("baseline_comparison_role") != "served_path_reference"
+        )
+    ]
+    if sup_anchor_bad:
+        raise DETError(
+            f"post-DET1.1 supersession rows lack a live registry anchor: {sup_anchor_bad}")
+    baseline_audit = {
+        "baseline_anchor": baseline_anchor,
+        "reanchor_receipt": file_record(reanchor_path),
+        "immutable_pre_fix_rows": reanchor["historical_row_audit"],
+        "harbor_adjudication": file_record(harbor_path),
+        "post_fix_sup_row_count": len(sup_rows),
+        "post_fix_sup_anchor_invalid": sup_anchor_bad,
+    }
+    g0_detail["registered_baseline_audit"] = baseline_audit
     g1_valid = bool(
         g1.get("status") == "PASS"
         and g1.get("byte_identical") is True
@@ -440,6 +541,10 @@ def report(run_dir: Path) -> Path:
         "runtime_frame": file_record(runtime_frame_path),
         "resolved_flags": dict(runtime_frame["resolved_flags"]),
         "eval_rows": [file_record(e2e_rows_path), file_record(sup_rows_path)],
+        "baseline_anchor": baseline_anchor,
+        "reanchor_receipt": file_record(reanchor_path),
+        "harbor_adjudication": file_record(harbor_path),
+        "registered_baseline_audit": baseline_audit,
     }
     race_path = write_content_addressed(run_dir, "race", race)
     table_text = race_table_markdown(table)
@@ -464,6 +569,8 @@ def report(run_dir: Path) -> Path:
         f"`{frame_flags['adm_decisive']}`; top-k `{frame_flags['topk']}`.",
         f"- Turn pipeline: `{frame_flags['turn_pipeline']}`; L1 length debias: `{frame_flags['length_debias']}`.",
         f"- Exact verbal wording: `{registration['verbal_question_exact']}`.",
+        f"- Live baseline registration: `{baseline_anchor['registration_id']}` "
+        f"(`{baseline_anchor['registration_hash']}`).",
         "",
         "## Gates",
         "",
@@ -496,12 +603,27 @@ def report(run_dir: Path) -> Path:
         f"- D-ENT entropy threshold: `{thresholds['D-ENT']['entropy_threshold']:.9g}` (strictly above).",
         f"- D-ENT margin threshold: `{thresholds['D-ENT']['margin_threshold']:.9g}` (strictly below).",
         "",
+        "## DET1.1 live-baseline anchor",
+        "",
+        f"- Registry SHA-256: `{baseline_anchor['registry']['sha256']}`.",
+        f"- Active registration SHA-256: `{baseline_anchor['registration_hash']}`.",
+        f"- Harbor adjudication: `{harbor_adjudication['status']}`; Harbor-only "
+        f"nonportable raw corroboration "
+        f"live match `{harbor_adjudication['instrumented_matches_live_harbor_raw_projection']}`; "
+        f"same-run authoritative match "
+        f"`{harbor_adjudication['instrumented_matches_authoritative_private_rerun']}`.",
+        f"- Immutable pre-fix served-row mismatches: "
+        f"`{[value['row_id'] for value in reanchor['historical_row_audit']['mismatches']]}`.",
+        f"- Post-fix supersession rows with invalid anchors: `{sup_anchor_bad}`.",
+        "",
         "## Files",
         "",
         f"- Registration: `{registration_path.relative_to(ROOT)}`",
         f"- Runtime frame: `{runtime_frame_path.relative_to(ROOT)}`",
         f"- Thresholds: `{thresholds_path.relative_to(ROOT)}`",
         f"- DET-G1 receipt: `{g1_path.relative_to(ROOT)}`",
+        f"- DET1.1 reanchor receipt: `{reanchor_path.relative_to(ROOT)}`",
+        f"- Harbor adjudication: `{harbor_path.relative_to(ROOT)}`",
         f"- Eval rows: `{e2e_rows_path.relative_to(ROOT)}`, `{sup_rows_path.relative_to(ROOT)}`",
         f"- Race JSON: `{race_path.relative_to(ROOT)}`",
         "",
@@ -511,7 +633,15 @@ def report(run_dir: Path) -> Path:
         "",
     ]
     report_path = run_dir / "GRM_DET1_REPORT.md"
-    write_json_exclusive(run_dir / "gate_statuses.json", gates)
+    gate_status_receipt = {
+        "schema": "grm.det1.gate_statuses.v2",
+        "gates": gates,
+        "baseline_anchor": baseline_anchor,
+        "reanchor_receipt": file_record(reanchor_path),
+        "harbor_adjudication": file_record(harbor_path),
+        "race": file_record(race_path),
+    }
+    write_json_exclusive(run_dir / "gate_statuses.json", gate_status_receipt)
     report_path.parent.mkdir(parents=True, exist_ok=True)
     with report_path.open("x", encoding="utf-8") as handle:
         handle.write("\n".join(lines))
