@@ -47,6 +47,12 @@ from core.grm_supersession import (  # noqa: E402
     sup_resolve_cli_argv,
     sup_resolve_enabled,
 )
+from core.grm_admission import (  # noqa: E402
+    admission_info_fields,
+    adm_decisive_cli_argv,
+    adm_decisive_enabled,
+    decisive_admission_profile,
+)
 from scripts.grm_probe_ladder import (  # noqa: E402
     build_probe_ladder_attempts,
     identifier_tokens_from_parts,
@@ -290,6 +296,16 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         default=None,
         help="resolve M5 supersession lineages at mount time (default ON; "
              "escape with --no-sup-resolve or GRM_SUP_RESOLVE=0)",
+    )
+    # GRM-ADM2: frozen A-DEC admission is permanently DEFAULT ON. The CLI
+    # pins experiment/restart frames; GRM_ADM_DECISIVE=0 is the registered
+    # byte-exact escape to fixed k=3 admission.
+    p.add_argument(
+        "--adm-decisive",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="use frozen A-DEC mount admission (default ON; escape with "
+             "--no-adm-decisive or GRM_ADM_DECISIVE=0)",
     )
     return p.parse_args(argv)
 
@@ -1065,19 +1081,40 @@ def _probe_ladder_chat(
     before = repo._snapshot_state()
     live_idx = {g for g, _ in arena.live_segs if g is not None}
     want = max(int(topk), 1)
-    route_limit = max(want, (int(max_trips) + 1) * want)
-    ranking = list(
-        arena.route(user_text, exclude=live_idx, limit=route_limit) or [])
+    admission_profile = None
+    if getattr(arena, "decisive_admission", False):
+        route_limit = max(want, (int(max_trips) + 1) * want)
+        admission_profile = decisive_admission_profile(
+            arena, user_text, exclude=live_idx, route_limit=route_limit)
+        ranking = list(admission_profile["ranking"])
+    else:
+        # GRM_ADM_DECISIVE=0 retains the legacy bounded route call exactly.
+        route_limit = max(want, (int(max_trips) + 1) * want)
+        ranking = list(
+            arena.route(user_text, exclude=live_idx, limit=route_limit) or [])
     id_tokens = _probe_identifier_tokens(arena, user_text)
     point_lookup = bool(id_tokens)
     precise = _probe_rank1_covers_identifiers(arena, ranking, id_tokens)
-    attempts = build_probe_ladder_attempts(
+    baseline_attempts = build_probe_ladder_attempts(
         ranking=ranking,
         topk=want,
         precise=precise,
         point_lookup=point_lookup,
         max_trips=int(max_trips),
     )
+    if admission_profile is None:
+        attempts = baseline_attempts
+    else:
+        first = (
+            [int(value) for value in admission_profile["rank_plan"]],
+            bool(point_lookup),
+        )
+        attempts = [first]
+        for candidate in [*baseline_attempts[1:], *baseline_attempts[:1]]:
+            normalized = ([int(value) for value in candidate[0]], bool(candidate[1]))
+            if normalized not in attempts:
+                attempts.append(normalized)
+        attempts = attempts[:max(1, int(max_trips) + 1)]
 
     for layer in arena.m.layers:
         layer.self_attn.live_shift = arena.live_shift
@@ -1148,6 +1185,8 @@ def _probe_ladder_chat(
             info["mount_dropped_for_width"] = [
                 i for i in planned if i not in set(picks)]
             info["ranking_ids"] = [int(x) for x in ranking]
+            if admission_profile is not None:
+                info.update(admission_info_fields(admission_profile))
             info = _probe_finish_deposit(
                 repo, before, user_text, ans, info, defer_memory=defer_memory)
             return ans, info
@@ -1205,6 +1244,8 @@ def _probe_ladder_chat(
                 "mount_dropped_for_width": list(last_planned),
                 "ranking_ids": [int(x) for x in ranking],
             })
+        if admission_profile is not None:
+            info.update(admission_info_fields(admission_profile))
         info = _probe_finish_deposit(
             repo, before, user_text, ans, info, defer_memory=defer_memory)
         return ans, info
@@ -1228,6 +1269,8 @@ def _probe_ladder_chat(
         i for i in planned if i not in set(picks)]
     info["ranking_ids"] = [int(x) for x in ranking]
     info["ungrounded_kept_first"] = True
+    if admission_profile is not None:
+        info.update(admission_info_fields(admission_profile))
     _probe_mount_snapshot(
         repo, arena, live_idx=live_idx, picks=picks,
         planned=planned, turn_idx=turn_idx)
@@ -1276,8 +1319,16 @@ def probe_multimount_chat(
     before = repo._snapshot_state()
     live_idx = {g for g, _ in arena.live_segs if g is not None}
     want = max(int(topk), 1)
-    ranking = list(arena.route(user_text, exclude=live_idx, limit=want) or [])
-    planned = [int(x) for x in ranking[:want]]
+    admission_profile = None
+    if getattr(arena, "decisive_admission", False):
+        admission_profile = decisive_admission_profile(
+            arena, user_text, exclude=live_idx, route_limit=want)
+        ranking = list(admission_profile["ranking"])
+        planned = [int(value) for value in admission_profile["rank_plan"]]
+    else:
+        ranking = list(
+            arena.route(user_text, exclude=live_idx, limit=want) or [])
+        planned = [int(x) for x in ranking[:want]]
     fitted = _budget_fit_mounts(arena, planned)
     # Seat in sorted order (matches arena._attempt / swap convention).
     picks = sorted(fitted)
@@ -1305,6 +1356,8 @@ def probe_multimount_chat(
     info["mount_fitted"] = picks
     info["mount_dropped_for_width"] = [
         i for i in planned if i not in set(picks)]
+    if admission_profile is not None:
+        info.update(admission_info_fields(admission_profile))
     info = _probe_finish_deposit(
         repo, before, user_text, ans, info, defer_memory=defer_memory)
     return ans, info
@@ -1340,6 +1393,7 @@ def load_model_and_repo(args: argparse.Namespace, session_dir: Path):
         "stop_sequences": HARMONY_STOPS,
         "storage_bits": 8,
         "revision_resolution": sup_resolve_enabled(args.sup_resolve),
+        "decisive_admission": adm_decisive_enabled(args.adm_decisive),
     }
     repo = GraftRepository(
         model,
@@ -1934,6 +1988,21 @@ def run_turn(
             "resumed": bool(resumed),
             "route_ranking": route_diag,
         })
+        if info.get("admission_policy") == "A-DEC":
+            probe_score["admission"] = {
+                key: info[key]
+                for key in (
+                    "admission_policy",
+                    "admission_policy_branch",
+                    "admission_rank_plan",
+                    "admission_identifier_hit_count",
+                    "admission_identified_candidates",
+                    "admission_route_margin_1_2",
+                    "admission_route_margin_evaluated",
+                    "admission_margin_threshold",
+                    "admission_rule_sha256",
+                )
+            }
         probe_rows.append(probe_score)
 
     row = {
@@ -2057,6 +2126,9 @@ def write_stage_timing(
             "max_trips": int(args.max_trips),
             "live_turns": int(args.live_turns),
             "storage_bits": 8,
+            "probe_ladder": bool(probe_ladder_enabled(args)),
+            "sup_resolve": bool(sup_resolve_enabled(args.sup_resolve)),
+            "adm_decisive": bool(adm_decisive_enabled(args.adm_decisive)),
         },
         "stages": stages,
         "turn_wall_ms_total": sum(turn_values),
@@ -2136,6 +2208,9 @@ def maybe_restart(args: argparse.Namespace, session_dir: Path, paths: dict[str, 
     # Freeze L2 independently too: a restart must not re-resolve against an
     # env change made after the parent process established its frame.
     argv += sup_resolve_cli_argv(sup_resolve_enabled(args.sup_resolve))
+    # Freeze A-DEC independently for the same reason: the restart belongs to
+    # the parent process's admission frame even if its environment changes.
+    argv += adm_decisive_cli_argv(adm_decisive_enabled(args.adm_decisive))
     os.execvpe(sys.executable, argv, os.environ.copy())
 
 
@@ -2197,6 +2272,7 @@ def main(argv: list[str]) -> int:
             "turn_pipeline": args.turn_pipeline,
             "probe_ladder": bool(probe_ladder_enabled(args)),
             "sup_resolve": bool(sup_resolve_enabled(args.sup_resolve)),
+            "adm_decisive": bool(adm_decisive_enabled(args.adm_decisive)),
             "vram_budget_mb": (
                 int(args.vram_budget_mb)
                 if args.vram_budget_mb is not None else None),
@@ -2215,6 +2291,8 @@ def main(argv: list[str]) -> int:
                     "GRM_MOUNT_SNAPSHOT_DIR", ""),
                 "GRM_PROBE_LADDER": os.environ.get("GRM_PROBE_LADDER", ""),
                 "GRM_SUP_RESOLVE": os.environ.get("GRM_SUP_RESOLVE", ""),
+                "GRM_ADM_DECISIVE": os.environ.get(
+                    "GRM_ADM_DECISIVE", ""),
             },
             "gpu_idle_check": idle,
             "script": script,

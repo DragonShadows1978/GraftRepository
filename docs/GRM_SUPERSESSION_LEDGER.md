@@ -139,3 +139,119 @@ Plan: GRM_SUPERSESSION_PLAN.md (immutable, b5428f9).
   `length_debias=False, revision_resolution=False`; ADM1's two arenas do
   the same and its E2E subprocess passes `--no-sup-resolve`. Their old-
   default experimental frames therefore do not inherit this flip.
+
+## 2026-08-31 — GRM-ADM2.1 A-DEC DEFAULT FLIP (operator decision; live re-registration pending)
+
+- Operator decision: David delegated the flip; the GRM-ADM2.1 amendment
+  requires full A-DEC adoption and replaces ADM2's erroneous zero-answer-
+  change stop with exactly one allowed and required improvement. The frozen
+  rule is
+  `artifacts/grm_adm1/run_20260830T093538Z_3defaa/decisiveness_rule_c304609f81475bd2.json`,
+  SHA-256
+  `c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91`:
+  zero identifier bindings select k=3; two or more select the complete
+  identified set; one rank-1 binding, or the strict fitted margin above
+  `0.1385774091529802`, selects k=1; the remaining one-hit case keeps k=3.
+- A-DEC is now DEFAULT ON in `ArenaCache`. Resolution order is explicit
+  constructor/CLI choice, then `GRM_ADM_DECISIVE`, then permanent default ON.
+  The constructor field is `decisive_admission`; E2E exposes
+  `--adm-decisive` / `--no-adm-decisive` and freezes the resolved value across
+  restart. The byte-covered legacy escape is `GRM_ADM_DECISIVE=0`, which
+  executes the original bounded fixed-k=3 route/admission branch and emits no
+  A-DEC arena fields.
+
+### Headline answer improvement and evidence
+
+- The answer-change enumeration is exactly one row:
+  `supersession:praxis_fresh`, wrong
+  `The current Praxis dock value is Raven-9-Ivory.` under legacy k=3, to
+  correct `The current Praxis dock value is Quartz-8-Jade.` under A-DEC k=1.
+  The wrong read is in the CMC live G0 receipt
+  `artifacts/grm_cmc1/live_arms_20260830T092447Z_4056005/g0_95d6dcb605db1bf0.json`,
+  SHA-256
+  `95d6dcb605db1bf0c16d2c54f70ba531040b6a7f799e50f0dcac0837c982e39c`;
+  the CMC arc convicted value blending in
+  `artifacts/grm_cmc2/live_sweep_20260830T170021Z_4124360/adjudication_ba6821ccf299ac17.json`,
+  SHA-256
+  `ba6821ccf299ac170ff27e685e91af5c76c82ba09ebc62e1150e6b40714788e3`.
+  The correct A-DEC k=1 read and adoption recommendation are in
+  `artifacts/grm_adm1/adm1_3_prod_run_20260830T161236Z_3eaccb/dual_frame_adjudication_c83a45c60e9fe50b.json`,
+  SHA-256
+  `c83a45c60e9fe50b76e63fd63e680f6dab1aaab47628cf030057a8a655600da9`.
+  Every other recorded answer is byte-stable; any second answer change is
+  RED.
+- The frozen ADM1.3 F-PROD adoption anchors are CORPUS-100 20/20,
+  supersession fresh controls 2/2, E2E-34 9/9, and P4-34 9/9. Both 34-turn
+  answer-transcript projections have SHA-256
+  `0318050b357bd651eb70b36e82fcf4ab203752e70049c600974322bd3b0f0889`.
+  The amended full supersession target is correct 5/5, stale 0/5,
+  wrong-fact 0/5.
+
+### Enumerated mount and arena-field re-registrations
+
+- The physical enumeration is 49 turns: 40
+  `exactly_one_identifier_decisive_rank1` and 9
+  `declared_synthesis_identified_set`. The exact per-row legacy/A-DEC rank
+  plans, final mounts, changed result fields, and changed arena fields are in
+  `artifacts/grm_adm2/default_on_20260831T150306599577Z_2/registered_acceptance.json`,
+  SHA-256
+  `fa8d11fea02f5878c339dbf617df2f88ccfcf1100fe11cf357377fcdb0a7f028`.
+- Lookup, 22 turns: `corpus100:apiary:1`, `corpus100:apiary:4`,
+  `corpus100:sonde:4`, `corpus100:sonde:1`,
+  `corpus100:geothermal:7`, `corpus100:geothermal:8`,
+  `corpus100:ticket:0`, `corpus100:ticket:5`, `corpus100:vessel:3`,
+  `corpus100:vessel:2`, `corpus100:depot:6`, `corpus100:depot:9`,
+  `corpus100:yeast:9`, `corpus100:yeast:6`, `corpus100:loco:2`,
+  `corpus100:loco:3`, `corpus100:psalter:5`, `corpus100:psalter:0`,
+  `corpus100:reef:8`, `corpus100:reef:7`,
+  `supersession:praxis_fresh`, and `supersession:solace_fresh`.
+  Lookup arena-field changes are confined to `evicted`, `mounts`, and
+  `resident` on the two supersession controls; the corpus rows change their
+  admission/rank-plan receipt fields while retaining their final correct
+  mount. Praxis is the sole row whose answer, correctness, and wrong-read
+  fields also change.
+- DIAG, 9 turns: `diag:turn-5:orion-pin`,
+  `diag:turn-9:cypher-bridge`, `diag:turn-13:orion-pin`,
+  `diag:turn-16:lyra-dock`, `diag:turn-19:nova-key`,
+  `diag:turn-22:mira-seal`, `diag:turn-24:terra-port`,
+  `diag:turn-26:ember-code`, and `diag:turn-30:atlas-tone`.
+- E2E-34, 9 turns: `e2e-anchor:turn-5:orion-pin`,
+  `e2e-anchor:turn-9:cypher-bridge`, `e2e-anchor:turn-13:orion-pin`,
+  `e2e-anchor:turn-16:lyra-dock`, `e2e-anchor:turn-19:nova-key`,
+  `e2e-anchor:turn-22:mira-seal`, `e2e-anchor:turn-24:terra-port`,
+  `e2e-anchor:turn-26:ember-code`, and
+  `e2e-anchor:turn-30:atlas-tone`.
+- P4-34, 9 turns: `p4-anchor:turn-5:orion-pin`,
+  `p4-anchor:turn-9:cypher-bridge`, `p4-anchor:turn-13:orion-pin`,
+  `p4-anchor:turn-16:lyra-dock`, `p4-anchor:turn-19:nova-key`,
+  `p4-anchor:turn-22:mira-seal`, `p4-anchor:turn-24:terra-port`,
+  `p4-anchor:turn-26:ember-code`, and `p4-anchor:turn-30:atlas-tone`.
+  Across DIAG/E2E/P4, arena changes are confined to the enumerated
+  `driver_topk`, `ranking_ids`, `mount_plan`, `mount_dropped_for_width`, and
+  `precise_first` surfaces; result changes are confined to `arena_info` and
+  the A-DEC policy/plan/production-ladder receipt fields. Answers do not
+  change.
+
+### Validation, pins, and remaining live gate
+
+- CPU receipt/hash gate PASS; focused admission/ladder/supersession/snapshot
+  suite 53/53 PASS. The broad GRM collection reached 504/509 PASS; the five
+  failures are the existing importance-telemetry constructors that allocate
+  real TensorCUDA tensors, and all failed with `cudaMalloc failed: no
+  CUDA-capable device is detected` because this managed worker exposed no
+  `/dev/nvidia*` device nodes. No admission assertion failed.
+- Historical counterfactual frames are explicit: ADM1, ADM1.3, CMC1 arms,
+  CMC2, and both legs of the L2-only default-on gate pin A-DEC off. DET1 needs
+  no pin: its order and implementation resolve the production default at GPU
+  start, record `adm_decisive` and the exact environment in the runtime-frame
+  receipt, and plant the withheld winner, making admission non-variable in
+  that race.
+- Live new-default, `GRM_ADM_DECISIVE=0` byte-projection, amended 5/5
+  supersession, both 34-turn sessions, shared suite, and full suite receipts
+  remain PENDING because this worker cannot allocate CUDA. The registered
+  serialized runner is:
+  `PYTHONPATH=/mnt/ForgeRealm/GraftRepository python3 scripts/grm_adm2_default_on_gate.py --stage all`.
+  It self-leases `/tmp/forge-gpu.lock`, caps each leg below 590 seconds,
+  writes a new append-only run directory, and refuses the run on any second
+  answer change. New live default/escape baseline hashes must come from that
+  run; none are fabricated here.
