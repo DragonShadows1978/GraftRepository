@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Registered GRM-ADM2.1 A-DEC default-on acceptance runner.
+"""Registered GRM-ADM2.2 A-DEC default-on acceptance runner.
 
 CPU-only invocation validates the frozen ADM1.3 and CMC receipts and emits
 the complete pre-live re-registration enumeration. ``--stage all`` creates a
@@ -489,6 +489,84 @@ def _probe_rows(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
             if row.get("record_type") == "supersession_probe_receipt"]
 
 
+def _supersession_answer_deltas(
+    anchor: Mapping[str, Mapping[str, Any]],
+    live: Mapping[str, Mapping[str, Any]],
+) -> dict[str, list[dict[str, Any]]]:
+    """Separate semantic answer changes from byte-only phrasing changes."""
+    if set(anchor) != set(live):
+        raise GateError(
+            "supersession probe set drift: "
+            f"anchor={sorted(anchor)} live={sorted(live)}")
+
+    semantic_changes = []
+    byte_only_changes = []
+    for probe_id in sorted(anchor):
+        before = anchor[probe_id]
+        after = live[probe_id]
+        delta = {
+            "probe_id": probe_id,
+            "before_answer": str(before["answer_text"]),
+            "after_answer": str(after["answer_text"]),
+            "before_classification": before.get("classification"),
+            "after_classification": after.get("classification"),
+            "before_extracted_value": before.get("classification_match"),
+            "after_extracted_value": after.get("classification_match"),
+        }
+        semantic_changed = (
+            delta["before_classification"] != delta["after_classification"]
+            or delta["before_extracted_value"] != delta["after_extracted_value"]
+        )
+        answer_bytes_changed = (
+            delta["before_answer"] != delta["after_answer"])
+        if semantic_changed:
+            semantic_changes.append(delta)
+        elif answer_bytes_changed:
+            byte_only_changes.append(delta)
+    return {
+        "semantic_changes": semantic_changes,
+        "byte_only_changes": byte_only_changes,
+    }
+
+
+def _assert_adm2_2_supersession_enumeration(
+    anchor: Mapping[str, Mapping[str, Any]],
+    live: Mapping[str, Mapping[str, Any]],
+) -> dict[str, list[dict[str, Any]]]:
+    """Enforce the two explicitly registered ADM2.2 answer deltas."""
+    deltas = _supersession_answer_deltas(anchor, live)
+    required_semantic_change = [{
+        "probe_id": "praxis_fresh",
+        "before_answer": "The current Praxis dock value is Raven-9-Ivory.",
+        "after_answer": "The current Praxis dock value is Quartz-8-Jade.",
+        "before_classification": "wrong-fact",
+        "after_classification": "correct",
+        "before_extracted_value": "raven-9-ivory",
+        "after_extracted_value": "quartz-8-jade",
+    }]
+    allowed_byte_only_change = [{
+        "probe_id": "orion_current",
+        "before_answer": "The current Orion pin value is Kestrel-9-Tango.",
+        "after_answer": (
+            "The current Orion pin value is Kestrel-9-Tango, replacing "
+            "Auric-4-Alpha."
+        ),
+        "before_classification": "correct",
+        "after_classification": "correct",
+        "before_extracted_value": "kestrel-9-tango",
+        "after_extracted_value": "kestrel-9-tango",
+    }]
+    if deltas["semantic_changes"] != required_semantic_change:
+        raise GateError(
+            "supersession semantic-change enumeration drift: "
+            f"{deltas['semantic_changes']}")
+    if deltas["byte_only_changes"] != allowed_byte_only_change:
+        raise GateError(
+            "supersession byte-only enumeration drift: "
+            f"{deltas['byte_only_changes']}")
+    return deltas
+
+
 def _sup_projection(rows: Sequence[Mapping[str, Any]]) -> bytes:
     return canonical_rows_bytes(
         {key: value for key, value in row.items() if key not in ENVELOPE_KEYS}
@@ -530,18 +608,15 @@ def run_supersession(run_dir: Path, *, decisive: bool) -> dict[str, Any]:
     anchor_rows = read_jsonl(L2_LEGACY_DEFAULT)
     anchor = {row["probe_id"]: row for row in _probe_rows(anchor_rows)}
     live = {row["probe_id"]: row for row in probes}
-    answer_changes = [
+    answer_byte_changes = [
         probe_id for probe_id in sorted(anchor)
         if anchor[probe_id]["answer_text"] != live[probe_id]["answer_text"]
     ]
+    answer_deltas = _supersession_answer_deltas(anchor, live)
     if decisive:
         if counts != {"correct": 5, "stale": 0, "wrong-fact": 0}:
             raise GateError(f"A-DEC supersession battery score drift: {counts}")
-        if answer_changes != ["praxis_fresh"]:
-            raise GateError(f"supersession answer enumeration drift: {answer_changes}")
-        praxis = live["praxis_fresh"]
-        if praxis["answer_text"] != "The current Praxis dock value is Quartz-8-Jade.":
-            raise GateError("live praxis default did not return Quartz-8-Jade")
+        answer_deltas = _assert_adm2_2_supersession_enumeration(anchor, live)
     else:
         if _sup_projection(rows) != _sup_projection(anchor_rows):
             raise GateError("GRM_ADM_DECISIVE=0 supersession transcript drifted")
@@ -552,12 +627,15 @@ def run_supersession(run_dir: Path, *, decisive: bool) -> dict[str, Any]:
         if keys:
             changes[probe_id] = keys
     result = {
-        "schema": "grm.adm2.supersession_stage.v1",
+        "schema": "grm.adm2.supersession_stage.v2",
         "stage": stage,
         "status": "PASS",
         "decisive_admission": bool(decisive),
         "classification_counts": counts,
-        "answer_changes_vs_legacy_default": answer_changes,
+        "answer_byte_changes_vs_legacy_default": answer_byte_changes,
+        "semantic_changes_vs_legacy_default": answer_deltas["semantic_changes"],
+        "byte_only_reregistrations_vs_legacy_default": (
+            answer_deltas["byte_only_changes"]),
         "changed_probe_fields_vs_legacy_default": changes,
         "receipt": file_record(receipt),
         "transcript_sha256": sha256_bytes(_sup_projection(rows)),
@@ -797,6 +875,7 @@ def _write_manifest(run_dir: Path, args: argparse.Namespace) -> None:
     sources = (
         ROOT / "orders" / "GRM_ADM2_ADEC_DEFAULT_ON.md",
         ROOT / "orders" / "GRM_ADM2_1_PROCEED.md",
+        ROOT / "orders" / "GRM_ADM2_2_ORION_PHRASING.md",
         ROOT / "core" / "grm_admission.py",
         ROOT / "core" / "graft_arena.py",
         ROOT / "scripts" / "grm_e2e_session.py",
@@ -830,7 +909,8 @@ def summarize(run_dir: Path) -> dict[str, Any]:
         raise GateError("not every ADM2 stage passed")
     gates = {
         "ADM2-FROZEN-RULE": "PASS",
-        "ADM2-ONE-ANSWER-CHANGE": "PASS",
+        "ADM2-SEMANTIC-CHANGE-ENUMERATION": "PASS",
+        "ADM2-ORION-BYTE-REREGISTRATION": "PASS",
         "ADM2-LOOKUP-F-PROD": "PASS",
         "ADM2-SUPERSESSION-BATTERY": "PASS",
         "ADM2-ESCAPE-BYTE-IDENTITY": "PASS",
@@ -841,7 +921,7 @@ def summarize(run_dir: Path) -> dict[str, Any]:
         "ADM2-DET1-COORDINATION": "PASS",
     }
     result = {
-        "schema": "grm.adm2.default_on_gate.v1",
+        "schema": "grm.adm2.default_on_gate.v2",
         "status": "PASS",
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "run_dir": relative(run_dir),
@@ -858,7 +938,13 @@ def summarize(run_dir: Path) -> dict[str, Any]:
             "E2E-34": stages["e2e_default"]["score"],
             "P4-34": stages["p4_default"]["score"],
         },
-        "answer_changes": registration["answer_changes"],
+        "registered_physical_semantic_changes": registration["answer_changes"],
+        "live_semantic_changes": (
+            stages["supersession_default"]
+            ["semantic_changes_vs_legacy_default"]),
+        "live_byte_only_reregistrations": (
+            stages["supersession_default"]
+            ["byte_only_reregistrations_vs_legacy_default"]),
         "re_registered_turns": registration["re_registered_turns"],
         "live_supersession_field_changes": (
             stages["supersession_default"]["changed_probe_fields_vs_legacy_default"]),

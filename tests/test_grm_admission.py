@@ -15,6 +15,10 @@ from core.grm_admission import (
     policy_plan,
 )
 from core.graft_arena import ArenaCache
+from scripts.grm_adm2_default_on_gate import (
+    GateError,
+    _assert_adm2_2_supersession_enumeration,
+)
 
 
 def test_adm_decisive_default_on_and_escape_tokens(monkeypatch):
@@ -230,3 +234,73 @@ def test_step_default_applies_plan_but_escape_retains_legacy_route(monkeypatch):
     assert legacy.cur_mounts == [0, 1, 2]
     assert legacy_route_calls == [("Praxis dock?", set(), 3)]
     assert "admission_policy" not in legacy_info
+
+
+def _adm2_2_answer_rows():
+    anchor = {
+        "orion_current": {
+            "answer_text": "The current Orion pin value is Kestrel-9-Tango.",
+            "classification": "correct",
+            "classification_match": "kestrel-9-tango",
+        },
+        "praxis_fresh": {
+            "answer_text": "The current Praxis dock value is Raven-9-Ivory.",
+            "classification": "wrong-fact",
+            "classification_match": "raven-9-ivory",
+        },
+        "stable": {
+            "answer_text": "stable bytes",
+            "classification": "correct",
+            "classification_match": "stable-value",
+        },
+    }
+    live = {
+        "orion_current": {
+            "answer_text": (
+                "The current Orion pin value is Kestrel-9-Tango, replacing "
+                "Auric-4-Alpha."
+            ),
+            "classification": "correct",
+            "classification_match": "kestrel-9-tango",
+        },
+        "praxis_fresh": {
+            "answer_text": "The current Praxis dock value is Quartz-8-Jade.",
+            "classification": "correct",
+            "classification_match": "quartz-8-jade",
+        },
+        "stable": dict(anchor["stable"]),
+    }
+    return anchor, live
+
+
+def test_adm2_2_enumeration_accepts_praxis_semantic_and_orion_bytes_only():
+    anchor, live = _adm2_2_answer_rows()
+    deltas = _assert_adm2_2_supersession_enumeration(anchor, live)
+
+    assert [row["probe_id"] for row in deltas["semantic_changes"]] == [
+        "praxis_fresh"]
+    assert [row["probe_id"] for row in deltas["byte_only_changes"]] == [
+        "orion_current"]
+    orion = deltas["byte_only_changes"][0]
+    assert orion["before_classification"] == orion["after_classification"]
+    assert orion["before_extracted_value"] == orion["after_extracted_value"]
+
+
+@pytest.mark.parametrize("field,value", [
+    ("classification", "wrong-fact"),
+    ("classification_match", "auric-4-alpha"),
+])
+def test_adm2_2_enumeration_rejects_orion_semantic_drift(field, value):
+    anchor, live = _adm2_2_answer_rows()
+    live["orion_current"][field] = value
+
+    with pytest.raises(GateError, match="semantic-change enumeration drift"):
+        _assert_adm2_2_supersession_enumeration(anchor, live)
+
+
+def test_adm2_2_enumeration_rejects_unregistered_byte_only_drift():
+    anchor, live = _adm2_2_answer_rows()
+    live["stable"]["answer_text"] = "stable value, extra phrasing"
+
+    with pytest.raises(GateError, match="byte-only enumeration drift"):
+        _assert_adm2_2_supersession_enumeration(anchor, live)
