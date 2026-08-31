@@ -44,7 +44,7 @@ synthesis. Later programs use the linked append-only ledgers.
 | Exact ragged GQA CUDA router | 175/175 semantic parity; 512 nodes p50 1.59 ms; disabled by default | [ragged ledger](GRM_GQA_EXACT_RAGGED_CUDA_LEDGER.md) |
 | Graft storage quantization | INT8 was free at 1.88× disk compression; INT6 was the last green depth at 2.46×; packed on-disk format landed | [quantization ledger](GRM_GRAFT_QUANT_LEDGER.md) |
 | Trinity NoPE grafts | Former README claim retained: recall at `live_shift=789`, twice GPT-OSS's word-salad depth, with carriage controls (`fdc478c`). **Planned / unconfirmed:** no matching `docs/` receipt was found. | unconfirmed |
-| Supersession L2 | Stale answers 2/5 → 0/5; multi-hop mounts lineage head only; resolve-only diagnostic attributes 100% of the gain to L2; flag default off | [supersession ledger](GRM_SUPERSESSION_LEDGER.md) |
+| Supersession L2 | Stale answers 2/5 → 0/5; multi-hop mounts lineage head only; resolve-only diagnostic attributes 100% of the gain to L2. Default ON by operator decision 2026-08-30; `GRM_SUP_RESOLVE=0` restores legacy behavior. L1 length-debias remains default off. | [supersession ledger](GRM_SUPERSESSION_LEDGER.md) |
 | S4 grounding-hit importance | Median Spearman 0.7556 and top-1 87.5% vs teacher-forced counterfactual arbiter, with no extra forward passes | [S4 ledger](GRM_S4_LEDGER.md) |
 | M11 fold-after-recovery guard | Crash-recovered placeholder fold bug and guard are recorded. Former README's exact “11 regressions crash pre-fix” count has no matching `docs/` receipt. | [bug queue](GRM_BUG_QUEUE.md); exact count unconfirmed |
 
