@@ -43,6 +43,12 @@ from scripts.grm_det1_common import (  # noqa: E402
     write_content_addressed,
     write_json_exclusive,
 )
+from scripts.grm_det1_baseline_registry import (  # noqa: E402
+    BaselineRegistryError,
+    compare_served_to_live_registry,
+    load_live_registry,
+    registered_projection,
+)
 
 
 LOCK_PATH = Path("/tmp/forge-gpu.lock")
@@ -58,6 +64,16 @@ MODEL_DIR = Path(
     f"snapshots/{MODEL_REVISION}"
 )
 NATIVE_LIB = ROOT / "cpp" / "build" / "libgrm_runtime.so"
+DET1_1_ORDER = ROOT / "orders" / "GRM_DET1_1_FRAME_REANCHOR.md"
+SOURCE_AMENDMENT_NAME = "det1_1_source_amendment.json"
+DET1_1_ADDED_SOURCES = frozenset((
+    "scripts/grm_det1_baseline_registry.py",
+))
+DET1_1_AMENDED_SOURCES = frozenset((
+    "scripts/grm_det1_analyze.py",
+    "scripts/grm_det1_e2e.py",
+    "scripts/grm_det1_gpu.py",
+))
 STAGE_ORDER = (
     "g1_baseline",
     "g1_off",
@@ -210,7 +226,80 @@ def _registration(run_dir: Path) -> Path:
     return _one(run_dir, "registration_*.json")
 
 
-def _check_inventory(registration: Mapping[str, Any]) -> None:
+def _source_amendment(
+    run_dir: Path,
+    registration: Mapping[str, Any],
+    registration_path: Path,
+) -> dict[str, Any]:
+    path = run_dir / SOURCE_AMENDMENT_NAME
+    if not path.is_file():
+        raise DETError(
+            "registered DET1 source drift requires the explicit DET1.1 "
+            f"amendment receipt {path}")
+    value = read_json(path)
+    if value.get("schema") != "grm.det1.source_amendment.v1":
+        raise DETError("unsupported DET1.1 source-amendment schema")
+    if value.get("order") != file_record(DET1_1_ORDER):
+        raise DETError("DET1.1 source amendment is not bound to the live order")
+    if value.get("registration") != file_record(registration_path):
+        raise DETError("DET1.1 source amendment is not bound to this registration")
+    amendment_anchor = value.get("baseline_anchor_at_amendment") or {}
+    if not (
+        isinstance(amendment_anchor, dict)
+        and amendment_anchor.get("registration_hash")
+        and (amendment_anchor.get("registry") or {}).get("sha256")
+    ):
+        raise DETError("DET1.1 source amendment lacks its creation-time baseline anchor")
+    allowed = value.get("allowed_source_changes") or {}
+    if not isinstance(allowed, dict) or set(allowed) != DET1_1_AMENDED_SOURCES:
+        raise DETError(
+            "DET1.1 amended-source set drifted: "
+            f"expected={sorted(DET1_1_AMENDED_SOURCES)} "
+            f"observed={sorted(allowed) if isinstance(allowed, dict) else allowed}")
+    registered = registration["production_source_inventory"]
+    for shown, change in allowed.items():
+        if shown not in registered or change.get("before") != registered[shown]:
+            raise DETError(f"DET1.1 amendment has invalid before-record for {shown}")
+        source = ROOT / shown
+        observed = {
+            "bytes": source.stat().st_size if source.is_file() else None,
+            "sha256": sha256_file(source) if source.is_file() else None,
+        }
+        if observed != change.get("after"):
+            raise DETError(
+                f"DET1.1 amended source drifted: {shown}: "
+                f"authorized={change.get('after')} observed={observed}")
+    added = value.get("added_sources") or {}
+    if not isinstance(added, dict) or set(added) != DET1_1_ADDED_SOURCES:
+        raise DETError(
+            "DET1.1 source amendment added-source set drifted: "
+            f"expected={sorted(DET1_1_ADDED_SOURCES)} "
+            f"observed={sorted(added) if isinstance(added, dict) else added}")
+    for shown, expected in added.items():
+        source = ROOT / shown
+        observed = {
+            "bytes": source.stat().st_size if source.is_file() else None,
+            "sha256": sha256_file(source) if source.is_file() else None,
+        }
+        if observed != expected:
+            raise DETError(
+                f"DET1.1 added source drifted: {shown}: "
+                f"authorized={expected} observed={observed}")
+    frozen = value.get("frozen_artifacts_unchanged") or []
+    if not isinstance(frozen, list) or len(frozen) < 4:
+        raise DETError("DET1.1 amendment lacks frozen-artifact bindings")
+    for index, record in enumerate(frozen):
+        _validate_file_record(record, f"DET1.1 frozen artifact {index}")
+    return value
+
+
+def _check_inventory(
+    registration: Mapping[str, Any],
+    *,
+    run_dir: Path,
+    registration_path: Path,
+) -> None:
+    drift: dict[str, dict[str, Any]] = {}
     for shown, expected in registration["production_source_inventory"].items():
         path = Path(shown)
         if not path.is_absolute():
@@ -219,9 +308,19 @@ def _check_inventory(registration: Mapping[str, Any]) -> None:
             raise DETError(f"registered source disappeared: {path}")
         observed = {"bytes": path.stat().st_size, "sha256": sha256_file(path)}
         if observed != expected:
+            drift[shown] = {"expected": expected, "observed": observed}
+    if drift:
+        amendment = _source_amendment(run_dir, registration, registration_path)
+        allowed = amendment["allowed_source_changes"]
+        unauthorized = {
+            shown: values for shown, values in drift.items()
+            if shown not in allowed or values["observed"] != allowed[shown].get("after")
+        }
+        surplus = sorted(set(allowed) - set(drift))
+        if unauthorized or surplus:
             raise DETError(
-                f"source drift after pre-data registration: {shown}: "
-                f"expected={expected} observed={observed}")
+                "source drift exceeds DET1.1 guard-only amendment: "
+                f"unauthorized={unauthorized} surplus={surplus}")
     for shown, expected in registration.get("model_snapshot_inventory", {}).items():
         path = Path(shown)
         observed = {
@@ -244,7 +343,11 @@ def _resolve_runtime_frame(
 ) -> Path:
     registration_path = _registration(run_dir)
     registration = read_json(registration_path)
-    _check_inventory(registration)
+    _check_inventory(
+        registration,
+        run_dir=run_dir,
+        registration_path=registration_path,
+    )
     existing = sorted(run_dir.glob("runtime_frame_*.json"))
     if existing:
         if len(existing) != 1:
@@ -259,6 +362,7 @@ def _resolve_runtime_frame(
             raise DETError("CUDA_VISIBLE_DEVICES differs from the frozen runtime frame")
         if int(frame["gpu_lease"]["actual_cap_seconds"]) != int(lease_seconds):
             raise DETError("lease cap differs from the frozen runtime frame")
+        _live_baseline_anchor(frame)
         return path
     from scripts import grm_e2e_session as e2e
     from core.grm_admission import adm_decisive_enabled
@@ -328,6 +432,7 @@ def _resolve_runtime_frame(
         },
         "source_inventory_match": True,
     }
+    frame["baseline_anchor"] = _live_baseline_anchor(frame)
     return write_content_addressed(run_dir, "runtime_frame", frame)
 
 
@@ -409,6 +514,29 @@ def _runtime_env(runtime_frame: Mapping[str, Any]) -> dict[str, str]:
     return env
 
 
+def _live_baseline_anchor(
+    runtime_frame: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    try:
+        registry, anchor = load_live_registry()
+    except BaselineRegistryError as exc:
+        raise DETError(f"live registered-baseline registry is invalid: {exc}") from exc
+    if runtime_frame is not None:
+        active_flags = dict(
+            (registry.get("active_registration") or {}).get("resolved_flags") or {})
+        frame_flags = dict(runtime_frame.get("resolved_flags") or {})
+        mismatches = {
+            key: {"registry": value, "runtime_frame": frame_flags.get(key)}
+            for key, value in active_flags.items()
+            if frame_flags.get(key) != value
+        }
+        if mismatches:
+            raise DETError(
+                "live baseline registration flags differ from DET1 runtime frame: "
+                f"{mismatches}")
+    return anchor
+
+
 def _receipt_context(
     runtime_frame: Mapping[str, Any],
     *,
@@ -429,6 +557,7 @@ def _receipt_context(
         "cuda_visible_devices": str(runtime_frame["cuda_visible_devices"]),
         "lease_seconds": int(lease_seconds),
         "environment_pins": {key: pins[key] for key in pin_keys},
+        "baseline_anchor": _live_baseline_anchor(runtime_frame),
     }
 
 
@@ -534,6 +663,7 @@ def _finalize_g1(run_dir: Path, runtime_frame_path: Path) -> Path:
             "complete deterministic production transcript and scorecard; "
             "timing/session-path artifacts are excluded"
         ),
+        "baseline_anchor": _live_baseline_anchor(runtime_frame),
     }
     path = write_content_addressed(run_dir / "g1", "g1_receipt", receipt)
     if receipt["status"] != "PASS":
@@ -808,6 +938,82 @@ def _sup_stage(
             raise DETError(
                 f"sup fixture {session_id} expected {expected_fixture_rows} "
                 f"rows, observed {len(fixture_rows)}")
+        harbor_adjudication_path = None
+        if session_id == "correction_then_restatement":
+            served_rows = [
+                row for row in fixture_rows
+                if row.get("fixture_id") == "sup_harbor_restatement"
+                and row.get("variant") == "served"
+            ]
+            if len(served_rows) != 1:
+                raise DETError(
+                    "Harbor adjudication requires exactly one served row")
+            served_row = served_rows[0]
+            comparison = dict(served_row.get("baseline_comparison") or {})
+            if not comparison:
+                comparison = dict(
+                    served_row.get("served_baseline_comparison") or {})
+            retired_guard = dict(
+                comparison.get("retired_private_guard_projection") or {})
+            observed = dict(comparison.get("observed") or {})
+            expected = dict(comparison.get("expected") or {})
+            registered_source = dict(
+                expected.get("registered_source_row") or {})
+            live_raw_projection = {
+                "answer": registered_source.get("answer_text"),
+                "mounted_ids": registered_source.get("mounted_indices"),
+            }
+            observed_raw_projection = {
+                "answer": str(served_row.get("answer", "")),
+                "mounted_ids": [
+                    int(value) for value in served_row.get("mounted_ids", ())],
+            }
+            old_guard_projection = {
+                "answer": retired_guard.get("answer"),
+                "mounted_ids": retired_guard.get("mount_fitted_pre_resolution"),
+            }
+            authoritative_private = dict(
+                comparison.get("authoritative_private_rerun_projection") or {})
+            adjudication = {
+                "schema": "grm.det1.harbor_adjudication.v1",
+                "status": "PASS_STALE_CANONICAL_NOT_INSTRUMENTATION_LEAK",
+                "fixture_id": "sup_harbor_restatement",
+                "baseline_anchor": comparison.get("anchor"),
+                "instrumented_served_projection": observed,
+                "live_registered_projection": expected,
+                "instrumented_matches_live_registration": (
+                    comparison.get("live_match") is True),
+                "instrumented_raw_projection": observed_raw_projection,
+                "live_registered_raw_projection": live_raw_projection,
+                "raw_projection_scope": (
+                    "Harbor-only nonportable corroboration required by "
+                    "ORDER GRM-DET1.1; not the cross-model family comparator"),
+                "instrumented_matches_live_harbor_raw_projection": (
+                    observed_raw_projection == live_raw_projection),
+                "retired_private_guard_projection": old_guard_projection,
+                "retired_guard_matches_instrumented_served": (
+                    old_guard_projection == observed_raw_projection),
+                "authoritative_private_rerun_projection": authoritative_private,
+                "instrumented_matches_authoritative_private_rerun": (
+                    comparison.get(
+                        "instrumented_matches_authoritative_rerun") is True),
+                "cause": (
+                    "retired guard selected pre-L2 mount_fitted rather than "
+                    "authoritative final arena.cur_mounts"
+                ),
+                "served_rows": file_record(fixture_rows_path),
+            }
+            if not (
+                adjudication["instrumented_matches_live_registration"] is True
+                and adjudication[
+                    "instrumented_matches_live_harbor_raw_projection"] is True
+                and adjudication[
+                    "instrumented_matches_authoritative_private_rerun"] is True
+                and adjudication["retired_guard_matches_instrumented_served"] is False
+            ):
+                raise DETError(f"Harbor adjudication did not clear: {adjudication}")
+            harbor_adjudication_path = write_content_addressed(
+                run_dir, "det1_1_harbor_adjudication", adjudication)
         write_json_exclusive(fixture_marker, {
             "schema": "grm.det1.sup_fixture.v1",
             "status": "COMPLETE",
@@ -818,6 +1024,9 @@ def _sup_stage(
             "runtime_frame": file_record(runtime_frame_path),
             "runtime": _receipt_context(
                 runtime_frame, lease_seconds=lease_seconds),
+            "harbor_adjudication": (
+                file_record(harbor_adjudication_path)
+                if harbor_adjudication_path is not None else None),
         })
 
     receipt = {
@@ -836,6 +1045,20 @@ def _sup_stage(
         "command": f"in-process GPT-OSS supersession fixture {fixture_path.name}",
         "gpu": _gpu_snapshot(),
     }
+    if int(segment_index) == 1:
+        completed = read_json(fixture_marker)
+        harbor_record = completed.get("harbor_adjudication") or {}
+        harbor_path = _validate_file_record(
+            harbor_record, "eval_sup_1 Harbor adjudication")
+        harbor_value = read_json(harbor_path)
+        if not (
+            harbor_value.get("status")
+                == "PASS_STALE_CANONICAL_NOT_INSTRUMENTATION_LEAK"
+            and harbor_value.get("baseline_anchor")
+                == _live_baseline_anchor(runtime_frame)
+        ):
+            raise DETError("eval_sup_1 Harbor adjudication is stale or not PASS")
+        receipt["harbor_adjudication"] = file_record(harbor_path)
     if final_segment:
         completed_row_paths = []
         for source in fixtures:
@@ -964,7 +1187,230 @@ def _stage_complete(run_dir: Path, stage: str) -> bool:
         "eval_sup_3": run_dir / "eval" / "sup_segment_3_complete.json",
         "eval_sup_4": run_dir / "eval" / "sup_stage_complete.json",
     }
-    return paths[stage].is_file()
+    path = paths[stage]
+    if not path.is_file():
+        return False
+    try:
+        receipt = read_json(path)
+    except (OSError, ValueError, DETError):
+        return False
+    return receipt.get("status") == "COMPLETE"
+
+
+def _historical_baseline_audit(
+    run_dir: Path,
+    expected_anchor: Mapping[str, Any],
+) -> dict[str, Any]:
+    registration = read_json(_registration(run_dir))
+    fixtures = {
+        str(value["fixture_id"]): value for value in registration["fixtures"]
+    }
+    row_paths = (
+        run_dir / "calibration" / "e2e_rows.jsonl",
+        run_dir / "eval" / "e2e_rows.jsonl",
+    )
+    rows = [
+        row
+        for path in row_paths
+        for row in read_jsonl(path)
+        if row.get("variant") == "served"
+    ]
+    comparisons = []
+    anchor = None
+    for row in rows:
+        fixture = fixtures[str(row["fixture_id"])]
+        try:
+            comparison = compare_served_to_live_registry(fixture, row)
+        except BaselineRegistryError as exc:
+            raise DETError(
+                f"cannot audit pre-DET1.1 row {row.get('row_id')}: {exc}") from exc
+        if comparison["anchor"] != dict(expected_anchor):
+            raise DETError("live baseline registry rotated during historical audit")
+        if anchor is None:
+            anchor = comparison["anchor"]
+        elif comparison["anchor"] != anchor:
+            raise DETError("live baseline registry rotated during historical audit")
+        comparisons.append({
+            "row_id": str(row["row_id"]),
+            "match": comparison["live_match"],
+            "observed": comparison["observed"],
+            "expected": comparison["expected"],
+            "checks": comparison.get("checks"),
+            "registration_hash": comparison["anchor"]["registration_hash"],
+        })
+    return {
+        "scope": "immutable DET1 served E2E rows created before DET1.1",
+        "comparison_count": len(comparisons),
+        "match_count": sum(bool(value["match"]) for value in comparisons),
+        "mismatches": [value for value in comparisons if not value["match"]],
+        "comparisons": comparisons,
+    }
+
+
+def _ensure_reanchor_receipt(run_dir: Path) -> Path:
+    registration_path = _registration(run_dir)
+    registration = read_json(registration_path)
+    # Revalidate the original inventory plus the narrowly authorized source
+    # amendment before issuing any new baseline receipt.
+    _check_inventory(
+        registration,
+        run_dir=run_dir,
+        registration_path=registration_path,
+    )
+    registry, anchor = load_live_registry()
+    harbor_fixtures = [
+        value for value in registration["fixtures"]
+        if value.get("fixture_id") == "sup_harbor_restatement"
+    ]
+    if len(harbor_fixtures) != 1:
+        raise DETError("DET1 registration lacks exactly one Harbor fixture")
+    fixture = harbor_fixtures[0]
+    active = registered_projection(fixture, registry=registry)
+    previous = registry.get("previous_registrations") or []
+    if not previous:
+        raise DETError("live registry lacks the Harbor predecessor registration")
+    retired_id = str(previous[0]["id"])
+    retired = registered_projection(
+        fixture, registry=registry, previous_registration_id=retired_id)
+    candidates = [
+        registration_path,
+        run_dir / "run_manifest.json",
+        run_dir / "gpu_blocked_receipt.json",
+        run_dir / "GRM_DET1_BLOCKED_REPORT.md",
+        *sorted(run_dir.glob("runtime_frame_*.json")),
+        *sorted(run_dir.glob("thresholds_*.json")),
+        *sorted(path for path in (run_dir / "g1").rglob("*") if path.is_file()),
+        *sorted(
+            path for path in (run_dir / "calibration").rglob("*")
+            if path.is_file()),
+        run_dir / "eval" / "e2e_rows.jsonl",
+        *sorted((run_dir / "eval").glob("e2e_segment_*_complete.json")),
+        *sorted(
+            path for directory in (
+                list((run_dir / "eval").glob("e2e_campaign_*"))
+                + list((run_dir / "eval").glob("eval_e2e_*"))
+            )
+            for path in directory.rglob("*") if path.is_file()),
+    ]
+    frozen_paths = []
+    seen_paths = set()
+    for path in candidates:
+        resolved = Path(path).resolve()
+        if resolved.is_file() and resolved not in seen_paths:
+            seen_paths.add(resolved)
+            frozen_paths.append(resolved)
+    amendment_path = run_dir / SOURCE_AMENDMENT_NAME
+    active_row = dict(active.get("registered_source_row") or {})
+    retired_row = dict(retired.get("registered_source_row") or {})
+    changed_fields = sorted(
+        key for key in set(active_row) | set(retired_row)
+        if active_row.get(key) != retired_row.get(key)
+    )
+    receipt = {
+        "schema": "grm.det1.reanchor.v1",
+        "status": "READY_TO_RESUME",
+        "order": file_record(DET1_1_ORDER),
+        "baseline_anchor": anchor,
+        "source_amendment": (
+            file_record(amendment_path) if amendment_path.is_file() else None),
+        "frozen_artifacts_unchanged": [file_record(path) for path in frozen_paths],
+        "frozen_artifact_anchor_overlay": (
+            "Each listed pre-DET1.1 artifact remains byte-immutable and is "
+            "interpreted under this receipt's live baseline anchor."),
+        "historical_row_audit": _historical_baseline_audit(run_dir, anchor),
+        "harbor_registry_diff": {
+            "active": active,
+            "retired": retired,
+            "raw_registered_rows": {
+                "active": active_row,
+                "retired": retired_row,
+            },
+            "mounted_ids": {
+                "retired": retired["mounted_ids"],
+                "active": active["mounted_ids"],
+            },
+            "registered_changed_fields": changed_fields,
+        },
+        "guard_change": (
+            "compare the instrumented served path with the live registered "
+            "family comparator (same-model exact answer bytes or registered "
+            "cross-model DET fixture semantics) and authoritative final mount "
+            "IDs; mount_fitted is retained only as pre-L2 stale-guard evidence"
+        ),
+    }
+    return write_content_addressed(run_dir, "det1_1_reanchor", receipt)
+
+
+def _write_resume_receipt(
+    run_dir: Path,
+    *,
+    started_utc: str,
+    initial_pending_stage: str | None,
+    status: str,
+    reanchor_path: Path | None,
+    baseline_anchor: Mapping[str, Any] | None = None,
+    error: str | None = None,
+) -> Path:
+    stages = {
+        stage: ("COMPLETE" if _stage_complete(run_dir, stage) else "PENDING")
+        for stage in STAGE_ORDER
+    }
+    outputs = {}
+    for name in ("GRM_DET1_REPORT.md", "gate_statuses.json"):
+        path = run_dir / name
+        if path.is_file():
+            outputs[name] = file_record(path)
+    race_paths = sorted(run_dir.glob("race_*.json"))
+    gate_path = run_dir / "gate_statuses.json"
+    if gate_path.is_file():
+        try:
+            gate_value = read_json(gate_path)
+            race_record = gate_value.get("race") or {}
+            race_path = _validate_file_record(
+                race_record, "gate-bound DET1 race")
+            outputs["race"] = file_record(race_path)
+        except BaseException as exc:
+            outputs["race_binding_error"] = f"{type(exc).__name__}: {exc}"
+    elif race_paths:
+        outputs["unbound_race_candidates"] = [
+            file_record(path) for path in race_paths]
+    harbor_paths = sorted(run_dir.glob("det1_1_harbor_adjudication_*.json"))
+    if harbor_paths:
+        outputs["harbor_adjudications"] = [
+            file_record(path) for path in harbor_paths]
+    guard_failures = sorted(run_dir.rglob("det1_1_guard_failure_*.json"))
+    if guard_failures:
+        outputs["guard_failures"] = [file_record(path) for path in guard_failures]
+    sup_rows = run_dir / "eval" / "sup_rows.jsonl"
+    if sup_rows.is_file():
+        outputs["sup_rows"] = file_record(sup_rows)
+    anchor_error = None
+    if baseline_anchor is None:
+        try:
+            baseline_anchor = _live_baseline_anchor()
+        except BaseException as exc:
+            anchor_error = f"{type(exc).__name__}: {exc}"
+    pending = [stage for stage, value in stages.items() if value != "COMPLETE"]
+    if not (run_dir / "GRM_DET1_REPORT.md").is_file():
+        pending.append("final_report")
+    receipt = {
+        "schema": "grm.det1.resume_receipt.v1",
+        "status": str(status),
+        "started_utc": str(started_utc),
+        "completed_utc": utc_now(),
+        "run_dir": str(run_dir),
+        "initial_pending_stage": initial_pending_stage,
+        "stages": stages,
+        "baseline_anchor": (
+            None if baseline_anchor is None else dict(baseline_anchor)),
+        "baseline_anchor_error": anchor_error,
+        "reanchor_receipt": (
+            file_record(reanchor_path) if reanchor_path is not None else None),
+        "outputs": outputs,
+        "error": error,
+        "anything_not_done": [] if status == "COMPLETE" else pending,
+    }
+    return write_content_addressed(run_dir, "det1_1_resume_receipt", receipt)
 
 
 def _run_stage_parent(
@@ -1014,31 +1460,71 @@ def run_parent(
     wait_seconds: int,
 ) -> None:
     stages = list(STAGE_ORDER) if requested == "all" else [requested]
-    previous_ran = False
-    for stage in stages:
-        if previous_ran:
-            print(f"inter_stage_gpu_gap_s={GAP_SECONDS}", flush=True)
-            time.sleep(GAP_SECONDS)
-        _run_stage_parent(
-            run_dir, stage,
-            lease_seconds=int(lease_seconds),
-            wait_seconds=int(wait_seconds),
+    started_utc = utc_now()
+    initial_pending = next(
+        (stage for stage in STAGE_ORDER if not _stage_complete(run_dir, stage)),
+        None,
+    )
+    reanchor_path = None
+    baseline_anchor = None
+    try:
+        reanchor_path = _ensure_reanchor_receipt(run_dir)
+        baseline_anchor = read_json(reanchor_path)["baseline_anchor"]
+        print(f"det1_1_reanchor_receipt={reanchor_path}", flush=True)
+        previous_ran = False
+        for stage in stages:
+            if _stage_complete(run_dir, stage):
+                print(f"stage={stage} status=already_complete", flush=True)
+                continue
+            if previous_ran:
+                print(f"inter_stage_gpu_gap_s={GAP_SECONDS}", flush=True)
+                time.sleep(GAP_SECONDS)
+            _run_stage_parent(
+                run_dir, stage,
+                lease_seconds=int(lease_seconds),
+                wait_seconds=int(wait_seconds),
+            )
+            previous_ran = True
+            if stage == "g1_off":
+                runtime_frame_path = _one(run_dir, "runtime_frame_*.json")
+                path = _finalize_g1(run_dir, runtime_frame_path)
+                print(f"det_g1_receipt={path}", flush=True)
+            if stage == "calibration":
+                _fit_thresholds(run_dir)
+        if requested == "all":
+            command = [
+                sys.executable, str(ANALYZE), "report", "--run-dir", str(run_dir),
+            ]
+            returncode = subprocess.run(
+                command, cwd=ROOT, env=_base_env(), check=False).returncode
+            if returncode != 0:
+                raise DETError(f"CPU final report returned {returncode}")
+        remaining = [
+            stage for stage in STAGE_ORDER if not _stage_complete(run_dir, stage)]
+        report_missing = not (run_dir / "GRM_DET1_REPORT.md").is_file()
+        completion_status = (
+            "COMPLETE" if not remaining and not report_missing else "PARTIAL")
+        resume_path = _write_resume_receipt(
+            run_dir,
+            started_utc=started_utc,
+            initial_pending_stage=initial_pending,
+            status=completion_status,
+            reanchor_path=reanchor_path,
+            baseline_anchor=baseline_anchor,
         )
-        previous_ran = True
-        if stage == "g1_off":
-            runtime_frame_path = _one(run_dir, "runtime_frame_*.json")
-            path = _finalize_g1(run_dir, runtime_frame_path)
-            print(f"det_g1_receipt={path}", flush=True)
-        if stage == "calibration":
-            _fit_thresholds(run_dir)
-    if requested == "all":
-        command = [
-            sys.executable, str(ANALYZE), "report", "--run-dir", str(run_dir),
-        ]
-        returncode = subprocess.run(
-            command, cwd=ROOT, env=_base_env(), check=False).returncode
-        if returncode != 0:
-            raise DETError(f"CPU final report returned {returncode}")
+        print(f"det1_1_resume_receipt={resume_path}", flush=True)
+    except BaseException as exc:
+        resume_path = _write_resume_receipt(
+            run_dir,
+            started_utc=started_utc,
+            initial_pending_stage=initial_pending,
+            status="STOPPED",
+            reanchor_path=reanchor_path,
+            baseline_anchor=baseline_anchor,
+            error=f"{type(exc).__name__}: {exc}",
+        )
+        print(f"det1_1_resume_receipt={resume_path}", flush=True)
+        raise
 
 
 def selftest() -> dict[str, Any]:
