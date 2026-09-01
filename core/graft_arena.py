@@ -38,6 +38,11 @@ from core.graft_quant import (
     SUPPORTED_BITS, is_packed_payload, pack_kv_arrays, unpack_kv_arrays,
 )
 from core.grm_supersession import sup_resolve_enabled
+from core.grm_admission import (
+    admission_info_fields,
+    adm_decisive_enabled,
+    decisive_admission_profile,
+)
 
 
 class GraftPayloadMissingError(RuntimeError):
@@ -56,7 +61,8 @@ class ArenaCache:
                  max_live=4096, cache_deposits=True,
                  ephemeral=False, recency_mounts=2, prompt_template=None,
                  stop_sequences=None, length_debias=False,
-                 revision_resolution=None, route_backend="auto",
+                 revision_resolution=None, decisive_admission=None,
+                 route_backend="auto",
                  route_profile=False, route_parity_check=False):
         # EPHEMERAL MODE ("clear the boat"): the live cache is reset at the
         # START of every turn — each turn runs on [sink | mounts | turn]
@@ -82,6 +88,11 @@ class ArenaCache:
         # pass-through; an explicit bool pins experimental harness frames.
         self.length_debias = bool(length_debias)
         self.revision_resolution = sup_resolve_enabled(revision_resolution)
+        # GRM-ADM2 (operator decision 2026-08-31) makes the frozen ADM1
+        # decisive-admission rule default ON. GRM_ADM_DECISIVE=0 restores the
+        # old fixed-k=3 admission path byte-for-byte; an explicit bool pins an
+        # experiment frame independently of the ambient operator setting.
+        self.decisive_admission = adm_decisive_enabled(decisive_admission)
         # Route backend is intentionally an operator opt-in.  ``auto`` is
         # the historical behavior (the existing dialect-specific environment
         # toggles still decide whether an optional CUDA bridge may engage),
@@ -2433,7 +2444,19 @@ class ArenaCache:
         # exclude turns already present (live window / recency mounts)
         live_idx = {g for g, _ in self.live_segs if g is not None} | set(rec)
         route_limit = max(1, (int(max_trips) + 1) * int(self.topk))
-        ranking = self.route(user_text, exclude=live_idx, limit=route_limit)
+        admission_profile = None
+        # Objects created through the real constructor always own this field.
+        # ``False`` for legacy ``__new__``-only fixtures preserves their
+        # pre-ADM2 test contract without weakening production default-on.
+        if getattr(self, "decisive_admission", False):
+            admission_profile = decisive_admission_profile(
+                self, user_text, exclude=live_idx, route_limit=route_limit)
+            ranking = list(admission_profile["ranking"])
+        else:
+            # Registered GRM_ADM_DECISIVE=0 escape: retain the legacy route
+            # call, including its bounded ranking window, exactly.
+            ranking = self.route(
+                user_text, exclude=live_idx, limit=route_limit)
         # `route()` finalizes this before returning.  Attach the immutable
         # per-turn profile to whichever attempt becomes authoritative; this
         # makes step() receipts describe the route that actually chose the
@@ -2445,6 +2468,8 @@ class ArenaCache:
                 info["route_receipt"] = route_receipt
                 info["route_backend"] = getattr(
                     self, "last_route_backend", "python")
+            if admission_profile is not None:
+                info.update(admission_info_fields(admission_profile))
             return info
 
         s4_turn = self._next_s4_turn()
@@ -2464,7 +2489,18 @@ class ArenaCache:
         attempts = []                # (picks, clean_room)
         qrare = self._rare_tokens(user_text)
         precise = None
-        if ranking and qrare:
+        if admission_profile is not None:
+            branch = str(admission_profile["policy_branch"])
+            selected = sorted(int(value) for value in admission_profile["rank_plan"])
+            if selected:
+                attempts.append((selected, False))
+            if branch in (
+                "exactly_one_identifier_decisive_rank1",
+                "fit_margin_decisive_rank1",
+                "declared_synthesis_identified_set",
+            ):
+                precise = selected
+        elif ranking and qrare:
             g0 = self.grafts[ranking[0]]
             if "rare" not in g0:
                 g0["rare"] = self._rare_tokens(g0["text"])
