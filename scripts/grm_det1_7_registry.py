@@ -490,10 +490,18 @@ def _normalize_value_text(value: str) -> str:
 
 
 def _contains_value(text: str, value: str) -> bool:
+    # DET1.10: separator glyphs (ASCII hyphen, U+2010, U+2011, space) are
+    # presentation within the value token sequence; token payload and token
+    # count stay load-bearing.  Shares the campaign comparator's pattern
+    # builder so registry lawfulness and served-control classification cannot
+    # drift apart.
+    from scripts.grm_det1_common import value_separator_regex
+
     haystack = _normalize_value_text(text)
     needle = _normalize_value_text(value)
     return bool(re.search(
-        rf"(?<![a-z0-9_-]){re.escape(needle)}(?![a-z0-9_-])", haystack
+        rf"(?<![a-z0-9_-]){value_separator_regex(needle)}(?![a-z0-9_-])",
+        haystack,
     ))
 
 

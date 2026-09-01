@@ -399,6 +399,58 @@ def test_det1_4_value_normalization_accepts_emphasis_and_unicode_hyphens():
         "The value is **Morrow\u20115\u2011Red**.", fixture) is False
 
 
+def test_det1_10_separator_variants_are_value_equivalent():
+    """t30's lived control answered the right value with spaces for hyphens."""
+    assert contains_value("Cobalt 1 India", "Cobalt-1-India") is True
+    assert contains_value("Cobalt-1-India", "Cobalt-1-India") is True
+    assert contains_value("Cobalt\u20111\u2010India", "Cobalt-1-India") is True
+    assert contains_value("**Cobalt 1 India**", "Cobalt-1-India") is True
+    assert contains_value("cobalt 1 india", "Cobalt-1-India") is True
+    assert contains_value(
+        "The current atlas tone value is Cobalt 1 India.",
+        "Cobalt-1-India",
+    ) is True
+
+
+def test_det1_10_separator_normalization_still_rejects_wrong_values():
+    """Separator glyphs are free; token payload and token count are not."""
+    # Wrong token in the middle.
+    assert contains_value("Cobalt-2-India", "Cobalt-1-India") is False
+    assert contains_value("Cobalt 2 India", "Cobalt-1-India") is False
+    # Missing token entirely.
+    assert contains_value("Cobalt India", "Cobalt-1-India") is False
+    assert contains_value("Cobalt-India", "Cobalt-1-India") is False
+    # Truncated, reordered, and boundary-straddling forms.
+    assert contains_value("Cobalt-1", "Cobalt-1-India") is False
+    assert contains_value("India-1-Cobalt", "Cobalt-1-India") is False
+    assert contains_value("Cobalt 1 Indiana", "Cobalt-1-India") is False
+    assert contains_value("XCobalt-1-India", "Cobalt-1-India") is False
+    # A wholly different value must never be rescued by normalization.
+    assert contains_value(
+        "The Falcon registry value is 42.", "Vortex-3-Sierra") is False
+
+
+def test_det1_10_comparator_is_consistent_across_det_call_sites():
+    """Served controls, registry lawfulness, and baseline classification agree."""
+    from scripts.grm_det1_7_registry import _contains_value as registry_contains
+    from scripts.grm_det1_baseline_registry import (
+        _contains_value as baseline_contains,
+    )
+
+    cases = [
+        ("Cobalt 1 India", "Cobalt-1-India", True),
+        ("Cobalt\u20111\u2011India", "Cobalt-1-India", True),
+        ("**Cobalt 1 India**", "Cobalt-1-India", True),
+        ("Cobalt-2-India", "Cobalt-1-India", False),
+        ("Cobalt India", "Cobalt-1-India", False),
+        ("Cobalt 1 Indiana", "Cobalt-1-India", False),
+    ]
+    for text, value, expected in cases:
+        assert contains_value(text, value) is expected, (text, value)
+        assert registry_contains(text, value) is expected, (text, value)
+        assert baseline_contains(text, value) is expected, (text, value)
+
+
 def test_lived_install_accepts_non_ephemeral_feed_none_return():
     class Arena:
         def __init__(self):

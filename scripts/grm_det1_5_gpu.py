@@ -177,6 +177,78 @@ REGISTRATION_QUALIFICATION = "LIVED_TARGET_QUALIFICATION_ABLATION"
 DET1_9_RESERVE_COUNT = 5
 DET1_9_CANDIDATE_COUNT = 14 + DET1_9_RESERVE_COUNT
 
+# DET1.10 amendment note on the frozen DET1.9 selection rule.  Recorded in the
+# registry policy record because the r5 fail-closed looked like a
+# rule-over-constraint but was NOT one; the honest finding is that the reserve
+# pool was empty of lawful members, so no rule change is warranted.
+DET1_10_RESERVE_DIAGNOSIS = {
+    "schema": "grm.det1_10.reserve_selection_diagnosis.v1",
+    "selection_rule_id": (
+        "DET1_9_PRIMARY_THEN_CANONICAL_UNUSED_LAWFUL_RESERVE_V1"
+    ),
+    "rule_amended": False,
+    "verdict": "RULE_NOT_OVER_CONSTRAINED_POOL_HAD_NO_LAWFUL_MEMBER",
+    "question": (
+        "r5 fail-closed with 'no unused lawful certified campaign-session "
+        "reserve for e2e_t30_atlas_tone' although all four sup_reserve_* "
+        "lived snapshots had been collected."
+    ),
+    "finding": (
+        "The selection filter constrains only on status == "
+        "LAWFUL_LIVED_TARGET, matching split, and non-consumption.  It does "
+        "NOT constrain on source_family, so supersession-battery reserves "
+        "were already eligible for e2e slots and DET1.9's widening was not "
+        "vacuous.  Every reserve carried split == 'eval' and was unconsumed; "
+        "all five candidates were rejected solely because each was itself "
+        "UNPLANTABLE with LIVED_SERVED_CONTROL_INCORRECT_OR_REFUSAL.  The "
+        "pool was therefore empty of lawful members, not wrongly filtered."
+    ),
+    "per_candidate_reason": {
+        "e2e_t33_polaris_mark": (
+            "UNPLANTABLE — served a refusal ('I'm sorry, but I don't have "
+            "that information.') against expected Marble-4-Juliet."
+        ),
+        "sup_reserve_juniper_pass": (
+            "UNPLANTABLE — served 'The Juniper pass value is currently 0.' "
+            "against expected Opal-7-Green; genuinely wrong value."
+        ),
+        "sup_reserve_tundra_ledger": (
+            "UNPLANTABLE — served 'Tundra-42-Eagle-Blue-Sapphire' against "
+            "expected Sable-0-Copper; genuinely wrong value."
+        ),
+        "sup_reserve_meridian_docket": (
+            "UNPLANTABLE — served 'Cobalt-3-Comet' against expected "
+            "Delta-4-Drift; genuinely wrong value."
+        ),
+        "sup_reserve_falcon_registry": (
+            "UNPLANTABLE — served 'The Falcon registry value is 42.' against "
+            "expected Vortex-3-Sierra; genuinely wrong value."
+        ),
+    },
+    "det1_10_consequence": (
+        "Under the DET1.10 separator-normalized comparator, "
+        "e2e_t30_atlas_tone's lived served control ('Cobalt 1 India' vs "
+        "expected 'Cobalt-1-India') is LAWFUL on its own primary and "
+        "requires NO substitution, which clears the r5 fail-closed at its "
+        "source.  None of the five reserves is rescued by normalization: "
+        "each served a genuinely different value or a refusal, so they "
+        "remain correctly UNPLANTABLE."
+    ),
+    "open_items": (
+        "t33's refusal and the four sup_reserve_* wrong-value answers remain "
+        "open lived findings (DET1.9 finding class); they are unaffected by "
+        "the comparator change and still have no lawful reserve behind them "
+        "if a future slot needs one.",
+        "The DET1.9 r4 finding receipt is a HISTORICAL record: it validates "
+        "archived observation fields (served_answer_correct is False) from "
+        "the frozen r4 run and never recomputes correctness with the live "
+        "comparator, so it still validates unchanged.  Its t30 text should be "
+        "read as 'r4 classified this incorrect under the pre-DET1.10 "
+        "comparator', which DET1.10 now adjudicates as a separator variant "
+        "of the correct value rather than a lived recall failure.",
+    ),
+}
+
 DET1_6_CHANGED_SOURCES = (
     "scripts/grm_det1_3_snapshot.py",
     "scripts/grm_det1_4_gpu.py",
@@ -4472,6 +4544,7 @@ def det1_7_cpu_preflight(
                 "sup_reserve_falcon_registry",
             ],
             "measured": False,
+            "det1_10_amendment_note": DET1_10_RESERVE_DIAGNOSIS,
         },
         "registry_freeze_ready": False,
         "registry_file_sha256": None,

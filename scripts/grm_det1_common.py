@@ -169,11 +169,37 @@ def source_inventory(paths: Iterable[Path]) -> dict[str, dict[str, Any]]:
     }
 
 
+# DET1.10: separator glyphs that may vary between a fixture's written value
+# and a served answer.  ASCII hyphen and U+2010/U+2011 are already collapsed to
+# "-" by normalize_value_text; whitespace is added here as an equivalent
+# separator.  Underscore is deliberately EXCLUDED: it participates in the word
+# boundary class, so treating it as a separator would let "cobalt_1_india"
+# straddle a boundary it is supposed to define.
+VALUE_SEPARATOR_PATTERN = r"[-\s]+"
+_VALUE_SEPARATOR_RUN = re.compile(VALUE_SEPARATOR_PATTERN)
+
+
+def value_separator_regex(word: str) -> str:
+    """Build a token-exact, separator-agnostic pattern for a value.
+
+    DET1.10 registers separator glyphs (ASCII hyphen, U+2010, U+2011, space)
+    as presentation WITHIN a value token sequence.  The token payloads and the
+    token COUNT stay load-bearing: the tokens are escaped literally and joined
+    by a mandatory separator run, so "Cobalt-2-India" (wrong token) and
+    "Cobalt India" (missing token) still fail against "Cobalt-1-India".
+    """
+    tokens = [token for token in _VALUE_SEPARATOR_RUN.split(word) if token]
+    if not tokens:
+        return re.escape(word)
+    return VALUE_SEPARATOR_PATTERN.join(re.escape(token) for token in tokens)
+
+
 def whole_word(text: str, word: str) -> bool:
     normalized_text = normalize_value_text(text)
     normalized_word = normalize_value_text(word)
     return bool(re.search(
-        rf"(?<![A-Za-z0-9_-]){re.escape(normalized_word)}(?![A-Za-z0-9_-])",
+        rf"(?<![A-Za-z0-9_-]){value_separator_regex(normalized_word)}"
+        rf"(?![A-Za-z0-9_-])",
         normalized_text,
         flags=re.IGNORECASE,
     ))

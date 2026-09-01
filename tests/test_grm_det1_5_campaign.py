@@ -984,3 +984,48 @@ def test_gpu_lead_plan_is_argument_vectorized_and_carries_lease_discipline(
         assert command[command.index("--lease-seconds") + 1] == "580"
         assert command[command.index("--lock-wait-seconds") + 1] == "7200"
     assert "grm_det1_5_analyze.py" in flattened[-1]
+
+
+def test_det1_10_reserve_eligibility_is_not_family_scoped():
+    """DET1.9's widening must stay usable by e2e slots (DET1.10 thread 2).
+
+    The r5 fail-closed looked like the frozen rule over-constraining sup
+    reserves out of e2e slots.  It was not: source_family is a deterministic
+    SORT key only.  Lock that so the rule cannot silently become a filter,
+    which would make the cross-session widening vacuous.
+    """
+    from scripts.grm_det1_7_registry import _substitution_policy
+
+    policy = _substitution_policy({})
+    assert policy["reserve_eligibility"] == (
+        "LAWFUL_LIVED_TARGET_AND_SAME_FROZEN_SPLIT_AND_UNUSED_"
+        "NON_BASE_EFFECTIVE_FIXTURE"
+    )
+    assert "source_family" not in policy["reserve_eligibility"]
+    assert "source_family" in policy["reserve_order"]
+    assert policy["pool_scope"] == (
+        "ANY_CERTIFIED_LIVED_COLLECTED_SESSION_IN_THIS_CAMPAIGN_"
+        "INCLUDING_SUPERSESSION_BATTERY"
+    )
+
+
+def test_det1_10_reserve_diagnosis_records_every_candidate():
+    """The amendment note must name a reason for each DET1.9 candidate."""
+    from scripts.grm_det1_5_gpu import DET1_10_RESERVE_DIAGNOSIS
+
+    note = DET1_10_RESERVE_DIAGNOSIS
+    assert note["rule_amended"] is False
+    assert note["verdict"] == (
+        "RULE_NOT_OVER_CONSTRAINED_POOL_HAD_NO_LAWFUL_MEMBER"
+    )
+    assert set(note["per_candidate_reason"]) == {
+        "e2e_t33_polaris_mark",
+        "sup_reserve_juniper_pass",
+        "sup_reserve_tundra_ledger",
+        "sup_reserve_meridian_docket",
+        "sup_reserve_falcon_registry",
+    }
+    assert all(
+        reason.startswith("UNPLANTABLE")
+        for reason in note["per_candidate_reason"].values()
+    )

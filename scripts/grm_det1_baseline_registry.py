@@ -15,7 +15,7 @@ from pathlib import Path
 import re
 from typing import Any, Mapping
 
-from scripts.grm_det1_common import normalize_value_text
+from scripts.grm_det1_common import normalize_value_text, value_separator_regex
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -527,10 +527,13 @@ def registered_projection(
 
 
 def _contains_value(text: str, value: str) -> bool:
+    # DET1.10: separator-agnostic within the value token sequence; token
+    # payload and token count remain load-bearing.
     normalized_text = normalize_value_text(text)
     normalized_value = normalize_value_text(value)
     return bool(re.search(
-        rf"(?<![A-Za-z0-9_-]){re.escape(normalized_value)}(?![A-Za-z0-9_-])",
+        rf"(?<![A-Za-z0-9_-]){value_separator_regex(normalized_value)}"
+        rf"(?![A-Za-z0-9_-])",
         normalized_text,
         flags=re.IGNORECASE,
     ))
