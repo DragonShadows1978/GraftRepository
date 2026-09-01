@@ -381,6 +381,7 @@ def sliding_sink_attention_tc(
     sliding_window: int,
     num_heads_per_kv: int = 1,
     attn_block: int = 128,
+    allowed_mask=None,
 ):
     """GPT-OSS sink attention for sliding-window layers without full LxS scores."""
 
@@ -399,9 +400,17 @@ def sliding_sink_attention_tc(
         Ki = key.slice(2, k0, k1 - k0)
         Vi = value.slice(2, k0, k1 - k0)
 
-        q_abs = np.arange(q_abs0, q_abs1 + 1, dtype=np.int64)[:, None]
-        k_abs = np.arange(k0, k1, dtype=np.int64)[None, :]
-        allowed = (k_abs <= q_abs) & (k_abs > (q_abs - window))
+        if allowed_mask is None:
+            q_abs = np.arange(q_abs0, q_abs1 + 1, dtype=np.int64)[:, None]
+            k_abs = np.arange(k0, k1, dtype=np.int64)[None, :]
+            allowed = (k_abs <= q_abs) & (k_abs > (q_abs - window))
+        else:
+            full_allowed = np.asarray(allowed_mask, dtype=np.uint8)
+            if full_allowed.shape != (1, 1, L, S):
+                raise ValueError(
+                    "fork allowed-mask shape mismatch: "
+                    f"expected={(1, 1, L, S)} observed={full_allowed.shape}")
+            allowed = full_allowed[0, 0, i:e, k0:k1].astype(bool, copy=False)
         mask = np.where(allowed, 0.0, -1.0e4).astype(np.float32)
         mask_t = tc.tensor(mask.reshape(1, 1, e - i, k1 - k0), dtype="float32").astype(
             query.dtype
@@ -705,6 +714,23 @@ class GptOssAttentionTC:
             k = tc.cat([kv_cache[0], k], dim=2)
             v = tc.cat([kv_cache[1], v], dim=2)
         S = k.shape[2]
+        fork_allowed = getattr(self, "_det1_fork_allowed_mask", None)
+        if fork_allowed is not None:
+            if self.attention_mode != "standard":
+                raise ValueError(
+                    "DET1 fork masks are valid only on the registered "
+                    f"standard attention path, observed {self.attention_mode!r}")
+            fork_allowed = np.ascontiguousarray(
+                np.asarray(fork_allowed, dtype=np.uint8))
+            expected_mask_shape = (1, 1, int(L), int(S))
+            if fork_allowed.shape != expected_mask_shape:
+                raise ValueError(
+                    "DET1 fork allowed-mask does not match the next forward: "
+                    f"expected={expected_mask_shape} observed={fork_allowed.shape}")
+            # One lived prefill mask is consumed exactly once. Decode calls
+            # then resume the unchanged production causal-mask path.
+            self._det1_fork_allowed_mask = None
+            self._det1_fork_mask_consumed = True
         if self.attention_mode == "apa_selective":
             from tensor_cuda.quant import _norm_ppf, _quantize_keys, _tables
 
@@ -756,15 +782,26 @@ class GptOssAttentionTC:
                     sliding_window=self.sliding_window,
                     num_heads_per_kv=self.num_heads_per_kv,
                     attn_block=self.attn_block,
+                    allowed_mask=fork_allowed,
                 )
                 self.last_attention_backend = "standard_sink_sliding_chunked"
             else:
-                mask = _gpt_oss_attention_mask(
-                    L,
-                    S,
-                    sliding_window=self.sliding_window,
-                    dtype=q.dtype,
-                )
+                if fork_allowed is None:
+                    mask = _gpt_oss_attention_mask(
+                        L,
+                        S,
+                        sliding_window=self.sliding_window,
+                        dtype=q.dtype,
+                    )
+                else:
+                    additive = np.where(
+                        fork_allowed.astype(bool, copy=False),
+                        0.0,
+                        -1.0e4,
+                    ).astype(np.float32)
+                    mask = tc.tensor(
+                        np.ascontiguousarray(additive), dtype="float32"
+                    ).astype(q.dtype)
                 attn = sink_attention_tc(
                     q,
                     k,
