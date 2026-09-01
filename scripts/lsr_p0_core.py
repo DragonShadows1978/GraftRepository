@@ -168,25 +168,47 @@ def derive_window_layout(
     arena_end = n_sink + cur_mount_n
     seat = arena_end
 
+    # RECENT vs LIVE among the resident segments.  When the layout is derived
+    # AFTER the serve, arena.live_segs already ends with the probe's OWN turn
+    # (core/graft_arena.py:2775 appends it post-generation), and that turn is
+    # the LIVE region, not a recent turn.  It is recognizable because the
+    # witness serves with deposit=False, so its graft_index is None
+    # (graft_arena.py:2752 `gidx = None; if deposit: gidx = ...`).
+    #
+    # Only a TRAILING anonymous segment is the probe turn.  An anonymous
+    # segment in any earlier position is a prior undeposited turn and stays
+    # RECENT -- being undeposited does not make an older turn "live".
+    probe_turn_index = (
+        len(segs) - 1
+        if segs and segs[-1][0] is None and not prompt_ntok
+        else None
+    )
     seg_rows: list[dict[str, Any]] = []
     for index, (graft_index, count) in enumerate(segs):
+        is_probe_turn = index == probe_turn_index
         seg_rows.append({
             "segment_index": int(index),
             "graft_index": None if graft_index is None else int(graft_index),
             "ntok": int(count),
             "start": int(seat),
             "end": int(seat + count),
-            "region": REGION_RECENT,
+            "region": REGION_LIVE if is_probe_turn else REGION_RECENT,
+            **({"is_probe_turn": True} if is_probe_turn else {}),
         })
         seat += int(count)
-    recent_end = seat
-    live_end = recent_end + prompt_ntok
+    if probe_turn_index is None:
+        recent_end = seat
+    else:
+        recent_end = int(seg_rows[probe_turn_index]["start"])
+    live_end = seat + prompt_ntok
     if prompt_ntok:
+        # Pre-serve layout: the probe's prompt is not yet a live segment, so
+        # it is supplied separately and forms the LIVE region.
         seg_rows.append({
             "segment_index": len(segs),
             "graft_index": None,
             "ntok": prompt_ntok,
-            "start": int(recent_end),
+            "start": int(seat),
             "end": int(live_end),
             "region": REGION_LIVE,
             "is_probe_prompt": True,
@@ -1053,6 +1075,60 @@ def cpu_selftest() -> dict[str, Any]:
         record("layout_rejects_unevicted_live_segments", False, "no raise")
     except LSRError as exc:
         record("layout_rejects_unevicted_live_segments", True, str(exc))
+
+    # --- the REAL post-serve segment shape -------------------------------
+    # After _attempt(deposit=False), arena.live_segs ends with the probe's own
+    # turn carrying graft_index None (core/graft_arena.py:2752,2775).  That
+    # trailing anonymous segment is the LIVE region; anything before it is
+    # RECENT.  This is the shape the third shakedown actually produced.
+    post = derive_window_layout(
+        n_sink=19, arena_width=96, cur_mount_n=63,
+        mount_seat_ranges={1: (19, 82)},
+        live_segs=[(5, 30), (None, 37)], live_turns=2, prompt_ntok=0)
+    record(
+        "post_serve_trailing_anonymous_segment_is_the_LIVE_probe_turn",
+        post["regions"][REGION_RECENT] == {"start": 82, "end": 112, "ntok": 30}
+        and post["regions"][REGION_LIVE] == {"start": 112, "end": 149, "ntok": 37}
+        and post["live_segments"][1].get("is_probe_turn") is True
+        and post["live_segments"][0]["region"] == REGION_RECENT,
+        {"regions": post["regions"],
+         "segs": [(s["segment_index"], s["graft_index"], s["region"])
+                  for s in post["live_segments"]]},
+    )
+    clean = derive_window_layout(
+        n_sink=19, arena_width=96, cur_mount_n=63,
+        mount_seat_ranges={1: (19, 82)},
+        live_segs=[(None, 37)], live_turns=2, prompt_ntok=0)
+    record(
+        "clean_room_post_serve_leaves_recent_empty_and_live_the_probe_turn",
+        clean["regions"][REGION_RECENT]["ntok"] == 0
+        and clean["regions"][REGION_LIVE]["ntok"] == 37,
+        clean["regions"],
+    )
+    earlier = derive_window_layout(
+        n_sink=4, arena_width=96, cur_mount_n=6,
+        mount_seat_ranges={0: (4, 10)},
+        live_segs=[(None, 5), (7, 4)], live_turns=2, prompt_ntok=0)
+    record(
+        "an_earlier_anonymous_segment_stays_RECENT_not_the_probe_turn",
+        earlier["regions"][REGION_RECENT]["ntok"] == 9
+        and earlier["regions"][REGION_LIVE]["ntok"] == 0
+        and all(s["region"] == REGION_RECENT
+                for s in earlier["live_segments"]),
+        [(s["segment_index"], s["graft_index"], s["region"])
+         for s in earlier["live_segments"]],
+    )
+    pre = derive_window_layout(
+        n_sink=19, arena_width=96, cur_mount_n=63,
+        mount_seat_ranges={1: (19, 82)},
+        live_segs=[], live_turns=2, prompt_ntok=37)
+    record(
+        "pre_serve_layout_still_takes_the_prompt_as_the_LIVE_region",
+        pre["regions"][REGION_RECENT]["ntok"] == 0
+        and pre["regions"][REGION_LIVE] == {"start": 82, "end": 119, "ntok": 37}
+        and pre["live_segments"][0].get("is_probe_prompt") is True,
+        pre["regions"],
+    )
 
     # --- witness scope -----------------------------------------------------
     heavy_recent = list(range(14, 21))

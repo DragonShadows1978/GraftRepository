@@ -616,6 +616,57 @@ def tap_selftest() -> dict[str, Any]:
         except LSRError as exc:
             record("recompute_rejects_indivisible_gqa_head_counts", True,
                    str(exc))
+        # --- live-segment ledger: the real post-serve shape ---------------
+        # A fake arena reproducing what _attempt(deposit=False) leaves behind:
+        # a deposited recent turn, then the probe's own turn with
+        # graft_index None (core/graft_arena.py:2752,2775).
+        class FakeArena:
+            def __init__(self, segs, grafts, n_sink=3, mounts=(0,)):
+                self.live_segs = list(segs)
+                self.grafts = list(grafts)
+                self.n_sink = n_sink
+                self.cur_mounts = list(mounts)
+
+            def encode(self, text):
+                return [ord(ch) for ch in str(text)]
+
+            def decode(self, ids):
+                return "".join(
+                    chr(int(v)) if int(v) >= 0 else "�" for v in ids)
+
+        grafts = [{"text": "ARENA!", "ntok": 6}, {"text": "recent", "ntok": 6}]
+        prompt = [ord(c) for c in "Q?"]
+        answer = [ord(c) for c in "AB"]
+        arena = FakeArena([(1, 6), (None, len(prompt) + len(answer))], grafts)
+        got = _window_tokens(arena, prompt, "sik", answer_ids=answer)
+        record(
+            "undeposited_probe_turn_is_reconstructed_from_prompt_plus_answer",
+            got["counts"][UNATTRIBUTABLE] == 0
+            and got["counts"]["live"] == 6 + 4
+            and "".join(got["token_strings"][-4:]) == "Q?AB"
+            and got["live_segment_ledger"][1]["kind"]
+            == "probe_turn_undeposited"
+            and got["live_segment_ledger"][1]["resolved"] is True,
+            got["counts"],
+        )
+
+        # A segment whose reconstruction cannot reach its seated length must
+        # become UNATTRIBUTABLE seats, not an exception.
+        short = FakeArena([(None, 99)], grafts)
+        got_short = _window_tokens(short, prompt, "sik", answer_ids=answer)
+        record(
+            "unreconstructable_segment_becomes_unattributable_not_fatal",
+            got_short["counts"][UNATTRIBUTABLE] == 99
+            and got_short["live_segment_ledger"][0]["resolved"] is False
+            and len(got_short["token_ids"]) == 3 + 6 + 99,
+            got_short["counts"],
+        )
+        record(
+            "unattributable_seats_keep_the_window_width_consistent",
+            len(got_short["token_ids"]) == len(got_short["token_strings"]),
+            {"ids": len(got_short["token_ids"]),
+             "strings": len(got_short["token_strings"])},
+        )
     finally:
         gpt.sink_attention_tc = orig_full
         gpt.sliding_sink_attention_tc = orig_sliding
@@ -631,14 +682,37 @@ def tap_selftest() -> dict[str, Any]:
     }
 
 
-def _window_tokens(arena, prompt_ids: Sequence[int], sink_text: str) -> dict[str, Any]:
+UNATTRIBUTABLE = "unattributable"
+
+
+def _window_tokens(
+    arena, prompt_ids: Sequence[int], sink_text: str,
+    *, answer_ids: Sequence[int] = (),
+) -> dict[str, Any]:
     """Per-token surface text for the whole window, region by region.
 
-    Anchor and live token ids are exact.  Arena and recent tokens are
-    recovered by re-encoding each graft's own text -- the way
-    scripts/grm_det1_5_gpu._live_token_ids recovers live ids.  If a re-encode
-    length disagrees with the seated token count the window is reported
-    unresolvable rather than guessed.
+    ANONYMOUS LIVE SEGMENTS.  A live segment carries `(graft_idx, ntok)` and
+    `graft_idx` is None whenever the turn was NOT deposited
+    (core/graft_arena.py::_attempt: `gidx = None; if deposit: gidx = ...`
+    then `self.live_segs.append((gidx, seg_cache_ntok))`).  The witness calls
+    `_attempt(..., deposit=False, defer_memory=True)` -- the same signature
+    the DET1.5 race uses (scripts/grm_det1_5_gpu.py:3093) -- precisely so
+    measuring a probe does not mutate the repository.  So the trailing
+    anonymous segment is NORMAL and is the PROBE'S OWN TURN, not a defect and
+    not an unknown segment class.
+
+    Its tokens are fully recoverable without the graft: the segment spans
+    `seg_cache_ntok = len(prompt_ids) + cached_out`, i.e. the harmony prompt
+    followed by the committed prefix of the generated answer.  `answer_ids`
+    supplies those generated tokens, and only the first `ntok - len(prompt)`
+    of them are in the cache (the final predicted token enters only if it was
+    fed back -- graft_arena.py:2723-2727).
+
+    FAIL-VISIBLE, NOT FAIL-FATAL.  If a segment's tokens still cannot be
+    reconstructed to its exact seated length, it is NOT an error: those seats
+    become an explicit UNATTRIBUTABLE region whose mass is reported
+    separately, so the adjudication can still reach recent/arena/absent.  The
+    caller escalates to NOT_MEASURED only if that region holds plurality mass.
     """
     sink_ids = [int(v) for v in arena.encode(sink_text)]
     if len(sink_ids) != int(arena.n_sink):
@@ -654,25 +728,53 @@ def _window_tokens(arena, prompt_ids: Sequence[int], sink_text: str) -> dict[str
                 f"graft {index} re-encode is {len(ids)} tokens but the arena "
                 f"seats {graft['ntok']}")
         arena_ids.extend(ids)
-    recent_ids: list[int] = []
-    for graft_index, count in arena.live_segs:
-        if graft_index is None:
-            raise LSRError("anonymous live segment: token ledger unrecoverable")
-        ids = [int(v) for v in arena.encode(
-            str(arena.grafts[int(graft_index)].get("text", "")))]
-        if len(ids) != int(count):
-            raise LSRError("live segment re-encode length differs from cache")
-        recent_ids.extend(ids)
-    token_ids = sink_ids + arena_ids + recent_ids + [int(v) for v in prompt_ids]
+
+    prompt = [int(v) for v in prompt_ids]
+    answer = [int(v) for v in answer_ids]
+    live_ids: list[int] = []
+    unattributable: list[int] = []
+    segments: list[dict[str, Any]] = []
+    for ordinal, (graft_index, count) in enumerate(arena.live_segs):
+        count = int(count)
+        if graft_index is not None:
+            ids = [int(v) for v in arena.encode(
+                str(arena.grafts[int(graft_index)].get("text", "")))]
+            kind = "deposited_turn"
+        else:
+            # The probe's own undeposited turn: prompt + committed answer
+            # prefix, in cache order.
+            ids = (prompt + answer)[:count]
+            kind = "probe_turn_undeposited"
+        resolved = len(ids) == count
+        if not resolved:
+            # Reconstruction disagrees with the seated length. Do not guess
+            # and do not die: hand these seats to UNATTRIBUTABLE.
+            ids = []
+        segments.append({
+            "ordinal": int(ordinal),
+            "graft_index": None if graft_index is None else int(graft_index),
+            "ntok": count,
+            "kind": kind,
+            "resolved": bool(resolved),
+        })
+        if resolved:
+            live_ids.extend(ids)
+        else:
+            unattributable.extend([-1] * count)
+
+    token_ids = sink_ids + arena_ids + live_ids + unattributable
+    strings = [str(arena.decode([int(v)])) for v in sink_ids + arena_ids + live_ids]
+    strings += ["�"] * len(unattributable)
     return {
         "token_ids": token_ids,
-        "token_strings": [str(arena.decode([int(v)])) for v in token_ids],
+        "token_strings": strings,
         "counts": {
             "anchor": len(sink_ids),
             "arena": len(arena_ids),
-            "recent": len(recent_ids),
-            "live": len(prompt_ids),
+            "live": len(live_ids),
+            UNATTRIBUTABLE: len(unattributable),
         },
+        "live_segment_ledger": segments,
     }
 
 
@@ -806,6 +908,15 @@ def _serve_and_witness(
                 arena.stop_sequences or (), defer_memory=True)
         tap.finalize(ngen)
 
+        # Token ids for the answer, to reconstruct the probe's own
+        # undeposited live segment (see _window_tokens).
+        answer_ids = arena.encode(str(answer))
+
+        # NOTE: the layout is derived AFTER _attempt, so arena.live_segs
+        # ALREADY contains the probe's own turn (appended at
+        # graft_arena.py:2775).  prompt_ntok must therefore be 0 here -- the
+        # prompt rows are inside that final segment, and passing them again
+        # would double-count them and shift every region boundary right.
         layout = derive_window_layout(
             n_sink=int(arena.n_sink),
             arena_width=int(arena.width),
@@ -813,9 +924,11 @@ def _serve_and_witness(
             mount_seat_ranges=arena._mount_seat_ranges(),
             live_segs=list(arena.live_segs),
             live_turns=int(arena.live_turns),
-            prompt_ntok=len(prompt_ids),
+            prompt_ntok=0,
         )
-        tokens = _window_tokens(arena, prompt_ids, e2e.HARMONY_SINK)
+        tokens = _window_tokens(
+            arena, prompt_ids, e2e.HARMONY_SINK, answer_ids=answer_ids)
+        unattributable_ntok = int(tokens["counts"][UNATTRIBUTABLE])
         scores, sinks, allowed = tap.stacked()
         mass = full_window_readout_mass(
             softmax_operands_by_layer=scores,
@@ -839,6 +952,28 @@ def _serve_and_witness(
             expected_value=expected_value or "",
             layout=layout, mass=mass,
             served_spans=served_spans, expected_spans=expected_spans)
+
+        # UNATTRIBUTABLE seats: segments whose tokens could not be
+        # reconstructed to their seated length.  Their mass is always
+        # reported.  It only invalidates the probe when it holds the
+        # PLURALITY -- a sliver must be visible, not fatal.
+        unattributable_share = 0.0
+        if unattributable_ntok:
+            per_token = np.asarray(mass["per_token_mass"], dtype=np.float64)
+            total = float(mass["total_weight"])
+            unattributable_share = float(
+                per_token[-unattributable_ntok:].sum() / total)
+            if unattributable_share >= float(verdict.get("plurality_share", 0.0)):
+                verdict = dict(verdict)
+                verdict["verdict"] = VERDICT_NOT_MEASURED
+                verdict["verdict_basis"] = (
+                    f"{unattributable_ntok} window seats could not be "
+                    f"attributed to a region and carry {unattributable_share:.6f} "
+                    "of readout mass -- at or above the plurality region's "
+                    "share, so no value-provenance verdict is defensible"
+                )
+        verdict["unattributable_seats"] = int(unattributable_ntok)
+        verdict["unattributable_mass_share"] = unattributable_share
         return {
             "schema": f"{SCHEMA_PREFIX}.probe_witness.v1",
             "program": "LSR",
@@ -858,6 +993,7 @@ def _serve_and_witness(
             },
             "window_layout": layout,
             "window_token_counts": tokens["counts"],
+            "live_segment_ledger": tokens["live_segment_ledger"],
             "layer_kinds": {str(k): v for k, v in sorted(tap.layer_kind.items())},
             "readout_mass": mass,
             "verdict": verdict,
