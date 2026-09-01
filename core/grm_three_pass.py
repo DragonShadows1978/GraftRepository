@@ -16,6 +16,9 @@ from typing import Any, Callable
 
 
 MEMORY_LEDGER_SCHEMA = "grm.memory_ledger.turn.v1"
+# LSR-P2B: route receipts get their OWN versioned schema.  The memory-ledger
+# mutation schema above is FROZEN; a new fact never re-versions an old record.
+ROUTE_RECEIPT_SCHEMA = "grm.route_receipt.v1"
 EMPTY_SHA256 = hashlib.sha256(b"").hexdigest()
 
 
@@ -435,6 +438,274 @@ class StagedWorkingSetResolver:
         }
 
 
+# --------------------------------------------------------------- LSR-P2B
+# Route-receipt persistence.  LSR Phase 1 earned the principle that "route
+# receipts are not persisted at serving time"; every field below is one that
+# Phase 1 had to RECONSTRUCT from snapshot manifests after the fact.  The
+# record is built from serve-time state only and carries its own version.
+
+# Generic pass-through prefixes/keys.  P2A adds fit-honesty and abstention
+# fields to arena/driver ``info``; naming them by PREFIX means P2B persists
+# them the moment they exist and needs no re-edit when P2A lands.
+ROUTE_RECEIPT_INFO_PREFIXES = ("fit_", "abstain")
+ROUTE_RECEIPT_INFO_KEYS = ("served_without_plan_head",)
+
+# ``info`` keys already projected into named receipt sections, so the generic
+# pass-through does not duplicate them.
+_ROUTE_RECEIPT_CLAIMED_INFO_KEYS = frozenset({
+    "route_receipt", "route_backend", "trip", "clean_room", "mounts",
+    "mount_plan", "mount_fitted", "mount_dropped_for_width", "ranking_ids",
+    "no_mount_fit", "resident", "evicted", "live_tokens", "extraction",
+    "_deferred_memory", "driver_probe_multimount", "driver_probe_ladder",
+    "driver_topk", "point_lookup", "precise_first", "ungrounded_kept_first",
+    "admission_policy", "admission_policy_branch", "admission_rank_plan",
+    "admission_identifier_hit_count", "admission_identified_candidates",
+    "admission_route_margin_1_2", "admission_route_margin_evaluated",
+    "admission_margin_threshold", "admission_rule_sha256",
+})
+
+
+def _int_list(values: Any) -> list[int]:
+    if values is None:
+        return []
+    out: list[int] = []
+    for value in values:
+        try:
+            out.append(int(value))
+        except (TypeError, ValueError):
+            continue
+    return out
+
+
+def _mounts_to_graft_indices(values: Any) -> list[int]:
+    """``_attempt`` reports ``mounts`` 1-based; the receipt is graft-indexed."""
+    return [value - 1 for value in _int_list(values)]
+
+
+def _route_receipt_generic_info(info: Mapping[str, Any]) -> dict[str, Any]:
+    out: dict[str, Any] = {}
+    for key, value in info.items():
+        name = str(key)
+        if name in _ROUTE_RECEIPT_CLAIMED_INFO_KEYS:
+            continue
+        if (name.startswith(ROUTE_RECEIPT_INFO_PREFIXES)
+                or name in ROUTE_RECEIPT_INFO_KEYS):
+            out[name] = canonical_value(value)
+    return out
+
+
+def route_receipt_sha256(record: Mapping[str, Any]) -> str:
+    """Sha rule: sha256 over canonical JSON of the record MINUS the stamp.
+
+    Canonical JSON is ``canonical_json_bytes`` (sorted keys, no spaces,
+    UTF-8, deterministic float/array/bytes projections), so the same serve
+    state always yields the same digest and the digest never covers itself.
+    """
+    payload = {key: value for key, value in record.items()
+               if key != "receipt_sha256"}
+    return sha256_bytes(canonical_json_bytes(payload))
+
+
+def build_route_receipt(
+    *,
+    session_id: str,
+    turn_id: str,
+    info: Mapping[str, Any] | None = None,
+    arena: Any = None,
+    repository: Any = None,
+    request_text: str | None = None,
+    output_text: str | None = None,
+    request_sha256: str | None = None,
+    output_sha256: str | None = None,
+    arena_before_sha256: str | None = None,
+    repository_size: int | None = None,
+    serving_path: str = "unknown",
+    route_limit: int | None = None,
+    candidate_count: int | None = None,
+    ranking_ids: Any = None,
+    ranking_scores: Any = None,
+    excluded_live_ids: Any = None,
+    excluded_recency_ids: Any = None,
+    admission_profile: Mapping[str, Any] | None = None,
+    trips: Any = None,
+    turn_kind: str | None = None,
+) -> dict[str, Any]:
+    """Assemble the per-turn ``grm.route_receipt.v1`` record.
+
+    Written on EVERY turn — mutation-free, abstained, and ``no_mount_fit``
+    turns included.  Every argument is optional so a caller that genuinely
+    cannot observe a field records ``null`` rather than a fabrication.
+    """
+    info = dict(info or {})
+    if arena is None and repository is not None:
+        arena = getattr(repository, "arena", None)
+
+    arena_receipt = info.get("route_receipt")
+    if not isinstance(arena_receipt, Mapping):
+        arena_receipt = getattr(arena, "last_route_receipt", None)
+    arena_receipt = (dict(arena_receipt)
+                     if isinstance(arena_receipt, Mapping) else None)
+
+    if ranking_ids is None:
+        ranking_ids = info.get("ranking_ids")
+    if ranking_ids is None and admission_profile is not None:
+        ranking_ids = admission_profile.get("ranking")
+    ranking = _int_list(ranking_ids)
+
+    scores = None
+    if ranking_scores is not None:
+        scores = [None if value is None else float(value)
+                  for value in ranking_scores]
+
+    if candidate_count is None and arena_receipt is not None:
+        candidate_count = arena_receipt.get("candidate_count")
+
+    backend = info.get("route_backend")
+    if backend is None and arena_receipt is not None:
+        backend = arena_receipt.get("route_backend")
+    if backend is None and arena is not None:
+        backend = getattr(arena, "last_route_backend", None)
+
+    fallbacks = []
+    if arena_receipt is not None:
+        for reason in arena_receipt.get("fallbacks") or ():
+            fallbacks.append({"reason_code": str(reason)})
+
+    planned = _int_list(info.get("mount_plan"))
+    if not planned and admission_profile is not None:
+        planned = _int_list(admission_profile.get("rank_plan"))
+    seated = _int_list(info.get("mount_fitted"))
+    dropped = _int_list(info.get("mount_dropped_for_width"))
+    final_mounts = _mounts_to_graft_indices(info.get("mounts"))
+    if not final_mounts and arena is not None:
+        final_mounts = _int_list(getattr(arena, "cur_mounts", ()))
+
+    if repository_size is None and arena is not None:
+        grafts = getattr(arena, "grafts", None)
+        if grafts is not None:
+            repository_size = len(grafts)
+
+    if arena_before_sha256 is None and repository is not None:
+        try:
+            arena_before_sha256 = arena_state_sha256(repository)
+        except Exception:
+            arena_before_sha256 = None
+
+    if request_sha256 is None and request_text is not None:
+        request_sha256 = sha256_text(request_text)
+    if output_sha256 is None and output_text is not None:
+        output_sha256 = sha256_text(output_text)
+
+    trip_rows: list[dict[str, Any]] = []
+    for row in trips or ():
+        if not isinstance(row, Mapping):
+            continue
+        trip_rows.append({
+            "ordinal": int(row.get("ordinal", len(trip_rows))),
+            "clean_room": bool(row.get("clean_room", False)),
+            "planned": _int_list(row.get("planned")),
+            "mount_set": _int_list(row.get("mount_set")),
+            "grounded": (None if row.get("grounded") is None
+                         else bool(row.get("grounded"))),
+        })
+    if not trip_rows and info.get("trip") is not None:
+        trip_rows.append({
+            "ordinal": int(info["trip"]),
+            "clean_room": bool(info.get("clean_room", False)),
+            "planned": list(planned),
+            "mount_set": list(final_mounts),
+            "grounded": None,
+        })
+
+    record: dict[str, Any] = {
+        "schema": ROUTE_RECEIPT_SCHEMA,
+        "session_id": str(session_id),
+        "turn_id": str(turn_id),
+        "turn_kind": None if turn_kind is None else str(turn_kind),
+        "serving_path": str(serving_path),
+        "route": {
+            "backend": None if backend is None else str(backend),
+            "route_limit": None if route_limit is None else int(route_limit),
+            "candidate_count": (None if candidate_count is None
+                                else int(candidate_count)),
+            "ranking_ids": ranking,
+            "ranking_scores": scores,
+            "ranking_length": len(ranking),
+            "excluded_live_ids": sorted(_int_list(excluded_live_ids)),
+            "excluded_recency_ids": sorted(_int_list(excluded_recency_ids)),
+            "fallbacks": fallbacks,
+            "arena_route_receipt": (canonical_value(arena_receipt)
+                                    if arena_receipt is not None else None),
+        },
+        "admission": {
+            "policy": info.get("admission_policy"),
+            "identifier_tokens": (
+                [str(token) for token in admission_profile["identifier_tokens"]]
+                if admission_profile is not None
+                and admission_profile.get("identifier_tokens") is not None
+                else None),
+            "rare_identifier_tokens": (
+                [str(token)
+                 for token in admission_profile["rare_identifier_tokens"]]
+                if admission_profile is not None
+                and admission_profile.get("rare_identifier_tokens") is not None
+                else None),
+            "identified_candidates": _int_list(
+                info.get("admission_identified_candidates")
+                if info.get("admission_identified_candidates") is not None
+                else (admission_profile or {}).get("identified_candidates")),
+            "identifier_hit_count": (
+                int(info["admission_identifier_hit_count"])
+                if info.get("admission_identifier_hit_count") is not None
+                else None),
+            "policy_branch": (
+                str(info["admission_policy_branch"])
+                if info.get("admission_policy_branch") is not None
+                else None),
+            "rank_plan": _int_list(
+                info.get("admission_rank_plan")
+                if info.get("admission_rank_plan") is not None
+                else (admission_profile or {}).get("rank_plan")),
+            "route_margin_1_2": (
+                float(info["admission_route_margin_1_2"])
+                if info.get("admission_route_margin_1_2") is not None
+                else None),
+            "route_margin_evaluated": (
+                bool(info["admission_route_margin_evaluated"])
+                if info.get("admission_route_margin_evaluated") is not None
+                else None),
+            "margin_threshold": (
+                float(info["admission_margin_threshold"])
+                if info.get("admission_margin_threshold") is not None
+                else None),
+            "rule_sha256": info.get("admission_rule_sha256"),
+        },
+        "fit": {
+            "planned": planned,
+            "seated": seated,
+            "dropped": dropped,
+            "final_mounts": final_mounts,
+            "cur_mount_n": (None if arena is None
+                            else int(getattr(arena, "cur_mount_n", 0) or 0)),
+            "width": (None if arena is None or getattr(arena, "width", None) is None
+                      else int(arena.width)),
+            "trips": trip_rows,
+            "trip_count": len(trip_rows),
+            "no_mount_fit": bool(info.get("no_mount_fit", False)),
+            "info_pass_through": _route_receipt_generic_info(info),
+        },
+        "provenance": {
+            "repository_size_at_probe": (None if repository_size is None
+                                         else int(repository_size)),
+            "arena_state_sha256_before_serve": arena_before_sha256,
+            "request_sha256": request_sha256,
+            "output_sha256": output_sha256,
+        },
+    }
+    record["receipt_sha256"] = route_receipt_sha256(record)
+    return record
+
+
 class MemoryLedgerBuilder:
     """Record every observed pass-3 target mutation in frozen-schema form."""
 
@@ -455,6 +726,21 @@ class MemoryLedgerBuilder:
         self.arena_before_sha256 = arena_state_sha256(repository)
         self._overall_before = _target_snapshots(repository)
         self.mutations: list[dict[str, Any]] = []
+        # LSR-P2B: optional sidecar.  Never attached => finalize() returns the
+        # frozen key set byte-for-byte, so every pre-P2B consumer and test is
+        # unaffected.
+        self.route_receipt: dict[str, Any] | None = None
+
+    def attach_route_receipt(self, receipt: Mapping[str, Any] | None) -> None:
+        """Attach a ``grm.route_receipt.v1`` record alongside the mutations."""
+        if receipt is None:
+            self.route_receipt = None
+            return
+        if str(receipt.get("schema")) != ROUTE_RECEIPT_SCHEMA:
+            raise ValueError(
+                "route receipt must carry schema "
+                f"{ROUTE_RECEIPT_SCHEMA!r}, got {receipt.get('schema')!r}")
+        self.route_receipt = dict(receipt)
 
     def record_operation(
         self,
@@ -531,6 +817,10 @@ class MemoryLedgerBuilder:
             "mutations": self.mutations,
             "mutation_count": len(self.mutations),
         }
+        if self.route_receipt is not None:
+            # Sidecar only.  Mutation rows and the completeness audit below
+            # are computed exactly as before this key existed.
+            receipt["route_receipt"] = self.route_receipt
         audit = {
             "schema": "grm.memory_ledger.completeness.v1",
             "turn_id": self.turn_id,
