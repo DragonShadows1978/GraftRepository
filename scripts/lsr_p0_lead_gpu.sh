@@ -45,6 +45,13 @@ echo "-- CPU selftest (no lease) --"
 "$PY" scripts/lsr_p0_core.py --selftest --emit
 
 echo
+echo "-- tap selftest against a fake engine (no lease, no weights) --"
+# Covers the model/layer attribute paths, layer attribution under the nested
+# chunked sliding path, and the engine-supplied scale. This is the gate that
+# would have caught the .cfg/.config shakedown failure without a GPU lease.
+"$PY" scripts/lsr_p0_gpu.py selftest
+
+echo
 echo "-- probe enumeration (no lease) --"
 "$PY" scripts/lsr_p0_core.py --enumerate --emit
 

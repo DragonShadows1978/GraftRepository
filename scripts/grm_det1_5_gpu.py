@@ -100,7 +100,7 @@ DET1_10_SOURCE_AUTH = (
 # script picked up the census step; it is retained unused under the same
 # append-only rule (the drift guard is what caught it, working as designed).
 DET1_11_SOURCE_AUTH = (
-    FROZEN_RUN / "det1_9_precollection_source_authorization_r13.json"
+    FROZEN_RUN / "det1_9_precollection_source_authorization_r18.json"
 )
 # The DET1.7 public campaign/analyzer API remains stable while its active
 # collection-only authority advances through append-only successor envelopes.
@@ -355,7 +355,9 @@ DET1_9_CHANGED_SOURCES = {
     "scripts/grm_det1_5_analyze.py": (
         "validate_and_report_cross_session_substitutions_and_findings_"
         "then_det1_11_report_the_achieved_count_in_table_and_verdict_"
-        "and_accept_any_validated_envelope_lineage_member_on_readback"
+        "and_accept_any_validated_envelope_lineage_member_on_readback_"
+        "and_bind_stage_shards_by_marker_reference_not_directory_glob_"
+        "and_account_for_the_det1_9_reserve_probe_in_sup_cardinality"
     ),
     "scripts/grm_det1_5_gpu.py": (
         "collect_select_freeze_and_bind_det1_9_cross_session_substitutions_"
@@ -431,7 +433,8 @@ DET1_9_ADDED_SOURCES = {
         "and_successor_lineage_idempotence_and_integrity_contracts"
     ),
     "tests/test_grm_det1_11_envelope_lineage.py": (
-        "det1_11_no_stage_consumer_hard_pins_a_superseded_envelope"
+        "det1_11_no_stage_consumer_hard_pins_a_superseded_envelope_"
+        "and_stage_shard_binding_is_marker_referenced_not_globbed"
     ),
 }
 

@@ -97,20 +97,47 @@ class SinkAttentionTap:
     engine's own arithmetic is untouched: the wrapper records its inputs and
     delegates to the original function for the actual compute.
 
-    For each call the LAST query row is kept.  Layer identity comes from the
-    call ordinal modulo the layer count, the convention
-    grm_cmc1_gpu_arms.SDPAInterceptor._wrapped already uses.
+    LAYER IDENTITY -- deliberately NOT a call ordinal.  grm_cmc1_gpu_arms
+    derives the layer from `calls % n_layers`, which is sound for MiniCPM3
+    because its SDPA site fires exactly once per layer.  It is NOT sound here:
+    core/gpt_oss20b_tc.py::sliding_sink_attention_tc calls sink_attention_tc
+    ONCE PER CHUNK internally (:419), so a shared counter sees several calls
+    for one sliding layer and desynchronizes for every layer after it.
+
+    Instead the tap binds each attention module's `sinks` tensor identity to
+    its `layer_idx` up front (every GptOssAttentionTC owns its own sinks
+    tensor, :668), and each intercepted call is attributed by looking up the
+    sinks object it was handed.  Nested and chunked calls therefore land on
+    the right layer, and a call whose sinks are unrecognized raises rather
+    than being silently misfiled.
+
+    SCALE: read from the engine's own `scale=` keyword (GptOssAttentionTC
+    passes `scale=self.scaling`), never re-derived from head_dim, so a future
+    change to `scaling` cannot silently desynchronize the witness.
     """
 
-    def __init__(self, n_layers: int, *, head_dim: int):
-        self.n_layers = int(n_layers)
+    def __init__(self, layers: Sequence[Any], *, head_dim: int):
         self.head_dim = int(head_dim)
-        self.calls = 0
+        self.n_layers = len(layers)
         self.forward_count = 0
         self.scores: dict[int, list[np.ndarray]] = {}
         self.sinks: dict[int, np.ndarray] = {}
         self.allowed: dict[int, list[np.ndarray]] = {}
         self.layer_kind: dict[int, str] = {}
+        self._pending: dict[int, tuple[int, bool]] = {}
+        self._seen_this_forward: set[int] = set()
+        self._by_sinks: dict[int, int] = {}
+        for layer in layers:
+            attn = getattr(layer, "self_attn", None)
+            if attn is None or getattr(attn, "sinks", None) is None:
+                raise LSRError(
+                    "layer exposes no self_attn.sinks; the tap cannot bind "
+                    "layer identity")
+            self._by_sinks[id(attn.sinks)] = int(attn.layer_idx)
+        if len(self._by_sinks) != self.n_layers:
+            raise LSRError(
+                f"{self.n_layers} layers share only {len(self._by_sinks)} "
+                "distinct sinks tensors; layer identity would be ambiguous")
         self._module = None
         self._orig_full = None
         self._orig_sliding = None
@@ -123,15 +150,59 @@ class SinkAttentionTap:
         self._orig_sliding = gpt.sliding_sink_attention_tc
 
         def wrapped_full(query, key, value, sinks, **kwargs):
-            self._record(query, key, sinks, kind="full", window=None)
+            # Chunks of a sliding layer re-enter here.  `_pending` carries the
+            # chunk's absolute key placement, set by wrapped_sliding just
+            # before it delegates; a bare full-attention call has none.
+            layer = self._layer_of(sinks)
+            pending = self._pending.pop(layer, None)
+            if pending is None:
+                self._record(
+                    query, key, sinks, kind="full", window=None,
+                    scale=kwargs.get("scale"),
+                    attention_mask=kwargs.get("attention_mask"))
+            else:
+                total_keys, last_chunk = pending
+                # Only the chunk holding the final query row is an answer
+                # readout; earlier chunks are skipped, not folded.
+                if last_chunk:
+                    offset = int(total_keys) - int(key.shape[2])
+                    self._record(
+                        query, key, sinks, kind="sliding",
+                        window=None, scale=kwargs.get("scale"),
+                        key_offset=max(0, offset), total_keys=int(total_keys),
+                        attention_mask=kwargs.get("attention_mask"))
             return self._orig_full(query, key, value, sinks, **kwargs)
 
         def wrapped_sliding(query, key, value, sinks, *, sliding_window, **kwargs):
-            self._record(query, key, sinks, kind="sliding",
-                         window=int(sliding_window))
-            return self._orig_sliding(
-                query, key, value, sinks,
-                sliding_window=sliding_window, **kwargs)
+            # Delegate the actual compute; the inner per-chunk
+            # sink_attention_tc calls carry the operands and wrapped_full
+            # records them.  The chunk that contains the LAST query row is the
+            # readout: sliding_sink_attention_tc walks i in range(0, L, blk),
+            # so that is the final iteration.
+            layer = self._layer_of(sinks)
+            self.layer_kind[layer] = "sliding"
+            total_keys = int(key.shape[2])
+            length = int(query.shape[2])
+            blk = max(1, int(kwargs.get("attn_block", 128)))
+            starts = list(range(0, length, blk))
+            seen = {"n": 0}
+            orig_full = self._orig_full
+
+            def chunk_probe(q_i, k_i, v_i, s_i, **kw):
+                seen["n"] += 1
+                self._pending[layer] = (
+                    total_keys, seen["n"] == len(starts))
+                return wrapped_full(q_i, k_i, v_i, s_i, **kw)
+
+            gpt.sink_attention_tc = chunk_probe
+            try:
+                return self._orig_sliding(
+                    query, key, value, sinks,
+                    sliding_window=sliding_window, **kwargs)
+            finally:
+                gpt.sink_attention_tc = wrapped_full
+                self._pending.pop(layer, None)
+                del orig_full
 
         gpt.sink_attention_tc = wrapped_full
         gpt.sliding_sink_attention_tc = wrapped_sliding
@@ -145,36 +216,64 @@ class SinkAttentionTap:
                 self._module.sliding_sink_attention_tc = self._orig_sliding
         return False
 
-    def _record(self, query, key, sinks, *, kind: str, window: int | None) -> None:
+    def _layer_of(self, sinks) -> int:
+        layer = self._by_sinks.get(id(sinks))
+        if layer is None:
+            raise LSRError(
+                "intercepted a sink attention call whose sinks tensor belongs "
+                "to no known layer; layer attribution would be wrong")
+        return int(layer)
+
+    def _record(self, query, key, sinks, *, kind: str, window: int | None,
+                scale: Any, key_offset: int = 0, total_keys: int | None = None,
+                attention_mask=None) -> None:
+        """Record the LAST query row's scores for one (possibly chunked) call.
+
+        `key_offset`/`total_keys` place a sliding chunk's columns back into the
+        full key axis.  A chunk that does not contain the final query row is
+        skipped: only the last row is an answer-readout position, and for the
+        chunked path that row lives in the final chunk alone.
+        """
         from core.mistral7b_tc import tc
 
-        layer = self.calls % self.n_layers
-        if layer == 0:
-            self.forward_count += 1
-        self.calls += 1
-        self.layer_kind[layer] = kind
+        layer = self._layer_of(sinks)
+        self.layer_kind.setdefault(layer, kind)
+        if layer not in self._seen_this_forward:
+            if not self._seen_this_forward:
+                self.forward_count += 1
+            self._seen_this_forward.add(layer)
+            if len(self._seen_this_forward) == self.n_layers:
+                self._seen_this_forward = set()
 
-        # The engine's own scaled-QK materialization, in its compute dtype.
-        # The scale reproduces GptOssAttentionTC.scaling (head_dim ** -0.5)
-        # exactly; the matmul itself is the engine's kernel.
-        scale = float(self.head_dim ** -0.5)
-        scores = tc.matmul(query, key, alpha=scale, trans_b=True)
+        width = int(total_keys if total_keys is not None else key.shape[2])
+        # The engine's own scaled-QK materialization in its compute dtype.
+        # The scale is the one the engine passed (GptOssAttentionTC uses
+        # scale=self.scaling), never re-derived here.
+        alpha = float(scale) if scale is not None else float(self.head_dim ** -0.5)
+        scores = tc.matmul(query, key, alpha=alpha, trans_b=True)
         rows = int(scores.shape[2])
         last = scores.slice(2, rows - 1, 1)
         array = np.asarray(last.float().numpy(), dtype=np.float32)[0, :, 0, :]
-        self.scores.setdefault(layer, []).append(array)
+
+        row = np.full((array.shape[0], width), -np.inf, dtype=np.float32)
+        row[:, key_offset:key_offset + array.shape[1]] = array
+        allowed = np.zeros(width, dtype=bool)
+        allowed[key_offset:key_offset + array.shape[1]] = True
+        if attention_mask is not None:
+            # sliding chunks carry an additive 0 / -1e4 mask; -1e4 entries are
+            # keys the engine excluded, not keys with genuine tiny mass.
+            additive = np.asarray(
+                attention_mask.float().numpy(), dtype=np.float32)
+            last_row = additive.reshape(
+                additive.shape[-2], additive.shape[-1])[-1]
+            keep = last_row > -1.0e3
+            allowed[key_offset:key_offset + array.shape[1]] &= keep
+
+        self.scores.setdefault(layer, []).append(row)
+        self.allowed.setdefault(layer, []).append(allowed)
         if layer not in self.sinks:
             self.sinks[layer] = np.asarray(
                 sinks.float().numpy(), dtype=np.float32).reshape(-1)
-
-        total = int(key.shape[2])
-        if kind == "sliding" and window:
-            q_abs = total - 1
-            index = np.arange(total, dtype=np.int64)
-            allowed = (index <= q_abs) & (index > (q_abs - int(window)))
-        else:
-            allowed = np.ones(total, dtype=bool)
-        self.allowed.setdefault(layer, []).append(allowed)
 
     def finalize(self, ngen: int) -> None:
         """Drop the trailing cache-commit forward, per DetectorObserver.finish.
@@ -208,7 +307,11 @@ class SinkAttentionTap:
             padded, masks = [], []
             for index, row in enumerate(rows):
                 have = int(row.shape[-1])
-                block = np.zeros((row.shape[0], width), dtype=np.float32)
+                # Rows are already placed on their own key axis; only the
+                # growing decode axis needs widening.  Pad with -inf and a
+                # False mask so absent columns are EXCLUDED by the witness
+                # rather than counted as genuine near-zero mass.
+                block = np.full((row.shape[0], width), -np.inf, dtype=np.float32)
                 block[:, :have] = row
                 padded.append(block)
                 mask = np.zeros(width, dtype=bool)
@@ -217,6 +320,198 @@ class SinkAttentionTap:
             scores[layer] = np.stack(padded, axis=0)
             allowed[layer] = np.stack(masks, axis=0)
         return scores, dict(self.sinks), allowed
+
+
+def tap_selftest() -> dict[str, Any]:
+    """Exercise SinkAttentionTap against a fake engine, on CPU.
+
+    This covers exactly what the live shakedown caught and what it would have
+    caught next: model/layer attribute paths, layer attribution under the
+    NESTED chunked sliding path, engine-supplied scale, and mask handling.
+    It monkeypatches core.gpt_oss20b_tc's two attention functions with numpy
+    stand-ins, so no CUDA and no weights are needed.
+    """
+    cases: list[dict[str, Any]] = []
+
+    def record(name: str, passed: bool, detail: Any) -> None:
+        cases.append({"case": name, "pass": bool(passed), "detail": detail})
+
+    import types
+
+    from core import gpt_oss20b_tc as gpt
+
+    class FakeTensor:
+        def __init__(self, array):
+            self.a = np.asarray(array, dtype=np.float32)
+
+        @property
+        def shape(self):
+            return self.a.shape
+
+        @property
+        def dtype(self):
+            return "float32"
+
+        def slice(self, dim, start, length):
+            index = [slice(None)] * self.a.ndim
+            index[dim] = slice(int(start), int(start) + int(length))
+            return FakeTensor(self.a[tuple(index)])
+
+        def reshape(self, shape):
+            return FakeTensor(self.a.reshape([int(v) for v in shape]))
+
+        def float(self):
+            return self
+
+        def numpy(self):
+            return self.a
+
+    fake_tc = types.SimpleNamespace(
+        matmul=lambda q, k, alpha=1.0, trans_b=False: FakeTensor(
+            np.einsum("bhqd,bhsd->bhqs", q.a, k.a) * float(alpha)),
+    )
+
+    heads, head_dim = 2, 4
+    n_layers = 3
+    sinks_by_layer = [FakeTensor(np.full((heads,), 0.5 * (i + 1)))
+                      for i in range(n_layers)]
+
+    layers = []
+    for index in range(n_layers):
+        attn = types.SimpleNamespace(
+            layer_idx=index, sinks=sinks_by_layer[index])
+        layers.append(types.SimpleNamespace(self_attn=attn))
+
+    orig_full = gpt.sink_attention_tc
+    orig_sliding = gpt.sliding_sink_attention_tc
+    orig_mistral = sys.modules.get("core.mistral7b_tc")
+    shim = types.ModuleType("core.mistral7b_tc")
+    shim.tc = fake_tc
+    sys.modules["core.mistral7b_tc"] = shim
+
+    def stub_full(query, key, value, sinks, **kwargs):
+        return FakeTensor(np.zeros_like(query.a))
+
+    def stub_sliding(query, key, value, sinks, *, sliding_window, **kwargs):
+        length = int(query.shape[2])
+        blk = max(1, int(kwargs.get("attn_block", 128)))
+        total = int(key.shape[2])
+        for i in range(0, length, blk):
+            end = min(i + blk, length)
+            q_abs0, q_abs1 = total - length + i, total - length + end - 1
+            k0 = max(0, q_abs0 - int(sliding_window) + 1)
+            k1 = min(total, q_abs1 + 1)
+            mask = np.zeros((1, 1, end - i, k1 - k0), dtype=np.float32)
+            gpt.sink_attention_tc(
+                query.slice(2, i, end - i), key.slice(2, k0, k1 - k0),
+                value.slice(2, k0, k1 - k0), sinks,
+                scale=kwargs.get("scale"),
+                attention_mask=FakeTensor(mask))
+        return FakeTensor(np.zeros_like(query.a))
+
+    try:
+        gpt.sink_attention_tc = stub_full
+        gpt.sliding_sink_attention_tc = stub_sliding
+
+        try:
+            SinkAttentionTap([types.SimpleNamespace(self_attn=None)],
+                             head_dim=head_dim)
+            record("tap_rejects_a_layer_without_self_attn_sinks", False, "no raise")
+        except LSRError as exc:
+            record("tap_rejects_a_layer_without_self_attn_sinks", True, str(exc))
+
+        shared = FakeTensor(np.ones((heads,)))
+        try:
+            SinkAttentionTap(
+                [types.SimpleNamespace(
+                    self_attn=types.SimpleNamespace(layer_idx=i, sinks=shared))
+                 for i in range(2)], head_dim=head_dim)
+            record("tap_rejects_ambiguous_shared_sinks", False, "no raise")
+        except LSRError as exc:
+            record("tap_rejects_ambiguous_shared_sinks", True, str(exc))
+
+        # One forward: layer 0 full, layers 1-2 sliding+chunked.
+        total_keys = 10
+        tap = SinkAttentionTap(layers, head_dim=head_dim)
+        with tap:
+            q = FakeTensor(np.random.RandomState(0).randn(
+                1, heads, 4, head_dim))
+            k = FakeTensor(np.random.RandomState(1).randn(
+                1, heads, total_keys, head_dim))
+            v = FakeTensor(np.zeros((1, heads, total_keys, head_dim)))
+            gpt.sink_attention_tc(
+                q, k, v, sinks_by_layer[0], scale=0.25)
+            for layer in (1, 2):
+                gpt.sliding_sink_attention_tc(
+                    q, k, v, sinks_by_layer[layer],
+                    scale=0.25, sliding_window=6, attn_block=2)
+
+        record(
+            "tap_attributes_every_layer_exactly_once_under_nested_chunking",
+            sorted(tap.scores) == [0, 1, 2]
+            and all(len(rows) == 1 for rows in tap.scores.values()),
+            {layer: len(rows) for layer, rows in sorted(tap.scores.items())},
+        )
+        record(
+            "tap_labels_layer_kinds_from_the_real_dispatch",
+            tap.layer_kind.get(0) == "full"
+            and tap.layer_kind.get(1) == "sliding"
+            and tap.layer_kind.get(2) == "sliding",
+            dict(sorted(tap.layer_kind.items())),
+        )
+        widths = {layer: int(rows[0].shape[-1])
+                  for layer, rows in tap.scores.items()}
+        record(
+            "sliding_chunks_are_placed_back_on_the_full_key_axis",
+            all(width == total_keys for width in widths.values()),
+            widths,
+        )
+        record(
+            "sliding_layers_expose_only_their_window_as_allowed",
+            int(tap.allowed[0][0].sum()) == total_keys
+            and 0 < int(tap.allowed[1][0].sum()) < total_keys,
+            {"full": int(tap.allowed[0][0].sum()),
+             "sliding": int(tap.allowed[1][0].sum())},
+        )
+        record(
+            "tap_counts_one_forward",
+            tap.forward_count == 1, tap.forward_count)
+
+        scores, sinks, allowed = tap.stacked()
+        record(
+            "stacked_yields_readout_by_head_by_key_and_per_layer_sinks",
+            all(value.shape == (1, heads, total_keys) for value in scores.values())
+            and sorted(sinks) == [0, 1, 2]
+            and all(value.shape == (heads,) for value in sinks.values())
+            and all(value.shape == (1, total_keys) for value in allowed.values()),
+            {"scores": {k: v.shape for k, v in scores.items()}},
+        )
+
+        # The engine's scale must be the one used, not head_dim ** -0.5.
+        expected = np.einsum(
+            "hqd,hsd->hqs", q.a[0], k.a[0])[:, -1, :] * 0.25
+        record(
+            "tap_uses_the_engine_supplied_scale_not_a_re_derived_one",
+            np.allclose(scores[0][0], expected, atol=1e-5),
+            {"max_abs": float(np.abs(scores[0][0] - expected).max())},
+        )
+    finally:
+        gpt.sink_attention_tc = orig_full
+        gpt.sliding_sink_attention_tc = orig_sliding
+        if orig_mistral is not None:
+            sys.modules["core.mistral7b_tc"] = orig_mistral
+        else:
+            sys.modules.pop("core.mistral7b_tc", None)
+
+    passed = sum(1 for row in cases if row["pass"])
+    return {
+        "schema": f"{SCHEMA_PREFIX}.tap_selftest.v1",
+        "cases": cases,
+        "case_count": len(cases),
+        "passed": passed,
+        "failed": len(cases) - passed,
+        "all_passed": passed == len(cases),
+    }
 
 
 def _window_tokens(arena, prompt_ids: Sequence[int], sink_text: str) -> dict[str, Any]:
@@ -379,8 +674,15 @@ def _serve_and_witness(
         picks = sorted(e2e._budget_fit_mounts(arena, planned))
         prompt_ids = arena.encode(arena._format_step_prompt(str(question)))
 
+        # GptOss20B_TC exposes its dataclass as .config (core/gpt_oss20b_tc.py
+        # :1218 `self.config = cfg or GptOss20BConfig()`), NOT .cfg -- the
+        # class's own contract-surface docstring lists ".config
+        # GptOss20BConfig".  Only the per-layer attention modules carry a bare
+        # .head_dim (GptOssAttentionTC.__init__ :639), and the arena drives
+        # the model object, not those modules, so the config path is the one
+        # that holds here.
         tap = SinkAttentionTap(
-            len(arena.m.layers), head_dim=int(model.cfg.head_dim))
+            arena.m.layers, head_dim=int(model.config.head_dim))
         with tap:
             answer, _info = arena._attempt(
                 str(question), picks, ngen, False,
@@ -508,11 +810,20 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
                          default=LOCK_WAIT_SECONDS)
     sub.add_parser("adjudicate", help="apply the registered adjudication")
     sub.add_parser("list-probes", help="print the enumerated probe ids")
+    sub.add_parser("selftest", help="CPU tap selftest (no GPU, no lease)")
     return parser.parse_args(argv)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
+    if args.command == "selftest":
+        result = tap_selftest()
+        for row in result["cases"]:
+            print(f"{'PASS' if row['pass'] else 'FAIL'} {row['case']}")
+            if not row["pass"]:
+                print(f"     {row['detail']}")
+        print(f"tap selftest: {result['passed']}/{result['case_count']}")
+        return 0 if result["all_passed"] else 1
     if args.command == "list-probes":
         enumerated = enumerate_probes()
         for group in ("wrong_value_probes", "lawful_controls"):
