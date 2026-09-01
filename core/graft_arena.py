@@ -42,6 +42,10 @@ from core.grm_admission import (
     admission_info_fields,
     adm_decisive_enabled,
     decisive_admission_profile,
+    fit_info_fields,
+    identifier_unbound_abstention,
+    plan_priority_fit,
+    shuttle_trip_cap,
 )
 
 
@@ -2473,6 +2477,29 @@ class ArenaCache:
             return info
 
         s4_turn = self._next_s4_turn()
+
+        # LSR-P2A Ruling 2: not-in-memory abstention.  A point lookup whose
+        # identifier tokens bind NO node over the FULL eligible repository
+        # must not be answered from the topical nearest neighbour; that is
+        # the confabulation-under-retrieval-failure path Phase 0 measured
+        # (H-LSR-3, ABSENT x4).  Structural trigger, no threshold.
+        abstain = identifier_unbound_abstention(admission_profile)
+        if abstain is not None:
+            txt, info = self._serve_abstention(
+                user_text, abstain, deposit=deposit,
+                defer_memory=defer_memory, stops=stops)
+            info["trip"] = 0
+            if defer_memory:
+                info["_deferred_memory"]["importance_bookkeeping"] = {
+                    "routed": [int(i) for i in ranking],
+                    "mounted": [],
+                    "grounded_mounts": [],
+                    "turn": int(s4_turn),
+                }
+            else:
+                self._commit_s4_attempt(ranking, (), (), turn=s4_turn)
+            return txt, attach_route_receipt(info)
+
         # Some backends consume the mutable outer cache list in-place while
         # building its successor.  Snapshot that container; tensor entries
         # remain shared because they are immutable.
@@ -2522,28 +2549,40 @@ class ArenaCache:
         # width (an unbounded descent over-filled the arena and collided
         # live positions with mount seats — descent diag). Cold-storage
         # children reload via node_loader.
-        def fit(picks):
-            # truncation is EXPANSION-ORDERED, deliberately. Score-ordered
-            # truncation was tried and REFUTED (2026-06-11, 6/8): max-over-
-            # child-cents inflates digest scores over verbatim turns, so
-            # "relevance" order kept prose digests and dropped the raw fact
-            # turns inside budget-bound expansions. A workable version
-            # needs a leaf bias — board item, not a one-liner.
-            # SUP-WO1 L2 sits after routing/descent expansion and before
-            # budget fitting/injection. Resolving first prevents a long stale
-            # revision from consuming seats and then disappearing only after
-            # it has already displaced a viable current candidate.
+        # LSR-P2A Ruling 1: the plan is the priority, filler is the leftover.
+        # `rank_plan` members are fitted FIRST, in PLAN ORDER, before any
+        # expansion/topk/recency filler; filler keeps its EXPANSION-ORDERED
+        # truncation (score-ordered truncation was tried and REFUTED
+        # 2026-06-11, 6/8: max-over-child-cents inflates digest scores over
+        # verbatim turns, so "relevance" order kept prose digests and dropped
+        # the raw fact turns inside budget-bound expansions. A workable
+        # version needs a leaf bias — board item, not a one-liner).
+        # SUP-WO1 L2 sits after routing/descent expansion and before budget
+        # fitting/injection, and it must NOT re-sort the plan: resolve first,
+        # then re-derive plan membership from the resolved set.
+        rank_plan = (
+            [int(value) for value in admission_profile["rank_plan"]]
+            if admission_profile is not None else []
+        )
+        fit_receipts = {}
+
+        def fit_detail(picks, plan=None):
             picks = self._resolve_revision_mounts(picks)
             rec_budget = 0 if qrare else sum(self.grafts[i]["ntok"]
                                              for i in rec)
             budget = self.width - rec_budget
-            out, used = [], 0
-            for i in picks:
-                n = self.grafts[i]["ntok"]
-                if used + n <= budget:
-                    out.append(i)
-                    used += n
-            return sorted(out)
+            receipt = plan_priority_fit(
+                plan=(rank_plan if plan is None else plan),
+                candidates=picks,
+                ntok={int(i): int(self.grafts[i]["ntok"]) for i in picks},
+                budget=budget,
+            )
+            key = tuple(sorted(int(v) for v in receipt["fit_seated"]))
+            fit_receipts.setdefault(key, receipt)
+            return receipt
+
+        def fit(picks, plan=None):
+            return list(fit_detail(picks, plan=plan)["fit_seated"])
 
         # budget: max_trips+1 attempts total. Ladder: primary (eras
         # pre-expanded) -> descent (digests expanded too) -> clean room on
@@ -2567,10 +2606,86 @@ class ArenaCache:
                 attempts[0][0], ("era",), qrare=qrare)), False)]
         else:
             attempts = [([], False)]
+
+        # LSR-P2A Ruling 1.2: plan members that do not co-fit become SHUTTLE
+        # trips — additive to max_trips, capped at len(rank_plan). The turn
+        # shuttles because the FIT dropped a planned member, not because a
+        # trip failed grounding: a wrong-but-grounded first trip must not end
+        # the turn while a planned node is still owed a seat.
+        shuttle_trips = []
+        plan_head_receipt = {}
+        if rank_plan:
+            plan_head_receipt = fit_detail(
+                self._descent_expand(
+                    [int(v) for v in rank_plan], ("era",), qrare=qrare))
+            seated_anywhere = {
+                int(v) for picks, _clean in attempts for v in picks}
+            owed = [
+                int(v) for v in plan_head_receipt["fit_shuttle_pending"]
+                if int(v) not in seated_anywhere
+            ]
+            for member in owed[:shuttle_trip_cap(rank_plan)]:
+                trip_picks = fit(
+                    self._descent_expand([member], ("era",), qrare=qrare),
+                    plan=[member])
+                if trip_picks and (trip_picks, False) not in attempts:
+                    attempts.append((trip_picks, False))
+                    shuttle_trips.append(list(trip_picks))
+
+        def attach_fit(info, seated):
+            """NEVER SILENT (Ruling 1.3): fit fields on every served turn.
+
+            The receipt describes the PLAN's fate across the whole turn, not
+            merely the served rung's own packing: the ladder can serve a rung
+            that contains no plan member at all, and a receipt scoped to that
+            rung would be silent about a planned node no rung ever seated —
+            the exact silence this ruling forbids.
+            """
+            if admission_profile is None:
+                # Legacy path (GRM_ADM_DECISIVE=0): byte-for-byte unchanged,
+                # no fit receipt fields are added at all.
+                return info
+            seated_set = {int(v) for v in seated}
+            rung = fit_receipts.get(tuple(sorted(seated_set))) or {}
+            # UNSEATABLE is a property of the plan member and the arena
+            # width, not of whichever rung happened to serve.
+            unseatable = [
+                int(v) for v in plan_head_receipt.get("fit_unseatable", ())]
+            seated_anywhere_now = seated_set | {
+                int(v) for trip in shuttle_trips for v in trip}
+            receipt = {
+                "fit_planned": list(rank_plan),
+                "fit_seated": sorted(seated_set),
+                "fit_dropped_planned": [
+                    int(v) for v in rank_plan
+                    if int(v) in set(unseatable)
+                    and int(v) not in seated_anywhere_now
+                ],
+                "fit_dropped_filler": [
+                    int(v) for v in rung.get("fit_dropped_filler", ())],
+                "fit_unseatable": unseatable,
+            }
+            info.update(fit_info_fields(
+                receipt,
+                shuttle=bool(shuttle_trips),
+                shuttle_trips=shuttle_trips,
+                # Ruling 1.4: UNSEATABLE is an explicit degrade, never an
+                # unlabeled substitution.
+                served_without_plan_head=bool(
+                    rank_plan and int(rank_plan[0]) not in seated_set),
+            ))
+            return info
+
         best = None
         for trip, (picks, clean) in enumerate(attempts):
             if not picks:
-                break
+                # Ruling 1.2: an empty rung no longer ends the turn when a
+                # plan is in play — the shuttle rungs behind it are exactly
+                # the trips that carry the unseated plan members. The legacy
+                # path keeps its `break` byte-for-byte.
+                if admission_profile is None:
+                    break
+                continue
             if trip:        # roll back the failed attempt entirely
                 (self.caches, self.pos, self.live_segs, self.cur_mounts,
                  self.cur_mount_n) = (
@@ -2622,11 +2737,12 @@ class ArenaCache:
                 else:
                     self._commit_s4_attempt(
                         ranking, mset, contributors, turn=s4_turn)
-                return txt, attach_route_receipt(info)
+                return txt, attach_route_receipt(attach_fit(info, picks))
             if best is None:
                 best = (txt, info, (self.caches, self.pos, list(self.live_segs),
                                     self.cur_mounts, self.cur_mount_n,
-                                    list(self.grafts)), tuple(mset))
+                                    list(self.grafts)), tuple(mset),
+                        list(picks))
         # nothing grounded — keep the FIRST attempt's answer and state
         if best is None:
             if defer_memory:
@@ -2647,8 +2763,8 @@ class ArenaCache:
                 }
             else:
                 self._commit_s4_attempt(ranking, (), (), turn=s4_turn)
-            return txt, attach_route_receipt(info)
-        txt, info, st, accepted_mounts = best
+            return txt, attach_route_receipt(attach_fit(info, []))
+        txt, info, st, accepted_mounts, accepted_picks = best
         (self.caches, self.pos, self.live_segs,
          self.cur_mounts, self.cur_mount_n) = st[0], st[1], st[2], st[3], st[4]
         self.grafts[:] = st[5]
@@ -2663,7 +2779,50 @@ class ArenaCache:
                 "grounded_mounts": [],
                 "turn": int(s4_turn),
             }
-        return txt, attach_route_receipt(info)
+        return txt, attach_route_receipt(attach_fit(info, accepted_picks))
+
+    def _serve_abstention(self, user_text, abstain, *, deposit,
+                          defer_memory, stops):
+        """Serve the fixed not-in-memory string without a model forward.
+
+        LSR-P2A Ruling 2.  The abstention is a CONSTANT (core.grm_admission
+        .ABSTENTION_TEMPLATE), not a generation, so nothing can be
+        confabulated into it. The user turn is still a lived turn and still
+        deposits; the abstention output is pinned ``kind="recall"`` so it is
+        excluded from the routing candidate base and can never later be
+        routed as if it were a stored fact (Ruling 2.2).
+        """
+        txt = str(abstain["abstain_text"])
+        info = {
+            "mounts": [],
+            # No forward runs, so the cache may still be unbuilt (None).
+            "resident": (0 if self.caches is None else self._cache_len()),
+            "evicted": 0,
+            "live_tokens": sum(n for _, n in self.live_segs),
+            "abstained": True,
+            "abstain_reason": str(abstain["abstain_reason"]),
+            "abstain_identifier_tokens": [
+                str(t) for t in abstain["abstain_identifier_tokens"]],
+            "no_mount_fit": False,
+        }
+        if defer_memory:
+            info["_deferred_memory"] = {
+                "turn_text": self._format_step_turn(user_text, txt),
+                "user_text": user_text,
+                "seg_cache_ntok": 0,
+                "picks": [],
+                "deposited": False,
+                "importance_committed": False,
+                "route_key_prepared": False,
+                "route_key_token": 0,
+                "abstained": True,
+            }
+        elif deposit:
+            gidx = self.deposit(self._format_step_turn(user_text, txt))
+            self.grafts[gidx]["kind"] = "recall"
+            self._bump_cuda_gqa_epoch()
+            info["abstain_deposited_graft"] = int(gidx)
+        return txt, info
 
     def _attempt(self, user_text, picks, ngen, deposit, stops,
                  defer_memory=False):

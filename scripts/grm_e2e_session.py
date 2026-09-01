@@ -52,6 +52,10 @@ from core.grm_admission import (  # noqa: E402
     adm_decisive_cli_argv,
     adm_decisive_enabled,
     decisive_admission_profile,
+    fit_info_fields,
+    identifier_unbound_abstention,
+    plan_priority_fit,
+    shuttle_trip_cap,
 )
 from scripts.grm_probe_ladder import (  # noqa: E402
     build_probe_ladder_attempts,
@@ -1092,6 +1096,39 @@ def _probe_ladder_chat(
         route_limit = max(want, (int(max_trips) + 1) * want)
         ranking = list(
             arena.route(user_text, exclude=live_idx, limit=route_limit) or [])
+    # LSR-P2A Ruling 2: not-in-memory abstention, before any mount work.
+    abstain = identifier_unbound_abstention(admission_profile)
+    if abstain is not None:
+        ans = str(abstain["abstain_text"])
+        info: dict[str, Any] = {
+            "trip": 0,
+            "driver_probe_multimount": True,
+            "driver_probe_ladder": True,
+            "driver_topk": int(want),
+            "point_lookup": True,
+            "precise_first": False,
+            "mount_plan": [],
+            "mount_fitted": [],
+            "mount_dropped_for_width": [],
+            "ranking_ids": [int(x) for x in ranking],
+            "abstained": True,
+            "abstain_reason": str(abstain["abstain_reason"]),
+            "abstain_identifier_tokens": [
+                str(t) for t in abstain["abstain_identifier_tokens"]],
+        }
+        info.update(admission_info_fields(admission_profile))
+        if not defer_memory:
+            # Ruling 2.2: the user turn is a lived turn and still deposits;
+            # the abstention output is pinned kind="recall" so it can never
+            # later be routed as a stored fact.
+            gidx = arena.deposit(arena._format_step_turn(user_text, ans))
+            arena.grafts[gidx]["kind"] = "recall"
+            arena._bump_cuda_gqa_epoch()
+            info["abstain_deposited_graft"] = int(gidx)
+        info = _probe_finish_deposit(
+            repo, before, user_text, ans, info, defer_memory=defer_memory)
+        return ans, info
+
     id_tokens = _probe_identifier_tokens(arena, user_text)
     point_lookup = bool(id_tokens)
     precise = _probe_rank1_covers_identifiers(arena, ranking, id_tokens)
@@ -1101,6 +1138,10 @@ def _probe_ladder_chat(
         precise=precise,
         point_lookup=point_lookup,
         max_trips=int(max_trips),
+    )
+    rank_plan = (
+        [int(value) for value in admission_profile["rank_plan"]]
+        if admission_profile is not None else []
     )
     if admission_profile is None:
         attempts = baseline_attempts
@@ -1115,6 +1156,42 @@ def _probe_ladder_chat(
             if normalized not in attempts:
                 attempts.append(normalized)
         attempts = attempts[:max(1, int(max_trips) + 1)]
+
+    # LSR-P2A Ruling 1.2: SHUTTLE. Plan members that cannot co-seat with the
+    # rest of the plan get their OWN trip, in plan order, additive to
+    # max_trips up to the registered hard cap len(rank_plan). This is
+    # triggered by the FIT DROP, not by a grounding failure — the defect
+    # anatomy (adjudication 31e5c894) is precisely that a wrong-but-grounded
+    # trip 0 ended the turn while the planned node was still unseated.
+    shuttle_trips: list[list[int]] = []
+    plan_head_receipt: dict[str, Any] = {}
+    if rank_plan:
+        resolved_plan = [
+            int(v) for v in arena._resolve_revision_mounts(list(rank_plan))]
+        head_receipt = plan_priority_fit(
+            plan=rank_plan,
+            candidates=resolved_plan,
+            ntok={
+                int(i): int(arena.grafts[int(i)]["ntok"])
+                for i in resolved_plan
+            },
+            budget=int(arena.width),
+        )
+        plan_head_receipt = head_receipt
+        seated_anywhere = {
+            int(v)
+            for planned_ids, _clean in attempts
+            for v in _budget_fit_mounts(arena, planned_ids)
+        }
+        owed = [
+            int(v) for v in head_receipt["fit_shuttle_pending"]
+            if int(v) not in seated_anywhere
+        ]
+        for member in owed[:shuttle_trip_cap(rank_plan)]:
+            rung = ([int(member)], bool(point_lookup))
+            if rung not in attempts:
+                attempts.append(rung)
+                shuttle_trips.append([int(member)])
 
     for layer in arena.m.layers:
         layer.self_attn.live_shift = arena.live_shift
@@ -1132,6 +1209,77 @@ def _probe_ladder_chat(
     best: tuple[str, dict[str, Any], tuple, list[int], list[int]] | None = None
     last_planned: list[int] = []
     last_picks: list[int] = []
+    fit_receipts: dict[tuple[int, ...], dict[str, Any]] = {}
+
+    def _fit_for(planned_ids: list[int]) -> dict[str, Any]:
+        """Plan-priority fit for one rung (Ruling 1.1).
+
+        Plan members come first in PLAN ORDER, then filler in rank order —
+        `_budget_fit_mounts`' original packing law, now confined to filler.
+        The legacy (`admission_profile is None`) path keeps the original
+        rank-order packing byte-for-byte.
+        """
+        ids = [int(v) for v in planned_ids]
+        if admission_profile is None:
+            picks_ = _budget_fit_mounts(arena, ids)
+            return {
+                "fit_planned": ids,
+                "fit_seated": list(picks_),
+                "fit_dropped_planned": [],
+                "fit_dropped_filler": [v for v in ids if v not in set(picks_)],
+                "fit_unseatable": [],
+                "fit_shuttle_pending": [],
+            }
+        receipt = plan_priority_fit(
+            plan=rank_plan,
+            candidates=ids,
+            ntok={int(i): int(arena.grafts[int(i)]["ntok"]) for i in ids},
+            budget=int(arena.width),
+        )
+        fit_receipts[tuple(sorted(receipt["fit_seated"]))] = receipt
+        return receipt
+
+    def _attach_fit(info: dict[str, Any], seated: list[int]) -> dict[str, Any]:
+        """NEVER SILENT (Ruling 1.3): fit fields on every served turn.
+
+        The receipt describes the PLAN's fate across the whole turn, not
+        merely the served rung's own packing: a rung the ladder chose can
+        omit the plan entirely (the baseline merge in this driver puts
+        ``ranking[topk:2*topk]`` ahead of the widened top-k rung), and a
+        receipt that reported only that rung would be silent about a plan
+        member no rung ever seated — the exact silence Ruling 1.3 forbids.
+        """
+        if admission_profile is None:
+            return info
+        seated_set = {int(v) for v in seated}
+        rung = fit_receipts.get(tuple(sorted(seated_set))) or {}
+        # UNSEATABLE is a property of the plan member and the arena width,
+        # not of whichever rung happened to serve.
+        unseatable = [
+            int(v) for v in plan_head_receipt.get("fit_unseatable", ())]
+        seated_anywhere_now = seated_set | {
+            int(v) for trip in shuttle_trips for v in trip}
+        dropped_planned = [
+            int(v) for v in rank_plan
+            if int(v) in set(unseatable) and int(v) not in seated_anywhere_now
+        ]
+        receipt = {
+            "fit_planned": list(rank_plan),
+            "fit_seated": sorted(seated_set),
+            "fit_dropped_planned": dropped_planned,
+            "fit_dropped_filler": [
+                int(v) for v in rung.get("fit_dropped_filler", ())],
+            "fit_unseatable": unseatable,
+        }
+        info.update(fit_info_fields(
+            receipt,
+            shuttle=bool(shuttle_trips),
+            shuttle_trips=shuttle_trips,
+            # Ruling 1.4: explicit degrade, never unlabeled substitution.
+            served_without_plan_head=bool(
+                rank_plan and int(rank_plan[0]) not in seated_set),
+        ))
+        return info
 
     for trip, (planned, clean) in enumerate(attempts):
         last_planned = list(planned)
@@ -1148,11 +1296,12 @@ def _probe_ladder_chat(
             arena.caches, arena.pos, arena.live_segs = None, 0, []
             arena.cur_mounts, arena.cur_mount_n = [], 0
 
-        fitted = _budget_fit_mounts(arena, planned)
-        picks = sorted(fitted)
+        receipt = _fit_for(list(planned))
+        picks = sorted(int(v) for v in receipt["fit_seated"])
         last_picks = list(picks)
         if not picks and planned:
-            # Nothing fits — treat as empty attempt.
+            # Nothing fits — treat as empty attempt. A later shuttle rung
+            # may still seat an owed plan member (Ruling 1.2).
             continue
         if defer_memory:
             ans, info = arena._attempt(
@@ -1187,6 +1336,7 @@ def _probe_ladder_chat(
             info["ranking_ids"] = [int(x) for x in ranking]
             if admission_profile is not None:
                 info.update(admission_info_fields(admission_profile))
+            info = _attach_fit(info, list(picks))
             info = _probe_finish_deposit(
                 repo, before, user_text, ans, info, defer_memory=defer_memory)
             return ans, info
@@ -1246,6 +1396,7 @@ def _probe_ladder_chat(
             })
         if admission_profile is not None:
             info.update(admission_info_fields(admission_profile))
+        info = _attach_fit(info, [])
         info = _probe_finish_deposit(
             repo, before, user_text, ans, info, defer_memory=defer_memory)
         return ans, info
@@ -1271,6 +1422,7 @@ def _probe_ladder_chat(
     info["ungrounded_kept_first"] = True
     if admission_profile is not None:
         info.update(admission_info_fields(admission_profile))
+    info = _attach_fit(info, list(picks))
     _probe_mount_snapshot(
         repo, arena, live_idx=live_idx, picks=picks,
         planned=planned, turn_idx=turn_idx)

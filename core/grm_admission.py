@@ -276,6 +276,198 @@ def decisive_admission_profile(
     }
 
 
+# ---------------------------------------------------------------------------
+# GRM-LSR-P2A Ruling 1 — fit-stage honesty (SHUTTLE over fail-loud)
+#
+# Phase-1 FINAL adjudication (artifacts/lsr_p1/
+# lsr_p1_adjudication_31e5c89453f4aa42.json) found four ADMISSION-PRUNE
+# probes sharing one shape: A-DEC planned exactly the answer-bearing node
+# (``rank_plan = [X]``), the ladder's later rung widened the mount plan to
+# ``[X, Y, Z]``, and expansion-ordered budget truncation then seated the
+# WRONG lineage end ``[Y]`` because ``X`` alone already exceeded the 96-seat
+# arena.  The planned node never received a seat and nothing said so.
+#
+# The principle this implements: a planned node is never displaced by an
+# unplanned one, and a planned set that cannot be co-seated is SERIALIZED,
+# never truncated.
+# ---------------------------------------------------------------------------
+
+
+def plan_priority_fit(
+    *,
+    plan: Sequence[int],
+    candidates: Sequence[int],
+    ntok: Mapping[int, int] | Any,
+    budget: int,
+) -> dict[str, Any]:
+    """Seat ``plan`` members first, in plan order, then filler.
+
+    ``candidates`` is the full post-L2, post-expansion pick list for the
+    attempt.  Members of ``plan`` that appear in it are seated FIRST in plan
+    order; everything else is filler and consumes only the seats left over,
+    in its own (expansion) order — the EXPANSION-ORDER truncation law of
+    ``graft_arena.step()::fit`` is preserved for filler, which is the only
+    population it was ever measured on (2026-06-11 score-order refutation).
+
+    ``ntok`` may be a mapping or any object supporting ``ntok[index]``
+    lookup of a per-node seat cost (the arena's ``grafts`` list satisfies
+    this via ``grafts[i]["ntok"]`` only through the mapping adapter the
+    callers build, so callers pass an explicit dict).
+
+    Returns the complete fit receipt.  ``fit_dropped_planned`` is ``[]``
+    unless a plan member is UNSEATABLE (its own ``ntok`` exceeds ``budget``
+    even alone); every other unseated plan member lands in
+    ``fit_shuttle_pending`` for the caller to serialize across trips.
+    """
+    budget = int(budget)
+    plan_order = [int(value) for value in plan]
+    candidate_set = {int(value) for value in candidates}
+    plan_in_play = [value for value in plan_order if value in candidate_set]
+    plan_set = set(plan_in_play)
+    filler = [int(value) for value in candidates if int(value) not in plan_set]
+
+    def cost(index: int) -> int:
+        return int(ntok[int(index)])
+
+    # A plan member whose own cost exceeds the whole budget can never be
+    # seated by any trip.  That is an explicit degrade, not a substitution.
+    unseatable = [value for value in plan_in_play if cost(value) > budget]
+    unseatable_set = set(unseatable)
+    seatable = [value for value in plan_in_play if value not in unseatable_set]
+
+    seated: list[int] = []
+    used = 0
+    pending: list[int] = []
+    for value in seatable:
+        n = cost(value)
+        if used + n <= budget:
+            seated.append(value)
+            used += n
+        else:
+            # Not a drop: this member is owed its own shuttle trip.
+            pending.append(value)
+
+    seated_filler: list[int] = []
+    dropped_filler: list[int] = []
+    for value in filler:
+        n = cost(value)
+        if used + n <= budget:
+            seated_filler.append(value)
+            used += n
+        else:
+            dropped_filler.append(value)
+
+    return {
+        "fit_planned": list(plan_order),
+        "fit_seated": sorted(seated + seated_filler),
+        "fit_seated_planned": list(seated),
+        "fit_seated_filler": list(seated_filler),
+        "fit_dropped_planned": list(unseatable),
+        "fit_dropped_filler": list(dropped_filler),
+        "fit_shuttle_pending": list(pending),
+        "fit_unseatable": list(unseatable),
+        "fit_used_seats": int(used),
+        "fit_budget": int(budget),
+    }
+
+
+def shuttle_trip_cap(plan: Sequence[int]) -> int:
+    """Registered hard cap on ADDITIVE shuttle trips: ``len(rank_plan)``.
+
+    Shuttle trips are additive to ``max_trips``; this is the ceiling, fixed
+    before the P2A gates ran and never tuned against a result.
+    """
+    return len(list(plan))
+
+
+def fit_info_fields(
+    receipt: Mapping[str, Any],
+    *,
+    shuttle: bool = False,
+    shuttle_trips: Sequence[Sequence[int]] = (),
+    served_without_plan_head: bool = False,
+) -> dict[str, Any]:
+    """Compact, always-present arena receipt fields for one fit decision.
+
+    NEVER SILENT: every fit decision lands in ``info`` whether or not it
+    dropped anything, so a later reader cannot mistake absence of a field
+    for absence of a drop.
+    """
+    return {
+        "fit_planned": [int(v) for v in receipt.get("fit_planned", ())],
+        "fit_seated": [int(v) for v in receipt.get("fit_seated", ())],
+        "fit_dropped_planned": [
+            int(v) for v in receipt.get("fit_dropped_planned", ())],
+        "fit_dropped_filler": [
+            int(v) for v in receipt.get("fit_dropped_filler", ())],
+        "fit_unseatable": [int(v) for v in receipt.get("fit_unseatable", ())],
+        "fit_shuttle": bool(shuttle),
+        "fit_shuttle_trips": [
+            [int(v) for v in trip] for trip in shuttle_trips],
+        "served_without_plan_head": bool(served_without_plan_head),
+    }
+
+
+# ---------------------------------------------------------------------------
+# GRM-LSR-P2A Ruling 2 — not-in-memory abstention (structural, no thresholds)
+#
+# Scope, stated honestly: the two NOT-YET-DEPOSITED probes of Phase 1 are
+# NOT this rule's targets.  Their identifiers DID bind a repository node —
+# the node that was the repository's best knowledge at that lived turn — and
+# the "wrong" expectation came from the harness's deposit ordering, not from
+# a retrieval failure.  No rule here is engineered to make those two pass.
+#
+# The target is the general Stage C class: a point lookup whose identifier
+# tokens bind NO repository node at all.  The trigger is purely structural
+# (an empty binding set over the FULL eligible repository), so no threshold
+# is registered and none can drift.
+# ---------------------------------------------------------------------------
+
+ABSTAIN_REASON_IDENTIFIER_UNBOUND = "identifier_unbound"
+ABSTENTION_TEMPLATE = "Not in memory: no stored record matches {tokens}."
+
+
+def abstention_text(tokens: Sequence[str]) -> str:
+    """The fixed abstention string.  Constant template, deterministic order."""
+    listed = ", ".join(str(token) for token in tokens)
+    return ABSTENTION_TEMPLATE.format(tokens=listed)
+
+
+def identifier_unbound_abstention(
+    profile: Mapping[str, Any] | None,
+) -> dict[str, Any] | None:
+    """Decide abstention from an A-DEC profile alone.  ``None`` = serve.
+
+    Abstain exactly when the question yielded identifier tokens AND the
+    identifier-binding scan over the full eligible repository found nothing.
+    ``decisive_admission_profile`` already enumerates ``identified_candidates``
+    over every eligible candidate (``for index in eligible``), not merely the
+    bounded ranking window, so the scan needs no widening here; its cost is
+    one ``normalized_words`` pass per eligible node per turn.
+
+    Non-identifier (ambiguous / topical) questions never abstain this round:
+    ``ordered_identifier_tokens`` returns empty for them and the guard below
+    falls through.  That class is an open David question, deliberately
+    untouched.
+    """
+    if not profile:
+        return None
+    tokens = [str(value) for value in profile.get("identifier_tokens", ())]
+    if not tokens:
+        return None
+    if list(profile.get("identified_candidates", ())):
+        return None
+    # An empty repository is a degenerate case, not an unbound identifier:
+    # there is nothing to have failed to match.  Abstaining is still the
+    # honest answer, and the same string says so.
+    return {
+        "abstained": True,
+        "abstain_reason": ABSTAIN_REASON_IDENTIFIER_UNBOUND,
+        "abstain_identifier_tokens": list(tokens),
+        "abstain_text": abstention_text(tokens),
+    }
+
+
 def admission_info_fields(profile: Mapping[str, Any]) -> dict[str, Any]:
     """Compact deterministic arena receipt fields for a selected plan."""
     return {
