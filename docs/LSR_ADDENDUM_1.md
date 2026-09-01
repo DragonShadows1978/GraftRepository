@@ -37,3 +37,36 @@ input was not persisted (state which).
 
 Fix design enters only after the stage verdicts — same discipline as
 Phase 0.
+
+## Phase 1 FINAL (2026-09-01 evening; adjudication 31e5c894, reconciliation 9c2f16a7)
+
+Verdicts: **ADMISSION-PRUNE ×4** (repos complete; A-DEC planned the
+right node; arena fit() at width 96 silently dropped it — long
+competitor nodes unseatable by construction) and **NOT-YET-DEPOSITED
+×2** (addendum term, accepted: the expected node was absent from the
+repository at the lived probe turn — deposit ordering; no stage could
+select it; registered-vocabulary fallback ROUTE-RANK recorded per
+probe). LINEAGE-RESOLUTION exonerated structurally; key derivation
+install-vs-deposit exonerated bit-for-bit on GQA (routing-index digest
+match; MLA contextualized-centroid hazard remains untested and
+unclaimed). Harbor control: value-duplication mask confirmed.
+
+Principles earned: (1) rebuild-based instruments are blind to
+mid-session repository states — evidence timing, not key fidelity, is
+what a rebuild cannot see (the fork-from-snapshot principle at the
+repository layer); (2) route receipts are not persisted at serving
+time — an observability gap (candidate_count/fallbacks per turn belong
+in the step-3 memory ledger).
+
+## Phase 2 fix menu (David decisions; no fixes authored yet)
+
+1. **Fit-stage honesty (the big one):** when fit() cannot seat the
+   planned node, fail loud / trigger shuttle-trip / degrade with an
+   explicit flag — never silently substitute a lower-ranked node.
+   (Mount-curation design Stage B machinery; D-NGH can witness.)
+2. **Not-in-memory honesty:** when the routed best is a weak match
+   because the answer was never deposited, the abstention/demand-loop
+   behavior applies — serve "not in memory" rather than the nearest
+   wrong thing. (Stage C design; ties to GRAPA abstention curriculum.)
+3. **Route-receipt persistence** in the per-turn memory ledger
+   (cheap observability fix).

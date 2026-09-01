@@ -98,6 +98,29 @@ LIVED_FRAME = {
     "decisive_admission": True,
 }
 
+# Environment flags the lived DET1.5 campaign PINS, read from
+# artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json
+# ("resolved_flags") and mapped to env exactly as
+# scripts/grm_det1_gpu.py:508-512 maps them.
+#
+# THIS MATTERS. GRM_GQA_CUDA_ROUTE defaults OFF
+# (core/graft_arena.py::_cuda_route_enabled: "auto retains the historic,
+# default-off environment toggle") but the lived frame pins it ON. An
+# unpinned probe therefore scores through a DIFFERENT engine than the one
+# that served, which is exactly the defect that made this instrument's
+# first run contradict the lived receipts.
+LIVED_ENV = {
+    "GRM_SUP_RESOLVE": "1",
+    "GRM_ADM_DECISIVE": "1",
+    "GRM_ROUTE_QUERY_LEX": "1",
+    "GRM_GQA_CUDA_ROUTE": "1",
+    "GRM_GRAFT_STORAGE_BITS": "8",
+    "GRM_PROBE_LADDER": "1",
+}
+RUNTIME_FRAME_REL = (
+    "artifacts/grm_det1/run_20260831T160525Z_2"
+    "/runtime_frame_28b3196f8fb04a41.json")
+
 
 def sha256_file(path):
     h = hashlib.sha256()
@@ -583,6 +606,11 @@ def capture_score_table(probe, lease_seconds, lock_wait_seconds):
     runtime_frame = {"resolved_flags": {
         "adm_decisive": LIVED_FRAME["decisive_admission"]}}
 
+    # Pin the lived environment BEFORE the arena is constructed: storage
+    # bits and the CUDA-route toggle are read at construction/route time.
+    env_before = {k: os.environ.get(k) for k in LIVED_ENV}
+    os.environ.update(LIVED_ENV)
+
     with _lease(lease_seconds, lock_wait_seconds):
         workdir = tempfile.mkdtemp(prefix="lsr_p1_route_probe_")
         e2e, model, tokenizer, repo, model_info = _load_model_repo(
@@ -622,13 +650,39 @@ def capture_score_table(probe, lease_seconds, lock_wait_seconds):
                 question, exclude=set(), limit=LIVED_FRAME["route_limit"],
                 probe_key=probe_key) or [])]
             backend = str(getattr(arena, "last_route_backend", "unknown"))
+            policy_backend = getattr(arena, "last_route_policy_backend", None)
             debias = bool(getattr(arena, "length_debias", False))
+            cuda_enabled = bool(arena._cuda_route_enabled())
+            native_store_present = bool(
+                getattr(arena, "native_store", None) is not None)
+
+            # ARM B, the A/B that names the divergence: force the pure
+            # Python backend on the SAME arena and the SAME probe key. If
+            # the two arms differ, the engine choice is the mechanism; if
+            # they agree, the engine is exonerated and the delta lies
+            # elsewhere. Measured, not asserted.
+            python_arm_ranking = [int(v) for v in (arena.route(
+                question, exclude=set(), limit=LIVED_FRAME["route_limit"],
+                probe_key=probe_key, route_backend="python") or [])]
+            python_arm_backend = str(
+                getattr(arena, "last_route_backend", "unknown"))
+
+            # Full-rank ordering under the pinned frame (limit=None), so a
+            # short ranking can be told apart from a short eligible set.
+            full_rank_ranking = [int(v) for v in (arena.route(
+                question, exclude=set(), limit=None,
+                probe_key=probe_key) or [])]
         finally:
             try:
                 repo.close()
             except BaseException:
                 pass
             shutil.rmtree(workdir, ignore_errors=True)
+            for key, value in env_before.items():
+                if value is None:
+                    os.environ.pop(key, None)
+                else:
+                    os.environ[key] = value
 
     table = classify_score_table(
         candidates=eligible,
@@ -640,9 +694,28 @@ def capture_score_table(probe, lease_seconds, lock_wait_seconds):
         key_lengths=key_lengths,
     )
     table["production_ranking"] = production_ranking
+    # classify_score_table() reproduces the PYTHON backend's arithmetic, so
+    # it can only be checked against the Python arm. When the pinned frame
+    # routes through CUDA/native, comparing the reconstruction to the
+    # production ranking would be a category error -- the guard names which
+    # comparison it actually made.
+    table["reconstruction_reference_arm"] = (
+        "production" if backend == "python" else "python_arm")
+    reference = (production_ranking if backend == "python"
+                 else python_arm_ranking)
     table["reconstruction_matches_production"] = (
-        table["ranking"] == production_ranking)
+        table["ranking"] == reference)
     table["route_backend"] = backend
+    table["route_policy_backend"] = policy_backend
+    table["cuda_route_enabled"] = cuda_enabled
+    table["native_store_present"] = native_store_present
+    table["python_arm_ranking"] = python_arm_ranking
+    table["python_arm_backend"] = python_arm_backend
+    table["engine_arms_agree"] = (production_ranking == python_arm_ranking)
+    table["full_rank_ranking"] = full_rank_ranking
+    table["full_rank_length"] = len(full_rank_ranking)
+    table["full_rank_covers_all_candidates"] = (
+        len(full_rank_ranking) == len(eligible))
     return {
         "probe_id": probe,
         "session_id": session,
@@ -650,6 +723,14 @@ def capture_score_table(probe, lease_seconds, lock_wait_seconds):
         "fixture": {"path": os.path.relpath(fixture_path, REPO),
                     "sha256": sha256_file(fixture_path)},
         "lived_frame": dict(LIVED_FRAME),
+        "lived_env_pinned": dict(LIVED_ENV),
+        "lived_env_source": {
+            "path": RUNTIME_FRAME_REL,
+            "sha256": sha256_file(os.path.join(REPO, RUNTIME_FRAME_REL)),
+            "field": "resolved_flags",
+            "env_mapping_source": "scripts/grm_det1_gpu.py:508-512",
+        },
+        "env_observed_before_pin": env_before,
         "frame_as_built": frame_check,
         "frame_matches_lived": (
             frame_check["arena_width"] == LIVED_FRAME["arena_width"]
@@ -737,8 +818,18 @@ def main(argv=None):
     print("probe=%s candidates=%d ranking=%s shortfall=%d m6_dropped=%s"
           % (args.probe, table["candidate_count"], table["ranking"],
              table["ranking_shortfall_vs_candidates"], table["m6_dropped_ids"]))
-    print("reconstruction_matches_production=%s"
-          % table["reconstruction_matches_production"])
+    print("backend=%s (policy=%s) cuda_enabled=%s native_store=%s"
+          % (table["route_backend"], table["route_policy_backend"],
+             table["cuda_route_enabled"], table["native_store_present"]))
+    print("production_arm=%s python_arm=%s engines_agree=%s"
+          % (table["production_ranking"], table["python_arm_ranking"],
+             table["engine_arms_agree"]))
+    print("full_rank=%s covers_all_candidates=%s"
+          % (table["full_rank_ranking"],
+             table["full_rank_covers_all_candidates"]))
+    print("reconstruction_matches_production=%s (reference arm: %s)"
+          % (table["reconstruction_matches_production"],
+             table["reconstruction_reference_arm"]))
     if not table["reconstruction_matches_production"]:
         print("RED: reconstruction disagrees with production route(); "
               "the attribution below is NOT trustworthy.")

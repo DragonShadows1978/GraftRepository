@@ -140,8 +140,25 @@ def analyze_probe(fixture, probe_question, expected_values, fixture_id,
         for i, n in enumerate(nodes)
     }
     tokens = LIVED_IDENTIFIER_TOKENS[fixture_id]
-    # The lived receipts show rare-token identifier binding (the rare set is
-    # non-empty), so the frozen predicate reduces to rare <= words(candidate).
+    # CORRECTED 2026-09-01 (LSR-P1 reconciliation). An earlier revision of
+    # this replay passed rare_identifier_tokens=tokens, which selects
+    # is_identifier_binding's SUBSET branch (rare <= words) and made all
+    # four nodes bind. That was WRONG.
+    #
+    # Measured on the rebuilt lived arena (GPU, pinned frame):
+    #     ordered_identifier_tokens(arena, question)
+    #       -> ordered=['harbor','token'], rare=set()   <-- rare is EMPTY
+    # because ArenaCache._rare_tokens only accepts code/number-shaped
+    # tokens (a digit, or ALL-CAPS length>=3); lowercase labels like
+    # "harbor"/"token" never qualify. The identifier list comes from the
+    # CONTENT-WORD channel instead, and an empty rare set sends the frozen
+    # predicate to its ORDERED-PHRASE branch: the candidate must contain
+    # the contiguous phrase ["current", *ordered, "value"].
+    #
+    # That reproduces the lived identified_candidates EXACTLY (harbor
+    # [1,0]; see the reconciliation artifact), so the replay now models
+    # production instead of contradicting it.
+    rare_for_predicate = []
     binding = []
     per_node = []
     for i, n in enumerate(nodes):
@@ -153,7 +170,7 @@ def analyze_probe(fixture, probe_question, expected_values, fixture_id,
         hit = is_identifier_binding(
             candidate_text=candidate_text,
             ordered_identifier_tokens=tokens,
-            rare_identifier_tokens=tokens,
+            rare_identifier_tokens=rare_for_predicate,
         )
         if hit:
             binding.append(i)
@@ -180,6 +197,11 @@ def analyze_probe(fixture, probe_question, expected_values, fixture_id,
         "session_id": fixture["session_id"],
         "question": probe_question,
         "identifier_tokens_from_lived_receipt": tokens,
+        "rare_identifier_tokens_used": list(rare_for_predicate),
+        "binding_branch": (
+            "ordered_phrase [current, *identifier, value] (rare set is "
+            "EMPTY in production: _rare_tokens accepts only code/number "
+            "shaped tokens, never lowercase labels)"),
         "expected_values": list(expected_values),
         "expected_node_graft_index": expected_idx,
         "identifier_binding_candidates_full_universe": binding,

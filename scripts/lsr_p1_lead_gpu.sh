@@ -103,6 +103,13 @@ echo "-- model-free replay of identifier / A-DEC / L2 stages (no lease) --"
 "$PY" scripts/lsr_p1_stage_replay.py
 
 echo
+echo "-- reconciliation: route-probe vs lived receipts (no lease) --"
+# Settles why the GPU route probe's rankings contradict the lived
+# admission.ranking receipts. Pure functions of fixture text; the GPU
+# numbers it quotes come from route-probe runs under the pinned frame.
+"$PY" scripts/lsr_p1_reconcile.py
+
+echo
 echo "-- per-probe stage adjudication (no lease) --"
 "$PY" scripts/lsr_p1_adjudicate.py
 

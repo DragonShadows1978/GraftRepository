@@ -25,10 +25,43 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUTDIR = os.path.join(REPO, "artifacts", "lsr_p1")
 
 HARVEST = "artifacts/lsr_p1/lsr_p1_harvest_cf29a6db390d4c81.json"
-REPLAY = "artifacts/lsr_p1/lsr_p1_stage_replay_8ea8dc56a738f0ee.json"
+REPLAY = "artifacts/lsr_p1/lsr_p1_stage_replay_4d5697bd93febc36.json"
 SURVEY = "artifacts/lsr_p0/lsr_p0_survey_bd5350fd63ddbf09.json"
 
 VOCAB = ("ROUTE-RANK", "LINEAGE-RESOLUTION", "ADMISSION-PRUNE", "UNRESOLVED")
+
+# PROPOSED ADDENDUM TERM (2026-09-01, LSR-P1 reconciliation).
+#
+# The registered Addendum-1 vocabulary assumes the expected node was in the
+# repository and some STAGE discarded it. The reconciliation shows that for
+# two probes the node was never there to discard: the lived serving moment
+# ran against a repository that did not yet contain the correction node.
+# Calling that ROUTE-RANK would blame the scorer for a node it never saw.
+#
+# NOT-YET-DEPOSITED is therefore proposed as a fifth term, upstream of all
+# three existing stages. It is offered explicitly for the lead to accept or
+# reject; both the registered verdict and this one are reported per probe so
+# nothing is lost either way.
+PROPOSED_TERM = "NOT-YET-DEPOSITED"
+PROPOSED_TERM_DEFINITION = (
+    "The expected node was absent from the repository at the lived probe "
+    "turn, so no routing/admission/resolution stage could have selected it. "
+    "Evidenced by admission.ranking length, identified_candidates, and "
+    "arena cur_mounts agreeing on a repository smaller than the fixture.")
+
+# Repository size implied by the lived receipts at each probe's serving
+# moment, from scripts/lsr_p1_reconcile.py (max(admission.ranking) + 1,
+# corroborated by identified_candidates and cur_mounts).
+LIVED_REPO_SIZE = {
+    "sup_lumen_head": 2,
+    "sup_orion_current": 1,
+    "sup_harbor_restatement": 2,
+    "sup_praxis_fresh": 1,
+    "sup_reserve_meridian_docket": 4,
+    "sup_reserve_juniper_pass": 4,
+    "sup_reserve_falcon_registry": 3,
+    "sup_reserve_tundra_ledger": 3,
+}
 
 # Probe -> (shard, snapshot rung whose manifest carries the SERVED attempt)
 SERVED_RUNG = {
@@ -135,6 +168,30 @@ def adjudicate(probe, lived, replay_row, survey_row):
     evidence["correct_value_served_from_a_non_target_node"] = bool(
         mounted_carries and expected is not None
         and expected not in final)
+
+    # Stage 0 (added by the LSR-P1 reconciliation): was the expected node
+    # even IN the repository at the lived probe turn? If not, no stage
+    # downstream could have discarded it, and a stage verdict would be an
+    # attribution error. This is checked FIRST because it is upstream of
+    # everything else.
+    repo_size = LIVED_REPO_SIZE.get(probe)
+    if repo_size is not None and expected is not None:
+        evidence["lived_repository_size_at_probe"] = repo_size
+        evidence["expected_node_present_at_lived_probe"] = (
+            expected < repo_size)
+        evidence["stage_0_note"] = (
+            "Repository size at the lived probe is implied by "
+            "max(admission.ranking)+1 and independently corroborated by "
+            "admission.identified_candidates (reproduced exactly by the "
+            "pure-CPU ordered-phrase binding replay) and by the arena "
+            "cur_mounts receipts in the LSR-P0 survey.")
+        if expected >= repo_size:
+            return PROPOSED_TERM, (
+                "The expected node (graft %d) did not exist in the "
+                "repository at the lived probe turn, which held only %d "
+                "node(s). No route/admission/resolution stage could have "
+                "selected it. %s"
+                % (expected, repo_size, PROPOSED_TERM_DEFINITION)), evidence
 
     # Stage 1: did the expected node reach the ranking at all?
     if not in_ranking:
@@ -331,16 +388,30 @@ def main():
             continue
         verdict, reason, evidence = adjudicate(
             probe, lived, replay_by_id[probe], survey_by_id[probe])
-        if verdict not in VOCAB:
+        if verdict not in VOCAB and verdict != PROPOSED_TERM:
             raise SystemExit("verdict outside the registered vocabulary")
-        results.append({
+        # When the proposed term fires, also report the closest REGISTERED
+        # verdict so a lead who rejects the addendum still has a value from
+        # the frozen vocabulary. ROUTE-RANK is that fallback: the node is
+        # absent from admission.ranking, which is what the registered term
+        # literally tests -- it simply attributes the absence to the scorer
+        # rather than to deposit ordering.
+        row = {
             "probe_id": probe,
             "role": ("wrong_value" if probe in SERVED_RUNG
                      else "lawful_control"),
             "verdict": verdict,
             "reason": reason,
             "evidence": evidence,
-        })
+        }
+        if verdict == PROPOSED_TERM:
+            row["verdict_is_proposed_addendum"] = True
+            row["registered_vocabulary_fallback"] = "ROUTE-RANK"
+            row["fallback_caveat"] = (
+                "ROUTE-RANK is literally true (the node is absent from "
+                "admission.ranking) but misattributes the cause: the "
+                "scorer never saw the node.")
+        results.append(row)
 
     six = [r for r in results if r["role"] == "wrong_value"]
     tally = {}
@@ -358,6 +429,20 @@ def main():
             "GPU, no network, no production code modified."),
         "registered_vocabulary": list(VOCAB),
         "vocabulary_source": "docs/LSR_ADDENDUM_1.md#phase-1",
+        "proposed_addendum_term": {
+            "term": PROPOSED_TERM,
+            "definition": PROPOSED_TERM_DEFINITION,
+            "status": "PROPOSED — not registered; for the lead to accept "
+                      "or reject",
+            "rationale": (
+                "The registered vocabulary presumes the expected node was "
+                "in the repository and a stage discarded it. For two probes "
+                "the node was never there, so every stage verdict would "
+                "misattribute the cause. Each probe carrying this verdict "
+                "also reports registered_vocabulary_fallback so the frozen "
+                "vocabulary remains usable if the addendum is rejected."),
+            "evidence": "artifacts/lsr_p1/lsr_p1_reconciliation_*.json",
+        },
         "denominator": len(six),
         "verdict_tally_wrong_value_probes": tally,
         "sources": {
