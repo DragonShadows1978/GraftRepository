@@ -34,7 +34,11 @@ from scripts.grm_det1_common import (  # noqa: E402
 from scripts import grm_det1_5_gpu as campaign  # noqa: E402
 
 
-SHARD_SCHEMA = "grm.det1_5.worker_shard.v1"
+SHARD_SCHEMA = "grm.det1_7.worker_shard.v1"
+OBSERVATION_SCHEMA = "grm.det1_7.plant_observation.v1"
+PLANT_REGISTRATION = "plant_registration"
+POLARIS_CANDIDATE_ID = "e2e_t33_polaris_mark"
+POLARIS_BASE_SLOT_ID = "e2e_t30_atlas_tone"
 E2E_SPECS: dict[str, dict[str, Any]] = {
     "e2e-cal": {
         "predecessor": None,
@@ -75,6 +79,7 @@ def _require(condition: bool, message: str) -> None:
 def _normalize_worker(value: str) -> str:
     worker = str(value).strip().replace("-", "_")
     _require(worker in {
+        PLANT_REGISTRATION,
         "g0", "g1", "calibration", "eval_mechanistic", "eval_verbal",
     }, f"unknown DET1.5 worker: {value}")
     return worker
@@ -107,6 +112,56 @@ def _validated_record(record: Mapping[str, Any], label: str) -> Path:
     return path
 
 
+def _det1_7_context(run_dir: Path, worker: str) -> dict[str, Any]:
+    """Load the phase-appropriate DET1.7 provenance envelope.
+
+    Registration collection is intentionally authorized only by the frozen
+    precollection source envelope.  Evaluation workers instead require both
+    the exact frozen plant registry and the terminal registration amendment.
+    The campaign helpers replay the source/amendment chain; workers recheck
+    the returned file records at both startup and receipt publication.
+    """
+    if worker == PLANT_REGISTRATION:
+        raw = campaign.load_det1_7_precollection_context(run_dir)
+        required = ("precollection_authorization",)
+        phase = "PRECOLLECTION_SOURCE_AUTHORIZATION"
+    else:
+        raw = campaign.load_det1_7_registered_context(run_dir)
+        required = (
+            "precollection_authorization",
+            "plant_registry_record",
+            "terminal_amendment",
+        )
+        phase = "POST_REGISTRATION_EXACT_BINDING"
+    _require(isinstance(raw, Mapping),
+             f"DET1.7 {phase} loader returned no provenance mapping")
+    result = dict(raw)
+    records: dict[str, dict[str, Any]] = {}
+    for key in required:
+        record = result.get(key)
+        _validated_record(record or {}, f"DET1.7 {key}")
+        records[key] = dict(record)
+    if worker != PLANT_REGISTRATION:
+        registry = result.get("plant_registry")
+        _require(isinstance(registry, Mapping),
+                 "DET1.7 registered context has no plant registry object")
+        registry_path = _record_path(records["plant_registry_record"])
+        _require(read_json(registry_path) == dict(registry),
+                 "DET1.7 loaded plant registry differs from its frozen bytes")
+        terminal = read_json(_record_path(records["terminal_amendment"]))
+        _require(terminal.get("plant_registry")
+                 == records["plant_registry_record"],
+                 "DET1.7 terminal amendment does not bind the exact registry")
+    return {
+        "phase": phase,
+        "records": records,
+        "plant_registry": (
+            dict(result["plant_registry"])
+            if worker != PLANT_REGISTRATION else None
+        ),
+    }
+
+
 def _context(args: Any, worker: str) -> dict[str, Any]:
     run_dir = Path(args.run_dir).resolve()
     _require(run_dir == campaign.FROZEN_RUN.resolve(),
@@ -118,14 +173,7 @@ def _context(args: Any, worker: str) -> dict[str, Any]:
     _require(attempt_dir.is_dir(), f"worker attempt directory is absent: {attempt_dir}")
     registration_path = _one(run_dir, "registration_*.json")
     runtime_path = _one(run_dir, "runtime_frame_*.json")
-    amendment_path = run_dir / campaign.RACE_AMENDMENT.name
-    source_amendment_path = run_dir / campaign.DELTA_AMENDMENT.name
-    delta_amendment = campaign.validate_delta_amendment(run_dir)
-    _require(
-        delta_amendment.get("record") == file_record(source_amendment_path),
-        "DET1.6 terminal source-amendment binding drifted",
-    )
-    race_amendment = campaign.validate_race_amendment(run_dir)
+    det1_7 = _det1_7_context(run_dir, worker)
     registration = read_json(registration_path)
     runtime = read_json(runtime_path)
     _require(runtime.get("registration") == file_record(registration_path),
@@ -150,10 +198,9 @@ def _context(args: Any, worker: str) -> dict[str, Any]:
         "registration": registration,
         "runtime_path": runtime_path,
         "runtime": runtime,
-        "amendment_path": amendment_path,
-        "amendment_record": dict(race_amendment["record"]),
-        "source_amendment_path": source_amendment_path,
-        "source_amendment_record": dict(delta_amendment["record"]),
+        "det1_7_provenance_phase": det1_7["phase"],
+        "det1_7_provenance": det1_7["records"],
+        "plant_registry": det1_7["plant_registry"],
         "lease_seconds": lease_seconds,
         "process": process,
     }
@@ -238,7 +285,89 @@ def _fixture_measure(
         verbal=verbal,
         mechanistic_times=bindings,
         snapshot_root=snapshot_root,
+        plant_registry=ctx.get("plant_registry"),
+        registration_capture=(ctx["worker"] == PLANT_REGISTRATION),
     )
+
+
+def _effective_fixture(
+    ctx: Mapping[str, Any], base_fixture: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Project a base slot through the frozen registry after collection."""
+    if ctx["worker"] == PLANT_REGISTRATION:
+        return dict(base_fixture)
+    value = campaign.effective_fixture_for_base(
+        ctx["plant_registry"], base_fixture)
+    _require(isinstance(value, Mapping),
+             f"effective fixture is absent for {base_fixture.get('fixture_id')}")
+    fixture = dict(value)
+    fixture.setdefault("base_fixture_id", str(base_fixture["fixture_id"]))
+    _require(
+        str(fixture["base_fixture_id"]) == str(base_fixture["fixture_id"]),
+        f"effective fixture crossed base slot {base_fixture['fixture_id']}",
+    )
+    return fixture
+
+
+def _polaris_candidate(base_fixture: Mapping[str, Any]) -> dict[str, Any]:
+    """Return the deterministic same-session replacement candidate for t30."""
+    _require(base_fixture.get("fixture_id") == POLARIS_BASE_SLOT_ID,
+             "Polaris replacement candidate is not tied to the t30 base slot")
+    source = base_fixture.get("source") or {}
+    source_sha256 = str(source.get("sha256", ""))
+    _require(bool(source_sha256), "t30 base slot lacks its certified session hash")
+    return {
+        **dict(base_fixture),
+        "fixture_id": POLARIS_CANDIDATE_ID,
+        "base_fixture_id": POLARIS_BASE_SLOT_ID,
+        "candidate_for_fixture_id": POLARIS_BASE_SLOT_ID,
+        "turn": 33,
+        "source_turn": 32,
+        "fact_id": "polaris mark",
+        "question": (
+            "Recall probe. What is the current polaris mark value? "
+            "Reply with only the value."
+        ),
+        "expected_values": ["Marble-4-Juliet"],
+        "old_values": [],
+        "substitution": {
+            "status": "SUBSTITUTED",
+            "original_fixture_id": POLARIS_BASE_SLOT_ID,
+            "replacement_fixture_id": POLARIS_CANDIDATE_ID,
+            "session_id": f"certified_34_turn:{source_sha256}",
+            "replacement_split": "eval",
+            "replacement_selector": {"turn": 33},
+            "reason": (
+                "deterministic final-turn recall of the existing turn-32 "
+                "Polaris fact if the registered t30 slot is unplantable"
+            ),
+        },
+    }
+
+
+def _install_polaris_probe(e2e: Any) -> Any:
+    """Replace only the final filler with the registered t33 recall probe."""
+    original = e2e.build_full_script
+
+    def build_full_script():
+        script = list(original())
+        _require(len(script) == 34,
+                 f"certified full script is no longer 34 turns: {len(script)}")
+        source = script[32]
+        _require(
+            source.get("kind") == "fact"
+            and source.get("fact_id") == "polaris mark"
+            and source.get("value") == "Marble-4-Juliet",
+            "turn 32 is no longer the registered Polaris source fact",
+        )
+        _require(script[33].get("kind") == "filler",
+                 "turn 33 is no longer the replaceable final filler")
+        script[33] = e2e.probe_turn(
+            "polaris mark", "Marble-4-Juliet", source_turn=32)
+        return script
+
+    e2e.build_full_script = build_full_script
+    return original
 
 
 def _session_evidence(
@@ -413,8 +542,12 @@ def _run_e2e(ctx: Mapping[str, Any], spec: str, *, verbal: bool) -> tuple[Path, 
     _require(spec in E2E_SPECS, f"invalid chronological E2E spec: {spec}")
     config = E2E_SPECS[spec]
     worker = str(ctx["worker"])
-    _require((worker == "calibration") == (spec == "e2e-cal"),
-             f"{worker} cannot run spec {spec}")
+    if worker == PLANT_REGISTRATION:
+        selected_split = "calibration" if spec == "e2e-cal" else "eval"
+    else:
+        _require((worker == "calibration") == (spec == "e2e-cal"),
+                 f"{worker} cannot run spec {spec}")
+        selected_split = "calibration" if worker == "calibration" else "eval"
     from scripts import grm_e2e_session as e2e
     from scripts import grm_det1_e2e as det_e2e
 
@@ -443,18 +576,41 @@ def _run_e2e(ctx: Mapping[str, Any], spec: str, *, verbal: bool) -> tuple[Path, 
         resumed_from = file_record(predecessor_path)
 
     raw_rows = attempt_dir / "raw_rows.jsonl"
-    selected_split = "calibration" if worker == "calibration" else "eval"
-    selected = {
-        int(row["turn"]): row
-        for row in ctx["registration"]["fixtures"]
+    base_fixtures = [
+        row for row in ctx["registration"]["fixtures"]
         if row.get("source_family") == "certified_34_turn"
         and row.get("split") == selected_split
-    }
-    active = () if verbal else MECHANISTIC
-    variants = ("served",) if worker == "calibration" else (
-        "served", "planted_miss")
+    ]
+    selected: dict[int, dict[str, Any]] = {}
+    for base_fixture in base_fixtures:
+        fixture = _effective_fixture(ctx, base_fixture)
+        turn = int(fixture["turn"])
+        _require(turn not in selected,
+                 f"effective E2E fixtures collide at turn {turn}")
+        selected[turn] = fixture
+    if worker == PLANT_REGISTRATION and selected_split == "eval":
+        base_t30 = [row for row in base_fixtures
+                    if row.get("fixture_id") == POLARIS_BASE_SLOT_ID]
+        _require(len(base_t30) == 1,
+                 "plant registration lacks exactly one t30 base slot")
+        candidate = _polaris_candidate(base_t30[0])
+        _require(33 not in selected, "turn 33 replacement candidate collides")
+        selected[33] = candidate
+
+    registration_capture = worker == PLANT_REGISTRATION
+    active = () if verbal or registration_capture else MECHANISTIC
+    variants = (
+        ("served",)
+        if worker in ("calibration", PLANT_REGISTRATION)
+        else ("served", "planted_miss")
+    )
     original_probe = e2e.probe_multimount_chat
     original_turn = e2e.run_turn
+    original_build_full_script = None
+    stop_after_turns = int(config["stop_after_turns"])
+    if spec == "e2e-4" and 33 in selected:
+        stop_after_turns = 34
+        original_build_full_script = _install_polaris_probe(e2e)
 
     def wrapped(repo, user_text: str, *, topk: int, ngen: int,
                 defer_memory: bool = False, turn_idx: int | None = None,
@@ -476,7 +632,7 @@ def _run_e2e(ctx: Mapping[str, Any], spec: str, *, verbal: bool) -> tuple[Path, 
         )
 
     e2e.probe_multimount_chat = wrapped
-    det_e2e.install_stop_boundary(e2e, int(config["stop_after_turns"]))
+    det_e2e.install_stop_boundary(e2e, stop_after_turns)
     flags = ctx["runtime"]["resolved_flags"]
     argv = [
         "--mode", "full",
@@ -504,19 +660,33 @@ def _run_e2e(ctx: Mapping[str, Any], spec: str, *, verbal: bool) -> tuple[Path, 
     finally:
         e2e.probe_multimount_chat = original_probe
         e2e.run_turn = original_turn
+        if original_build_full_script is not None:
+            e2e.build_full_script = original_build_full_script
     _require(stopped, f"E2E spec {spec} did not stop at its registered boundary")
-    output_rows = attempt_dir / "rows.jsonl"
+    output_rows = attempt_dir / (
+        "observations.jsonl" if registration_capture else "rows.jsonl")
     rows = _stamp_rows(
         raw_rows, output_rows, str(ctx["process"]["process_instance_sha256"]))
-    _require(len(rows) == int(config["expected_rows"]),
-             f"{spec} expected {config['expected_rows']} rows, got {len(rows)}")
+    start_turn = 0
+    if predecessor is not None:
+        start_turn = int(E2E_SPECS[str(predecessor)]["stop_after_turns"])
+    probes_in_segment = sum(
+        1 for turn in selected if start_turn <= turn < stop_after_turns)
+    expected_rows = probes_in_segment * len(variants)
+    _require(len(rows) == expected_rows,
+             f"{spec} expected {expected_rows} rows, got {len(rows)}")
+    if registration_capture:
+        _require(all(row.get("schema") == OBSERVATION_SCHEMA for row in rows),
+                 f"{spec} emitted a non-registration row during collection")
     evidence = _session_evidence(
         ctx, spec, session_dir, resumed_from=resumed_from)
     return output_rows, rows, {
         "chronological_session": evidence,
         "session_dir": str(session_dir),
         "resume": bool(resume),
-        "stop_after_turns": int(config["stop_after_turns"]),
+        "stop_after_turns": stop_after_turns,
+        "polaris_t33_candidate_captured": bool(
+            registration_capture and spec == "e2e-4"),
     }
 
 
@@ -551,11 +721,22 @@ def _run_sup(ctx: Mapping[str, Any], spec: str, *, verbal: bool,
              "supersession battery layout is not the registered four files")
     source = SUP_SOURCES[index - 1]
     fixture_source = read_json(source)
-    registered = {
+    fixture_probe_ids = {
+        str(probe["probe_id"]) for probe in fixture_source["probes"]
+    }
+    base_registered = {
         str(row["probe_id"]): row
         for row in ctx["registration"]["fixtures"]
         if row.get("source_family") == "supersession_battery_on_gpt_oss"
+        and str(row["probe_id"]) in fixture_probe_ids
     }
+    registered: dict[str, dict[str, Any]] = {}
+    for base_fixture in base_registered.values():
+        fixture = _effective_fixture(ctx, base_fixture)
+        probe_id = str(fixture["probe_id"])
+        _require(probe_id not in registered,
+                 f"effective supersession fixtures collide at {probe_id}")
+        registered[probe_id] = fixture
     from scripts.grm_det1_2_gpu import _load_model_repo
     from scripts.grm_det1_3_gpu import _install_lived_nodes
 
@@ -568,11 +749,13 @@ def _run_sup(ctx: Mapping[str, Any], spec: str, *, verbal: bool,
         _install_lived_nodes(repo, e2e, fixture_source)
         original = e2e.probe_multimount_chat
         for probe in fixture_source["probes"]:
-            fixture = registered[str(probe["probe_id"])]
+            probe_id = str(probe["probe_id"])
+            if probe_id not in registered:
+                continue
+            fixture = registered[probe_id]
             _fixture_measure(
                 ctx=ctx, repo=repo, e2e=e2e, original=original,
-                fixture=fixture, split=(
-                    "calibration" if ctx["worker"] == "calibration" else "eval"),
+                fixture=fixture, split=str(fixture["split"]),
                 raw_rows=raw_rows,
                 active_detectors=(
                     tuple(active_detectors) if active_detectors is not None
@@ -584,13 +767,20 @@ def _run_sup(ctx: Mapping[str, Any], spec: str, *, verbal: bool,
             )
     finally:
         _close_model(repo, model, tokenizer)
-    output_rows = attempt_dir / "rows.jsonl"
+    registration_capture = ctx["worker"] == PLANT_REGISTRATION
+    output_rows = attempt_dir / (
+        "observations.jsonl" if registration_capture else "rows.jsonl")
     rows = _stamp_rows(
         raw_rows, output_rows, str(ctx["process"]["process_instance_sha256"]))
-    expected = 2 * len(fixture_source["probes"]) if len(variants) == 2 else len(
-        fixture_source["probes"])
+    selected_count = len(fixture_probe_ids & set(registered))
+    _require(selected_count == len(registered),
+             f"{spec} effective fixture left its certified session source")
+    expected = len(variants) * selected_count
     _require(len(rows) == expected,
              f"{spec} expected {expected} rows, got {len(rows)}")
+    if registration_capture:
+        _require(all(row.get("schema") == OBSERVATION_SCHEMA for row in rows),
+                 f"{spec} emitted a non-registration row during collection")
     evidence_value = {
         "schema": "grm.det1_5.chronological_session.v1",
         "status": "COMPLETE_LIVED_FIXTURE",
@@ -672,16 +862,14 @@ def _run_g1(ctx: Mapping[str, Any], spec: str) -> dict[str, Any]:
 
 def _write_shard(ctx: Mapping[str, Any], spec: str,
                  payload: Mapping[str, Any]) -> dict[str, Any]:
-    protected = {"race_authorization_amendment", "source_amendment"}
+    protected = {"det1_7_provenance_phase", "det1_7_provenance"}
     collisions = sorted(protected & set(payload))
     _require(not collisions,
              f"worker payload attempted to replace provenance: {collisions}")
-    race_amendment = file_record(ctx["amendment_path"])
-    source_amendment = file_record(ctx["source_amendment_path"])
-    _require(race_amendment == ctx["amendment_record"],
-             "race-authorization amendment changed during worker execution")
-    _require(source_amendment == ctx["source_amendment_record"],
-             "DET1.6 source amendment changed during worker execution")
+    provenance: dict[str, dict[str, Any]] = {}
+    for key, record in ctx["det1_7_provenance"].items():
+        _validated_record(record, f"DET1.7 {key} at receipt publication")
+        provenance[str(key)] = dict(record)
     value = {
         "schema": SHARD_SCHEMA,
         "status": "COMPLETE",
@@ -692,8 +880,8 @@ def _write_shard(ctx: Mapping[str, Any], spec: str,
         "process": dict(ctx["process"]),
         "registration": file_record(ctx["registration_path"]),
         "runtime_frame": file_record(ctx["runtime_path"]),
-        "race_authorization_amendment": race_amendment,
-        "source_amendment": source_amendment,
+        "det1_7_provenance_phase": ctx["det1_7_provenance_phase"],
+        "det1_7_provenance": provenance,
         "lease_seconds": int(ctx["lease_seconds"]),
         "fork_from_lived_snapshot": True,
         "same_process_full_index_required": True,
@@ -719,16 +907,38 @@ def run_worker(worker: str, args: Any) -> dict[str, Any]:
         if spec in E2E_SPECS:
             rows_path, rows, extra = _run_e2e(ctx, spec, verbal=verbal)
         elif spec.startswith("sup-"):
-            _require(stage in ("g0", "eval_mechanistic", "eval_verbal"),
+            _require(stage in (
+                PLANT_REGISTRATION, "g0", "eval_mechanistic", "eval_verbal",
+            ),
                      f"{stage} cannot run supersession spec {spec}")
-            rows_path, rows, extra = _run_sup(ctx, spec, verbal=verbal)
+            if stage == PLANT_REGISTRATION:
+                rows_path, rows, extra = _run_sup(
+                    ctx, spec, verbal=False, variants=("served",),
+                    active_detectors=())
+            else:
+                rows_path, rows, extra = _run_sup(ctx, spec, verbal=verbal)
         else:
             raise DETError(f"unsupported {stage} shard spec: {spec}")
-        payload = {
-            "rows": file_record(rows_path),
-            "row_ids": [str(row["row_id"]) for row in rows],
-            "row_count": len(rows),
-            **extra,
-        }
+        if stage == PLANT_REGISTRATION:
+            _require(not verbal,
+                     "plant registration cannot invoke the verbal detector")
+            observation_ids = [str(row["row_id"]) for row in rows]
+            _require(len(observation_ids) == len(set(observation_ids)),
+                     f"duplicate plant observations in {spec}")
+            payload = {
+                "observations": file_record(rows_path),
+                "observation_ids": observation_ids,
+                "observation_count": len(rows),
+                "detector_hooks": [],
+                "variants": ["served"],
+                **extra,
+            }
+        else:
+            payload = {
+                "rows": file_record(rows_path),
+                "row_ids": [str(row["row_id"]) for row in rows],
+                "row_count": len(rows),
+                **extra,
+            }
     payload["elapsed_seconds"] = time.monotonic() - started
     return _write_shard(ctx, spec, payload)

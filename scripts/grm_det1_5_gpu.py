@@ -7,9 +7,10 @@ The private ``_worker`` command is deliberately absent from the lead-facing
 inventory and must never be used as a campaign entry point.
 
 This file does not reinterpret the registered DET1 prediction.  It validates
-the immutable registration, the successful DET1.4 zero fork gate, the later
-race-authorization amendment, and fresh DET1.5 namespace receipts before any
-stage may advance.  Historical reconstructed DET1 rows are never inputs.
+the immutable base registration, the successful DET1.4 zero fork gate, the
+later race authorization, and the DET1.7 lived-admission plant registry before
+any detector stage may advance.  Historical reconstructed DET1 rows are never
+inputs.
 """
 
 from __future__ import annotations
@@ -58,11 +59,16 @@ FROZEN_RUN = ROOT / "artifacts/grm_det1/run_20260831T160525Z_2"
 ORDER = ROOT / "orders/GRM_DET1_5_RACE_CAMPAIGN.md"
 DET1_ORDER = ROOT / "orders/GRM_DET1_DEMAND_DETECTOR_RACE.md"
 DET1_6_ORDER = ROOT / "orders/GRM_DET1_6_PLANT_ON_FORK.md"
+DET1_7_ORDER = ROOT / "orders/GRM_DET1_7_PLANT_REALIGN.md"
 REGISTRATION = FROZEN_RUN / "registration_62cb6c09cbec211d.json"
 RUNTIME_FRAME = FROZEN_RUN / "runtime_frame_28b3196f8fb04a41.json"
 PRIOR_AMENDMENT = FROZEN_RUN / "det1_4_source_amendment.json"
 RACE_AMENDMENT = FROZEN_RUN / "det1_5_race_authorization_amendment.json"
 DELTA_AMENDMENT = FROZEN_RUN / "det1_6_fork_hydration_delta_amendment.json"
+DET1_7_SOURCE_AUTH = (
+    FROZEN_RUN / "det1_7_precollection_source_authorization_r2.json"
+)
+DET1_7_TERMINAL_AMENDMENT = FROZEN_RUN / "det1_7_plant_registry_amendment.json"
 PARENT_ZERO_MARKER = FROZEN_RUN / "det1_4/zero_gate/stage_complete.json"
 
 CAMPAIGN_RELATIVE = Path("det1_4/campaign")
@@ -73,6 +79,7 @@ DEFAULT_WAIT_SECONDS = 7200
 
 STAGE_ORDER = (
     "cross_process_zero",
+    "plant_registration",
     "g0",
     "g1",
     "calibration",
@@ -83,6 +90,7 @@ STAGE_ORDER = (
 GPU_STAGES = frozenset(STAGE_ORDER[:-1])
 STAGE_DIRS = {
     "cross_process_zero": Path("cross_process_zero"),
+    "plant_registration": Path("det1_7/plant_registration"),
     "g0": Path("g0"),
     "g1": Path("g1"),
     "calibration": Path("calibration"),
@@ -92,6 +100,7 @@ STAGE_DIRS = {
 }
 STAGE_MARKERS = {
     "cross_process_zero": Path("cross_process_zero/stage_complete.json"),
+    "plant_registration": Path("det1_7/plant_registration/stage_complete.json"),
     "g0": Path("g0/stage_complete.json"),
     "g1": Path("g1/stage_complete.json"),
     "calibration": Path("calibration/stage_complete.json"),
@@ -100,6 +109,7 @@ STAGE_MARKERS = {
     "analyze": Path("analysis/stage_complete.json"),
 }
 STAGE_SHARD_DIRS = {
+    "plant_registration": Path("det1_7/plant_registration/shards"),
     "g0": Path("g0/shards"),
     "g1": Path("g1/shards"),
     "calibration": Path("calibration/shards"),
@@ -107,6 +117,10 @@ STAGE_SHARD_DIRS = {
     "eval_verbal": Path("eval/verbal_shards"),
 }
 STAGE_SPECS = {
+    "plant_registration": (
+        "e2e-cal", "e2e-1", "e2e-2", "e2e-3", "e2e-4",
+        "sup-1", "sup-2", "sup-3", "sup-4",
+    ),
     "g0": (
         "e2e-1", "e2e-2", "e2e-3", "e2e-4",
         "sup-1", "sup-2", "sup-3", "sup-4",
@@ -124,6 +138,7 @@ STAGE_SPECS = {
 }
 STAGE_SCHEMAS = {
     "cross_process_zero": "grm.det1_5.cross_process_zero.v1",
+    "plant_registration": "grm.det1_7.plant_registration.v1",
     "g0": "grm.det1_5.g0.v1",
     "g1": "grm.det1_5.g1.v1",
     "calibration": "grm.det1_5.calibration.v1",
@@ -140,6 +155,11 @@ DELTA_AMENDMENT_SCHEMA = "grm.det1_6.fork_hydration_delta_amendment.v1"
 DELTA_AMENDMENT_STATUS = "AUTHORIZED_FORK_HYDRATION_DELTA_SOURCE_REBINDING"
 RACE_AMENDMENT_SCHEMA = "grm.det1_5.race_authorization_amendment.v1"
 RACE_AMENDMENT_STATUS = "AUTHORIZED_RACE_ON_FORKED_SUBSTRATE"
+DET1_7_SOURCE_AUTH_SCHEMA = "grm.det1_7.precollection_source_authorization.v1"
+DET1_7_SOURCE_AUTH_STATUS = "AUTHORIZED_LIVED_PLANT_REGISTRY_COLLECTION_ONLY"
+DET1_7_TERMINAL_SCHEMA = "grm.det1_7.plant_registry_amendment.v1"
+DET1_7_TERMINAL_STATUS = "AUTHORIZED_RACE_WITH_LIVED_PLANT_REGISTRY"
+REGISTRATION_QUALIFICATION = "LIVED_TARGET_QUALIFICATION_ABLATION"
 
 DET1_6_CHANGED_SOURCES = (
     "scripts/grm_det1_3_snapshot.py",
@@ -162,10 +182,116 @@ DET1_6_CHANGE_PURPOSES = {
     "tests/test_grm_det1_5_campaign.py": "campaign_receipt_cpu_contracts",
 }
 
+DET1_7_CHANGED_SOURCES = {
+    "scripts/grm_det1_5_analyze.py": "bind_analysis_to_lived_plant_registry",
+    "scripts/grm_det1_5_gpu.py": "collect_freeze_and_apply_lived_plant_targets",
+    "scripts/grm_det1_5_lead.sh": "run_registration_before_detector_campaign",
+    "scripts/grm_det1_5_workers.py": "served_only_registration_workers_and_registry_provenance",
+    "tests/test_grm_det1_5_campaign.py": "campaign_registration_and_target_binding_contracts",
+}
+DET1_7_ADDED_SOURCES = {
+    "scripts/grm_det1_7_registry.py": "pure_lived_admission_registry_derivation",
+    "scripts/grm_det1_7_source_auth.py": "append_only_precollection_source_authorization",
+    "tests/test_grm_det1_7_registry.py": "plant_registry_cpu_contracts",
+    "tests/test_grm_det1_7_source_auth.py": "source_authorization_cpu_contracts",
+}
+
 
 def _require(condition: bool, message: str) -> None:
     if not condition:
         raise DETError(message)
+
+
+def _plant_registry_entry(
+    registry: Mapping[str, Any], base_fixture_id: str,
+) -> dict[str, Any]:
+    entries = registry.get("entries") or ()
+    matches = [
+        dict(value) for value in entries
+        if isinstance(value, Mapping)
+        and value.get("fixture_id") == str(base_fixture_id)
+    ]
+    _require(len(matches) == 1,
+             f"plant registry lacks exactly one entry for {base_fixture_id}")
+    return matches[0]
+
+
+def effective_fixture_for_base(
+    registry: Mapping[str, Any], base_fixture: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Project a base slot to its explicitly registered effective fixture."""
+    entry = _plant_registry_entry(registry, str(base_fixture["fixture_id"]))
+    effective_id = str(entry.get("effective_fixture_id", ""))
+    if effective_id == str(base_fixture["fixture_id"]):
+        return dict(base_fixture)
+    effective = entry.get("effective_fixture")
+    _require(isinstance(effective, Mapping),
+             f"substituted entry lacks effective fixture: {base_fixture['fixture_id']}")
+    projected = dict(effective)
+    _require(projected.get("fixture_id") == effective_id,
+             f"effective fixture identity drift: {base_fixture['fixture_id']}")
+    selector = projected.get("selector")
+    _require(isinstance(selector, Mapping) and bool(selector),
+             f"effective fixture selector is absent: {base_fixture['fixture_id']}")
+    source_family = str(projected.get("source_family", ""))
+    if source_family == "certified_34_turn":
+        _require(set(selector) == {"turn"}
+                 and isinstance(selector.get("turn"), int)
+                 and not isinstance(selector.get("turn"), bool),
+                 f"effective E2E selector is invalid: {base_fixture['fixture_id']}")
+        projected["turn"] = int(selector["turn"])
+    elif source_family == "supersession_battery_on_gpt_oss":
+        _require(set(selector) == {"probe_id"}
+                 and isinstance(selector.get("probe_id"), str)
+                 and bool(selector.get("probe_id")),
+                 "effective supersession selector is invalid: "
+                 f"{base_fixture['fixture_id']}")
+        projected["probe_id"] = str(selector["probe_id"])
+    else:
+        raise DETError(
+            f"effective fixture has unknown source family: {source_family!r}")
+    projected["base_fixture_id"] = str(base_fixture["fixture_id"])
+    projected["substitution"] = dict(entry.get("substitution") or {})
+    return projected
+
+
+def bind_plant_profile(
+    profile: Mapping[str, Any],
+    entry: Mapping[str, Any],
+    registry_record: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Bind runtime diagnostics to the pre-eval lived-admission target."""
+    aliases = [int(value) for value in entry.get("alias_ids") or ()]
+    target = int(entry.get("selected_target_id", -1))
+    actual = [int(value) for value in
+              entry.get("actual_authoritative_mounts") or ()]
+    _require(bool(aliases) and target in aliases,
+             "plant registry target/alias unit is empty or inconsistent")
+    _require(set(aliases).issubset(actual),
+             "plant registry names aliases without lived source seats")
+    bound = dict(profile)
+    bound.update({
+        "logical_router_rank1": target,
+        "production_admitted_rank1": target,
+        "router_rank1_admitted": True,
+        "logical_alias_ids": aliases,
+        "target_contains_expected": bool(
+            (entry.get("expected_value_coverage") or {}).get(str(target))),
+        "plant_target_source": "DET1_7_LIVED_ADMISSION_REGISTRY",
+        "plant_registry": dict(registry_record),
+        "plant_entry_sha256": hashlib.sha256(
+            canonical_json_bytes(dict(entry))).hexdigest(),
+        "plant_entry": dict(entry),
+    })
+    return bound
+
+
+def plant_registry_path(run_dir: Path = FROZEN_RUN) -> Path:
+    directory = campaign_root(run_dir) / STAGE_DIRS["plant_registration"]
+    paths = sorted(directory.glob("plant_registry_*.json"))
+    _require(len(paths) == 1,
+             f"expected exactly one frozen DET1.7 plant registry, got {len(paths)}")
+    return paths[0]
 
 
 def campaign_root(run_dir: Path = FROZEN_RUN) -> Path:
@@ -438,30 +564,44 @@ def validate_served_control(
 ) -> dict[str, Any]:
     """Validate the complete registered served-side task projection."""
     try:
-        aliases = {int(value) for value in row.get("logical_alias_ids") or ()}
+        aliases = {int(value) for value in row.get("plant_alias_ids") or ()}
         mounted = {int(value) for value in row.get("mounted_ids") or ()}
-        raw_rank1 = int(row.get("raw_router_rank1", -1))
-        logical_rank1 = int(row.get("logical_router_rank1", -1))
+        target = int(row.get("plant_target_id", -1))
     except (TypeError, ValueError) as exc:
-        raise DETError(f"{where} has malformed route/mount identifiers") from exc
+        raise DETError(f"{where} has malformed plant/mount identifiers") from exc
+    registry = row.get("plant_registry") or {}
+    entry_digest = str(row.get("plant_entry_sha256", ""))
     checks = {
         "answer_correct": row.get("answer_correct") is True,
         "target_contains_expected": row.get("target_contains_expected") is True,
-        "router_rank1_admitted": row.get("router_rank1_admitted") is True,
-        "raw_router_rank1_is_alias": raw_rank1 in aliases,
-        "logical_router_rank1_is_alias": logical_rank1 in aliases,
-        "logical_alias_mounted": bool(aliases & mounted),
+        "registered_target_is_alias": target in aliases,
+        "registered_target_mounted": target in mounted,
+        "all_registered_aliases_mounted": bool(aliases) and aliases <= mounted,
         "mounted_contains_expected": row.get("mounted_contains_expected") is True,
         "full_index_contains_all_aliases": (
             row.get("full_index_contains_all_aliases") is True),
+        "plant_target_from_lived_registry": (
+            row.get("plant_target_source")
+            == "DET1_7_LIVED_ADMISSION_REGISTRY"),
+        "plant_registry_bound": (
+            isinstance(registry, Mapping)
+            and isinstance(registry.get("sha256"), str)
+            and len(str(registry.get("sha256"))) == 64),
+        "plant_entry_bound": (
+            len(entry_digest) == 64
+            and all(character in "0123456789abcdef"
+                    for character in entry_digest)),
     }
     for name, passed in checks.items():
         _require(passed, f"{where} failed served check: {name}")
     return {
         "status": "PASS",
         "checks": checks,
-        "logical_alias_ids": sorted(aliases),
+        "plant_target_id": target,
+        "plant_alias_ids": sorted(aliases),
         "mounted_alias_ids": sorted(aliases & mounted),
+        "plant_registry_sha256": registry.get("sha256"),
+        "plant_entry_sha256": entry_digest,
     }
 
 
@@ -478,13 +618,21 @@ def validate_g0_rows(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         served = variants["served"]
         planted = variants["planted_miss"]
         validate_served_control(served, f"served control {fixture_id}")
+        for binding in (
+            "plant_target_id", "plant_alias_ids", "plant_registry",
+            "plant_entry_sha256", "plant_target_source",
+        ):
+            _require(served.get(binding) == planted.get(binding),
+                     f"DET-G0 pair plant binding differs: "
+                     f"{fixture_id}.{binding}")
         _require(planted.get("target_contains_expected") is True,
                  f"DET-G0 planted target lacks expected value: {fixture_id}")
         checks = planted.get("plant_checks") or {}
         for key in (
             "withheld_aliases_absent",
             "logical_target_absent",
-            "raw_router_rank1_absent",
+            "registered_plant_target_absent",
+            "registered_plant_aliases_absent",
             "expected_value_absent_from_mounted_text",
             "withheld_aliases_remain_in_full_detector_index",
             "admission_ranking_unchanged",
@@ -677,6 +825,28 @@ def _registered_split(registration: Mapping[str, Any]) -> tuple[list[str], list[
     return calibration, evaluation
 
 
+def effective_registration_projection(
+    registration: Mapping[str, Any], registry: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Substitute only fixture identities while preserving the frozen split."""
+    projected = json.loads(json.dumps(registration))
+    mapping = {
+        str(entry["fixture_id"]): str(entry["effective_fixture_id"])
+        for entry in registry.get("entries") or ()
+    }
+    base_cal, base_eval = _registered_split(registration)
+    _require(set(mapping) == set(base_cal) | set(base_eval),
+             "plant registry does not map the complete frozen split")
+    split = projected["split_rule"]
+    split["calibration"] = [mapping[value] for value in base_cal]
+    split["eval_e2e"] = [mapping[str(value)] for value in
+                         registration["split_rule"]["eval_e2e"]]
+    split["eval_supersession"] = [
+        mapping[str(value)] for value in
+        registration["split_rule"]["eval_supersession"]]
+    return projected
+
+
 def validate_split(
     registration: Mapping[str, Any],
     calibration_rows: Sequence[Mapping[str, Any]],
@@ -826,11 +996,17 @@ def build_lead_commands(
         "--gap-seconds", str(int(gap_seconds)),
     ]
     commands = [
-        [sys.executable, script, stage, *common, *gpu_tail]
-        for stage in (
-            "cross-process-zero", "g0", "g1", "calibration",
-            "eval-mechanistic", "eval-verbal",
-        )
+        [sys.executable, script, "cross-process-zero", *common, *gpu_tail],
+        [sys.executable, script, "author-det1-7-source", *common],
+        [sys.executable, script, "plant-registration", *common, *gpu_tail],
+        [sys.executable, script, "author-det1-7-terminal", *common],
+        *[
+            [sys.executable, script, stage, *common, *gpu_tail]
+            for stage in (
+                "g0", "g1", "calibration",
+                "eval-mechanistic", "eval-verbal",
+            )
+        ],
     ]
     analyzer = ROOT / "scripts/grm_det1_5_analyze.py"
     commands.append([
@@ -964,6 +1140,66 @@ def _pre_delta_g0_output_records(run_dir: Path) -> list[dict[str, Any]]:
                  f"pre-DET1.6 G0 attempt unexpectedly has terminal provenance: {path}")
         records.append(file_record(path))
     return records
+
+
+def validate_det1_7_source_authorization(
+    run_dir: Path = FROZEN_RUN,
+) -> dict[str, Any]:
+    from scripts.grm_det1_7_source_auth import (
+        validate_precollection_source_authorization,
+    )
+
+    run_dir = Path(run_dir).resolve()
+    _require(run_dir == FROZEN_RUN.resolve(),
+             "DET1.7 source authorization is bound to the frozen run")
+    return validate_precollection_source_authorization(
+        run_dir / DET1_7_SOURCE_AUTH.name,
+        repo_root=ROOT,
+        order_path=DET1_7_ORDER,
+        registration_path=REGISTRATION,
+        runtime_frame_path=RUNTIME_FRAME,
+        det1_6_amendment_path=DELTA_AMENDMENT,
+        changed_sources=DET1_7_CHANGED_SOURCES,
+        added_sources=DET1_7_ADDED_SOURCES,
+    )
+
+
+def author_det1_7_source_authorization(
+    run_dir: Path = FROZEN_RUN,
+) -> dict[str, Any]:
+    from scripts.grm_det1_7_source_auth import (
+        author_precollection_source_authorization,
+    )
+
+    run_dir = Path(run_dir).resolve()
+    _require(run_dir == FROZEN_RUN.resolve(),
+             "DET1.7 source authorization is bound to the frozen run")
+    path = run_dir / DET1_7_SOURCE_AUTH.name
+    if path.exists():
+        return validate_det1_7_source_authorization(run_dir)
+    return author_precollection_source_authorization(
+        path,
+        repo_root=ROOT,
+        order_path=DET1_7_ORDER,
+        registration_path=REGISTRATION,
+        runtime_frame_path=RUNTIME_FRAME,
+        det1_6_amendment_path=DELTA_AMENDMENT,
+        changed_sources=DET1_7_CHANGED_SOURCES,
+        added_sources=DET1_7_ADDED_SOURCES,
+    )
+
+
+def load_det1_7_precollection_context(
+    run_dir: Path = FROZEN_RUN,
+) -> dict[str, Any]:
+    authorization = validate_det1_7_source_authorization(run_dir)
+    _require(authorization.get("collection_authorized") is True
+             and authorization.get("race_resume_authorized") is False,
+             "DET1.7 precollection authority crossed into evaluation")
+    return {
+        "precollection_authorization": file_record(
+            Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name),
+    }
 
 
 def validate_delta_amendment(run_dir: Path = FROZEN_RUN) -> dict[str, Any]:
@@ -1149,8 +1385,14 @@ def validate_race_amendment(
         _require(source in sources,
                  f"race amendment omits execution source: {source}")
     lead = value.get("lead_script") or {}
-    lead_path = _validate_file_record(lead, "race amendment lead_script")
-    _require(lead_path == ROOT / "scripts/grm_det1_5_lead.sh",
+    # The source-inventory loop above has already required either exact bytes
+    # or an explicit transitive rebinding.  Requiring the predecessor bytes a
+    # second time here would reject the very lead-script rebinding DET1.7
+    # authorized; this check is identity-only after that byte validation.
+    lead_path = _path_from_record(lead)
+    _require(lead_path.is_file(), "race amendment lead_script is missing")
+    _require(lead_path.resolve()
+             == (ROOT / "scripts/grm_det1_5_lead.sh").resolve(),
              "race amendment binds the wrong lead script")
     _require(sources.get("scripts/grm_det1_5_lead.sh") == lead,
              "lead script is not identically bound in source_inventory")
@@ -1245,8 +1487,25 @@ def _write_stage_marker(
         "prerequisites": [file_record(path) for path in prerequisites],
         "registration": file_record(REGISTRATION),
         "runtime_frame": file_record(RUNTIME_FRAME),
-        "source_amendment": file_record(DELTA_AMENDMENT),
     }
+    if stage == "cross_process_zero":
+        marker["source_amendment"] = file_record(DELTA_AMENDMENT)
+    elif stage == "plant_registration":
+        marker["det1_7_provenance"] = {
+            "precollection_authorization": file_record(
+                Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name),
+        }
+    else:
+        # Preserve the exact DET1.6 predecessor binding while the terminal
+        # DET1.7 envelope authorizes the narrower registration amendment.
+        marker["source_amendment"] = file_record(DELTA_AMENDMENT)
+        marker["det1_7_provenance"] = {
+            "precollection_authorization": file_record(
+                Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name),
+            "plant_registry_record": file_record(plant_registry_path(run_dir)),
+            "terminal_amendment": file_record(
+                Path(run_dir).resolve() / DET1_7_TERMINAL_AMENDMENT.name),
+        }
     return _write_json_exclusive_or_verify(_marker_path(run_dir, stage), marker)
 
 
@@ -1262,9 +1521,27 @@ def _validate_stage_marker(run_dir: Path, stage: str) -> tuple[Path, Path, dict[
              f"stage registration binding drift: {stage}")
     _require(marker.get("runtime_frame") == file_record(RUNTIME_FRAME),
              f"stage runtime binding drift: {stage}")
-    if stage != "cross_process_zero":
-        _require(marker.get("source_amendment") == file_record(DELTA_AMENDMENT),
-                 f"stage source-amendment binding drift: {stage}")
+    if stage == "plant_registration":
+        _require(
+            marker.get("det1_7_provenance") == {
+                "precollection_authorization": file_record(
+                    Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name),
+            },
+            "plant-registration marker source authorization drifted",
+        )
+    elif stage != "cross_process_zero":
+        _require(
+            marker.get("det1_7_provenance") == {
+                "precollection_authorization": file_record(
+                    Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name),
+                "plant_registry_record": file_record(
+                    plant_registry_path(run_dir)),
+                "terminal_amendment": file_record(
+                    Path(run_dir).resolve()
+                    / DET1_7_TERMINAL_AMENDMENT.name),
+            },
+            f"stage DET1.7 binding drift: {stage}",
+        )
     receipt_path = _validate_file_record(marker.get("receipt") or {},
                                          f"{stage} receipt")
     receipt = read_json(receipt_path)
@@ -1274,10 +1551,20 @@ def _validate_stage_marker(run_dir: Path, stage: str) -> tuple[Path, Path, dict[
                  f"stage receipt schema drift: {stage}")
         _require(receipt.get("status") == "PASS",
                  f"stage receipt did not PASS: {stage}")
-        if stage != "cross_process_zero":
+        if stage == "plant_registration":
             _require(
-                receipt.get("source_amendment") == file_record(DELTA_AMENDMENT),
-                f"stage receipt source-amendment binding drift: {stage}",
+                receipt.get("precollection_authorization") == file_record(
+                    Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name),
+                "plant-registration receipt source authorization drifted",
+            )
+        elif stage != "cross_process_zero":
+            _require(
+                receipt.get("plant_registry") == file_record(
+                    plant_registry_path(run_dir))
+                and receipt.get("terminal_amendment") == file_record(
+                    Path(run_dir).resolve()
+                    / DET1_7_TERMINAL_AMENDMENT.name),
+                f"stage receipt DET1.7 binding drift: {stage}",
             )
     return marker_path, receipt_path, receipt
 
@@ -1290,6 +1577,114 @@ def _stage_is_complete(run_dir: Path, stage: str) -> bool:
     return True
 
 
+def _terminal_invariants() -> dict[str, Any]:
+    return {
+        "amendment_is_evidence": False,
+        "detector_arms_changed": False,
+        "threshold_policy_changed": False,
+        "adjudication_vocabulary_changed": False,
+        "historical_rows_reusable": False,
+        "plant_registry_frozen_before_g0": True,
+        "plant_registry_frozen_before_evaluation": True,
+        "race_resume_authorized": True,
+        "served_planted_pairing_preserved": True,
+        "eval_served_count": 12,
+        "eval_planted_miss_count": 12,
+    }
+
+
+def validate_det1_7_terminal_amendment(
+    run_dir: Path = FROZEN_RUN,
+) -> dict[str, Any]:
+    from scripts.grm_det1_7_registry import validate_plant_registry
+
+    run_dir = Path(run_dir).resolve()
+    path = run_dir / DET1_7_TERMINAL_AMENDMENT.name
+    _require(path.is_file(), f"DET1.7 terminal amendment is missing: {path}")
+    value = read_json(path)
+    _require(value.get("schema") == DET1_7_TERMINAL_SCHEMA
+             and value.get("status") == DET1_7_TERMINAL_STATUS,
+             "DET1.7 terminal amendment schema/status drifted")
+    source_auth = validate_det1_7_source_authorization(run_dir)
+    marker_path, receipt_path, registration_receipt = _validate_stage_marker(
+        run_dir, "plant_registration")
+    registry_path = plant_registry_path(run_dir)
+    registry = read_json(registry_path)
+    registry_validation = validate_plant_registry(registry, record_root=ROOT)
+    for key, expected in (
+        ("order", file_record(DET1_7_ORDER)),
+        ("base_registration", file_record(REGISTRATION)),
+        ("runtime_frame", file_record(RUNTIME_FRAME)),
+        ("det1_6_predecessor", file_record(DELTA_AMENDMENT)),
+        ("precollection_authorization", source_auth["record"]),
+        ("plant_registration_marker", file_record(marker_path)),
+        ("plant_registration_receipt", file_record(receipt_path)),
+        ("plant_registry", file_record(registry_path)),
+    ):
+        _require(value.get(key) == expected,
+                 f"DET1.7 terminal amendment {key} drifted")
+    _require(registration_receipt.get("plant_registry") == file_record(
+        registry_path), "plant-registration receipt binds another registry")
+    _require(value.get("invariants") == _terminal_invariants(),
+             "DET1.7 terminal amendment invariants drifted")
+    return {
+        "schema": DET1_7_TERMINAL_SCHEMA,
+        "status": DET1_7_TERMINAL_STATUS,
+        "record": file_record(path),
+        "plant_registry": file_record(registry_path),
+        "plant_registry_validation": registry_validation,
+        "race_resume_authorized": True,
+        "amendment_is_evidence": False,
+    }
+
+
+def author_det1_7_terminal_amendment(
+    run_dir: Path = FROZEN_RUN,
+) -> dict[str, Any]:
+    run_dir = Path(run_dir).resolve()
+    path = run_dir / DET1_7_TERMINAL_AMENDMENT.name
+    if path.exists():
+        return validate_det1_7_terminal_amendment(run_dir)
+    source_auth = validate_det1_7_source_authorization(run_dir)
+    marker_path, receipt_path, registration_receipt = _validate_stage_marker(
+        run_dir, "plant_registration")
+    registry_path = plant_registry_path(run_dir)
+    _require(registration_receipt.get("plant_registry") == file_record(
+        registry_path), "plant-registration stage did not freeze this registry")
+    _require(not _marker_path(run_dir, "g0").exists(),
+             "cannot author plant registry amendment after G0 completion")
+    value = {
+        "schema": DET1_7_TERMINAL_SCHEMA,
+        "status": DET1_7_TERMINAL_STATUS,
+        "created_utc": utc_now(),
+        "order": file_record(DET1_7_ORDER),
+        "base_registration": file_record(REGISTRATION),
+        "runtime_frame": file_record(RUNTIME_FRAME),
+        "det1_6_predecessor": file_record(DELTA_AMENDMENT),
+        "precollection_authorization": source_auth["record"],
+        "plant_registration_marker": file_record(marker_path),
+        "plant_registration_receipt": file_record(receipt_path),
+        "plant_registry": file_record(registry_path),
+        "invariants": _terminal_invariants(),
+    }
+    write_json_exclusive(path, value)
+    return validate_det1_7_terminal_amendment(run_dir)
+
+
+def load_det1_7_registered_context(
+    run_dir: Path = FROZEN_RUN,
+) -> dict[str, Any]:
+    terminal = validate_det1_7_terminal_amendment(run_dir)
+    registry_path = plant_registry_path(run_dir)
+    return {
+        "precollection_authorization": file_record(
+            Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name),
+        "plant_registry_record": file_record(registry_path),
+        "plant_registry": read_json(registry_path),
+        "terminal_amendment": terminal["record"],
+    }
+
+
 def inventory(run_dir: Path = FROZEN_RUN) -> dict[str, Any]:
     """CPU-only validation of frozen bindings and fresh campaign progress."""
     run_dir = Path(run_dir)
@@ -1297,12 +1692,13 @@ def inventory(run_dir: Path = FROZEN_RUN) -> dict[str, Any]:
              "DET1.5 is bound to the one frozen DET1 run")
     from scripts import grm_det1_4_gpu as det14
 
-    delta_amendment = validate_delta_amendment(run_dir)
+    det1_7_auth = validate_det1_7_source_authorization(run_dir)
     det14_args = argparse.Namespace(
         run_dir=run_dir,
         require_amendment=True,
         write_receipt=False,
-        det1_6_source_rebindings=delta_amendment["source_rebindings"],
+        det1_6_source_rebindings=det1_7_auth[
+            "det1_4_source_rebindings"],
     )
     prior = det14.inventory(det14_args)
     parent_zero_path, parent_zero = _parent_zero()
@@ -1318,7 +1714,7 @@ def inventory(run_dir: Path = FROZEN_RUN) -> dict[str, Any]:
     if (run_dir / RACE_AMENDMENT.name).exists():
         amendment = validate_race_amendment(
             run_dir,
-            source_rebindings=delta_amendment["source_rebindings"],
+            source_rebindings=det1_7_auth["det1_5_source_rebindings"],
         )
     return {
         "schema": "grm.det1_5.inventory.v1",
@@ -1330,7 +1726,11 @@ def inventory(run_dir: Path = FROZEN_RUN) -> dict[str, Any]:
         "parent_zero_receipt": file_record(parent_zero_path),
         "parent_zero_status": parent_zero["substrate_comparison"]["status"],
         "race_amendment": amendment,
-        "source_amendment": delta_amendment,
+        "source_amendment": {
+            "record": file_record(DELTA_AMENDMENT),
+            "superseded_by": det1_7_auth["record"],
+        },
+        "det1_7_precollection_authorization": det1_7_auth,
         "campaign_drivers": campaign_driver_inventory(),
         "stages": stages,
         "historical_rows_reused": False,
@@ -1343,12 +1743,13 @@ def gpu_preflight(run_dir: Path = FROZEN_RUN, *, write_receipt: bool = False) ->
     inventory(run_dir)
     from scripts import grm_det1_4_gpu as det14
 
-    delta_amendment = validate_delta_amendment(run_dir)
+    det1_7_auth = validate_det1_7_source_authorization(run_dir)
     args = argparse.Namespace(
         run_dir=Path(run_dir),
         require_amendment=True,
         write_receipt=False,
-        det1_6_source_rebindings=delta_amendment["source_rebindings"],
+        det1_6_source_rebindings=det1_7_auth[
+            "det1_4_source_rebindings"],
     )
     value, code = det14.gpu_preflight(args)
     result = {
@@ -1356,7 +1757,8 @@ def gpu_preflight(run_dir: Path = FROZEN_RUN, *, write_receipt: bool = False) ->
         "status": "READY" if code == 0 else "BLOCKED",
         "created_utc": utc_now(),
         "det1_4_preflight": value,
-        "source_amendment": delta_amendment["record"],
+        "source_amendment": file_record(DELTA_AMENDMENT),
+        "det1_7_precollection_authorization": det1_7_auth["record"],
         "gpu_allocations_attempted": 0,
     }
     if write_receipt:
@@ -1486,20 +1888,13 @@ def _completed_shard_output(
             and all(character in "0123456789abcdef" for character in parent_sha),
             f"{stage}/{spec} parent finish observation did not pass",
         )
-        source_binding = value.get("source_amendment")
-        if source_binding != file_record(DELTA_AMENDMENT):
-            _require(source_binding is None,
-                     f"{stage}/{spec} has an unrecognized source amendment")
-            historical = (
-                read_json(DELTA_AMENDMENT).get("historical_g0_attempt_outputs")
-                or []
-            )
+        if value.get("schema") != "grm.det1_7.worker_shard.v1":
             _require(
-                stage == "g0" and file_record(output_path) in historical,
-                f"{stage}/{spec} completed under an unregistered source layer",
+                value.get("schema") in (None, "grm.det1_5.worker_shard.v1"),
+                f"{stage}/{spec} has an unrecognized historical shard schema",
             )
-            _validate_worker_shard_output(
-                value, stage=stage, spec=spec, require_delta=False)
+            # DET1.7 makes every earlier successful output historical.  It is
+            # intentionally neither reused nor counted as a duplicate.
             continue
         _validate_worker_shard_output(value, stage=stage, spec=spec)
         completed.append(value)
@@ -1521,7 +1916,7 @@ def _validate_worker_shard_output(
         value.get("receipt_file") or {}, f"{stage}/{spec} shard receipt")
     receipt = read_json(receipt_path)
     _require(
-        receipt.get("schema") == "grm.det1_5.worker_shard.v1"
+        receipt.get("schema") == "grm.det1_7.worker_shard.v1"
         and receipt.get("status") == "COMPLETE"
         and receipt.get("stage") == stage
         and receipt.get("spec") == spec,
@@ -1535,13 +1930,28 @@ def _validate_worker_shard_output(
     for key, expected in (
         ("registration", file_record(REGISTRATION)),
         ("runtime_frame", file_record(RUNTIME_FRAME)),
-        ("race_authorization_amendment", file_record(RACE_AMENDMENT)),
     ):
         _require(receipt.get(key) == expected,
                  f"{stage}/{spec} shard {key} binding drifted")
-    if require_delta:
-        _require(receipt.get("source_amendment") == file_record(DELTA_AMENDMENT),
-                 f"{stage}/{spec} shard source_amendment binding drifted")
+    del require_delta
+    expected_phase = (
+        "PRECOLLECTION_SOURCE_AUTHORIZATION"
+        if stage == "plant_registration"
+        else "POST_REGISTRATION_EXACT_BINDING"
+    )
+    expected_provenance = (
+        load_det1_7_precollection_context(FROZEN_RUN)
+        if stage == "plant_registration"
+        else {
+            key: value for key, value in
+            load_det1_7_registered_context(FROZEN_RUN).items()
+            if key != "plant_registry"
+        }
+    )
+    _require(receipt.get("det1_7_provenance_phase") == expected_phase,
+             f"{stage}/{spec} shard DET1.7 phase drifted")
+    _require(receipt.get("det1_7_provenance") == expected_provenance,
+             f"{stage}/{spec} shard DET1.7 provenance drifted")
     process = str(receipt.get("process_instance_sha256", ""))
     _require(len(process) == 64 and all(
         character in "0123456789abcdef" for character in process),
@@ -1634,6 +2044,11 @@ def _calibration_thresholds(
                 Path(run_dir).resolve() / RACE_AMENDMENT.name)),
             ("source_amendment", file_record(
                 Path(run_dir).resolve() / DELTA_AMENDMENT.name)),
+            ("precollection_authorization", file_record(
+                Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name)),
+            ("plant_registry", file_record(plant_registry_path(run_dir))),
+            ("terminal_amendment", file_record(
+                Path(run_dir).resolve() / DET1_7_TERMINAL_AMENDMENT.name)),
             ("calibration_rows", file_record(rows_path)),
         ):
             _require(value.get(key) == expected,
@@ -1649,6 +2064,11 @@ def _calibration_thresholds(
             Path(run_dir).resolve() / RACE_AMENDMENT.name),
         "source_amendment": file_record(
             Path(run_dir).resolve() / DELTA_AMENDMENT.name),
+        "precollection_authorization": file_record(
+            Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name),
+        "plant_registry": file_record(plant_registry_path(run_dir)),
+        "terminal_amendment": file_record(
+            Path(run_dir).resolve() / DET1_7_TERMINAL_AMENDMENT.name),
         "calibration_rows": file_record(rows_path),
     }
     return write_content_addressed(directory, "thresholds", value), value
@@ -1918,7 +2338,10 @@ def _fork_attempt(
         "protocol_source_sha256": file_record(Path(__file__).resolve())["sha256"],
         "run_id": FROZEN_RUN.name,
         "order_sha256": file_record(ORDER)["sha256"],
+        "det1_7_order_sha256": file_record(DET1_7_ORDER)["sha256"],
         "source_amendment_sha256": file_record(DELTA_AMENDMENT)["sha256"],
+        "det1_7_precollection_authorization_sha256": file_record(
+            DET1_7_SOURCE_AUTH)["sha256"],
         "race_authorization_amendment_sha256": (
             file_record(RACE_AMENDMENT)["sha256"]
         ),
@@ -1939,6 +2362,13 @@ def _fork_attempt(
         "attempt_ordinal": int(ordinal),
         **dict(process),
     }
+    if profile.get("plant_registry"):
+        provenance.update({
+            "det1_7_plant_registry_sha256": str(
+                (profile.get("plant_registry") or {}).get("sha256", "")),
+            "det1_7_terminal_amendment_sha256": file_record(
+                DET1_7_TERMINAL_AMENDMENT)["sha256"],
+        })
 
     def admission_supplier() -> dict[str, Any]:
         return _admission_snapshot(
@@ -2081,14 +2511,25 @@ def _fork_attempt(
                 }
             verbal_payload = None
         mounts = [int(value) for value in arena.cur_mounts]
+        mounted_catalog = {
+            str(index): {
+                "graft_id": int(index),
+                "text": str(arena.grafts[index].get("text", "")),
+                "text_sha256": hashlib.sha256(
+                    str(arena.grafts[index].get("text", "")).encode("utf-8")
+                ).hexdigest(),
+            }
+            for index in mounts
+        }
         mounted_text = "\n".join(
-            str(arena.grafts[index].get("text", "")) for index in mounts)
+            str(mounted_catalog[str(index)]["text"]) for index in mounts)
         grounded, _contributors = arena._grounding_attribution(
             answer, mounts, capture_prompt)
         results[variant] = {
             "answer": str(answer),
             "answer_correct": _answer_correct(str(answer), fixture),
             "mounted_ids": mounts,
+            "mounted_graft_catalog": mounted_catalog,
             "mounted_contains_expected": any(
                 contains_value(mounted_text, str(value))
                 for value in fixture.get("expected_values", ())),
@@ -2116,6 +2557,183 @@ def _fork_attempt(
             "source_mounted_withheld_aliases": source_mounted_withheld,
         }
     return results
+
+
+def _registration_target_candidate(
+    *,
+    fixture: Mapping[str, Any],
+    result: Mapping[str, Any],
+) -> tuple[int, dict[str, list[str]], str]:
+    """Derive the candidate solely from the selected lived snapshot/mounts."""
+    from scripts.grm_det1_3_snapshot import load_snapshot
+
+    snapshot_record = result.get("snapshot") or {}
+    snapshot_path = _path_from_record(snapshot_record)
+    snapshot = load_snapshot(snapshot_path)
+    state = snapshot.get("state") or {}
+    actual = [int(value) for value in state.get(
+        "admission.authoritative_mounts", ())]
+    for field in (
+        "admission.current_fitted", "admission.final_mounts", "arena.cur_mounts",
+    ):
+        _require([int(value) for value in state.get(field, ())] == actual,
+                 f"registration lived mount projection differs at {field}")
+    _require(actual == [int(value) for value in result.get("mounted_ids", ())],
+             "selected served mounts differ from its lived snapshot")
+    catalog = result.get("mounted_graft_catalog") or {}
+    expected = [str(value) for value in fixture.get("expected_values", ())]
+    coverage: dict[str, list[str]] = {}
+    for graft_id in actual:
+        record = catalog.get(str(graft_id)) or {}
+        text_value = str(record.get("text", ""))
+        hits = [value for value in expected if contains_value(text_value, value)]
+        if hits:
+            coverage[str(graft_id)] = hits
+
+    rank_plan = [int(value) for value in state.get("admission.rank_plan", ())]
+    planned = [int(value) for value in state.get(
+        "admission.current_planned", ())]
+    order = list(dict.fromkeys([*rank_plan, *planned, *sorted(actual)]))
+    branch = str(state.get("admission.policy_branch", ""))
+    if branch == "declared_synthesis_identified_set":
+        identified = {int(value) for value in state.get(
+            "admission.identified_candidates", ())}
+        candidates = [
+            value for value in order if value in identified and value in actual
+        ]
+        expected_keys = {normalize_value_text(value) for value in expected}
+        essential: list[int] = []
+        for candidate in candidates:
+            remaining = {
+                normalize_value_text(value)
+                for graft_id, values in coverage.items()
+                if int(graft_id) != candidate
+                for value in values
+            }
+            if not expected_keys.issubset(remaining):
+                essential.append(candidate)
+        _require(len(essential) == 1,
+                 "declared synthesis has no unique mounted expected-value "
+                 f"breaker candidate: {essential}")
+        return essential[0], coverage, "DECLARED_SYNTHESIS_BREAKING_MEMBER"
+
+    target = next((value for value in order if value in actual), None)
+    _require(target is not None,
+             "lived admission has no mounted winner in admission order")
+    _require(bool(coverage.get(str(target))),
+             "lived admission winner does not carry the registered expected value")
+    return int(target), coverage, "ORDINARY_ACTUAL_WINNER"
+
+
+def _qualify_registration_target(
+    *,
+    arena: Any,
+    e2e: Any,
+    fixture: Mapping[str, Any],
+    result: Mapping[str, Any],
+    target_id: int,
+    identity: Mapping[str, Any],
+    process: Mapping[str, Any],
+    capture_prompt: str,
+    ngen: int,
+) -> dict[str, Any]:
+    """Run an explicit one-member fork ablation for synthesis registration."""
+    from scripts.grm_det1_3_snapshot import (
+        capture_arena_snapshot,
+        compare_fork_hydration_delta,
+        load_snapshot,
+        restore_prefill_fork,
+    )
+    from scripts.grm_det1_4_gpu import _continue_forked_prefill
+    from scripts.grm_det1_3_gpu import _is_refusal
+
+    source_record = dict(result.get("snapshot") or {})
+    source_path = _path_from_record(source_record)
+    source = load_snapshot(source_path)
+    actual_ordered = [
+        int(value) for value in
+        (source.get("state") or {}).get("admission.authoritative_mounts", ())
+    ]
+    actual = set(actual_ordered)
+    _require(int(target_id) in actual,
+             "registration ablation target has no lived source seat")
+    restore = restore_prefill_fork(
+        arena,
+        source_path,
+        withheld_mounts=[int(target_id)],
+        target_identity=identity,
+        expected_frame_sha256=str(source["identity"]["frame_sha256"]),
+        require_same_process_index=True,
+    )
+    qualification_dir = source_path.parent / "registration_target_ablation"
+    provenance = {
+        **dict(source.get("provenance") or {}),
+        "schema": "grm.det1_7.registration_ablation_provenance.v1",
+        "arm": "fork",
+        "probe_driver": "grm_det1_7.target_only_registration_qualification",
+        "withheld_target_id": int(target_id),
+        "process_instance_sha256": process["process_instance_sha256"],
+    }
+    fork_manifest = capture_arena_snapshot(
+        arena,
+        qualification_dir,
+        label="fork",
+        provenance=provenance,
+        question=capture_prompt,
+        prompt_ids=restore["prompt_ids"],
+        admission_plan=restore["admission_state"],
+        live_token_ids=restore["live_token_ids"],
+        sink_text=e2e.HARMONY_SINK,
+        sink_token_ids=restore["sink_token_ids"],
+        explicit_identity=identity,
+    )
+    delta = compare_fork_hydration_delta(
+        source_path, fork_manifest, withheld_mounts=[int(target_id)])
+    _require(
+        delta.get("schema") == DELTA_RECEIPT_SCHEMA
+        and delta.get("status") == DELTA_PASS_STATUS
+        and delta.get("gate_pass") is True,
+        "registration target-only ablation failed exact delta validation",
+    )
+    answer, _masks = _continue_forked_prefill(
+        arena, restore["prompt_ids"], int(ngen))
+    answer_correct = _answer_correct(str(answer), fixture)
+    refusal = _is_refusal(str(answer))
+    breaks_probe = not answer_correct or refusal
+    stale_values = [str(value) for value in fixture.get(
+        "stale_values", fixture.get("old_values", ()))]
+    wrong_values = [str(value) for value in fixture.get(
+        "wrong_fact_values", ())]
+    if refusal:
+        classification = "refusal"
+    elif any(contains_value(str(answer), value) for value in stale_values):
+        classification = "stale"
+    elif any(contains_value(str(answer), value) for value in wrong_values):
+        classification = "wrong_fact"
+    else:
+        classification = "incorrect"
+    return {
+        "schema": "grm.det1_7.target_only_behavioral_breaker.v1",
+        "source_manifest_payload_sha256": source[
+            "manifest_payload_sha256"],
+        "withheld_target_id": int(target_id),
+        "withheld_alias_ids": [int(target_id)],
+        "served": {
+            "answer": str((source.get("linked_answer") or {})[
+                "probe_answer"]),
+            "answer_correct": True,
+            "refusal": False,
+            "mounted_ids": actual_ordered,
+        },
+        "counterfactual": {
+            "answer": str(answer),
+            "answer_correct": bool(answer_correct),
+            "refusal": bool(refusal),
+            "mounted_ids": [int(value) for value in arena.cur_mounts],
+            "classification": classification,
+        },
+        "delta_receipt": dict(delta),
+    }
 
 
 def _select_ladder(
@@ -2209,6 +2827,11 @@ def _mechanistic_row(
         "raw_ranking_ids": [int(value) for value in profile["raw_ranking"]],
         "post_l2_ranking_ids": [int(value) for value in profile["effective_ranking"]],
         "logical_alias_ids": sorted(aliases),
+        "plant_target_id": int(profile["logical_router_rank1"]),
+        "plant_alias_ids": sorted(aliases),
+        "plant_target_source": profile.get("plant_target_source"),
+        "plant_registry": dict(profile.get("plant_registry") or {}),
+        "plant_entry_sha256": profile.get("plant_entry_sha256"),
         "target_contains_expected": bool(profile["target_contains_expected"]),
         "served_admission_profile": admission,
         "served_effective_admission_plan": [
@@ -2231,6 +2854,11 @@ def _mechanistic_row(
             "logical_target_absent": (
                 int(profile["logical_router_rank1"]) not in mounted
                 if planted else None),
+            "registered_plant_target_absent": (
+                int(profile["logical_router_rank1"]) not in mounted
+                if planted else None),
+            "registered_plant_aliases_absent": (
+                not bool(aliases & mounted) if planted else None),
             "raw_router_rank1_absent": (
                 int(profile["raw_rank1"]) not in mounted if planted else None),
             "expected_value_absent_from_mounted_text": (
@@ -2279,6 +2907,8 @@ def _measure_fixture_inline(
     verbal: bool,
     mechanistic_times: Mapping[str, int] | None,
     snapshot_root: Path,
+    plant_registry: Mapping[str, Any] | None = None,
+    registration_capture: bool = False,
 ) -> tuple[str, dict[str, Any]]:
     from scripts.grm_det1_e2e import (
         _restore_counterfactual,
@@ -2288,6 +2918,27 @@ def _measure_fixture_inline(
     from scripts.grm_det1_common import route_fixture_profile
 
     arena = repo.arena
+    base_fixture_id = str(fixture.get("base_fixture_id", fixture["fixture_id"]))
+    if registration_capture:
+        _require(
+            plant_registry is None
+            and tuple(variants) == ("served",)
+            and not active_detectors
+            and not verbal,
+            "plant registration must be served-only with every detector dark",
+        )
+        registry_record: dict[str, Any] | None = None
+        registry_entry: dict[str, Any] | None = None
+    else:
+        _require(isinstance(plant_registry, Mapping),
+                 "race fixture opened without the frozen DET1.7 plant registry")
+        registry_entry = _plant_registry_entry(plant_registry, base_fixture_id)
+        _require(
+            str(registry_entry.get("effective_fixture_id"))
+            == str(fixture["fixture_id"]),
+            f"effective fixture differs from plant registry slot {base_fixture_id}",
+        )
+        registry_record = file_record(plant_registry_path(FROZEN_RUN))
     live = {int(graft) for graft, _count in arena.live_segs if graft is not None}
     base = _snapshot_counterfactual(arena)
     try:
@@ -2298,6 +2949,9 @@ def _measure_fixture_inline(
             live_excluded=live,
             route_limit=max(int(topk), (int(max_trips) + 1) * int(topk)),
         )
+        if registry_entry is not None:
+            profile = bind_plant_profile(
+                profile, registry_entry, registry_record or {})
     finally:
         _restore_counterfactual(arena, base)
     schedule = _attempt_schedule(
@@ -2371,7 +3025,117 @@ def _measure_fixture_inline(
                 variant: _select_ladder(attempt_rows, variant)[0]
                 for variant in variants
             }
-        if "planted_miss" in selected:
+        registration_observation: dict[str, Any] | None = None
+        if registration_capture:
+            served = selected["served"]
+            observation_status = "LAWFUL_LIVED_TARGET"
+            unplantable_reason: str | None = None
+            target_id: int | None = None
+            coverage: dict[str, list[str]] = {}
+            selection_class: str | None = None
+            breaker: dict[str, Any] | None = None
+            from scripts.grm_det1_3_gpu import _is_refusal
+            if served.get("answer_correct") is not True or _is_refusal(
+                str(served.get("answer", ""))
+            ):
+                observation_status = "UNPLANTABLE"
+                unplantable_reason = "LIVED_SERVED_CONTROL_INCORRECT_OR_REFUSAL"
+            else:
+                try:
+                    target_id, coverage, selection_class = (
+                        _registration_target_candidate(
+                            fixture=fixture, result=served))
+                    if selection_class == "DECLARED_SYNTHESIS_BREAKING_MEMBER":
+                        breaker = _qualify_registration_target(
+                            arena=arena,
+                            e2e=e2e,
+                            fixture=fixture,
+                            result=served,
+                            target_id=target_id,
+                            identity=identity,
+                            process=process,
+                            capture_prompt=capture_prompt,
+                            ngen=int(ngen),
+                        )
+                        if (breaker.get("counterfactual") or {}).get(
+                            "answer_correct") is not False:
+                            observation_status = "UNPLANTABLE"
+                            unplantable_reason = (
+                                "DECLARED_SYNTHESIS_MEMBER_DID_NOT_BREAK_PROBE")
+                except DETError as exc:
+                    observation_status = "UNPLANTABLE"
+                    unplantable_reason = str(exc)
+            if base_fixture_id == str(fixture["fixture_id"]):
+                substitution = {"status": "NONE"}
+            else:
+                source = dict(fixture.get("source") or {})
+                source_sha = str(source.get("sha256", ""))
+                stale = fixture.get("stale_values")
+                if stale is None:
+                    stale = fixture.get("old_values") or []
+                selector = (
+                    {"turn": int(fixture["turn"])}
+                    if fixture.get("source_family") == "certified_34_turn"
+                    else {"probe_id": str(fixture["probe_id"])}
+                )
+                effective_fixture = {
+                    "fixture_id": str(fixture["fixture_id"]),
+                    "split": str(fixture["split"]),
+                    "source_family": str(fixture["source_family"]),
+                    "session_id": (
+                        f"certified_34_turn:{source_sha}"
+                        if fixture.get("source_family") == "certified_34_turn"
+                        else str(fixture["session_id"])),
+                    "selector": selector,
+                    "question": str(fixture["question"]),
+                    "expected_values": [str(value) for value in
+                                        fixture.get("expected_values", ())],
+                    "stale_values": [str(value) for value in stale],
+                    "wrong_fact_values": [str(value) for value in
+                                           fixture.get("wrong_fact_values", ())],
+                    "source": source,
+                }
+                substitution = {
+                    "status": "SUBSTITUTED",
+                    "original_fixture_id": base_fixture_id,
+                    "effective_fixture": effective_fixture,
+                    "reason": str((fixture.get("substitution") or {}).get(
+                        "reason", "NO_LAWFUL_LIVED_MOUNTED_TARGET")),
+                }
+            registration_observation = {
+                "schema": "grm.det1_7.plant_observation.v1",
+                "row_id": f"{fixture['fixture_id']}:plant_registration",
+                "fixture_id": base_fixture_id,
+                "effective_fixture_id": str(fixture["fixture_id"]),
+                "candidate_for_fixture_id": str(fixture.get(
+                    "candidate_for_fixture_id", base_fixture_id)),
+                "status": observation_status,
+                "unplantable_reason": unplantable_reason,
+                "snapshot_path": str(_path_from_record(
+                    served.get("snapshot") or {})),
+                "source_snapshot": dict(served.get("snapshot") or {}),
+                "evidence_utc": utc_now(),
+                "expected_value_coverage": coverage,
+                "alias_ids": [target_id] if target_id is not None else [],
+                "selected_target_id": target_id,
+                "selection_class": selection_class,
+                "behavioral_breaker": breaker,
+                "served_answer": str(served.get("answer", "")),
+                "served_answer_correct": served.get("answer_correct") is True,
+                "mounted_ids": [int(value) for value in
+                                served.get("mounted_ids", ())],
+                "substitution": substitution,
+                "effective_fixture": {
+                    key: fixture[key] for key in (
+                        "fixture_id", "source_family", "split", "turn",
+                        "session_id", "probe_id", "question", "expected_values",
+                        "stale_values", "old_values", "wrong_fact_values", "source",
+                    ) if key in fixture
+                },
+                "detector_arms_active": [],
+                "race_row": False,
+            }
+        elif "planted_miss" in selected:
             rung_restores = [
                 dict(row["planted_miss"]["fork_restore"])
                 for row in attempt_rows
@@ -2438,7 +3202,11 @@ def _measure_fixture_inline(
             f"inline served fork differs from lived production for {fixture['fixture_id']}",
         )
     completed_ns = time.time_ns()
-    if verbal:
+    if registration_capture:
+        assert registration_observation is not None
+        append_jsonl_once(
+            rows_path, registration_observation, key="row_id")
+    elif verbal:
         _require(mechanistic_times is not None,
                  "D-VERB worker lacks mechanistic chronology bindings")
         for variant in variants:
@@ -2468,6 +3236,12 @@ def _measure_fixture_inline(
                     selected[variant]["attempt_ordinal"]),
                 "mounted_ids": [
                     int(value) for value in selected[variant]["mounted_ids"]],
+                "plant_target_id": int(profile["logical_router_rank1"]),
+                "plant_alias_ids": [int(value) for value in
+                                    profile["logical_alias_ids"]],
+                "plant_target_source": profile.get("plant_target_source"),
+                "plant_registry": dict(profile.get("plant_registry") or {}),
+                "plant_entry_sha256": profile.get("plant_entry_sha256"),
                 "mechanistic_selected_attempt_ordinal": int(
                     binding["selected_attempt_ordinal"]),
                 "mechanistic_mounted_ids": [
@@ -2501,6 +3275,209 @@ def _load_rows_record(receipt: Mapping[str, Any], label: str) -> tuple[Path, lis
     return path, read_jsonl(path)
 
 
+def _select_registration_observations(
+    registration: Mapping[str, Any],
+    candidates: Sequence[Mapping[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Choose a lawful lived observation per base slot, or fail closed."""
+    by_slot: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    row_ids: set[str] = set()
+    for raw in candidates:
+        row = dict(raw)
+        _require(row.get("schema") == "grm.det1_7.plant_observation.v1",
+                 "plant-registration candidate has the wrong schema")
+        row_id = str(row.get("row_id", ""))
+        slot = str(row.get("candidate_for_fixture_id", row.get("fixture_id", "")))
+        _require(bool(row_id) and row_id not in row_ids and bool(slot),
+                 "plant-registration candidate id/slot is missing or duplicate")
+        row_ids.add(row_id)
+        by_slot[slot].append(row)
+    base_ids = [str(row["fixture_id"]) for row in registration["fixtures"]]
+    _require(set(by_slot) == set(base_ids),
+             "plant-registration candidate slots differ from base registration")
+    selected: list[dict[str, Any]] = []
+    substitutions: list[dict[str, Any]] = []
+    for slot in base_ids:
+        values = by_slot[slot]
+        primary = [
+            row for row in values
+            if str(row.get("effective_fixture_id")) == slot
+        ]
+        _require(len(primary) == 1,
+                 f"plant-registration slot lacks one primary observation: {slot}")
+        chosen = primary[0]
+        if chosen.get("status") != "LAWFUL_LIVED_TARGET":
+            reserves = [
+                row for row in values
+                if str(row.get("effective_fixture_id")) != slot
+                and row.get("status") == "LAWFUL_LIVED_TARGET"
+            ]
+            _require(len(reserves) == 1,
+                     f"no unique lawful same-session substitution for {slot}: "
+                     f"primary_reason={chosen.get('unplantable_reason')!r}")
+            chosen = reserves[0]
+            substitution = dict(chosen.get("substitution") or {})
+            _require(substitution.get("status") == "SUBSTITUTED",
+                     f"replacement candidate lacks explicit substitution: {slot}")
+            substitutions.append({
+                "base_fixture_id": slot,
+                "effective_fixture_id": chosen.get("effective_fixture_id"),
+                "reason": substitution.get("reason"),
+                "same_certified_session": True,
+            })
+        normalized = dict(chosen)
+        normalized["fixture_id"] = slot
+        selected.append(normalized)
+    effective_ids = [str(value["effective_fixture_id"]) for value in selected]
+    _require(len(effective_ids) == len(set(effective_ids)) == 14,
+             "plant-registration effective fixtures are not one-to-one")
+    return selected, substitutions
+
+
+def plant_registration(
+    run_dir: Path = FROZEN_RUN,
+    *,
+    lease_seconds: int = LEASE_SECONDS,
+    wait_seconds: int = DEFAULT_WAIT_SECONDS,
+    gap_seconds: int = GAP_SECONDS,
+) -> dict[str, Any]:
+    """Capture lived admissions, freeze their targets, and emit no race rows."""
+    from scripts.grm_det1_7_registry import (
+        derive_plant_registry,
+        validate_plant_registry,
+        write_content_addressed_registry,
+    )
+
+    run_dir = Path(run_dir).resolve()
+    if _stage_is_complete(run_dir, "plant_registration"):
+        return _validate_stage_marker(run_dir, "plant_registration")[2]
+    source_auth = validate_det1_7_source_authorization(run_dir)
+    prerequisite = _require_prior_stage(run_dir, "cross_process_zero")
+    preflight, code = gpu_preflight(run_dir)
+    _require(code == 0,
+             f"GPU preflight blocked plant registration: {preflight}")
+    directory = campaign_root(run_dir) / STAGE_DIRS["plant_registration"]
+    outputs: list[dict[str, Any]] = []
+    shard_records: list[dict[str, Any]] = []
+    candidates: list[dict[str, Any]] = []
+    for spec in STAGE_SPECS["plant_registration"]:
+        shard_dir = stage_shard_root(run_dir, "plant_registration") / spec
+        output = _completed_shard_output(
+            shard_dir, stage="plant_registration", spec=spec)
+        if output is None:
+            _enforce_worker_gap(run_dir, int(gap_seconds))
+            output = _run_worker(
+                run_dir,
+                "plant-registration",
+                _next_attempt(shard_dir),
+                lease_seconds=int(lease_seconds),
+                wait_seconds=int(wait_seconds),
+                extra=("--spec", spec),
+            )
+        receipt_path = _validate_worker_shard_output(
+            output, stage="plant_registration", spec=spec)
+        observations_path = _validate_file_record(
+            output.get("observations") or {},
+            f"plant-registration/{spec} observations",
+        )
+        observed = read_jsonl(observations_path)
+        _require(int(output.get("observation_count", -1)) == len(observed),
+                 f"plant-registration/{spec} observation count drifted")
+        _require(output.get("detector_hooks") == []
+                 and output.get("variants") == ["served"],
+                 f"plant-registration/{spec} activated an evaluation arm")
+        outputs.append(output)
+        shard_records.append(file_record(receipt_path))
+        candidates.extend(observed)
+
+    _require(len(candidates) == 15,
+             f"plant registration expected 14 slots + one reserve, got "
+             f"{len(candidates)}")
+    selected, substitutions = _select_registration_observations(
+        read_json(REGISTRATION), candidates)
+    candidates_path = directory / "candidate_observations.jsonl"
+    selected_path = directory / "selected_observations.jsonl"
+    _write_jsonl_exclusive_or_verify(candidates_path, candidates)
+    _write_jsonl_exclusive_or_verify(selected_path, selected)
+    registry = derive_plant_registry(
+        REGISTRATION,
+        DET1_7_ORDER,
+        selected,
+        created_utc=utc_now(),
+        new_eval_evidence_utc=(),
+        record_root=ROOT,
+    )
+    registry_path = write_content_addressed_registry(
+        directory,
+        registry,
+        record_root=ROOT,
+        stem="plant_registry",
+    )
+    validation = validate_plant_registry(registry, record_root=ROOT)
+    table = [
+        {
+            "base_fixture_id": entry["fixture_id"],
+            "effective_fixture_id": entry["effective_fixture_id"],
+            "split": entry["split"],
+            "policy_branch": entry["policy_branch"],
+            "actual_lived_mounts": entry["actual_authoritative_mounts"],
+            "plant_target_id": entry["selected_target_id"],
+            "plant_alias_ids": entry["alias_ids"],
+            "selection_rule": entry["rule_id"],
+            "source_snapshot": entry["source_snapshot"],
+            "substitution": entry["substitution"],
+        }
+        for entry in registry["entries"]
+    ]
+    process_ids = [str(value["process_instance_sha256"]) for value in outputs]
+    _require(len(process_ids) == len(set(process_ids)),
+             "plant-registration reused a process across bounded shards")
+    receipt = {
+        "schema": STAGE_SCHEMAS["plant_registration"],
+        "status": "PASS",
+        "created_utc": utc_now(),
+        "registration": file_record(REGISTRATION),
+        "runtime_frame": file_record(RUNTIME_FRAME),
+        "precollection_authorization": source_auth["record"],
+        "shard_receipts": shard_records,
+        "candidate_observations": file_record(candidates_path),
+        "selected_observations": file_record(selected_path),
+        "candidate_count": len(candidates),
+        "selected_count": len(selected),
+        "plant_registry": file_record(registry_path),
+        "plant_registry_payload_sha256": registry[
+            "registry_payload_sha256"],
+        "plant_registry_file_sha256": file_record(registry_path)["sha256"],
+        "registry_validation": validation,
+        "per_turn_table": table,
+        "substitutions": substitutions,
+        "counts": {"served": 12, "planted_miss": 12, "eval_pairs": 12},
+        "detector_arms_active": [],
+        "race_rows_emitted": False,
+        "thresholds_fitted": False,
+        "frozen_before_g0": True,
+        "frozen_before_eval": True,
+        "process_instance_sha256s": process_ids,
+        "process_instance_sha256": aggregate_process_instances(process_ids),
+        "process_instance_identity": (
+            "AGGREGATE_ORDERED_PROCESS_LIST_NOT_OS_IDENTITY"
+        ),
+        "process_identity_semantics": (
+            "SHA256_OF_ORDERED_OS_PROCESS_INSTANCE_LIST"
+        ),
+        "gpu_allocations_claimed_by_parent": 0,
+    }
+    receipt_path = write_content_addressed(
+        directory, "plant_registration_receipt", receipt)
+    _write_stage_marker(
+        run_dir,
+        "plant_registration",
+        receipt_path,
+        [prerequisite, run_dir / DET1_7_SOURCE_AUTH.name],
+    )
+    return receipt
+
+
 def _require_prior_stage(run_dir: Path, stage: str) -> Path:
     return _validate_stage_marker(run_dir, stage)[0]
 
@@ -2516,9 +3493,10 @@ def _run_row_stage(
     """Run bounded worker shards and finalize one fresh stage receipt."""
     if _stage_is_complete(run_dir, stage):
         return _validate_stage_marker(run_dir, stage)[2]
-    validate_race_amendment(run_dir)
+    registered_context = load_det1_7_registered_context(run_dir)
+    plant_registry = registered_context["plant_registry"]
     predecessor = {
-        "g0": "cross_process_zero",
+        "g0": "plant_registration",
         "g1": "g0",
         "calibration": "g1",
         "eval_mechanistic": "calibration",
@@ -2564,10 +3542,12 @@ def _run_row_stage(
         "status": "PASS",
         "registration": file_record(REGISTRATION),
         "runtime_frame": file_record(RUNTIME_FRAME),
-        "race_authorization_amendment": file_record(
-            Path(run_dir).resolve() / RACE_AMENDMENT.name),
-        "source_amendment": file_record(
-            Path(run_dir).resolve() / DELTA_AMENDMENT.name),
+        "race_authorization_amendment": file_record(RACE_AMENDMENT),
+        "source_amendment": file_record(DELTA_AMENDMENT),
+        "precollection_authorization": registered_context[
+            "precollection_authorization"],
+        "plant_registry": registered_context["plant_registry_record"],
+        "terminal_amendment": registered_context["terminal_amendment"],
         "shard_receipts": shard_records,
         "process_instance_sha256s": process_ids,
         "process_instance_sha256": aggregate_process_instances(process_ids),
@@ -2577,6 +3557,8 @@ def _run_row_stage(
         "inter_child_gap_seconds": int(gap_seconds),
     }
     registration = read_json(REGISTRATION)
+    effective_registration = effective_registration_projection(
+        registration, plant_registry)
     runtime = read_json(RUNTIME_FRAME)
     rows_path: Path | None = None
     rows: list[dict[str, Any]] = []
@@ -2638,7 +3620,8 @@ def _run_row_stage(
         receipt_path = write_content_addressed(directory, "g1_receipt", receipt)
     elif stage == "calibration":
         assert rows_path is not None
-        calibration_ids, _evaluation_ids = _registered_split(registration)
+        calibration_ids, _evaluation_ids = _registered_split(
+            effective_registration)
         _require(
             [str(row.get("fixture_id")) for row in rows] == calibration_ids
             and len(rows) == 2
@@ -2666,7 +3649,8 @@ def _run_row_stage(
     elif stage == "eval_mechanistic":
         assert rows_path is not None
         calibration_path = campaign_root(run_dir) / "calibration/mechanistic_rows.jsonl"
-        split = validate_split(registration, read_jsonl(calibration_path), rows)
+        split = validate_split(
+            effective_registration, read_jsonl(calibration_path), rows)
         repeated_g0 = validate_g0_rows(rows)
         receipt = {
             **common,
@@ -2707,7 +3691,11 @@ def _run_row_stage(
         run_dir,
         stage,
         receipt_path,
-        [prerequisite, Path(run_dir) / RACE_AMENDMENT.name],
+        [
+            prerequisite,
+            Path(run_dir) / DET1_7_TERMINAL_AMENDMENT.name,
+            plant_registry_path(run_dir),
+        ],
     )
     return receipt
 
@@ -2748,7 +3736,15 @@ def campaign(
     cross_process_zero(
         run_dir, lease_seconds=lease_seconds, wait_seconds=wait_seconds)
     completed.append("cross_process_zero")
-    author_amendment(run_dir)
+    author_det1_7_source_authorization(run_dir)
+    plant_registration(
+        run_dir,
+        lease_seconds=lease_seconds,
+        wait_seconds=wait_seconds,
+        gap_seconds=gap_seconds,
+    )
+    completed.append("plant_registration")
+    author_det1_7_terminal_amendment(run_dir)
     for stage in ("g0", "g1", "calibration", "eval_mechanistic", "eval_verbal"):
         if completed:
             _require(int(gap_seconds) >= 0, "inter-stage gap must be nonnegative")
@@ -2813,6 +3809,14 @@ def selftest(_args: argparse.Namespace | None = None) -> dict[str, Any]:
                 "raw_router_rank1": index,
                 "logical_router_rank1": index,
                 "logical_alias_ids": [index],
+                "plant_target_id": index,
+                "plant_alias_ids": [index],
+                "plant_target_source": "DET1_7_LIVED_ADMISSION_REGISTRY",
+                "plant_registry": {
+                    "path": "plant_registry.json", "bytes": 1,
+                    "sha256": "a" * 64,
+                },
+                "plant_entry_sha256": "b" * 64,
                 "mounted_ids": [index],
                 "mounted_contains_expected": True,
                 "full_index_contains_all_aliases": True,
@@ -2823,11 +3827,21 @@ def selftest(_args: argparse.Namespace | None = None) -> dict[str, Any]:
                 "variant": "planted_miss",
                 "target_contains_expected": True,
                 "logical_alias_ids": [index],
+                "plant_target_id": index,
+                "plant_alias_ids": [index],
+                "plant_target_source": "DET1_7_LIVED_ADMISSION_REGISTRY",
+                "plant_registry": {
+                    "path": "plant_registry.json", "bytes": 1,
+                    "sha256": "a" * 64,
+                },
+                "plant_entry_sha256": "b" * 64,
                 "mounted_ids": [],
                 "plant_checks": {
                     "withheld_aliases_absent": True,
                     "logical_target_absent": True,
                     "raw_router_rank1_absent": True,
+                    "registered_plant_target_absent": True,
+                    "registered_plant_aliases_absent": True,
                     "expected_value_absent_from_mounted_text": True,
                     "withheld_aliases_remain_in_full_detector_index": True,
                     "admission_ranking_unchanged": True,
@@ -2907,7 +3921,7 @@ def selftest(_args: argparse.Namespace | None = None) -> dict[str, Any]:
     _require(not any("_worker" in command for command in commands),
              "private worker leaked into lead commands")
     drivers = campaign_driver_inventory()
-    _require(drivers["gpu_child_count"] == 27,
+    _require(drivers["gpu_child_count"] == 36,
              "bounded GPU shard count drifted")
     _require(STAGE_SHARD_DIRS["eval_mechanistic"]
              != STAGE_SHARD_DIRS["eval_verbal"],
@@ -2929,6 +3943,106 @@ def selftest(_args: argparse.Namespace | None = None) -> dict[str, Any]:
         },
         "gpu_allocations_attempted": 0,
     }
+
+
+def det1_7_cpu_preflight(
+    run_dir: Path = FROZEN_RUN,
+) -> dict[str, Any]:
+    """Inventory extant lived evidence without treating it as a full registry."""
+    run_dir = Path(run_dir).resolve()
+    _require(run_dir == FROZEN_RUN.resolve(),
+             "DET1.7 CPU preflight is bound to the frozen run")
+    registration = read_json(REGISTRATION)
+    _calibration, evaluation = _registered_split(registration)
+    root = campaign_root(run_dir) / STAGE_SHARD_DIRS["g0"]
+    table: list[dict[str, Any]] = []
+    missing: list[str] = []
+    incorrect: list[str] = []
+    synthesis_pending: list[str] = []
+    for fixture_id in evaluation:
+        paths = sorted(root.glob(
+            f"*/attempt_002/snapshots/{fixture_id}/rung_00/manifest.json"))
+        if len(paths) != 1:
+            missing.append(fixture_id)
+            table.append({
+                "fixture_id": fixture_id,
+                "status": "MISSING_DET1_6_LIVED_FORK_SNAPSHOT",
+                "candidate_target_id": None,
+            })
+            continue
+        path = paths[0]
+        manifest = read_json(path)
+        state = manifest.get("state") or {}
+        mounts = [int(value) for value in state.get(
+            "admission.authoritative_mounts", ())]
+        plan = [int(value) for value in state.get("admission.rank_plan", ())]
+        planned = [int(value) for value in state.get(
+            "admission.current_planned", ())]
+        ordered = list(dict.fromkeys([*plan, *planned, *mounts]))
+        branch = str(state.get("admission.policy_branch", ""))
+        identified = {int(value) for value in state.get(
+            "admission.identified_candidates", ())}
+        if branch == "declared_synthesis_identified_set":
+            candidates = [value for value in ordered
+                          if value in identified and value in mounts]
+            target = candidates[0] if len(candidates) == 1 else None
+            synthesis_pending.append(fixture_id)
+            status = "CANDIDATE_REQUIRES_TARGET_ONLY_BREAKER"
+        else:
+            target = next((value for value in ordered if value in mounts), None)
+            status = "CANDIDATE_FROM_LIVED_ACTUAL_WINNER"
+        linked = manifest.get("linked_answer") or {}
+        served_correct = (
+            linked.get("attempt_answer_correct") is True
+            and linked.get("probe_answer_correct") is True
+            and linked.get("attempt_refusal") is False
+            and linked.get("probe_refusal") is False
+        )
+        if not served_correct:
+            incorrect.append(fixture_id)
+            status = "UNPLANTABLE_LIVED_SERVED_CONTROL"
+        table.append({
+            "fixture_id": fixture_id,
+            "status": status,
+            "candidate_target_id": target,
+            "actual_lived_mounts": mounts,
+            "policy_branch": branch,
+            "rank_plan": plan,
+            "identified_candidates": sorted(identified),
+            "served_correct_nonrefusal": served_correct,
+            "source_snapshot": file_record(path),
+        })
+    receipt = {
+        "schema": "grm.det1_7.cpu_evidence_preflight.v1",
+        "status": "BLOCKED_PENDING_LIVED_REGISTRATION_COLLECTION",
+        "created_utc": utc_now(),
+        "order": file_record(DET1_7_ORDER),
+        "base_registration": file_record(REGISTRATION),
+        "base_registration_sha256": file_record(REGISTRATION)["sha256"],
+        "extant_eval_table": table,
+        "extant_snapshot_count": len(evaluation) - len(missing),
+        "missing_fixture_ids": missing,
+        "invalid_served_fixture_ids": incorrect,
+        "synthesis_breaker_pending_fixture_ids": synthesis_pending,
+        "required_same_session_substitution": {
+            "original_fixture_id": "e2e_t30_atlas_tone",
+            "candidate_fixture_id": "e2e_t33_polaris_mark",
+            "source_turn": 32,
+            "probe_turn": 33,
+            "expected_values": ["Marble-4-Juliet"],
+            "measured": False,
+        },
+        "registry_freeze_ready": False,
+        "registry_file_sha256": None,
+        "historical_cross_model_rows_used": False,
+        "gpu_allocations_attempted": 0,
+        "cpu_selftest": selftest(),
+    }
+    path = write_content_addressed(
+        run_dir / "det1_7", "cpu_evidence_preflight", receipt)
+    result = dict(receipt)
+    result["receipt_file"] = file_record(path)
+    return result
 
 
 def _worker_main(args: argparse.Namespace) -> dict[str, Any]:
@@ -2955,14 +4069,15 @@ def _parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
     for name in (
         "inventory", "selftest", "author-amendment",
-        "author-delta-amendment", "analyze",
+        "author-delta-amendment", "author-det1-7-source",
+        "author-det1-7-terminal", "det1-7-cpu-preflight", "analyze",
     ):
         _add_common(sub.add_parser(name))
     preflight = sub.add_parser("gpu-preflight")
     _add_common(preflight)
     preflight.add_argument("--write-receipt", action="store_true")
     for name in (
-        "cross-process-zero", "g0", "g1", "calibration",
+        "cross-process-zero", "plant-registration", "g0", "g1", "calibration",
         "eval-mechanistic", "eval-verbal", "campaign",
     ):
         _add_gpu(sub.add_parser(name))
@@ -2997,6 +4112,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             output = author_amendment(args.run_dir)
         elif args.command == "author-delta-amendment":
             output = author_delta_amendment(args.run_dir)
+        elif args.command == "author-det1-7-source":
+            output = author_det1_7_source_authorization(args.run_dir)
+        elif args.command == "plant-registration":
+            output = plant_registration(
+                args.run_dir,
+                lease_seconds=args.lease_seconds,
+                wait_seconds=args.lock_wait_seconds,
+                gap_seconds=args.gap_seconds,
+            )
+        elif args.command == "author-det1-7-terminal":
+            output = author_det1_7_terminal_amendment(args.run_dir)
+        elif args.command == "det1-7-cpu-preflight":
+            output = det1_7_cpu_preflight(args.run_dir)
         elif args.command in (
             "g0", "g1", "calibration", "eval-mechanistic", "eval-verbal",
         ):

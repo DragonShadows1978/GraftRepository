@@ -9,6 +9,8 @@ artifact only after every registered gate and all 12+12 observations validate.
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -26,6 +28,7 @@ from scripts.grm_det1_common import (  # noqa: E402
     MECHANISTIC,
     VERBAL_QUESTION,
     DETError,
+    canonical_json_bytes,
     file_record,
     fit_thresholds,
     normalize_value_text,
@@ -37,15 +40,22 @@ from scripts.grm_det1_common import (  # noqa: E402
 )
 from scripts.grm_det1_5_gpu import (  # noqa: E402
     DELTA_AMENDMENT,
+    DET1_7_ORDER,
+    DET1_7_SOURCE_AUTH,
+    DET1_7_TERMINAL_AMENDMENT,
     aggregate_process_instances,
+    effective_registration_projection,
     merge_detector_rows,
-    validate_delta_amendment,
+    plant_registry_path,
+    validate_det1_7_source_authorization,
+    validate_det1_7_terminal_amendment,
     validate_g0_rows,
     validate_g1_pair,
     validate_served_control,
     validate_split,
     validate_verbal_chronology,
 )
+from scripts.grm_det1_7_registry import validate_plant_registry  # noqa: E402
 
 
 DET1_5_ORDER = ROOT / "orders" / "GRM_DET1_5_RACE_CAMPAIGN.md"
@@ -60,6 +70,11 @@ STAGES: tuple[tuple[str, Path, str], ...] = (
         "cross_process_zero",
         Path("cross_process_zero") / "stage_complete.json",
         "grm.det1_5.cross_process_zero.v1",
+    ),
+    (
+        "plant_registration",
+        Path("det1_7") / "plant_registration" / "stage_complete.json",
+        "grm.det1_7.plant_registration.v1",
     ),
     ("g0", Path("g0") / "stage_complete.json", "grm.det1_5.g0.v1"),
     ("g1", Path("g1") / "stage_complete.json", "grm.det1_5.g1.v1"),
@@ -81,6 +96,20 @@ STAGES: tuple[tuple[str, Path, str], ...] = (
 )
 
 SHARD_LAYOUT: dict[str, tuple[Path, tuple[str, ...]]] = {
+    "plant_registration": (
+        Path("det1_7") / "plant_registration" / "shards",
+        (
+            "e2e-cal",
+            "e2e-1",
+            "e2e-2",
+            "e2e-3",
+            "e2e-4",
+            "sup-1",
+            "sup-2",
+            "sup-3",
+            "sup-4",
+        ),
+    ),
     "g0": (
         Path("g0") / "shards",
         (
@@ -123,6 +152,19 @@ SHARD_LAYOUT: dict[str, tuple[Path, tuple[str, ...]]] = {
         ),
     ),
 }
+
+# The predecessor DET1.5 authorization is append-only and therefore retains
+# the stage order it authorized.  DET1.7's terminal amendment, validated
+# separately below, inserts plant_registration between ZERO and G0.
+DET1_5_AUTHORIZED_STAGE_ORDER = [
+    "cross_process_zero",
+    "g0",
+    "g1",
+    "calibration",
+    "eval_mechanistic",
+    "eval_verbal",
+    "analyze",
+]
 
 
 def _require(condition: bool, message: str) -> None:
@@ -516,12 +558,19 @@ def _amendment(
             source_rebindings=source_rebindings,
         )
     lead = value.get("lead_script") or {}
-    lead_path = _validated_record(lead, "amendment.lead_script")
+    lead_source = "scripts/grm_det1_5_lead.sh"
+    _validated_historical_source_record(
+        lead,
+        lead_source,
+        "amendment.lead_script",
+        source_rebindings=source_rebindings,
+    )
+    lead_path = (ROOT / lead_source).resolve()
     _require(
         lead_path == (ROOT / "scripts" / "grm_det1_5_lead.sh").resolve(),
         "amendment binds the wrong DET1.5 lead script",
     )
-    lead_key = str(file_record(lead_path)["path"])
+    lead_key = lead_source
     _require(lead_key in inventory, "lead script is absent from source inventory")
     _same_record(inventory[lead_key], lead, "source inventory lead script")
     invariants = value.get("invariants") or {}
@@ -544,9 +593,8 @@ def _amendment(
         "amendment fresh campaign namespace drifted",
     )
     _require(
-        invariants.get("stage_order")
-        == [stage for stage, _marker, _schema in STAGES] + ["analyze"],
-        "amendment stage order drifted",
+        invariants.get("stage_order") == DET1_5_AUTHORIZED_STAGE_ORDER,
+        "predecessor DET1.5 amendment stage order drifted",
     )
     _require(
         invariants.get("verdict_vocabulary") == list(VERDICTS),
@@ -617,15 +665,33 @@ def _validate_common_stage_bindings(
     *,
     amendment_path: Path,
     source_amendment_path: Path,
+    precollection_authorization_path: Path,
+    plant_registry_path_value: Path,
+    terminal_amendment_path: Path,
     registration_path: Path,
     runtime_frame_path: Path,
 ) -> None:
     for stage, receipt in receipts.items():
         _binding(receipt, "registration", registration_path, stage)
         _binding(receipt, "runtime_frame", runtime_frame_path, stage)
-        if stage != "cross_process_zero":
+        if stage == "plant_registration":
+            _binding(
+                receipt,
+                "precollection_authorization",
+                precollection_authorization_path,
+                stage,
+            )
+        elif stage != "cross_process_zero":
             _binding(receipt, "race_authorization_amendment", amendment_path, stage)
             _binding(receipt, "source_amendment", source_amendment_path, stage)
+            _binding(
+                receipt,
+                "precollection_authorization",
+                precollection_authorization_path,
+                stage,
+            )
+            _binding(receipt, "plant_registry", plant_registry_path_value, stage)
+            _binding(receipt, "terminal_amendment", terminal_amendment_path, stage)
 
 
 def _validate_marker_chain(
@@ -636,12 +702,16 @@ def _validate_marker_chain(
     zero_receipt: Mapping[str, Any],
     amendment_path: Path,
     source_amendment_path: Path,
+    precollection_authorization_path: Path,
+    plant_registry_path_value: Path,
+    terminal_amendment_path: Path,
     registration_path: Path,
     runtime_frame_path: Path,
 ) -> None:
     predecessor = {
         "cross_process_zero": zero_marker_path,
-        "g0": marker_paths["cross_process_zero"],
+        "plant_registration": marker_paths["cross_process_zero"],
+        "g0": marker_paths["plant_registration"],
         "g1": marker_paths["g0"],
         "calibration": marker_paths["g1"],
         "eval_mechanistic": marker_paths["calibration"],
@@ -664,9 +734,38 @@ def _validate_marker_chain(
                 dict(zero_receipt.get("lived_snapshot") or {}),
                 dict(zero_receipt.get("fork_snapshot") or {}),
             ])
-        if stage != "cross_process_zero":
+        elif stage == "plant_registration":
+            expected.append(file_record(precollection_authorization_path))
+            _require(
+                marker.get("det1_7_provenance")
+                == {
+                    "precollection_authorization": file_record(
+                        precollection_authorization_path
+                    )
+                },
+                "plant_registration marker DET1.7 provenance drifted",
+            )
+        else:
             _binding(marker, "source_amendment", source_amendment_path, f"{stage} marker")
-            expected.append(file_record(amendment_path))
+            expected.extend(
+                [
+                    file_record(terminal_amendment_path),
+                    file_record(plant_registry_path_value),
+                ]
+            )
+            _require(
+                marker.get("det1_7_provenance")
+                == {
+                    "precollection_authorization": file_record(
+                        precollection_authorization_path
+                    ),
+                    "plant_registry_record": file_record(
+                        plant_registry_path_value
+                    ),
+                    "terminal_amendment": file_record(terminal_amendment_path),
+                },
+                f"{stage} marker DET1.7 provenance drifted",
+            )
         _require(
             marker.get("prerequisites") == expected,
             f"{stage} marker prerequisite chain drifted",
@@ -749,6 +848,9 @@ def _worker_shard(
     stage: str,
     amendment_path: Path,
     source_amendment_path: Path,
+    precollection_authorization_path: Path,
+    plant_registry_path_value: Path,
+    terminal_amendment_path: Path,
     registration_path: Path,
     runtime_frame_path: Path,
 ) -> dict[str, Any]:
@@ -758,13 +860,37 @@ def _worker_shard(
         f"{where} is not content-addressed",
     )
     value = read_json(path)
-    _require(value.get("schema") == "grm.det1_5.worker_shard.v1", f"{where} schema drifted")
+    _require(value.get("schema") == "grm.det1_7.worker_shard.v1", f"{where} schema drifted")
     _require(value.get("status") == "COMPLETE", f"{where} is not COMPLETE")
     _require(value.get("stage") == stage, f"{where} names a different stage")
     _binding(value, "registration", registration_path, where)
     _binding(value, "runtime_frame", runtime_frame_path, where)
-    _binding(value, "race_authorization_amendment", amendment_path, where)
-    _binding(value, "source_amendment", source_amendment_path, where)
+    _require(value.get("historical_rows_reused") is False, f"{where} reused history")
+    expected_phase = (
+        "PRECOLLECTION_SOURCE_AUTHORIZATION"
+        if stage == "plant_registration"
+        else "POST_REGISTRATION_EXACT_BINDING"
+    )
+    expected_provenance = {
+        "precollection_authorization": file_record(
+            precollection_authorization_path
+        )
+    }
+    if stage != "plant_registration":
+        expected_provenance.update(
+            {
+                "plant_registry_record": file_record(plant_registry_path_value),
+                "terminal_amendment": file_record(terminal_amendment_path),
+            }
+        )
+    _require(
+        value.get("det1_7_provenance_phase") == expected_phase,
+        f"{where} DET1.7 provenance phase drifted",
+    )
+    _require(
+        value.get("det1_7_provenance") == expected_provenance,
+        f"{where} DET1.7 provenance records drifted",
+    )
     return value
 
 
@@ -803,9 +929,15 @@ def _validate_stage_shards(
     campaign_dir: Path,
     amendment_path: Path,
     source_amendment_path: Path,
+    precollection_authorization_path: Path,
+    plant_registry_path_value: Path,
+    terminal_amendment_path: Path,
     registration_path: Path,
     runtime_frame_path: Path,
     combined_rows: Sequence[Mapping[str, Any]] | None = None,
+    combined_record_key: str = "rows",
+    combined_count_key: str = "row_count",
+    historical_outputs: list[dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
     _require(where in SHARD_LAYOUT, f"no registered shard layout for {where}")
     shard_relative, expected_specs = SHARD_LAYOUT[where]
@@ -832,6 +964,9 @@ def _validate_stage_shards(
             stage=where,
             amendment_path=amendment_path,
             source_amendment_path=source_amendment_path,
+            precollection_authorization_path=precollection_authorization_path,
+            plant_registry_path_value=plant_registry_path_value,
+            terminal_amendment_path=terminal_amendment_path,
             registration_path=registration_path,
             runtime_frame_path=runtime_frame_path,
         )
@@ -867,6 +1002,16 @@ def _validate_stage_shards(
                 and all(character in "0123456789abcdef" for character in parent_process_sha),
                 f"{where}/{expected_spec} parent finish observation did not pass",
             )
+            output_schema = output.get("schema")
+            if output_schema != "grm.det1_7.worker_shard.v1":
+                _require(
+                    output_schema in (None, "grm.det1_5.worker_shard.v1"),
+                    f"{where}/{expected_spec} has an unrecognized historical "
+                    "shard schema",
+                )
+                if historical_outputs is not None:
+                    historical_outputs.append(file_record(output_path))
+                continue
             bound_path = _validated_record(
                 output.get("receipt_file") or {},
                 f"{where}/{expected_spec} completed worker output",
@@ -874,7 +1019,7 @@ def _validate_stage_shards(
             )
             bound = read_json(bound_path)
             _require(
-                bound.get("schema") == "grm.det1_5.worker_shard.v1"
+                bound.get("schema") == "grm.det1_7.worker_shard.v1"
                 and bound.get("status") == "COMPLETE"
                 and bound.get("stage") == where
                 and bound.get("spec") == expected_spec,
@@ -900,14 +1045,14 @@ def _validate_stage_shards(
         shard_rows: list[dict[str, Any]] = []
         for index, shard in enumerate(shards):
             rows_path = _validated_record(
-                shard.get("rows") or {},
-                f"{where}.shard[{index}].rows",
+                shard.get(combined_record_key) or {},
+                f"{where}.shard[{index}].{combined_record_key}",
                 beneath=campaign_dir,
             )
             rows = read_jsonl(rows_path)
             _require(
-                int(shard.get("row_count", -1)) == len(rows),
-                f"{where}.shard[{index}] row_count drifted",
+                int(shard.get(combined_count_key, -1)) == len(rows),
+                f"{where}.shard[{index}] {combined_count_key} drifted",
             )
             _require(
                 all(
@@ -1156,26 +1301,57 @@ def _validate_verbal_sessions(
             )
 
 
-def _eval_ids(registration: Mapping[str, Any]) -> list[str]:
+def _registry_entries(registry: Mapping[str, Any]) -> list[dict[str, Any]]:
+    raw = registry.get("entries")
+    _require(isinstance(raw, list) and len(raw) == 14, "plant registry lacks 14 entries")
+    entries = [dict(value) for value in raw if isinstance(value, Mapping)]
+    _require(len(entries) == 14, "plant registry contains a malformed entry")
+    _require(
+        len({str(entry.get("fixture_id", "")) for entry in entries}) == 14,
+        "plant registry base fixture identities are not unique",
+    )
+    _require(
+        len({str(entry.get("effective_fixture_id", "")) for entry in entries}) == 14,
+        "plant registry effective fixture identities are not unique",
+    )
+    return entries
+
+
+def _entry_by_effective_fixture(
+    registry: Mapping[str, Any],
+) -> dict[str, dict[str, Any]]:
+    return {
+        str(entry["effective_fixture_id"]): entry
+        for entry in _registry_entries(registry)
+    }
+
+
+def _split_ids(registry: Mapping[str, Any], split: str) -> list[str]:
     return [
-        str(row["fixture_id"])
-        for row in registration["fixtures"]
-        if row.get("split") == "eval"
+        str(entry["effective_fixture_id"])
+        for entry in _registry_entries(registry)
+        if entry.get("split") == split
     ]
 
 
-def _expected_eval_keys(registration: Mapping[str, Any]) -> set[tuple[str, str]]:
+def _eval_ids(registry: Mapping[str, Any]) -> list[str]:
+    values = _split_ids(registry, "eval")
+    _require(len(values) == 12, "plant registry no longer has 12 eval fixtures")
+    return values
+
+
+def _expected_eval_keys(registry: Mapping[str, Any]) -> set[tuple[str, str]]:
     return {
         (fixture_id, variant)
-        for fixture_id in _eval_ids(registration)
+        for fixture_id in _eval_ids(registry)
         for variant in ("served", "planted_miss")
     }
 
 
-def _expected_eval_order(registration: Mapping[str, Any]) -> list[tuple[str, str]]:
+def _expected_eval_order(registry: Mapping[str, Any]) -> list[tuple[str, str]]:
     return [
         (fixture_id, variant)
-        for fixture_id in _eval_ids(registration)
+        for fixture_id in _eval_ids(registry)
         for variant in ("served", "planted_miss")
     ]
 
@@ -1304,17 +1480,19 @@ def _validate_fixture_projection(
     row: Mapping[str, Any],
     where: str,
     *,
-    registration: Mapping[str, Any],
+    registry: Mapping[str, Any],
     mechanistic: bool,
 ) -> None:
     fixture_id = str(row.get("fixture_id", ""))
-    matches = [
-        fixture
-        for fixture in registration.get("fixtures") or ()
-        if str(fixture.get("fixture_id", "")) == fixture_id
-    ]
-    _require(len(matches) == 1, f"{where} does not name one registered fixture")
-    fixture = matches[0]
+    entries = _entry_by_effective_fixture(registry)
+    _require(fixture_id in entries, f"{where} does not name one effective fixture")
+    entry = entries[fixture_id]
+    fixture = entry.get("effective_fixture") or {}
+    _require(isinstance(fixture, Mapping), f"{where} effective fixture is malformed")
+    _require(
+        entry.get("effective_fixture_id") == fixture.get("fixture_id") == fixture_id,
+        f"{where} effective fixture identity drifted",
+    )
     for key in ("question", "source_family"):
         _require(
             row.get(key) == fixture.get(key),
@@ -1340,12 +1518,76 @@ def _validate_fixture_projection(
         )
 
 
+def _plant_entry_sha256(entry: Mapping[str, Any]) -> str:
+    return hashlib.sha256(canonical_json_bytes(dict(entry))).hexdigest()
+
+
+def _validate_row_plant_binding(
+    row: Mapping[str, Any],
+    where: str,
+    *,
+    registry: Mapping[str, Any],
+    registry_path: Path,
+    mechanistic: bool,
+) -> dict[str, Any]:
+    fixture_id = str(row.get("fixture_id", ""))
+    entries = _entry_by_effective_fixture(registry)
+    _require(fixture_id in entries, f"{where} lacks a DET1.7 registry entry")
+    entry = entries[fixture_id]
+    target = int(entry["selected_target_id"])
+    aliases = [int(value) for value in entry.get("alias_ids") or ()]
+    _require(bool(aliases) and target in aliases, f"{where} registry target is empty")
+    _require(
+        row.get("plant_target_id") == target,
+        f"{where}.plant_target_id differs from lived registry",
+    )
+    _require(
+        row.get("plant_alias_ids") == aliases,
+        f"{where}.plant_alias_ids differs from lived registry",
+    )
+    _require(
+        row.get("plant_target_source") == "DET1_7_LIVED_ADMISSION_REGISTRY",
+        f"{where}.plant_target_source drifted",
+    )
+    _same_record(
+        row.get("plant_registry"),
+        file_record(registry_path),
+        f"{where}.plant_registry",
+    )
+    _require(
+        row.get("plant_entry_sha256") == _plant_entry_sha256(entry),
+        f"{where}.plant_entry_sha256 differs from the exact entry",
+    )
+    variant = str(row.get("variant", ""))
+    expected_row_id = (
+        entry.get("served_row_id")
+        if variant == "served"
+        else entry.get("planted_row_id")
+    )
+    _require(
+        row.get("row_id") == expected_row_id,
+        f"{where}.row_id differs from its registered effective pair",
+    )
+    if mechanistic:
+        _require(
+            row.get("logical_router_rank1") == target
+            and row.get("production_admitted_rank1") == target,
+            f"{where} logical/admitted target differs from DET1.7",
+        )
+        _require(
+            row.get("logical_alias_ids") == aliases,
+            f"{where}.logical_alias_ids differs from DET1.7",
+        )
+    return entry
+
+
 def _planted_miss_valid(row: Mapping[str, Any]) -> bool:
     checks = row.get("plant_checks") or {}
     names = (
         "withheld_aliases_absent",
         "logical_target_absent",
-        "raw_router_rank1_absent",
+        "registered_plant_target_absent",
+        "registered_plant_aliases_absent",
         "expected_value_absent_from_mounted_text",
         "withheld_aliases_remain_in_full_detector_index",
         "admission_ranking_unchanged",
@@ -1357,6 +1599,186 @@ def _planted_miss_valid(row: Mapping[str, Any]) -> bool:
         row.get("target_contains_expected") is True
         and all(checks.get(name) is True for name in names)
     )
+
+
+def _utc_unix_ns(value: Any, where: str) -> int:
+    _require(isinstance(value, str) and bool(value), f"{where} is not a timestamp")
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise DETError(f"{where} is not ISO-8601 UTC: {value!r}") from exc
+    _require(
+        parsed.tzinfo is not None and parsed.utcoffset() == timezone.utc.utcoffset(parsed),
+        f"{where} is not UTC",
+    )
+    return int(parsed.timestamp() * 1_000_000_000)
+
+
+def _plant_registration_table(registry: Mapping[str, Any]) -> list[dict[str, Any]]:
+    return [
+        {
+            "base_fixture_id": entry["fixture_id"],
+            "effective_fixture_id": entry["effective_fixture_id"],
+            "split": entry["split"],
+            "policy_branch": entry["policy_branch"],
+            "actual_lived_mounts": entry["actual_authoritative_mounts"],
+            "plant_target_id": entry["selected_target_id"],
+            "plant_alias_ids": entry["alias_ids"],
+            "selection_rule": entry["rule_id"],
+            "source_snapshot": entry["source_snapshot"],
+            "substitution": entry["substitution"],
+        }
+        for entry in _registry_entries(registry)
+    ]
+
+
+def _receipt_substitutions(registry: Mapping[str, Any]) -> list[dict[str, Any]]:
+    result: list[dict[str, Any]] = []
+    for entry in _registry_entries(registry):
+        substitution = entry.get("substitution") or {}
+        if substitution.get("status") != "SUBSTITUTED":
+            continue
+        result.append(
+            {
+                "base_fixture_id": entry["fixture_id"],
+                "effective_fixture_id": entry["effective_fixture_id"],
+                "reason": substitution.get("reason"),
+                "same_certified_session": True,
+            }
+        )
+    return result
+
+
+def _validate_plant_registration(
+    receipt: Mapping[str, Any],
+    *,
+    campaign_dir: Path,
+    amendment_path: Path,
+    source_amendment_path: Path,
+    precollection_authorization_path: Path,
+    registry_path: Path,
+    terminal_amendment_path: Path,
+    registration_path: Path,
+    runtime_frame_path: Path,
+    registry: Mapping[str, Any],
+    historical_outputs: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    validation = validate_plant_registry(registry, record_root=ROOT)
+    _require(
+        validation.get("status") == "PASS"
+        and validation.get("fixture_count") == 14
+        and validation.get("calibration_count") == 2
+        and validation.get("eval_count") == 12
+        and validation.get("eval_served_count") == 12
+        and validation.get("eval_planted_count") == 12,
+        "DET1.7 plant registry did not validate complete pairing",
+    )
+    _binding(receipt, "plant_registry", registry_path, "plant_registration")
+    _require(
+        receipt.get("registry_validation") == validation,
+        "plant-registration validation projection drifted",
+    )
+    _require(
+        receipt.get("plant_registry_payload_sha256")
+        == registry.get("registry_payload_sha256"),
+        "plant-registration payload hash differs from registry",
+    )
+    _require(
+        receipt.get("plant_registry_file_sha256")
+        == file_record(registry_path)["sha256"],
+        "plant-registration file hash differs from registry",
+    )
+    _require(
+        receipt.get("per_turn_table") == _plant_registration_table(registry),
+        "plant-registration per-turn table differs from frozen entries",
+    )
+    _require(
+        receipt.get("substitutions") == _receipt_substitutions(registry),
+        "plant-registration substitution enumeration drifted",
+    )
+    _require(
+        receipt.get("counts")
+        == {"served": 12, "planted_miss": 12, "eval_pairs": 12},
+        "plant-registration did not preserve 12+12 pairing",
+    )
+    _require(
+        receipt.get("candidate_count") == 15
+        and receipt.get("selected_count") == 14,
+        "plant-registration candidate/selection cardinality drifted",
+    )
+    _require(
+        receipt.get("detector_arms_active") == []
+        and receipt.get("race_rows_emitted") is False
+        and receipt.get("thresholds_fitted") is False,
+        "plant-registration crossed its collection-only boundary",
+    )
+    _require(
+        receipt.get("frozen_before_g0") is True
+        and receipt.get("frozen_before_eval") is True,
+        "plant-registration does not claim a pre-eval freeze",
+    )
+
+    candidates_path = _validated_record(
+        receipt.get("candidate_observations") or {},
+        "plant_registration.candidate_observations",
+        beneath=campaign_dir,
+    )
+    selected_path = _validated_record(
+        receipt.get("selected_observations") or {},
+        "plant_registration.selected_observations",
+        beneath=campaign_dir,
+    )
+    candidates = read_jsonl(candidates_path)
+    selected = read_jsonl(selected_path)
+    _require(len(candidates) == 15, "candidate observation file is not 15 rows")
+    _require(len(selected) == 14, "selected observation file is not 14 rows")
+    _require(
+        [str(row.get("fixture_id", "")) for row in selected]
+        == [str(entry["fixture_id"]) for entry in _registry_entries(registry)],
+        "selected observations differ from frozen base-slot order",
+    )
+    for index, row in enumerate(selected):
+        entry = _registry_entries(registry)[index]
+        _require(
+            row.get("effective_fixture_id") == entry.get("effective_fixture_id")
+            and row.get("substitution") == entry.get("substitution")
+            and row.get("snapshot_path")
+            == str(_record_path(entry["source_snapshot"])),
+            f"selected observation {index} differs from its registry entry",
+        )
+    shards = _validate_stage_shards(
+        receipt,
+        "plant_registration",
+        campaign_dir=campaign_dir,
+        amendment_path=amendment_path,
+        source_amendment_path=source_amendment_path,
+        precollection_authorization_path=precollection_authorization_path,
+        plant_registry_path_value=registry_path,
+        terminal_amendment_path=terminal_amendment_path,
+        registration_path=registration_path,
+        runtime_frame_path=runtime_frame_path,
+        combined_rows=candidates,
+        combined_record_key="observations",
+        combined_count_key="observation_count",
+        historical_outputs=historical_outputs,
+    )
+    _require(
+        all(
+            shard.get("detector_hooks") == []
+            and shard.get("variants") == ["served"]
+            for shard in shards
+        ),
+        "plant-registration shard activated a detector or planted arm",
+    )
+    processes = [str(shard.get("process_instance_sha256", "")) for shard in shards]
+    _require(
+        len(processes) == len(set(processes)) == 9
+        and receipt.get("process_instance_sha256s") == processes
+        and receipt.get("process_instance_sha256")
+        == aggregate_process_instances(processes),
+        "plant-registration process aggregation drifted",
+    )
+    return shards
 
 
 def _thresholds_equal(frozen: Mapping[str, Any], fitted: Mapping[str, Any]) -> bool:
@@ -1397,38 +1819,22 @@ def analyze(run_dir: Path) -> Path:
     registration_path, registration = _registration(run_dir)
     runtime_frame_path, runtime_frame = _runtime_frame(run_dir)
     zero_marker_path, _zero_marker, zero_receipt_path, zero_receipt = _zero_gate(run_dir)
-    source_amendment = validate_delta_amendment(run_dir)
+    precollection = validate_det1_7_source_authorization(run_dir)
     _require(
-        source_amendment.get("schema")
-        == "grm.det1_6.fork_hydration_delta_amendment.v1",
-        "bad DET1.6 terminal source-amendment schema",
+        precollection.get("collection_authorized") is True
+        and precollection.get("race_resume_authorized") is False
+        and precollection.get("amendment_is_evidence") is False,
+        "DET1.7 precollection authority crossed into evaluation",
     )
-    _require(
-        source_amendment.get("status")
-        == "AUTHORIZED_FORK_HYDRATION_DELTA_SOURCE_REBINDING",
-        "DET1.6 terminal source amendment is not authorized",
+    precollection_authorization_path = _validated_record(
+        precollection.get("record") or {}, "DET1.7 precollection authorization"
     )
-    _require(
-        source_amendment.get("race_resume_authorized") is True
-        and source_amendment.get("amendment_is_evidence") is False,
-        "DET1.6 terminal source-amendment authority drifted",
-    )
-    source_amendment_path = _validated_record(
-        source_amendment.get("record") or {},
-        "DET1.6 terminal source amendment",
-    )
-    _require(
-        source_amendment_path == (run_dir / DELTA_AMENDMENT.name).resolve(),
-        "DET1.6 validator returned the wrong terminal amendment",
-    )
-    source_rebindings = source_amendment.get("source_rebindings")
+    source_amendment_path = (run_dir / DELTA_AMENDMENT.name).resolve()
+    _require(source_amendment_path.is_file(), "DET1.6 predecessor amendment is absent")
+    source_rebindings = precollection.get("det1_5_source_rebindings")
     _require(
         isinstance(source_rebindings, Mapping),
-        "DET1.6 terminal source rebindings are malformed",
-    )
-    _require(
-        source_amendment.get("source_count") == len(source_rebindings),
-        "DET1.6 terminal source-rebinding count drifted",
+        "DET1.7 direct DET1.5 source rebindings are malformed",
     )
     amendment_path, authorization = _amendment(
         run_dir,
@@ -1437,6 +1843,22 @@ def analyze(run_dir: Path) -> Path:
         registration_path,
         runtime_frame_path,
         source_rebindings=source_rebindings,
+    )
+    terminal = validate_det1_7_terminal_amendment(run_dir)
+    terminal_amendment_path = _validated_record(
+        terminal.get("record") or {}, "DET1.7 terminal amendment"
+    )
+    registry_path = plant_registry_path(run_dir)
+    _same_record(
+        terminal.get("plant_registry"),
+        file_record(registry_path),
+        "DET1.7 terminal plant registry",
+    )
+    registry = read_json(registry_path)
+    _require(
+        terminal.get("plant_registry_validation")
+        == validate_plant_registry(registry, record_root=ROOT),
+        "DET1.7 terminal registry validation drifted",
     )
 
     stage_files: dict[str, tuple[Path, Path]] = {}
@@ -1456,6 +1878,9 @@ def analyze(run_dir: Path) -> Path:
         zero_receipt=zero_receipt,
         amendment_path=amendment_path,
         source_amendment_path=source_amendment_path,
+        precollection_authorization_path=precollection_authorization_path,
+        plant_registry_path_value=registry_path,
+        terminal_amendment_path=terminal_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
     )
@@ -1463,6 +1888,9 @@ def analyze(run_dir: Path) -> Path:
         receipts,
         amendment_path=amendment_path,
         source_amendment_path=source_amendment_path,
+        precollection_authorization_path=precollection_authorization_path,
+        plant_registry_path_value=registry_path,
+        terminal_amendment_path=terminal_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
     )
@@ -1485,6 +1913,21 @@ def analyze(run_dir: Path) -> Path:
         "amendment.cross_process_zero_receipt",
     )
 
+    historical_outputs: list[dict[str, Any]] = []
+    _validate_plant_registration(
+        receipts["plant_registration"],
+        campaign_dir=campaign_dir,
+        amendment_path=amendment_path,
+        source_amendment_path=source_amendment_path,
+        precollection_authorization_path=precollection_authorization_path,
+        registry_path=registry_path,
+        terminal_amendment_path=terminal_amendment_path,
+        registration_path=registration_path,
+        runtime_frame_path=runtime_frame_path,
+        registry=registry,
+        historical_outputs=historical_outputs,
+    )
+
     g0 = receipts["g0"]
     _require(g0.get("gate_pass") is True, "DET-G0 did not pass")
     g0_rows_path = campaign_dir / "g0" / "mechanistic_rows.jsonl"
@@ -1500,8 +1943,10 @@ def analyze(run_dir: Path) -> Path:
             registration_path=registration_path,
             runtime_frame=runtime_frame,
         )
-        _validate_fixture_projection(
-            row, where, registration=registration, mechanistic=True
+        _validate_fixture_projection(row, where, registry=registry, mechanistic=True)
+        _validate_row_plant_binding(
+            row, where, registry=registry, registry_path=registry_path,
+            mechanistic=True,
         )
         if key[1] == "served":
             validate_served_control(row, f"dedicated G0 served row {key[0]}")
@@ -1509,7 +1954,7 @@ def analyze(run_dir: Path) -> Path:
             _require(_planted_miss_valid(row), f"invalid dedicated G0 planted row: {key}")
         g0_keys.append(key)
     _require(
-        g0_keys == _expected_eval_order(registration),
+        g0_keys == _expected_eval_order(registry),
         "dedicated DET-G0 rows differ from registered 12+12 coverage",
     )
     _require_projection(g0, validate_g0_rows(g0_rows), "g0")
@@ -1520,9 +1965,13 @@ def analyze(run_dir: Path) -> Path:
         campaign_dir=campaign_dir,
         amendment_path=amendment_path,
         source_amendment_path=source_amendment_path,
+        precollection_authorization_path=precollection_authorization_path,
+        plant_registry_path_value=registry_path,
+        terminal_amendment_path=terminal_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
         combined_rows=g0_rows,
+        historical_outputs=historical_outputs,
     )
 
     g1 = receipts["g1"]
@@ -1533,6 +1982,9 @@ def analyze(run_dir: Path) -> Path:
         stage="g1",
         amendment_path=amendment_path,
         source_amendment_path=source_amendment_path,
+        precollection_authorization_path=precollection_authorization_path,
+        plant_registry_path_value=registry_path,
+        terminal_amendment_path=terminal_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
     )
@@ -1543,6 +1995,9 @@ def analyze(run_dir: Path) -> Path:
         stage="g1",
         amendment_path=amendment_path,
         source_amendment_path=source_amendment_path,
+        precollection_authorization_path=precollection_authorization_path,
+        plant_registry_path_value=registry_path,
+        terminal_amendment_path=terminal_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
     )
@@ -1583,8 +2038,12 @@ def analyze(run_dir: Path) -> Path:
         campaign_dir=campaign_dir,
         amendment_path=amendment_path,
         source_amendment_path=source_amendment_path,
+        precollection_authorization_path=precollection_authorization_path,
+        plant_registry_path_value=registry_path,
+        terminal_amendment_path=terminal_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
+        historical_outputs=historical_outputs,
     )
 
     calibration_path = campaign_dir / "calibration" / "mechanistic_rows.jsonl"
@@ -1605,15 +2064,20 @@ def analyze(run_dir: Path) -> Path:
             registration_path=registration_path,
             runtime_frame=runtime_frame,
         )
-        _validate_fixture_projection(
-            row, where, registration=registration, mechanistic=True
+        _validate_fixture_projection(row, where, registry=registry, mechanistic=True)
+        _validate_row_plant_binding(
+            row, where, registry=registry, registry_path=registry_path,
+            mechanistic=True,
         )
         _require(key[1] == "served", f"calibration[{index}] is not served")
         calibration_served_validations.append(
             validate_served_control(row, f"calibration served row {key[0]}")
         )
         calibration_ids.append(key[0])
-    _require(calibration_ids == list(CALIBRATION_IDS), "calibration row order/split drifted")
+    _require(
+        calibration_ids == _split_ids(registry, "calibration"),
+        "calibration effective row order/split drifted",
+    )
     _require(
         calibration_receipt.get("served_control_validations")
         == calibration_served_validations,
@@ -1630,9 +2094,13 @@ def analyze(run_dir: Path) -> Path:
         campaign_dir=campaign_dir,
         amendment_path=amendment_path,
         source_amendment_path=source_amendment_path,
+        precollection_authorization_path=precollection_authorization_path,
+        plant_registry_path_value=registry_path,
+        terminal_amendment_path=terminal_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
         combined_rows=calibration_rows,
+        historical_outputs=historical_outputs,
     )
 
     thresholds = read_json(threshold_path)
@@ -1649,6 +2117,12 @@ def analyze(run_dir: Path) -> Path:
     _binding(thresholds, "runtime_frame", runtime_frame_path, "thresholds")
     _binding(thresholds, "race_authorization_amendment", amendment_path, "thresholds")
     _binding(thresholds, "source_amendment", source_amendment_path, "thresholds")
+    _binding(
+        thresholds, "precollection_authorization",
+        precollection_authorization_path, "thresholds",
+    )
+    _binding(thresholds, "plant_registry", registry_path, "thresholds")
+    _binding(thresholds, "terminal_amendment", terminal_amendment_path, "thresholds")
     _binding(thresholds, "calibration_rows", calibration_path, "thresholds")
     fitted = fit_thresholds(calibration_rows)
     _require(_thresholds_equal(thresholds, fitted), "frozen thresholds differ from fresh fit")
@@ -1662,7 +2136,7 @@ def analyze(run_dir: Path) -> Path:
     _require(len(mechanistic_rows) == 24, "mechanistic eval is not exactly 12+12")
     _require(len(verbal_rows) == 24, "verbal eval is not exactly 12+12")
 
-    expected_keys = _expected_eval_keys(registration)
+    expected_keys = _expected_eval_keys(registry)
     mechanistic_keys: list[tuple[str, str]] = []
     for index, row in enumerate(mechanistic_rows):
         where = f"mechanistic_eval[{index}]"
@@ -1673,8 +2147,10 @@ def analyze(run_dir: Path) -> Path:
             registration_path=registration_path,
             runtime_frame=runtime_frame,
         )
-        _validate_fixture_projection(
-            row, where, registration=registration, mechanistic=True
+        _validate_fixture_projection(row, where, registry=registry, mechanistic=True)
+        _validate_row_plant_binding(
+            row, where, registry=registry, registry_path=registry_path,
+            mechanistic=True,
         )
         mechanistic_keys.append(key)
         if key[1] == "served":
@@ -1682,12 +2158,15 @@ def analyze(run_dir: Path) -> Path:
         else:
             _require(_planted_miss_valid(row), f"invalid DET-G0 planted row: {key}")
     _require(
-        mechanistic_keys == _expected_eval_order(registration)
+        mechanistic_keys == _expected_eval_order(registry)
         and set(mechanistic_keys) == expected_keys,
         "mechanistic eval coverage differs from registered 12+12",
     )
     repeated_g0 = validate_g0_rows(mechanistic_rows)
-    split_projection = validate_split(registration, calibration_rows, mechanistic_rows)
+    effective_registration = effective_registration_projection(registration, registry)
+    split_projection = validate_split(
+        effective_registration, calibration_rows, mechanistic_rows
+    )
     _require(
         receipts["eval_mechanistic"].get("repeated_g0_validation")
         == repeated_g0,
@@ -1710,9 +2189,13 @@ def analyze(run_dir: Path) -> Path:
         campaign_dir=campaign_dir,
         amendment_path=amendment_path,
         source_amendment_path=source_amendment_path,
+        precollection_authorization_path=precollection_authorization_path,
+        plant_registry_path_value=registry_path,
+        terminal_amendment_path=terminal_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
         combined_rows=mechanistic_rows,
+        historical_outputs=historical_outputs,
     )
 
     verbal_keys: list[tuple[str, str]] = []
@@ -1726,9 +2209,20 @@ def analyze(run_dir: Path) -> Path:
                 runtime_frame=runtime_frame,
             )
         )
-        _validate_fixture_projection(
-            row, where, registration=registration, mechanistic=False
+        _validate_fixture_projection(row, where, registry=registry, mechanistic=False)
+        _validate_row_plant_binding(
+            row, where, registry=registry, registry_path=registry_path,
+            mechanistic=False,
         )
+        for binding in (
+            "plant_target_id", "plant_alias_ids", "plant_target_source",
+            "plant_registry", "plant_entry_sha256",
+        ):
+            _require(
+                row.get(binding) == mechanistic.get(binding),
+                f"verbal_eval[{index}] plant binding differs from mechanistic row: "
+                f"{binding}",
+            )
         mechanistic_completed = int(mechanistic["mechanistic_completed_unix_ns"])
         _require(
             int(row.get("mechanistic_completed_unix_ns", -1))
@@ -1785,9 +2279,13 @@ def analyze(run_dir: Path) -> Path:
         campaign_dir=campaign_dir,
         amendment_path=amendment_path,
         source_amendment_path=source_amendment_path,
+        precollection_authorization_path=precollection_authorization_path,
+        plant_registry_path_value=registry_path,
+        terminal_amendment_path=terminal_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
         combined_rows=verbal_rows,
+        historical_outputs=historical_outputs,
     )
     chronology_input = {**verbal_receipt, "rows": verbal_rows}
     chronology_projection = validate_verbal_chronology(chronology_input)
@@ -1810,8 +2308,27 @@ def analyze(run_dir: Path) -> Path:
 
     first_eval = min(int(row["evaluation_started_unix_ns"]) for row in mechanistic_rows)
     first_verbal = min(int(row["evaluation_started_unix_ns"]) for row in verbal_rows)
+    first_g0 = min(int(row["evaluation_started_unix_ns"]) for row in g0_rows)
     calibration_times = [int(row["evaluation_started_unix_ns"]) for row in calibration_rows]
     threshold_time = int(thresholds["created_unix_ns"])
+    registry_time = _utc_unix_ns(registry.get("created_utc"), "plant registry created_utc")
+    plant_receipt_time = _utc_unix_ns(
+        receipts["plant_registration"].get("created_utc"),
+        "plant-registration receipt created_utc",
+    )
+    plant_marker_time = _utc_unix_ns(
+        stage_markers["plant_registration"].get("created_utc"),
+        "plant-registration marker created_utc",
+    )
+    terminal_time = _utc_unix_ns(
+        read_json(terminal_amendment_path).get("created_utc"),
+        "terminal amendment created_utc",
+    )
+    _require(
+        registry_time <= plant_receipt_time <= plant_marker_time <= terminal_time
+        < min(first_g0, min(calibration_times), first_eval, first_verbal),
+        "plant registry/terminal amendment were not frozen before G0 and evaluation",
+    )
     _require(
         int(registration["registered_unix_ns"]) < min(calibration_times)
         and max(calibration_times) < threshold_time < min(first_eval, first_verbal),
@@ -1859,6 +2376,16 @@ def analyze(run_dir: Path) -> Path:
             "DET-G3": "PASS_FOUR_ROWS_AND_VERDICT",
         },
         "gate_details": {
+            "DET1.7_plant_registration": {
+                "registry_validation": receipts["plant_registration"][
+                    "registry_validation"
+                ],
+                "registry_payload_sha256": registry["registry_payload_sha256"],
+                "registry_file_sha256": file_record(registry_path)["sha256"],
+                "per_turn_table": _plant_registration_table(registry),
+                "substitutions": _receipt_substitutions(registry),
+                "frozen_before_g0_and_eval": True,
+            },
             "DET-G0_dedicated": validate_g0_rows(g0_rows),
             "DET-G0_eval_repeat": repeated_g0,
             "DET-G1": {
@@ -1876,12 +2403,20 @@ def analyze(run_dir: Path) -> Path:
         "zero_gate": file_record(zero_receipt_path),
         "race_authorization_amendment": file_record(amendment_path),
         "source_amendment": file_record(source_amendment_path),
+        "det1_7_order": file_record(DET1_7_ORDER),
+        "precollection_authorization": file_record(
+            precollection_authorization_path
+        ),
+        "plant_registry": file_record(registry_path),
+        "terminal_amendment": file_record(terminal_amendment_path),
         "thresholds": file_record(threshold_path),
         "fresh_rows": source_rows,
         "stage_receipts": {
             stage: file_record(paths[1]) for stage, paths in stage_files.items()
         },
         "historical_rows_consumed": False,
+        "pre_det1_7_shard_outputs_consumed": False,
+        "ignored_pre_det1_7_shard_outputs": historical_outputs,
     }
     if existing_analysis:
         analysis_path = existing_analysis[0]
@@ -1926,10 +2461,32 @@ def analyze(run_dir: Path) -> Path:
         "",
         "Latency medians are zero-based generated-token indices over triggered planted misses.",
         "",
+        "## DET1.7 lived-admission plant registry",
+        "",
+        f"Registry payload SHA-256: `{registry['registry_payload_sha256']}`",
+        f"Registry file SHA-256: `{file_record(registry_path)['sha256']}`",
+        "",
+        "| Base slot | Effective fixture | Split | Branch | Lived mounts | Target | Aliases | Rule | Substitution |",
+        "|---|---|---|---|---|---:|---|---|---|",
+        *[
+            "| {base_fixture_id} | {effective_fixture_id} | {split} | "
+            "{policy_branch} | {actual_lived_mounts} | {plant_target_id} | "
+            "{plant_alias_ids} | {selection_rule} | {substitution} |".format(
+                **row
+            )
+            for row in _plant_registration_table(registry)
+        ],
+        "",
+        f"Substitutions: `{json.dumps(_receipt_substitutions(registry), sort_keys=True)}`",
+        "",
         "## Evidence",
         "",
         f"- Race authorization: `{file_record(amendment_path)['path']}`",
         f"- DET1.6 terminal source amendment: `{file_record(source_amendment_path)['path']}`",
+        f"- DET1.7 precollection authorization: `{file_record(precollection_authorization_path)['path']}`",
+        f"- DET1.7 plant registration: `{file_record(stage_files['plant_registration'][1])['path']}`",
+        f"- DET1.7 plant registry: `{file_record(registry_path)['path']}`",
+        f"- DET1.7 terminal amendment: `{file_record(terminal_amendment_path)['path']}`",
         f"- Cross-process ZERO: `{file_record(stage_files['cross_process_zero'][1])['path']}`",
         f"- DET-G0: `{file_record(stage_files['g0'][1])['path']}`",
         f"- DET-G1: `{file_record(stage_files['g1'][1])['path']}`",
