@@ -76,9 +76,16 @@ DET1_8_SOURCE_AUTH = (
 DET1_9_SOURCE_AUTH = (
     FROZEN_RUN / "det1_9_precollection_source_authorization.json"
 )
+# DET1.10 re-authors the DET1.9 envelope because the overlay's declared
+# source set and current bytes both moved (separator normalization).  The r5
+# artifact above is immutable and retained; this successor is a new file, the
+# same append-only pattern the DET1.7 _r2 envelope established.
+DET1_10_SOURCE_AUTH = (
+    FROZEN_RUN / "det1_9_precollection_source_authorization_r6.json"
+)
 # The DET1.7 public campaign/analyzer API remains stable while its active
 # collection-only authority advances through append-only successor envelopes.
-DET1_7_SOURCE_AUTH = DET1_9_SOURCE_AUTH
+DET1_7_SOURCE_AUTH = DET1_10_SOURCE_AUTH
 DET1_9_TERMINAL_AMENDMENT = FROZEN_RUN / "det1_9_plant_registry_amendment.json"
 DET1_7_TERMINAL_AMENDMENT = DET1_9_TERMINAL_AMENDMENT
 PARENT_ZERO_MARKER = FROZEN_RUN / "det1_4/zero_gate/stage_complete.json"
@@ -328,6 +335,22 @@ DET1_9_CHANGED_SOURCES = {
     ),
     "tests/test_grm_det1_7_registry.py": (
         "certified_cross_session_registry_contracts"
+    ),
+    # DET1.10 overlay: separator normalization of the whole-value comparator
+    # (ADM2.2 / DET1.4 value-semantics lineage) plus the reserve-selection
+    # diagnosis note.  Declared on the DET1.9 envelope because DET1.10 changes
+    # no DET1.9 evidence, adds no module, and the campaign gate reconstructs
+    # its inventory from the same immutable DET1.8 predecessor.  The three
+    # entries below are the DET1.10-only additions; the DET1.9 entries above
+    # are unchanged.
+    "scripts/grm_det1_common.py": (
+        "det1_10_separator_normalized_whole_value_comparator"
+    ),
+    "scripts/grm_det1_baseline_registry.py": (
+        "det1_10_separator_normalized_baseline_value_classification"
+    ),
+    "tests/test_grm_det1_3_snapshot.py": (
+        "det1_10_separator_normalization_positive_and_negative_contracts"
     ),
 }
 DET1_9_ADDED_SOURCES = {
