@@ -33,8 +33,10 @@ from scripts.grm_det1_11_census import (  # noqa: E402
     TITLE,
     UNPLANTABLE_REASON,
     build_census,
+    census_lineage,
     classify_observation,
     collect_latest_observations,
+    current_census,
     selftest,
     write_census,
 )
@@ -68,6 +70,12 @@ def _observation(
     if status != "LAWFUL_LIVED_TARGET":
         row["unplantable_reason"] = UNPLANTABLE_REASON
     return row
+
+
+def _sha256(path: Path) -> str:
+    import hashlib
+
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _write_shard(root: Path, spec: str, attempt: int, rows: list[dict]) -> None:
@@ -219,7 +227,91 @@ def test_writing_twice_keeps_exactly_one_receipt(tmp_path):
     assert len(list(out.glob("lived_serving_census_*.json"))) == 1
 
 
-def test_changed_evidence_refuses_to_overwrite_a_frozen_receipt(tmp_path):
+def test_changed_evidence_authors_a_successor_naming_its_predecessor(tmp_path):
+    """Campaign r9's failure mode, now the successor path it needed.
+
+    Fresh lived collections legitimately move the evidence.  The prior
+    receipt is retained untouched and a successor is authored over the new
+    evidence, naming the receipt it supersedes.
+    """
+    root = tmp_path / "shards"
+    _write_shard(root, "e2e-1", 1, [_observation(
+        "lawful_a", status="LAWFUL_LIVED_TARGET",
+        answer="Auric-4-Alpha", expected=["Auric-4-Alpha"],
+    )])
+    out = tmp_path / "census"
+    first_path, first = write_census(out, shard_root=root)
+    first_bytes = first_path.read_bytes()
+
+    # A fresh collection adds a probe: real evidence drift.
+    _write_shard(root, "e2e-2", 1, [_observation(
+        "wrong_a", status="UNPLANTABLE", answer="Birch-2-Beacon.",
+        expected=["cobalt-3-comet"],
+    )])
+    second_path, second = write_census(out, shard_root=root)
+
+    assert second_path != first_path
+    assert second["generation"] == 2
+    assert second["supersedes"]["sha256"] == _sha256(first_path)
+    assert "rows" in second["superseded_evidence_fields"]
+    assert second["counts"]["probes_total"] == 2
+
+    # The predecessor is retained byte-for-byte: append-only.
+    assert first_path.exists()
+    assert first_path.read_bytes() == first_bytes
+    assert first["generation"] == 1
+    assert first["supersedes"] is None
+
+    # Both receipts live in the directory; the chain orders them.
+    assert len(list(out.glob("lived_serving_census_*.json"))) == 2
+    chain = census_lineage(out)
+    assert [p for p, _ in chain] == [first_path, second_path]
+    assert current_census(out)[0] == second_path
+
+
+def test_a_successor_is_authored_only_when_evidence_actually_drifted(tmp_path):
+    """The guard: repeated writes must not grow the lineage."""
+    root = tmp_path / "shards"
+    _write_shard(root, "e2e-1", 1, [_observation(
+        "lawful_a", status="LAWFUL_LIVED_TARGET",
+        answer="Auric-4-Alpha", expected=["Auric-4-Alpha"],
+    )])
+    out = tmp_path / "census"
+    first_path, _ = write_census(out, shard_root=root)
+
+    for _ in range(4):
+        again_path, again = write_census(out, shard_root=root)
+        assert again_path == first_path
+        assert again["generation"] == 1
+        assert again["supersedes"] is None
+
+    assert len(census_lineage(out)) == 1
+
+
+def test_lineage_extends_across_several_drifts(tmp_path):
+    root = tmp_path / "shards"
+    out = tmp_path / "census"
+    paths = []
+    for index in range(3):
+        _write_shard(root, f"e2e-{index}", 1, [_observation(
+            f"lawful_{index}", status="LAWFUL_LIVED_TARGET",
+            answer="Auric-4-Alpha", expected=["Auric-4-Alpha"],
+        )])
+        path, payload = write_census(out, shard_root=root)
+        paths.append(path)
+        assert payload["generation"] == index + 1
+
+    chain = census_lineage(out)
+    assert [p for p, _ in chain] == paths
+    assert [payload["generation"] for _, payload in chain] == [1, 2, 3]
+    # Each link names the one before it.
+    for (_prev_path, prev), (_next_path, nxt) in zip(chain, chain[1:]):
+        assert nxt["supersedes"]["sha256"] == _sha256(_prev_path)
+    assert current_census(out)[1]["counts"]["probes_total"] == 3
+
+
+def test_lineage_rejects_a_receipt_outside_the_chain(tmp_path):
+    """An orphan receipt must not leave 'which is current?' ambiguous."""
     root = tmp_path / "shards"
     _write_shard(root, "e2e-1", 1, [_observation(
         "lawful_a", status="LAWFUL_LIVED_TARGET",
@@ -228,12 +320,66 @@ def test_changed_evidence_refuses_to_overwrite_a_frozen_receipt(tmp_path):
     out = tmp_path / "census"
     write_census(out, shard_root=root)
 
-    _write_shard(root, "e2e-2", 1, [_observation(
-        "wrong_a", status="UNPLANTABLE", answer="Birch-2-Beacon.",
-        expected=["cobalt-3-comet"],
+    orphan = json.loads(
+        next(out.glob("lived_serving_census_*.json")).read_text("utf-8"))
+    orphan["supersedes"] = {
+        "path": "nowhere.json", "bytes": 1, "sha256": "f" * 64,
+    }
+    orphan["generation"] = 2
+    (out / "lived_serving_census_deadbeefdeadbeef.json").write_text(
+        json.dumps(orphan, sort_keys=True), encoding="utf-8")
+
+    with pytest.raises(DETError, match="not present|outside the lineage"):
+        census_lineage(out)
+
+
+def test_lineage_rejects_two_originals(tmp_path):
+    root = tmp_path / "shards"
+    _write_shard(root, "e2e-1", 1, [_observation(
+        "lawful_a", status="LAWFUL_LIVED_TARGET",
+        answer="Auric-4-Alpha", expected=["Auric-4-Alpha"],
     )])
-    with pytest.raises(DETError, match="census evidence changed"):
-        write_census(out, shard_root=root)
+    out = tmp_path / "census"
+    write_census(out, shard_root=root)
+
+    fork = json.loads(
+        next(out.glob("lived_serving_census_*.json")).read_text("utf-8"))
+    fork["run_id"] = "a_second_original"
+    (out / "lived_serving_census_00000000cafe0000.json").write_text(
+        json.dumps(fork, sort_keys=True), encoding="utf-8")
+
+    with pytest.raises(DETError, match="exactly one original"):
+        census_lineage(out)
+
+
+def test_lineage_rejects_a_fork(tmp_path):
+    """Two successors of one receipt would make 'newest' undefined."""
+    root = tmp_path / "shards"
+    _write_shard(root, "e2e-1", 1, [_observation(
+        "lawful_a", status="LAWFUL_LIVED_TARGET",
+        answer="Auric-4-Alpha", expected=["Auric-4-Alpha"],
+    )])
+    out = tmp_path / "census"
+    original_path, _ = write_census(out, shard_root=root)
+    record = {
+        "path": str(original_path), "bytes": original_path.stat().st_size,
+        "sha256": _sha256(original_path),
+    }
+    for index, tag in enumerate(("aaaa", "bbbb")):
+        child = json.loads(original_path.read_text("utf-8"))
+        child["supersedes"] = record
+        child["generation"] = 2
+        child["run_id"] = f"child_{index}"
+        (out / f"lived_serving_census_{tag}00000000{tag}.json").write_text(
+            json.dumps(child, sort_keys=True), encoding="utf-8")
+
+    with pytest.raises(DETError, match="forks"):
+        census_lineage(out)
+
+
+def test_no_lineage_yet_reports_empty(tmp_path):
+    assert census_lineage(tmp_path / "absent") == []
+    assert current_census(tmp_path / "absent") is None
 
 
 def test_census_receipt_is_titled_and_scoped_to_receipts_only(tmp_path):

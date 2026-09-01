@@ -10,8 +10,19 @@ graft mounted.  That is a distinct defect class from co-mount blending, and
 this module is its evidence base.
 
 What this module does: it replays the persisted plant-registration
-observations, classifies each probe's lived served control, and freezes one
+observations, classifies each probe's lived served control, and freezes an
 append-only content-addressed census receipt.
+
+Receipts form a LINEAGE.  Campaign rounds keep collecting, so the lived
+evidence legitimately moves between runs; a frozen receipt is never rewritten
+to match.  Instead each round that finds drifted evidence authors a SUCCESSOR
+naming its predecessor in ``supersedes``, and the campaign consumes the
+newest member (``current_census``).  A round whose evidence is unchanged
+returns the existing receipt untouched, so re-running the lead script does
+not grow the chain.  ``census_lineage`` reconstructs the order from the
+supersedes links rather than filenames — content addresses sort arbitrarily —
+and fails closed on an orphan, a fork, a cycle, or two originals, because any
+of those makes "which receipt is current" ambiguous.
 
 What this module deliberately does NOT do, per the DET1.11 order: it does not
 investigate why any probe served what it served.  No hypothesis, no
@@ -75,6 +86,27 @@ ORDER_ID = "GRM-DET1.11"
 RUN_ID = "run_20260831T160525Z_2"
 STATUS = "RECEIPTS_ONLY_CAUSE_NOT_INVESTIGATED"
 UNPLANTABLE_REASON = "LIVED_SERVED_CONTROL_INCORRECT_OR_REFUSAL"
+
+# The fields that constitute the census's EVIDENCE.  Two receipts agreeing on
+# every one of these describe the same lived population, so the existing
+# receipt is returned unchanged (idempotence).  A difference in any of them is
+# genuine evidence drift and earns a successor.  created_utc and the file
+# records are deliberately NOT evidence — they move on every derivation and
+# would otherwise make idempotence impossible.
+EVIDENCE_FIELDS = (
+    "schema",
+    "title",
+    "order",
+    "run_id",
+    "status",
+    "counts",
+    "rows",
+    "attempt_history",
+    "markdown",
+    "cause_investigated",
+    "scope_note",
+    "defect_class_note",
+)
 
 CLASS_LAWFUL = "LAWFUL"
 CLASS_REFUSAL = "REFUSAL"
@@ -350,8 +382,17 @@ def build_census(
     shard_root: Path = SHARD_ROOT,
     *,
     record_root: Path | None = None,
+    supersedes: Mapping[str, Any] | None = None,
+    generation: int = 1,
 ) -> dict[str, Any]:
-    """Derive the census payload without writing anything."""
+    """Derive the census payload without writing anything.
+
+    ``supersedes`` names the immediate predecessor receipt (its file record)
+    when this payload is a successor authored over drifted evidence;
+    ``generation`` counts from 1 for the original.  Neither participates in
+    the evidence comparison — a successor over identical evidence is exactly
+    what must never be authored.
+    """
 
     observations, history = collect_latest_observations(shard_root)
     _require(bool(observations), "census found no lived observations")
@@ -384,11 +425,111 @@ def build_census(
         "cause_investigated": False,
         "created_utc": utc_now(),
         "registration": file_record(REGISTRATION, root=record_root or ROOT),
+        # Lineage.  The original census has supersedes=None and generation=1;
+        # each successor names the receipt it replaces, so the chain can be
+        # walked back to the original without reading any directory listing.
+        "supersedes": None if supersedes is None else dict(supersedes),
+        "generation": int(generation),
         "counts": counts,
         "rows": rows,
         "attempt_history": history,
         "markdown": _markdown(rows, counts),
     }
+
+
+def _evidence_drift(
+    stored: Mapping[str, Any], census: Mapping[str, Any]
+) -> list[str]:
+    """The evidence fields on which two census payloads disagree."""
+    return [
+        field for field in EVIDENCE_FIELDS
+        if stored.get(field) != census.get(field)
+    ]
+
+
+def census_lineage(
+    directory: Path = CENSUS_DIR,
+) -> list[tuple[Path, dict[str, Any]]]:
+    """Every census receipt in the directory, ordered original -> newest.
+
+    Receipts are content-addressed, so filename order is meaningless; the
+    chain is reconstructed from the ``supersedes`` links themselves.  A
+    directory holding an unlinked receipt, a fork, or a cycle fails closed
+    rather than letting the campaign guess which member is current.
+    """
+
+    directory = Path(directory)
+    if not directory.is_dir():
+        return []
+    receipts: dict[str, tuple[Path, dict[str, Any]]] = {}
+    for path in sorted(directory.glob("lived_serving_census_*.json")):
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        digest = file_record(path)["sha256"]
+        receipts[digest] = (path, payload)
+    if not receipts:
+        return []
+
+    # Index by predecessor: each receipt names the one it supersedes.
+    successor_of: dict[str | None, list[str]] = {}
+    for digest, (_path, payload) in receipts.items():
+        parent = payload.get("supersedes")
+        parent_sha = (
+            None if parent is None else str((parent or {}).get("sha256", ""))
+        )
+        successor_of.setdefault(parent_sha, []).append(digest)
+
+    roots = successor_of.get(None, [])
+    _require(
+        len(roots) == 1,
+        f"census lineage must have exactly one original receipt "
+        f"(supersedes=None), found {len(roots)}",
+    )
+    chain: list[tuple[Path, dict[str, Any]]] = []
+    seen: set[str] = set()
+    current: str | None = roots[0]
+    while current is not None:
+        _require(current not in seen, "census lineage contains a cycle")
+        seen.add(current)
+        _require(
+            current in receipts,
+            f"census lineage names a receipt that is not present: {current}",
+        )
+        chain.append(receipts[current])
+        children = successor_of.get(current, [])
+        _require(
+            len(children) <= 1,
+            f"census lineage forks at {current}: {len(children)} successors",
+        )
+        current = children[0] if children else None
+    _require(
+        len(chain) == len(receipts),
+        f"census directory holds {len(receipts) - len(chain)} receipt(s) "
+        f"outside the lineage chain",
+    )
+    for index, (path, payload) in enumerate(chain, start=1):
+        # A receipt authored before the lineage fields existed carries no
+        # generation.  It can only be the original — it has no supersedes
+        # link, so the root check above already placed it at index 1 — and
+        # is accepted as generation 1 rather than forcing the immutable
+        # artifact to be rewritten.
+        recorded = payload.get("generation")
+        if recorded is None and index == 1:
+            continue
+        _require(
+            isinstance(recorded, int) and not isinstance(recorded, bool)
+            and recorded == index,
+            f"census generation is out of order at {path.name}: "
+            f"expected {index}, got {recorded!r}",
+        )
+    return chain
+
+
+def current_census(
+    directory: Path = CENSUS_DIR,
+) -> tuple[Path, dict[str, Any]] | None:
+    """The newest lineage member — the receipt the campaign consumes."""
+    chain = census_lineage(directory)
+    return chain[-1] if chain else None
 
 
 def write_census(
@@ -397,42 +538,53 @@ def write_census(
     shard_root: Path = SHARD_ROOT,
     record_root: Path | None = None,
 ) -> tuple[Path, dict[str, Any]]:
-    """Freeze one append-only content-addressed census receipt.
+    """Freeze the current census receipt, authoring a successor on drift.
 
-    Author-if-absent, else revalidate.  The payload carries ``created_utc``,
-    so a second write would otherwise content-address to a different name and
-    leave two receipts describing one population.  Instead an existing
-    receipt is re-derived from the same observations and its evidence
-    compared field by field: identical evidence returns the existing receipt,
-    changed evidence fails closed rather than quietly adding a second one.
+    Three branches, and only three:
+
+    * No receipt yet — author the original (``generation`` 1,
+      ``supersedes`` None).
+    * A receipt exists and its evidence is byte-identical to a fresh
+      derivation — return it unchanged.  The payload carries ``created_utc``,
+      so re-deriving always produces a different content address; comparing
+      EVIDENCE rather than bytes is what keeps repeated writes idempotent.
+    * A receipt exists and the evidence genuinely moved — author a SUCCESSOR
+      naming it in ``supersedes``.  Prior receipts are never rewritten or
+      removed; the campaign consumes the newest lineage member.
+
+    A successor is authored only for real drift.  That guard is what stops
+    the lineage from growing a link every time the lead script runs.
     """
 
     census = build_census(shard_root, record_root=record_root)
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
-    existing = sorted(directory.glob("lived_serving_census_*.json"))
-    _require(
-        len(existing) <= 1,
-        f"census directory holds more than one receipt: "
-        f"{[p.name for p in existing]}",
+
+    chain = census_lineage(directory)
+    if not chain:
+        path = write_content_addressed(directory, "lived_serving_census", census)
+        return path, census
+
+    newest_path, newest = chain[-1]
+    drifted = _evidence_drift(newest, census)
+    if not drifted:
+        return newest_path, newest
+
+    # Real drift: fresh lived collections moved the evidence.  Author the
+    # successor this module's error message has always promised.
+    successor = build_census(
+        shard_root,
+        record_root=record_root,
+        supersedes=file_record(newest_path),
+        generation=int(newest.get("generation", len(chain))) + 1,
     )
-    if existing:
-        path = existing[0]
-        stored = json.loads(path.read_text(encoding="utf-8"))
-        drifted = [
-            field for field in
-            ("schema", "title", "order", "run_id", "status", "counts",
-             "rows", "attempt_history", "markdown", "cause_investigated")
-            if stored.get(field) != census.get(field)
-        ]
-        _require(
-            not drifted,
-            f"census evidence changed since it was frozen: {drifted}; the "
-            f"existing receipt is immutable, author a successor instead",
-        )
-        return path, stored
-    path = write_content_addressed(directory, "lived_serving_census", census)
-    return path, census
+    successor["superseded_evidence_fields"] = list(drifted)
+    path = write_content_addressed(directory, "lived_serving_census", successor)
+    _require(
+        path != newest_path,
+        "census successor collided with the receipt it supersedes",
+    )
+    return path, successor
 
 
 def selftest() -> dict[str, Any]:
@@ -505,7 +657,8 @@ def selftest() -> dict[str, Any]:
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=TITLE)
-    parser.add_argument("command", choices=("report", "write", "selftest"))
+    parser.add_argument(
+        "command", choices=("report", "write", "selftest", "lineage"))
     parser.add_argument("--shard-root", type=Path, default=SHARD_ROOT)
     parser.add_argument("--out-dir", type=Path, default=CENSUS_DIR)
     parser.add_argument("--markdown", action="store_true")
@@ -517,18 +670,49 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command == "selftest":
         print(json.dumps(selftest(), sort_keys=True))
         return 0
+    if args.command == "lineage":
+        chain = census_lineage(args.out_dir)
+        print(json.dumps({
+            "count": len(chain),
+            "current": None if not chain else file_record(chain[-1][0]),
+            "members": [
+                {
+                    "generation": payload.get("generation", 1),
+                    "record": file_record(member),
+                    "supersedes": payload.get("supersedes"),
+                    "superseded_evidence_fields": payload.get(
+                        "superseded_evidence_fields"),
+                    "probes_total": (payload.get("counts") or {}).get(
+                        "probes_total"),
+                }
+                for member, payload in chain
+            ],
+        }, indent=2, sort_keys=True))
+        return 0
     if args.command == "report":
-        census = build_census(args.shard_root)
+        # Read the frozen current member when a lineage exists, so the
+        # report shows what the campaign consumes rather than a fresh
+        # derivation that may not have been frozen yet.
+        current = current_census(args.out_dir)
+        census = current[1] if current else build_census(args.shard_root)
         if args.markdown:
             print(census["markdown"])
         else:
             print(json.dumps(census, indent=2, sort_keys=True))
         return 0
     path, census = write_census(args.out_dir, shard_root=args.shard_root)
+    chain = census_lineage(args.out_dir)
     print(json.dumps({
         "census": file_record(path),
         "counts": census["counts"],
         "status": census["status"],
+        # The campaign consumes the newest lineage member; prior receipts are
+        # retained append-only and named here so the chain is auditable.
+        "generation": census.get("generation"),
+        "supersedes": census.get("supersedes"),
+        "superseded_evidence_fields": census.get(
+            "superseded_evidence_fields"),
+        "lineage": [file_record(member) for member, _payload in chain],
     }, indent=2, sort_keys=True))
     return 0
 
