@@ -19,10 +19,11 @@ import re
 from typing import Any, Mapping, Sequence
 
 
-REGISTRY_SCHEMA = "grm.det1_7.plant_registry.v1"
+REGISTRY_SCHEMA = "grm.det1_7.plant_registry.v2"
 BASE_REGISTRATION_SCHEMA = "grm.det1.registration.v1"
 SNAPSHOT_SCHEMA = "grm.det1_3.model_visible_snapshot.v2"
 ORDER_ID = "GRM-DET1.7"
+AMENDMENT_ORDER_ID = "GRM-DET1.9"
 BASE_ORDER_ID = "GRM-DET1"
 CAPTURE_PHASE = "before_probe_prefill"
 DECLARED_SYNTHESIS_BRANCH = "declared_synthesis_identified_set"
@@ -34,6 +35,9 @@ ADJUDICATION_VOCABULARY = (
 ORDINARY_RULE_ID = "LIVED_FIRST_ACTUAL_IN_ADMISSION_ORDER_V1"
 SYNTHESIS_RULE_ID = (
     "LIVED_UNIQUE_ESSENTIAL_IDENTIFIED_EXPECTED_CARRIER_V1"
+)
+SUBSTITUTION_SELECTION_RULE_ID = (
+    "DET1_9_PRIMARY_THEN_CANONICAL_UNUSED_LAWFUL_RESERVE_V1"
 )
 
 
@@ -264,6 +268,54 @@ def _session_projection(fixture: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def _certified_campaign_sessions(
+    fixture_map: Mapping[str, Mapping[str, Any]],
+) -> dict[tuple[str, str], dict[str, Any]]:
+    """Freeze every source/session pair certified by the base registration."""
+    sessions: dict[tuple[str, str], dict[str, Any]] = {}
+    for fixture in fixture_map.values():
+        projection = _session_projection(fixture)
+        key = (
+            str(projection["source_family"]),
+            str(projection["session_id"]),
+        )
+        source = dict(fixture["source"])
+        prior = sessions.get(key)
+        if prior is not None and prior != source:
+            raise RegistryError(
+                "certified campaign session resolves to multiple source records"
+            )
+        sessions[key] = source
+    return sessions
+
+
+def _substitution_policy(amendment_record: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "amendment_order": AMENDMENT_ORDER_ID,
+        "amendment_order_record": dict(amendment_record),
+        "pool_scope": (
+            "ANY_CERTIFIED_LIVED_COLLECTED_SESSION_IN_THIS_CAMPAIGN_"
+            "INCLUDING_SUPERSESSION_BATTERY"
+        ),
+        "primary_precedence": "KEEP_EACH_LAWFUL_PRIMARY",
+        "failed_slot_order": "FROZEN_BASE_REGISTRATION_FIXTURE_ORDER",
+        "reserve_eligibility": (
+            "LAWFUL_LIVED_TARGET_AND_SAME_FROZEN_SPLIT_AND_UNUSED_"
+            "NON_BASE_EFFECTIVE_FIXTURE"
+        ),
+        "reserve_order": [
+            "split",
+            "source_family",
+            "session_id",
+            "canonical_selector_json",
+            "effective_fixture_id",
+            "row_id",
+        ],
+        "consume_each_reserve_at_most_once": True,
+        "selection_rule_id": SUBSTITUTION_SELECTION_RULE_ID,
+    }
+
+
 def _string_list(value: Any, label: str, *, nonempty: bool = False) -> list[str]:
     if not isinstance(value, list) or not all(
         isinstance(item, str) and item for item in value
@@ -307,6 +359,7 @@ def _validate_substitution(
     value: Any,
     fixture: Mapping[str, Any],
     session: Mapping[str, Any],
+    certified_sessions: Mapping[tuple[str, str], Mapping[str, Any]],
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     if not isinstance(value, Mapping):
         raise RegistryError(
@@ -349,18 +402,44 @@ def _validate_substitution(
     replacement = effective["fixture_id"]
     if not isinstance(replacement, str) or not replacement or replacement == original:
         raise RegistryError("substitution effective fixture_id is invalid")
-    if effective["session_id"] != session["session_id"]:
-        raise RegistryError("substitution crosses the certified session")
-    if effective["source_family"] != fixture["source_family"]:
-        raise RegistryError("substitution crosses the source family")
     if effective["split"] != fixture["split"]:
         raise RegistryError("substitution crosses the frozen split")
-    if effective["source"] != fixture["source"]:
-        raise RegistryError("substitution does not bind the same certified source")
+    session_key = (
+        str(effective["source_family"]),
+        str(effective["session_id"]),
+    )
+    certified_source = certified_sessions.get(session_key)
+    if certified_source is None:
+        raise RegistryError(
+            "substitution source/session is not certified by this campaign"
+        )
+    if effective["source"] != certified_source:
+        raise RegistryError(
+            "substitution source record differs from its certified campaign session"
+        )
     selector = effective["selector"]
     if not isinstance(selector, Mapping) or not selector:
         raise RegistryError("substitution must enumerate an effective selector")
-    if dict(selector) == dict(session["selector"]):
+    family = str(effective["source_family"])
+    if family == "certified_34_turn":
+        valid_selector = (
+            set(selector) == {"turn"}
+            and isinstance(selector.get("turn"), int)
+            and not isinstance(selector.get("turn"), bool)
+            and int(selector["turn"]) >= 0
+        )
+    else:
+        valid_selector = (
+            set(selector) == {"probe_id"}
+            and isinstance(selector.get("probe_id"), str)
+            and bool(str(selector["probe_id"]).strip())
+        )
+    if not valid_selector:
+        raise RegistryError("substitution selector is invalid for its source family")
+    if (
+        effective["session_id"] == session["session_id"]
+        and dict(selector) == dict(session["selector"])
+    ):
         raise RegistryError("substitution selector does not replace the original probe")
     question = effective["question"]
     if not isinstance(question, str) or not question:
@@ -829,7 +908,7 @@ def _validate_effective_uniqueness(
         for entry in entries
     ]
     if len(selectors) != len(set(selectors)):
-        raise RegistryError("duplicate effective same-session selectors/replacements")
+        raise RegistryError("duplicate effective campaign-session selectors/replacements")
 
 
 def _observation_map(observations: Any) -> dict[str, dict[str, Any]]:
@@ -862,12 +941,13 @@ def _derive_entry(
     observation: Mapping[str, Any],
     *,
     registration_sha256: str,
+    certified_sessions: Mapping[tuple[str, str], Mapping[str, Any]],
     record_root: Path | None,
 ) -> dict[str, Any]:
     fixture_id = str(fixture["fixture_id"])
     session = _session_projection(fixture)
     substitution, effective_fixture = _validate_substitution(
-        observation.get("substitution"), fixture, session
+        observation.get("substitution"), fixture, session, certified_sessions
     )
     effective_fixture_id = str(effective_fixture["fixture_id"])
     raw_path = observation.get("snapshot_path")
@@ -951,8 +1031,15 @@ def derive_plant_registry(
     order_record = file_record(order_path, record_root=record_root)
     registration = _read_object(base_registration_path, "base registration")
     fixture_map = _base_fixture_map(registration)
+    certified_sessions = _certified_campaign_sessions(fixture_map)
     if ORDER_ID not in order_path.read_text(encoding="utf-8"):
         raise RegistryError("order record does not identify GRM-DET1.7")
+    amendment_order_path = order_path.with_name("GRM_DET1_9_SUBSTITUTION_POOL.md")
+    amendment_record = file_record(
+        amendment_order_path, record_root=record_root
+    )
+    if AMENDMENT_ORDER_ID not in amendment_order_path.read_text(encoding="utf-8"):
+        raise RegistryError("amendment order record does not identify GRM-DET1.9")
     observed = _observation_map(observations)
     if set(observed) != set(fixture_map):
         missing = sorted(set(fixture_map) - set(observed))
@@ -966,6 +1053,7 @@ def derive_plant_registry(
             fixture,
             observed[fixture_id],
             registration_sha256=registration_record["sha256"],
+            certified_sessions=certified_sessions,
             record_root=record_root,
         )
         for fixture_id, fixture in fixture_map.items()
@@ -1010,6 +1098,7 @@ def derive_plant_registry(
             "eval_planted_miss_rows": 12,
         },
         "policy_bindings": _policy_bindings(registration),
+        "substitution_policy": _substitution_policy(amendment_record),
         "substitution_count": len(substitutions),
         "substitutions": substitutions,
         "entries": entries,
@@ -1046,8 +1135,25 @@ def validate_plant_registry(
     )
     registration = _read_object(registration_path, "base registration")
     fixture_map = _base_fixture_map(registration)
+    certified_sessions = _certified_campaign_sessions(fixture_map)
     if value.get("policy_bindings") != _policy_bindings(registration):
         raise RegistryError("detector/threshold/adjudication binding changed")
+    policy = value.get("substitution_policy")
+    if not isinstance(policy, Mapping):
+        raise RegistryError("registry lacks the DET1.9 substitution policy")
+    amendment_path = _validate_file_record(
+        policy.get("amendment_order_record") or {},
+        record_root=record_root,
+        label="DET1.9 amendment order",
+    )
+    if amendment_path != order_path.with_name(
+        "GRM_DET1_9_SUBSTITUTION_POOL.md"
+    ).resolve():
+        raise RegistryError("registry binds the wrong DET1.9 amendment order path")
+    if AMENDMENT_ORDER_ID not in amendment_path.read_text(encoding="utf-8"):
+        raise RegistryError("bound amendment order does not identify GRM-DET1.9")
+    if dict(policy) != _substitution_policy(policy["amendment_order_record"]):
+        raise RegistryError("DET1.9 substitution policy drifted")
     expected_counts = {
         "all_fixture_pairs": 14,
         "calibration_fixture_pairs": 2,
@@ -1088,6 +1194,7 @@ def validate_plant_registry(
             fixture_map[fixture_id],
             observation,
             registration_sha256=(value["base_registration"])["sha256"],
+            certified_sessions=certified_sessions,
             record_root=record_root,
         )
         if dict(entry) != expected:
@@ -1175,7 +1282,9 @@ write_registry = write_content_addressed_registry
 
 
 __all__ = [
+    "AMENDMENT_ORDER_ID",
     "RegistryError",
+    "SUBSTITUTION_SELECTION_RULE_ID",
     "build_registry",
     "canonical_json_bytes",
     "canonical_sha256",

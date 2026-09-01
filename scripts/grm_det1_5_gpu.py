@@ -61,6 +61,7 @@ DET1_ORDER = ROOT / "orders/GRM_DET1_DEMAND_DETECTOR_RACE.md"
 DET1_6_ORDER = ROOT / "orders/GRM_DET1_6_PLANT_ON_FORK.md"
 DET1_7_ORDER = ROOT / "orders/GRM_DET1_7_PLANT_REALIGN.md"
 DET1_8_ORDER = ROOT / "orders/GRM_DET1_8_SYNTH_TURN_SNAPSHOTS.md"
+DET1_9_ORDER = ROOT / "orders/GRM_DET1_9_SUBSTITUTION_POOL.md"
 REGISTRATION = FROZEN_RUN / "registration_62cb6c09cbec211d.json"
 RUNTIME_FRAME = FROZEN_RUN / "runtime_frame_28b3196f8fb04a41.json"
 PRIOR_AMENDMENT = FROZEN_RUN / "det1_4_source_amendment.json"
@@ -72,10 +73,14 @@ DET1_7_SOURCE_AUTH_PREDECESSOR = (
 DET1_8_SOURCE_AUTH = (
     FROZEN_RUN / "det1_8_precollection_source_authorization.json"
 )
+DET1_9_SOURCE_AUTH = (
+    FROZEN_RUN / "det1_9_precollection_source_authorization.json"
+)
 # The DET1.7 public campaign/analyzer API remains stable while its active
-# collection-only authority advances through the append-only DET1.8 envelope.
-DET1_7_SOURCE_AUTH = DET1_8_SOURCE_AUTH
-DET1_7_TERMINAL_AMENDMENT = FROZEN_RUN / "det1_7_plant_registry_amendment.json"
+# collection-only authority advances through append-only successor envelopes.
+DET1_7_SOURCE_AUTH = DET1_9_SOURCE_AUTH
+DET1_9_TERMINAL_AMENDMENT = FROZEN_RUN / "det1_9_plant_registry_amendment.json"
+DET1_7_TERMINAL_AMENDMENT = DET1_9_TERMINAL_AMENDMENT
 PARENT_ZERO_MARKER = FROZEN_RUN / "det1_4/zero_gate/stage_complete.json"
 
 CAMPAIGN_RELATIVE = Path("det1_4/campaign")
@@ -162,11 +167,15 @@ DELTA_AMENDMENT_SCHEMA = "grm.det1_6.fork_hydration_delta_amendment.v1"
 DELTA_AMENDMENT_STATUS = "AUTHORIZED_FORK_HYDRATION_DELTA_SOURCE_REBINDING"
 RACE_AMENDMENT_SCHEMA = "grm.det1_5.race_authorization_amendment.v1"
 RACE_AMENDMENT_STATUS = "AUTHORIZED_RACE_ON_FORKED_SUBSTRATE"
-DET1_7_SOURCE_AUTH_SCHEMA = "grm.det1_8.precollection_source_authorization.v1"
+DET1_7_SOURCE_AUTH_SCHEMA = "grm.det1_9.precollection_source_authorization.v1"
 DET1_7_SOURCE_AUTH_STATUS = "AUTHORIZED_LIVED_PLANT_REGISTRY_COLLECTION_ONLY"
-DET1_7_TERMINAL_SCHEMA = "grm.det1_7.plant_registry_amendment.v1"
-DET1_7_TERMINAL_STATUS = "AUTHORIZED_RACE_WITH_LIVED_PLANT_REGISTRY"
+DET1_7_TERMINAL_SCHEMA = "grm.det1_9.plant_registry_amendment.v1"
+DET1_7_TERMINAL_STATUS = (
+    "AUTHORIZED_RACE_WITH_DET1_9_CROSS_SESSION_PLANT_REGISTRY"
+)
 REGISTRATION_QUALIFICATION = "LIVED_TARGET_QUALIFICATION_ABLATION"
+DET1_9_RESERVE_COUNT = 5
+DET1_9_CANDIDATE_COUNT = 14 + DET1_9_RESERVE_COUNT
 
 DET1_6_CHANGED_SOURCES = (
     "scripts/grm_det1_3_snapshot.py",
@@ -223,6 +232,44 @@ DET1_8_ADDED_SOURCES = {
     ),
     "tests/test_grm_det1_8_source_auth.py": (
         "det1_8_source_authorization_cpu_contracts"
+    ),
+}
+
+DET1_9_CHANGED_SOURCES = {
+    "scripts/grm_det1_5_analyze.py": (
+        "validate_and_report_cross_session_substitutions_and_findings"
+    ),
+    "scripts/grm_det1_5_gpu.py": (
+        "collect_select_freeze_and_bind_det1_9_cross_session_substitutions"
+    ),
+    "scripts/grm_det1_5_lead.sh": (
+        "author_det1_9_finding_receipt_before_plant_registration"
+    ),
+    "scripts/grm_det1_5_workers.py": (
+        "collect_distinct_reserves_from_certified_campaign_sessions"
+    ),
+    "scripts/grm_det1_7_registry.py": (
+        "freeze_det1_9_cross_session_substitution_policy_and_table"
+    ),
+    "tests/test_grm_det1_5_campaign.py": (
+        "campaign_cross_session_selection_and_receipt_contracts"
+    ),
+    "tests/test_grm_det1_7_registry.py": (
+        "certified_cross_session_registry_contracts"
+    ),
+}
+DET1_9_ADDED_SOURCES = {
+    "scripts/grm_det1_9_findings.py": (
+        "content_addressed_r4_lived_control_finding_receipt"
+    ),
+    "scripts/grm_det1_9_source_auth.py": (
+        "append_only_det1_9_precollection_source_authorization"
+    ),
+    "tests/test_grm_det1_9_findings.py": (
+        "det1_9_finding_evidence_and_tamper_contracts"
+    ),
+    "tests/test_grm_det1_9_source_auth.py": (
+        "det1_9_source_authorization_cpu_contracts"
     ),
 }
 
@@ -1040,6 +1087,7 @@ def build_lead_commands(
     commands = [
         [sys.executable, script, "cross-process-zero", *common, *gpu_tail],
         [sys.executable, script, "author-det1-7-source", *common],
+        [sys.executable, script, "author-det1-9-finding", *common],
         [sys.executable, script, "plant-registration", *common, *gpu_tail],
         [sys.executable, script, "author-det1-7-terminal", *common],
         *[
@@ -1187,8 +1235,8 @@ def _pre_delta_g0_output_records(run_dir: Path) -> list[dict[str, Any]]:
 def validate_det1_7_source_authorization(
     run_dir: Path = FROZEN_RUN,
 ) -> dict[str, Any]:
-    """Validate the active DET1.8 successor behind the stable campaign API."""
-    from scripts.grm_det1_8_source_auth import (
+    """Validate the active DET1.9 successor behind the stable campaign API."""
+    from scripts.grm_det1_9_source_auth import (
         validate_precollection_source_authorization,
     )
 
@@ -1198,22 +1246,21 @@ def validate_det1_7_source_authorization(
     return validate_precollection_source_authorization(
         run_dir / DET1_7_SOURCE_AUTH.name,
         repo_root=ROOT,
-        order_path=DET1_8_ORDER,
+        order_path=DET1_9_ORDER,
         registration_path=REGISTRATION,
         runtime_frame_path=RUNTIME_FRAME,
         det1_6_amendment_path=DELTA_AMENDMENT,
-        predecessor_authorization_path=(
-            run_dir / DET1_7_SOURCE_AUTH_PREDECESSOR.name),
-        changed_sources=DET1_8_CHANGED_SOURCES,
-        added_sources=DET1_8_ADDED_SOURCES,
+        predecessor_authorization_path=(run_dir / DET1_8_SOURCE_AUTH.name),
+        changed_sources=DET1_9_CHANGED_SOURCES,
+        added_sources=DET1_9_ADDED_SOURCES,
     )
 
 
 def author_det1_7_source_authorization(
     run_dir: Path = FROZEN_RUN,
 ) -> dict[str, Any]:
-    """Author the active DET1.8 successor behind the stable lead command."""
-    from scripts.grm_det1_8_source_auth import (
+    """Author the active DET1.9 successor behind the stable lead command."""
+    from scripts.grm_det1_9_source_auth import (
         author_precollection_source_authorization,
     )
 
@@ -1226,14 +1273,13 @@ def author_det1_7_source_authorization(
     return author_precollection_source_authorization(
         path,
         repo_root=ROOT,
-        order_path=DET1_8_ORDER,
+        order_path=DET1_9_ORDER,
         registration_path=REGISTRATION,
         runtime_frame_path=RUNTIME_FRAME,
         det1_6_amendment_path=DELTA_AMENDMENT,
-        predecessor_authorization_path=(
-            run_dir / DET1_7_SOURCE_AUTH_PREDECESSOR.name),
-        changed_sources=DET1_8_CHANGED_SOURCES,
-        added_sources=DET1_8_ADDED_SOURCES,
+        predecessor_authorization_path=(run_dir / DET1_8_SOURCE_AUTH.name),
+        changed_sources=DET1_9_CHANGED_SOURCES,
+        added_sources=DET1_9_ADDED_SOURCES,
     )
 
 
@@ -1248,6 +1294,57 @@ def load_det1_7_precollection_context(
         "precollection_authorization": file_record(
             Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name),
     }
+
+
+def det1_9_finding_receipt_path(run_dir: Path = FROZEN_RUN) -> Path:
+    """Resolve the one content-addressed campaign-r4 finding receipt."""
+    run_dir = Path(run_dir).resolve()
+    _require(run_dir == FROZEN_RUN.resolve(),
+             "DET1.9 finding receipt is bound to the frozen run")
+    matches = sorted((run_dir / "det1_9/findings").glob(
+        "campaign_r4_lived_control_finding_*.json"
+    ))
+    _require(len(matches) == 1,
+             "DET1.9 requires exactly one campaign-r4 finding receipt")
+    return matches[0]
+
+
+def validate_det1_9_finding_receipt(
+    run_dir: Path = FROZEN_RUN,
+) -> dict[str, Any]:
+    """Replay t30/t33 evidence while preserving the no-investigation scope."""
+    from scripts.grm_det1_9_findings import validate_finding_receipt_file
+
+    return validate_finding_receipt_file(
+        det1_9_finding_receipt_path(run_dir), repo_root=ROOT
+    )
+
+
+def author_det1_9_finding_receipt(
+    run_dir: Path = FROZEN_RUN,
+) -> dict[str, Any]:
+    """Author the one campaign-r4 finding receipt, or validate the existing one.
+
+    The receipt payload carries ``created_utc``, so authoring is NOT
+    byte-idempotent: a second unconditional authoring would leave two
+    content-addressed receipts and fail ``det1_9_finding_receipt_path``
+    closed.  The lead entry point is resumable, so this mirrors the
+    DET1.7/DET1.9 source-authorization guard exactly: author only when the
+    append-only directory is still empty, otherwise revalidate.
+    """
+    from scripts.grm_det1_9_findings import author_finding_receipt
+
+    run_dir = Path(run_dir).resolve()
+    _require(run_dir == FROZEN_RUN.resolve(),
+             "DET1.9 finding receipt is bound to the frozen run")
+    findings_dir = run_dir / "det1_9/findings"
+    existing = sorted(findings_dir.glob(
+        "campaign_r4_lived_control_finding_*.json"
+    )) if findings_dir.is_dir() else []
+    if existing:
+        return validate_det1_9_finding_receipt(run_dir)
+    author_finding_receipt(directory=findings_dir)
+    return validate_det1_9_finding_receipt(run_dir)
 
 
 def validate_delta_amendment(run_dir: Path = FROZEN_RUN) -> dict[str, Any]:
@@ -1600,10 +1697,22 @@ def _validate_stage_marker(run_dir: Path, stage: str) -> tuple[Path, Path, dict[
         _require(receipt.get("status") == "PASS",
                  f"stage receipt did not PASS: {stage}")
         if stage == "plant_registration":
+            finding_path = det1_9_finding_receipt_path(run_dir)
+            finding = read_json(finding_path)
             _require(
                 receipt.get("precollection_authorization") == file_record(
                     Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name),
                 "plant-registration receipt source authorization drifted",
+            )
+            _require(
+                receipt.get("campaign_r4_lived_control_finding")
+                == file_record(finding_path)
+                and receipt.get(
+                    "campaign_r4_lived_control_finding_validation"
+                ) == validate_det1_9_finding_receipt(run_dir)
+                and receipt.get("campaign_r4_lived_control_finding_text")
+                == [str(row["text"]) for row in finding["ordered_findings"]],
+                "plant-registration receipt DET1.9 finding binding drifted",
             )
         elif stage != "cross_process_zero":
             _require(
@@ -1628,10 +1737,17 @@ def _stage_is_complete(run_dir: Path, stage: str) -> bool:
 def _terminal_invariants() -> dict[str, Any]:
     return {
         "amendment_is_evidence": False,
+        "campaign_r4_finding_cause_investigated": False,
+        "campaign_r4_finding_status": "OPEN_POST_RACE_INVESTIGATION",
+        "cross_session_substitution_scope": (
+            "ANY_CERTIFIED_LIVED_COLLECTED_SESSION_IN_THIS_CAMPAIGN_"
+            "INCLUDING_SUPERSESSION_BATTERY"
+        ),
         "detector_arms_changed": False,
         "threshold_policy_changed": False,
         "adjudication_vocabulary_changed": False,
         "historical_rows_reusable": False,
+        "plant_lawfulness_rules_changed": False,
         "plant_registry_frozen_before_g0": True,
         "plant_registry_frozen_before_evaluation": True,
         "race_resume_authorized": True,
@@ -1659,8 +1775,12 @@ def validate_det1_7_terminal_amendment(
     registry_path = plant_registry_path(run_dir)
     registry = read_json(registry_path)
     registry_validation = validate_plant_registry(registry, record_root=ROOT)
+    finding_path = det1_9_finding_receipt_path(run_dir)
+    finding_validation = validate_det1_9_finding_receipt(run_dir)
+    finding = read_json(finding_path)
     for key, expected in (
         ("order", file_record(DET1_7_ORDER)),
+        ("det1_9_amendment_order", file_record(DET1_9_ORDER)),
         ("base_registration", file_record(REGISTRATION)),
         ("runtime_frame", file_record(RUNTIME_FRAME)),
         ("det1_6_predecessor", file_record(DELTA_AMENDMENT)),
@@ -1668,11 +1788,26 @@ def validate_det1_7_terminal_amendment(
         ("plant_registration_marker", file_record(marker_path)),
         ("plant_registration_receipt", file_record(receipt_path)),
         ("plant_registry", file_record(registry_path)),
+        ("campaign_r4_lived_control_finding", file_record(finding_path)),
     ):
         _require(value.get(key) == expected,
                  f"DET1.7 terminal amendment {key} drifted")
     _require(registration_receipt.get("plant_registry") == file_record(
         registry_path), "plant-registration receipt binds another registry")
+    _require(
+        registration_receipt.get("campaign_r4_lived_control_finding")
+        == file_record(finding_path)
+        and value.get("campaign_r4_lived_control_finding_validation")
+        == finding_validation
+        and value.get("campaign_r4_lived_control_finding_text")
+        == [str(row["text"]) for row in finding["ordered_findings"]],
+        "DET1.9 terminal finding binding drifted",
+    )
+    _require(
+        value.get("substitution_policy") == registry["substitution_policy"]
+        and value.get("substitution_table") == registry["substitutions"],
+        "DET1.9 terminal substitution policy/table drifted",
+    )
     _require(value.get("invariants") == _terminal_invariants(),
              "DET1.7 terminal amendment invariants drifted")
     return {
@@ -1681,6 +1816,10 @@ def validate_det1_7_terminal_amendment(
         "record": file_record(path),
         "plant_registry": file_record(registry_path),
         "plant_registry_validation": registry_validation,
+        "substitution_policy": registry["substitution_policy"],
+        "substitution_table": registry["substitutions"],
+        "campaign_r4_lived_control_finding": file_record(finding_path),
+        "campaign_r4_lived_control_finding_validation": finding_validation,
         "race_resume_authorized": True,
         "amendment_is_evidence": False,
     }
@@ -1697,6 +1836,10 @@ def author_det1_7_terminal_amendment(
     marker_path, receipt_path, registration_receipt = _validate_stage_marker(
         run_dir, "plant_registration")
     registry_path = plant_registry_path(run_dir)
+    registry = read_json(registry_path)
+    finding_path = det1_9_finding_receipt_path(run_dir)
+    finding_validation = validate_det1_9_finding_receipt(run_dir)
+    finding = read_json(finding_path)
     _require(registration_receipt.get("plant_registry") == file_record(
         registry_path), "plant-registration stage did not freeze this registry")
     _require(not _marker_path(run_dir, "g0").exists(),
@@ -1706,6 +1849,7 @@ def author_det1_7_terminal_amendment(
         "status": DET1_7_TERMINAL_STATUS,
         "created_utc": utc_now(),
         "order": file_record(DET1_7_ORDER),
+        "det1_9_amendment_order": file_record(DET1_9_ORDER),
         "base_registration": file_record(REGISTRATION),
         "runtime_frame": file_record(RUNTIME_FRAME),
         "det1_6_predecessor": file_record(DELTA_AMENDMENT),
@@ -1713,6 +1857,13 @@ def author_det1_7_terminal_amendment(
         "plant_registration_marker": file_record(marker_path),
         "plant_registration_receipt": file_record(receipt_path),
         "plant_registry": file_record(registry_path),
+        "substitution_policy": registry["substitution_policy"],
+        "substitution_table": registry["substitutions"],
+        "campaign_r4_lived_control_finding": file_record(finding_path),
+        "campaign_r4_lived_control_finding_validation": finding_validation,
+        "campaign_r4_lived_control_finding_text": [
+            str(row["text"]) for row in finding["ordered_findings"]
+        ],
         "invariants": _terminal_invariants(),
     }
     write_json_exclusive(path, value)
@@ -1741,6 +1892,8 @@ def inventory(run_dir: Path = FROZEN_RUN) -> dict[str, Any]:
     from scripts import grm_det1_4_gpu as det14
 
     det1_7_auth = validate_det1_7_source_authorization(run_dir)
+    finding_path = det1_9_finding_receipt_path(run_dir)
+    finding_validation = validate_det1_9_finding_receipt(run_dir)
     det14_args = argparse.Namespace(
         run_dir=run_dir,
         require_amendment=True,
@@ -1779,6 +1932,10 @@ def inventory(run_dir: Path = FROZEN_RUN) -> dict[str, Any]:
             "superseded_by": det1_7_auth["record"],
         },
         "det1_7_precollection_authorization": det1_7_auth,
+        "campaign_r4_lived_control_finding": {
+            "record": file_record(finding_path),
+            "validation": finding_validation,
+        },
         "campaign_drivers": campaign_driver_inventory(),
         "stages": stages,
         "historical_rows_reused": False,
@@ -3144,36 +3301,37 @@ def _measure_fixture_inline(
                 except DETError as exc:
                     observation_status = "UNPLANTABLE"
                     unplantable_reason = str(exc)
+            source = dict(fixture.get("source") or {})
+            source_sha = str(source.get("sha256", ""))
+            stale = fixture.get("stale_values")
+            if stale is None:
+                stale = fixture.get("old_values") or []
+            selector = (
+                {"turn": int(fixture["turn"])}
+                if fixture.get("source_family") == "certified_34_turn"
+                else {"probe_id": str(fixture["probe_id"])}
+            )
+            effective_fixture = {
+                "fixture_id": str(fixture["fixture_id"]),
+                "split": str(fixture["split"]),
+                "source_family": str(fixture["source_family"]),
+                "session_id": (
+                    f"certified_34_turn:{source_sha}"
+                    if fixture.get("source_family") == "certified_34_turn"
+                    else str(fixture["session_id"])
+                ),
+                "selector": selector,
+                "question": str(fixture["question"]),
+                "expected_values": [str(value) for value in
+                                    fixture.get("expected_values", ())],
+                "stale_values": [str(value) for value in stale],
+                "wrong_fact_values": [str(value) for value in
+                                       fixture.get("wrong_fact_values", ())],
+                "source": source,
+            }
             if base_fixture_id == str(fixture["fixture_id"]):
                 substitution = {"status": "NONE"}
             else:
-                source = dict(fixture.get("source") or {})
-                source_sha = str(source.get("sha256", ""))
-                stale = fixture.get("stale_values")
-                if stale is None:
-                    stale = fixture.get("old_values") or []
-                selector = (
-                    {"turn": int(fixture["turn"])}
-                    if fixture.get("source_family") == "certified_34_turn"
-                    else {"probe_id": str(fixture["probe_id"])}
-                )
-                effective_fixture = {
-                    "fixture_id": str(fixture["fixture_id"]),
-                    "split": str(fixture["split"]),
-                    "source_family": str(fixture["source_family"]),
-                    "session_id": (
-                        f"certified_34_turn:{source_sha}"
-                        if fixture.get("source_family") == "certified_34_turn"
-                        else str(fixture["session_id"])),
-                    "selector": selector,
-                    "question": str(fixture["question"]),
-                    "expected_values": [str(value) for value in
-                                        fixture.get("expected_values", ())],
-                    "stale_values": [str(value) for value in stale],
-                    "wrong_fact_values": [str(value) for value in
-                                           fixture.get("wrong_fact_values", ())],
-                    "source": source,
-                }
                 substitution = {
                     "status": "SUBSTITUTED",
                     "original_fixture_id": base_fixture_id,
@@ -3188,6 +3346,7 @@ def _measure_fixture_inline(
                 "effective_fixture_id": str(fixture["fixture_id"]),
                 "candidate_for_fixture_id": str(fixture.get(
                     "candidate_for_fixture_id", base_fixture_id)),
+                "reserve_candidate": fixture.get("reserve_candidate") is True,
                 "status": observation_status,
                 "unplantable_reason": unplantable_reason,
                 "snapshot_path": str(_path_from_record(
@@ -3206,13 +3365,7 @@ def _measure_fixture_inline(
                 "mounted_ids": [int(value) for value in
                                 served.get("mounted_ids", ())],
                 "substitution": substitution,
-                "effective_fixture": {
-                    key: fixture[key] for key in (
-                        "fixture_id", "source_family", "split", "turn",
-                        "session_id", "probe_id", "question", "expected_values",
-                        "stale_values", "old_values", "wrong_fact_values", "source",
-                    ) if key in fixture
-                },
+                "effective_fixture": effective_fixture,
                 "detector_arms_active": [],
                 "race_row": False,
             }
@@ -3360,8 +3513,11 @@ def _select_registration_observations(
     registration: Mapping[str, Any],
     candidates: Sequence[Mapping[str, Any]],
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    """Choose a lawful lived observation per base slot, or fail closed."""
+    """Choose primaries, then canonical unused DET1.9 cross-session reserves."""
+    from scripts.grm_det1_7_registry import SUBSTITUTION_SELECTION_RULE_ID
+
     by_slot: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    reserve_rows: list[dict[str, Any]] = []
     row_ids: set[str] = set()
     for raw in candidates:
         row = dict(raw)
@@ -3372,12 +3528,104 @@ def _select_registration_observations(
         _require(bool(row_id) and row_id not in row_ids and bool(slot),
                  "plant-registration candidate id/slot is missing or duplicate")
         row_ids.add(row_id)
-        by_slot[slot].append(row)
+        if row.get("reserve_candidate") is True:
+            reserve_rows.append(row)
+        else:
+            by_slot[slot].append(row)
     base_ids = [str(row["fixture_id"]) for row in registration["fixtures"]]
     _require(set(by_slot) == set(base_ids),
              "plant-registration candidate slots differ from base registration")
+    base_by_id = {
+        str(row["fixture_id"]): dict(row) for row in registration["fixtures"]
+    }
+
+    def session_id(fixture: Mapping[str, Any]) -> str:
+        if fixture.get("source_family") == "certified_34_turn":
+            source_sha = str((fixture.get("source") or {}).get("sha256", ""))
+            _require(bool(source_sha), "certified fixture lacks source hash")
+            return f"certified_34_turn:{source_sha}"
+        return str(fixture.get("session_id", ""))
+
+    certified_sessions: dict[tuple[str, str], dict[str, Any]] = {}
+    for base in base_by_id.values():
+        family = str(base.get("source_family", ""))
+        source_session = session_id(base)
+        source = dict(base.get("source") or {})
+        key = (family, source_session)
+        prior = certified_sessions.get(key)
+        _require(bool(family) and bool(source_session) and bool(source),
+                 "base registration has an incomplete certified session")
+        _require(prior is None or prior == source,
+                 "base registration session maps to multiple source records")
+        certified_sessions[key] = source
+
+    def reserve_key(row: Mapping[str, Any]) -> tuple[str, ...]:
+        effective = row.get("effective_fixture") or {}
+        _require(isinstance(effective, Mapping),
+                 "reserve candidate lacks an effective fixture")
+        selector = effective.get("selector") or {}
+        return (
+            str(effective.get("split", "")),
+            str(effective.get("source_family", "")),
+            str(effective.get("session_id", "")),
+            canonical_json_bytes(selector).decode("utf-8"),
+            str(effective.get("fixture_id", "")),
+            str(row.get("row_id", "")),
+        )
+
+    reserve_rows.sort(key=reserve_key)
+    reserve_ids = [
+        str((row.get("effective_fixture") or {}).get("fixture_id", ""))
+        for row in reserve_rows
+    ]
+    reserve_selectors = [
+        (
+            str((row.get("effective_fixture") or {}).get(
+                "source_family", "")),
+            str((row.get("effective_fixture") or {}).get("session_id", "")),
+            canonical_json_bytes(
+                (row.get("effective_fixture") or {}).get("selector") or {}
+            ),
+        )
+        for row in reserve_rows
+    ]
+    _require(
+        len(reserve_rows) == DET1_9_RESERVE_COUNT
+        and len(reserve_ids) == len(set(reserve_ids))
+        and not (set(reserve_ids) & set(base_ids))
+        and len(reserve_selectors) == len(set(reserve_selectors)),
+        "DET1.9 reserve pool cardinality/identity/selector drifted",
+    )
+    for row in reserve_rows:
+        effective = dict(row.get("effective_fixture") or {})
+        family = str(effective.get("source_family", ""))
+        source_session = str(effective.get("session_id", ""))
+        selector = effective.get("selector") or {}
+        _require(
+            row.get("candidate_for_fixture_id")
+            == "__DET1_9_ANY_EVAL_BASE_SLOT__"
+            and effective.get("split") == "eval"
+            and dict(effective.get("source") or {})
+            == certified_sessions.get((family, source_session)),
+            "DET1.9 reserve is not bound to a certified lived campaign session",
+        )
+        if family == "certified_34_turn":
+            selector_valid = (
+                set(selector) == {"turn"}
+                and isinstance(selector.get("turn"), int)
+                and not isinstance(selector.get("turn"), bool)
+            )
+        else:
+            selector_valid = (
+                set(selector) == {"probe_id"}
+                and isinstance(selector.get("probe_id"), str)
+                and bool(str(selector["probe_id"]).strip())
+            )
+        _require(selector_valid,
+                 "DET1.9 reserve selector is invalid for its source family")
     selected: list[dict[str, Any]] = []
     substitutions: list[dict[str, Any]] = []
+    consumed_reserve_ids: set[str] = set()
     for slot in base_ids:
         values = by_slot[slot]
         primary = [
@@ -3388,23 +3636,47 @@ def _select_registration_observations(
                  f"plant-registration slot lacks one primary observation: {slot}")
         chosen = primary[0]
         if chosen.get("status") != "LAWFUL_LIVED_TARGET":
+            split = str(base_by_id[slot].get("split", ""))
             reserves = [
-                row for row in values
-                if str(row.get("effective_fixture_id")) != slot
-                and row.get("status") == "LAWFUL_LIVED_TARGET"
+                row for row in reserve_rows
+                if row.get("status") == "LAWFUL_LIVED_TARGET"
+                and str((row.get("effective_fixture") or {}).get("split", ""))
+                == split
+                and str((row.get("effective_fixture") or {}).get(
+                    "fixture_id", "")) not in consumed_reserve_ids
             ]
-            _require(len(reserves) == 1,
-                     f"no unique lawful same-session substitution for {slot}: "
+            _require(bool(reserves),
+                     f"no unused lawful certified campaign-session reserve for {slot}: "
                      f"primary_reason={chosen.get('unplantable_reason')!r}")
-            chosen = reserves[0]
-            substitution = dict(chosen.get("substitution") or {})
-            _require(substitution.get("status") == "SUBSTITUTED",
-                     f"replacement candidate lacks explicit substitution: {slot}")
+            reserve = dict(reserves[0])
+            effective = dict(reserve.get("effective_fixture") or {})
+            effective_id = str(effective.get("fixture_id", ""))
+            consumed_reserve_ids.add(effective_id)
+            reason = (
+                f"primary {slot} was unplantable: "
+                f"{chosen.get('unplantable_reason')}; selected {effective_id} by "
+                f"{SUBSTITUTION_SELECTION_RULE_ID}"
+            )
+            reserve["fixture_id"] = slot
+            reserve["candidate_for_fixture_id"] = slot
+            reserve["substitution"] = {
+                "status": "SUBSTITUTED",
+                "original_fixture_id": slot,
+                "effective_fixture": effective,
+                "reason": reason,
+            }
+            chosen = reserve
             substitutions.append({
                 "base_fixture_id": slot,
-                "effective_fixture_id": chosen.get("effective_fixture_id"),
-                "reason": substitution.get("reason"),
-                "same_certified_session": True,
+                "effective_fixture_id": effective_id,
+                "source_family": effective.get("source_family"),
+                "session_id": effective.get("session_id"),
+                "selector": effective.get("selector"),
+                "reason": reason,
+                "same_certified_session": (
+                    effective.get("session_id") == session_id(base_by_id[slot])
+                ),
+                "selection_rule_id": SUBSTITUTION_SELECTION_RULE_ID,
             })
         normalized = dict(chosen)
         normalized["fixture_id"] = slot
@@ -3437,6 +3709,9 @@ def plant_registration(
     if _stage_is_complete(run_dir, "plant_registration"):
         return _validate_stage_marker(run_dir, "plant_registration")[2]
     source_auth = validate_det1_7_source_authorization(run_dir)
+    finding_path = det1_9_finding_receipt_path(run_dir)
+    finding_validation = validate_det1_9_finding_receipt(run_dir)
+    finding = read_json(finding_path)
     prerequisite = _require_prior_stage(run_dir, "cross_process_zero")
     preflight, code = gpu_preflight(run_dir)
     _require(code == 0,
@@ -3475,8 +3750,8 @@ def plant_registration(
         shard_records.append(file_record(receipt_path))
         candidates.extend(observed)
 
-    _require(len(candidates) == 15,
-             f"plant registration expected 14 slots + one reserve, got "
+    _require(len(candidates) == DET1_9_CANDIDATE_COUNT,
+             f"plant registration expected 14 slots + five reserves, got "
              f"{len(candidates)}")
     selected, substitutions = _select_registration_observations(
         read_json(REGISTRATION), candidates)
@@ -3571,6 +3846,11 @@ def plant_registration(
         "registration": file_record(REGISTRATION),
         "runtime_frame": file_record(RUNTIME_FRAME),
         "precollection_authorization": source_auth["record"],
+        "campaign_r4_lived_control_finding": file_record(finding_path),
+        "campaign_r4_lived_control_finding_validation": finding_validation,
+        "campaign_r4_lived_control_finding_text": [
+            str(row["text"]) for row in finding["ordered_findings"]
+        ],
         "shard_receipts": shard_records,
         "candidate_observations": file_record(candidates_path),
         "selected_observations": file_record(selected_path),
@@ -3581,6 +3861,7 @@ def plant_registration(
             "registry_payload_sha256"],
         "plant_registry_file_sha256": file_record(registry_path)["sha256"],
         "registry_validation": validation,
+        "substitution_policy": registry["substitution_policy"],
         "per_turn_table": table,
         "snapshot_member_audit_table": member_audit_table,
         "substitutions": substitutions,
@@ -3870,6 +4151,7 @@ def campaign(
         run_dir, lease_seconds=lease_seconds, wait_seconds=wait_seconds)
     completed.append("cross_process_zero")
     author_det1_7_source_authorization(run_dir)
+    author_det1_9_finding_receipt(run_dir)
     plant_registration(
         run_dir,
         lease_seconds=lease_seconds,
@@ -4174,12 +4456,21 @@ def det1_7_cpu_preflight(
         "missing_fixture_ids": missing,
         "invalid_served_fixture_ids": incorrect,
         "synthesis_breaker_pending_fixture_ids": synthesis_pending,
-        "required_same_session_substitution": {
-            "original_fixture_id": "e2e_t30_atlas_tone",
-            "candidate_fixture_id": "e2e_t33_polaris_mark",
-            "source_turn": 32,
-            "probe_turn": 33,
-            "expected_values": ["Marble-4-Juliet"],
+        "det1_9_cross_session_substitution_pool": {
+            "selection_rule_id": (
+                "DET1_9_PRIMARY_THEN_CANONICAL_UNUSED_LAWFUL_RESERVE_V1"
+            ),
+            "scope": (
+                "ANY_CERTIFIED_LIVED_COLLECTED_SESSION_IN_THIS_CAMPAIGN_"
+                "INCLUDING_SUPERSESSION_BATTERY"
+            ),
+            "candidate_fixture_ids": [
+                "e2e_t33_polaris_mark",
+                "sup_reserve_juniper_pass",
+                "sup_reserve_tundra_ledger",
+                "sup_reserve_meridian_docket",
+                "sup_reserve_falcon_registry",
+            ],
             "measured": False,
         },
         "registry_freeze_ready": False,
@@ -4220,6 +4511,7 @@ def _parser() -> argparse.ArgumentParser:
     for name in (
         "inventory", "selftest", "author-amendment",
         "author-delta-amendment", "author-det1-7-source",
+        "author-det1-9-finding",
         "author-det1-7-terminal", "det1-7-cpu-preflight", "analyze",
     ):
         _add_common(sub.add_parser(name))
@@ -4264,6 +4556,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             output = author_delta_amendment(args.run_dir)
         elif args.command == "author-det1-7-source":
             output = author_det1_7_source_authorization(args.run_dir)
+        elif args.command == "author-det1-9-finding":
+            output = author_det1_9_finding_receipt(args.run_dir)
         elif args.command == "plant-registration":
             output = plant_registration(
                 args.run_dir,

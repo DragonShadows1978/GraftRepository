@@ -178,6 +178,9 @@ def _case(tmp_path: Path) -> tuple[Path, Path, dict[str, dict]]:
     order_path = tmp_path / "orders/GRM_DET1_7_PLANT_REALIGN.md"
     order_path.parent.mkdir(parents=True)
     order_path.write_text("# ORDER GRM-DET1.7\n", encoding="utf-8")
+    order_path.with_name("GRM_DET1_9_SUBSTITUTION_POOL.md").write_text(
+        "# ORDER GRM-DET1.9\n", encoding="utf-8"
+    )
     registration_path = tmp_path / "registration.json"
     registration = _base_registration()
     _write_json(registration_path, registration)
@@ -469,7 +472,7 @@ def test_same_session_substitution_is_enumerated(tmp_path: Path):
     ]
 
 
-def test_cross_session_substitution_fails_closed(tmp_path: Path):
+def test_uncertified_cross_session_substitution_fails_closed(tmp_path: Path):
     registration, order, observations = _case(tmp_path)
     base = json.loads(registration.read_text(encoding="utf-8"))["fixtures"][2]
     fixture_id = "fixture_02"
@@ -490,7 +493,7 @@ def test_cross_session_substitution_fails_closed(tmp_path: Path):
         },
         "reason": "no seat",
     }
-    with pytest.raises(RegistryError, match="crosses the certified session"):
+    with pytest.raises(RegistryError, match="not certified by this campaign"):
         derive_plant_registry(
             registration,
             order,
@@ -498,6 +501,55 @@ def test_cross_session_substitution_fails_closed(tmp_path: Path):
             created_utc=CREATED_UTC,
             record_root=tmp_path,
         )
+
+
+def test_certified_cross_session_supersession_substitution_is_accepted(
+    tmp_path: Path,
+):
+    registration, order, observations = _case(tmp_path)
+    base_registration = json.loads(registration.read_text(encoding="utf-8"))
+    base = base_registration["fixtures"][2]
+    donor = base_registration["fixtures"][9]
+    fixture_id = str(base["fixture_id"])
+    replacement = "reserve_meridian_docket"
+    path = observations[fixture_id]["snapshot_path"]
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    manifest["provenance"]["fixture_id"] = replacement
+    manifest["linked_answer"]["attempt_answer"] = donor["expected_values"][0]
+    manifest["linked_answer"]["probe_answer"] = donor["expected_values"][0]
+    _sign_snapshot(manifest)
+    _write_json(path, manifest)
+    observations[fixture_id]["substitution"] = {
+        "status": "SUBSTITUTED",
+        "original_fixture_id": fixture_id,
+        "effective_fixture": {
+            "fixture_id": replacement,
+            "split": "eval",
+            "source_family": donor["source_family"],
+            "session_id": donor["session_id"],
+            "selector": {"probe_id": "reserve_meridian_docket"},
+            "question": "What is the current Meridian docket value?",
+            "expected_values": list(donor["expected_values"]),
+            "stale_values": [],
+            "wrong_fact_values": [],
+            "source": dict(donor["source"]),
+        },
+        "reason": "primary lived served control failed",
+    }
+
+    registry = derive_plant_registry(
+        registration,
+        order,
+        observations,
+        created_utc=CREATED_UTC,
+        record_root=tmp_path,
+    )
+
+    entry = registry["entries"][2]
+    assert entry["effective_fixture_id"] == replacement
+    assert entry["effective_fixture"]["session_id"] == donor["session_id"]
+    assert registry["substitution_policy"]["amendment_order"] == "GRM-DET1.9"
+    assert registry["substitution_count"] == 1
 
 
 def test_duplicate_effective_replacements_fail_closed(tmp_path: Path):

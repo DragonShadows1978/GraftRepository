@@ -41,14 +41,17 @@ from scripts.grm_det1_common import (  # noqa: E402
 from scripts.grm_det1_5_gpu import (  # noqa: E402
     DELTA_AMENDMENT,
     DET1_7_ORDER,
+    DET1_9_ORDER,
     DET1_7_SOURCE_AUTH,
     DET1_7_TERMINAL_AMENDMENT,
     aggregate_process_instances,
+    det1_9_finding_receipt_path,
     effective_registration_projection,
     merge_detector_rows,
     plant_registry_path,
     validate_det1_7_source_authorization,
     validate_det1_7_terminal_amendment,
+    validate_det1_9_finding_receipt,
     validate_g0_rows,
     validate_g1_pair,
     validate_served_control,
@@ -1633,6 +1636,8 @@ def _plant_registration_table(registry: Mapping[str, Any]) -> list[dict[str, Any
 
 
 def _receipt_substitutions(registry: Mapping[str, Any]) -> list[dict[str, Any]]:
+    from scripts.grm_det1_7_registry import SUBSTITUTION_SELECTION_RULE_ID
+
     result: list[dict[str, Any]] = []
     for entry in _registry_entries(registry):
         substitution = entry.get("substitution") or {}
@@ -1642,8 +1647,15 @@ def _receipt_substitutions(registry: Mapping[str, Any]) -> list[dict[str, Any]]:
             {
                 "base_fixture_id": entry["fixture_id"],
                 "effective_fixture_id": entry["effective_fixture_id"],
+                "source_family": entry["effective_fixture"]["source_family"],
+                "session_id": entry["effective_fixture"]["session_id"],
+                "selector": entry["effective_fixture"]["selector"],
                 "reason": substitution.get("reason"),
-                "same_certified_session": True,
+                "same_certified_session": (
+                    entry["effective_fixture"]["session_id"]
+                    == entry["session"]["session_id"]
+                ),
+                "selection_rule_id": SUBSTITUTION_SELECTION_RULE_ID,
             }
         )
     return result
@@ -1656,6 +1668,9 @@ def _validate_plant_registration(
     amendment_path: Path,
     source_amendment_path: Path,
     precollection_authorization_path: Path,
+    finding_path: Path,
+    finding_validation: Mapping[str, Any],
+    finding_text: Sequence[str],
     registry_path: Path,
     terminal_amendment_path: Path,
     registration_path: Path,
@@ -1693,8 +1708,21 @@ def _validate_plant_registration(
         "plant-registration per-turn table differs from frozen entries",
     )
     _require(
+        receipt.get("substitution_policy") == registry.get("substitution_policy"),
+        "plant-registration DET1.9 substitution policy drifted",
+    )
+    _require(
         receipt.get("substitutions") == _receipt_substitutions(registry),
         "plant-registration substitution enumeration drifted",
+    )
+    _require(
+        receipt.get("campaign_r4_lived_control_finding")
+        == file_record(finding_path)
+        and receipt.get("campaign_r4_lived_control_finding_validation")
+        == dict(finding_validation)
+        and receipt.get("campaign_r4_lived_control_finding_text")
+        == list(finding_text),
+        "plant-registration campaign-r4 finding binding drifted",
     )
     _require(
         receipt.get("counts")
@@ -1702,7 +1730,7 @@ def _validate_plant_registration(
         "plant-registration did not preserve 12+12 pairing",
     )
     _require(
-        receipt.get("candidate_count") == 15
+        receipt.get("candidate_count") == 19
         and receipt.get("selected_count") == 14,
         "plant-registration candidate/selection cardinality drifted",
     )
@@ -1730,7 +1758,7 @@ def _validate_plant_registration(
     )
     candidates = read_jsonl(candidates_path)
     selected = read_jsonl(selected_path)
-    _require(len(candidates) == 15, "candidate observation file is not 15 rows")
+    _require(len(candidates) == 19, "candidate observation file is not 19 rows")
     _require(len(selected) == 14, "selected observation file is not 14 rows")
     _require(
         [str(row.get("fixture_id", "")) for row in selected]
@@ -1829,6 +1857,12 @@ def analyze(run_dir: Path) -> Path:
     precollection_authorization_path = _validated_record(
         precollection.get("record") or {}, "DET1.7 precollection authorization"
     )
+    finding_path = det1_9_finding_receipt_path(run_dir)
+    finding_validation = validate_det1_9_finding_receipt(run_dir)
+    finding_receipt = read_json(finding_path)
+    finding_text = [
+        str(row["text"]) for row in finding_receipt["ordered_findings"]
+    ]
     source_amendment_path = (run_dir / DELTA_AMENDMENT.name).resolve()
     _require(source_amendment_path.is_file(), "DET1.6 predecessor amendment is absent")
     source_rebindings = precollection.get("det1_5_source_rebindings")
@@ -1920,6 +1954,9 @@ def analyze(run_dir: Path) -> Path:
         amendment_path=amendment_path,
         source_amendment_path=source_amendment_path,
         precollection_authorization_path=precollection_authorization_path,
+        finding_path=finding_path,
+        finding_validation=finding_validation,
+        finding_text=finding_text,
         registry_path=registry_path,
         terminal_amendment_path=terminal_amendment_path,
         registration_path=registration_path,
@@ -2382,8 +2419,14 @@ def analyze(run_dir: Path) -> Path:
                 ],
                 "registry_payload_sha256": registry["registry_payload_sha256"],
                 "registry_file_sha256": file_record(registry_path)["sha256"],
+                "substitution_policy": registry["substitution_policy"],
+                "substitution_table": registry["substitutions"],
                 "per_turn_table": _plant_registration_table(registry),
                 "substitutions": _receipt_substitutions(registry),
+                "campaign_r4_lived_control_finding": file_record(finding_path),
+                "campaign_r4_lived_control_finding_validation": (
+                    finding_validation
+                ),
                 "frozen_before_g0_and_eval": True,
             },
             "DET-G0_dedicated": validate_g0_rows(g0_rows),
@@ -2404,9 +2447,13 @@ def analyze(run_dir: Path) -> Path:
         "race_authorization_amendment": file_record(amendment_path),
         "source_amendment": file_record(source_amendment_path),
         "det1_7_order": file_record(DET1_7_ORDER),
+        "det1_9_amendment_order": file_record(DET1_9_ORDER),
         "precollection_authorization": file_record(
             precollection_authorization_path
         ),
+        "campaign_r4_lived_control_finding": file_record(finding_path),
+        "campaign_r4_lived_control_finding_validation": finding_validation,
+        "campaign_r4_lived_control_finding_text": finding_text,
         "plant_registry": file_record(registry_path),
         "terminal_amendment": file_record(terminal_amendment_path),
         "thresholds": file_record(threshold_path),
@@ -2479,11 +2526,19 @@ def analyze(run_dir: Path) -> Path:
         "",
         f"Substitutions: `{json.dumps(_receipt_substitutions(registry), sort_keys=True)}`",
         "",
+        "## DET1.9 recorded finding",
+        "",
+        *finding_text,
+        "",
+        "Finding status: `OPEN_POST_RACE_INVESTIGATION`; causal investigation was not performed here.",
+        "",
         "## Evidence",
         "",
         f"- Race authorization: `{file_record(amendment_path)['path']}`",
         f"- DET1.6 terminal source amendment: `{file_record(source_amendment_path)['path']}`",
         f"- DET1.7 precollection authorization: `{file_record(precollection_authorization_path)['path']}`",
+        f"- DET1.9 amendment order: `{file_record(DET1_9_ORDER)['path']}`",
+        f"- Campaign-r4 lived-control finding: `{file_record(finding_path)['path']}`",
         f"- DET1.7 plant registration: `{file_record(stage_files['plant_registration'][1])['path']}`",
         f"- DET1.7 plant registry: `{file_record(registry_path)['path']}`",
         f"- DET1.7 terminal amendment: `{file_record(terminal_amendment_path)['path']}`",
@@ -2497,7 +2552,7 @@ def analyze(run_dir: Path) -> Path:
         "",
         "## Anything not done",
         "",
-        "None.",
+        "The open t30/t33 post-race causal investigation was intentionally not performed under DET1.9.",
         "",
     ]
     report_path = analysis_dir / "GRM_DET1_5_REPORT.md"

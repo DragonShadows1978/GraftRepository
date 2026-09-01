@@ -39,6 +39,7 @@ OBSERVATION_SCHEMA = "grm.det1_7.plant_observation.v1"
 PLANT_REGISTRATION = "plant_registration"
 POLARIS_CANDIDATE_ID = "e2e_t33_polaris_mark"
 POLARIS_BASE_SLOT_ID = "e2e_t30_atlas_tone"
+GLOBAL_RESERVE_SLOT = "__DET1_9_ANY_EVAL_BASE_SLOT__"
 E2E_SPECS: dict[str, dict[str, Any]] = {
     "e2e-cal": {
         "predecessor": None,
@@ -69,6 +70,42 @@ E2E_SPECS: dict[str, dict[str, Any]] = {
 SUP_SOURCES = tuple(sorted(
     (ROOT / "tests/fixtures/supersession_battery").glob("*.json")
 ))
+SUP_RESERVE_PROBES: dict[str, dict[str, Any]] = {
+    "correction_then_restatement": {
+        "fixture_id": "sup_reserve_juniper_pass",
+        "probe_id": "reserve_juniper_pass",
+        "question": "What is the current Juniper pass value?",
+        "expected_values": ["Opal-7-Green"],
+        "stale_values": [],
+        "wrong_fact_values": ["Morrow-5-Red", "Nacre-6-Blue"],
+    },
+    "fresh_fact_controls": {
+        "fixture_id": "sup_reserve_tundra_ledger",
+        "probe_id": "reserve_tundra_ledger",
+        "question": "What is the current Tundra ledger value?",
+        "expected_values": ["Sable-0-Copper"],
+        "stale_values": [],
+        "wrong_fact_values": ["Quartz-8-Jade", "Raven-9-Ivory"],
+    },
+    "multi_hop_a_b_c": {
+        "fixture_id": "sup_reserve_meridian_docket",
+        "probe_id": "reserve_meridian_docket",
+        "question": "What is the current Meridian docket value?",
+        "expected_values": ["Delta-4-Drift"],
+        "stale_values": [],
+        "wrong_fact_values": [
+            "Amber-1-Atlas", "Birch-2-Beacon", "Cobalt-3-Comet",
+        ],
+    },
+    "short_correction_long_competitor": {
+        "fixture_id": "sup_reserve_falcon_registry",
+        "probe_id": "reserve_falcon_registry",
+        "question": "What is the current Falcon registry value?",
+        "expected_values": ["Vortex-3-Sierra"],
+        "stale_values": [],
+        "wrong_fact_values": ["Auric-4-Alpha", "Kestrel-9-Tango"],
+    },
+}
 
 
 def _require(condition: bool, message: str) -> None:
@@ -301,6 +338,14 @@ def _effective_fixture(
     _require(isinstance(value, Mapping),
              f"effective fixture is absent for {base_fixture.get('fixture_id')}")
     fixture = dict(value)
+    if fixture.get("source_family") == "certified_34_turn":
+        source_sha256 = str((fixture.get("source") or {}).get("sha256", ""))
+        _require(bool(source_sha256),
+                 f"effective E2E fixture lacks source hash: {fixture.get('fixture_id')}")
+        fixture.setdefault("session_id", f"certified_34_turn:{source_sha256}")
+        fixture.setdefault("selector", {"turn": int(fixture["turn"])})
+    else:
+        fixture.setdefault("selector", {"probe_id": str(fixture["probe_id"])})
     fixture.setdefault("base_fixture_id", str(base_fixture["fixture_id"]))
     _require(
         str(fixture["base_fixture_id"]) == str(base_fixture["fixture_id"]),
@@ -310,7 +355,7 @@ def _effective_fixture(
 
 
 def _polaris_candidate(base_fixture: Mapping[str, Any]) -> dict[str, Any]:
-    """Return the deterministic same-session replacement candidate for t30."""
+    """Return the E2E session's deterministic global reserve candidate."""
     _require(base_fixture.get("fixture_id") == POLARIS_BASE_SLOT_ID,
              "Polaris replacement candidate is not tied to the t30 base slot")
     source = base_fixture.get("source") or {}
@@ -319,8 +364,9 @@ def _polaris_candidate(base_fixture: Mapping[str, Any]) -> dict[str, Any]:
     return {
         **dict(base_fixture),
         "fixture_id": POLARIS_CANDIDATE_ID,
-        "base_fixture_id": POLARIS_BASE_SLOT_ID,
-        "candidate_for_fixture_id": POLARIS_BASE_SLOT_ID,
+        "base_fixture_id": POLARIS_CANDIDATE_ID,
+        "candidate_for_fixture_id": GLOBAL_RESERVE_SLOT,
+        "reserve_candidate": True,
         "turn": 33,
         "source_turn": 32,
         "fact_id": "polaris mark",
@@ -331,18 +377,50 @@ def _polaris_candidate(base_fixture: Mapping[str, Any]) -> dict[str, Any]:
         "expected_values": ["Marble-4-Juliet"],
         "old_values": [],
         "substitution": {
-            "status": "SUBSTITUTED",
-            "original_fixture_id": POLARIS_BASE_SLOT_ID,
-            "replacement_fixture_id": POLARIS_CANDIDATE_ID,
-            "session_id": f"certified_34_turn:{source_sha256}",
-            "replacement_split": "eval",
-            "replacement_selector": {"turn": 33},
+            "status": "RESERVE",
             "reason": (
                 "deterministic final-turn recall of the existing turn-32 "
-                "Polaris fact if the registered t30 slot is unplantable"
+                "Polaris fact for the DET1.9 cross-session reserve pool"
             ),
         },
     }
+
+
+def _sup_reserve_fixture(
+    source: Path, fixture_source: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Bind one distinct reserve probe to an existing certified SUP session."""
+    session_id = str(fixture_source.get("session_id", ""))
+    _require(session_id in SUP_RESERVE_PROBES,
+             f"supersession session has no frozen DET1.9 reserve: {session_id}")
+    reserve = dict(SUP_RESERVE_PROBES[session_id])
+    expected = str(reserve["expected_values"][0])
+    owners = [
+        dict(node) for node in fixture_source.get("nodes", ())
+        if node.get("role") == "competitor"
+        and str(node.get("value", "")).casefold() == expected.casefold()
+        and expected.casefold() in str(node.get("text", "")).casefold()
+    ]
+    _require(len(owners) == 1,
+             f"DET1.9 reserve lacks one competitor-owned source fact: {session_id}")
+    reserve.update({
+        "base_fixture_id": reserve["fixture_id"],
+        "candidate_for_fixture_id": GLOBAL_RESERVE_SLOT,
+        "reserve_candidate": True,
+        "source_family": "supersession_battery_on_gpt_oss",
+        "session_id": session_id,
+        "split": "eval",
+        "source": file_record(source),
+        "source_node_id": str(owners[0]["node_id"]),
+        "substitution": {
+            "status": "RESERVE",
+            "reason": (
+                "distinct competitor-owned fact appended after the registered "
+                "probes in its certified supersession session"
+            ),
+        },
+    })
+    return reserve
 
 
 def _install_polaris_probe(e2e: Any) -> Any:
@@ -576,11 +654,32 @@ def _run_e2e(ctx: Mapping[str, Any], spec: str, *, verbal: bool) -> tuple[Path, 
         resumed_from = file_record(predecessor_path)
 
     raw_rows = attempt_dir / "raw_rows.jsonl"
-    base_fixtures = [
+    all_split_fixtures = [
         row for row in ctx["registration"]["fixtures"]
-        if row.get("source_family") == "certified_34_turn"
-        and row.get("split") == selected_split
+        if row.get("split") == selected_split
     ]
+    certified_sources = {
+        str((row.get("source") or {}).get("sha256", ""))
+        for row in ctx["registration"]["fixtures"]
+        if row.get("source_family") == "certified_34_turn"
+    }
+    _require(len(certified_sources) == 1 and "" not in certified_sources,
+             "registration does not bind one certified E2E session")
+    certified_session_id = f"certified_34_turn:{next(iter(certified_sources))}"
+    if worker == PLANT_REGISTRATION:
+        base_fixtures = [
+            row for row in all_split_fixtures
+            if row.get("source_family") == "certified_34_turn"
+        ]
+    else:
+        base_fixtures = []
+        for base_fixture in all_split_fixtures:
+            effective = _effective_fixture(ctx, base_fixture)
+            if (
+                effective.get("source_family") == "certified_34_turn"
+                and effective.get("session_id") == certified_session_id
+            ):
+                base_fixtures.append(base_fixture)
     selected: dict[int, dict[str, Any]] = {}
     for base_fixture in base_fixtures:
         fixture = _effective_fixture(ctx, base_fixture)
@@ -721,18 +820,37 @@ def _run_sup(ctx: Mapping[str, Any], spec: str, *, verbal: bool,
              "supersession battery layout is not the registered four files")
     source = SUP_SOURCES[index - 1]
     fixture_source = read_json(source)
-    fixture_probe_ids = {
-        str(probe["probe_id"]) for probe in fixture_source["probes"]
-    }
-    base_registered = {
-        str(row["probe_id"]): row
-        for row in ctx["registration"]["fixtures"]
-        if row.get("source_family") == "supersession_battery_on_gpt_oss"
-        and str(row["probe_id"]) in fixture_probe_ids
-    }
+    reserve = _sup_reserve_fixture(source, fixture_source)
+    session_probes = [
+        *[dict(probe) for probe in fixture_source["probes"]],
+        {key: reserve[key] for key in (
+            "probe_id", "question", "expected_values", "stale_values",
+            "wrong_fact_values",
+        )},
+    ]
+    fixture_probe_ids = {str(probe["probe_id"]) for probe in session_probes}
+    if ctx["worker"] == PLANT_REGISTRATION:
+        base_fixtures = [
+            row for row in ctx["registration"]["fixtures"]
+            if row.get("source_family") == "supersession_battery_on_gpt_oss"
+            and row.get("session_id") == fixture_source.get("session_id")
+        ]
+        effective_fixtures = [dict(row) for row in base_fixtures]
+        effective_fixtures.append(reserve)
+    else:
+        effective_fixtures = []
+        for base_fixture in ctx["registration"]["fixtures"]:
+            if base_fixture.get("split") != "eval":
+                continue
+            effective = _effective_fixture(ctx, base_fixture)
+            if (
+                effective.get("source_family")
+                == "supersession_battery_on_gpt_oss"
+                and effective.get("session_id") == fixture_source.get("session_id")
+            ):
+                effective_fixtures.append(effective)
     registered: dict[str, dict[str, Any]] = {}
-    for base_fixture in base_registered.values():
-        fixture = _effective_fixture(ctx, base_fixture)
+    for fixture in effective_fixtures:
         probe_id = str(fixture["probe_id"])
         _require(probe_id not in registered,
                  f"effective supersession fixtures collide at {probe_id}")
@@ -748,7 +866,7 @@ def _run_sup(ctx: Mapping[str, Any], spec: str, *, verbal: bool,
             attempt_dir, ctx["runtime"])
         _install_lived_nodes(repo, e2e, fixture_source)
         original = e2e.probe_multimount_chat
-        for probe in fixture_source["probes"]:
+        for probe in session_probes:
             probe_id = str(probe["probe_id"])
             if probe_id not in registered:
                 continue
@@ -790,7 +908,9 @@ def _run_sup(ctx: Mapping[str, Any], spec: str, *, verbal: bool,
         "process_instance_sha256": ctx["process"]["process_instance_sha256"],
         "fixture_source": file_record(source),
         "node_count": len(fixture_source["nodes"]),
-        "probe_count": len(fixture_source["probes"]),
+        "source_probe_count": len(fixture_source["probes"]),
+        "reserve_probe_count": 1,
+        "probe_count": len(session_probes),
         "protocol": "CHRONOLOGICAL_ARENA_FEED_THEN_INLINE_FORK",
     }
     evidence_path = write_content_addressed(

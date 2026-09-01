@@ -31,6 +31,8 @@ from scripts.grm_det1_5_gpu import (
     validate_verbal_chronology,
 )
 from scripts.grm_det1_common import DETECTORS, DETError, VERBAL_QUESTION
+from scripts.grm_det1_5_workers import SUP_SOURCES, _sup_reserve_fixture
+from scripts.grm_det1_common import read_json
 
 
 def _sha(character: str) -> str:
@@ -470,11 +472,24 @@ def test_lived_admission_target_overrides_stale_raw_rank_one_diagnostic():
     assert bound["plant_registry"] == registry_record
 
 
-def test_registration_selects_only_unique_lawful_same_session_reserve():
+def test_registration_selects_canonical_unused_cross_session_reserve():
     fixture_ids = [f"slot_{index:02d}" for index in range(14)]
-    registration = {"fixtures": [
-        {"fixture_id": fixture_id} for fixture_id in fixture_ids
-    ]}
+    fixtures = [
+        {
+            "fixture_id": fixture_id,
+            "split": "calibration" if index < 2 else "eval",
+            "source_family": "certified_34_turn",
+            "source": {"sha256": "a" * 64},
+        }
+        for index, fixture_id in enumerate(fixture_ids)
+    ]
+    for index in range(1, 5):
+        fixtures[index + 1].update({
+            "source_family": "supersession_battery_on_gpt_oss",
+            "session_id": f"session_{index}",
+            "source": {"sha256": str(index) * 64},
+        })
+    registration = {"fixtures": fixtures}
     candidates = [
         {
             "schema": "grm.det1_7.plant_observation.v1",
@@ -493,31 +508,86 @@ def test_registration_selects_only_unique_lawful_same_session_reserve():
         }
         for fixture_id in fixture_ids
     ]
-    candidates.append({
-        "schema": "grm.det1_7.plant_observation.v1",
-        "row_id": "polaris:plant_registration",
-        "fixture_id": "polaris",
-        "candidate_for_fixture_id": "slot_12",
-        "effective_fixture_id": "polaris",
-        "status": "LAWFUL_LIVED_TARGET",
-        "substitution": {
-            "status": "SUBSTITUTED",
-            "reason": "primary served control failed",
-        },
-    })
+    for index in range(5):
+        reserve_id = f"reserve_{index}"
+        if index == 0:
+            source_family = "certified_34_turn"
+            session_id = f"certified_34_turn:{'a' * 64}"
+            selector = {"turn": 33}
+            source = {"sha256": "a" * 64}
+        else:
+            source_family = "supersession_battery_on_gpt_oss"
+            session_id = f"session_{index}"
+            selector = {"probe_id": f"probe_{index}"}
+            source = {"sha256": str(index) * 64}
+        candidates.append({
+            "schema": "grm.det1_7.plant_observation.v1",
+            "row_id": f"{reserve_id}:plant_registration",
+            "fixture_id": reserve_id,
+            "candidate_for_fixture_id": "__DET1_9_ANY_EVAL_BASE_SLOT__",
+            "effective_fixture_id": reserve_id,
+            "reserve_candidate": True,
+            "status": (
+                "UNPLANTABLE" if index == 0 else "LAWFUL_LIVED_TARGET"
+            ),
+            "effective_fixture": {
+                "fixture_id": reserve_id,
+                "split": "eval",
+                "source_family": source_family,
+                "session_id": session_id,
+                "selector": selector,
+                "question": f"reserve question {index}",
+                "expected_values": [f"reserve-value-{index}"],
+                "stale_values": [],
+                "wrong_fact_values": [],
+                "source": source,
+            },
+            "substitution": {"status": "NONE"},
+        })
 
     selected, substitutions = _select_registration_observations(
         registration, candidates)
+    reversed_selected, reversed_substitutions = _select_registration_observations(
+        registration, list(reversed(candidates)))
 
     assert len(selected) == 14
     assert selected[12]["fixture_id"] == "slot_12"
-    assert selected[12]["effective_fixture_id"] == "polaris"
+    assert selected[12]["effective_fixture_id"] == "reserve_1"
+    assert selected == reversed_selected
+    assert substitutions == reversed_substitutions
     assert substitutions == [{
         "base_fixture_id": "slot_12",
-        "effective_fixture_id": "polaris",
-        "reason": "primary served control failed",
-        "same_certified_session": True,
+        "effective_fixture_id": "reserve_1",
+        "source_family": "supersession_battery_on_gpt_oss",
+        "session_id": "session_1",
+        "selector": {"probe_id": "probe_1"},
+        "reason": (
+            "primary slot_12 was unplantable: served answer incorrect; "
+            "selected reserve_1 by "
+            "DET1_9_PRIMARY_THEN_CANONICAL_UNUSED_LAWFUL_RESERVE_V1"
+        ),
+        "same_certified_session": False,
+        "selection_rule_id": (
+            "DET1_9_PRIMARY_THEN_CANONICAL_UNUSED_LAWFUL_RESERVE_V1"
+        ),
     }]
+
+
+def test_det1_9_supersession_reserves_bind_distinct_certified_source_facts():
+    reserves = [
+        _sup_reserve_fixture(path, read_json(path)) for path in SUP_SOURCES
+    ]
+
+    assert len(reserves) == 4
+    assert len({row["fixture_id"] for row in reserves}) == 4
+    assert len({(row["session_id"], row["probe_id"]) for row in reserves}) == 4
+    assert all(row["reserve_candidate"] is True for row in reserves)
+    assert all(row["split"] == "eval" for row in reserves)
+    assert all(
+        row["source_family"] == "supersession_battery_on_gpt_oss"
+        for row in reserves
+    )
+    assert all(row["source_node_id"] for row in reserves)
 
 
 def test_registration_ablation_uses_fork_protocol_and_member_delta(

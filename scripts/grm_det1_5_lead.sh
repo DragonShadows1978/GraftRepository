@@ -20,6 +20,11 @@ export PYTHONPATH="$ROOT:/mnt/ForgeRealm/Project-Tensor/tensor_cuda${PYTHONPATH:
 
 "$PY" "$DRIVER" selftest --run-dir "$RUN_DIR"
 "$PY" "$DRIVER" author-det1-7-source --run-dir "$RUN_DIR"
+# GRM-DET1.9: the campaign-r4 t30/t33 lived-control finding is a hard
+# prerequisite of plant-registration, so it must be recorded before the
+# registry can freeze.  Authoring is guarded (author-if-absent, else
+# revalidate) because the receipt payload carries created_utc.
+"$PY" "$DRIVER" author-det1-9-finding --run-dir "$RUN_DIR"
 "$PY" "$DRIVER" inventory --run-dir "$RUN_DIR"
 "$PY" "$DRIVER" det1-7-cpu-preflight --run-dir "$RUN_DIR"
 "$PY" "$DRIVER" gpu-preflight --run-dir "$RUN_DIR" --write-receipt
