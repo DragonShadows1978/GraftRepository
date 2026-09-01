@@ -55,12 +55,23 @@
 #     right of way) and any parallel seat can take the lock between probes;
 #   * lock wait 7200 s: this battery yields to whatever already holds it.
 #
-# NOTE FOR THE LEAD: the Python driver referenced below
-# (scripts/lsr_p1_route_probe.py) is NOT written by this seat -- writing it
-# would mean authoring a GPU instrument this seat cannot run or verify.
-# This file states the required measurement, the flags, and the discipline
-# so the lead can commission it deliberately. Everything above the GPU
-# section is already done and needs no lease.
+# INSTRUMENT: scripts/lsr_p1_route_probe.py.
+#   `selftest`    -- 16 pure-function cases over synthetic score tables,
+#                    including NaN / inf / never-scored / non-finite lex
+#                    bonus. No GPU, no weights. Runs as a CPU leg below and
+#                    gates the leases: a broken attribution must not be
+#                    handed a GPU.
+#   `score-table` -- rebuilds the lived arena for one probe under a self
+#                    lease and captures the real per-candidate table.
+#
+# The attribution logic was mutation-tested: seven independent mutants
+# (dropping each finite guard, the sort, the window truncation, the
+# normalize stage, and the debias stage in both directions) are all caught
+# by the selftests. This seat could not execute the GPU leg (no GPU in its
+# boundaries), so `score-table` is authored and CPU-verified but UNRUN --
+# its first real execution is by the lead. The `reconstruction_matches_
+# production` field is the guard: the instrument re-runs the production
+# route() and refuses (exit 1, RED) if its reconstruction disagrees.
 #
 # APPEND-ONLY: receipts belong under artifacts/lsr_p1/, content-addressed,
 # with their own provenance (NOT a DET envelope).
@@ -95,6 +106,14 @@ echo
 echo "-- per-probe stage adjudication (no lease) --"
 "$PY" scripts/lsr_p1_adjudicate.py
 
+echo
+echo "-- route-probe selftests: synthetic score tables incl. non-finite --"
+# Pure-function tests of the M6 attribution logic (drop sites D1/D2/D3,
+# score ordering, window truncation, debias, normalize). No GPU, no
+# weights. If this fails, the GPU battery below would produce an
+# attribution that cannot be trusted, so it gates the leases.
+"$PY" scripts/lsr_p1_route_probe.py selftest --emit
+
 # ---------------------------------------------------------------- GPU legs
 # One lease per probe, 30 s gap between them. Only the probes whose verdict
 # rests on an un-persisted router input are measured; the four
@@ -108,12 +127,16 @@ PROBES=(
 
 echo
 echo "-- GPU route-score battery: ${#PROBES[@]} probes, one lease each --"
-echo "   REQUIRES: scripts/lsr_p1_route_probe.py (to be commissioned)"
-if [ ! -f scripts/lsr_p1_route_probe.py ]; then
-  echo
-  echo "   scripts/lsr_p1_route_probe.py is absent."
-  echo "   The CPU legs above are complete and the six stage verdicts stand."
-  echo "   Skipping the GPU battery rather than inventing a measurement."
+# Captures the router's real per-candidate score table for the probes whose
+# verdict rests on an un-persisted router input, and classifies every
+# candidate M6-FILTER-CONVICTED / SCORE-RANK-CONVICTED / OTHER.
+# The four ADMISSION-PRUNE probes need no GPU: their planned/fitted/dropped
+# fields are fully persisted.
+#
+# Set LSR_SKIP_GPU=1 to run the CPU legs alone (the six stage verdicts are
+# complete without this battery; it only names the truncation mechanism).
+if [ "${LSR_SKIP_GPU:-0}" = "1" ]; then
+  echo "   LSR_SKIP_GPU=1 -- skipping the GPU battery by request."
   echo
   echo "== LSR Phase 1 CPU legs complete; receipts under artifacts/lsr_p1/ =="
   exit 0
