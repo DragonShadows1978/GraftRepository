@@ -181,6 +181,9 @@ def _case(tmp_path: Path) -> tuple[Path, Path, dict[str, dict]]:
     order_path.with_name("GRM_DET1_9_SUBSTITUTION_POOL.md").write_text(
         "# ORDER GRM-DET1.9\n", encoding="utf-8"
     )
+    order_path.with_name("GRM_DET1_11_ACHIEVED_COUNT.md").write_text(
+        "# ORDER GRM-DET1.11\n", encoding="utf-8"
+    )
     registration_path = tmp_path / "registration.json"
     registration = _base_registration()
     _write_json(registration_path, registration)
@@ -295,6 +298,13 @@ def test_derives_exact_base_slots_and_lived_targets_then_validates(tmp_path: Pat
         "eval_count": 12,
         "eval_served_count": 12,
         "eval_planted_count": 12,
+        # DET1.11: a full-population run reports achieved == registered.
+        "achieved_eval_pairs": 12,
+        "registered_eval_pairs": 12,
+        "excluded_eval_pairs": 0,
+        "achieved_eval_pair_floor": 8,
+        "achieved_of_registered": "12 of 12",
+        "excluded_fixture_ids": [],
         "substitution_count": 0,
     }
 

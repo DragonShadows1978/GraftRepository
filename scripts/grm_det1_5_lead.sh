@@ -25,6 +25,14 @@ export PYTHONPATH="$ROOT:/mnt/ForgeRealm/Project-Tensor/tensor_cuda${PYTHONPATH:
 # registry can freeze.  Authoring is guarded (author-if-absent, else
 # revalidate) because the receipt payload carries created_utc.
 "$PY" "$DRIVER" author-det1-9-finding --run-dir "$RUN_DIR"
+# GRM-DET1.11: the lived-serving reliability census is a receipts-only
+# artifact over the observations already on disk.  It is authored before the
+# campaign so the successor investigation's evidence base exists whether or
+# not this round's race completes.  Writing is content-addressed and
+# append-only, so re-running the lead script never duplicates it.
+"$PY" "$ROOT/scripts/grm_det1_11_census.py" selftest
+"$PY" "$ROOT/scripts/grm_det1_11_census.py" write
+
 "$PY" "$DRIVER" inventory --run-dir "$RUN_DIR"
 "$PY" "$DRIVER" det1-7-cpu-preflight --run-dir "$RUN_DIR"
 "$PY" "$DRIVER" gpu-preflight --run-dir "$RUN_DIR" --write-receipt

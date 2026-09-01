@@ -58,7 +58,11 @@ from scripts.grm_det1_5_gpu import (  # noqa: E402
     validate_split,
     validate_verbal_chronology,
 )
-from scripts.grm_det1_7_registry import validate_plant_registry  # noqa: E402
+from scripts.grm_det1_7_registry import (  # noqa: E402
+    ACHIEVED_EVAL_PAIR_FLOOR,
+    REGISTERED_EVAL_PAIR_COUNT,
+    validate_plant_registry,
+)
 
 
 DET1_5_ORDER = ROOT / "orders" / "GRM_DET1_5_RACE_CAMPAIGN.md"
@@ -299,7 +303,18 @@ def prediction_verdict(table: Sequence[Mapping[str, Any]]) -> str:
     )
 
 
-def _prediction_sentence(verdict: str) -> str:
+def _achieved_clause(achieved_pairs: int) -> str:
+    """The DET1.11 population clause every verdict/table carries."""
+    achieved = int(achieved_pairs)
+    _require(
+        ACHIEVED_EVAL_PAIR_FLOOR <= achieved <= REGISTERED_EVAL_PAIR_COUNT,
+        f"achieved pair count {achieved} is outside the registered floor "
+        f"{ACHIEVED_EVAL_PAIR_FLOOR}..{REGISTERED_EVAL_PAIR_COUNT}",
+    )
+    return f"at {achieved} of {REGISTERED_EVAL_PAIR_COUNT} registered pairs"
+
+
+def _prediction_sentence(verdict: str, achieved_pairs: int) -> str:
     detail = {
         "SUPPORTED": (
             "D-LQR is a highest-F1 viable winner and every viable "
@@ -315,7 +330,13 @@ def _prediction_sentence(verdict: str) -> str:
         ),
     }
     _require(verdict in detail, f"forbidden prediction verdict: {verdict}")
-    return f"PREDICTION VERDICT: {verdict} — {detail[verdict]}"
+    # DET1.11: the achieved population is named IN the verdict sentence, so
+    # the verdict can never be read as if it rested on the full registered
+    # twelve.  The verdict vocabulary itself is unchanged.
+    return (
+        f"PREDICTION VERDICT: {verdict} "
+        f"({_achieved_clause(achieved_pairs)}) — {detail[verdict]}"
+    )
 
 
 def _pct(value: float) -> str:
@@ -326,15 +347,36 @@ def _latency(value: Any) -> str:
     return "N/A" if value is None else f"{float(value):.1f}"
 
 
-def race_table_markdown(table: Sequence[Mapping[str, Any]]) -> str:
+def race_table_markdown(
+    table: Sequence[Mapping[str, Any]],
+    *,
+    achieved_pairs: int | None = None,
+    excluded_fixture_ids: Sequence[str] = (),
+) -> str:
     _require(
         [str(row.get("detector")) for row in table] == list(DETECTORS),
         "race table requires the four registered detector rows in order",
     )
-    lines = [
+    lines: list[str] = []
+    if achieved_pairs is not None:
+        # DET1.11: the achieved population heads the table, so N is read
+        # before any metric is.
+        lines.append(
+            f"**Population: {_achieved_clause(achieved_pairs)}** "
+            f"({achieved_pairs} planted-miss / {achieved_pairs} served)."
+        )
+        dropped = [str(value) for value in excluded_fixture_ids]
+        if dropped:
+            lines.append("")
+            lines.append(
+                f"Excluded ({len(dropped)}): {', '.join(dropped)} — lived "
+                f"served control unlawful, reserve pool exhausted."
+            )
+        lines.append("")
+    lines.extend([
         "| Detector | Recall | False-positive rate | Precision | F1 | Viable | Median latency (token, 0-based) |",
         "|---|---:|---:|---:|---:|:---:|---:|",
-    ]
+    ])
     for row in table:
         lines.append(
             f"| {row['detector']} | {_pct(row['recall'])} "
@@ -359,7 +401,13 @@ def _registration(run_dir: Path) -> tuple[Path, dict[str, Any]]:
         [str(row.get("fixture_id")) for row in calibration] == list(CALIBRATION_IDS),
         "registration calibration split drifted",
     )
-    _require(len(evaluation) == 12, "registration no longer has 12 eval fixtures")
+    # The BASE registration always carries the full registered twelve; only
+    # the achieved population downstream of it varies (DET1.11).
+    _require(
+        len(evaluation) == REGISTERED_EVAL_PAIR_COUNT,
+        f"registration no longer has {REGISTERED_EVAL_PAIR_COUNT} eval "
+        f"fixtures",
+    )
     _require(
         value.get("verbal_question_exact") == VERBAL_QUESTION,
         "registered D-VERB wording drifted",
@@ -1338,8 +1386,29 @@ def _split_ids(registry: Mapping[str, Any], split: str) -> list[str]:
 
 
 def _eval_ids(registry: Mapping[str, Any]) -> list[str]:
+    """The ACHIEVED evaluation slot order the registry certified.
+
+    DET1.11: the registered population is twelve; the achieved population is
+    what actually produced lawful lived controls.  The registered floor is
+    re-enforced here because this list is the choke point every downstream
+    coverage check derives from.
+    """
     values = _split_ids(registry, "eval")
-    _require(len(values) == 12, "plant registry no longer has 12 eval fixtures")
+    excluded = [
+        str(row.get("fixture_id"))
+        for row in registry.get("excluded_slots") or ()
+    ]
+    _require(
+        len(values) + len(excluded) == REGISTERED_EVAL_PAIR_COUNT,
+        f"plant registry eval fixtures plus exclusions must equal the "
+        f"registered {REGISTERED_EVAL_PAIR_COUNT}, got "
+        f"{len(values)}+{len(excluded)}",
+    )
+    _require(
+        len(values) >= ACHIEVED_EVAL_PAIR_FLOOR,
+        f"DET1.11 achieved-pair floor not met: {len(values)} evaluation "
+        f"pairs is below the registered floor of {ACHIEVED_EVAL_PAIR_FLOOR}",
+    )
     return values
 
 
@@ -1679,14 +1748,37 @@ def _validate_plant_registration(
     historical_outputs: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
     validation = validate_plant_registry(registry, record_root=ROOT)
+    # DET1.11: pairing must be COMPLETE over the ACHIEVED population — every
+    # certified eval slot carries both a served and a planted row — and the
+    # achieved count must clear the registered floor.  The registry validator
+    # already re-enforces the floor; this re-checks its projection so the
+    # analyzer never trusts a count it did not verify.
+    achieved = validation.get("achieved_eval_pairs")
     _require(
         validation.get("status") == "PASS"
-        and validation.get("fixture_count") == 14
         and validation.get("calibration_count") == 2
-        and validation.get("eval_count") == 12
-        and validation.get("eval_served_count") == 12
-        and validation.get("eval_planted_count") == 12,
+        and isinstance(achieved, int)
+        and validation.get("eval_count") == achieved
+        and validation.get("eval_served_count") == achieved
+        and validation.get("eval_planted_count") == achieved,
         "DET1.7 plant registry did not validate complete pairing",
+    )
+    _require(
+        validation.get("registered_eval_pairs") == REGISTERED_EVAL_PAIR_COUNT
+        and int(achieved) + int(validation.get("excluded_eval_pairs", -1))
+        == REGISTERED_EVAL_PAIR_COUNT,
+        "plant registry achieved+excluded does not reconstruct the "
+        "registered evaluation population",
+    )
+    _require(
+        int(achieved) >= ACHIEVED_EVAL_PAIR_FLOOR,
+        f"DET1.11 achieved-pair floor not met: {achieved} evaluation pairs "
+        f"is below the registered floor of {ACHIEVED_EVAL_PAIR_FLOOR}",
+    )
+    _require(
+        validation.get("fixture_count")
+        == int(achieved) + int(validation.get("calibration_count", 0)),
+        "plant registry fixture count differs from its achieved population",
     )
     _binding(receipt, "plant_registry", registry_path, "plant_registration")
     _require(
@@ -1726,12 +1818,33 @@ def _validate_plant_registration(
     )
     _require(
         receipt.get("counts")
-        == {"served": 12, "planted_miss": 12, "eval_pairs": 12},
-        "plant-registration did not preserve 12+12 pairing",
+        == {
+            "served": int(achieved),
+            "planted_miss": int(achieved),
+            "eval_pairs": int(achieved),
+        },
+        "plant-registration did not preserve achieved-pair pairing",
     )
     _require(
+        receipt.get("achieved_counts") == registry.get("achieved_counts"),
+        "plant-registration achieved-count projection differs from registry",
+    )
+    _require(
+        receipt.get("excluded_slots") == list(
+            registry.get("excluded_slots") or ()),
+        "plant-registration exclusion enumeration differs from registry",
+    )
+    _require(
+        receipt.get("excluded_count")
+        == len(registry.get("excluded_slots") or ()),
+        "plant-registration excluded_count differs from its enumeration",
+    )
+    # Every candidate is still collected — DET1.11 shrinks the SELECTED
+    # population, never the evidence gathered about it.
+    _require(
         receipt.get("candidate_count") == 19
-        and receipt.get("selected_count") == 14,
+        and int(receipt.get("selected_count", -1))
+        + int(receipt.get("excluded_count", -1)) == 14,
         "plant-registration candidate/selection cardinality drifted",
     )
     _require(
@@ -1994,7 +2107,9 @@ def analyze(run_dir: Path) -> Path:
         g0_keys == _expected_eval_order(registry),
         "dedicated DET-G0 rows differ from registered 12+12 coverage",
     )
-    _require_projection(g0, validate_g0_rows(g0_rows), "g0")
+    _require_projection(
+        g0, validate_g0_rows(g0_rows, expected_pairs=len(_eval_ids(registry))),
+        "g0")
     _require_row_processes(g0_rows, _process_instances(g0, "g0"), "g0")
     _validate_stage_shards(
         g0,
@@ -2170,8 +2285,17 @@ def analyze(run_dir: Path) -> Path:
     _binding(receipts["eval_verbal"], "rows", verbal_path, "eval_verbal")
     mechanistic_rows = read_jsonl(mech_path)
     verbal_rows = read_jsonl(verbal_path)
-    _require(len(mechanistic_rows) == 24, "mechanistic eval is not exactly 12+12")
-    _require(len(verbal_rows) == 24, "verbal eval is not exactly 12+12")
+    # DET1.11: both arms must cover the ACHIEVED population exactly — the
+    # per-key coverage checks below prove identity, this proves cardinality.
+    achieved_pairs = len(_eval_ids(registry))
+    _require(
+        len(mechanistic_rows) == 2 * achieved_pairs,
+        f"mechanistic eval is not exactly {achieved_pairs}+{achieved_pairs}",
+    )
+    _require(
+        len(verbal_rows) == 2 * achieved_pairs,
+        f"verbal eval is not exactly {achieved_pairs}+{achieved_pairs}",
+    )
 
     expected_keys = _expected_eval_keys(registry)
     mechanistic_keys: list[tuple[str, str]] = []
@@ -2197,12 +2321,14 @@ def analyze(run_dir: Path) -> Path:
     _require(
         mechanistic_keys == _expected_eval_order(registry)
         and set(mechanistic_keys) == expected_keys,
-        "mechanistic eval coverage differs from registered 12+12",
+        "mechanistic eval coverage differs from the achieved population",
     )
-    repeated_g0 = validate_g0_rows(mechanistic_rows)
+    repeated_g0 = validate_g0_rows(
+        mechanistic_rows, expected_pairs=achieved_pairs)
     effective_registration = effective_registration_projection(registration, registry)
     split_projection = validate_split(
-        effective_registration, calibration_rows, mechanistic_rows
+        effective_registration, calibration_rows, mechanistic_rows,
+        achieved_eval_ids=_eval_ids(registry),
     )
     _require(
         receipts["eval_mechanistic"].get("repeated_g0_validation")
@@ -2380,7 +2506,7 @@ def analyze(run_dir: Path) -> Path:
         f"registered race arithmetic disagrees: {legacy_verdict} != {verdict}",
     )
     _require(verdict in VERDICTS, "forbidden prediction-verdict vocabulary")
-    prediction_sentence = _prediction_sentence(verdict)
+    prediction_sentence = _prediction_sentence(verdict, achieved_pairs)
 
     source_rows = [
         file_record(g0_rows_path),
@@ -2429,7 +2555,8 @@ def analyze(run_dir: Path) -> Path:
                 ),
                 "frozen_before_g0_and_eval": True,
             },
-            "DET-G0_dedicated": validate_g0_rows(g0_rows),
+            "DET-G0_dedicated": validate_g0_rows(
+                g0_rows, expected_pairs=len(_eval_ids(registry))),
             "DET-G0_eval_repeat": repeated_g0,
             "DET-G1": {
                 "byte_identity": dict(g1["byte_identity"]),
@@ -2480,7 +2607,15 @@ def analyze(run_dir: Path) -> Path:
             analysis_dir, "analysis_receipt", analysis
         )
 
-    table_text = race_table_markdown(table)
+    excluded_ids = [
+        str(row.get("fixture_id"))
+        for row in registry.get("excluded_slots") or ()
+    ]
+    table_text = race_table_markdown(
+        table,
+        achieved_pairs=achieved_pairs,
+        excluded_fixture_ids=excluded_ids,
+    )
     sentence = prediction_sentence
     lines = [
         "# GRM-DET1.5 fork-substrate demand-detector race",
@@ -2498,7 +2633,7 @@ def analyze(run_dir: Path) -> Path:
         "| DET-G2 | PASS_FROZEN_PRE_EVAL |",
         "| DET-G3 | PASS_FOUR_ROWS_AND_VERDICT |",
         "",
-        "## Four-row registered race table",
+        f"## Four-row registered race table ({_achieved_clause(achieved_pairs)})",
         "",
         table_text,
         "",

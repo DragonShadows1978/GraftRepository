@@ -545,12 +545,19 @@ def test_registration_selects_canonical_unused_cross_session_reserve():
             "substitution": {"status": "NONE"},
         })
 
-    selected, substitutions = _select_registration_observations(
+    selected, substitutions, excluded = _select_registration_observations(
         registration, candidates)
-    reversed_selected, reversed_substitutions = _select_registration_observations(
+    (
+        reversed_selected,
+        reversed_substitutions,
+        reversed_excluded,
+    ) = _select_registration_observations(
         registration, list(reversed(candidates)))
 
     assert len(selected) == 14
+    # A lawful reserve was available, so nothing is excluded (DET1.11).
+    assert excluded == []
+    assert reversed_excluded == []
     assert selected[12]["fixture_id"] == "slot_12"
     assert selected[12]["effective_fixture_id"] == "reserve_1"
     assert selected == reversed_selected
@@ -886,7 +893,7 @@ def test_mechanistic_and_verbal_rows_join_one_to_one_without_signal_loss():
 def test_detector_row_join_rejects_a_missing_or_mislabelled_verbal_row():
     mechanistic = _mechanistic_rows()
     missing = _verbal_rows()[:-1]
-    with pytest.raises(DETError, match="row keys"):
+    with pytest.raises(DETError, match="disagree on row count"):
         merge_detector_rows(mechanistic, missing)
 
     mismatched = _verbal_rows()

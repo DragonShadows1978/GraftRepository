@@ -27,6 +27,19 @@ ARTIFACT_ROOT = ROOT / "artifacts" / "grm_det1"
 VERBAL_QUESTION = "Do you have the information needed to answer? YES/NO"
 DETECTORS = ("D-LQR", "D-NGH", "D-ENT", "D-VERB")
 MECHANISTIC = ("D-LQR", "D-NGH", "D-ENT")
+
+# --- GRM-DET1.11 achieved-count amendment -------------------------------
+# The registered evaluation population is twelve planted/served pairs.  The
+# ACHIEVED population is however many of those slots produced a lawful lived
+# served control; the campaign runs at that count and refuses below the
+# floor.  Both numbers live here, in the shared base module, so exactly one
+# definition governs the driver, the registry, and the analyzer alike.  The
+# floor is registered before the gate it decides and is never adjusted after
+# seeing results.
+REGISTERED_EVAL_PAIR_COUNT = 12
+REGISTERED_CALIBRATION_PAIR_COUNT = 2
+REGISTERED_FIXTURE_COUNT = 14
+ACHIEVED_EVAL_PAIR_FLOOR = 8
 CALIBRATION_IDS = ("e2e_t09_cypher_bridge", "e2e_t16_lyra_dock")
 EVAL_E2E_IDS = (
     "e2e_t05_orion_pin",
@@ -853,10 +866,21 @@ def race_metrics(
 ) -> tuple[list[dict[str, Any]], list[str], str]:
     positives = [row for row in rows if row.get("variant") == "planted_miss"]
     negatives = [row for row in rows if row.get("variant") == "served"]
-    if len(positives) < 12 or len(negatives) < 12:
+    # GRM-DET1.11: the race runs at the ACHIEVED lawful pair count, with a
+    # registered floor of 8 pairs per arm below which the campaign refuses
+    # rather than run a hollow race.  The arms must also be balanced — an
+    # unequal race has no honest recall/FPR pairing.
+    if len(positives) < ACHIEVED_EVAL_PAIR_FLOOR or (
+        len(negatives) < ACHIEVED_EVAL_PAIR_FLOOR
+    ):
         raise DETError(
-            f"registered race requires at least 12+12 rows, got "
-            f"{len(positives)}+{len(negatives)}")
+            f"DET1.11 achieved-pair floor not met: race requires at least "
+            f"{ACHIEVED_EVAL_PAIR_FLOOR}+{ACHIEVED_EVAL_PAIR_FLOOR} rows, "
+            f"got {len(positives)}+{len(negatives)}")
+    if len(positives) != len(negatives):
+        raise DETError(
+            f"race arms are unbalanced: {len(positives)} planted-miss vs "
+            f"{len(negatives)} served")
     table = []
     for detector in DETECTORS:
         pos = [detector_decision(row, detector, thresholds) for row in positives]

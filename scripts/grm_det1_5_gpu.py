@@ -53,6 +53,13 @@ from scripts.grm_det1_common import (  # noqa: E402
     write_content_addressed,
     write_json_exclusive,
 )
+from scripts.grm_det1_7_registry import (  # noqa: E402
+    ACHIEVED_EVAL_PAIR_FLOOR,
+    ACHIEVED_SELECTION_RULE_ID,
+    EXCLUSION_STATUS,
+    REGISTERED_CALIBRATION_PAIR_COUNT,
+    REGISTERED_EVAL_PAIR_COUNT,
+)
 
 
 FROZEN_RUN = ROOT / "artifacts/grm_det1/run_20260831T160525Z_2"
@@ -83,9 +90,21 @@ DET1_9_SOURCE_AUTH = (
 DET1_10_SOURCE_AUTH = (
     FROZEN_RUN / "det1_9_precollection_source_authorization_r6.json"
 )
+# DET1.11 re-authors the envelope again, for the same reason DET1.10 did: the
+# overlay's declared source set grew (three new DET1.11 files) and the current
+# bytes of seven already-declared sources moved.  The r6 artifact above is
+# immutable and retained; this successor is a new file.  r7 is deliberately
+# skipped — that number belongs to the campaign round that fail-closed on
+# sup_lumen_head, and reusing it would blur which envelope governed which run.
+# r8 was authored mid-amendment and immediately superseded when the lead
+# script picked up the census step; it is retained unused under the same
+# append-only rule (the drift guard is what caught it, working as designed).
+DET1_11_SOURCE_AUTH = (
+    FROZEN_RUN / "det1_9_precollection_source_authorization_r10.json"
+)
 # The DET1.7 public campaign/analyzer API remains stable while its active
 # collection-only authority advances through append-only successor envelopes.
-DET1_7_SOURCE_AUTH = DET1_10_SOURCE_AUTH
+DET1_7_SOURCE_AUTH = DET1_11_SOURCE_AUTH
 DET1_9_TERMINAL_AMENDMENT = FROZEN_RUN / "det1_9_plant_registry_amendment.json"
 DET1_7_TERMINAL_AMENDMENT = DET1_9_TERMINAL_AMENDMENT
 PARENT_ZERO_MARKER = FROZEN_RUN / "det1_4/zero_gate/stage_complete.json"
@@ -182,7 +201,25 @@ DET1_7_TERMINAL_STATUS = (
 )
 REGISTRATION_QUALIFICATION = "LIVED_TARGET_QUALIFICATION_ABLATION"
 DET1_9_RESERVE_COUNT = 5
-DET1_9_CANDIDATE_COUNT = 14 + DET1_9_RESERVE_COUNT
+DET1_9_BASE_SLOT_COUNT = 14
+DET1_9_CANDIDATE_COUNT = DET1_9_BASE_SLOT_COUNT + DET1_9_RESERVE_COUNT
+
+# --- GRM-DET1.11 achieved-count amendment -------------------------------
+# The campaign runs at the ACHIEVED lawful pair count.  The registered
+# population (2 calibration + 12 evaluation pairs) is unchanged and remains
+# the reference the verdict sentence quotes; what varies is how many of
+# those evaluation slots produced a lawful lived served control.  The floor
+# is imported from the registry module so exactly one number governs, and it
+# is registered before the gate it decides.
+DET1_11_ORDER = ROOT / "orders/GRM_DET1_11_ACHIEVED_COUNT.md"
+DET1_11_ACHIEVED_EVAL_PAIR_FLOOR = ACHIEVED_EVAL_PAIR_FLOOR
+DET1_11_CALIBRATION_PAIR_COUNT = REGISTERED_CALIBRATION_PAIR_COUNT
+DET1_11_REGISTERED_EVAL_PAIR_COUNT = REGISTERED_EVAL_PAIR_COUNT
+DET1_11_MIN_SELECTED_SLOTS = (
+    DET1_11_ACHIEVED_EVAL_PAIR_FLOOR + DET1_11_CALIBRATION_PAIR_COUNT
+)
+DET1_11_EXCLUSION_STATUS = EXCLUSION_STATUS
+DET1_11_SELECTION_RULE_ID = ACHIEVED_SELECTION_RULE_ID
 
 # DET1.10 amendment note on the frozen DET1.9 selection rule.  Recorded in the
 # registry policy record because the r5 fail-closed looked like a
@@ -316,25 +353,31 @@ DET1_8_ADDED_SOURCES = {
 
 DET1_9_CHANGED_SOURCES = {
     "scripts/grm_det1_5_analyze.py": (
-        "validate_and_report_cross_session_substitutions_and_findings"
+        "validate_and_report_cross_session_substitutions_and_findings_"
+        "then_det1_11_report_the_achieved_count_in_table_and_verdict"
     ),
     "scripts/grm_det1_5_gpu.py": (
-        "collect_select_freeze_and_bind_det1_9_cross_session_substitutions"
+        "collect_select_freeze_and_bind_det1_9_cross_session_substitutions_"
+        "then_det1_11_exclude_unlawful_slots_and_run_at_achieved_count"
     ),
     "scripts/grm_det1_5_lead.sh": (
-        "author_det1_9_finding_receipt_before_plant_registration"
+        "author_det1_9_finding_receipt_before_plant_registration_"
+        "then_det1_11_author_the_lived_serving_census_before_the_campaign"
     ),
     "scripts/grm_det1_5_workers.py": (
         "collect_distinct_reserves_from_certified_campaign_sessions"
     ),
     "scripts/grm_det1_7_registry.py": (
-        "freeze_det1_9_cross_session_substitution_policy_and_table"
+        "freeze_det1_9_cross_session_substitution_policy_and_table_"
+        "then_det1_11_achieved_population_exclusions_floor_and_projection"
     ),
     "tests/test_grm_det1_5_campaign.py": (
-        "campaign_cross_session_selection_and_receipt_contracts"
+        "campaign_cross_session_selection_and_receipt_contracts_"
+        "then_det1_11_selection_exclusion_and_detector_arity_contracts"
     ),
     "tests/test_grm_det1_7_registry.py": (
-        "certified_cross_session_registry_contracts"
+        "certified_cross_session_registry_contracts_"
+        "then_det1_11_achieved_count_validation_projection_contracts"
     ),
     # DET1.10 overlay: separator normalization of the whole-value comparator
     # (ADM2.2 / DET1.4 value-semantics lineage) plus the reserve-selection
@@ -344,7 +387,8 @@ DET1_9_CHANGED_SOURCES = {
     # entries below are the DET1.10-only additions; the DET1.9 entries above
     # are unchanged.
     "scripts/grm_det1_common.py": (
-        "det1_10_separator_normalized_whole_value_comparator"
+        "det1_10_separator_normalized_whole_value_comparator_"
+        "then_det1_11_registered_population_constants_and_race_floor"
     ),
     "scripts/grm_det1_baseline_registry.py": (
         "det1_10_separator_normalized_baseline_value_classification"
@@ -365,6 +409,21 @@ DET1_9_ADDED_SOURCES = {
     ),
     "tests/test_grm_det1_9_source_auth.py": (
         "det1_9_source_authorization_cpu_contracts"
+    ),
+    # DET1.11 overlay additions.  Declared on the DET1.9 envelope for the
+    # same reason DET1.10's changes were: DET1.11 changes no DET1.9 evidence
+    # and the campaign gate reconstructs its inventory from the same
+    # immutable DET1.8 predecessor.  These are NEW files, so they belong in
+    # the added set — a changed source must have a predecessor, an added one
+    # must not.
+    "scripts/grm_det1_11_census.py": (
+        "lived_serving_reliability_census_receipts_only_no_cause_analysis"
+    ),
+    "tests/test_grm_det1_11_achieved.py": (
+        "det1_11_achieved_pair_floor_and_achieved_count_reporting_contracts"
+    ),
+    "tests/test_grm_det1_11_census.py": (
+        "det1_11_lived_serving_census_classification_and_receipt_contracts"
     ),
 }
 
@@ -777,11 +836,21 @@ def validate_served_control(
     }
 
 
-def validate_g0_rows(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
-    """Validate the registered 12-pair planted-miss gate."""
-    _require(len(rows) == 24,
-             f"DET-G0 requires 12 served + 12 planted rows, got {len(rows)}")
-    pairs = _pair_rows(rows, expected_pairs=12)
+def validate_g0_rows(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    expected_pairs: int = DET1_11_REGISTERED_EVAL_PAIR_COUNT,
+) -> dict[str, Any]:
+    """Validate the achieved-pair planted-miss gate.
+
+    DET1.11: ``expected_pairs`` is the ACHIEVED evaluation pair count taken
+    from the frozen plant registry, defaulting to the registered 12 so a
+    full-population run behaves exactly as before.
+    """
+    _require(len(rows) == 2 * int(expected_pairs),
+             f"DET-G0 requires {expected_pairs} served + {expected_pairs} "
+             f"planted rows, got {len(rows)}")
+    pairs = _pair_rows(rows, expected_pairs=int(expected_pairs))
     delta_count = 0
     delta_receipt_count = 0
     observed_delta_field_count = 0
@@ -929,14 +998,17 @@ def validate_g0_rows(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         "gate_pass": True,
         "counts": {
             "fixtures": len(pairs),
-            "served": 12,
-            "planted_miss": 12,
+            "served": len(pairs),
+            "planted_miss": len(pairs),
         },
+        "achieved_of_registered": (
+            f"{len(pairs)} of {DET1_11_REGISTERED_EVAL_PAIR_COUNT}"
+        ),
         "registered_delta_count": delta_count,
         "fork_hydration_delta_receipt_count": delta_receipt_count,
         "observed_delta_field_count": observed_delta_field_count,
         "withheld_alias_count": alias_count,
-        "full_index_same_process_verified_count": 12,
+        "full_index_same_process_verified_count": len(pairs),
     }
 
 
@@ -1000,34 +1072,97 @@ def _registered_split(registration: Mapping[str, Any]) -> tuple[list[str], list[
              "registration calibration split is not exactly two fixtures")
     _require(split.get("calibration_pair_count") == 2,
              "registration calibration_pair_count is not 2")
-    _require(len(evaluation) == 12 and len(set(evaluation)) == 12,
-             "registration evaluation split is not exactly twelve fixtures")
-    _require(split.get("eval_pair_count") == 12,
-             "registration eval_pair_count is not 12")
+    # DET1.11: a base registration always carries the full registered twelve.
+    # An ACHIEVED projection carries fewer, and declares both the registered
+    # count it descends from and the slots it dropped, so the two cases stay
+    # distinguishable and neither can be forged into the other.
+    registered_count = split.get("det1_11_registered_eval_pair_count")
+    if registered_count is None:
+        _require(len(evaluation) == DET1_11_REGISTERED_EVAL_PAIR_COUNT
+                 and len(set(evaluation)) == DET1_11_REGISTERED_EVAL_PAIR_COUNT,
+                 "registration evaluation split is not exactly twelve fixtures")
+        _require(split.get("eval_pair_count")
+                 == DET1_11_REGISTERED_EVAL_PAIR_COUNT,
+                 "registration eval_pair_count is not 12")
+    else:
+        _require(registered_count == DET1_11_REGISTERED_EVAL_PAIR_COUNT,
+                 "achieved projection descends from a non-registered count")
+        dropped = [
+            str(value) for value in
+            split.get("det1_11_excluded_fixture_ids") or ()
+        ]
+        _require(len(evaluation) == len(set(evaluation)),
+                 "achieved evaluation split repeats a fixture")
+        _require(len(evaluation) + len(dropped)
+                 == DET1_11_REGISTERED_EVAL_PAIR_COUNT,
+                 "achieved evaluation split plus exclusions is not twelve")
+        _require(split.get("eval_pair_count") == len(evaluation),
+                 "achieved eval_pair_count differs from its split")
+        _require(len(evaluation) >= DET1_11_ACHIEVED_EVAL_PAIR_FLOOR,
+                 f"DET1.11 achieved-pair floor not met: {len(evaluation)} "
+                 f"evaluation pairs is below the registered floor of "
+                 f"{DET1_11_ACHIEVED_EVAL_PAIR_FLOOR}")
     _require(not set(calibration) & set(evaluation),
              "registration calibration/evaluation splits overlap")
     return calibration, evaluation
 
 
+def _achieved_eval_ids(registration: Mapping[str, Any]) -> list[str]:
+    """The evaluation slot order this registration/projection actually runs."""
+    _calibration, evaluation = _registered_split(registration)
+    return list(evaluation)
+
+
 def effective_registration_projection(
     registration: Mapping[str, Any], registry: Mapping[str, Any],
 ) -> dict[str, Any]:
-    """Substitute only fixture identities while preserving the frozen split."""
+    """Substitute only fixture identities while preserving the frozen split.
+
+    DET1.11: the registry may cover fewer than the registered evaluation
+    slots.  Excluded slots drop out of the projected split in frozen order;
+    calibration is never shrunk and every excluded slot must be declared in
+    the registry, so the projection can never silently lose a fixture.
+    """
     projected = json.loads(json.dumps(registration))
     mapping = {
         str(entry["fixture_id"]): str(entry["effective_fixture_id"])
         for entry in registry.get("entries") or ()
     }
+    excluded = {
+        str(row.get("fixture_id"))
+        for row in registry.get("excluded_slots") or ()
+    }
     base_cal, base_eval = _registered_split(registration)
-    _require(set(mapping) == set(base_cal) | set(base_eval),
-             "plant registry does not map the complete frozen split")
+    _require(not (set(mapping) & excluded),
+             "plant registry both maps and excludes a fixture")
+    _require(set(mapping) | excluded == set(base_cal) | set(base_eval),
+             "plant registry does not account for the complete frozen split")
+    _require(not (excluded & set(base_cal)),
+             "plant registry excludes a calibration fixture")
+    _require(len(set(base_eval) - excluded)
+             >= DET1_11_ACHIEVED_EVAL_PAIR_FLOOR,
+             f"DET1.11 achieved-pair floor not met: "
+             f"{len(set(base_eval) - excluded)} evaluation pairs is below "
+             f"the registered floor of {DET1_11_ACHIEVED_EVAL_PAIR_FLOOR}")
     split = projected["split_rule"]
     split["calibration"] = [mapping[value] for value in base_cal]
     split["eval_e2e"] = [mapping[str(value)] for value in
-                         registration["split_rule"]["eval_e2e"]]
+                         registration["split_rule"]["eval_e2e"]
+                         if str(value) not in excluded]
     split["eval_supersession"] = [
         mapping[str(value)] for value in
-        registration["split_rule"]["eval_supersession"]]
+        registration["split_rule"]["eval_supersession"]
+        if str(value) not in excluded]
+    # The pair counts in the projection describe the ACHIEVED population the
+    # downstream stages will actually run; the registered counts stay
+    # available under their det1_11_registered_* keys.
+    achieved = len(split["eval_e2e"]) + len(split["eval_supersession"])
+    split["det1_11_registered_eval_pair_count"] = int(
+        split.get("eval_pair_count", DET1_11_REGISTERED_EVAL_PAIR_COUNT))
+    split["eval_pair_count"] = achieved
+    split["det1_11_excluded_fixture_ids"] = [
+        str(value) for value in base_eval if str(value) in excluded
+    ]
     return projected
 
 
@@ -1035,9 +1170,33 @@ def validate_split(
     registration: Mapping[str, Any],
     calibration_rows: Sequence[Mapping[str, Any]],
     eval_rows: Sequence[Mapping[str, Any]],
+    *,
+    achieved_eval_ids: Sequence[str] | None = None,
 ) -> dict[str, Any]:
-    """Validate the frozen 2-served calibration / 12+12 evaluation split."""
-    calibration_ids, evaluation_ids = _registered_split(registration)
+    """Validate the frozen 2-served calibration / achieved evaluation split.
+
+    DET1.11: ``achieved_eval_ids`` is the evaluation slot order that actually
+    produced lawful lived controls, in frozen registration order.  When it is
+    omitted the full registered evaluation split is required, which is the
+    pre-DET1.11 behaviour.  Passing it never widens the population: the
+    achieved order must be a subsequence of the registered one.
+    """
+    calibration_ids, registered_eval_ids = _registered_split(registration)
+    if achieved_eval_ids is None:
+        evaluation_ids = registered_eval_ids
+    else:
+        evaluation_ids = [str(value) for value in achieved_eval_ids]
+        _require(len(set(evaluation_ids)) == len(evaluation_ids),
+                 "achieved evaluation split repeats a fixture")
+        _require(set(evaluation_ids).issubset(set(registered_eval_ids)),
+                 "achieved evaluation split names an unregistered fixture")
+        _require(evaluation_ids == [value for value in registered_eval_ids
+                                    if value in set(evaluation_ids)],
+                 "achieved evaluation split is not in frozen registered order")
+        _require(len(evaluation_ids) >= DET1_11_ACHIEVED_EVAL_PAIR_FLOOR,
+                 f"DET1.11 achieved-pair floor not met: "
+                 f"{len(evaluation_ids)} evaluation pairs is below the "
+                 f"registered floor of {DET1_11_ACHIEVED_EVAL_PAIR_FLOOR}")
     _require(len(calibration_rows) == 2,
              f"calibration requires 2 served rows, got {len(calibration_rows)}")
     observed_cal = []
@@ -1050,21 +1209,31 @@ def validate_split(
     observed_eval_ids = {str(row.get("fixture_id", "")) for row in eval_rows}
     _require(not set(observed_cal) & observed_eval_ids,
              "observed calibration/evaluation fixtures are not disjoint")
-    pairs = _pair_rows(eval_rows, expected_pairs=12)
+    pairs = _pair_rows(eval_rows, expected_pairs=len(evaluation_ids))
     _require(list(pairs) == evaluation_ids,
              f"evaluation order/identity drift: {list(pairs)}")
     _require(not set(observed_cal) & set(pairs),
              "observed calibration/evaluation fixtures overlap")
+    achieved = len(evaluation_ids)
     return {
         "schema": STAGE_SCHEMAS["calibration"],
         "status": "PASS",
         "calibration_fixture_ids": calibration_ids,
         "calibration_served_count": 2,
         "evaluation_fixture_ids": evaluation_ids,
-        "evaluation_served_count": 12,
-        "evaluation_planted_miss_count": 12,
+        "evaluation_served_count": achieved,
+        "evaluation_planted_miss_count": achieved,
         "calibration_count": 2,
-        "eval_counts": {"served": 12, "planted_miss": 12},
+        "eval_counts": {"served": achieved, "planted_miss": achieved},
+        "achieved_eval_pairs": achieved,
+        "registered_eval_pairs": DET1_11_REGISTERED_EVAL_PAIR_COUNT,
+        "achieved_of_registered": (
+            f"{achieved} of {DET1_11_REGISTERED_EVAL_PAIR_COUNT}"
+        ),
+        "excluded_eval_fixture_ids": [
+            value for value in registered_eval_ids
+            if value not in set(evaluation_ids)
+        ],
         "disjoint": True,
     }
 
@@ -1073,9 +1242,21 @@ def merge_detector_rows(
     mechanistic_rows: Sequence[Mapping[str, Any]],
     verbal_rows: Sequence[Mapping[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Join isolated D-VERB observations without changing mechanistic rows."""
-    _require(len(mechanistic_rows) == 24 and len(verbal_rows) == 24,
-             "detector row keys require exactly 24+24 rows")
+    """Join isolated D-VERB observations without changing mechanistic rows.
+
+    DET1.11: the arm sizes must match each other and clear the registered
+    floor, but they are no longer pinned to the full registered population.
+    """
+    _require(len(mechanistic_rows) == len(verbal_rows),
+             f"detector arms disagree on row count: "
+             f"{len(mechanistic_rows)} mechanistic vs {len(verbal_rows)} "
+             f"verbal")
+    _require(len(mechanistic_rows) >= 2 * DET1_11_ACHIEVED_EVAL_PAIR_FLOOR,
+             f"DET1.11 achieved-pair floor not met: "
+             f"{len(mechanistic_rows)} detector rows is below "
+             f"{2 * DET1_11_ACHIEVED_EVAL_PAIR_FLOOR}")
+    _require(len(mechanistic_rows) % 2 == 0,
+             "detector rows are not served/planted pairs")
     verbal_by_id: dict[str, Mapping[str, Any]] = {}
     for row in verbal_rows:
         row_id = str(row.get("row_id", ""))
@@ -1131,8 +1312,17 @@ def validate_verbal_chronology(receipt: Mapping[str, Any]) -> dict[str, Any]:
         _require(set(verbal_processes).isdisjoint(mechanistic_processes),
                  "D-VERB process set overlaps mechanistic workers")
     rows = list(receipt.get("rows") or ())
-    _require(len(rows) == 24, f"D-VERB chronology requires 24 rows, got {len(rows)}")
-    pairs = _pair_rows(rows, expected_pairs=12)
+    # DET1.11: the chronology covers the achieved population, so the row
+    # count is validated as complete pairs above the registered floor rather
+    # than as the fixed registered 24.
+    _require(len(rows) >= 2 * DET1_11_ACHIEVED_EVAL_PAIR_FLOOR
+             and len(rows) % 2 == 0
+             and len(rows) <= 2 * DET1_11_REGISTERED_EVAL_PAIR_COUNT,
+             f"D-VERB chronology requires complete achieved pairs between "
+             f"{2 * DET1_11_ACHIEVED_EVAL_PAIR_FLOOR} and "
+             f"{2 * DET1_11_REGISTERED_EVAL_PAIR_COUNT} rows, got "
+             f"{len(rows)}")
+    pairs = _pair_rows(rows, expected_pairs=len(rows) // 2)
     del pairs
     strict_after = 0
     for row in rows:
@@ -1847,8 +2037,18 @@ def _terminal_invariants() -> dict[str, Any]:
         "plant_registry_frozen_before_evaluation": True,
         "race_resume_authorized": True,
         "served_planted_pairing_preserved": True,
-        "eval_served_count": 12,
-        "eval_planted_miss_count": 12,
+        # DET1.11: the campaign runs at the ACHIEVED lawful pair count.  The
+        # registered population is unchanged and still the reference the
+        # verdict sentence quotes; the floor below is what the campaign
+        # refuses under.  Detector arms, threshold policy, and the
+        # adjudication vocabulary are untouched (see the three False flags
+        # above) — only the population size varies.
+        "eval_pair_count_policy": ACHIEVED_SELECTION_RULE_ID,
+        "registered_eval_pair_count": DET1_11_REGISTERED_EVAL_PAIR_COUNT,
+        "achieved_eval_pair_floor": DET1_11_ACHIEVED_EVAL_PAIR_FLOOR,
+        "achieved_count_amendment_order": "GRM-DET1.11",
+        "excluded_slots_enumerated_with_reasons": True,
+        "calibration_never_shrunk": True,
     }
 
 
@@ -3720,6 +3920,7 @@ def _select_registration_observations(
                  "DET1.9 reserve selector is invalid for its source family")
     selected: list[dict[str, Any]] = []
     substitutions: list[dict[str, Any]] = []
+    excluded: list[dict[str, Any]] = []
     consumed_reserve_ids: set[str] = set()
     for slot in base_ids:
         values = by_slot[slot]
@@ -3740,9 +3941,32 @@ def _select_registration_observations(
                 and str((row.get("effective_fixture") or {}).get(
                     "fixture_id", "")) not in consumed_reserve_ids
             ]
-            _require(bool(reserves),
-                     f"no unused lawful certified campaign-session reserve for {slot}: "
-                     f"primary_reason={chosen.get('unplantable_reason')!r}")
+            if not reserves:
+                # GRM-DET1.11: substitution is exhausted for this slot.  The
+                # pre-DET1.11 campaign failed closed here, which made the
+                # registered 12+12 count unreachable on a fixture population
+                # whose lived serving baseline is unreliable.  The amendment
+                # runs at the ACHIEVED lawful pair count instead: drop the
+                # slot, enumerate it with its lived-failure reason, and let
+                # the registered floor decide whether the race is still
+                # worth running.  Calibration is never dropped — the registry
+                # refuses a shrunken calibration split.
+                _require(
+                    split == "eval",
+                    f"calibration slot has no lawful lived control and no "
+                    f"reserve; DET1.11 excludes evaluation slots only: {slot} "
+                    f"primary_reason={chosen.get('unplantable_reason')!r}",
+                )
+                excluded.append({
+                    "fixture_id": slot,
+                    "split": split,
+                    "status": DET1_11_EXCLUSION_STATUS,
+                    "primary_reason": str(chosen.get("unplantable_reason")),
+                    "served_answer": chosen.get("served_answer"),
+                    "reserve_pool_exhausted": True,
+                    "selection_rule_id": DET1_11_SELECTION_RULE_ID,
+                })
+                continue
             reserve = dict(reserves[0])
             effective = dict(reserve.get("effective_fixture") or {})
             effective_id = str(effective.get("fixture_id", ""))
@@ -3777,9 +4001,21 @@ def _select_registration_observations(
         normalized["fixture_id"] = slot
         selected.append(normalized)
     effective_ids = [str(value["effective_fixture_id"]) for value in selected]
-    _require(len(effective_ids) == len(set(effective_ids)) == 14,
+    _require(len(effective_ids) == len(set(effective_ids)),
              "plant-registration effective fixtures are not one-to-one")
-    return selected, substitutions
+    # DET1.11: the achieved population is the registered one minus the
+    # excluded evaluation slots.  The floor itself is enforced in the
+    # registry, which is the artifact the analyzer validates.
+    _require(len(selected) + len(excluded) == DET1_9_BASE_SLOT_COUNT,
+             f"plant-registration selected+excluded must equal "
+             f"{DET1_9_BASE_SLOT_COUNT}, got "
+             f"{len(selected)}+{len(excluded)}")
+    _require(len(selected) >= DET1_11_MIN_SELECTED_SLOTS,
+             f"DET1.11 achieved-pair floor not met: {len(selected)} lawful "
+             f"slots is below {DET1_11_MIN_SELECTED_SLOTS} "
+             f"({DET1_11_ACHIEVED_EVAL_PAIR_FLOOR} eval pairs + "
+             f"{DET1_11_CALIBRATION_PAIR_COUNT} calibration)")
+    return selected, substitutions, excluded
 
 
 def plant_registration(
@@ -3848,7 +4084,7 @@ def plant_registration(
     _require(len(candidates) == DET1_9_CANDIDATE_COUNT,
              f"plant registration expected 14 slots + five reserves, got "
              f"{len(candidates)}")
-    selected, substitutions = _select_registration_observations(
+    selected, substitutions, excluded = _select_registration_observations(
         read_json(REGISTRATION), candidates)
     for observation in selected:
         snapshot_path = _path_from_record(
@@ -3867,14 +4103,20 @@ def plant_registration(
         observation["snapshot_member_coverage"] = member_coverage
     candidates_path = directory / "candidate_observations.jsonl"
     selected_path = directory / "selected_observations.jsonl"
+    excluded_path = directory / "excluded_slots.jsonl"
     _write_jsonl_exclusive_or_verify(candidates_path, candidates)
     _write_jsonl_exclusive_or_verify(selected_path, selected)
+    # DET1.11: the exclusion enumeration is a first-class receipt even when
+    # it is empty, so a full-population run and an amended run are read the
+    # same way.
+    _write_jsonl_exclusive_or_verify(excluded_path, excluded)
     registry = derive_plant_registry(
         REGISTRATION,
         DET1_7_ORDER,
         selected,
         created_utc=utc_now(),
         new_eval_evidence_utc=(),
+        exclusions=excluded,
         record_root=ROOT,
     )
     registry_path = write_content_addressed_registry(
@@ -3949,8 +4191,11 @@ def plant_registration(
         "shard_receipts": shard_records,
         "candidate_observations": file_record(candidates_path),
         "selected_observations": file_record(selected_path),
+        "excluded_slots_file": file_record(excluded_path),
         "candidate_count": len(candidates),
         "selected_count": len(selected),
+        "excluded_count": len(excluded),
+        "excluded_slots": excluded,
         "plant_registry": file_record(registry_path),
         "plant_registry_payload_sha256": registry[
             "registry_payload_sha256"],
@@ -3960,7 +4205,17 @@ def plant_registration(
         "per_turn_table": table,
         "snapshot_member_audit_table": member_audit_table,
         "substitutions": substitutions,
-        "counts": {"served": 12, "planted_miss": 12, "eval_pairs": 12},
+        # DET1.11: achieved counts, derived from the registry rather than
+        # asserted as literals.  achieved_counts carries the "N of 12"
+        # projection the analyzer reports.
+        "counts": {
+            "served": int(registry["pair_counts"]["eval_served_rows"]),
+            "planted_miss": int(
+                registry["pair_counts"]["eval_planted_miss_rows"]),
+            "eval_pairs": int(registry["pair_counts"]["eval_fixture_pairs"]),
+        },
+        "achieved_counts": registry["achieved_counts"],
+        "achieved_policy": registry["achieved_policy"],
         "detector_arms_active": [],
         "race_rows_emitted": False,
         "thresholds_fitted": False,
@@ -4090,7 +4345,10 @@ def _run_row_stage(
         _write_jsonl_exclusive_or_verify(rows_path, rows)
     if stage == "g0":
         assert rows_path is not None
-        gate = validate_g0_rows(rows)
+        gate = validate_g0_rows(
+            rows,
+            expected_pairs=len(_achieved_eval_ids(effective_registration)),
+        )
         receipt = {
             **common,
             **gate,
@@ -4158,16 +4416,21 @@ def _run_row_stage(
     elif stage == "eval_mechanistic":
         assert rows_path is not None
         calibration_path = campaign_root(run_dir) / "calibration/mechanistic_rows.jsonl"
+        # DET1.11: both gates run against the ACHIEVED evaluation population
+        # that the frozen registry certified, not the registered twelve.
+        achieved_eval_ids = _achieved_eval_ids(effective_registration)
         split = validate_split(
-            effective_registration, read_jsonl(calibration_path), rows)
-        repeated_g0 = validate_g0_rows(rows)
+            effective_registration, read_jsonl(calibration_path), rows,
+            achieved_eval_ids=achieved_eval_ids)
+        repeated_g0 = validate_g0_rows(
+            rows, expected_pairs=len(achieved_eval_ids))
         receipt = {
             **common,
             "gate_pass": True,
             "rows": file_record(rows_path),
             "split_validation": split,
             "repeated_g0_validation": repeated_g0,
-            "row_count": 24,
+            "row_count": len(rows),
         }
         receipt_path = write_content_addressed(
             directory, "mechanistic_eval_receipt", receipt)
@@ -4188,7 +4451,7 @@ def _run_row_stage(
                 "process_instance_sha256s"],
             "verbal_question_exact": VERBAL_QUESTION,
             "rows": file_record(rows_path),
-            "row_count": 24,
+            "row_count": len(rows),
             "chronological_session": chronological_sessions,
         }
         validation = validate_verbal_chronology({**receipt, "rows": rows})

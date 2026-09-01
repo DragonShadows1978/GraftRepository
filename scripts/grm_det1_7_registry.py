@@ -40,6 +40,36 @@ SUBSTITUTION_SELECTION_RULE_ID = (
     "DET1_9_PRIMARY_THEN_CANONICAL_UNUSED_LAWFUL_RESERVE_V1"
 )
 
+# --- GRM-DET1.11 achieved-count amendment -------------------------------
+# The registered population stays 2 calibration + 12 evaluation pairs; those
+# numbers are frozen in the base registration and are never rewritten.  What
+# DET1.11 admits is that the ACHIEVED population can be smaller, because a
+# slot whose lived served control is unlawful (and for which no lawful
+# reserve remains) cannot lawfully carry a planted/served pair.  Rather than
+# fail the campaign closed, such a slot is EXCLUDED and enumerated with its
+# lived-failure reason.
+#
+# The floor is registered here, before the gate it governs, so it can never
+# be relaxed after seeing results.  Eight pairs is the point below which the
+# race would be noise dressed as a result.
+ACHIEVED_ORDER_ID = "GRM-DET1.11"
+# The counts themselves live in grm_det1_common, the shared base module, so a
+# single definition governs the driver, this registry, and the analyzer.  They
+# are re-exported here because this module is the one that enforces them.
+from scripts.grm_det1_common import (  # noqa: E402
+    ACHIEVED_EVAL_PAIR_FLOOR,
+    REGISTERED_CALIBRATION_PAIR_COUNT,
+    REGISTERED_EVAL_PAIR_COUNT,
+    REGISTERED_FIXTURE_COUNT,
+)
+ACHIEVED_SELECTION_RULE_ID = (
+    "DET1_11_ACHIEVED_LAWFUL_PAIRS_WITH_REGISTERED_FLOOR_V1"
+)
+# Calibration fits the detector thresholds; it is not part of the race
+# population and DET1.11 does not license shrinking it.  A calibration slot
+# that fails its lived control still fails the campaign closed.
+EXCLUSION_STATUS = "EXCLUDED_LIVED_SERVED_CONTROL_UNLAWFUL"
+
 
 class RegistryError(RuntimeError):
     """A DET1.7 registration invariant was not proved."""
@@ -313,6 +343,112 @@ def _substitution_policy(amendment_record: Mapping[str, Any]) -> dict[str, Any]:
         ],
         "consume_each_reserve_at_most_once": True,
         "selection_rule_id": SUBSTITUTION_SELECTION_RULE_ID,
+    }
+
+
+def _achieved_policy(amendment_record: Mapping[str, Any]) -> dict[str, Any]:
+    """Freeze the DET1.11 achieved-count policy into the registry."""
+
+    return {
+        "amendment_order": ACHIEVED_ORDER_ID,
+        "amendment_order_record": dict(amendment_record),
+        "population_rule": (
+            "EVERY_EVAL_SLOT_WITH_A_LAWFUL_LIVED_CONTROL_GETS_ITS_PAIR"
+        ),
+        "exclusion_rule": (
+            "DROP_EVAL_SLOT_WHOSE_PRIMARY_IS_UNLAWFUL_AND_WHOSE_RESERVE_"
+            "POOL_HOLDS_NO_LAWFUL_UNUSED_MEMBER"
+        ),
+        "calibration_rule": "CALIBRATION_IS_NEVER_SHRUNK",
+        "registered_eval_pair_count": REGISTERED_EVAL_PAIR_COUNT,
+        "registered_calibration_pair_count": REGISTERED_CALIBRATION_PAIR_COUNT,
+        "registered_fixture_count": REGISTERED_FIXTURE_COUNT,
+        "achieved_eval_pair_floor": ACHIEVED_EVAL_PAIR_FLOOR,
+        "floor_registered_before_gate": True,
+        "adjudication_unchanged": True,
+        "selection_rule_id": ACHIEVED_SELECTION_RULE_ID,
+    }
+
+
+def _require_achieved_floor(
+    entries: Sequence[Mapping[str, Any]],
+    excluded: Sequence[Mapping[str, Any]],
+) -> None:
+    """Refuse a hollow race: enforce the registered achieved-pair floor.
+
+    Calibration is not part of the race population and is never shrunk, so a
+    missing calibration slot is a hard failure rather than an exclusion.
+    """
+
+    counts = _achieved_pair_counts(entries)
+    calibration = int(counts["calibration_fixture_pairs"])
+    if calibration != REGISTERED_CALIBRATION_PAIR_COUNT:
+        raise RegistryError(
+            f"calibration is never shrunk: expected "
+            f"{REGISTERED_CALIBRATION_PAIR_COUNT} calibration pairs, got "
+            f"{calibration}"
+        )
+    achieved = int(counts["eval_fixture_pairs"])
+    if achieved + len(excluded) != REGISTERED_EVAL_PAIR_COUNT:
+        raise RegistryError(
+            f"achieved eval pairs plus exclusions must equal the registered "
+            f"{REGISTERED_EVAL_PAIR_COUNT}; got {achieved}+{len(excluded)}"
+        )
+    if achieved > REGISTERED_EVAL_PAIR_COUNT:
+        raise RegistryError(
+            f"achieved eval pairs exceed the registered "
+            f"{REGISTERED_EVAL_PAIR_COUNT}: {achieved}"
+        )
+    if achieved < ACHIEVED_EVAL_PAIR_FLOOR:
+        raise RegistryError(
+            f"DET1.11 achieved-pair floor not met: {achieved} lawful "
+            f"planted/served pairs is below the registered floor of "
+            f"{ACHIEVED_EVAL_PAIR_FLOOR}; the campaign refuses rather than "
+            f"run a hollow race"
+        )
+
+
+def _achieved_pair_counts(
+    entries: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Project the ACHIEVED pair cardinalities of a registry entry set."""
+
+    calibration = [
+        entry for entry in entries if str(entry.get("split")) == "calibration"
+    ]
+    evaluation = [
+        entry for entry in entries if str(entry.get("split")) == "eval"
+    ]
+    return {
+        "all_fixture_pairs": len(entries),
+        "calibration_fixture_pairs": len(calibration),
+        "eval_fixture_pairs": len(evaluation),
+        "eval_served_rows": len(evaluation),
+        "eval_planted_miss_rows": len(evaluation),
+    }
+
+
+def _achieved_counts_projection(
+    entries: Sequence[Mapping[str, Any]],
+    excluded: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Report achieved-vs-registered evaluation population, floor included."""
+
+    counts = _achieved_pair_counts(entries)
+    achieved = int(counts["eval_fixture_pairs"])
+    return {
+        "achieved_eval_pairs": achieved,
+        "registered_eval_pairs": REGISTERED_EVAL_PAIR_COUNT,
+        "excluded_eval_pairs": len(excluded),
+        "achieved_eval_pair_floor": ACHIEVED_EVAL_PAIR_FLOOR,
+        "meets_floor": achieved >= ACHIEVED_EVAL_PAIR_FLOOR,
+        "is_full_registered_population": (
+            achieved == REGISTERED_EVAL_PAIR_COUNT
+        ),
+        "achieved_of_registered": (
+            f"{achieved} of {REGISTERED_EVAL_PAIR_COUNT}"
+        ),
+        "selection_rule_id": ACHIEVED_SELECTION_RULE_ID,
     }
 
 
@@ -919,6 +1055,87 @@ def _validate_effective_uniqueness(
         raise RegistryError("duplicate effective campaign-session selectors/replacements")
 
 
+def _exclusion_map(
+    exclusions: Any, fixture_map: Mapping[str, Mapping[str, Any]]
+) -> dict[str, dict[str, Any]]:
+    """Validate DET1.11 slot exclusions and key them by base fixture id.
+
+    An exclusion is only lawful for an EVAL slot: calibration fits the
+    detector thresholds and DET1.11 does not license shrinking it.  Every
+    exclusion must carry the lived-failure reason that produced it, so the
+    receipts can enumerate why the achieved count fell short of registered.
+    """
+
+    if exclusions is None:
+        exclusions = ()
+    if isinstance(exclusions, Mapping):
+        rows = []
+        for key, value in exclusions.items():
+            if not isinstance(value, Mapping):
+                raise RegistryError(f"exclusion {key!r} is not an object")
+            row = dict(value)
+            if "fixture_id" in row and row["fixture_id"] != str(key):
+                raise RegistryError(f"exclusion key/fixture mismatch: {key}")
+            row["fixture_id"] = str(key)
+            rows.append(row)
+    elif isinstance(exclusions, Sequence) and not isinstance(
+        exclusions, (str, bytes)
+    ):
+        rows = []
+        for row in exclusions:
+            if not isinstance(row, Mapping):
+                raise RegistryError("exclusion is not an object")
+            rows.append(dict(row))
+    else:
+        raise RegistryError("exclusions must be a mapping or sequence")
+
+    result: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        fixture_id = row.get("fixture_id")
+        if not isinstance(fixture_id, str) or not fixture_id:
+            raise RegistryError(f"invalid exclusion fixture_id: {fixture_id!r}")
+        if fixture_id in result:
+            raise RegistryError(f"duplicate exclusion fixture_id: {fixture_id}")
+        fixture = fixture_map.get(fixture_id)
+        if fixture is None:
+            raise RegistryError(
+                f"exclusion names a fixture the base registration does not "
+                f"certify: {fixture_id}"
+            )
+        split = str(fixture.get("split", ""))
+        if split != "eval":
+            raise RegistryError(
+                f"DET1.11 excludes evaluation slots only; {fixture_id} is "
+                f"split={split!r}"
+            )
+        status = row.get("status")
+        if status != EXCLUSION_STATUS:
+            raise RegistryError(
+                f"exclusion {fixture_id} must carry status "
+                f"{EXCLUSION_STATUS!r}, got {status!r}"
+            )
+        reason = row.get("primary_reason")
+        if not isinstance(reason, str) or not reason:
+            raise RegistryError(
+                f"exclusion {fixture_id} has no lived-failure primary_reason"
+            )
+        served_answer = row.get("served_answer")
+        if served_answer is not None and not isinstance(served_answer, str):
+            raise RegistryError(
+                f"exclusion {fixture_id} served_answer must be a string"
+            )
+        result[fixture_id] = {
+            "fixture_id": fixture_id,
+            "split": split,
+            "status": EXCLUSION_STATUS,
+            "primary_reason": reason,
+            "served_answer": served_answer,
+            "reserve_pool_exhausted": bool(row.get("reserve_pool_exhausted")),
+            "selection_rule_id": ACHIEVED_SELECTION_RULE_ID,
+        }
+    return result
+
+
 def _observation_map(observations: Any) -> dict[str, dict[str, Any]]:
     if isinstance(observations, Mapping):
         result = {}
@@ -1027,9 +1244,16 @@ def derive_plant_registry(
     *,
     created_utc: str,
     new_eval_evidence_utc: Sequence[str] = (),
+    exclusions: Any = (),
     record_root: Path | None = None,
 ) -> dict[str, Any]:
-    """Derive a frozen DET1.7 registry without writing any artifact."""
+    """Derive a frozen DET1.7 registry without writing any artifact.
+
+    DET1.11: ``exclusions`` enumerates base slots dropped because their lived
+    served control was unlawful and no lawful reserve remained.  The default
+    of no exclusions reproduces the pre-DET1.11 full-population registry
+    byte-for-byte apart from the added achieved-count projection.
+    """
     created = _parse_utc(created_utc, "registry created_utc")
     base_registration_path = Path(base_registration_path).resolve()
     order_path = Path(order_path).resolve()
@@ -1048,13 +1272,32 @@ def derive_plant_registry(
     )
     if AMENDMENT_ORDER_ID not in amendment_order_path.read_text(encoding="utf-8"):
         raise RegistryError("amendment order record does not identify GRM-DET1.9")
-    observed = _observation_map(observations)
-    if set(observed) != set(fixture_map):
-        missing = sorted(set(fixture_map) - set(observed))
-        extra = sorted(set(observed) - set(fixture_map))
+    achieved_order_path = order_path.with_name("GRM_DET1_11_ACHIEVED_COUNT.md")
+    achieved_amendment_record = file_record(
+        achieved_order_path, record_root=record_root
+    )
+    if ACHIEVED_ORDER_ID not in achieved_order_path.read_text(encoding="utf-8"):
         raise RegistryError(
-            f"observations must cover exactly all 14 base fixtures; "
+            "achieved-count order record does not identify GRM-DET1.11"
+        )
+    observed = _observation_map(observations)
+    # DET1.11: observations may omit EXCLUDED slots, but may never contain a
+    # fixture the base registration does not certify, and every omission must
+    # be declared as an exclusion so the achieved count is auditable.
+    exclusion_records = _exclusion_map(exclusions, fixture_map)
+    covered = set(observed) | set(exclusion_records)
+    if covered != set(fixture_map):
+        missing = sorted(set(fixture_map) - covered)
+        extra = sorted(covered - set(fixture_map))
+        raise RegistryError(
+            f"observations plus exclusions must cover exactly all "
+            f"{REGISTERED_FIXTURE_COUNT} base fixtures; "
             f"missing={missing}, extra={extra}"
+        )
+    overlap = sorted(set(observed) & set(exclusion_records))
+    if overlap:
+        raise RegistryError(
+            f"fixtures are both observed and excluded: {overlap}"
         )
     entries = [
         _derive_entry(
@@ -1065,8 +1308,15 @@ def derive_plant_registry(
             record_root=record_root,
         )
         for fixture_id, fixture in fixture_map.items()
+        if fixture_id in observed
     ]
     _validate_effective_uniqueness(entries, set(fixture_map))
+    excluded = [
+        exclusion_records[fixture_id]
+        for fixture_id in fixture_map
+        if fixture_id in exclusion_records
+    ]
+    _require_achieved_floor(entries, excluded)
     for entry in entries:
         if _parse_utc(entry["evidence_utc"], "lived evidence_utc") > created:
             raise RegistryError("registry was created before its lived evidence")
@@ -1097,14 +1347,11 @@ def derive_plant_registry(
                 if eval_times else "FROZEN_WITH_NO_NEW_EVAL_EVIDENCE"
             ),
         },
-        "fixture_count": 14,
-        "pair_counts": {
-            "all_fixture_pairs": 14,
-            "calibration_fixture_pairs": 2,
-            "eval_fixture_pairs": 12,
-            "eval_served_rows": 12,
-            "eval_planted_miss_rows": 12,
-        },
+        "fixture_count": len(entries),
+        "pair_counts": _achieved_pair_counts(entries),
+        "achieved_counts": _achieved_counts_projection(entries, excluded),
+        "achieved_policy": _achieved_policy(achieved_amendment_record),
+        "excluded_slots": excluded,
         "policy_bindings": _policy_bindings(registration),
         "substitution_policy": _substitution_policy(amendment_record),
         "substitution_count": len(substitutions),
@@ -1162,22 +1409,58 @@ def validate_plant_registry(
         raise RegistryError("bound amendment order does not identify GRM-DET1.9")
     if dict(policy) != _substitution_policy(policy["amendment_order_record"]):
         raise RegistryError("DET1.9 substitution policy drifted")
-    expected_counts = {
-        "all_fixture_pairs": 14,
-        "calibration_fixture_pairs": 2,
-        "eval_fixture_pairs": 12,
-        "eval_served_rows": 12,
-        "eval_planted_miss_rows": 12,
-    }
-    if value.get("fixture_count") != 14 or value.get("pair_counts") != expected_counts:
-        raise RegistryError("registry did not preserve the 2+12 / 12+12 counts")
-    entries = value.get("entries")
-    if not isinstance(entries, list) or len(entries) != 14:
-        raise RegistryError("registry must contain exactly 14 entries")
-    if [entry.get("fixture_id") for entry in entries if isinstance(entry, Mapping)] != list(
-        fixture_map
+    # DET1.11: the registry carries the ACHIEVED population.  Its excluded
+    # slots are revalidated against the base registration, the achieved
+    # counts are recomputed from the entries rather than trusted, and the
+    # registered floor is re-enforced here so a tampered registry cannot
+    # smuggle a hollow race past validation.
+    achieved_policy = value.get("achieved_policy")
+    if not isinstance(achieved_policy, Mapping):
+        raise RegistryError("registry lacks the DET1.11 achieved policy")
+    achieved_order_path = _validate_file_record(
+        achieved_policy.get("amendment_order_record") or {},
+        record_root=record_root,
+        label="DET1.11 amendment order",
+    )
+    if achieved_order_path != order_path.with_name(
+        "GRM_DET1_11_ACHIEVED_COUNT.md"
+    ).resolve():
+        raise RegistryError("registry binds the wrong DET1.11 amendment order path")
+    if ACHIEVED_ORDER_ID not in achieved_order_path.read_text(encoding="utf-8"):
+        raise RegistryError("bound amendment order does not identify GRM-DET1.11")
+    if dict(achieved_policy) != _achieved_policy(
+        achieved_policy["amendment_order_record"]
     ):
+        raise RegistryError("DET1.11 achieved policy drifted")
+
+    entries = value.get("entries")
+    if not isinstance(entries, list) or not entries:
+        raise RegistryError("registry must contain at least one entry")
+    excluded = _exclusion_map(value.get("excluded_slots") or (), fixture_map)
+    entry_ids = [
+        entry.get("fixture_id") for entry in entries if isinstance(entry, Mapping)
+    ]
+    expected_ids = [
+        fixture_id for fixture_id in fixture_map if fixture_id not in excluded
+    ]
+    if entry_ids != expected_ids:
         raise RegistryError("registry entries differ from base fixture order")
+    excluded_rows = [
+        excluded[fixture_id]
+        for fixture_id in fixture_map
+        if fixture_id in excluded
+    ]
+    if list(value.get("excluded_slots") or ()) != excluded_rows:
+        raise RegistryError("registry excluded slots are not in base fixture order")
+    _require_achieved_floor(entries, excluded_rows)
+    if value.get("fixture_count") != len(entries):
+        raise RegistryError("registry fixture_count differs from its entries")
+    if value.get("pair_counts") != _achieved_pair_counts(entries):
+        raise RegistryError("registry did not preserve its achieved pair counts")
+    if value.get("achieved_counts") != _achieved_counts_projection(
+        entries, excluded_rows
+    ):
+        raise RegistryError("registry achieved-count projection drifted")
 
     replayed = []
     for entry in entries:
@@ -1245,17 +1528,29 @@ def validate_plant_registry(
         raise RegistryError("substitution enumeration differs from entries")
     served = [entry["served_row_id"] for entry in replayed]
     planted = [entry["planted_row_id"] for entry in replayed]
-    if len(set(served)) != 14 or len(set(planted)) != 14:
+    if len(set(served)) != len(replayed) or len(set(planted)) != len(replayed):
         raise RegistryError("served/planted row ids are not one-to-one")
+    counts = _achieved_pair_counts(replayed)
+    achieved = int(counts["eval_fixture_pairs"])
     return {
         "schema": "grm.det1_7.plant_registry_validation.v1",
         "status": "PASS",
         "registry_payload_sha256": claimed_digest,
-        "fixture_count": 14,
-        "calibration_count": 2,
-        "eval_count": 12,
-        "eval_served_count": 12,
-        "eval_planted_count": 12,
+        "fixture_count": len(replayed),
+        "calibration_count": int(counts["calibration_fixture_pairs"]),
+        "eval_count": achieved,
+        "eval_served_count": achieved,
+        "eval_planted_count": achieved,
+        "achieved_eval_pairs": achieved,
+        "registered_eval_pairs": REGISTERED_EVAL_PAIR_COUNT,
+        "excluded_eval_pairs": len(excluded_rows),
+        "achieved_eval_pair_floor": ACHIEVED_EVAL_PAIR_FLOOR,
+        "achieved_of_registered": (
+            f"{achieved} of {REGISTERED_EVAL_PAIR_COUNT}"
+        ),
+        "excluded_fixture_ids": [
+            str(row["fixture_id"]) for row in excluded_rows
+        ],
         "substitution_count": len(substitutions),
     }
 
