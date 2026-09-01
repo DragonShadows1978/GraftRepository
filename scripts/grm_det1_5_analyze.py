@@ -47,6 +47,7 @@ from scripts.grm_det1_5_gpu import (  # noqa: E402
     aggregate_process_instances,
     det1_9_finding_receipt_path,
     effective_registration_projection,
+    is_lineage_source_authorization,
     merge_detector_rows,
     plant_registry_path,
     validate_det1_7_source_authorization,
@@ -726,21 +727,18 @@ def _validate_common_stage_bindings(
     for stage, receipt in receipts.items():
         _binding(receipt, "registration", registration_path, stage)
         _binding(receipt, "runtime_frame", runtime_frame_path, stage)
+        # DET1.11: receipts frozen in earlier rounds name the envelope that
+        # governed them; lineage membership rather than current-envelope
+        # equality.
         if stage == "plant_registration":
-            _binding(
-                receipt,
-                "precollection_authorization",
-                precollection_authorization_path,
-                stage,
+            _require_lineage_authorization(
+                receipt.get("precollection_authorization"), stage,
             )
         elif stage != "cross_process_zero":
             _binding(receipt, "race_authorization_amendment", amendment_path, stage)
             _binding(receipt, "source_amendment", source_amendment_path, stage)
-            _binding(
-                receipt,
-                "precollection_authorization",
-                precollection_authorization_path,
-                stage,
+            _require_lineage_authorization(
+                receipt.get("precollection_authorization"), stage,
             )
             _binding(receipt, "plant_registry", plant_registry_path_value, stage)
             _binding(receipt, "terminal_amendment", terminal_amendment_path, stage)
@@ -781,21 +779,28 @@ def _validate_marker_chain(
             f"{stage} marker.runtime_frame",
         )
         expected = [file_record(predecessor[stage])]
+        authorization_slots: list[int] = []
         if stage == "cross_process_zero":
             expected.extend([
                 dict(zero_receipt.get("lived_snapshot") or {}),
                 dict(zero_receipt.get("fork_snapshot") or {}),
             ])
         elif stage == "plant_registration":
-            expected.append(file_record(precollection_authorization_path))
+            # DET1.11: the envelope occupies a positional slot in the
+            # prerequisite chain.  Mark it so the comparison below accepts
+            # any lineage member in that one position while every other
+            # prerequisite stays pinned exactly.
+            authorization_slots.append(len(expected))
+            expected.append(None)
+            provenance = marker.get("det1_7_provenance")
             _require(
-                marker.get("det1_7_provenance")
-                == {
-                    "precollection_authorization": file_record(
-                        precollection_authorization_path
-                    )
-                },
+                isinstance(provenance, Mapping)
+                and set(provenance) == {"precollection_authorization"},
                 "plant_registration marker DET1.7 provenance drifted",
+            )
+            _require_lineage_authorization(
+                provenance.get("precollection_authorization"),
+                "plant_registration marker",
             )
         else:
             _binding(marker, "source_amendment", source_amendment_path, f"{stage} marker")
@@ -805,23 +810,55 @@ def _validate_marker_chain(
                     file_record(plant_registry_path_value),
                 ]
             )
+            provenance = marker.get("det1_7_provenance")
             _require(
-                marker.get("det1_7_provenance")
-                == {
-                    "precollection_authorization": file_record(
-                        precollection_authorization_path
-                    ),
-                    "plant_registry_record": file_record(
-                        plant_registry_path_value
-                    ),
-                    "terminal_amendment": file_record(terminal_amendment_path),
-                },
+                isinstance(provenance, Mapping)
+                and set(provenance) == {
+                    "precollection_authorization",
+                    "plant_registry_record",
+                    "terminal_amendment",
+                }
+                and provenance.get("plant_registry_record") == file_record(
+                    plant_registry_path_value)
+                and provenance.get("terminal_amendment") == file_record(
+                    terminal_amendment_path),
                 f"{stage} marker DET1.7 provenance drifted",
             )
+            _require_lineage_authorization(
+                provenance.get("precollection_authorization"),
+                f"{stage} marker",
+            )
+        prerequisites = list(marker.get("prerequisites") or ())
         _require(
-            marker.get("prerequisites") == expected,
+            len(prerequisites) == len(expected),
             f"{stage} marker prerequisite chain drifted",
         )
+        for index, want in enumerate(expected):
+            if index in authorization_slots:
+                _require_lineage_authorization(
+                    prerequisites[index], f"{stage} marker prerequisite",
+                )
+                continue
+            _require(
+                prerequisites[index] == want,
+                f"{stage} marker prerequisite chain drifted",
+            )
+
+
+def _require_lineage_authorization(record: Any, where: str) -> None:
+    """Accept any validated member of the DET1.9 envelope lineage.
+
+    DET1.11: markers, receipts, and shards frozen in earlier campaign rounds
+    name the envelope that governed THAT round.  Pinning equality against the
+    current envelope makes every advance invalidate all prior artifacts —
+    the r10 fail-close.  Membership of the validated lineage is the correct
+    check; a record naming a file outside the series is still rejected.
+    """
+    _require(
+        is_lineage_source_authorization(record),
+        f"{where} names an authorization outside the validated DET1.9 "
+        f"envelope lineage",
+    )
 
 
 def _validate_cross_process_zero(
@@ -923,12 +960,12 @@ def _worker_shard(
         if stage == "plant_registration"
         else "POST_REGISTRATION_EXACT_BINDING"
     )
-    expected_provenance = {
-        "precollection_authorization": file_record(
-            precollection_authorization_path
-        )
-    }
+    # DET1.11: the authorization is checked for lineage membership; every
+    # other provenance record is still pinned exactly.
+    expected_keys = {"precollection_authorization"}
+    expected_provenance: dict[str, Any] = {}
     if stage != "plant_registration":
+        expected_keys |= {"plant_registry_record", "terminal_amendment"}
         expected_provenance.update(
             {
                 "plant_registry_record": file_record(plant_registry_path_value),
@@ -939,9 +976,18 @@ def _worker_shard(
         value.get("det1_7_provenance_phase") == expected_phase,
         f"{where} DET1.7 provenance phase drifted",
     )
+    provenance = value.get("det1_7_provenance")
     _require(
-        value.get("det1_7_provenance") == expected_provenance,
+        isinstance(provenance, Mapping)
+        and set(provenance) == expected_keys
+        and all(
+            provenance.get(key) == expected
+            for key, expected in expected_provenance.items()
+        ),
         f"{where} DET1.7 provenance records drifted",
+    )
+    _require_lineage_authorization(
+        provenance.get("precollection_authorization"), where,
     )
     return value
 
@@ -2299,9 +2345,8 @@ def analyze(run_dir: Path) -> Path:
     _binding(thresholds, "runtime_frame", runtime_frame_path, "thresholds")
     _binding(thresholds, "race_authorization_amendment", amendment_path, "thresholds")
     _binding(thresholds, "source_amendment", source_amendment_path, "thresholds")
-    _binding(
-        thresholds, "precollection_authorization",
-        precollection_authorization_path, "thresholds",
+    _require_lineage_authorization(
+        thresholds.get("precollection_authorization"), "thresholds",
     )
     _binding(thresholds, "plant_registry", registry_path, "thresholds")
     _binding(thresholds, "terminal_amendment", terminal_amendment_path, "thresholds")

@@ -100,7 +100,7 @@ DET1_10_SOURCE_AUTH = (
 # script picked up the census step; it is retained unused under the same
 # append-only rule (the drift guard is what caught it, working as designed).
 DET1_11_SOURCE_AUTH = (
-    FROZEN_RUN / "det1_9_precollection_source_authorization_r11.json"
+    FROZEN_RUN / "det1_9_precollection_source_authorization_r13.json"
 )
 # The DET1.7 public campaign/analyzer API remains stable while its active
 # collection-only authority advances through append-only successor envelopes.
@@ -354,11 +354,13 @@ DET1_8_ADDED_SOURCES = {
 DET1_9_CHANGED_SOURCES = {
     "scripts/grm_det1_5_analyze.py": (
         "validate_and_report_cross_session_substitutions_and_findings_"
-        "then_det1_11_report_the_achieved_count_in_table_and_verdict"
+        "then_det1_11_report_the_achieved_count_in_table_and_verdict_"
+        "and_accept_any_validated_envelope_lineage_member_on_readback"
     ),
     "scripts/grm_det1_5_gpu.py": (
         "collect_select_freeze_and_bind_det1_9_cross_session_substitutions_"
-        "then_det1_11_exclude_unlawful_slots_and_run_at_achieved_count"
+        "then_det1_11_exclude_unlawful_slots_and_run_at_achieved_count_"
+        "and_accept_any_validated_envelope_lineage_member_on_readback"
     ),
     "scripts/grm_det1_5_lead.sh": (
         "author_det1_9_finding_receipt_before_plant_registration_"
@@ -418,13 +420,18 @@ DET1_9_ADDED_SOURCES = {
     # the added set — a changed source must have a predecessor, an added one
     # must not.
     "scripts/grm_det1_11_census.py": (
-        "lived_serving_reliability_census_receipts_only_no_cause_analysis"
+        "lived_serving_reliability_census_receipts_only_no_cause_analysis_"
+        "with_append_only_supersedes_lineage_over_drifted_lived_evidence"
     ),
     "tests/test_grm_det1_11_achieved.py": (
         "det1_11_achieved_pair_floor_and_achieved_count_reporting_contracts"
     ),
     "tests/test_grm_det1_11_census.py": (
-        "det1_11_lived_serving_census_classification_and_receipt_contracts"
+        "det1_11_lived_serving_census_classification_and_receipt_contracts_"
+        "and_successor_lineage_idempotence_and_integrity_contracts"
+    ),
+    "tests/test_grm_det1_11_envelope_lineage.py": (
+        "det1_11_no_stage_consumer_hard_pins_a_superseded_envelope"
     ),
 }
 
@@ -1619,6 +1626,94 @@ def author_det1_7_source_authorization(
     )
 
 
+# --- GRM-DET1.11 envelope lineage ---------------------------------------
+#
+# The DET1.9 precollection envelope is re-authored whenever the declared
+# source set or its bytes move.  Every such re-authoring writes a NEW
+# append-only file (_r6, _r8 ... _r12), and DET1_7_SOURCE_AUTH points at the
+# newest.  A stage marker or receipt frozen during an earlier round records
+# the envelope that governed IT, which is by construction not the newest one
+# any more.
+#
+# Campaign r10 died on exactly that: markers hard-pinned an equality against
+# the current envelope's file record, so any advance of the envelope
+# invalidated every previously frozen marker.  The fix mirrors the census
+# supersedes-lineage: identity checks accept ANY validated member of the
+# envelope lineage, not only its newest member.
+#
+# The envelopes are siblings off one immutable DET1.8 predecessor rather than
+# a linked chain, so lineage membership is established by (a) filename
+# belonging to the registered series, (b) the DET1.8 predecessor record
+# matching, and (c) the envelope validating on its own terms.  That is a
+# stronger check than a supersedes pointer would be here: a forged file
+# cannot join the lineage merely by naming a member.
+
+DET1_9_ENVELOPE_STEM = "det1_9_precollection_source_authorization"
+
+
+def det1_7_source_auth_lineage(run_dir: Path = FROZEN_RUN) -> list[Path]:
+    """Every envelope in the append-only DET1.9 series, oldest first.
+
+    Ordering is by authored timestamp, not filename: the suffixes are round
+    numbers with deliberate gaps (r7 skipped) and sort lexicographically
+    wrong (``_r10`` before ``_r6``).
+    """
+    run_dir = Path(run_dir).resolve()
+    members: list[tuple[str, Path]] = []
+    for path in run_dir.glob(f"{DET1_9_ENVELOPE_STEM}*.json"):
+        suffix = path.stem[len(DET1_9_ENVELOPE_STEM):]
+        # Members are the bare stem or a "_r<N>" round suffix; anything else
+        # in the directory is not part of this series.
+        if suffix and not (
+            suffix.startswith("_r") and suffix[2:].isdigit()
+        ):
+            continue
+        try:
+            payload = read_json(path)
+        except Exception:  # pragma: no cover - unreadable file is not a member
+            continue
+        if payload.get("schema") != DET1_7_SOURCE_AUTH_SCHEMA:
+            continue
+        members.append((str(payload.get("created_utc", "")), path))
+    return [path for _created, path in sorted(members)]
+
+
+def det1_7_source_auth_records(
+    run_dir: Path = FROZEN_RUN,
+) -> list[dict[str, Any]]:
+    """File records for every envelope in the lineage, oldest first."""
+    return [file_record(path) for path in det1_7_source_auth_lineage(run_dir)]
+
+
+def is_lineage_source_authorization(
+    record: Any, run_dir: Path = FROZEN_RUN,
+) -> bool:
+    """True when ``record`` names any envelope in the validated lineage.
+
+    This is the predicate every persisted-identity check uses in place of an
+    equality against the current envelope.  A marker frozen under r6 stays
+    valid when r12 is live, because r6 is still a lawful member; a record
+    naming a file outside the series is still rejected.
+    """
+    if not isinstance(record, Mapping):
+        return False
+    return any(
+        dict(record) == candidate
+        for candidate in det1_7_source_auth_records(run_dir)
+    )
+
+
+def _require_lineage_source_authorization(
+    record: Any, where: str, run_dir: Path = FROZEN_RUN,
+) -> None:
+    _require(
+        is_lineage_source_authorization(record, run_dir),
+        f"{where} names an authorization outside the validated DET1.9 "
+        f"envelope lineage: "
+        f"{(record or {}).get('path') if isinstance(record, Mapping) else record!r}",
+    )
+
+
 def load_det1_7_precollection_context(
     run_dir: Path = FROZEN_RUN,
 ) -> dict[str, Any]:
@@ -2002,26 +2097,39 @@ def _validate_stage_marker(run_dir: Path, stage: str) -> tuple[Path, Path, dict[
              f"stage registration binding drift: {stage}")
     _require(marker.get("runtime_frame") == file_record(RUNTIME_FRAME),
              f"stage runtime binding drift: {stage}")
+    # DET1.11: the envelope advances across campaign rounds, so a marker
+    # frozen earlier legitimately names an EARLIER member of the lineage.
+    # Its authorization is checked for lineage membership; every other
+    # binding in the provenance block is still pinned exactly.
     if stage == "plant_registration":
+        provenance = marker.get("det1_7_provenance")
         _require(
-            marker.get("det1_7_provenance") == {
-                "precollection_authorization": file_record(
-                    Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name),
-            },
-            "plant-registration marker source authorization drifted",
+            isinstance(provenance, Mapping)
+            and set(provenance) == {"precollection_authorization"},
+            "plant-registration marker provenance shape drifted",
+        )
+        _require_lineage_source_authorization(
+            provenance.get("precollection_authorization"),
+            "plant-registration marker", run_dir,
         )
     elif stage != "cross_process_zero":
+        provenance = marker.get("det1_7_provenance")
         _require(
-            marker.get("det1_7_provenance") == {
-                "precollection_authorization": file_record(
-                    Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name),
-                "plant_registry_record": file_record(
-                    plant_registry_path(run_dir)),
-                "terminal_amendment": file_record(
-                    Path(run_dir).resolve()
-                    / DET1_7_TERMINAL_AMENDMENT.name),
-            },
+            isinstance(provenance, Mapping)
+            and set(provenance) == {
+                "precollection_authorization",
+                "plant_registry_record",
+                "terminal_amendment",
+            }
+            and provenance.get("plant_registry_record") == file_record(
+                plant_registry_path(run_dir))
+            and provenance.get("terminal_amendment") == file_record(
+                Path(run_dir).resolve() / DET1_7_TERMINAL_AMENDMENT.name),
             f"stage DET1.7 binding drift: {stage}",
+        )
+        _require_lineage_source_authorization(
+            provenance.get("precollection_authorization"),
+            f"{stage} marker", run_dir,
         )
     receipt_path = _validate_file_record(marker.get("receipt") or {},
                                          f"{stage} receipt")
@@ -2035,10 +2143,9 @@ def _validate_stage_marker(run_dir: Path, stage: str) -> tuple[Path, Path, dict[
         if stage == "plant_registration":
             finding_path = det1_9_finding_receipt_path(run_dir)
             finding = read_json(finding_path)
-            _require(
-                receipt.get("precollection_authorization") == file_record(
-                    Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name),
-                "plant-registration receipt source authorization drifted",
+            _require_lineage_source_authorization(
+                receipt.get("precollection_authorization"),
+                "plant-registration receipt", run_dir,
             )
             _require(
                 receipt.get("campaign_r4_lived_control_finding")
@@ -2115,7 +2222,11 @@ def validate_det1_7_terminal_amendment(
     _require(value.get("schema") == DET1_7_TERMINAL_SCHEMA
              and value.get("status") == DET1_7_TERMINAL_STATUS,
              "DET1.7 terminal amendment schema/status drifted")
-    source_auth = validate_det1_7_source_authorization(run_dir)
+    # The CURRENT envelope must still validate on its own terms; what the
+    # terminal amendment NAMES is then checked against the whole lineage,
+    # because the amendment was frozen under whichever envelope was live
+    # at the time (DET1.11).
+    validate_det1_7_source_authorization(run_dir)
     marker_path, receipt_path, registration_receipt = _validate_stage_marker(
         run_dir, "plant_registration")
     registry_path = plant_registry_path(run_dir)
@@ -2124,13 +2235,16 @@ def validate_det1_7_terminal_amendment(
     finding_path = det1_9_finding_receipt_path(run_dir)
     finding_validation = validate_det1_9_finding_receipt(run_dir)
     finding = read_json(finding_path)
+    _require_lineage_source_authorization(
+        value.get("precollection_authorization"),
+        "DET1.7 terminal amendment", run_dir,
+    )
     for key, expected in (
         ("order", file_record(DET1_7_ORDER)),
         ("det1_9_amendment_order", file_record(DET1_9_ORDER)),
         ("base_registration", file_record(REGISTRATION)),
         ("runtime_frame", file_record(RUNTIME_FRAME)),
         ("det1_6_predecessor", file_record(DELTA_AMENDMENT)),
-        ("precollection_authorization", source_auth["record"]),
         ("plant_registration_marker", file_record(marker_path)),
         ("plant_registration_receipt", file_record(receipt_path)),
         ("plant_registry", file_record(registry_path)),
@@ -2597,6 +2711,13 @@ def _calibration_thresholds(
         for key, expected in expected_projection.items():
             _require(value.get(key) == expected,
                      f"calibration threshold fit drifted: {key}")
+        # DET1.11: a threshold receipt frozen in an earlier round names the
+        # envelope that governed that round.  Lineage membership, not
+        # equality against the current envelope.
+        _require_lineage_source_authorization(
+            value.get("precollection_authorization"),
+            "calibration threshold receipt", run_dir,
+        )
         for key, expected in (
             ("registration", file_record(REGISTRATION)),
             ("runtime_frame", file_record(RUNTIME_FRAME)),
@@ -2604,8 +2725,6 @@ def _calibration_thresholds(
                 Path(run_dir).resolve() / RACE_AMENDMENT.name)),
             ("source_amendment", file_record(
                 Path(run_dir).resolve() / DELTA_AMENDMENT.name)),
-            ("precollection_authorization", file_record(
-                Path(run_dir).resolve() / DET1_7_SOURCE_AUTH.name)),
             ("plant_registry", file_record(plant_registry_path(run_dir))),
             ("terminal_amendment", file_record(
                 Path(run_dir).resolve() / DET1_7_TERMINAL_AMENDMENT.name)),
@@ -2614,7 +2733,22 @@ def _calibration_thresholds(
             _require(value.get(key) == expected,
                      f"calibration threshold binding drifted: {key}")
         return path, value
-    value = {
+    value = _threshold_receipt_payload(
+        fitted, run_dir=run_dir, rows_path=rows_path)
+    return write_content_addressed(directory, "thresholds", value), value
+
+
+def _threshold_receipt_payload(
+    fitted: Mapping[str, Any], *, run_dir: Path, rows_path: Path,
+) -> dict[str, Any]:
+    """Build the thresholds receipt, stamping the CURRENT envelope.
+
+    Kept separate from the revalidation branch above so the two roles stay
+    distinguishable: a WRITER pins the newest envelope, a READBACK accepts
+    any lineage member (DET1.11).  Collapsing them into one function is what
+    let the r10 hard-pin hide in plain sight.
+    """
+    return {
         **fitted,
         "schema": "grm.det1_5.thresholds.v1",
         "frozen_before_eval": True,
@@ -2631,7 +2765,6 @@ def _calibration_thresholds(
             Path(run_dir).resolve() / DET1_7_TERMINAL_AMENDMENT.name),
         "calibration_rows": file_record(rows_path),
     }
-    return write_content_addressed(directory, "thresholds", value), value
 
 
 def cross_process_zero(
