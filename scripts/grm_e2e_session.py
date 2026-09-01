@@ -41,6 +41,7 @@ from core.grm_three_pass import (  # noqa: E402
     StagedWorkingSetResolver,
     TurnStepIOTracker,
     arena_state_sha256,
+    build_route_receipt,
 )
 from core import paging_telemetry as _paging_telemetry  # noqa: E402
 from core.grm_supersession import (  # noqa: E402
@@ -1066,6 +1067,31 @@ def _probe_mount_snapshot(
             )
 
 
+def _route_observation(
+    *,
+    route_limit: int,
+    excluded_live_ids,
+    admission_profile: dict[str, Any] | None,
+    trips: list[dict[str, Any]],
+    serving_path: str,
+) -> dict[str, Any]:
+    """LSR-P2B observation hand-off (pure bookkeeping, no control flow).
+
+    ``_probe_ladder_chat`` already knows the route limit, the live exclusions,
+    the admission profile object, and every ladder trip it walked.  Phase 1 had
+    to reconstruct all four from snapshot manifests; carrying them out through
+    ``info`` under one private key is what closes that gap.  P2A owns the
+    ladder/fit logic; this function only reads what the ladder produced.
+    """
+    return {
+        "serving_path": str(serving_path),
+        "route_limit": int(route_limit),
+        "excluded_live_ids": sorted(int(value) for value in excluded_live_ids),
+        "admission_profile": admission_profile,
+        "trips": list(trips),
+    }
+
+
 def _probe_ladder_chat(
     repo: GraftRepository,
     user_text: str,
@@ -1125,6 +1151,17 @@ def _probe_ladder_chat(
             arena.grafts[gidx]["kind"] = "recall"
             arena._bump_cuda_gqa_epoch()
             info["abstain_deposited_graft"] = int(gidx)
+        # LSR-P2B: the abstention short-circuit returns BEFORE any mount work,
+        # so it walks no rungs — an empty trip list is the honest record, and
+        # the receipt still carries the route, the admission profile, and the
+        # abstain_* fields via the generic pass-through.
+        info["_route_observation"] = _route_observation(
+            route_limit=route_limit,
+            excluded_live_ids=live_idx,
+            admission_profile=admission_profile,
+            trips=[],
+            serving_path="grm_e2e_session._probe_ladder_chat:abstention",
+        )
         info = _probe_finish_deposit(
             repo, before, user_text, ans, info, defer_memory=defer_memory)
         return ans, info
@@ -1281,6 +1318,9 @@ def _probe_ladder_chat(
         ))
         return info
 
+    # LSR-P2B: one row per ladder trip actually walked, recorded as it happens.
+    trip_rows: list[dict[str, Any]] = []
+
     for trip, (planned, clean) in enumerate(attempts):
         last_planned = list(planned)
         if trip:
@@ -1302,6 +1342,17 @@ def _probe_ladder_chat(
         if not picks and planned:
             # Nothing fits — treat as empty attempt. A later shuttle rung
             # may still seat an owed plan member (Ruling 1.2).
+            # LSR-P2B: the rung is still a rung the ladder walked, so it gets
+            # its own row; "grounded: False" describes THIS rung, not the
+            # turn — a later shuttle rung can still ground.
+            trip_rows.append({
+                "ordinal": int(trip),
+                "clean_room": bool(clean),
+                "planned": [int(v) for v in planned],
+                "mount_set": [],
+                "grounded": False,
+                "shuttle": [int(v) for v in planned] in shuttle_trips,
+            })
             continue
         if defer_memory:
             ans, info = arena._attempt(
@@ -1315,6 +1366,16 @@ def _probe_ladder_chat(
             info["clean_room"] = True
         grounded, _contributors = arena._grounding_attribution(
             ans, picks, user_text)
+        trip_rows.append({
+            "ordinal": int(trip),
+            "clean_room": bool(clean),
+            "planned": [int(v) for v in planned],
+            "mount_set": [int(v) for v in picks],
+            "grounded": bool(grounded),
+            # LSR-P2A Ruling 1.2 rungs are additive to max_trips; naming them
+            # keeps a reader from mistaking a shuttle rung for a normal trip.
+            "shuttle": [int(v) for v in planned] in shuttle_trips,
+        })
         state = (
             arena.caches, arena.pos, list(arena.live_segs),
             arena.cur_mounts, arena.cur_mount_n, list(arena.grafts),
@@ -1336,7 +1397,16 @@ def _probe_ladder_chat(
             info["ranking_ids"] = [int(x) for x in ranking]
             if admission_profile is not None:
                 info.update(admission_info_fields(admission_profile))
+            # P2A's fit receipt lands in ``info`` FIRST so P2B's generic
+            # ``fit_*`` pass-through picks it up on this same turn.
             info = _attach_fit(info, list(picks))
+            info["_route_observation"] = _route_observation(
+                route_limit=route_limit,
+                excluded_live_ids=live_idx,
+                admission_profile=admission_profile,
+                trips=trip_rows,
+                serving_path="grm_e2e_session._probe_ladder_chat",
+            )
             info = _probe_finish_deposit(
                 repo, before, user_text, ans, info, defer_memory=defer_memory)
             return ans, info
@@ -1397,6 +1467,13 @@ def _probe_ladder_chat(
         if admission_profile is not None:
             info.update(admission_info_fields(admission_profile))
         info = _attach_fit(info, [])
+        info["_route_observation"] = _route_observation(
+            route_limit=route_limit,
+            excluded_live_ids=live_idx,
+            admission_profile=admission_profile,
+            trips=trip_rows,
+            serving_path="grm_e2e_session._probe_ladder_chat",
+        )
         info = _probe_finish_deposit(
             repo, before, user_text, ans, info, defer_memory=defer_memory)
         return ans, info
@@ -1423,6 +1500,13 @@ def _probe_ladder_chat(
     if admission_profile is not None:
         info.update(admission_info_fields(admission_profile))
     info = _attach_fit(info, list(picks))
+    info["_route_observation"] = _route_observation(
+        route_limit=route_limit,
+        excluded_live_ids=live_idx,
+        admission_profile=admission_profile,
+        trips=trip_rows,
+        serving_path="grm_e2e_session._probe_ladder_chat",
+    )
     _probe_mount_snapshot(
         repo, arena, live_idx=live_idx, picks=picks,
         planned=planned, turn_idx=turn_idx)
@@ -1508,8 +1592,22 @@ def probe_multimount_chat(
     info["mount_fitted"] = picks
     info["mount_dropped_for_width"] = [
         i for i in planned if i not in set(picks)]
+    info["ranking_ids"] = [int(x) for x in ranking]
     if admission_profile is not None:
         info.update(admission_info_fields(admission_profile))
+    info["_route_observation"] = _route_observation(
+        route_limit=int(want),
+        excluded_live_ids=live_idx,
+        admission_profile=admission_profile,
+        trips=[{
+            "ordinal": 0,
+            "clean_room": False,
+            "planned": [int(v) for v in planned],
+            "mount_set": [int(v) for v in picks],
+            "grounded": None,
+        }],
+        serving_path="grm_e2e_session.probe_multimount_chat",
+    )
     info = _probe_finish_deposit(
         repo, before, user_text, ans, info, defer_memory=defer_memory)
     return ans, info
@@ -1703,6 +1801,67 @@ def infer_complete_turn_deferred(
     return answer, info
 
 
+def _turn_route_receipt(
+    repo: GraftRepository,
+    event: dict[str, Any],
+    info: dict[str, Any],
+    answer: str,
+    *,
+    turn_idx: int,
+    session_id: str,
+    prep_receipt: dict[str, Any] | None,
+    arena_before_sha256: str | None,
+    args: argparse.Namespace,
+) -> dict[str, Any]:
+    """LSR-P2B: assemble this turn's grm.route_receipt.v1 from serve state.
+
+    Every turn gets one — including plants and fillers, which route nothing;
+    those record an empty ranking rather than no receipt at all, so a session
+    ledger has no holes for a later investigation to interpret.
+    """
+    observation = dict(info.get("_route_observation") or {})
+    prep = prep_receipt or {}
+    ranking_ids = observation.get("ranking_ids")
+    if ranking_ids is None:
+        ranking_ids = info.get("ranking_ids")
+    if ranking_ids is None and prep.get("routed"):
+        ranking_ids = prep.get("ranking_ids")
+    ranking_scores = None
+    excluded_live = observation.get("excluded_live_ids")
+    if excluded_live is None:
+        excluded_live = prep.get("live_excluded_ids") or []
+    if prep.get("routed") and prep.get("ranking_ids") == list(
+            int(v) for v in (ranking_ids or ())):
+        # ``_ranking_rows`` already carries the score column for this exact
+        # ranking; reuse it rather than re-scoring (no model, no GPU).
+        ranking_scores = [row.get("score") for row in prep.get("ranking") or ()]
+    route_limit = observation.get("route_limit")
+    if route_limit is None:
+        route_limit = max(
+            int(args.topk), (int(args.max_trips) + 1) * int(args.topk))
+    return build_route_receipt(
+        session_id=session_id,
+        turn_id=str(turn_idx),
+        info=info,
+        arena=repo.arena,
+        request_text=event["user"],
+        output_text=answer,
+        arena_before_sha256=arena_before_sha256,
+        repository_size=len(repo.arena.grafts),
+        serving_path=str(observation.get(
+            "serving_path", f"grm_e2e_session.run_turn:{event['kind']}")),
+        route_limit=route_limit,
+        candidate_count=prep.get("repository_candidate_count"),
+        ranking_ids=ranking_ids,
+        ranking_scores=ranking_scores,
+        excluded_live_ids=excluded_live,
+        excluded_recency_ids=observation.get("excluded_recency_ids"),
+        admission_profile=observation.get("admission_profile"),
+        trips=observation.get("trips"),
+        turn_kind=event["kind"],
+    )
+
+
 def run_pass3_memory_management(
     repo: GraftRepository,
     event: dict[str, Any],
@@ -1713,6 +1872,7 @@ def run_pass3_memory_management(
     turn_idx: int,
     session_id: str,
     timers: TurnTimers,
+    route_receipt: dict[str, Any] | None = None,
 ) -> tuple[
     dict[str, Any], int | None, dict[str, Any] | None,
     dict[str, Any], dict[str, Any],
@@ -1725,6 +1885,9 @@ def run_pass3_memory_management(
         request_text=event["user"],
         output_text=answer,
     )
+    # LSR-P2B: sidecar attach, before finalize().  Mutation rows and the
+    # completeness audit are unaffected by construction.
+    ledger.attach_route_receipt(route_receipt)
     nodes_before = len(repo.arena.grafts)
     chat_node_id = None
     correction_result = None
@@ -1897,6 +2060,7 @@ def run_turn(
     pass2_arena_after_sha256 = None
     memory_ledger_audit = None
     memory_ledger_path = None
+    route_receipt = None
     prep_receipt = None
     working_set_path = None
     prep_wall_ms = None
@@ -1957,6 +2121,19 @@ def run_turn(
                 last = repo.runtime.last_result
                 new_nodes = list(getattr(last, "new_nodes", ()) or ())
                 chat_node_id = int(new_nodes[0]) if new_nodes else None
+            # LSR-P2B: the single pipeline has no per-turn memory ledger file,
+            # so its route receipt rides the instrumentation row instead.
+            route_receipt = _turn_route_receipt(
+                repo,
+                event,
+                info,
+                answer,
+                turn_idx=turn_idx,
+                session_id=paths["memory_ledger"].parent.name,
+                prep_receipt=None,
+                arena_before_sha256=None,
+                args=args,
+            )
         else:
             source_node = None
             if event["kind"] == "probe":
@@ -2046,6 +2223,21 @@ def run_turn(
 
             io_tracker.set_step("3_cleanup")
             pass3_started = time.perf_counter()
+            # LSR-P2B: build the route receipt from serve-time state BEFORE
+            # pass-3 mutates the arena, so repository size / mount geometry
+            # are the ones the serve actually saw.  Written on every turn:
+            # probe, plant, filler, abstained, and no_mount_fit alike.
+            route_receipt = _turn_route_receipt(
+                repo,
+                event,
+                info,
+                answer,
+                turn_idx=turn_idx,
+                session_id=paths["memory_ledger"].parent.name,
+                prep_receipt=prep_receipt,
+                arena_before_sha256=pass2_arena_before_sha256,
+                args=args,
+            )
             (info, chat_node_id, correction_result, memory_receipt,
              memory_ledger_audit) = run_pass3_memory_management(
                 repo,
@@ -2056,6 +2248,7 @@ def run_turn(
                 turn_idx=turn_idx,
                 session_id=paths["memory_ledger"].parent.name,
                 timers=timers,
+                route_receipt=route_receipt,
             )
             correction_wall_ms = timers.supersession_ms
             plant_mode = info.get("plant_mode", plant_mode)
@@ -2206,6 +2399,10 @@ def run_turn(
     if memory_ledger_audit is not None:
         row["memory_ledger_audit"] = memory_ledger_audit
         row["memory_ledger_path"] = str(memory_ledger_path)
+    if route_receipt is not None:
+        # Also on the row so a single-pipeline session (which writes no
+        # per-turn ledger file) still persists the route decision.
+        row["route_receipt"] = route_receipt
     append_jsonl(paths["instrumentation"], row)
     print(json.dumps({
         "turn": turn_idx,

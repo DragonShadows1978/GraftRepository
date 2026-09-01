@@ -498,6 +498,43 @@ class GraftRepository:
                              metadata=g.get("metadata", {}),
                              state=list(self._state_tuple(g)))
 
+    # ------------------------------------------------- LSR-P2B route ledger
+    # OPT-IN by construction: no location configured => no directory is made
+    # and nothing is written, so every existing repository on disk keeps its
+    # exact layout.  When a location IS configured, the runtime's per-turn
+    # route receipt is persisted there and the serve reports the path.
+
+    def configure_route_receipt_ledger(self, directory=None, *, enabled=True):
+        """Choose where per-turn route receipts land (None = default subdir)."""
+        if not enabled:
+            self.route_receipt_dir = None
+            return None
+        self.route_receipt_dir = (
+            os.path.join(self.path, "route_receipts")
+            if directory is None else str(directory))
+        return self.route_receipt_dir
+
+    def route_receipt_ledger_dir(self):
+        return getattr(self, "route_receipt_dir", None)
+
+    def write_route_receipt(self, record):
+        """Persist one ``grm.route_receipt.v1`` record; None if unconfigured.
+
+        The runtime treats ``None`` as "no ledger location" and returns the
+        record in ``info`` instead, so the receipt is never lost either way.
+        """
+        directory = self.route_receipt_ledger_dir()
+        if not directory:
+            return None
+        os.makedirs(directory, exist_ok=True)
+        name = "turn_{}_{}.json".format(
+            str(record.get("turn_id", "0")),
+            str(record.get("receipt_sha256", ""))[:16])
+        path = os.path.join(directory, name)
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump(record, fh, indent=2, sort_keys=True)
+        return path
+
     def chat(self, user_text, ngen=64, max_trips=2):
         ans, info = self.runtime.chat(user_text, ngen=ngen, max_trips=max_trips)
         self._queue_s2_pending()

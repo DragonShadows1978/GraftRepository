@@ -8,6 +8,15 @@ storage and cache movement.
 
 from dataclasses import dataclass, field
 
+from core.grm_three_pass import arena_state_sha256, build_route_receipt
+
+# LSR-P2B: the production serve returns this record under this ``info`` key
+# when the repository has no ledger location configured.  ``route_receipt`` is
+# already the arena's optional route-profiling blob; a new fact takes a new
+# name rather than overloading an existing one.
+ROUTE_RECEIPT_INFO_KEY = "route_receipt_record"
+ROUTE_RECEIPT_SINK_INFO_KEY = "route_receipt_sink"
+
 
 @dataclass(frozen=True)
 class RuntimeResult:
@@ -84,11 +93,66 @@ class GRMRuntime:
         self.last_result = result
         return result
 
+    def _route_receipt_turn_id(self):
+        """Monotonic per-process turn ordinal for the production serve."""
+        ordinal = int(getattr(self, "_route_receipt_turns", 0))
+        self._route_receipt_turns = ordinal + 1
+        return str(ordinal)
+
+    def _persist_route_receipt(self, record, info):
+        """Write to the repository's ledger location, else return in info.
+
+        LSR-P2B principle: the receipt is produced unconditionally.  Where it
+        lands is a deployment question, and the answer is always stated in
+        ``info[ROUTE_RECEIPT_SINK_INFO_KEY]`` so a reader never has to guess
+        whether a missing file means "not configured" or "not written".
+        """
+        repo = self.repository
+        writer = getattr(repo, "write_route_receipt", None)
+        if callable(writer):
+            try:
+                path = writer(record)
+            except Exception as exc:
+                info[ROUTE_RECEIPT_INFO_KEY] = record
+                info[ROUTE_RECEIPT_SINK_INFO_KEY] = {
+                    "sink": "info", "reason": "ledger_write_failed",
+                    "error": repr(exc)}
+                return info
+            if path is not None:
+                info[ROUTE_RECEIPT_SINK_INFO_KEY] = {
+                    "sink": "repository_ledger", "path": str(path)}
+                return info
+            # Writer present but no location configured: fall through to info.
+        info[ROUTE_RECEIPT_INFO_KEY] = record
+        info[ROUTE_RECEIPT_SINK_INFO_KEY] = {
+            "sink": "info", "reason": "no_ledger_location_configured"}
+        return info
+
     def chat(self, user_text, ngen=64, max_trips=2):
         repo = self.repository
         before = repo._snapshot_state()
+        # LSR-P2B: arena state as the serve saw it, captured before step().
+        try:
+            arena_before_sha256 = arena_state_sha256(repo)
+        except Exception:
+            arena_before_sha256 = None
+        route_limit = max(1, (int(max_trips) + 1) * int(
+            getattr(repo.arena, "topk", 1) or 1))
         ans, info = repo.arena.step(user_text, ngen=ngen,
                                     max_trips=max_trips)
+        record = build_route_receipt(
+            session_id=str(getattr(repo, "path", "") or "repository"),
+            turn_id=self._route_receipt_turn_id(),
+            info=info,
+            arena=repo.arena,
+            request_text=user_text,
+            output_text=ans,
+            arena_before_sha256=arena_before_sha256,
+            serving_path="core.grm_runtime.GRMRuntime.chat",
+            route_limit=route_limit,
+            turn_kind="chat",
+        )
+        info = self._persist_route_receipt(record, info)
         extracted = repo._extract_from_new_turns(
             before, context={"event": "chat", "user_text": user_text,
                              "assistant_text": ans})
