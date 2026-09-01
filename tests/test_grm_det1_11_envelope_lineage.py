@@ -191,6 +191,68 @@ def test_persisted_sites_still_stamp_the_current_envelope(function):
     )
 
 
+# --- stage-shard binding is marker-referenced ----------------------------
+#
+# Campaign r11 ran every stage to completion and only the analyzer refused:
+# eleven append-only rounds had left completed shard receipts from earlier
+# attempts in the same shard directories, and the binding globbed the
+# directory and demanded exactly one.  The authority is the marker chain,
+# which already names this round's receipt; historical attempts are inert.
+
+
+def test_stage_shard_binding_resolves_the_attempt_from_the_marker():
+    """The binding must derive its attempt dir from the named receipt."""
+    source = inspect.getsource(analyze._validate_stage_shards)
+    assert "bound_attempt_dir = receipt_path.parent.resolve()" in source, (
+        "the bound attempt must be resolved from the marker-referenced "
+        "receipt, not searched for in the shard directory"
+    )
+    assert "if output_path.parent.resolve() != bound_attempt_dir:" in source, (
+        "completed attempts outside the bound attempt directory must be "
+        "skipped; globbing them into the binding is the r11 regression"
+    )
+
+
+def test_stray_completed_receipts_in_shard_dirs_change_nothing():
+    """The live run-dir carries many completed attempts per shard.
+
+    This is the r11 condition itself: if the binding still globbed, the
+    presence of more than one completed attempt in a spec directory would
+    make the analyzer refuse.  The analyzer's own receipt on disk is the
+    proof it does not.
+    """
+    campaign_dir = campaign.campaign_root(campaign.FROZEN_RUN)
+    shard_root = campaign_dir / "det1_7/plant_registration/shards/e2e-cal"
+    if not shard_root.is_dir():
+        pytest.skip("plant_registration shards not present in this tree")
+
+    completed = []
+    for output_path in sorted(shard_root.glob("attempt_*/worker_output.json")):
+        payload = campaign.read_json(output_path)
+        if payload.get("status") in ("PASS", "COMPLETE"):
+            completed.append(output_path.parent.name)
+    assert len(completed) > 1, (
+        "expected several completed attempts from append-only rounds; "
+        "without them this test cannot witness the r11 condition"
+    )
+
+
+def test_analysis_receipt_exists_and_names_a_lineage_envelope():
+    """End-to-end: the analyzer ran to completion over the real evidence."""
+    analysis_dir = campaign.campaign_root(campaign.FROZEN_RUN) / "analysis"
+    receipts = sorted(analysis_dir.glob("analysis_receipt_*.json"))
+    if not receipts:
+        pytest.skip("no analysis receipt in this tree")
+    assert len(receipts) == 1, "analysis directory holds more than one receipt"
+    payload = campaign.read_json(receipts[0])
+    assert payload.get("prediction_verdict") in (
+        "SUPPORTED", "PARTIAL", "REFUTED",
+    )
+    campaign._require_lineage_source_authorization(
+        payload.get("precollection_authorization"), "analysis receipt",
+    )
+
+
 def test_marker_prerequisite_chain_tolerates_lineage_positionally():
     """The subtlest pin: the envelope sits anonymously in a list."""
     source = inspect.getsource(analyze._validate_marker_chain)

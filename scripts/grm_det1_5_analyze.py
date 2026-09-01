@@ -1072,10 +1072,35 @@ def _validate_stage_shards(
             shard.get("spec") == expected_spec,
             f"{where}.shard_receipts[{index}] names a different worker spec",
         )
+        # DET1.11: bind THIS round's attempt by reference from the marker
+        # chain, not by globbing the shard directory.  Eleven append-only
+        # campaign rounds have left completed receipts from earlier attempts
+        # in place; they are historical evidence, not competitors for this
+        # round's binding.  The receipt named by the marker identifies its
+        # own attempt directory, so the attempt is resolved rather than
+        # searched for, and stray completed receipts elsewhere in the shard
+        # directory are inert by construction.
+        bound_attempt_dir = receipt_path.parent.resolve()
+        _require(
+            bound_attempt_dir.parent == expected_spec_root
+            and bound_attempt_dir.name.startswith("attempt_"),
+            f"{where}.shard_receipts[{index}] is not inside a registered "
+            f"attempt directory of {expected_spec}",
+        )
         completed = []
         for output_path in sorted(expected_spec_root.glob("attempt_*/worker_output.json")):
             output = read_json(output_path)
             if output.get("status") not in ("PASS", "COMPLETE"):
+                continue
+            if output_path.parent.resolve() != bound_attempt_dir:
+                # A completed attempt from an earlier round.  Record it as
+                # historical evidence when the caller collects that, and
+                # move on: only the marker-referenced attempt binds.
+                if (
+                    historical_outputs is not None
+                    and output.get("schema") == "grm.det1_7.worker_shard.v1"
+                ):
+                    historical_outputs.append(file_record(output_path))
                 continue
             finished_path = output_path.parent / "attempt_finished.json"
             if not finished_path.is_file():
@@ -1129,9 +1154,15 @@ def _validate_stage_shards(
                 f"{where}/{expected_spec} worker output differs from its receipt",
             )
             completed.append(bound_path.resolve())
+        # Exactly one completed output may live in the BOUND attempt
+        # directory, and it must be the receipt the marker chain named.
+        # Historical attempts were skipped above, so this no longer fails
+        # merely because earlier rounds also succeeded.
         _require(
             completed == [receipt_path],
-            f"{where}/{expected_spec} has duplicate or unbound completed shard receipts",
+            f"{where}/{expected_spec} bound attempt "
+            f"{bound_attempt_dir.name} does not carry exactly its "
+            f"marker-referenced completed shard receipt",
         )
         shards.append(shard)
     _require(
@@ -1298,9 +1329,18 @@ def _validate_verbal_sessions(
                 f"D-VERB {spec} binds the wrong registered fixture source",
             )
             source = read_json(source_path)
+            # DET1.9 binds one distinct reserve probe to each certified
+            # supersession session, so the fed session carries the fixture's
+            # own probes PLUS that reserve.  The worker records the split
+            # explicitly; check every component rather than comparing the
+            # total against the raw fixture, which never included it.
+            source_probes = len(source.get("probes") or ())
+            reserve_probes = evidence.get("reserve_probe_count")
             _require(
                 evidence.get("node_count") == len(source.get("nodes") or ())
-                and evidence.get("probe_count") == len(source.get("probes") or ()),
+                and evidence.get("source_probe_count") == source_probes
+                and reserve_probes == 1
+                and evidence.get("probe_count") == source_probes + 1,
                 f"D-VERB {spec} fixture cardinality projection drifted",
             )
 
@@ -2008,6 +2048,22 @@ def _thresholds_equal(frozen: Mapping[str, Any], fitted: Mapping[str, Any]) -> b
     )
 
 
+def _write_text_rendering(path: Path, text: str) -> Path:
+    """Write a derived rendering, refreshing it when its source advances.
+
+    Distinct from :func:`_write_text_exclusive_or_verify`, which guards
+    write-once EVIDENCE.  A rendering carries no information the receipt
+    does not already hold, so refusing to refresh it would strand the
+    campaign on a cosmetic difference (DET1.11).
+    """
+    payload = text.encode("utf-8")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists() and path.read_bytes() == payload:
+        return path
+    path.write_bytes(payload)
+    return path
+
+
 def _write_text_exclusive_or_verify(path: Path, text: str) -> Path:
     payload = text.encode("utf-8")
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -2669,8 +2725,18 @@ def analyze(run_dir: Path) -> Path:
     }
     if existing_analysis:
         analysis_path = existing_analysis[0]
+        stored = read_json(analysis_path)
+        # DET1.11: a receipt frozen in an earlier round names the envelope
+        # that governed THAT round.  Every other field must still match
+        # exactly; the authorization is checked for lineage membership.
+        _require_lineage_authorization(
+            stored.get("precollection_authorization"), "existing analysis",
+        )
         _require(
-            read_json(analysis_path) == analysis,
+            {k: v for k, v in stored.items()
+             if k != "precollection_authorization"}
+            == {k: v for k, v in analysis.items()
+                if k != "precollection_authorization"},
             "existing analysis receipt no longer matches validated inputs",
         )
         _require(
@@ -2766,7 +2832,12 @@ def analyze(run_dir: Path) -> Path:
         "",
     ]
     report_path = analysis_dir / "GRM_DET1_5_REPORT.md"
-    _write_text_exclusive_or_verify(report_path, "\n".join(lines))
+    # DET1.11: the report is a RENDERING of the analysis receipt, not
+    # independent evidence.  When the envelope advances, the receipt stays
+    # valid under the lineage rule but the rendered evidence list names the
+    # newer envelope; regenerate rather than refuse.  The receipt itself is
+    # still write-once and content-addressed — that is what is immutable.
+    _write_text_rendering(report_path, "\n".join(lines))
     return analysis_path
 
 
