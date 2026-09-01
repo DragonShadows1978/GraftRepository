@@ -247,8 +247,9 @@ def _mechanistic_bindings(run_dir: Path) -> dict[str, dict[str, Any]]:
     rows_path = campaign.campaign_root(run_dir) / "eval/mechanistic_rows.jsonl"
     _require(rows_path.is_file(),
              "D-VERB opened before fixed mechanistic evaluation rows exist")
+    rows = read_jsonl(rows_path)
     bindings: dict[str, dict[str, Any]] = {}
-    for row in read_jsonl(rows_path):
+    for row in rows:
         row_id = str(row.get("row_id", ""))
         selection = (row.get("signals") or {}).get("ladder_attempt_selection") or {}
         ordinal = selection.get("selected_call_ordinal",
@@ -261,8 +262,23 @@ def _mechanistic_bindings(run_dir: Path) -> dict[str, dict[str, Any]]:
             "selected_attempt_ordinal": int(ordinal),
             "mounted_ids": [int(value) for value in row["mounted_ids"]],
         }
-    _require(len(bindings) == 24,
-             f"D-VERB requires 24 mechanistic bindings, got {len(bindings)}")
+    # DET1.11: the mechanistic arm covers the ACHIEVED population, so the
+    # binding count follows those rows rather than a fixed 24.  What must
+    # still hold is that D-VERB binds EVERY mechanistic row exactly once
+    # (no duplicate row_ids collapsing two rows into one binding) and that
+    # the arm is complete pairs above the registered floor.
+    _require(len(bindings) == len(rows),
+             f"D-VERB bindings do not cover the mechanistic rows one-to-one: "
+             f"{len(bindings)} bindings for {len(rows)} rows")
+    _require(
+        len(bindings) >= 2 * campaign.DET1_11_ACHIEVED_EVAL_PAIR_FLOOR
+        and len(bindings) % 2 == 0
+        and len(bindings)
+        <= 2 * campaign.DET1_11_REGISTERED_EVAL_PAIR_COUNT,
+        f"D-VERB requires complete achieved pairs between "
+        f"{2 * campaign.DET1_11_ACHIEVED_EVAL_PAIR_FLOOR} and "
+        f"{2 * campaign.DET1_11_REGISTERED_EVAL_PAIR_COUNT} mechanistic "
+        f"bindings, got {len(bindings)}")
     return bindings
 
 
@@ -673,7 +689,12 @@ def _run_e2e(ctx: Mapping[str, Any], spec: str, *, verbal: bool) -> tuple[Path, 
         ]
     else:
         base_fixtures = []
-        for base_fixture in all_split_fixtures:
+        # DET1.11: iterate the ACHIEVED population.  An excluded slot has no
+        # plant-registry entry by design, so projecting it would fail closed
+        # (this is exactly what sank campaign r8 at G0).
+        for base_fixture in campaign.achieved_base_fixtures(
+            ctx.get("plant_registry"), all_split_fixtures
+        ):
             effective = _effective_fixture(ctx, base_fixture)
             if (
                 effective.get("source_family") == "certified_34_turn"
@@ -839,7 +860,11 @@ def _run_sup(ctx: Mapping[str, Any], spec: str, *, verbal: bool,
         effective_fixtures.append(reserve)
     else:
         effective_fixtures = []
-        for base_fixture in ctx["registration"]["fixtures"]:
+        # DET1.11: same rule as the E2E branch — the achieved population, not
+        # the registered slot list.
+        for base_fixture in campaign.achieved_base_fixtures(
+            ctx.get("plant_registry"), ctx["registration"]["fixtures"]
+        ):
             if base_fixture.get("split") != "eval":
                 continue
             effective = _effective_fixture(ctx, base_fixture)

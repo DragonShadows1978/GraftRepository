@@ -100,7 +100,7 @@ DET1_10_SOURCE_AUTH = (
 # script picked up the census step; it is retained unused under the same
 # append-only rule (the drift guard is what caught it, working as designed).
 DET1_11_SOURCE_AUTH = (
-    FROZEN_RUN / "det1_9_precollection_source_authorization_r10.json"
+    FROZEN_RUN / "det1_9_precollection_source_authorization_r11.json"
 )
 # The DET1.7 public campaign/analyzer API remains stable while its active
 # collection-only authority advances through append-only successor envelopes.
@@ -365,7 +365,8 @@ DET1_9_CHANGED_SOURCES = {
         "then_det1_11_author_the_lived_serving_census_before_the_campaign"
     ),
     "scripts/grm_det1_5_workers.py": (
-        "collect_distinct_reserves_from_certified_campaign_sessions"
+        "collect_distinct_reserves_from_certified_campaign_sessions_"
+        "then_det1_11_iterate_the_achieved_population_in_stage_workers"
     ),
     "scripts/grm_det1_7_registry.py": (
         "freeze_det1_9_cross_session_substitution_policy_and_table_"
@@ -433,6 +434,47 @@ def _require(condition: bool, message: str) -> None:
         raise DETError(message)
 
 
+def excluded_slot_ids(registry: Mapping[str, Any] | None) -> frozenset[str]:
+    """The base slots DET1.11 dropped from the achieved population.
+
+    This is the ONE definition every stage consumer filters on.  The r8
+    campaign fail-closed at G0 because registration honoured the exclusions
+    while the stage workers still enumerated the full REGISTERED slot list
+    and demanded a plant-registry entry for every one of them.  Any consumer
+    that walks ``registration["fixtures"]`` must subtract this set first.
+    """
+    if not isinstance(registry, Mapping):
+        return frozenset()
+    return frozenset(
+        str(row.get("fixture_id"))
+        for row in registry.get("excluded_slots") or ()
+        if isinstance(row, Mapping) and row.get("fixture_id")
+    )
+
+
+def is_excluded_slot(
+    registry: Mapping[str, Any] | None, base_fixture_id: str
+) -> bool:
+    """True when this base slot is not part of the achieved population."""
+    return str(base_fixture_id) in excluded_slot_ids(registry)
+
+
+def achieved_base_fixtures(
+    registry: Mapping[str, Any] | None,
+    fixtures: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Filter registered base fixtures down to the achieved population.
+
+    Order is preserved: the achieved population is always a subsequence of
+    the frozen registration order, never a re-sort of it.
+    """
+    excluded = excluded_slot_ids(registry)
+    return [
+        dict(row) for row in fixtures
+        if str(row.get("fixture_id")) not in excluded
+    ]
+
+
 def _plant_registry_entry(
     registry: Mapping[str, Any], base_fixture_id: str,
 ) -> dict[str, Any]:
@@ -442,6 +484,15 @@ def _plant_registry_entry(
         if isinstance(value, Mapping)
         and value.get("fixture_id") == str(base_fixture_id)
     ]
+    # DET1.11: an excluded slot legitimately has no entry.  Say so, rather
+    # than reporting a missing entry, so a consumer that forgot to subtract
+    # the achieved population is diagnosed instead of merely failing.
+    _require(
+        not is_excluded_slot(registry, base_fixture_id),
+        f"{base_fixture_id} is an EXCLUDED slot with no plant-registry "
+        f"entry; this consumer must iterate the achieved population "
+        f"(see achieved_base_fixtures) rather than the registered slot list",
+    )
     _require(len(matches) == 1,
              f"plant registry lacks exactly one entry for {base_fixture_id}")
     return matches[0]

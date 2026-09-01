@@ -33,10 +33,18 @@ from scripts.grm_det1_common import (  # noqa: E402
 from scripts.grm_det1_5_analyze import (  # noqa: E402
     VERDICTS,
     _achieved_clause,
+    _expected_eval_keys,
+    _expected_eval_order,
     _prediction_sentence,
+    _registry_entries,
+    _split_ids,
     race_table_markdown,
 )
 from scripts.grm_det1_5_gpu import (  # noqa: E402
+    _plant_registry_entry,
+    achieved_base_fixtures,
+    excluded_slot_ids,
+    is_excluded_slot,
     merge_detector_rows,
     validate_g0_rows,
 )
@@ -305,6 +313,210 @@ def test_detector_join_refuses_arms_below_the_floor():
     ]
     with pytest.raises(DETError, match="floor not met"):
         merge_detector_rows(rows, rows)
+
+
+# --- an excluded slot reaches NO stage consumer --------------------------
+#
+# Campaign r8 fail-closed at G0 with "plant registry lacks exactly one entry
+# for sup_lumen_head": registration honoured the exclusions, but the stage
+# workers still walked the REGISTERED slot list and demanded an entry for
+# every slot in it.  These tests pin the invariant that failure violated.
+
+
+_R8_REGISTRATION = {
+    "fixtures": [
+        {"fixture_id": "e2e_t09_cypher_bridge", "split": "calibration",
+         "source_family": "certified_34_turn"},
+        {"fixture_id": "e2e_t16_lyra_dock", "split": "calibration",
+         "source_family": "certified_34_turn"},
+        {"fixture_id": "e2e_t05_orion_pin", "split": "eval",
+         "source_family": "certified_34_turn"},
+        {"fixture_id": "sup_praxis_fresh", "split": "eval",
+         "source_family": "supersession_battery_on_gpt_oss"},
+        {"fixture_id": "sup_lumen_head", "split": "eval",
+         "source_family": "supersession_battery_on_gpt_oss"},
+        {"fixture_id": "sup_orion_current", "split": "eval",
+         "source_family": "supersession_battery_on_gpt_oss"},
+    ],
+}
+
+# The two slots campaign r7/r8 could not serve lawfully.
+_R8_EXCLUDED = ("sup_lumen_head", "sup_orion_current")
+
+
+def _r8_registry() -> dict:
+    kept = [
+        row["fixture_id"] for row in _R8_REGISTRATION["fixtures"]
+        if row["fixture_id"] not in _R8_EXCLUDED
+    ]
+    return {
+        "entries": [
+            {"fixture_id": value, "effective_fixture_id": value,
+             "split": "eval"}
+            for value in kept
+        ],
+        "excluded_slots": [
+            {
+                "fixture_id": value,
+                "split": "eval",
+                "status": EXCLUSION_STATUS,
+                "primary_reason":
+                    "LIVED_SERVED_CONTROL_INCORRECT_OR_REFUSAL",
+                "served_answer": "Birch-2-Beacon.",
+                "reserve_pool_exhausted": True,
+                "selection_rule_id": ACHIEVED_SELECTION_RULE_ID,
+            }
+            for value in _R8_EXCLUDED
+        ],
+    }
+
+
+def test_excluded_slots_are_identified_from_the_registry():
+    assert excluded_slot_ids(_r8_registry()) == frozenset(_R8_EXCLUDED)
+    for value in _R8_EXCLUDED:
+        assert is_excluded_slot(_r8_registry(), value) is True
+    assert is_excluded_slot(_r8_registry(), "sup_praxis_fresh") is False
+
+
+def test_excluded_slot_appears_in_no_stage_workers_expectation_list():
+    """The r8 regression, pinned.
+
+    Every stage consumer that enumerates slots must derive its expectation
+    list from the achieved population.  No excluded slot may appear in any of
+    them — G0, G1, calibration, eval, or the analyzer's inputs.
+    """
+    registry = _r8_registry()
+    fixtures = _R8_REGISTRATION["fixtures"]
+
+    # 1. The shared filter every stage consumer is required to apply.
+    achieved = achieved_base_fixtures(registry, fixtures)
+    achieved_ids = [row["fixture_id"] for row in achieved]
+
+    # 2. The per-split expectation lists the stage workers build from it.
+    e2e_eval = [
+        row["fixture_id"] for row in achieved
+        if row["split"] == "eval"
+        and row["source_family"] == "certified_34_turn"
+    ]
+    sup_eval = [
+        row["fixture_id"] for row in achieved
+        if row["split"] == "eval"
+        and row["source_family"] == "supersession_battery_on_gpt_oss"
+    ]
+    calibration = [
+        row["fixture_id"] for row in achieved
+        if row["split"] == "calibration"
+    ]
+
+    for expectation_list in (
+        achieved_ids, e2e_eval, sup_eval, calibration,
+    ):
+        for excluded in _R8_EXCLUDED:
+            assert excluded not in expectation_list
+
+    # 3. Nothing lawful was lost, and calibration is intact.
+    assert achieved_ids == [
+        "e2e_t09_cypher_bridge", "e2e_t16_lyra_dock",
+        "e2e_t05_orion_pin", "sup_praxis_fresh",
+    ]
+    assert calibration == ["e2e_t09_cypher_bridge", "e2e_t16_lyra_dock"]
+
+
+def test_projecting_an_excluded_slot_names_the_real_fault():
+    """r8's opaque 'lacks exactly one entry' becomes a diagnosis."""
+    registry = _r8_registry()
+    for excluded in _R8_EXCLUDED:
+        with pytest.raises(DETError, match="EXCLUDED slot"):
+            _plant_registry_entry(registry, excluded)
+
+
+def test_achieved_population_preserves_frozen_registration_order():
+    registry = _r8_registry()
+    achieved = achieved_base_fixtures(registry, _R8_REGISTRATION["fixtures"])
+    registered_order = [
+        row["fixture_id"] for row in _R8_REGISTRATION["fixtures"]
+    ]
+    got = [row["fixture_id"] for row in achieved]
+    assert got == [v for v in registered_order if v in set(got)]
+
+
+def test_a_registry_without_exclusions_keeps_the_full_population():
+    """The amendment must be inert on a fully lawful campaign."""
+    fixtures = _R8_REGISTRATION["fixtures"]
+    for registry in ({"entries": [], "excluded_slots": []}, {}, None):
+        achieved = achieved_base_fixtures(registry, fixtures)
+        assert len(achieved) == len(fixtures)
+        assert excluded_slot_ids(registry) == frozenset()
+
+
+def test_lawful_slots_still_project_through_the_registry():
+    registry = _r8_registry()
+    entry = _plant_registry_entry(registry, "sup_praxis_fresh")
+    assert entry["effective_fixture_id"] == "sup_praxis_fresh"
+
+
+def _analyzer_registry() -> dict:
+    """A registry at the real r7/r8 achieved population: 10 eval + 2 cal."""
+    eval_ids = [
+        "e2e_t05_orion_pin", "e2e_t13_orion_pin", "e2e_t19_nova_key",
+        "e2e_t22_mira_seal", "e2e_t24_terra_port", "e2e_t26_ember_code",
+        "e2e_t30_atlas_tone", "sup_harbor_restatement", "sup_praxis_fresh",
+        "sup_solace_fresh",
+    ]
+    entries = [
+        {"fixture_id": value, "split": "eval", "effective_fixture_id": value}
+        for value in eval_ids
+    ] + [
+        {"fixture_id": value, "split": "calibration",
+         "effective_fixture_id": value}
+        for value in ("e2e_t09_cypher_bridge", "e2e_t16_lyra_dock")
+    ]
+    return {
+        "entries": entries,
+        "excluded_slots": [{"fixture_id": v} for v in _R8_EXCLUDED],
+    }
+
+
+def test_analyzer_expectation_lists_exclude_the_dropped_slots():
+    """The analyzer's row-coverage lists are stage consumers too."""
+    registry = _analyzer_registry()
+    eval_ids = _split_ids(registry, "eval")
+    key_ids = {key[0] for key in _expected_eval_keys(registry)}
+    order_ids = [key[0] for key in _expected_eval_order(registry)]
+
+    for excluded in _R8_EXCLUDED:
+        assert excluded not in eval_ids
+        assert excluded not in key_ids
+        assert excluded not in order_ids
+
+    assert len(eval_ids) == 10
+    # Ten pairs: a served and a planted_miss row apiece.
+    assert len(order_ids) == 20
+    assert _split_ids(registry, "calibration") == [
+        "e2e_t09_cypher_bridge", "e2e_t16_lyra_dock",
+    ]
+
+
+def test_registry_entry_count_follows_registered_minus_excluded():
+    registry = _analyzer_registry()
+    assert len(_registry_entries(registry)) == 12
+
+    short = {**registry, "entries": registry["entries"][:-1]}
+    with pytest.raises(DETError, match="lacks 12 entries"):
+        _registry_entries(short)
+
+
+def test_registry_may_not_both_exclude_and_carry_a_slot():
+    registry = _analyzer_registry()
+    tampered = {
+        "entries": registry["entries"] + [{
+            "fixture_id": "sup_lumen_head", "split": "eval",
+            "effective_fixture_id": "sup_lumen_head",
+        }],
+        "excluded_slots": [{"fixture_id": "sup_lumen_head"}],
+    }
+    with pytest.raises(DETError, match="both excludes and carries"):
+        _registry_entries(tampered)
 
 
 # --- helpers -------------------------------------------------------------

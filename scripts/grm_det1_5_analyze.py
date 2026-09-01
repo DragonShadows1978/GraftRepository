@@ -61,6 +61,7 @@ from scripts.grm_det1_5_gpu import (  # noqa: E402
 from scripts.grm_det1_7_registry import (  # noqa: E402
     ACHIEVED_EVAL_PAIR_FLOOR,
     REGISTERED_EVAL_PAIR_COUNT,
+    REGISTERED_FIXTURE_COUNT,
     validate_plant_registry,
 )
 
@@ -1353,17 +1354,40 @@ def _validate_verbal_sessions(
 
 
 def _registry_entries(registry: Mapping[str, Any]) -> list[dict[str, Any]]:
+    # DET1.11: the registry carries the ACHIEVED population, so the entry
+    # count is registered-minus-excluded rather than a fixed 14.  Identity
+    # uniqueness and the reconstruction back to the registered fixture count
+    # are still enforced exactly as before.
     raw = registry.get("entries")
-    _require(isinstance(raw, list) and len(raw) == 14, "plant registry lacks 14 entries")
-    entries = [dict(value) for value in raw if isinstance(value, Mapping)]
-    _require(len(entries) == 14, "plant registry contains a malformed entry")
+    excluded = list(registry.get("excluded_slots") or ())
+    expected = REGISTERED_FIXTURE_COUNT - len(excluded)
     _require(
-        len({str(entry.get("fixture_id", "")) for entry in entries}) == 14,
+        isinstance(raw, list) and len(raw) == expected,
+        f"plant registry lacks {expected} entries "
+        f"({REGISTERED_FIXTURE_COUNT} registered - {len(excluded)} excluded)",
+    )
+    entries = [dict(value) for value in raw if isinstance(value, Mapping)]
+    _require(len(entries) == expected, "plant registry contains a malformed entry")
+    _require(
+        len({str(entry.get("fixture_id", "")) for entry in entries}) == expected,
         "plant registry base fixture identities are not unique",
     )
     _require(
-        len({str(entry.get("effective_fixture_id", "")) for entry in entries}) == 14,
+        len({str(entry.get("effective_fixture_id", "")) for entry in entries})
+        == expected,
         "plant registry effective fixture identities are not unique",
+    )
+    # An excluded slot must never reappear as an entry.
+    excluded_ids = {
+        str(row.get("fixture_id")) for row in excluded
+        if isinstance(row, Mapping)
+    }
+    collisions = sorted(
+        excluded_ids & {str(entry.get("fixture_id", "")) for entry in entries}
+    )
+    _require(
+        not collisions,
+        f"plant registry both excludes and carries entries for: {collisions}",
     )
     return entries
 
@@ -1871,8 +1895,14 @@ def _validate_plant_registration(
     )
     candidates = read_jsonl(candidates_path)
     selected = read_jsonl(selected_path)
+    # Every candidate is still collected; DET1.11 shrinks only the selected
+    # population, which must match the registry's achieved entry list.
     _require(len(candidates) == 19, "candidate observation file is not 19 rows")
-    _require(len(selected) == 14, "selected observation file is not 14 rows")
+    _require(
+        len(selected) == len(_registry_entries(registry)),
+        f"selected observation file is not "
+        f"{len(_registry_entries(registry))} rows",
+    )
     _require(
         [str(row.get("fixture_id", "")) for row in selected]
         == [str(entry["fixture_id"]) for entry in _registry_entries(registry)],
