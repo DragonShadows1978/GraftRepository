@@ -36,8 +36,10 @@ from scripts.grm_det1_common import (  # noqa: E402
     write_content_addressed,
 )
 from scripts.grm_det1_5_gpu import (  # noqa: E402
+    DELTA_AMENDMENT,
     aggregate_process_instances,
     merge_detector_rows,
+    validate_delta_amendment,
     validate_g0_rows,
     validate_g1_pair,
     validate_served_control,
@@ -387,12 +389,56 @@ def _source_records(amendment: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
     return records
 
 
+def _validated_historical_source_record(
+    record: Mapping[str, Any],
+    source: str,
+    where: str,
+    *,
+    source_rebindings: Mapping[str, Mapping[str, Any]],
+) -> None:
+    """Accept a DET1.5 source record only if current or exactly rebound."""
+
+    _require(isinstance(record, Mapping), f"{where} is not a file record")
+    _require(
+        set(record) == {"path", "bytes", "sha256"},
+        f"{where} must contain exactly path/bytes/sha256",
+    )
+    source_path = (ROOT / source).resolve()
+    _require(
+        _record_path(record) == source_path,
+        f"{where} binds the wrong source path",
+    )
+    current = file_record(source_path)
+    if dict(record) == current:
+        _validated_record(record, where)
+        return
+
+    rebinding = source_rebindings.get(source)
+    _require(
+        isinstance(rebinding, Mapping),
+        f"{where} is stale without a DET1.6 source rebinding",
+    )
+    _require(
+        set(rebinding) == {"before", "after"},
+        f"{where} DET1.6 source rebinding is malformed",
+    )
+    _same_record(rebinding.get("before"), record, f"{where}.rebinding.before")
+    _same_record(rebinding.get("after"), current, f"{where}.rebinding.after")
+    _require(
+        rebinding.get("before") != rebinding.get("after"),
+        f"{where} DET1.6 source rebinding is empty",
+    )
+    _validated_record(rebinding["after"], f"{where}.rebinding.after")
+
+
 def _amendment(
     run_dir: Path,
     zero_marker_path: Path,
     zero_receipt_path: Path,
     registration_path: Path,
     runtime_frame_path: Path,
+    *,
+    source_rebindings: Mapping[str, Mapping[str, Any]],
 ) -> tuple[Path, dict[str, Any]]:
     path = run_dir / AMENDMENT_NAME
     _require(
@@ -463,8 +509,12 @@ def _amendment(
     )
     for source in required:
         _require(source in inventory, f"amendment source inventory omits {source}")
-        _validated_record(inventory[source], f"amendment.source_inventory[{source}]")
-        _same_record(inventory[source], file_record(ROOT / source), f"source {source}")
+        _validated_historical_source_record(
+            inventory[source],
+            source,
+            f"amendment.source_inventory[{source}]",
+            source_rebindings=source_rebindings,
+        )
     lead = value.get("lead_script") or {}
     lead_path = _validated_record(lead, "amendment.lead_script")
     _require(
@@ -566,6 +616,7 @@ def _validate_common_stage_bindings(
     receipts: Mapping[str, Mapping[str, Any]],
     *,
     amendment_path: Path,
+    source_amendment_path: Path,
     registration_path: Path,
     runtime_frame_path: Path,
 ) -> None:
@@ -574,6 +625,7 @@ def _validate_common_stage_bindings(
         _binding(receipt, "runtime_frame", runtime_frame_path, stage)
         if stage != "cross_process_zero":
             _binding(receipt, "race_authorization_amendment", amendment_path, stage)
+            _binding(receipt, "source_amendment", source_amendment_path, stage)
 
 
 def _validate_marker_chain(
@@ -583,6 +635,7 @@ def _validate_marker_chain(
     zero_marker_path: Path,
     zero_receipt: Mapping[str, Any],
     amendment_path: Path,
+    source_amendment_path: Path,
     registration_path: Path,
     runtime_frame_path: Path,
 ) -> None:
@@ -612,6 +665,7 @@ def _validate_marker_chain(
                 dict(zero_receipt.get("fork_snapshot") or {}),
             ])
         if stage != "cross_process_zero":
+            _binding(marker, "source_amendment", source_amendment_path, f"{stage} marker")
             expected.append(file_record(amendment_path))
         _require(
             marker.get("prerequisites") == expected,
@@ -694,6 +748,7 @@ def _worker_shard(
     campaign_dir: Path,
     stage: str,
     amendment_path: Path,
+    source_amendment_path: Path,
     registration_path: Path,
     runtime_frame_path: Path,
 ) -> dict[str, Any]:
@@ -709,6 +764,7 @@ def _worker_shard(
     _binding(value, "registration", registration_path, where)
     _binding(value, "runtime_frame", runtime_frame_path, where)
     _binding(value, "race_authorization_amendment", amendment_path, where)
+    _binding(value, "source_amendment", source_amendment_path, where)
     return value
 
 
@@ -746,6 +802,7 @@ def _validate_stage_shards(
     *,
     campaign_dir: Path,
     amendment_path: Path,
+    source_amendment_path: Path,
     registration_path: Path,
     runtime_frame_path: Path,
     combined_rows: Sequence[Mapping[str, Any]] | None = None,
@@ -774,6 +831,7 @@ def _validate_stage_shards(
             campaign_dir=campaign_dir,
             stage=where,
             amendment_path=amendment_path,
+            source_amendment_path=source_amendment_path,
             registration_path=registration_path,
             runtime_frame_path=runtime_frame_path,
         )
@@ -1339,12 +1397,46 @@ def analyze(run_dir: Path) -> Path:
     registration_path, registration = _registration(run_dir)
     runtime_frame_path, runtime_frame = _runtime_frame(run_dir)
     zero_marker_path, _zero_marker, zero_receipt_path, zero_receipt = _zero_gate(run_dir)
+    source_amendment = validate_delta_amendment(run_dir)
+    _require(
+        source_amendment.get("schema")
+        == "grm.det1_6.fork_hydration_delta_amendment.v1",
+        "bad DET1.6 terminal source-amendment schema",
+    )
+    _require(
+        source_amendment.get("status")
+        == "AUTHORIZED_FORK_HYDRATION_DELTA_SOURCE_REBINDING",
+        "DET1.6 terminal source amendment is not authorized",
+    )
+    _require(
+        source_amendment.get("race_resume_authorized") is True
+        and source_amendment.get("amendment_is_evidence") is False,
+        "DET1.6 terminal source-amendment authority drifted",
+    )
+    source_amendment_path = _validated_record(
+        source_amendment.get("record") or {},
+        "DET1.6 terminal source amendment",
+    )
+    _require(
+        source_amendment_path == (run_dir / DELTA_AMENDMENT.name).resolve(),
+        "DET1.6 validator returned the wrong terminal amendment",
+    )
+    source_rebindings = source_amendment.get("source_rebindings")
+    _require(
+        isinstance(source_rebindings, Mapping),
+        "DET1.6 terminal source rebindings are malformed",
+    )
+    _require(
+        source_amendment.get("source_count") == len(source_rebindings),
+        "DET1.6 terminal source-rebinding count drifted",
+    )
     amendment_path, authorization = _amendment(
         run_dir,
         zero_marker_path,
         zero_receipt_path,
         registration_path,
         runtime_frame_path,
+        source_rebindings=source_rebindings,
     )
 
     stage_files: dict[str, tuple[Path, Path]] = {}
@@ -1363,12 +1455,14 @@ def analyze(run_dir: Path) -> Path:
         zero_marker_path=zero_marker_path,
         zero_receipt=zero_receipt,
         amendment_path=amendment_path,
+        source_amendment_path=source_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
     )
     _validate_common_stage_bindings(
         receipts,
         amendment_path=amendment_path,
+        source_amendment_path=source_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
     )
@@ -1425,6 +1519,7 @@ def analyze(run_dir: Path) -> Path:
         "g0",
         campaign_dir=campaign_dir,
         amendment_path=amendment_path,
+        source_amendment_path=source_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
         combined_rows=g0_rows,
@@ -1437,6 +1532,7 @@ def analyze(run_dir: Path) -> Path:
         campaign_dir=campaign_dir,
         stage="g1",
         amendment_path=amendment_path,
+        source_amendment_path=source_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
     )
@@ -1446,6 +1542,7 @@ def analyze(run_dir: Path) -> Path:
         campaign_dir=campaign_dir,
         stage="g1",
         amendment_path=amendment_path,
+        source_amendment_path=source_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
     )
@@ -1485,6 +1582,7 @@ def analyze(run_dir: Path) -> Path:
         "g1",
         campaign_dir=campaign_dir,
         amendment_path=amendment_path,
+        source_amendment_path=source_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
     )
@@ -1531,6 +1629,7 @@ def analyze(run_dir: Path) -> Path:
         "calibration",
         campaign_dir=campaign_dir,
         amendment_path=amendment_path,
+        source_amendment_path=source_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
         combined_rows=calibration_rows,
@@ -1549,6 +1648,7 @@ def analyze(run_dir: Path) -> Path:
     _binding(thresholds, "registration", registration_path, "thresholds")
     _binding(thresholds, "runtime_frame", runtime_frame_path, "thresholds")
     _binding(thresholds, "race_authorization_amendment", amendment_path, "thresholds")
+    _binding(thresholds, "source_amendment", source_amendment_path, "thresholds")
     _binding(thresholds, "calibration_rows", calibration_path, "thresholds")
     fitted = fit_thresholds(calibration_rows)
     _require(_thresholds_equal(thresholds, fitted), "frozen thresholds differ from fresh fit")
@@ -1609,6 +1709,7 @@ def analyze(run_dir: Path) -> Path:
         "eval_mechanistic",
         campaign_dir=campaign_dir,
         amendment_path=amendment_path,
+        source_amendment_path=source_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
         combined_rows=mechanistic_rows,
@@ -1683,6 +1784,7 @@ def analyze(run_dir: Path) -> Path:
         "eval_verbal",
         campaign_dir=campaign_dir,
         amendment_path=amendment_path,
+        source_amendment_path=source_amendment_path,
         registration_path=registration_path,
         runtime_frame_path=runtime_frame_path,
         combined_rows=verbal_rows,
@@ -1773,6 +1875,7 @@ def analyze(run_dir: Path) -> Path:
         "runtime_frame": file_record(runtime_frame_path),
         "zero_gate": file_record(zero_receipt_path),
         "race_authorization_amendment": file_record(amendment_path),
+        "source_amendment": file_record(source_amendment_path),
         "thresholds": file_record(threshold_path),
         "fresh_rows": source_rows,
         "stage_receipts": {
@@ -1826,6 +1929,7 @@ def analyze(run_dir: Path) -> Path:
         "## Evidence",
         "",
         f"- Race authorization: `{file_record(amendment_path)['path']}`",
+        f"- DET1.6 terminal source amendment: `{file_record(source_amendment_path)['path']}`",
         f"- Cross-process ZERO: `{file_record(stage_files['cross_process_zero'][1])['path']}`",
         f"- DET-G0: `{file_record(stage_files['g0'][1])['path']}`",
         f"- DET-G1: `{file_record(stage_files['g1'][1])['path']}`",

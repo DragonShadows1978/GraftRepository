@@ -119,7 +119,13 @@ def _context(args: Any, worker: str) -> dict[str, Any]:
     registration_path = _one(run_dir, "registration_*.json")
     runtime_path = _one(run_dir, "runtime_frame_*.json")
     amendment_path = run_dir / campaign.RACE_AMENDMENT.name
-    campaign.validate_race_amendment(run_dir)
+    source_amendment_path = run_dir / campaign.DELTA_AMENDMENT.name
+    delta_amendment = campaign.validate_delta_amendment(run_dir)
+    _require(
+        delta_amendment.get("record") == file_record(source_amendment_path),
+        "DET1.6 terminal source-amendment binding drifted",
+    )
+    race_amendment = campaign.validate_race_amendment(run_dir)
     registration = read_json(registration_path)
     runtime = read_json(runtime_path)
     _require(runtime.get("registration") == file_record(registration_path),
@@ -145,6 +151,9 @@ def _context(args: Any, worker: str) -> dict[str, Any]:
         "runtime_path": runtime_path,
         "runtime": runtime,
         "amendment_path": amendment_path,
+        "amendment_record": dict(race_amendment["record"]),
+        "source_amendment_path": source_amendment_path,
+        "source_amendment_record": dict(delta_amendment["record"]),
         "lease_seconds": lease_seconds,
         "process": process,
     }
@@ -663,6 +672,16 @@ def _run_g1(ctx: Mapping[str, Any], spec: str) -> dict[str, Any]:
 
 def _write_shard(ctx: Mapping[str, Any], spec: str,
                  payload: Mapping[str, Any]) -> dict[str, Any]:
+    protected = {"race_authorization_amendment", "source_amendment"}
+    collisions = sorted(protected & set(payload))
+    _require(not collisions,
+             f"worker payload attempted to replace provenance: {collisions}")
+    race_amendment = file_record(ctx["amendment_path"])
+    source_amendment = file_record(ctx["source_amendment_path"])
+    _require(race_amendment == ctx["amendment_record"],
+             "race-authorization amendment changed during worker execution")
+    _require(source_amendment == ctx["source_amendment_record"],
+             "DET1.6 source amendment changed during worker execution")
     value = {
         "schema": SHARD_SCHEMA,
         "status": "COMPLETE",
@@ -673,7 +692,8 @@ def _write_shard(ctx: Mapping[str, Any], spec: str,
         "process": dict(ctx["process"]),
         "registration": file_record(ctx["registration_path"]),
         "runtime_frame": file_record(ctx["runtime_path"]),
-        "race_authorization_amendment": file_record(ctx["amendment_path"]),
+        "race_authorization_amendment": race_amendment,
+        "source_amendment": source_amendment,
         "lease_seconds": int(ctx["lease_seconds"]),
         "fork_from_lived_snapshot": True,
         "same_process_full_index_required": True,

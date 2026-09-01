@@ -12,6 +12,7 @@ from scripts.grm_det1_3_snapshot import (
     ARM_PROTOCOLS,
     SnapshotError,
     capture_arena_snapshot,
+    compare_fork_hydration_delta,
     compare_fork_substrate,
     compare_snapshots,
     finalize_snapshot_with_answer,
@@ -623,6 +624,76 @@ def test_planted_miss_fork_removes_only_mounted_seat_ranges(
         row["reason"] for row in receipt["field_deltas"]
     } == {"registered_planted_miss_withholding"}
 
+    fork = capture_arena_snapshot(
+        target,
+        tmp_path / f"fork_{substrate}",
+        label="fork",
+        provenance=provenance("fork", "fork-process"),
+        question="What is the value?",
+        prompt_ids=receipt["prompt_ids"],
+        admission_plan=receipt["admission_state"],
+        live_token_ids=receipt["live_token_ids"],
+        sink_text="<sink>",
+        sink_token_ids=receipt["sink_token_ids"],
+        explicit_identity=IDENTITY,
+    )
+    delta = compare_fork_hydration_delta(
+        source, fork, withheld_mounts=[0])
+    assert delta["status"] == (
+        "PASS_EXACT_REGISTERED_DELTA_CANONICAL_VALUE_BYTES")
+    assert delta["gate_pass"] is True
+    assert delta["target_absence"]["gate_pass"] is True
+    assert delta["exact_divergence_set"] is True
+    assert delta["non_delta_fields_equal"] is True
+    assert delta["unexpected_divergent_fields"] == []
+    assert delta["missing_expected_divergent_fields"] == []
+    assert delta["expected_fork_value_mismatches"] == []
+    assert delta["expected_divergent_fields"] == delta[
+        "observed_non_equal_fields"]
+    assert delta["strict_zero_comparator"]["status"] == "DIVERGENT"
+    assert delta["strict_zero_comparator"]["gate_pass"] is False
+    expected_counts = (
+        {"DIVERGENT": 21, "EQUAL": 51, "MISSING_FORK": 4}
+        if substrate == "cache" else
+        {"DIVERGENT": 20, "EQUAL": 54, "MISSING_FORK": 4}
+    )
+    assert delta["strict_zero_comparator"]["counts"] == expected_counts
+
+
+def test_planted_delta_comparator_rejects_an_unrelated_byte_change(tmp_path: Path):
+    source = capture(tmp_path, "source", arena=FakeArena(), arm="lived")
+    target = FakeArena()
+    receipt = restore_prefill_fork(
+        target,
+        source,
+        withheld_mounts=[0],
+        target_identity=IDENTITY,
+        require_same_process_index=False,
+        tensor_factory=_cpu_fork_tensor,
+    )
+    target.m.rope_cos[0, 0] += np.float32(1.0)
+    fork = capture_arena_snapshot(
+        target,
+        tmp_path / "fork_unrelated_mutation",
+        label="fork",
+        provenance=provenance("fork", "fork-process"),
+        question="What is the value?",
+        prompt_ids=receipt["prompt_ids"],
+        admission_plan=receipt["admission_state"],
+        live_token_ids=receipt["live_token_ids"],
+        sink_text="<sink>",
+        sink_token_ids=receipt["sink_token_ids"],
+        explicit_identity=IDENTITY,
+    )
+
+    delta = compare_fork_hydration_delta(
+        source, fork, withheld_mounts=[0])
+
+    assert delta["gate_pass"] is False
+    assert delta["non_delta_fields_equal"] is False
+    assert "arrays.model.rope_cos" in delta["unexpected_divergent_fields"]
+    assert "arrays.model.rope_cos" in delta["expected_fork_value_mismatches"]
+
 
 def test_planted_miss_fork_rejects_a_model_state_noop(tmp_path: Path):
     source = capture(tmp_path, "source", arena=FakeArena(), arm="lived")
@@ -634,6 +705,36 @@ def test_planted_miss_fork_rejects_a_model_state_noop(tmp_path: Path):
             target,
             source,
             withheld_mounts=[1],
+            target_identity=IDENTITY,
+            require_same_process_index=False,
+            tensor_factory=_cpu_fork_tensor,
+        )
+
+
+def test_planted_miss_fork_rejects_duplicate_or_live_target(tmp_path: Path):
+    source = capture(tmp_path, "source", arena=FakeArena(), arm="lived")
+    with pytest.raises(SnapshotError, match="duplicates"):
+        restore_prefill_fork(
+            FakeArena(),
+            source,
+            withheld_mounts=[0, 0],
+            target_identity=IDENTITY,
+            require_same_process_index=False,
+            tensor_factory=_cpu_fork_tensor,
+        )
+
+    live_source = capture(
+        tmp_path,
+        "live_source",
+        arena=FakeArena(live=True),
+        arm="lived",
+        live_ids=[10, 11],
+    )
+    with pytest.raises(SnapshotError, match="live seats"):
+        restore_prefill_fork(
+            FakeArena(live=True),
+            live_source,
+            withheld_mounts=[0],
             target_identity=IDENTITY,
             require_same_process_index=False,
             tensor_factory=_cpu_fork_tensor,

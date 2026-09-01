@@ -744,9 +744,27 @@ def capture_arena_snapshot(
             },
             group="masks",
         )
+        # A hydrated DET1.4 fork carries the lived mask (or its registered
+        # seat-deletion projection) as a one-shot override. Recomputing a
+        # shorter sliding-window mask here would describe different bytes and
+        # make a DET1.6 post-hydration capture incapable of proving the delta.
+        installed_mask = getattr(att, "_det1_fork_allowed_mask", None)
+        allowed_mask = (
+            _causal_allowed_mask(int(prompt.size), total, window)
+            if installed_mask is None else _fork_export(installed_mask)
+        )
+        expected_mask_shape = (1, 1, int(prompt.size), total)
+        if tuple(int(value) for value in allowed_mask.shape) != expected_mask_shape:
+            raise SnapshotError(
+                "installed fork mask geometry differs from the captured arena: "
+                f"layer={layer_index} observed={allowed_mask.shape} "
+                f"expected={expected_mask_shape}")
+        if not np.isin(allowed_mask, (0, 1)).all():
+            raise SnapshotError(
+                f"installed fork mask is not canonical binary: layer={layer_index}")
         builder.array(
             f"mask.layer_{layer_index:02d}.allowed",
-            _causal_allowed_mask(int(prompt.size), total, window),
+            allowed_mask,
             group="masks",
         )
     builder.scalar("cache.lengths_by_layer", cache_lengths, group="arena_kv")
@@ -1018,24 +1036,10 @@ def load_snapshot(path: Path) -> dict[str, Any]:
     return value
 
 
-def load_snapshot_array(
-    snapshot: Path | Mapping[str, Any], field: str,
+def _load_validated_snapshot_array(
+    value: Mapping[str, Any], field: str,
 ) -> np.ndarray:
-    """Load one validated snapshot blob as a private C-contiguous array."""
-    if isinstance(snapshot, Mapping):
-        shown = dict(snapshot)
-        manifest_path = Path(str(shown.get("_manifest_path", "")))
-        value = load_snapshot(manifest_path)
-        shown_without_path = dict(shown)
-        shown_without_path.pop("_manifest_path", None)
-        loaded_without_path = dict(value)
-        loaded_without_path.pop("_manifest_path", None)
-        if _canonical_json(_jsonable(shown_without_path)) != _canonical_json(
-            _jsonable(loaded_without_path)
-        ):
-            raise SnapshotError("snapshot mapping differs from its signed manifest")
-    else:
-        value = load_snapshot(Path(snapshot))
+    """Read one blob from a mapping already returned by ``load_snapshot``."""
     manifest_path = Path(str(value.get("_manifest_path", "")))
     if not manifest_path.is_file():
         raise SnapshotError("snapshot mapping lacks a validated manifest path")
@@ -1078,6 +1082,27 @@ def load_snapshot_array(
             f"metadata={expected} blob={len(payload)}")
     array = np.frombuffer(payload, dtype=dtype).reshape(shape)
     return np.ascontiguousarray(array.copy())
+
+
+def load_snapshot_array(
+    snapshot: Path | Mapping[str, Any], field: str,
+) -> np.ndarray:
+    """Load one validated snapshot blob as a private C-contiguous array."""
+    if isinstance(snapshot, Mapping):
+        shown = dict(snapshot)
+        manifest_path = Path(str(shown.get("_manifest_path", "")))
+        value = load_snapshot(manifest_path)
+        shown_without_path = dict(shown)
+        shown_without_path.pop("_manifest_path", None)
+        loaded_without_path = dict(value)
+        loaded_without_path.pop("_manifest_path", None)
+        if _canonical_json(_jsonable(shown_without_path)) != _canonical_json(
+            _jsonable(loaded_without_path)
+        ):
+            raise SnapshotError("snapshot mapping differs from its signed manifest")
+    else:
+        value = load_snapshot(Path(snapshot))
+    return _load_validated_snapshot_array(value, field)
 
 
 def compare_fork_substrate(
@@ -1309,6 +1334,363 @@ def _fork_mount_ranges(
     return ranges, lengths
 
 
+def compare_fork_hydration_delta(
+    lived_path: Path,
+    fork_path: Path,
+    *,
+    withheld_mounts: Sequence[int],
+) -> dict[str, Any]:
+    """Prove that a hydrated fork differs only by registered mount seats.
+
+    This deliberately re-runs DET1.4's strict ZERO comparator.  Its expected
+    result is ``DIVERGENT`` under a planted miss; this wrapper independently
+    derives the exact fork projection from the lived manifest and accepts only
+    when the ZERO comparator's non-equal rows are exactly that projection.
+    The restore receipt is not an allowlist input.
+    """
+    lived = load_snapshot(Path(lived_path))
+    fork = load_snapshot(Path(fork_path))
+    lived_manifest = Path(lived["_manifest_path"])
+    fork_manifest = Path(fork["_manifest_path"])
+    if not (lived.get("complete") and fork.get("complete")):
+        raise SnapshotError("fork-hydration delta requires two complete snapshots")
+
+    requested = [int(value) for value in withheld_mounts]
+    if not requested:
+        raise SnapshotError("fork-hydration delta requires a registered target")
+    if len(set(requested)) != len(requested):
+        raise SnapshotError("registered planted-miss aliases contain duplicates")
+    withheld = set(requested)
+
+    lived_state = copy.deepcopy(lived.get("state") or {})
+    fork_state = copy.deepcopy(fork.get("state") or {})
+    source_mounts = [int(value) for value in lived_state.get("arena.cur_mounts", ())]
+    if len(set(source_mounts)) != len(source_mounts):
+        raise SnapshotError("lived delta source contains duplicate mounted grafts")
+    source_mounted_aliases = [value for value in source_mounts if value in withheld]
+    if not source_mounted_aliases:
+        raise SnapshotError(
+            "registered planted target has no hydrated seats in the lived snapshot: "
+            f"targets={sorted(withheld)} mounts={source_mounts}")
+    already_absent_aliases = sorted(withheld - set(source_mounted_aliases))
+    lived_aliases = {
+        int(value[0])
+        for value in lived_state.get("live.segments", ())
+        if value and value[0] is not None and int(value[0]) in withheld
+    }
+    if lived_aliases:
+        raise SnapshotError(
+            "registered planted target remains model-visible in live seats: "
+            f"{sorted(lived_aliases)}")
+
+    identity = lived.get("identity") or {}
+    payload = [
+        (str(value["name"]), int(value["sequence_dim"]))
+        for value in identity.get("dialect_payload", ())
+    ]
+    layer_count = int(identity.get("layer_count", -1))
+    if not payload or layer_count <= 0:
+        raise SnapshotError("lived delta source lacks payload/layer geometry")
+    n_sink = int(lived_state.get("arena.n_sink", 0))
+    mount_ranges, mount_lengths = _fork_mount_ranges(
+        lived, source_mounts, n_sink, payload, layer_count)
+    removed_ranges = [mount_ranges[value] for value in source_mounted_aliases]
+    removed_rows = sum(end - start for start, end in removed_ranges)
+    source_mount_n = int(lived_state.get("arena.cur_mount_n", -1))
+    if source_mount_n != sum(mount_lengths.values()):
+        raise SnapshotError(
+            "lived delta source mount count differs from mounted payload bytes")
+    kept_mounts = [value for value in source_mounts if value not in withheld]
+
+    # Independently derive every scalar parent row that the strict ZERO
+    # comparator must see change.  This mirrors the registered semantics, not
+    # a restore receipt's self-reported leaf list.
+    expected_state = copy.deepcopy(lived_state)
+    expected_state["arena.cur_mounts"] = list(kept_mounts)
+    expected_state["arena.cur_mount_n"] = source_mount_n - removed_rows
+    physical = copy.deepcopy(lived_state.get("positions.physical_sections") or {})
+    physical["mounted_payload"] = [n_sink, n_sink + source_mount_n - removed_rows]
+    expected_state["positions.physical_sections"] = physical
+    caches_present = lived_state.get("arena.caches_present") is True
+    if caches_present:
+        expected_state["cache.lengths_by_layer"] = [
+            int(value) - removed_rows
+            for value in lived_state.get("cache.lengths_by_layer", ())
+        ]
+    active_key = "cache_length" if caches_present else "injection_length"
+    for layer_index in range(layer_count):
+        seat_field = f"attention.layer_{layer_index:02d}.graft_seats"
+        expected_state[seat_field] = int(lived_state[seat_field]) - removed_rows
+        mask_field = f"mask.layer_{layer_index:02d}.inputs"
+        mask_inputs = copy.deepcopy(lived_state[mask_field])
+        mask_inputs[active_key] = int(mask_inputs[active_key]) - removed_rows
+        mask_inputs["key_length"] = int(mask_inputs["key_length"]) - removed_rows
+        expected_state[mask_field] = mask_inputs
+
+    admission = copy.deepcopy(lived_state.get("admission.full_plan") or {})
+    if not admission:
+        raise SnapshotError("lived delta source lacks the full admission plan")
+    for key in (
+        "rank_plan", "current_planned", "current_fitted",
+        "current_dropped", "final_mounts",
+    ):
+        if isinstance(admission.get(key), list):
+            admission[key] = [
+                int(value) for value in admission[key]
+                if int(value) not in withheld
+            ]
+    for attempt in admission.get("ladder_attempts", ()):
+        if isinstance(attempt, dict) and isinstance(attempt.get("planned"), list):
+            attempt["planned"] = [
+                int(value) for value in attempt["planned"]
+                if int(value) not in withheld
+            ]
+    admission["final_mounts"] = list(kept_mounts)
+    expected_state["admission.full_plan"] = admission
+    for key, value in admission.items():
+        field = f"admission.{key}"
+        if field in expected_state:
+            expected_state[field] = copy.deepcopy(value)
+    expected_state["admission.authoritative_mounts"] = list(kept_mounts)
+
+    expected_state_delta_fields = {
+        f"state.{field}"
+        for field in set(lived_state) | set(expected_state)
+        if _canonical_json(_jsonable(lived_state.get(field, "<MISSING>")))
+        != _canonical_json(_jsonable(expected_state.get(field, "<MISSING>")))
+    }
+    expected_value_mismatches: list[str] = []
+    for field in sorted(set(expected_state) | set(fork_state)):
+        if field not in expected_state or field not in fork_state:
+            expected_value_mismatches.append(f"state.{field}")
+            continue
+        if _canonical_json(_jsonable(expected_state[field])) != _canonical_json(
+            _jsonable(fork_state[field])
+        ):
+            expected_value_mismatches.append(f"state.{field}")
+
+    lived_arrays = lived.get("arrays") or {}
+    fork_arrays = fork.get("arrays") or {}
+    payload_dims = {name: dim for name, dim in payload}
+    active_prefix = "cache" if caches_present else "injection"
+    target_payload_fields = sorted(
+        field for field in lived_arrays
+        if any(
+            field.startswith(f"mounted_graft.{target}.")
+            for target in source_mounted_aliases
+        )
+    )
+    if not target_payload_fields:
+        raise SnapshotError("lived delta source has no target mounted-payload fields")
+    target_payload_set = set(target_payload_fields)
+    expected_array_delta_fields: set[str] = {
+        f"arrays.{field}" for field in target_payload_fields
+    }
+    transformed_arrays: list[dict[str, Any]] = []
+    retained_array_bindings: list[dict[str, Any]] = []
+    projection_keys = (
+        "group", "source_dtype", "host_dtype", "shape", "bytes", "sha256")
+
+    for field in sorted(lived_arrays):
+        source_record = lived_arrays[field]
+        if field in target_payload_set:
+            if field in fork_arrays:
+                expected_value_mismatches.append(f"arrays.{field}")
+            transformed_arrays.append({
+                "field": f"arrays.{field}",
+                "transformation": "TARGET_MOUNTED_PAYLOAD_ABSENT",
+                "source_sha256": source_record.get("sha256"),
+                "observed": "MISSING_FORK" if field not in fork_arrays else "PRESENT",
+                "retained_bytes_exact": field not in fork_arrays,
+            })
+            continue
+
+        axis = None
+        transformation = None
+        active_match = re.fullmatch(
+            rf"{re.escape(active_prefix)}\.layer_\d{{2}}\.([^.]+)", field)
+        if active_match and active_match.group(1) in payload_dims:
+            axis = int(payload_dims[active_match.group(1)])
+            transformation = "DELETE_REGISTERED_MOUNT_SEAT_RANGES"
+        elif re.fullmatch(r"mask\.layer_\d{2}\.allowed", field):
+            axis = 3
+            transformation = "DELETE_REGISTERED_MOUNT_MASK_COLUMNS"
+
+        source_array = _load_validated_snapshot_array(lived, field)
+        expected_array = (
+            source_array if axis is None
+            else _remove_ranges(source_array, axis, removed_ranges)
+        )
+        expected_bytes = np.ascontiguousarray(expected_array).tobytes(order="C")
+        expected_projection = {
+            "group": source_record.get("group"),
+            "source_dtype": source_record.get("source_dtype"),
+            "host_dtype": expected_array.dtype.str,
+            "shape": [int(value) for value in expected_array.shape],
+            "bytes": len(expected_bytes),
+            "sha256": _sha256_bytes(expected_bytes),
+        }
+        fork_record = fork_arrays.get(field)
+        observed_projection = (
+            None if fork_record is None else
+            {key: fork_record.get(key) for key in projection_keys}
+        )
+        observed_bytes_equal = False
+        if fork_record is not None:
+            observed = _load_validated_snapshot_array(fork, field)
+            observed_bytes_equal = (
+                observed.tobytes(order="C") == expected_bytes
+            )
+        projection_equal = observed_projection == expected_projection
+        if not (projection_equal and observed_bytes_equal):
+            expected_value_mismatches.append(f"arrays.{field}")
+        if transformation is not None:
+            expected_array_delta_fields.add(f"arrays.{field}")
+            transformed_arrays.append({
+                "field": f"arrays.{field}",
+                "transformation": transformation,
+                "axis": int(axis),
+                "removed_ranges": [
+                    [int(start), int(end)] for start, end in removed_ranges],
+                "source": {
+                    "shape": list(source_record.get("shape") or ()),
+                    "bytes": source_record.get("bytes"),
+                    "sha256": source_record.get("sha256"),
+                },
+                "expected_fork": expected_projection,
+                "observed_fork": observed_projection,
+                "retained_bytes_exact": bool(
+                    projection_equal and observed_bytes_equal),
+            })
+        else:
+            retained_array_bindings.append({
+                "field": f"arrays.{field}",
+                "source_sha256": source_record.get("sha256"),
+                "fork_sha256": (
+                    None if fork_record is None else fork_record.get("sha256")),
+                "bytes_equal": bool(projection_equal and observed_bytes_equal),
+            })
+
+    for field in sorted(set(fork_arrays) - set(lived_arrays)):
+        expected_value_mismatches.append(f"arrays.{field}")
+
+    expected_divergent = expected_state_delta_fields | expected_array_delta_fields
+    strict_zero = compare_fork_substrate(lived_manifest, fork_manifest)
+    observed_non_equal = {
+        str(row["field"])
+        for row in strict_zero.get("rows", ())
+        if row.get("status") != "EQUAL"
+    }
+    unexpected = sorted(observed_non_equal - expected_divergent)
+    missing = sorted(expected_divergent - observed_non_equal)
+    expected_value_mismatches = sorted(set(expected_value_mismatches))
+    exact_divergence_set = not unexpected and not missing
+    non_delta_rows = [
+        row for row in strict_zero.get("rows", ())
+        if str(row.get("field")) not in expected_divergent
+    ]
+    non_delta_fields_equal = bool(non_delta_rows) and all(
+        row.get("status") == "EQUAL" for row in non_delta_rows)
+
+    fork_mounts = [int(value) for value in fork_state.get("arena.cur_mounts", ())]
+    fork_live = {
+        int(value[0])
+        for value in fork_state.get("live.segments", ())
+        if value and value[0] is not None
+    }
+    target_payload_absent = all(field not in fork_arrays for field in target_payload_fields)
+    target_absence_checks = {
+        "at_least_one_target_had_lived_seats": bool(source_mounted_aliases),
+        "fork_mounts_equal_source_minus_target": fork_mounts == kept_mounts,
+        "registered_aliases_absent_from_fork_mounts": not bool(
+            withheld & set(fork_mounts)),
+        "registered_aliases_absent_from_live_seats": not bool(withheld & fork_live),
+        "source_target_payload_fields_absent_from_fork": target_payload_absent,
+        "one_seat_range_per_source_target": (
+            len(removed_ranges) == len(source_mounted_aliases)),
+    }
+    target_absence_pass = all(target_absence_checks.values())
+    transformed_arrays_exact = all(
+        row.get("retained_bytes_exact") is True for row in transformed_arrays)
+    retained_arrays_exact = all(
+        row.get("bytes_equal") is True for row in retained_array_bindings)
+    gate_pass = bool(
+        target_absence_pass
+        and exact_divergence_set
+        and non_delta_fields_equal
+        and not expected_value_mismatches
+        and transformed_arrays_exact
+        and retained_arrays_exact
+    )
+    strict_rows = list(strict_zero.get("rows", ()))
+    delta_rows = [
+        row for row in strict_rows if str(row.get("field")) in expected_divergent]
+    return {
+        "schema": "grm.det1_6.fork_hydration_delta.v1",
+        "status": (
+            "PASS_EXACT_REGISTERED_DELTA_CANONICAL_VALUE_BYTES"
+            if gate_pass else "FAIL_FORK_HYDRATION_DELTA"),
+        "gate_pass": gate_pass,
+        "intervention": "REGISTERED_PLANTED_MISS_WITHHOLDING",
+        "lived_manifest": {
+            "path": str(lived_manifest),
+            "bytes": lived_manifest.stat().st_size,
+            "sha256": _sha256_file(lived_manifest),
+        },
+        "fork_manifest": {
+            "path": str(fork_manifest),
+            "bytes": fork_manifest.stat().st_size,
+            "sha256": _sha256_file(fork_manifest),
+        },
+        "withheld_logical_aliases": sorted(withheld),
+        "source_mounted_aliases": source_mounted_aliases,
+        "already_absent_aliases": already_absent_aliases,
+        "source_mounts": source_mounts,
+        "fork_mounts": fork_mounts,
+        "seat_ranges": [
+            {
+                "graft_id": int(value),
+                "range": [
+                    int(mount_ranges[value][0]), int(mount_ranges[value][1])],
+            }
+            for value in source_mounted_aliases
+        ],
+        "target_absence": {
+            "gate_pass": target_absence_pass,
+            "checks": target_absence_checks,
+            "source_target_payload_fields": target_payload_fields,
+        },
+        "strict_zero_comparator": {
+            "schema": strict_zero.get("schema"),
+            "status": strict_zero.get("status"),
+            "gate_pass": strict_zero.get("gate_pass"),
+            "counts": strict_zero.get("counts"),
+            "row_count": len(strict_rows),
+            "rows_sha256": _sha256_bytes(_canonical_json(strict_rows)),
+        },
+        "expected_divergent_fields": sorted(expected_divergent),
+        "observed_non_equal_fields": sorted(observed_non_equal),
+        "unexpected_divergent_fields": unexpected,
+        "missing_expected_divergent_fields": missing,
+        "exact_divergence_set": exact_divergence_set,
+        "non_delta_fields_equal": non_delta_fields_equal,
+        "non_delta_field_count": len(non_delta_rows),
+        "non_delta_rows_sha256": _sha256_bytes(_canonical_json(non_delta_rows)),
+        "expected_fork_value_mismatches": expected_value_mismatches,
+        "transformed_arrays": transformed_arrays,
+        "retained_array_count": len(retained_array_bindings),
+        "retained_arrays_exact": retained_arrays_exact,
+        "retained_array_bindings_sha256": _sha256_bytes(
+            _canonical_json(retained_array_bindings)),
+        "delta_rows": delta_rows,
+        "byte_semantics": copy.deepcopy(lived.get("byte_semantics")),
+        "byte_claim": (
+            "exact C-contiguous canonical exported value bytes after deleting "
+            "only the registered mounted-seat ranges; not literal device bytes"
+        ),
+    }
+
+
 def restore_prefill_fork(
     arena: Any,
     snapshot_path: Path,
@@ -1395,7 +1777,19 @@ def restore_prefill_fork(
     source_mounts = [int(value) for value in state.get("arena.cur_mounts", ())]
     if len(set(source_mounts)) != len(source_mounts):
         raise SnapshotError("fork source contains duplicate mounted graft indices")
-    withheld = {int(value) for value in withheld_mounts}
+    withheld_values = [int(value) for value in withheld_mounts]
+    if len(set(withheld_values)) != len(withheld_values):
+        raise SnapshotError("registered planted-miss aliases contain duplicates")
+    withheld = set(withheld_values)
+    live_withheld = sorted({
+        int(value[0])
+        for value in state.get("live.segments", ())
+        if value and value[0] is not None and int(value[0]) in withheld
+    })
+    if live_withheld:
+        raise SnapshotError(
+            "registered planted-miss target remains model-visible in live seats: "
+            f"{live_withheld}")
     kept_mounts = [value for value in source_mounts if value not in withheld]
     n_sink = int(state.get("arena.n_sink", 0))
     mount_ranges, mount_lengths = _fork_mount_ranges(
@@ -1501,7 +1895,7 @@ def restore_prefill_fork(
         })
 
     def restored_array(field: str, *, axis: int | None = None):
-        source = load_snapshot_array(snapshot, field)
+        source = _load_validated_snapshot_array(snapshot, field)
         value = source if axis is None else _remove_ranges(source, axis, removed_ranges)
         if value.tobytes(order="C") != source.tobytes(order="C"):
             deltas.append({
@@ -1610,11 +2004,11 @@ def restore_prefill_fork(
             scale = state.get(f"injection.layer_{layer_index:02d}.component_2", 1.0)
             layer.self_attn.inject_kv = (*values, float(scale))
 
-    prompt_ids = load_snapshot_array(snapshot, "tokens.prompt_ids").astype(
+    prompt_ids = _load_validated_snapshot_array(snapshot, "tokens.prompt_ids").astype(
         np.int64, copy=False).reshape(-1)
-    sink_ids = load_snapshot_array(snapshot, "tokens.sink_ids").astype(
+    sink_ids = _load_validated_snapshot_array(snapshot, "tokens.sink_ids").astype(
         np.int64, copy=False).reshape(-1)
-    live_ids = load_snapshot_array(snapshot, "tokens.live_ids").astype(
+    live_ids = _load_validated_snapshot_array(snapshot, "tokens.live_ids").astype(
         np.int64, copy=False).reshape(-1)
     if len(sink_ids) != n_sink:
         raise SnapshotError("fork sink-token ledger disagrees with n_sink")

@@ -317,6 +317,7 @@ def _validate_det1_4_amendment(
     *,
     required: bool,
     bindings: Mapping[str, Mapping[str, Any]],
+    source_rebindings: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     if not DET1_4_AMENDMENT.exists():
         _require(not required, f"required DET1.4 amendment is missing: {DET1_4_AMENDMENT}")
@@ -334,14 +335,36 @@ def _validate_det1_4_amendment(
     for key in ("order", "registration", "runtime_frame", "prior_amendment"):
         _record_equal(value.get(key) or {}, bindings[key], f"det1_4_amendment.{key}")
     source_bindings: dict[str, Any] = {}
+    superseded_sources: list[str] = []
     for source_path in REQUIRED_AMENDMENT_SOURCES:
         source_entry = _source_entry(value, source_path)
         _require(source_entry is not None,
                  f"DET1.4 amendment does not bind {source_path}")
         current = file_record(ROOT / source_path)
-        _require(source_entry.get("bytes") == current["bytes"] and
-                 source_entry.get("sha256") == current["sha256"],
-                 f"DET1.4 amendment binding does not match current bytes: {source_path}")
+        matches_original = (
+            source_entry.get("bytes") == current["bytes"]
+            and source_entry.get("sha256") == current["sha256"]
+        )
+        if not matches_original:
+            rebinding = (source_rebindings or {}).get(source_path)
+            _require(
+                isinstance(rebinding, Mapping),
+                f"DET1.4 amendment binding does not match current bytes: {source_path}",
+            )
+            historical = {
+                "path": source_path,
+                "bytes": source_entry.get("bytes"),
+                "sha256": source_entry.get("sha256"),
+            }
+            _record_equal(
+                rebinding.get("before") or {}, historical,
+                f"DET1.4 superseding amendment.{source_path}.before",
+            )
+            _record_equal(
+                rebinding.get("after") or {}, current,
+                f"DET1.4 superseding amendment.{source_path}.after",
+            )
+            superseded_sources.append(source_path)
         source_bindings[source_path] = current
     invariants = value.get("invariants") or {}
     _require(invariants.get("reconstruction_as_counterfactual") in (False, "FORBIDDEN"),
@@ -365,6 +388,7 @@ def _validate_det1_4_amendment(
         "status": value["status"],
         "required_by_cli": bool(required),
         "source_bindings": source_bindings,
+        "superseded_sources": sorted(superseded_sources),
         "race_resume_authorized": race_authorized,
     }
 
@@ -603,6 +627,7 @@ def inventory(args: argparse.Namespace) -> dict[str, Any]:
             "runtime_frame": records[RUNTIME_FRAME],
             "prior_amendment": records[PRIOR_AMENDMENT],
         },
+        source_rebindings=getattr(args, "det1_6_source_rebindings", None),
     )
     lived = _validate_lived_capture(
         records[CAPTURE_RECEIPT],
