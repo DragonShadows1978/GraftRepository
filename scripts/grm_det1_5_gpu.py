@@ -60,14 +60,21 @@ ORDER = ROOT / "orders/GRM_DET1_5_RACE_CAMPAIGN.md"
 DET1_ORDER = ROOT / "orders/GRM_DET1_DEMAND_DETECTOR_RACE.md"
 DET1_6_ORDER = ROOT / "orders/GRM_DET1_6_PLANT_ON_FORK.md"
 DET1_7_ORDER = ROOT / "orders/GRM_DET1_7_PLANT_REALIGN.md"
+DET1_8_ORDER = ROOT / "orders/GRM_DET1_8_SYNTH_TURN_SNAPSHOTS.md"
 REGISTRATION = FROZEN_RUN / "registration_62cb6c09cbec211d.json"
 RUNTIME_FRAME = FROZEN_RUN / "runtime_frame_28b3196f8fb04a41.json"
 PRIOR_AMENDMENT = FROZEN_RUN / "det1_4_source_amendment.json"
 RACE_AMENDMENT = FROZEN_RUN / "det1_5_race_authorization_amendment.json"
 DELTA_AMENDMENT = FROZEN_RUN / "det1_6_fork_hydration_delta_amendment.json"
-DET1_7_SOURCE_AUTH = (
+DET1_7_SOURCE_AUTH_PREDECESSOR = (
     FROZEN_RUN / "det1_7_precollection_source_authorization_r2.json"
 )
+DET1_8_SOURCE_AUTH = (
+    FROZEN_RUN / "det1_8_precollection_source_authorization.json"
+)
+# The DET1.7 public campaign/analyzer API remains stable while its active
+# collection-only authority advances through the append-only DET1.8 envelope.
+DET1_7_SOURCE_AUTH = DET1_8_SOURCE_AUTH
 DET1_7_TERMINAL_AMENDMENT = FROZEN_RUN / "det1_7_plant_registry_amendment.json"
 PARENT_ZERO_MARKER = FROZEN_RUN / "det1_4/zero_gate/stage_complete.json"
 
@@ -155,7 +162,7 @@ DELTA_AMENDMENT_SCHEMA = "grm.det1_6.fork_hydration_delta_amendment.v1"
 DELTA_AMENDMENT_STATUS = "AUTHORIZED_FORK_HYDRATION_DELTA_SOURCE_REBINDING"
 RACE_AMENDMENT_SCHEMA = "grm.det1_5.race_authorization_amendment.v1"
 RACE_AMENDMENT_STATUS = "AUTHORIZED_RACE_ON_FORKED_SUBSTRATE"
-DET1_7_SOURCE_AUTH_SCHEMA = "grm.det1_7.precollection_source_authorization.v1"
+DET1_7_SOURCE_AUTH_SCHEMA = "grm.det1_8.precollection_source_authorization.v1"
 DET1_7_SOURCE_AUTH_STATUS = "AUTHORIZED_LIVED_PLANT_REGISTRY_COLLECTION_ONLY"
 DET1_7_TERMINAL_SCHEMA = "grm.det1_7.plant_registry_amendment.v1"
 DET1_7_TERMINAL_STATUS = "AUTHORIZED_RACE_WITH_LIVED_PLANT_REGISTRY"
@@ -194,6 +201,29 @@ DET1_7_ADDED_SOURCES = {
     "scripts/grm_det1_7_source_auth.py": "append_only_precollection_source_authorization",
     "tests/test_grm_det1_7_registry.py": "plant_registry_cpu_contracts",
     "tests/test_grm_det1_7_source_auth.py": "source_authorization_cpu_contracts",
+}
+
+DET1_8_CHANGED_SOURCES = {
+    "scripts/grm_det1_3_snapshot.py": (
+        "complete_declared_synthesis_member_snapshot_and_exact_delta"
+    ),
+    "scripts/grm_det1_5_gpu.py": (
+        "fresh_collection_member_coverage_and_fork_protocol_gate"
+    ),
+    "tests/test_grm_det1_3_snapshot.py": (
+        "declared_member_snapshot_and_delta_cpu_contracts"
+    ),
+    "tests/test_grm_det1_5_campaign.py": (
+        "campaign_member_coverage_and_fork_protocol_cpu_contracts"
+    ),
+}
+DET1_8_ADDED_SOURCES = {
+    "scripts/grm_det1_8_source_auth.py": (
+        "append_only_det1_8_precollection_source_authorization"
+    ),
+    "tests/test_grm_det1_8_source_auth.py": (
+        "det1_8_source_authorization_cpu_contracts"
+    ),
 }
 
 
@@ -684,6 +714,18 @@ def validate_g0_rows(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
                  f"fork-hydration non-delta equality failed: {fixture_id}")
         _require(delta.get("retained_arrays_exact") is True,
                  f"fork-hydration retained arrays differ: {fixture_id}")
+        member_coverage = delta.get("member_snapshot_coverage") or {}
+        lived_member_coverage = member_coverage.get("lived") or {}
+        fork_member_coverage = member_coverage.get("fork") or {}
+        _require(
+            member_coverage.get("gate_pass") is True
+            and member_coverage.get("selected_member_payload_absent") is True
+            and member_coverage.get(
+                "all_other_member_payload_bytes_exact") is True
+            and lived_member_coverage.get("gate_pass") is True
+            and fork_member_coverage.get("gate_pass") is True,
+            f"fork-hydration mounted-member proof failed: {fixture_id}",
+        )
         transformed = delta.get("transformed_arrays") or []
         _require(
             isinstance(transformed, list)
@@ -1145,7 +1187,8 @@ def _pre_delta_g0_output_records(run_dir: Path) -> list[dict[str, Any]]:
 def validate_det1_7_source_authorization(
     run_dir: Path = FROZEN_RUN,
 ) -> dict[str, Any]:
-    from scripts.grm_det1_7_source_auth import (
+    """Validate the active DET1.8 successor behind the stable campaign API."""
+    from scripts.grm_det1_8_source_auth import (
         validate_precollection_source_authorization,
     )
 
@@ -1155,19 +1198,22 @@ def validate_det1_7_source_authorization(
     return validate_precollection_source_authorization(
         run_dir / DET1_7_SOURCE_AUTH.name,
         repo_root=ROOT,
-        order_path=DET1_7_ORDER,
+        order_path=DET1_8_ORDER,
         registration_path=REGISTRATION,
         runtime_frame_path=RUNTIME_FRAME,
         det1_6_amendment_path=DELTA_AMENDMENT,
-        changed_sources=DET1_7_CHANGED_SOURCES,
-        added_sources=DET1_7_ADDED_SOURCES,
+        predecessor_authorization_path=(
+            run_dir / DET1_7_SOURCE_AUTH_PREDECESSOR.name),
+        changed_sources=DET1_8_CHANGED_SOURCES,
+        added_sources=DET1_8_ADDED_SOURCES,
     )
 
 
 def author_det1_7_source_authorization(
     run_dir: Path = FROZEN_RUN,
 ) -> dict[str, Any]:
-    from scripts.grm_det1_7_source_auth import (
+    """Author the active DET1.8 successor behind the stable lead command."""
+    from scripts.grm_det1_8_source_auth import (
         author_precollection_source_authorization,
     )
 
@@ -1180,12 +1226,14 @@ def author_det1_7_source_authorization(
     return author_precollection_source_authorization(
         path,
         repo_root=ROOT,
-        order_path=DET1_7_ORDER,
+        order_path=DET1_8_ORDER,
         registration_path=REGISTRATION,
         runtime_frame_path=RUNTIME_FRAME,
         det1_6_amendment_path=DELTA_AMENDMENT,
-        changed_sources=DET1_7_CHANGED_SOURCES,
-        added_sources=DET1_7_ADDED_SOURCES,
+        predecessor_authorization_path=(
+            run_dir / DET1_7_SOURCE_AUTH_PREDECESSOR.name),
+        changed_sources=DET1_8_CHANGED_SOURCES,
+        added_sources=DET1_8_ADDED_SOURCES,
     )
 
 
@@ -1896,6 +1944,15 @@ def _completed_shard_output(
             # DET1.7 makes every earlier successful output historical.  It is
             # intentionally neither reused nor counted as a duplicate.
             continue
+        if (
+            stage == "plant_registration"
+            and value.get("det1_7_provenance")
+            != load_det1_7_precollection_context(FROZEN_RUN)
+        ):
+            # A successor collection-only authorization makes prior PASS
+            # shards historical. Preserve their append-only attempt records,
+            # but collect fresh snapshots under the active source bytes.
+            continue
         _validate_worker_shard_output(value, stage=stage, spec=spec)
         completed.append(value)
     _require(
@@ -2318,6 +2375,7 @@ def _fork_attempt(
         compare_fork_hydration_delta,
         finalize_snapshot_with_answer,
         load_snapshot,
+        require_snapshot_member_coverage,
         restore_prefill_fork,
         stop_at_next_forward,
     )
@@ -2418,6 +2476,8 @@ def _fork_attempt(
     }
     manifest_path = finalize_snapshot_with_answer(manifest_path, linked)
     snapshot = load_snapshot(manifest_path)
+    source_member_coverage = require_snapshot_member_coverage(
+        snapshot, f"{fixture['fixture_id']} rung {ordinal} lived source")
     source_mounts = {
         int(value) for value in
         (snapshot.get("state") or {}).get("arena.cur_mounts", ())
@@ -2547,6 +2607,7 @@ def _fork_attempt(
                 if variant != "planted_miss" or int(value) not in aliases
             ],
             "snapshot": file_record(manifest_path),
+            "snapshot_member_coverage": dict(source_member_coverage),
             "lived_answer": str(lived_answer),
             "lived_info": dict(lived_info or {}),
             "process_instance_sha256": process["process_instance_sha256"],
@@ -2565,11 +2626,16 @@ def _registration_target_candidate(
     result: Mapping[str, Any],
 ) -> tuple[int, dict[str, list[str]], str]:
     """Derive the candidate solely from the selected lived snapshot/mounts."""
-    from scripts.grm_det1_3_snapshot import load_snapshot
+    from scripts.grm_det1_3_snapshot import (
+        load_snapshot,
+        require_snapshot_member_coverage,
+    )
 
     snapshot_record = result.get("snapshot") or {}
     snapshot_path = _path_from_record(snapshot_record)
     snapshot = load_snapshot(snapshot_path)
+    require_snapshot_member_coverage(
+        snapshot, f"{fixture['fixture_id']} registration target source")
     state = snapshot.get("state") or {}
     actual = [int(value) for value in state.get(
         "admission.authoritative_mounts", ())]
@@ -2639,9 +2705,11 @@ def _qualify_registration_target(
 ) -> dict[str, Any]:
     """Run an explicit one-member fork ablation for synthesis registration."""
     from scripts.grm_det1_3_snapshot import (
+        ARM_PROTOCOLS,
         capture_arena_snapshot,
         compare_fork_hydration_delta,
         load_snapshot,
+        require_snapshot_member_coverage,
         restore_prefill_fork,
     )
     from scripts.grm_det1_4_gpu import _continue_forked_prefill
@@ -2650,6 +2718,8 @@ def _qualify_registration_target(
     source_record = dict(result.get("snapshot") or {})
     source_path = _path_from_record(source_record)
     source = load_snapshot(source_path)
+    source_member_coverage = require_snapshot_member_coverage(
+        source, f"{fixture['fixture_id']} registration lived source")
     actual_ordered = [
         int(value) for value in
         (source.get("state") or {}).get("admission.authoritative_mounts", ())
@@ -2670,6 +2740,7 @@ def _qualify_registration_target(
         **dict(source.get("provenance") or {}),
         "schema": "grm.det1_7.registration_ablation_provenance.v1",
         "arm": "fork",
+        "protocol": ARM_PROTOCOLS["fork"],
         "probe_driver": "grm_det1_7.target_only_registration_qualification",
         "withheld_target_id": int(target_id),
         "process_instance_sha256": process["process_instance_sha256"],
@@ -2694,6 +2765,14 @@ def _qualify_registration_target(
         and delta.get("status") == DELTA_PASS_STATUS
         and delta.get("gate_pass") is True,
         "registration target-only ablation failed exact delta validation",
+    )
+    member_delta = delta.get("member_snapshot_coverage") or {}
+    _require(
+        member_delta.get("gate_pass") is True
+        and member_delta.get("selected_member_payload_absent") is True
+        and member_delta.get("all_other_member_payload_bytes_exact") is True
+        and source_member_coverage["mounted_members"] == actual_ordered,
+        "registration target-only ablation failed mounted-member coverage",
     )
     answer, _masks = _continue_forked_prefill(
         arena, restore["prompt_ids"], int(ngen))
@@ -3114,6 +3193,8 @@ def _measure_fixture_inline(
                 "snapshot_path": str(_path_from_record(
                     served.get("snapshot") or {})),
                 "source_snapshot": dict(served.get("snapshot") or {}),
+                "snapshot_member_coverage": dict(
+                    served.get("snapshot_member_coverage") or {}),
                 "evidence_utc": utc_now(),
                 "expected_value_coverage": coverage,
                 "alias_ids": [target_id] if target_id is not None else [],
@@ -3347,6 +3428,10 @@ def plant_registration(
         validate_plant_registry,
         write_content_addressed_registry,
     )
+    from scripts.grm_det1_3_snapshot import (
+        load_snapshot,
+        require_snapshot_member_coverage,
+    )
 
     run_dir = Path(run_dir).resolve()
     if _stage_is_complete(run_dir, "plant_registration"):
@@ -3395,6 +3480,21 @@ def plant_registration(
              f"{len(candidates)}")
     selected, substitutions = _select_registration_observations(
         read_json(REGISTRATION), candidates)
+    for observation in selected:
+        snapshot_path = _path_from_record(
+            observation.get("source_snapshot") or {})
+        member_coverage = require_snapshot_member_coverage(
+            load_snapshot(snapshot_path),
+            f"{observation['effective_fixture_id']} selected lived source",
+        )
+        recorded_coverage = observation.get("snapshot_member_coverage")
+        _require(
+            recorded_coverage in (None, {})
+            or dict(recorded_coverage) == member_coverage,
+            "selected plant observation member-coverage receipt drifted: "
+            f"{observation['effective_fixture_id']}",
+        )
+        observation["snapshot_member_coverage"] = member_coverage
     candidates_path = directory / "candidate_observations.jsonl"
     selected_path = directory / "selected_observations.jsonl"
     _write_jsonl_exclusive_or_verify(candidates_path, candidates)
@@ -3414,6 +3514,38 @@ def plant_registration(
         stem="plant_registry",
     )
     validation = validate_plant_registry(registry, record_root=ROOT)
+    selected_by_base = {
+        str(row["fixture_id"]): row for row in selected
+    }
+    member_audit_table = []
+    for entry in registry["entries"]:
+        observation = selected_by_base[str(entry["fixture_id"])]
+        member_coverage = dict(
+            observation.get("snapshot_member_coverage") or {})
+        _require(
+            member_coverage.get("gate_pass") is True,
+            "selected plant observation lacks complete snapshot-member "
+            f"coverage: {entry['fixture_id']}",
+        )
+        member_audit_table.append({
+            "base_fixture_id": entry["fixture_id"],
+            "effective_fixture_id": entry["effective_fixture_id"],
+            "split": entry["split"],
+            "policy_branch": entry["policy_branch"],
+            "rank_plan_members": member_coverage["rank_plan_members"],
+            "current_planned_members": member_coverage[
+                "current_planned_members"],
+            "current_fitted_members": member_coverage[
+                "current_fitted_members"],
+            "current_dropped_members": member_coverage[
+                "current_dropped_members"],
+            "actual_lived_mounts": entry["actual_authoritative_mounts"],
+            "snapshot_covered_members": member_coverage["covered_members"],
+            "planned_not_mounted_members": member_coverage[
+                "planned_not_mounted_members"],
+            "snapshot_member_coverage_status": member_coverage["status"],
+            "source_snapshot": entry["source_snapshot"],
+        })
     table = [
         {
             "base_fixture_id": entry["fixture_id"],
@@ -3450,6 +3582,7 @@ def plant_registration(
         "plant_registry_file_sha256": file_record(registry_path)["sha256"],
         "registry_validation": validation,
         "per_turn_table": table,
+        "snapshot_member_audit_table": member_audit_table,
         "substitutions": substitutions,
         "counts": {"served": 12, "planted_miss": 12, "eval_pairs": 12},
         "detector_arms_active": [],
@@ -3875,6 +4008,23 @@ def selftest(_args: argparse.Namespace | None = None) -> dict[str, Any]:
                         "exact_divergence_set": True,
                         "non_delta_fields_equal": True,
                         "retained_arrays_exact": True,
+                        "member_snapshot_coverage": {
+                            "gate_pass": True,
+                            "selected_member_payload_absent": True,
+                            "all_other_member_payload_bytes_exact": True,
+                            "lived": {
+                                "gate_pass": True,
+                                "mounted_members": [index],
+                                "snapshot_required_members": [index],
+                                "covered_members": [index],
+                            },
+                            "fork": {
+                                "gate_pass": True,
+                                "mounted_members": [],
+                                "snapshot_required_members": [],
+                                "covered_members": [],
+                            },
+                        },
                         "transformed_arrays": [{
                             "field": "state.arena.cur_mounts",
                             "retained_bytes_exact": True,

@@ -19,7 +19,9 @@ from scripts.grm_det1_3_snapshot import (
     load_snapshot,
     load_snapshot_array,
     process_instance_sha256,
+    require_snapshot_member_coverage,
     restore_prefill_fork,
+    snapshot_member_coverage,
     verify_fork_masks_consumed,
 )
 from scripts.grm_det1_3_gpu import (
@@ -200,7 +202,12 @@ def provenance(arm: str, process: str, *, attempt: int = 0) -> dict:
     return value
 
 
-def linked_answer(process: str, *, answer: str = "Nacre-6-Blue") -> dict:
+def linked_answer(
+    process: str,
+    *,
+    answer: str = "Nacre-6-Blue",
+    mounts: tuple[int, ...] = (0,),
+) -> dict:
     refusal = _is_refusal(answer)
     correct = "nacre-6-blue" in answer.casefold() and not refusal
     return {
@@ -208,12 +215,12 @@ def linked_answer(process: str, *, answer: str = "Nacre-6-Blue") -> dict:
         "process_instance_sha256": process,
         "captured_attempt_ordinal": 0,
         "attempt_answer": answer,
-        "attempt_mounts": [0],
+        "attempt_mounts": list(mounts),
         "attempt_answer_correct": correct,
         "attempt_refusal": refusal,
         "probe_answer": answer,
         "probe_selected_attempt": 0,
-        "probe_mounts": [0],
+        "probe_mounts": list(mounts),
         "probe_answer_correct": correct,
         "probe_refusal": refusal,
     }
@@ -229,6 +236,7 @@ def capture(
     arm: str | None = None,
     process: str | None = None,
     finalize: bool = True,
+    admission_plan: dict | None = None,
 ) -> Path:
     arena = arena or FakeArena()
     arm = arm or ("lived" if "left" in name else "replay")
@@ -241,7 +249,7 @@ def capture(
         provenance=capture_provenance,
         question="What is the value?",
         prompt_ids=[7, 8, 9],
-        admission_plan=admission(),
+        admission_plan=admission_plan or admission(),
         live_token_ids=[] if live_ids is None else live_ids,
         sink_text="<sink>",
         sink_token_ids=[1, 2],
@@ -249,7 +257,12 @@ def capture(
     )
     if finalize:
         finalize_snapshot_with_answer(
-            path, linked_answer(capture_provenance["process_instance_sha256"]))
+            path,
+            linked_answer(
+                capture_provenance["process_instance_sha256"],
+                mounts=tuple(int(value) for value in arena.cur_mounts),
+            ),
+        )
     return path
 
 
@@ -504,6 +517,46 @@ def test_missing_live_token_ledger_marks_snapshot_incomplete(tmp_path: Path):
     )
 
 
+def test_fork_arm_requires_the_registered_fork_protocol(tmp_path: Path):
+    wrong = provenance("fork", "fork-process")
+    wrong["protocol"] = ARM_PROTOCOLS["lived"]
+    wrong_path = capture_arena_snapshot(
+        FakeArena(),
+        tmp_path / "wrong_fork_protocol",
+        label="fork",
+        provenance=wrong,
+        question="What is the value?",
+        prompt_ids=[7, 8, 9],
+        admission_plan=admission(),
+        live_token_ids=[],
+        sink_text="<sink>",
+        sink_token_ids=[1, 2],
+        explicit_identity=IDENTITY,
+    )
+    correct_path = capture_arena_snapshot(
+        FakeArena(),
+        tmp_path / "correct_fork_protocol",
+        label="fork",
+        provenance=provenance("fork", "fork-process"),
+        question="What is the value?",
+        prompt_ids=[7, 8, 9],
+        admission_plan=admission(),
+        live_token_ids=[],
+        sink_text="<sink>",
+        sink_token_ids=[1, 2],
+        explicit_identity=IDENTITY,
+    )
+
+    wrong_snapshot = load_snapshot(wrong_path)
+    correct_snapshot = load_snapshot(correct_path)
+    assert wrong_snapshot["complete"] is False
+    assert [
+        row["field"]
+        for row in wrong_snapshot["availability"]["required_unavailable_fields"]
+    ] == ["provenance.registered_arm_protocol"]
+    assert correct_snapshot["complete"] is True
+
+
 def test_blob_tamper_is_rejected(tmp_path: Path):
     manifest_path = capture(tmp_path, "snapshot")
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -513,6 +566,219 @@ def test_blob_tamper_is_rejected(tmp_path: Path):
 
     with pytest.raises(SnapshotError, match="size mismatch"):
         load_snapshot(manifest_path)
+
+
+def _declared_synthesis_admission(
+    *, fitted: tuple[int, ...] = (0, 1), dropped: tuple[int, ...] = (),
+) -> dict:
+    value = admission()
+    value.update({
+        "ranking": [0, 1],
+        "route_scores": [
+            {"id": 0, "score": 1.0},
+            {"id": 1, "score": 0.9},
+        ],
+        "identifier_tokens": ["value", "echo"],
+        "identified_candidates": [0, 1],
+        "policy_branch": "declared_synthesis_identified_set",
+        "rank_plan": [0, 1],
+        "ladder_attempts": [{
+            "ordinal": 0,
+            "planned": [0, 1],
+            "clean_room": False,
+        }],
+        "current_planned": [0, 1],
+        "current_fitted": list(fitted),
+        "current_dropped": list(dropped),
+        "final_mounts": list(fitted),
+    })
+    return value
+
+
+def _multi_mount_arena(substrate: str) -> FakeArena:
+    arena = FakeArena()
+    arena.width = 8
+    arena.cur_mounts = [0, 1]
+    arena.cur_mount_n = 3
+    arena.last_route_receipt = {"ranking": [0, 1]}
+    arena.grafts = []
+    for graft_id, ntok in ((0, 1), (1, 2)):
+        layers = []
+        for layer_index in range(2):
+            base = np.arange(16 * ntok, dtype=np.float16).reshape(
+                1, 2, ntok, 8)
+            layers.append({
+                "k": base + np.float16(100 * graft_id + 10 * layer_index),
+                "v": base + np.float16(200 + 100 * graft_id + 10 * layer_index),
+            })
+        arena.grafts.append({
+            "ntok": ntok,
+            "h": layers,
+            "text": f"member-{graft_id}",
+        })
+    if substrate == "injection":
+        arena.caches = None
+    for layer_index, layer in enumerate(arena.m.layers):
+        active = np.arange(80, dtype=np.float16).reshape(1, 2, 5, 8)
+        active = active + np.float16(10 * layer_index)
+        layer.self_attn.graft_seats = 5
+        if substrate == "cache":
+            arena.caches[layer_index] = (
+                active.copy(), active + np.float16(500))
+            layer.self_attn.inject_kv = None
+        else:
+            layer.self_attn.inject_kv = (
+                active.copy(), active + np.float16(500), 1.0)
+    return arena
+
+
+def _declared_single_mount_arena(substrate: str) -> FakeArena:
+    arena = _multi_mount_arena(substrate)
+    arena.cur_mounts = [0]
+    arena.cur_mount_n = 1
+    for layer_index, layer in enumerate(arena.m.layers):
+        if substrate == "cache":
+            cache = arena.caches[layer_index]
+            arena.caches[layer_index] = (
+                np.ascontiguousarray(cache[0][:, :, :3, :]),
+                np.ascontiguousarray(cache[1][:, :, :3, :]),
+            )
+        else:
+            injection = layer.self_attn.inject_kv
+            layer.self_attn.inject_kv = (
+                np.ascontiguousarray(injection[0][:, :, :3, :]),
+                np.ascontiguousarray(injection[1][:, :, :3, :]),
+                injection[2],
+            )
+        layer.self_attn.graft_seats = 3
+    return arena
+
+
+def test_declared_synthesis_budget_drop_still_captures_every_declared_member(
+    tmp_path: Path,
+):
+    arena = _declared_single_mount_arena("cache")
+    path = capture(
+        tmp_path,
+        "declared_synthesis_fitted_single",
+        arena=arena,
+        arm="lived",
+        admission_plan=_declared_synthesis_admission(
+            fitted=(0,), dropped=(1,)),
+    )
+
+    receipt = require_snapshot_member_coverage(
+        load_snapshot(path), "declared synthesis fitted source")
+
+    assert receipt["gate_pass"] is True
+    assert receipt["rank_plan_members"] == [0, 1]
+    assert receipt["current_fitted_members"] == [0]
+    assert receipt["current_dropped_members"] == [1]
+    assert receipt["mounted_members"] == [0]
+    assert receipt["snapshot_required_members"] == [0, 1]
+    assert receipt["declared_snapshot_only_members"] == [1]
+    assert receipt["covered_members"] == [0, 1]
+    assert receipt["planned_not_mounted_members"] == [1]
+
+
+def test_snapshot_member_coverage_rejects_contradictory_drop_ledger(
+    tmp_path: Path,
+):
+    path = capture(
+        tmp_path,
+        "declared_synthesis_bad_drop_ledger",
+        arena=_declared_single_mount_arena("cache"),
+        arm="lived",
+        admission_plan=_declared_synthesis_admission(
+            fitted=(0,), dropped=()),
+    )
+
+    receipt = snapshot_member_coverage(load_snapshot(path))
+
+    assert receipt["snapshot_complete"] is True
+    assert receipt["covered_members"] == [0, 1]
+    assert receipt["planned_not_mounted_members"] == [1]
+    assert receipt["current_dropped_members"] == []
+    assert receipt["plan_fit_consistent"] is False
+    assert receipt["gate_pass"] is False
+
+
+@pytest.mark.parametrize("substrate", ["cache", "injection"])
+def test_declared_single_physical_mount_delta_retains_other_member_snapshot(
+    tmp_path: Path, substrate: str,
+):
+    source = capture(
+        tmp_path,
+        f"declared_single_physical_source_{substrate}",
+        arena=_declared_single_mount_arena(substrate),
+        arm="lived",
+        admission_plan=_declared_synthesis_admission(
+            fitted=(0,), dropped=(1,)),
+    )
+    target = _multi_mount_arena(substrate)
+    restore = restore_prefill_fork(
+        target,
+        source,
+        withheld_mounts=[0],
+        target_identity=IDENTITY,
+        require_same_process_index=False,
+        tensor_factory=_cpu_fork_tensor,
+    )
+    fork = capture_arena_snapshot(
+        target,
+        tmp_path / f"declared_single_physical_fork_{substrate}",
+        label="fork",
+        provenance=provenance("fork", "fork-process"),
+        question="What is the value?",
+        prompt_ids=restore["prompt_ids"],
+        admission_plan=restore["admission_state"],
+        live_token_ids=restore["live_token_ids"],
+        sink_text="<sink>",
+        sink_token_ids=restore["sink_token_ids"],
+        explicit_identity=IDENTITY,
+    )
+
+    delta = compare_fork_hydration_delta(
+        source, fork, withheld_mounts=[0])
+    member_delta = delta["member_snapshot_coverage"]
+
+    assert delta["status"] == (
+        "PASS_EXACT_REGISTERED_DELTA_CANONICAL_VALUE_BYTES")
+    assert delta["gate_pass"] is True
+    assert delta["source_mounts"] == [0]
+    assert delta["fork_mounts"] == []
+    assert member_delta["source_snapshot_members"] == [0, 1]
+    assert member_delta["expected_fork_snapshot_members"] == [1]
+    assert member_delta["lived"]["covered_members"] == [0, 1]
+    assert member_delta["fork"]["covered_members"] == [1]
+    assert member_delta["retained_member_payload_field_count"] == 4
+    assert member_delta["all_other_member_payload_bytes_exact"] is True
+
+
+def test_missing_one_mounted_member_payload_fails_coverage_closed(
+    tmp_path: Path,
+):
+    arena = _multi_mount_arena("cache")
+    del arena.grafts[1]["h"][1]["v"]
+    path = capture(
+        tmp_path,
+        "declared_synthesis_missing_member",
+        arena=arena,
+        arm="lived",
+        finalize=False,
+        admission_plan=_declared_synthesis_admission(),
+    )
+
+    receipt = snapshot_member_coverage(load_snapshot(path))
+
+    assert receipt["gate_pass"] is False
+    assert receipt["mounted_members"] == [0, 1]
+    assert receipt["covered_members"] == [0]
+    assert receipt["missing_member_payload_fields"] == [
+        "mounted_graft.1.layer_01.v"]
+    with pytest.raises(SnapshotError, match="snapshot-member coverage"):
+        require_snapshot_member_coverage(
+            load_snapshot(path), "incomplete declared synthesis")
 
 
 def _cpu_fork_tensor(array: np.ndarray, _source_dtype: str) -> np.ndarray:
@@ -658,6 +924,132 @@ def test_planted_miss_fork_removes_only_mounted_seat_ranges(
         {"DIVERGENT": 20, "EQUAL": 54, "MISSING_FORK": 4}
     )
     assert delta["strict_zero_comparator"]["counts"] == expected_counts
+
+
+@pytest.mark.parametrize("substrate", ["cache", "injection"])
+@pytest.mark.parametrize(
+    ("withheld", "kept", "seat_range"),
+    [(0, 1, [2, 3]), (1, 0, [3, 5])],
+)
+def test_declared_synthesis_delta_withholds_one_member_and_preserves_other(
+    tmp_path: Path,
+    substrate: str,
+    withheld: int,
+    kept: int,
+    seat_range: list[int],
+):
+    source_arena = _multi_mount_arena(substrate)
+    source = capture(
+        tmp_path,
+        f"declared_synthesis_source_{substrate}",
+        arena=source_arena,
+        arm="lived",
+        admission_plan=_declared_synthesis_admission(),
+    )
+    source_snapshot = load_snapshot(source)
+    source_coverage = require_snapshot_member_coverage(
+        source_snapshot, "declared synthesis source")
+    target = _multi_mount_arena(substrate)
+
+    restore = restore_prefill_fork(
+        target,
+        source,
+        withheld_mounts=[withheld],
+        target_identity=IDENTITY,
+        require_same_process_index=False,
+        tensor_factory=_cpu_fork_tensor,
+    )
+    fork = capture_arena_snapshot(
+        target,
+        tmp_path / f"declared_synthesis_fork_{substrate}",
+        label="fork",
+        provenance=provenance("fork", "fork-process"),
+        question="What is the value?",
+        prompt_ids=restore["prompt_ids"],
+        admission_plan=restore["admission_state"],
+        live_token_ids=restore["live_token_ids"],
+        sink_text="<sink>",
+        sink_token_ids=restore["sink_token_ids"],
+        explicit_identity=IDENTITY,
+    )
+    fork_snapshot = load_snapshot(fork)
+    fork_coverage = require_snapshot_member_coverage(
+        fork_snapshot, "declared synthesis target-only fork")
+    delta = compare_fork_hydration_delta(
+        source, fork, withheld_mounts=[withheld])
+
+    assert source_coverage["mounted_members"] == [0, 1]
+    assert source_coverage["covered_members"] == [0, 1]
+    assert fork_coverage["mounted_members"] == [kept]
+    assert fork_coverage["covered_members"] == [kept]
+    assert delta["source_mounted_aliases"] == [withheld]
+    assert delta["source_mounts"] == [0, 1]
+    assert delta["fork_mounts"] == [kept]
+    assert delta["seat_ranges"] == [{
+        "graft_id": withheld,
+        "range": seat_range,
+    }]
+    assert delta["target_absence"]["gate_pass"] is True
+    assert delta["retained_arrays_exact"] is True
+    assert delta["non_delta_fields_equal"] is True
+    assert delta["expected_fork_value_mismatches"] == []
+    member_delta = delta["member_snapshot_coverage"]
+    assert member_delta["gate_pass"] is True
+    assert member_delta["selected_member_payload_absent"] is True
+    assert member_delta["all_other_member_payload_bytes_exact"] is True
+    assert member_delta["lived"]["covered_members"] == [0, 1]
+    assert member_delta["fork"]["covered_members"] == [kept]
+    for field, record in source_snapshot["arrays"].items():
+        if field.startswith(f"mounted_graft.{withheld}."):
+            assert field not in fork_snapshot["arrays"]
+        if field.startswith(f"mounted_graft.{kept}."):
+            assert fork_snapshot["arrays"][field]["sha256"] == record["sha256"]
+
+
+def test_declared_synthesis_delta_rejects_retained_member_payload_mutation(
+    tmp_path: Path,
+):
+    source = capture(
+        tmp_path,
+        "declared_synthesis_survivor_source",
+        arena=_multi_mount_arena("cache"),
+        arm="lived",
+        admission_plan=_declared_synthesis_admission(),
+    )
+    target = _multi_mount_arena("cache")
+    restore = restore_prefill_fork(
+        target,
+        source,
+        withheld_mounts=[0],
+        target_identity=IDENTITY,
+        require_same_process_index=False,
+        tensor_factory=_cpu_fork_tensor,
+    )
+    target.grafts[1]["h"][0]["k"][0, 0, 0, 0] += np.float16(1)
+    fork = capture_arena_snapshot(
+        target,
+        tmp_path / "declared_synthesis_survivor_mutated",
+        label="fork",
+        provenance=provenance("fork", "fork-process"),
+        question="What is the value?",
+        prompt_ids=restore["prompt_ids"],
+        admission_plan=restore["admission_state"],
+        live_token_ids=restore["live_token_ids"],
+        sink_text="<sink>",
+        sink_token_ids=restore["sink_token_ids"],
+        explicit_identity=IDENTITY,
+    )
+
+    delta = compare_fork_hydration_delta(
+        source, fork, withheld_mounts=[0])
+
+    assert delta["gate_pass"] is False
+    assert delta["retained_arrays_exact"] is False
+    assert delta["member_snapshot_coverage"]["gate_pass"] is False
+    assert delta["member_snapshot_coverage"][
+        "all_other_member_payload_bytes_exact"] is False
+    assert "arrays.mounted_graft.1.layer_00.k" in delta[
+        "expected_fork_value_mismatches"]
 
 
 def test_planted_delta_comparator_rejects_an_unrelated_byte_change(tmp_path: Path):

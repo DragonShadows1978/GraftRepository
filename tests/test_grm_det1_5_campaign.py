@@ -4,15 +4,26 @@ from copy import deepcopy
 import hashlib
 import json
 from pathlib import Path
+import sys
 import time
+from types import SimpleNamespace
 
 import pytest
 
-from scripts.grm_det1_5_analyze import prediction_verdict
+from scripts.grm_det1_5_analyze import (
+    _process_instances as analyzer_process_instances,
+    prediction_verdict,
+)
 from scripts.grm_det1_5_gpu import (
+    _qualify_registration_target,
+    _select_registration_observations,
     _worker_gap_anchor_ns,
+    bind_plant_profile,
     build_lead_commands,
+    effective_fixture_for_base,
+    effective_registration_projection,
     merge_detector_rows,
+    selftest,
     validate_cross_process_zero,
     validate_g0_rows,
     validate_g1_pair,
@@ -24,6 +35,14 @@ from scripts.grm_det1_common import DETECTORS, DETError, VERBAL_QUESTION
 
 def _sha(character: str) -> str:
     return hashlib.sha256(character.encode("utf-8")).hexdigest()
+
+
+def test_campaign_cpu_selftest_includes_det1_8_member_gate():
+    receipt = selftest()
+
+    assert receipt["status"] == "PASS_CPU_ONLY"
+    assert receipt["checks"]["g0_12_plus_12"] == "PASS"
+    assert receipt["gpu_allocations_attempted"] == 0
 
 
 def test_worker_gap_anchor_survives_timeout_without_worker_output(tmp_path: Path):
@@ -47,6 +66,31 @@ def test_worker_gap_anchor_survives_timeout_without_worker_output(tmp_path: Path
 
     anchor = _worker_gap_anchor_ns(run_dir)
     assert anchor is not None and anchor >= finished_ns
+
+
+def test_registration_receipt_labels_ordered_process_aggregate_semantics():
+    process_ids = [_sha("registration-a"), _sha("registration-b")]
+    aggregate = hashlib.sha256(
+        json.dumps(
+            process_ids,
+            ensure_ascii=False,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    receipt = {
+        "process_instance_sha256s": process_ids,
+        "process_instance_sha256": aggregate,
+        "process_instance_identity": (
+            "AGGREGATE_ORDERED_PROCESS_LIST_NOT_OS_IDENTITY"
+        ),
+        "process_identity_semantics": (
+            "SHA256_OF_ORDERED_OS_PROCESS_INSTANCE_LIST"
+        ),
+    }
+
+    assert analyzer_process_instances(receipt, "plant_registration") == (
+        process_ids
+    )
 
 
 def _zero_receipt(process: str, *, state: str = "s") -> dict:
@@ -128,6 +172,13 @@ def _delta_receipt(field: str) -> dict:
         "exact_divergence_set": True,
         "non_delta_fields_equal": True,
         "retained_arrays_exact": True,
+        "member_snapshot_coverage": {
+            "gate_pass": True,
+            "selected_member_payload_absent": True,
+            "all_other_member_payload_bytes_exact": True,
+            "lived": {"gate_pass": True},
+            "fork": {"gate_pass": True},
+        },
         "transformed_arrays": [{
             "field": field,
             "retained_bytes_exact": True,
@@ -142,6 +193,11 @@ def _delta_receipt(field: str) -> dict:
 
 def _paired_rows(pair_count: int = 12) -> list[dict]:
     rows: list[dict] = []
+    registry_record = {
+        "path": "artifacts/grm_det1/run/plant_registry_deadbeef.json",
+        "bytes": 1234,
+        "sha256": "a" * 64,
+    }
     for index in range(pair_count):
         fixture = f"eval_{index:02d}"
         rows.extend([
@@ -156,6 +212,11 @@ def _paired_rows(pair_count: int = 12) -> list[dict]:
                 "raw_router_rank1": index,
                 "logical_router_rank1": index,
                 "logical_alias_ids": [index],
+                "plant_target_id": index,
+                "plant_alias_ids": [index],
+                "plant_target_source": "DET1_7_LIVED_ADMISSION_REGISTRY",
+                "plant_registry": registry_record,
+                "plant_entry_sha256": _sha(f"entry-{index}"),
                 "mounted_ids": [index],
                 "mounted_contains_expected": True,
                 "full_index_contains_all_aliases": True,
@@ -167,10 +228,17 @@ def _paired_rows(pair_count: int = 12) -> list[dict]:
                 "variant": "planted_miss",
                 "answer_correct": False,
                 "target_contains_expected": True,
+                "plant_target_id": index,
+                "plant_alias_ids": [index],
+                "plant_target_source": "DET1_7_LIVED_ADMISSION_REGISTRY",
+                "plant_registry": registry_record,
+                "plant_entry_sha256": _sha(f"entry-{index}"),
                 "plant_checks": {
                     "withheld_aliases_absent": True,
                     "logical_target_absent": True,
                     "raw_router_rank1_absent": True,
+                    "registered_plant_target_absent": True,
+                    "registered_plant_aliases_absent": True,
                     "expected_value_absent_from_mounted_text": True,
                     "withheld_aliases_remain_in_full_detector_index": True,
                     "admission_ranking_unchanged": True,
@@ -366,6 +434,267 @@ def test_calibration_and_eval_are_exact_registered_disjoint_splits():
     assert result["status"] == "PASS"
     assert result["calibration_count"] == 2
     assert result["eval_counts"] == {"served": 12, "planted_miss": 12}
+
+
+def test_lived_admission_target_overrides_stale_raw_rank_one_diagnostic():
+    entry = {
+        "selected_target_id": 1,
+        "alias_ids": [1],
+        "actual_authoritative_mounts": [1],
+        "expected_value_coverage": {"1": True},
+    }
+    registry_record = {
+        "path": "artifacts/grm_det1/run/plant_registry_feedface.json",
+        "bytes": 321,
+        "sha256": "f" * 64,
+    }
+
+    bound = bind_plant_profile(
+        {
+            "raw_router_rank1": 2,
+            "logical_router_rank1": 2,
+            "logical_alias_ids": [2],
+        },
+        entry,
+        registry_record,
+    )
+
+    # Solace's lived A-DEC mount was graft 1 even though the raw/rank-plan
+    # diagnostic began at graft 2.  The plant must withhold the lived seat.
+    assert bound["raw_router_rank1"] == 2
+    assert bound["logical_router_rank1"] == 1
+    assert bound["logical_alias_ids"] == [1]
+    assert bound["plant_target_source"] == (
+        "DET1_7_LIVED_ADMISSION_REGISTRY"
+    )
+    assert bound["plant_registry"] == registry_record
+
+
+def test_registration_selects_only_unique_lawful_same_session_reserve():
+    fixture_ids = [f"slot_{index:02d}" for index in range(14)]
+    registration = {"fixtures": [
+        {"fixture_id": fixture_id} for fixture_id in fixture_ids
+    ]}
+    candidates = [
+        {
+            "schema": "grm.det1_7.plant_observation.v1",
+            "row_id": f"{fixture_id}:plant_registration",
+            "fixture_id": fixture_id,
+            "candidate_for_fixture_id": fixture_id,
+            "effective_fixture_id": fixture_id,
+            "status": (
+                "UNPLANTABLE" if fixture_id == "slot_12"
+                else "LAWFUL_LIVED_TARGET"
+            ),
+            "unplantable_reason": (
+                "served answer incorrect" if fixture_id == "slot_12"
+                else None
+            ),
+        }
+        for fixture_id in fixture_ids
+    ]
+    candidates.append({
+        "schema": "grm.det1_7.plant_observation.v1",
+        "row_id": "polaris:plant_registration",
+        "fixture_id": "polaris",
+        "candidate_for_fixture_id": "slot_12",
+        "effective_fixture_id": "polaris",
+        "status": "LAWFUL_LIVED_TARGET",
+        "substitution": {
+            "status": "SUBSTITUTED",
+            "reason": "primary served control failed",
+        },
+    })
+
+    selected, substitutions = _select_registration_observations(
+        registration, candidates)
+
+    assert len(selected) == 14
+    assert selected[12]["fixture_id"] == "slot_12"
+    assert selected[12]["effective_fixture_id"] == "polaris"
+    assert substitutions == [{
+        "base_fixture_id": "slot_12",
+        "effective_fixture_id": "polaris",
+        "reason": "primary served control failed",
+        "same_certified_session": True,
+    }]
+
+
+def test_registration_ablation_uses_fork_protocol_and_member_delta(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+):
+    import scripts.grm_det1_3_snapshot as snapshot_module
+
+    source_path = tmp_path / "lived_manifest.json"
+    source_path.write_text("{}\n", encoding="utf-8")
+    fork_path = tmp_path / "fork_manifest.json"
+    source = {
+        "state": {"admission.authoritative_mounts": [10, 20]},
+        "identity": {"frame_sha256": _sha("frame")},
+        "provenance": {
+            "schema": "grm.det1_3.capture_provenance.v2",
+            "arm": "lived",
+            "protocol": snapshot_module.ARM_PROTOCOLS["lived"],
+        },
+        "manifest_payload_sha256": _sha("source-manifest"),
+        "linked_answer": {"probe_answer": "The value is right."},
+    }
+    captured_provenance: dict = {}
+
+    def fake_load(path: Path) -> dict:
+        return source if Path(path) == source_path else {
+            "state": {"admission.authoritative_mounts": [20]},
+        }
+
+    def fake_coverage(value: dict, _label: str) -> dict:
+        return {
+            "gate_pass": True,
+            "mounted_members": list(
+                value["state"]["admission.authoritative_mounts"]),
+        }
+
+    def fake_restore(arena, _path, **_kwargs):
+        arena.cur_mounts = [20]
+        return {
+            "prompt_ids": [1, 2],
+            "admission_state": {"final_mounts": [20]},
+            "live_token_ids": [],
+            "sink_token_ids": [3],
+        }
+
+    def fake_capture(_arena, _directory, **kwargs):
+        captured_provenance.update(kwargs["provenance"])
+        return fork_path
+
+    delta = _delta_receipt("arrays.cache.layer_00.k")
+    delta.update({
+        "source_mounts": [10, 20],
+        "fork_mounts": [20],
+        "withheld_logical_aliases": [10],
+        "source_mounted_aliases": [10],
+        "already_absent_aliases": [],
+        "member_snapshot_coverage": {
+            "gate_pass": True,
+            "selected_member_payload_absent": True,
+            "all_other_member_payload_bytes_exact": True,
+        },
+    })
+    monkeypatch.setattr(snapshot_module, "load_snapshot", fake_load)
+    monkeypatch.setattr(
+        snapshot_module, "require_snapshot_member_coverage", fake_coverage)
+    monkeypatch.setattr(snapshot_module, "restore_prefill_fork", fake_restore)
+    monkeypatch.setattr(snapshot_module, "capture_arena_snapshot", fake_capture)
+    monkeypatch.setattr(
+        snapshot_module, "compare_fork_hydration_delta",
+        lambda *_args, **_kwargs: delta,
+    )
+    monkeypatch.setitem(
+        sys.modules,
+        "scripts.grm_det1_4_gpu",
+        SimpleNamespace(
+            _continue_forked_prefill=(
+                lambda *_args, **_kwargs: ("obsolete", {})
+            ),
+        ),
+    )
+    arena = SimpleNamespace(
+        cur_mounts=[10, 20],
+        encode=lambda _text: [3],
+    )
+
+    breaker = _qualify_registration_target(
+        arena=arena,
+        e2e=SimpleNamespace(HARMONY_SINK="<sink>"),
+        fixture={
+            "fixture_id": "declared_synthesis",
+            "expected_values": ["right"],
+            "wrong_fact_values": ["obsolete"],
+        },
+        result={"snapshot": {"path": str(source_path)}},
+        target_id=10,
+        identity={"frame_sha256": _sha("frame")},
+        process={"process_instance_sha256": _sha("process")},
+        capture_prompt="What is the value?",
+        ngen=1,
+    )
+
+    assert captured_provenance["arm"] == "fork"
+    assert captured_provenance["protocol"] == snapshot_module.ARM_PROTOCOLS["fork"]
+    assert breaker["withheld_target_id"] == 10
+    assert breaker["counterfactual"]["mounted_ids"] == [20]
+    assert breaker["counterfactual"]["classification"] == "wrong_fact"
+    assert breaker["delta_receipt"]["member_snapshot_coverage"][
+        "all_other_member_payload_bytes_exact"] is True
+
+
+def test_effective_registration_projection_preserves_2_plus_12_split():
+    registration = _registration()
+    base_ids = [
+        *registration["split_rule"]["calibration"],
+        *registration["split_rule"]["eval_e2e"],
+        *registration["split_rule"]["eval_supersession"],
+    ]
+    registry = {"entries": [
+        {
+            "fixture_id": fixture_id,
+            "effective_fixture_id": (
+                "e2e_t33_polaris_mark"
+                if fixture_id == "eval_11" else fixture_id
+            ),
+        }
+        for fixture_id in base_ids
+    ]}
+
+    projected = effective_registration_projection(registration, registry)
+    calibration, evaluation = _registered_split_for_test(projected)
+
+    assert calibration == ["cal_00", "cal_01"]
+    assert len(evaluation) == 12
+    assert evaluation[-1] == "e2e_t33_polaris_mark"
+    assert "eval_11" not in evaluation
+
+
+@pytest.mark.parametrize(
+    ("source_family", "selector", "runtime_key", "runtime_value"),
+    [
+        ("certified_34_turn", {"turn": 33}, "turn", 33),
+        (
+            "supersession_battery_on_gpt_oss",
+            {"probe_id": "reserve-probe"},
+            "probe_id",
+            "reserve-probe",
+        ),
+    ],
+)
+def test_substituted_selector_projects_to_worker_runtime_identity(
+    source_family, selector, runtime_key, runtime_value,
+):
+    base = {"fixture_id": "base-slot"}
+    effective = {
+        "fixture_id": "reserve-fixture",
+        "source_family": source_family,
+        "selector": selector,
+    }
+    registry = {"entries": [{
+        "fixture_id": "base-slot",
+        "effective_fixture_id": "reserve-fixture",
+        "effective_fixture": effective,
+        "substitution": {"status": "SUBSTITUTED"},
+    }]}
+
+    projected = effective_fixture_for_base(registry, base)
+
+    assert projected[runtime_key] == runtime_value
+    assert projected["base_fixture_id"] == "base-slot"
+    assert projected["fixture_id"] == "reserve-fixture"
+
+
+def _registered_split_for_test(registration: dict) -> tuple[list[str], list[str]]:
+    split = registration["split_rule"]
+    return (
+        list(split["calibration"]),
+        [*split["eval_e2e"], *split["eval_supersession"]],
+    )
 
 
 @pytest.mark.parametrize(
@@ -572,11 +901,16 @@ def test_gpu_lead_plan_is_argument_vectorized_and_carries_lease_discipline(
                for command in commands)
     flattened = [" ".join(command) for command in commands]
     for stage in (
-        "cross-process-zero", "g0", "g1", "calibration",
+        "cross-process-zero", "author-det1-7-source", "plant-registration",
+        "author-det1-7-terminal", "g0", "g1", "calibration",
         "eval-mechanistic", "eval-verbal", "analyze",
     ):
         assert any(stage in command for command in flattened), stage
-    for command in commands[:-1]:
+    gpu_commands = [
+        command for command in commands[:-1] if "--lease-seconds" in command
+    ]
+    assert gpu_commands
+    for command in gpu_commands:
         assert command[command.index("--lease-seconds") + 1] == "580"
         assert command[command.index("--lock-wait-seconds") + 1] == "7200"
     assert "grm_det1_5_analyze.py" in flattened[-1]

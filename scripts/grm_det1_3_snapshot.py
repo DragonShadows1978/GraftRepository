@@ -32,6 +32,7 @@ import numpy as np
 
 SNAPSHOT_SCHEMA = "grm.det1_3.model_visible_snapshot.v2"
 COMPARISON_SCHEMA = "grm.det1_3.dual_snapshot_comparison.v2"
+MEMBER_COVERAGE_SCHEMA = "grm.det1_8.snapshot_member_coverage.v1"
 CAPTURE_PHASE = "before_probe_prefill"
 ARM_PROTOCOLS = {
     "lived": "same_model_chronological_harmony_feed_v1",
@@ -681,17 +682,36 @@ def capture_arena_snapshot(
         _capture_payload_layers(builder, arena, "textual_sink", sink_h, group="sink_rows")
 
     mounts = [int(value) for value in (getattr(arena, "cur_mounts", ()) or ())]
+    declared_members: list[int] = []
+    if (
+        isinstance(admission_plan, Mapping)
+        and admission_plan.get("policy_branch")
+        == "declared_synthesis_identified_set"
+    ):
+        declared_members = [
+            int(value) for value in admission_plan.get("rank_plan", ())]
+        if len(declared_members) != len(set(declared_members)):
+            raise SnapshotError(
+                "declared-synthesis snapshot members contain duplicates")
     grafts = list(getattr(arena, "grafts", ()) or ())
-    for graft_index in mounts:
+    member_prefixes = {
+        graft_index: (
+            f"mounted_graft.{graft_index}"
+            if graft_index in set(mounts)
+            else f"declared_graft.{graft_index}"
+        )
+        for graft_index in dict.fromkeys([*mounts, *declared_members])
+    }
+    for graft_index, prefix in member_prefixes.items():
         if not (0 <= graft_index < len(grafts)) or grafts[graft_index].get("h") is None:
             builder.unavailable_field(
-                f"mounted_graft.{graft_index}.payload",
-                "mounted graft payload is absent from the Python arena",
+                f"{prefix}.payload",
+                "required snapshot-member payload is absent from the Python arena",
                 group="arena_kv",
             )
             continue
         _capture_payload_layers(
-            builder, arena, f"mounted_graft.{graft_index}",
+            builder, arena, prefix,
             grafts[graft_index]["h"], group="arena_kv",
         )
 
@@ -818,6 +838,15 @@ def capture_arena_snapshot(
                 group="sink_rows",
                 reason="textual sink payload is incomplete",
             )
+            for _member, prefix in member_prefixes.items():
+                builder.require(
+                    f"{prefix}.layer_{layer_index:02d}.{name}",
+                    group="arena_kv",
+                    reason=(
+                        "required snapshot-member payload is incomplete for "
+                        f"{prefix}"
+                    ),
+                )
         builder.require(
             f"mask.layer_{layer_index:02d}.inputs",
             group="masks",
@@ -1034,6 +1063,182 @@ def load_snapshot(path: Path) -> dict[str, Any]:
             raise SnapshotError(f"snapshot blob digest mismatch for {field}")
     value["_manifest_path"] = str(manifest_path.resolve())
     return value
+
+
+def snapshot_member_coverage(snapshot: Mapping[str, Any]) -> dict[str, Any]:
+    """Audit exact per-member payload coverage for one validated snapshot.
+
+    A-DEC's logical rank plan may be wider than the physical arena after
+    budget fitting. Snapshot completeness therefore covers every physically
+    mounted member and, for declared synthesis, every member of the declared
+    rank plan. The receipt keeps physical seats distinct from declaration-only
+    payloads instead of hiding either side behind a single-mount projection.
+    """
+
+    def ids(field: str) -> list[int]:
+        raw = state.get(field, ())
+        if not isinstance(raw, list):
+            raise SnapshotError(f"snapshot member coverage {field} is not a list")
+        try:
+            values = [int(value) for value in raw]
+        except (TypeError, ValueError) as exc:
+            raise SnapshotError(
+                f"snapshot member coverage {field} contains a non-integer"
+            ) from exc
+        if len(values) != len(set(values)):
+            raise SnapshotError(
+                f"snapshot member coverage {field} contains duplicates")
+        return values
+
+    if snapshot.get("schema") != SNAPSHOT_SCHEMA:
+        raise SnapshotError("snapshot member coverage requires a DET1.3 snapshot")
+    state = snapshot.get("state")
+    arrays = snapshot.get("arrays")
+    identity = snapshot.get("identity")
+    if not isinstance(state, Mapping) or not isinstance(arrays, Mapping):
+        raise SnapshotError("snapshot member coverage requires state and arrays")
+    if not isinstance(identity, Mapping):
+        raise SnapshotError("snapshot member coverage requires frame identity")
+
+    mounted = ids("arena.cur_mounts")
+    mirrors = {
+        field: ids(field)
+        for field in (
+            "admission.authoritative_mounts",
+            "admission.current_fitted",
+            "admission.final_mounts",
+        )
+    }
+    rank_plan = ids("admission.rank_plan")
+    identified = ids("admission.identified_candidates")
+    current_planned = ids("admission.current_planned")
+    current_dropped = ids("admission.current_dropped")
+
+    raw_payload = identity.get("dialect_payload")
+    try:
+        payload_names = [str(value["name"]) for value in raw_payload]
+        layer_count = int(identity["layer_count"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise SnapshotError(
+            "snapshot member coverage lacks payload/layer geometry"
+        ) from exc
+    if not payload_names or len(payload_names) != len(set(payload_names)):
+        raise SnapshotError("snapshot member coverage has invalid payload names")
+    if layer_count <= 0:
+        raise SnapshotError("snapshot member coverage has no model layers")
+
+    branch = state.get("admission.policy_branch")
+    declared_required = (
+        rank_plan if branch == "declared_synthesis_identified_set" else [])
+    required_members = list(dict.fromkeys([*mounted, *declared_required]))
+    member_prefixes = {
+        member: (
+            f"mounted_graft.{member}"
+            if member in set(mounted)
+            else f"declared_graft.{member}"
+        )
+        for member in required_members
+    }
+    expected_by_member = {
+        member: {
+            f"{member_prefixes[member]}.layer_{layer_index:02d}.{name}"
+            for layer_index in range(layer_count)
+            for name in payload_names
+        }
+        for member in required_members
+    }
+    expected_fields = (
+        set().union(*expected_by_member.values()) if required_members else set())
+    observed_fields = {
+        str(field) for field in arrays
+        if str(field).startswith(("mounted_graft.", "declared_graft."))
+    }
+    missing_fields = sorted(expected_fields - observed_fields)
+    unexpected_fields = sorted(observed_fields - expected_fields)
+    covered_members = [
+        member for member in required_members
+        if expected_by_member[member].issubset(observed_fields)
+    ]
+    mirror_match = all(value == mounted for value in mirrors.values())
+    mounted_set = set(mounted)
+    planned_not_mounted = [
+        value for value in current_planned if value not in mounted_set
+    ]
+    mounted_not_planned = [
+        value for value in mounted if value not in set(current_planned)
+    ]
+    plan_fit_consistent = bool(
+        not mounted_not_planned
+        and current_dropped == planned_not_mounted
+    )
+    snapshot_complete = snapshot.get("complete") is True
+    member_fields_exact = not missing_fields and not unexpected_fields
+    gate_pass = bool(
+        snapshot_complete
+        and mirror_match
+        and plan_fit_consistent
+        and member_fields_exact
+        and covered_members == required_members
+    )
+    return {
+        "schema": MEMBER_COVERAGE_SCHEMA,
+        "status": "PASS_COMPLETE_SNAPSHOT_MEMBER_COVERAGE" if gate_pass else (
+            "FAIL_INCOMPLETE_SNAPSHOT_MEMBER_COVERAGE"
+        ),
+        "gate_pass": gate_pass,
+        "snapshot_complete": snapshot_complete,
+        "coverage_scope": (
+            "ACTUAL_MOUNTS_PLUS_DECLARED_SYNTHESIS_RANK_PLAN"),
+        "policy_branch": branch,
+        "rank_plan_members": rank_plan,
+        "identified_members": identified,
+        "current_planned_members": current_planned,
+        "current_fitted_members": mirrors["admission.current_fitted"],
+        "current_dropped_members": current_dropped,
+        "mounted_members": mounted,
+        "declared_snapshot_members": declared_required,
+        "snapshot_required_members": required_members,
+        "declared_snapshot_only_members": [
+            value for value in declared_required if value not in mounted_set
+        ],
+        "covered_members": covered_members,
+        "planned_not_mounted_members": planned_not_mounted,
+        "mounted_not_planned_members": mounted_not_planned,
+        "plan_fit_consistent": plan_fit_consistent,
+        "member_field_counts": {
+            str(member): {
+                "field_prefix": member_prefixes[member],
+                "physically_mounted": member in mounted_set,
+                "expected": len(expected_by_member[member]),
+                "observed": len(expected_by_member[member] & observed_fields),
+                "complete": member in covered_members,
+            }
+            for member in required_members
+        },
+        "mount_mirrors": mirrors,
+        "mount_mirrors_equal": mirror_match,
+        "member_fields_exact": member_fields_exact,
+        "missing_member_payload_fields": missing_fields,
+        "unexpected_member_payload_fields": unexpected_fields,
+    }
+
+
+def require_snapshot_member_coverage(
+    snapshot: Mapping[str, Any], label: str,
+) -> dict[str, Any]:
+    """Return a coverage receipt or fail before a fork/delta can be claimed."""
+    receipt = snapshot_member_coverage(snapshot)
+    if receipt["gate_pass"] is not True:
+        raise SnapshotError(
+            f"{label} lacks complete snapshot-member coverage: "
+            f"complete={receipt['snapshot_complete']} "
+            f"mounted={receipt['mounted_members']} "
+            f"required={receipt['snapshot_required_members']} "
+            f"covered={receipt['covered_members']} "
+            f"missing={receipt['missing_member_payload_fields']} "
+            f"unexpected={receipt['unexpected_member_payload_fields']}"
+        )
+    return receipt
 
 
 def _load_validated_snapshot_array(
@@ -1352,8 +1557,10 @@ def compare_fork_hydration_delta(
     fork = load_snapshot(Path(fork_path))
     lived_manifest = Path(lived["_manifest_path"])
     fork_manifest = Path(fork["_manifest_path"])
-    if not (lived.get("complete") and fork.get("complete")):
-        raise SnapshotError("fork-hydration delta requires two complete snapshots")
+    lived_member_coverage = require_snapshot_member_coverage(
+        lived, "fork-hydration lived source")
+    fork_member_coverage = require_snapshot_member_coverage(
+        fork, "fork-hydration counterfactual")
 
     requested = [int(value) for value in withheld_mounts]
     if not requested:
@@ -1614,6 +1821,43 @@ def compare_fork_hydration_delta(
         row.get("retained_bytes_exact") is True for row in transformed_arrays)
     retained_arrays_exact = all(
         row.get("bytes_equal") is True for row in retained_array_bindings)
+    source_snapshot_members = [
+        int(value) for value in
+        lived_member_coverage["snapshot_required_members"]
+    ]
+    expected_fork_snapshot_members = [
+        value for value in source_snapshot_members if value not in withheld
+    ]
+    source_member_counts = lived_member_coverage.get(
+        "member_field_counts") or {}
+    retained_member_prefixes = tuple(
+        f"arrays.{source_member_counts[str(value)]['field_prefix']}."
+        for value in expected_fork_snapshot_members
+    )
+    retained_member_bindings = [
+        row for row in retained_array_bindings
+        if str(row.get("field", "")).startswith(retained_member_prefixes)
+    ]
+    expected_retained_member_fields = sum(
+        int((fork_member_coverage.get("member_field_counts") or {})
+            .get(str(value), {}).get("expected", 0))
+        for value in expected_fork_snapshot_members
+    )
+    retained_member_payloads_exact = bool(
+        len(retained_member_bindings) == expected_retained_member_fields
+        and all(row.get("bytes_equal") is True
+                for row in retained_member_bindings)
+    )
+    if not expected_fork_snapshot_members:
+        retained_member_payloads_exact = expected_retained_member_fields == 0
+    member_delta_pass = bool(
+        lived_member_coverage["mounted_members"] == source_mounts
+        and fork_member_coverage["mounted_members"] == kept_mounts
+        and fork_member_coverage["snapshot_required_members"]
+        == expected_fork_snapshot_members
+        and target_payload_absent
+        and retained_member_payloads_exact
+    )
     gate_pass = bool(
         target_absence_pass
         and exact_divergence_set
@@ -1621,6 +1865,7 @@ def compare_fork_hydration_delta(
         and not expected_value_mismatches
         and transformed_arrays_exact
         and retained_arrays_exact
+        and member_delta_pass
     )
     strict_rows = list(strict_zero.get("rows", ()))
     delta_rows = [
@@ -1647,6 +1892,20 @@ def compare_fork_hydration_delta(
         "already_absent_aliases": already_absent_aliases,
         "source_mounts": source_mounts,
         "fork_mounts": fork_mounts,
+        "member_snapshot_coverage": {
+            "gate_pass": member_delta_pass,
+            "lived": lived_member_coverage,
+            "fork": fork_member_coverage,
+            "selected_member_payload_absent": target_payload_absent,
+            "source_snapshot_members": source_snapshot_members,
+            "expected_fork_snapshot_members": expected_fork_snapshot_members,
+            "retained_member_payload_field_count": len(
+                retained_member_bindings),
+            "expected_retained_member_payload_field_count": (
+                expected_retained_member_fields),
+            "all_other_member_payload_bytes_exact": (
+                retained_member_payloads_exact),
+        },
         "seat_ranges": [
             {
                 "graft_id": int(value),
@@ -1712,8 +1971,8 @@ def restore_prefill_fork(
     """
     snapshot = load_snapshot(Path(snapshot_path))
     manifest_path = Path(snapshot["_manifest_path"])
-    if not snapshot.get("complete"):
-        raise SnapshotError("fork source must be a complete lived snapshot")
+    source_member_coverage = require_snapshot_member_coverage(
+        snapshot, "fork source")
     if require_finalized_source and not snapshot.get("capture_finalized"):
         raise SnapshotError("fork source must be finalized before cross-process use")
     if not require_finalized_source and not require_same_process_index:
@@ -2150,6 +2409,7 @@ def restore_prefill_fork(
             "ZERO" if not withheld else "REGISTERED_PLANTED_MISS_WITHHOLDING"),
         "withheld_logical_aliases": sorted(withheld),
         "source_mounts": source_mounts,
+        "source_snapshot_member_coverage": source_member_coverage,
         "fork_mounts": kept_mounts,
         "removed_seat_ranges": [
             [int(start), int(end)] for start, end in removed_ranges],
