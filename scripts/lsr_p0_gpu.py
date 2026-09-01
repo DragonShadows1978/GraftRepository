@@ -21,20 +21,33 @@ did, taps the engine's own softmax operands at the answer-readout positions,
 and runs the offline fp32 witness over the FULL window -- anchor + arena +
 recent-turns + live -- not just the arena.
 
-THE TAP (CMC1.2 pattern, adapted to GPT-OSS).  grm_cmc1_gpu_arms taps
-MiniCPM3's tc.causal_softmax.  GPT-OSS instead routes through
-core.gpt_oss20b_tc.sink_attention_tc / sliding_sink_attention_tc, which
-concatenate a per-head SINK LOGIT column, softmax over the concatenation, then
-drop that column (core/gpt_oss20b_tc.py::sink_attention_tc).  This module
-wraps those two functions -- the same seam DetectorObserver already uses --
-and records:
+THE TAP (CMC1.2 / DET1.3 EXPORT pattern, adapted to GPT-OSS).
+grm_cmc1_gpu_arms taps MiniCPM3's tc.causal_softmax.  GPT-OSS instead routes
+through core.gpt_oss20b_tc.sink_attention_tc / sliding_sink_attention_tc,
+which concatenate a per-head SINK LOGIT column, softmax over the
+concatenation, then drop that column (core/gpt_oss20b_tc.py::sink_attention_tc).
+This module wraps those two functions -- the same seam DetectorObserver
+already uses -- and EXPORTS their operands to host:
 
-    scores        the scaled-QK values in the engine's compute dtype (bf16),
-                  exported value-preserving via .float().numpy(); the offline
-                  fp32 work starts HERE, never at a re-derived idealized fp32
-                  QK contraction (CMC1.2 law)
+    Q             the last query row of each forward (the readout position),
+                  pulled to host with .float().numpy()
+    K             the key bank the call was handed, likewise exported
     sinks         the per-head sink logits, so the denominator matches
     allowed mask  for sliding layers, which keys were attendable at all
+    scale         the engine's own `scale=` keyword, never re-derived
+
+Scores are then recomputed OFFLINE in numpy fp32 (SinkAttentionTap.stacked /
+_recompute_row), which is precisely
+grm_cmc1_mechanism.materialized_softmax's contraction.
+
+WHY EXPORT RATHER THAN COMPUTE IN-ENGINE.  An earlier revision issued its own
+`tc.matmul` inside the tap to materialize scores on device.  That touched
+tensors whose lifetime and layout the engine owns and died with "CUDA error
+at to_host: an illegal memory access was encountered".  Exporting operands
+and doing the arithmetic offline removes that failure class outright.  It
+also moots the G2-style equivalence question that the in-engine approach
+would have raised: offline fp32 math over engine-exported operands IS the
+established instrument in this lineage, not an approximation of it.
 
 Only the LAST query row of each forward is kept: that is the answer-readout
 position (core/graft_arena.py::_attempt -- prefill's last row predicts token 0,
@@ -114,13 +127,20 @@ class SinkAttentionTap:
     SCALE: read from the engine's own `scale=` keyword (GptOssAttentionTC
     passes `scale=self.scaling`), never re-derived from head_dim, so a future
     change to `scaling` cannot silently desynchronize the witness.
+
+    DEVICE DISCIPLINE: this tap performs NO device arithmetic.  It slices and
+    exports operands with `.float().numpy()` and nothing else; every score is
+    recomputed offline in numpy fp32.  Nothing device-resident is retained
+    past the call that produced it.
     """
 
     def __init__(self, layers: Sequence[Any], *, head_dim: int):
         self.head_dim = int(head_dim)
         self.n_layers = len(layers)
         self.forward_count = 0
-        self.scores: dict[int, list[np.ndarray]] = {}
+        # Exported host-side operands per layer, one entry per readout row:
+        # {q, k, scale, key_offset, width}.  No device tensors are retained.
+        self.operands: dict[int, list[dict[str, Any]]] = {}
         self.sinks: dict[int, np.ndarray] = {}
         self.allowed: dict[int, list[np.ndarray]] = {}
         self.layer_kind: dict[int, str] = {}
@@ -233,9 +253,20 @@ class SinkAttentionTap:
         full key axis.  A chunk that does not contain the final query row is
         skipped: only the last row is an answer-readout position, and for the
         chunked path that row lives in the final chunk alone.
-        """
-        from core.mistral7b_tc import tc
 
+        EXPORT-ONLY (CMC1.2 / DET1.3 lineage).  Nothing is computed on the
+        device here.  The tap does exactly what
+        grm_cmc1_gpu_arms.SDPAInterceptor._capture does -- slice the operand
+        it wants and pull it to host with `.float().numpy()` -- and the score
+        recompute happens offline in numpy fp32 (see `stacked`).  An earlier
+        revision issued its own `tc.matmul` at this point to materialize
+        scores in-engine; that touched device tensors whose lifetime and
+        layout the engine owns and died with an illegal memory access at
+        to_host.  Exporting operands and recomputing offline removes that
+        entire failure class, and it is the established instrument rather
+        than a workaround: grm_cmc1_mechanism.materialized_softmax is defined
+        as fp32 numpy math over exported Q/K.
+        """
         layer = self._layer_of(sinks)
         self.layer_kind.setdefault(layer, kind)
         if layer not in self._seen_this_forward:
@@ -246,19 +277,18 @@ class SinkAttentionTap:
                 self._seen_this_forward = set()
 
         width = int(total_keys if total_keys is not None else key.shape[2])
-        # The engine's own scaled-QK materialization in its compute dtype.
-        # The scale is the one the engine passed (GptOssAttentionTC uses
-        # scale=self.scaling), never re-derived here.
-        alpha = float(scale) if scale is not None else float(self.head_dim ** -0.5)
-        scores = tc.matmul(query, key, alpha=alpha, trans_b=True)
-        rows = int(scores.shape[2])
-        last = scores.slice(2, rows - 1, 1)
-        array = np.asarray(last.float().numpy(), dtype=np.float32)[0, :, 0, :]
+        # Q: the LAST query row only -- the answer-readout position.
+        rows = int(query.shape[2])
+        q_last = query.slice(2, rows - 1, 1)
+        q_np = np.asarray(
+            q_last.float().numpy(), dtype=np.float32)[0, :, 0, :]  # (Hq,D)
+        # K: the whole bank this call was handed (a chunk's slice for the
+        # sliding path), exported once per call.
+        k_np = np.asarray(
+            key.float().numpy(), dtype=np.float32)[0]               # (Hkv,S,D)
 
-        row = np.full((array.shape[0], width), -np.inf, dtype=np.float32)
-        row[:, key_offset:key_offset + array.shape[1]] = array
         allowed = np.zeros(width, dtype=bool)
-        allowed[key_offset:key_offset + array.shape[1]] = True
+        allowed[key_offset:key_offset + k_np.shape[1]] = True
         if attention_mask is not None:
             # sliding chunks carry an additive 0 / -1e4 mask; -1e4 entries are
             # keys the engine excluded, not keys with genuine tiny mass.
@@ -267,9 +297,16 @@ class SinkAttentionTap:
             last_row = additive.reshape(
                 additive.shape[-2], additive.shape[-1])[-1]
             keep = last_row > -1.0e3
-            allowed[key_offset:key_offset + array.shape[1]] &= keep
+            allowed[key_offset:key_offset + k_np.shape[1]] &= keep
 
-        self.scores.setdefault(layer, []).append(row)
+        self.operands.setdefault(layer, []).append({
+            "q": q_np,
+            "k": k_np,
+            "scale": (float(scale) if scale is not None
+                      else float(self.head_dim ** -0.5)),
+            "key_offset": int(key_offset),
+            "width": int(width),
+        })
         self.allowed.setdefault(layer, []).append(allowed)
         if layer not in self.sinks:
             self.sinks[layer] = np.asarray(
@@ -283,7 +320,7 @@ class SinkAttentionTap:
         readout position.
         """
         if self.forward_count == int(ngen) + 1:
-            for store in (self.scores, self.allowed):
+            for store in (self.operands, self.allowed):
                 for layer in list(store):
                     if store[layer]:
                         store[layer].pop()
@@ -300,36 +337,72 @@ class SinkAttentionTap:
         """
         scores: dict[int, np.ndarray] = {}
         allowed: dict[int, np.ndarray] = {}
-        for layer, rows in self.scores.items():
-            if not rows:
+        for layer, records in self.operands.items():
+            if not records:
                 continue
-            width = max(int(row.shape[-1]) for row in rows)
-            padded, masks = [], []
-            for index, row in enumerate(rows):
-                have = int(row.shape[-1])
-                # Rows are already placed on their own key axis; only the
-                # growing decode axis needs widening.  Pad with -inf and a
-                # False mask so absent columns are EXCLUDED by the witness
-                # rather than counted as genuine near-zero mass.
-                block = np.full((row.shape[0], width), -np.inf, dtype=np.float32)
-                block[:, :have] = row
-                padded.append(block)
+            width = max(int(row["width"]) for row in records)
+            rows, masks = [], []
+            for index, row in enumerate(records):
+                rows.append(self._recompute_row(row, width))
                 mask = np.zeros(width, dtype=bool)
+                have = int(self.allowed[layer][index].shape[0])
                 mask[:have] = self.allowed[layer][index][:have]
                 masks.append(mask)
-            scores[layer] = np.stack(padded, axis=0)
+            scores[layer] = np.stack(rows, axis=0)
             allowed[layer] = np.stack(masks, axis=0)
         return scores, dict(self.sinks), allowed
+
+    def _recompute_row(self, record: Mapping[str, Any], width: int) -> np.ndarray:
+        """Offline fp32 scaled-QK for one readout row, from exported operands.
+
+        This is grm_cmc1_mechanism.materialized_softmax's contraction --
+        `np.einsum("hqd,hsd->hqs", q, k) * scale` -- specialized to a single
+        query row and carrying GPT-OSS's GQA expansion.  All numpy, all host
+        memory: no device tensor is touched, which is the whole point of the
+        pivot.
+
+        GQA: the engine expands KV heads with core.mistral7b_tc._repeat_kv,
+        "(B,KVH,L,D) -> (B,KVH*rep,L,D), each kv head repeated rep times".
+        np.repeat(..., axis=0) reproduces that contiguous repetition exactly,
+        so query head h pairs with the same KV head the engine used.
+        """
+        q = np.asarray(record["q"], dtype=np.float32)      # (Hq,D)
+        k = np.asarray(record["k"], dtype=np.float32)      # (Hkv,S,D)
+        if q.shape[-1] != k.shape[-1]:
+            raise LSRError(
+                f"exported Q/K head dims differ: {q.shape} vs {k.shape}")
+        heads_q, heads_kv = int(q.shape[0]), int(k.shape[0])
+        if heads_q % heads_kv:
+            raise LSRError(
+                f"{heads_q} query heads do not divide over {heads_kv} KV heads")
+        rep = heads_q // heads_kv
+        if rep > 1:
+            k = np.repeat(k, rep, axis=0)
+        row = np.einsum("hd,hsd->hs", q, k, dtype=np.float32)
+        row *= np.float32(record["scale"])
+        # Absent columns are EXCLUDED (-inf + a False allowed mask), never
+        # counted as genuine near-zero mass.
+        out = np.full((heads_q, width), -np.inf, dtype=np.float32)
+        offset = int(record["key_offset"])
+        out[:, offset:offset + row.shape[1]] = row
+        return out
 
 
 def tap_selftest() -> dict[str, Any]:
     """Exercise SinkAttentionTap against a fake engine, on CPU.
 
-    This covers exactly what the live shakedown caught and what it would have
-    caught next: model/layer attribute paths, layer attribution under the
-    NESTED chunked sliding path, engine-supplied scale, and mask handling.
+    Covers what the two live shakedowns caught and what they would have caught
+    next: model/layer attribute paths, layer attribution under the NESTED
+    chunked sliding path, engine-supplied scale, mask handling, GQA head
+    pairing, and the offline recompute's agreement with the reference
+    contraction.
+
     It monkeypatches core.gpt_oss20b_tc's two attention functions with numpy
-    stand-ins, so no CUDA and no weights are needed.
+    stand-ins, so no CUDA and no weights are needed.  Note that NO fake `tc`
+    module is installed: after the export pivot the tap performs no device
+    arithmetic at all, so if any `tc.*` call crept back in, these tests would
+    fail on the real (CUDA-requiring) import rather than silently passing
+    against a stand-in.  That absence is deliberate coverage.
     """
     cases: list[dict[str, Any]] = []
 
@@ -366,11 +439,6 @@ def tap_selftest() -> dict[str, Any]:
         def numpy(self):
             return self.a
 
-    fake_tc = types.SimpleNamespace(
-        matmul=lambda q, k, alpha=1.0, trans_b=False: FakeTensor(
-            np.einsum("bhqd,bhsd->bhqs", q.a, k.a) * float(alpha)),
-    )
-
     heads, head_dim = 2, 4
     n_layers = 3
     sinks_by_layer = [FakeTensor(np.full((heads,), 0.5 * (i + 1)))
@@ -384,10 +452,6 @@ def tap_selftest() -> dict[str, Any]:
 
     orig_full = gpt.sink_attention_tc
     orig_sliding = gpt.sliding_sink_attention_tc
-    orig_mistral = sys.modules.get("core.mistral7b_tc")
-    shim = types.ModuleType("core.mistral7b_tc")
-    shim.tc = fake_tc
-    sys.modules["core.mistral7b_tc"] = shim
 
     def stub_full(query, key, value, sinks, **kwargs):
         return FakeTensor(np.zeros_like(query.a))
@@ -448,9 +512,24 @@ def tap_selftest() -> dict[str, Any]:
 
         record(
             "tap_attributes_every_layer_exactly_once_under_nested_chunking",
-            sorted(tap.scores) == [0, 1, 2]
-            and all(len(rows) == 1 for rows in tap.scores.values()),
-            {layer: len(rows) for layer, rows in sorted(tap.scores.items())},
+            sorted(tap.operands) == [0, 1, 2]
+            and all(len(rows) == 1 for rows in tap.operands.values()),
+            {layer: len(rows) for layer, rows in sorted(tap.operands.items())},
+        )
+        record(
+            "tap_exports_host_operands_and_retains_no_device_tensor",
+            all(
+                isinstance(row["q"], np.ndarray)
+                and isinstance(row["k"], np.ndarray)
+                and not isinstance(row["q"], FakeTensor)
+                and not isinstance(row["k"], FakeTensor)
+                for rows in tap.operands.values() for row in rows
+            ),
+            {"exported_kinds": sorted({
+                type(row[key]).__name__
+                for rows in tap.operands.values() for row in rows
+                for key in ("q", "k")
+            })},
         )
         record(
             "tap_labels_layer_kinds_from_the_real_dispatch",
@@ -459,8 +538,8 @@ def tap_selftest() -> dict[str, Any]:
             and tap.layer_kind.get(2) == "sliding",
             dict(sorted(tap.layer_kind.items())),
         )
-        widths = {layer: int(rows[0].shape[-1])
-                  for layer, rows in tap.scores.items()}
+        widths = {layer: int(rows[0]["width"])
+                  for layer, rows in tap.operands.items()}
         record(
             "sliding_chunks_are_placed_back_on_the_full_key_axis",
             all(width == total_keys for width in widths.values()),
@@ -487,7 +566,8 @@ def tap_selftest() -> dict[str, Any]:
             {"scores": {k: v.shape for k, v in scores.items()}},
         )
 
-        # The engine's scale must be the one used, not head_dim ** -0.5.
+        # The engine's scale must be the one used, not head_dim ** -0.5, and
+        # the offline recompute must reproduce the reference contraction.
         expected = np.einsum(
             "hqd,hsd->hqs", q.a[0], k.a[0])[:, -1, :] * 0.25
         record(
@@ -495,13 +575,50 @@ def tap_selftest() -> dict[str, Any]:
             np.allclose(scores[0][0], expected, atol=1e-5),
             {"max_abs": float(np.abs(scores[0][0] - expected).max())},
         )
+
+        # Reference cross-check against grm_cmc1_mechanism's own contraction:
+        # the offline recompute IS materialized_softmax's pre-softmax math.
+        from scripts.grm_cmc1_mechanism import softmax_fp32
+
+        ref_scores = np.einsum(
+            "hqd,hsd->hqs", q.a[0], k.a[0], dtype=np.float32) * np.float32(0.25)
+        record(
+            "offline_recompute_matches_the_cmc1_reference_contraction",
+            np.allclose(
+                softmax_fp32(scores[0][0][:, None, :])[:, 0, :],
+                softmax_fp32(ref_scores)[:, -1, :], atol=1e-6),
+            "softmax over recomputed row == softmax over reference row",
+        )
+
+        # GQA: 4 query heads over 2 KV heads must pair the way _repeat_kv does
+        # ("each kv head repeated rep times", contiguously).
+        gqa_q = np.random.RandomState(2).randn(4, head_dim).astype(np.float32)
+        gqa_k = np.random.RandomState(3).randn(2, 5, head_dim).astype(np.float32)
+        gqa_row = SinkAttentionTap.__dict__["_recompute_row"](
+            tap, {"q": gqa_q, "k": gqa_k, "scale": 1.0,
+                  "key_offset": 0, "width": 5}, 5)
+        gqa_expected = np.einsum(
+            "hd,hsd->hs", gqa_q, np.repeat(gqa_k, 2, axis=0), dtype=np.float32)
+        record(
+            "gqa_query_heads_pair_with_repeat_kv_expanded_key_heads",
+            gqa_row.shape == (4, 5)
+            and np.allclose(gqa_row, gqa_expected, atol=1e-6),
+            {"shape": gqa_row.shape,
+             "max_abs": float(np.abs(gqa_row - gqa_expected).max())},
+        )
+        try:
+            SinkAttentionTap.__dict__["_recompute_row"](
+                tap, {"q": np.zeros((3, head_dim), dtype=np.float32),
+                      "k": np.zeros((2, 5, head_dim), dtype=np.float32),
+                      "scale": 1.0, "key_offset": 0, "width": 5}, 5)
+            record("recompute_rejects_indivisible_gqa_head_counts", False,
+                   "no raise")
+        except LSRError as exc:
+            record("recompute_rejects_indivisible_gqa_head_counts", True,
+                   str(exc))
     finally:
         gpt.sink_attention_tc = orig_full
         gpt.sliding_sink_attention_tc = orig_sliding
-        if orig_mistral is not None:
-            sys.modules["core.mistral7b_tc"] = orig_mistral
-        else:
-            sys.modules.pop("core.mistral7b_tc", None)
 
     passed = sum(1 for row in cases if row["pass"])
     return {
