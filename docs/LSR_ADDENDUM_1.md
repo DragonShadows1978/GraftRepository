@@ -70,3 +70,58 @@ in the step-3 memory ledger).
    wrong thing. (Stage C design; ties to GRAPA abstention curriculum.)
 3. **Route-receipt persistence** in the per-turn memory ledger
    (cheap observability fix).
+
+## Phase 2 (2026-09-01 evening/night; David's ruling: all three, SHUTTLE over fail-loud)
+
+Orders: GRM_LSR_P2A (fit honesty + abstention), P2B (route-receipt
+persistence, worktree), P2C (unseatable split/descent). Commits 60635c9
+(P2A), 6a552f4→39c1be1 (P2B + merge), 2001ada (P2C). All Opus 5 seats.
+
+- **P2A**: plan-order seating (a planned node is never displaced by
+  filler), fit-drop-triggered shuttle (cap `len(rank_plan)`, registered),
+  explicit UNSEATABLE degrade (`fit_unseatable`,
+  `served_without_plan_head`), structural not-in-memory abstention
+  (identifier tokens bind no node → constant served, deposited as
+  `kind="recall"` never as fact; no threshold). G3 abstention live GREEN.
+  FINDING: the 4 ADMISSION-PRUNE answer nodes (623–706 chars) exceed
+  the 96-seat arena ALONE; shuttle has nothing to serialize. P2A's lived
+  replay BLOCKED: DET1.3 fork snapshots capture mounted payload at a
+  boundary AFTER admission; rebuilds flip A-DEC branches (principle 1
+  reproduced). The `[X,Y,Z]`-from-`rank_plan=[X]` widening site:
+  `scripts/grm_probe_ladder.py:115` (topk rung merged behind the plan
+  rung by the drivers).
+- **P2B**: `grm.route_receipt.v1` attached opt-in to the step-3 memory
+  ledger (frozen mutation schema untouched); dump script reproduces all
+  14 Phase-1 evidence fields on 8/8 probes from persisted receipts.
+  Merge seat caught a phantom-rung receipt on abstained turns
+  (`trips None` vs `[]`) and fixed it.
+- **P2C**: width guard at every repository deposit path (chunk at
+  sentence boundaries via cull_graft, one-time repair); fit-time split
+  + identifier-child descent using the frozen ADM1
+  `is_identifier_binding` predicate (the rare channel is EMPTY for the
+  whole probe class); chunk shuttle; `split_oversized` sweep. Fixed a
+  pre-existing packed-payload slice corruption in `cull_graft`. G2
+  lived-order replay: Arm 0 (fixes OFF) reproduced 9/9 lived values and
+  the Phase-1 admission receipts exactly; Arm 1 = 4 flips, 5 unchanged,
+  0 regressions, 0 abstentions, `fit_unseatable` empty 9/9. G3 (e2e
+  census turns) BLOCKED: Arm 0 8/10, the two late-turn divergences are
+  fork-ladder-vs-in-session mechanism; Arm 1 withheld per rule.
+
+**Verdict: the wrong-value class is CLOSED for the supersession battery
+(4/4 ADMISSION-PRUNE flipped under lived-order reproduction; the 2
+NOT-YET-DEPOSITED are harness deposit-ordering artifacts and correctly
+unchanged).**
+
+Principles earned: (3) the repository never holds a node the arena
+cannot mount — prevention at deposit, same shape as co-mount; (4) a
+reproduction arm with the fixes OFF must reproduce the lived receipts
+before the fixes-ON arm counts (it caught a non-equivalent rebuild in
+P2A and a non-equivalent session replay in P2C-G3); (5) the rare-token
+channel is not an identifier channel — descent filters must ask the
+same binding predicate admission asks.
+
+Successors (open): greedy-coarse chunker (child can take 96/96 seats;
+leaf-bias / fill-fraction, no knob registered); A-DEC insurance branch
+ranks a long competitor ahead of the answer on sup_solace (harmless
+now, plan still wrong); in-session fork harness so e2e turns get a
+lived-equivalent replay (G3); D-NGH Stage C wiring; branch housekeeping.
