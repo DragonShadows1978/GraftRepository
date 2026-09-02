@@ -490,8 +490,14 @@ def _pin_rows(monkeypatch, sequence):
     queue = list(sequence)
 
     class _FakeObserver:
-        def __init__(self, arena, ngen, threshold):
+        # GRM-SC2 added the ``early_abort`` keyword to the real observer. This
+        # stub accepts and RECORDS it but never aborts: these SC1 tests pin the
+        # generate-then-trip behaviour, and an aborting stub would be testing
+        # SC2's path under SC1's name. The SC2 tests drive the real observer.
+        def __init__(self, arena, ngen, threshold, early_abort=False):
             self._rows = queue.pop(0) if queue else []
+            self.early_abort = bool(early_abort)
+            self.aborted_at = None
 
         def __enter__(self):
             return self

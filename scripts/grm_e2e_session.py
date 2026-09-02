@@ -1148,6 +1148,7 @@ def _probe_ladder_chat(
     turn_idx: int | None = None,
     lsr_fixes: bool | None = None,
     demand_ngh: bool | None = None,
+    demand_early_abort: bool | None = None,
 ) -> tuple[str, dict[str, Any]]:
     """Fork-A probe path with production laws enforced (flag-on only).
 
@@ -1552,14 +1553,45 @@ def _probe_ladder_chat(
     demand_threshold = (
         grm_demand.registered_threshold() if demand_on else None)
 
+    # GRM-SC2: the probe path's mirror of the arena's early-abort seam.
+    # Consulted ONLY when demand is on; with demand off nothing below runs and
+    # this path is byte-identical to SC1.
+    early_abort_on = (
+        grm_demand.early_abort_enabled(demand_early_abort)
+        if demand_on else False)
+    demand_state["early_abort"] = bool(early_abort_on)
+
     def _serve(*args, **kwargs):
-        """One generation attempt, observed when the demand flag is on."""
+        """One generation attempt, observed when the demand flag is on.
+
+        GRM-SC2: when early abort is on, an attempt whose D-NGH mass falls
+        below the line stops generating at that token and comes back as a
+        SUSPENSION handle rather than a finished answer.  The handle rides on
+        ``info`` so ``_demand_trip`` can consume it, and it never reaches a
+        receipt (it is popped there).
+        """
+        started = time.perf_counter()
         if not demand_on:
             return arena._attempt(*args, **kwargs)
+        abort_now = bool(early_abort_on) and not demand_state.get(
+            "suppress_early_abort")
         with grm_demand.DemandObserver(
-            arena, int(ngen), float(demand_threshold)) as observer:
+            arena, int(ngen), float(demand_threshold),
+            early_abort=abort_now,
+        ) as observer:
             out = arena._attempt(*args, **kwargs)
         demand_state["rows"] = observer.finish()
+        demand_state["wall_ms"] = (time.perf_counter() - started) * 1000.0
+        if isinstance(out, dict) and out.get("grm_sc2_suspended_attempt"):
+            rows = list(demand_state["rows"])
+            index = int(out["abort_token_index"])
+            # Rebuild the emitted ids from the observer rows, never from a
+            # decoded string: decode->encode is not a BPE round trip, and the
+            # resume has to continue the EXACT token sequence.
+            out["out"] = [
+                int(row["prediction_token_id"]) for row in rows[:index + 1]]
+            out["tokens_generated_before_abort"] = len(out["out"])
+            return "", {"_grm_sc2_suspended": out}
         return out
 
     def _demand_trip(ans, info, picks, trip, rows=None):
@@ -1577,7 +1609,15 @@ def _probe_ladder_chat(
                 info.update(demand_state["info"])
             return ans, info, picks
         observed = list(demand_state["rows"] if rows is None else rows)
+        # GRM-SC2: the suspended attempt this trip stands in for, if any.
+        suspended = (info or {}).pop("_grm_sc2_suspended", None)
+        attempt_wall_ms = demand_state.get("wall_ms")
         decision = grm_demand.decide(observed, float(demand_threshold))
+        if suspended is not None and not decision["demand_fired"]:
+            raise grm_demand.DemandError(
+                "GRM-SC2: an attempt was suspended by the early abort but the "
+                "decision over its rows says it never fired; the abort and "
+                "the carried decision rule have diverged")
         if not decision["demand_fired"]:
             info.update(grm_demand.demand_info_fields(
                 supported=True, decision=decision, served="original",
@@ -1623,25 +1663,78 @@ def _probe_ladder_chat(
             arena.grafts[:] = original_state[5]
             arena._bump_cuda_gqa_epoch()
 
+        def _resume_if_suspended(ans, info):
+            """GRM-SC2: finish the suspended attempt so the turn has an answer.
+
+            The arena state has already been restored to the aborted attempt's
+            state by ``_restore_original`` -- the same verbatim restore SC1
+            performs when a trip fails to ground -- so the cache the resume
+            continues from is the one the abort left behind. That is what
+            makes the finished text the ORIGINAL text rather than a
+            regeneration of it.
+            """
+            if suspended is None:
+                return ans, info, None
+            started = time.perf_counter()
+            r_ans, r_info = arena._attempt(
+                user_text, list(suspended["picks"]), int(ngen),
+                False if defer_memory else True, stops,
+                defer_memory=defer_memory, suspended=suspended)
+            resume_ms = (time.perf_counter() - started) * 1000.0
+            merged = dict(r_info or {})
+            for key, value in (info or {}).items():
+                if key.startswith("_grm_sc2_"):
+                    continue
+                merged.setdefault(key, value)
+            return r_ans, merged, resume_ms
+
+        def _abort_fields(**extra):
+            """The GRM-SC2 receipt block, or nothing when nothing aborted."""
+            if suspended is None:
+                return {}
+            return grm_demand.demand_info_fields(
+                supported=True, decision=decision,
+                threshold=float(demand_threshold),
+                early_abort=True,
+                abort_token_index=int(suspended["abort_token_index"]),
+                tokens_generated_before_abort=int(
+                    suspended["tokens_generated_before_abort"]),
+                wall_ms_attempt=attempt_wall_ms,
+                **extra)
+
         if not demand_picks:
             # Nothing new to fetch. Honest: the receipt says the trip found
             # nothing rather than pretending the detector never fired.
             _restore_original()
+            ans, info, resume_ms = _resume_if_suspended(ans, info)
             info.update(grm_demand.demand_info_fields(
                 **base_fields, served="original", fetched=[],
                 trip_taken=False))
+            info.update(_abort_fields(
+                served="original", trip_taken=False, tokens_saved=0,
+                resumed_original=True, wall_ms_resume=resume_ms))
             return ans, info, picks
 
         # The demand trip runs UNDER the observer as well, but ONLY so a
         # second fire can be RECORDED. Cap 1 is registered: `demand_refired`
         # is a receipt field, never a branch.
-        if defer_memory:
-            d_ans, d_info = _serve(
-                user_text, demand_picks, int(ngen), False, stops,
-                defer_memory=True)
-        else:
-            d_ans, d_info = _serve(
-                user_text, demand_picks, int(ngen), True, stops)
+        # GRM-SC2: the trip itself is NEVER early-aborted. Cap 1 is
+        # registered -- a second fire is RECORDED and not acted on -- so
+        # aborting the trip would throw away the only answer the turn has
+        # left to serve and leave it with nothing to put out.
+        trip_started = time.perf_counter()
+        demand_state["suppress_early_abort"] = True
+        try:
+            if defer_memory:
+                d_ans, d_info = _serve(
+                    user_text, demand_picks, int(ngen), False, stops,
+                    defer_memory=True)
+            else:
+                d_ans, d_info = _serve(
+                    user_text, demand_picks, int(ngen), True, stops)
+        finally:
+            demand_state["suppress_early_abort"] = False
+        trip_wall_ms = (time.perf_counter() - trip_started) * 1000.0
         refire = grm_demand.decide(
             list(demand_state["rows"]), float(demand_threshold))
         # SC1.1: the demand trip's own grounding receipt. Both branches below
@@ -1663,13 +1756,31 @@ def _probe_ladder_chat(
         )
         fields.update(grounding_fields)
         if d_grounded:
+            # The trip serves. The suspended attempt is ABANDONED, never
+            # resumed: every token after the fire index is one this turn never
+            # had to generate, and that is the whole saving.
             d_info = dict(d_info or {})
             d_info["trip"] = int(trip)
             d_info["demand_source_trip"] = int(trip)
             d_info.update(fields)
+            d_info.update(_abort_fields(
+                served="demand_trip", trip_taken=True, trip_grounded=True,
+                resumed_original=False, wall_ms_trip=trip_wall_ms))
+            if suspended is not None:
+                d_info.update(grounding_fields)
             return d_ans, d_info, list(demand_picks)
         _restore_original()
+        # GRM-SC2: under early abort the "original answer" does not exist yet
+        # -- the attempt stopped at the fire token. Resume and finish it, so
+        # what goes out is exactly what SC1 put out on this probe.
+        ans, info, resume_ms = _resume_if_suspended(ans, info)
         info.update(fields)
+        info.update(_abort_fields(
+            served="original", trip_taken=True, trip_grounded=False,
+            tokens_saved=0, resumed_original=True,
+            wall_ms_trip=trip_wall_ms, wall_ms_resume=resume_ms))
+        if suspended is not None:
+            info.update(grounding_fields)
         return ans, info, picks
 
     # LSR-P2B: one row per ladder trip actually walked, recorded as it happens.
@@ -1718,15 +1829,30 @@ def _probe_ladder_chat(
         info["trip"] = int(trip)
         if clean:
             info["clean_room"] = True
-        grounded, _contributors = arena._grounding_attribution(
-            ans, picks, user_text)
-        _stamp_grounding_receipt(arena, ans, picks, user_text, info)
+        # GRM-SC2: a SUSPENDED attempt has no text to ground. Grounding the
+        # empty string would fail, and the rung would fall through to the
+        # ungrounded-keep-first path carrying an answer that does not exist.
+        # Route it straight into the demand trip -- which is where an
+        # un-aborted fired attempt would have arrived anyway, just without
+        # generating the rest of the wrong answer on the way.
+        suspended_here = info.get("_grm_sc2_suspended") is not None
+        if suspended_here:
+            grounded, _contributors = True, ()
+        else:
+            grounded, _contributors = arena._grounding_attribution(
+                ans, picks, user_text)
+            _stamp_grounding_receipt(arena, ans, picks, user_text, info)
         trip_rows.append({
             "ordinal": int(trip),
             "clean_room": bool(clean),
             "planned": [int(v) for v in planned],
             "mount_set": [int(v) for v in picks],
-            "grounded": bool(grounded),
+            # GRM-SC2: a suspended rung has NO grounding verdict -- there is
+            # no text to attribute. Recording ``True`` here would be a claim
+            # the rung never made; ``None`` says what actually happened, and
+            # ``early_aborted`` says why.
+            "grounded": None if suspended_here else bool(grounded),
+            "early_aborted": bool(suspended_here),
             # SC1.1: per-rung glyph receipt, so a rung that grounded ONLY
             # because of the projection is visible in the ladder trace.
             "grounding_normalized": bool(info.get("grounding_normalized")),

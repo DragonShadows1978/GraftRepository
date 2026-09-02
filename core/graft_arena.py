@@ -2770,7 +2770,8 @@ class ArenaCache:
         return (out, False) if with_binding_flag else out
 
     def step(self, user_text, ngen=48, deposit=True,
-             stops=None, max_trips=0, defer_memory=False, demand_ngh=None):
+             stops=None, max_trips=0, defer_memory=False, demand_ngh=None,
+             demand_early_abort=None):
         """One conversation turn through the arena. max_trips > 0 enables
         SHUTTLING: if the answer fails the grounding check, restore the
         pre-attempt cache (snapshot = a private outer-list copy + position —
@@ -3235,16 +3236,86 @@ class ArenaCache:
                     demand_state["unsupported"])
         demand_threshold = (
             grm_demand.registered_threshold() if demand_on else None)
+        # GRM-SC2: early abort is consulted ONLY when demand is on. With demand
+        # off there is no observer, nothing can fire, and this block is inert
+        # exactly as SC1 left it.
+        early_abort_on = (
+            grm_demand.early_abort_enabled(demand_early_abort)
+            if demand_on else False)
+        demand_state["early_abort"] = bool(early_abort_on)
 
         def _serve(*args, **kwargs):
-            """One generation attempt, observed when the demand flag is on."""
+            """One generation attempt, observed when the demand flag is on.
+
+            GRM-SC2: when early abort is on, an attempt whose D-NGH mass falls
+            below the line stops generating at that token and comes back as a
+            SUSPENSION handle instead of a ``(txt, info)`` pair.  The handle is
+            stashed on ``demand_state`` and the caller is told, via the handle
+            itself, that there is no answer to ground yet.
+            """
+            started = time.perf_counter()
             if not demand_on:
                 return self._attempt(*args, **kwargs)
+            abort_now = bool(early_abort_on) and not demand_state.get(
+                "suppress_early_abort")
             with grm_demand.DemandObserver(
-                self, int(ngen), float(demand_threshold)) as observer:
+                self, int(ngen), float(demand_threshold),
+                early_abort=abort_now,
+            ) as observer:
                 out = self._attempt(*args, **kwargs)
             demand_state["rows"] = observer.finish()
+            demand_state["wall_ms"] = (time.perf_counter() - started) * 1000.0
+            if isinstance(out, dict) and out.get("grm_sc2_suspended_attempt"):
+                # Recover the tokens the aborted attempt emitted. The observer
+                # captured a greedy prediction id for EVERY position it closed,
+                # including the fire position, so the token the abort unwound
+                # before appending is row[abort_index]'s prediction. Rebuilding
+                # `out` from the rows rather than from a decoded string is the
+                # same reason `demand_prefix_text` does: decode->encode is not
+                # a round trip on BPE, so the ids are the only exact carrier.
+                rows = list(demand_state["rows"])
+                index = int(out["abort_token_index"])
+                out["out"] = [
+                    int(row["prediction_token_id"]) for row in rows[:index + 1]]
+                out["tokens_generated_before_abort"] = len(out["out"])
+                demand_state["suspended"] = out
+                # The outer trip loop wants a (txt, info) pair. There is no
+                # text yet, and inventing one would be a lie the grounding
+                # check would then act on. Hand back an EMPTY text carrying the
+                # handle: `_demand_trip` consumes the handle, and every caller
+                # between here and there is guarded on `_grm_sc2_suspended`.
+                return "", {"_grm_sc2_suspended": out}
             return out
+
+        def _resume_if_suspended(suspended, txt, info):
+            """Finish a suspended attempt so the turn has its original answer.
+
+            Returns ``(txt, info, resume_wall_ms)``.  With nothing suspended it
+            is a pass-through and costs nothing, which is what keeps the
+            early-abort-OFF path byte-identical to SC1.
+
+            The arena state has ALREADY been restored to the aborted attempt's
+            state by the caller (the same verbatim restore SC1 does when a trip
+            fails to ground), so the cache the resume continues from is the one
+            the abort left behind -- that is what makes the finished text the
+            original text rather than a re-generation of it.
+            """
+            if suspended is None:
+                return txt, info, None
+            started = time.perf_counter()
+            r_txt, r_info = self._attempt(
+                user_text, list(suspended["picks"]), ngen, deposit, stops,
+                defer_memory=defer_memory, suspended=suspended)
+            resume_ms = (time.perf_counter() - started) * 1000.0
+            merged = dict(r_info or {})
+            # Keep the pre-resume receipt keys the turn already accumulated
+            # (trip index, clean-room marker, grounding fields) -- the resumed
+            # attempt only re-establishes the mount/resident/live accounting.
+            for key, value in (info or {}).items():
+                if key.startswith("_grm_sc2_"):
+                    continue
+                merged.setdefault(key, value)
+            return r_txt, merged, resume_ms
 
         def _demand_trip(txt, info, mset, picks, contributors, trip,
                          rows=None):
@@ -3273,7 +3344,17 @@ class ArenaCache:
                 return txt, info, mset, picks, contributors
             observed = list(
                 demand_state["rows"] if rows is None else rows)
+            # GRM-SC2: the suspended attempt this trip is standing in for, if
+            # any. `info` carries it because `_serve` had nowhere else to put
+            # it; it is popped here so it never reaches a receipt.
+            suspended = (info or {}).pop("_grm_sc2_suspended", None)
+            attempt_wall_ms = demand_state.get("wall_ms")
             decision = grm_demand.decide(observed, float(demand_threshold))
+            if suspended is not None and not decision["demand_fired"]:
+                raise grm_demand.DemandError(
+                    "GRM-SC2: an attempt was suspended by the early abort but "
+                    "the decision over its rows says it never fired; the abort "
+                    "and the decision rule have diverged")
             if not decision["demand_fired"]:
                 info.update(grm_demand.demand_info_fields(
                     supported=True, decision=decision, served="original",
@@ -3330,18 +3411,47 @@ class ArenaCache:
                  self.cur_mount_n) = original[5][:5]
                 self.grafts[:] = original[5][5]
                 self._bump_cuda_gqa_epoch()
+                txt, info, resume_ms = _resume_if_suspended(
+                    suspended, txt, info)
                 info.update(fields)
+                info.update(grm_demand.demand_info_fields(
+                    supported=True, decision=decision, served="original",
+                    threshold=float(demand_threshold),
+                    early_abort=bool(early_abort_on),
+                    abort_token_index=(
+                        None if suspended is None
+                        else int(suspended["abort_token_index"])),
+                    tokens_generated_before_abort=(
+                        None if suspended is None
+                        else int(suspended["tokens_generated_before_abort"])),
+                    tokens_saved=(None if suspended is None else 0),
+                    resumed_original=(None if suspended is None else True),
+                    wall_ms_attempt=attempt_wall_ms,
+                    wall_ms_resume=resume_ms,
+                ))
                 return txt, info, mset, picks, contributors
 
             demand_mset = sorted(self._resolve_revision_mounts(
                 sorted(set(demand_picks))))
-            if defer_memory:
-                d_txt, d_info = _serve(
-                    user_text, demand_mset, ngen, deposit, stops,
-                    defer_memory=True)
-            else:
-                d_txt, d_info = _serve(
-                    user_text, demand_mset, ngen, deposit, stops)
+            trip_started = time.perf_counter()
+            # The trip itself is NEVER early-aborted. Cap 1 is registered: a
+            # second fire is RECORDED and not acted on, so aborting the trip
+            # would throw away the only answer this turn has left to serve and
+            # would leave the turn with nothing to put out. `demand_state`
+            # carries the suppression because `_serve` reads it there; a plain
+            # rebinding would need `nonlocal` and would be easy to leave set.
+            demand_state["suppress_early_abort"] = True
+            try:
+                if defer_memory:
+                    d_txt, d_info = _serve(
+                        user_text, demand_mset, ngen, deposit, stops,
+                        defer_memory=True)
+                else:
+                    d_txt, d_info = _serve(
+                        user_text, demand_mset, ngen, deposit, stops)
+            finally:
+                demand_state["suppress_early_abort"] = False
+            trip_wall_ms = (time.perf_counter() - trip_started) * 1000.0
             # 4. A refire on the demand trip is RECORDED, never acted on.
             refire = grm_demand.decide(
                 list(demand_state["rows"]), float(demand_threshold))
@@ -3364,16 +3474,43 @@ class ArenaCache:
                 refire_token_index=refire["demand_token_index"],
                 trip_taken=True,
                 trip_grounded=bool(d_grounded),
+                early_abort=bool(early_abort_on),
+                abort_token_index=(
+                    None if suspended is None
+                    else int(suspended["abort_token_index"])),
+                tokens_generated_before_abort=(
+                    None if suspended is None
+                    else int(suspended["tokens_generated_before_abort"])),
+                wall_ms_attempt=attempt_wall_ms,
+                wall_ms_trip=trip_wall_ms,
             )
             # Both branches below apply ``fields``, so folding the grounding
             # receipt in here carries it whether the trip serves or is
             # rejected — the rejection is exactly the case SC1 needed named.
             fields.update(grounding_fields)
             if d_grounded:
+                # The trip serves. The suspended attempt is ABANDONED, never
+                # resumed: every token after the fire index is one this turn
+                # never had to generate, and that is the whole saving.
                 d_info = dict(d_info or {})
                 d_info["trip"] = int(trip)
                 d_info["demand_source_trip"] = int(trip)
                 d_info.update(fields)
+                if suspended is not None:
+                    d_info.update(grm_demand.demand_info_fields(
+                        supported=True, decision=decision,
+                        served="demand_trip",
+                        threshold=float(demand_threshold),
+                        trip_taken=True, trip_grounded=True,
+                        early_abort=True,
+                        abort_token_index=int(suspended["abort_token_index"]),
+                        tokens_generated_before_abort=int(
+                            suspended["tokens_generated_before_abort"]),
+                        resumed_original=False,
+                        wall_ms_attempt=attempt_wall_ms,
+                        wall_ms_trip=trip_wall_ms,
+                    ))
+                    d_info.update(grounding_fields)
                 return (d_txt, d_info, demand_mset, list(demand_picks),
                         d_contributors)
             # 3. Ungrounded demand trip -> the ORIGINAL answer goes out, and
@@ -3382,7 +3519,29 @@ class ArenaCache:
              self.cur_mount_n) = original[5][:5]
             self.grafts[:] = original[5][5]
             self._bump_cuda_gqa_epoch()
+            # GRM-SC2: under early abort the "original answer" does not exist
+            # yet -- the attempt stopped at the fire token. Resume it here and
+            # finish it, so what goes out is exactly what SC1 put out on this
+            # pair. This is the fallback that makes the abort safe to default
+            # on: a failed trip costs the same tokens it always did.
+            txt, info, resume_ms = _resume_if_suspended(suspended, txt, info)
             info.update(fields)
+            if suspended is not None:
+                info.update(grm_demand.demand_info_fields(
+                    supported=True, decision=decision, served="original",
+                    threshold=float(demand_threshold),
+                    trip_taken=True, trip_grounded=False,
+                    early_abort=True,
+                    abort_token_index=int(suspended["abort_token_index"]),
+                    tokens_generated_before_abort=int(
+                        suspended["tokens_generated_before_abort"]),
+                    tokens_saved=0,
+                    resumed_original=True,
+                    wall_ms_attempt=attempt_wall_ms,
+                    wall_ms_trip=trip_wall_ms,
+                    wall_ms_resume=resume_ms,
+                ))
+                info.update(grounding_fields)
             return txt, info, mset, picks, contributors
 
         best = None
@@ -3433,6 +3592,27 @@ class ArenaCache:
             info["trip"] = trip
             if clean:
                 info["clean_room"] = True
+            # GRM-SC2: a SUSPENDED attempt has no text to ground. Grounding it
+            # would attribute the empty string, which cannot ground, and the
+            # turn would fall through to the ungrounded-keep-first path with an
+            # empty answer. Route it straight into the demand trip instead --
+            # which is exactly what an un-aborted fired attempt would have
+            # reached anyway, just without generating the rest of the wrong
+            # answer first.
+            if info.get("_grm_sc2_suspended") is not None:
+                txt, info, mset, picks, contributors = _demand_trip(
+                    txt, info, mset, picks, (), trip)
+                if defer_memory:
+                    info["_deferred_memory"]["importance_bookkeeping"] = {
+                        "routed": [int(i) for i in ranking],
+                        "mounted": [int(i) for i in mset],
+                        "grounded_mounts": [int(i) for i in contributors],
+                        "turn": int(s4_turn),
+                    }
+                else:
+                    self._commit_s4_attempt(
+                        ranking, mset, contributors, turn=s4_turn)
+                return txt, attach_route_receipt(attach_fit(info, picks))
             grounded, contributors = self._grounding_attribution(
                 txt, mset, user_text)
             self._grounding_receipt(txt, mset, user_text, info)
@@ -3557,7 +3737,33 @@ class ArenaCache:
         return txt, info
 
     def _attempt(self, user_text, picks, ngen, deposit, stops,
-                 defer_memory=False):
+                 defer_memory=False, suspended=None):
+        """One generation attempt.
+
+        GRM-SC2 adds two seams and changes nothing else:
+
+        ``suspended``
+            A handle previously returned by an aborted attempt (via
+            ``grm_demand.DemandAbort``).  When given, mounting, prompt
+            encoding and the prompt forward are all SKIPPED -- the arena is
+            already carrying that attempt's cache -- and the decode loop picks
+            up exactly where it stopped.  The completed text is therefore the
+            text the un-aborted attempt would have produced, not a re-run.
+
+        the abort
+            When the caller has installed a ``DemandObserver`` with
+            ``early_abort`` on, the observer raises ``DemandAbort`` from inside
+            ``self._forward``.  It is caught here, and instead of a
+            ``(txt, info)`` pair the attempt returns a SUSPENSION handle.  None
+            of the post-generation bookkeeping -- decode, deposit, evict,
+            ``live_segs`` append -- runs on that path, because none of it is
+            valid for an answer that does not exist yet.
+        """
+        from core import grm_demand as _demand
+
+        if suspended is not None:
+            return self._resume_attempt(suspended, deposit, stops, defer_memory)
+
         # Final assembly choke point: callers such as diagnostic/probe
         # drivers may invoke _attempt directly instead of step(). Keep L2
         # immediately before any payload is loaded, swapped, or injected.
@@ -3591,7 +3797,20 @@ class ArenaCache:
             self.swap(picks)
         prompt_ids = self.encode(self._format_step_prompt(user_text))
         seg_start_ntok = len(prompt_ids)
-        row = self._forward(prompt_ids)
+        try:
+            row = self._forward(prompt_ids)
+        except _demand.DemandAbort as abort:
+            # Fired on the very first answer position. The prompt forward has
+            # run, so the cache holds [sink | mounts | question] and nothing
+            # else; the injection has NOT been cleared yet, so clear it here
+            # exactly as the non-aborted path does one line below -- it fired
+            # once and must not fire again on resume.
+            kv_graft.clear_injection(self.m)
+            return self._suspend_attempt(
+                abort, user_text=user_text, picks=picks,
+                seg_start_ntok=seg_start_ntok, out=[], cached_out=0,
+                ngen=ngen, deposit=deposit, stops=stops,
+                defer_memory=defer_memory)
         kv_graft.clear_injection(self.m)     # bootstrap injection fired once
         out = [int(row.argmax())]
         cached_out = 0
@@ -3608,14 +3827,54 @@ class ArenaCache:
             if any(s in self.decode(out) for s in stops):
                 stopped = True
                 break
-            row = self._forward([out[-1]])
+            try:
+                row = self._forward([out[-1]])
+            except _demand.DemandAbort as abort:
+                # The forward COMPLETED (the abort is raised after the real
+                # logits were computed), so `out[-1]` is now committed to the
+                # cache and the resume point is one token further along than
+                # the pre-forward state. `cached_out` is incremented to match,
+                # exactly as the non-aborted path does on the next line.
+                return self._suspend_attempt(
+                    abort, user_text=user_text, picks=picks,
+                    seg_start_ntok=seg_start_ntok, out=list(out),
+                    cached_out=cached_out + 1,
+                    ngen=ngen, deposit=deposit, stops=stops,
+                    defer_memory=defer_memory)
             cached_out += 1
             out.append(int(row.argmax()))
         if not stopped and not any(s in self.decode(out) for s in stops):
             # The last predicted token is not in the KV cache until it is fed
             # once. Commit it so live/deposit segment lengths match reality.
-            self._forward([out[-1]])
+            try:
+                self._forward([out[-1]])
+            except _demand.DemandAbort:
+                # This forward's logits are UNUSED -- it exists only to commit
+                # the final token to KV, and the race's flush-drop convention
+                # says it is not an answer position at all. So a fire here is
+                # not a fire on the answer: the answer is already complete and
+                # every one of its positions read its mounts. Swallow the
+                # control-flow signal, keep the completed attempt, and let the
+                # normal decision path (which drops this row) rule on it.
+                # The cache is committed either way -- the abort is raised
+                # after the forward did its work.
+                pass
             cached_out += 1
+        return self._finish_attempt(
+            user_text=user_text, picks=picks, out=out,
+            seg_start_ntok=seg_start_ntok, cached_out=cached_out,
+            deposit=deposit, stops=stops, defer_memory=defer_memory)
+
+    def _finish_attempt(self, *, user_text, picks, out, seg_start_ntok,
+                        cached_out, deposit, stops, defer_memory):
+        """The post-generation tail of ``_attempt``, shared with resume.
+
+        GRM-SC2 lifted this out of ``_attempt`` VERBATIM so that a resumed
+        attempt runs the identical decode / deposit / evict / live-segment
+        bookkeeping rather than a second copy of it that could drift.  Nothing
+        in the body changed in the move; the only new thing is that it now has
+        two callers.
+        """
         # the answer tokens are in the cache; record the live segment
         txt = self.decode(out)
         for stop in stops:
@@ -3681,6 +3940,112 @@ class ArenaCache:
                 "route_key_token": int(route_key_token),
             }
         return txt, info
+
+    # -- GRM-SC2: suspend / resume ------------------------------------------
+
+    def _suspend_attempt(self, abort, *, user_text, picks, seg_start_ntok,
+                         out, cached_out, ngen, deposit, stops, defer_memory):
+        """Freeze an attempt aborted at the D-NGH fire token.
+
+        WHAT IS AND IS NOT CAPTURED.  The KV cache, position, live segments and
+        mount bookkeeping are NOT copied into the handle: they are the arena's
+        own live state, and the demand block's rollback/restore already owns
+        snapshotting them (it snapshots the SAME tuple the shuttle uses, and it
+        restores it verbatim when a trip fails to ground).  Copying them here
+        would give the resume a second, competing idea of the truth.  What the
+        handle carries is only what the arena does NOT keep: the tokens emitted
+        so far, how many of them are committed to KV, where the prompt ended,
+        and the loop parameters needed to continue.
+
+        WHY NO BOOKKEEPING RUNS HERE.  ``deposit``, ``evict`` and the
+        ``live_segs`` append all describe a COMPLETED turn.  An aborted attempt
+        has no answer yet, so running any of them would deposit a fragment and
+        record a live segment for text that may never be served.  They run on
+        resume, through ``_finish_attempt``, exactly once.
+        """
+        return {
+            "grm_sc2_suspended_attempt": True,
+            "abort_token_index": int(abort.token_index),
+            "abort_mounted_mass": float(abort.mounted_mass),
+            "tokens_generated_before_abort": len(out),
+            "user_text": user_text,
+            "picks": list(picks),
+            "seg_start_ntok": int(seg_start_ntok),
+            "out": list(out),
+            "cached_out": int(cached_out),
+            "ngen": int(ngen),
+            "deposit": bool(deposit),
+            "stops": list(stops),
+            "defer_memory": bool(defer_memory),
+            "resumed": False,
+        }
+
+    def _resume_attempt(self, suspended, deposit, stops, defer_memory):
+        """Finish a suspended attempt from the token it aborted at.
+
+        The contract this has to honour is exact: the completed text must be
+        the text the un-aborted attempt WOULD have produced.  It is, and for a
+        structural reason rather than a hopeful one -- generation here is
+        greedy ``argmax`` over a KV cache, the abort was raised only AFTER the
+        aborting forward had computed its logits and committed its token, and
+        the arena still holds that cache.  So the resumed loop reads the same
+        state and takes the same argmax the original loop would have taken at
+        every remaining position.  There is no sampling, no temperature and no
+        re-prefill to make it merely approximate.
+
+        The caller is responsible for having restored the arena to the abort
+        point before calling this.  In the demand block that restoration is the
+        ordinary "ungrounded trip -> restore the original attempt's state"
+        path, unchanged from SC1.
+        """
+        from core import grm_demand as _demand
+
+        if not (suspended or {}).get("grm_sc2_suspended_attempt"):
+            raise ValueError("not a GRM-SC2 suspended attempt handle")
+        if suspended.get("resumed"):
+            raise RuntimeError("suspended attempt already resumed")
+
+        user_text = suspended["user_text"]
+        picks = list(suspended["picks"])
+        seg_start_ntok = int(suspended["seg_start_ntok"])
+        out = list(suspended["out"])
+        cached_out = int(suspended["cached_out"])
+        ngen = int(suspended["ngen"])
+        stops = list(suspended["stops"] if stops is None else stops)
+
+        # `out` must already carry every token the aborted attempt predicted,
+        # INCLUDING the one at the fire position. The abort unwound before that
+        # token was appended, so the demand block refills it from the observer
+        # rows (the only exact carrier: decode->encode is not a BPE round
+        # trip). A handle that arrives without them cannot be resumed into the
+        # original text, and saying so is the honest failure.
+        if not out:
+            raise _demand.DemandError(
+                "GRM-SC2: cannot resume a suspended attempt whose predicted "
+                "tokens were not recovered from the observer rows; resuming "
+                "from an empty prefix would generate a DIFFERENT answer than "
+                "the one this attempt was producing")
+
+        stopped = False
+        remaining = ngen - 1 - (len(out) - 1)
+        for _ in range(max(0, remaining)):
+            if any(s in self.decode(out) for s in stops):
+                stopped = True
+                break
+            row = self._forward([out[-1]])
+            cached_out += 1
+            out.append(int(row.argmax()))
+        if not stopped and not any(s in self.decode(out) for s in stops):
+            self._forward([out[-1]])
+            cached_out += 1
+        suspended["resumed"] = True
+        return self._finish_attempt(
+            user_text=user_text, picks=picks, out=out,
+            seg_start_ntok=seg_start_ntok, cached_out=cached_out,
+            deposit=bool(suspended["deposit"] if deposit is None else deposit),
+            stops=stops,
+            defer_memory=bool(suspended["defer_memory"]
+                              if defer_memory is None else defer_memory))
 
     def deposit_deferred_turn(self, info):
         """Pass 3: deposit the accepted pass-2 output from its live cache.

@@ -48,6 +48,20 @@ REGISTERED_CONFIG_PATH = ROOT / "config" / "grm_demand_registered.json"
 #: The env switch. DEFAULT OFF; an unknown token fails CLOSED to OFF.
 ENV_NAME = "GRM_DEMAND_NGH"
 _ENV_TRUE = frozenset(("1", "true", "yes", "on"))
+_ENV_FALSE = frozenset(("0", "false", "no", "off"))
+
+#: GRM-SC2: the early-abort switch. DEFAULT **ON whenever demand is ON**.
+#:
+#: The direction is deliberately the opposite of ``GRM_DEMAND_NGH``'s.  That
+#: switch fails CLOSED to OFF because turning the demand loop on is a change to
+#: what the stack SERVES, and a typo must never make that change.  This switch
+#: cannot change what the stack serves at all: a fired turn either serves the
+#: grounded demand trip (identical either way) or resumes the suspended attempt
+#: and serves exactly the text the un-aborted attempt would have served.  What
+#: it changes is only how many tokens are generated on the way there.  So an
+#: unreadable token fails to the DEFAULT (on), and only an explicit false token
+#: selects the SC1 generate-the-whole-wrong-answer path.
+ENV_EARLY_ABORT = "GRM_DEMAND_EARLY_ABORT"
 
 #: Registered cap: at most ONE demand trip per turn, ever. A second fire on
 #: the demand trip is RECORDED and NOT acted on.
@@ -66,6 +80,31 @@ DEMAND_INFO_PREFIX = "demand_"
 
 class DemandError(RuntimeError):
     """The production demand detector could not run as registered."""
+
+
+class DemandAbort(BaseException):
+    """GRM-SC2: D-NGH fired mid-generation; stop generating THIS attempt.
+
+    Derived from ``BaseException``, not ``Exception``, on purpose.  It is
+    raised from inside a wrapped ``arena._forward`` and has to travel up
+    through the generation loop untouched.  Anything on that path that catches
+    broad ``Exception`` to convert a decode failure into a fallback would
+    otherwise swallow the abort and turn a control-flow signal into a silent
+    behaviour change.  ``_attempt`` catches this class by name, and nothing
+    else does.
+
+    ``token_index`` is the answer position that fired -- the FIRST position
+    strictly below the registered line.  The tokens generated BEFORE it are the
+    ones the model produced while still reading its mounts; they are kept, both
+    as the demand query's prefix and as the resume point.
+    """
+
+    def __init__(self, token_index: int, mounted_mass: float) -> None:
+        super().__init__(
+            f"D-NGH fired at answer token {int(token_index)} "
+            f"(mounted_mass={float(mounted_mass)!r})")
+        self.token_index = int(token_index)
+        self.mounted_mass = float(mounted_mass)
 
 
 # --------------------------------------------------------------------------
@@ -108,7 +147,34 @@ def load_registered(path: Path | None = None) -> dict[str, Any]:
 
 
 def registered_threshold(path: Path | None = None) -> float:
-    return float(load_registered(path)["threshold"])
+    """The line production actually fires on.
+
+    GRM-SC2 recorded a wider-calibration ``candidate_threshold`` in the same
+    config file.  Production does NOT read it.  It reads ``threshold`` -- the
+    value carried verbatim from the race -- and keeps reading it until a config
+    sets ``adopted_by`` to name who adopted the candidate and under which
+    order.  SC2 does not set that field: the candidate is a REPORTED number for
+    David to rule on, not a live one.
+
+    A config that sets ``adopted_by`` without carrying a ``candidate_threshold``
+    to adopt is refused rather than silently falling back, because that shape is
+    indistinguishable from a half-applied edit.
+    """
+    payload = load_registered(path)
+    adopted_by = payload.get("adopted_by")
+    if adopted_by in (None, "", False):
+        return float(payload["threshold"])
+    if not isinstance(adopted_by, str) or not adopted_by.strip():
+        raise DemandError(
+            f"demand config `adopted_by` must name an adopter: {adopted_by!r}")
+    if "candidate_threshold" not in payload:
+        raise DemandError(
+            "demand config sets `adopted_by` but carries no "
+            "`candidate_threshold` to adopt")
+    candidate = float(payload["candidate_threshold"])
+    if not np.isfinite(candidate):
+        raise DemandError(f"candidate threshold is not finite: {candidate!r}")
+    return candidate
 
 
 def demand_enabled(
@@ -126,6 +192,28 @@ def demand_enabled(
     env = os.environ if environ is None else environ
     value = str(env.get(ENV_NAME, "")).strip().casefold()
     return value in _ENV_TRUE
+
+
+def early_abort_enabled(
+    explicit: bool | None = None,
+    environ: Mapping[str, str] | None = None,
+) -> bool:
+    """Resolve ``GRM_DEMAND_EARLY_ABORT``: explicit caller, then env, then ON.
+
+    GRM-SC2 registers this DEFAULT ON whenever the demand loop is on.  Only an
+    explicit false token (``0``/``false``/``no``/``off``) selects the SC1 path
+    that generates the whole wrong answer before taking the trip; an unknown
+    or unset token resolves to the default, because this switch cannot change
+    what the turn serves -- only how much is generated getting there.
+
+    The caller is responsible for not consulting this at all when demand is
+    OFF; with demand off there is no detector to fire and nothing to abort.
+    """
+    if explicit is not None:
+        return bool(explicit)
+    env = os.environ if environ is None else environ
+    value = str(env.get(ENV_EARLY_ABORT, "")).strip().casefold()
+    return value not in _ENV_FALSE
 
 
 # --------------------------------------------------------------------------
@@ -204,10 +292,18 @@ class DemandObserver:
     ngen: int
     threshold: float
     records: list[dict[str, Any]] = field(default_factory=list)
+    #: GRM-SC2. When True the observer RAISES ``DemandAbort`` on the first
+    #: token strictly below the line instead of letting generation run on.
+    #: The row for that token is appended BEFORE the raise, so the decision
+    #: the caller reads afterwards is computed from exactly the rows the
+    #: un-aborted attempt would have produced up to and including the fire.
+    early_abort: bool = False
 
     def __post_init__(self) -> None:
         self.threshold = float(self.threshold)
         self.ngen = int(self.ngen)
+        self.early_abort = bool(self.early_abort)
+        self.aborted_at: int | None = None
         self.records = []
         self._gpt = None
         self._original_forward = None
@@ -275,8 +371,9 @@ class DemandObserver:
             finally:
                 observer._inside_forward = False
             mass = observer._summarize_mass(observer._mass_rows)
+            index = len(observer.records)
             observer.records.append({
-                "token_index": len(observer.records),
+                "token_index": index,
                 # The greedy prediction at this answer position. Captured so
                 # a fired turn can rebuild the model's own partial output up
                 # to the fire index WITHOUT re-tokenizing the decoded string
@@ -289,6 +386,22 @@ class DemandObserver:
                 "learned_sink_mass": float(mass["learned_sink_mass"]),
                 "full_attention_layers": int(observer.expected_full_layers),
             })
+            # GRM-SC2 EARLY ABORT. The carried rule, applied the instant it can
+            # be applied instead of after the whole answer is generated: FIRST
+            # token STRICTLY BELOW the line. Equality still does not fire.
+            #
+            # The row above is already appended, so `finish()`/`decide()` see
+            # the same rows the un-aborted attempt would have produced through
+            # this position -- the decision is identical, only the tokens after
+            # it are never generated. The raise happens AFTER the real logits
+            # were computed, so the arena's KV cache is in exactly the state a
+            # non-aborting forward would have left it in: that is the resume
+            # point, and it is why resuming is byte-identical rather than
+            # approximately identical.
+            if (observer.early_abort and observer.aborted_at is None
+                    and float(mass["mounted_mass"]) < observer.threshold):
+                observer.aborted_at = int(index)
+                raise DemandAbort(index, float(mass["mounted_mass"]))
             return logits
 
         gpt.sink_attention_tc = sink_wrapper
@@ -374,7 +487,12 @@ class DemandObserver:
         is not an answer position.  The race dropped it and so does this.
         """
         kept = list(self.records)
-        if len(kept) == self.ngen + 1:
+        # GRM-SC2: an ABORTED attempt never reached the final commit forward,
+        # so there is no unused flush row to drop. Dropping one here would
+        # silently discard the FIRE row itself whenever the fire landed on the
+        # last captured position, which would turn a fired turn into an
+        # un-fired one. The convention applies to completed attempts only.
+        if self.aborted_at is None and len(kept) == self.ngen + 1:
             kept = kept[:-1]
         if len(kept) > self.ngen:
             raise DemandError(
@@ -481,6 +599,14 @@ def demand_info_fields(
     unsupported_reason: str | None = None,
     threshold: float | None = None,
     prefix_token_count: int | None = None,
+    early_abort: bool | None = None,
+    abort_token_index: int | None = None,
+    tokens_generated_before_abort: int | None = None,
+    tokens_saved: int | None = None,
+    resumed_original: bool | None = None,
+    wall_ms_attempt: float | None = None,
+    wall_ms_trip: float | None = None,
+    wall_ms_resume: float | None = None,
 ) -> dict[str, Any]:
     """Assemble the registered ``demand_*`` receipt block.
 
@@ -528,4 +654,22 @@ def demand_info_fields(
             None if refire_token_index is None else int(refire_token_index))
     if trip_grounded is not None:
         out["demand_trip_grounded"] = bool(trip_grounded)
+    # --- GRM-SC2 early-abort receipt block --------------------------------
+    if early_abort is not None:
+        out["demand_early_abort"] = bool(early_abort)
+    if abort_token_index is not None:
+        out["demand_abort_token_index"] = int(abort_token_index)
+    if tokens_generated_before_abort is not None:
+        out["demand_tokens_generated_before_abort"] = int(
+            tokens_generated_before_abort)
+    if tokens_saved is not None:
+        out["demand_tokens_saved"] = int(tokens_saved)
+    if resumed_original is not None:
+        out["demand_resumed_original"] = bool(resumed_original)
+    if wall_ms_attempt is not None:
+        out["demand_wall_ms_attempt"] = float(wall_ms_attempt)
+    if wall_ms_trip is not None:
+        out["demand_wall_ms_trip"] = float(wall_ms_trip)
+    if wall_ms_resume is not None:
+        out["demand_wall_ms_resume"] = float(wall_ms_resume)
     return out

@@ -28,5 +28,55 @@
     "name": "GRM_DEMAND_NGH",
     "default": "OFF",
     "unknown_token_behaviour": "fail_closed_to_OFF"
+  },
+  "early_abort_flag": {
+    "name": "GRM_DEMAND_EARLY_ABORT",
+    "order": "orders/GRM_SC2_CALIBRATION_EARLY_ABORT.md",
+    "default": "ON whenever GRM_DEMAND_NGH is ON",
+    "unknown_token_behaviour": "fail_to_the_default_ON",
+    "why_the_opposite_direction_from_GRM_DEMAND_NGH": "GRM_DEMAND_NGH fails closed because turning the demand loop on changes what the stack SERVES. This switch cannot change what the stack serves at all: a fired turn either serves the grounded demand trip (identical either way) or resumes the suspended attempt and serves exactly the text the un-aborted attempt would have served. It changes only how many tokens are generated on the way there, so an unreadable token fails to the default and only an explicit false selects the SC1 generate-the-whole-wrong-answer path.",
+    "demand_off_behaviour": "not consulted at all; nothing changes",
+    "off_path": "byte-identical to SC1 behaviour"
+  },
+  "candidate_threshold": 0.3181141105790933,
+  "candidate_threshold_provenance": {
+    "order": "orders/GRM_SC2_CALIBRATION_EARLY_ABORT.md",
+    "order_sha256": "4610be7e5d3ac856fd09d68d01aff07e1a36531129006952e5bc461198c15096",
+    "registration_path": "artifacts/grm_sc2/registration.json",
+    "receipt_path": "artifacts/grm_sc2/sc2_calibration_2a04614226c6287b.json",
+    "rule": "minimum_of_served_turn_minima_strict_envelope -- the race's envelope rule, CARRIED UNCHANGED",
+    "rule_source": "scripts/grm_det1_common.py::fit_thresholds (D-NGH branch)",
+    "rule_source_file_sha256": "f13f44cfa6f87dc57cec4ae9bf7fe509a6fbd0be983746202ad64da18a4d8343",
+    "fit_thresholds_function_text_sha256": "5aa8abcd6fcb9aaf0f4009104fad6e384b6c1720205d0632790e92b5f6692f68",
+    "detector_decision_function_text_sha256": "6db4552e599e6a62abe0962f1375b7bc86b96af681fbe42bead7e06f50ccf329",
+    "split_rule": "PROVENANCE SPLIT registered before computation: calibration = race-provenance served rows; held-out = post-race served rows",
+    "calibration_set_ids": [
+      "e2e_t05_orion_pin@race_eval",
+      "e2e_t09_cypher_bridge@race_calibration",
+      "e2e_t13_orion_pin@race_eval",
+      "e2e_t16_lyra_dock@race_calibration",
+      "e2e_t19_nova_key@race_eval",
+      "e2e_t22_mira_seal@race_eval",
+      "e2e_t24_terra_port@race_eval",
+      "e2e_t26_ember_code@race_eval",
+      "e2e_t30_atlas_tone@race_eval",
+      "sup_harbor_restatement@race_eval",
+      "sup_praxis_fresh@race_eval",
+      "sup_solace_fresh@race_eval"
+    ],
+    "calibration_set_n": 12,
+    "argmin_row_id": "sup_solace_fresh@race_eval",
+    "fit_turn_count": 12,
+    "held_out_false_fires_at_candidate": 1,
+    "held_out_false_fires_at_carried": 2,
+    "held_out_n": 10
+  },
+  "candidate_threshold_status": "REPORTED, NOT ADOPTED. Production reads `threshold`, never `candidate_threshold`. GRM-SC2 does NOT set `adopted_by`; adopting the candidate is David's decision with the SC2 frame receipts in view.",
+  "adoption_contract": {
+    "production_field": "threshold",
+    "candidate_field": "candidate_threshold",
+    "gate_field": "adopted_by",
+    "rule": "core.grm_demand.registered_threshold() returns `threshold` unless `adopted_by` is set to a non-empty string naming who adopted the candidate and in which order. While `adopted_by` is absent, a config carrying a candidate is still a carried-race config and refuses to behave otherwise.",
+    "adopted_by_is_NOT_set_by_this_order": true
   }
 }
