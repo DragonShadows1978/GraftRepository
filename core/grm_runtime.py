@@ -66,9 +66,35 @@ class GRMRuntime:
                      bool(autosave_enabled))
         return {"flush": flush, "page": page, "read_only": actual_read_only}
 
+    def _guard_deposit_width(self, before):
+        """LSR-P2C Part 1: width-guard every node this event deposited.
+
+        ``before`` is the ``_snapshot_state()`` list the event opened with, so
+        ``len(before)`` is the graft count before any deposit.  Running the
+        guard HERE (before ``_librarian()`` and before ``_mark_mutations``)
+        means the librarian, the extractor, the WAL and the pager all see the
+        already-split shape — a node the arena cannot mount never reaches
+        them.
+
+        The repository object is duck-typed on purpose: the three-pass and
+        diagnostic harnesses build runtimes over stub repositories that have
+        no width guard, and those must keep working unchanged.
+        """
+        guard = getattr(self.repository, "_guard_deposit_range", None)
+        if not callable(guard):
+            return ()
+        return guard(len(before))
+
     def _finish_turn_event(self, event, before, extraction=(), *,
                            autosave=False):
         repo = self.repository
+        # LSR-P2C Part 1: the LAST funnel every turn-deposit event passes
+        # through, including the DEFERRED-TURN path whose deposit happens
+        # outside chat()/add_turn() (grm_e2e_session._commit_turn_mutations ->
+        # arena.deposit_deferred_turn, then runtime._finish_turn_event).
+        # Guarding here means the librarian below never folds an unmountable
+        # node into a digest.
+        self._guard_deposit_width(before)
         folds_before = len(getattr(repo, "fold_history", ()))
         repo._librarian()
         folds = len(getattr(repo, "fold_history", ())) - folds_before
@@ -153,6 +179,12 @@ class GRMRuntime:
             turn_kind="chat",
         )
         info = self._persist_route_receipt(record, info)
+        # LSR-P2C Part 1: the turn graft arena.step() just deposited is
+        # width-guarded BEFORE extraction reads it.  _finish_turn_event runs
+        # the same guard again for the deferred-turn path (whose deposit
+        # happens outside chat()); the second pass is a no-op integer scan
+        # because children are budget-fitting by construction.
+        self._guard_deposit_width(before)
         extracted = repo._extract_from_new_turns(
             before, context={"event": "chat", "user_text": user_text,
                              "assistant_text": ans})
@@ -167,6 +199,9 @@ class GRMRuntime:
         before = repo._snapshot_state()
         repo.arena.feed(f"User: {user}\nAssistant: {assistant}\n")
         repo._set_new_node_provenance(before, "exchange_span")
+        # LSR-P2C Part 1: a fed turn longer than the arena can seat is split
+        # here, before extraction or the librarian sees it.
+        self._guard_deposit_width(before)
         extracted = repo._extract_from_new_turns(
             before, context={"event": "add_turn", "user_text": user,
                              "assistant_text": assistant})
@@ -347,6 +382,16 @@ class GRMRuntime:
                 kwargs["spans"] = spans
             out = repo._cull_graft_direct(int(node_id), **kwargs)
             self._finish_memory_event(before, "cull_graft")
+            return out
+        if action == "split_oversized":
+            # LSR-P2C Part 3: the one-time legacy repair sweep.
+            kwargs = {}
+            if plan.get("boundary"):
+                kwargs["boundary"] = str(plan["boundary"])
+            if plan.get("budget") is not None:
+                kwargs["budget"] = int(plan["budget"])
+            out = repo.split_oversized(**kwargs)
+            self._finish_memory_event(before, "split_oversized")
             return out
         if action == "select_graft_span":
             node_id = plan.get("node_id")

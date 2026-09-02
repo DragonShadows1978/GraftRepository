@@ -52,11 +52,14 @@ from core.grm_admission import (  # noqa: E402
     admission_info_fields,
     adm_decisive_cli_argv,
     adm_decisive_enabled,
+    chunk_trip_cap,
     decisive_admission_profile,
     fit_info_fields,
     identifier_unbound_abstention,
+    mountable_budget,
     plan_priority_fit,
     shuttle_trip_cap,
+    split_info_fields,
 )
 from scripts.grm_probe_ladder import (  # noqa: E402
     build_probe_ladder_attempts,
@@ -610,6 +613,32 @@ def collect_route_diagnostics(
     }
 
 
+# ---------------------------------------------------------------------------
+# GRM-LSR-P2C — the fixes flag.
+#
+# G2 Arm 0 (reproduction) needs the P2A+P2C fixes OFF so the replay can be
+# shown lived-equivalent BEFORE Arm 1 counts as evidence.  The flag is
+# DEFAULT ON: production keeps the fixes, and only a gate that has declared
+# itself a reproduction arm turns them off.
+# ---------------------------------------------------------------------------
+LSR_FIXES_ENV = "GRM_LSR_FIXES"
+_LSR_ENV_FALSE = frozenset(("0", "false", "no", "off"))
+
+
+def lsr_fixes_enabled(explicit: bool | None = None) -> bool:
+    """Resolve the P2A+P2C fix switch: explicit caller, then env, then ON.
+
+    Fails CLOSED to ON for an unknown token, the same direction the A-DEC
+    switch fails: an operator who mistypes the value keeps the fixes.
+    """
+    if explicit is not None:
+        return bool(explicit)
+    value = str(os.environ.get(LSR_FIXES_ENV, "")).strip().casefold()
+    if value in _LSR_ENV_FALSE:
+        return False
+    return True
+
+
 def _budget_fit_mounts(arena, picks: list[int]) -> list[int]:
     """Pack mounts into arena.width in the given order (rank order)."""
     budget = int(arena.width)
@@ -1101,13 +1130,20 @@ def _probe_ladder_chat(
     max_trips: int = 1,
     defer_memory: bool = False,
     turn_idx: int | None = None,
+    lsr_fixes: bool | None = None,
 ) -> tuple[str, dict[str, Any]]:
     """Fork-A probe path with production laws enforced (flag-on only).
 
     Reuses arena.route / _rare_tokens / _query_lex_tokens / _node_text_tokens /
     _attempt / _grounding_attribution. Does not reimplement scoring.
+
+    ``lsr_fixes`` (default: the ``GRM_LSR_FIXES`` env switch, itself default
+    ON) gates the LSR-P2A fit-honesty rulings and the LSR-P2C split/descent.
+    Turning it OFF restores the pre-P2A packing for the G2 Arm-0
+    reproduction arm; production never runs with it off.
     """
     arena = repo.arena
+    fixes_on = lsr_fixes_enabled(lsr_fixes)
     before = repo._snapshot_state()
     live_idx = {g for g, _ in arena.live_segs if g is not None}
     want = max(int(topk), 1)
@@ -1123,7 +1159,10 @@ def _probe_ladder_chat(
         ranking = list(
             arena.route(user_text, exclude=live_idx, limit=route_limit) or [])
     # LSR-P2A Ruling 2: not-in-memory abstention, before any mount work.
-    abstain = identifier_unbound_abstention(admission_profile)
+    # Gated by the same fixes switch: the Arm-0 reproduction arm must serve
+    # what the lived run served, and the lived run had no abstention rule.
+    abstain = (
+        identifier_unbound_abstention(admission_profile) if fixes_on else None)
     if abstain is not None:
         ans = str(abstain["abstain_text"])
         info: dict[str, Any] = {
@@ -1176,9 +1215,15 @@ def _probe_ladder_chat(
         point_lookup=point_lookup,
         max_trips=int(max_trips),
     )
+    # LSR-P2C Arm-0 switch: with the fixes OFF, the FIT stage reverts to the
+    # pre-P2A rank-order packing (_budget_fit_mounts) and no split/descent
+    # runs. Routing and the A-DEC plan are untouched either way, because Arm 0
+    # must reproduce the LIVED ranking and the lived plan — only the fit-stage
+    # rulings are what P2A/P2C changed.
+    fit_profile = admission_profile if fixes_on else None
     rank_plan = (
         [int(value) for value in admission_profile["rank_plan"]]
-        if admission_profile is not None else []
+        if fit_profile is not None else []
     )
     if admission_profile is None:
         attempts = baseline_attempts
@@ -1202,6 +1247,129 @@ def _probe_ladder_chat(
     # trip 0 ended the turn while the planned node was still unseated.
     shuttle_trips: list[list[int]] = []
     plan_head_receipt: dict[str, Any] = {}
+
+    # LSR-P2C Part 2: FIT-TIME DESCENT at the driver's fit site — the site
+    # the lived probes actually went through. A plan member whose own ntok
+    # exceeds the budget is UNSEATABLE: no fit and no plan-shuttle can seat
+    # it. Split it and make its identifier-bearing children the plan head,
+    # then shuttle across the chunks in document order if they do not co-fit.
+    split_parent: int | None = None
+    split_children: list[int] = []
+    split_ephemeral: bool | None = None
+    descended_head: list[int] = []
+    chunk_trips: list[list[int]] = []
+    chunk_owed: list[int] = []
+    split_head_binds = False
+    splitter = getattr(arena, "_split_unseatable", None)
+    if rank_plan and callable(splitter):
+        turn_budget = mountable_budget(arena)
+        unseatable_now = [
+            int(v) for v in rank_plan
+            if int(arena.grafts[int(v)]["ntok"]) > turn_budget
+        ]
+        # One split per turn: the plan head is the member the turn is about,
+        # and splitting every unseatable member would multiply chunk trips
+        # past the registered cap.
+        for member in unseatable_now[:1]:
+            children, ephemeral = splitter(member, turn_budget)
+            if not children:
+                # Nothing could be split. P2A's explicit degrade stands and
+                # the receipt still says so — honest, not silent.
+                continue
+            split_parent = int(member)
+            split_children = [int(v) for v in children]
+            split_ephemeral = bool(ephemeral)
+            # The IDENTIFIER-BEARING child set. See
+            # ArenaCache._identifier_bearing_children: the rare (code/number)
+            # channel is EMPTY for the whole ADMISSION-PRUNE probe class, so
+            # the frozen ADM1 lexical binding predicate is what discriminates
+            # the chunks. Duck-typed so the CPU stub harness still works.
+            qrare = arena._rare_tokens(user_text)
+            picker = getattr(arena, "_identifier_bearing_children", None)
+            if callable(picker):
+                descended_head, head_binds = picker(
+                    member, user_text, qrare, split_children,
+                    with_binding_flag=True)
+                descended_head = [int(v) for v in descended_head]
+            else:
+                descended_head = [
+                    int(v) for v in arena._descent_source_children(
+                        member, qrare=qrare)
+                ] or list(split_children)
+                head_binds = True
+            # SUBSTITUTE IN PLACE, never re-rank. The children stand exactly
+            # where their parent stood in the plan; promoting them to the head
+            # would demote a SEATABLE, higher-ranked plan member behind the
+            # chunks of an unseatable lower-ranked one.
+            was_head = int(rank_plan[0]) == int(member) and bool(head_binds)
+            # A split whose chunks bind NOTHING does not enter the plan at all
+            # when the identifier binds some OTHER plan member: a plan member
+            # is owed a SHUTTLE TRIP by Ruling 1.2, so keeping non-binding
+            # chunks in the plan hands the turn to a competitor's filler when
+            # the real answer node fails grounding (measured: sup_solace_fresh
+            # produced fit_shuttle_trips [[0], [3], [4]] and trip 4 served the
+            # competitor's Sable-0-Copper).
+            other_binds = bool(
+                {int(v) for v in admission_profile["identified_candidates"]}
+                - {int(member)}
+            ) if admission_profile is not None else False
+            drop_chunks = bool(not head_binds and other_binds)
+            substituted: list[int] = []
+            trailing: list[int] = []
+            seen_plan: set[int] = set()
+            for value in rank_plan:
+                if int(value) == int(member):
+                    if drop_chunks:
+                        continue
+                    incoming = descended_head
+                    sink = substituted if head_binds else trailing
+                else:
+                    incoming, sink = [int(value)], substituted
+                for entry in incoming:
+                    # DE-DUPLICATE: a previous turn's persisted child can
+                    # already be a plan member in its own right, and
+                    # substituting its parent would list it twice (measured:
+                    # fit_planned = [4, 4] on sup_reserve_tundra_ledger).
+                    if int(entry) not in seen_plan:
+                        sink.append(int(entry))
+                        seen_plan.add(int(entry))
+            rank_plan = [*substituted, *trailing]
+            head_fit = plan_priority_fit(
+                plan=rank_plan,
+                candidates=rank_plan,
+                ntok={
+                    int(i): int(arena.grafts[int(i)]["ntok"])
+                    for i in rank_plan
+                },
+                budget=int(turn_budget),
+            )
+            head_picks = [int(v) for v in head_fit["fit_seated"]]
+            if head_picks and was_head:
+                head_rung = (sorted(head_picks), bool(point_lookup))
+                attempts = [
+                    head_rung,
+                    *[a for a in attempts
+                      if (sorted(a[0]), bool(a[1])) != head_rung],
+                ]
+            # Chunks the head rung could not co-seat are owed their OWN trip,
+            # in DOCUMENT ORDER, additive and capped at chunk_trip_cap.
+            # A split whose chunks bind NOTHING gets no trips: giving them
+            # their own rungs lets a competitor's filler ground the turn while
+            # the planned answer node goes unread (measured: sup_solace_fresh
+            # served the competitor's Sable-0-Copper from chunk trip 3).
+            split_head_binds = bool(head_binds)
+            chunk_owed = (
+                [int(v) for v in descended_head
+                 if int(v) not in set(head_picks)
+                 ][:chunk_trip_cap(descended_head)]
+                if head_binds else []
+            )
+            for chunk in chunk_owed:
+                rung = ([int(chunk)], bool(point_lookup))
+                if rung not in attempts:
+                    attempts.append(rung)
+                    chunk_trips.append([int(chunk)])
+
     if rank_plan:
         resolved_plan = [
             int(v) for v in arena._resolve_revision_mounts(list(rank_plan))]
@@ -1257,7 +1425,7 @@ def _probe_ladder_chat(
         rank-order packing byte-for-byte.
         """
         ids = [int(v) for v in planned_ids]
-        if admission_profile is None:
+        if fit_profile is None:
             picks_ = _budget_fit_mounts(arena, ids)
             return {
                 "fit_planned": ids,
@@ -1286,7 +1454,7 @@ def _probe_ladder_chat(
         receipt that reported only that rung would be silent about a plan
         member no rung ever seated — the exact silence Ruling 1.3 forbids.
         """
-        if admission_profile is None:
+        if fit_profile is None:
             return info
         seated_set = {int(v) for v in seated}
         rung = fit_receipts.get(tuple(sorted(seated_set))) or {}
@@ -1295,7 +1463,8 @@ def _probe_ladder_chat(
         unseatable = [
             int(v) for v in plan_head_receipt.get("fit_unseatable", ())]
         seated_anywhere_now = seated_set | {
-            int(v) for trip in shuttle_trips for v in trip}
+            int(v) for trip in shuttle_trips for v in trip} | {
+            int(v) for trip in chunk_trips for v in trip}
         dropped_planned = [
             int(v) for v in rank_plan
             if int(v) in set(unseatable) and int(v) not in seated_anywhere_now
@@ -1308,13 +1477,34 @@ def _probe_ladder_chat(
                 int(v) for v in rung.get("fit_dropped_filler", ())],
             "fit_unseatable": unseatable,
         }
+        # LSR-P2C: after a split-and-descend the turn served WITH the plan
+        # head whenever the grounded trip seated any chunk of it — the answer
+        # is composed from the grounded trips, so served_without_plan_head is
+        # true ONLY when every chunk trip failed grounding.
+        # The chunk set counts as "the plan head" ONLY when the split member
+        # WAS the head and its chunks BOUND the identifier. A demoted,
+        # non-binding chunk set is filler that happened to ground; calling
+        # that "served with the plan head" is the unlabeled substitution
+        # Ruling 1.4 forbids.
+        head_served = bool(rank_plan) and int(rank_plan[0]) in seated_set
+        if (split_parent is not None and not head_served
+                and split_head_binds):
+            head_served = bool(seated_set & set(descended_head))
         info.update(fit_info_fields(
             receipt,
             shuttle=bool(shuttle_trips),
             shuttle_trips=shuttle_trips,
             # Ruling 1.4: explicit degrade, never unlabeled substitution.
-            served_without_plan_head=bool(
-                rank_plan and int(rank_plan[0]) not in seated_set),
+            served_without_plan_head=bool(rank_plan and not head_served),
+        ))
+        # LSR-P2C receipt fields, all fit_-prefixed so P2B persists them via
+        # ROUTE_RECEIPT_INFO_PREFIXES with no edit to core/grm_three_pass.py.
+        info.update(split_info_fields(
+            split_parent=split_parent,
+            split_children=split_children,
+            split_ephemeral=split_ephemeral,
+            descended_head=descended_head,
+            chunk_trips=chunk_trips,
         ))
         return info
 

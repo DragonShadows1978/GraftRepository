@@ -44,6 +44,10 @@ import time
 import numpy as np
 
 from core.graft_arena import ArenaCache
+from core.graft_quant import (
+    is_packed_payload, pack_kv_arrays, unpack_kv_arrays,
+)
+from core.grm_admission import mountable_budget
 from core.grm_runtime import GRMRuntime
 from core.mistral7b_tc import tc
 from core import kv_graft
@@ -321,6 +325,10 @@ class GraftRepository:
             self._native_configure_arena()
         # descent re-mounts retired children from cold storage on demand
         self.arena.node_loader = self._load_node
+        # LSR-P2C Part 2: fit-time descent reaches the librarian's split
+        # through this seam, so an unseatable node found at fit time is
+        # repaired ONCE (persisted) instead of re-chunked every turn.
+        self.arena.graft_splitter = self._split_for_fit
         # GRM3P-DIAG-CONTAM: opt-in paging telemetry (default-off; env paths).
         # Disabled sink is a process-wide no-op — no file I/O, no control-flow
         # change on the registered default path.
@@ -552,6 +560,9 @@ class GraftRepository:
         g["kind"] = "doc"
         g["tags"] = list(tags)
         g["provenance"] = [self._provenance("doc_span", idx)]
+        # LSR-P2C Part 1: a document longer than the arena can seat is split
+        # HERE, so the repository never holds a node the arena cannot mount.
+        self._guard_deposit_width(idx)
         self._mark_mutations(before)
         self._page()
         return idx
@@ -779,6 +790,18 @@ class GraftRepository:
         return None
 
     def _slice_host_payload(self, payload, ntok, start, end, native_node_id=None):
+        # LSR-P2C: a PACKED (quantized) payload cannot be sliced as if it
+        # were dense.  ``pack_kv_arrays`` stores group-32 codes plus scales
+        # and records the ORIGINAL shape, so slicing the code array along a
+        # guessed axis produces bytes that ``unpack_kv_arrays`` then tries to
+        # reshape back to the PARENT's token count:
+        #   ValueError: cannot reshape array of size 1179648 into (24,8,159,64)
+        # (measured, LSR-P2C G2 Arm 1 on the lived storage_bits=8 frame).
+        # The honest slice is dequantize -> slice -> re-quantize with the
+        # same bit width, which is what the arena's own pack/unpack pair
+        # does; no new quantization law is introduced here.
+        if is_packed_payload(payload):
+            return self._slice_packed_payload(payload, ntok, start, end)
         out = {}
         for key, value in payload.items():
             arr = np.ascontiguousarray(value)
@@ -798,6 +821,40 @@ class GraftRepository:
             sl[axis] = slice(start, end)
             out[key] = np.ascontiguousarray(arr[tuple(sl)])
         return out
+
+    def _slice_packed_payload(self, payload, ntok, start, end):
+        """Dequantize, slice on the token axis, re-quantize at the same bits.
+
+        LSR-P2C.  ``core.graft_quant`` records ``orig_shape`` per array, so
+        the token axis is found the same way the dense path finds it (the
+        axis whose extent equals the parent's ``ntok``), and the re-packed
+        child carries its OWN shape.  Fail-closed: a payload whose declared
+        bit width this build does not understand raises out of
+        ``unpack_kv_arrays`` rather than being silently mis-sliced.
+        """
+        keys = list(
+            payload.files if hasattr(payload, "files") else payload.keys())
+        names = [
+            str(key)[: -len("_codes")] for key in keys
+            if str(key).endswith("_codes")
+        ]
+        arrays = unpack_kv_arrays(payload, names)
+        sliced = {}
+        for key, value in arrays.items():
+            arr = np.ascontiguousarray(value)
+            axis = self._payload_token_axis(key, arr, ntok)
+            if axis is None:
+                sliced[key] = arr.copy()
+                continue
+            sl = [slice(None)] * arr.ndim
+            sl[axis] = slice(int(start), int(end))
+            sliced[key] = np.ascontiguousarray(arr[tuple(sl)])
+        bits = int(np.asarray(payload["storage_bits"]).reshape(-1)[0])
+        kwargs = {}
+        if "group_size" in keys:
+            kwargs["group_size"] = int(
+                np.asarray(payload["group_size"]).reshape(-1)[0])
+        return self._payload_to_ram(pack_kv_arrays(sliced, bits, **kwargs))
 
     def _decode_token_span(self, text, start, end):
         try:
@@ -966,6 +1023,347 @@ class GraftRepository:
     def split_graft(self, *args, **kwargs):
         return self.cull_graft(*args, **kwargs)
 
+    # ------------------------------------------------------------------
+    # GRM-LSR-P2C Part 1 — deposit-time width guard (prevention)
+    #
+    # PRINCIPLE: the repository never holds a node the arena cannot mount.
+    # A node whose own ``ntok`` exceeds ``mountable_budget`` is UNSEATABLE
+    # (P2A ``fit_unseatable``): no fit and no shuttle can ever seat it, so
+    # the honest fix is at DEPOSIT, not at readout — the same shape as
+    # co-mount prevention.
+    #
+    # The split reuses the librarian's existing verbs: ``_section_text_chunks``
+    # for the boundary set and ``_cull_graft_direct`` for the actual split, so
+    # children inherit provenance, tags, metadata (durability / mutability /
+    # scope / write_intent / confidence), lineage (``sources``,
+    # ``culled_from``) and supersession membership through the code path that
+    # already owns those transfers.  The parent becomes an ERA-CLASS INDEX
+    # node: routable, never a reader (measured law, 2026-06-10 — a model
+    # reading a corrupt era faithfully reproduces the corruption), and
+    # ``_descent_expand`` expands it to its children at the PRIMARY attempt.
+    # ------------------------------------------------------------------
+
+    #: Kind the width guard stamps on the retained parent.  ``era`` is the
+    #: arena's INDEX class: ``graft_arena.step()`` expands ``("era",)`` at the
+    #: primary attempt, so the parent routes but never reads.
+    WIDTH_GUARD_PARENT_KIND = "era"
+
+    def _mountable_budget(self):
+        """Derived seat budget for one node.  No new constant — see
+        ``core.grm_admission.mountable_budget`` for the full derivation."""
+        return mountable_budget(self.arena)
+
+    def _width_fitting_chunks(self, text, budget, boundary="section"):
+        """Chunk ``text`` so that NO chunk exceeds ``budget`` tokens.
+
+        Stage 1 is the librarian's own ``_section_text_chunks`` (headings,
+        blank lines, speaker turns).  Stage 2 is the sentence/line FALLBACK
+        the order requires: any section still over budget is broken at
+        sentence boundaries, and any single sentence still over budget is
+        broken at whitespace, so the postcondition "no child exceeds the
+        budget" holds for text with no structure at all.
+        """
+        budget = int(budget)
+        if budget <= 0:
+            raise ValueError("mountable budget must be positive")
+        encode = self.arena.encode
+        out = []
+        for chunk in self._section_text_chunks(text, boundary=boundary):
+            if len(encode(chunk)) <= budget:
+                out.append(chunk)
+                continue
+            for piece in self._sentence_fallback_chunks(chunk, budget):
+                out.append(piece)
+        return out
+
+    _SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+|\n+")
+
+    def _sentence_fallback_chunks(self, text, budget):
+        """Sentence-then-whitespace fallback for one over-budget section."""
+        encode = self.arena.encode
+        units = [u for u in self._SENTENCE_SPLIT.split(str(text)) if u.strip()]
+        if not units:
+            units = [str(text)]
+        # A single sentence can still exceed the budget; break it on
+        # whitespace so the postcondition holds for pathological input.
+        atoms = []
+        for unit in units:
+            if len(encode(unit)) <= budget:
+                atoms.append(unit)
+                continue
+            words = unit.split()
+            cur = []
+            for word in words:
+                trial = " ".join(cur + [word])
+                if cur and len(encode(trial)) > budget:
+                    atoms.append(" ".join(cur))
+                    cur = [word]
+                else:
+                    cur.append(word)
+            if cur:
+                atoms.append(" ".join(cur))
+        # Re-pack adjacent atoms greedily so the split is as coarse as the
+        # budget allows (fewer children = fewer chunk trips).
+        out = []
+        cur = ""
+        for atom in atoms:
+            trial = f"{cur} {atom}".strip() if cur else atom
+            if cur and len(encode(trial)) > budget:
+                out.append(cur)
+                cur = atom
+            else:
+                cur = trial
+        if cur:
+            out.append(cur)
+        return out or [str(text)]
+
+    def _width_guard_spans(self, idx, budget, boundary="section"):
+        """Token spans for the width guard's split, or ``None`` when the node
+        already fits.
+
+        A node at EXACTLY ``budget`` is one node: the guard triggers strictly
+        ABOVE the budget, because ``plan_priority_fit`` seats a member whose
+        cost is ``<= budget``.
+        """
+        graft = self.arena.grafts[int(idx)]
+        ntok = int(graft.get("ntok", 0))
+        budget = int(budget)
+        if ntok <= budget:
+            return None
+        text = str(graft.get("text", "") or "")
+        chunks = self._width_fitting_chunks(text, budget, boundary=boundary)
+        if len(chunks) <= 1:
+            # No structure to cut on at all: fall back to the librarian's
+            # own fixed-width span planner, which always covers every token.
+            return self._normalize_cull_spans(
+                ntok, max_tokens=budget, retire_parent=True)
+        # The SPANS must follow the CHUNKER's boundaries, not a blind
+        # fixed-width cap.  MEASURED (LSR-P2C G2 Arm 1, first run): a
+        # prefix-offset plan capped at max_tokens cut the meridian competitor
+        # at token 96, which lands INSIDE the answer — chunk 0 ended
+        # "...Meridian docket value is Delta-4-" and chunk 1 began "Drift." —
+        # and the model read the truncated value and emitted
+        # "Delta-4-Delta-4-Delta-4...".  A split that severs the value it is
+        # supposed to preserve is worse than no split at all.
+        spans = self._chunk_token_spans(chunks, ntok, budget)
+        if spans is None or len(spans) <= 1:
+            return self._normalize_cull_spans(
+                ntok, max_tokens=budget, retire_parent=True)
+        return self._normalize_cull_spans(
+            ntok, spans=spans, retire_parent=True)
+
+    def _chunk_token_spans(self, chunks, ntok, budget):
+        """Token spans whose cuts land on the CHUNKER's text boundaries.
+
+        The parent's token ledger is re-encoded once and each chunk's own
+        token length walks a cursor along it.  Encoding a chunk in isolation
+        is not always byte-identical to encoding it in context (BPE merges
+        across a boundary), so the cursor is a PLAN, and the result is
+        validated: every span must be within budget and the spans must tile
+        the parent exactly.  If they do not, ``None`` is returned and the
+        caller falls back to the fixed-width planner rather than emitting a
+        span set that silently drops or duplicates tokens.
+        """
+        budget = int(budget)
+        ntok = int(ntok)
+        encode = self.arena.encode
+        spans = []
+        cursor = 0
+        for chunk in chunks[:-1]:
+            n = len(encode(chunk))
+            if n <= 0:
+                return None
+            end = min(ntok, cursor + n)
+            if end <= cursor:
+                return None
+            spans.append((cursor, end))
+            cursor = end
+            if cursor >= ntok:
+                break
+        if cursor < ntok:
+            spans.append((cursor, ntok))
+        if len(spans) <= 1:
+            return None
+        # VALIDATE: tiling and budget. A chunk whose in-context encoding runs
+        # longer than its isolated encoding can push a later span over budget;
+        # re-cap those spans so the postcondition still holds.
+        spans = self._cap_cull_spans(spans, max_tokens=budget)
+        cursor = 0
+        for start, end in spans:
+            if int(start) != cursor or int(end) <= int(start):
+                return None
+            cursor = int(end)
+        if cursor != ntok:
+            return None
+        return spans
+
+    def _guard_deposit_width(self, idx, *, boundary="section", budget=None):
+        """Apply the width guard to one freshly deposited node.
+
+        Returns ``None`` when the node already fits (the overwhelmingly
+        common case, one integer comparison), else the ``cull_graft`` receipt
+        with the parent kept as an era-class INDEX node.
+
+        ``budget`` defaults to the derived ``mountable_budget``; the fit-time
+        descent seam passes the budget the ARENA measured for that turn (the
+        same number, minus any recency reserve the arena applied), so the
+        persisted split is fitted to the seats the turn actually had.
+        """
+        idx = int(idx)
+        budget = (self._mountable_budget() if budget is None else int(budget))
+        # A non-positive budget is not a node this guard can help: there are no
+        # seats to fit into, and splitting would recurse forever.  It is also
+        # what a stub/diagnostic arena with no declared width reports, and
+        # those callers must keep working unchanged — so this is a NO-OP, not
+        # an error (measured: raising here broke 11 unrelated tests in
+        # tests/test_grm_importance_salience.py).
+        if budget <= 0:
+            return None
+        parent = self.arena.grafts[idx]
+        # IDEMPOTENT: a node this guard already split keeps its full ``ntok``
+        # (it is the index node, and its text is the whole original), so a
+        # naive ``ntok > budget`` test would split it again on the next turn
+        # and again on the one after — measured, LSR-P2C G2 Arm 1 on
+        # fresh_fact_controls: node 2 split into [3,4] on probe 2 and into
+        # [5,6] on probe 3, leaving two rival child families in the routing
+        # surface (ranking [2,4,3,1,0]).  The guard is a ONE-TIME repair.
+        if (parent.get("metadata") or {}).get("width_guard_parent"):
+            return None
+        spans = self._width_guard_spans(idx, budget, boundary=boundary)
+        if spans is None:
+            return None
+        parent_kind = parent.get("kind", "doc")
+        out = self._cull_graft_direct(
+            idx, spans=spans, retire_parent=True,
+            # Children keep the PARENT's reader kind: they are the readers.
+            kind=parent_kind,
+            recompute_route=True,
+            segment_type="width_guard_span",
+            extra_metadata={
+                "width_guard": True,
+                "width_guard_budget": int(budget),
+            },
+        )
+        children = [int(v) for v in out["children"]]
+        # The parent stays in the repository as an INDEX node: routable so
+        # identifier routing still finds the family, never a reader because
+        # `_descent_expand` expands era-kind picks to their children at the
+        # primary attempt.  `_cull_graft_direct` retired it; un-retire it and
+        # re-class it, then give it the UNION routing surface.
+        parent["retired"] = False
+        parent["kind"] = self.WIDTH_GUARD_PARENT_KIND
+        meta = parent.setdefault("metadata", self._default_metadata(parent))
+        meta["active"] = True
+        meta["kind"] = self.WIDTH_GUARD_PARENT_KIND
+        meta["width_guard_parent"] = True
+        meta["width_guard_children"] = list(children)
+        # `sources` is what `_descent_source_children` reads: the parent must
+        # point AT its children (the cull wrote the reverse edge on each
+        # child).  Identifier routing works off the UNION of the children's
+        # rare tokens plus the parent's own.
+        parent["sources"] = list(children)
+        rare = set(parent.get("rare") or self.arena._rare_tokens(
+            str(parent.get("text", "") or "")))
+        child_cents = []
+        for child_idx in children:
+            child = self.arena.grafts[child_idx]
+            if "rare" not in child:
+                child["rare"] = self.arena._rare_tokens(child["text"])
+            rare |= set(child["rare"])
+            child_cents.append(child["cent"])
+            child.setdefault("metadata", {})["width_guard_child"] = True
+        parent["rare"] = rare
+        parent["child_cents"] = child_cents
+        self._mark_dirty(idx, payload=False, metadata=True)
+        self._native_sync_node(idx, payload_required=False)
+        self.arena._bump_cuda_gqa_epoch()
+        out["action"] = "width_guard_split"
+        out["retired_parent"] = False
+        out["parent_kind"] = self.WIDTH_GUARD_PARENT_KIND
+        out["budget"] = int(budget)
+        return out
+
+    def _split_for_fit(self, idx, budget):
+        """Arena seam (``ArenaCache.graft_splitter``): persist a fit-time split.
+
+        LSR-P2C Part 2.  The arena discovers an unseatable plan member during
+        ``fit``; this writes the split through the same librarian verb the
+        deposit guard uses, so the repair is PERSISTED (the node is fixed
+        once, not re-chunked at every fit) and the children inherit
+        provenance, tags, lineage and supersession membership.
+
+        Returns the child indices, or ``None`` when the split is not possible
+        or not allowed on this path (the arena then falls back to an
+        ephemeral in-turn split and says so in ``fit_split_ephemeral``).
+        """
+        out = self._guard_deposit_width(int(idx), budget=int(budget))
+        if out is None:
+            return None
+        return [int(v) for v in out["children"]]
+
+    def _guard_deposit_range(self, before_count, *, boundary="section"):
+        """Apply the width guard to every node appended since ``before_count``.
+
+        Every deposit path funnels through here, so a new deposit site cannot
+        silently skip the guard: it either calls this or is named in the
+        order's report as deliberately unguarded.
+        """
+        results = []
+        # The loop bound is captured first: the guard APPENDS children, and
+        # children are budget-fitting by construction, so re-guarding them
+        # would be wasted work (and `_width_guard_spans` would return None
+        # anyway).
+        for idx in range(int(before_count), len(self.arena.grafts)):
+            out = self._guard_deposit_width(idx, boundary=boundary)
+            if out is not None:
+                results.append(out)
+        return results
+
+    # ------------------------------------------------------------------
+    # GRM-LSR-P2C Part 3 — librarian sweep op
+    # ------------------------------------------------------------------
+
+    def split_oversized(self, *, boundary="section", budget=None):
+        """Repair a legacy repository: split every oversized ACTIVE node once.
+
+        Part 1 prevents oversized nodes at deposit; this is the one-time
+        repair for repositories that already contain them, so a legacy
+        repository is fixed ONCE rather than re-chunked at every fit.
+
+        Follows the existing cull/split verb grammar
+        (``cull graft <id> ...`` / ``split graft <id> ...``); the memory
+        command is ``split oversized`` with the same optional
+        ``into <boundary>`` and ``max tokens <n>`` options.
+        """
+        budget = (self._mountable_budget() if budget is None else int(budget))
+        if budget <= 0:
+            raise ValueError("mountable budget must be positive")
+        before = self._snapshot_state()
+        # Snapshot the candidate list first: the sweep APPENDS children, and
+        # children are budget-fitting by construction.
+        candidates = [
+            i for i, g in enumerate(self.arena.grafts)
+            if not g.get("retired")
+            and g.get("kind") != self.WIDTH_GUARD_PARENT_KIND
+            and int(g.get("ntok", 0)) > budget
+        ]
+        splits = []
+        for idx in candidates:
+            out = self._guard_deposit_width(idx, boundary=boundary)
+            if out is not None:
+                splits.append(out)
+        if splits:
+            self._mark_mutations(before)
+            self._page()
+        return {
+            "action": "split_oversized",
+            "budget": int(budget),
+            "examined": len(candidates),
+            "split": [int(row["parent"]) for row in splits],
+            "children": [int(v) for row in splits for v in row["children"]],
+            "results": splits,
+        }
+
     def remember(self, text, durability="project", mutability="stable",
                  scope="project", kind="fact", write_intent="user_asserted",
                  confidence=1.0, tags=(), metadata=None):
@@ -993,6 +1391,8 @@ class GraftRepository:
         })
         if metadata:
             g["metadata"].update(metadata)
+        # LSR-P2C Part 1: an explicit memory too long to seat is split HERE.
+        self._guard_deposit_width(idx)
         self._mark_mutations(before)
         self._page()
         return idx
@@ -1044,6 +1444,63 @@ class GraftRepository:
         if name in ("heading", "headings"):
             return "heading"
         raise ValueError(f"unknown cull boundary strategy {name!r}")
+
+    @staticmethod
+    def _parse_split_oversized_command_python(original, low):
+        """LSR-P2C Part 3: ``split oversized [into <boundary>] [max tokens n]``.
+
+        Same verb grammar as ``cull graft`` / ``split graft`` one line down:
+        the verb, the object, then the same optional boundary and max-tokens
+        options.  ``cull oversized`` is accepted as the cull-side synonym for
+        the same reason ``cull graft`` and ``split graft`` are synonyms.
+        """
+        words = low.replace(",", " ").replace(":", " ").replace(
+            "=", " ").split()
+        if len(words) < 2 or words[0] not in ("cull", "split"):
+            return None
+        if words[1] != "oversized":
+            return None
+        plan = {"action": "split_oversized"}
+        cursor = 2
+        while cursor < len(words):
+            word = words[cursor]
+            if word in ("into", "by"):
+                cursor += 1
+                if cursor >= len(words):
+                    raise ValueError("split oversized boundary is missing")
+                plan["boundary"] = GraftRepository._normalize_cull_command_boundary(
+                    words[cursor])
+                cursor += 1
+                continue
+            if word in ("section", "sections", "paragraph", "paragraphs",
+                        "turn", "turns", "heading", "headings"):
+                plan["boundary"] = GraftRepository._normalize_cull_command_boundary(
+                    word)
+                cursor += 1
+                continue
+            if word in ("max", "max_tokens", "max-token", "max-tokens"):
+                if word == "max":
+                    cursor += 1
+                    if cursor < len(words) and words[cursor] in (
+                            "token", "tokens"):
+                        cursor += 1
+                else:
+                    cursor += 1
+                if cursor >= len(words):
+                    raise ValueError("split oversized max tokens is missing")
+                try:
+                    budget = int(words[cursor])
+                except ValueError as exc:
+                    raise ValueError(
+                        "split oversized max tokens must be numeric") from exc
+                if budget <= 0:
+                    raise ValueError(
+                        "split oversized max tokens must be positive")
+                plan["budget"] = budget
+                cursor += 1
+                continue
+            raise ValueError(f"unknown split oversized option {word!r}")
+        return plan
 
     @staticmethod
     def _parse_cull_command_python(original, low):
@@ -1265,6 +1722,10 @@ class GraftRepository:
             original, low)
         if selected is not None:
             return selected
+        oversized = GraftRepository._parse_split_oversized_command_python(
+            original, low)
+        if oversized is not None:
+            return oversized
         cull = GraftRepository._parse_cull_command_python(original, low)
         if cull is not None:
             return cull
@@ -1320,7 +1781,17 @@ class GraftRepository:
 
         Native-backed repositories use the C++ parser so command grammar is a
         stable runtime boundary. Python remains the operation/policy executor.
+
+        LSR-P2C Part 3 exception: ``split oversized`` is a Python-side policy
+        sweep with no native plan, and the frozen C++ grammar would reject it
+        as unknown.  It is parsed here BEFORE the native delegation so the new
+        verb works on native-backed repositories too; every pre-existing verb
+        still reaches the native parser exactly as before.
         """
+        oversized = self._parse_split_oversized_command_python(
+            str(text).strip(), str(text).strip().lower())
+        if oversized is not None:
+            return oversized
         if self.native_store is not None and hasattr(
                 self.native_store, "parse_memory_command"):
             try:

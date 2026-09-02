@@ -41,11 +41,16 @@ from core.grm_supersession import sup_resolve_enabled
 from core.grm_admission import (
     admission_info_fields,
     adm_decisive_enabled,
+    chunk_trip_cap,
     decisive_admission_profile,
     fit_info_fields,
     identifier_unbound_abstention,
+    is_identifier_binding,
+    mountable_budget,
+    ordered_identifier_tokens,
     plan_priority_fit,
     shuttle_trip_cap,
+    split_info_fields,
 )
 
 
@@ -2422,6 +2427,218 @@ class ArenaCache:
                 seen.add(idx)
         return out
 
+    # ------------------------------------------------------------------
+    # GRM-LSR-P2C Part 2 — fit-time descent for legacy oversized nodes
+    #
+    # P2A marks a plan member ``fit_unseatable`` when its own ``ntok`` exceeds
+    # the budget: no fit and no plan-shuttle can seat it.  Rather than degrade
+    # first, the turn SPLITS the node and DESCENDS: the unseatable node is
+    # chunked on the fly (the librarian's chunker when a repository is
+    # attached, else the arena's own line/sentence fallback), and the plan
+    # head becomes the identifier-bearing CHILD SET.  If the children co-fit,
+    # seat them; if not, SHUTTLE across the chunks in document order.
+    #
+    # PERSISTED vs EPHEMERAL is stated in the receipt, never guessed:
+    # ``fit_split_ephemeral`` is False when the split was written through the
+    # librarian's ``cull_graft`` (deposit/mutation allowed on this path) and
+    # True when the split lived only for this turn.
+    # ------------------------------------------------------------------
+
+    #: Set by GraftRepository so the arena can reach the librarian's split.
+    #: ``None`` (the default for a bare ArenaCache) forces the ephemeral path.
+    graft_splitter = None
+
+    @staticmethod
+    def _lsr_fixes_enabled():
+        """LSR-P2C: the P2A+P2C fix switch, ``GRM_LSR_FIXES``, default ON.
+
+        The G2 Arm-0 reproduction arm turns the fixes OFF so the replay can
+        be shown lived-equivalent BEFORE Arm 1 counts as evidence.  It fails
+        CLOSED to ON for an unknown token, the same direction the A-DEC
+        switch fails: an operator who mistypes the value keeps the fixes.
+        """
+        value = os.environ.get("GRM_LSR_FIXES", "").strip().casefold()
+        return value not in ("0", "false", "no", "off")
+
+    def _split_source_text_chunks(self, text, budget):
+        """Arena-side fallback chunker: lines, then sentences, then words.
+
+        Used only when no repository/librarian chunker is reachable.  It obeys
+        the same postcondition the librarian's does: NO chunk exceeds
+        ``budget`` encoded tokens.
+        """
+        budget = int(budget)
+        if budget <= 0 or not callable(getattr(self, "encode", None)):
+            # FAIL CLOSED: no tokenizer on this arena means no honest way to
+            # measure a chunk against the budget. Returning the text whole
+            # signals "not splittable" and the caller falls back to P2A's
+            # explicit degrade, which is still honest.
+            return [str(text)]
+        units = [u.strip() for u in re.split(r"\n+", str(text)) if u.strip()]
+        if not units:
+            units = [str(text)]
+        atoms = []
+        for unit in units:
+            if len(self.encode(unit)) <= budget:
+                atoms.append(unit)
+                continue
+            for sentence in re.split(r"(?<=[.!?])\s+", unit):
+                sentence = sentence.strip()
+                if not sentence:
+                    continue
+                if len(self.encode(sentence)) <= budget:
+                    atoms.append(sentence)
+                    continue
+                cur = []
+                for word in sentence.split():
+                    trial = " ".join(cur + [word])
+                    if cur and len(self.encode(trial)) > budget:
+                        atoms.append(" ".join(cur))
+                        cur = [word]
+                    else:
+                        cur.append(word)
+                if cur:
+                    atoms.append(" ".join(cur))
+        # Greedy re-pack: as coarse as the budget allows (fewer chunk trips).
+        out, cur = [], ""
+        for atom in atoms:
+            trial = f"{cur} {atom}".strip() if cur else atom
+            if cur and len(self.encode(trial)) > budget:
+                out.append(cur)
+                cur = atom
+            else:
+                cur = trial
+        if cur:
+            out.append(cur)
+        return out or [str(text)]
+
+    def _split_unseatable(self, idx, budget):
+        """Split one unseatable node into width-fitting children.
+
+        Returns ``(children, ephemeral)``.  ``children`` is empty when the
+        node could not be split at all (a single token wider than the whole
+        arena is not a thing this can fix, and saying so is the honest
+        answer — the caller then falls back to P2A's explicit degrade).
+        """
+        idx = int(idx)
+        budget = int(budget)
+        # IDEMPOTENT: an index node this machinery already split keeps its full
+        # ``ntok`` (its text is still the whole original), so a naive size test
+        # would split it again every turn and leave rival child families in the
+        # routing surface.  The split is a ONE-TIME repair.
+        node = self.grafts[idx]
+        if (node.get("metadata") or {}).get("width_guard_parent") or (
+                node.get("kind") == "era" and node.get("sources")):
+            existing = [int(v) for v in (node.get("sources") or ())]
+            return existing, bool(node.get("ephemeral_split", False))
+        splitter = getattr(self, "graft_splitter", None)
+        if callable(splitter):
+            # PERSISTED: the librarian owns the split, so children inherit
+            # provenance, tags, lineage and supersession membership through
+            # the code path that already owns those transfers, and the node
+            # is repaired once rather than at every fit.
+            try:
+                out = splitter(idx, budget)
+            except Exception:  # noqa: BLE001 - a failed persist must not
+                out = None    # abort the turn; fall through to ephemeral.
+            if out:
+                children = [int(v) for v in out]
+                if children:
+                    return children, False
+        # EPHEMERAL: no repository on this path (a bare arena, a fork, a
+        # read-only replay). The children live for this turn only; the
+        # receipt says so via fit_split_ephemeral=True.
+        parent = self.grafts[idx]
+        text = str(parent.get("text", "") or "")
+        chunks = self._split_source_text_chunks(text, budget)
+        if len(chunks) <= 1:
+            return [], True
+        children = []
+        for chunk in chunks:
+            child_idx = self.deposit(chunk)
+            child = self.grafts[child_idx]
+            child["kind"] = parent.get("kind", "turn")
+            child["sources"] = [idx]
+            child["rare"] = self._rare_tokens(chunk)
+            child["tags"] = list(parent.get("tags", ()) or ())
+            child["ephemeral_split_of"] = idx
+            meta = dict(parent.get("metadata") or {})
+            meta.update({
+                "kind": child["kind"],
+                "active": True,
+                "culled_from": idx,
+                "width_guard": True,
+                "width_guard_budget": int(budget),
+                "width_guard_child": True,
+                "ephemeral": True,
+            })
+            child["metadata"] = meta
+            children.append(int(child_idx))
+        if children:
+            # The parent becomes the INDEX node for this turn: routable,
+            # never a reader, and _descent_expand("era") descends to the
+            # children the identifier picks out.
+            parent["kind"] = "era"
+            parent["sources"] = list(children)
+            parent["ephemeral_split"] = True
+            rare = set(parent.get("rare") or self._rare_tokens(text))
+            for child_idx in children:
+                rare |= set(self.grafts[child_idx]["rare"])
+            parent["rare"] = rare
+            self._bump_cuda_gqa_epoch()
+        return children, True
+
+    def _identifier_bearing_children(self, idx, user_text, qrare, fallback,
+                                     *, with_binding_flag=False):
+        """Which chunks of a split node the probe's identifier actually binds.
+
+        LSR-P2C.  ``_descent_source_children`` filters by
+        ``qrare & child["rare"]`` — the CODE/NUMBER channel — and that channel
+        is EMPTY for the whole ADMISSION-PRUNE probe class: "What is the
+        current Meridian docket value?" contains no code-shaped token, so
+        ``_rare_tokens`` returns ``set()``, the filter cannot discriminate,
+        and the fallback returns every chunk in DOCUMENT ORDER — filler first.
+        MEASURED (LSR-P2C G2 Arm 1): the 86-token filler prefix was seated,
+        it grounded, and the turn ended before the chunk holding
+        ``Delta-4-Drift`` was ever read.
+
+        The LEXICAL identifier channel is the one that binds these probes, and
+        it is not a new rule: ``grm_admission.is_identifier_binding`` is the
+        FROZEN ADM1 predicate A-DEC already uses to decide which repository
+        nodes the identifier binds.  Applying the same predicate one level
+        down — to a split node's children — introduces no threshold and no new
+        law; it asks the existing question of the new candidates.
+
+        Order is preserved (document order among the binding chunks).  When
+        the predicate binds nothing, the rare-channel descent stands, then the
+        full chunk set.
+
+        ``with_binding_flag`` also returns whether any chunk actually BOUND
+        the identifier.  The caller needs that to decide rank: chunks that
+        bind may stand where their parent stood, but chunks that bind NOTHING
+        must never outrank a plan member that does.
+        """
+        children = [int(v) for v in fallback]
+        if not children:
+            return ([], False) if with_binding_flag else []
+        ordered, rare = ordered_identifier_tokens(self, user_text)
+        if ordered:
+            binding = [
+                index for index in children
+                if is_identifier_binding(
+                    candidate_text=str(
+                        self.grafts[index].get("text", "") or ""),
+                    ordered_identifier_tokens=ordered,
+                    rare_identifier_tokens=rare,
+                )
+            ]
+            if binding:
+                return (binding, True) if with_binding_flag else binding
+        descended = [
+            int(v) for v in self._descent_source_children(idx, qrare=qrare)]
+        out = descended or children
+        return (out, False) if with_binding_flag else out
+
     def step(self, user_text, ngen=48, deposit=True,
              stops=None, max_trips=0, defer_memory=False):
         """One conversation turn through the arena. max_trips > 0 enables
@@ -2584,6 +2801,137 @@ class ArenaCache:
         def fit(picks, plan=None):
             return list(fit_detail(picks, plan=plan)["fit_seated"])
 
+        # LSR-P2C Part 2: FIT-TIME DESCENT for legacy oversized nodes.
+        # A plan member whose own ntok exceeds the budget is UNSEATABLE: no
+        # fit and no plan-shuttle can seat it, and P2A's honest degrade still
+        # serves without the answer. Before degrading, SPLIT AND DESCEND —
+        # chunk the node and make its identifier-bearing children the plan
+        # head. This runs BEFORE the ladder is built so the descended head IS
+        # the head every rung is derived from.
+        split_parent = None
+        split_children = []
+        split_ephemeral = None
+        descended_head = []
+        chunk_trips = []
+        chunk_owed = []
+        split_head_binds = False
+        if rank_plan and self._lsr_fixes_enabled():
+            turn_budget = mountable_budget(
+                self,
+                recency_reserve=(
+                    0 if qrare else sum(self.grafts[i]["ntok"] for i in rec)),
+            )
+            unseatable_now = [
+                int(v) for v in rank_plan
+                if int(self.grafts[int(v)]["ntok"]) > turn_budget
+            ]
+            # One split per turn: the plan head is the member the turn is
+            # about, and splitting every unseatable member would multiply
+            # chunk trips past the registered cap.
+            for member in unseatable_now[:1]:
+                children, ephemeral = self._split_unseatable(
+                    member, turn_budget)
+                if not children:
+                    # Honest: nothing could be split. P2A's explicit degrade
+                    # remains the outcome and the receipt still says so.
+                    continue
+                split_parent = int(member)
+                split_children = [int(v) for v in children]
+                split_ephemeral = bool(ephemeral)
+                # The plan head becomes the IDENTIFIER-BEARING child set.
+                descended_head, head_binds = (
+                    self._identifier_bearing_children(
+                        member, user_text, qrare, split_children,
+                        with_binding_flag=True))
+                # SUBSTITUTE IN PLACE, never re-rank. The children stand
+                # exactly where their parent stood in the plan; promoting them
+                # to the head would demote a SEATABLE, higher-ranked plan
+                # member behind the chunks of an unseatable lower-ranked one.
+                # (Measured, LSR-P2C G2 Arm 1 first run on
+                # fresh_fact_controls: promoting the split competitor's
+                # children ahead of the answer node turned the passing
+                # sup_solace_fresh control into a refusal.)
+                split_head_binds = bool(head_binds)
+                was_head = (
+                    int(rank_plan[0]) == int(member) and bool(head_binds))
+                # A split whose chunks bind NOTHING does not enter the plan at
+                # all when the identifier binds some OTHER plan member. Those
+                # chunks are neither the answer nor useful filler, and a plan
+                # member is owed a SHUTTLE TRIP by Ruling 1.2 — so keeping
+                # them in the plan hands the turn to a competitor's filler
+                # when the real answer node fails grounding.
+                #   MEASURED (LSR-P2C G2 Arm 1, runs 3-5): the solace probe
+                #   planned [2, 1, 0]; neither chunk of the competitor binds
+                #   "solace key"; demoting them to [1, 0, 3, 4] still produced
+                #   fit_shuttle_trips [[0], [3], [4]] and trip 4 served the
+                #   competitor's Sable-0-Copper.
+                other_binds = bool(
+                    {int(v) for v in admission_profile[
+                        "identified_candidates"]}
+                    - {int(member)}
+                ) if admission_profile is not None else False
+                drop_chunks = bool(not head_binds and other_binds)
+                substituted = []
+                seen_plan = set()
+                trailing = []
+                for value in rank_plan:
+                    if int(value) == int(member):
+                        if drop_chunks:
+                            continue
+                        incoming = descended_head
+                        sink = substituted if head_binds else trailing
+                    else:
+                        incoming, sink = [int(value)], substituted
+                    for entry in incoming:
+                        # DE-DUPLICATE: a previous turn's persisted child can
+                        # already be a plan member in its own right, and
+                        # substituting its parent would list it twice
+                        # (measured: fit_planned = [4, 4] on
+                        # sup_reserve_tundra_ledger, rank_plan [2, 4]).
+                        if int(entry) not in seen_plan:
+                            sink.append(int(entry))
+                            seen_plan.add(int(entry))
+                rank_plan = [*substituted, *trailing]
+                head_picks = fit(rank_plan, plan=rank_plan)
+                if head_picks and was_head:
+                    # Only when the SPLIT MEMBER WAS THE PLAN HEAD does the
+                    # descended set take over the attempt head; otherwise the
+                    # existing ladder order stands and the children simply
+                    # join the plan at their parent's rank.
+                    attempts = [(sorted(head_picks), False),
+                                *[a for a in attempts
+                                  if sorted(a[0]) != sorted(head_picks)]]
+                    if precise is not None:
+                        precise = sorted(head_picks)
+                elif not head_picks:
+                    # Nothing co-fits at all: every chunk is served on its own
+                    # trip below.
+                    attempts = [a for a in attempts if a[0]]
+                # Chunks the head rung could not co-seat are owed their own
+                # trip, in DOCUMENT ORDER. They are APPENDED AFTER the ladder
+                # build below (which truncates to max_trips + 1), exactly the
+                # way P2A's plan-shuttle rungs are additive.
+                # Chunk trips exist to SERIALIZE the answer across the chunks
+                # of the node the probe is about.  A split whose chunks bind
+                # NOTHING is not that node: giving its chunks their own trips
+                # lets a competitor's filler ground the turn while the planned
+                # answer node goes unread (measured: sup_solace_fresh served
+                # the competitor's Sable-0-Copper from chunk trip 3).  Those
+                # chunks stay in the plan, at the back, and take a seat only
+                # if one is left over.
+                chunk_owed = (
+                    [int(v) for v in descended_head
+                     if int(v) not in set(head_picks)
+                     ][:chunk_trip_cap(descended_head)]
+                    if head_binds else []
+                )
+                # The split APPENDED grafts (persisted children, or ephemeral
+                # ones). `snap[5]` is the rollback watermark the shuttle uses
+                # to `del self.grafts[snap[5]:]` between trips — re-baseline
+                # it, or trip 1 would delete the very children this turn is
+                # about to mount.
+                snap = (*snap[:5], len(self.grafts))
+
         # budget: max_trips+1 attempts total. Ladder: primary (eras
         # pre-expanded) -> descent (digests expanded too) -> clean room on
         # the deepest mount set. Identifier queries keep precise-first.
@@ -2606,6 +2954,22 @@ class ArenaCache:
                 attempts[0][0], ("era",), qrare=qrare)), False)]
         else:
             attempts = [([], False)]
+
+        # LSR-P2C Part 2: CHUNK SHUTTLE. Chunks of the split node that the
+        # head rung could not co-seat get their own trip, in DOCUMENT ORDER,
+        # additive to max_trips and capped at chunk_trip_cap(chunks) — the
+        # cap registered before the gates. The answer is composed from the
+        # grounded trips; served_without_plan_head becomes true ONLY when
+        # every chunk trip fails grounding (attach_fit below reads
+        # seated_anywhere_now, which includes every chunk trip).
+        for chunk in chunk_owed:
+            trip_picks = fit([chunk], plan=[chunk])
+            if not trip_picks:
+                continue
+            rung = (sorted(trip_picks), False)
+            if rung not in attempts:
+                attempts.append(rung)
+                chunk_trips.append(list(rung[0]))
 
         # LSR-P2A Ruling 1.2: plan members that do not co-fit become SHUTTLE
         # trips — additive to max_trips, capped at len(rank_plan). The turn
@@ -2652,7 +3016,8 @@ class ArenaCache:
             unseatable = [
                 int(v) for v in plan_head_receipt.get("fit_unseatable", ())]
             seated_anywhere_now = seated_set | {
-                int(v) for trip in shuttle_trips for v in trip}
+                int(v) for trip in shuttle_trips for v in trip} | {
+                int(v) for trip in chunk_trips for v in trip}
             receipt = {
                 "fit_planned": list(rank_plan),
                 "fit_seated": sorted(seated_set),
@@ -2665,14 +3030,40 @@ class ArenaCache:
                     int(v) for v in rung.get("fit_dropped_filler", ())],
                 "fit_unseatable": unseatable,
             }
+            # LSR-P2C: after a split-and-descend the turn served WITH the plan
+            # head whenever a grounded trip seated any chunk of it — the
+            # answer is composed from the grounded trips, so
+            # served_without_plan_head is true ONLY when every chunk trip
+            # failed grounding.
+            #
+            # The chunk set counts as "the plan head" ONLY when the split
+            # member WAS the head and its chunks BOUND the identifier.  A
+            # demoted, non-binding chunk set is filler that happened to
+            # ground; calling that "served with the plan head" would be
+            # exactly the unlabeled substitution Ruling 1.4 forbids
+            # (measured: sup_solace_fresh served the competitor's
+            # Sable-0-Copper from chunk trip 3 while the planned answer node
+            # went unseated, and the receipt claimed the head was served).
+            head_served = bool(rank_plan) and int(rank_plan[0]) in seated_set
+            if (split_parent is not None and not head_served
+                    and split_head_binds):
+                head_served = bool(seated_set & set(descended_head))
             info.update(fit_info_fields(
                 receipt,
                 shuttle=bool(shuttle_trips),
                 shuttle_trips=shuttle_trips,
                 # Ruling 1.4: UNSEATABLE is an explicit degrade, never an
                 # unlabeled substitution.
-                served_without_plan_head=bool(
-                    rank_plan and int(rank_plan[0]) not in seated_set),
+                served_without_plan_head=bool(rank_plan and not head_served),
+            ))
+            # LSR-P2C receipt fields (all fit_-prefixed, so P2B persists them
+            # via ROUTE_RECEIPT_INFO_PREFIXES with no edit to grm_three_pass).
+            info.update(split_info_fields(
+                split_parent=split_parent,
+                split_children=split_children,
+                split_ephemeral=split_ephemeral,
+                descended_head=descended_head,
+                chunk_trips=chunk_trips,
             ))
             return info
 

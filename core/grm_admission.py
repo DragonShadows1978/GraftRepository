@@ -468,6 +468,96 @@ def identifier_unbound_abstention(
     }
 
 
+# ---------------------------------------------------------------------------
+# GRM-LSR-P2C — unseatable nodes: split at deposit, descend at fit
+#
+# P2A made the fit stage honest and found that Ruling 1 alone cannot flip the
+# four ADMISSION-PRUNE probes: their answer-bearing nodes (623-706 chars)
+# exceed the 96-seat arena ALONE, so ``fit_unseatable`` is non-empty and the
+# shuttle has nothing to serialize.  Explicit degrade is honest, but it still
+# serves without the answer.
+#
+# The principle: the repository never holds a node the arena cannot mount,
+# and a node too long to seat is served ACROSS ITS CHUNKS, not replaced by a
+# neighbour.  Same shape as co-mount prevention: fix at deposit/admission,
+# never at readout.
+#
+# NO NEW CONSTANT.  ``mountable_budget`` is DERIVED from the arena's own
+# width and the recency reserve the arena already applies in ``fit``.
+# ---------------------------------------------------------------------------
+
+
+def mountable_budget(arena: Any, *, recency_reserve: int = 0) -> int:
+    """Seats a single node may occupy and still be mountable.
+
+    DERIVATION (registered before the P2C gates, artifacts/lsr_p2c/
+    lsr_p2c_registration.json):
+
+    * ``ArenaCache.__init__`` sets ``self.width = arena_width`` and
+      ``live_shift = self.n_sink + arena_width``.  The SINK occupies its own
+      ``n_sink`` positions BELOW the arena band and the question/answer live
+      tokens occupy positions at or above ``live_shift``.  Neither consumes a
+      mount seat, so the sink/question reserve against the MOUNT budget is
+      structurally ZERO.
+    * The only reserve the arena subtracts is in
+      ``graft_arena.step()::fit_detail``:
+      ``rec_budget = 0 if qrare else sum(grafts[i]["ntok"] for i in rec)``,
+      ``budget = self.width - rec_budget`` — the ephemeral recency mounts.
+      It is zero for identifier queries (the whole ADMISSION-PRUNE class) and
+      zero for every non-ephemeral arena.
+    * ``grm_e2e_session._probe_ladder_chat::_fit_for`` and
+      ``_budget_fit_mounts`` use ``int(arena.width)`` with no reserve at all.
+
+    So ``mountable_budget = arena.width - recency_reserve``, and the deposit
+    guard (which has no question in hand, hence no recency reserve to know)
+    uses the reserve-free form.
+    """
+    width = int(getattr(arena, "width", 0))
+    return max(0, width - int(recency_reserve))
+
+
+def chunk_trip_cap(chunks: Sequence[Any]) -> int:
+    """Registered hard cap on ADDITIVE chunk-shuttle trips: ``len(chunks)``.
+
+    A node split at fit time is served across its chunks in document order;
+    this is the ceiling on how many such trips a turn may add, fixed before
+    the P2C gates ran and never tuned against a result.  It is the exact
+    analogue of ``shuttle_trip_cap`` one level down: the plan shuttles over
+    plan members, the chunk shuttle over one member's chunks.
+    """
+    return len(list(chunks))
+
+
+def split_info_fields(
+    *,
+    split_parent: int | None = None,
+    split_children: Sequence[int] = (),
+    split_ephemeral: bool | None = None,
+    descended_head: Sequence[int] = (),
+    chunk_trips: Sequence[Sequence[int]] = (),
+) -> dict[str, Any]:
+    """The P2C receipt fields, all ``fit_``-prefixed.
+
+    NEVER SILENT, the same law P2A's ``fit_info_fields`` obeys: a turn that
+    split-and-descended says so, naming the parent it split, the children it
+    produced, whether that split was persisted or ephemeral, the child set
+    that became the plan head, and every chunk trip it composed from.
+
+    ``fit_``-prefixed by contract: ``grm_three_pass.ROUTE_RECEIPT_INFO_PREFIXES``
+    is ``("fit_", "abstain")``, so P2B persists every field here for free and
+    ``core/grm_three_pass.py`` needs no edit.
+    """
+    return {
+        "fit_split_parent": (
+            None if split_parent is None else int(split_parent)),
+        "fit_split_children": [int(v) for v in split_children],
+        "fit_split_ephemeral": (
+            None if split_ephemeral is None else bool(split_ephemeral)),
+        "fit_descended_head": [int(v) for v in descended_head],
+        "fit_chunk_trips": [[int(v) for v in trip] for trip in chunk_trips],
+    }
+
+
 def admission_info_fields(profile: Mapping[str, Any]) -> dict[str, Any]:
     """Compact deterministic arena receipt fields for a selected plan."""
     return {
