@@ -841,10 +841,45 @@ def summarize(session_receipts: Sequence[Path]) -> dict[str, Any]:
     }
 
 
+def summarize_ten_pairs(
+    sc1_1_summary_path: Path,
+    sc1_2_pair_receipts: Sequence[Path],
+) -> dict[str, Any]:
+    """SC1.2: merge this order's 3 standalone pairs with SC1.2's 7 E2E pairs.
+
+    This is the ONE extension SC1.2's file boundary permits in this module,
+    and it is deliberately a DELEGATION: the merge rule, the exclusion rule
+    and the floor rule all live in ``grm_sc1_2_session.ten_pair_table``, so
+    there is exactly one implementation of "how the ten pairs are counted"
+    rather than two that can drift.
+
+    The three SC1/SC1.1 rows are read from the FROZEN SC1.1 summary, never
+    re-measured here: they are already evidence.
+    """
+    from scripts import grm_sc1_2_session as sc12
+
+    results = [
+        _read(Path(path))["result"] for path in sc1_2_pair_receipts]
+    table = sc12.ten_pair_table(results, _read(Path(sc1_1_summary_path)))
+    table["gate"] = "G3"
+    table["sc1_1_source"] = file_record(Path(sc1_1_summary_path))
+    table["sc1_2_pair_receipts"] = [
+        file_record(Path(p)) for p in sc1_2_pair_receipts]
+    table["merge_owner"] = (
+        "grm_sc1_2_session.ten_pair_table -- one counting rule, delegated to, "
+        "never duplicated here")
+    return table
+
+
 def emit(payload: Mapping[str, Any], stem: str) -> Path:
     # SC1.1 stems are written under artifacts/grm_sc1_1/ so this order's
     # receipts never mix with the frozen SC1 evidence they are compared to.
-    out_dir = SC1_1_ARTIFACT_DIR if stem.startswith("sc1_1_") else ARTIFACT_DIR
+    if stem.startswith("sc1_2_"):
+        out_dir = ROOT / "artifacts" / "grm_sc1_2"
+    elif stem.startswith("sc1_1_"):
+        out_dir = SC1_1_ARTIFACT_DIR
+    else:
+        out_dir = ARTIFACT_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
     body = canonical_json_bytes(payload)
     digest = sha256_bytes(body)
@@ -855,9 +890,13 @@ def emit(payload: Mapping[str, Any], stem: str) -> Path:
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("plan", "session", "summarize"))
+    parser.add_argument(
+        "command", choices=("plan", "session", "summarize", "summarize10"))
     parser.add_argument("--session-id", default=None)
     parser.add_argument("--receipts", nargs="*", default=())
+    parser.add_argument(
+        "--sc1-2-receipts", nargs="*", default=(),
+        help="SC1.2 per-pair receipts for the merged 10-pair table")
     parser.add_argument("--lease-seconds", type=int, default=LEASE_SECONDS)
     parser.add_argument("--lock-wait-seconds", type=int,
                         default=LOCK_WAIT_SECONDS)
@@ -874,6 +913,27 @@ def main(argv: Sequence[str] | None = None) -> int:
             "pairs": {k: [f["fixture_id"] for f in v] for k, v in plan.items()},
         }, indent=1))
         return 0
+    if args.command == "summarize10":
+        if len(args.receipts) != 1:
+            raise SC1Error(
+                "summarize10 takes exactly one --receipts value: the SC1.1 "
+                "3-pair summary to merge SC1.2's E2E pairs into")
+        payload = summarize_ten_pairs(
+            Path(args.receipts[0]),
+            [Path(p) for p in args.sc1_2_receipts])
+        path = emit(payload, "sc1_2_ten_pair_table")
+        print(f"receipt={path}")
+        print(f"rows={payload['rows_present']} "
+              f"positives={payload['measured_positives']} "
+              f"negatives={payload['measured_negatives']}")
+        print(f"recall={payload['detection_recall']} "
+              f"fp={payload['false_fires_on_served_controls']} "
+              f"recovered={payload['recovered']} "
+              f"gate_pass={payload['gate_pass']}")
+        for row in payload["table"]:
+            print(json.dumps(row))
+        return 0 if payload["gate_pass"] else 1
+
     if args.command == "summarize":
         payload = summarize([Path(p) for p in args.receipts])
         path = emit(payload, "sc1_1_g2_summary")
