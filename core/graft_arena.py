@@ -25,6 +25,7 @@ Position law: live token positions = live_shift + running counter, where
 live_shift = n_sink + arena_width is FIXED for the cache's lifetime (the
 `live_shift` attribute on MLAAttentionTC — decoupled from mount size).
 """
+import contextlib
 import gc
 import os
 import re
@@ -39,6 +40,7 @@ from core.graft_quant import (
 )
 from core.grm_supersession import sup_resolve_enabled
 from core import grm_demand
+from core.grm_text_norm import normalize_glyphs
 from core.grm_admission import (
     admission_info_fields,
     adm_decisive_enabled,
@@ -1604,11 +1606,66 @@ class ArenaCache:
             remaining -= len(clean)
         return " ".join(parts)
 
+    #: SC1.1 -- a ONE-CALL override of the glyph switch, set only by
+    #: ``_grounding_verdict``'s explicit-mode contextmanager.  ``None`` means
+    #: "read the switch", which is what every other caller gets.  It exists
+    #: because the grounding receipt must compute the LEGACY counterfactual
+    #: while the switch is ON, and because ``_rare_tokens``/``_caps_tokens``
+    #: are single-argument stub seams across the suite (seven fixtures
+    #: replace them with one-argument lambdas) -- widening their signatures
+    #: to carry the flag would break every one of them.
+    _glyph_norm_override = None
+
+    @staticmethod
+    @contextlib.contextmanager
+    def _glyph_norm(normalized):
+        """Force the glyph projection on or off for the enclosed block.
+
+        Restores the previous value on exit, including on exception, so a
+        raised grounding call can never leave the override latched.
+        """
+        previous = ArenaCache._glyph_norm_override
+        ArenaCache._glyph_norm_override = (
+            None if normalized is None else bool(normalized))
+        try:
+            yield
+        finally:
+            ArenaCache._glyph_norm_override = previous
+
+    @staticmethod
+    def _norm_text(text):
+        """SC1.1: project the two REGISTERED glyph classes, switch-gated.
+
+        ON (``GRM_LSR_FIXES`` default) applies ``normalize_glyphs`` — U+2010/
+        U+2011 collapse to "-" and paired Markdown emphasis is stripped —
+        so the lexical channels obey the same principle the DET1 value
+        comparator does: *value comparison is semantics, not glyphs*.
+        Measured cause: the model emits "Quartz‑8‑Jade" (U+2011) and the
+        token class ``[A-Za-z0-9][\\w:.,\\-]*`` shatters it into {"8"},
+        while the mounted node's ASCII "Quartz-8-Jade" tokenizes whole, so a
+        CORRECT answer failed ``content <= have`` (SC1 G3: recovery 0/2 with
+        ``recovery_blocked_by_grounding_only = 2``).
+
+        OFF is byte-identical legacy behavior: ``normalize_glyphs`` is not
+        called at all, so the P2C Arm-0 reproduction arm is untouched.
+
+        ``_glyph_norm_override`` (set only by ``_glyph_norm``) wins over the
+        switch for the enclosed block.  Nothing else may set it: the switch
+        is the law everywhere outside grounding's own counterfactual.
+        """
+        normalized = ArenaCache._glyph_norm_override
+        if normalized is None:
+            normalized = ArenaCache._lsr_fixes_enabled()
+        if not normalized:
+            return text
+        return normalize_glyphs(text)
+
     @staticmethod
     def _rare_tokens(text):
         """Code/number-shaped tokens — the verbatim payload a digest must
         preserve. Mechanically checkable: the librarian holds the sources."""
         out = set()
+        text = ArenaCache._norm_text(text)
         # ',' inside the token class keeps "7,400" whole — fragmenting it
         # made a CORRECT answer fail grounding (descent diag, 2026-06-10)
         for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text):
@@ -2224,8 +2281,13 @@ class ArenaCache:
     @staticmethod
     def _caps_tokens(text, skip_sentence_initial=True):
         """Proper-noun-ish tokens: capitalized words, optionally excluding
-        sentence starters (for answers; sources keep everything)."""
+        sentence starters (for answers; sources keep everything).
+
+        SC1.1: the same switch-gated glyph projection ``_rare_tokens`` takes.
+        ``normalize_glyphs`` deliberately does NOT casefold — this channel is
+        case-bearing and casefolding its input would empty it."""
         out = set()
+        text = ArenaCache._norm_text(text)
         for sent in re.split(r"[.!?\n]+", text):
             ws = sent.split()
             for j, w in enumerate(ws):
@@ -2235,16 +2297,31 @@ class ArenaCache:
                     out.add(w.lower().rstrip(".,;:"))
         return out
 
-    def _grounding_attribution(self, ans, mount_idxs, question):
-        """Return ``(pooled_grounded, contributing_mounts)``.
+    def _grounding_verdict(self, ans, mount_idxs, question, *, normalized):
+        """Grounding v3's pooled coverage, with the glyph projection EXPLICIT.
 
-        This is a pure split of grounding v3's existing pooled coverage
-        calculation.  ``pooled_grounded`` deliberately follows the former
-        ``_grounded`` branches and set operations exactly; the additional
-        per-mount sets only identify which mounted sources supplied at least
-        one token to the coverage set after that pooled verdict succeeds.
-        No routing, model forward, or token machinery is introduced here.
+        ``normalized=False`` is the legacy path byte-for-byte: no
+        ``normalize_glyphs`` call anywhere on it.  ``normalized=True`` runs
+        the identical branches over glyph-projected text (SC1.1).  The two
+        modes are the SAME code, so they cannot drift, and
+        ``_grounding_receipt`` evaluates both to fill
+        ``grounding_glyph_rescued``.
+
+        The flag is carried by ``_glyph_norm`` rather than by a widened
+        tokenizer signature: ``_rare_tokens``/``_caps_tokens`` are
+        single-argument stub seams that fixtures across the suite replace
+        with one-argument lambdas, and this method must not break them.
         """
+        with self._glyph_norm(normalized):
+            return self._grounding_verdict_inner(ans, mount_idxs, question)
+
+    def _grounding_verdict_inner(self, ans, mount_idxs, question):
+        """The v3 branches verbatim, run under whatever projection is in
+        force.  Split out only so ``_glyph_norm`` wraps every token call --
+        including the ones inside a stubbed ``_rare_tokens``."""
+        norm = self._norm_text
+        ans = norm(ans)
+        question = norm(question)
         a = ans.lower()
         if any(h in a for h in self.HEDGES):
             return False, set()
@@ -2268,7 +2345,7 @@ class ArenaCache:
         words = set()
         per_mount_words = {}
         for i in mount_idxs:
-            t = self.grafts[i]["text"]
+            t = norm(self.grafts[i]["text"])
             mount_content = self._rare_tokens(t) | self._caps_tokens(t, False)
             mount_words = {w.lower().rstrip(".,:;") for w in t.split()}
             per_mount_content[i] = mount_content
@@ -2295,6 +2372,58 @@ class ArenaCache:
         contributors = {i for i in mount_idxs
                         if content & per_mount_content[i]}
         return True, contributors
+
+    def _grounding_receipt(self, ans, mount_idxs, question, info):
+        """Stamp SC1.1's two grounding-receipt fields onto ``info``.
+
+        Kept SEPARATE from ``_grounding_attribution`` on purpose: that method
+        is a documented seam that fixtures across the suite replace with a
+        three-argument stub, and widening its signature would break every one
+        of them for a receipt they do not exercise.  This runs alongside the
+        verdict instead, over the same already-generated text -- pure set
+        arithmetic, no forward, no routing, no state mutation.
+
+        ``grounding_normalized`` says whether the glyph projection was in
+        force.  ``grounding_glyph_rescued`` is True only when the normalized
+        verdict is True AND the legacy verdict would have been False: the
+        turn served BECAUSE the projection landed.  Both verdicts are
+        computed with an explicit flag, never by reading the env twice, so
+        the counterfactual is real while the switch is ON.
+        """
+        if info is None:
+            return
+        normalized = bool(self._lsr_fixes_enabled())
+        rescued = False
+        if normalized:
+            new_verdict, _nc = self._grounding_verdict(
+                ans, mount_idxs, question, normalized=True)
+            if new_verdict:
+                legacy, _lc = self._grounding_verdict(
+                    ans, mount_idxs, question, normalized=False)
+                rescued = not legacy
+        info["grounding_normalized"] = bool(normalized)
+        info["grounding_glyph_rescued"] = bool(rescued)
+
+    def _grounding_attribution(self, ans, mount_idxs, question):
+        """Return ``(pooled_grounded, contributing_mounts)``.
+
+        This is a pure split of grounding v3's existing pooled coverage
+        calculation.  ``pooled_grounded`` deliberately follows the former
+        ``_grounded`` branches and set operations exactly; the additional
+        per-mount sets only identify which mounted sources supplied at least
+        one token to the coverage set after that pooled verdict succeeds.
+        No routing, model forward, or token machinery is introduced here.
+
+        SC1.1: the verdict is the NORMALIZED one when the LSR fixes switch is
+        ON and the legacy one when it is OFF — the switch is the only thing
+        that decides.  The receipt that names WHICH ran, and whether the
+        projection is what let the turn serve, is stamped by the separate
+        ``_grounding_receipt`` (this signature stays three-argument so the
+        suite's grounding stubs keep working).
+        """
+        return self._grounding_verdict(
+            ans, mount_idxs, question,
+            normalized=bool(self._lsr_fixes_enabled()))
 
     def _grounded(self, ans, mount_idxs, question):
         """Compatibility wrapper: pooled verdict is unchanged."""
@@ -3216,8 +3345,13 @@ class ArenaCache:
             # 4. A refire on the demand trip is RECORDED, never acted on.
             refire = grm_demand.decide(
                 list(demand_state["rows"]), float(demand_threshold))
+            # SC1.1: the grounding receipt for the DEMAND TRIP's verdict —
+            # this is the verdict SC1 measured as blocking recovery 2/2.
+            grounding_fields = {}
             d_grounded, d_contributors = self._grounding_attribution(
                 d_txt, demand_mset, user_text)
+            self._grounding_receipt(
+                d_txt, demand_mset, user_text, grounding_fields)
             fields = grm_demand.demand_info_fields(
                 supported=True, decision=decision,
                 served="demand_trip" if d_grounded else "original",
@@ -3231,6 +3365,10 @@ class ArenaCache:
                 trip_taken=True,
                 trip_grounded=bool(d_grounded),
             )
+            # Both branches below apply ``fields``, so folding the grounding
+            # receipt in here carries it whether the trip serves or is
+            # rejected — the rejection is exactly the case SC1 needed named.
+            fields.update(grounding_fields)
             if d_grounded:
                 d_info = dict(d_info or {})
                 d_info["trip"] = int(trip)
@@ -3297,6 +3435,7 @@ class ArenaCache:
                 info["clean_room"] = True
             grounded, contributors = self._grounding_attribution(
                 txt, mset, user_text)
+            self._grounding_receipt(txt, mset, user_text, info)
             if grounded:
                 # SC1: the turn is about to serve. If D-NGH fired on THIS
                 # attempt, roll back and take the one registered demand trip

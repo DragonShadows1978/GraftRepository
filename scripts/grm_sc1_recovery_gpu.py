@@ -68,11 +68,15 @@ from scripts.grm_cmc1_mechanism import (  # noqa: E402
 from scripts.grm_det1_common import contains_value, file_record  # noqa: E402
 
 ARTIFACT_DIR = ROOT / "artifacts" / "grm_sc1"
+#: SC1.1 receipts land in their OWN directory; SC1's are frozen evidence.
+SC1_1_ARTIFACT_DIR = ROOT / "artifacts" / "grm_sc1_1"
 SCHEMA_PREFIX = "grm.sc1"
 FROZEN_RUN = ROOT / "artifacts" / "grm_det1" / "run_20260831T160525Z_2"
 RUNTIME_FRAME = FROZEN_RUN / "runtime_frame_28b3196f8fb04a41.json"
 REGISTRATION = ARTIFACT_DIR / "grm_sc1_registration.json"
 ORDER = ROOT / "orders" / "GRM_SC1_DEMAND_LOOP_NGH.md"
+SC1_1_ORDER = ROOT / "orders" / "GRM_SC1_1_GROUNDING_GLYPHS.md"
+SC1_1_REGISTRATION = SC1_1_ARTIFACT_DIR / "registration.json"
 SUP_FIXTURES = ROOT / "tests" / "fixtures" / "supersession_battery"
 EVAL_ROWS = FROZEN_RUN / "det1_4" / "campaign" / "eval" / "mechanistic_rows.jsonl"
 #: The FROZEN race registration. Read-only here; it carries the model
@@ -264,8 +268,27 @@ def _demand_trip_after_fork(
     refire_rows = observer.finish()
     refire = grm_demand.decide(refire_rows, float(threshold))
     mounted_after = [int(v) for v in arena.cur_mounts]
+    # SC1.1: the glyph receipt for the verdict that blocked recovery 2/2 in
+    # SC1. Both verdicts are computed (pure set arithmetic over already
+    # generated text), so the receipt can say WHETHER the projection is what
+    # let the trip serve, instead of leaving the reader to infer it.
+    grounding_fields: dict[str, Any] = {}
     grounded, contributors = arena._grounding_attribution(
         answer, mounted_after, question)
+    arena._grounding_receipt(
+        answer, mounted_after, question, grounding_fields)
+    legacy_grounded, _legacy_contributors = arena._grounding_verdict(
+        answer, mounted_after, question, normalized=False)
+    normalized_grounded, _norm_contributors = arena._grounding_verdict(
+        answer, mounted_after, question, normalized=True)
+    trip.update({
+        "demand_trip_grounding_normalized": bool(
+            grounding_fields.get("grounding_normalized")),
+        "demand_trip_grounding_glyph_rescued": bool(
+            grounding_fields.get("grounding_glyph_rescued")),
+        "demand_trip_grounded_legacy": bool(legacy_grounded),
+        "demand_trip_grounded_normalized": bool(normalized_grounded),
+    })
     trip.update({
         "demand_trip_taken": True,
         "demand_trip_answer": str(answer),
@@ -610,6 +633,9 @@ def run_session(session_id: str) -> dict[str, Any]:
     # The demand loop is ON for this gate. Set it explicitly rather than
     # relying on inheritance, so the receipt can state what ran.
     os.environ["GRM_DEMAND_NGH"] = "1"
+    # SC1.1: the fixes switch is what gates the glyph projection. G2 is the
+    # fixes-ON arm, stated explicitly for the same reason.
+    os.environ["GRM_LSR_FIXES"] = "1"
 
     repo_dir = Path(tempfile.mkdtemp(prefix=f"sc1_g3_{session_id}_"))
     snapshot_root = repo_dir / "snapshots"
@@ -649,6 +675,9 @@ def run_session(session_id: str) -> dict[str, Any]:
         "session_id": session_id,
         "order": file_record(ORDER),
         "registration": file_record(REGISTRATION),
+        "sc1_1_order": file_record(SC1_1_ORDER),
+        "sc1_1_registration": file_record(SC1_1_REGISTRATION),
+        "lsr_fixes_env": os.environ.get("GRM_LSR_FIXES"),
         "demand_flag": os.environ.get("GRM_DEMAND_NGH"),
         "carried_threshold": float(threshold),
         "carried_threshold_caveat": str(registered["caveat"]),
@@ -676,6 +705,7 @@ def run_session(session_id: str) -> dict[str, Any]:
             "grm_e2e_session": file_record(
                 ROOT / "scripts" / "grm_e2e_session.py"),
             "grm_sc1_recovery_gpu": file_record(Path(__file__).resolve()),
+            "grm_text_norm": file_record(ROOT / "core" / "grm_text_norm.py"),
         },
     }
 
@@ -707,6 +737,9 @@ def summarize(session_receipts: Sequence[Path]) -> dict[str, Any]:
         recall is not None and recall >= 0.9 and fp <= 1)
     return {
         "schema": f"{SCHEMA_PREFIX}.g3_summary.v1",
+        # SC1.1 extends this receipt ADDITIVELY: every SC1 field keeps its
+        # name, type and meaning, and the glyph block is new alongside them.
+        "schema_extension": "grm.sc1_1.grounding_glyph_receipts.v1",
         "gate": "G3",
         "pair_count": len(rows),
         "measured_positives": len(positives),
@@ -726,6 +759,12 @@ def summarize(session_receipts: Sequence[Path]) -> dict[str, Any]:
         # in front of it disagreed with the comparator.
         "recovery_blocked_by_grounding_only": blocked,
         "recovery_if_grounding_matched_the_comparator": recovered + blocked,
+        # SC1.1: how many planted-miss trips grounded ONLY because the glyph
+        # projection landed. Registered prediction: 2 of 2.
+        "recovery_glyph_rescued": sum(
+            1 for r in positives
+            if ((r["arms"]["planted_miss"].get("demand_trip") or {}).get(
+                "demand_trip_grounding_glyph_rescued"))),
         "grounding_separator_artifact_note": (
             "Pre-existing class, named in the DET1.11 census "
             "(separator_artifact_rescued). NOT introduced by SC1 and NOT "
@@ -762,6 +801,23 @@ def summarize(session_receipts: Sequence[Path]) -> dict[str, Any]:
                     "demand_trip") or {}).get("demand_trip_answer"),
                 "planted_trip_grounded": ((r["arms"].get("planted_miss") or {}).get(
                     "demand_trip") or {}).get("demand_trip_grounded"),
+                # SC1.1: the glyph receipt for the trip's grounding verdict.
+                "planted_trip_grounded_legacy": (
+                    ((r["arms"].get("planted_miss") or {}).get(
+                        "demand_trip") or {}).get(
+                            "demand_trip_grounded_legacy")),
+                "planted_trip_grounded_normalized": (
+                    ((r["arms"].get("planted_miss") or {}).get(
+                        "demand_trip") or {}).get(
+                            "demand_trip_grounded_normalized")),
+                "planted_trip_grounding_normalized": (
+                    ((r["arms"].get("planted_miss") or {}).get(
+                        "demand_trip") or {}).get(
+                            "demand_trip_grounding_normalized")),
+                "planted_trip_grounding_glyph_rescued": (
+                    ((r["arms"].get("planted_miss") or {}).get(
+                        "demand_trip") or {}).get(
+                            "demand_trip_grounding_glyph_rescued")),
                 "planted_trip_answer_correct": (
                     ((r["arms"].get("planted_miss") or {}).get(
                         "trip_answer_verdict") or {}).get("correct")),
@@ -786,10 +842,13 @@ def summarize(session_receipts: Sequence[Path]) -> dict[str, Any]:
 
 
 def emit(payload: Mapping[str, Any], stem: str) -> Path:
-    ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
+    # SC1.1 stems are written under artifacts/grm_sc1_1/ so this order's
+    # receipts never mix with the frozen SC1 evidence they are compared to.
+    out_dir = SC1_1_ARTIFACT_DIR if stem.startswith("sc1_1_") else ARTIFACT_DIR
+    out_dir.mkdir(parents=True, exist_ok=True)
     body = canonical_json_bytes(payload)
     digest = sha256_bytes(body)
-    path = ARTIFACT_DIR / f"{stem}_{digest[:16]}.json"
+    path = out_dir / f"{stem}_{digest[:16]}.json"
     path.write_bytes(body)
     return path
 
@@ -817,7 +876,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
     if args.command == "summarize":
         payload = summarize([Path(p) for p in args.receipts])
-        path = emit(payload, "sc1_g3_summary")
+        path = emit(payload, "sc1_1_g2_summary")
         print(f"receipt={path}")
         print(f"gate_pass={payload['gate_pass']}")
         print(f"recall={payload['detection_recall']}")
@@ -834,7 +893,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     with gpu_lease(int(args.lease_seconds), int(args.lock_wait_seconds)):
         payload = run_session(str(args.session_id))
-    path = emit(payload, f"sc1_g3_{args.session_id}")
+    path = emit(payload, f"sc1_1_g2_{args.session_id}")
     print(f"receipt={path}")
     for pair in payload["pairs"]:
         planted = pair["arms"].get("planted_miss") or {}

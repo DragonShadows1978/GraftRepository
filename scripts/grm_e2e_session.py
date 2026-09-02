@@ -640,6 +640,21 @@ def lsr_fixes_enabled(explicit: bool | None = None) -> bool:
     return True
 
 
+def _stamp_grounding_receipt(arena, ans, picks, user_text, info) -> None:
+    """SC1.1: stamp the glyph receipt when the arena can produce one.
+
+    The driver is called with FAKE arenas by several fixtures (a namespace
+    carrying only the handful of attributes the ladder touches).  The receipt
+    is a receipt, not a verdict -- an arena that cannot compute it simply
+    does not get the two fields, and nothing about serving changes.  A real
+    ``ArenaCache`` always can.
+    """
+    stamp = getattr(arena, "_grounding_receipt", None)
+    if stamp is None:
+        return
+    stamp(ans, picks, user_text, info)
+
+
 def _budget_fit_mounts(arena, picks: list[int]) -> list[int]:
     """Pack mounts into arena.width in the given order (rank order)."""
     budget = int(arena.width)
@@ -1629,8 +1644,14 @@ def _probe_ladder_chat(
                 user_text, demand_picks, int(ngen), True, stops)
         refire = grm_demand.decide(
             list(demand_state["rows"]), float(demand_threshold))
+        # SC1.1: the demand trip's own grounding receipt. Both branches below
+        # apply ``fields``, so the receipt travels whether the trip serves or
+        # is rejected.
+        grounding_fields: dict[str, Any] = {}
         d_grounded, _dc = arena._grounding_attribution(
             d_ans, demand_picks, user_text)
+        _stamp_grounding_receipt(
+            arena, d_ans, demand_picks, user_text, grounding_fields)
         fields = grm_demand.demand_info_fields(
             **base_fields,
             served="demand_trip" if d_grounded else "original",
@@ -1640,6 +1661,7 @@ def _probe_ladder_chat(
             trip_taken=True,
             trip_grounded=bool(d_grounded),
         )
+        fields.update(grounding_fields)
         if d_grounded:
             d_info = dict(d_info or {})
             d_info["trip"] = int(trip)
@@ -1698,12 +1720,18 @@ def _probe_ladder_chat(
             info["clean_room"] = True
         grounded, _contributors = arena._grounding_attribution(
             ans, picks, user_text)
+        _stamp_grounding_receipt(arena, ans, picks, user_text, info)
         trip_rows.append({
             "ordinal": int(trip),
             "clean_room": bool(clean),
             "planned": [int(v) for v in planned],
             "mount_set": [int(v) for v in picks],
             "grounded": bool(grounded),
+            # SC1.1: per-rung glyph receipt, so a rung that grounded ONLY
+            # because of the projection is visible in the ladder trace.
+            "grounding_normalized": bool(info.get("grounding_normalized")),
+            "grounding_glyph_rescued": bool(
+                info.get("grounding_glyph_rescued")),
             # LSR-P2A Ruling 1.2 rungs are additive to max_trips; naming them
             # keeps a reader from mistaking a shuttle rung for a normal trip.
             "shuttle": [int(v) for v in planned] in shuttle_trips,

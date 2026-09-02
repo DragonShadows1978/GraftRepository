@@ -49,9 +49,13 @@ from scripts.grm_det1_common import file_record  # noqa: E402
 from scripts import lsr_p2c_replay_gpu as p2c  # noqa: E402
 
 ARTIFACT_DIR = ROOT / "artifacts" / "grm_sc1"
+#: SC1.1 receipts land in their OWN directory; SC1's are frozen evidence.
+SC1_1_ARTIFACT_DIR = ROOT / "artifacts" / "grm_sc1_1"
 SCHEMA_PREFIX = "grm.sc1"
 REGISTRATION = ARTIFACT_DIR / "grm_sc1_registration.json"
+SC1_1_REGISTRATION = SC1_1_ARTIFACT_DIR / "registration.json"
 ORDER = ROOT / "orders" / "GRM_SC1_DEMAND_LOOP_NGH.md"
+SC1_1_ORDER = ROOT / "orders" / "GRM_SC1_1_GROUNDING_GLYPHS.md"
 LEASE_SECONDS = 580
 LOCK_WAIT_SECONDS = 7200
 
@@ -64,13 +68,22 @@ def _info_fields(info: Mapping[str, Any]) -> dict[str, Any]:
     out = {key: info[key] for key in _INFO_KEYS if key in info}
     out.update({
         key: value for key, value in info.items()
-        if str(key).startswith("demand_")
+        # SC1.1 adds the ``grounding_`` block alongside SC1's ``demand_``
+        # block; the P2C projection drops both, so widen it here rather than
+        # touching the read-only P2C instrument.
+        if str(key).startswith(("demand_", "grounding_"))
     })
     return out
 
 
-def serve_fixture(session_id: str) -> dict[str, Any]:
-    """P2C's Arm 1 replay, demand ON, with the demand block kept."""
+def serve_fixture(session_id: str, demand: bool = True) -> dict[str, Any]:
+    """P2C's Arm 1 replay, with the demand and grounding blocks kept.
+
+    SC1.1 G3 runs BOTH demand arms (OFF and ON) with the fixes ON: the glyph
+    projection sits in grounding, which the demand loop only consults, so the
+    demand-OFF arm is the one that shows the projection's effect on the plain
+    serving path with nothing else moving.
+    """
     from scripts.grm_det1_2_gpu import _load_model_repo
     from scripts.grm_det1_3_gpu import _install_lived_nodes
 
@@ -81,10 +94,11 @@ def serve_fixture(session_id: str) -> dict[str, Any]:
 
     # Arm 1 conditions: the P2A+P2C fixes ON, exactly as P2C's G2 ran them.
     os.environ["GRM_LSR_FIXES"] = "1"
-    # The one thing this gate changes.
-    os.environ["GRM_DEMAND_NGH"] = "1"
+    # The one thing this gate changes (SC1.1 runs it both ways).
+    os.environ["GRM_DEMAND_NGH"] = "1" if demand else "0"
 
-    repo_dir = Path(tempfile.mkdtemp(prefix=f"sc1_g4_{session_id}_"))
+    repo_dir = Path(tempfile.mkdtemp(
+        prefix=f"sc1_1_g3_{session_id}_{int(bool(demand))}_"))
     served: list[dict[str, Any]] = []
     repo = model = tokenizer = None
     model_info: Any = None
@@ -105,6 +119,17 @@ def serve_fixture(session_id: str) -> dict[str, Any]:
             )
             elapsed = int(time.time_ns() - started)
             fields = _info_fields(info)
+            # SC1.1 G3: the per-probe legacy-vs-normalized grounding verdict,
+            # recomputed on the SERVED answer against the mounts it was
+            # actually read from. Pure set arithmetic over already generated
+            # text -- no forward, no routing, no state mutation.
+            served_mounts = [int(v) for v in repo.arena.cur_mounts]
+            legacy_grounded, _lc = repo.arena._grounding_verdict(
+                str(answer), served_mounts, str(probe["question"]),
+                normalized=False)
+            normalized_grounded, _nc = repo.arena._grounding_verdict(
+                str(answer), served_mounts, str(probe["question"]),
+                normalized=True)
             verdict = p2c.answer_verdict(
                 answer,
                 expected_values=probe["expected_values"],
@@ -127,7 +152,15 @@ def serve_fixture(session_id: str) -> dict[str, Any]:
                 # Named here so the report does not have to infer it.
                 "false_fire": bool(
                     fields.get("demand_fired", False) and verdict["correct"]),
-                "mounted_ids": [int(v) for v in repo.arena.cur_mounts],
+                # SC1.1 G3 receipts.
+                "grounding_normalized": fields.get("grounding_normalized"),
+                "grounding_glyph_rescued": fields.get(
+                    "grounding_glyph_rescued"),
+                "grounded_legacy_recomputed": bool(legacy_grounded),
+                "grounded_normalized_recomputed": bool(normalized_grounded),
+                "glyph_rescued_recomputed": bool(
+                    normalized_grounded and not legacy_grounded),
+                "mounted_ids": served_mounts,
                 "elapsed_ns": elapsed,
             })
     finally:
@@ -147,6 +180,10 @@ def serve_fixture(session_id: str) -> dict[str, Any]:
 
     return {
         "schema": f"{SCHEMA_PREFIX}.g4_lived_battery.v1",
+        # SC1.1 extends this receipt ADDITIVELY (grounding_* per probe).
+        # Every SC1 field keeps its name, type and meaning, so the schema id
+        # stays and a reader of the SC1 receipts is not invalidated.
+        "schema_extension": "grm.sc1_1.grounding_glyph_receipts.v1",
         "gate": "G4",
         "session_id": session_id,
         "arm": 1,
@@ -158,6 +195,10 @@ def serve_fixture(session_id: str) -> dict[str, Any]:
             grm_demand.load_registered()["caveat"]),
         "order": file_record(ORDER),
         "registration": file_record(REGISTRATION),
+        "sc1_1_order": file_record(SC1_1_ORDER),
+        "sc1_1_registration": file_record(SC1_1_REGISTRATION),
+        "sources_grm_text_norm": file_record(
+            ROOT / "core" / "grm_text_norm.py"),
         "probes": served,
         "demand_fired_count": sum(
             1 for row in served if row["demand_fired"]),
@@ -212,6 +253,15 @@ def compare(demand_receipts: Sequence[Path],
                 "demand_served": row.get("demand_served"),
                 "demand_fetched": row.get("demand_fetched"),
                 "false_fire": bool(row["false_fire"]),
+                # SC1.1 G3: legacy vs normalized grounded verdict per probe.
+                "grounding_normalized": row.get("grounding_normalized"),
+                "grounding_glyph_rescued": row.get("grounding_glyph_rescued"),
+                "grounded_legacy_recomputed": row.get(
+                    "grounded_legacy_recomputed"),
+                "grounded_normalized_recomputed": row.get(
+                    "grounded_normalized_recomputed"),
+                "glyph_rescued_recomputed": row.get(
+                    "glyph_rescued_recomputed"),
                 "lived_answer": row["lived_answer"],
                 "lived_correct": row["lived_correct"],
             })
@@ -222,6 +272,7 @@ def compare(demand_receipts: Sequence[Path],
         compared and all(r["identical_to_p2c_arm1"] for r in compared))
     return {
         "schema": f"{SCHEMA_PREFIX}.g4_summary.v1",
+        "schema_extension": "grm.sc1_1.grounding_glyph_receipts.v1",
         "gate": "G4",
         "probe_count": len(rows),
         "compared_count": len(compared),
@@ -237,6 +288,12 @@ def compare(demand_receipts: Sequence[Path],
         "demand_fired_within_prediction": bool(fired <= 1),
         "false_fires_on_correctly_served_probes": false_fires,
         "false_fire_count": len(false_fires),
+        # SC1.1 G3: which probes grounded ONLY because of the glyph
+        # projection. Registered prediction: the 4 P2C flips.
+        "glyph_rescued_probe_ids": sorted(
+            r["probe_id"] for r in rows if r.get("glyph_rescued_recomputed")),
+        "glyph_rescued_count": sum(
+            1 for r in rows if r.get("glyph_rescued_recomputed")),
         # The gate is the NO-REGRESSION claim. The fire count is REPORTED
         # against its prediction, exactly as the order words it.
         "gate_pass": all_identical,
@@ -247,10 +304,13 @@ def compare(demand_receipts: Sequence[Path],
 
 
 def emit(payload: Mapping[str, Any], stem: str) -> Path:
-    ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
+    # SC1.1 stems are written under artifacts/grm_sc1_1/ so this order's
+    # receipts never mix with the frozen SC1 evidence they are compared to.
+    out_dir = SC1_1_ARTIFACT_DIR if stem.startswith("sc1_1_") else ARTIFACT_DIR
+    out_dir.mkdir(parents=True, exist_ok=True)
     body = canonical_json_bytes(payload)
     digest = sha256_bytes(body)
-    path = ARTIFACT_DIR / f"{stem}_{digest[:16]}.json"
+    path = out_dir / f"{stem}_{digest[:16]}.json"
     path.write_bytes(body)
     return path
 
@@ -259,6 +319,8 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("fixture", "compare"))
     parser.add_argument("--session-id", default=None)
+    parser.add_argument("--demand", type=int, default=1, choices=(0, 1),
+                        help="GRM_DEMAND_NGH arm: 0 = OFF, 1 = ON.")
     parser.add_argument("--demand-receipts", nargs="*", default=())
     parser.add_argument("--p2c-receipts", nargs="*", default=())
     parser.add_argument("--lease-seconds", type=int, default=LEASE_SECONDS)
@@ -273,7 +335,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         payload = compare(
             [Path(p) for p in args.demand_receipts],
             [Path(p) for p in args.p2c_receipts])
-        path = emit(payload, "sc1_g4_summary")
+        path = emit(payload, "sc1_1_g3_summary")
         print(f"receipt={path}")
         print(f"gate_pass={payload['gate_pass']}")
         print(f"probes={payload['probe_count']}"
@@ -281,6 +343,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"regressions={payload['regressions']}")
         print(f"demand_fired={payload['demand_fired_count']}")
         print(f"false_fires={payload['false_fires_on_correctly_served_probes']}")
+        print(f"glyph_rescued={payload['glyph_rescued_probe_ids']}")
         for row in payload["table"]:
             print(json.dumps(row))
         return 0 if payload["gate_pass"] else 1
@@ -290,8 +353,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     from scripts.grm_cmc1_gpu_arms import gpu_lease
 
     with gpu_lease(int(args.lease_seconds), int(args.lock_wait_seconds)):
-        payload = serve_fixture(str(args.session_id))
-    path = emit(payload, f"sc1_g4_{args.session_id}")
+        payload = serve_fixture(str(args.session_id), bool(args.demand))
+    path = emit(
+        payload,
+        f"sc1_1_g3_demand{int(bool(args.demand))}_{args.session_id}")
     print(f"receipt={path}")
     print(f"demand_fired_count={payload['demand_fired_count']}")
     print(f"false_fire_count={payload['false_fire_count']}")
