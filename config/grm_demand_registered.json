@@ -1,0 +1,32 @@
+{
+  "schema": "grm.demand.registered.v1",
+  "order": "orders/GRM_SC1_DEMAND_LOOP_NGH.md",
+  "detector": "D-NGH",
+  "threshold": 0.3380523274342219,
+  "score": "per-token full-layer mean mounted_mass",
+  "direction": "trigger_if_strictly_below",
+  "selection": "minimum_of_served_turn_minima_strict_envelope",
+  "carried_not_refit": true,
+  "provenance": {
+    "thresholds_path": "artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json",
+    "thresholds_sha256": "2149a44b6136fd1b19fe64445a17baf35b5f8885b8b58c5eccc6df9ad321d500",
+    "race_analysis_receipt_path": "artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/analysis/analysis_receipt_89bcd331ae7f9ef4.json",
+    "race_analysis_receipt_sha256": "89bcd331ae7f9ef4cf444712b9926a9220823d35ac5f16358f16daa4fb484858",
+    "fit_side": "served_controls_only",
+    "fit_fixture_ids": ["e2e_t09_cypher_bridge", "e2e_t16_lyra_dock"],
+    "fit_turn_minima": [0.3380523274342219, 0.3774214796721935],
+    "race_recall": 1.0,
+    "race_false_positive_rate": 0.1,
+    "race_f1": 0.952,
+    "race_eval_pairs": 10
+  },
+  "fit_turn_count": 2,
+  "caveat": "THIN ENVELOPE: this threshold was fit on 2 calibration turns (served controls only, strict minimum-of-minima envelope). It is CARRIED verbatim from the GRM-DET1 race and is never refit or adjusted from serving traffic. Any receipt that reports a D-NGH decision must restate this caveat.",
+  "demand_trip_cap_per_turn": 1,
+  "demand_fetch_source": "question_plus_prefix_reroute",
+  "flag": {
+    "name": "GRM_DEMAND_NGH",
+    "default": "OFF",
+    "unknown_token_behaviour": "fail_closed_to_OFF"
+  }
+}

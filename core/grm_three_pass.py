@@ -447,7 +447,7 @@ class StagedWorkingSetResolver:
 # Generic pass-through prefixes/keys.  P2A adds fit-honesty and abstention
 # fields to arena/driver ``info``; naming them by PREFIX means P2B persists
 # them the moment they exist and needs no re-edit when P2A lands.
-ROUTE_RECEIPT_INFO_PREFIXES = ("fit_", "abstain")
+ROUTE_RECEIPT_INFO_PREFIXES = ("fit_", "abstain", "demand_")
 ROUTE_RECEIPT_INFO_KEYS = ("served_without_plan_head",)
 
 # ``info`` keys already projected into named receipt sections, so the generic

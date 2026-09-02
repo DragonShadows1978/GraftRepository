@@ -44,6 +44,7 @@ from core.grm_three_pass import (  # noqa: E402
     build_route_receipt,
 )
 from core import paging_telemetry as _paging_telemetry  # noqa: E402
+from core import grm_demand  # noqa: E402
 from core.grm_supersession import (  # noqa: E402
     sup_resolve_cli_argv,
     sup_resolve_enabled,
@@ -1131,6 +1132,7 @@ def _probe_ladder_chat(
     defer_memory: bool = False,
     turn_idx: int | None = None,
     lsr_fixes: bool | None = None,
+    demand_ngh: bool | None = None,
 ) -> tuple[str, dict[str, Any]]:
     """Fork-A probe path with production laws enforced (flag-on only).
 
@@ -1141,6 +1143,10 @@ def _probe_ladder_chat(
     ON) gates the LSR-P2A fit-honesty rulings and the LSR-P2C split/descent.
     Turning it OFF restores the pre-P2A packing for the G2 Arm-0
     reproduction arm; production never runs with it off.
+
+    ``demand_ngh`` (GRM-SC1, default: the ``GRM_DEMAND_NGH`` env switch,
+    itself DEFAULT OFF) enables the Stage C demand loop.  With it off this
+    function's served outputs are byte-identical to P2C.
     """
     arena = repo.arena
     fixes_on = lsr_fixes_enabled(lsr_fixes)
@@ -1508,6 +1514,142 @@ def _probe_ladder_chat(
         ))
         return info
 
+    # -----------------------------------------------------------------
+    # GRM-SC1 Stage C: the DEMAND LOOP at the DRIVER site.
+    #
+    # The lived probes go through THIS function, not ``ArenaCache.step`` —
+    # the same reason P2A/P2C had to land their rulings at both fit sites.
+    # The mechanism is identical and comes from ``core.grm_demand``; only
+    # the local variable names differ.
+    #
+    # FLAG OFF => ``_serve`` is ``arena._attempt`` by identity and no other
+    # line below executes, so served outputs are byte-identical to P2C.
+    demand_on = grm_demand.demand_enabled(demand_ngh)
+    demand_state: dict[str, Any] = {"rows": [], "info": {}}
+    if demand_on:
+        support = grm_demand.arena_support(arena)
+        if not support.get("demand_supported"):
+            # LOUD refusal: an unsupported arena must never be reported as
+            # "no demand detected".
+            demand_on = False
+            demand_state["info"] = grm_demand.unsupported_info(
+                str(support.get("demand_unsupported_reason")))
+    demand_threshold = (
+        grm_demand.registered_threshold() if demand_on else None)
+
+    def _serve(*args, **kwargs):
+        """One generation attempt, observed when the demand flag is on."""
+        if not demand_on:
+            return arena._attempt(*args, **kwargs)
+        with grm_demand.DemandObserver(
+            arena, int(ngen), float(demand_threshold)) as observer:
+            out = arena._attempt(*args, **kwargs)
+        demand_state["rows"] = observer.finish()
+        return out
+
+    def _demand_trip(ans, info, picks, trip, rows=None):
+        """The ONE registered demand trip, at the point of serving.
+
+        Returns ``(answer, info, picks)``.  Same four steps as
+        ``ArenaCache.step``: decide on the attempt about to be served; on a
+        fire roll back to ``snap`` and re-route on question + the model's own
+        partial output (excluding what is already mounted or live); serve the
+        trip's answer iff it grounds, else restore and serve the original;
+        record a refire without acting on it (cap 1, registered).
+        """
+        if not demand_on:
+            if demand_state["info"]:
+                info.update(demand_state["info"])
+            return ans, info, picks
+        observed = list(demand_state["rows"] if rows is None else rows)
+        decision = grm_demand.decide(observed, float(demand_threshold))
+        if not decision["demand_fired"]:
+            info.update(grm_demand.demand_info_fields(
+                supported=True, decision=decision, served="original",
+                threshold=float(demand_threshold)))
+            return ans, info, picks
+
+        original_state = (
+            arena.caches, arena.pos, list(arena.live_segs),
+            arena.cur_mounts, arena.cur_mount_n, list(arena.grafts),
+        )
+        prefix = grm_demand.demand_prefix_text(
+            arena, observed, int(decision["demand_token_index"]))
+        query = grm_demand.demand_query_text(user_text, prefix)
+        (arena.caches, arena.pos, arena.live_segs, arena.cur_mounts,
+         arena.cur_mount_n) = (
+            snap[0], snap[1], list(snap[2]), snap[3], snap[4])
+        del arena.grafts[snap[5]:]
+        arena._bump_cuda_gqa_epoch()
+        demand_exclude = set(live_idx) | {int(v) for v in picks}
+        if getattr(arena, "decisive_admission", False):
+            demand_profile = decisive_admission_profile(
+                arena, query, exclude=demand_exclude, route_limit=route_limit)
+            demand_ranking = [int(v) for v in demand_profile["ranking"]]
+            demand_plan = [int(v) for v in demand_profile["rank_plan"]]
+        else:
+            demand_ranking = [
+                int(v) for v in (arena.route(
+                    query, exclude=demand_exclude, limit=route_limit) or [])]
+            demand_plan = demand_ranking[:want]
+        demand_picks = sorted(
+            int(v) for v in _budget_fit_mounts(arena, demand_plan))
+        base_fields = dict(
+            supported=True, decision=decision,
+            threshold=float(demand_threshold),
+            query_text_sha256=grm_demand.demand_query_sha256(query),
+            prefix_token_count=int(decision["demand_token_index"]),
+            ranking=demand_ranking,
+        )
+
+        def _restore_original():
+            (arena.caches, arena.pos, arena.live_segs, arena.cur_mounts,
+             arena.cur_mount_n) = original_state[:5]
+            arena.grafts[:] = original_state[5]
+            arena._bump_cuda_gqa_epoch()
+
+        if not demand_picks:
+            # Nothing new to fetch. Honest: the receipt says the trip found
+            # nothing rather than pretending the detector never fired.
+            _restore_original()
+            info.update(grm_demand.demand_info_fields(
+                **base_fields, served="original", fetched=[],
+                trip_taken=False))
+            return ans, info, picks
+
+        # The demand trip runs UNDER the observer as well, but ONLY so a
+        # second fire can be RECORDED. Cap 1 is registered: `demand_refired`
+        # is a receipt field, never a branch.
+        if defer_memory:
+            d_ans, d_info = _serve(
+                user_text, demand_picks, int(ngen), False, stops,
+                defer_memory=True)
+        else:
+            d_ans, d_info = _serve(
+                user_text, demand_picks, int(ngen), True, stops)
+        refire = grm_demand.decide(
+            list(demand_state["rows"]), float(demand_threshold))
+        d_grounded, _dc = arena._grounding_attribution(
+            d_ans, demand_picks, user_text)
+        fields = grm_demand.demand_info_fields(
+            **base_fields,
+            served="demand_trip" if d_grounded else "original",
+            fetched=[int(v) for v in demand_picks],
+            refired=bool(refire["demand_fired"]),
+            refire_token_index=refire["demand_token_index"],
+            trip_taken=True,
+            trip_grounded=bool(d_grounded),
+        )
+        if d_grounded:
+            d_info = dict(d_info or {})
+            d_info["trip"] = int(trip)
+            d_info["demand_source_trip"] = int(trip)
+            d_info.update(fields)
+            return d_ans, d_info, list(demand_picks)
+        _restore_original()
+        info.update(fields)
+        return ans, info, picks
+
     # LSR-P2B: one row per ladder trip actually walked, recorded as it happens.
     trip_rows: list[dict[str, Any]] = []
 
@@ -1545,10 +1687,10 @@ def _probe_ladder_chat(
             })
             continue
         if defer_memory:
-            ans, info = arena._attempt(
+            ans, info = _serve(
                 user_text, picks, int(ngen), False, stops, defer_memory=True)
         else:
-            ans, info = arena._attempt(
+            ans, info = _serve(
                 user_text, picks, int(ngen), True, stops)
         info = dict(info or {})
         info["trip"] = int(trip)
@@ -1571,6 +1713,10 @@ def _probe_ladder_chat(
             arena.cur_mounts, arena.cur_mount_n, list(arena.grafts),
         )
         if grounded:
+            # SC1: the turn is about to serve. Take the one registered demand
+            # trip FIRST, so the mount snapshot and every receipt field below
+            # describe the mounts the SERVED answer was actually read from.
+            ans, info, picks = _demand_trip(ans, info, list(picks), int(trip))
             _probe_mount_snapshot(
                 repo, arena, live_idx=live_idx, picks=picks,
                 planned=planned, turn_idx=turn_idx)
@@ -1601,7 +1747,8 @@ def _probe_ladder_chat(
                 repo, before, user_text, ans, info, defer_memory=defer_memory)
             return ans, info
         if best is None:
-            best = (ans, info, state, list(picks), list(planned))
+            best = (ans, info, state, list(picks), list(planned),
+                    list(demand_state["rows"]))
 
     # Nothing grounded — keep FIRST attempt (arena.step convention).
     if best is None:
@@ -1621,7 +1768,7 @@ def _probe_ladder_chat(
         }
         if defer_memory:
             # Empty attempt still needs a deferred shell for pass-3.
-            ans, info_att = arena._attempt(
+            ans, info_att = _serve(
                 user_text, [], int(ngen), False, stops, defer_memory=True)
             info = dict(info_att or {})
             info.update({
@@ -1638,7 +1785,7 @@ def _probe_ladder_chat(
                 "ranking_ids": [int(x) for x in ranking],
             })
         else:
-            ans, info_att = arena._attempt(
+            ans, info_att = _serve(
                 user_text, [], int(ngen), True, stops)
             info = dict(info_att or {})
             info.update({
@@ -1654,9 +1801,15 @@ def _probe_ladder_chat(
                 "mount_dropped_for_width": list(last_planned),
                 "ranking_ids": [int(x) for x in ranking],
             })
+        # SC1: a no-mount turn is the purest demand case there is — the
+        # detector sees zero mounted mass by construction. One trip, and
+        # ``mount_fitted`` names whatever the served answer actually read.
+        ans, info, demand_picks = _demand_trip(ans, info, [], 0)
+        if demand_picks:
+            info["mount_fitted"] = list(demand_picks)
         if admission_profile is not None:
             info.update(admission_info_fields(admission_profile))
-        info = _attach_fit(info, [])
+        info = _attach_fit(info, list(demand_picks))
         info["_route_observation"] = _route_observation(
             route_limit=route_limit,
             excluded_live_ids=live_idx,
@@ -1668,13 +1821,18 @@ def _probe_ladder_chat(
             repo, before, user_text, ans, info, defer_memory=defer_memory)
         return ans, info
 
-    ans, info, st, picks, planned = best
+    ans, info, st, picks, planned, best_rows = best
     (arena.caches, arena.pos, arena.live_segs,
      arena.cur_mounts, arena.cur_mount_n) = st[0], st[1], st[2], st[3], st[4]
     arena.grafts[:] = st[5]
     if not defer_memory:
         arena._bump_cuda_gqa_epoch()
     info = dict(info or {})
+    # SC1: the ungrounded-keep-first answer is still an answer about to be
+    # SERVED, so the demand loop applies. Its detector rows are the ones
+    # captured on THAT attempt (``best_rows``), not whichever later rung ran
+    # last.
+    ans, info, picks = _demand_trip(ans, info, list(picks), 0, rows=best_rows)
     info["driver_probe_multimount"] = True
     info["driver_probe_ladder"] = True
     info["driver_topk"] = int(want)

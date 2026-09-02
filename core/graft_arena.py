@@ -38,6 +38,7 @@ from core.graft_quant import (
     SUPPORTED_BITS, is_packed_payload, pack_kv_arrays, unpack_kv_arrays,
 )
 from core.grm_supersession import sup_resolve_enabled
+from core import grm_demand
 from core.grm_admission import (
     admission_info_fields,
     adm_decisive_enabled,
@@ -2640,13 +2641,21 @@ class ArenaCache:
         return (out, False) if with_binding_flag else out
 
     def step(self, user_text, ngen=48, deposit=True,
-             stops=None, max_trips=0, defer_memory=False):
+             stops=None, max_trips=0, defer_memory=False, demand_ngh=None):
         """One conversation turn through the arena. max_trips > 0 enables
         SHUTTLING: if the answer fails the grounding check, restore the
         pre-attempt cache (snapshot = a private outer-list copy + position —
         cache tensors are immutable), swap in the NEXT ranking slice, and
         retry. Failed attempts never enter the live cache. Returns
-        (answer, info)."""
+        (answer, info).
+
+        ``demand_ngh`` (GRM-SC1, default: the ``GRM_DEMAND_NGH`` env switch,
+        itself DEFAULT OFF) enables the Stage C demand loop: the answer is
+        generated under the race-winning D-NGH observer, and a turn whose
+        mounted mass falls below the CARRIED race threshold rolls back and
+        takes ONE demand trip that re-routes on question + the model's own
+        partial output.  With it off, this method's served outputs are
+        byte-identical to P2C."""
         if defer_memory and deposit:
             raise ValueError("defer_memory requires deposit=False")
         if stops is None:
@@ -3067,6 +3076,177 @@ class ArenaCache:
             ))
             return info
 
+        # ---------------------------------------------------------------
+        # GRM-SC1 Stage C: the DEMAND LOOP (GRM_DEMAND_NGH, DEFAULT OFF).
+        #
+        # A turn that is missing a needed memory NOTICES mid-generation and
+        # fetches.  The detector is the race winner D-NGH, carried whole:
+        # per-token full-layer mean mounted_mass, fire on the FIRST token
+        # STRICTLY BELOW the registered threshold (fit on TWO calibration
+        # turns — a thin envelope, restated in every receipt).
+        #
+        # WITH THE FLAG OFF this block is inert: `_serve` is `self._attempt`
+        # by identity and nothing else below runs, so served outputs are
+        # byte-identical to P2C.  A test pins that.
+        demand_on = grm_demand.demand_enabled(demand_ngh)
+        demand_state = {
+            "rows": [],          # observer rows for the attempt just served
+            "info": {},          # demand_* receipt fields
+            "unsupported": None,
+        }
+        if demand_on:
+            support = grm_demand.arena_support(self)
+            if not support.get("demand_supported"):
+                # LOUD, not silent: a turn that cannot carry the detector
+                # must not look like a turn that found its memory.
+                demand_on = False
+                demand_state["unsupported"] = str(
+                    support.get("demand_unsupported_reason"))
+                demand_state["info"] = grm_demand.unsupported_info(
+                    demand_state["unsupported"])
+        demand_threshold = (
+            grm_demand.registered_threshold() if demand_on else None)
+
+        def _serve(*args, **kwargs):
+            """One generation attempt, observed when the demand flag is on."""
+            if not demand_on:
+                return self._attempt(*args, **kwargs)
+            with grm_demand.DemandObserver(
+                self, int(ngen), float(demand_threshold)) as observer:
+                out = self._attempt(*args, **kwargs)
+            demand_state["rows"] = observer.finish()
+            return out
+
+        def _demand_trip(txt, info, mset, picks, contributors, trip,
+                         rows=None):
+            """The ONE registered demand trip, at the point of serving.
+
+            Sequence (all four steps are the order's, in the order's order):
+
+            1. D-NGH decides on the attempt about to be served.  Not fired ->
+               record the decision and serve the original untouched.
+            2. Fired -> roll back to the SAME pre-attempt snapshot the
+               shuttle already uses (`snap`), then re-route on
+               question + the model's own partial output up to the fire
+               token, EXCLUDING everything already mounted or live.  Admit
+               plan-first through the existing A-DEC path; P2C fit rules
+               apply because this goes through `fit()`, the same fitter every
+               rung uses.
+            3. Serve the demand trip's answer IFF it grounds; otherwise
+               restore the original attempt and serve that.  `demand_served`
+               always names which one went out.
+            4. NEVER LOOP.  A second fire on the demand trip is RECORDED
+               (`demand_refired`) and NOT acted on — cap 1, registered.
+            """
+            if not demand_on:
+                if demand_state["info"]:
+                    info.update(demand_state["info"])
+                return txt, info, mset, picks, contributors
+            observed = list(
+                demand_state["rows"] if rows is None else rows)
+            decision = grm_demand.decide(observed, float(demand_threshold))
+            if not decision["demand_fired"]:
+                info.update(grm_demand.demand_info_fields(
+                    supported=True, decision=decision, served="original",
+                    threshold=float(demand_threshold)))
+                return txt, info, mset, picks, contributors
+
+            # --- 2. roll back and re-route -----------------------------
+            original = (txt, info, mset, picks, contributors,
+                        (self.caches, self.pos, list(self.live_segs),
+                         self.cur_mounts, self.cur_mount_n,
+                         list(self.grafts)))
+            prefix = grm_demand.demand_prefix_text(
+                self, observed, int(decision["demand_token_index"]))
+            query = grm_demand.demand_query_text(user_text, prefix)
+            (self.caches, self.pos, self.live_segs, self.cur_mounts,
+             self.cur_mount_n) = (
+                list(snap[0]) if isinstance(snap[0], list) else snap[0],
+                snap[1], list(snap[2]), snap[3], snap[4])
+            del self.grafts[snap[5]:]
+            self._bump_cuda_gqa_epoch()
+            # Exclude what the turn already had: the failed attempt's own
+            # mounts and the live window. A demand trip that re-fetches the
+            # nodes already read is not a fetch.
+            demand_exclude = set(live_idx) | {int(i) for i in mset}
+            demand_profile = None
+            if getattr(self, "decisive_admission", False):
+                demand_profile = decisive_admission_profile(
+                    self, query, exclude=demand_exclude,
+                    route_limit=route_limit)
+                demand_ranking = [int(v) for v in demand_profile["ranking"]]
+                demand_plan = [int(v) for v in demand_profile["rank_plan"]]
+            else:
+                demand_ranking = [
+                    int(v) for v in (self.route(
+                        query, exclude=demand_exclude,
+                        limit=route_limit) or [])]
+                demand_plan = demand_ranking[:self.topk]
+            demand_picks = fit(
+                sorted({int(v) for v in demand_plan}), plan=demand_plan)
+            fields = grm_demand.demand_info_fields(
+                supported=True, decision=decision, served="original",
+                threshold=float(demand_threshold),
+                query_text_sha256=grm_demand.demand_query_sha256(query),
+                prefix_token_count=int(decision["demand_token_index"]),
+                ranking=demand_ranking,
+                fetched=[],
+                trip_taken=False,
+            )
+            if not demand_picks:
+                # Nothing new to fetch: restore the original attempt's state
+                # verbatim and serve it. Honest, and the receipt says the
+                # trip found nothing rather than pretending it never fired.
+                (self.caches, self.pos, self.live_segs, self.cur_mounts,
+                 self.cur_mount_n) = original[5][:5]
+                self.grafts[:] = original[5][5]
+                self._bump_cuda_gqa_epoch()
+                info.update(fields)
+                return txt, info, mset, picks, contributors
+
+            demand_mset = sorted(self._resolve_revision_mounts(
+                sorted(set(demand_picks))))
+            if defer_memory:
+                d_txt, d_info = _serve(
+                    user_text, demand_mset, ngen, deposit, stops,
+                    defer_memory=True)
+            else:
+                d_txt, d_info = _serve(
+                    user_text, demand_mset, ngen, deposit, stops)
+            # 4. A refire on the demand trip is RECORDED, never acted on.
+            refire = grm_demand.decide(
+                list(demand_state["rows"]), float(demand_threshold))
+            d_grounded, d_contributors = self._grounding_attribution(
+                d_txt, demand_mset, user_text)
+            fields = grm_demand.demand_info_fields(
+                supported=True, decision=decision,
+                served="demand_trip" if d_grounded else "original",
+                threshold=float(demand_threshold),
+                query_text_sha256=grm_demand.demand_query_sha256(query),
+                prefix_token_count=int(decision["demand_token_index"]),
+                ranking=demand_ranking,
+                fetched=[int(v) for v in demand_mset],
+                refired=bool(refire["demand_fired"]),
+                refire_token_index=refire["demand_token_index"],
+                trip_taken=True,
+                trip_grounded=bool(d_grounded),
+            )
+            if d_grounded:
+                d_info = dict(d_info or {})
+                d_info["trip"] = int(trip)
+                d_info["demand_source_trip"] = int(trip)
+                d_info.update(fields)
+                return (d_txt, d_info, demand_mset, list(demand_picks),
+                        d_contributors)
+            # 3. Ungrounded demand trip -> the ORIGINAL answer goes out, and
+            # the arena state that goes with it is restored verbatim.
+            (self.caches, self.pos, self.live_segs, self.cur_mounts,
+             self.cur_mount_n) = original[5][:5]
+            self.grafts[:] = original[5][5]
+            self._bump_cuda_gqa_epoch()
+            info.update(fields)
+            return txt, info, mset, picks, contributors
+
         best = None
         for trip, (picks, clean) in enumerate(attempts):
             if not picks:
@@ -3106,11 +3286,11 @@ class ArenaCache:
             # two explicit revisions of the same M5 lineage.
             mset = sorted(self._resolve_revision_mounts(mset))
             if defer_memory:
-                txt, info = self._attempt(
+                txt, info = _serve(
                     user_text, mset, ngen, deposit, stops,
                     defer_memory=True)
             else:
-                txt, info = self._attempt(
+                txt, info = _serve(
                     user_text, mset, ngen, deposit, stops)
             info["trip"] = trip
             if clean:
@@ -3118,6 +3298,11 @@ class ArenaCache:
             grounded, contributors = self._grounding_attribution(
                 txt, mset, user_text)
             if grounded:
+                # SC1: the turn is about to serve. If D-NGH fired on THIS
+                # attempt, roll back and take the one registered demand trip
+                # before committing anything.
+                txt, info, mset, picks, contributors = _demand_trip(
+                    txt, info, mset, picks, contributors, trip)
                 if defer_memory:
                     info["_deferred_memory"]["importance_bookkeeping"] = {
                         "routed": [int(i) for i in ranking],
@@ -3133,41 +3318,58 @@ class ArenaCache:
                 best = (txt, info, (self.caches, self.pos, list(self.live_segs),
                                     self.cur_mounts, self.cur_mount_n,
                                     list(self.grafts)), tuple(mset),
-                        list(picks))
+                        list(picks), list(demand_state["rows"]))
         # nothing grounded — keep the FIRST attempt's answer and state
         if best is None:
             if defer_memory:
-                txt, info = self._attempt(
+                txt, info = _serve(
                     user_text, [], ngen, deposit, stops,
                     defer_memory=True)
             else:
-                txt, info = self._attempt(
+                txt, info = _serve(
                     user_text, [], ngen, deposit, stops)
             info["trip"] = 0
             info["no_mount_fit"] = True
+            # SC1: a no-mount turn is the purest demand case there is — the
+            # detector sees zero mounted mass by construction. It still gets
+            # exactly one trip, and the receipt still records the decision.
+            # Whatever the trip ends up serving, the bookkeeping below names
+            # the mounts THAT answer was actually read from, never the empty
+            # set the pre-trip attempt had.
+            txt, info, d_mset, d_picks, d_contrib = _demand_trip(
+                txt, info, [], [], (), 0)
             if defer_memory:
                 info["_deferred_memory"]["importance_bookkeeping"] = {
                     "routed": [int(i) for i in ranking],
-                    "mounted": [],
-                    "grounded_mounts": [],
+                    "mounted": [int(i) for i in d_mset],
+                    "grounded_mounts": [int(i) for i in d_contrib],
                     "turn": int(s4_turn),
                 }
             else:
-                self._commit_s4_attempt(ranking, (), (), turn=s4_turn)
-            return txt, attach_route_receipt(attach_fit(info, []))
-        txt, info, st, accepted_mounts, accepted_picks = best
+                self._commit_s4_attempt(
+                    ranking, d_mset, d_contrib, turn=s4_turn)
+            return txt, attach_route_receipt(attach_fit(info, d_picks))
+        txt, info, st, accepted_mounts, accepted_picks, best_rows = best
         (self.caches, self.pos, self.live_segs,
          self.cur_mounts, self.cur_mount_n) = st[0], st[1], st[2], st[3], st[4]
         self.grafts[:] = st[5]
+        # SC1: the ungrounded-keep-first answer is still an answer about to be
+        # SERVED, so the demand loop applies to it too — and its detector rows
+        # are the ones captured on THAT attempt (`best_rows`), not whichever
+        # later rung happened to run last.
+        txt, info, accepted_mounts, accepted_picks, demand_contributors = (
+            _demand_trip(
+                txt, info, list(accepted_mounts), list(accepted_picks), (), 0,
+                rows=best_rows))
         if not defer_memory:
             self._bump_cuda_gqa_epoch()
             self._commit_s4_attempt(
-                ranking, accepted_mounts, (), turn=s4_turn)
+                ranking, accepted_mounts, demand_contributors, turn=s4_turn)
         else:
             info["_deferred_memory"]["importance_bookkeeping"] = {
                 "routed": [int(i) for i in ranking],
                 "mounted": [int(i) for i in accepted_mounts],
-                "grounded_mounts": [],
+                "grounded_mounts": [int(i) for i in demand_contributors],
                 "turn": int(s4_turn),
             }
         return txt, attach_route_receipt(attach_fit(info, accepted_picks))
