@@ -45,6 +45,11 @@ from core.grm_three_pass import (  # noqa: E402
 )
 from core import paging_telemetry as _paging_telemetry  # noqa: E402
 from core import grm_demand  # noqa: E402
+from core.grm_frame import (  # noqa: E402
+    ENV_NAME as PERSISTENT_BOAT_ENV,
+    env_persistent_boat,
+    ephemeral_frame_enabled,
+)
 from core.grm_supersession import (  # noqa: E402
     sup_resolve_cli_argv,
     sup_resolve_enabled,
@@ -1058,8 +1063,18 @@ def _probe_finish_deposit(
     *,
     defer_memory: bool,
 ) -> dict[str, Any]:
-    """Repository deposit bookkeeping shared by legacy and ladder probe paths."""
+    """Repository deposit bookkeeping shared by legacy and ladder probe paths.
+
+    GRM-EB1: this is the single funnel every probe-path return passes through,
+    so it is where the frame receipt is stamped — ``frame_ephemeral``,
+    ``frame_escape_active``, ``recency_mounted_ids``, ``recency_seats`` and
+    the live-window fields.  Stamping it here rather than at each return means
+    a new return site cannot silently ship a turn with no frame receipt.
+    """
     info = dict(info or {})
+    frame_info = getattr(repo.arena, "_eb1_frame_info", None)
+    if callable(frame_info):
+        info.update(frame_info())
     if not defer_memory:
         extracted = repo._extract_from_new_turns(
             before,
@@ -1167,7 +1182,18 @@ def _probe_ladder_chat(
     arena = repo.arena
     fixes_on = lsr_fixes_enabled(lsr_fixes)
     before = repo._snapshot_state()
-    live_idx = {g for g, _ in arena.live_segs if g is not None}
+    # GRM-EB1: this is a PRODUCTION SERVING PATH, so it opens its turn under
+    # the same frame ``ArenaCache.step()`` does, through the same helper.
+    #
+    # Before EB1 only ``step()`` carried the ephemeral logic. Run against an
+    # ephemeral arena, this path served a THIRD frame -- no live window
+    # (nothing feeds one) and no recency mounts either (it never nominated
+    # any) -- so the routing exclusion the persistent frame got for free from
+    # its live window simply vanished. Measured on the G2 sup battery, that
+    # cost three probes the persistent frame served correctly. The fix is to
+    # share the frame, not to special-case the probe.
+    rec = arena.eb1_begin_turn()
+    live_idx = {g for g, _ in arena.live_segs if g is not None} | set(rec)
     want = max(int(topk), 1)
     admission_profile = None
     if getattr(arena, "decisive_admission", False):
@@ -1461,7 +1487,12 @@ def _probe_ladder_chat(
             plan=rank_plan,
             candidates=ids,
             ntok={int(i): int(arena.grafts[int(i)]["ntok"]) for i in ids},
-            budget=int(arena.width),
+            # GRM-EB1: the recency mounts are co-seated at mount-set assembly
+            # below, so their seats must come off this rung's budget exactly
+            # as ``step()::fit_detail`` takes them off its own.  The charge is
+            # zero for identifier queries (the point-lookup rule), and the
+            # helper records which branch ran onto the turn's receipt.
+            budget=arena.eb1_charge_recency(rec, id_tokens),
         )
         fit_receipts[tuple(sorted(receipt["fit_seated"]))] = receipt
         return receipt
@@ -1803,6 +1834,19 @@ def _probe_ladder_chat(
 
         receipt = _fit_for(list(planned))
         picks = sorted(int(v) for v in receipt["fit_seated"])
+        # GRM-EB1: co-seat the recency mounts, under EXACTLY ``step()``'s
+        # ``use_rec`` rule (graft_arena.step: ``rec and not qrare and not
+        # clean and picks != precise``).  Recency joins topical/anaphora
+        # attempts only: an identifier lookup is a point read, and a
+        # clean-room rung is the RECENCY LAW rung that exists precisely to
+        # exclude these seats.  Restating the rule here rather than inventing
+        # a probe-specific one is what keeps the two serving paths one frame.
+        use_rec = bool(rec) and not id_tokens and not clean and (
+            picks != (precise or []))
+        if use_rec:
+            picks = sorted(
+                int(v) for v in arena._resolve_revision_mounts(
+                    sorted(set(rec) | set(picks))))
         last_picks = list(picks)
         if not picks and planned:
             # Nothing fits — treat as empty attempt. A later shuttle rung
@@ -2140,6 +2184,12 @@ def load_model_and_repo(args: argparse.Namespace, session_dir: Path):
         "topk": int(args.topk),
         "live_turns": int(args.live_turns),
         "max_live": int(args.max_live),
+        # GRM-EB1: the driver serves under the SPEC frame — the ephemeral
+        # boat.  ``ephemeral_frame_enabled(None)`` resolves the registered
+        # GRM_PERSISTENT_BOAT escape and fails CLOSED to ephemeral, so the
+        # driver is explicit about the frame it is running rather than
+        # inheriting a constructor default silently.
+        "ephemeral": ephemeral_frame_enabled(),
         "sink_text": HARMONY_SINK,
         "prompt_template": harmony_turn,
         "stop_sequences": HARMONY_STOPS,
@@ -2166,6 +2216,15 @@ def load_model_and_repo(args: argparse.Namespace, session_dir: Path):
 
 def refeed_live_window(repo: GraftRepository, transcript: list[dict[str, Any]],
                        live_turns: int) -> list[dict[str, Any]]:
+    """ESCAPE-ONLY (GRM-EB1).  Re-establish a persistent-frame live window.
+
+    This pushes the last ``live_turns`` transcript turns back through the live
+    cache with ``deposit=False``.  That is a CHAT LOG IN CONTEXT, which the
+    spec forbids, so ``main()`` calls it only under ``GRM_PERSISTENT_BOAT``,
+    to reproduce frozen receipts taken before the spec frame existed.  Under
+    the spec frame resume is repository state: the turns are already grafts
+    and recency-as-mount pulls them by routing on the next step.
+    """
     replayed = []
     for row in transcript[-int(live_turns):]:
         turn_text = harmony_turn(row["user"], row["assistant"])
@@ -2834,6 +2893,24 @@ def run_turn(
             "eviction_check": eviction_check,
             "resumed": bool(resumed),
             "route_ranking": route_diag,
+            # GRM-EB1: the frame receipt reaches the SCORECARD, not only the
+            # instrumentation row's full ``info`` blob.  The scorecard is what
+            # every downstream scorer reads, so a frame receipt that stopped
+            # at ``info`` would leave "which frame served this probe, and what
+            # did recency cost it" unanswerable from the gate's own artifact.
+            "frame": {
+                key: info[key]
+                for key in (
+                    "frame_ephemeral",
+                    "frame_escape_active",
+                    "recency_mounted_ids",
+                    "recency_seats",
+                    "live_segments_inherited",
+                    "live_segments_carried_into_turn",
+                    "live_segments_after_turn",
+                )
+                if key in info
+            },
         })
         if info.get("admission_policy") == "A-DEC":
             probe_score["admission"] = {
@@ -3166,11 +3243,29 @@ def main(argv: list[str]) -> int:
     load_ms = (time.perf_counter() - t_load) * 1000.0
     refeed = []
     if args.resume:
-        refeed = refeed_live_window(repo, transcript, int(args.live_turns))
+        # GRM-EB1: RESUME = REPOSITORY STATE, NOT TRANSCRIPT RE-FEED.
+        #
+        # The old resume path pushed the last ``live_turns`` transcript turns
+        # back through the live cache with ``deposit=False`` — literally
+        # re-establishing a chat log in the model's context on every restart,
+        # which is the thing the spec forbids.  Under the spec frame the
+        # repository already holds those turns as grafts; recency-as-mount
+        # picks them up on the next step, from the repository, by routing.
+        # The re-feed therefore runs ONLY under the registered escape, where
+        # it is needed to reproduce frozen persistent-frame receipts.
+        frame_ephemeral = bool(getattr(repo.arena, "ephemeral", False))
+        if frame_ephemeral:
+            refeed_skipped_reason = "spec_frame_resume_is_repository_state"
+        else:
+            refeed_skipped_reason = None
+            refeed = refeed_live_window(repo, transcript, int(args.live_turns))
         restart_payload = json.loads(paths["restart"].read_text(encoding="utf-8"))
         restart_payload.update({
             "resume_load_wall_ms": load_ms,
             "refeed": refeed,
+            "frame_ephemeral": frame_ephemeral,
+            "frame_escape_active": env_persistent_boat(),
+            "refeed_skipped_reason": refeed_skipped_reason,
             "vram_after_refeed": vram_snapshot(),
         })
         write_json(paths["restart"], restart_payload)

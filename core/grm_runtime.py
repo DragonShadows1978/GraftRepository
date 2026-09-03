@@ -155,6 +155,19 @@ class GRMRuntime:
         return info
 
     def chat(self, user_text, ngen=64, max_trips=2):
+        """The production serve.
+
+        GRM-EB1 FRAME.  This path serves under whatever frame the repository's
+        arena was built with, and since ``ArenaCache`` now defaults to the
+        SPEC frame (ephemeral boat), every runtime built the ordinary way
+        serves without a persistent live window: no prior turn's tokens sit in
+        the model's context, and every recall of an earlier fact is a routed
+        graft.  ``step()`` attaches the frame receipt (``frame_ephemeral``,
+        ``frame_escape_active``, ``recency_mounted_ids``, ``recency_seats``,
+        ``live_segments_after_turn``) to ``info``, and ``build_route_receipt``
+        persists it through the ``frame_``/``recency_``/``live_segments_``
+        prefixes, so the frame a served turn ran under is on the receipt.
+        """
         repo = self.repository
         before = repo._snapshot_state()
         # LSR-P2B: arena state as the serve saw it, captured before step().

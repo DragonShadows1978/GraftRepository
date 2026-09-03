@@ -304,6 +304,12 @@ class GraftRepository:
         # a 2x backpressure threshold folds inline only as a last resort.
         # One GPU = no true concurrency: background means BETWEEN turns.
         self.librarian_mode = librarian_mode
+        # GRM-EB1: ``arena_kw`` is a pass-through, so the repository inherits
+        # the arena's SPEC-frame default (ephemeral boat) without restating
+        # it.  A caller that must pin a frame — a harness reproducing frozen
+        # persistent-frame receipts — passes ``ephemeral=`` here and it
+        # reaches the arena constructor, where an explicit bool outranks the
+        # GRM_PERSISTENT_BOAT escape.
         self.arena = arena_cls(model, encode, decode, **arena_kw)
         self.dialect_desc = DialectDescriptor.from_model(model, self.arena)
         self.dialect = self.dialect_desc.dialect_id

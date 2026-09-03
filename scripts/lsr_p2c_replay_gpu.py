@@ -70,6 +70,10 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from core.grm_frame import (  # noqa: E402
+    ENV_NAME as PERSISTENT_BOAT_ENV,
+    env_persistent_boat,
+)
 from scripts.grm_cmc1_mechanism import canonical_json_bytes, sha256_bytes  # noqa: E402
 from scripts.grm_det1_common import contains_value, file_record  # noqa: E402
 
@@ -226,11 +230,32 @@ _INFO_KEYS = (
     "abstained", "abstain_reason", "abstain_identifier_tokens",
     "admission_policy_branch", "admission_rank_plan",
     "mount_plan", "mount_fitted", "ranking_ids", "trip",
+    # GRM-EB1 frame receipts: which frame the turn ran under, what recency
+    # nominated, what recency actually cost, and the live window at both ends
+    # of the turn.  Receipts only -- this harness's serving path is unchanged.
+    "frame_ephemeral", "frame_escape_active",
+    "recency_mounted_ids", "recency_seats",
+    "live_segments_inherited", "live_segments_carried_into_turn",
+    "live_segments_after_turn",
+    # GRM-EB1 G4: the demand-ON arm reports false fires and any recovery, so
+    # the SC1 demand fields have to survive this filter to be reportable.
 )
+
+#: GRM-EB1 G4: the demand-ON arm must report false fires and any recovery, so
+#: EVERY ``demand_`` field is captured by PREFIX rather than by an enumerated
+#: list.  Guessing SC1's field names would silently drop whichever ones this
+#: build actually emits, and an empty demand section would then read as "no
+#: fire" when it really meant "not captured".
+_INFO_PREFIXES = ("demand_",)
 
 
 def _fit_fields(info: Mapping[str, Any]) -> dict[str, Any]:
-    return {key: info[key] for key in _INFO_KEYS if key in info}
+    out = {key: info[key] for key in _INFO_KEYS if key in info}
+    out.update({
+        key: value for key, value in dict(info).items()
+        if str(key).startswith(_INFO_PREFIXES)
+    })
+    return out
 
 
 def _serve_probe_arm0(repo, e2e, question: str, flags: Mapping[str, Any]):
@@ -378,9 +403,18 @@ def serve_fixture(session_id: str, *, arm: int) -> dict[str, Any]:
     node_to_idx: dict[str, int] = {}
     live_at_install: list[int] = []
     model_info: Any = None
+    frame_ephemeral = True
+    recency_mounts = 0
     try:
         e2e, model, tokenizer, repo, model_info = _load_model_repo(
             repo_dir, frame)
+        # GRM-EB1: read the frame off the arena that will actually serve.
+        # ``_load_model_repo`` is a READ-ONLY det1 module that passes no
+        # ``ephemeral``, so it inherits the constructor default — which is now
+        # the spec frame.  Recording the observed value keeps the receipt
+        # honest if that ever stops being true.
+        frame_ephemeral = bool(getattr(repo.arena, "ephemeral", False))
+        recency_mounts = int(getattr(repo.arena, "recency_mounts", 0))
         # THE LIVED DEPOSIT SEQUENCE: chronological feed, turn by turn.
         node_to_idx, _ledgers = _install_lived_nodes(repo, e2e, fixture)
         live_at_install = [
@@ -435,6 +469,24 @@ def serve_fixture(session_id: str, *, arm: int) -> dict[str, Any]:
             "arm0_reproduction_fixes_off" if arm == 0
             else "arm1_p2a_p2c_fixes_on"),
         "lsr_fixes_env": os.environ.get("GRM_LSR_FIXES"),
+        # GRM-EB1: the FRAME this replay served under, read off the arena that
+        # actually served rather than assumed from the env.  A different frame
+        # is a NEW baseline, so this field is what tells a reader whether a row
+        # is comparable to a persistent-frame receipt (it is not).
+        "frame": {
+            "ephemeral": bool(frame_ephemeral),
+            "escape_env": os.environ.get(PERSISTENT_BOAT_ENV),
+            "escape_active": bool(env_persistent_boat()),
+            "recency_mounts": int(recency_mounts),
+            "spec": (
+                "GRM-EB1: the chat log is not kept in memory context; any "
+                "chat recall on facts is pulled via GRM"),
+            "arm0_reproduction_claimed": False,
+            "arm0_reproduction_note": (
+                "A different frame is a NEW baseline. This run does NOT claim "
+                "or attempt Arm-0 reproduction of persistent-frame rows; the "
+                "lived/P2C columns are carried for CHANGE, not for identity."),
+        },
         "session_id": session_id,
         "arena_width": int(flags["arena_width"]),
         "deposit_protocol": (

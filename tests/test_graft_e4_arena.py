@@ -8,6 +8,17 @@ Protocol matches E4 v3 (L44 latent router, bare-question routing inside
 ArenaCache.route via step(), retrieval turns not deposited). Targets:
   recall parity with the re-prefill harness (6/6), bounded residency,
   coherent generation across 6 arena swaps + ~20 evictions on ONE cache.
+
+GRM-EB1 FRAME PIN.  This harness measures the PERSISTENT-live-window frame:
+its whole subject is one cache carried across turns, with eviction at the
+2-turn recency window, and it reads ``arena.caches`` directly after ``feed``.
+EB1 made the EPHEMERAL boat the production default (David's spec: the chat log
+is not kept in memory context), under which ``feed`` deposits without pushing
+through a live cache and ``arena.caches`` stays ``None``.  So this harness
+pins ``ephemeral=False`` EXPLICITLY -- an explicit constructor value outranks
+the GRM_PERSISTENT_BOAT escape -- because the frame it measures is the frame
+it was written for.  It is a frozen-receipt harness, not a statement that the
+persistent frame is still the production posture.
 """
 import os, sys, time, numpy as np
 sys.path.insert(0, "/mnt/ForgeRealm/Project-Tensor/tensor_cuda")
@@ -35,7 +46,8 @@ arena = ArenaCache(m,
                    encode=lambda t: tok.encode(t).ids,
                    decode=lambda ids: tok.decode(ids),
                    sink_text="<conversation>\n",
-                   arena_width=256, route_layer=44, topk=3, live_turns=2)
+                   arena_width=256, route_layer=44, topk=3, live_turns=2,
+                   ephemeral=False)   # GRM-EB1: frozen persistent-frame pin
 print(f"arena: sink={arena.n_sink} seats, width={arena.width}, "
       f"live_shift={arena.live_shift}", flush=True)
 

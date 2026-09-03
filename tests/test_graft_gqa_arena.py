@@ -34,7 +34,16 @@ arena = GQAArenaCache(m,
                       decode=lambda ids: tok.decode(ids),
                       sink_text="<conversation>\n",
                       arena_width=256, route_layer=0, topk=3, live_turns=2,
-                      cache_deposits=False)
+                      cache_deposits=False,
+                      # GRM-EB1: this harness measures the PERSISTENT frame
+                      # ("one persistent cache", per-turn resident counts read
+                      # from arena._cache_len() after feed()).  The production
+                      # default is now the ephemeral boat, under which feed()
+                      # deposits without a live cache and _cache_len() has
+                      # nothing to read.  An explicit pin outranks the
+                      # GRM_PERSISTENT_BOAT escape and keeps this frozen
+                      # receipt reproducible.
+                      ephemeral=False)
 print(f"arena: sink={arena.n_sink} seats, width={arena.width}, "
       f"live_shift={arena.live_shift}", flush=True)
 

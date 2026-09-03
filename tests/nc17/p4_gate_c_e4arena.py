@@ -148,7 +148,13 @@ arena = GQAArenaCache(m,
                       decode=lambda ids: tok.decode(ids),
                       sink_text="<conversation>\n",
                       arena_width=256, route_layer=0, topk=3, live_turns=LIVE_W,
-                      cache_deposits=False)
+                      cache_deposits=False,
+                      # GRM-EB1: Arm B is explicitly "one cache" with feeds,
+                      # evictions and per-turn resident counts read via
+                      # _cache_len() -- the PERSISTENT frame.  The production
+                      # default is now the ephemeral boat, so this frozen gate
+                      # pins the frame it was written to measure.
+                      ephemeral=False)
 print(f"[gateC]   arena: sink={arena.n_sink} seats width={arena.width} "
       f"live_shift={arena.live_shift}", flush=True)
 

@@ -28,6 +28,7 @@ from types import SimpleNamespace
 import pytest
 
 from core import grm_demand
+from core.graft_arena import ArenaCache
 from core.grm_three_pass import (
     ROUTE_RECEIPT_INFO_PREFIXES,
     _route_receipt_generic_info,
@@ -373,6 +374,13 @@ class _DemandArena:
     honest about what is CPU-checkable and what is G2's job.
     """
 
+    # GRM-EB1: the driver's probe path opens its turn through the arena's
+    # frame helpers.  Borrow the REAL methods so these tests run the
+    # production frame logic rather than a copy that could drift.
+    eb1_begin_turn = ArenaCache.eb1_begin_turn
+    eb1_charge_recency = ArenaCache.eb1_charge_recency
+    _eb1_frame_info = ArenaCache._eb1_frame_info
+
     def __init__(self, *, ntok, width=96, answers=None, grounded=None):
         self.grafts = [
             {"text": f"node-{i}", "ntok": int(n), "kind": "fact"}
@@ -380,6 +388,11 @@ class _DemandArena:
         ]
         self.width = int(width)
         self.decisive_admission = True
+        # SC1 pins the DEMAND loop, which is frame-independent: every node is
+        # kind="fact", so recency nominates nothing under either frame.  The
+        # frame itself is pinned in tests/test_grm_eb1_ephemeral_frame.py.
+        self.ephemeral = False
+        self.recency_mounts = 0
         self.live_segs = []
         self.caches = None
         self.pos = 0

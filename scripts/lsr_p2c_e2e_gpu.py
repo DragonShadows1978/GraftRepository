@@ -49,6 +49,11 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from core.grm_frame import (  # noqa: E402
+    ENV_NAME as PERSISTENT_BOAT_ENV,
+    env_persistent_boat,
+    ephemeral_frame_enabled,
+)
 from scripts.grm_cmc1_mechanism import canonical_json_bytes, sha256_bytes  # noqa: E402
 from scripts.grm_det1_common import contains_value, file_record  # noqa: E402
 from scripts.lsr_p2c_replay_gpu import (  # noqa: E402
@@ -214,11 +219,41 @@ def score_run(run_dir: Path, *, arm: int) -> dict[str, Any]:
                 answer, str(probe["lived_answer"])),
             "turn_row_found": row is not None,
         })
+    # GRM-EB1: the FRAME this census ran under, read from the restart receipts
+    # the driver wrote (which record the arena's observed ``ephemeral`` and
+    # whether the transcript re-feed was skipped), not assumed from the env.
+    frame_rows = []
+    for spec in SHARDS:
+        restart = arm_dir / spec / "session" / "restart.json"
+        if restart.is_file():
+            payload = _read(restart)
+            frame_rows.append({
+                "shard": spec,
+                "frame_ephemeral": payload.get("frame_ephemeral"),
+                "frame_escape_active": payload.get("frame_escape_active"),
+                "refeed": payload.get("refeed"),
+                "refeed_skipped_reason": payload.get("refeed_skipped_reason"),
+            })
+
     return {
         "schema": f"{SCHEMA_PREFIX}.e2e_replay.v1",
         "program": "LSR",
         "phase": "2C",
         "gate": "G3",
+        "frame": {
+            "ephemeral_declared": bool(ephemeral_frame_enabled()),
+            "escape_env": os.environ.get(PERSISTENT_BOAT_ENV),
+            "escape_active": bool(env_persistent_boat()),
+            "per_shard_restart_receipts": frame_rows,
+            "spec": (
+                "GRM-EB1: the chat log is not kept in memory context; any "
+                "chat recall on facts is pulled via GRM"),
+            "arm0_reproduction_claimed": False,
+            "arm0_reproduction_note": (
+                "A different frame is a NEW baseline. This run does NOT claim "
+                "or attempt Arm-0 reproduction of persistent-frame rows; the "
+                "lived column is carried for CHANGE, not for identity."),
+        },
         "arm": int(arm),
         "arm_label": (
             "arm0_reproduction_fixes_off" if arm == 0

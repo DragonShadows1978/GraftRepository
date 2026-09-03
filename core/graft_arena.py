@@ -38,6 +38,7 @@ from core import kv_graft
 from core.graft_quant import (
     SUPPORTED_BITS, is_packed_payload, pack_kv_arrays, unpack_kv_arrays,
 )
+from core.grm_frame import ephemeral_frame_enabled, frame_receipt
 from core.grm_supersession import sup_resolve_enabled
 from core import grm_demand
 from core.grm_text_norm import normalize_glyphs
@@ -71,7 +72,7 @@ class ArenaCache:
     def __init__(self, model, encode, decode, sink_text="<conversation>\n",
                  arena_width=256, route_layer=44, topk=3, live_turns=2,
                  max_live=4096, cache_deposits=True,
-                 ephemeral=False, recency_mounts=2, prompt_template=None,
+                 ephemeral=None, recency_mounts=2, prompt_template=None,
                  stop_sequences=None, length_debias=False,
                  revision_resolution=None, decisive_admission=None,
                  route_backend="auto",
@@ -84,7 +85,15 @@ class ArenaCache:
         # for discourse cohesion (anaphora), ~40 seats instead of a growing
         # live region. Side effect: the live-window echo failure class
         # (corpus-100) cannot occur — there is no window to echo from.
-        self.ephemeral = ephemeral
+        #
+        # GRM-EB1 (David's spec, 2026-09-02: "the chat log is not kept in
+        # memory context; any chat recall on facts is pulled via GRM") makes
+        # this the PRODUCTION DEFAULT on every serving path. The registered
+        # escape GRM_PERSISTENT_BOAT=1 restores the old persistent live
+        # window for reproduction of FROZEN receipts only; it fails CLOSED to
+        # ephemeral on an unknown token. An explicit bool still wins, so a
+        # harness can pin either frame regardless of the ambient setting.
+        self.ephemeral = ephemeral_frame_enabled(ephemeral)
         self.recency_mounts = recency_mounts
         self.m = model
         self.encode = encode            # text -> list of token ids
@@ -2112,7 +2121,17 @@ class ArenaCache:
         self._commit_native_mount(picks, n_new)
 
     def evict(self):
-        """Drop live segments beyond the recency window from the cache."""
+        """Drop live segments beyond the recency window from the cache.
+
+        GRM-EB1.  Under the SPEC (ephemeral) frame ``live_turns`` governs only
+        the CURRENT turn's segments.  ``step()`` clears the boat at the START
+        of every turn, so the window this method trims never spans a turn
+        boundary: whatever it keeps is discarded wholesale by the next turn's
+        clear.  The invariant the frame owes the spec — "after N turns the
+        live cache holds only turn N's segments" — is therefore a property of
+        ``step()``'s clear, and ``tests/test_grm_eb1_ephemeral_frame.py`` pins
+        it directly rather than inferring it from this window arithmetic.
+        """
         if len(self.live_segs) <= self.live_turns or self.caches is None:
             return 0
         if self.live_turns <= 0:
@@ -2578,6 +2597,126 @@ class ArenaCache:
     #: ``None`` (the default for a bare ArenaCache) forces the ephemeral path.
     graft_splitter = None
 
+    def eb1_begin_turn(self):
+        """GRM-EB1: open a turn under the arena's frame. Returns the recency
+        nomination (a possibly-empty list of graft indices).
+
+        THE ONE IMPLEMENTATION of the frame's turn-open, shared by
+        ``ArenaCache.step()`` and the e2e driver's ``_probe_ladder_chat``.
+        Both are PRODUCTION SERVING PATHS, and before EB1 only ``step()``
+        carried the ephemeral logic — which meant the driver's probe path,
+        run against an ephemeral arena, served a THIRD frame: no live window
+        (because nothing feeds one) and no recency mounts either (because it
+        never nominated any).  Measured on the G2 sup battery, that third
+        frame regressed three probes that the persistent frame served
+        correctly.  Sharing the code is what makes "the spec frame is the
+        default on every serving path" true rather than merely intended.
+
+        Under the spec frame this clears the live cache and nominates the last
+        ``recency_mounts`` turn grafts.  Under the escape it does nothing and
+        returns an empty nomination, so the persistent path is byte-identical
+        to its pre-EB1 self.
+        """
+        live_inherited = [
+            {"graft_id": (None if g is None else int(g)), "ntok": int(n)}
+            for g, n in self.live_segs]
+        rec = []
+        # Objects created through the real constructor always own this field.
+        # ``False`` for legacy ``__new__``-only fixtures preserves their
+        # pre-EB1 contract without weakening the production default — the same
+        # rule ``step()`` applies to ``decisive_admission``.
+        if getattr(self, "ephemeral", False):
+            # clear the boat: fresh cache every turn, recency as mounts
+            self.caches, self.pos, self.live_segs = None, 0, []
+            self.cur_mounts, self.cur_mount_n = [], 0
+            turns = [i for i, g in enumerate(self.grafts)
+                     if not g.get("retired")
+                     and g.get("kind", "turn") in ("turn", "recall")]
+            recency_mounts = int(getattr(self, "recency_mounts", 0) or 0)
+            rec = turns[-recency_mounts:] if recency_mounts else []
+        self._eb1_recency_mounted_ids = [int(i) for i in rec]
+        self._eb1_recency_seats_nominated = sum(
+            int(self.grafts[i]["ntok"]) for i in rec)
+        self._eb1_recency_seats_charged = None
+        self._eb1_recency_charge_waived_reason = None
+        self._eb1_live_segments_inherited = live_inherited
+        # Captured AFTER the clear: the live window this turn actually starts
+        # from.  THE SPEC IS THIS FIELD BEING EMPTY — no prior turn's tokens
+        # in the model's context.  It is measured, not asserted.
+        self._eb1_live_segments_carried_into_turn = [
+            {"graft_id": (None if g is None else int(g)), "ntok": int(n)}
+            for g, n in self.live_segs]
+        return rec
+
+    def eb1_charge_recency(self, rec, qrare):
+        """Record what recency actually cost this turn, and return the budget.
+
+        ``qrare`` non-empty means an IDENTIFIER query, and the point-lookup
+        rule already excludes recency from the mount set for those; charging
+        their seats too would be a double penalty, so the budget is not
+        reduced.  This records WHICH of the two happened, per turn, so the
+        recency cost table is read off receipts instead of re-derived.
+        """
+        rec_budget = 0 if qrare else sum(
+            int(self.grafts[i]["ntok"]) for i in rec)
+        self._eb1_recency_seats_charged = int(rec_budget)
+        self._eb1_recency_charge_waived_reason = (
+            "identifier_query_point_lookup" if (qrare and rec) else None)
+        return int(self.width) - int(rec_budget)
+
+    def _eb1_frame_info(self):
+        """GRM-EB1: the per-turn frame receipt, on EVERY served turn.
+
+        Four registered fields plus the two the escape needs to be auditable:
+
+        ``frame_ephemeral``          the frame this turn actually ran under
+        ``frame_escape_active``      whether GRM_PERSISTENT_BOAT selected it
+        ``recency_mounted_ids``      which grafts recency nominated
+        ``recency_seats``            what those grafts COST in arena seats
+        ``live_segments_after_turn`` the live cache the turn leaves behind
+
+        Plus the two that make the frame auditable turn by turn:
+
+        ``live_segments_inherited``          what the PREVIOUS turn left
+        ``live_segments_carried_into_turn``  what this turn actually STARTED
+                                             from, captured after the clear
+
+        The spec — "the chat log is not kept in memory context" — IS
+        ``live_segments_carried_into_turn`` being empty.  Under the spec frame
+        ``live_segments_inherited`` may be non-empty and every one of those
+        segments was DISCARDED by the clear; keeping both fields is what lets
+        a reader see the discard happen instead of taking it on trust.
+
+        ``recency_seats`` reports both the nominated cost and the cost the fit
+        stage actually charged, because the point-lookup rule waives the
+        charge for identifier queries.  A reader can therefore see the recency
+        cost WITHOUT re-deriving the branch.
+        """
+        info = frame_receipt(bool(getattr(self, "ephemeral", False)))
+        info["recency_mounted_ids"] = list(
+            getattr(self, "_eb1_recency_mounted_ids", ()) or ())
+        charged = getattr(self, "_eb1_recency_seats_charged", None)
+        info["recency_seats"] = {
+            "arena_width": int(self.width),
+            "nominated_ids": list(
+                getattr(self, "_eb1_recency_mounted_ids", ()) or ()),
+            "nominated_ntok": int(
+                getattr(self, "_eb1_recency_seats_nominated", 0) or 0),
+            "charged_ntok": (None if charged is None else int(charged)),
+            "budget_after_charge": (
+                None if charged is None else int(self.width) - int(charged)),
+            "charge_waived_reason": getattr(
+                self, "_eb1_recency_charge_waived_reason", None),
+        }
+        info["live_segments_inherited"] = list(
+            getattr(self, "_eb1_live_segments_inherited", ()) or ())
+        info["live_segments_carried_into_turn"] = list(
+            getattr(self, "_eb1_live_segments_carried_into_turn", ()) or ())
+        info["live_segments_after_turn"] = [
+            {"graft_id": (None if g is None else int(g)), "ntok": int(n)}
+            for g, n in self.live_segs]
+        return info
+
     @staticmethod
     def _lsr_fixes_enabled():
         """LSR-P2C: the P2A+P2C fix switch, ``GRM_LSR_FIXES``, default ON.
@@ -2792,15 +2931,10 @@ class ArenaCache:
             stops = self.stop_sequences
         for L in self.m.layers:
             L.self_attn.live_shift = self.live_shift
-        rec = []
-        if self.ephemeral:
-            # clear the boat: fresh cache every turn, recency as mounts
-            self.caches, self.pos, self.live_segs = None, 0, []
-            self.cur_mounts, self.cur_mount_n = [], 0
-            turns = [i for i, g in enumerate(self.grafts)
-                     if not g.get("retired")
-                     and g.get("kind", "turn") in ("turn", "recall")]
-            rec = turns[-self.recency_mounts:] if self.recency_mounts else []
+        # GRM-EB1: open the turn under the frame (clear the boat and nominate
+        # recency under the spec frame; a no-op under the escape).  Shared
+        # with the driver's probe path so both serving paths run ONE frame.
+        rec = self.eb1_begin_turn()
         # exclude turns already present (live window / recency mounts)
         live_idx = {g for g, _ in self.live_segs if g is not None} | set(rec)
         route_limit = max(1, (int(max_trips) + 1) * int(self.topk))
@@ -2830,6 +2964,7 @@ class ArenaCache:
                     self, "last_route_backend", "python")
             if admission_profile is not None:
                 info.update(admission_info_fields(admission_profile))
+            info.update(self._eb1_frame_info())
             return info
 
         s4_turn = self._next_s4_turn()
@@ -2924,9 +3059,9 @@ class ArenaCache:
 
         def fit_detail(picks, plan=None):
             picks = self._resolve_revision_mounts(picks)
-            rec_budget = 0 if qrare else sum(self.grafts[i]["ntok"]
-                                             for i in rec)
-            budget = self.width - rec_budget
+            # GRM-EB1: one implementation of the recency charge and its
+            # receipt, shared with the driver's probe path.
+            budget = self.eb1_charge_recency(rec, qrare)
             receipt = plan_priority_fit(
                 plan=(rank_plan if plan is None else plan),
                 candidates=picks,

@@ -15,17 +15,34 @@ from types import SimpleNamespace
 import pytest
 
 from scripts import grm_e2e_session as e2e
+from core.graft_arena import ArenaCache
 from core.grm_admission import ABSTAIN_REASON_IDENTIFIER_UNBOUND
 
 
 class _StubArena:
-    def __init__(self, *, ntok, width, decisive, grounded=True):
+    # GRM-EB1: the driver's probe path is a PRODUCTION SERVING PATH and now
+    # opens its turn through the arena's frame helpers, exactly as
+    # ``ArenaCache.step()`` does.  The stub borrows the REAL methods rather
+    # than reimplementing them, so these tests exercise the production frame
+    # logic instead of a copy that could drift away from it.
+    eb1_begin_turn = ArenaCache.eb1_begin_turn
+    eb1_charge_recency = ArenaCache.eb1_charge_recency
+    _eb1_frame_info = ArenaCache._eb1_frame_info
+
+    def __init__(self, *, ntok, width, decisive, grounded=True,
+                 ephemeral=False, recency_mounts=0):
         self.grafts = [
             {"text": f"node-{i}", "ntok": int(n), "kind": "fact"}
             for i, n in enumerate(ntok)
         ]
         self.width = int(width)
         self.decisive_admission = bool(decisive)
+        # These fixtures pin the FIT stage, whose contract predates EB1 and is
+        # frame-independent: every node is kind="fact", so recency nominates
+        # nothing under either frame and the budget is the full width.  The
+        # frame itself is pinned in tests/test_grm_eb1_ephemeral_frame.py.
+        self.ephemeral = bool(ephemeral)
+        self.recency_mounts = int(recency_mounts)
         self.live_segs = []
         self.caches = None
         self.pos = 0
