@@ -3208,6 +3208,61 @@ class ArenaCache:
             self._bump_cuda_gqa_epoch()
         return children, True
 
+    # ------------------------------------------------------------------
+    # GRM-RT1 — a split child must not outrank the fact node it competes with
+    #
+    # The width guard leaves THREE first-class candidates in the routing
+    # surface where there was one node: the index parent (which
+    # ``_guard_deposit_width`` hands the UNION rare surface AND
+    # ``child_cents``, so ``_cent_score`` scores it as the max over the
+    # family) and every child on its own.  MEASURED (RS1 A0
+    # fresh_fact_controls, artifacts/grm_rt1/grm_rt1_diagnosis.json): on
+    # ``sup_solace_fresh`` the lexical channel is a FOUR-WAY TIE at
+    # ``lex_bonus = 1.000`` across grafts 2, 4, 3 and 1 — the competitor's own
+    # text says "the Praxis dock and Solace key references are index context",
+    # so both query content words hit every family member as well as the fact
+    # node.  Ordering among the tied four is then decided entirely by the
+    # latent channel, and one 159-token topically-hot competitor takes ranks
+    # 1, 2 and 3 while the 31-token identifier-bound fact node is pushed to
+    # rank 4 (``admission_route_margin_1_2 = 0.0`` is the fingerprint: rank 1
+    # and rank 2 are exactly tied because the parent's score IS its child's).
+    #
+    # This method reports MEMBERSHIP only.  The rule itself lives in
+    # ``grm_admission.demote_non_binding_split_members`` — structural, no
+    # threshold, and applied at admission rather than at readout.
+    # ------------------------------------------------------------------
+
+    def _split_family_members(self, candidates):
+        """Which of ``candidates`` are width-guard split parents or children.
+
+        Reads ONLY flags the existing split writers already set — RT1
+        introduces no new metadata:
+
+        * ``metadata['width_guard_child']`` — a persisted split child
+          (``graft_repository._guard_deposit_width``) or an ephemeral one
+          (``_split_unseatable``).
+        * ``metadata['width_guard_parent']`` — the persisted index parent.
+        * ``ephemeral_split_of`` / ``ephemeral_split`` — the ephemeral pair,
+          for a bare arena with no repository attached.
+
+        A node the guard never touched is not a member and the rule cannot
+        move it.
+        """
+        out = set()
+        for index in candidates:
+            index = int(index)
+            try:
+                node = self.grafts[index]
+            except (IndexError, TypeError, KeyError):
+                continue
+            meta = node.get("metadata") or {}
+            if (meta.get("width_guard_child")
+                    or meta.get("width_guard_parent")
+                    or node.get("ephemeral_split_of") is not None
+                    or node.get("ephemeral_split")):
+                out.add(index)
+        return out
+
     def _identifier_bearing_children(self, idx, user_text, qrare, fallback,
                                      *, with_binding_flag=False):
         """Which chunks of a split node the probe's identifier actually binds.

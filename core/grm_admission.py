@@ -118,6 +118,194 @@ def is_identifier_binding(
     )
 
 
+# ---------------------------------------------------------------------------
+# GRM-RT1 — a fit-time split child must not outrank the fact node it competes
+# with.
+#
+# MEASURED (RS1 A0 fresh_fact_controls; RS3 reproduced it; the channel
+# decomposition is artifacts/grm_rt1/grm_rt1_diagnosis.json): on
+# ``sup_solace_fresh`` the router returns ``[2, 4, 3, 1, 0]`` — the width-guard
+# INDEX PARENT 2 and both its children 4 and 3 sweep the top three ranks while
+# graft 1, the solace FACT node and the ONLY node in the repository whose own
+# text binds the question's identifier, is pushed to rank 4.
+#
+# The cause is not identifier evidence and not L2/lineage.  It is the LATENT
+# channel amplified by the split:
+#
+#   * the lexical channel is a FOUR-WAY TIE (``lex_bonus = 1.000`` for 2, 4, 3
+#     AND 1) because the sable competitor's own text names "the Praxis dock and
+#     Solace key references are index context", so both query content words hit
+#     every member of the split family as well as the fact node;
+#   * ``_guard_deposit_width`` gives the index parent ``child_cents``, so
+#     ``_cent_score(parent) = max(own centroid, each child's)`` — and each
+#     child also competes on its own.  One 159-token topically-hot node
+#     therefore gets THREE bites at the apple against a 31-token fact node's
+#     one.  ``route_margin_1_2 == 0.0`` is the fingerprint: ranks 1 and 2 are
+#     exactly tied because the parent's score IS its winning child's.
+#
+# A-DEC then sees ``identified_candidates = [1]`` with ``ranking[0] = 2``: the
+# sole binder is off-rank-1 and the margin is not above the fitted threshold,
+# so the branch is ``one_off_rank_identifier_insurance_k3`` and the plan is
+# ``ranking[:3] = [2, 4, 3]`` — the only identifier-binding node in the
+# repository is not in the plan at all, and the turn refuses.
+#
+# THE RULE (structural; NO new threshold, nothing refit):
+#
+#   A width-guard split child, or its index parent, that does not bind the
+#   question's identifier tokens IN ITS OWN TEXT never outranks a candidate
+#   that does; and a split member's identifier binding is always judged on its
+#   own text, never on the union routing surface it inherited from its parent.
+#
+# The second clause is the one the index parent needs: ``_guard_deposit_width``
+# sets ``parent['rare']`` to the UNION of its own and every child's rare
+# tokens, so a parent can appear to bind an identifier only a child's text
+# carries.  RT1 judges it on ``parent['text']`` alone.
+#
+# The rule REORDERS; it never scores.  Relative order within each group is the
+# router's, untouched.  When nothing binds, or every binder is itself a split
+# member, or no split member is ranked, it is a NO-OP and the router's order
+# stands verbatim.  Fixed at ADMISSION, never at readout.
+# ---------------------------------------------------------------------------
+
+RT1_RULE = (
+    "a width-guard split child (or its index parent) that does not bind the "
+    "question's identifier tokens in its OWN text never outranks a candidate "
+    "that does, and a split member's binding is judged on its own text, never "
+    "on the union surface inherited from its parent"
+)
+
+#: The switch RT1 rides.  It is P2A/P2C's, not a new one: the same
+#: ``GRM_LSR_FIXES`` that governs the fit-time split and the plan-priority
+#: fit, default ON, failing CLOSED to ON on an unknown token.
+RT1_ENV_NAME = "GRM_LSR_FIXES"
+
+#: ISOLATION ESCAPE, for measurement only.  ``GRM_LSR_FIXES`` governs the
+#: whole P2A+P2C+RT1 family, so turning it off to measure RT1 also removes the
+#: fit-time split — and the RT1 arm would then differ from its control by TWO
+#: changes instead of one.  This variable turns RT1 ALONE off while P2A/P2C
+#: stay on, so the G2 OFF arm is a clean single-variable control against RS3's
+#: 8/9.  It is ABSENT in production and, when absent, changes nothing:
+#: ``rt1_enabled`` falls through to ``GRM_LSR_FIXES`` exactly as before.
+RT1_ONLY_ENV_NAME = "GRM_RT1_RULE"
+
+_RT1_OFF_TOKENS = ("0", "false", "no", "off")
+
+
+def rt1_enabled(arena: Any = None) -> bool:
+    """Resolve the RT1 rule's switch.
+
+    Precedence, and why:
+
+    1. ``GRM_RT1_RULE`` when it is set — the measurement-only isolation
+       escape, so a gate can turn RT1 off WITHOUT also turning off the
+       fit-time split it must be compared against.  Absent in production.
+    2. otherwise ``GRM_LSR_FIXES``, the family switch, resolved through the
+       arena's own ``_lsr_fixes_enabled`` when the object has one so RT1 and
+       P2C can never disagree about it on a live arena; the environment is
+       read with identical semantics for the stubbed arenas the CPU tests
+       build through ``__new__``.
+
+    Both fail CLOSED to ON on an unknown token, the direction A-DEC and P2C
+    already fail: an operator who mistypes the value KEEPS the fix.
+    """
+    override = os.environ.get(RT1_ONLY_ENV_NAME)
+    if override is not None:
+        return str(override).strip().casefold() not in _RT1_OFF_TOKENS
+    resolver = getattr(arena, "_lsr_fixes_enabled", None)
+    if callable(resolver):
+        return bool(resolver())
+    value = os.environ.get(RT1_ENV_NAME, "").strip().casefold()
+    return value not in _RT1_OFF_TOKENS
+
+
+def demote_non_binding_split_members(
+    *,
+    ranking: Sequence[int],
+    binding: Iterable[int],
+    split_members: Iterable[int],
+) -> tuple[list[int], list[int]]:
+    """Move non-binding split-family members below every binding non-member.
+
+    ``binding`` is the set of candidates whose OWN text satisfies the frozen
+    ADM1 predicate; ``split_members`` is the width-guard family membership the
+    arena reports.  Returns ``(reordered_ranking, demoted_ids)``.
+
+    STABLE: the two groups keep the router's relative order internally, so the
+    only thing that moves is a non-binding split member that was sitting above
+    a binder.  ``demoted_ids`` names exactly those, in the order they were
+    demoted from — an empty list means the rule did nothing.
+
+    NO-OP CONDITIONS, all of them structural:
+
+    * no candidate binds — nothing to protect, so nothing moves;
+    * every binder is itself a split member — the rule only ever protects a
+      NON-member against a member, so it declines to reorder a family against
+      itself;
+    * no split member outranks a binder — the order already obeys the rule.
+    """
+    ranked = [int(value) for value in ranking]
+    binders = {int(value) for value in binding}
+    members = {int(value) for value in split_members}
+    # Only a binding NON-member is protected: the rule exists to stop a
+    # competitor's chunk from outranking the fact node, not to re-sort one
+    # split family against another.
+    protected = [value for value in ranked if value in binders - members]
+    if not protected:
+        return ranked, []
+    highest_protected = ranked.index(protected[0])
+    demoted = [
+        value for position, value in enumerate(ranked)
+        if position < highest_protected
+        and value in members
+        and value not in binders
+    ]
+    if not demoted:
+        return ranked, []
+    demoted_set = set(demoted)
+    kept = [value for value in ranked if value not in demoted_set]
+    return [*kept, *demoted], demoted
+
+
+def split_member_binds_own_text(
+    *,
+    text: str,
+    ordered_identifier_tokens: Sequence[str],
+    rare_identifier_tokens: Iterable[str],
+) -> bool:
+    """The frozen ADM1 predicate applied to a split member's OWN text.
+
+    A thin, deliberately named wrapper: RT1 introduces no predicate of its
+    own, and the name makes the "own text, never the inherited union" clause
+    of the rule visible at every call site.
+    """
+    return is_identifier_binding(
+        candidate_text=str(text or ""),
+        ordered_identifier_tokens=ordered_identifier_tokens,
+        rare_identifier_tokens=rare_identifier_tokens,
+    )
+
+
+def rt1_info_fields(
+    *,
+    demoted: Sequence[int] = (),
+    split_members: Iterable[int] = (),
+    ranking_before: Sequence[int] = (),
+) -> dict[str, Any]:
+    """RT1's receipt fields.  NEVER SILENT, the same law P2A/P2C obey.
+
+    Present on every A-DEC profile whether or not the rule moved anything, so
+    a later reader cannot mistake the absence of a field for the absence of a
+    demotion.
+    """
+    return {
+        "admission_split_child_demoted": bool(demoted),
+        "admission_split_demoted_ids": [int(v) for v in demoted],
+        "admission_split_family_ids": sorted(int(v) for v in split_members),
+        "admission_ranking_before_demotion": [
+            int(v) for v in ranking_before],
+    }
+
+
 def policy_plan(
     *,
     ranking: Sequence[int],
@@ -179,7 +367,7 @@ def decisive_admission_profile(
     if not eligible:
         plan, branch = policy_plan(
             ranking=(), identified_candidates=(), route_margin_1_2=0.0)
-        return {
+        empty = {
             "ranking": [],
             "identified_candidates": [],
             "identifier_tokens": [],
@@ -193,6 +381,11 @@ def decisive_admission_profile(
             "rule_sha256": FROZEN_RULE_SHA256,
             "route_backend": None,
         }
+        # NEVER SILENT: the RT1 fields are present even on the degenerate
+        # empty-repository profile, so a reader cannot mistake a missing field
+        # for a demotion that did not get recorded.
+        empty.update(rt1_info_fields())
+        return empty
 
     probe_key = arena._probe_key(question)
     want = min(
@@ -216,6 +409,43 @@ def decisive_admission_profile(
             rare_identifier_tokens=rare,
         )
     }
+
+    # GRM-RT1: a non-binding split-family member never outranks a binder.
+    # Applied HERE — after the router returns and BEFORE identified / margin /
+    # policy_plan are computed — so the demotion is visible to the A-DEC
+    # branch decision itself, which is the whole point: on sup_solace_fresh it
+    # turns the off-rank-1 sole binder into rank 1, and the branch from
+    # ``one_off_rank_identifier_insurance_k3`` (plan = a competitor's chunks)
+    # into ``exactly_one_identifier_decisive_rank1`` (plan = the fact node).
+    #
+    # Governed by the SAME switch P2A/P2C are, ``GRM_LSR_FIXES``.  With it OFF
+    # this block does not run at all and the ranking stays the router's
+    # verbatim, so the legacy path is byte-identical (test-pinned).
+    ranking_before = list(ranking)
+    rt1_demoted: list[int] = []
+    rt1_members: set[int] = set()
+    if rt1_enabled(arena) and ranking:
+        member_probe = getattr(arena, "_split_family_members", None)
+        if callable(member_probe):
+            rt1_members = {int(value) for value in member_probe(ranking)}
+        if rt1_members:
+            # Binding is judged on each candidate's OWN text.  For a
+            # non-member that is identical to ``identified_set``; for a split
+            # member it deliberately is NOT, because the width guard handed
+            # the index parent the union rare surface.
+            own_text_binders = {
+                index for index in ranking
+                if split_member_binds_own_text(
+                    text=arena.grafts[index].get("text", ""),
+                    ordered_identifier_tokens=ordered,
+                    rare_identifier_tokens=rare,
+                )
+            }
+            ranking, rt1_demoted = demote_non_binding_split_members(
+                ranking=ranking,
+                binding=own_text_binders,
+                split_members=rt1_members,
+            )
     # Preserve router order for observed hits; any identified member beyond
     # the bounded attempt window is still admitted and receives deterministic
     # graft-id order. Physical assembly sorts the final set in either case.
@@ -246,21 +476,35 @@ def decisive_admission_profile(
             if index in base and math.isfinite(float(base[index]))
         }
         reference = sorted(scores, key=lambda index: (-scores[index], index))
-        if reference[:len(ranking)] != ranking:
+        # The reconstruction guard checks the ROUTER against the frozen score
+        # law, so it must compare against the router's own output.  RT1's
+        # demotion is an admission-stage REORDER applied after that output;
+        # comparing the reordered list here would make the guard fire on the
+        # very defect it is meant to be blind to.  ``ranking_before`` is
+        # ``ranking`` verbatim whenever RT1 moved nothing (and always with
+        # GRM_LSR_FIXES off), so the legacy check is unchanged.
+        if reference[:len(ranking_before)] != ranking_before:
             raise AdmissionPolicyError(
                 "production route ranking differs from frozen A-DEC score "
                 f"reconstruction: backend={route_backend} "
-                f"production={ranking} reference={reference[:len(ranking)]}"
+                f"production={ranking_before} "
+                f"reference={reference[:len(ranking_before)]}"
             )
         if len(reference) >= 2:
             margin = float(scores[reference[0]] - scores[reference[1]])
         margin_evaluated = True
+    # GRM-RT1: the MARGIN is a property of the router's own top two, and the
+    # ``one_off_rank_identifier_insurance_k3`` branch asks whether the sole
+    # binder sits off rank 1.  After a demotion the binder IS rank 1, so that
+    # branch is not reached and the stale (pre-demotion) margin cannot decide
+    # anything; it is still reported verbatim so the receipt shows the tie
+    # (0.0 on sup_solace_fresh) that the split family produced.
     plan, branch = policy_plan(
         ranking=ranking,
         identified_candidates=identified,
         route_margin_1_2=margin,
     )
-    return {
+    profile = {
         "ranking": [int(value) for value in ranking],
         "identified_candidates": [int(value) for value in identified],
         "identifier_tokens": list(ordered),
@@ -274,6 +518,12 @@ def decisive_admission_profile(
         "rule_sha256": FROZEN_RULE_SHA256,
         "route_backend": route_backend,
     }
+    profile.update(rt1_info_fields(
+        demoted=rt1_demoted,
+        split_members=rt1_members,
+        ranking_before=ranking_before,
+    ))
+    return profile
 
 
 # ---------------------------------------------------------------------------
@@ -560,7 +810,7 @@ def split_info_fields(
 
 def admission_info_fields(profile: Mapping[str, Any]) -> dict[str, Any]:
     """Compact deterministic arena receipt fields for a selected plan."""
-    return {
+    fields = {
         "admission_policy": "A-DEC",
         "admission_policy_branch": str(profile["policy_branch"]),
         "admission_rank_plan": [int(value) for value in profile["rank_plan"]],
@@ -574,3 +824,14 @@ def admission_info_fields(profile: Mapping[str, Any]) -> dict[str, Any]:
         "admission_margin_threshold": MARGIN_THRESHOLD,
         "admission_rule_sha256": FROZEN_RULE_SHA256,
     }
+    # GRM-RT1, NEVER SILENT: a turn that demoted a split member says so, and a
+    # turn that did not says THAT, rather than omitting the field.  Profiles
+    # built by older frames (or by a test's hand-written dict) simply have no
+    # RT1 keys and the receipt reports the rule as inert, which is honest.
+    fields.update(rt1_info_fields(
+        demoted=profile.get("admission_split_demoted_ids", ()),
+        split_members=profile.get("admission_split_family_ids", ()),
+        ranking_before=profile.get(
+            "admission_ranking_before_demotion", profile.get("ranking", ())),
+    ))
+    return fields
