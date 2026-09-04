@@ -54,6 +54,10 @@ from core.grm_frame import (  # noqa: E402
     env_persistent_boat,
     ephemeral_frame_enabled,
 )
+from core.grm_frame import (  # noqa: E402
+    CAPTURE_PIN_ENV, CAPTURE_PIN_OFF, CAPTURE_PINS, SEAT_NEAR_LIVE_ENV,
+    capture_pin_mode, seat_near_live_enabled,
+)
 from scripts.grm_cmc1_mechanism import canonical_json_bytes, sha256_bytes  # noqa: E402
 from scripts.grm_det1_common import contains_value, file_record  # noqa: E402
 from scripts.lsr_p2c_replay_gpu import (  # noqa: E402
@@ -112,8 +116,25 @@ def _stop_after(spec: str) -> int:
     return 34 if spec == "e2e-4" else int(stop)
 
 
-def run_shard(spec: str, *, arm: int, run_dir: Path) -> dict[str, Any]:
-    """Run one shard of the certified session, resuming the previous one."""
+def run_shard(spec: str, *, arm: int, run_dir: Path,
+              capture_pin: str | None = None,
+              seat_near_live: bool | None = None) -> dict[str, Any]:
+    """Run one shard of the certified session, resuming the previous one.
+
+    GRM-RS3 adds ``capture_pin`` and ``seat_near_live``: FLAG PLUMBING ONLY.
+    Both default ``None``, which resolves through the (default-OFF, fail-
+    closed) env, so a shard that passes neither is the legacy shard byte for
+    byte.  Passing them pins the process env for the whole shard, so every
+    deposit and every bootstrap seating in those turns runs under the named
+    lever.  The resolved values ride on the shard's return.
+
+    EVERY SHARD IN A CHAIN MUST BE RUN WITH THE SAME LEVERS.  A shard resumes
+    the previous shard's persisted repository, so mixing levers across a chain
+    would serve later turns against grafts captured under a different
+    geometry — a confound, not an arm.  The caller owns that discipline; the
+    receipt records what each shard actually ran with so a mixed chain is
+    visible rather than silent.
+    """
     from scripts import grm_det1_e2e as det_e2e
     from scripts import grm_e2e_session as e2e
     from scripts.grm_det1_5_workers import _install_polaris_probe
@@ -123,6 +144,16 @@ def run_shard(spec: str, *, arm: int, run_dir: Path) -> dict[str, Any]:
     frame = _read(RUNTIME_FRAME)
     flags = frame["resolved_flags"]
     os.environ["GRM_LSR_FIXES"] = "1" if arm else "0"
+    resolved_pin = capture_pin_mode(capture_pin)
+    resolved_seat = seat_near_live_enabled(seat_near_live)
+    if resolved_pin == CAPTURE_PIN_OFF:
+        os.environ.pop(CAPTURE_PIN_ENV, None)
+    else:
+        os.environ[CAPTURE_PIN_ENV] = resolved_pin
+    if resolved_seat:
+        os.environ[SEAT_NEAR_LIVE_ENV] = "1"
+    else:
+        os.environ.pop(SEAT_NEAR_LIVE_ENV, None)
 
     arm_dir = Path(run_dir) / f"arm{int(arm)}"
     session_dir = arm_dir / spec / "session"
@@ -192,6 +223,15 @@ def run_shard(spec: str, *, arm: int, run_dir: Path) -> dict[str, Any]:
         "elapsed_seconds": float(elapsed),
         "scorecard": file_record(scorecard),
         "probe_rows": _read(scorecard).get("probes", []),
+        # GRM-RS3: the levers THIS shard served under.
+        "rs3_levers": {
+            "capture_pin": resolved_pin,
+            "seat_near_live": bool(resolved_seat),
+            "capture_pin_env": os.environ.get(CAPTURE_PIN_ENV),
+            "seat_near_live_env": os.environ.get(SEAT_NEAR_LIVE_ENV),
+            "both_off_is_the_legacy_run": (
+                resolved_pin == CAPTURE_PIN_OFF and not resolved_seat),
+        },
     }
 
 
@@ -293,6 +333,15 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("command", choices=("plan", "shard", "score"))
     parser.add_argument("--spec", default=None, choices=SHARDS)
     parser.add_argument("--arm", type=int, default=None, choices=(0, 1))
+    # GRM-RS3 flag plumbing. Both default to the legacy run. Pass the SAME
+    # values to every shard in a chain: a shard resumes the previous shard's
+    # persisted repository, so mixing levers mid-chain is a confound.
+    parser.add_argument("--capture-pin", default=None, choices=CAPTURE_PINS,
+                        help="GRM-RS3 capture geometry pin (default: off)")
+    parser.add_argument("--seat-near-live", action="store_true",
+                        default=False,
+                        help="GRM-RS3 seat the plan head next to the live "
+                             "band (default: off)")
     parser.add_argument("--run-dir", type=Path,
                         default=ROOT / "artifacts" / "lsr_p2c" / "g3_run")
     parser.add_argument("--lease-seconds", type=int, default=LEASE_SECONDS)
@@ -340,13 +389,17 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     with gpu_lease(int(args.lease_seconds), int(args.lock_wait_seconds)):
         out = run_shard(str(args.spec), arm=int(args.arm),
-                        run_dir=args.run_dir)
+                        run_dir=args.run_dir,
+                        capture_pin=args.capture_pin,
+                        seat_near_live=(
+                            True if args.seat_near_live else None))
     print(json.dumps({
         "spec": out["spec"],
         "stop_after_turns": out["stop_after_turns"],
         "resumed": out["resumed"],
         "elapsed_seconds": round(out["elapsed_seconds"], 1),
         "probe_rows": len(out["probe_rows"]),
+        "rs3_levers": out["rs3_levers"],
     }))
     return 0
 

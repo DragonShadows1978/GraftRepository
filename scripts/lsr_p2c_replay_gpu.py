@@ -74,6 +74,10 @@ from core.grm_frame import (  # noqa: E402
     ENV_NAME as PERSISTENT_BOAT_ENV,
     env_persistent_boat,
 )
+from core.grm_frame import (  # noqa: E402
+    CAPTURE_PIN_ENV, CAPTURE_PIN_OFF, CAPTURE_PINS, SEAT_NEAR_LIVE_ENV,
+    capture_pin_mode, seat_near_live_enabled,
+)
 from scripts.grm_cmc1_mechanism import canonical_json_bytes, sha256_bytes  # noqa: E402
 from scripts.grm_det1_common import contains_value, file_record  # noqa: E402
 
@@ -381,8 +385,19 @@ def _serve_probe_arm1(repo, e2e, question: str, flags: Mapping[str, Any]):
     return str(answer), _fit_fields(info), [int(v) for v in arena.cur_mounts]
 
 
-def serve_fixture(session_id: str, *, arm: int) -> dict[str, Any]:
-    """Replay one fixture's lived deposit order, then serve its probes."""
+def serve_fixture(session_id: str, *, arm: int,
+                  capture_pin: str | None = None,
+                  seat_near_live: bool | None = None) -> dict[str, Any]:
+    """Replay one fixture's lived deposit order, then serve its probes.
+
+    GRM-RS3 adds ``capture_pin`` and ``seat_near_live``: FLAG PLUMBING ONLY.
+    Both default ``None``, which resolves through the (default-OFF, fail-
+    closed) env, so a run that passes neither is the legacy run byte for byte.
+    Passing them sets the process env for the whole replay, so every deposit
+    and every bootstrap seating inside it runs under the named lever — which
+    is what "run the battery with the winning pair ON" means.  Nothing else
+    about the replay changes, and the resolved values land on the receipt.
+    """
     from scripts.grm_det1_2_gpu import _load_model_repo
     from scripts.grm_det1_3_gpu import _install_lived_nodes
 
@@ -396,6 +411,19 @@ def serve_fixture(session_id: str, *, arm: int) -> dict[str, Any]:
     # Arm 0 turns the P2A+P2C fixes OFF for the whole process so the
     # reproduction arm cannot accidentally inherit one of them.
     os.environ["GRM_LSR_FIXES"] = "1" if arm else "0"
+    # GRM-RS3 levers. An explicit value is validated and pinned for the whole
+    # process; ``None`` CLEARS the variable so an ambient setting cannot steer
+    # a run whose receipt would then not show it.
+    resolved_pin = capture_pin_mode(capture_pin)
+    resolved_seat = seat_near_live_enabled(seat_near_live)
+    if resolved_pin == CAPTURE_PIN_OFF:
+        os.environ.pop(CAPTURE_PIN_ENV, None)
+    else:
+        os.environ[CAPTURE_PIN_ENV] = resolved_pin
+    if resolved_seat:
+        os.environ[SEAT_NEAR_LIVE_ENV] = "1"
+    else:
+        os.environ.pop(SEAT_NEAR_LIVE_ENV, None)
 
     repo_dir = Path(tempfile.mkdtemp(prefix=f"lsr_p2c_{session_id}_"))
     served: list[dict[str, Any]] = []
@@ -469,6 +497,17 @@ def serve_fixture(session_id: str, *, arm: int) -> dict[str, Any]:
             "arm0_reproduction_fixes_off" if arm == 0
             else "arm1_p2a_p2c_fixes_on"),
         "lsr_fixes_env": os.environ.get("GRM_LSR_FIXES"),
+        # GRM-RS3: the two levers this replay served under, RESOLVED (not the
+        # raw env), plus the raw env beside them so an operator typo is
+        # visible rather than swallowed by the fail-closed rule.
+        "rs3_levers": {
+            "capture_pin": resolved_pin,
+            "seat_near_live": bool(resolved_seat),
+            "capture_pin_env": os.environ.get(CAPTURE_PIN_ENV),
+            "seat_near_live_env": os.environ.get(SEAT_NEAR_LIVE_ENV),
+            "both_off_is_the_legacy_run": (
+                resolved_pin == CAPTURE_PIN_OFF and not resolved_seat),
+        },
         # GRM-EB1: the FRAME this replay served under, read off the arena that
         # actually served rather than assumed from the env.  A different frame
         # is a NEW baseline, so this field is what tells a reader whether a row
@@ -529,6 +568,13 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("command", choices=("plan", "fixture"))
     parser.add_argument("--session-id", default=None)
     parser.add_argument("--arm", type=int, default=None, choices=(0, 1))
+    # GRM-RS3 flag plumbing. Both default to the legacy run.
+    parser.add_argument("--capture-pin", default=None, choices=CAPTURE_PINS,
+                        help="GRM-RS3 capture geometry pin (default: off)")
+    parser.add_argument("--seat-near-live", action="store_true",
+                        default=False,
+                        help="GRM-RS3 seat the plan head next to the live "
+                             "band (default: off)")
     parser.add_argument("--lease-seconds", type=int, default=LEASE_SECONDS)
     parser.add_argument("--lock-wait-seconds", type=int,
                         default=LOCK_WAIT_SECONDS)
@@ -554,8 +600,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     from scripts.grm_cmc1_gpu_arms import gpu_lease
 
     with gpu_lease(int(args.lease_seconds), int(args.lock_wait_seconds)):
-        payload = serve_fixture(str(args.session_id), arm=int(args.arm))
-    path = emit(payload, f"lsr_p2c_arm{int(args.arm)}_{args.session_id}")
+        payload = serve_fixture(
+            str(args.session_id), arm=int(args.arm),
+            capture_pin=args.capture_pin,
+            seat_near_live=(True if args.seat_near_live else None))
+    levers = payload["rs3_levers"]
+    stem = f"lsr_p2c_arm{int(args.arm)}_{args.session_id}"
+    if not levers["both_off_is_the_legacy_run"]:
+        # A lever run gets its own receipt name so it can never be mistaken
+        # for the legacy baseline it must be compared against.
+        stem += f"_pin-{levers['capture_pin']}_seat-{int(levers['seat_near_live'])}"
+    path = emit(payload, stem)
     print(f"receipt={path}")
     print(f"reproduced_all={payload['reproduced']}")
     for row in payload["probes"]:

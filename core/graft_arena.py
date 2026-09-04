@@ -38,7 +38,11 @@ from core import kv_graft
 from core.graft_quant import (
     SUPPORTED_BITS, is_packed_payload, pack_kv_arrays, unpack_kv_arrays,
 )
-from core.grm_frame import ephemeral_frame_enabled, frame_receipt
+from core.grm_frame import (
+    CAPTURE_PIN_LIVE, CAPTURE_PIN_MOUNT, CAPTURE_PIN_OFF, CAPTURE_PINS,
+    capture_pin_mode, ephemeral_frame_enabled, frame_receipt, rs3_receipt,
+    seat_near_live_enabled,
+)
 from core.grm_supersession import sup_resolve_enabled
 from core import grm_demand
 from core.grm_text_norm import normalize_glyphs
@@ -518,21 +522,352 @@ class ArenaCache:
     def unpack_index(self, z, i):
         return z["cents"][i].astype(np.float32)
 
+    # ---------------------------------------------- GRM-RS3 capture geometry
+    def capture_shift_for(self, pin=None):
+        """The absolute query position a harvest forward runs at, per pin.
+
+        DERIVED FROM THE ARENA, never typed.  ``mount`` is ``n_sink`` — the
+        first arena seat, which is where ``_attempt``'s bootstrap branch always
+        lands a mount (the sink occupies [0, n_sink) and the mount block
+        follows it immediately, RoPE'd at ``cos.slice(0, 0, graft_seats)``).
+        ``live`` is ``live_shift`` — ``n_sink + arena_width``, the first LIVE
+        seat, which is where text fed live immediately before a question sits.
+
+        ``off`` returns ``None``, which is not a position: it means "do not
+        touch ``live_shift``", i.e. leave whatever the caller's state left, so
+        the harvest is byte-identical to the legacy one.
+        """
+        if pin is None:
+            pin = getattr(self, "_rs3_capture_pin_explicit", None)
+        mode = capture_pin_mode(pin)
+        if mode == CAPTURE_PIN_MOUNT:
+            return int(self.n_sink)
+        if mode == CAPTURE_PIN_LIVE:
+            return int(self.live_shift)
+        return None
+
+    @contextlib.contextmanager
+    def _capture_geometry(self, pin=None):
+        """Pin every layer's capture-time QUERY position for one harvest.
+
+        GRM-RS3 Part 1.  ``GptOssAttentionTC.__call__`` rotates queries at
+        ``cos.slice(0, position_offset + shift, L)`` with ``shift =
+        self_attn.live_shift`` (falling back to ``graft_seats`` when it is
+        ``None``).  The harvested KEYS are pre-RoPE and therefore position-free
+        — the relocatable-keys invariant is untouched by this — but the
+        QUERIES decide each layer's attention output, which is the next
+        layer's K/V input.  So the capture-time query position propagates into
+        every layer above 0, and pinning it is what makes ``deposit`` produce
+        the same graft whether or not a turn has been served yet.
+
+        OFF is not "pin to the current value": it does not touch ``live_shift``
+        at all, so the OFF path is the legacy path operand for operand.
+
+        Yields the receipt dict the caller stamps onto the graft.
+        """
+        if pin is None:
+            # Arena-level explicit channel; ``None`` still defers to the env,
+            # which is DEFAULT OFF. Resolver order: argument > attribute >
+            # env > OFF.
+            pin = getattr(self, "_rs3_capture_pin_explicit", None)
+        mode = capture_pin_mode(pin)
+        shift = self.capture_shift_for(mode)
+        receipt = {
+            "capture_pin": mode,
+            "capture_shift": shift,
+            "capture_shift_derived_from": (
+                "arena.n_sink" if mode == CAPTURE_PIN_MOUNT else
+                "arena.live_shift (= n_sink + arena_width)"
+                if mode == CAPTURE_PIN_LIVE else
+                "not pinned; live_shift left exactly as the caller's state "
+                "had it (legacy, byte-identical)"),
+            "n_sink": int(self.n_sink),
+            "arena_width": int(self.width),
+            "live_shift": int(self.live_shift),
+        }
+        if mode == CAPTURE_PIN_OFF:
+            # LEGACY: touch nothing. Record what the unpinned harvest actually
+            # ran at, so an OFF receipt still says which geometry it got.
+            observed = [getattr(L.self_attn, "live_shift", None)
+                        for L in self.m.layers]
+            first = observed[0] if observed else None
+            # READ-ONLY and never coercive: this branch must not raise on a
+            # value it merely reports, or OFF would stop being a no-op for a
+            # caller whose live_shift is not an int.
+            try:
+                first = None if first is None else int(first)
+            except (TypeError, ValueError):
+                first = repr(first)
+            receipt["capture_shift_observed"] = first
+            yield receipt
+            return
+        before = [getattr(L.self_attn, "live_shift", None)
+                  for L in self.m.layers]
+        for L in self.m.layers:
+            L.self_attn.live_shift = shift
+        try:
+            receipt["capture_shift_observed"] = int(shift)
+            yield receipt
+        finally:
+            # Restore EXACTLY what was there, per layer — the pin is scoped to
+            # this one harvest and must not leak into the serving path.
+            for L, value in zip(self.m.layers, before):
+                L.self_attn.live_shift = value
+
+    # ------------------------------------------- GRM-RS3 band seating (Part 2)
+    #: Receipt for the most recent bootstrap seating. ``None`` until a mount
+    #: has been seated through ``_attempt``'s bootstrap branch.
+    _rs3_last_seating = None
+
+    #: The arena-level EXPLICIT channel for the seating lever, for callers that
+    #: cannot reach ``_rs3_seat_plan``'s argument (``_attempt``'s bootstrap is
+    #: reached through ``step`` / ``_probe_ladder_chat``, neither of which
+    #: takes a seating argument). ``None`` = defer to the env, which is itself
+    #: DEFAULT OFF, so the class default changes nothing.
+    _rs3_seat_explicit = None
+
+    #: The same channel for the capture pin, used by the deposit paths that
+    #: run inside a serving turn. ``None`` = defer to the env (DEFAULT OFF).
+    _rs3_capture_pin_explicit = None
+
+    def _rs3_seat_plan(self, picks, seat_near_live=None):
+        """Decide the mount block's ORDER and its band offset.
+
+        GRM-RS3 Part 2.  Production seats the block at ``[n_sink, n_sink +
+        mount_ntok)``: ``_attempt``'s bootstrap branch concatenates the sink
+        payload and the mount payloads into ONE block and
+        ``GptOssAttentionTC.__call__`` RoPEs that whole block at
+        ``cos.slice(0, 0, graft_seats)``.  So the plan head — ``picks[0]``, the
+        first seat ``grm_admission.plan_priority_fit`` fills — lands at the
+        band's SINK end, as far from the question as the band allows, with the
+        filler between it and the live tokens.
+
+        ON inverts that: the block is filled from the TOP DOWN, so the PLAN
+        HEAD is last in the block and its LAST TOKEN is adjacent to
+        ``live_shift``, with filler and the other mounts below it.  The sink is
+        untouched — moving it would be a second variable.
+
+        Returns ``(seat_order, info)``.  OFF returns ``picks`` unchanged and an
+        info dict whose ``seat_near_live`` is ``False``, and the caller then
+        takes the legacy path operand for operand.
+        """
+        picks = [int(v) for v in picks]
+        if seat_near_live is None:
+            # The ARENA-LEVEL explicit channel, for a caller that cannot reach
+            # this call's argument (``_attempt``'s bootstrap branch is reached
+            # through ``step``/``_probe_ladder_chat``, neither of which takes a
+            # seating argument). ``None`` here still means "ask the env", so
+            # the default remains OFF and the resolver order is unchanged:
+            # explicit argument > arena attribute > env > OFF.
+            seat_near_live = getattr(self, "_rs3_seat_explicit", None)
+        enabled = seat_near_live_enabled(seat_near_live)
+        mount_ntok = sum(int(self.grafts[i]["ntok"]) for i in picks)
+        n_sink = int(self.n_sink)
+        info = {
+            "seat_near_live": bool(enabled),
+            "seat_order": list(picks),
+            "seat_order_legacy": list(picks),
+            "plan_head": (int(picks[0]) if picks else None),
+            "mount_ntok": int(mount_ntok),
+            "n_sink": n_sink,
+            "arena_width": int(self.width),
+            "live_shift": int(self.live_shift),
+            "mount_pos0_legacy": n_sink,
+            "mount_pos0": n_sink,
+            "delta_positions": 0,
+            "seat_offset_plan_head": (n_sink if picks else None),
+            "seat_rule": (
+                "LEGACY: the block is seated at [n_sink, n_sink + mount_ntok) "
+                "and the plan head (picks[0]) takes the band's SINK end"),
+        }
+        if not picks:
+            # Nothing to seat: the lever cannot have moved anything, and a
+            # receipt claiming otherwise would be false.
+            info["seat_near_live"] = False
+            info["declined_reason"] = "no_mounts_to_seat"
+            info["seat_near_live_requested"] = bool(enabled)
+            return picks, info
+        if not enabled:
+            return picks, info
+        # TOP-DOWN FILL. The plan head goes LAST in the block so its final row
+        # is the block's final row; the rest keep their relative order below
+        # it. The block as a whole then moves up so its last row sits at
+        # live_shift - 1, i.e. immediately below the first live token.
+        seat_order = picks[1:] + picks[:1]
+        mount_pos0 = int(self.live_shift) - int(mount_ntok)
+        head_ntok = int(self.grafts[picks[0]]["ntok"])
+        info.update({
+            "seat_order": [int(v) for v in seat_order],
+            "mount_pos0": int(mount_pos0),
+            "delta_positions": int(mount_pos0 - n_sink),
+            # The plan head is the LAST member of the block, so it starts
+            # head_ntok rows before the block's end.
+            "seat_offset_plan_head": int(self.live_shift) - head_ntok,
+            "plan_head_ntok": head_ntok,
+            "plan_head_last_position": int(self.live_shift) - 1,
+            "plan_head_adjacent_to_live_shift": True,
+            "seat_rule": (
+                "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN — "
+                "the plan head (picks[0]) is seated LAST so its final token "
+                "sits at live_shift - 1, immediately below the first live "
+                "token; filler and the other mounts sit below it; the sink "
+                "stays at [0, n_sink)"),
+        })
+        if mount_pos0 < n_sink:
+            # A block wider than the band cannot be seated top-down without
+            # overrunning the sink. Production's own width law forbids that
+            # block anyway (swap raises above self.width); fail closed to the
+            # legacy seating rather than corrupt the sink.
+            info.update({
+                "seat_near_live": False,
+                "seat_order": list(picks),
+                "mount_pos0": n_sink,
+                "delta_positions": 0,
+                "seat_offset_plan_head": n_sink,
+                "seat_rule": (
+                    "GRM_SEAT_NEAR_LIVE requested but DECLINED: mount_ntok "
+                    f"({mount_ntok}) would place the block at {mount_pos0}, "
+                    f"below n_sink ({n_sink}), overrunning the sink. Failed "
+                    "closed to the legacy seating."),
+                "declined_reason": "block_wider_than_band",
+                "seat_near_live_requested": True,
+            })
+            return picks, info
+        return [int(v) for v in seat_order], info
+
+    def _rs3_rotate_injection(self, inj, seat_info):
+        """Pre-rotate the MOUNT rows of a bootstrap injection block.
+
+        THE MECHANISM, and why it is a POSITION change and nothing else.  The
+        attention layer will RoPE the whole injected block at absolute
+        positions ``[0, graft_seats)`` no matter what — that call site is not
+        changed by this order.  The mount occupies block rows ``[n_sink,
+        n_sink + mount_ntok)``, so the layer will rotate row ``n_sink + j`` by
+        ``n_sink + j``.  To land it at ``mount_pos0 + j`` the payload is
+        pre-rotated HERE by ``delta = mount_pos0 - n_sink``; the layer's own
+        rotation then composes with it to the requested net position.  That
+        composition is the same one ``_rope_block_at`` already relies on to
+        re-seat a graft, which is the pre-RoPE relocatable-keys invariant
+        (``docs/GRM_Methodology.md`` §4) doing exactly what it promises.
+
+        Only the ROPE-carrying payload key is touched (``ROPE_KEYS``); the
+        value payload is passed through untouched, and the PHYSICAL cache rows
+        are unchanged — the mount stays a packed prefix immediately after the
+        sink.  The sink's own rows are never rotated.
+        """
+        delta = int(seat_info["delta_positions"])
+        n_sink = int(seat_info["n_sink"])
+        if not delta:
+            return inj
+        rope_keys = set(self.ROPE_KEYS)
+        out = []
+        for block in inj:
+            new_block = {}
+            for key, dim in self.PAYLOAD:
+                array = block[key]
+                array = (array if isinstance(array, np.ndarray)
+                         else array.numpy())
+                if key not in rope_keys:
+                    new_block[key] = array
+                    continue
+                index = [slice(None)] * array.ndim
+                index[dim] = slice(0, n_sink)
+                sink_rows = array[tuple(index)]
+                index[dim] = slice(n_sink, array.shape[dim])
+                mount_rows = array[tuple(index)]
+                if mount_rows.shape[dim] == 0:
+                    new_block[key] = array
+                    continue
+                rotated = self._rs3_rotate_rows(mount_rows, dim, delta)
+                new_block[key] = np.ascontiguousarray(
+                    np.concatenate([sink_rows, rotated], axis=dim))
+            out.append(new_block)
+        return out
+
+    def _rs3_rotate_rows(self, array, dim, delta):
+        """Rotate EVERY row of a host payload by the SAME ``delta`` positions.
+
+        THE CONSTANT-DELTA LAW, and why it is not ``_rope_tensor(x, delta)``.
+        RoPE tables are indexed by ABSOLUTE position: ``_rope_tensor(x, pos0)``
+        rotates row ``j`` by ``pos0 + j``, because that is what rotating a
+        SPAN at a seat range means.  A band RELOCATION is a different
+        operation: every row must move by the same amount, so that composing
+        with the layer's own ``n_sink + j`` rotation yields ``mount_pos0 + j``
+        — the block translated, its internal geometry intact.
+
+        Rotating the block at ``pos0 = delta`` instead composes to
+        ``n_sink + delta + 2j``: the extra rotation GROWS along the block, so
+        the mount's rows are progressively de-phased relative to each other.
+        That is not a relocation, it is a shear — the keys stop being the same
+        keys.  MEASURED here in pure numpy before any GPU run: constant-delta
+        composition matches the direct rotation to 4.4e-16, the span-style
+        pre-rotation is off by 4.56 on the same input.
+
+        So this rotates against ONE table row — position ``|delta|``,
+        broadcast over the sequence axis — using the arena's own rope tables,
+        which is the operation ``_rope_block_at`` composes with when it
+        re-seats a graft.  A negative delta uses the inverse rotation, exactly
+        as ``_rope_block_at(..., inverse=True)`` does.
+        """
+        delta = int(delta)
+        if not delta:
+            return array
+        seq_axis = array.ndim - 2
+        moved = array if dim == seq_axis else np.moveaxis(array, dim, seq_axis)
+        moved = np.ascontiguousarray(moved).astype(np.float32)
+        # ONE table row, broadcast: the constant-delta rotation.
+        cos_row = np.asarray(
+            self.m.rope_cos.float().numpy()[abs(delta)], dtype=np.float32)
+        sin_row = np.asarray(
+            self.m.rope_sin.float().numpy()[abs(delta)], dtype=np.float32)
+        if delta < 0:
+            sin_row = -sin_row
+        x = moved
+        if self.ROPE_PAIR_SWAP:
+            x = self._pair_swap_last(x)
+        half = x.shape[-1] // 2
+        rotated_half = np.concatenate([-x[..., half:], x[..., :half]], axis=-1)
+        out = x * cos_row + rotated_half * sin_row
+        out = out.astype(array.dtype)
+        if dim != seq_axis:
+            out = np.moveaxis(out, seq_axis, dim)
+        return np.ascontiguousarray(out)
+
     # ------------------------------------------------------------ repository
-    def deposit(self, text):
+    def deposit(self, text, capture_pin=None):
         """Standalone harvest deposit (document-in-isolation semantics, one
-        dedicated forward). Stored DEVICE-resident: mounts never re-upload."""
+        dedicated forward). Stored DEVICE-resident: mounts never re-upload.
+
+        GRM-RS3: ``capture_pin`` pins the harvest forward's QUERY position to a
+        registered geometry (``mount`` / ``live``) instead of inheriting
+        whatever ``live_shift`` the previous turn left behind.  Default
+        ``None`` resolves through ``GRM_CAPTURE_PIN``, itself DEFAULT OFF, and
+        OFF does not touch ``live_shift`` at all — the legacy harvest, byte
+        for byte.  Every harvest path in the stack (``feed``'s ephemeral
+        branch, the P2C split children, the consolidation note, the abstention
+        deposit, the repository installers) reaches the model through THIS
+        call, so pinning it here pins all of them.
+        """
         ids = self.encode(text)
-        h = self._harvest(ids)
-        dev = [{key: tc.tensor(np.ascontiguousarray(h[li][key])).astype(self.dt)
-                for key, _ in self.PAYLOAD}
-               for li in range(len(self.m.layers))]
-        self.grafts.append({"h": dev, "cent": self._node_key(text, h),
-                            "ntok": len(ids), "text": text})
+        with self._capture_geometry(capture_pin) as capture:
+            h = self._harvest(ids)
+            dev = [{key: tc.tensor(
+                        np.ascontiguousarray(h[li][key])).astype(self.dt)
+                    for key, _ in self.PAYLOAD}
+                   for li in range(len(self.m.layers))]
+            # The ROUTING KEY comes from the same pinned geometry: _node_key
+            # runs its own partial harvest forward when it is not handed one,
+            # and a key captured at a different position than the payload
+            # would be a second, unregistered variable.
+            cent = self._node_key(text, h)
+        graft = {"h": dev, "cent": cent, "ntok": len(ids), "text": text}
+        graft.update(capture)
+        self.grafts.append(graft)
         self._bump_cuda_gqa_epoch()
         return len(self.grafts) - 1
 
-    def deposit_from_cache(self, text, seg_ntok, route_key=None):
+    def deposit_from_cache(self, text, seg_ntok, route_key=None,
+                           capture_pin=None):
         """Harvest-on-generate: the live cache ALREADY holds the turn's
         (c_n, k_pe) — slice the span instead of re-forwarding. c_n is
         position-free as-is; k_pe un-RoPEs by rotation composition
@@ -544,7 +879,17 @@ class ArenaCache:
         conversation — early turns become routing attractors (5/6, mounts
         collapsed onto turn 1). So the ROUTING KEY comes from a standalone
         partial forward (layers 0..route_layer, no head) unless
-        key_from_cache=True (the measured-5/6 exploratory mode)."""
+        key_from_cache=True (the measured-5/6 exploratory mode).
+
+        GRM-RS3 ``capture_pin``.  This path runs NO harvest forward for the
+        PAYLOAD — it slices the live cache, whose geometry is already fixed by
+        the turn that built it — so the pin cannot and does not move the
+        payload here, and the receipt says so.  It DOES cover the one forward
+        this path can still run: the standalone ``_node_key(text)`` fallback
+        when no ``route_key`` was carried.  Pinning that keeps the routing key
+        from depending on whether a turn has been served, for the same reason
+        the payload pin exists.  OFF touches nothing.
+        """
         p0 = self.live_shift + self.pos - seg_ntok      # span's first seat
         dev = self._export_cache_payloads(seg_ntok, p0)
         if dev is None:
@@ -554,13 +899,19 @@ class ArenaCache:
         for li, seg in enumerate(dev):
             if li == self.route_layer and cent is None:
                 cent = self._cache_key_of(seg)
-        if cent is None:
-            cent = (
-                np.asarray(route_key, dtype=np.float32)
-                if route_key is not None else self._node_key(text)
-            )
-        self.grafts.append({"h": dev, "cent": cent,
-                            "ntok": seg_ntok, "text": text})
+        with self._capture_geometry(capture_pin) as capture:
+            if cent is None:
+                cent = (
+                    np.asarray(route_key, dtype=np.float32)
+                    if route_key is not None else self._node_key(text)
+                )
+        capture = dict(capture)
+        capture["capture_payload_source"] = "live_cache_slice"
+        capture["capture_span_pos0"] = int(p0)
+        capture["capture_pin_moves_payload"] = False
+        graft = {"h": dev, "cent": cent, "ntok": seg_ntok, "text": text}
+        graft.update(capture)
+        self.grafts.append(graft)
         self._bump_cuda_gqa_epoch()
         return len(self.grafts) - 1
 
@@ -3916,7 +4267,9 @@ class ArenaCache:
                 L.self_attn.reset_telemetry()
         if self.caches is None:
             # bootstrap: sink (+ first mounts) enter via the injection path
-            mounts = [{"h": self.sink_h}] + [self.grafts[i] for i in picks]
+            seat_order, seat_info = self._rs3_seat_plan(picks)
+            mounts = [{"h": self.sink_h}] + [
+                self.grafts[i] for i in seat_order]
             inj = []
             # sink is host numpy; deposited grafts are device tensors
             _np = lambda t: t if isinstance(t, np.ndarray) else t.numpy()
@@ -3924,10 +4277,17 @@ class ArenaCache:
                 inj.append({key: np.concatenate([_np(g["h"][li][key])
                                                  for g in mounts], axis=dim)
                             for key, dim in self.PAYLOAD})
+            # GRM-RS3 Part 2: when the lever is ON, pre-rotate the MOUNT rows
+            # (not the sink) by the band delta so the layer's own RoPE lands
+            # them adjacent to live_shift. OFF leaves `inj` exactly as the
+            # legacy branch built it — the same object, unrotated.
+            if seat_info["seat_near_live"]:
+                inj = self._rs3_rotate_injection(inj, seat_info)
             self._set_injection_host(inj)
             self.cur_mounts = picks
             self.cur_mount_n = sum(self.grafts[i]["ntok"] for i in picks)
             self._commit_native_mount(picks, self.cur_mount_n)
+            self._rs3_last_seating = seat_info
         else:
             self.swap(picks)
         prompt_ids = self.encode(self._format_step_prompt(user_text))

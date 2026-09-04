@@ -88,3 +88,130 @@ def frame_receipt(ephemeral: bool,
         "frame_ephemeral": bool(ephemeral),
         "frame_escape_active": bool(env_persistent_boat(environ)),
     }
+
+
+# ======================================================================
+# GRM-RS3 — the two capture/seating levers, BOTH DEFAULT OFF
+# ======================================================================
+#
+# THE MEASURED SEAM (RS2 amendment ``amendment_b1p_capture_position.json``,
+# sha256 72f73f08…).  ``ArenaCache.deposit`` runs a harvest forward and stores
+# the PRE-RoPE keys, which are position-free — but the forward's QUERIES are
+# rotated at ``cos.slice(0, position_offset + shift, L)`` where ``shift`` is
+# ``self_attn.live_shift`` (falling back to ``graft_seats`` when ``None``).
+# The queries decide each layer's ATTENTION OUTPUT, which is the input to the
+# next layer's K/V — so the capture-time query position propagates into every
+# layer above 0.  Measured: layer 0 identical, layers 1..23 all changed.
+#
+# Nothing pins that position.  A virgin arena leaves ``live_shift = None`` and
+# harvests at [0, L); any served turn leaves ``live_shift = n_sink +
+# arena_width`` and the IDENTICAL ``deposit(text)`` call then harvests at
+# [live_shift, live_shift + L) and yields a DIFFERENT graft.  Which graft you
+# get depends on whether a turn has been served yet.  ``GRM_CAPTURE_PIN``
+# makes it a registered geometry instead of an accident.
+#
+# FAIL DIRECTION: CLOSED TO OFF, for both flags.  ON changes what the stack
+# serves (a different stored payload; a different mount position), so an
+# unknown or mistyped token must never make that change.  Same polarity as
+# ``GRM_DEMAND_NGH``; the opposite of ``GRM_LSR_FIXES``.  An explicit value
+# from the caller always outranks the env, so a harness pins either state
+# regardless of the ambient operator setting.
+
+#: Part 1's registered switch.  ``mount`` / ``live`` select a pin; every other
+#: token — absent, ``off``, unknown, mistyped — selects OFF (legacy, unpinned).
+CAPTURE_PIN_ENV = "GRM_CAPTURE_PIN"
+
+#: Part 2's registered switch.  A true token seats the mount block so the plan
+#: head's LAST token is adjacent to ``live_shift``; everything else is OFF.
+SEAT_NEAR_LIVE_ENV = "GRM_SEAT_NEAR_LIVE"
+
+#: The pin geometries.  ``off`` is legacy: ``deposit`` does not touch
+#: ``live_shift`` at all and the graft is byte-identical to today's.
+CAPTURE_PIN_OFF = "off"
+#: ``mount``: queries at ``n_sink`` — the geometry a graft is READ in when it
+#: is mounted at the band start, which is where production's bootstrap branch
+#: always seats it.  "A graft is the text to the model" literally requires the
+#: capture and the read to share a geometry; this is that geometry.
+CAPTURE_PIN_MOUNT = "mount"
+#: ``live``: queries at ``live_shift`` (``n_sink + arena_width``) — the
+#: geometry of text fed LIVE immediately before a question, and the geometry
+#: RS2's B1p harvested at when it lifted harbor 0.184 -> 0.303 and flipped it.
+CAPTURE_PIN_LIVE = "live"
+
+CAPTURE_PINS = (CAPTURE_PIN_OFF, CAPTURE_PIN_MOUNT, CAPTURE_PIN_LIVE)
+
+#: Only these two tokens select a pin.  Case-folded and stripped first.
+_CAPTURE_PIN_TOKENS = {
+    CAPTURE_PIN_MOUNT: CAPTURE_PIN_MOUNT,
+    CAPTURE_PIN_LIVE: CAPTURE_PIN_LIVE,
+}
+
+
+def env_capture_pin(environ: Mapping[str, str] | None = None) -> str:
+    """Resolve ``GRM_CAPTURE_PIN`` from the environment alone.
+
+    Returns one of :data:`CAPTURE_PINS`.  ONLY the exact tokens ``mount`` and
+    ``live`` (case-folded, stripped) select a pin; absent, empty, ``off``, and
+    ANY unknown token all return ``off`` — the fail-closed rule.
+    """
+    env = os.environ if environ is None else environ
+    if CAPTURE_PIN_ENV not in env:
+        return CAPTURE_PIN_OFF
+    value = str(env.get(CAPTURE_PIN_ENV, "")).strip().casefold()
+    # Unknown tokens land on OFF with the false tokens: fail closed.
+    return _CAPTURE_PIN_TOKENS.get(value, CAPTURE_PIN_OFF)
+
+
+def capture_pin_mode(explicit: str | None = None,
+                     environ: Mapping[str, str] | None = None) -> str:
+    """Resolve the capture pin: explicit caller > env > OFF.
+
+    An explicit value is validated STRICTLY — a caller naming an unknown pin is
+    a bug in the caller, not an ambient typo, and silently serving ``off``
+    would hide it.  The env path stays fail-closed.
+    """
+    if explicit is not None:
+        value = str(explicit).strip().casefold()
+        if value not in CAPTURE_PINS:
+            raise ValueError(
+                f"{CAPTURE_PIN_ENV} pin must be one of {list(CAPTURE_PINS)}, "
+                f"got {explicit!r}")
+        return value
+    return env_capture_pin(environ)
+
+
+def env_seat_near_live(environ: Mapping[str, str] | None = None) -> bool:
+    """Resolve ``GRM_SEAT_NEAR_LIVE`` from the environment alone.
+
+    ``True`` only for an explicit true token.  Absent, explicitly false, and
+    UNKNOWN all return ``False`` — the fail-closed-to-OFF rule.
+    """
+    env = os.environ if environ is None else environ
+    if SEAT_NEAR_LIVE_ENV not in env:
+        return False
+    value = str(env.get(SEAT_NEAR_LIVE_ENV, "")).strip().casefold()
+    if value in _ENV_TRUE:
+        return True
+    return False
+
+
+def seat_near_live_enabled(explicit: bool | None = None,
+                           environ: Mapping[str, str] | None = None) -> bool:
+    """Resolve the seating lever: explicit caller > env > OFF (the default)."""
+    if explicit is not None:
+        return bool(explicit)
+    return env_seat_near_live(environ)
+
+
+def rs3_receipt(capture_pin: str, seat_near_live: bool,
+                environ: Mapping[str, str] | None = None,
+                ) -> dict[str, object]:
+    """The RS3 lever receipt fields, shared by every path that carries them."""
+    return {
+        "capture_pin": str(capture_pin),
+        "seat_near_live": bool(seat_near_live),
+        "capture_pin_env": (os.environ if environ is None
+                            else environ).get(CAPTURE_PIN_ENV),
+        "seat_near_live_env": (os.environ if environ is None
+                               else environ).get(SEAT_NEAR_LIVE_ENV),
+    }
