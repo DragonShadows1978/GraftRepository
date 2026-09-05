@@ -40,8 +40,25 @@ PROBE_ORDER = (
 
 #: Receipts by arm, named explicitly from the run log.  Both arms ran with
 #: GRM_LSR_FIXES=1 and the RS3 pair ON (capture_pin=live, seat_near_live=1);
-#: the ONLY difference is GRM_RT1_RULE, the single-variable control recorded
-#: in artifacts/grm_rt1/amendment_a1_rt1_only_switch.json.
+#: the ONLY difference is GRM_RT1_RULE, the single-variable control.
+#:
+#: GRM-RT1.1 RESTORATION (orders/GRM_RT1_1_RESTORE_RECEIPTS.md).  The RT1
+#: worktree was removed with --force after the merge and the gitignored
+#: receipts named here went with it, so the table exited "receipt missing on
+#: disk".  The eight runs were re-served on the same levers and the names
+#: below are the regenerated ones.  Registration:
+#: artifacts/grm_rt1/restoration_registration.json.
+#:
+#: WHY THESE STAY EXPLICIT NAMES AND ARE NOT GLOBBED.  The order offered a
+#: glob keyed on a receipt-embedded ``rs3_levers`` + ``rt1_rule`` marker.
+#: There is no such marker to key on: ``lsr_p2c_replay_gpu`` writes
+#: ``rs3_levers`` (capture_pin / seat_near_live only) and ``lsr_fixes_env``,
+#: and it never records ``GRM_RT1_RULE`` anywhere in the payload -- the two
+#: arms' receipts are indistinguishable in every lever field, differing only
+#: in the served rows they are supposed to be judged by.  Adding the marker
+#: means editing the replay, which this order does not authorize, and a glob
+#: on the filename stem would silently pool the two arms together with the
+#: pre-RT1 RS3 receipts that share it.  The run log stays the provenance.
 ARMS: dict[str, dict[str, Any]] = {
     "rule_on": {
         "levers": {
@@ -52,13 +69,19 @@ ARMS: dict[str, dict[str, Any]] = {
         },
         "receipts": [
             "lsr_p2c_arm1_correction_then_restatement_pin-live_seat-1"
-            "_0d437009d0b80b06.json",
+            "_2dacebeb4c231250.json",
             "lsr_p2c_arm1_fresh_fact_controls_pin-live_seat-1"
-            "_23d9412706944b8c.json",
+            "_1c323ca95064bf2c.json",
             "lsr_p2c_arm1_multi_hop_a_b_c_pin-live_seat-1"
-            "_21b6c4f7d82bf11e.json",
+            "_61b24c7e6528a546.json",
             "lsr_p2c_arm1_short_correction_long_competitor_pin-live_seat-1"
-            "_56d55caee1977cf3.json",
+            "_558d070eda13c41e.json",
+        ],
+        "run_logs": [
+            "logs/rt1_1_ruleon_correction_then_restatement.log",
+            "logs/rt1_1_ruleon_fresh_fact_controls.log",
+            "logs/rt1_1_ruleon_multi_hop_a_b_c.log",
+            "logs/rt1_1_ruleon_short_correction_long_competitor.log",
         ],
     },
     "rule_off": {
@@ -70,13 +93,19 @@ ARMS: dict[str, dict[str, Any]] = {
         },
         "receipts": [
             "lsr_p2c_arm1_correction_then_restatement_pin-live_seat-1"
-            "_c86ef93b688d49ae.json",
+            "_8df958e8187f9854.json",
             "lsr_p2c_arm1_fresh_fact_controls_pin-live_seat-1"
-            "_f2948d64622cd3b7.json",
+            "_ba1015e02b750120.json",
             "lsr_p2c_arm1_multi_hop_a_b_c_pin-live_seat-1"
-            "_3e99b6093210b95d.json",
+            "_36e0ba0860cceb1b.json",
             "lsr_p2c_arm1_short_correction_long_competitor_pin-live_seat-1"
-            "_c9088b4c80bb814a.json",
+            "_284a20a9d67d6a9b.json",
+        ],
+        "run_logs": [
+            "logs/rt1_1_ruleoff_correction_then_restatement.log",
+            "logs/rt1_1_ruleoff_fresh_fact_controls.log",
+            "logs/rt1_1_ruleoff_multi_hop_a_b_c.log",
+            "logs/rt1_1_ruleoff_short_correction_long_competitor.log",
         ],
     },
 }
