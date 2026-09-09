@@ -1,5 +1,18 @@
 # ORDER QWEN38-LC1 implementation report
 
+> **Status addendum (lead, 2026-09-09, from the GRM-C6 integration review):**
+> the statements below that `BASELINE_TOKEN_IDS` is a `REPLACE-ME`
+> placeholder and that the GPU gates are unrun are STALE. The source
+> (`scripts/qwen38_longctx_gate.py`, `BASELINE_TOKEN_IDS`) holds the real
+> greedy token arrays, and the retained receipt
+> `logs/lc1_g0_merged_final.log` (2026-08-20) records G0 `status: PASS`
+> with chat 64/64, code 64/64, factual 23/23 tokens matching (loaded
+> `attn_path: legacy`, chunk 31040; peak 11,663 MiB decode). That receipt
+> covers the default/concat path only; the LC/INT8/host-KV gates and the
+> 6,208-row preallocated chunk are not certified by it. The original text
+> is left as written below (historical); see the C6 review for the
+> remaining drift items.
+
 Status: CPU implementation gates PASS. GPU gates are authored but UNRUN here,
 as assigned to the lead. No 8K/16K/32K recall, top-1 agreement, coherence, or
 whole-device peak claim is upgraded to PASS until those commands produce GPU
