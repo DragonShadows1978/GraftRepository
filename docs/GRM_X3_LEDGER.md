@@ -161,3 +161,28 @@ finished. Experimental RED, hard native-hang deadline residual and independent
 blind verification are not claimed fixed. Target openai/gpt-oss-20b, frozen
 Harmony effort low. Author GPT-6/Codex (exact deployment subvariant unavailable),
 reasoning effort high as requested.
+
+2026-09-09 — Amendment 2, r2 registered CPU handoff (order dated 2026-09-08).
+Separate immutable registration `artifacts/grm_x3/r2/registration.json`, SHA256
+99abd4dfbed92df335135cdb08f5180bba32a6cbfa8ff2e37b8d1190d236af33; new 8/6/6
+recipe manifest b848cf7f1af0c9cf2816acaa8dd253394e2837871677574361e64b9cc38acce6.
+Ordered normalized span + conservative negation veto registered before tests;
+372 controls pass. The 0.10-nat sham floor was selected from r1 as prior-run
+calibration, and is immutable for r2. Frozen exact-error labels remain classifier
+targets; value-span strata use6/4/4 minimums; exact-equality realization separately
+reported. No r1 rescoring/rethresholding/reinterpretation. All5,161 frozen evidence
+files remain unchanged. CPU combined regression62 passed, no GPU launched;
+preflight blocked on absent /dev/nvidia0. Experimental RED/pending remains.
+
+Full separate new-order ledger: `artifacts/grm_x3/r2/IMPLEMENTATION_LEDGER.md`;
+report: `artifacts/grm_x3/r2/REPORT.md`; exact fingerprinted lead commands:
+`artifacts/grm_x3/r2/lead_commands.txt`. Prior art: Unicode Consortium UAX15
+(1998 onward), NFKC; house DET1/X3/C5 (2026), frozen span specification, capture,
+mask interventions and receipt plumbing; Jain/Wallace2019 and Meng et al.2022,
+attention/intervention distinction; Kullback/Leibler1951 KL (unverified lead DOI
+10.1214/aoms/1177729694). No prior art known to me for particular vetoes, relation
+recipes or0.10 calibration choice; no novelty claim. C5 duplication is independent
+and must be reconciled by lead. Registered choices and inherited RED residuals
+are explicit in the new ledger/report. No git, subagents, GPU/lease, background
+wait, service change or process kill; CPU processes completed. GPT-6/Codex,
+exact subvariant unavailable; high effort requested; target model Harmony low.

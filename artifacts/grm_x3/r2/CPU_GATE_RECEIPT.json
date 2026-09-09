@@ -1,0 +1,57 @@
+{
+  "evidence_class": "unit tests and CPU checks; author baseline, not independent blind verification",
+  "executions": [
+    {
+      "argv": [
+        "bash",
+        "scripts/grm_x3_r2_lead_gpu.sh",
+        "preflight",
+        "530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683"
+      ],
+      "elapsed_seconds": 0.23899825988337398,
+      "exit_code": 2,
+      "name": "preflight",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/grm_x3_r2_lead_gpu.sh",
+        "--dry-run"
+      ],
+      "elapsed_seconds": 0.17398770712316036,
+      "exit_code": 0,
+      "name": "dry_run",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "scripts/grm_x3_r2_lead_gpu.sh"
+      ],
+      "elapsed_seconds": 0.0019608638249337673,
+      "exit_code": 0,
+      "name": "shell_syntax",
+      "stderr": ""
+    }
+  ],
+  "gpu_launches": 0,
+  "pytest": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q tests/test_grm_x3_r2.py tests/test_grm_x3_lesions.py",
+    "log": {
+      "path": "logs/grm_x3_r2_cpu_02.txt",
+      "sha256": "4e8953870fa03d7428311d36ae627e4e8e0d64a6013d022499c1e2902c082e51"
+    },
+    "passed": 62
+  },
+  "python_ast": "PASS",
+  "r1_files_unchanged": 5161,
+  "r1_manifest_sha256": "783c1cf9a3f83a360601dadfbbd39175536f4f623a414f510c338868e5629e90",
+  "r2_registration_sha256": "99abd4dfbed92df335135cdb08f5180bba32a6cbfa8ff2e37b8d1190d236af33",
+  "recipe_manifest_sha256": "b848cf7f1af0c9cf2816acaa8dd253394e2837871677574361e64b9cc38acce6",
+  "run_fingerprint": "530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683",
+  "scorer_controls": 372,
+  "shell_syntax": "PASS",
+  "status": "PASS"
+}

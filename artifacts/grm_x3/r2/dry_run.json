@@ -1,0 +1,106 @@
+[
+  {
+    "arms": [
+      "unforked",
+      "zero",
+      "remove",
+      "swap",
+      "same_payload",
+      "sham"
+    ],
+    "cell": "cell_00",
+    "cooldown_seconds": 30,
+    "estimated_worker_seconds": [
+      180,
+      285
+    ],
+    "evidence_class": "reasoning; enumeration, no GPU measurements",
+    "outer_cap_seconds": 590,
+    "snapshot_ids": [
+      "x3_r2_00",
+      "x3_r2_01",
+      "x3_r2_02",
+      "x3_r2_03",
+      "x3_r2_04"
+    ],
+    "worker_cap_seconds": 285
+  },
+  {
+    "arms": [
+      "unforked",
+      "zero",
+      "remove",
+      "swap",
+      "same_payload",
+      "sham"
+    ],
+    "cell": "cell_01",
+    "cooldown_seconds": 30,
+    "estimated_worker_seconds": [
+      180,
+      285
+    ],
+    "evidence_class": "reasoning; enumeration, no GPU measurements",
+    "outer_cap_seconds": 590,
+    "snapshot_ids": [
+      "x3_r2_05",
+      "x3_r2_06",
+      "x3_r2_07",
+      "x3_r2_08",
+      "x3_r2_09"
+    ],
+    "worker_cap_seconds": 285
+  },
+  {
+    "arms": [
+      "unforked",
+      "zero",
+      "remove",
+      "swap",
+      "same_payload",
+      "sham"
+    ],
+    "cell": "cell_02",
+    "cooldown_seconds": 30,
+    "estimated_worker_seconds": [
+      180,
+      285
+    ],
+    "evidence_class": "reasoning; enumeration, no GPU measurements",
+    "outer_cap_seconds": 590,
+    "snapshot_ids": [
+      "x3_r2_10",
+      "x3_r2_11",
+      "x3_r2_12",
+      "x3_r2_13",
+      "x3_r2_14"
+    ],
+    "worker_cap_seconds": 285
+  },
+  {
+    "arms": [
+      "unforked",
+      "zero",
+      "remove",
+      "swap",
+      "same_payload",
+      "sham"
+    ],
+    "cell": "cell_03",
+    "cooldown_seconds": 30,
+    "estimated_worker_seconds": [
+      180,
+      285
+    ],
+    "evidence_class": "reasoning; enumeration, no GPU measurements",
+    "outer_cap_seconds": 590,
+    "snapshot_ids": [
+      "x3_r2_15",
+      "x3_r2_16",
+      "x3_r2_17",
+      "x3_r2_18",
+      "x3_r2_19"
+    ],
+    "worker_cap_seconds": 285
+  }
+]

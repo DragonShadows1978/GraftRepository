@@ -1,0 +1,8 @@
+# Run foreground, sequentially; stop on any nonzero exit. No retries.
+cd /mnt/ForgeRealm/wt/grm-x3
+bash scripts/grm_x3_r2_lead_gpu.sh preflight 530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683
+bash scripts/grm_x3_r2_lead_gpu.sh run cell_00 530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683
+bash scripts/grm_x3_r2_lead_gpu.sh run cell_01 530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683
+bash scripts/grm_x3_r2_lead_gpu.sh run cell_02 530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683
+bash scripts/grm_x3_r2_lead_gpu.sh run cell_03 530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683
+bash scripts/grm_x3_r2_lead_gpu.sh summary 530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683
