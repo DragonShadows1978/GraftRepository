@@ -1,0 +1,501 @@
+{
+  "attempt": 1,
+  "cell": "oracle_m1_s0",
+  "completed_unix_ns": 1788935992167786010,
+  "content_sha256": "a20ef81589da5825bde29b34ab7703bc0df3b551ea849fdc3f14edea3e3849f3",
+  "error": null,
+  "evidence_class": "E2E session receipt",
+  "fingerprint": "44f715a690b5e58c42a675e92df1b997b47598b608ea8c2074f8b13f5d114b02",
+  "fit_status": "FIT",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "rows": [
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "Use the Harbor token **Nacre‑6‑Blue**.",
+      "arm": "C",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "nacre-6-blue",
+      "false_answer": true,
+      "family_id": "sup_harbor",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 54
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          2
+        ],
+        "x1_address": {
+          "entity": "harbor",
+          "relation": "token"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          2
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 3
+      },
+      "kind": "correction",
+      "mounted_ids": [
+        2
+      ],
+      "multiplicity": 1,
+      "query_id": "correction_02",
+      "question": "After all recorded revisions, what token should I use for Harbor?",
+      "resolved_address": [
+        "harbor",
+        "token"
+      ],
+      "seed": 20260922,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        2
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 3.7328208698891103
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "Not in memory: no stored record matches after, recorded, revisions, token, use, harbor.",
+      "arm": "A",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "nacre-6-blue",
+      "false_answer": false,
+      "family_id": "sup_harbor",
+      "generation_calls": 0,
+      "info": {
+        "abstain_identifier_tokens": [
+          "after",
+          "recorded",
+          "revisions",
+          "token",
+          "use",
+          "harbor"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          0,
+          3,
+          5
+        ],
+        "admission_ranking_before_demotion": [
+          0,
+          3,
+          5,
+          4,
+          6,
+          2,
+          1
+        ],
+        "admission_route_margin_1_2": 0.06461839167229866,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "correction",
+      "mounted_ids": [],
+      "multiplicity": 1,
+      "query_id": "correction_02",
+      "question": "After all recorded revisions, what token should I use for Harbor?",
+      "resolved_address": [
+        "harbor",
+        "token"
+      ],
+      "seed": 20260922,
+      "served_text_class": "abstention",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        2
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 0.5203986228443682
+    },
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "Use the Harbor token **Nacre‑6‑Blue**.",
+      "arm": "B",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "nacre-6-blue",
+      "false_answer": true,
+      "family_id": "sup_harbor",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 54
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          2
+        ],
+        "x1_address": {
+          "entity": "harbor",
+          "relation": "token"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          2
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 3
+      },
+      "kind": "correction",
+      "mounted_ids": [
+        2
+      ],
+      "multiplicity": 1,
+      "query_id": "correction_02",
+      "question": "After all recorded revisions, what token should I use for Harbor?",
+      "resolved_address": [
+        "harbor",
+        "token"
+      ],
+      "seed": 20260922,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        2
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 3.72932555899024
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "Not in memory: no stored record matches after, recorded, revisions, token, use, harbor.",
+      "arm": "A",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "nacre-6-blue",
+      "false_answer": false,
+      "family_id": "sup_harbor",
+      "generation_calls": 0,
+      "info": {
+        "abstain_identifier_tokens": [
+          "after",
+          "recorded",
+          "revisions",
+          "token",
+          "use",
+          "harbor"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          0,
+          3,
+          5
+        ],
+        "admission_ranking_before_demotion": [
+          0,
+          3,
+          5,
+          4,
+          6,
+          1
+        ],
+        "admission_route_margin_1_2": 0.06461839167229866,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "correction",
+      "mounted_ids": [],
+      "multiplicity": 1,
+      "query_id": "correction_02",
+      "question": "After all recorded revisions, what token should I use for Harbor?",
+      "resolved_address": [
+        "harbor",
+        "token"
+      ],
+      "seed": 20260922,
+      "served_text_class": "abstention",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        2
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 0.515619641635567
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "Not in memory: no stored record matches after, recorded, revisions, token, use, harbor.",
+      "arm": "B",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "nacre-6-blue",
+      "false_answer": false,
+      "family_id": "sup_harbor",
+      "generation_calls": 0,
+      "info": {
+        "abstain_identifier_tokens": [
+          "after",
+          "recorded",
+          "revisions",
+          "token",
+          "use",
+          "harbor"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          0,
+          3,
+          5
+        ],
+        "admission_ranking_before_demotion": [
+          0,
+          3,
+          5,
+          4,
+          6,
+          1
+        ],
+        "admission_route_margin_1_2": 0.06461839167229866,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_address": {
+          "entity": "harbor",
+          "relation": "token"
+        },
+        "x1_fallback_reason": "pages_absent",
+        "x1_missing_pages": [
+          2
+        ],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          2
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 3
+      },
+      "kind": "correction",
+      "mounted_ids": [],
+      "multiplicity": 1,
+      "query_id": "correction_02",
+      "question": "After all recorded revisions, what token should I use for Harbor?",
+      "resolved_address": [
+        "harbor",
+        "token"
+      ],
+      "seed": 20260922,
+      "served_text_class": "abstention",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        2
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 0.5039417841471732
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "I cannot answer from the mounted memory: PAGE_FAULT.",
+      "arm": "C",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "nacre-6-blue",
+      "false_answer": false,
+      "family_id": "sup_harbor",
+      "generation_calls": 0,
+      "info": {
+        "abstain": true,
+        "demand_fired": false,
+        "x1_address": {
+          "entity": "harbor",
+          "relation": "token"
+        },
+        "x1_fault_reason": "pages_absent",
+        "x1_generation_calls": 0,
+        "x1_missing_pages": [
+          2
+        ],
+        "x1_page_fault": true,
+        "x1_requested_pages": [
+          2
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 3
+      },
+      "kind": "correction",
+      "mounted_ids": [],
+      "multiplicity": 1,
+      "query_id": "correction_02",
+      "question": "After all recorded revisions, what token should I use for Harbor?",
+      "resolved_address": [
+        "harbor",
+        "token"
+      ],
+      "seed": 20260922,
+      "served_text_class": "abstention",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        2
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 2.523837611079216e-05
+    }
+  ],
+  "rows_sha256": "a2e34f19ad6f1b196fed378478e60f8e6f309ff80d180ebd5bc29c7d9efd0cc6",
+  "schema": "grm.x1.gpu-unit.v4",
+  "session_digests": {
+    "correction_02_absent_A/turn_receipt.json": "7d829e352abca365d4aae25ea71108c433a503d0d106a9d2c9f804059eda74ee",
+    "correction_02_absent_B/turn_receipt.json": "01661a3f88580defa3a9595d62c6d4b4b776667430ce313490864e2b1f896e08",
+    "correction_02_absent_C/turn_receipt.json": "1590bb080f07dad7a0781ea35f469773258c5f8f356efca5ee9ac529b26a3b85",
+    "correction_02_present_A/turn_receipt.json": "3cabb4253541564f82269677f928a0c072a719d90833b09ea9f3b4aee2c54b15",
+    "correction_02_present_B/turn_receipt.json": "a4c77ef9c5707f02d8778b95a9211a08af747948e5b64fb05a9dc8b3eec0e1d3",
+    "correction_02_present_C/turn_receipt.json": "c77baa874f4e3784287a0269c858de19fe5554914a3b999bbfbb1cee1a1ea9d5",
+    "model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d",
+    "sup_harbor_addresses.json": "7c324bc30c0145ae65594244d3d29060f298b2b86e2ae02b9676966d63c58b5c",
+    "sup_harbor_pages.json": "b528e2ce7b56ef716f9ceec273d9d7daeb4294422eaacbbff66949b272e30d28"
+  },
+  "status": "COMPLETE",
+  "unit_id": "oracle_m1_s0__correction_02",
+  "worker_wall_s": 47.60565072204918
+}

@@ -1,0 +1,629 @@
+{
+  "attempt": 1,
+  "cell": "oracle_m1_s0",
+  "completed_unix_ns": 1788936215052113620,
+  "content_sha256": "d07a089ff53fb32ff1bfe6d32ffaace5504c76f9679a3bf8f089cdc947848f47",
+  "error": null,
+  "evidence_class": "E2E session receipt",
+  "fingerprint": "44f715a690b5e58c42a675e92df1b997b47598b608ea8c2074f8b13f5d114b02",
+  "fit_status": "FIT",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "rows": [
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The authoritative PIN identifier for Orion is **Kestrel-9-Tango**.",
+      "arm": "A",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "kestrel-9-tango",
+      "false_answer": true,
+      "family_id": "census_orion",
+      "generation_calls": null,
+      "info": {
+        "admission_identified_candidates": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          0
+        ],
+        "admission_identifier_hit_count": 6,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "declared_synthesis_identified_set",
+        "admission_rank_plan": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          0
+        ],
+        "admission_ranking_before_demotion": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          0
+        ],
+        "admission_route_margin_1_2": 0.2974729351832248,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "fit_chunk_trips": [
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "fit_descended_head": [
+          3,
+          4,
+          5
+        ],
+        "fit_dropped_filler": [],
+        "fit_dropped_planned": [],
+        "fit_planned": [
+          1,
+          3,
+          4,
+          5,
+          0
+        ],
+        "fit_seated": [
+          1
+        ],
+        "fit_shuttle": false,
+        "fit_shuttle_trips": [],
+        "fit_split_children": [
+          3,
+          4,
+          5
+        ],
+        "fit_split_ephemeral": false,
+        "fit_split_parent": 2,
+        "fit_unseatable": [],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 57
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": 96,
+          "charge_waived_reason": null,
+          "charged_ntok": 0,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "correction",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 1,
+      "query_id": "correction_06",
+      "question": "Which PIN identifier is authoritative for Orion after the recorded update?",
+      "resolved_address": [
+        "orion",
+        "pin"
+      ],
+      "seed": 20260926,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 22.024487279821187
+    },
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The authoritative PIN identifier for Orion is **Kestrel-9-Tango**.",
+      "arm": "B",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "kestrel-9-tango",
+      "false_answer": true,
+      "family_id": "census_orion",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 57
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          1
+        ],
+        "x1_address": {
+          "entity": "orion",
+          "relation": "pin"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 2
+      },
+      "kind": "correction",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 1,
+      "query_id": "correction_06",
+      "question": "Which PIN identifier is authoritative for Orion after the recorded update?",
+      "resolved_address": [
+        "orion",
+        "pin"
+      ],
+      "seed": 20260926,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 4.040878379251808
+    },
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The authoritative PIN identifier for Orion is **Kestrel-9-Tango**.",
+      "arm": "C",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "kestrel-9-tango",
+      "false_answer": true,
+      "family_id": "census_orion",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 57
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          1
+        ],
+        "x1_address": {
+          "entity": "orion",
+          "relation": "pin"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 2
+      },
+      "kind": "correction",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 1,
+      "query_id": "correction_06",
+      "question": "Which PIN identifier is authoritative for Orion after the recorded update?",
+      "resolved_address": [
+        "orion",
+        "pin"
+      ],
+      "seed": 20260926,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 3.980194660369307
+    },
+    {
+      "abstained": false,
+      "address_coverage": false,
+      "answer": "The authoritative PIN identifier for the Orion system after the update is **PIN # 42**.",
+      "arm": "B",
+      "condition": "absent",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "kestrel-9-tango",
+      "false_answer": true,
+      "family_id": "census_orion",
+      "generation_calls": null,
+      "info": {
+        "admission_identified_candidates": [
+          2,
+          3,
+          4,
+          5,
+          0
+        ],
+        "admission_identifier_hit_count": 5,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "declared_synthesis_identified_set",
+        "admission_rank_plan": [
+          2,
+          3,
+          4,
+          5,
+          0
+        ],
+        "admission_ranking_before_demotion": [
+          2,
+          3,
+          4,
+          5,
+          0
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "demand_fired": false,
+        "fit_chunk_trips": [
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "fit_descended_head": [
+          3,
+          4,
+          5
+        ],
+        "fit_dropped_filler": [],
+        "fit_dropped_planned": [],
+        "fit_planned": [
+          3,
+          4,
+          5,
+          0
+        ],
+        "fit_seated": [
+          3
+        ],
+        "fit_shuttle": true,
+        "fit_shuttle_trips": [
+          [
+            0
+          ]
+        ],
+        "fit_split_children": [
+          3,
+          4,
+          5
+        ],
+        "fit_split_ephemeral": false,
+        "fit_split_parent": 2,
+        "fit_unseatable": [],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 60
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": 96,
+          "charge_waived_reason": null,
+          "charged_ntok": 0,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_address": {
+          "entity": "orion",
+          "relation": "pin"
+        },
+        "x1_fallback_reason": "pages_absent",
+        "x1_missing_pages": [
+          1
+        ],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 2
+      },
+      "kind": "correction",
+      "mounted_ids": [
+        3
+      ],
+      "multiplicity": 1,
+      "query_id": "correction_06",
+      "question": "Which PIN identifier is authoritative for Orion after the recorded update?",
+      "resolved_address": [
+        "orion",
+        "pin"
+      ],
+      "seed": 20260926,
+      "served_text_class": "answer",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 22.40802935883403
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "I cannot answer from the mounted memory: PAGE_FAULT.",
+      "arm": "C",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "kestrel-9-tango",
+      "false_answer": false,
+      "family_id": "census_orion",
+      "generation_calls": 0,
+      "info": {
+        "abstain": true,
+        "demand_fired": false,
+        "x1_address": {
+          "entity": "orion",
+          "relation": "pin"
+        },
+        "x1_fault_reason": "pages_absent",
+        "x1_generation_calls": 0,
+        "x1_missing_pages": [
+          1
+        ],
+        "x1_page_fault": true,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 2
+      },
+      "kind": "correction",
+      "mounted_ids": [],
+      "multiplicity": 1,
+      "query_id": "correction_06",
+      "question": "Which PIN identifier is authoritative for Orion after the recorded update?",
+      "resolved_address": [
+        "orion",
+        "pin"
+      ],
+      "seed": 20260926,
+      "served_text_class": "abstention",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 2.750195562839508e-05
+    },
+    {
+      "abstained": false,
+      "address_coverage": false,
+      "answer": "The authoritative PIN identifier for the Orion system after the update is **PIN # 42**.",
+      "arm": "A",
+      "condition": "absent",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "kestrel-9-tango",
+      "false_answer": true,
+      "family_id": "census_orion",
+      "generation_calls": null,
+      "info": {
+        "admission_identified_candidates": [
+          2,
+          3,
+          4,
+          5,
+          0
+        ],
+        "admission_identifier_hit_count": 5,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "declared_synthesis_identified_set",
+        "admission_rank_plan": [
+          2,
+          3,
+          4,
+          5,
+          0
+        ],
+        "admission_ranking_before_demotion": [
+          2,
+          3,
+          4,
+          5,
+          0
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "fit_chunk_trips": [
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "fit_descended_head": [
+          3,
+          4,
+          5
+        ],
+        "fit_dropped_filler": [],
+        "fit_dropped_planned": [],
+        "fit_planned": [
+          3,
+          4,
+          5,
+          0
+        ],
+        "fit_seated": [
+          3
+        ],
+        "fit_shuttle": true,
+        "fit_shuttle_trips": [
+          [
+            0
+          ]
+        ],
+        "fit_split_children": [
+          3,
+          4,
+          5
+        ],
+        "fit_split_ephemeral": false,
+        "fit_split_parent": 2,
+        "fit_unseatable": [],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 60
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": 96,
+          "charge_waived_reason": null,
+          "charged_ntok": 0,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "correction",
+      "mounted_ids": [
+        3
+      ],
+      "multiplicity": 1,
+      "query_id": "correction_06",
+      "question": "Which PIN identifier is authoritative for Orion after the recorded update?",
+      "resolved_address": [
+        "orion",
+        "pin"
+      ],
+      "seed": 20260926,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 22.41664309008047
+    }
+  ],
+  "rows_sha256": "daa6e46396374ff8497004d11e577bed7dfd25fff95e16fcbef831a7b39599b4",
+  "schema": "grm.x1.gpu-unit.v4",
+  "session_digests": {
+    "census_orion_addresses.json": "d9edc033abada678668638af2a079d2f167cbee8783c7282463ff59c495fd36e",
+    "census_orion_pages.json": "7d96482fafddce3025a4b468183ce07092fa28a5c7726362c623530735714195",
+    "correction_06_absent_A/turn_receipt.json": "e8edab78dc7346678bac0c589c3d57c57a86be5e8b907505b8a90cf34f9df015",
+    "correction_06_absent_B/turn_receipt.json": "19eed67049e4426e3dc0a15b1e80c30863b60543bcce88954d278d98dc03e5a9",
+    "correction_06_absent_C/turn_receipt.json": "bea487b835268148e0d33b2a312944ff9e2fa168ad78bf71e34f419f91a3bd61",
+    "correction_06_present_A/turn_receipt.json": "901ade51065df13c602ca4cefce003c9c667073b048dafa44d2d3bd49db2e5ed",
+    "correction_06_present_B/turn_receipt.json": "2531bb0a1fc95a24348d156af55c1ba746670f21d2dc8169759b6ce05a431543",
+    "correction_06_present_C/turn_receipt.json": "aa0d626cbdfa6817ba3e7fd91adca1dff2f3b12056c7d662757aa59c36e15697",
+    "model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d"
+  },
+  "status": "COMPLETE",
+  "unit_id": "oracle_m1_s0__correction_06",
+  "worker_wall_s": 113.56237995671108
+}

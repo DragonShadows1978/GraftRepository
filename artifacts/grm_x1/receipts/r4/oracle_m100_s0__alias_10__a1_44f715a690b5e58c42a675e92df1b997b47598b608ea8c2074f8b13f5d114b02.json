@@ -1,0 +1,526 @@
+{
+  "attempt": 1,
+  "cell": "oracle_m100_s0",
+  "completed_unix_ns": 1788937679187578396,
+  "content_sha256": "f695601ffc2a11ded98137052be4b82f9b3a49b8c5b8a671779338507c5118bf",
+  "error": null,
+  "evidence_class": "E2E session receipt",
+  "fingerprint": "44f715a690b5e58c42a675e92df1b997b47598b608ea8c2074f8b13f5d114b02",
+  "fit_status": "FIT",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "rows": [
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The current ember code is Violet-2-Hotel.",
+      "arm": "B",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "violet-2-hotel",
+      "false_answer": true,
+      "family_id": "census_ember",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 51
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          0
+        ],
+        "x1_address": {
+          "entity": "ember",
+          "relation": "code"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          0
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 1
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        0
+      ],
+      "multiplicity": 100,
+      "query_id": "alias_10",
+      "question": "For EMBER, give the access code currently on record.",
+      "resolved_address": [
+        "ember",
+        "code"
+      ],
+      "seed": 20260918,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        0
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 3.6049341540783644
+    },
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The current ember code is Violet-2-Hotel.",
+      "arm": "C",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "violet-2-hotel",
+      "false_answer": true,
+      "family_id": "census_ember",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 51
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          0
+        ],
+        "x1_address": {
+          "entity": "ember",
+          "relation": "code"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          0
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 1
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        0
+      ],
+      "multiplicity": 100,
+      "query_id": "alias_10",
+      "question": "For EMBER, give the access code currently on record.",
+      "resolved_address": [
+        "ember",
+        "code"
+      ],
+      "seed": 20260918,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        0
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 3.6214768779464066
+    },
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The current ember code is Violet-2-Hotel.",
+      "arm": "A",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "violet-2-hotel",
+      "false_answer": true,
+      "family_id": "census_ember",
+      "generation_calls": null,
+      "info": {
+        "admission_identified_candidates": [
+          0
+        ],
+        "admission_identifier_hit_count": 1,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+        "admission_rank_plan": [
+          0
+        ],
+        "admission_ranking_before_demotion": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "fit_chunk_trips": [],
+        "fit_descended_head": [],
+        "fit_dropped_filler": [],
+        "fit_dropped_planned": [],
+        "fit_planned": [
+          0
+        ],
+        "fit_seated": [
+          0
+        ],
+        "fit_shuttle": false,
+        "fit_shuttle_trips": [],
+        "fit_split_children": [],
+        "fit_split_ephemeral": null,
+        "fit_split_parent": null,
+        "fit_unseatable": [],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 51
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": 96,
+          "charge_waived_reason": null,
+          "charged_ntok": 0,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        0
+      ],
+      "multiplicity": 100,
+      "query_id": "alias_10",
+      "question": "For EMBER, give the access code currently on record.",
+      "resolved_address": [
+        "ember",
+        "code"
+      ],
+      "seed": 20260918,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        0
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 13.162892535328865
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "I cannot answer from the mounted memory: PAGE_FAULT.",
+      "arm": "C",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "violet-2-hotel",
+      "false_answer": false,
+      "family_id": "census_ember",
+      "generation_calls": 0,
+      "info": {
+        "abstain": true,
+        "demand_fired": false,
+        "x1_address": {
+          "entity": "ember",
+          "relation": "code"
+        },
+        "x1_fault_reason": "pages_absent",
+        "x1_generation_calls": 0,
+        "x1_missing_pages": [
+          0
+        ],
+        "x1_page_fault": true,
+        "x1_requested_pages": [
+          0
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 1
+      },
+      "kind": "alias",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "alias_10",
+      "question": "For EMBER, give the access code currently on record.",
+      "resolved_address": [
+        "ember",
+        "code"
+      ],
+      "seed": 20260918,
+      "served_text_class": "abstention",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        0
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 3.2621901482343674e-05
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "Not in memory: no stored record matches ember.",
+      "arm": "A",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "violet-2-hotel",
+      "false_answer": false,
+      "family_id": "census_ember",
+      "generation_calls": 0,
+      "info": {
+        "abstain_identifier_tokens": [
+          "ember"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          1,
+          2,
+          3
+        ],
+        "admission_ranking_before_demotion": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "alias",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "alias_10",
+      "question": "For EMBER, give the access code currently on record.",
+      "resolved_address": [
+        "ember",
+        "code"
+      ],
+      "seed": 20260918,
+      "served_text_class": "abstention",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        0
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 3.6953942771069705
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "Not in memory: no stored record matches ember.",
+      "arm": "B",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "violet-2-hotel",
+      "false_answer": false,
+      "family_id": "census_ember",
+      "generation_calls": 0,
+      "info": {
+        "abstain_identifier_tokens": [
+          "ember"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          1,
+          2,
+          3
+        ],
+        "admission_ranking_before_demotion": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_address": {
+          "entity": "ember",
+          "relation": "code"
+        },
+        "x1_fallback_reason": "pages_absent",
+        "x1_missing_pages": [
+          0
+        ],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          0
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 1
+      },
+      "kind": "alias",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "alias_10",
+      "question": "For EMBER, give the access code currently on record.",
+      "resolved_address": [
+        "ember",
+        "code"
+      ],
+      "seed": 20260918,
+      "served_text_class": "abstention",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        0
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 5.663450947031379
+    }
+  ],
+  "rows_sha256": "4b511328eb653ad11fb61c16ca1827e768be4ec196b91d155628fc975cd7d4d5",
+  "schema": "grm.x1.gpu-unit.v4",
+  "session_digests": {
+    "alias_10_absent_A/turn_receipt.json": "a8b2d0c81fe05d88b5f5df8897ab6643d594aaf5a41399a4fd31781fb394f2aa",
+    "alias_10_absent_B/turn_receipt.json": "668edce066d57fe30807092adb28875ddc11af90d3e15b47ef0dbb0d6c61433f",
+    "alias_10_absent_C/turn_receipt.json": "abafd1b265311326b018020475b0575f643523fd342b03d4193be1ecd52d640f",
+    "alias_10_present_A/turn_receipt.json": "d2e1f556b9bd18079654257ff10c29c9b10194a436bb19aaa611ad8515902ed3",
+    "alias_10_present_B/turn_receipt.json": "99a15ac2596eb74ef05701a58997162edc1b876da09837529fcf6c0c001f8f36",
+    "alias_10_present_C/turn_receipt.json": "68fd24cc69c41d544c2432a6f105df78d98fa728d3b872535e2479283bfd647f",
+    "census_ember_addresses.json": "cba1bbb829b0461e69d9c96b570a93ed1541262440afe4e5875025326660bcd9",
+    "census_ember_pages.json": "dd1f01f9df60e2732cd50405b7b41cf3be152efa50e11f17c8c73be6dbe1055e",
+    "model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d"
+  },
+  "status": "COMPLETE",
+  "unit_id": "oracle_m100_s0__alias_10",
+  "worker_wall_s": 85.17103452794254
+}

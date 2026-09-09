@@ -1,0 +1,26 @@
+{
+  "attempt": 1,
+  "cell": "oracle_m100_s0",
+  "completed_unix_ns": 1788936683745652014,
+  "content_sha256": "a7ced132b40ec6411a87e7c0c21a65c5a36898353ce5654a70cd1b1aac1b5307",
+  "error": {
+    "message": "GRM-X1 unit reached its 280 s work rail (285 s worker allowance)",
+    "traceback": "Traceback (most recent call last):\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_units.py\", line 417, in worker\n    execute(unit, rows, directory)\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_units.py\", line 395, in execute\n    run_unit(unit, rows, directory)\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_gpu.py\", line 269, in run_unit\n    run_cell(unit, rows, directory)\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_gpu.py\", line 232, in run_cell\n    answer, info = recall.serve(query[\"question\"], address=address, point_lookup=True,\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/grm_x1_addresses.py\", line 138, in serve\n    return self.fallback(question, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_gpu.py\", line 222, in <lambda>\n    fallback = lambda question, **kw: arena.step(question, deposit=False, defer_memory=True, demand_ngh=False, **kw)\n                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/graft_arena.py\", line 4127, in step\n    txt, info = _serve(\n                ^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/graft_arena.py\", line 3799, in _serve\n    return self._attempt(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/graft_arena.py\", line 4351, in _attempt\n    row = self._forward(prompt_ids)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/graft_arena.py\", line 2604, in _forward\n    lg, self.caches = self.m(np.array([ids], dtype=np.int64),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/gpt_oss20b_tc.py\", line 1294, in __call__\n    h, kv, _route_info = layer(h, self.rope_cos, self.rope_sin, position_offset, cache)\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/gpt_oss20b_tc.py\", line 1166, in __call__\n    mlp_out, route_info = self.mlp(mlp_in)\n                          ^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/gpt_oss20b_tc.py\", line 1073, in __call__\n    and hasattr(tc, \"empty_cache\")\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_units.py\", line 413, in expired\n    raise TimeoutError('GRM-X1 unit reached its 280 s work rail (285 s worker allowance)')\nTimeoutError: GRM-X1 unit reached its 280 s work rail (285 s worker allowance)\n",
+    "type": "TimeoutError"
+  },
+  "evidence_class": "E2E session receipt",
+  "fingerprint": "44f715a690b5e58c42a675e92df1b997b47598b608ea8c2074f8b13f5d114b02",
+  "fit_status": "NON_FIT",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "rows": [],
+  "rows_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+  "schema": "grm.x1.gpu-unit.v4",
+  "session_digests": {
+    "model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d",
+    "sup_lumen_addresses.json": "19f7fac37537caac8f03e62059896072a5684680d5e2edb0430e74597e66a62b",
+    "sup_lumen_pages.json": "bb3d652f9dfeee5975ca71b6cf6973ed7ded4a65c627a962ca75880b8b1b0a5f"
+  },
+  "status": "RED",
+  "unit_id": "oracle_m100_s0__alias_00",
+  "worker_wall_s": 280.0182449547574
+}

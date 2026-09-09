@@ -1,0 +1,613 @@
+{
+  "attempt": 1,
+  "cell": "oracle_m1_s0",
+  "completed_unix_ns": 1788935597053740837,
+  "content_sha256": "ff28a47490326bc7c8cd30f0dfbd3d1a910a12a70d10b8e0190663d401f25b5f",
+  "error": null,
+  "evidence_class": "E2E session receipt",
+  "fingerprint": "44f715a690b5e58c42a675e92df1b997b47598b608ea8c2074f8b13f5d114b02",
+  "fit_status": "FIT",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "rows": [
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The current Solace key is **Raven‑9‑Ivory**.",
+      "arm": "B",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "raven-9-ivory",
+      "false_answer": true,
+      "family_id": "sup_solace",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 56
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          1
+        ],
+        "x1_address": {
+          "entity": "solace",
+          "relation": "key"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 1
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 1,
+      "query_id": "alias_04",
+      "question": "For SOLACE, give the access key currently on record.",
+      "resolved_address": [
+        "solace",
+        "key"
+      ],
+      "seed": 20260912,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 4.008265776094049
+    },
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The current Solace key is **Raven-9-Ivory**.",
+      "arm": "C",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "raven-9-ivory",
+      "false_answer": true,
+      "family_id": "sup_solace",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 56
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          1
+        ],
+        "x1_address": {
+          "entity": "solace",
+          "relation": "key"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 1
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 1,
+      "query_id": "alias_04",
+      "question": "For SOLACE, give the access key currently on record.",
+      "resolved_address": [
+        "solace",
+        "key"
+      ],
+      "seed": 20260912,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 3.983175612986088
+    },
+    {
+      "abstained": false,
+      "address_coverage": false,
+      "answer": "I’m sorry, but I can’t help with that.",
+      "arm": "A",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "raven-9-ivory",
+      "false_answer": true,
+      "family_id": "sup_solace",
+      "generation_calls": null,
+      "info": {
+        "admission_identified_candidates": [
+          2,
+          3,
+          5,
+          4,
+          1
+        ],
+        "admission_identifier_hit_count": 5,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "declared_synthesis_identified_set",
+        "admission_rank_plan": [
+          2,
+          3,
+          5,
+          4,
+          1
+        ],
+        "admission_ranking_before_demotion": [
+          2,
+          3,
+          5,
+          4,
+          1,
+          0
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "fit_chunk_trips": [
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "fit_descended_head": [
+          3,
+          4,
+          5
+        ],
+        "fit_dropped_filler": [],
+        "fit_dropped_planned": [],
+        "fit_planned": [
+          3,
+          4,
+          5,
+          1
+        ],
+        "fit_seated": [
+          3
+        ],
+        "fit_shuttle": true,
+        "fit_shuttle_trips": [
+          [
+            1
+          ]
+        ],
+        "fit_split_children": [
+          3,
+          4,
+          5
+        ],
+        "fit_split_ephemeral": false,
+        "fit_split_parent": 2,
+        "fit_unseatable": [],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 52
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": 96,
+          "charge_waived_reason": null,
+          "charged_ntok": 0,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        3
+      ],
+      "multiplicity": 1,
+      "query_id": "alias_04",
+      "question": "For SOLACE, give the access key currently on record.",
+      "resolved_address": [
+        "solace",
+        "key"
+      ],
+      "seed": 20260912,
+      "served_text_class": "refusal-style",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 19.82763334410265
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "I cannot answer from the mounted memory: PAGE_FAULT.",
+      "arm": "C",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "raven-9-ivory",
+      "false_answer": false,
+      "family_id": "sup_solace",
+      "generation_calls": 0,
+      "info": {
+        "abstain": true,
+        "demand_fired": false,
+        "x1_address": {
+          "entity": "solace",
+          "relation": "key"
+        },
+        "x1_fault_reason": "pages_absent",
+        "x1_generation_calls": 0,
+        "x1_missing_pages": [
+          1
+        ],
+        "x1_page_fault": true,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 1
+      },
+      "kind": "alias",
+      "mounted_ids": [],
+      "multiplicity": 1,
+      "query_id": "alias_04",
+      "question": "For SOLACE, give the access key currently on record.",
+      "resolved_address": [
+        "solace",
+        "key"
+      ],
+      "seed": 20260912,
+      "served_text_class": "abstention",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 2.7602072805166245e-05
+    },
+    {
+      "abstained": false,
+      "address_coverage": false,
+      "answer": "I’m sorry, but I can’t help with that.",
+      "arm": "A",
+      "condition": "absent",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "raven-9-ivory",
+      "false_answer": true,
+      "family_id": "sup_solace",
+      "generation_calls": null,
+      "info": {
+        "admission_identified_candidates": [
+          2,
+          3,
+          5,
+          4
+        ],
+        "admission_identifier_hit_count": 4,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "declared_synthesis_identified_set",
+        "admission_rank_plan": [
+          2,
+          3,
+          5,
+          4
+        ],
+        "admission_ranking_before_demotion": [
+          2,
+          3,
+          5,
+          4,
+          0
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "fit_chunk_trips": [
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "fit_descended_head": [
+          3,
+          4,
+          5
+        ],
+        "fit_dropped_filler": [],
+        "fit_dropped_planned": [],
+        "fit_planned": [
+          3,
+          4,
+          5
+        ],
+        "fit_seated": [
+          3
+        ],
+        "fit_shuttle": false,
+        "fit_shuttle_trips": [],
+        "fit_split_children": [
+          3,
+          4,
+          5
+        ],
+        "fit_split_ephemeral": false,
+        "fit_split_parent": 2,
+        "fit_unseatable": [],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 52
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": 96,
+          "charge_waived_reason": null,
+          "charged_ntok": 0,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        3
+      ],
+      "multiplicity": 1,
+      "query_id": "alias_04",
+      "question": "For SOLACE, give the access key currently on record.",
+      "resolved_address": [
+        "solace",
+        "key"
+      ],
+      "seed": 20260912,
+      "served_text_class": "refusal-style",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 15.428974081296474
+    },
+    {
+      "abstained": false,
+      "address_coverage": false,
+      "answer": "I’m sorry, but I can’t help with that.",
+      "arm": "B",
+      "condition": "absent",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "raven-9-ivory",
+      "false_answer": true,
+      "family_id": "sup_solace",
+      "generation_calls": null,
+      "info": {
+        "admission_identified_candidates": [
+          2,
+          3,
+          5,
+          4
+        ],
+        "admission_identifier_hit_count": 4,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "declared_synthesis_identified_set",
+        "admission_rank_plan": [
+          2,
+          3,
+          5,
+          4
+        ],
+        "admission_ranking_before_demotion": [
+          2,
+          3,
+          5,
+          4,
+          0
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "demand_fired": false,
+        "fit_chunk_trips": [
+          [
+            4
+          ],
+          [
+            5
+          ]
+        ],
+        "fit_descended_head": [
+          3,
+          4,
+          5
+        ],
+        "fit_dropped_filler": [],
+        "fit_dropped_planned": [],
+        "fit_planned": [
+          3,
+          4,
+          5
+        ],
+        "fit_seated": [
+          3
+        ],
+        "fit_shuttle": false,
+        "fit_shuttle_trips": [],
+        "fit_split_children": [
+          3,
+          4,
+          5
+        ],
+        "fit_split_ephemeral": false,
+        "fit_split_parent": 2,
+        "fit_unseatable": [],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 52
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": 96,
+          "charge_waived_reason": null,
+          "charged_ntok": 0,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_address": {
+          "entity": "solace",
+          "relation": "key"
+        },
+        "x1_fallback_reason": "pages_absent",
+        "x1_missing_pages": [
+          1
+        ],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 1
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        3
+      ],
+      "multiplicity": 1,
+      "query_id": "alias_04",
+      "question": "For SOLACE, give the access key currently on record.",
+      "resolved_address": [
+        "solace",
+        "key"
+      ],
+      "seed": 20260912,
+      "served_text_class": "refusal-style",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 15.924691748339683
+    }
+  ],
+  "rows_sha256": "881c25381b8da467873a6d7d23f619158cd14fc62894986634286ab315ae1ff0",
+  "schema": "grm.x1.gpu-unit.v4",
+  "session_digests": {
+    "alias_04_absent_A/turn_receipt.json": "270965b3620b734735fe53c26084af75abf21f3e9766fd81416695294c8f65ed",
+    "alias_04_absent_B/turn_receipt.json": "7d4ebb4b4bf4d092c0a5bf7eecd51cd989e8161b4f3290e25d1fafc38d7f766d",
+    "alias_04_absent_C/turn_receipt.json": "ce5fb8022517e6575630bf22080e04bbf66875fb113850f14228486ace4f5d71",
+    "alias_04_present_A/turn_receipt.json": "41139176f708d096c5606551272b110cf9f45bd1b7880859ffa48ed4ed982c53",
+    "alias_04_present_B/turn_receipt.json": "2f443b3d158c5a7957bc5fa6c8ab62dad2ae2ab36af20bf31ded984a19ed1b48",
+    "alias_04_present_C/turn_receipt.json": "948271b6bd62fac0ea8aa8414e9f225e0bd52833c438002cefbcc610eaf237de",
+    "model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d",
+    "sup_solace_addresses.json": "b48964d29955483e6d04370f7211520f6d12ebf7f734d9e94c929008bba86037",
+    "sup_solace_pages.json": "8878dfccd5f3a8c1be4948fd773e9ed225e00e97af619ad3698bec89ed8c68a6"
+  },
+  "status": "COMPLETE",
+  "unit_id": "oracle_m1_s0__alias_04",
+  "worker_wall_s": 95.63470907881856
+}

@@ -1,0 +1,100 @@
+{
+  "attempt": 1,
+  "cell": "oracle_m1_s0",
+  "completed_unix_ns": 1788935751604783193,
+  "content_sha256": "0bfee6b39d1d42a70e2207fdfed36af51c54050892fc67b350e02b1add7426a6",
+  "error": {
+    "message": "production route ranking differs from frozen A-DEC score reconstruction: backend=native production=[0, 2, 3, 4, 5, 1] reference=[0, 1, 2, 3, 4, 5]",
+    "traceback": "Traceback (most recent call last):\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_units.py\", line 417, in worker\n    execute(unit, rows, directory)\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_units.py\", line 395, in execute\n    run_unit(unit, rows, directory)\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_gpu.py\", line 269, in run_unit\n    run_cell(unit, rows, directory)\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_gpu.py\", line 232, in run_cell\n    answer, info = recall.serve(query[\"question\"], address=address, point_lookup=True,\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/grm_x1_addresses.py\", line 138, in serve\n    return self.fallback(question, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_gpu.py\", line 222, in <lambda>\n    fallback = lambda question, **kw: arena.step(question, deposit=False, defer_memory=True, demand_ngh=False, **kw)\n                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/graft_arena.py\", line 3352, in step\n    admission_profile = decisive_admission_profile(\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/grm_admission.py\", line 487, in decisive_admission_profile\n    raise AdmissionPolicyError(\ncore.grm_admission.AdmissionPolicyError: production route ranking differs from frozen A-DEC score reconstruction: backend=native production=[0, 2, 3, 4, 5, 1] reference=[0, 1, 2, 3, 4, 5]\n",
+    "type": "AdmissionPolicyError"
+  },
+  "evidence_class": "E2E session receipt",
+  "fingerprint": "44f715a690b5e58c42a675e92df1b997b47598b608ea8c2074f8b13f5d114b02",
+  "fit_status": "UNKNOWN",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "rows": [
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "Gold-7-Foxtrot",
+      "arm": "C",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": true,
+      "expected": "gold-7-foxtrot",
+      "false_answer": false,
+      "family_id": "census_mira",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 47
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          1
+        ],
+        "x1_address": {
+          "entity": "mira",
+          "relation": "seal"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 2
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 1,
+      "query_id": "alias_08",
+      "question": "For MIRA, give the sealing identifier currently on record.",
+      "resolved_address": [
+        "mira",
+        "seal"
+      ],
+      "seed": 20260916,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 3.2198526207357645
+    }
+  ],
+  "rows_sha256": "535ad5d6757646b8b324daf3ee61ff69c7fa9d63e5a9e40ed1a77d2ce0062224",
+  "schema": "grm.x1.gpu-unit.v4",
+  "session_digests": {
+    "alias_08_present_C/turn_receipt.json": "613dda273e588f818546ff4957ee72f2dfb365af10713218e1f0fc21ca790d8a",
+    "census_mira_addresses.json": "793f9cdb8b93ab51466efc5b8aca8f9fda616c6f758a724e57fb16e8012b3896",
+    "census_mira_pages.json": "baeaff33084f5a39a4950e7b5abe9d6eb9f8dacfefcbd1261e885935d9295b2f",
+    "model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d"
+  },
+  "status": "RED",
+  "unit_id": "oracle_m1_s0__alias_08",
+  "worker_wall_s": 38.708577524870634
+}

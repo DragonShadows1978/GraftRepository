@@ -1,0 +1,563 @@
+{
+  "attempt": 1,
+  "cell": "oracle_m100_s0",
+  "completed_unix_ns": 1788937562428952883,
+  "content_sha256": "b06d16f37d08a5b7dc8238375484da4dc71926d5c0771da88fc4e1eaa7e86dde",
+  "error": null,
+  "evidence_class": "E2E session receipt",
+  "fingerprint": "44f715a690b5e58c42a675e92df1b997b47598b608ea8c2074f8b13f5d114b02",
+  "fit_status": "FIT",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "rows": [
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "Gold-7-Foxtrot",
+      "arm": "C",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": true,
+      "expected": "gold-7-foxtrot",
+      "false_answer": false,
+      "family_id": "census_mira",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 47
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          1
+        ],
+        "x1_address": {
+          "entity": "mira",
+          "relation": "seal"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 2
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 100,
+      "query_id": "alias_08",
+      "question": "For MIRA, give the sealing identifier currently on record.",
+      "resolved_address": [
+        "mira",
+        "seal"
+      ],
+      "seed": 20260916,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 3.1646525016985834
+    },
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "Gold-7-Foxtrot",
+      "arm": "A",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": true,
+      "expected": "gold-7-foxtrot",
+      "false_answer": false,
+      "family_id": "census_mira",
+      "generation_calls": null,
+      "info": {
+        "admission_identified_candidates": [
+          0,
+          1
+        ],
+        "admission_identifier_hit_count": 2,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "declared_synthesis_identified_set",
+        "admission_rank_plan": [
+          0,
+          1
+        ],
+        "admission_ranking_before_demotion": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "fit_chunk_trips": [],
+        "fit_descended_head": [],
+        "fit_dropped_filler": [],
+        "fit_dropped_planned": [],
+        "fit_planned": [
+          0,
+          1
+        ],
+        "fit_seated": [
+          1
+        ],
+        "fit_shuttle": false,
+        "fit_shuttle_trips": [],
+        "fit_split_children": [],
+        "fit_split_ephemeral": null,
+        "fit_split_parent": null,
+        "fit_unseatable": [],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 47
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": 96,
+          "charge_waived_reason": null,
+          "charged_ntok": 0,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 100,
+      "query_id": "alias_08",
+      "question": "For MIRA, give the sealing identifier currently on record.",
+      "resolved_address": [
+        "mira",
+        "seal"
+      ],
+      "seed": 20260916,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 12.531461091712117
+    },
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "Gold-7-Foxtrot",
+      "arm": "B",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": true,
+      "expected": "gold-7-foxtrot",
+      "false_answer": false,
+      "family_id": "census_mira",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 47
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          1
+        ],
+        "x1_address": {
+          "entity": "mira",
+          "relation": "seal"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 2
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 100,
+      "query_id": "alias_08",
+      "question": "For MIRA, give the sealing identifier currently on record.",
+      "resolved_address": [
+        "mira",
+        "seal"
+      ],
+      "seed": 20260916,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 3.2690709359012544
+    },
+    {
+      "abstained": false,
+      "address_coverage": false,
+      "answer": "The mira seal identifier currently on record is **Silver-6-Charlie**.",
+      "arm": "A",
+      "condition": "absent",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "gold-7-foxtrot",
+      "false_answer": true,
+      "family_id": "census_mira",
+      "generation_calls": null,
+      "info": {
+        "admission_identified_candidates": [
+          0
+        ],
+        "admission_identifier_hit_count": 1,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+        "admission_rank_plan": [
+          0
+        ],
+        "admission_ranking_before_demotion": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "fit_chunk_trips": [],
+        "fit_descended_head": [],
+        "fit_dropped_filler": [],
+        "fit_dropped_planned": [],
+        "fit_planned": [
+          0
+        ],
+        "fit_seated": [
+          0
+        ],
+        "fit_shuttle": false,
+        "fit_shuttle_trips": [],
+        "fit_split_children": [],
+        "fit_split_ephemeral": null,
+        "fit_split_parent": null,
+        "fit_unseatable": [],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 57
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": 96,
+          "charge_waived_reason": null,
+          "charged_ntok": 0,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        0
+      ],
+      "multiplicity": 100,
+      "query_id": "alias_08",
+      "question": "For MIRA, give the sealing identifier currently on record.",
+      "resolved_address": [
+        "mira",
+        "seal"
+      ],
+      "seed": 20260916,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 13.929403631947935
+    },
+    {
+      "abstained": false,
+      "address_coverage": false,
+      "answer": "The mira seal identifier currently on record is **Silver-6-Charlie**.",
+      "arm": "B",
+      "condition": "absent",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "gold-7-foxtrot",
+      "false_answer": true,
+      "family_id": "census_mira",
+      "generation_calls": null,
+      "info": {
+        "admission_identified_candidates": [
+          0
+        ],
+        "admission_identifier_hit_count": 1,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+        "admission_rank_plan": [
+          0
+        ],
+        "admission_ranking_before_demotion": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "demand_fired": false,
+        "fit_chunk_trips": [],
+        "fit_descended_head": [],
+        "fit_dropped_filler": [],
+        "fit_dropped_planned": [],
+        "fit_planned": [
+          0
+        ],
+        "fit_seated": [
+          0
+        ],
+        "fit_shuttle": false,
+        "fit_shuttle_trips": [],
+        "fit_split_children": [],
+        "fit_split_ephemeral": null,
+        "fit_split_parent": null,
+        "fit_unseatable": [],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 57
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": 96,
+          "charge_waived_reason": null,
+          "charged_ntok": 0,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_address": {
+          "entity": "mira",
+          "relation": "seal"
+        },
+        "x1_fallback_reason": "pages_absent",
+        "x1_missing_pages": [
+          1
+        ],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 2
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        0
+      ],
+      "multiplicity": 100,
+      "query_id": "alias_08",
+      "question": "For MIRA, give the sealing identifier currently on record.",
+      "resolved_address": [
+        "mira",
+        "seal"
+      ],
+      "seed": 20260916,
+      "served_text_class": "answer",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 11.822840263135731
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "I cannot answer from the mounted memory: PAGE_FAULT.",
+      "arm": "C",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "gold-7-foxtrot",
+      "false_answer": false,
+      "family_id": "census_mira",
+      "generation_calls": 0,
+      "info": {
+        "abstain": true,
+        "demand_fired": false,
+        "x1_address": {
+          "entity": "mira",
+          "relation": "seal"
+        },
+        "x1_fault_reason": "pages_absent",
+        "x1_generation_calls": 0,
+        "x1_missing_pages": [
+          1
+        ],
+        "x1_page_fault": true,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 2
+      },
+      "kind": "alias",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "alias_08",
+      "question": "For MIRA, give the sealing identifier currently on record.",
+      "resolved_address": [
+        "mira",
+        "seal"
+      ],
+      "seed": 20260916,
+      "served_text_class": "abstention",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 2.747122198343277e-05
+    }
+  ],
+  "rows_sha256": "35f49dea2fce0fc57e28894149cf0c6bc299e52f94d0b2a27f8a2d7b58cd5fca",
+  "schema": "grm.x1.gpu-unit.v4",
+  "session_digests": {
+    "alias_08_absent_A/turn_receipt.json": "5e48a2daaacb2ef7d32c060f1c36b327b7297f69b42be90f01a5402b39744837",
+    "alias_08_absent_B/turn_receipt.json": "adfbbc3adb8719b619f0b380cc3d6adac3b331de49b85573297df2646f45d764",
+    "alias_08_absent_C/turn_receipt.json": "7e16795f1db69341beb713e42dc9c7954e3e858c73526105825933e1299cea66",
+    "alias_08_present_A/turn_receipt.json": "b3516fd55c32bcc4fdd03a28ebb5908d625853ef0201be1e2156dfe784c957c2",
+    "alias_08_present_B/turn_receipt.json": "e39ba70aa9561cdba519a2cc21e73e0ecabae6191fa01eafc08d75ae69da120d",
+    "alias_08_present_C/turn_receipt.json": "f1bc1c0515952dc759fb2025d38e572c2d681bf1ed7811342920b1a7f866e613",
+    "census_mira_addresses.json": "793f9cdb8b93ab51466efc5b8aca8f9fda616c6f758a724e57fb16e8012b3896",
+    "census_mira_pages.json": "fcfb49834324dc731c758b9c388aa5d619d47dc55dc6b265b2452d27924e0cec",
+    "model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d"
+  },
+  "status": "COMPLETE",
+  "unit_id": "oracle_m100_s0__alias_08",
+  "worker_wall_s": 105.52540304278955
+}

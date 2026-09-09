@@ -1,0 +1,520 @@
+{
+  "attempt": 1,
+  "cell": "oracle_m100_s0",
+  "completed_unix_ns": 1788938567062241178,
+  "content_sha256": "b436e8300c26830f93bf17053a04298f926e63c6164319af01ab42013475ffdb",
+  "error": null,
+  "evidence_class": "E2E session receipt",
+  "fingerprint": "44f715a690b5e58c42a675e92df1b997b47598b608ea8c2074f8b13f5d114b02",
+  "fit_status": "FIT",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "rows": [
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "Gold-7-Foxtrot",
+      "arm": "B",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": true,
+      "expected": "gold-7-foxtrot",
+      "false_answer": false,
+      "family_id": "census_mira",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 48
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          1
+        ],
+        "x1_address": {
+          "entity": "mira",
+          "relation": "seal"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 2
+      },
+      "kind": "correction",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 100,
+      "query_id": "correction_10",
+      "question": "After all recorded revisions, what seal should I use for Mira?",
+      "resolved_address": [
+        "mira",
+        "seal"
+      ],
+      "seed": 20260930,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 3.250546715222299
+    },
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "Gold-7-Foxtrot",
+      "arm": "C",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": true,
+      "expected": "gold-7-foxtrot",
+      "false_answer": false,
+      "family_id": "census_mira",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 48
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          1
+        ],
+        "x1_address": {
+          "entity": "mira",
+          "relation": "seal"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 2
+      },
+      "kind": "correction",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 100,
+      "query_id": "correction_10",
+      "question": "After all recorded revisions, what seal should I use for Mira?",
+      "resolved_address": [
+        "mira",
+        "seal"
+      ],
+      "seed": 20260930,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 3.251270190346986
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "Not in memory: no stored record matches after, recorded, revisions, seal, use, mira.",
+      "arm": "A",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "gold-7-foxtrot",
+      "false_answer": false,
+      "family_id": "census_mira",
+      "generation_calls": 0,
+      "info": {
+        "abstain_identifier_tokens": [
+          "after",
+          "recorded",
+          "revisions",
+          "seal",
+          "use",
+          "mira"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          0,
+          1,
+          2
+        ],
+        "admission_ranking_before_demotion": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "correction",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "correction_10",
+      "question": "After all recorded revisions, what seal should I use for Mira?",
+      "resolved_address": [
+        "mira",
+        "seal"
+      ],
+      "seed": 20260930,
+      "served_text_class": "abstention",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 6.2205227497033775
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "I cannot answer from the mounted memory: PAGE_FAULT.",
+      "arm": "C",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "gold-7-foxtrot",
+      "false_answer": false,
+      "family_id": "census_mira",
+      "generation_calls": 0,
+      "info": {
+        "abstain": true,
+        "demand_fired": false,
+        "x1_address": {
+          "entity": "mira",
+          "relation": "seal"
+        },
+        "x1_fault_reason": "pages_absent",
+        "x1_generation_calls": 0,
+        "x1_missing_pages": [
+          1
+        ],
+        "x1_page_fault": true,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 2
+      },
+      "kind": "correction",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "correction_10",
+      "question": "After all recorded revisions, what seal should I use for Mira?",
+      "resolved_address": [
+        "mira",
+        "seal"
+      ],
+      "seed": 20260930,
+      "served_text_class": "abstention",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 3.2100826501846313e-05
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "Not in memory: no stored record matches after, recorded, revisions, seal, use, mira.",
+      "arm": "A",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "gold-7-foxtrot",
+      "false_answer": false,
+      "family_id": "census_mira",
+      "generation_calls": 0,
+      "info": {
+        "abstain_identifier_tokens": [
+          "after",
+          "recorded",
+          "revisions",
+          "seal",
+          "use",
+          "mira"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          0,
+          2,
+          3
+        ],
+        "admission_ranking_before_demotion": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "correction",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "correction_10",
+      "question": "After all recorded revisions, what seal should I use for Mira?",
+      "resolved_address": [
+        "mira",
+        "seal"
+      ],
+      "seed": 20260930,
+      "served_text_class": "abstention",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 6.227983789984137
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "Not in memory: no stored record matches after, recorded, revisions, seal, use, mira.",
+      "arm": "B",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "gold-7-foxtrot",
+      "false_answer": false,
+      "family_id": "census_mira",
+      "generation_calls": 0,
+      "info": {
+        "abstain_identifier_tokens": [
+          "after",
+          "recorded",
+          "revisions",
+          "seal",
+          "use",
+          "mira"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          0,
+          2,
+          3
+        ],
+        "admission_ranking_before_demotion": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_address": {
+          "entity": "mira",
+          "relation": "seal"
+        },
+        "x1_fallback_reason": "pages_absent",
+        "x1_missing_pages": [
+          1
+        ],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 2
+      },
+      "kind": "correction",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "correction_10",
+      "question": "After all recorded revisions, what seal should I use for Mira?",
+      "resolved_address": [
+        "mira",
+        "seal"
+      ],
+      "seed": 20260930,
+      "served_text_class": "abstention",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 5.912257050164044
+    }
+  ],
+  "rows_sha256": "5c2be6015cb720082cf061a42f0a089df43669351133b609b25e9a9bb14e105b",
+  "schema": "grm.x1.gpu-unit.v4",
+  "session_digests": {
+    "census_mira_addresses.json": "793f9cdb8b93ab51466efc5b8aca8f9fda616c6f758a724e57fb16e8012b3896",
+    "census_mira_pages.json": "fcfb49834324dc731c758b9c388aa5d619d47dc55dc6b265b2452d27924e0cec",
+    "correction_10_absent_A/turn_receipt.json": "4c247a8856f40b1e5a44c7fdd1dd0b86260971eaa6f0f19a3eb6c00c077d5617",
+    "correction_10_absent_B/turn_receipt.json": "f01725cd2bf2d9f45e3c084f46343645376b6cdc1cdeef4b1211ab76ba9c255e",
+    "correction_10_absent_C/turn_receipt.json": "449d962e446813bc498d463ba7bdfaa48079a6b3057a6b33d9607344e8547113",
+    "correction_10_present_A/turn_receipt.json": "0a6c2fd462d2f24770b56779fcf8ec82ba6d85124fb067ed003ae4d9412c0e37",
+    "correction_10_present_B/turn_receipt.json": "838499a71a8d32ce9292c64c7b434d538d026aeade8ce1e7a1b3921e6a6a5ae2",
+    "correction_10_present_C/turn_receipt.json": "fae49582b80fed6ea70323fed466eaf8a3ef1bac1a8dab31297ca52a8b5a489c",
+    "model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d"
+  },
+  "status": "COMPLETE",
+  "unit_id": "oracle_m100_s0__correction_10",
+  "worker_wall_s": 84.84377407422289
+}

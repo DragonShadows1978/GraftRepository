@@ -1,0 +1,26 @@
+{
+  "attempt": 1,
+  "cell": "oracle_m100_s0",
+  "completed_unix_ns": 1788938332965657725,
+  "content_sha256": "ec3330c7129c553e2003749eecac4a57bd895b991fbfd9a31498417620b89d6f",
+  "error": {
+    "message": "GRM-X1 unit reached its 280 s work rail (285 s worker allowance)",
+    "traceback": "Traceback (most recent call last):\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_units.py\", line 417, in worker\n    execute(unit, rows, directory)\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_units.py\", line 395, in execute\n    run_unit(unit, rows, directory)\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_gpu.py\", line 269, in run_unit\n    run_cell(unit, rows, directory)\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_gpu.py\", line 232, in run_cell\n    answer, info = recall.serve(query[\"question\"], address=address, point_lookup=True,\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/grm_x1_addresses.py\", line 138, in serve\n    return self.fallback(question, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_gpu.py\", line 222, in <lambda>\n    fallback = lambda question, **kw: arena.step(question, deposit=False, defer_memory=True, demand_ngh=False, **kw)\n                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/graft_arena.py\", line 4127, in step\n    txt, info = _serve(\n                ^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/graft_arena.py\", line 3799, in _serve\n    return self._attempt(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/graft_arena.py\", line 4381, in _attempt\n    row = self._forward([out[-1]])\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/graft_arena.py\", line 2604, in _forward\n    lg, self.caches = self.m(np.array([ids], dtype=np.int64),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/gpt_oss20b_tc.py\", line 1294, in __call__\n    h, kv, _route_info = layer(h, self.rope_cos, self.rope_sin, position_offset, cache)\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/gpt_oss20b_tc.py\", line 1162, in __call__\n    attn, kv = self.self_attn(normed, cos, sin, position_offset, kv_cache)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/gpt_oss20b_tc.py\", line 805, in __call__\n    attn = sink_attention_tc(\n           ^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/gpt_oss20b_tc.py\", line 362, in sink_attention_tc\n    value_h = _repeat_kv(value, num_heads_per_kv)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/mistral7b_tc.py\", line 221, in _repeat_kv\n    return x.unsqueeze(2).expand([B, KVH, rep, L, D]).reshape([B, KVH * rep, L, D])\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_units.py\", line 413, in expired\n    raise TimeoutError('GRM-X1 unit reached its 280 s work rail (285 s worker allowance)')\nTimeoutError: GRM-X1 unit reached its 280 s work rail (285 s worker allowance)\n",
+    "type": "TimeoutError"
+  },
+  "evidence_class": "E2E session receipt",
+  "fingerprint": "44f715a690b5e58c42a675e92df1b997b47598b608ea8c2074f8b13f5d114b02",
+  "fit_status": "NON_FIT",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "rows": [],
+  "rows_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+  "schema": "grm.x1.gpu-unit.v4",
+  "session_digests": {
+    "census_orion_addresses.json": "d9edc033abada678668638af2a079d2f167cbee8783c7282463ff59c495fd36e",
+    "census_orion_pages.json": "52ddb17098a19123ae62b56ea57c995d7f268babc7dc15e57c2bbdb8d7d88079",
+    "model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d"
+  },
+  "status": "RED",
+  "unit_id": "oracle_m100_s0__correction_06",
+  "worker_wall_s": 280.01736963912845
+}

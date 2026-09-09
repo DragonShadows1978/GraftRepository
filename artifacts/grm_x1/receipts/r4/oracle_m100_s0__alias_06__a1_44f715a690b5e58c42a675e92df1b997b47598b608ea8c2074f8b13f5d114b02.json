@@ -1,0 +1,526 @@
+{
+  "attempt": 1,
+  "cell": "oracle_m100_s0",
+  "completed_unix_ns": 1788937425270863198,
+  "content_sha256": "c0c4d49781fd7dc00ff5c837441f85887454d8ea0251fe150c6d69098d4b00f3",
+  "error": null,
+  "evidence_class": "E2E session receipt",
+  "fingerprint": "44f715a690b5e58c42a675e92df1b997b47598b608ea8c2074f8b13f5d114b02",
+  "fit_status": "FIT",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "rows": [
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The recorded cypher bridge identifier is **Vortex-3-Sierra**.",
+      "arm": "A",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "vortex-3-sierra",
+      "false_answer": true,
+      "family_id": "census_cypher",
+      "generation_calls": null,
+      "info": {
+        "admission_identified_candidates": [
+          0
+        ],
+        "admission_identifier_hit_count": 1,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+        "admission_rank_plan": [
+          0
+        ],
+        "admission_ranking_before_demotion": [
+          0,
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14
+        ],
+        "fit_chunk_trips": [],
+        "fit_descended_head": [],
+        "fit_dropped_filler": [],
+        "fit_dropped_planned": [],
+        "fit_planned": [
+          0
+        ],
+        "fit_seated": [
+          0
+        ],
+        "fit_shuttle": false,
+        "fit_shuttle_trips": [],
+        "fit_split_children": [],
+        "fit_split_ephemeral": null,
+        "fit_split_parent": null,
+        "fit_unseatable": [],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 56
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": 96,
+          "charge_waived_reason": null,
+          "charged_ntok": 0,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        0
+      ],
+      "multiplicity": 100,
+      "query_id": "alias_06",
+      "question": "For CYPHER, give the bridge identifier currently on record.",
+      "resolved_address": [
+        "cypher",
+        "bridge"
+      ],
+      "seed": 20260914,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        0
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 14.152849989943206
+    },
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The recorded cypher bridge identifier is **Vortex-3-Sierra**.",
+      "arm": "B",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "vortex-3-sierra",
+      "false_answer": true,
+      "family_id": "census_cypher",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 56
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          0
+        ],
+        "x1_address": {
+          "entity": "cypher",
+          "relation": "bridge"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          0
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 1
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        0
+      ],
+      "multiplicity": 100,
+      "query_id": "alias_06",
+      "question": "For CYPHER, give the bridge identifier currently on record.",
+      "resolved_address": [
+        "cypher",
+        "bridge"
+      ],
+      "seed": 20260914,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        0
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 3.9839630066417158
+    },
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The recorded cypher bridge identifier is **Vortex-3-Sierra**.",
+      "arm": "C",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "vortex-3-sierra",
+      "false_answer": true,
+      "family_id": "census_cypher",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 56
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          0
+        ],
+        "x1_address": {
+          "entity": "cypher",
+          "relation": "bridge"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          0
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 1
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        0
+      ],
+      "multiplicity": 100,
+      "query_id": "alias_06",
+      "question": "For CYPHER, give the bridge identifier currently on record.",
+      "resolved_address": [
+        "cypher",
+        "bridge"
+      ],
+      "seed": 20260914,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        0
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 3.9340833290480077
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "Not in memory: no stored record matches cypher.",
+      "arm": "B",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "vortex-3-sierra",
+      "false_answer": false,
+      "family_id": "census_cypher",
+      "generation_calls": 0,
+      "info": {
+        "abstain_identifier_tokens": [
+          "cypher"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          1,
+          2,
+          4
+        ],
+        "admission_ranking_before_demotion": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_address": {
+          "entity": "cypher",
+          "relation": "bridge"
+        },
+        "x1_fallback_reason": "pages_absent",
+        "x1_missing_pages": [
+          0
+        ],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          0
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 1
+      },
+      "kind": "alias",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "alias_06",
+      "question": "For CYPHER, give the bridge identifier currently on record.",
+      "resolved_address": [
+        "cypher",
+        "bridge"
+      ],
+      "seed": 20260914,
+      "served_text_class": "abstention",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        0
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 4.588230994064361
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "I cannot answer from the mounted memory: PAGE_FAULT.",
+      "arm": "C",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "vortex-3-sierra",
+      "false_answer": false,
+      "family_id": "census_cypher",
+      "generation_calls": 0,
+      "info": {
+        "abstain": true,
+        "demand_fired": false,
+        "x1_address": {
+          "entity": "cypher",
+          "relation": "bridge"
+        },
+        "x1_fault_reason": "pages_absent",
+        "x1_generation_calls": 0,
+        "x1_missing_pages": [
+          0
+        ],
+        "x1_page_fault": true,
+        "x1_requested_pages": [
+          0
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 1
+      },
+      "kind": "alias",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "alias_06",
+      "question": "For CYPHER, give the bridge identifier currently on record.",
+      "resolved_address": [
+        "cypher",
+        "bridge"
+      ],
+      "seed": 20260914,
+      "served_text_class": "abstention",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        0
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 2.866378054022789e-05
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "Not in memory: no stored record matches cypher.",
+      "arm": "A",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "vortex-3-sierra",
+      "false_answer": false,
+      "family_id": "census_cypher",
+      "generation_calls": 0,
+      "info": {
+        "abstain_identifier_tokens": [
+          "cypher"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          1,
+          2,
+          4
+        ],
+        "admission_ranking_before_demotion": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "alias",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "alias_06",
+      "question": "For CYPHER, give the bridge identifier currently on record.",
+      "resolved_address": [
+        "cypher",
+        "bridge"
+      ],
+      "seed": 20260914,
+      "served_text_class": "abstention",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        0
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 4.425892848987132
+    }
+  ],
+  "rows_sha256": "79ace0c41ed02a40325a7b00e599006f4a2d058a98ca9bd6dc77f63400e7a45a",
+  "schema": "grm.x1.gpu-unit.v4",
+  "session_digests": {
+    "alias_06_absent_A/turn_receipt.json": "154b4abb4726cdc1bbcc1b4b54b1e24d51440fdfa4043b6a5866cff368216467",
+    "alias_06_absent_B/turn_receipt.json": "796cae65a5668cdf1aff8865427e24c995af8db94d5738ca464a886b3a696c0e",
+    "alias_06_absent_C/turn_receipt.json": "e80f9b6dba7fd21db6a687500a9932e5f3f9015690353fb9051860fd66bea5c7",
+    "alias_06_present_A/turn_receipt.json": "3799e05757ce78f1692850264c7efddb7cc1d6de44406c7eca6ff35f24419aa1",
+    "alias_06_present_B/turn_receipt.json": "2b54b1dbe10b04e465f8c16658c88dee2188141d94e37d6fec0db4ee9930cc44",
+    "alias_06_present_C/turn_receipt.json": "3c221ecea4c11e51fac68400469ced354b17691e7f5d98250c979f30490cc52d",
+    "census_cypher_addresses.json": "6f76063138d5e57dd11bc6677580d0b4a65e2d0d77a99912d2db847f51223e84",
+    "census_cypher_pages.json": "23c291f5df71c1098f5e23f462acde7f104226d0e3715af0649dab7dca9b75dd",
+    "model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d"
+  },
+  "status": "COMPLETE",
+  "unit_id": "oracle_m100_s0__alias_06",
+  "worker_wall_s": 86.69652952300385
+}

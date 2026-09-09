@@ -1,0 +1,100 @@
+{
+  "attempt": 1,
+  "cell": "oracle_m100_s0",
+  "completed_unix_ns": 1788936995349222745,
+  "content_sha256": "6e9fc7e65937c5db595fc356582b1cfd1f0a26475c3e220abd319cf4c7ff13c0",
+  "error": {
+    "message": "GRM-X1 unit reached its 280 s work rail (285 s worker allowance)",
+    "traceback": "Traceback (most recent call last):\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_units.py\", line 417, in worker\n    execute(unit, rows, directory)\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_units.py\", line 395, in execute\n    run_unit(unit, rows, directory)\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_gpu.py\", line 269, in run_unit\n    run_cell(unit, rows, directory)\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_gpu.py\", line 232, in run_cell\n    answer, info = recall.serve(query[\"question\"], address=address, point_lookup=True,\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/grm_x1_addresses.py\", line 138, in serve\n    return self.fallback(question, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_gpu.py\", line 222, in <lambda>\n    fallback = lambda question, **kw: arena.step(question, deposit=False, defer_memory=True, demand_ngh=False, **kw)\n                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/graft_arena.py\", line 4127, in step\n    txt, info = _serve(\n                ^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/graft_arena.py\", line 3799, in _serve\n    return self._attempt(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/graft_arena.py\", line 4351, in _attempt\n    row = self._forward(prompt_ids)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/graft_arena.py\", line 2604, in _forward\n    lg, self.caches = self.m(np.array([ids], dtype=np.int64),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/gpt_oss20b_tc.py\", line 1294, in __call__\n    h, kv, _route_info = layer(h, self.rope_cos, self.rope_sin, position_offset, cache)\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/gpt_oss20b_tc.py\", line 1166, in __call__\n    mlp_out, route_info = self.mlp(mlp_in)\n                          ^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/gpt_oss20b_tc.py\", line 1066, in __call__\n    y = self._expert_packed_mxfp4(xt, e, w)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/core/gpt_oss20b_tc.py\", line 1020, in _expert_packed_mxfp4\n    tc.mxfp4_linear_expert(\n  File \"/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tensor_cuda/__init__.py\", line 915, in mxfp4_linear_expert\n    return _C.mxfp4_linear_expert(x, blocks, scales, expert_idx)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_units.py\", line 413, in expired\n    raise TimeoutError('GRM-X1 unit reached its 280 s work rail (285 s worker allowance)')\nTimeoutError: GRM-X1 unit reached its 280 s work rail (285 s worker allowance)\n",
+    "type": "TimeoutError"
+  },
+  "evidence_class": "E2E session receipt",
+  "fingerprint": "44f715a690b5e58c42a675e92df1b997b47598b608ea8c2074f8b13f5d114b02",
+  "fit_status": "NON_FIT",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "rows": [
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The current Orion pin identifier is **Kestrel‑9‑Tango**.",
+      "arm": "C",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "kestrel-9-tango",
+      "false_answer": true,
+      "family_id": "sup_orion",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 57
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          1
+        ],
+        "x1_address": {
+          "entity": "orion",
+          "relation": "pin"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 2
+      },
+      "kind": "alias",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 100,
+      "query_id": "alias_02",
+      "question": "For ORION, give the PIN identifier currently on record.",
+      "resolved_address": [
+        "orion",
+        "pin"
+      ],
+      "seed": 20260910,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 4.140333007089794
+    }
+  ],
+  "rows_sha256": "10bf73641fb1df81a3fdd7d9890dcd2354db17f22b04bed8250e5c363c00cdc4",
+  "schema": "grm.x1.gpu-unit.v4",
+  "session_digests": {
+    "alias_02_present_C/turn_receipt.json": "5845277d7ee41c3ceeb96dd2523c0f84fdf96097879aaded807481247a402aed",
+    "model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d",
+    "sup_orion_addresses.json": "14709645dc95bc809ec12014b7126941d1c1095384fe1870acffc07005ddaa88",
+    "sup_orion_pages.json": "c7f3e624ad4aa2b74110f9c4e42be44fb0afd58fd50dd5bf5c0dd6d531a1249a"
+  },
+  "status": "RED",
+  "unit_id": "oracle_m100_s0__alias_02",
+  "worker_wall_s": 280.0181290297769
+}
