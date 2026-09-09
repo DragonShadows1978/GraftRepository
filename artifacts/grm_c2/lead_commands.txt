@@ -1,26 +1,21 @@
 #!/usr/bin/env bash
-# Prior art: C2 r1 / CMC1 foreground leased commands (project, 2026).
-# Amendment 1 adds ordered battery scoring and explicit no-retry resume.
-# No prior art known to me for this glue beyond the local systems above.
+# Prior art: C2 amendment1 / CMC1 foreground lease scheduler (project, 2026).
+# New: amendment3 fixed-source epoch with explicit resume and retained charge.
+# No prior art known to me beyond those local systems.
 set -euo pipefail
 cd /mnt/ForgeRealm/wt/grm-c2
 if [[ $# -gt 1 || ( $# -eq 1 && "$1" != --resume && "$1" != --dry-run ) ]]; then
     echo 'Usage: ./artifacts/grm_c2/lead_commands.txt [--dry-run|--resume]' >&2
     exit 2
 fi
-python scripts/grm_c2_amended.py --dry-run
+python scripts/grm_c2_epoch3.py --dry-run
 if [[ ${1:-} == --dry-run ]]; then exit 0; fi
-# Each inner cell uses exactly:
-# timeout --signal=TERM --kill-after=5 585 python scripts/grm_c2_amended.py --cell CELL_ID
-# CMC1 fcntl.flock holds /tmp/forge-gpu.lock, wait <=240s, lease <=285s,
-# worker timeout 280s. Outer TERM at585s/KILL at590s targets its own group only.
-# Persisted foreground cooldown >=30s precedes each subsequent cell.
-# --run stops at first new RED. --resume skips all started cells, including RED;
-# failed dependencies are RED without a worker. Recorded RED remains in summary.
+# One foreground flock lease per cell: /tmp/forge-gpu.lock, wait <=240s,
+# worker timeout280s / lease285s, outer TERM585s / KILL590s, cooldown30s.
 set +e
-python scripts/grm_c2_amended.py --run "$@"
+python scripts/grm_c2_epoch3.py --run --resume
 run_status=$?
-python scripts/grm_c2_amended.py summary
+python scripts/grm_c2_epoch3.py summary
 summary_status=$?
 if [[ $run_status -ne 0 ]]; then exit "$run_status"; fi
 exit "$summary_status"
