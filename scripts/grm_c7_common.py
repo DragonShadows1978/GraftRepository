@@ -143,6 +143,11 @@ def verify():
         verify_r2(r, inputs, ROOT, OUT)
     elif os.environ.get('GRM_C7_REVISION', 'r1') != 'r1':
         raise ValueError('UNKNOWN_C7_REVISION')
+    # Prior art: C7 explicit chained source overrides (GRM, 2026).
+    # FIX-4 is opt-in and separately SHA-bound; old r2 remains fail-closed.
+    if os.environ.get('GRM_C7_FIX4') == '1':
+        from scripts.grm_c7_fix4 import verify_fix4
+        verify_fix4(r, inputs)
     for path, digest in inputs.items():
         p = Path(path) if Path(path).is_absolute() else ROOT / path
         if sha(p) != digest:

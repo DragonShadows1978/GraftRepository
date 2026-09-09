@@ -24,6 +24,10 @@ from scripts.grm_c7_common import (ROOT, OUT as BASE, FIX, REG, DISTANCES, CLASS
 # Prior art: C7 immutable receipt directories (GRM contributors, 2026).
 # r2 is a fresh campaign namespace; original registration/fixture stay in BASE.
 OUT = BASE / 'r2' if os.environ.get('GRM_C7_REVISION') == 'r2' else BASE
+# Prior art: C7 r2 namespace isolation (GRM, 2026). FIX-4 preserves old cells.
+from scripts import grm_c7_fix4 as fix4
+if fix4.enabled():
+    OUT = fix4.ATTEMPT
 
 
 def binding(arm):
@@ -40,6 +44,8 @@ def binding(arm):
     if 'amendment_r2_sha256' in r:
         value.update(revision='r2', amendment_r2_sha256=r['amendment_r2_sha256'],
                      fold_core_sha256=r['fold_core_sha256'])
+    if 'amendment_fix4_sha256' in r:
+        value['amendment_fix4_sha256'] = r['amendment_fix4_sha256']
     return value
 
 
@@ -360,10 +366,10 @@ def worker(cell):
              'process_id': None, 'cold_nodes': [], 'fold_failures': []}
     prior = None
     if cell['depends']:
-        prior_dir = OUT/'cells'/cell['depends']
+        prior_dir = fix4.cell_directory(OUT, cell['depends'])
         prior = read(prior_dir/'worker.json')
         cp = prior_dir/'checkpoint'
-        state = validate_checkpoint(cp, cell['start'], binding(cell['arm']))
+        state = fix4.resume_state(cp, cell['start'], binding(cell['arm']), r)
         assert_payloads(cp/'repository')
         shutil.copytree(cp/'repository', session/'repository')
     old_process = state['process_id']
@@ -381,7 +387,7 @@ def worker(cell):
         if list(a.encode(r['model_frame']['sink_text'])) != r['model_frame']['sink_token_ids']:
             raise ValueError('EB1_SINK_TOKEN_MISMATCH')
         if prior:
-            expected = read(OUT/'cells'/cell['depends']/'checkpoint/repository/manifest.json')['nodes']
+            expected = read(fix4.cell_directory(OUT, cell['depends'])/'checkpoint/repository/manifest.json')['nodes']
             loaded = [repo._node_manifest(g) for g in a.grafts]
             if manifest_projection(expected) != manifest_projection(loaded):
                 raise ValueError('RESTART_METADATA_CHANGED')
@@ -461,6 +467,11 @@ def worker(cell):
 def run_leased(cell):
     r = verify()
     arm = cell['arm']
+    if fix4.enabled() and OUT == fix4.ATTEMPT:
+        if cell['arm'] != 'A' or cell['start'] < 24:
+            raise ValueError('FIX4_RESUME_BOUNDARY_ONLY')
+        fix4.check_ready()
+        OUT.mkdir(parents=True, exist_ok=True)
     # Allocate campaign ownership atomically; concurrent launches of this arm
     # cannot overspend or race dependencies. Stale owners are RED, never cleared.
     owner = OUT/f'{arm}.active'
@@ -471,12 +482,14 @@ def run_leased(cell):
     started = None
     try:
         if cell['depends']:
-            previous = read(OUT/'cells'/cell['depends']/'controller.json')
+            previous = read(fix4.cell_directory(OUT, cell['depends'])/'controller.json')
             if previous['status'] != 'COMPLETE':
                 raise ValueError('DEPENDENCY_NOT_COMPLETE')
-        controllers = list((OUT/'cells').glob(f'{arm}-*/controller.json'))
+        controllers = [p for d in fix4.accounting_directories(OUT)
+                       for p in d.glob(f'{arm}-*/controller.json')]
         done = sum(read(p)['charged_seconds'] for p in controllers)
-        reserved = sum(read(p)['seconds'] for p in (OUT/'cells').glob(f'{arm}-*/reservation.json')
+        reserved = sum(read(p)['seconds'] for d in fix4.accounting_directories(OUT)
+                       for p in d.glob(f'{arm}-*/reservation.json')
                        if not p.with_name('controller.json').exists())
         reserve_check(r, cell, done, reserved)
         if directory.exists():
@@ -494,6 +507,8 @@ def run_leased(cell):
                 # C2 strips ambient GRM_* switches; restore the campaign
                 # selector explicitly so this owned child uses r2 receipts.
                 env['GRM_C7_REVISION'] = os.environ.get('GRM_C7_REVISION', 'r1')
+                if fix4.enabled():
+                    env['GRM_C7_FIX4'] = '1'
                 env['GRM_C7_LEASE_PARENT'] = str(os.getpid())
                 with (directory/'worker.log').open('x') as log:
                     # Parent waits in foreground. Registered timeout applies
@@ -522,7 +537,7 @@ def summary(arm):
     r = verify()
     f = read(FIX)
     cells = [c for c in r['cells'] if c['arm'] == arm]
-    paths = [OUT/'cells'/c['id'] for c in cells]
+    paths = [fix4.cell_directory(OUT, c['id']) for c in cells]
     rows = [row for p in paths for row in lines(p/'probes.jsonl')]
     strata = table(rows, f['probes'])
     residency = [row for p in paths for row in lines(p/'residency.jsonl')]
@@ -554,7 +569,7 @@ def summary(arm):
     passed = (complete and all(d['passes'] for d in distance_rows) and bound and folded and
               len(restarts)==2 and all(restarts) and all(x['controlled_nvme_return'] for x in paging)
               and fold_rule and len(captures)==len(cells) and all(captures))
-    return {'arm': arm, 'status': 'PASS' if passed else 'FAIL' if complete else 'NOT_RUN' if not rows else 'INCOMPLETE',
+    value = {'arm': arm, 'status': 'PASS' if passed else 'FAIL' if complete else 'NOT_RUN' if not rows else 'INCOMPLETE',
             'binding': binding(arm), 'evidence_class': 'E2E only if complete; otherwise incomplete or no GPU evidence',
             'by_distance_and_class': strata, 'by_distance': distance_rows,
             'residency_bounded': bound if residency else None,
@@ -562,6 +577,7 @@ def summary(arm):
             'folded_path_exercised': folded, 'restart_scores': restarts, 'paging': paging,
             'fold_count': len(folds), 'failed_fold_count': sum(not x['accepted'] for x in folds),
             'fold_coverage_rule': fold_rule if folds else None, 'complete': complete}
+    return fix4.quarantine_summary(value) if fix4.enabled() else value
 
 
 def main():

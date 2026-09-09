@@ -1,4 +1,4 @@
-"""CPU author pins, not a GPT-OSS quality gate or a core repair.
+"""CPU author pins, not a GPT-OSS quality gate.
 
 Prior art: GRM contributors (2026), C7 receipt replays and real serving-path
 doubles; reuse these with the actual attention constructor. No prior art
@@ -92,11 +92,17 @@ def test_alias_recency_exclusion_reproduces_in_core_and_ladder(tmp_path, monkeyp
         else:
             answer, info = _probe_ladder_chat(repo, question, topk=3, ngen=32,
                                              max_trips=1, defer_memory=True)
-        assert answer == 'Not in memory: no stored record matches c7-signal-0.'
+        assert not info.get('abstained', False)
+        assert info['served_from'] == 'recency_mount'
+        assert info['served_from_node_ids'] == [8]
+        assert 'Not in memory:' not in answer
         assert info['admission_identified_candidates'] == []
         assert info['recency_mounted_ids'] == [8, 9]
-        assert a.cur_mounts == []
-        assert a.m.calls == []  # refuses before any numerical reader call
+        assert a.cur_mounts == [8]  # only the binding nominee, no admission mount
+        assert a.m.calls
+        assert 'C7-Signal-0 is an alias for C7-AliasBase-0.' in a.m.calls[0]['injected']
+        assert 8 not in info['admission_rank_plan']
+        assert 8 not in info['admission_ranking_before_demotion']
         # Read-only counterfactual, not a proposed recency-policy change.
         profile = decisive_admission_profile(a, question, exclude=(), route_limit=6)
         assert profile['identified_candidates'] == [8]

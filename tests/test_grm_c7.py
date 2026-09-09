@@ -139,7 +139,10 @@ def test_missing_rows_are_unknown_and_duplicate_probe_rejected():
     row = {'probe_id':p['id'],'memory':{'answer':p['expected']},'oracle':{'answer':p['expected']}}
     with pytest.raises(ValueError,match='DUPLICATE'):
         c.table([row,row],f['probes'])
-    assert run.summary('A')['status']=='NOT_RUN'
+    # Prior art: C7 campaign-state guards (GRM, 2026); FIX-4 imports
+    # old receipts under explicit quarantine instead of claiming an unrun arm.
+    from scripts.grm_c7_fix4 import enabled
+    assert run.summary('A')['status'] == ('NOT_MEASURED' if enabled() else 'INCOMPLETE')
 
 
 def test_oracle_uses_exact_source_and_cannot_deposit():

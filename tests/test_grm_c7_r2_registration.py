@@ -11,12 +11,13 @@ import pytest
 from scripts import grm_c7_common as c
 from scripts import grm_c7_run as run
 from scripts import grm_c7_register_r2 as r2
+from scripts import grm_c7_fix4 as fix4
 
 
 def test_r2_layout_bindings_fixtures_and_no_r1_resume(tmp_path):
     r = c.verify()
     a = c.read(c.OUT/'r2/amendment.json')
-    assert run.OUT == c.OUT/'r2'
+    assert run.OUT == (fix4.ATTEMPT if fix4.enabled() else c.OUT/'r2')
     assert r['cells'] == c.read(c.REG)['cells'] == a['cells']
     assert len([x for x in r['cells'] if x['arm'] == 'A']) == 39
     assert a['fixture_sha256'] == c.sha(c.FIX)
@@ -31,9 +32,9 @@ def test_r2_layout_bindings_fixtures_and_no_r1_resume(tmp_path):
     stale = {k:v for k,v in b.items() if k not in ('revision','amendment_r2_sha256','fold_core_sha256')}
     with pytest.raises(ValueError, match='CHECKPOINT'):
         c.validate_checkpoint(tmp_path, 9, stale)
-    # r1 completed, r2 unrun: reading r1 cells would turn this into FAIL.
-    assert run.summary('A')['status'] == 'NOT_RUN'
-    assert run.dry_run()['receipt_directory'] == str(c.OUT/'r2')
+    # FIX-4 explicitly imports three completed cells, with old rows quarantined.
+    assert run.summary('A')['status'] == ('NOT_MEASURED' if fix4.enabled() else 'INCOMPLETE')
+    assert run.dry_run()['receipt_directory'] == str(run.OUT)
 
 
 @pytest.mark.parametrize('attack,error', [
@@ -85,5 +86,6 @@ def test_live_r2_source_tampering_is_rejected(monkeypatch, name):
 
 def test_r1_execution_fails_closed_after_core_change(monkeypatch):
     monkeypatch.delenv('GRM_C7_REVISION', raising=False)
+    monkeypatch.delenv('GRM_C7_FIX4', raising=False)
     with pytest.raises(ValueError, match='INPUT_SHA_MISMATCH'):
         c.verify()
