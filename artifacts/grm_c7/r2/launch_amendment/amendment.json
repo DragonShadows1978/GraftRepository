@@ -1,0 +1,60 @@
+{
+  "finding": "C2 environment filtering drops GRM_C7_REVISION; explicitly restore it for the owned worker",
+  "gates": {
+    "budget_threshold_changes": false,
+    "changes": [
+      "scripts/grm_c7_run.py",
+      "scripts/grm_c7_register_r2.py",
+      "scripts/grm_c7_r2_cpu.py",
+      "artifacts/grm_c7/r2/lead_commands_r2.txt"
+    ],
+    "finding": "C2 environment(flags) removes all GRM_* variables; r2 selector would be lost before child initialization",
+    "gate": "test_leased_child_keeps_r2_after_c2_environment_filter: fake owned child launch through real controller and real C2 environment builder must retain r2; RED-before/GREEN-after",
+    "immutable": true,
+    "mutations": {
+      "additional_mutant": "omit_child_revision",
+      "prior_five_unchanged": true,
+      "threshold": 0.8
+    },
+    "new_inputs": [
+      "tests/test_grm_c7_r2_launch.py"
+    ],
+    "prior_art": "Existing C7 GRM_C7_LEASE_PARENT propagation and C2 filtered environment (GRM contributors, 2026). Reuse explicit campaign-variable forwarding. No new algorithm."
+  },
+  "immutable": true,
+  "new_inputs": {
+    "artifacts/grm_c7/r2/launch_amendment/registration.json": "4f37ebfb00cc5af81c947e88fdb28607eeca5025a5a4eeb3cde4fa968a6417a7",
+    "tests/test_grm_c7_r2_launch.py": "2837de496f2eeca64e3a154f0047325eb7458fb4509d336eb22200e2bda9eefe"
+  },
+  "overrides": {
+    "artifacts/grm_c7/r2/lead_commands_r2.txt": {
+      "after_sha256": "04922d2e3700b896fb51ea4c33d17e6effe9d5ac9881dba9f3acfdbbb44b32b7",
+      "before_archive": "artifacts/grm_c7/r2/launch_amendment/before/artifacts/grm_c7/r2/lead_commands_r2.txt",
+      "before_sha256": "5e62d60db9120272bfc20df1945262a591dd9568fd0afe3e92747bcc4b65d2ec"
+    },
+    "scripts/grm_c7_r2_cpu.py": {
+      "after_sha256": "91d559c068cd1ab1b519e9b3aac147ba962735370cb7411ecb1727892320d42a",
+      "before_archive": "artifacts/grm_c7/r2/launch_amendment/before/scripts/grm_c7_r2_cpu.py",
+      "before_sha256": "ca9414dfd64c9da9eca7e01171175dfb38488902cc9b06c32b7ffa07bdb0abfd"
+    },
+    "scripts/grm_c7_register_r2.py": {
+      "after_sha256": "70310119a832a72bd1f57a206e30bceff226f243181ed0b4a672b252908a809e",
+      "before_archive": "artifacts/grm_c7/r2/launch_amendment/before/scripts/grm_c7_register_r2.py",
+      "before_sha256": "b89fe19afe96c3d926b6999102c4eaaa5edfbc12fb1b2e8e5b93c386463dfed4"
+    },
+    "scripts/grm_c7_run.py": {
+      "after_sha256": "fa37a81df0f5b3260778f0259502b6c1acd13634fee0bdc80cfd1fe41b325bc8",
+      "before_archive": "artifacts/grm_c7/r2/launch_amendment/before/scripts/grm_c7_run.py",
+      "before_sha256": "b9646aadadcdd2115243c55778e9b2c078b5838dbbe011689616496f395b6223"
+    },
+    "tests/test_grm_c7_r2_registration.py": {
+      "after_sha256": "0a916ef84e719336d4efba60ed0ee70f985da96ede3d88beda39a386788d8894",
+      "before_archive": "artifacts/grm_c7/r2/launch_amendment/before/tests/test_grm_c7_r2_registration.py",
+      "before_sha256": "824d12fde65d6951f4137076f7d7b139c1de4aa50fa8dc2bd6590bbe72a28e5b"
+    }
+  },
+  "previous_amendment_sha256": "6b0d07b5c979ba30d8315a7ffe474a134bcb9fc52602a10518a42dff09e00048",
+  "prior_art": "C7 lease-parent propagation and C7 amendment chaining (GRM contributors, 2026); reuse explicit forwarding and SHA overrides, no new algorithm",
+  "registered_protocol": "Base r2 fixtures, cells, core SHA, budgets and thresholds unchanged",
+  "schema": "grm.c7.r2-launch-amendment.v1"
+}

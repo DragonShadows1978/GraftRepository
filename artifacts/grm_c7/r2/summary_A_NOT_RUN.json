@@ -1,0 +1,664 @@
+{
+  "arm": "A",
+  "status": "NOT_RUN",
+  "binding": {
+    "registration_sha256": "7bc0a0d1ad4cca02a02ae7653ce4b841a8f2fcd0c1e8e051d46b5f5ed7c70c1c",
+    "fixture_sha256": "18c4bc891115ac6d96f7c443ad023f3e923ee92ab6aac21a1f1150bd14408ff0",
+    "arm": "A",
+    "amendment_sha256": "3f69ac4537b503c214af0b34e1364ad1ad3f040f16a20b411dad4228eea57e2a",
+    "amendment_A2_sha256": "41b70efdf1735684322a8762c2b716348180bb51ec48a6cc05c630b13c2285fb",
+    "amendment_lead_1_sha256": "e7c8bb527953ae82512ce1fa13e8118288a7223d162b3b15f5f3c6c10f1984d5",
+    "amended_source_sha256": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db",
+    "revision": "r2",
+    "amendment_r2_sha256": "6b0d07b5c979ba30d8315a7ffe474a134bcb9fc52602a10518a42dff09e00048",
+    "fold_core_sha256": "cf242ddfe0ff29ac2114e98768f5cf66939f0ff46886658e50a4f492fcdb1fa4"
+  },
+  "evidence_class": "E2E only if complete; otherwise incomplete or no GPU evidence",
+  "by_distance_and_class": [
+    {
+      "distance": 5,
+      "class": "fresh",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 5,
+      "class": "alias",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 5,
+      "class": "correction",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 5,
+      "class": "folded",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 30,
+      "class": "fresh",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 30,
+      "class": "alias",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 30,
+      "class": "correction",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 30,
+      "class": "folded",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 60,
+      "class": "fresh",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 60,
+      "class": "alias",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 60,
+      "class": "correction",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 60,
+      "class": "folded",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 120,
+      "class": "fresh",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 120,
+      "class": "alias",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 120,
+      "class": "correction",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 120,
+      "class": "folded",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 250,
+      "class": "fresh",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 250,
+      "class": "alias",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 250,
+      "class": "correction",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    },
+    {
+      "distance": 250,
+      "class": "folded",
+      "expected_n": 3,
+      "n": 0,
+      "complete": false,
+      "memory": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      },
+      "oracle": {
+        "n": 0,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null,
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null
+      }
+    }
+  ],
+  "by_distance": [
+    {
+      "distance": 5,
+      "n": 0,
+      "memory": null,
+      "oracle": null,
+      "passes": false
+    },
+    {
+      "distance": 30,
+      "n": 0,
+      "memory": null,
+      "oracle": null,
+      "passes": false
+    },
+    {
+      "distance": 60,
+      "n": 0,
+      "memory": null,
+      "oracle": null,
+      "passes": false
+    },
+    {
+      "distance": 120,
+      "n": 0,
+      "memory": null,
+      "oracle": null,
+      "passes": false
+    },
+    {
+      "distance": 250,
+      "n": 0,
+      "memory": null,
+      "oracle": null,
+      "passes": false
+    }
+  ],
+  "residency_bounded": null,
+  "max_token_seats": null,
+  "folded_path_exercised": false,
+  "restart_scores": [],
+  "paging": [
+    {
+      "pressure_turn": 60,
+      "old_hot_nodes": [],
+      "natural_nvme_return": false,
+      "controlled_nvme_return": false
+    },
+    {
+      "pressure_turn": 140,
+      "old_hot_nodes": [],
+      "natural_nvme_return": false,
+      "controlled_nvme_return": false
+    },
+    {
+      "pressure_turn": 240,
+      "old_hot_nodes": [],
+      "natural_nvme_return": false,
+      "controlled_nvme_return": false
+    }
+  ],
+  "fold_count": 0,
+  "failed_fold_count": 0,
+  "fold_coverage_rule": null,
+  "complete": false
+}

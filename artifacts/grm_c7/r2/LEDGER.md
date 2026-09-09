@@ -1,0 +1,23 @@
+# FIX-3 + C7 r2 ledger
+
+- Read house rules, immutable order and diagnosis. Branch ref read directly: refs/heads/grm-c7; no git invoked. Registered gates before execution in execution_registration.json. Archived three edit targets and hashed all r1 receipts.
+- Prior art: local GRM contributors (2026), EB1 harmony_turn/HARMONY_STOPS, consolidation/QC, C7 fake numerical reader and SHA amendments; borrowed existing contracts, new application and punctuation rule. No prior art known to me for this exact QC rule. No external algorithm or novelty claim.
+
+- CPU RED: cpu_fix3_red.log = 17 failed / 5 passed. Initial GREEN = 22 passed. Expanded non-Harmony control to a configured plain template; dispatch now recognizes the configured Harmony final-channel suffix, retaining other model generation paths. No budget or coverage threshold change.
+- CPU harness RED: cpu_harness_red.log = 3 failed. Repairs plus expanded FIX-3 controls: cpu_repairs_green.log = 26 passed. Existing tests/test_grm_c7.py oracle double lacks the real arena layer/template interface now exercised; archive it and add that interface without removing assertions. Other historic diagnosis pins intentionally describe old defects and remain immutable.
+- Methodology docs/GRM_Methodology.md registers 0.70 coverage and no alternate token budget. Default CONSOLIDATE_NGEN=120 retained, explicit ngen still honored. S2 salience raw continuation is a separate finding, not changed.
+
+- Harness repair choice: lowercase only the exact fallback suffix at execution for probes/sentinels/oracle. Frozen fixture, source records and expected answers untouched; effective_questions.json records all 60 byte deltas. Added real layer setup/restoration and wrapped token receipts; GPT-OSS causal diagnosis stays RED. Added both-sided real 0.70 coverage pins and non-Harmony template control before final registration.
+- Prior art at implementation sites: existing GRM/EB1 wrapper, early-stop loop, C7 serialization/amendment/lease patterns (GRM contributors, 2026); character punctuation QC is a new local heuristic, no prior art known to me for the exact rule.
+
+- Registered immutable r2 amendment before campaign gates: 6b0d07b5c979ba30d8315a7ffe474a134bcb9fc52602a10518a42dff09e00048. Core arena SHA cf242ddfe0ff29ac2114e98768f5cf66939f0ff46886658e50a4f492fcdb1fa4. Repository caller unchanged.
+- Ran `GRM_C7_REVISION=r2 CUDA_VISIBLE_DEVICES='' python -m scripts.grm_c7_r2_cpu`: cpu_registered.log/json, 107 passed; five registered source-copy mutants killed, non-error kill rate 1.0 >= 0.80. Live source re-verification passed after mutations. No live source was mutated.
+- CPU dry-run verified the full input chain; arm A summary = NOT_RUN (exit 1 is the registered non-PASS summary convention). Both receipts saved under r2. `bash -n artifacts/grm_c7/r2/lead_commands_r2.txt` passed. Source deltas saved without git using Python difflib.
+- RED residuals: GPT-OSS UNKNOWN causality and post-fix digest quality unmeasured. S2 salience raw generation is a separate optional core finding, not changed. No GPU calls, git commands, subagents, service changes, background shell jobs, or process kills.
+
+- Final source audit found scripts/grm_c2_cells.py:50 drops every GRM_* variable, including r2 selector, before child launch. Original 107-case baseline did not cover this boundary. Register launch_amendment/registration.json BEFORE its RED gate; preserve base amendment and CPU receipts. Fix explicitly forwards GRM_C7_REVISION alongside existing lease-parent marker; no model flags, fixtures, thresholds or budgets change. Prior art: C7 lease-parent propagation/C2 filtered environment (GRM contributors, 2026).
+
+- Launch RED: expected r2, observed None after C2 environment filtering. Pytest included unrelated environment values in its failure repr; redacted that repr in the RED log, preserving the assertion/result, and narrowed the fake launcher observation to campaign markers only. No environment values are required by this gate.
+
+- Final launch amendment registered SHA cb20ba62d3fa99ebe5b6dde12cacefbab0126098476f6b4601e3584fb6ca3712. Base r2 amendment remains 6b0d07b5c979ba30d8315a7ffe474a134bcb9fc52602a10518a42dff09e00048. Latest CPU command: 112 passed, six source-copy mutants killed (1.0 >= .80), live inputs unchanged after mutations. Final dry-run verifies and arm A summary is NOT_RUN. Exact lead CPU preflight and bash syntax check pass.
+- SHA256 integrity census: all 10,833 pre-existing r1 files unchanged (r1_integrity_after.json). Completed report in REPORT.md, source deltas archived, lead GPU commands prepared but not run.

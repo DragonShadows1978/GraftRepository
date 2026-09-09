@@ -6,6 +6,7 @@ no prior art known to me for this exact composition. No routing algorithm.
 from __future__ import annotations
 import hashlib
 import json
+import os
 import re
 import unicodedata
 from pathlib import Path
@@ -135,6 +136,13 @@ def verify():
         r['pressure']['controlled_source_turn'] = 6
         r['acceptance']['paging'] = 'each pressure forces registered old source hot -> durable cold -> production loader return; report controlled return separately from probe-selected return'
     verify_lead_1(r, inputs)
+    if os.environ.get('GRM_C7_REVISION') == 'r2':
+        # Prior art: local C7 amendment chain (GRM contributors, 2026).
+        # r2 explicitly binds changed core/harness before live SHA checks.
+        from scripts.grm_c7_register_r2 import verify_r2
+        verify_r2(r, inputs, ROOT, OUT)
+    elif os.environ.get('GRM_C7_REVISION', 'r1') != 'r1':
+        raise ValueError('UNKNOWN_C7_REVISION')
     for path, digest in inputs.items():
         p = Path(path) if Path(path).is_absolute() else ROOT / path
         if sha(p) != digest:

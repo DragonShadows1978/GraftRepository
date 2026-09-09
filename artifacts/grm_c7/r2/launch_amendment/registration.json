@@ -1,0 +1,21 @@
+{
+  "immutable": true,
+  "finding": "C2 environment(flags) removes all GRM_* variables; r2 selector would be lost before child initialization",
+  "gate": "test_leased_child_keeps_r2_after_c2_environment_filter: fake owned child launch through real controller and real C2 environment builder must retain r2; RED-before/GREEN-after",
+  "changes": [
+    "scripts/grm_c7_run.py",
+    "scripts/grm_c7_register_r2.py",
+    "scripts/grm_c7_r2_cpu.py",
+    "artifacts/grm_c7/r2/lead_commands_r2.txt"
+  ],
+  "new_inputs": [
+    "tests/test_grm_c7_r2_launch.py"
+  ],
+  "budget_threshold_changes": false,
+  "mutations": {
+    "prior_five_unchanged": true,
+    "additional_mutant": "omit_child_revision",
+    "threshold": 0.8
+  },
+  "prior_art": "Existing C7 GRM_C7_LEASE_PARENT propagation and C2 filtered environment (GRM contributors, 2026). Reuse explicit campaign-variable forwarding. No new algorithm."
+}

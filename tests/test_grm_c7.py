@@ -143,9 +143,16 @@ def test_missing_rows_are_unknown_and_duplicate_probe_rejected():
 
 
 def test_oracle_uses_exact_source_and_cannot_deposit():
+    from types import SimpleNamespace
     class Arena:
         caches='saved'; pos=11; live_segs=[]; cur_mounts=[4]; cur_mount_n=31
         stop_sequences=[]
+        # Prior art: EB1 layer/template contract (GRM, 2026). Complete this
+        # existing double's interface for the r2 oracle; keep all old pins.
+        live_shift=115
+        m=SimpleNamespace(layers=[SimpleNamespace(self_attn=SimpleNamespace(live_shift=None))])
+        def _format_step_prompt(self, text):
+            return 'wrapped: ' + text
         def reset_live_cache(self):
             self.caches=None; self.pos=0; self.cur_mounts=[]; self.cur_mount_n=0; self.live_segs=[]
         def encode(self,text):
@@ -161,6 +168,8 @@ def test_oracle_uses_exact_source_and_cannot_deposit():
     value=run.oracle(a,p,32)
     assert value['score']['exact_correct'] and value['mounted_ids']==[]
     assert a.caches=='saved' and a.cur_mounts==[4]
+    assert value['prompt_token_ids'] == a.encode('wrapped: ' + value['live_prompt'])
+    assert a.m.layers[0].self_attn.live_shift is None
 
 
 def test_residency_counts_token_rows_and_actual_recency_only():

@@ -1,0 +1,33 @@
+{
+  "order": "orders/GRM_SCOUT_FIX_3_C7_R2.md",
+  "order_sha256": "4567b5aaa065f7af7b9b685a27c8dd68e6a07bd24ea838defbdfe4ac17bf5fa1",
+  "immutable": true,
+  "gpu_executed": false,
+  "gates_before_edits": [
+    "real repository fold with fake model: configured Harmony wrapper for turn/digest/era, each configured stop ends generation with no suffix leakage; explicit budget honored",
+    "legacy no-template prompt and generation unchanged for nondegenerate output",
+    "QC rejects >=3 Unicode ellipses, >=6 punctuation characters allowing whitespace between them before coverage; punctuation-rich ordinary prose passes",
+    "existing fold coverage tests pass at unchanged 0.70",
+    "C7 lowercases only fallback instruction at execution; frozen fixture stays byte-identical; all 60 source/query pairs bind; fake live-window oracle answers with layer shifts set/restored and exact wrapped IDs",
+    "probe serialization includes original question, effective question and expected",
+    "r2 verification binds source/harness, rejects tampering, preserves fixtures/cells/acceptance; CPU dry run only"
+  ],
+  "budget": {
+    "digest_ngen": 120,
+    "answer_ngen": 32,
+    "r2_gpu_seconds": 7200,
+    "total_C7_gpu_hours": 3.9
+  },
+  "mutations": {
+    "threshold": 0.8,
+    "after_green_only": true,
+    "defects": [
+      "remove_fold_wrapper",
+      "remove_fold_stops",
+      "disable_punctuation_qc",
+      "omit_oracle_shift",
+      "disable_instruction_lowercase"
+    ]
+  },
+  "prior_art": "Local GRM consolidation, EB1 harmony_turn/HARMONY_STOPS and C7 diagnostic doubles (GRM contributors, 2026), source verified. Taken: existing formatting/stop contract, baseline and mutation methodology, SHA-bound amendments. New: application to fold path, punctuation QC rule and C7 repair pins; no prior art known to me for exact QC rule."
+}

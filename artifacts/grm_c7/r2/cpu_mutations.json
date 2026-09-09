@@ -1,0 +1,40 @@
+{
+  "amendment_sha256": "6b0d07b5c979ba30d8315a7ffe474a134bcb9fc52602a10518a42dff09e00048",
+  "evidence_class": "author CPU source-copy mutation; not blind review",
+  "kill_rate": 1.0,
+  "live_sources_unchanged": true,
+  "pass": true,
+  "rows": [
+    {
+      "id": "remove_fold_wrapper",
+      "mutant_sha256": "5fb68ba1f4d6e6fe474bd30c03321d029bd174f46de465ba7669eb72404ef678",
+      "returncode": 1,
+      "status": "KILLED"
+    },
+    {
+      "id": "remove_fold_stops",
+      "mutant_sha256": "1a7cdeada49f0ddc10c4d102100462bbf27ddfa5acacf9dcdd9120cdbf1c3444",
+      "returncode": 1,
+      "status": "KILLED"
+    },
+    {
+      "id": "disable_punctuation_qc",
+      "mutant_sha256": "5d698b11ffc95643ecbe15edff7ede66e8c27d143cb0ecc4305da3aed51c2905",
+      "returncode": 1,
+      "status": "KILLED"
+    },
+    {
+      "id": "omit_oracle_shift",
+      "mutant_sha256": "59f7d6835d3d5de0d2f40f54a916f2314de4fc3ff836b547fcebc83890e2ef81",
+      "returncode": 1,
+      "status": "KILLED"
+    },
+    {
+      "id": "disable_instruction_lowercase",
+      "mutant_sha256": "126c34f51d6b7cb1fe7d0e8dcc51d9d17f1eeb7aebe6b347d180f8a090fd1e30",
+      "returncode": 1,
+      "status": "KILLED"
+    }
+  ],
+  "threshold": 0.8
+}

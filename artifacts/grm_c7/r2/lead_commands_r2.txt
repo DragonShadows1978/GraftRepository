@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-c7
+export GRM_C7_REVISION=r2
+# Prior art: C7/C2 foreground leased cells (GRM contributors, 2026).
+# r2 fresh 2 GPU-h cap; cumulative C7 cap 3.9 GPU-h. B stays NON_FIT.
+# CPU gates were run against the SHA-bound amendment; verify their receipt.
+CUDA_VISIBLE_DEVICES='' python scripts/grm_c7_run.py --dry-run
+CUDA_VISIBLE_DEVICES='' python - <<'CHECK_CPU'
+from scripts.grm_c7_common import OUT, read, verify
+r=verify()
+b=read(OUT/'r2/launch_amendment/cpu_registered.json'); m=read(OUT/'r2/launch_amendment/cpu_mutations.json')
+assert b['returncode']==0 and b['executed_inputs']==r['effective_inputs']
+assert b['amendment_sha256']==m['amendment_sha256']==r['amendment_r2_sha256']
+assert m['pass'] and m['live_sources_unchanged']
+CHECK_CPU
+run_cell() {
+    local cell_id="$1"
+    local cell_dir="artifacts/grm_c7/r2/cells/$cell_id"
+    if [ -f "$cell_dir/controller.json" ]; then
+        python - "$cell_dir/controller.json" <<'CHECK_COMPLETE'
+import json, sys
+from scripts.grm_c7_run import binding
+row=json.load(open(sys.argv[1]))
+if row['status']!='COMPLETE' or row['binding']!=binding('A'):
+    raise SystemExit('RED: incomplete/stale started cell; never retry')
+print('Already complete:', row['cell']['id'])
+CHECK_COMPLETE
+    elif [ -e "$cell_dir" ]; then
+        echo "RED: orphaned started cell $cell_id; no retry" >&2
+        return 1
+    else
+        # Owned worker 280s; lease 285s; outer 590s; foreground cooldown 30s.
+        # Never clear shared locks or owner files; no retries after RED.
+        timeout --signal=INT 590 python scripts/grm_c7_run.py --cell "$cell_id"
+    fi
+}
+run_cell A-001-008
+run_cell A-009-016
+run_cell A-017-023
+run_cell A-024-031
+run_cell A-032-039
+run_cell A-040-047
+run_cell A-048-055
+run_cell A-056-062
+run_cell A-063-070
+run_cell A-071-077
+run_cell A-078-085
+run_cell A-086-093
+run_cell A-094-100
+run_cell A-101-108
+run_cell A-109-116
+run_cell A-117-124
+run_cell A-125-132
+run_cell A-133-140
+run_cell A-141-148
+run_cell A-149-156
+run_cell A-157-164
+run_cell A-165-172
+run_cell A-173-180
+run_cell A-181-188
+run_cell A-189-196
+run_cell A-197-200
+run_cell A-201-208
+run_cell A-209-216
+run_cell A-217-224
+run_cell A-225-232
+run_cell A-233-240
+run_cell A-241-248
+run_cell A-249-256
+run_cell A-257-264
+run_cell A-265-272
+run_cell A-273-280
+run_cell A-281-288
+run_cell A-289-296
+run_cell A-297-300
+python scripts/grm_c7_run.py --summary A

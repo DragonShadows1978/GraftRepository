@@ -481,10 +481,6 @@ def run_leased(cell):
             with gpu_lease(285, 240):
                 started = time.monotonic()
                 env = environment(r['arms'][arm]['flags'])
-                # Prior art: C7 lease-parent propagation (GRM, 2026).
-                # C2 strips ambient GRM_* switches; restore the campaign
-                # selector explicitly so this owned child uses r2 receipts.
-                env['GRM_C7_REVISION'] = os.environ.get('GRM_C7_REVISION', 'r1')
                 env['GRM_C7_LEASE_PARENT'] = str(os.getpid())
                 with (directory/'worker.log').open('x') as log:
                     # Parent waits in foreground. Registered timeout applies

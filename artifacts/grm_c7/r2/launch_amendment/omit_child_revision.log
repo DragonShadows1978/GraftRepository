@@ -1,0 +1,39 @@
+F....                                                                    [100%]
+=================================== FAILURES ===================================
+____________ test_leased_child_keeps_r2_after_c2_environment_filter ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-911/test_leased_child_keeps_r2_aft0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735d0526d550>
+
+    def test_leased_child_keeps_r2_after_c2_environment_filter(tmp_path, monkeypatch):
+        r = common.read(common.REG)
+        cell = r['cells'][0]
+        r['effective_inputs'] = {}
+        monkeypatch.setenv('GRM_C7_REVISION', 'r2')
+        monkeypatch.setenv('GRM_UNREGISTERED_SWITCH', 'must-be-removed')
+        monkeypatch.setattr(run, 'OUT', tmp_path)
+        monkeypatch.setattr(run, 'verify', lambda: r)
+        monkeypatch.setattr(run, 'binding', lambda arm: {'revision':'r2','arm':arm})
+        monkeypatch.setattr(leases, 'gpu_lease', lambda *args: nullcontext())
+        monkeypatch.setattr(run.time, 'sleep', lambda seconds: None)
+        calls = []
+        def child(cmd, **kwargs):
+            # Keep unrelated host environment (potential credentials) out of
+            # pytest failure reprs and receipts; observe only campaign markers.
+            env = kwargs['env']
+            calls.append((cmd, {'revision':env.get('GRM_C7_REVISION'),
+                               'parent':env.get('GRM_C7_LEASE_PARENT'),
+                               'unregistered_present':'GRM_UNREGISTERED_SWITCH' in env}))
+            return SimpleNamespace(returncode=0)
+        monkeypatch.setattr(run.subprocess, 'run', child)
+        assert run.run_leased(cell) == 0
+        assert len(calls) == 1
+        cmd, env = calls[0]
+        assert cmd[-2:] == ['--worker', cell['id']]
+>       assert env['revision'] == 'r2'
+E       AssertionError: assert None == 'r2'
+
+tests/test_grm_c7_r2_launch.py:42: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_c7_r2_launch.py::test_leased_child_keeps_r2_after_c2_environment_filter
+1 failed, 4 passed in 0.29s
