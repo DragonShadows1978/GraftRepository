@@ -1,0 +1,63 @@
+{
+  "amendment": {
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/amendment_a3.json",
+    "sha256": "168acfe429f3b1a288ea74c0bc491ae3359c297a4e363d50fe4eedf7a2677c42",
+    "bytes": 66270
+  },
+  "order": {
+    "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_1.md",
+    "sha256": "2bb3e59d54f62895a072718613dc4768aae6513b49e7203c94310f83936d03f7",
+    "bytes": 2080
+  },
+  "cells": [
+    {
+      "chunk": 64,
+      "equal_standing": true,
+      "estimate_seconds": 1600,
+      "id": "c64_w64",
+      "reason": "Lead amendment 1 authorizes fixed geometry replacement; historical row remains a separate comparison.",
+      "status": "NEW",
+      "width": 64
+    },
+    {
+      "chunk": 96,
+      "equal_standing": true,
+      "estimate_seconds": 0,
+      "id": "c96_w96",
+      "status": "CITE_WC1",
+      "width": 96
+    },
+    {
+      "chunk": 64,
+      "equal_standing": true,
+      "estimate_seconds": 1600,
+      "id": "c64_w96",
+      "status": "NEW",
+      "width": 96
+    },
+    {
+      "chunk": 96,
+      "equal_standing": true,
+      "estimate_seconds": 1600,
+      "id": "c96_w64",
+      "status": "NEW",
+      "width": 64
+    }
+  ],
+  "budget": {
+    "cooldown_seconds": 30,
+    "estimate_class": "Planning assumption: sup 60s/fixture, census and 8-turn LH segments 80s each including load/save; unvalidated on this sandbox; stop at rail without retry.",
+    "full_fixed_geometry_estimate_seconds": 4800,
+    "full_fixed_geometry_status": "PLANNING_FIT_AT_CAP_UNVALIDATED",
+    "gpu_seconds": 4800,
+    "lock": "/tmp/forge-gpu.lock",
+    "lock_wait_seconds": 0,
+    "new_cells_estimate_seconds": 4800,
+    "outer_seconds": 590,
+    "stop": "One timeout stops its chain; no retry or longer lease. Reserve full 285s before each worker against remaining total.",
+    "worker_seconds": 285,
+    "authorized_by": "Lead, orders/GRM_C4_AMENDMENT_1.md, 2026-09-09",
+    "planning_cooldown_seconds": 1890,
+    "reserve_note": "285s full-worker reservation unchanged. At exactly estimated unit times the final worker needs 5005s cumulative reservation, so a 4800s estimate does not guarantee completion under the 4800s cap; stop NON_FIT if reserve fails. Cooldown is outside GPU budget."
+  }
+}

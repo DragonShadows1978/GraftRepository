@@ -168,11 +168,28 @@ def binding():
         assert update['registration'] == record(REG), 'amendment registration mismatch'
         if previous is not None:
             assert update['previous_amendment'] == previous, 'amendment chain mismatch'
+        # Prior art: RS3/WC1 immutable amendments (house, 2026). Lead amendment
+        # 1 authorizes only the added diagonal, budget and comparison schedule;
+        # fixtures, geometry, prediction and rejection remain the base values.
+        if 'overrides' in update:
+            assert record(update['order']['path']) == update['order'], 'amendment order drift'
+            allowed = {'cells', 'budget', 'execution_order', 'diagonal_comparison', 'diagonal_ruling'}
+            assert set(update['overrides']) <= allowed, 'unapproved amendment field'
+            reg = {**reg, **update['overrides']}
         previous = record(amendment)
         reg = {**reg, 'sources': update['sources'], 'amendment': previous}
     for r in reg['sources']:
         assert record(r['path']) == r, f"source drift: {r['path']}"
     return reg
+
+
+def executable_cells(reg):
+    # Prior art: WC1 registered cell enumeration (house, 2026). Use the active
+    # SHA-bound schedule so merely adding a CLI choice cannot authorize a run.
+    cells = tuple(c['id'] for c in reg['cells'] if c['status'] == 'NEW')
+    order = tuple(reg.get('execution_order', cells))
+    assert len(order) == len(cells) and set(order) == set(cells)
+    return order
 
 
 @contextmanager
@@ -212,7 +229,7 @@ def harness(chunk, width, run_root, events):
 
 def worker(cell, battery, spec):
     reg = binding()
-    assert cell in NEW_CELLS, 'Only the two registered new cells may execute'
+    assert cell in executable_cells(reg), 'Only registered new cells may execute'
     cfg = next(c for c in reg['cells'] if c['id'] == cell)
     candidates = [u for u in reg['units_per_new_cell'] if u['battery'] == battery]
     index = next(i for i, u in enumerate(candidates) if u['spec'] == spec)
@@ -285,6 +302,7 @@ def worker(cell, battery, spec):
 
 def score(cell):
     reg = binding()
+    assert cell in executable_cells(reg), 'Only registered new cells may score'
     cfg = next(c for c in reg['cells'] if c['id'] == cell)
     run_root = OUT / 'runs' / cell
     receipts = []
@@ -328,9 +346,18 @@ def score(cell):
                'measurements': measurements, 'amendment': reg.get('amendment'),
                'sup_probes': sup, 'census_probes': c['probes'], 'longhorizon_probes': l['probes'],
                'prediction_met_in_cell': scores == reg['counts'],
-               'factorial_verdict': 'INCONCLUSIVE: c64_w64 fixed-geometry control absent',
+               'factorial_verdict': 'INCONCLUSIVE: per-cell score only; lead must compare all fixed-geometry cells',
                'measurement_receipts': [record(run_root / f"{u['battery']}_{u['spec']}.json") for u in units()],
                'measurement_note': 'Per-attempt and turn token residency, capture/seat positions, split events and original routing info in bound worker receipts; historical WC1 graft-count column not used.'}
+    if cell == 'c64_w64' and 'diagonal_comparison' in reg:
+        # Prior art: WC1 per-battery deltas (house, 2026). Report componentwise
+        # differences from the historical diagonal; no causal verdict inferred.
+        comparison = reg['diagonal_comparison']
+        baseline = comparison['historical_scores']
+        payload['diagonal_comparison'] = {
+            'registration': comparison, 'fixed_geometry_scores': scores,
+            'delta_correct': {b: scores[b] - baseline[b] for b in scores},
+            'note': 'Different historical geometry; compare probe identities too. This is not support for chunking by itself.'}
     write_once(run_root / 'score.json', payload)
     return payload
 
@@ -339,7 +366,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('command', choices=['register', 'preflight', 'worker', 'score'], nargs='?', default='preflight')
     p.add_argument('--dry-run', action='store_true')
-    p.add_argument('--cell', choices=NEW_CELLS)
+    p.add_argument('--cell', choices=('c64_w96', 'c96_w64', 'c64_w64', 'c96_w96'))
     p.add_argument('--battery', choices=['sup', 'census', 'longhorizon'])
     p.add_argument('--spec')
     a = p.parse_args()
@@ -349,6 +376,13 @@ def main():
         r = binding()
         result = {k: r[k] for k in ('cells', 'units_per_new_cell', 'counts', 'geometry', 'budget')}
         result['registration'] = record(REG)
+        result['amendment'] = r.get('amendment')
+        result['execution_order'] = executable_cells(r)
+        result['scheduled_units'] = [dict(cell=c, **u) for c in executable_cells(r)
+                                     for u in r['units_per_new_cell']]
+        for key in ('diagonal_ruling', 'diagonal_comparison'):
+            if key in r:
+                result[key] = r[key]
         result['gpu_executed'] = False
     elif a.command == 'score':
         result = score(a.cell)

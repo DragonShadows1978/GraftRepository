@@ -91,3 +91,80 @@ Author GPT-6 (Codex; finer deployment id not exposed), high per order.
 Prior art remains house LSR-P2C/RS3/WC1/EB1/DET1 (2026); external Fisher (1935)
 lead unverified. No novel algorithm claim. GPU/full-factorial verdict RED and
 INCONCLUSIVE, not claimed fixed. Blind verification remains lead-owned.
+
+## 2026-09-09 — lead amendment 1, before gates (artifact A3)
+Read HOUSE_RULES, AGENTS and immutable orders/GRM_C4_AMENDMENT_1.md.
+Lead accepts r1 width64 numeric-geometry mismatch and authorizes the complete
+fixed cross at 4800s GPU cap (1.333 GPU-h), superseding the 3600s cap only.
+Register c64_w64 NEW at 1600s with the same 21 units, 9/10/14 batteries,
+geometry, prediction/rejection, 285s worker / 590s outer / 30s cooldown.
+c64_w96 and c96_w64 remain 1600s each. Total new GPU planning estimate 4800s.
+WC1 width96 is CITE_WC1: RS3 registration derives sink19, capture/live115
+and near-live head114. Its 13 worker receipts bind the width96 frame and
+live/near-live levers; archive source fingerprints and quality receipt SHAs
+are checked by the amendment writer. Historical scores: width96 9/9,9/10,13/14;
+width64 8/9,10/10,14/14. Register the new c64_w64 versus historical comparison
+to test survival of that benefit under fixed geometry; no prediction changed.
+Implementation A1/A2 and base registration remain immutable. A3 is this lead
+amendment 1, not a rewrite of the existing implementation A1. Amend binding
+to apply only authorized fields and verify the order SHA. CLI, worker and
+score enumerate the active registered schedule. Per-cell score reports the
+diagonal deltas without assigning a factorial verdict. Refresh lead_commands
+for complete-cell ordering and immediate per-cell scoring; preserve r1 copy.
+Prior art: verified house RS3/WC1/EB1/DET1/C4 (2026), borrowed geometry
+derivation, SHA chain, cell enumeration, deltas, resume and lease; this work
+adds authorized controls and evidence pins, no novel algorithm claim. Original
+Fisher (1935) external lead remains unverified — lead to check, search Fisher
+factorial experiments 1935. Code-site and final-report annotations required.
+RED reasoning: 4800s equals the unvalidated estimate and provides no headroom.
+The unchanged full285s pre-worker reserve would require 5005s at the exact
+planning unit times for the last unit; completion is not guaranteed at cap.
+Do not loosen the reserve, retry or enlarge leases. Cooldowns add 1890s of
+foreground wall time outside GPU usage. No r1 worker receipts/start claims
+exist; no prior GPU receipts are being revalidated or relabeled.
+Process safety so far: no git, subagents, GPU, background waits/jobs, process
+signals, lock access, live services or external delivery. Lead commands retain
+r1 outer timeout for only its own worker; no such command is executed here.
+Author: GPT-6 (Codex; finer deployment id not exposed); high per order.
+
+### Registration writer correction before A3 existed
+First invocation exited 1 before writing the immutable amendment: at
+scripts/grm_c4_amendment_1.py:52, `levers = row['shard']['rs3_levers']`
+raised `KeyError: 'shard'`. Source diagnosis: WC1 score summaries also carry
+frame_binding but are not worker receipts. Select the three explicit worker
+schemas (sup_fixture, census_shard, longhorizon_shard); score source hashes
+remain checked separately. No gate or GPU ran and no registered threshold
+changed. Prior art: WC1 typed receipt schemas (house, 2026).
+
+## 2026-09-09 — lead amendment 1 registered, CPU gates and handoff
+A3 immutable SHA-256: 168acfe429f3b1a288ea74c0bc491ae3359c297a4e363d50fe4eedf7a2677c42.
+Order SHA: 2bb3e59d54f62895a072718613dc4768aae6513b49e7203c94310f83936d03f7.
+Base/A1/A2 SHA chain verified; A3 written before gates.
+`python -m pytest -q tests/test_grm_c4_campaign.py tests/test_grm_lsr_p2c_split_descent.py`
+-> exit0, 66 passed, 2 warnings in5.63s (cpu_gate_lead_a1.txt); includes new
+diagonal execution eligibility, timeout RED/no retry, order/amendment drift
+refusal, unchanged bars/geometry, historical pin, dependency schedule checks.
+`python scripts/grm_c4_campaign.py preflight --dry-run` -> exit0,
+dry_run_lead_a1.json: 4 logical cells,3 executable,63 units,4800s estimate.
+`bash -n artifacts/grm_c4/lead_commands.txt` -> exit0. 63 explicit workers
+and63 foreground cooldowns, with each of3 scores immediately after its cell.
+No GPU commands executed. Prior art unchanged: local house RS3/WC1/EB1/DET1/C4
+(2026), external Fisher1935 lead unverified. No novel algorithm claim.
+Updated BLOCKED_REPORT.md/blocked_report.json; preserved r1 reports and
+lead commands; original SHA256SUMS saved as SHA256SUMS_r1. Current checksum
+manifest will be regenerated after this append and verified. Old r1 manifest
+records historical bytes and is not a current-tree integrity gate.
+GPU/full-factorial verdict RED/INCONCLUSIVE pending lead execution; budget
+headroom and historical token-residency limitations remain. Not claimed fixed:
+t33,Juniper,GPU geometry parity,historical benefit survival,chunking causality.
+No deviations beyond authorized cap/cell and noted pre-registration writer
+correction. No git,subagents,GPU,background jobs/waits,signals/kills,lock access,
+service changes or external delivery. Model GPT-6 (Codex; deployment suffix
+not exposed); reasoning high per order.
+
+Final integrity verification: all32 current SHA256SUMS entries passed; active
+A3 source binding passed,13/13 historical fingerprints match,zero C4 worker
+files. Base-source comparison includes adapter differences already present
+in r1; adapter current SHA2638f87714f32af58cce32065a635107058c09de8e7635ae1d9da46303fd41e4
+matches the preserved r1 SHA256SUMS. This turn changed only the existing C4
+campaign/test files and added the amendment writer, besides scoped artifacts.

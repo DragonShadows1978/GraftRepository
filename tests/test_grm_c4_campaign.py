@@ -132,8 +132,9 @@ def test_registered_probe_sets_and_segment_coverage():
     assert r['fixtures']['longhorizon']['total_turns'] == 104
     assert list(campaign.LH_STOPS.values()) == list(range(8,105,8))
     assert max(u['estimate_seconds'] for u in campaign.units()) < 285
-    assert r['budget']['new_cells_estimate_seconds'] <= 3600
-    assert r['budget']['full_fixed_geometry_estimate_seconds'] > 3600
+    assert r['budget']['new_cells_estimate_seconds'] == 4800
+    assert r['budget']['full_fixed_geometry_estimate_seconds'] == 4800
+    assert r['budget']['gpu_seconds'] == 4800
 
 
 def test_registration_and_source_drift_refused(tmp_path, monkeypatch):
@@ -152,12 +153,13 @@ def test_registration_and_source_drift_refused(tmp_path, monkeypatch):
         campaign.write_once(r, {})
 
 
-def test_missing_results_cannot_score(tmp_path, monkeypatch):
+@pytest.mark.parametrize('cell', ['c64_w96', 'c96_w64', 'c64_w64'])
+def test_missing_results_cannot_score(tmp_path, monkeypatch, cell):
     r = campaign.binding()
     monkeypatch.setattr(campaign, 'OUT', tmp_path)
     monkeypatch.setattr(campaign, 'binding', lambda: r)
     with pytest.raises(FileNotFoundError):
-        campaign.score('c64_w96')
+        campaign.score(cell)
 
 
 def test_imported_loader_paths_pinned_without_gpu(tmp_path):
@@ -169,7 +171,8 @@ def test_imported_loader_paths_pinned_without_gpu(tmp_path):
     assert loader.NATIVE_LIB == original_native
 
 
-def test_timeout_receipted_and_same_worker_cannot_retry(tmp_path, monkeypatch):
+@pytest.mark.parametrize('cell', ['c64_w96', 'c64_w64'])
+def test_timeout_receipted_and_same_worker_cannot_retry(tmp_path, monkeypatch, cell):
     from contextlib import contextmanager
     from scripts import grm_cmc1_gpu_arms as leases
     reg = campaign.binding()
@@ -187,11 +190,11 @@ def test_timeout_receipted_and_same_worker_cannot_retry(tmp_path, monkeypatch):
     monkeypatch.setattr(leases, 'gpu_lease', lease)
     monkeypatch.setattr(campaign, 'harness', harness)
     with pytest.raises(TimeoutError, match='synthetic rail'):
-        campaign.worker('c64_w96', 'sup', campaign.SUP[0])
-    r = campaign.read(tmp_path/'runs/c64_w96'/f'sup_{campaign.SUP[0]}.json')
+        campaign.worker(cell, 'sup', campaign.SUP[0])
+    r = campaign.read(tmp_path/'runs'/cell/f'sup_{campaign.SUP[0]}.json')
     assert r['status'] == 'RED' and r['error'] == 'TimeoutError: synthetic rail'
     with pytest.raises(AssertionError, match='No retries'):
-        campaign.worker('c64_w96', 'sup', campaign.SUP[0])
+        campaign.worker(cell, 'sup', campaign.SUP[0])
 
 
 def test_imported_lh_segments_copy_saved_state(tmp_path, monkeypatch):
@@ -234,3 +237,76 @@ def test_abandoned_worker_blocks_other_cell_without_gpu(tmp_path, monkeypatch):
     monkeypatch.setattr(leases, 'gpu_lease', lease)
     with pytest.raises(AssertionError, match='Unfinished worker claim'):
         campaign.worker('c64_w96', 'sup', campaign.SUP[0])
+
+
+def test_lead_amendment_preserves_prediction_geometry_and_rails():
+    # Prior art: C4/RS3 registration invariants (house, 2026). Check the
+    # lead's exact permitted delta against the immutable base, not a new bar.
+    base = campaign.read(campaign.REG)
+    reg = campaign.binding()
+    assert campaign.executable_cells(reg) == ('c64_w96', 'c96_w64', 'c64_w64')
+    for key in ('geometry', 'fixtures', 'counts', 'acceptance', 'prediction', 'rejection', 'units_per_new_cell'):
+        assert reg[key] == base[key]
+    for key in ('worker_seconds', 'outer_seconds', 'cooldown_seconds', 'stop'):
+        assert reg['budget'][key] == base['budget'][key]
+    cell = next(c for c in reg['cells'] if c['id'] == 'c64_w64')
+    assert (cell['chunk'], cell['width'], cell['estimate_seconds']) == (64, 64, 1600)
+    assert sum(c['estimate_seconds'] for c in reg['cells'] if c['status'] == 'NEW') == 4800
+    assert reg['diagonal_comparison']['historical_scores'] == dict(sup=8, census=10, longhorizon=14)
+    pin = reg['diagonal_ruling']
+    assert pin['decision'] == 'CITE_WC1'
+    assert (pin['n_sink'], pin['capture_shift'], pin['live_shift'], pin['plan_head_last_position']) == (19, 115, 115, 114)
+    assert len(pin['worker_pins']) == 13 and all(r['match'] for r in pin['historical_fingerprints'])
+
+
+def test_amendment_sha_and_order_drift_refused(tmp_path, monkeypatch):
+    # Prior art: C4 source-drift refusal (house, 2026), extended to the order
+    # and amendment itself. All corruptions are temporary CPU fixtures.
+    order = tmp_path/'order.md'
+    order.write_text('original lead decision')
+    reg_path = tmp_path/'registration.json'
+    campaign.write_once(reg_path, {'sources': []})
+    (tmp_path/'registration.sha256').write_text(campaign.record(reg_path)['sha256'])
+    amend = tmp_path/'amendment_a1.json'
+    campaign.write_once(amend, {'registration': campaign.record(reg_path),
+        'sources': [], 'order': campaign.record(order), 'overrides': {'budget': {'gpu_seconds': 4800}}})
+    amend.with_suffix('.sha256').write_text(campaign.record(amend)['sha256'])
+    monkeypatch.setattr(campaign, 'OUT', tmp_path)
+    monkeypatch.setattr(campaign, 'REG', reg_path)
+    assert campaign.binding()['budget']['gpu_seconds'] == 4800
+    order.write_text('changed lead decision')
+    with pytest.raises(AssertionError, match='amendment order drift'):
+        campaign.binding()
+    order.write_text('original lead decision')
+    with amend.open('a') as f:
+        f.write(' ')
+    with pytest.raises(AssertionError, match='amendment SHA mismatch'):
+        campaign.binding()
+
+
+def test_lead_commands_complete_each_cell_before_score():
+    # Prior art: WC1 dependency-ordered commands (house, 2026). Ensure the
+    # new diagonal is executable and each score needs only completed units.
+    import shlex
+    commands = (campaign.OUT/'lead_commands.txt').read_text().splitlines()
+    reg = campaign.binding()
+    observed = []
+    pending = []
+    for i, line in enumerate(commands):
+        if ' worker --cell ' in line:
+            args = shlex.split(line)
+            assert args[:3] == ['timeout', '--signal=KILL', '590s']
+            cell = args[args.index('--cell')+1]
+            pending.append((cell, args[args.index('--battery')+1], args[args.index('--spec')+1]))
+            assert commands[i+1] == 'sleep 30'
+        elif ' score --cell ' in line:
+            cell = shlex.split(line)[-1]
+            assert pending == [(cell, u['battery'], u['spec']) for u in reg['units_per_new_cell']]
+            pending = []
+            observed.append(cell)
+    assert not pending and tuple(observed) == campaign.executable_cells(reg)
+
+
+def test_historical_diagonal_cannot_launch_worker():
+    with pytest.raises(AssertionError, match='Only registered new cells'):
+        campaign.worker('c96_w96', 'sup', campaign.SUP[0])
