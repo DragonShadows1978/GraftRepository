@@ -1,0 +1,29 @@
+{
+  "evidence_class": "reasoning: registration before mutation gate",
+  "minimum_kill_fraction": 0.8,
+  "mutants": {
+    "accept_stale_version": [
+      "if history and version <= history[-1].version:",
+      "if history and version == history[-1].version:"
+    ],
+    "off_defaults_on": [
+      "env.get(ENV_NAME, \"\")",
+      "env.get(ENV_NAME, \"1\")"
+    ],
+    "partial_page_set_accepted": [
+      "sorted(set(row.page_ids) - set(self.available_pages()))",
+      "[]"
+    ],
+    "physical_mount_guard_removed": [
+      "if page_fault and tuple(mounted) != row.page_ids:",
+      "if False:"
+    ],
+    "relation_identity_collapsed": [
+      "normalize(self.relation)",
+      "\"any_relation\""
+    ]
+  },
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "rule": "Run only after passing baseline. Exclude syntax/import errors from denominator, require all 5 runnable. Original module never edited.",
+  "schema": "grm.x1.cpu-mutations.v1"
+}

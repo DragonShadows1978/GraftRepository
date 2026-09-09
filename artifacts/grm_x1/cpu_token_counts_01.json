@@ -1,0 +1,221 @@
+{
+  "evidence_class": "unit test: offline tokenizer counts; no GPU/native captures",
+  "rows": [
+    {
+      "family": "census_atlas",
+      "node": "census_t27",
+      "target": true,
+      "tokens": 63
+    },
+    {
+      "family": "census_atlas",
+      "node": "falcon_competitor",
+      "target": false,
+      "tokens": 140
+    },
+    {
+      "family": "census_cypher",
+      "node": "census_t04",
+      "target": true,
+      "tokens": 67
+    },
+    {
+      "family": "census_cypher",
+      "node": "falcon_competitor",
+      "target": false,
+      "tokens": 140
+    },
+    {
+      "family": "census_ember",
+      "node": "census_t20",
+      "target": true,
+      "tokens": 60
+    },
+    {
+      "family": "census_ember",
+      "node": "falcon_competitor",
+      "target": false,
+      "tokens": 140
+    },
+    {
+      "family": "census_lyra",
+      "node": "census_t02",
+      "target": false,
+      "tokens": 67
+    },
+    {
+      "family": "census_lyra",
+      "node": "census_t11",
+      "target": true,
+      "tokens": 67
+    },
+    {
+      "family": "census_lyra",
+      "node": "falcon_competitor",
+      "target": false,
+      "tokens": 140
+    },
+    {
+      "family": "census_mira",
+      "node": "census_t10",
+      "target": false,
+      "tokens": 63
+    },
+    {
+      "family": "census_mira",
+      "node": "census_t17",
+      "target": true,
+      "tokens": 70
+    },
+    {
+      "family": "census_mira",
+      "node": "falcon_competitor",
+      "target": false,
+      "tokens": 140
+    },
+    {
+      "family": "census_nova",
+      "node": "census_t07",
+      "target": true,
+      "tokens": 60
+    },
+    {
+      "family": "census_nova",
+      "node": "falcon_competitor",
+      "target": false,
+      "tokens": 140
+    },
+    {
+      "family": "census_orion",
+      "node": "census_t00",
+      "target": false,
+      "tokens": 67
+    },
+    {
+      "family": "census_orion",
+      "node": "census_t06",
+      "target": true,
+      "tokens": 73
+    },
+    {
+      "family": "census_orion",
+      "node": "falcon_competitor",
+      "target": false,
+      "tokens": 140
+    },
+    {
+      "family": "census_terra",
+      "node": "census_t14",
+      "target": true,
+      "tokens": 60
+    },
+    {
+      "family": "census_terra",
+      "node": "falcon_competitor",
+      "target": false,
+      "tokens": 140
+    },
+    {
+      "family": "sup_harbor",
+      "node": "harbor_a",
+      "target": false,
+      "tokens": 35
+    },
+    {
+      "family": "sup_harbor",
+      "node": "harbor_b",
+      "target": false,
+      "tokens": 45
+    },
+    {
+      "family": "sup_harbor",
+      "node": "harbor_c",
+      "target": true,
+      "tokens": 42
+    },
+    {
+      "family": "sup_harbor",
+      "node": "opal_competitor",
+      "target": false,
+      "tokens": 131
+    },
+    {
+      "family": "sup_lumen",
+      "node": "lumen_a",
+      "target": false,
+      "tokens": 35
+    },
+    {
+      "family": "sup_lumen",
+      "node": "lumen_b",
+      "target": false,
+      "tokens": 44
+    },
+    {
+      "family": "sup_lumen",
+      "node": "lumen_c",
+      "target": true,
+      "tokens": 47
+    },
+    {
+      "family": "sup_lumen",
+      "node": "delta_competitor",
+      "target": false,
+      "tokens": 132
+    },
+    {
+      "family": "sup_orion",
+      "node": "orion_a",
+      "target": false,
+      "tokens": 35
+    },
+    {
+      "family": "sup_orion",
+      "node": "orion_b",
+      "target": true,
+      "tokens": 47
+    },
+    {
+      "family": "sup_orion",
+      "node": "falcon_competitor",
+      "target": false,
+      "tokens": 140
+    },
+    {
+      "family": "sup_praxis",
+      "node": "praxis_fact",
+      "target": true,
+      "tokens": 33
+    },
+    {
+      "family": "sup_praxis",
+      "node": "solace_fact",
+      "target": false,
+      "tokens": 37
+    },
+    {
+      "family": "sup_praxis",
+      "node": "sable_competitor",
+      "target": false,
+      "tokens": 140
+    },
+    {
+      "family": "sup_solace",
+      "node": "praxis_fact",
+      "target": false,
+      "tokens": 33
+    },
+    {
+      "family": "sup_solace",
+      "node": "solace_fact",
+      "target": true,
+      "tokens": 37
+    },
+    {
+      "family": "sup_solace",
+      "node": "sable_competitor",
+      "target": false,
+      "tokens": 140
+    }
+  ]
+}
