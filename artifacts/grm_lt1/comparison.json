@@ -1,0 +1,518 @@
+{
+  "A": {
+    "arm": "A",
+    "status": "NOT_RUN",
+    "registration_status": "NON_FIT",
+    "evidence_class": "no GPU evidence",
+    "measured_recalls": 0,
+    "by_distance": [
+      {
+        "distance": 10,
+        "category": "all",
+        "expected_n": 7,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 10,
+        "category": "fresh",
+        "expected_n": 3,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 10,
+        "category": "correction",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 10,
+        "category": "alias",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 25,
+        "category": "all",
+        "expected_n": 7,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 25,
+        "category": "fresh",
+        "expected_n": 3,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 25,
+        "category": "correction",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 25,
+        "category": "alias",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 50,
+        "category": "all",
+        "expected_n": 7,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 50,
+        "category": "fresh",
+        "expected_n": 3,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 50,
+        "category": "correction",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 50,
+        "category": "alias",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 100,
+        "category": "all",
+        "expected_n": 7,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 100,
+        "category": "fresh",
+        "expected_n": 3,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 100,
+        "category": "correction",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 100,
+        "category": "alias",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 150,
+        "category": "all",
+        "expected_n": 7,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 150,
+        "category": "fresh",
+        "expected_n": 3,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 150,
+        "category": "correction",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 150,
+        "category": "alias",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      }
+    ],
+    "recap": null,
+    "residency_bounded": null,
+    "restart_retained": null,
+    "binding": {
+      "arm": "A",
+      "registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c",
+      "fixture_sha256": "57aac20ddc8a3379fa03ded29dc5609a1f4cdc2f973ec52241853a5c2e63bb83"
+    }
+  },
+  "B": {
+    "arm": "B",
+    "status": "NOT_RUN",
+    "registration_status": "NON_FIT",
+    "evidence_class": "no GPU evidence",
+    "measured_recalls": 0,
+    "by_distance": [
+      {
+        "distance": 10,
+        "category": "all",
+        "expected_n": 7,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 10,
+        "category": "fresh",
+        "expected_n": 3,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 10,
+        "category": "correction",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 10,
+        "category": "alias",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 25,
+        "category": "all",
+        "expected_n": 7,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 25,
+        "category": "fresh",
+        "expected_n": 3,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 25,
+        "category": "correction",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 25,
+        "category": "alias",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 50,
+        "category": "all",
+        "expected_n": 7,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 50,
+        "category": "fresh",
+        "expected_n": 3,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 50,
+        "category": "correction",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 50,
+        "category": "alias",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 100,
+        "category": "all",
+        "expected_n": 7,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 100,
+        "category": "fresh",
+        "expected_n": 3,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 100,
+        "category": "correction",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 100,
+        "category": "alias",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 150,
+        "category": "all",
+        "expected_n": 7,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 150,
+        "category": "fresh",
+        "expected_n": 3,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 150,
+        "category": "correction",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      },
+      {
+        "distance": 150,
+        "category": "alias",
+        "expected_n": 2,
+        "n": 0,
+        "memory": {
+          "exact_rate": null
+        },
+        "oracle": {
+          "exact_rate": null
+        }
+      }
+    ],
+    "recap": null,
+    "residency_bounded": null,
+    "restart_retained": null,
+    "binding": {
+      "arm": "B",
+      "registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c",
+      "fixture_sha256": "57aac20ddc8a3379fa03ded29dc5609a1f4cdc2f973ec52241853a5c2e63bb83"
+    }
+  },
+  "comparison": "NOT_MEASURED: no paired complete GPU run",
+  "recap_comparison": "NOT_MEASURED"
+}

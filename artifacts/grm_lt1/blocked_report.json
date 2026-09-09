@@ -1,0 +1,68 @@
+{
+  "RED": [
+    "NON_FIT",
+    "natural-prose identifier_unbound on 35/35 CPU recalls in each arm",
+    "checkpoint author test KeyError: 'process_id'"
+  ],
+  "agent_effort": "high requested; inference setting not independently exposed",
+  "agent_model": "GPT-6 (exact deployment model ID not exposed)",
+  "cpu_receipt": {
+    "evidence_class": "author CPU suite; no GPU, no blind validation",
+    "log_sha256": "c11ff7125fcf0a9d4dc65878c2bba25b6465aba6eb930efb077f3681c769ae51",
+    "registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c",
+    "returncode": 1,
+    "status": "RED"
+  },
+  "deviations": [
+    "No GPU launcher implemented after NON_FIT rail; --resume is a fail-closed block, not a validated runner.",
+    "Frozen scripted assistant dialogue; not free generation or observed human usage.",
+    "CPU fake tests numeric widths only; capture-pin and seat-near-live quality are not simulated.",
+    "Checkpoint corruption test failed before validation because required process_id was absent."
+  ],
+  "fixture_manifest_sha256": "992acacf307fa5c4e7b7a3c6c5ed8adb1196c13063a5a77caec26630a218d1bb",
+  "free_bytes": 325428609024,
+  "gpu_executed": false,
+  "lead_command": "bash /mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/lead_commands.txt",
+  "lead_command_observed_exit": 2,
+  "lead_shell_syntax": "PASS",
+  "minimum_free_bytes": 20000000000,
+  "model": {
+    "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "repository": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee"
+  },
+  "not_run": [
+    "GPU",
+    "recap generation",
+    "full 26-cell/arm resume",
+    "GPU residency/capture checks",
+    "mutation suite (baseline RED)",
+    "blind review"
+  ],
+  "process_safety": "All started CPU subprocesses completed; no GPU, git command, subagents, background shell or process killing.",
+  "projection": {
+    "base_turn_seconds": 10.429511184288106,
+    "budget_seconds": 9000,
+    "cooldown_charged_as_gpu": false,
+    "cooldown_wall_seconds": 1560,
+    "correction_turn_seconds": 38.41557270148769,
+    "evidence_class": "reasoning projection from historical EB1 E2E timing; not measured LT1 or B runtime",
+    "history_source_sha256": "fab22e372aca830b48c6b4db6cae4a377e8bda865d5e38b38a4598b7d22a8e9c",
+    "maximum_cell_seconds": 255.03035895501228,
+    "oracle_seconds": 9.212028309702873,
+    "per_arm_seconds": {
+      "A": 4507.870518481353,
+      "B": 4507.870518481353
+    },
+    "reload_io_seconds_per_cell": 60,
+    "total_gpu_hours": 2.5043725102674186,
+    "total_gpu_seconds": 9015.741036962707,
+    "uncertainty": "B uses A proxy; natural prose, growing persistence, folding and 160-token recap unmeasured. No trimming or optimistic replacement with short early C7 cells."
+  },
+  "reasons": [
+    "NON_FIT",
+    "CPU_GATES_NOT_GREEN"
+  ],
+  "registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c",
+  "status": "BLOCKED"
+}

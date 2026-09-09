@@ -1,0 +1,2276 @@
+{
+  "decisions": [
+    {
+      "attribute": "lamp spacing",
+      "entity": "Promenade",
+      "expected": "9 voxels",
+      "source_turns": [
+        12
+      ]
+    },
+    {
+      "attribute": "maintenance crew",
+      "entity": "Commtower",
+      "expected": "Iona Vale",
+      "source_turns": [
+        13
+      ]
+    },
+    {
+      "attribute": "map position",
+      "entity": "Breakwater",
+      "expected": "(-31, 48, 12)",
+      "source_turns": [
+        14
+      ]
+    },
+    {
+      "attribute": "docking fee",
+      "entity": "Vega",
+      "expected": "29 credits",
+      "source_turns": [
+        1,
+        3,
+        15
+      ]
+    },
+    {
+      "attribute": "bed count",
+      "entity": "Medibay",
+      "expected": "16 beds",
+      "source_turns": [
+        2,
+        4,
+        16
+      ]
+    }
+  ],
+  "distances": [
+    10,
+    25,
+    50,
+    100,
+    150
+  ],
+  "probes": [
+    {
+      "answerable": true,
+      "attribute": "lamp spacing",
+      "class": "fresh",
+      "distance": 10,
+      "entity": "Promenade",
+      "expected": "9 voxels",
+      "id": "recall_1_10",
+      "oracle_source_texts": [
+        "Promenade's lamp spacing will be 9 voxels."
+      ],
+      "question": "What did we settle on for Promenade's lamp spacing?",
+      "source_turn": 12,
+      "source_turns": [
+        12
+      ],
+      "turn": 22
+    },
+    {
+      "answerable": true,
+      "attribute": "maintenance crew",
+      "class": "fresh",
+      "distance": 10,
+      "entity": "Commtower",
+      "expected": "Iona Vale",
+      "id": "recall_2_10",
+      "oracle_source_texts": [
+        "Commtower's maintenance crew will be Iona Vale."
+      ],
+      "question": "What did we settle on for Commtower's maintenance crew?",
+      "source_turn": 13,
+      "source_turns": [
+        13
+      ],
+      "turn": 23
+    },
+    {
+      "answerable": true,
+      "attribute": "map position",
+      "class": "fresh",
+      "distance": 10,
+      "entity": "Breakwater",
+      "expected": "(-31, 48, 12)",
+      "id": "recall_3_10",
+      "oracle_source_texts": [
+        "Breakwater's map position will be (-31, 48, 12)."
+      ],
+      "question": "What did we settle on for Breakwater's map position?",
+      "source_turn": 14,
+      "source_turns": [
+        14
+      ],
+      "turn": 24
+    },
+    {
+      "answerable": true,
+      "attribute": "docking fee",
+      "class": "correction",
+      "distance": 10,
+      "entity": "Vega",
+      "expected": "29 credits",
+      "id": "recall_4_10",
+      "oracle_source_texts": [
+        "Vega's docking fee will be 17 credits.",
+        "Actually, Vega's docking fee will be 23 credits, replacing the earlier choice.",
+        "Actually, Vega's docking fee will be 29 credits, replacing the earlier choice."
+      ],
+      "question": "What did we settle on for Vega's docking fee?",
+      "source_turn": 15,
+      "source_turns": [
+        1,
+        3,
+        15
+      ],
+      "turn": 25
+    },
+    {
+      "answerable": true,
+      "attribute": "bed count",
+      "class": "correction",
+      "distance": 10,
+      "entity": "Medibay",
+      "expected": "16 beds",
+      "id": "recall_5_10",
+      "oracle_source_texts": [
+        "Medibay's bed count will be 12 beds.",
+        "Actually, Medibay's bed count will be 14 beds, replacing the earlier choice.",
+        "Actually, Medibay's bed count will be 16 beds, replacing the earlier choice."
+      ],
+      "question": "What did we settle on for Medibay's bed count?",
+      "source_turn": 16,
+      "source_turns": [
+        2,
+        4,
+        16
+      ],
+      "turn": 26
+    },
+    {
+      "answerable": true,
+      "attribute": "cargo allowance",
+      "class": "alias",
+      "distance": 10,
+      "entity": "Kestrel",
+      "expected": "37 crates",
+      "id": "recall_6_10",
+      "oracle_source_texts": [
+        "Kestrel's cargo allowance will be 37 crates.",
+        "Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use."
+      ],
+      "question": "What did we settle on for the Hauler's cargo allowance?",
+      "source_turn": 17,
+      "source_turns": [
+        5,
+        17
+      ],
+      "turn": 27
+    },
+    {
+      "answerable": true,
+      "attribute": "launch date",
+      "class": "alias",
+      "distance": 10,
+      "entity": "Lantern",
+      "expected": "18 October 2196",
+      "id": "recall_7_10",
+      "oracle_source_texts": [
+        "Lantern's launch date will be 18 October 2196.",
+        "Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use."
+      ],
+      "question": "What did we settle on for the Beacon's launch date?",
+      "source_turn": 18,
+      "source_turns": [
+        6,
+        18
+      ],
+      "turn": 28
+    },
+    {
+      "answerable": true,
+      "attribute": "lamp spacing",
+      "class": "fresh",
+      "distance": 25,
+      "entity": "Promenade",
+      "expected": "9 voxels",
+      "id": "recall_1_25",
+      "oracle_source_texts": [
+        "Promenade's lamp spacing will be 9 voxels."
+      ],
+      "question": "What did we settle on for Promenade's lamp spacing?",
+      "source_turn": 12,
+      "source_turns": [
+        12
+      ],
+      "turn": 37
+    },
+    {
+      "answerable": true,
+      "attribute": "maintenance crew",
+      "class": "fresh",
+      "distance": 25,
+      "entity": "Commtower",
+      "expected": "Iona Vale",
+      "id": "recall_2_25",
+      "oracle_source_texts": [
+        "Commtower's maintenance crew will be Iona Vale."
+      ],
+      "question": "What did we settle on for Commtower's maintenance crew?",
+      "source_turn": 13,
+      "source_turns": [
+        13
+      ],
+      "turn": 38
+    },
+    {
+      "answerable": true,
+      "attribute": "map position",
+      "class": "fresh",
+      "distance": 25,
+      "entity": "Breakwater",
+      "expected": "(-31, 48, 12)",
+      "id": "recall_3_25",
+      "oracle_source_texts": [
+        "Breakwater's map position will be (-31, 48, 12)."
+      ],
+      "question": "What did we settle on for Breakwater's map position?",
+      "source_turn": 14,
+      "source_turns": [
+        14
+      ],
+      "turn": 39
+    },
+    {
+      "answerable": true,
+      "attribute": "docking fee",
+      "class": "correction",
+      "distance": 25,
+      "entity": "Vega",
+      "expected": "29 credits",
+      "id": "recall_4_25",
+      "oracle_source_texts": [
+        "Vega's docking fee will be 17 credits.",
+        "Actually, Vega's docking fee will be 23 credits, replacing the earlier choice.",
+        "Actually, Vega's docking fee will be 29 credits, replacing the earlier choice."
+      ],
+      "question": "What did we settle on for Vega's docking fee?",
+      "source_turn": 15,
+      "source_turns": [
+        1,
+        3,
+        15
+      ],
+      "turn": 40
+    },
+    {
+      "answerable": true,
+      "attribute": "bed count",
+      "class": "correction",
+      "distance": 25,
+      "entity": "Medibay",
+      "expected": "16 beds",
+      "id": "recall_5_25",
+      "oracle_source_texts": [
+        "Medibay's bed count will be 12 beds.",
+        "Actually, Medibay's bed count will be 14 beds, replacing the earlier choice.",
+        "Actually, Medibay's bed count will be 16 beds, replacing the earlier choice."
+      ],
+      "question": "What did we settle on for Medibay's bed count?",
+      "source_turn": 16,
+      "source_turns": [
+        2,
+        4,
+        16
+      ],
+      "turn": 41
+    },
+    {
+      "answerable": true,
+      "attribute": "cargo allowance",
+      "class": "alias",
+      "distance": 25,
+      "entity": "Kestrel",
+      "expected": "37 crates",
+      "id": "recall_6_25",
+      "oracle_source_texts": [
+        "Kestrel's cargo allowance will be 37 crates.",
+        "Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use."
+      ],
+      "question": "What did we settle on for the Hauler's cargo allowance?",
+      "source_turn": 17,
+      "source_turns": [
+        5,
+        17
+      ],
+      "turn": 42
+    },
+    {
+      "answerable": true,
+      "attribute": "launch date",
+      "class": "alias",
+      "distance": 25,
+      "entity": "Lantern",
+      "expected": "18 October 2196",
+      "id": "recall_7_25",
+      "oracle_source_texts": [
+        "Lantern's launch date will be 18 October 2196.",
+        "Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use."
+      ],
+      "question": "What did we settle on for the Beacon's launch date?",
+      "source_turn": 18,
+      "source_turns": [
+        6,
+        18
+      ],
+      "turn": 43
+    },
+    {
+      "answerable": true,
+      "attribute": "lamp spacing",
+      "class": "fresh",
+      "distance": 50,
+      "entity": "Promenade",
+      "expected": "9 voxels",
+      "id": "recall_1_50",
+      "oracle_source_texts": [
+        "Promenade's lamp spacing will be 9 voxels."
+      ],
+      "question": "What did we settle on for Promenade's lamp spacing?",
+      "source_turn": 12,
+      "source_turns": [
+        12
+      ],
+      "turn": 62
+    },
+    {
+      "answerable": true,
+      "attribute": "maintenance crew",
+      "class": "fresh",
+      "distance": 50,
+      "entity": "Commtower",
+      "expected": "Iona Vale",
+      "id": "recall_2_50",
+      "oracle_source_texts": [
+        "Commtower's maintenance crew will be Iona Vale."
+      ],
+      "question": "What did we settle on for Commtower's maintenance crew?",
+      "source_turn": 13,
+      "source_turns": [
+        13
+      ],
+      "turn": 63
+    },
+    {
+      "answerable": true,
+      "attribute": "map position",
+      "class": "fresh",
+      "distance": 50,
+      "entity": "Breakwater",
+      "expected": "(-31, 48, 12)",
+      "id": "recall_3_50",
+      "oracle_source_texts": [
+        "Breakwater's map position will be (-31, 48, 12)."
+      ],
+      "question": "What did we settle on for Breakwater's map position?",
+      "source_turn": 14,
+      "source_turns": [
+        14
+      ],
+      "turn": 64
+    },
+    {
+      "answerable": true,
+      "attribute": "docking fee",
+      "class": "correction",
+      "distance": 50,
+      "entity": "Vega",
+      "expected": "29 credits",
+      "id": "recall_4_50",
+      "oracle_source_texts": [
+        "Vega's docking fee will be 17 credits.",
+        "Actually, Vega's docking fee will be 23 credits, replacing the earlier choice.",
+        "Actually, Vega's docking fee will be 29 credits, replacing the earlier choice."
+      ],
+      "question": "What did we settle on for Vega's docking fee?",
+      "source_turn": 15,
+      "source_turns": [
+        1,
+        3,
+        15
+      ],
+      "turn": 65
+    },
+    {
+      "answerable": true,
+      "attribute": "bed count",
+      "class": "correction",
+      "distance": 50,
+      "entity": "Medibay",
+      "expected": "16 beds",
+      "id": "recall_5_50",
+      "oracle_source_texts": [
+        "Medibay's bed count will be 12 beds.",
+        "Actually, Medibay's bed count will be 14 beds, replacing the earlier choice.",
+        "Actually, Medibay's bed count will be 16 beds, replacing the earlier choice."
+      ],
+      "question": "What did we settle on for Medibay's bed count?",
+      "source_turn": 16,
+      "source_turns": [
+        2,
+        4,
+        16
+      ],
+      "turn": 66
+    },
+    {
+      "answerable": true,
+      "attribute": "cargo allowance",
+      "class": "alias",
+      "distance": 50,
+      "entity": "Kestrel",
+      "expected": "37 crates",
+      "id": "recall_6_50",
+      "oracle_source_texts": [
+        "Kestrel's cargo allowance will be 37 crates.",
+        "Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use."
+      ],
+      "question": "What did we settle on for the Hauler's cargo allowance?",
+      "source_turn": 17,
+      "source_turns": [
+        5,
+        17
+      ],
+      "turn": 67
+    },
+    {
+      "answerable": true,
+      "attribute": "launch date",
+      "class": "alias",
+      "distance": 50,
+      "entity": "Lantern",
+      "expected": "18 October 2196",
+      "id": "recall_7_50",
+      "oracle_source_texts": [
+        "Lantern's launch date will be 18 October 2196.",
+        "Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use."
+      ],
+      "question": "What did we settle on for the Beacon's launch date?",
+      "source_turn": 18,
+      "source_turns": [
+        6,
+        18
+      ],
+      "turn": 68
+    },
+    {
+      "answerable": true,
+      "attribute": "lamp spacing",
+      "class": "fresh",
+      "distance": 100,
+      "entity": "Promenade",
+      "expected": "9 voxels",
+      "id": "recall_1_100",
+      "oracle_source_texts": [
+        "Promenade's lamp spacing will be 9 voxels."
+      ],
+      "question": "What did we settle on for Promenade's lamp spacing?",
+      "source_turn": 12,
+      "source_turns": [
+        12
+      ],
+      "turn": 112
+    },
+    {
+      "answerable": true,
+      "attribute": "maintenance crew",
+      "class": "fresh",
+      "distance": 100,
+      "entity": "Commtower",
+      "expected": "Iona Vale",
+      "id": "recall_2_100",
+      "oracle_source_texts": [
+        "Commtower's maintenance crew will be Iona Vale."
+      ],
+      "question": "What did we settle on for Commtower's maintenance crew?",
+      "source_turn": 13,
+      "source_turns": [
+        13
+      ],
+      "turn": 113
+    },
+    {
+      "answerable": true,
+      "attribute": "map position",
+      "class": "fresh",
+      "distance": 100,
+      "entity": "Breakwater",
+      "expected": "(-31, 48, 12)",
+      "id": "recall_3_100",
+      "oracle_source_texts": [
+        "Breakwater's map position will be (-31, 48, 12)."
+      ],
+      "question": "What did we settle on for Breakwater's map position?",
+      "source_turn": 14,
+      "source_turns": [
+        14
+      ],
+      "turn": 114
+    },
+    {
+      "answerable": true,
+      "attribute": "docking fee",
+      "class": "correction",
+      "distance": 100,
+      "entity": "Vega",
+      "expected": "29 credits",
+      "id": "recall_4_100",
+      "oracle_source_texts": [
+        "Vega's docking fee will be 17 credits.",
+        "Actually, Vega's docking fee will be 23 credits, replacing the earlier choice.",
+        "Actually, Vega's docking fee will be 29 credits, replacing the earlier choice."
+      ],
+      "question": "What did we settle on for Vega's docking fee?",
+      "source_turn": 15,
+      "source_turns": [
+        1,
+        3,
+        15
+      ],
+      "turn": 115
+    },
+    {
+      "answerable": true,
+      "attribute": "bed count",
+      "class": "correction",
+      "distance": 100,
+      "entity": "Medibay",
+      "expected": "16 beds",
+      "id": "recall_5_100",
+      "oracle_source_texts": [
+        "Medibay's bed count will be 12 beds.",
+        "Actually, Medibay's bed count will be 14 beds, replacing the earlier choice.",
+        "Actually, Medibay's bed count will be 16 beds, replacing the earlier choice."
+      ],
+      "question": "What did we settle on for Medibay's bed count?",
+      "source_turn": 16,
+      "source_turns": [
+        2,
+        4,
+        16
+      ],
+      "turn": 116
+    },
+    {
+      "answerable": true,
+      "attribute": "cargo allowance",
+      "class": "alias",
+      "distance": 100,
+      "entity": "Kestrel",
+      "expected": "37 crates",
+      "id": "recall_6_100",
+      "oracle_source_texts": [
+        "Kestrel's cargo allowance will be 37 crates.",
+        "Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use."
+      ],
+      "question": "What did we settle on for the Hauler's cargo allowance?",
+      "source_turn": 17,
+      "source_turns": [
+        5,
+        17
+      ],
+      "turn": 117
+    },
+    {
+      "answerable": true,
+      "attribute": "launch date",
+      "class": "alias",
+      "distance": 100,
+      "entity": "Lantern",
+      "expected": "18 October 2196",
+      "id": "recall_7_100",
+      "oracle_source_texts": [
+        "Lantern's launch date will be 18 October 2196.",
+        "Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use."
+      ],
+      "question": "What did we settle on for the Beacon's launch date?",
+      "source_turn": 18,
+      "source_turns": [
+        6,
+        18
+      ],
+      "turn": 118
+    },
+    {
+      "answerable": true,
+      "attribute": "lamp spacing",
+      "class": "fresh",
+      "distance": 150,
+      "entity": "Promenade",
+      "expected": "9 voxels",
+      "id": "recall_1_150",
+      "oracle_source_texts": [
+        "Promenade's lamp spacing will be 9 voxels."
+      ],
+      "question": "What did we settle on for Promenade's lamp spacing?",
+      "source_turn": 12,
+      "source_turns": [
+        12
+      ],
+      "turn": 162
+    },
+    {
+      "answerable": true,
+      "attribute": "maintenance crew",
+      "class": "fresh",
+      "distance": 150,
+      "entity": "Commtower",
+      "expected": "Iona Vale",
+      "id": "recall_2_150",
+      "oracle_source_texts": [
+        "Commtower's maintenance crew will be Iona Vale."
+      ],
+      "question": "What did we settle on for Commtower's maintenance crew?",
+      "source_turn": 13,
+      "source_turns": [
+        13
+      ],
+      "turn": 163
+    },
+    {
+      "answerable": true,
+      "attribute": "map position",
+      "class": "fresh",
+      "distance": 150,
+      "entity": "Breakwater",
+      "expected": "(-31, 48, 12)",
+      "id": "recall_3_150",
+      "oracle_source_texts": [
+        "Breakwater's map position will be (-31, 48, 12)."
+      ],
+      "question": "What did we settle on for Breakwater's map position?",
+      "source_turn": 14,
+      "source_turns": [
+        14
+      ],
+      "turn": 164
+    },
+    {
+      "answerable": true,
+      "attribute": "docking fee",
+      "class": "correction",
+      "distance": 150,
+      "entity": "Vega",
+      "expected": "29 credits",
+      "id": "recall_4_150",
+      "oracle_source_texts": [
+        "Vega's docking fee will be 17 credits.",
+        "Actually, Vega's docking fee will be 23 credits, replacing the earlier choice.",
+        "Actually, Vega's docking fee will be 29 credits, replacing the earlier choice."
+      ],
+      "question": "What did we settle on for Vega's docking fee?",
+      "source_turn": 15,
+      "source_turns": [
+        1,
+        3,
+        15
+      ],
+      "turn": 165
+    },
+    {
+      "answerable": true,
+      "attribute": "bed count",
+      "class": "correction",
+      "distance": 150,
+      "entity": "Medibay",
+      "expected": "16 beds",
+      "id": "recall_5_150",
+      "oracle_source_texts": [
+        "Medibay's bed count will be 12 beds.",
+        "Actually, Medibay's bed count will be 14 beds, replacing the earlier choice.",
+        "Actually, Medibay's bed count will be 16 beds, replacing the earlier choice."
+      ],
+      "question": "What did we settle on for Medibay's bed count?",
+      "source_turn": 16,
+      "source_turns": [
+        2,
+        4,
+        16
+      ],
+      "turn": 166
+    },
+    {
+      "answerable": true,
+      "attribute": "cargo allowance",
+      "class": "alias",
+      "distance": 150,
+      "entity": "Kestrel",
+      "expected": "37 crates",
+      "id": "recall_6_150",
+      "oracle_source_texts": [
+        "Kestrel's cargo allowance will be 37 crates.",
+        "Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use."
+      ],
+      "question": "What did we settle on for the Hauler's cargo allowance?",
+      "source_turn": 17,
+      "source_turns": [
+        5,
+        17
+      ],
+      "turn": 167
+    },
+    {
+      "answerable": true,
+      "attribute": "launch date",
+      "class": "alias",
+      "distance": 150,
+      "entity": "Lantern",
+      "expected": "18 October 2196",
+      "id": "recall_7_150",
+      "oracle_source_texts": [
+        "Lantern's launch date will be 18 October 2196.",
+        "Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use."
+      ],
+      "question": "What did we settle on for the Beacon's launch date?",
+      "source_turn": 18,
+      "source_turns": [
+        6,
+        18
+      ],
+      "turn": 168
+    }
+  ],
+  "protocol": "Frozen user/assistant dialogue replay; recall and recap responses generated. Probe answers not deposited. Natural corrections only, no hidden memory commands.",
+  "provenance": "Invented expansion facts; vocabulary from Project-Frontier docs/PLAN_E_HUB.md. Not canonical game changes.",
+  "recency_mounts": 2,
+  "restart_after_turns": [
+    70,
+    140
+  ],
+  "schema": "grm.lt1.fixture.v1",
+  "turns": [
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "docking fee",
+      "entity": "Vega",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 1,
+      "user": "Vega's docking fee will be 17 credits.",
+      "value": "17 credits"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "bed count",
+      "entity": "Medibay",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 2,
+      "user": "Medibay's bed count will be 12 beds.",
+      "value": "12 beds"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "docking fee",
+      "entity": "Vega",
+      "kind": "correction",
+      "previous_turn": 1,
+      "turn": 3,
+      "user": "Actually, Vega's docking fee will be 23 credits, replacing the earlier choice.",
+      "value": "23 credits"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "bed count",
+      "entity": "Medibay",
+      "kind": "correction",
+      "previous_turn": 2,
+      "turn": 4,
+      "user": "Actually, Medibay's bed count will be 14 beds, replacing the earlier choice.",
+      "value": "14 beds"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "cargo allowance",
+      "entity": "Kestrel",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 5,
+      "user": "Kestrel's cargo allowance will be 37 crates.",
+      "value": "37 crates"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "launch date",
+      "entity": "Lantern",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 6,
+      "user": "Lantern's launch date will be 18 October 2196.",
+      "value": "18 October 2196"
+    },
+    {
+      "assistant": "Let the promenade reveal itself as the player walks out.",
+      "kind": "ordinary",
+      "turn": 7,
+      "user": "I want the arrival to feel welcoming rather than overwhelming."
+    },
+    {
+      "assistant": "Small irregularities in the silhouettes could suggest people built it.",
+      "kind": "ordinary",
+      "turn": 8,
+      "user": "Can we make the voxel construction feel handmade?"
+    },
+    {
+      "assistant": "We can give people reasons to linger without asking them to fight.",
+      "kind": "ordinary",
+      "turn": 9,
+      "user": "The Galactic Hub should still feel like a social place."
+    },
+    {
+      "assistant": "That is a useful mood for the quieter corners.",
+      "kind": "ordinary",
+      "turn": 10,
+      "user": "I keep picturing a tired pilot stopping for tea."
+    },
+    {
+      "assistant": "Give it warm materials and a view toward a public space.",
+      "kind": "ordinary",
+      "turn": 11,
+      "user": "How do we avoid turning the medibay into a gloomy corridor?"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "lamp spacing",
+      "entity": "Promenade",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 12,
+      "user": "Promenade's lamp spacing will be 9 voxels.",
+      "value": "9 voxels"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "maintenance crew",
+      "entity": "Commtower",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 13,
+      "user": "Commtower's maintenance crew will be Iona Vale.",
+      "value": "Iona Vale"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "map position",
+      "entity": "Breakwater",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 14,
+      "user": "Breakwater's map position will be (-31, 48, 12).",
+      "value": "(-31, 48, 12)"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "docking fee",
+      "entity": "Vega",
+      "kind": "correction",
+      "previous_turn": 3,
+      "turn": 15,
+      "user": "Actually, Vega's docking fee will be 29 credits, replacing the earlier choice.",
+      "value": "29 credits"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "bed count",
+      "entity": "Medibay",
+      "kind": "correction",
+      "previous_turn": 4,
+      "turn": 16,
+      "user": "Actually, Medibay's bed count will be 16 beds, replacing the earlier choice.",
+      "value": "16 beds"
+    },
+    {
+      "alias": "the Hauler",
+      "assistant": "I like that shorthand. I'll use it in our discussion.",
+      "entity": "Kestrel",
+      "kind": "alias",
+      "turn": 17,
+      "user": "Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use."
+    },
+    {
+      "alias": "the Beacon",
+      "assistant": "I like that shorthand. I'll use it in our discussion.",
+      "entity": "Lantern",
+      "kind": "alias",
+      "turn": 18,
+      "user": "Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use."
+    },
+    {
+      "assistant": "Its silhouette can be recognizable while leaving room for the rest of the station.",
+      "kind": "ordinary",
+      "turn": 19,
+      "user": "The comm tower ought to feel useful without dominating the skyline."
+    },
+    {
+      "assistant": "It makes the settlement feel connected to a larger world.",
+      "kind": "ordinary",
+      "turn": 20,
+      "user": "I like seeing other ships through the docking windows."
+    },
+    {
+      "assistant": "Let unusual shapes suggest possibilities before showing a crafting menu.",
+      "kind": "ordinary",
+      "turn": 21,
+      "user": "Could the salvage loop encourage curiosity?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_1_10",
+      "turn": 22,
+      "user": "What did we settle on for Promenade's lamp spacing?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_2_10",
+      "turn": 23,
+      "user": "What did we settle on for Commtower's maintenance crew?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_3_10",
+      "turn": 24,
+      "user": "What did we settle on for Breakwater's map position?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_4_10",
+      "turn": 25,
+      "user": "What did we settle on for Vega's docking fee?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_5_10",
+      "turn": 26,
+      "user": "What did we settle on for Medibay's bed count?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_6_10",
+      "turn": 27,
+      "user": "What did we settle on for the Hauler's cargo allowance?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_7_10",
+      "turn": 28,
+      "user": "What did we settle on for the Beacon's launch date?"
+    },
+    {
+      "assistant": "Use sightlines and material changes before adding signs.",
+      "kind": "ordinary",
+      "turn": 29,
+      "user": "I worry that too much signage will hide the architecture."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "iron reserve",
+      "entity": "Foundry",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 30,
+      "user": "Foundry's iron reserve will be 83 ingots.",
+      "value": "83 ingots"
+    },
+    {
+      "assistant": "We should leave spaces where wandering is rewarding on its own.",
+      "kind": "ordinary",
+      "turn": 31,
+      "user": "Sometimes I enjoy just wandering around a game."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "water reserve",
+      "entity": "Orchard",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 32,
+      "user": "Orchard's water reserve will be 146 litres.",
+      "value": "146 litres"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "iron reserve",
+      "entity": "Foundry",
+      "kind": "correction",
+      "previous_turn": 30,
+      "turn": 33,
+      "user": "Actually, Foundry's iron reserve will be 89 ingots, replacing the earlier choice.",
+      "value": "89 ingots"
+    },
+    {
+      "assistant": "A calm view can provide contrast with the machinery outside.",
+      "kind": "ordinary",
+      "turn": 34,
+      "user": "Would a silent observation room be too uneventful?"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "survey lead",
+      "entity": "Aster",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 35,
+      "user": "Aster's survey lead will be Neri Sol.",
+      "value": "Neri Sol"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "iron reserve",
+      "entity": "Foundry",
+      "kind": "correction",
+      "previous_turn": 33,
+      "turn": 36,
+      "user": "Actually, Foundry's iron reserve will be 91 ingots, replacing the earlier choice.",
+      "value": "91 ingots"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_1_25",
+      "turn": 37,
+      "user": "What did we settle on for Promenade's lamp spacing?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_2_25",
+      "turn": 38,
+      "user": "What did we settle on for Commtower's maintenance crew?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_3_25",
+      "turn": 39,
+      "user": "What did we settle on for Breakwater's map position?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_4_25",
+      "turn": 40,
+      "user": "What did we settle on for Vega's docking fee?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_5_25",
+      "turn": 41,
+      "user": "What did we settle on for Medibay's bed count?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_6_25",
+      "turn": 42,
+      "user": "What did we settle on for the Hauler's cargo allowance?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_7_25",
+      "turn": 43,
+      "user": "What did we settle on for the Beacon's launch date?"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "repair budget",
+      "entity": "Tern",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 44,
+      "user": "Tern's repair budget will be 412 credits.",
+      "value": "412 credits"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "water reserve",
+      "entity": "Orchard",
+      "kind": "correction",
+      "previous_turn": 32,
+      "turn": 45,
+      "user": "Actually, Orchard's water reserve will be 152 litres, replacing the earlier choice.",
+      "value": "152 litres"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "arrival date",
+      "entity": "Morrow",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 46,
+      "user": "Morrow's arrival date will be 22 November 2196.",
+      "value": "22 November 2196"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "survey lead",
+      "entity": "Aster",
+      "kind": "correction",
+      "previous_turn": 35,
+      "turn": 47,
+      "user": "Actually, Aster's survey lead will be Neri Ash, replacing the earlier choice.",
+      "value": "Neri Ash"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "repair budget",
+      "entity": "Tern",
+      "kind": "correction",
+      "previous_turn": 44,
+      "turn": 48,
+      "user": "Actually, Tern's repair budget will be 438 credits, replacing the earlier choice.",
+      "value": "438 credits"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "map position",
+      "entity": "Spindle",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 49,
+      "user": "Spindle's map position will be (62, -17, 8).",
+      "value": "(62, -17, 8)"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "arrival date",
+      "entity": "Morrow",
+      "kind": "correction",
+      "previous_turn": 46,
+      "turn": 50,
+      "user": "Actually, Morrow's arrival date will be 24 November 2196, replacing the earlier choice.",
+      "value": "24 November 2196"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "drill count",
+      "entity": "Quarry",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 51,
+      "user": "Quarry's drill count will be 7 drills.",
+      "value": "7 drills"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "map position",
+      "entity": "Spindle",
+      "kind": "correction",
+      "previous_turn": 49,
+      "turn": 52,
+      "user": "Actually, Spindle's map position will be (64, -17, 8), replacing the earlier choice.",
+      "value": "(64, -17, 8)"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "galley stock",
+      "entity": "Saffron",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 53,
+      "user": "Saffron's galley stock will be 52 meals.",
+      "value": "52 meals"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "drill count",
+      "entity": "Quarry",
+      "kind": "correction",
+      "previous_turn": 51,
+      "turn": 54,
+      "user": "Actually, Quarry's drill count will be 9 drills, replacing the earlier choice.",
+      "value": "9 drills"
+    },
+    {
+      "alias": "the Forge",
+      "assistant": "That should feel comfortable in crew conversation.",
+      "entity": "Foundry",
+      "kind": "alias",
+      "turn": 55,
+      "user": "Let's call Foundry 'the Forge' from now on. That fits its role in the expansion."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "rescue pilot",
+      "entity": "Harbor",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 56,
+      "user": "Harbor's rescue pilot will be Edda Rook.",
+      "value": "Edda Rook"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "galley stock",
+      "entity": "Saffron",
+      "kind": "correction",
+      "previous_turn": 53,
+      "turn": 57,
+      "user": "Actually, Saffron's galley stock will be 58 meals, replacing the earlier choice.",
+      "value": "58 meals"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "battery reserve",
+      "entity": "Relay",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 58,
+      "user": "Relay's battery reserve will be 31 cells.",
+      "value": "31 cells"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "rescue pilot",
+      "entity": "Harbor",
+      "kind": "correction",
+      "previous_turn": 56,
+      "turn": 59,
+      "user": "Actually, Harbor's rescue pilot will be Edda Fern, replacing the earlier choice.",
+      "value": "Edda Fern"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "seat count",
+      "entity": "Ferry",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 60,
+      "user": "Ferry's seat count will be 11 seats.",
+      "value": "11 seats"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "battery reserve",
+      "entity": "Relay",
+      "kind": "correction",
+      "previous_turn": 58,
+      "turn": 61,
+      "user": "Actually, Relay's battery reserve will be 35 cells, replacing the earlier choice.",
+      "value": "35 cells"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_1_50",
+      "turn": 62,
+      "user": "What did we settle on for Promenade's lamp spacing?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_2_50",
+      "turn": 63,
+      "user": "What did we settle on for Commtower's maintenance crew?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_3_50",
+      "turn": 64,
+      "user": "What did we settle on for Breakwater's map position?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_4_50",
+      "turn": 65,
+      "user": "What did we settle on for Vega's docking fee?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_5_50",
+      "turn": 66,
+      "user": "What did we settle on for Medibay's bed count?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_6_50",
+      "turn": 67,
+      "user": "What did we settle on for the Hauler's cargo allowance?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_7_50",
+      "turn": 68,
+      "user": "What did we settle on for the Beacon's launch date?"
+    },
+    {
+      "alias": "the Cistern",
+      "assistant": "That should feel comfortable in crew conversation.",
+      "entity": "Orchard",
+      "kind": "alias",
+      "turn": 69,
+      "user": "Let's call Orchard 'the Cistern' from now on. That fits its role in the expansion."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "seed stock",
+      "entity": "Garden",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 70,
+      "user": "Garden's seed stock will be 93 packets.",
+      "value": "93 packets"
+    },
+    {
+      "alias": "the Lookout",
+      "assistant": "That should feel comfortable in crew conversation.",
+      "entity": "Aster",
+      "kind": "alias",
+      "turn": 71,
+      "user": "Let's call Aster 'the Lookout' from now on. That fits its role in the expansion."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "heat limit",
+      "entity": "Kiln",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 72,
+      "user": "Kiln's heat limit will be 680 kelvin.",
+      "value": "680 kelvin"
+    },
+    {
+      "alias": "the Workshop",
+      "assistant": "That should feel comfortable in crew conversation.",
+      "entity": "Tern",
+      "kind": "alias",
+      "turn": 73,
+      "user": "Let's call Tern 'the Workshop' from now on. That fits its role in the expansion."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "oxygen reserve",
+      "entity": "Shelter",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 74,
+      "user": "Shelter's oxygen reserve will be 245 litres.",
+      "value": "245 litres"
+    },
+    {
+      "alias": "the Gate",
+      "assistant": "That should feel comfortable in crew conversation.",
+      "entity": "Morrow",
+      "kind": "alias",
+      "turn": 75,
+      "user": "Let's call Morrow 'the Gate' from now on. That fits its role in the expansion."
+    },
+    {
+      "alias": "the Needle",
+      "assistant": "That should feel comfortable in crew conversation.",
+      "entity": "Spindle",
+      "kind": "alias",
+      "turn": 76,
+      "user": "Let's call Spindle 'the Needle' from now on. That fits its role in the expansion."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "beacon height",
+      "entity": "Cairn",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 77,
+      "user": "Cairn's beacon height will be 27 voxels.",
+      "value": "27 voxels"
+    },
+    {
+      "alias": "the Pit",
+      "assistant": "That should feel comfortable in crew conversation.",
+      "entity": "Quarry",
+      "kind": "alias",
+      "turn": 78,
+      "user": "Let's call Quarry 'the Pit' from now on. That fits its role in the expansion."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "rental price",
+      "entity": "Sparrow",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 79,
+      "user": "Sparrow's rental price will be 61 credits.",
+      "value": "61 credits"
+    },
+    {
+      "alias": "the Kitchen",
+      "assistant": "That should feel comfortable in crew conversation.",
+      "entity": "Saffron",
+      "kind": "alias",
+      "turn": 80,
+      "user": "Let's call Saffron 'the Kitchen' from now on. That fits its role in the expansion."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "pump count",
+      "entity": "Rill",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 81,
+      "user": "Rill's pump count will be 4 pumps.",
+      "value": "4 pumps"
+    },
+    {
+      "assistant": "Clear paths and readable stacks would help.",
+      "kind": "ordinary",
+      "turn": 82,
+      "user": "The cargo areas should look busy without becoming confusing."
+    },
+    {
+      "assistant": "A glimpse through an opening can invite exploration.",
+      "kind": "ordinary",
+      "turn": 83,
+      "user": "I would rather discover a shortcut than follow a glowing trail."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "supply date",
+      "entity": "Marrow",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 84,
+      "user": "Marrow's supply date will be 9 December 2196.",
+      "value": "9 December 2196"
+    },
+    {
+      "assistant": "Then repairs and additions can remain part of the visual story.",
+      "kind": "ordinary",
+      "turn": 85,
+      "user": "Let us keep the voxel scale visible in the walls."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "navigator",
+      "entity": "Osprey",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 86,
+      "user": "Osprey's navigator will be Tavi Moss.",
+      "value": "Tavi Moss"
+    },
+    {
+      "assistant": "Good moment to step back and imagine walking through the place.",
+      "kind": "ordinary",
+      "turn": 87,
+      "user": "I am taking a quick tea break before we continue."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "map position",
+      "entity": "Cobalt",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 88,
+      "user": "Cobalt's map position will be (-72, 15, -6).",
+      "value": "(-72, 15, -6)"
+    },
+    {
+      "assistant": "A shift in ambience can signal the boundary before the door moves.",
+      "kind": "ordinary",
+      "turn": 89,
+      "user": "How should the sound change near an airlock?"
+    },
+    {
+      "assistant": "Personal clutter can imply routines without exposition.",
+      "kind": "ordinary",
+      "turn": 90,
+      "user": "I like the idea that crews leave traces of everyday life."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "sensor count",
+      "entity": "Gull",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 91,
+      "user": "Gull's sensor count will be 13 sensors.",
+      "value": "13 sensors"
+    },
+    {
+      "assistant": "It could show repeated handling and make the materials readable.",
+      "kind": "ordinary",
+      "turn": 92,
+      "user": "Would weathered paint work on the freight decks?"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "fuel stock",
+      "entity": "Cinder",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 93,
+      "user": "Cinder's fuel stock will be 118 canisters.",
+      "value": "118 canisters"
+    },
+    {
+      "assistant": "We can provide places and tools without dictating every outcome.",
+      "kind": "ordinary",
+      "turn": 94,
+      "user": "This expansion needs room for players to make their own stories."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "botanist",
+      "entity": "Thistle",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 95,
+      "user": "Thistle's botanist will be Lysa Fen.",
+      "value": "Lysa Fen"
+    },
+    {
+      "assistant": "Some rooms can simply make the station believable.",
+      "kind": "ordinary",
+      "turn": 96,
+      "user": "I do not want every room to contain a reward chest."
+    },
+    {
+      "assistant": "Visible changes to damaged surfaces would connect the action to its result.",
+      "kind": "ordinary",
+      "turn": 97,
+      "user": "Could we make repair work satisfying to watch?"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "tool price",
+      "entity": "Flint",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 98,
+      "user": "Flint's tool price will be 34 credits.",
+      "value": "34 credits"
+    },
+    {
+      "assistant": "Recessed seating could preserve a clear walking route.",
+      "kind": "ordinary",
+      "turn": 99,
+      "user": "The promenade needs places where people can stop without blocking traffic."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "opening date",
+      "entity": "Hearth",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 100,
+      "user": "Hearth's opening date will be 6 January 2197.",
+      "value": "6 January 2197"
+    },
+    {
+      "assistant": "Movement, conversation, and small environmental changes can carry it.",
+      "kind": "ordinary",
+      "turn": 101,
+      "user": "How do we keep the no-combat space interesting?"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "map position",
+      "entity": "Cove",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 102,
+      "user": "Cove's map position will be (19, 83, -22).",
+      "value": "(19, 83, -22)"
+    },
+    {
+      "assistant": "It gives the player a sense of motion even while standing still.",
+      "kind": "ordinary",
+      "turn": 103,
+      "user": "I keep coming back to the view of arriving ships."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "drone count",
+      "entity": "Wren",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 104,
+      "user": "Wren's drone count will be 8 drones.",
+      "value": "8 drones"
+    },
+    {
+      "assistant": "Let familiar shapes and gentle experimentation do some of that work.",
+      "kind": "ordinary",
+      "turn": 105,
+      "user": "We should not make the tutorial explain every machine."
+    },
+    {
+      "assistant": "That could make the return to the social areas feel warmer.",
+      "kind": "ordinary",
+      "turn": 106,
+      "user": "Is it all right if the outer walk feels a little lonely?"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "wire stock",
+      "entity": "Petrel",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 107,
+      "user": "Petrel's wire stock will be 267 metres.",
+      "value": "267 metres"
+    },
+    {
+      "assistant": "Brief interactions can leave more attention on the surroundings.",
+      "kind": "ordinary",
+      "turn": 108,
+      "user": "The menus should not interrupt the feeling of being there."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "quartermaster",
+      "entity": "Ember",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 109,
+      "user": "Ember's quartermaster will be Oren Pike.",
+      "value": "Oren Pike"
+    },
+    {
+      "assistant": "Animation and sound can help even with blocky geometry.",
+      "kind": "ordinary",
+      "turn": 110,
+      "user": "I would like cargo to have a convincing sense of weight."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "permit price",
+      "entity": "Willow",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 111,
+      "user": "Willow's permit price will be 46 credits.",
+      "value": "46 credits"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_1_100",
+      "turn": 112,
+      "user": "What did we settle on for Promenade's lamp spacing?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_2_100",
+      "turn": 113,
+      "user": "What did we settle on for Commtower's maintenance crew?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_3_100",
+      "turn": 114,
+      "user": "What did we settle on for Breakwater's map position?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_4_100",
+      "turn": 115,
+      "user": "What did we settle on for Vega's docking fee?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_5_100",
+      "turn": 116,
+      "user": "What did we settle on for Medibay's bed count?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_6_100",
+      "turn": 117,
+      "user": "What did we settle on for the Hauler's cargo allowance?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_7_100",
+      "turn": 118,
+      "user": "What did we settle on for the Beacon's launch date?"
+    },
+    {
+      "assistant": "Hints of how the station works can be more interesting than another prize.",
+      "kind": "ordinary",
+      "turn": 119,
+      "user": "What makes a maintenance corridor worth exploring?"
+    },
+    {
+      "assistant": "A steady ambience can tie otherwise different spaces together.",
+      "kind": "ordinary",
+      "turn": 120,
+      "user": "I think the distant engine hum should be almost comforting."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "inspection date",
+      "entity": "Mesa",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 121,
+      "user": "Mesa's inspection date will be 13 February 2197.",
+      "value": "13 February 2197"
+    },
+    {
+      "assistant": "Shared materials can establish that connection without identical layouts.",
+      "kind": "ordinary",
+      "turn": 122,
+      "user": "The medibay and docks need to feel part of the same settlement."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "map position",
+      "entity": "Basin",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 123,
+      "user": "Basin's map position will be (-9, -44, 71).",
+      "value": "(-9, -44, 71)"
+    },
+    {
+      "assistant": "Alternating busy and quiet spaces should give the player room to breathe.",
+      "kind": "ordinary",
+      "turn": 124,
+      "user": "I am trying to imagine this in a long evening session."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "locker count",
+      "entity": "Lark",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 125,
+      "user": "Lark's locker count will be 24 lockers.",
+      "value": "24 lockers"
+    },
+    {
+      "assistant": "A distinct silhouette or lighting rhythm could make that possible.",
+      "kind": "ordinary",
+      "turn": 126,
+      "user": "Could the player recognize a room just from its doorway?"
+    },
+    {
+      "assistant": "We should judge it by walking routes as well as screenshots.",
+      "kind": "ordinary",
+      "turn": 127,
+      "user": "I do not want a beautiful station that is annoying to navigate."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "glass stock",
+      "entity": "Reef",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 128,
+      "user": "Reef's glass stock will be 156 panels.",
+      "value": "156 panels"
+    },
+    {
+      "assistant": "The transition from exposed space to familiar shelter could matter a lot.",
+      "kind": "ordinary",
+      "turn": 129,
+      "user": "Let us think about the experience of returning after an expedition."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "medic",
+      "entity": "Dune",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 130,
+      "user": "Dune's medic will be Sela Voss.",
+      "value": "Sela Voss"
+    },
+    {
+      "assistant": "They suggest continued use and give the lighting something to catch.",
+      "kind": "ordinary",
+      "turn": 131,
+      "user": "I like scuffed surfaces more than perfectly polished ones here."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "tug price",
+      "entity": "Crag",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 132,
+      "user": "Crag's tug price will be 385 credits.",
+      "value": "385 credits"
+    },
+    {
+      "assistant": "Its surrounding space can support that social role.",
+      "kind": "ordinary",
+      "turn": 133,
+      "user": "The tower could be a meeting point even for people who never use its terminal."
+    },
+    {
+      "assistant": "That can make neighboring rooms feel connected.",
+      "kind": "ordinary",
+      "turn": 134,
+      "user": "It would be nice to hear activity without seeing its source immediately."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "festival date",
+      "entity": "Glade",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 135,
+      "user": "Glade's festival date will be 27 March 2197.",
+      "value": "27 March 2197"
+    },
+    {
+      "assistant": "Yes, the practical choices can support that mood rather than compete with it.",
+      "kind": "ordinary",
+      "turn": 136,
+      "user": "I think we have the mood now."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "map position",
+      "entity": "Vale",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 137,
+      "user": "Vale's map position will be (55, -26, 39).",
+      "value": "(55, -26, 39)"
+    },
+    {
+      "assistant": "We can pause wherever the layout loses its sense of welcome.",
+      "kind": "ordinary",
+      "turn": 138,
+      "user": "Let us keep the final walkthrough focused on how the place feels."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "airlock count",
+      "entity": "Plover",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 139,
+      "user": "Plover's airlock count will be 3 airlocks.",
+      "value": "3 airlocks"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Let the promenade reveal itself as the player walks out.",
+      "kind": "ordinary",
+      "turn": 140,
+      "user": "Coming back to that earlier thought: i want the arrival to feel welcoming rather than overwhelming."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Small irregularities in the silhouettes could suggest people built it.",
+      "kind": "ordinary",
+      "turn": 141,
+      "user": "Coming back to that earlier thought: can we make the voxel construction feel handmade?"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "cable stock",
+      "entity": "Drift",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 142,
+      "user": "Drift's cable stock will be 179 metres.",
+      "value": "179 metres"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. We can give people reasons to linger without asking them to fight.",
+      "kind": "ordinary",
+      "turn": 143,
+      "user": "Coming back to that earlier thought: the Galactic Hub should still feel like a social place."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "steward",
+      "entity": "Fallow",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 144,
+      "user": "Fallow's steward will be Arlo Reed.",
+      "value": "Arlo Reed"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. That is a useful mood for the quieter corners.",
+      "kind": "ordinary",
+      "turn": 145,
+      "user": "Coming back to that earlier thought: i keep picturing a tired pilot stopping for tea."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "ticket price",
+      "entity": "Nacre",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 146,
+      "user": "Nacre's ticket price will be 19 credits.",
+      "value": "19 credits"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Give it warm materials and a view toward a public space.",
+      "kind": "ordinary",
+      "turn": 147,
+      "user": "Coming back to that earlier thought: how do we avoid turning the medibay into a gloomy corridor?"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Its silhouette can be recognizable while leaving room for the rest of the station.",
+      "kind": "ordinary",
+      "turn": 148,
+      "user": "Coming back to that earlier thought: the comm tower ought to feel useful without dominating the skyline."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "handover date",
+      "entity": "Bracken",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 149,
+      "user": "Bracken's handover date will be 11 April 2197.",
+      "value": "11 April 2197"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. It makes the settlement feel connected to a larger world.",
+      "kind": "ordinary",
+      "turn": 150,
+      "user": "Coming back to that earlier thought: i like seeing other ships through the docking windows."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "map position",
+      "entity": "Shoal",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 151,
+      "user": "Shoal's map position will be (-63, 28, 46).",
+      "value": "(-63, 28, 46)"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Let unusual shapes suggest possibilities before showing a crafting menu.",
+      "kind": "ordinary",
+      "turn": 152,
+      "user": "Coming back to that earlier thought: could the salvage loop encourage curiosity?"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "suit count",
+      "entity": "Finch",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 153,
+      "user": "Finch's suit count will be 18 suits.",
+      "value": "18 suits"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Use sightlines and material changes before adding signs.",
+      "kind": "ordinary",
+      "turn": 154,
+      "user": "Coming back to that earlier thought: i worry that too much signage will hide the architecture."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. We should leave spaces where wandering is rewarding on its own.",
+      "kind": "ordinary",
+      "turn": 155,
+      "user": "Coming back to that earlier thought: sometimes I enjoy just wandering around a game."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "soil stock",
+      "entity": "Grove",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 156,
+      "user": "Grove's soil stock will be 224 sacks.",
+      "value": "224 sacks"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. A calm view can provide contrast with the machinery outside.",
+      "kind": "ordinary",
+      "turn": 157,
+      "user": "Coming back to that earlier thought: would a silent observation room be too uneventful?"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "architect",
+      "entity": "Russet",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 158,
+      "user": "Russet's architect will be Mira Holt.",
+      "value": "Mira Holt"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Clear paths and readable stacks would help.",
+      "kind": "ordinary",
+      "turn": 159,
+      "user": "Coming back to that earlier thought: the cargo areas should look busy without becoming confusing."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "freight price",
+      "entity": "Brook",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 160,
+      "user": "Brook's freight price will be 72 credits.",
+      "value": "72 credits"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. A glimpse through an opening can invite exploration.",
+      "kind": "ordinary",
+      "turn": 161,
+      "user": "Coming back to that earlier thought: i would rather discover a shortcut than follow a glowing trail."
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_1_150",
+      "turn": 162,
+      "user": "What did we settle on for Promenade's lamp spacing?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_2_150",
+      "turn": 163,
+      "user": "What did we settle on for Commtower's maintenance crew?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_3_150",
+      "turn": 164,
+      "user": "What did we settle on for Breakwater's map position?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_4_150",
+      "turn": 165,
+      "user": "What did we settle on for Vega's docking fee?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_5_150",
+      "turn": 166,
+      "user": "What did we settle on for Medibay's bed count?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_6_150",
+      "turn": 167,
+      "user": "What did we settle on for the Hauler's cargo allowance?"
+    },
+    {
+      "kind": "probe",
+      "probe_id": "recall_7_150",
+      "turn": 168,
+      "user": "What did we settle on for the Beacon's launch date?"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Then repairs and additions can remain part of the visual story.",
+      "kind": "ordinary",
+      "turn": 169,
+      "user": "Coming back to that earlier thought: let us keep the voxel scale visible in the walls."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "test date",
+      "entity": "Slate",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 170,
+      "user": "Slate's test date will be 16 May 2197.",
+      "value": "16 May 2197"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Good moment to step back and imagine walking through the place.",
+      "kind": "ordinary",
+      "turn": 171,
+      "user": "Coming back to that earlier thought: i am taking a quick tea break before we continue."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "map position",
+      "entity": "Rookery",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 172,
+      "user": "Rookery's map position will be (41, 66, -13).",
+      "value": "(41, 66, -13)"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. A shift in ambience can signal the boundary before the door moves.",
+      "kind": "ordinary",
+      "turn": 173,
+      "user": "Coming back to that earlier thought: how should the sound change near an airlock?"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "filter count",
+      "entity": "Nettle",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 174,
+      "user": "Nettle's filter count will be 32 filters.",
+      "value": "32 filters"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Personal clutter can imply routines without exposition.",
+      "kind": "ordinary",
+      "turn": 175,
+      "user": "Coming back to that earlier thought: i like the idea that crews leave traces of everyday life."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. It could show repeated handling and make the materials readable.",
+      "kind": "ordinary",
+      "turn": 176,
+      "user": "Coming back to that earlier thought: would weathered paint work on the freight decks?"
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "spare stock",
+      "entity": "Weir",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 177,
+      "user": "Weir's spare stock will be 57 valves.",
+      "value": "57 valves"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. We can provide places and tools without dictating every outcome.",
+      "kind": "ordinary",
+      "turn": 178,
+      "user": "Coming back to that earlier thought: this expansion needs room for players to make their own stories."
+    },
+    {
+      "assistant": "That gives us something concrete to design around.",
+      "attribute": "curator",
+      "entity": "Mossbank",
+      "kind": "fact",
+      "previous_turn": null,
+      "turn": 179,
+      "user": "Mossbank's curator will be Kavi Elm.",
+      "value": "Kavi Elm"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Some rooms can simply make the station believable.",
+      "kind": "ordinary",
+      "turn": 180,
+      "user": "Coming back to that earlier thought: i do not want every room to contain a reward chest."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Visible changes to damaged surfaces would connect the action to its result.",
+      "kind": "ordinary",
+      "turn": 181,
+      "user": "Coming back to that earlier thought: could we make repair work satisfying to watch?"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Recessed seating could preserve a clear walking route.",
+      "kind": "ordinary",
+      "turn": 182,
+      "user": "Coming back to that earlier thought: the promenade needs places where people can stop without blocking traffic."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Movement, conversation, and small environmental changes can carry it.",
+      "kind": "ordinary",
+      "turn": 183,
+      "user": "Coming back to that earlier thought: how do we keep the no-combat space interesting?"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. It gives the player a sense of motion even while standing still.",
+      "kind": "ordinary",
+      "turn": 184,
+      "user": "Coming back to that earlier thought: i keep coming back to the view of arriving ships."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Let familiar shapes and gentle experimentation do some of that work.",
+      "kind": "ordinary",
+      "turn": 185,
+      "user": "Coming back to that earlier thought: we should not make the tutorial explain every machine."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. That could make the return to the social areas feel warmer.",
+      "kind": "ordinary",
+      "turn": 186,
+      "user": "Coming back to that earlier thought: is it all right if the outer walk feels a little lonely?"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Brief interactions can leave more attention on the surroundings.",
+      "kind": "ordinary",
+      "turn": 187,
+      "user": "Coming back to that earlier thought: the menus should not interrupt the feeling of being there."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Animation and sound can help even with blocky geometry.",
+      "kind": "ordinary",
+      "turn": 188,
+      "user": "Coming back to that earlier thought: i would like cargo to have a convincing sense of weight."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Hints of how the station works can be more interesting than another prize.",
+      "kind": "ordinary",
+      "turn": 189,
+      "user": "Coming back to that earlier thought: what makes a maintenance corridor worth exploring?"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. A steady ambience can tie otherwise different spaces together.",
+      "kind": "ordinary",
+      "turn": 190,
+      "user": "Coming back to that earlier thought: i think the distant engine hum should be almost comforting."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Shared materials can establish that connection without identical layouts.",
+      "kind": "ordinary",
+      "turn": 191,
+      "user": "Coming back to that earlier thought: the medibay and docks need to feel part of the same settlement."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Alternating busy and quiet spaces should give the player room to breathe.",
+      "kind": "ordinary",
+      "turn": 192,
+      "user": "Coming back to that earlier thought: i am trying to imagine this in a long evening session."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. A distinct silhouette or lighting rhythm could make that possible.",
+      "kind": "ordinary",
+      "turn": 193,
+      "user": "Coming back to that earlier thought: could the player recognize a room just from its doorway?"
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. We should judge it by walking routes as well as screenshots.",
+      "kind": "ordinary",
+      "turn": 194,
+      "user": "Coming back to that earlier thought: i do not want a beautiful station that is annoying to navigate."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. The transition from exposed space to familiar shelter could matter a lot.",
+      "kind": "ordinary",
+      "turn": 195,
+      "user": "Coming back to that earlier thought: let us think about the experience of returning after an expedition."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. They suggest continued use and give the lighting something to catch.",
+      "kind": "ordinary",
+      "turn": 196,
+      "user": "Coming back to that earlier thought: i like scuffed surfaces more than perfectly polished ones here."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Its surrounding space can support that social role.",
+      "kind": "ordinary",
+      "turn": 197,
+      "user": "Coming back to that earlier thought: the tower could be a meeting point even for people who never use its terminal."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. That can make neighboring rooms feel connected.",
+      "kind": "ordinary",
+      "turn": 198,
+      "user": "Coming back to that earlier thought: it would be nice to hear activity without seeing its source immediately."
+    },
+    {
+      "assistant": "That still fits the direction we have been discussing. Yes, the practical choices can support that mood rather than compete with it.",
+      "kind": "ordinary",
+      "turn": 199,
+      "user": "Coming back to that earlier thought: i think we have the mood now."
+    },
+    {
+      "kind": "recap",
+      "turn": 200,
+      "user": "recap the five biggest decisions we made"
+    }
+  ]
+}

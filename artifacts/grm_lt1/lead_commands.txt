@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Prior art: C7 fail-closed resumable commands (GRM contributors, 2026).
+# LT1's immutable NON_FIT rail prohibits every GPU cell and partial-arm run.
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-lt1
+export PYTHONDONTWRITEBYTECODE=1
+# Summaries remain available on RED, without running or retrying a cell.
+python -m scripts.grm_lt1 --summary A > artifacts/grm_lt1/summary_A.json
+python -m scripts.grm_lt1 --summary B > artifacts/grm_lt1/summary_B.json
+python -m scripts.grm_lt1 --summary both > artifacts/grm_lt1/comparison.json
+# Exits 2 on NON_FIT or a non-green CPU gate. Never bypass this check.
+python -m scripts.grm_lt1 --preflight
+# Reachable only under a separately registered successor; no --force path.
+python -m scripts.grm_lt1 --resume

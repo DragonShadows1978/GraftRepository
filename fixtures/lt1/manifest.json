@@ -1,0 +1,17 @@
+{
+  "files": {
+    "dialogue.json": "57aac20ddc8a3379fa03ded29dc5609a1f4cdc2f973ec52241853a5c2e63bb83",
+    "turn_plan.md": "516c127fe8cfda523a87c489739732205d4bdd308efcc605e490d4d92b676f58"
+  },
+  "recalls": 35,
+  "recap": 1,
+  "turn_mix": {
+    "alias": 10,
+    "correction": 15,
+    "fact": 60,
+    "ordinary": 79,
+    "probe": 35,
+    "recap": 1
+  },
+  "turns": 200
+}

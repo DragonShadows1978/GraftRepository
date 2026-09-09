@@ -1,0 +1,7 @@
+{
+  "evidence_class": "author CPU suite; no GPU, no blind validation",
+  "log_sha256": "c11ff7125fcf0a9d4dc65878c2bba25b6465aba6eb930efb077f3681c769ae51",
+  "registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c",
+  "returncode": 1,
+  "status": "RED"
+}
