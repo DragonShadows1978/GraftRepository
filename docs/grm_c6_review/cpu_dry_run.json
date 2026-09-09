@@ -1,0 +1,873 @@
+{
+  "cpu_cells": [
+    {
+      "id": "test_deepseek_grm_hooks_static",
+      "file": "tests/test_deepseek_grm_hooks_static.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_gpt_oss20b_e14_backend_fix",
+      "file": "tests/test_gpt_oss20b_e14_backend_fix.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_adm1_3_dual_frame",
+      "file": "tests/test_grm_adm1_3_dual_frame.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_adm1_probe_adjudication",
+      "file": "tests/test_grm_adm1_probe_adjudication.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_adm1_snapshot",
+      "file": "tests/test_grm_adm1_snapshot.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_admission",
+      "file": "tests/test_grm_admission.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_arena_step_rollback",
+      "file": "tests/test_grm_arena_step_rollback.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_det1_11_achieved",
+      "file": "tests/test_grm_det1_11_achieved.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_det1_11_census",
+      "file": "tests/test_grm_det1_11_census.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_det1_11_envelope_lineage",
+      "file": "tests/test_grm_det1_11_envelope_lineage.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_det1_3_snapshot",
+      "file": "tests/test_grm_det1_3_snapshot.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_det1_5_campaign",
+      "file": "tests/test_grm_det1_5_campaign.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_det1_7_registry",
+      "file": "tests/test_grm_det1_7_registry.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_det1_7_source_auth",
+      "file": "tests/test_grm_det1_7_source_auth.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_det1_8_source_auth",
+      "file": "tests/test_grm_det1_8_source_auth.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_det1_9_findings",
+      "file": "tests/test_grm_det1_9_findings.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_det1_9_source_auth",
+      "file": "tests/test_grm_det1_9_source_auth.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_det1_baseline_registry",
+      "file": "tests/test_grm_det1_baseline_registry.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_eb1_ephemeral_frame",
+      "file": "tests/test_grm_eb1_ephemeral_frame.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_ensure_h_error",
+      "file": "tests/test_grm_ensure_h_error.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_fold_recovered_guard",
+      "file": "tests/test_grm_fold_recovered_guard.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_importance_counterfactual",
+      "file": "tests/test_grm_importance_counterfactual.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_importance_g1g2",
+      "file": "tests/test_grm_importance_g1g2.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_importance_salience",
+      "file": "tests/test_grm_importance_salience.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_importance_telemetry",
+      "file": "tests/test_grm_importance_telemetry.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_lsr_p2a_fit_honesty",
+      "file": "tests/test_grm_lsr_p2a_fit_honesty.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_lsr_p2a_probe_path",
+      "file": "tests/test_grm_lsr_p2a_probe_path.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_lsr_p2b_e2e_fixture",
+      "file": "tests/test_grm_lsr_p2b_e2e_fixture.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_lsr_p2b_route_receipt",
+      "file": "tests/test_grm_lsr_p2b_route_receipt.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_lsr_p2c_split_descent",
+      "file": "tests/test_grm_lsr_p2c_split_descent.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_00",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_arena_step_prompt_template_formats_prompt_and_deposit_turn",
+        "test_cpp_durability_writer_commits_binary_checkpoint",
+        "test_cpp_dialect_profile_rejects_fixed_position_remountable",
+        "test_native_store_lifecycle_via_ctypes",
+        "test_native_store_clear_route_removes_persistent_route_entry",
+        "test_native_route_upsert_replaces_existing_entry"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_01",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_native_route_drops_non_finite_scores",
+        "test_native_memory_mutation_plan_via_ctypes",
+        "test_native_librarian_plan_via_ctypes",
+        "test_native_foldable_nodes_track_kind_active_and_no_fold",
+        "test_native_profile_requires_reseatable_position_law",
+        "test_native_store_gqa_dialect_via_ctypes"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_02",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_native_gqa_raw_route_matches_python_law",
+        "test_native_gqa_cuda_route_requires_explicit_bank",
+        "test_native_gqa_route_mutation_clears_cuda_bank",
+        "test_native_gqa_eligibility_mutation_clears_cuda_bank",
+        "test_native_mla_cuda_route_requires_explicit_bank",
+        "test_native_mla_route_mutation_clears_cuda_bank"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_03",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_native_mla_eligibility_mutation_clears_cuda_bank",
+        "test_native_gqa_segment_reduce_matches_python_law",
+        "test_native_gqa_single_key_segment_matches_python_law",
+        "test_native_gqa_rowblock_segment_matches_python_law",
+        "test_native_gqa_qt4_even_repeat_route_matches_python_law",
+        "test_native_gqa_topk_selection_preserves_tie_order"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_04",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_native_gqa_route_drops_non_finite_scores",
+        "test_native_gqa_key_bank_rebuilds_after_route_update",
+        "test_native_route_list_rejects_terminal_offset_mismatch",
+        "test_native_store_slices_host_tensor_payload",
+        "test_native_route_uses_python_fractional_lexical_bonus",
+        "test_native_route_skips_inactive_entries"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_05",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_native_checkpoint_preserves_route_keys_and_lexical_index",
+        "test_native_clear_payload_preserves_metadata_route_checkpoint",
+        "test_native_metadata_active_updates_route_index",
+        "test_native_memory_command_parser",
+        "test_native_extraction_policy_planner",
+        "test_native_reinforcement_planner"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_06",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_native_remember_flush_planner",
+        "test_native_runtime_event_planner",
+        "test_native_durability_mode_planner",
+        "test_native_metadata_update_planner",
+        "test_native_review_transition_planner",
+        "test_native_cull_span_planner"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_07",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_native_apply_revision_links_edges_and_retires_routes",
+        "test_native_apply_expire_retires_routes",
+        "test_native_active_node_filter_preserves_order_and_dedupes",
+        "test_native_active_text_matches_active_case_insensitive_text",
+        "test_native_source_closure_walks_folded_graph",
+        "test_native_route_filters_metadata_fields"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_08",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_native_route_filter_bitmasks_fall_back_for_unknown_values",
+        "test_native_mla_gemv_arena_matches_reference_scan",
+        "test_native_mla_gemv_arena_openmp_matches_reference_scan",
+        "test_native_mla_int4_refine_all_matches_fp32_route",
+        "test_native_mla_tied_scores_use_node_id_order",
+        "test_native_mla_int4_single_row_fast_path_matches_fp32_route"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_09",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_native_router_serializes_concurrent_route_updates",
+        "test_native_gqa_router_snapshots_concurrent_route_updates",
+        "test_native_store_structured_payload_tensors_via_ctypes",
+        "test_native_metadata_json_round_trips_through_checkpoint",
+        "test_native_node_text_round_trips_through_checkpoint",
+        "test_native_node_summary_round_trips_through_checkpoint"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_10",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_native_provenance_round_trips_through_checkpoint",
+        "test_native_fact_identity_scan_round_trips_through_checkpoint",
+        "test_native_checkpoint_round_trips_structured_payloads",
+        "test_native_dirty_plan_tracks_payload_metadata_and_priority",
+        "test_native_checkpoint_enforces_dialect_wall",
+        "test_native_device_arena_swap_plan_via_ctypes"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_11",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_native_device_arena_evict_plan_via_ctypes",
+        "test_native_device_arena_applies_host_tensor_swap_via_ctypes",
+        "test_native_device_arena_applies_host_tensor_evict_via_ctypes",
+        "test_native_device_arena_applies_payload_swap_reference",
+        "test_native_device_arena_applies_payload_evict_reference",
+        "test_native_device_arena_rejects_host_tensor_swap_overflow"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_12",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_native_device_arena_rejects_host_tensor_evict_underflow",
+        "test_arena_commits_native_mount_state",
+        "test_arena_route_uses_native_index_for_flat_mla_nodes",
+        "test_arena_route_uses_native_child_centroid_keys",
+        "test_gqa_arena_route_uses_native_raw_qk_backend",
+        "test_gqa_arena_uses_opt_in_cuda_route_bank"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_13",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_gqa_arena_rebuilds_cuda_route_bank_when_rows_change",
+        "test_gqa_cuda_epoch_bump_covers_every_signature_changing_mutation",
+        "test_gqa_cuda_bridge_never_reuses_stale_bank_across_mutation_battery",
+        "test_gqa_cuda_epoch_bump_covers_graft_repository_mutation_battery",
+        "test_gqa_cuda_epoch_bump_covers_migrate_mutation_battery",
+        "test_gqa_cuda_bridge_paranoid_env_catches_epoch_under_invalidation"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_14",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_gqa_arena_skips_cuda_route_for_lexical_queries",
+        "test_arena_route_falls_back_for_child_centroid_without_native_multikey",
+        "test_arena_python_route_drops_non_finite_scores",
+        "test_arena_python_route_vectorizes_flat_mla_scores",
+        "test_query_lex_tokens_keep_lowercase_content_words",
+        "test_query_side_lex_ranks_short_label_node_above_long_zero_overlap"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_15",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_query_side_lex_silent_when_no_content_hit_keeps_latent",
+        "test_arena_descent_expand_uses_native_source_closure",
+        "test_arena_descent_expand_falls_back_to_python_sources",
+        "test_arena_descent_expand_keeps_identifier_filter_in_python",
+        "test_repository_native_route_sync_includes_child_centroids",
+        "test_mla_native_to_idx_epoch_bump_covers_every_signature_changing_mutation"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_16",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_mla_native_to_idx_map_fast_path_returns_same_cached_object",
+        "test_mla_native_to_idx_map_under_invalidation_would_be_visible",
+        "test_mla_route_cand_base_fast_path_and_staleness",
+        "test_mla_route_cand_semantics_byte_identical_to_inline_comprehension",
+        "test_mla_limited_route_prefix_parity_mixed_eligibility_fuzz",
+        "test_mla_limited_route_prefix_parity_vs_full_path"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_17",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_mla_limited_route_prefix_parity_with_excludes_and_fuzz",
+        "test_mla_limited_route_prefix_parity_limit_larger_than_eligible",
+        "test_mla_limited_route_prefix_parity_limit_zero",
+        "test_mla_limited_route_prefix_parity_excluded_winner",
+        "test_mla_limited_route_non_finite_scores_present",
+        "test_mla_arena_uses_opt_in_cuda_route_bank"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_native_runtime_18",
+      "file": "tests/test_grm_native_runtime.py",
+      "selection": [
+        "test_mla_arena_rebuilds_cuda_route_bank_when_rows_change",
+        "test_mla_arena_skips_cuda_route_for_lexical_queries",
+        "test_mla_cuda_epoch_bump_covers_every_signature_changing_mutation",
+        "test_mla_cuda_bridge_never_reuses_stale_bank_across_mutation_battery",
+        "test_mla_cuda_route_falls_back_on_out_of_range_row_id"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_probe_ladder",
+      "file": "tests/test_grm_probe_ladder.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_route_seams_gate",
+      "file": "tests/test_grm_route_seams_gate.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_router_baseline",
+      "file": "tests/test_grm_router_baseline.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_rs1_read_strength",
+      "file": "tests/test_grm_rs1_read_strength.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_rs2_mount_read",
+      "file": "tests/test_grm_rs2_mount_read.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_rs3_capture_pin_seat",
+      "file": "tests/test_grm_rs3_capture_pin_seat.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_rs3_tables",
+      "file": "tests/test_grm_rs3_tables.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_rs4_baseline_and_gates",
+      "file": "tests/test_grm_rs4_baseline_and_gates.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_rs4_row_split",
+      "file": "tests/test_grm_rs4_row_split.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_rt1_split_child_routing",
+      "file": "tests/test_grm_rt1_split_child_routing.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_00",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_dialect_descriptor_uses_deepseek_mla_dimensions",
+        "test_dialect_descriptor_records_graftability_profiles",
+        "test_dialect_descriptor_accepts_arena_graftability_override",
+        "test_dirty_flush_and_reload_lifecycle",
+        "test_async_flush_manifest_lsn_does_not_skip_concurrent_wal",
+        "test_atomic_json_publish_preserves_prior_file_on_failure"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_01",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_atomic_npz_publish_preserves_prior_file_on_failure",
+        "test_cull_graft_slices_payloads_and_preserves_lineage",
+        "test_cull_graft_uses_native_slice_when_available",
+        "test_cull_graft_sections_uses_intentional_boundaries",
+        "test_select_graft_span_keeps_parent_active_and_records_provenance",
+        "test_native_provenance_guides_why_memory_rows"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_02",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_plan_cull_sections_caps_large_sections",
+        "test_plan_cull_sections_uses_original_prefix_token_edges",
+        "test_runtime_cull_graft_autosaves_and_reports",
+        "test_memory_command_culls_graft_with_token_cap",
+        "test_native_memory_command_culls_graft_by_sections",
+        "test_native_memory_command_selects_graft_span"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_03",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_native_memory_commands_execute_review_buffer",
+        "test_remember_attaches_semantic_metadata",
+        "test_memory_commands_revision_and_review",
+        "test_memory_commands_execute_review_buffer_python_parser",
+        "test_memory_commands_autosave_all_mutations",
+        "test_memory_control_commands_update_and_read_metadata"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_04",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_native_runtime_event_plan_guides_runtime_finish",
+        "test_memory_mode_commands_change_wal_behavior",
+        "test_native_durability_mode_plan_drives_wal_behavior",
+        "test_native_metadata_update_plan_drives_memory_command",
+        "test_native_memory_mutation_plan_guides_text_mutations",
+        "test_durability_mode_recovers_from_manifest_and_wal"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_05",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_wal_upgrade_snapshots_existing_dirty_nodes",
+        "test_wal_gap_placeholders_can_checkpoint_after_replay",
+        "test_project_safe_forces_explicit_project_memory_flush",
+        "test_runtime_coordinator_drives_chat_flush_and_extraction",
+        "test_review_buffer_edit_reject_and_manifest_wal_replay",
+        "test_manifest_review_replay_ignores_stale_low_lsn_records"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_06",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_runtime_review_execution_autosaves_and_reports",
+        "test_native_review_transition_plan_guides_review_lifecycle",
+        "test_librarian_respects_arena_era_folding_capability",
+        "test_native_librarian_plan_guides_fold_scheduler",
+        "test_native_librarian_plan_guides_deferred_backpressure",
+        "test_native_memory_command_parser_drives_repository_policy"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_07",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_extraction_candidate_interface_is_conservative",
+        "test_extraction_duplicate_fact_reinforces_existing_node",
+        "test_low_trust_duplicate_does_not_overwrite_reinforcement_metadata",
+        "test_low_confidence_duplicate_fact_still_goes_to_review",
+        "test_approved_duplicate_review_reinforces_existing_fact",
+        "test_approved_conflicting_review_supersedes_existing_fact"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_08",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_extraction_reinforcement_maps_native_graph_refs",
+        "test_native_fact_scan_guides_extraction_policy",
+        "test_extraction_explicit_supersede_requires_authority",
+        "test_authoritative_extraction_unions_conflicts_and_requested_supersedes",
+        "test_native_active_filter_guides_explicit_extraction_targets",
+        "test_native_text_scan_guides_memory_command_targets"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_09",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_native_text_scan_uses_ascii_cache_not_full_corpus_iteration",
+        "test_native_node_summary_guides_memory_read_rows",
+        "test_extraction_conflicts_respect_temporal_validity",
+        "test_native_fact_scan_applies_temporal_effective_policy",
+        "test_extraction_expire_action_retires_and_recovers_from_wal",
+        "test_runtime_extraction_candidate_autosaves_and_reports"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_10",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_runtime_extractor_runs_on_completed_turns",
+        "test_runtime_extractor_review_and_error_policy",
+        "test_runtime_extractor_malformed_candidates_are_isolated",
+        "test_runtime_extractor_malformed_candidate_raise_policy",
+        "test_dirty_node_can_leave_vram_before_disk_flush",
+        "test_load_enforces_vram_budget"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_11",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_load_respects_vram_budget_before_device_unpack",
+        "test_native_load_budget_eviction_keeps_durable_payload_clean",
+        "test_native_eviction_refreshes_stale_metadata_only_node",
+        "test_native_reload_mirrors_retired_cold_nodes_as_metadata_only",
+        "test_wal_recovers_text_metadata_without_manifest",
+        "test_wal_recovery_adopts_orphaned_payload_before_manifest"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_12",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_missing_payload_load_degrades_to_pending",
+        "test_native_wal_recovery_mirrors_text_without_route",
+        "test_wal_recovery_keeps_forgotten_nodes_inert",
+        "test_wal_recovery_replays_extraction_supersession",
+        "test_wal_recovery_preserves_fold_abort_exemption",
+        "test_manifest_load_replays_post_checkpoint_forget"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_13",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_manifest_load_replays_post_checkpoint_correction",
+        "test_native_manifest_load_mirrors_post_checkpoint_pending_without_route",
+        "test_native_manifest_load_replays_wal_into_route_state",
+        "test_native_store_mirrors_repository_lifecycle",
+        "test_repository_native_store_supports_gqa_dialect",
+        "test_repository_native_route_respects_memory_lifecycle"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_14",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_repository_native_route_filters_metadata_policy",
+        "test_repository_native_mirror_can_checkpoint_payloads",
+        "test_repository_skips_clean_native_checkpoint_rewrite",
+        "test_flush_now_uses_native_dirty_flush_order_without_reordering_manifest",
+        "test_repository_native_mirror_persists_semantic_metadata",
+        "test_repository_attaches_native_store_to_arena"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_15",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_repository_auto_attaches_native_store_from_env",
+        "test_repository_can_disable_env_native_auto_attach",
+        "test_forget_empty_query_matches_nothing",
+        "test_update_memory_metadata_empty_query_matches_nothing",
+        "test_torn_wal_tail_is_dropped_and_repaired_on_reopen",
+        "test_malformed_wal_record_before_later_records_refuses_open"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_runtime_lifecycle_16",
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "selection": [
+        "test_native_checkpoint_captures_nodes_flushed_after_first_checkpoint",
+        "test_native_text_scan_falls_back_for_non_ascii",
+        "test_correct_memory_whitespace_query_supersedes_nothing",
+        "test_native_temporal_policy_stays_python_owned",
+        "test_native_fact_scan_falls_back_for_non_ascii_identity"
+      ],
+      "wall_estimate_s": 40,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_s4_demotion",
+      "file": "tests/test_grm_s4_demotion.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_s4_fold_order",
+      "file": "tests/test_grm_s4_fold_order.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_s4_ledger",
+      "file": "tests/test_grm_s4_ledger.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_sc1_1_grounding_glyphs",
+      "file": "tests/test_grm_sc1_1_grounding_glyphs.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_sc1_2_e2e_pairs",
+      "file": "tests/test_grm_sc1_2_e2e_pairs.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_sc1_demand_loop",
+      "file": "tests/test_grm_sc1_demand_loop.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_sc2_calibration_early_abort",
+      "file": "tests/test_grm_sc2_calibration_early_abort.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_supersession_battery",
+      "file": "tests/test_grm_supersession_battery.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_three_pass",
+      "file": "tests/test_grm_three_pass.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_grm_wc1_sweep",
+      "file": "tests/test_grm_wc1_sweep.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_lsr_p2c_1_census",
+      "file": "tests/test_lsr_p2c_1_census.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    },
+    {
+      "id": "test_qwen38_cpu",
+      "file": "tests/test_qwen38_cpu.py",
+      "selection": [],
+      "wall_estimate_s": 8,
+      "timeout_s": 55
+    }
+  ],
+  "gpu_execution": false,
+  "gpu_plan": "Proposed profile EB1 width96 capture=live near_live=true RT1=true, demand=false; all original-correct controls retained, supersession9/9 census9/10 longhistory13/14 before and after process restart, metadata durable. Control=current defaults same fixtures. Inherited unpinned payloads separate equal-standing cells. Non-fit cells stop, no extended lease.",
+  "gpu_budget_s": 1440
+}

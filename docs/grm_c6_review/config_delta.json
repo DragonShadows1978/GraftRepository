@@ -1,0 +1,248 @@
+{
+  "config/grm_demand_registered.json": {
+    "main": "ABSENT",
+    "lc1": {
+      "schema": "grm.demand.registered.v1",
+      "order": "orders/GRM_SC1_DEMAND_LOOP_NGH.md",
+      "detector": "D-NGH",
+      "threshold": 0.3380523274342219,
+      "score": "per-token full-layer mean mounted_mass",
+      "direction": "trigger_if_strictly_below",
+      "selection": "minimum_of_served_turn_minima_strict_envelope",
+      "carried_not_refit": true,
+      "provenance": {
+        "thresholds_path": "artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json",
+        "thresholds_sha256": "2149a44b6136fd1b19fe64445a17baf35b5f8885b8b58c5eccc6df9ad321d500",
+        "race_analysis_receipt_path": "artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/analysis/analysis_receipt_89bcd331ae7f9ef4.json",
+        "race_analysis_receipt_sha256": "89bcd331ae7f9ef4cf444712b9926a9220823d35ac5f16358f16daa4fb484858",
+        "fit_side": "served_controls_only",
+        "fit_fixture_ids": [
+          "e2e_t09_cypher_bridge",
+          "e2e_t16_lyra_dock"
+        ],
+        "fit_turn_minima": [
+          0.3380523274342219,
+          0.3774214796721935
+        ],
+        "race_recall": 1.0,
+        "race_false_positive_rate": 0.1,
+        "race_f1": 0.952,
+        "race_eval_pairs": 10
+      },
+      "fit_turn_count": 2,
+      "caveat": "THIN ENVELOPE: this threshold was fit on 2 calibration turns (served controls only, strict minimum-of-minima envelope). It is CARRIED verbatim from the GRM-DET1 race and is never refit or adjusted from serving traffic. Any receipt that reports a D-NGH decision must restate this caveat.",
+      "demand_trip_cap_per_turn": 1,
+      "demand_fetch_source": "question_plus_prefix_reroute",
+      "flag": {
+        "name": "GRM_DEMAND_NGH",
+        "default": "OFF",
+        "unknown_token_behaviour": "fail_closed_to_OFF"
+      },
+      "early_abort_flag": {
+        "name": "GRM_DEMAND_EARLY_ABORT",
+        "order": "orders/GRM_SC2_CALIBRATION_EARLY_ABORT.md",
+        "default": "ON whenever GRM_DEMAND_NGH is ON",
+        "unknown_token_behaviour": "fail_to_the_default_ON",
+        "why_the_opposite_direction_from_GRM_DEMAND_NGH": "GRM_DEMAND_NGH fails closed because turning the demand loop on changes what the stack SERVES. This switch cannot change what the stack serves at all: a fired turn either serves the grounded demand trip (identical either way) or resumes the suspended attempt and serves exactly the text the un-aborted attempt would have served. It changes only how many tokens are generated on the way there, so an unreadable token fails to the default and only an explicit false selects the SC1 generate-the-whole-wrong-answer path.",
+        "demand_off_behaviour": "not consulted at all; nothing changes",
+        "off_path": "byte-identical to SC1 behaviour"
+      },
+      "candidate_threshold": 0.3181141105790933,
+      "candidate_threshold_provenance": {
+        "order": "orders/GRM_SC2_CALIBRATION_EARLY_ABORT.md",
+        "order_sha256": "4610be7e5d3ac856fd09d68d01aff07e1a36531129006952e5bc461198c15096",
+        "registration_path": "artifacts/grm_sc2/registration.json",
+        "receipt_path": "artifacts/grm_sc2/sc2_calibration_2a04614226c6287b.json",
+        "rule": "minimum_of_served_turn_minima_strict_envelope -- the race's envelope rule, CARRIED UNCHANGED",
+        "rule_source": "scripts/grm_det1_common.py::fit_thresholds (D-NGH branch)",
+        "rule_source_file_sha256": "f13f44cfa6f87dc57cec4ae9bf7fe509a6fbd0be983746202ad64da18a4d8343",
+        "fit_thresholds_function_text_sha256": "5aa8abcd6fcb9aaf0f4009104fad6e384b6c1720205d0632790e92b5f6692f68",
+        "detector_decision_function_text_sha256": "6db4552e599e6a62abe0962f1375b7bc86b96af681fbe42bead7e06f50ccf329",
+        "split_rule": "PROVENANCE SPLIT registered before computation: calibration = race-provenance served rows; held-out = post-race served rows",
+        "calibration_set_ids": [
+          "e2e_t05_orion_pin@race_eval",
+          "e2e_t09_cypher_bridge@race_calibration",
+          "e2e_t13_orion_pin@race_eval",
+          "e2e_t16_lyra_dock@race_calibration",
+          "e2e_t19_nova_key@race_eval",
+          "e2e_t22_mira_seal@race_eval",
+          "e2e_t24_terra_port@race_eval",
+          "e2e_t26_ember_code@race_eval",
+          "e2e_t30_atlas_tone@race_eval",
+          "sup_harbor_restatement@race_eval",
+          "sup_praxis_fresh@race_eval",
+          "sup_solace_fresh@race_eval"
+        ],
+        "calibration_set_n": 12,
+        "argmin_row_id": "sup_solace_fresh@race_eval",
+        "fit_turn_count": 12,
+        "held_out_false_fires_at_candidate": 1,
+        "held_out_false_fires_at_carried": 2,
+        "held_out_n": 10
+      },
+      "candidate_threshold_status": "REPORTED, NOT ADOPTED. Production reads `threshold`, never `candidate_threshold`. GRM-SC2 does NOT set `adopted_by`; adopting the candidate is David's decision with the SC2 frame receipts in view.",
+      "adoption_contract": {
+        "production_field": "threshold",
+        "candidate_field": "candidate_threshold",
+        "gate_field": "adopted_by",
+        "rule": "core.grm_demand.registered_threshold() returns `threshold` unless `adopted_by` is set to a non-empty string naming who adopted the candidate and in which order. While `adopted_by` is absent, a config carrying a candidate is still a carried-race config and refuses to behave otherwise.",
+        "adopted_by_is_NOT_set_by_this_order": true
+      }
+    }
+  },
+  "config/grm_live_registered_baselines.json": {
+    "main": "ABSENT",
+    "lc1": {
+      "active_registration": {
+        "id": "GRM-ADM2.2-default-on-20260831T154804440365Z_61064",
+        "registration_receipt": {
+          "bytes": 55817,
+          "path": "artifacts/grm_adm2/default_on_20260831T154804440365Z_61064/gate_result.json",
+          "sha256": "e2ff807356604911520eac922befd82384fef6354720b37cd9b76d119c8d9378"
+        },
+        "resolved_flags": {
+          "adm_decisive": true,
+          "probe_ladder": true,
+          "sup_resolve": true
+        },
+        "status": "PASS"
+      },
+      "families": {
+        "certified_34_turn": {
+          "comparator": {
+            "answer": "exact_bytes",
+            "kind": "same_model_exact_answer_bytes_ordered_mount_ids_v1",
+            "mounts": "ordered_authoritative_final_physical_ids",
+            "schema": "grm.registered_baseline_comparator.v1"
+          },
+          "consumer": "DET1 GPT-OSS-20B certified 34-turn probes",
+          "format": "grm_e2e_probe_scorecard_v1",
+          "gate_stage": "e2e_default",
+          "producer": "ADM2 GPT-OSS-20B E2E-34 single-pass default-on gate",
+          "registered_projection_sha256": "0318050b357bd651eb70b36e82fcf4ab203752e70049c600974322bd3b0f0889",
+          "source": {
+            "bytes": 30185,
+            "path": "artifacts/grm_adm2/default_on_20260831T154804440365Z_61064/e2e_default/session/probe_scorecard.json",
+            "sha256": "c2f9ae77cc044f9b68cfcfec6377ee49b5aa2574ca3ee6f0160763fd8d0a94f3"
+          },
+          "stage_receipt": {
+            "bytes": 4848,
+            "path": "artifacts/grm_adm2/default_on_20260831T154804440365Z_61064/e2e_default/stage_complete.json",
+            "sha256": "83cd27939985cdb75b48eba5d058ed7f7f2389272078c398b76d489b0e3a360b"
+          },
+          "stage_source_field": "scorecard"
+        },
+        "supersession_battery_on_gpt_oss": {
+          "comparator": {
+            "answer": "det1_fixture_expected_present_and_rejected_absent_case_insensitive_whole_value",
+            "kind": "cross_model_det_fixture_accept_reject_ordered_physical_identity_v1",
+            "mounts": "ordered_fixture_physical_ids_and_nodes",
+            "schema": "grm.registered_baseline_comparator.v1"
+          },
+          "consumer": "DET1 GPT-OSS-20B replay of the same physical supersession fixtures",
+          "family_key_semantics": "frozen DET1 consumer alias; not the producer model identity",
+          "fixture_sources": {
+            "correction_then_restatement": {
+              "bytes": 2303,
+              "path": "tests/fixtures/supersession_battery/correction_then_restatement.json",
+              "sha256": "ea97d4007d66357442f0424f76200984e8c2f39311618a4b892e88db9ad90f4b"
+            },
+            "fresh_fact_controls": {
+              "bytes": 2357,
+              "path": "tests/fixtures/supersession_battery/fresh_fact_controls.json",
+              "sha256": "9b75e1e4f70d77524d7d099f1416ae34ea3cafc149e749e26e7a5dd47b298d75"
+            },
+            "multi_hop_a_b_c": {
+              "bytes": 2300,
+              "path": "tests/fixtures/supersession_battery/multi_hop_a_b_c.json",
+              "sha256": "036f291dc4f91d7e38b23d033f97d45b8d4b1176afa1741624f7728355a13d90"
+            },
+            "short_correction_long_competitor": {
+              "bytes": 2101,
+              "path": "tests/fixtures/supersession_battery/short_correction_long_competitor.json",
+              "sha256": "c06decbe127dd228bdf6529b002ccdaaf5f628addda003692e5e49d9e47c1221"
+            }
+          },
+          "format": "grm_supersession_probe_receipt_v1",
+          "gate_stage": "supersession_default",
+          "producer": "ADM2 MiniCPM3-4B MLA supersession default-on gate",
+          "producer_classification_requirement": "correct",
+          "projection_portability": "cross-model producer answer bytes are evidence only; compare DET fixture accept/reject classification+match and ordered fixture-local physical IDs/nodes; no cross-model full arena-row identity claim",
+          "registered_projection_sha256": "655aaa9aa9b261b88fb43227cfe7d96603d56462bc7a6ff845d3dd0411297740",
+          "source": {
+            "bytes": 8450,
+            "path": "artifacts/grm_adm2/default_on_20260831T154804440365Z_61064/supersession_default/battery.jsonl",
+            "sha256": "716e5d68e0c897f579ba339546e237731b1cb5b88a9103ed1cd098c2db045686"
+          },
+          "stage_receipt": {
+            "bytes": 2501,
+            "path": "artifacts/grm_adm2/default_on_20260831T154804440365Z_61064/supersession_default/stage_complete.json",
+            "sha256": "c670e2a5f03482ee9f52ad4e5c5d104bfe606b3b1dcde3152702a7f7f17bb739"
+          },
+          "stage_source_field": "receipt"
+        }
+      },
+      "previous_registrations": [
+        {
+          "id": "GRM-SUP-L2-default-on-20260830T165648866160Z_4123111",
+          "families": {
+            "supersession_battery_on_gpt_oss": {
+              "comparator": {
+                "answer": "det1_fixture_expected_present_and_rejected_absent_case_insensitive_whole_value",
+                "kind": "cross_model_det_fixture_accept_reject_ordered_physical_identity_v1",
+                "mounts": "ordered_fixture_physical_ids_and_nodes",
+                "schema": "grm.registered_baseline_comparator.v1"
+              },
+              "consumer": "DET1 GPT-OSS-20B replay of the same physical supersession fixtures",
+              "family_key_semantics": "frozen DET1 consumer alias; not the producer model identity",
+              "format": "grm_supersession_probe_receipt_v1",
+              "fixture_sources": {
+                "correction_then_restatement": {
+                  "bytes": 2303,
+                  "path": "tests/fixtures/supersession_battery/correction_then_restatement.json",
+                  "sha256": "ea97d4007d66357442f0424f76200984e8c2f39311618a4b892e88db9ad90f4b"
+                },
+                "fresh_fact_controls": {
+                  "bytes": 2357,
+                  "path": "tests/fixtures/supersession_battery/fresh_fact_controls.json",
+                  "sha256": "9b75e1e4f70d77524d7d099f1416ae34ea3cafc149e749e26e7a5dd47b298d75"
+                },
+                "multi_hop_a_b_c": {
+                  "bytes": 2300,
+                  "path": "tests/fixtures/supersession_battery/multi_hop_a_b_c.json",
+                  "sha256": "036f291dc4f91d7e38b23d033f97d45b8d4b1176afa1741624f7728355a13d90"
+                },
+                "short_correction_long_competitor": {
+                  "bytes": 2101,
+                  "path": "tests/fixtures/supersession_battery/short_correction_long_competitor.json",
+                  "sha256": "c06decbe127dd228bdf6529b002ccdaaf5f628addda003692e5e49d9e47c1221"
+                }
+              },
+              "gate_source_key": "default_on",
+              "producer": "pre-ADM2 MiniCPM3-4B MLA supersession registration",
+              "producer_classification_requirement": "registered_evidence_only",
+              "projection_portability": "cross-model producer answer bytes are evidence only; compare DET fixture accept/reject classification+match and ordered fixture-local physical IDs/nodes",
+              "registered_projection_sha256": "4ef9ad270bf3a6e5ccd798f16c0be43f9c4d6544be7d77c1d33d38542a4a1b94",
+              "source": {
+                "bytes": 6347,
+                "path": "artifacts/grm_supersession/l2_default_on_20260830T165648866160Z_4123111/default_on.jsonl",
+                "sha256": "ba550e37915b09bbf4f80347b32386b3500ea360afef28b054f91463dce4e6b1"
+              }
+            }
+          },
+          "registration_receipt": {
+            "bytes": 9519,
+            "path": "artifacts/grm_supersession/l2_default_on_20260830T165648866160Z_4123111/gate_result.json",
+            "sha256": "f2d82d105b7ccaba1c1dfd65b54e56c9f2829e3064f54ea471b4d691e22ca211"
+          },
+          "status": "RETIRED"
+        }
+      ],
+      "projection": {
+        "comparison": "family-specific comparator contract: same-model E2E exact answer bytes+ordered final IDs; cross-model supersession DET fixture semantics+ordered fixture IDs/nodes",
+        "excluded": "pre-resolution mount plans, model-specific token counts, resident/evicted counts, timing, detector signals; cross-model producer answer bytes are evidence rather than an equality oracle"
+      },
+      "schema": "grm.live_registered_baseline_registry.v1"
+    }
+  }
+}

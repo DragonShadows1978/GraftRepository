@@ -1,0 +1,80 @@
+FFFFFFF.                                                                 [100%]
+=================================== FAILURES ===================================
+__________________ test_live_harbor_registration_is_post_adm2 __________________
+tests/test_grm_det1_baseline_registry.py:55: in test_live_harbor_registration_is_post_adm2
+    registry, anchor = load_live_registry()
+                       ^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_baseline_registry.py:108: in load_live_registry
+    registration_path = _validate_record(
+scripts/grm_det1_baseline_registry.py:77: in _validate_record
+    raise BaselineRegistryError(f"{label} hash/size record does not validate")
+E   scripts.grm_det1_baseline_registry.BaselineRegistryError: active registration receipt hash/size record does not validate
+__________ test_served_comparison_distinguishes_live_retired_and_leak __________
+tests/test_grm_det1_baseline_registry.py:82: in test_served_comparison_distinguishes_live_retired_and_leak
+    live = compare_served_to_live_registry(
+scripts/grm_det1_baseline_registry.py:637: in compare_served_to_live_registry
+    registry, anchor = load_live_registry(registry_path_override)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_baseline_registry.py:108: in load_live_registry
+    registration_path = _validate_record(
+scripts/grm_det1_baseline_registry.py:77: in _validate_record
+    raise BaselineRegistryError(f"{label} hash/size record does not validate")
+E   scripts.grm_det1_baseline_registry.BaselineRegistryError: active registration receipt hash/size record does not validate
+_____ test_orion_cross_model_uses_det_fixture_semantics_not_producer_bytes _____
+tests/test_grm_det1_baseline_registry.py:101: in test_orion_cross_model_uses_det_fixture_semantics_not_producer_bytes
+    short = compare_served_to_live_registry(
+scripts/grm_det1_baseline_registry.py:637: in compare_served_to_live_registry
+    registry, anchor = load_live_registry(registry_path_override)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_baseline_registry.py:108: in load_live_registry
+    registration_path = _validate_record(
+scripts/grm_det1_baseline_registry.py:77: in _validate_record
+    raise BaselineRegistryError(f"{label} hash/size record does not validate")
+E   scripts.grm_det1_baseline_registry.BaselineRegistryError: active registration receipt hash/size record does not validate
+____ test_cross_model_value_semantics_normalize_emphasis_and_hyphen_glyphs _____
+tests/test_grm_det1_baseline_registry.py:135: in test_cross_model_value_semantics_normalize_emphasis_and_hyphen_glyphs
+    result = compare_served_to_live_registry(
+scripts/grm_det1_baseline_registry.py:637: in compare_served_to_live_registry
+    registry, anchor = load_live_registry(registry_path_override)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_baseline_registry.py:108: in load_live_registry
+    registration_path = _validate_record(
+scripts/grm_det1_baseline_registry.py:77: in _validate_record
+    raise BaselineRegistryError(f"{label} hash/size record does not validate")
+E   scripts.grm_det1_baseline_registry.BaselineRegistryError: active registration receipt hash/size record does not validate
+_____ test_same_model_e2e_contract_remains_exact_bytes_and_ordered_mounts ______
+tests/test_grm_det1_baseline_registry.py:155: in test_same_model_e2e_contract_remains_exact_bytes_and_ordered_mounts
+    registry, _anchor = load_live_registry()
+                        ^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_baseline_registry.py:108: in load_live_registry
+    registration_path = _validate_record(
+scripts/grm_det1_baseline_registry.py:77: in _validate_record
+    raise BaselineRegistryError(f"{label} hash/size record does not validate")
+E   scripts.grm_det1_baseline_registry.BaselineRegistryError: active registration receipt hash/size record does not validate
+_________________ test_registry_source_hash_drift_fails_closed _________________
+tests/test_grm_det1_baseline_registry.py:171: in test_registry_source_hash_drift_fails_closed
+    registry, _anchor = load_live_registry()
+                        ^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_baseline_registry.py:108: in load_live_registry
+    registration_path = _validate_record(
+scripts/grm_det1_baseline_registry.py:77: in _validate_record
+    raise BaselineRegistryError(f"{label} hash/size record does not validate")
+E   scripts.grm_det1_baseline_registry.BaselineRegistryError: active registration receipt hash/size record does not validate
+___________ test_comparator_and_fixture_identity_tamper_fail_closed ____________
+tests/test_grm_det1_baseline_registry.py:182: in test_comparator_and_fixture_identity_tamper_fail_closed
+    registry, _anchor = load_live_registry()
+                        ^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_baseline_registry.py:108: in load_live_registry
+    registration_path = _validate_record(
+scripts/grm_det1_baseline_registry.py:77: in _validate_record
+    raise BaselineRegistryError(f"{label} hash/size record does not validate")
+E   scripts.grm_det1_baseline_registry.BaselineRegistryError: active registration receipt hash/size record does not validate
+=========================== short test summary info ============================
+FAILED tests/test_grm_det1_baseline_registry.py::test_live_harbor_registration_is_post_adm2
+FAILED tests/test_grm_det1_baseline_registry.py::test_served_comparison_distinguishes_live_retired_and_leak
+FAILED tests/test_grm_det1_baseline_registry.py::test_orion_cross_model_uses_det_fixture_semantics_not_producer_bytes
+FAILED tests/test_grm_det1_baseline_registry.py::test_cross_model_value_semantics_normalize_emphasis_and_hyphen_glyphs
+FAILED tests/test_grm_det1_baseline_registry.py::test_same_model_e2e_contract_remains_exact_bytes_and_ordered_mounts
+FAILED tests/test_grm_det1_baseline_registry.py::test_registry_source_hash_drift_fails_closed
+FAILED tests/test_grm_det1_baseline_registry.py::test_comparator_and_fixture_identity_tamper_fail_closed
+7 failed, 1 passed in 0.27s

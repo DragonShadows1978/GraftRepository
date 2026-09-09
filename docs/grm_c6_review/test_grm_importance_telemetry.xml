@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="12" time="0.379" timestamp="2026-09-08T23:53:38.624494-04:00" hostname="MilleniumFalcon"><testcase classname="tests.test_grm_importance_telemetry" name="test_mount_seat_ranges_pack_from_n_sink_in_mount_order" time="0.000" /><testcase classname="tests.test_grm_importance_telemetry" name="test_s1_mass_seat_to_node_aggregation_and_non_live_share" time="0.000" /><testcase classname="tests.test_grm_importance_telemetry" name="test_s1_mass_means_over_all_layers_not_just_last" time="0.000" /><testcase classname="tests.test_grm_importance_telemetry" name="test_s1_mass_per_layer_diagnostics_not_used_by_headline" time="0.007" /><testcase classname="tests.test_grm_importance_telemetry" name="test_s1_mass_handles_no_mounts_and_no_accumulator_without_div_by_zero" time="0.000" /><testcase classname="tests.test_grm_importance_telemetry" name="test_s1_mass_grows_with_seat_count_across_decode_steps" time="0.000" /><testcase classname="tests.test_grm_importance_telemetry" name="test_telemetry_flag_defaults_off_and_accumulator_starts_none" time="0.004"><failure message="RuntimeError: cudaMalloc failed: no CUDA-capable device is detected">tests/test_grm_importance_telemetry.py:164: in test_telemetry_flag_defaults_off_and_accumulator_starts_none
+    attn = MLAAttentionTC(MiniCPM3Config())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+core/minicpm3_tc.py:76: in __init__
+    self.q_a_norm = RMSNormTC(cfg.q_lora_rank, cfg.rms_norm_eps)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+core/mistral7b_tc.py:204: in __init__
+    self.weight = tc.tensor(np.ones(dim, np.float32), dtype="float32")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../Project-Tensor/tensor_cuda/tensor_cuda/__init__.py:48: in tensor
+    return _C.tensor(arr, device, requires_grad)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   RuntimeError: cudaMalloc failed: no CUDA-capable device is detected</failure></testcase><testcase classname="tests.test_grm_importance_telemetry" name="test_reset_telemetry_clears_accumulator" time="0.000"><failure message="RuntimeError: cudaMalloc failed: no CUDA-capable device is detected">tests/test_grm_importance_telemetry.py:170: in test_reset_telemetry_clears_accumulator
+    attn = MLAAttentionTC(MiniCPM3Config())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+core/minicpm3_tc.py:76: in __init__
+    self.q_a_norm = RMSNormTC(cfg.q_lora_rank, cfg.rms_norm_eps)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+core/mistral7b_tc.py:204: in __init__
+    self.weight = tc.tensor(np.ones(dim, np.float32), dtype="float32")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../Project-Tensor/tensor_cuda/tensor_cuda/__init__.py:48: in tensor
+    return _C.tensor(arr, device, requires_grad)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   RuntimeError: cudaMalloc failed: no CUDA-capable device is detected</failure></testcase><testcase classname="tests.test_grm_importance_telemetry" name="test_accumulate_telemetry_grows_without_copying_stale_tail" time="0.000"><failure message="RuntimeError: cudaMalloc failed: no CUDA-capable device is detected">tests/test_grm_importance_telemetry.py:180: in test_accumulate_telemetry_grows_without_copying_stale_tail
+    attn = MLAAttentionTC(MiniCPM3Config())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+core/minicpm3_tc.py:76: in __init__
+    self.q_a_norm = RMSNormTC(cfg.q_lora_rank, cfg.rms_norm_eps)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+core/mistral7b_tc.py:204: in __init__
+    self.weight = tc.tensor(np.ones(dim, np.float32), dtype="float32")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../Project-Tensor/tensor_cuda/tensor_cuda/__init__.py:48: in tensor
+    return _C.tensor(arr, device, requires_grad)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   RuntimeError: cudaMalloc failed: no CUDA-capable device is detected</failure></testcase><testcase classname="tests.test_grm_importance_telemetry" name="test_accumulate_telemetry_shrink_restarts_clean_no_crash" time="0.000"><failure message="RuntimeError: cudaMalloc failed: no CUDA-capable device is detected">tests/test_grm_importance_telemetry.py:196: in test_accumulate_telemetry_shrink_restarts_clean_no_crash
+    attn = MLAAttentionTC(MiniCPM3Config())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+core/minicpm3_tc.py:76: in __init__
+    self.q_a_norm = RMSNormTC(cfg.q_lora_rank, cfg.rms_norm_eps)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+core/mistral7b_tc.py:204: in __init__
+    self.weight = tc.tensor(np.ones(dim, np.float32), dtype="float32")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../Project-Tensor/tensor_cuda/tensor_cuda/__init__.py:48: in tensor
+    return _C.tensor(arr, device, requires_grad)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   RuntimeError: cudaMalloc failed: no CUDA-capable device is detected</failure></testcase><testcase classname="tests.test_grm_importance_telemetry" name="test_accumulate_telemetry_shrink_then_grow_sequence" time="0.000"><failure message="RuntimeError: cudaMalloc failed: no CUDA-capable device is detected">tests/test_grm_importance_telemetry.py:211: in test_accumulate_telemetry_shrink_then_grow_sequence
+    attn = MLAAttentionTC(MiniCPM3Config())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+core/minicpm3_tc.py:76: in __init__
+    self.q_a_norm = RMSNormTC(cfg.q_lora_rank, cfg.rms_norm_eps)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+core/mistral7b_tc.py:204: in __init__
+    self.weight = tc.tensor(np.ones(dim, np.float32), dtype="float32")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../Project-Tensor/tensor_cuda/tensor_cuda/__init__.py:48: in tensor
+    return _C.tensor(arr, device, requires_grad)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   RuntimeError: cudaMalloc failed: no CUDA-capable device is detected</failure></testcase><testcase classname="tests.test_grm_importance_telemetry" name="test_telemetry_tap_is_gated_behind_the_flag_and_reads_w_only" time="0.002" /></testsuite></testsuites>

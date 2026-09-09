@@ -1,0 +1,2 @@
+d2999f8ce3921f834e6214ab2f0396d892e7b758 main order: QWEN38-LC1-F3 — --force-alloc for empirical OOM receipts (descent protocol)
+d0ff96a1800c86e090039e182db9e7f2f7ddd7ef HEAD -> grm-c6, lc1-wip, grm-c5, grm-c4, grm-c3 Scout Part C orders C3 (D-NGH threshold rules, 4 arms), C4 (chunk×width cross), C5 (t30/t33 grounding arms + adversarial controls), C6 (lc1-wip→main review); both sides as cells; Astra high

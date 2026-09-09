@@ -1,0 +1,8 @@
+...........................sssss                                         [100%]
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_grm_rs4_row_split.py:330: RS4 registration not written yet
+SKIPPED [1] tests/test_grm_rs4_row_split.py:348: RS4 registration not written yet
+SKIPPED [1] tests/test_grm_rs4_row_split.py:359: RS4 registration not written yet
+SKIPPED [1] tests/test_grm_rs4_row_split.py:369: RS4 registration not written yet
+SKIPPED [1] tests/test_grm_rs4_row_split.py:381: RS4 registration not written yet
+27 passed, 5 skipped in 0.15s
