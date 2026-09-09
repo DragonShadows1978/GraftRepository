@@ -1,0 +1,95 @@
+{
+  "amendment_sha256": "b8064981b42570b8cf21a6ef7eb0da196b6338f13ec2f1188113d00d7b6109f9",
+  "blind_verification": "NOT RUN; lead dispatch required",
+  "cpu": {
+    "path": "artifacts/grm_x2/cpu_gate_002.json",
+    "sha256": "79cd23f9eaab6e04f054ba80409d01ef901a951d6a22544f5974ebb304872a52"
+  },
+  "dry_run": {
+    "path": "artifacts/grm_x2/dry_run_002.json",
+    "sha256": "7c3384aa2673df2c8237bf1ceedcaaa6ed453e3747504a5406d093b1fd3434b7"
+  },
+  "evidence_class": "unit test / CPU addendum audit; NO GPU",
+  "fingerprint": "1a972a26f78e917cc0bd2ec676139687e2121bc7869ed5560daf1d10febf8171",
+  "fingerprint_inputs": {
+    "artifacts/grm_x2/fixtures/cpu.json": "4070d2a8d00c9f3f89ae6841a3737caeb603140ddead7cf605aff895c16be5bd",
+    "artifacts/grm_x2/fixtures/live.json": "08a460ad9982a84717993c2a1815125d0cdc2dfc818b02c13e90a0f372ca159f",
+    "artifacts/grm_x2/registration.json": "92bc8695b2561dc1db68954d5025b2c3d505f24470b73e4985c26c705ae23373",
+    "config/grm_demand_registered.json": "1408d0b1c2ecd91ce89172add0f7d25248953f55e0dd1594cf8d54eab8a14a98",
+    "config/grm_live_registered_baselines.json": "48609fa2e179c14401c4cbeb35c03157a8d8b241af90f15ae9568b23826da708",
+    "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "core/deepseek_v2_lite_tc.py": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07",
+    "core/gemma4_tc.py": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b",
+    "core/gpt_oss20b_tc.py": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1",
+    "core/graft_arena.py": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b",
+    "core/graft_quant.py": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130",
+    "core/graft_repository.py": "e0a0fc777d3c0f535ec915238390d7c1f1a6d43e927976351b8441a1b1358e89",
+    "core/grm_admission.py": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f",
+    "core/grm_cuda_router.py": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5",
+    "core/grm_demand.py": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3",
+    "core/grm_frame.py": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2",
+    "core/grm_native.py": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df",
+    "core/grm_runtime.py": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e",
+    "core/grm_supersession.py": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e",
+    "core/grm_text_norm.py": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8",
+    "core/grm_three_pass.py": "71e0e4f8503d4e132101fc79cce9d64daf399ffe73892e2f0102c8568d0ec0f3",
+    "core/grm_x2_witnesses.py": "357d233ec008a67caaf6c6ba32e7b470f1c520b944ab366433be207d06cae704",
+    "core/kv_graft.py": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d",
+    "core/minicpm3_tc.py": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69",
+    "core/mistral7b_tc.py": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4",
+    "core/paging_telemetry.py": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c",
+    "core/qwen35_tc.py": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b",
+    "core/qwen35_translation_poc.py": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1",
+    "core/qwen38_tc.py": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e",
+    "core/qwen3_1p7b_tc.py": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f",
+    "core/qwen3_tc.py": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa",
+    "core/qwen_tc.py": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3",
+    "scripts/grm_e2e_session.py": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450",
+    "scripts/grm_x2_common.py": "598d3ee694a7de47d3843b6b4d4ee18ef9e0ebd741ea483412d9f5b7ce9cd94e",
+    "scripts/grm_x2_cpu.py": "9bd75312c38167e26bd12899bf997a4b997e64f09ca2ef02c8aa073c3fdc8956",
+    "scripts/grm_x2_freeze.py": "c591dc374e66d63284381e85e77527136fab708a7d10b850494762af291a3dfd",
+    "scripts/grm_x2_gpu.py": "41707e8bcfd12d70db29a4b69f8044f711b3a4956ec622ebf62861dbc7847ef8",
+    "scripts/grm_x2_lead_gpu.sh": "3cb525285d4539eb6f14ce11b57efc5d09eb7fa345b60c82e9f07c865fc3ac79",
+    "scripts/grm_x2_mutations.py": "508c083a01d660f44636a92e4c165d82b79377587f4e1e6c7fec1bcaa7789dbe",
+    "scripts/grm_x2_validate.py": "30d7cd00b5d73786dc84039a2a143d338b705cd95ecf5e64ae28a5c524a4ec41",
+    "scripts/grm_x2_validate_001.py": "34f146945cc3e837dcd20bb227599b2ecb9015517120f26f041d3b74aafaa73e",
+    "tests/test_grm_x2_runner.py": "39ed7afb71a3c67ba82f253f512a426b792123c7562bf4ad4c120ca140cf5859",
+    "tests/test_grm_x2_witnesses.py": "21ac36d3b3c3d2dc5613e3a0cb8d475497501989ff1e157713f00e25606d01b3"
+  },
+  "gpu_status": "BLOCKED_NO_GPU_IN_SEAT",
+  "mutation_reused": {
+    "path": "artifacts/grm_x2/mutation_gate.json",
+    "sha256": "94db6bbf5ad865f7dfa5176a8acc544564bd44db22e428d0a668dafc7c552e8f",
+    "unchanged_module_verified": true
+  },
+  "shell": {
+    "command": [
+      "bash",
+      "-n",
+      "scripts/grm_x2_lead_gpu.sh"
+    ],
+    "exit_code": 0,
+    "log": "logs/grm_x2_shell_gate_002.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "wall_s": 0.002018745057284832
+  },
+  "status": "PASS",
+  "tests": {
+    "command": [
+      "/usr/bin/python3",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "tests/test_grm_x2_witnesses.py",
+      "tests/test_grm_x2_runner.py",
+      "tests/test_grm_sc1_1_grounding_glyphs.py",
+      "tests/test_grm_eb1_ephemeral_frame.py"
+    ],
+    "exit_code": 0,
+    "log": "logs/grm_x2_unit_gate_002.log",
+    "sha256": "61a7ae692ac1df7fac81a23f2df29e271df30fab3966e1141acbb7cf11bb416c",
+    "wall_s": 6.386992789339274
+  }
+}

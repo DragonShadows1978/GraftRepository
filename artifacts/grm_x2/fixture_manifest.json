@@ -1,0 +1,19 @@
+{
+  "fixtures": [
+    {
+      "bytes": 18060,
+      "path": "artifacts/grm_x2/fixtures/cpu.json",
+      "sha256": "4070d2a8d00c9f3f89ae6841a3737caeb603140ddead7cf605aff895c16be5bd"
+    },
+    {
+      "bytes": 14617,
+      "path": "artifacts/grm_x2/fixtures/live.json",
+      "sha256": "08a460ad9982a84717993c2a1815125d0cdc2dfc818b02c13e90a0f372ca159f"
+    }
+  ],
+  "registration": {
+    "bytes": 5339,
+    "path": "artifacts/grm_x2/registration.json",
+    "sha256": "92bc8695b2561dc1db68954d5025b2c3d505f24470b73e4985c26c705ae23373"
+  }
+}
