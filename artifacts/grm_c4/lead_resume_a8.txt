@@ -1,0 +1,88 @@
+#!/bin/bash
+set -e
+cd /mnt/ForgeRealm/wt/grm-c4
+# A8 only; original receipts and claims remain immutable.
+python scripts/grm_c4_recovery_a8.py preflight
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery census --spec e2e-2
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery census --spec e2e-3
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery census --spec e2e-4
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-01
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-02
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-03
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-04
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-05
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-06
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-07
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-08
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-09
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-10
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-11
+sleep 30
+python scripts/grm_c4_recovery_a8.py skip --cell c96_w64 --battery longhorizon --spec c4-lh-12a
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-12b
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-13a
+sleep 30
+python scripts/grm_c4_recovery_a8.py skip --cell c96_w64 --battery longhorizon --spec c4-lh-13b
+python scripts/grm_c4_recovery_a8.py score --cell c96_w64
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery sup --spec correction_then_restatement
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery sup --spec fresh_fact_controls
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery sup --spec multi_hop_a_b_c
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery sup --spec short_correction_long_competitor
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery census --spec e2e-1
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery census --spec e2e-2
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery census --spec e2e-3
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery census --spec e2e-4
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery longhorizon --spec c4-lh-01
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery longhorizon --spec c4-lh-02
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery longhorizon --spec c4-lh-03
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery longhorizon --spec c4-lh-04
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery longhorizon --spec c4-lh-05
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery longhorizon --spec c4-lh-06
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery longhorizon --spec c4-lh-07
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery longhorizon --spec c4-lh-08
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery longhorizon --spec c4-lh-09
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery longhorizon --spec c4-lh-10
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery longhorizon --spec c4-lh-11
+sleep 30
+python scripts/grm_c4_recovery_a8.py skip --cell c64_w64 --battery longhorizon --spec c4-lh-12a
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery longhorizon --spec c4-lh-12b
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_recovery_a8.py worker --cell c64_w64 --battery longhorizon --spec c4-lh-13a
+sleep 30
+python scripts/grm_c4_recovery_a8.py skip --cell c64_w64 --battery longhorizon --spec c4-lh-13b
+python scripts/grm_c4_recovery_a8.py score --cell c64_w64
+python scripts/grm_c4_recovery_a8.py score --cell c64_w96
+python scripts/grm_c4_recovery_a8.py summary

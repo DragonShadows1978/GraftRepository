@@ -1,0 +1,16 @@
+{
+  "amendment": {
+    "bytes": 4826,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/amendment_a10.json",
+    "sha256": "8108af9b123c31508bf1a5b99703b832653efd6176ba5e612ff5a09cb4e42431"
+  },
+  "gate": "Full remaining ordered sequence using inherited synthetic states/fake leases; require 38 fake leases total, three NON_FIT partial cells,19 completed segments and4 failures per cell, zero attempts for registered/dependency NON_FIT, INCONCLUSIVE cross-summary, unchanged original fixture bytes.",
+  "immutable": true,
+  "prior_art": "C4/A5/A6 (house,2026) synthetic full-sequence gates, verified local test fixtures; no novelty.",
+  "reason": "Resolve adapter-wide dependency/summary integration beyond two-shard census treatment test. No source or existing test changes.",
+  "test": {
+    "bytes": 2041,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/tests/test_grm_c4_recovery_a8_sequence.py",
+    "sha256": "0167868df6e12a52f90112218ababc511f8a3ca44dc90ff36d5e31536ca4284f"
+  }
+}

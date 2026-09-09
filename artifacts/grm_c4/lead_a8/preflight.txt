@@ -1,0 +1,51 @@
+{"df_mount": "/mnt/ForgeRealm", "available_bytes": 41018793984, "available_GB": 41.018793984, "minimum_bytes": 20000000000}
+{
+  "gpu_executed": false,
+  "amendment": {
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/amendment_a10.json",
+    "sha256": "8108af9b123c31508bf1a5b99703b832653efd6176ba5e612ff5a09cb4e42431",
+    "bytes": 4826
+  },
+  "incidents": [
+    {
+      "accounting_reason": "Lead A8: recorded top-level wall only; paired claim is not a second abandoned unit.",
+      "archive": {
+        "bytes": 16384,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/corrupt/28eb9c9dd370c07f00f2e5e10e413f987c1d80bde3d2ab11f67fe96b008b03c6/census_e2e-2.json",
+        "sha256": "28eb9c9dd370c07f00f2e5e10e413f987c1d80bde3d2ab11f67fe96b008b03c6"
+      },
+      "charge_seconds": 0,
+      "claim": {
+        "bytes": 726,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census_e2e-2.attempt.json",
+        "sha256": "ecd7924d1de68f43b734cdf2f28524918fe7cde95e04182d54a35cbb6ed766f8"
+      },
+      "classification": "CORRUPT_DISK_FULL",
+      "parse_error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 545 column 3 (char 16384)",
+      "receipt": {
+        "bytes": 16384,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census_e2e-2.json",
+        "sha256": "28eb9c9dd370c07f00f2e5e10e413f987c1d80bde3d2ab11f67fe96b008b03c6"
+      },
+      "recorded_wall_seconds": null,
+      "reruns_allowed": 1,
+      "unit": [
+        "c96_w64",
+        "census",
+        "e2e-2"
+      ]
+    }
+  ],
+  "projection": {
+    "recorded_seconds_including_incident_charges": 2415.5582846361212,
+    "remaining_estimate_seconds": 3396.0,
+    "total_seconds": 5811.558284636121,
+    "cap_seconds": 6600,
+    "headroom_seconds": 788.4417153638788,
+    "peak_reservation_seconds": 6030.558284636121,
+    "status": "FIT",
+    "remaining_units": 41,
+    "remaining_fitting_units": 37,
+    "limit": "Planning only; six registered skips and all state dependencies unchanged. Dependency-blocked fitting estimates retained. Long-history NON_FIT; no full score claim."
+  }
+}

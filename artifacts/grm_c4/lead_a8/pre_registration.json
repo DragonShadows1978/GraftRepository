@@ -1,0 +1,23 @@
+{
+  "effort": "high (requested)",
+  "gates": [
+    "Exact 16384-byte corrupt receipt class and SHA preservation; no invented wall",
+    "Incident orphan claim classification, full 285-second reservation; absent live orphan reported honestly",
+    "One create-only rerun; PASS/RED/unfinished rerun blocks further attempts",
+    "Mock df below 20000000000 bytes refuses before lease; exact threshold accepts; malformed/error df fails closed",
+    "Reject stale/forged manifest, evidence, sources and unknown orphan/corrupt receipts",
+    "CPU fake-worker continuation and census state-copy integration; preserve original sources and top-level receipt bytes",
+    "Registered-order continuation and recorded+remaining estimates/peak reserve against unchanged 6600 cap"
+  ],
+  "immutable": true,
+  "model": "GPT-6 (Codex; exact deployment identifier not exposed)",
+  "order": {
+    "bytes": 2075,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_8.md",
+    "sha256": "540441716b8492f3dd491f753f261c7fdb45d98051bc57fe6d2d2a46d51cf66c"
+  },
+  "prior_art": "Local C4/A2/A5/A6/A7 and DET1 (house, 2026), verified in local source: SHA-bound create-only manifests, receipt selection, claim guards, wall-plus-reservation accounting, ordered continuation and copy-and-verify saved state. A8 adds incident-scoped exceptions and a 20 GB df admission guard; no novel algorithm claimed. Specific threshold/class labels are lead instructions.",
+  "schema": "grm.c4.a8.pre-registration.v1",
+  "scope": "New A8 adapter and isolated receipt/session root; preserve all earlier source and receipt bytes. No GPU, git, agents, background work, waits or kills.",
+  "stop_conditions": "No real GPU execution. Any new unregistered damaged evidence blocks; no generic retries. Report failing CPU gates without weakening. Freeze amendment and source closure before gates; corrections require separate create-only amendment."
+}

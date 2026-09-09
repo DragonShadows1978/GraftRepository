@@ -1,0 +1,419 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0 -- /usr/bin/python
+rootdir: /mnt/ForgeRealm/wt/grm-c4
+plugins: anyio-4.13.0
+collecting ... collected 100 items
+
+tests/test_grm_c4_split_a5.py::test_registered_plan_honesty_and_commands PASSED [  1%]
+tests/test_grm_c4_split_a5.py::test_forged_or_stale_refused[sha] PASSED  [  2%]
+tests/test_grm_c4_split_a5.py::test_forged_or_stale_refused[order] PASSED [  3%]
+tests/test_grm_c4_split_a5.py::test_forged_or_stale_refused[previous_amendment] PASSED [  4%]
+tests/test_grm_c4_split_a5.py::test_forged_or_stale_refused[sources] PASSED [  5%]
+tests/test_grm_c4_split_a5.py::test_forged_or_stale_refused[plan] PASSED [  6%]
+tests/test_grm_c4_split_a5.py::test_forged_or_stale_refused[decoupling] PASSED [  7%]
+tests/test_grm_c4_split_a5.py::test_forged_or_stale_refused[receipt_root] PASSED [  8%]
+tests/test_grm_c4_split_a5.py::test_forged_or_stale_refused[budget] PASSED [  9%]
+tests/test_grm_c4_split_a5.py::test_forged_or_stale_refused[registration] PASSED [ 10%]
+tests/test_grm_c4_split_a5.py::test_forged_or_stale_refused[legacy_executor] PASSED [ 11%]
+tests/test_grm_c4_split_a5.py::test_forged_or_stale_refused[extra] PASSED [ 12%]
+tests/test_grm_c4_split_a5.py::test_stale_source_refused PASSED          [ 13%]
+tests/test_grm_c4_split_a5.py::test_decoupled_start_without_earlier_score[c96_w64] PASSED [ 14%]
+tests/test_grm_c4_split_a5.py::test_decoupled_start_without_earlier_score[c64_w64] PASSED [ 15%]
+tests/test_grm_c4_split_a5.py::test_synthetic_full_batteries_half_resume_score_and_cross PASSED [ 16%]
+tests/test_grm_c4_split_a5.py::test_resume_and_identity_attacks[state] PASSED [ 17%]
+tests/test_grm_c4_split_a5.py::test_resume_and_identity_attacks[turns] PASSED [ 18%]
+tests/test_grm_c4_split_a5.py::test_resume_and_identity_attacks[prior] PASSED [ 19%]
+tests/test_grm_c4_split_a5.py::test_resume_and_identity_attacks[geometry] PASSED [ 20%]
+tests/test_grm_c4_split_a5.py::test_resume_and_identity_attacks[amendment] PASSED [ 21%]
+tests/test_grm_c4_split_a5.py::test_resume_and_identity_attacks[serving] PASSED [ 22%]
+tests/test_grm_c4_split_a5.py::test_registered_nonfit_no_gpu_and_independent_cell PASSED [ 23%]
+tests/test_grm_c4_split_a5.py::test_cap_overflow_and_missing_dependency_are_nonfit PASSED [ 24%]
+tests/test_grm_c4_split_a5.py::test_partial_summary_has_no_battery_score PASSED [ 25%]
+tests/test_grm_c4_split_a5.py::test_summary_refuses_forged_partial_and_stale_full[partial_score] PASSED [ 26%]
+tests/test_grm_c4_split_a5.py::test_summary_refuses_forged_partial_and_stale_full[stale_partial] PASSED [ 27%]
+tests/test_grm_c4_split_a5.py::test_summary_refuses_forged_partial_and_stale_full[stale_score] PASSED [ 28%]
+tests/test_grm_c4_split_a5.py::test_summary_refuses_forged_partial_and_stale_full[probes] PASSED [ 29%]
+tests/test_grm_c4_split_a5.py::test_accounting[charge] PASSED            [ 30%]
+tests/test_grm_c4_split_a5.py::test_accounting[reserve] PASSED           [ 31%]
+tests/test_grm_c4_split_a5.py::test_accounting[cooldown] PASSED          [ 32%]
+tests/test_grm_c4_split_a5.py::test_accounting[orphan] PASSED            [ 33%]
+tests/test_grm_c4_split_a5.py::test_accounting[historical_drift] PASSED  [ 34%]
+tests/test_grm_c4_split_a5.py::test_real_existing_bytes_unchanged FAILED [ 35%]
+tests/test_grm_c4_skip_a6.py::test_registered_projection_commands_and_unchanged_rules PASSED [ 36%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[sha] PASSED [ 37%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[order] PASSED [ 38%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[previous_amendment] PASSED [ 39%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[registration] PASSED [ 40%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[plan] PASSED [ 41%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[budget] PASSED [ 42%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[previous_budget] PASSED [ 43%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[sources] PASSED [ 44%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[executor] PASSED [ 45%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[receipt_root] PASSED [ 46%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[policy] PASSED [ 47%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[extra] PASSED [ 48%]
+tests/test_grm_c4_skip_a6.py::test_stale_bound_bytes_refused[source] PASSED [ 49%]
+tests/test_grm_c4_skip_a6.py::test_stale_bound_bytes_refused[order] PASSED [ 50%]
+tests/test_grm_c4_skip_a6.py::test_stale_bound_bytes_refused[predecessor] PASSED [ 51%]
+tests/test_grm_c4_skip_a6.py::test_stale_bound_bytes_refused[executor] PASSED [ 52%]
+tests/test_grm_c4_skip_a6.py::test_stale_bound_bytes_refused[commands] PASSED [ 53%]
+tests/test_grm_c4_skip_a6.py::test_all_registered_skips_zero_attempt_lease_reserve_or_charge PASSED [ 54%]
+tests/test_grm_c4_skip_a6.py::test_all_fitting_units_dispatched_dependencies_preserved_partial_summary PASSED [ 55%]
+tests/test_grm_c4_skip_a6.py::test_forged_skip_receipt_refused[pass] PASSED [ 56%]
+tests/test_grm_c4_skip_a6.py::test_forged_skip_receipt_refused[charge] PASSED [ 57%]
+tests/test_grm_c4_skip_a6.py::test_forged_skip_receipt_refused[attempt] PASSED [ 58%]
+tests/test_grm_c4_skip_a6.py::test_forged_skip_receipt_refused[source] PASSED [ 59%]
+tests/test_grm_c4_skip_a6.py::test_forged_skip_receipt_refused[reason] PASSED [ 60%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_partial_score_refused[scores] PASSED [ 61%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_partial_score_refused[completed] PASSED [ 62%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_partial_score_refused[amendment] PASSED [ 63%]
+tests/test_grm_c4_skip_a6.py::test_actual_cap_reserves_285_at_6600[6315-True] PASSED [ 64%]
+tests/test_grm_c4_skip_a6.py::test_actual_cap_reserves_285_at_6600[6315.001-False] PASSED [ 65%]
+tests/test_grm_c4_skip_a6.py::test_existing_artifacts_byte_unchanged_and_no_real_attempts FAILED [ 66%]
+tests/test_grm_c4_accounting_a7.py::test_exact_crashed_disk_layout_keyerror_then_completed_receipts FAILED [ 67%]
+tests/test_grm_c4_accounting_a7.py::test_metadata_attempt_and_score_are_excluded_before_read FAILED [ 68%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[False-{] PASSED [ 69%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[False-[]] PASSED [ 70%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[False-{}] PASSED [ 71%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[False-{"status":"PASS"}] PASSED [ 72%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[False-{"status":"PASS","cell":"c96_w64","battery":"sup","spec":"partial"}] PASSED [ 73%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[True-{] PASSED [ 74%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[True-[]] PASSED [ 75%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[True-{}] PASSED [ 76%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[True-{"status":"PASS"}] PASSED [ 77%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[True-{"status":"PASS","cell":"c96_w64","battery":"sup","spec":"partial"}] PASSED [ 78%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[gpu_seconds-nan] PASSED [ 79%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[gpu_seconds-inf] PASSED [ 80%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[gpu_seconds--1] PASSED [ 81%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[gpu_seconds-True] PASSED [ 82%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[gpu_seconds-1] PASSED [ 83%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[finished_unix-nan] PASSED [ 84%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[finished_unix--1] PASSED [ 85%]
+tests/test_grm_c4_accounting_a7.py::test_a6_plan_budget_commands_and_historical_artifacts_unchanged FAILED [ 86%]
+tests/test_grm_c4_accounting_a7.py::test_a7_forged_manifest_refused[sha] PASSED [ 87%]
+tests/test_grm_c4_accounting_a7.py::test_a7_forged_manifest_refused[source_replacements] PASSED [ 88%]
+tests/test_grm_c4_accounting_a7.py::test_a7_forged_manifest_refused[added_sources] PASSED [ 89%]
+tests/test_grm_c4_accounting_a7.py::test_a7_forged_manifest_refused[policy] PASSED [ 90%]
+tests/test_grm_c4_accounting_a7.py::test_a7_forged_manifest_refused[extra] PASSED [ 91%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[executor] PASSED [ 92%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[entrypoint] PASSED [ 93%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[helper] PASSED [ 94%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[test] PASSED [ 95%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[commands] PASSED [ 96%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[order] PASSED [ 97%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[before] PASSED [ 98%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[predecessor] PASSED [ 99%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[snapshot] PASSED [100%]
+
+=================================== FAILURES ===================================
+______________________ test_real_existing_bytes_unchanged ______________________
+
+    def test_real_existing_bytes_unchanged():
+        before=c.read(a5.OUT/'before.json')['files']
+        assert len(before)==2567
+        assert all(c.record(p['path'])==p for p in before)
+>       assert not (a5.OUT/'runs').exists()
+E       AssertionError: assert not True
+E        +  where True = exists()
+E        +    where exists = (PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5') / 'runs').exists
+E        +      where PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5') = a5.OUT
+
+tests/test_grm_c4_split_a5.py:311: AssertionError
+_________ test_existing_artifacts_byte_unchanged_and_no_real_attempts __________
+
+    def test_existing_artifacts_byte_unchanged_and_no_real_attempts():
+        pins=c.read(a6.OUT/'before.json')['files']
+        assert len(pins)>2567
+>       assert all(c.record(p['path'])==p for p in pins)
+E       assert False
+E        +  where False = all(<generator object test_existing_artifacts_byte_unchanged_and_no_real_attempts.<locals>.<genexpr> at 0x75ee233fab20>)
+
+tests/test_grm_c4_skip_a6.py:179: AssertionError
+_______ test_exact_crashed_disk_layout_keyerror_then_completed_receipts ________
+
+crashed_disk_layout = {'a4_context': {'acceptance': {'census': 10, 'longhorizon': 14, 'required_probes': ['sup_reserve_juniper_pass', 'e2e_t.../grm_c4/lead_a6/amendment_a8.json', 'sha256': '4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e'}, ...}
+capsys = <_pytest.capture.CaptureFixture object at 0x75ed678c9340>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x75eea6ac78c0>
+
+    def test_exact_crashed_disk_layout_keyerror_then_completed_receipts(crashed_disk_layout, capsys, monkeypatch):
+        reg = crashed_disk_layout
+        with pytest.raises(KeyError, match='status') as caught:
+            original_accounting()(reg, reserve=False)
+        frame = caught.traceback[-1].frame
+        assert frame.f_locals['path'] == c.OUT/'runs/c64_w96/runtime_frame.json'
+        assert frame.f_locals['row']['schema'] == 'grm.det1.runtime_frame.v1'
+>       assert a5.accounting(reg, reserve=False) == pytest.approx(2157.6785489856265)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_c4_accounting_a7.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+reg = {'a4_context': {'acceptance': {'census': 10, 'longhorizon': 14, 'required_probes': ['sup_reserve_juniper_pass', 'e2e_t.../grm_c4/lead_a6/amendment_a8.json', 'sha256': '4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e'}, ...}
+
+    def accounting(reg, *, reserve=True):
+        # Prior art: DET1/A4 reserve accounting (house,2026). Charge immutable
+        # historical REDs exactly; new RED blocks its cell but not independent cells.
+        # A7: C4/A5 completed-worker accounting and claim guard (house,2026),
+        # reused. Added filename filtering and per-file diagnostics; no novelty.
+        # Metadata is not a receipt. Incomplete worker evidence still fails closed
+        # so skipping it cannot undercount work and authorize a new lease.
+        workers=[]
+        completed=set()
+        claims=[]
+        blocked=[]
+        pins={p['path']:p for p in c.read(OUT/'before.json')['files']}
+        def skip(path, reason):
+            print(json.dumps({'accounting_skip':str(path),'reason':reason}), file=sys.stderr)
+        for root in (c.OUT,a2.OUT,a3.OUT,OUT):
+            for path in sorted((root/'runs').glob('*/*.json')):
+                if path.name.endswith('.attempt.json'):
+                    skip(path, 'attempt marker; not a completed receipt')
+                    claims.append(path)
+                    continue
+                if path.name=='score.json':
+                    skip(path, 'score summary; not a worker receipt')
+                    continue
+                if not path.name.startswith(('sup_', 'census_', 'longhorizon_')):
+                    skip(path, 'metadata/non-worker filename; not a worker receipt')
+                    continue
+                try:
+                    row=c.read(path)
+                except (ValueError, OSError) as exc:
+                    skip(path, f'unreadable worker receipt: {type(exc).__name__}: {exc}')
+                    blocked.append(str(path))
+                    continue
+                if not isinstance(row, dict) or row.get('status') not in ('PASS','RED','NON_FIT'):
+                    skip(path, 'incomplete worker receipt: missing/invalid status')
+                    blocked.append(str(path))
+                    continue
+                if not all(k in row for k in ('cell','battery','spec')):
+                    skip(path, 'incomplete worker receipt: missing cell/battery/spec')
+                    blocked.append(str(path))
+                    continue
+                assert path.parent.name == row['cell'] and path.name == f"{row['battery']}_{row['spec']}.json", f'Worker identity mismatch: {path}'
+                if row['status'] != 'NON_FIT' and not all(k in row for k in ('finished_unix','gpu_seconds')):
+                    skip(path, 'incomplete worker receipt: missing finished_unix/gpu_seconds')
+                    blocked.append(str(path))
+                    continue
+                if root != OUT:
+                    assert str(path) in pins and c.record(path)==pins[str(path)], 'Unregistered or stale historical worker'
+                else:
+                    row=validate_receipt(path,reg,row['cell'],row['battery'],row['spec'])
+                if row['status']=='NON_FIT':
+                    assert row.get('gpu_executed') is False and row.get('gpu_seconds') == 0, f'Invalid NON_FIT accounting: {path}'
+                    skip(path, 'NON_FIT status receipt; no executed work, zero charge')
+                    continue
+                assert all(type(row[k]) in (int,float) and math.isfinite(row[k]) and row[k]>=0
+                           for k in ('gpu_seconds','finished_unix')), f'Invalid wall accounting: {path}'
+                completed.add(path)
+                workers.append(row)
+        for claim in claims:
+            receipt=claim.with_name(claim.name.removesuffix('.attempt.json')+'.json')
+            if receipt not in completed:
+                skip(claim, 'unfinished worker claim: no completed PASS/RED receipt; campaign blocked')
+                blocked.append(str(claim))
+>       assert not blocked, 'Unfinished worker claim or incomplete worker receipt: campaign blocked: '+', '.join(blocked)
+               ^^^^^^^^^^^
+E       AssertionError: Unfinished worker claim or incomplete worker receipt: campaign blocked: /tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c96_w64/census_e2e-2.json, /tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c96_w64/census_e2e-2.attempt.json
+
+scripts/grm_c4_split_a5.py:276: AssertionError
+----------------------------- Captured stderr call -----------------------------
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/census_e2e-1.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/census_e2e-2.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/census_e2e-3.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/census_e2e-4.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/longhorizon_c4-lh-01.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/longhorizon_c4-lh-02.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/longhorizon_c4-lh-03.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/longhorizon_c4-lh-04.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/longhorizon_c4-lh-05.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/longhorizon_c4-lh-06.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/runtime_frame.json", "reason": "metadata/non-worker filename; not a worker receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/sup_correction_then_restatement.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/sup_fresh_fact_controls.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/sup_multi_hop_a_b_c.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/runs/c64_w96/sup_short_correction_long_competitor.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a2/runs/c64_w96/longhorizon_c4-lh-06.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a2/runs/c64_w96/longhorizon_c4-lh-07.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a2/runs/c64_w96/longhorizon_c4-lh-08.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a2/runs/c64_w96/longhorizon_c4-lh-09.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a2/runs/c64_w96/longhorizon_c4-lh-10.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a2/runs/c64_w96/longhorizon_c4-lh-11.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a2/runs/c64_w96/longhorizon_c4-lh-12.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a2/runs/c64_w96/runtime_frame.json", "reason": "metadata/non-worker filename; not a worker receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c64_w96/longhorizon_c4-lh-12a.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c64_w96/longhorizon_c4-lh-12b.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c64_w96/longhorizon_c4-lh-13a.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c64_w96/longhorizon_c4-lh-13b.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c64_w96/score.json", "reason": "score summary; not a worker receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c96_w64/census_e2e-1.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c96_w64/census_e2e-2.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c96_w64/census_e2e-2.json", "reason": "unreadable worker receipt: JSONDecodeError: Expecting property name enclosed in double quotes: line 545 column 3 (char 16384)"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c96_w64/runtime_frame.json", "reason": "metadata/non-worker filename; not a worker receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c96_w64/sup_correction_then_restatement.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c96_w64/sup_fresh_fact_controls.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c96_w64/sup_multi_hop_a_b_c.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c96_w64/sup_short_correction_long_competitor.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_exact_crashed_disk_layout0/lead_a5/runs/c96_w64/census_e2e-2.attempt.json", "reason": "unfinished worker claim: no completed PASS/RED receipt; campaign blocked"}
+___________ test_metadata_attempt_and_score_are_excluded_before_read ___________
+
+crashed_disk_layout = {'a4_context': {'acceptance': {'census': 10, 'longhorizon': 14, 'required_probes': ['sup_reserve_juniper_pass', 'e2e_t.../grm_c4/lead_a6/amendment_a8.json', 'sha256': '4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e'}, ...}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x75ed66f0ba10>
+capsys = <_pytest.capture.CaptureFixture object at 0x75ed66ddf470>
+
+    def test_metadata_attempt_and_score_are_excluded_before_read(crashed_disk_layout, monkeypatch, capsys):
+        original = c.read
+        def read(path):
+            if Path(path).name in ('runtime_frame.json','score.json') or str(path).endswith('.attempt.json'):
+                pytest.fail(f'Accounting parsed non-receipt: {path}')
+            return original(path)
+        monkeypatch.setattr(c, 'read', read)
+>       assert a5.accounting(crashed_disk_layout, reserve=False) == pytest.approx(2157.6785489856265)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_c4_accounting_a7.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+reg = {'a4_context': {'acceptance': {'census': 10, 'longhorizon': 14, 'required_probes': ['sup_reserve_juniper_pass', 'e2e_t.../grm_c4/lead_a6/amendment_a8.json', 'sha256': '4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e'}, ...}
+
+    def accounting(reg, *, reserve=True):
+        # Prior art: DET1/A4 reserve accounting (house,2026). Charge immutable
+        # historical REDs exactly; new RED blocks its cell but not independent cells.
+        # A7: C4/A5 completed-worker accounting and claim guard (house,2026),
+        # reused. Added filename filtering and per-file diagnostics; no novelty.
+        # Metadata is not a receipt. Incomplete worker evidence still fails closed
+        # so skipping it cannot undercount work and authorize a new lease.
+        workers=[]
+        completed=set()
+        claims=[]
+        blocked=[]
+        pins={p['path']:p for p in c.read(OUT/'before.json')['files']}
+        def skip(path, reason):
+            print(json.dumps({'accounting_skip':str(path),'reason':reason}), file=sys.stderr)
+        for root in (c.OUT,a2.OUT,a3.OUT,OUT):
+            for path in sorted((root/'runs').glob('*/*.json')):
+                if path.name.endswith('.attempt.json'):
+                    skip(path, 'attempt marker; not a completed receipt')
+                    claims.append(path)
+                    continue
+                if path.name=='score.json':
+                    skip(path, 'score summary; not a worker receipt')
+                    continue
+                if not path.name.startswith(('sup_', 'census_', 'longhorizon_')):
+                    skip(path, 'metadata/non-worker filename; not a worker receipt')
+                    continue
+                try:
+                    row=c.read(path)
+                except (ValueError, OSError) as exc:
+                    skip(path, f'unreadable worker receipt: {type(exc).__name__}: {exc}')
+                    blocked.append(str(path))
+                    continue
+                if not isinstance(row, dict) or row.get('status') not in ('PASS','RED','NON_FIT'):
+                    skip(path, 'incomplete worker receipt: missing/invalid status')
+                    blocked.append(str(path))
+                    continue
+                if not all(k in row for k in ('cell','battery','spec')):
+                    skip(path, 'incomplete worker receipt: missing cell/battery/spec')
+                    blocked.append(str(path))
+                    continue
+                assert path.parent.name == row['cell'] and path.name == f"{row['battery']}_{row['spec']}.json", f'Worker identity mismatch: {path}'
+                if row['status'] != 'NON_FIT' and not all(k in row for k in ('finished_unix','gpu_seconds')):
+                    skip(path, 'incomplete worker receipt: missing finished_unix/gpu_seconds')
+                    blocked.append(str(path))
+                    continue
+                if root != OUT:
+                    assert str(path) in pins and c.record(path)==pins[str(path)], 'Unregistered or stale historical worker'
+                else:
+                    row=validate_receipt(path,reg,row['cell'],row['battery'],row['spec'])
+                if row['status']=='NON_FIT':
+                    assert row.get('gpu_executed') is False and row.get('gpu_seconds') == 0, f'Invalid NON_FIT accounting: {path}'
+                    skip(path, 'NON_FIT status receipt; no executed work, zero charge')
+                    continue
+                assert all(type(row[k]) in (int,float) and math.isfinite(row[k]) and row[k]>=0
+                           for k in ('gpu_seconds','finished_unix')), f'Invalid wall accounting: {path}'
+                completed.add(path)
+                workers.append(row)
+        for claim in claims:
+            receipt=claim.with_name(claim.name.removesuffix('.attempt.json')+'.json')
+            if receipt not in completed:
+                skip(claim, 'unfinished worker claim: no completed PASS/RED receipt; campaign blocked')
+                blocked.append(str(claim))
+>       assert not blocked, 'Unfinished worker claim or incomplete worker receipt: campaign blocked: '+', '.join(blocked)
+               ^^^^^^^^^^^
+E       AssertionError: Unfinished worker claim or incomplete worker receipt: campaign blocked: /tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c96_w64/census_e2e-2.json, /tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c96_w64/census_e2e-2.attempt.json
+
+scripts/grm_c4_split_a5.py:276: AssertionError
+----------------------------- Captured stderr call -----------------------------
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/census_e2e-1.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/census_e2e-2.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/census_e2e-3.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/census_e2e-4.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/longhorizon_c4-lh-01.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/longhorizon_c4-lh-02.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/longhorizon_c4-lh-03.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/longhorizon_c4-lh-04.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/longhorizon_c4-lh-05.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/longhorizon_c4-lh-06.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/runtime_frame.json", "reason": "metadata/non-worker filename; not a worker receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/sup_correction_then_restatement.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/sup_fresh_fact_controls.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/sup_multi_hop_a_b_c.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/runs/c64_w96/sup_short_correction_long_competitor.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a2/runs/c64_w96/longhorizon_c4-lh-06.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a2/runs/c64_w96/longhorizon_c4-lh-07.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a2/runs/c64_w96/longhorizon_c4-lh-08.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a2/runs/c64_w96/longhorizon_c4-lh-09.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a2/runs/c64_w96/longhorizon_c4-lh-10.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a2/runs/c64_w96/longhorizon_c4-lh-11.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a2/runs/c64_w96/longhorizon_c4-lh-12.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a2/runs/c64_w96/runtime_frame.json", "reason": "metadata/non-worker filename; not a worker receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c64_w96/longhorizon_c4-lh-12a.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c64_w96/longhorizon_c4-lh-12b.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c64_w96/longhorizon_c4-lh-13a.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c64_w96/longhorizon_c4-lh-13b.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c64_w96/score.json", "reason": "score summary; not a worker receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c96_w64/census_e2e-1.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c96_w64/census_e2e-2.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c96_w64/census_e2e-2.json", "reason": "unreadable worker receipt: JSONDecodeError: Expecting property name enclosed in double quotes: line 545 column 3 (char 16384)"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c96_w64/runtime_frame.json", "reason": "metadata/non-worker filename; not a worker receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c96_w64/sup_correction_then_restatement.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c96_w64/sup_fresh_fact_controls.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c96_w64/sup_multi_hop_a_b_c.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c96_w64/sup_short_correction_long_competitor.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/tmp/pytest-of-vader/pytest-925/test_metadata_attempt_and_scor0/lead_a5/runs/c96_w64/census_e2e-2.attempt.json", "reason": "unfinished worker claim: no completed PASS/RED receipt; campaign blocked"}
+_______ test_a6_plan_budget_commands_and_historical_artifacts_unchanged ________
+
+    def test_a6_plan_budget_commands_and_historical_artifacts_unchanged():
+        reg=a6.binding();old=c.read(a6.AMENDMENT)
+        assert reg['a5_plan']==old['plan'] and reg['budget']==old['budget']
+        assert reg['budget']['gpu_seconds']==6600
+        assert a7.COMMANDS.read_bytes()==a6.COMMANDS.read_bytes()
+        replacements={str(c.ROOT/p) for p in a7.REPLACEMENTS}
+        before=c.read(a7.OUT/'before.json')['files']
+        assert all(c.record(p['path'])==p for p in before
+                   if p['path'] not in replacements and p['path']!=str(c.OUT/'NARRATIVE_SYNTHESIS.md'))
+>       assert len(list((a5.OUT/'runs').glob('*/*.json')))==5
+E       AssertionError: assert 18 == 5
+E        +  where 18 = len([PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census_e2e-2.json'), PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census_e2e-1.attempt.json'), PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/sup_fresh_fact_controls.attempt.json'), PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/runtime_frame.json'), PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/sup_short_correction_long_competitor.json'), PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/sup_multi_hop_a_b_c.attempt.json'), ...])
+E        +    where [PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census_e2e-2.json'), PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census_e2e-1.attempt.json'), PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/sup_fresh_fact_controls.attempt.json'), PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/runtime_frame.json'), PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/sup_short_correction_long_competitor.json'), PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/sup_multi_hop_a_b_c.attempt.json'), ...] = list(<generator object Path.glob at 0x75ee233fd250>)
+E        +      where <generator object Path.glob at 0x75ee233fd250> = glob('*/*.json')
+E        +        where glob = (PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5') / 'runs').glob
+E        +          where PosixPath('/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5') = a5.OUT
+
+tests/test_grm_c4_accounting_a7.py:134: AssertionError
+=============================== warnings summary ===============================
+tests/test_grm_c4_split_a5.py::test_decoupled_start_without_earlier_score[c96_w64]
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+tests/test_grm_c4_split_a5.py::test_decoupled_start_without_earlier_score[c96_w64]
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_c4_split_a5.py::test_real_existing_bytes_unchanged - As...
+FAILED tests/test_grm_c4_skip_a6.py::test_existing_artifacts_byte_unchanged_and_no_real_attempts
+FAILED tests/test_grm_c4_accounting_a7.py::test_exact_crashed_disk_layout_keyerror_then_completed_receipts
+FAILED tests/test_grm_c4_accounting_a7.py::test_metadata_attempt_and_score_are_excluded_before_read
+FAILED tests/test_grm_c4_accounting_a7.py::test_a6_plan_budget_commands_and_historical_artifacts_unchanged
+================== 5 failed, 95 passed, 2 warnings in 55.25s ===================
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
