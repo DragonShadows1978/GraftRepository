@@ -54,7 +54,15 @@ def verify_registration():
     for name, digest in registration['immutable_inputs'].items():
         path = Path(name) if Path(name).is_absolute() else ROOT / name
         if sha(path) != digest:
-            raise ValueError(f'registered input changed: {name}')
+            # Prior art: C2 SHA-bound amendments (project, 2026). Only the
+            # explicitly registered fixed-source replacements may supersede
+            # r1 inputs; keep the original registration byte-for-byte.
+            from scripts.grm_c2_epoch3 import verify_amendment
+            epoch = verify_amendment()
+            replacement = epoch['superseded_inputs'].get(name, {})
+            if (replacement.get('before') != digest
+                    or replacement.get('after') != sha(path)):
+                raise ValueError(f'registered input changed: {name}')
     return registration
 
 

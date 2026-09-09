@@ -42,9 +42,20 @@ def effective_registration():
     a = read(AMENDMENT)
     template = Path(__file__).read_text().replace(AMENDMENT_SHA256, 'PENDING_REGISTRATION')
     if hashlib.sha256(template.encode()).hexdigest() != a['verifier_template_sha256']:
-        raise ValueError('stale amendment verifier source')
+        # Prior art: C2 immutable amendment bindings (project, 2026). Amendment
+        # 3 explicitly supersedes this verifier and lead command; validate its
+        # fixed-source binding before consulting byte-preserved history.
+        from scripts.grm_c2_epoch3 import verify_amendment
+        epoch = verify_amendment()
+        template = (ROOT / epoch['historical_verifier']).read_text().replace(
+            AMENDMENT_SHA256, 'PENDING_REGISTRATION')
+        if hashlib.sha256(template.encode()).hexdigest() != a['verifier_template_sha256']:
+            raise ValueError('stale amendment verifier source')
     for name, digest in a['bindings'].items():
         path = Path(name) if Path(name).is_absolute() else ROOT / name
+        if name == 'artifacts/grm_c2/lead_commands.txt' and sha(path) != digest:
+            from scripts.grm_c2_epoch3 import verify_amendment
+            path = ROOT / verify_amendment()['historical_lead_commands']
         if sha(path) != digest:
             raise ValueError(f'stale amendment binding: {name}')
     r = verify_registration()
@@ -349,4 +360,7 @@ def main():
 
 
 if __name__ == '__main__':
-    raise SystemExit(main())
+    # Amendment 3 owns all subsequent CLI execution, including legacy entry
+    # points; keep old epoch receipts and their charges immutable.
+    from scripts.grm_c2_epoch3 import main as epoch_main
+    raise SystemExit(epoch_main())
