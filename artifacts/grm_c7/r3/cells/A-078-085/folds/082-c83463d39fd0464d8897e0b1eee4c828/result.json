@@ -1,0 +1,29 @@
+{
+  "accepted": true,
+  "attempts": [
+    {
+      "coverage": 1.0,
+      "hit_count": 8,
+      "need_count": 8,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the  current C7-Outpost-00 value is Pearl-1200, the current C7-Outpost-01 value is Pearl-1201, the current C7-Outpost-02 value is Pearl-1202, and the current C7-Outpost-03 value is Pearl-1203."
+    }
+  ],
+  "digest_text": "For the archive: the  current C7-Outpost-00 value is Pearl-1200, the current C7-Outpost-01 value is Pearl-1201, the current C7-Outpost-02 value is Pearl-1202, and the current C7-Outpost-03 value is Pearl-1203.",
+  "error": null,
+  "result": {
+    "accepted": true,
+    "best_cov": 1.0,
+    "hit_count": 8,
+    "need_count": 8
+  },
+  "source_payload_sha256": {
+    "0039.npz": "324566c22631a012224b0ce1b199d1e5648ee04998452754ced0ba1a3b86d9fb",
+    "0044.npz": "aa4b4232fd2dd72f2a262c212847644db8f2e26f7351260582cc6438b329bf3e",
+    "0050.npz": "b6b9f12868e47432c249d44fc34c20bcd767ddd504c912ea6859c10e0033f919",
+    "0055.npz": "24a2e8fd27ad904ed18a38bbc7cb21b063c3636c121db732e8780e5fdb815424"
+  },
+  "turn": 82
+}

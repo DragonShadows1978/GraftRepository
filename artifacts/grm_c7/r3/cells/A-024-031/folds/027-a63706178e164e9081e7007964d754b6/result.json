@@ -1,0 +1,29 @@
+{
+  "accepted": true,
+  "attempts": [
+    {
+      "coverage": 1.0,
+      "hit_count": 8,
+      "need_count": 8,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the  C7-Signal-1 is an alias for C7-AliasBase-1, the C7-Signal-2 is an alias for C7-AliasBase-2, the current C7-Vesper-0 value is Onyx-911, and the current C7-Vesper-1 value is Onyx-912."
+    }
+  ],
+  "digest_text": "For the archive: the  C7-Signal-1 is an alias for C7-AliasBase-1, the C7-Signal-2 is an alias for C7-AliasBase-2, the current C7-Vesper-0 value is Onyx-911, and the current C7-Vesper-1 value is Onyx-912.",
+  "error": null,
+  "result": {
+    "accepted": true,
+    "best_cov": 1.0,
+    "hit_count": 8,
+    "need_count": 8
+  },
+  "source_payload_sha256": {
+    "0011.npz": "1a9cf3c764012b9c76a486a400a6c85d27efdb89906dbe47599495fc5c97fe27",
+    "0012.npz": "a0bed078b0f12dfdee1e42e0e8cca657c00ad058a08e0a3c8c68f57b4587b86a",
+    "0013.npz": "98d019e6dbec29a78944746d77e0ee5a829a294ab7cee05f2ac6482900ab423e",
+    "0015.npz": "653ab667d820b47cfbc2a857bd556857cc8854c54d2b4727d70800ea2889250e"
+  },
+  "turn": 27
+}

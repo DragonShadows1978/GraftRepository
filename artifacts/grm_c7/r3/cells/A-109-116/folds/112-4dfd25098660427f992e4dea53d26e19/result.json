@@ -1,0 +1,46 @@
+{
+  "accepted": false,
+  "attempts": [
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 28,
+      "prompt_index": 0,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "CHRONICLE \u2014 In this period,  the archive records that the current C7\u2011Outpost\u201108 holds the value Slate\u20111208, and that C7\u2011Handle\u201108 is an alias for this same outpost. The archive further notes that the current C7\u2011Outpost\u201109 contains the value Slate\u20111209, with C7\u2011Handle\u201109 serving as its alias. The archive also records that the current C7\u2011Outpost\u201110 holds the value Slate\u20111210, and that C7\u2011Handle\u201110 is an alias for this outpost. The archive records that the current C7\u2011Outpost\u201111 holds the value Slate\u20111211, and that C7\u2011Handle\u201111 is an alias for this outpost. The archive records that the current C7\u2011Outpost\u201112 holds the value Slate\u20111212, and that C7\u2011Handle\u201112 is an alias for this outpost. The archive records that the current C7\u2011Outpost\u201113 holds the value Slate\u20111213, and that C7\u2011Handle\u201113 is an alias for this outpost. The archive records that the current C7\u2011Outpost\u201114 holds the value Slate\u20111214, and that C7\u2011Handle\u201114 is an alias for this outpost. The archive records that the current C7\u2011Outpost\u201115 holds the value Slate\u20111215, and that C7\u2011Handle\u201115 is an alias for this outpost. The archive records that the current C7\u2011Outpost\u201116 holds the value Slate\u20111216, and that C7\u2011Handle\u201116 is an alias for"
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 28,
+      "prompt_index": 1,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "Combined record: during these conversations,  the current C7\u2011Outpost\u201108 value is Slate\u20111208, and C7\u2011Handle\u201108 is an alias for C7\u2011Outpost\u201108; the current C7\u2011Outpost\u201109 value is Slate\u20111209, and C7\u2011Handle\u201109 is an alias for C7\u2011Outpost\u201109; the current C7\u2011Outpost\u201110 value is Slate\u20111210, and C7\u2011Handle\u201110 is an alias for C7\u2011Outpost\u201110; the current C7\u2011Outpost\u201111 value is Slate\u20111211, and C7\u2011Handle\u201111 is an alias for C7\u2011Outpost\u201111; the current C7\u2011Outpost\u201112 value is Slate\u20111212; the current C7\u2011Outpost\u201113 value is Slate\u20111213; the current C7\u2011Outpost\u201114 value is Slate\u20111214; the current C7\u2011Outpost\u201115 value is Slate\u20111215; the current C7\u2011Outpost\u201116 value is Slate\u20111216; the current C7\u2011Outpost\u201117 value is Slate\u20111217; the current C7\u2011Outpost\u201118 value is Slate\u20111218; the current C7\u2011Outpost\u201119 value is Slate\u20111219."
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 28,
+      "prompt_index": 2,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "The facts to archive are:  the current C7\u2011Outpost\u201108 value is Slate\u20111208, and C7\u2011Handle\u201108 is an alias for C7\u2011Outpost\u201108; the current C7\u2011Outpost\u201109 value is Slate\u20111209, and C7\u2011Handle\u201109 is an alias for C7\u2011Outpost\u201109; the current C7\u2011Outpost\u201110 value is Slate\u20111210, and C7\u2011Handle\u201110 is an alias for C7\u2011Outpost\u201110; the current C7\u2011Outpost\u201111 value is Slate\u20111211, and C7\u2011Handle\u201111 is an alias for C7\u2011Outpost\u201111; the current C7\u2011Outpost\u201112 value is Slate\u20111212; the current C7\u2011Outpost\u201113 value is Slate\u20111213; the current C7\u2011Outpost\u201114 value is Slate\u20111214; the current C7\u2011Outpost\u201115 value is Slate\u20111215; the current C7\u2011Outpost\u201116 value is Slate\u20111216; the current C7\u2011Outpost\u201117 value is Slate\u20111217; the current C7\u2011Outpost\u201118 value is Slate\u20111218; and the current C7\u2011Outpost\u201119 value is Slate\u20111219."
+    }
+  ],
+  "digest_text": null,
+  "error": null,
+  "result": {
+    "accepted": false,
+    "best_cov": -1.0,
+    "hit_count": 0,
+    "need_count": 28
+  },
+  "source_payload_sha256": {
+    "0078.npz": "7180e7cc683a147cd7c8380582cd91b434b92453e8ca479ba3bb086c9d5609db",
+    "0083.npz": "c1a602178d8510e152e1842e4b6ba7125b4f6da0585c4ffe5afa9d0399915cd6",
+    "0088.npz": "a46ccf3ad6a223937c29f4117d1996d8c56639bf448cceaac36623b40335e049"
+  },
+  "turn": 112
+}

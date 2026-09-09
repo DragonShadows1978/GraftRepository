@@ -1,0 +1,46 @@
+{
+  "accepted": false,
+  "attempts": [
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 22,
+      "prompt_index": 0,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "CHRONICLE \u2014 In this period,  the C7\u2011Fresh\u20110 tag holds Basalt\u2011811, the C7\u2011Fresh\u20111 tag holds Basalt\u2011812, and the C7\u2011Fresh\u20112 tag holds Basalt\u2011813. The C7\u2011Signal\u20110 tag is an alias for the C7\u2011AliasBase\u20110 tag, while the C7\u2011Signal\u20111 tag is an alias for the C7\u2011AliasBase\u20111 tag and the C7\u2011Signal\u20112 tag is an alias for the C7\u2011AliasBase\u20112 tag. The C7\u2011Vesper\u20110 tag holds Onyx\u2011911, the C7\u2011Vesper\u20111 tag holds Onyx\u2011912, and the C7\u2011Vesper\u20110 tag also holds Flint\u2011511. The C7\u2011Vesper\u20111 tag also holds Flint\u2011512. The C7\u2011Archive\u20110 tag holds Reed\u2011611, and the C7\u2011Archive\u20111 tag holds Reed\u2011612."
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 22,
+      "prompt_index": 1,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "Combined record: during these conversations,  the current C7\u2011Fresh\u20110 tag was Basalt\u2011811, the current C7\u2011Fresh\u20111 tag was Basalt\u2011812, the current C7\u2011Fresh\u20112 tag was Basalt\u2011813, and the current C7\u2011Signal\u20110 tag was an alias for C7\u2011AliasBase\u20110. The current C7\u2011Signal\u20111 tag was an alias for C7\u2011AliasBase\u20111, the current C7\u2011Signal\u20112 tag was an alias for C7\u2011AliasBase\u20112, the current C7\u2011Vesper\u20110 tag was Onyx\u2011911, and the current C7\u2011Vesper\u20111 tag was Onyx\u2011912. The current C7\u2011Vesper\u20110 tag was also an alias for Flint\u2011511, the current C7\u2011Vesper\u20111 tag was also an alias for Flint\u2011512, and the earlier Mica values were no longer relevant. The current C7\u2011Archive\u20110 outbound tag was Reed\u2011611, and the current C7\u2011Archive\u20111 outbound tag was Reed\u2011612."
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 22,
+      "prompt_index": 2,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "The facts to archive are:  the C7\u2011Fresh\u20110 tag is Basalt\u2011811, the C7\u2011Fresh\u20111 tag is Basalt\u2011812, the C7\u2011Fresh\u20112 tag is Basalt\u2011813, the C7\u2011Signal\u20110 tag is an alias for the C7\u2011AliasBase\u20110 tag, the C7\u2011Signal\u20111 tag is an alias for the C7\u2011AliasBase\u20111 tag, the C7\u2011Signal\u20112 tag is an alias for the C7\u2011AliasBase\u20112 tag, the C7\u2011Vesper\u20110 tag is Onyx\u2011911, the C7\u2011Vesper\u20111 tag is Onyx\u2011912, the C7\u2011Vesper\u20110 tag is also Flint\u2011511, the C7\u2011Vesper\u20111 tag is also Flint\u2011512, the C7\u2011Archive\u20110 tag is Reed\u2011611, and the C7\u2011Archive\u20111 tag is Reed\u2011612."
+    }
+  ],
+  "digest_text": null,
+  "error": null,
+  "result": {
+    "accepted": false,
+    "best_cov": -1.0,
+    "hit_count": 0,
+    "need_count": 22
+  },
+  "source_payload_sha256": {
+    "0016.npz": "453308adaf43b84d7ef15b0b92c7bde381fb5c8203599620892d77d95d43e7ba",
+    "0022.npz": "544941820580cf2ad4b3a6909972599e991d48f7ec0c40afb6c14fd8b0d015f2",
+    "0026.npz": "4d925b156534fb76e40a5740b1b16398cac8f7d26e7d50f984a9436cf2ec79b1"
+  },
+  "turn": 82
+}

@@ -1,0 +1,47 @@
+{
+  "accepted": false,
+  "attempts": [
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 10,
+      "prompt_index": 0,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "For the archive: the  current C7-Outpost-04 value is Pearl-1204. The current C7-Outpost-05 value is Pearl-1205. The current C7-Outpost-06 value is Slate-1206. C7-Handle-06 is an alias for C7-Outpost-06. The current C7-Outpost-07 value is Slate-1207. C7-Handle-07 is an alias for C7-Outpost-07."
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 10,
+      "prompt_index": 1,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "ARCHIVE NOTE \u2014 The conversation established that the  current value for the identifier C7\u2011Outpost\u201104 is Pearl\u20111204. The current value for the identifier C7\u2011Outpost\u201105 is Pearl\u20111205. The current value for the identifier C7\u2011Outpost\u201106 is Slate\u20111206, and the identifier C7\u2011Handle\u201106 is an alias for C7\u2011Outpost\u201106. The current value for the identifier C7\u2011Outpost\u201107 is Slate\u20111207, and the identifier C7\u2011Handle\u201107 is an alias for C7\u2011Outpost\u201107."
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 10,
+      "prompt_index": 2,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "The facts to archive are:  1. The current C7\u2011Outpost\u201104 value is Pearl\u20111204. 2. The current C7\u2011Outpost\u201105 value is Pearl\u20111205. 3. The current C7\u2011Outpost\u201106 value is Slate\u20111206, and C7\u2011Handle\u201106 is an alias for that same outpost. 4. The current C7\u2011Outpost\u201107 value is Slate\u20111207, with C7\u2011Handle\u201107 serving as an alias for that outpost."
+    }
+  ],
+  "digest_text": null,
+  "error": null,
+  "result": {
+    "accepted": false,
+    "best_cov": -1.0,
+    "hit_count": 0,
+    "need_count": 10
+  },
+  "source_payload_sha256": {
+    "0060.npz": "cb7f8bf6c304a80c1511647aea9b8dcd91733f9d382d673a00dca5a15b7c8c7c",
+    "0065.npz": "8f00db10ebdd517210d9e0b485f54a58ddb35f1f578f984390796ef52f7e75d7",
+    "0067.npz": "565a6e5429d999930571c6918b941cb1dfd5006690d808c5432d3c6769bdf4c2",
+    "0068.npz": "119875d5a7d6befb5f4b7b44f407f2d1a70b16ccc493800d3679efd23aff6bd7"
+  },
+  "turn": 88
+}
