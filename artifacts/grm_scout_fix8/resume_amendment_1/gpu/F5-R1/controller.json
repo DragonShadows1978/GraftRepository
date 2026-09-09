@@ -1,0 +1,36 @@
+{
+  "batch": "F5-R1",
+  "charged_seconds": 120,
+  "elapsed_seconds": 45.705746973864734,
+  "error": "RuntimeError: cudaMalloc failed: out of memory",
+  "historical_F5_status": "FAILED",
+  "historical_RED_preserved": true,
+  "memory_receipts": [
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/resume_amendment_1/gpu/F5-R1/memory/000.json",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/resume_amendment_1/gpu/F5-R1/memory/001.json",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/resume_amendment_1/gpu/F5-R1/memory/002.json",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/resume_amendment_1/gpu/F5-R1/memory/003.json",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/resume_amendment_1/gpu/F5-R1/memory/004.json",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/resume_amendment_1/gpu/F5-R1/memory/005.json",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/resume_amendment_1/gpu/F5-R1/memory/006.json",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/resume_amendment_1/gpu/F5-R1/memory/007.json",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/resume_amendment_1/gpu/F5-R1/memory/008.json",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/resume_amendment_1/gpu/F5-R1/memory/009.json",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/resume_amendment_1/gpu/F5-R1/memory/010.json"
+  ],
+  "memory_scope": "boundary/failure snapshots, not continuous or certified peak",
+  "registration_sha256": "f42b61df6d413551431c84042d6ceca11dfa5e3d89b600a7669f5cc76fa4283b",
+  "resume_registration_sha256": "6a6800a0c222487d9bf7f89afd77acf82266ce0754a2e2bb146e0a81bcef244e",
+  "rows_attempted": [
+    "c7_folded_2_d120",
+    "c7_fresh_0_d250",
+    "c7_fresh_1_d250"
+  ],
+  "rows_completed": [
+    "c7_folded_2_d120",
+    "c7_fresh_0_d250"
+  ],
+  "stage": "c7_fresh_1_d250:open_copy",
+  "status": "FAILED",
+  "traceback": "Traceback (most recent call last):\n  File \"/mnt/ForgeRealm/wt/grm-c7/scripts/grm_scout_fix8_resume.py\", line 249, in execute\n    repo, loaded = open_copy(qs[pid], destination / 'sessions' / pid, base, loaded)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-c7/scripts/grm_c7_middle_replay.py\", line 93, in open_copy\n    repo=e.GraftRepository(model,lambda t:tok.encode(t,add_special_tokens=False),\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-c7/core/graft_repository.py\", line 345, in __init__\n    self.load()\n  File \"/mnt/ForgeRealm/wt/grm-c7/core/graft_repository.py\", line 4818, in load\n    g[\"h\"] = self.arena.unpack_node(g[\"host_payload\"])\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ForgeRealm/wt/grm-c7/core/graft_arena.py\", line 5441, in unpack_node\n    return [{\"k\": tc.tensor(np.ascontiguousarray(k[li][None])).astype(dt),\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: cudaMalloc failed: out of memory\n"
+}
