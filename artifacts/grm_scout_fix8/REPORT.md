@@ -98,3 +98,28 @@ Busy lease, insufficient disk, input/payload drift, existing/failed/orphaned run
 No GPU/model-weight load, git command, subagents, shell background execution/waits, signals, process termination, service operation or external message in this seat. Foreground CPU children were awaited to completion; existing processes were not killed. Only this task's temporary test ownership files were removed. Sibling worktrees were read for historical C2/FIX6 evidence, not edited. `.git` pointer and worktree HEAD were read as files to confirm `grm-c7`, without invoking git. The order and original registrations remain immutable; amendments are separate.
 
 Agent model **gpt-6-astra**, reasoning effort **high**, verified from `logs/grm_fix8_r1.log:6,10`. No GPU time consumed by the seat. Registered lead runs remain **NOT_RUN**.
+
+
+## 2026-09-09 order amendment 1 — F5 OOM successor (CPU only)
+
+The lead completed F1-F4; F5 failed `RuntimeError: cudaMalloc failed: out of memory`
+after two completed rows and a third attempted checkpoint copy. Failure memory
+was unrecorded; transient versus own-peak remains undetermined. The original
+F5 RED and full 280s charge are retained. One create-only F5-R1 successor is
+registered with 120s (the original cap's slack), then F6 retains 280s; total
+historical plus remaining charges =1800s. No original registration/core/receipt
+was rewritten. Each new lease has a >1000 MiB preexisting-device-memory refusal
+and recorded PIDs; row/failure samples retain diagnostic evidence.
+
+[Order amendment report](resume_amendment_1/REPORT.md),
+[ledger](resume_amendment_1/LEDGER.md),
+[registration](resume_amendment_1/registration.json),
+[lead command](lead_commands_fix8_resume.txt).
+Registration SHA-256: `6a6800a0c222487d9bf7f89afd77acf82266ce0754a2e2bb146e0a81bcef244e`.
+CPU author baseline 80 passed; lead --check-only passed; 136 historical hashes
+unchanged. No GPU run or OOM clearance claimed. Prior art: GRM C7/CMC1/FIX8
+(contributors, 2026), NVIDIA nvidia-smi documentation (accessed 2026-09-09);
+reused leases/receipts/telemetry, new exact successor wiring. No prior art known
+to me for this exact composition. Agent gpt-6-astra, high. Process-safety
+residual: overbroad read-only discovery tool session 95902 remains unconfirmed;
+no process killed. Full limits and original RED retained in amendment report.

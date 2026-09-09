@@ -22,3 +22,10 @@
 - Wrote PER_PROBE.md (24 rows), compact recorded/replayed C2 plan streams and c2_identity.json: 132/132 identical, aggregate SHA eae443d91b0a18231865f397526f8e16cdee3c04aa47f8baf6db3a91114a35ce. These serialize recorded ranking/margin policy outputs, not numerical-router/model replay.
 - Verified immutable FIX8 order and all original A7 inputs under the explicit three-module archive mapping; final_integrity.json. Core delta preserved via difflib only (no git). Original scorer SHA 5f8018edd43c0e794ac8ed72424a872cc3de82ccffe6f85d65ec88b0f1531fe0 unchanged.
 - REPORT.md records source lines, evidence classes, all residual RED, exact lead command, separate FIX8/A7 budgets, prior art, process safety and live model/effort receipt. New replay cap 1800s; existing A7 cap separate, combined reservations 3360s. No GPU run, no full-suite PASS, no model-quality claim.
+
+- 2026-09-09 order amendment 1: separate immutable PLAN/registration, append-only
+  ledger and report at resume_amendment_1/. Historical F5 OOM remains RED; new
+  F5-R1 120s + F6 280s retain 1400s old charges under 1800s. Pre-lease 1000 MiB
+  device-memory/PID admission, single successor, CPU baseline 80 passed and
+  lead --check-only passed; no GPU. Prior art and safety residual documented
+  in amendment ledger/report; old narrative extended by append only.
