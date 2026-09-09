@@ -23,6 +23,8 @@ from scripts import grm_lt1 as lt
 from scripts.grm_c7_common import hashes
 from scripts.grm_c7_run import emit, lines, oracle, seats
 RUN = lt.RUN
+from scripts.grm_lt1_amendment4 import (install_native_publication, cell_directory,
+    accepted_failed_charge, execution_sha)
 
 
 def bind(arm):
@@ -81,7 +83,7 @@ def execute(cell, directory, registration, loader, *, run=RUN, deadline=float('i
     session=directory/'session';session.mkdir()
     state=initial_state();prior=None;previous_nodes=None
     if cell['depends']:
-        previous=run/cell['depends'];prior=lt.read(previous/'worker.json')
+        previous=cell_directory(run,cell['depends']);prior=lt.read(previous/'worker.json')
         if prior['binding']!=bind(cell['arm']):raise ValueError('PRIOR_WORKER_BINDING')
         state=lt.validate_checkpoint(previous/'checkpoint',cell['start'],bind(cell['arm']))
         if not fake:assert_payloads(previous/'checkpoint/repository')
@@ -103,6 +105,8 @@ def execute(cell, directory, registration, loader, *, run=RUN, deadline=float('i
             loaded=[repo._node_manifest(g) for g in a.grafts]
             if manifest_projection(previous_nodes)!=manifest_projection(loaded):raise ValueError('RESTART_METADATA_CHANGED')
         observe(a,directory,context)
+        fed_nodes = {}
+        install_native_publication(repo, fed_nodes, directory, context)
         restart_ok=None
         if cell['start'] in (71,141):
             context['phase']='restart_after'
@@ -142,6 +146,7 @@ def execute(cell, directory, registration, loader, *, run=RUN, deadline=float('i
                 # User corrections are ordinary prose, not hidden supersede calls.
                 idx=a.feed(e2e.harmony_turn(event['user'],event['assistant']))
                 a.grafts[idx]['kind']='turn';state['turn_nodes'][str(turn)]=idx
+                fed_nodes[idx] = a.grafts[idx]
             state['transcript'].append(copy.deepcopy(event));state['next_turn']=turn+1
             context['phase']='post_turn';record_seats(a,directory,context)
         restart_before=None
@@ -158,7 +163,7 @@ def execute(cell, directory, registration, loader, *, run=RUN, deadline=float('i
         if not fake:assert_payloads(cp/'repository')
         lt.checkpoint(cp,state,bind(cell['arm']))
         check_deadline(deadline)
-        return dict(cell=cell,binding=bind(cell['arm']),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
+        return dict(cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
                     previous_process_id=old_process,previous_pid=old_pid,metadata_retained=True if prior else None,
                     restart_before=restart_before,restart_retained_scores=restart_ok,capture=capture,
                     rows=nrows,model_info=model_info,checkpoint_sha256=lt.sha(cp/'checkpoint.json'),
@@ -178,7 +183,7 @@ def worker(cell):
         from scripts.grm_c2_cells import args_for
         _,_,repo,info=e2e.load_model_and_repo(args_for(e2e,session,flags),session)
         return repo,info
-    directory=RUN/'cells'/cell['id']
+    directory=cell_directory(RUN/'cells',cell['id'])
     try:
         result=execute(cell,directory,lt.verify(),loader,run=RUN/'cells',deadline=deadline)
         lt.create(directory/'worker.json',result)
@@ -191,7 +196,11 @@ def accounting(run=RUN):
         controller=p.with_name('controller.json')
         if not controller.exists():raise ValueError('ORPHAN_RESERVATION: '+str(p.parent))
         r=lt.read(controller)
-        if r['status']!='COMPLETE':raise ValueError('PRIOR_CELL_RED: '+str(p.parent))
+        if r['status']!='COMPLETE':
+            charge=accepted_failed_charge(p.parent,r)
+            if charge is None:raise ValueError('PRIOR_CELL_RED: '+str(p.parent))
+            spent+=charge
+            continue
         spent+=r['charged_seconds']
     return spent
 
@@ -200,7 +209,7 @@ def pending(registration,run=RUN):
     # Prior art: C2 immutable reservations (2026), combined-arm ownership here.
     accounting(run)
     for cell in sorted(registration['cells'],key=lambda c:(c['start'],c['arm'])):
-        d=run/'cells'/cell['id']
+        d=cell_directory(run/'cells',cell['id'])
         if d.exists():
             c=lt.read(d/'controller.json');w=lt.read(d/'worker.json')
             if c['status']!='COMPLETE' or c['binding']!=bind(cell['arm']) or w['binding']!=bind(cell['arm']):
@@ -216,8 +225,8 @@ def run_cell(cell,registration):
     from scripts.grm_c2_cells import environment
     from scripts.grm_cmc1_gpu_arms import LOCK_PATH
     if accounting()+cell['lease_seconds']>10800:raise ValueError('COMBINED_GPU_BUDGET_RAIL')
-    directory=RUN/'cells'/cell['id'];directory.mkdir(parents=True)
-    lt.create(directory/'reservation.json',dict(seconds=285,cell=cell,binding=bind(cell['arm']),admission_rule="margin_first"))
+    directory=cell_directory(RUN/'cells',cell['id']);directory.mkdir(parents=True)
+    lt.create(directory/'reservation.json',dict(seconds=285,cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first"))
     outer=time.monotonic();status='RED';error=None;charged=285.0;acquired=None
     try:
         # Prior art: CMC1 flock lease (2026), same shared lock, bounded wait.
@@ -255,7 +264,7 @@ def run_cell(cell,registration):
     finally:
         if acquired is not None:charged=max(charged,time.monotonic()-acquired)
         lt.create(directory/'controller.json',dict(status=status,error=error,charged_seconds=charged,
-             cell=cell,binding=bind(cell['arm']),admission_rule="margin_first",outer_seconds_before_cooldown=time.monotonic()-outer))
+             cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",outer_seconds_before_cooldown=time.monotonic()-outer))
         time.sleep(30)
     return status=='COMPLETE'
 

@@ -93,6 +93,8 @@ def verify():
     # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
     from scripts.grm_lt1_amendment3 import apply
     apply(sys.modules[__name__], inputs, a2)
+    from scripts.grm_lt1_amendment4 import apply as apply4
+    apply4(sys.modules[__name__], inputs)
     r['effective_admission_rule']='margin_first'
     for arm in r['arms'].values():arm['admission_rule']='margin_first'
     for name,digest in inputs.items():
@@ -137,6 +139,10 @@ def summary(arm):
     r=verify(); f=read(FIX); ps={p['id']:p for p in f['probes']}
     rows=[]
     for p in sorted((RUN/'cells').glob(f'{arm}-*/probes.jsonl')):
+        # Prior art: LT1 stop-on-RED cell accounting (GRM, 2026). Partial
+        # crashed-cell rows are evidence, not committed/scorable turns.
+        ctl=p.parent/'controller.json'
+        if not ctl.exists() or read(ctl).get('status')!='COMPLETE': continue
         rows.extend(json.loads(line) for line in p.read_text().splitlines())
     ids=[x['probe_id'] for x in rows]
     if len(ids)!=len(set(ids)) or set(ids)-set(ps): raise ValueError('DUPLICATE_OR_UNKNOWN_PROBE')
@@ -159,7 +165,10 @@ def summary(arm):
         recap=dict(answer=answer,out_of=5,matched=sum(score(answer,p['expected'])['exact_correct'] for p in f['decisions']))
     # Prior art: C7 complete-cell plus seat/restart receipts (GRM, 2026).
     # Completeness alone never establishes quality, residency or restart pass.
-    completed=list((RUN/'cells').glob(f'{arm}-*/controller.json'))
+    from scripts.grm_lt1_amendment4 import cell_directory
+    completed=[cell_directory(RUN/'cells',c['id'])/'controller.json'
+               for c in r['cells'] if c['arm']==arm
+               and (cell_directory(RUN/'cells',c['id'])/'controller.json').exists()]
     workers=[read(p.with_name('worker.json')) for p in completed if p.with_name('worker.json').exists()]
     complete=len(completed)==26 and len(workers)==26 and len(rows)==35 and recap is not None and all(read(p)['status']=='COMPLETE' for p in completed)
     seats=[]
@@ -179,6 +188,9 @@ def summary(arm):
 def preflight():
     r=verify(); free=shutil.disk_usage(ROOT).free
     reasons=[]
+    from scripts.grm_lt1_amendment4 import check_original_evidence, cpu_ready
+    check_original_evidence()
+    if not cpu_ready(): reasons.append('AMENDMENT4_CPU_GATES_NOT_GREEN')
     if free<20_000_000_000: reasons.append('FREE_SPACE_BELOW_20_GB')
     if r['status']!='FIT_ESTIMATE': reasons.append(r['status'])
     receipt=OUT/'amendment3/r3/cpu_receipt.json'
