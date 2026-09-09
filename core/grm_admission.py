@@ -740,6 +740,29 @@ def abstention_text(tokens: Sequence[str]) -> str:
     return ABSTENTION_TEMPLATE.format(tokens=listed)
 
 
+def identifier_serving_decision(arena, question, profile, *, exclude=()):
+    """Keep admission mount-exempt; distinguish an existing live binder.
+
+    Prior art: GRM contributors (2026), ADM1 is_identifier_binding and EB1
+    live exclusions. Reuse the frozen predicate, not routing or score changes.
+    David's FIX-4 ruling (2026): live-only binding satisfies the lookup.
+    No prior art known to me for this exact repair composition.
+    """
+    if profile is not None and not profile.get("identified_candidates"):
+        # Empty eligible banks have an empty profile token list; scan the
+        # question itself so an all-live bank still serves its binding source.
+        ordered, rare = ordered_identifier_tokens(arena, question)
+        bound = [int(i) for i in sorted(set(exclude))
+                 if not arena.grafts[int(i)].get("retired")
+                 and is_identifier_binding(
+                     candidate_text=str(arena.grafts[int(i)].get("text", "") or ""),
+                     ordered_identifier_tokens=ordered,
+                     rare_identifier_tokens=rare)] if ordered else []
+        if bound:
+            return {"served_from": "recency_mount", "served_from_node_ids": bound}
+    return identifier_unbound_abstention(profile)
+
+
 def identifier_unbound_abstention(
     profile: Mapping[str, Any] | None,
 ) -> dict[str, Any] | None:

@@ -53,7 +53,7 @@ from core.grm_admission import (
     chunk_trip_cap,
     decisive_admission_profile,
     fit_info_fields,
-    identifier_unbound_abstention,
+    identifier_serving_decision,
     is_identifier_binding,
     mountable_budget,
     ordered_identifier_tokens,
@@ -3345,6 +3345,30 @@ class ArenaCache:
         out = descended or children
         return (out, False) if with_binding_flag else out
 
+    def _serve_live_binding(self, user_text, decision, rec, *, ngen,
+                            deposit, defer_memory, stops):
+        """Read the binding live source without an admission mount.
+
+        Prior art: GRM contributors (2026), EB1 nomination/assembly and
+        ArenaCache._attempt cache reuse. Materialize only binding recency
+        nominees, once; persistent live segments stay in their existing cache.
+        No prior art known to me for this exact FIX-4 composition.
+        """
+        ids = decision["served_from_node_ids"]
+        rec_ids = sorted(set(ids) & set(rec))
+        picks = sorted(set(self.cur_mounts) | set(rec_ids))
+        self._eb1_recency_seats_charged = sum(
+            int(self.grafts[i]["ntok"]) for i in rec_ids)
+        self._eb1_recency_charge_waived_reason = None
+        for layer in self.m.layers:
+            layer.self_attn.live_shift = self.live_shift
+        txt, info = self._attempt(user_text, picks, ngen, deposit, stops,
+                                  defer_memory=defer_memory)
+        info.update(decision)
+        info["trip"] = 0
+        self._grounding_receipt(txt, picks, user_text, info)
+        return txt, info
+
     def step(self, user_text, ngen=48, deposit=True,
              stops=None, max_trips=0, defer_memory=False, demand_ngh=None,
              demand_early_abort=None):
@@ -3411,7 +3435,23 @@ class ArenaCache:
         # must not be answered from the topical nearest neighbour; that is
         # the confabulation-under-retrieval-failure path Phase 0 measured
         # (H-LSR-3, ABSENT x4).  Structural trigger, no threshold.
-        abstain = identifier_unbound_abstention(admission_profile)
+        abstain = identifier_serving_decision(
+            self, user_text, admission_profile, exclude=live_idx)
+        if abstain is not None and abstain.get("served_from"):
+            txt, info = self._serve_live_binding(
+                user_text, abstain, rec, ngen=ngen, deposit=deposit,
+                defer_memory=defer_memory, stops=stops)
+            _, contributors = self._grounding_attribution(
+                txt, self.cur_mounts, user_text)
+            if defer_memory:
+                info["_deferred_memory"]["importance_bookkeeping"] = {
+                    "routed": [int(i) for i in ranking],
+                    "mounted": list(self.cur_mounts),
+                    "grounded_mounts": list(contributors), "turn": int(s4_turn)}
+            else:
+                self._commit_s4_attempt(
+                    ranking, self.cur_mounts, contributors, turn=s4_turn)
+            return txt, attach_route_receipt(info)
         if abstain is not None:
             txt, info = self._serve_abstention(
                 user_text, abstain, deposit=deposit,
