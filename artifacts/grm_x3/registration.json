@@ -1,0 +1,109 @@
+{
+  "author": {
+    "model_id": "GPT-6 (Codex; exact deployment subvariant unavailable)",
+    "reasoning_effort": "not exposed in this session"
+  },
+  "control_scope": "unrelated sham can compete for attention; not a mathematical zero; ZERO replay measures hydration noise separately",
+  "deviations": [
+    "No GPU snapshots exist in sandbox; recipes are not snapshots.",
+    "Controlled direct _attempt after chronological fact feeds; not a natural routed full-battery serving receipt.",
+    "Mask exclusion replaces physical deletion to preserve all other row positions.",
+    "E2E-derived recipes retain completed fact turns; filler and previous generated probes are not replayed."
+  ],
+  "evidence_class": "reasoning; preregistration before any CPU/GPU gate",
+  "fixture_phase": "freeze 20 recipes now; lead captures 20 actual model states before fork gates, in four cells of five. Actual strata are pending.",
+  "fork_contract": "remove/sham disable only target columns in canonical attention masks (no row compaction); swaps change only same-length active K/V span; all remaining canonical host bytes identical",
+  "forks": [
+    "unforked",
+    "zero",
+    "remove",
+    "swap",
+    "same_payload",
+    "sham"
+  ],
+  "frame": {
+    "GRM_CAPTURE_PIN": "live",
+    "GRM_DEMAND_NGH": "0",
+    "GRM_LSR_FIXES": "1",
+    "GRM_PERSISTENT_BOAT": "0",
+    "GRM_SEAT_NEAR_LIVE": "1",
+    "arena_width": 96,
+    "routing": "RT1 source retained; diagnostic controlled picks after chronological feed"
+  },
+  "immutable": true,
+  "lead_predictions": {
+    "P1": "same_payload AND sham KL < 0.05 nats jointly on >=18/20 snapshots",
+    "P2": "remove-source KL > 1 nat on >=6/8 observed-correct, correct-mount cases",
+    "P3": "decoy mass high on >=4/6 observed-decoy cases AND lesion classifier strictly better exact-error accuracy than mass classifier on those six"
+  },
+  "model_id": "openai/gpt-oss-20b",
+  "order": {
+    "path": "orders/GRM_X3_MEMORY_LESIONS.md",
+    "sha256": "80f34216daa0e40893ae50c0f8a63f39835625f08df66f42fbf50cca83dedb89"
+  },
+  "prior_art": [
+    {
+      "url": "https://aclanthology.org/N19-1357/",
+      "used": "attention weight is not sufficient causal attribution; verified primary abstract",
+      "work": "Jain and Wallace 2019 Attention is not Explanation"
+    },
+    {
+      "url": "https://arxiv.org/abs/2202.05262",
+      "used": "controlled activation interventions; no ROME weight editing; verified primary abstract",
+      "work": "Meng et al. 2022 Locating and Editing Factual Associations in GPT"
+    },
+    {
+      "search_terms": "Kullback Leibler 1951 On Information and Sufficiency doi 10.1214/aoms/1177729694",
+      "status": "unverified \u2014 lead to check",
+      "used": "KL divergence",
+      "work": "Kullback and Leibler 1951 On Information and Sufficiency"
+    },
+    {
+      "used": "capture/hydration, arithmetic, geometry, repository feed; own code is scoped mask/payload fork adapter and negative controls",
+      "work": "house DET1 S3/S4 D-NGH RS3/RS4 EB1 RT1 (2026)"
+    },
+    {
+      "used": "particular fixed accuracy direction, thresholds beyond lead values, digit decoy rule and 8/6/6 allocation; no novelty claim",
+      "work": "no prior art known to me"
+    }
+  ],
+  "rails": {
+    "cells": 4,
+    "cooldown_seconds": 30,
+    "gpu_budget_seconds": 1800,
+    "kill": "controls comparable to factual interventions (max(same,sham,zero) >= max(remove,swap) with factual max>=0.05 on >=3/20) OR no strict overall accuracy improvement; no serving change",
+    "lock_wait_seconds": 240,
+    "maximum_launches": 4,
+    "outer_seconds": 590,
+    "retry": "none; failed or abandoned starts remain consumed; resume only never-started cells",
+    "snapshots_per_cell": 5,
+    "worker_seconds": 285
+  },
+  "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+  "schema": "grm.x3.registration.v1",
+  "scoring": {
+    "effect_high": "remove KL > 1.0 (strict)",
+    "error": "casefold+outer-whitespace exact whole answer differs from every expected value; refusals count as factual errors",
+    "kl": "KL(P_unforked || P_fork), float64 log-softmax over full vocabulary, natural log; no clipping",
+    "lesion_error_classifier": "remove KL > 1.0; fixed positive association, no label-dependent inversion",
+    "mass_caveat": "D-NGH threshold carried from TWO full-mount calibration turns; applied to target mount here, never refit.",
+    "mass_error_classifier": "mass < registered mass threshold (D-NGH direction)",
+    "mass_high": ">= 0.3380523274342219",
+    "mass_statistic": "unforked first-position mean over full-attention layers and heads, target span only; D-NGH arithmetic",
+    "mass_threshold": 0.3380523274342219,
+    "metric": "paired accuracy (#correct predictions / N); P3 decoy subset, primary overall20 also reported; ties fail improvement",
+    "refusal": "normalized answer starts with not in memory, i don't know, i do not know, i cannot, i can't, or unknown",
+    "table": "4 cells on all20 unforked target mass vs remove KL; count, exact_errors, error_rate; empty cells null, never zero",
+    "token_position": "first predicted token after the identical full question prefill, no teacher forcing",
+    "truncation": "ngen=40, no stop reached => truncated; prediction gates unevaluable (RED), keep rows"
+  },
+  "seat_predictions": {
+    "Q1": "same_payload raw first-token logits bitwise equal on 20/20; sham KL <0.05 on >=18/20",
+    "Q2": "remove-source KL >1 on <=5/8 correct-mount cases (first-token statistic may miss later value tokens)",
+    "Q3": "lesion classifier accuracy <= mass classifier accuracy across all 20; reliance alone does not identify truth"
+  },
+  "tokenizer": {
+    "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/tokenizer.json",
+    "sha256": "0614fe83cadab421296e664e1f48f4261fa8fef6e03e63bb75c20f38e37d07d3"
+  }
+}

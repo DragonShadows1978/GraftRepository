@@ -1,0 +1,112 @@
+{
+  "cells": [
+    {
+      "cell": "cell_00",
+      "snapshot_ids": [
+        "x3_00",
+        "x3_01",
+        "x3_02",
+        "x3_03",
+        "x3_04"
+      ],
+      "arms": [
+        "unforked",
+        "zero",
+        "remove",
+        "swap",
+        "same_payload",
+        "sham"
+      ],
+      "worker_cap_seconds": 285,
+      "outer_cap_seconds": 590,
+      "estimated_worker_seconds": [
+        180,
+        285
+      ],
+      "cooldown_seconds": 30,
+      "evidence_class": "reasoning; enumeration, no GPU measurements"
+    },
+    {
+      "cell": "cell_01",
+      "snapshot_ids": [
+        "x3_05",
+        "x3_06",
+        "x3_07",
+        "x3_08",
+        "x3_09"
+      ],
+      "arms": [
+        "unforked",
+        "zero",
+        "remove",
+        "swap",
+        "same_payload",
+        "sham"
+      ],
+      "worker_cap_seconds": 285,
+      "outer_cap_seconds": 590,
+      "estimated_worker_seconds": [
+        180,
+        285
+      ],
+      "cooldown_seconds": 30,
+      "evidence_class": "reasoning; enumeration, no GPU measurements"
+    },
+    {
+      "cell": "cell_02",
+      "snapshot_ids": [
+        "x3_10",
+        "x3_11",
+        "x3_12",
+        "x3_13",
+        "x3_14"
+      ],
+      "arms": [
+        "unforked",
+        "zero",
+        "remove",
+        "swap",
+        "same_payload",
+        "sham"
+      ],
+      "worker_cap_seconds": 285,
+      "outer_cap_seconds": 590,
+      "estimated_worker_seconds": [
+        180,
+        285
+      ],
+      "cooldown_seconds": 30,
+      "evidence_class": "reasoning; enumeration, no GPU measurements"
+    },
+    {
+      "cell": "cell_03",
+      "snapshot_ids": [
+        "x3_15",
+        "x3_16",
+        "x3_17",
+        "x3_18",
+        "x3_19"
+      ],
+      "arms": [
+        "unforked",
+        "zero",
+        "remove",
+        "swap",
+        "same_payload",
+        "sham"
+      ],
+      "worker_cap_seconds": 285,
+      "outer_cap_seconds": 590,
+      "estimated_worker_seconds": [
+        180,
+        285
+      ],
+      "cooldown_seconds": 30,
+      "evidence_class": "reasoning; enumeration, no GPU measurements"
+    }
+  ],
+  "total_snapshot_recipes": 20,
+  "raw_GPU_snapshots": 0,
+  "maximum_gpu_seconds": 1140,
+  "registration_sha256": "83bba1ea9f9223271526694e97ed3c92b89f11382facc6598515b2c3fed09b62"
+}

@@ -1,0 +1,39 @@
+{
+  "status": "BLOCKED",
+  "errors": [
+    "NO GPU: /dev/nvidia0 absent in dispatched sandbox"
+  ],
+  "runtime": {
+    "registration_sha256": "83bba1ea9f9223271526694e97ed3c92b89f11382facc6598515b2c3fed09b62",
+    "fixtures_sha256": "a437e950a89e45e629a7a8c11cd1225429030dfc210749502c07e1faa35eff45",
+    "implementation_sha256": "361dc992bd19b8ba896f784e4cb04f0efbf1fe1dac029bbfa19b08af0f5f6d1f",
+    "model_id": "openai/gpt-oss-20b",
+    "model_inventory": {
+      "model-00000-of-00002.safetensors": {
+        "blob": "16d0f997dcfc4462089d536bffe51b4bcea2f872f5c430be09ef8ed392312427",
+        "size": 4792272488
+      },
+      "model-00001-of-00002.safetensors": {
+        "blob": "4fbe328ab445455d6f58dc73852b85873bd626986310abd91cd4d2ce3245eaea",
+        "size": 4798702184
+      },
+      "model-00002-of-00002.safetensors": {
+        "blob": "a18106b209e9ab35c3406db4f6f12a927364a058b21e9d1373d682e20674b303",
+        "size": 4170342232
+      }
+    },
+    "native_sha256": "6e984b0de89339e1ea5c7a0731323f5682aff476e3fabf48af2d173ecea3976d",
+    "engine_sha256": "7f438cc7ceb66a16b492d59185f2bd9940f0ecfa44d05514499c89ac2195b250",
+    "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+    "frame": {
+      "GRM_CAPTURE_PIN": "live",
+      "GRM_DEMAND_NGH": "0",
+      "GRM_LSR_FIXES": "1",
+      "GRM_PERSISTENT_BOAT": "0",
+      "GRM_SEAT_NEAR_LIVE": "1",
+      "arena_width": 96,
+      "routing": "RT1 source retained; diagnostic controlled picks after chronological feed"
+    },
+    "fingerprint": "e59ce9ad2e2073d8328db192c9a0405e3147fa0d0d660288567458debfb55008"
+  }
+}
