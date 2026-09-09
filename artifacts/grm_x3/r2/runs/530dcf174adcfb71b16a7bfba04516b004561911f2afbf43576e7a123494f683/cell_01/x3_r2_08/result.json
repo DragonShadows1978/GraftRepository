@@ -1,0 +1,524 @@
+{
+  "donor_payload": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_01/x3_r2_08/donor_payload.npz",
+    "sha256": "2d29331eb37c940751b9f6bb7c91db08213587590f9b5e3066e0053d8b660b39"
+  },
+  "evidence_class": "E2E session receipt",
+  "forks": {
+    "remove": {
+      "base_mass_on_lesioned_mount": 0.40413009375333786,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "8036fa2d2fbf02e730f8dac8c70f66671f36a9f5cf1aab4467713e9ead6e5842",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "4258cda1a98bd0813e9dd07be50ff72db79a64d98a4b4b1efefce6a487cf786a",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.4657860040043115,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_01/x3_r2_08/remove.npy",
+        "sha256": "41c738a04470bd2e83ab816dcceb4bcb2ae0e944c07550eba1a09e87c38270e9"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.0,
+      "outcome": {
+        "answer": "I\u2019m sorry, but I don\u2019t have any information on that.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "I\u2019m sorry, but I don\u2019t have any information on that.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        40,
+        4572,
+        23045,
+        11,
+        889,
+        357,
+        1700,
+        1573,
+        679,
+        1062,
+        2164,
+        402,
+        484,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "1f65ae207bc4198b2bd24e77af105946176fac87a2935753581f38961da39e88"
+      }
+    },
+    "same_payload": {
+      "base_mass_on_lesioned_mount": 0.40413009375333786,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "8036fa2d2fbf02e730f8dac8c70f66671f36a9f5cf1aab4467713e9ead6e5842",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "8036fa2d2fbf02e730f8dac8c70f66671f36a9f5cf1aab4467713e9ead6e5842",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_01/x3_r2_08/same_payload.npy",
+        "sha256": "123d5c2b23c3ab8d9ef64e294495f12d1cf42b640c8e24ece1f3b12eb856cd9e"
+      },
+      "mass_on_lesioned_mount": 0.40413009375333786,
+      "mass_on_target": 0.40413009375333786,
+      "outcome": {
+        "answer": "Iverstone\u2019s order: copper\u2011839, then indigo\u2011859.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "Iverstone\u2019s order: copper\u2011839, then indigo\u2011859.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        40,
+        445,
+        18617,
+        802,
+        2569,
+        25,
+        34855,
+        50005,
+        49502,
+        11,
+        1815,
+        1383,
+        6235,
+        50005,
+        48262,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "1f65ae207bc4198b2bd24e77af105946176fac87a2935753581f38961da39e88"
+      }
+    },
+    "sham": {
+      "base_mass_on_lesioned_mount": 0.03996523860647964,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "8036fa2d2fbf02e730f8dac8c70f66671f36a9f5cf1aab4467713e9ead6e5842",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "f2d23685c22465729286c5af983122171ae2387117bfb9ac9dbb03dcf1c96778",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.012678163332834617,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_01/x3_r2_08/sham.npy",
+        "sha256": "fac1c1aa5ad1efd4196d7851c10c131d9c89c40aa417da191ae8e90a3301d9ae"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.4124583701292674,
+      "outcome": {
+        "answer": "Iverstone\u2019s recorded order: copper\u2011839 precedes indigo\u2011859.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "Iverstone\u2019s recorded order: copper\u2011839 precedes indigo\u2011859.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        40,
+        445,
+        18617,
+        802,
+        19460,
+        2569,
+        25,
+        34855,
+        50005,
+        49502,
+        25951,
+        268,
+        1383,
+        6235,
+        50005,
+        48262,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "1f65ae207bc4198b2bd24e77af105946176fac87a2935753581f38961da39e88"
+      }
+    },
+    "swap": {
+      "base_mass_on_lesioned_mount": 0.40413009375333786,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "8036fa2d2fbf02e730f8dac8c70f66671f36a9f5cf1aab4467713e9ead6e5842",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "injection.layer_00.k",
+          "injection.layer_00.v",
+          "injection.layer_01.k",
+          "injection.layer_01.v",
+          "injection.layer_02.k",
+          "injection.layer_02.v",
+          "injection.layer_03.k",
+          "injection.layer_03.v",
+          "injection.layer_04.k",
+          "injection.layer_04.v",
+          "injection.layer_05.k",
+          "injection.layer_05.v",
+          "injection.layer_06.k",
+          "injection.layer_06.v",
+          "injection.layer_07.k",
+          "injection.layer_07.v",
+          "injection.layer_08.k",
+          "injection.layer_08.v",
+          "injection.layer_09.k",
+          "injection.layer_09.v",
+          "injection.layer_10.k",
+          "injection.layer_10.v",
+          "injection.layer_11.k",
+          "injection.layer_11.v",
+          "injection.layer_12.k",
+          "injection.layer_12.v",
+          "injection.layer_13.k",
+          "injection.layer_13.v",
+          "injection.layer_14.k",
+          "injection.layer_14.v",
+          "injection.layer_15.k",
+          "injection.layer_15.v",
+          "injection.layer_16.k",
+          "injection.layer_16.v",
+          "injection.layer_17.k",
+          "injection.layer_17.v",
+          "injection.layer_18.k",
+          "injection.layer_18.v",
+          "injection.layer_19.k",
+          "injection.layer_19.v",
+          "injection.layer_20.k",
+          "injection.layer_20.v",
+          "injection.layer_21.k",
+          "injection.layer_21.v",
+          "injection.layer_22.k",
+          "injection.layer_22.v",
+          "injection.layer_23.k",
+          "injection.layer_23.v"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "5099c769cb9d328a1c908594fbec9844869cdd451c060e67cd4990be5082a083",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.004643390209069678,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_01/x3_r2_08/swap.npy",
+        "sha256": "5841684b9bdfaf0b07e12039ce902be6f9263db0fd3f40caa90314069539607b"
+      },
+      "mass_on_lesioned_mount": 0.4071715176105499,
+      "mass_on_target": 0.4071715176105499,
+      "outcome": {
+        "answer": "Iverstone\u2019s order: copper\u2011739, then indigo\u2011859.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "Iverstone\u2019s order: copper\u2011739, then indigo\u2011859.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        40,
+        445,
+        18617,
+        802,
+        2569,
+        25,
+        34855,
+        50005,
+        49505,
+        11,
+        1815,
+        1383,
+        6235,
+        50005,
+        48262,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "1f65ae207bc4198b2bd24e77af105946176fac87a2935753581f38961da39e88"
+      }
+    },
+    "zero": {
+      "base_mass_on_lesioned_mount": 0.40413009375333786,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "8036fa2d2fbf02e730f8dac8c70f66671f36a9f5cf1aab4467713e9ead6e5842",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "8036fa2d2fbf02e730f8dac8c70f66671f36a9f5cf1aab4467713e9ead6e5842",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_01/x3_r2_08/zero.npy",
+        "sha256": "123d5c2b23c3ab8d9ef64e294495f12d1cf42b640c8e24ece1f3b12eb856cd9e"
+      },
+      "mass_on_lesioned_mount": 0.40413009375333786,
+      "mass_on_target": 0.40413009375333786,
+      "outcome": {
+        "answer": "Iverstone\u2019s order: copper\u2011839, then indigo\u2011859.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "Iverstone\u2019s order: copper\u2011839, then indigo\u2011859.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        40,
+        445,
+        18617,
+        802,
+        2569,
+        25,
+        34855,
+        50005,
+        49502,
+        11,
+        1815,
+        1383,
+        6235,
+        50005,
+        48262,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "1f65ae207bc4198b2bd24e77af105946176fac87a2935753581f38961da39e88"
+      }
+    }
+  },
+  "id": "x3_r2_08",
+  "intended_group": "decoy",
+  "mass": 0.40413009375333786,
+  "mass_telemetry_first_position": {
+    "ent": null,
+    "full_attention_layers": 12,
+    "lqr": null,
+    "ngh": {
+      "learned_sink_mass": 0.20724950179768106,
+      "live_mass": 0.32584768782059353,
+      "mounted_mass": 0.40413009375333786,
+      "physical_sink_mass": 0.06278910899224381
+    },
+    "prediction_token_id": 40,
+    "token_index": 0
+  },
+  "outcome": {
+    "answer": "Iverstone\u2019s order: copper\u2011839, then indigo\u2011859.",
+    "category_realized": false,
+    "exact_equality_outcome": {
+      "answer": "Iverstone\u2019s order: copper\u2011839, then indigo\u2011859.",
+      "category_realized": false,
+      "exact_error": true,
+      "is_exact_decoy": false,
+      "is_refusal": false,
+      "truncated": false
+    },
+    "exact_equality_realization": false,
+    "exact_error": true,
+    "is_exact_decoy": false,
+    "is_refusal": false,
+    "realization_scorer": "grm.x3.r2.value_span.v1",
+    "truncated": false,
+    "value_span_correct": false,
+    "value_span_decoy": false,
+    "value_span_error": true,
+    "value_span_refusal": false
+  },
+  "seat": {
+    "arena_width": 96,
+    "delta_positions": 38,
+    "live_shift": 115,
+    "mount_ntok": 58,
+    "mount_pos0": 57,
+    "mount_pos0_legacy": 19,
+    "n_sink": 19,
+    "plan_head": 1,
+    "plan_head_adjacent_to_live_shift": true,
+    "plan_head_last_position": 114,
+    "plan_head_ntok": 55,
+    "seat_near_live": true,
+    "seat_offset_plan_head": 60,
+    "seat_order": [
+      3,
+      1
+    ],
+    "seat_order_legacy": [
+      1,
+      3
+    ],
+    "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+  },
+  "session_scope": "controlled captured attempt, not full natural battery acceptance",
+  "sham_mass": 0.03996523860647964,
+  "snapshot": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_01/x3_r2_08/snapshot/manifest.json",
+    "sha256": "1f65ae207bc4198b2bd24e77af105946176fac87a2935753581f38961da39e88"
+  },
+  "spans": {
+    "sham": [
+      19,
+      22
+    ],
+    "target": [
+      22,
+      77
+    ]
+  },
+  "unforked_logits": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_01/x3_r2_08/unforked.npy",
+    "sha256": "123d5c2b23c3ab8d9ef64e294495f12d1cf42b640c8e24ece1f3b12eb856cd9e"
+  }
+}

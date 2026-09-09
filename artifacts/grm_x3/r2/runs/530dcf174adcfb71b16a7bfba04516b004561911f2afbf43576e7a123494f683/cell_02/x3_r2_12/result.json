@@ -1,0 +1,518 @@
+{
+  "donor_payload": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_12/donor_payload.npz",
+    "sha256": "f1e557ba974f5f46ded9ee8135e547fbb728b72368f0a6e401ffd65ca1638f53"
+  },
+  "evidence_class": "E2E session receipt",
+  "forks": {
+    "remove": {
+      "base_mass_on_lesioned_mount": 0.40125710268815357,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "2966f9b84de38bd663d6b3af1335baa5a1dfb0a29ba50ee8d0613422fc85c2e5",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "0f79d67e2c5b794d43862802f777611faa0cf5892d1a6e91bcc40f35fbfd3890",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.6643130267275815,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_12/remove.npy",
+        "sha256": "1c9238d36342dcdd9b3e4673ec54e158aebcb4f8f47b9879eca23653caa441b9"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.0,
+      "outcome": {
+        "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        40,
+        4572,
+        23045,
+        11,
+        889,
+        357,
+        1700,
+        1573,
+        679,
+        484,
+        2164,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "ec43e1806619f8319d7776c0a302a05b57ee2cfb4fc5ebc8f3457317bfa72f89"
+      }
+    },
+    "same_payload": {
+      "base_mass_on_lesioned_mount": 0.40125710268815357,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "2966f9b84de38bd663d6b3af1335baa5a1dfb0a29ba50ee8d0613422fc85c2e5",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "2966f9b84de38bd663d6b3af1335baa5a1dfb0a29ba50ee8d0613422fc85c2e5",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_12/same_payload.npy",
+        "sha256": "43efac8d3d567e0ef7534a8f40d8da40f8677b0ad1a4d4977b0ad5c5f70e8186"
+      },
+      "mass_on_lesioned_mount": 0.40125710268815357,
+      "mass_on_target": 0.40125710268815357,
+      "outcome": {
+        "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        40,
+        4572,
+        23045,
+        11,
+        889,
+        357,
+        1700,
+        1573,
+        679,
+        484,
+        2164,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "ec43e1806619f8319d7776c0a302a05b57ee2cfb4fc5ebc8f3457317bfa72f89"
+      }
+    },
+    "sham": {
+      "base_mass_on_lesioned_mount": 0.03835351744783111,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "2966f9b84de38bd663d6b3af1335baa5a1dfb0a29ba50ee8d0613422fc85c2e5",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "bebdee1f949d5e2980ba15092c8a0814177053b7401c7cdc0f5eecf62be523f6",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.005513081986896689,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_12/sham.npy",
+        "sha256": "79e9130221eedde6b9414e3008beef34218800ac0711b930821b83d5b05fcc79"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.4179303285976251,
+      "outcome": {
+        "answer": "The recorded order for Morrowfield is: copper-843 before indigo-863.",
+        "category_realized": true,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Morrowfield is: copper-843 before indigo-863.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": true,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        391,
+        10386,
+        4735,
+        382,
+        25,
+        34855,
+        12,
+        42500,
+        2254,
+        1383,
+        6235,
+        12,
+        50036,
+        13,
+        200002
+      ],
+      "top1_changed": true,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "ec43e1806619f8319d7776c0a302a05b57ee2cfb4fc5ebc8f3457317bfa72f89"
+      }
+    },
+    "swap": {
+      "base_mass_on_lesioned_mount": 0.40125710268815357,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "2966f9b84de38bd663d6b3af1335baa5a1dfb0a29ba50ee8d0613422fc85c2e5",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "injection.layer_00.k",
+          "injection.layer_00.v",
+          "injection.layer_01.k",
+          "injection.layer_01.v",
+          "injection.layer_02.k",
+          "injection.layer_02.v",
+          "injection.layer_03.k",
+          "injection.layer_03.v",
+          "injection.layer_04.k",
+          "injection.layer_04.v",
+          "injection.layer_05.k",
+          "injection.layer_05.v",
+          "injection.layer_06.k",
+          "injection.layer_06.v",
+          "injection.layer_07.k",
+          "injection.layer_07.v",
+          "injection.layer_08.k",
+          "injection.layer_08.v",
+          "injection.layer_09.k",
+          "injection.layer_09.v",
+          "injection.layer_10.k",
+          "injection.layer_10.v",
+          "injection.layer_11.k",
+          "injection.layer_11.v",
+          "injection.layer_12.k",
+          "injection.layer_12.v",
+          "injection.layer_13.k",
+          "injection.layer_13.v",
+          "injection.layer_14.k",
+          "injection.layer_14.v",
+          "injection.layer_15.k",
+          "injection.layer_15.v",
+          "injection.layer_16.k",
+          "injection.layer_16.v",
+          "injection.layer_17.k",
+          "injection.layer_17.v",
+          "injection.layer_18.k",
+          "injection.layer_18.v",
+          "injection.layer_19.k",
+          "injection.layer_19.v",
+          "injection.layer_20.k",
+          "injection.layer_20.v",
+          "injection.layer_21.k",
+          "injection.layer_21.v",
+          "injection.layer_22.k",
+          "injection.layer_22.v",
+          "injection.layer_23.k",
+          "injection.layer_23.v"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "14262cb5fdd315f30fc5d0ccda29be6cea1f5b5fa48d5aba1e4169870f3f6505",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.029743189024001675,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_12/swap.npy",
+        "sha256": "4b48488a872ca2b3510aebd1525d394f83ab5dcdeb685d0033537b2e611020c5"
+      },
+      "mass_on_lesioned_mount": 0.40604404856761295,
+      "mass_on_target": 0.40604404856761295,
+      "outcome": {
+        "answer": "The recorded order for Morrowfield is: copper\u2011743, then indigo\u2011863.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Morrowfield is: copper\u2011743, then indigo\u2011863.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        391,
+        10386,
+        4735,
+        382,
+        25,
+        34855,
+        50005,
+        49191,
+        11,
+        1815,
+        1383,
+        6235,
+        50005,
+        50036,
+        13,
+        200002
+      ],
+      "top1_changed": true,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "ec43e1806619f8319d7776c0a302a05b57ee2cfb4fc5ebc8f3457317bfa72f89"
+      }
+    },
+    "zero": {
+      "base_mass_on_lesioned_mount": 0.40125710268815357,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "2966f9b84de38bd663d6b3af1335baa5a1dfb0a29ba50ee8d0613422fc85c2e5",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "2966f9b84de38bd663d6b3af1335baa5a1dfb0a29ba50ee8d0613422fc85c2e5",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_12/zero.npy",
+        "sha256": "43efac8d3d567e0ef7534a8f40d8da40f8677b0ad1a4d4977b0ad5c5f70e8186"
+      },
+      "mass_on_lesioned_mount": 0.40125710268815357,
+      "mass_on_target": 0.40125710268815357,
+      "outcome": {
+        "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        40,
+        4572,
+        23045,
+        11,
+        889,
+        357,
+        1700,
+        1573,
+        679,
+        484,
+        2164,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "ec43e1806619f8319d7776c0a302a05b57ee2cfb4fc5ebc8f3457317bfa72f89"
+      }
+    }
+  },
+  "id": "x3_r2_12",
+  "intended_group": "decoy",
+  "mass": 0.40125710268815357,
+  "mass_telemetry_first_position": {
+    "ent": null,
+    "full_attention_layers": 12,
+    "lqr": null,
+    "ngh": {
+      "learned_sink_mass": 0.20850362163037062,
+      "live_mass": 0.3288697103659312,
+      "mounted_mass": 0.40125710268815357,
+      "physical_sink_mass": 0.06147855085631212
+    },
+    "prediction_token_id": 40,
+    "token_index": 0
+  },
+  "outcome": {
+    "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+    "category_realized": false,
+    "exact_equality_outcome": {
+      "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+      "category_realized": false,
+      "exact_error": true,
+      "is_exact_decoy": false,
+      "is_refusal": false,
+      "truncated": false
+    },
+    "exact_equality_realization": false,
+    "exact_error": true,
+    "is_exact_decoy": false,
+    "is_refusal": false,
+    "realization_scorer": "grm.x3.r2.value_span.v1",
+    "truncated": false,
+    "value_span_correct": false,
+    "value_span_decoy": false,
+    "value_span_error": true,
+    "value_span_refusal": false
+  },
+  "seat": {
+    "arena_width": 96,
+    "delta_positions": 38,
+    "live_shift": 115,
+    "mount_ntok": 58,
+    "mount_pos0": 57,
+    "mount_pos0_legacy": 19,
+    "n_sink": 19,
+    "plan_head": 1,
+    "plan_head_adjacent_to_live_shift": true,
+    "plan_head_last_position": 114,
+    "plan_head_ntok": 55,
+    "seat_near_live": true,
+    "seat_offset_plan_head": 60,
+    "seat_order": [
+      3,
+      1
+    ],
+    "seat_order_legacy": [
+      1,
+      3
+    ],
+    "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+  },
+  "session_scope": "controlled captured attempt, not full natural battery acceptance",
+  "sham_mass": 0.03835351744783111,
+  "snapshot": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_12/snapshot/manifest.json",
+    "sha256": "ec43e1806619f8319d7776c0a302a05b57ee2cfb4fc5ebc8f3457317bfa72f89"
+  },
+  "spans": {
+    "sham": [
+      19,
+      22
+    ],
+    "target": [
+      22,
+      77
+    ]
+  },
+  "unforked_logits": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_12/unforked.npy",
+    "sha256": "43efac8d3d567e0ef7534a8f40d8da40f8677b0ad1a4d4977b0ad5c5f70e8186"
+  }
+}

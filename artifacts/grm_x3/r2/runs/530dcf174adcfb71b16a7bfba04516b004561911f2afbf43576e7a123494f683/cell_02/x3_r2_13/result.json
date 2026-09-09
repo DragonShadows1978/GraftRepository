@@ -1,0 +1,507 @@
+{
+  "donor_payload": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_13/donor_payload.npz",
+    "sha256": "ff22d185036f2931c8a958d9c42aed48f63104cfc05c6221507f8c95059bc1c0"
+  },
+  "evidence_class": "E2E session receipt",
+  "forks": {
+    "remove": {
+      "base_mass_on_lesioned_mount": 0.4043251685798168,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "845b1ba45d38ac2d3bebfc2300f745f7e8190b5b07dc73c49f1884b353285b8e",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "b3892d3818796c00fd3e1d6e527828108b23a9b24be0dd93381babfbac9a502e",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.38098162280654324,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_13/remove.npy",
+        "sha256": "409b25da2d8b3ab4998e9ff9911a37148aa5be8769bd9719e03784868e45deea"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.0,
+      "outcome": {
+        "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        40,
+        4572,
+        23045,
+        11,
+        889,
+        357,
+        1700,
+        1573,
+        679,
+        484,
+        2164,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "e0ec633fab58daf25ccecfa2b0a8492be8a0785a64211947f88246c4bd55cdb6"
+      }
+    },
+    "same_payload": {
+      "base_mass_on_lesioned_mount": 0.4043251685798168,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "845b1ba45d38ac2d3bebfc2300f745f7e8190b5b07dc73c49f1884b353285b8e",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "845b1ba45d38ac2d3bebfc2300f745f7e8190b5b07dc73c49f1884b353285b8e",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_13/same_payload.npy",
+        "sha256": "177b3978e32e1705b0019f891582600a25134f25b0ac5b8a7517cc14ea3a92ac"
+      },
+      "mass_on_lesioned_mount": 0.4043251685798168,
+      "mass_on_target": 0.4043251685798168,
+      "outcome": {
+        "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        40,
+        4572,
+        23045,
+        11,
+        889,
+        357,
+        1700,
+        1573,
+        679,
+        484,
+        2164,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "e0ec633fab58daf25ccecfa2b0a8492be8a0785a64211947f88246c4bd55cdb6"
+      }
+    },
+    "sham": {
+      "base_mass_on_lesioned_mount": 0.03933795374662926,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "845b1ba45d38ac2d3bebfc2300f745f7e8190b5b07dc73c49f1884b353285b8e",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "0e0e7dbd99ca1a48f2e3aa859d11bee0f92c9e625a941835bb4dbcc6ae9e439a",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.0060129208943866105,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_13/sham.npy",
+        "sha256": "2adc86cdc4d2b47f6e784bacd199f7ccba177e0e4ebba145193cdd88f6f49dce"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.41841600462794304,
+      "outcome": {
+        "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        40,
+        4572,
+        23045,
+        11,
+        889,
+        357,
+        1700,
+        1573,
+        679,
+        484,
+        2164,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "e0ec633fab58daf25ccecfa2b0a8492be8a0785a64211947f88246c4bd55cdb6"
+      }
+    },
+    "swap": {
+      "base_mass_on_lesioned_mount": 0.4043251685798168,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "845b1ba45d38ac2d3bebfc2300f745f7e8190b5b07dc73c49f1884b353285b8e",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "injection.layer_00.k",
+          "injection.layer_00.v",
+          "injection.layer_01.k",
+          "injection.layer_01.v",
+          "injection.layer_02.k",
+          "injection.layer_02.v",
+          "injection.layer_03.k",
+          "injection.layer_03.v",
+          "injection.layer_04.k",
+          "injection.layer_04.v",
+          "injection.layer_05.k",
+          "injection.layer_05.v",
+          "injection.layer_06.k",
+          "injection.layer_06.v",
+          "injection.layer_07.k",
+          "injection.layer_07.v",
+          "injection.layer_08.k",
+          "injection.layer_08.v",
+          "injection.layer_09.k",
+          "injection.layer_09.v",
+          "injection.layer_10.k",
+          "injection.layer_10.v",
+          "injection.layer_11.k",
+          "injection.layer_11.v",
+          "injection.layer_12.k",
+          "injection.layer_12.v",
+          "injection.layer_13.k",
+          "injection.layer_13.v",
+          "injection.layer_14.k",
+          "injection.layer_14.v",
+          "injection.layer_15.k",
+          "injection.layer_15.v",
+          "injection.layer_16.k",
+          "injection.layer_16.v",
+          "injection.layer_17.k",
+          "injection.layer_17.v",
+          "injection.layer_18.k",
+          "injection.layer_18.v",
+          "injection.layer_19.k",
+          "injection.layer_19.v",
+          "injection.layer_20.k",
+          "injection.layer_20.v",
+          "injection.layer_21.k",
+          "injection.layer_21.v",
+          "injection.layer_22.k",
+          "injection.layer_22.v",
+          "injection.layer_23.k",
+          "injection.layer_23.v"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "8eba4698e0fc856d4c71809c49aeaef2a709164c76ea3d45b014b13a8f74569d",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.032355410934541376,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_13/swap.npy",
+        "sha256": "f613690de7c8178a677fef66958eb1b286ebf226f7c35f361a850713c1caaf32"
+      },
+      "mass_on_lesioned_mount": 0.4069087083141009,
+      "mass_on_target": 0.4069087083141009,
+      "outcome": {
+        "answer": "The recorded order is: copper-744 before indigo-864.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "The recorded order is: copper-744 before indigo-864.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": true,
+        "value_span_decoy": false,
+        "value_span_error": false,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        382,
+        25,
+        34855,
+        12,
+        46240,
+        2254,
+        1383,
+        6235,
+        12,
+        37438,
+        13,
+        200002
+      ],
+      "top1_changed": true,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "e0ec633fab58daf25ccecfa2b0a8492be8a0785a64211947f88246c4bd55cdb6"
+      }
+    },
+    "zero": {
+      "base_mass_on_lesioned_mount": 0.4043251685798168,
+      "base_top1": 40,
+      "delta_pin": {
+        "base_fingerprint": "845b1ba45d38ac2d3bebfc2300f745f7e8190b5b07dc73c49f1884b353285b8e",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "845b1ba45d38ac2d3bebfc2300f745f7e8190b5b07dc73c49f1884b353285b8e",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_13/zero.npy",
+        "sha256": "177b3978e32e1705b0019f891582600a25134f25b0ac5b8a7517cc14ea3a92ac"
+      },
+      "mass_on_lesioned_mount": 0.4043251685798168,
+      "mass_on_target": 0.4043251685798168,
+      "outcome": {
+        "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        40,
+        4572,
+        23045,
+        11,
+        889,
+        357,
+        1700,
+        1573,
+        679,
+        484,
+        2164,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "e0ec633fab58daf25ccecfa2b0a8492be8a0785a64211947f88246c4bd55cdb6"
+      }
+    }
+  },
+  "id": "x3_r2_13",
+  "intended_group": "decoy",
+  "mass": 0.4043251685798168,
+  "mass_telemetry_first_position": {
+    "ent": null,
+    "full_attention_layers": 12,
+    "lqr": null,
+    "ngh": {
+      "learned_sink_mass": 0.20613959586868683,
+      "live_mass": 0.3266674404342969,
+      "mounted_mass": 0.4043251685798168,
+      "physical_sink_mass": 0.06296922879604001
+    },
+    "prediction_token_id": 40,
+    "token_index": 0
+  },
+  "outcome": {
+    "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+    "category_realized": false,
+    "exact_equality_outcome": {
+      "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+      "category_realized": false,
+      "exact_error": true,
+      "is_exact_decoy": false,
+      "is_refusal": false,
+      "truncated": false
+    },
+    "exact_equality_realization": false,
+    "exact_error": true,
+    "is_exact_decoy": false,
+    "is_refusal": false,
+    "realization_scorer": "grm.x3.r2.value_span.v1",
+    "truncated": false,
+    "value_span_correct": false,
+    "value_span_decoy": false,
+    "value_span_error": true,
+    "value_span_refusal": false
+  },
+  "seat": {
+    "arena_width": 96,
+    "delta_positions": 38,
+    "live_shift": 115,
+    "mount_ntok": 58,
+    "mount_pos0": 57,
+    "mount_pos0_legacy": 19,
+    "n_sink": 19,
+    "plan_head": 1,
+    "plan_head_adjacent_to_live_shift": true,
+    "plan_head_last_position": 114,
+    "plan_head_ntok": 55,
+    "seat_near_live": true,
+    "seat_offset_plan_head": 60,
+    "seat_order": [
+      3,
+      1
+    ],
+    "seat_order_legacy": [
+      1,
+      3
+    ],
+    "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+  },
+  "session_scope": "controlled captured attempt, not full natural battery acceptance",
+  "sham_mass": 0.03933795374662926,
+  "snapshot": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_13/snapshot/manifest.json",
+    "sha256": "e0ec633fab58daf25ccecfa2b0a8492be8a0785a64211947f88246c4bd55cdb6"
+  },
+  "spans": {
+    "sham": [
+      19,
+      22
+    ],
+    "target": [
+      22,
+      77
+    ]
+  },
+  "unforked_logits": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_13/unforked.npy",
+    "sha256": "177b3978e32e1705b0019f891582600a25134f25b0ac5b8a7517cc14ea3a92ac"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "cell": "cell_01",
+  "cooldown_seconds": 30,
+  "elapsed_worker_seconds": 119.93757961690426,
+  "evidence_class": "E2E session receipt",
+  "failure": null,
+  "fingerprint": "530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683",
+  "process_policy": "no signals to other processes, no kill, foreground; Python alarm raises in own worker",
+  "schema": "grm.x3.cell_receipt.v1",
+  "status": "COMPLETE",
+  "worker_result_sha256": "14af0f236bbcaa13ed3c097793308746ebcea40d44aa66d09c93febec733bda6"
+}

@@ -1,0 +1,525 @@
+{
+  "donor_payload": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_04/donor_payload.npz",
+    "sha256": "1d53bba4af9dd4596424a88c6710d367b1de44e4b2ced8e54ac1756531f3a3c9"
+  },
+  "evidence_class": "E2E session receipt",
+  "forks": {
+    "remove": {
+      "base_mass_on_lesioned_mount": 0.4103572567303975,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "6f2c60633175b0506fff551f6082b00521ee8b17f514cd6bfab8b7a5a19a54c5",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "1126234ae3fc3b823495ee33423619eb1a87d9f2a3081edc37498e081a0a0109",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.4459569677094485,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_04/remove.npy",
+        "sha256": "077fade65c7e1cdda73724705a8c82f994b80e153bc71c8b70f665b81214210d"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.0,
+      "outcome": {
+        "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        40,
+        4572,
+        23045,
+        11,
+        889,
+        357,
+        1700,
+        1573,
+        679,
+        484,
+        2164,
+        13,
+        200002
+      ],
+      "top1_changed": true,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "79b66eed87a37515f62f1d75226899e6c9ccd3ac88d5e274da457ae505f0963c"
+      }
+    },
+    "same_payload": {
+      "base_mass_on_lesioned_mount": 0.4103572567303975,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "6f2c60633175b0506fff551f6082b00521ee8b17f514cd6bfab8b7a5a19a54c5",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "6f2c60633175b0506fff551f6082b00521ee8b17f514cd6bfab8b7a5a19a54c5",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_04/same_payload.npy",
+        "sha256": "83019ddfc1b3fb0dce21906549e5e25660f49bd31ce939a8e22c7a84724ffe1f"
+      },
+      "mass_on_lesioned_mount": 0.4103572567303975,
+      "mass_on_target": 0.4103572567303975,
+      "outcome": {
+        "answer": "The recorded order for Elmspire is: copper-735 before indigo-855.",
+        "category_realized": true,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Elmspire is: copper-735 before indigo-855.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": true,
+        "value_span_decoy": false,
+        "value_span_error": false,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        102209,
+        94809,
+        382,
+        25,
+        34855,
+        12,
+        46356,
+        2254,
+        1383,
+        6235,
+        12,
+        39052,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "79b66eed87a37515f62f1d75226899e6c9ccd3ac88d5e274da457ae505f0963c"
+      }
+    },
+    "sham": {
+      "base_mass_on_lesioned_mount": 0.03876014246876972,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "6f2c60633175b0506fff551f6082b00521ee8b17f514cd6bfab8b7a5a19a54c5",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "f565c7047f1a336622e32e832842473e3115b91577fb6e3a82a15372d3a740ca",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.011784566454312298,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_04/sham.npy",
+        "sha256": "9073de718729efce9f472ba033eb4dfcdb6e8742c6380716049a215e5c2a810c"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.4236942206819852,
+      "outcome": {
+        "answer": "The recorded order for Elmspire is: copper-735 before indigo-855.",
+        "category_realized": true,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Elmspire is: copper-735 before indigo-855.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": true,
+        "value_span_decoy": false,
+        "value_span_error": false,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        102209,
+        94809,
+        382,
+        25,
+        34855,
+        12,
+        46356,
+        2254,
+        1383,
+        6235,
+        12,
+        39052,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "79b66eed87a37515f62f1d75226899e6c9ccd3ac88d5e274da457ae505f0963c"
+      }
+    },
+    "swap": {
+      "base_mass_on_lesioned_mount": 0.4103572567303975,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "6f2c60633175b0506fff551f6082b00521ee8b17f514cd6bfab8b7a5a19a54c5",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "injection.layer_00.k",
+          "injection.layer_00.v",
+          "injection.layer_01.k",
+          "injection.layer_01.v",
+          "injection.layer_02.k",
+          "injection.layer_02.v",
+          "injection.layer_03.k",
+          "injection.layer_03.v",
+          "injection.layer_04.k",
+          "injection.layer_04.v",
+          "injection.layer_05.k",
+          "injection.layer_05.v",
+          "injection.layer_06.k",
+          "injection.layer_06.v",
+          "injection.layer_07.k",
+          "injection.layer_07.v",
+          "injection.layer_08.k",
+          "injection.layer_08.v",
+          "injection.layer_09.k",
+          "injection.layer_09.v",
+          "injection.layer_10.k",
+          "injection.layer_10.v",
+          "injection.layer_11.k",
+          "injection.layer_11.v",
+          "injection.layer_12.k",
+          "injection.layer_12.v",
+          "injection.layer_13.k",
+          "injection.layer_13.v",
+          "injection.layer_14.k",
+          "injection.layer_14.v",
+          "injection.layer_15.k",
+          "injection.layer_15.v",
+          "injection.layer_16.k",
+          "injection.layer_16.v",
+          "injection.layer_17.k",
+          "injection.layer_17.v",
+          "injection.layer_18.k",
+          "injection.layer_18.v",
+          "injection.layer_19.k",
+          "injection.layer_19.v",
+          "injection.layer_20.k",
+          "injection.layer_20.v",
+          "injection.layer_21.k",
+          "injection.layer_21.v",
+          "injection.layer_22.k",
+          "injection.layer_22.v",
+          "injection.layer_23.k",
+          "injection.layer_23.v"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "a47cddae70bba495ed695192f7b119dd2245145a76590f6fa8eee2b471c36d36",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.03144152410960906,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_04/swap.npy",
+        "sha256": "96e00bdeab2e2510d20afebeca9e8f7a9bb31ea0ac279e9ef740bdc3f2709298"
+      },
+      "mass_on_lesioned_mount": 0.4105059566597144,
+      "mass_on_target": 0.4105059566597144,
+      "outcome": {
+        "answer": "The recorded order for Elmspire is: copper-835 before indigo-855.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Elmspire is: copper-835 before indigo-855.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": true,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        102209,
+        94809,
+        382,
+        25,
+        34855,
+        12,
+        44885,
+        2254,
+        1383,
+        6235,
+        12,
+        39052,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "79b66eed87a37515f62f1d75226899e6c9ccd3ac88d5e274da457ae505f0963c"
+      }
+    },
+    "zero": {
+      "base_mass_on_lesioned_mount": 0.4103572567303975,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "6f2c60633175b0506fff551f6082b00521ee8b17f514cd6bfab8b7a5a19a54c5",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "6f2c60633175b0506fff551f6082b00521ee8b17f514cd6bfab8b7a5a19a54c5",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_04/zero.npy",
+        "sha256": "83019ddfc1b3fb0dce21906549e5e25660f49bd31ce939a8e22c7a84724ffe1f"
+      },
+      "mass_on_lesioned_mount": 0.4103572567303975,
+      "mass_on_target": 0.4103572567303975,
+      "outcome": {
+        "answer": "The recorded order for Elmspire is: copper-735 before indigo-855.",
+        "category_realized": true,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Elmspire is: copper-735 before indigo-855.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": true,
+        "value_span_decoy": false,
+        "value_span_error": false,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        102209,
+        94809,
+        382,
+        25,
+        34855,
+        12,
+        46356,
+        2254,
+        1383,
+        6235,
+        12,
+        39052,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "79b66eed87a37515f62f1d75226899e6c9ccd3ac88d5e274da457ae505f0963c"
+      }
+    }
+  },
+  "id": "x3_r2_04",
+  "intended_group": "correct",
+  "mass": 0.4103572567303975,
+  "mass_telemetry_first_position": {
+    "ent": null,
+    "full_attention_layers": 12,
+    "lqr": null,
+    "ngh": {
+      "learned_sink_mass": 0.20264982602869472,
+      "live_mass": 0.324911264081796,
+      "mounted_mass": 0.4103572567303975,
+      "physical_sink_mass": 0.062204882269725204
+    },
+    "prediction_token_id": 976,
+    "token_index": 0
+  },
+  "outcome": {
+    "answer": "The recorded order for Elmspire is: copper-735 before indigo-855.",
+    "category_realized": true,
+    "exact_equality_outcome": {
+      "answer": "The recorded order for Elmspire is: copper-735 before indigo-855.",
+      "category_realized": false,
+      "exact_error": true,
+      "is_exact_decoy": false,
+      "is_refusal": false,
+      "truncated": false
+    },
+    "exact_equality_realization": false,
+    "exact_error": true,
+    "is_exact_decoy": false,
+    "is_refusal": false,
+    "realization_scorer": "grm.x3.r2.value_span.v1",
+    "truncated": false,
+    "value_span_correct": true,
+    "value_span_decoy": false,
+    "value_span_error": false,
+    "value_span_refusal": false
+  },
+  "seat": {
+    "arena_width": 96,
+    "delta_positions": 39,
+    "live_shift": 115,
+    "mount_ntok": 57,
+    "mount_pos0": 58,
+    "mount_pos0_legacy": 19,
+    "n_sink": 19,
+    "plan_head": 0,
+    "plan_head_adjacent_to_live_shift": true,
+    "plan_head_last_position": 114,
+    "plan_head_ntok": 54,
+    "seat_near_live": true,
+    "seat_offset_plan_head": 61,
+    "seat_order": [
+      2,
+      0
+    ],
+    "seat_order_legacy": [
+      0,
+      2
+    ],
+    "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+  },
+  "session_scope": "controlled captured attempt, not full natural battery acceptance",
+  "sham_mass": 0.03876014246876972,
+  "snapshot": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_04/snapshot/manifest.json",
+    "sha256": "79b66eed87a37515f62f1d75226899e6c9ccd3ac88d5e274da457ae505f0963c"
+  },
+  "spans": {
+    "sham": [
+      19,
+      22
+    ],
+    "target": [
+      22,
+      76
+    ]
+  },
+  "unforked_logits": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_04/unforked.npy",
+    "sha256": "83019ddfc1b3fb0dce21906549e5e25660f49bd31ce939a8e22c7a84724ffe1f"
+  }
+}

@@ -1,0 +1,6263 @@
+{
+  "arrays": {
+    "injection.layer_00.k": {
+      "blob": "blobs/0151_injection.layer_00.k_35056c5244efa8ad.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "35056c5244efa8ad8b8cfb78bbb17593775f9f2eb4bc777060c895603d4476c5",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_00.v": {
+      "blob": "blobs/0152_injection.layer_00.v_de7e4972a5709668.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "de7e4972a57096681c8c0ccfa4eb77563eaf5251ea978e51384ca60c45cd49aa",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_01.k": {
+      "blob": "blobs/0155_injection.layer_01.k_228ec6fdd1624331.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "228ec6fdd1624331a490ba0e4b46a67cd15d483fa959b02eb635a6fc43edf9fd",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_01.v": {
+      "blob": "blobs/0156_injection.layer_01.v_042b6ae390d21c9b.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "042b6ae390d21c9b7d5500e7d79519943a6e019e4b4b66d522834028e1785a59",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_02.k": {
+      "blob": "blobs/0159_injection.layer_02.k_5562b0490d51e24b.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "5562b0490d51e24bfbad67fb4e7427f5847fd5b6ee4b270c91a8ad3b4b9baca4",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_02.v": {
+      "blob": "blobs/0160_injection.layer_02.v_98c1c032ff1aef60.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "98c1c032ff1aef60aa63a3aa735af121f6314239e8d73008d34d7b3eb6ff401f",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_03.k": {
+      "blob": "blobs/0163_injection.layer_03.k_43a56c5010c6ac69.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "43a56c5010c6ac69095ed29c79d4b3dad1413d1339e39d51c579376616e84249",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_03.v": {
+      "blob": "blobs/0164_injection.layer_03.v_4dc0ca83479325ff.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4dc0ca83479325ffdc977b37b3d636d20cb7cb8e79362e10dd26a2c250f1a9a3",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_04.k": {
+      "blob": "blobs/0167_injection.layer_04.k_38bcc61862d8bd32.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "38bcc61862d8bd32a095d4594054c314497684218e3796e9a1d9992ab31f3d9a",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_04.v": {
+      "blob": "blobs/0168_injection.layer_04.v_3dfc3683e4183f62.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "3dfc3683e4183f6287d285e6f6bad70c54083a61b73acded2028109ce18185fb",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_05.k": {
+      "blob": "blobs/0171_injection.layer_05.k_92582ac7357936cc.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "92582ac7357936cc5252849af0af685a2eea55178b3122f920f0cc8c20a12ea4",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_05.v": {
+      "blob": "blobs/0172_injection.layer_05.v_110b759b2687ac7b.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "110b759b2687ac7bb97e0dbf11fac2e69969741b92bd6cdd36ad2bc1444fcdd8",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_06.k": {
+      "blob": "blobs/0175_injection.layer_06.k_68b1f726273eaddc.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "68b1f726273eaddca70ee023e70df8e124694fcc80edcecf56ee4de5393837c0",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_06.v": {
+      "blob": "blobs/0176_injection.layer_06.v_28a9164d3cf52d0d.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "28a9164d3cf52d0d0278180e12a280889a6f1e7efbb9e6569f36e7ada2b43ccb",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_07.k": {
+      "blob": "blobs/0179_injection.layer_07.k_b1a70a7a77749e51.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "b1a70a7a77749e51e9131e0ce045a47e19240ca559ccf51d8d4439ce5190c12d",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_07.v": {
+      "blob": "blobs/0180_injection.layer_07.v_21af5b9827230a8e.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "21af5b9827230a8ed5e3d38587292991df23f1475a1f1607260ea1d88b7f5fd8",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_08.k": {
+      "blob": "blobs/0183_injection.layer_08.k_488c79673d673a9b.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "488c79673d673a9bc460321dd264422bd188953d312e0a9c99f4195bef319523",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_08.v": {
+      "blob": "blobs/0184_injection.layer_08.v_1bfafb6d23ae13e7.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "1bfafb6d23ae13e77c2dd1e6b3f159413f6d6d3643910c2d0716d32bd10290a2",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_09.k": {
+      "blob": "blobs/0187_injection.layer_09.k_0f6de91d31d2d071.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "0f6de91d31d2d0712e6439b0e5383aabfbec4066095510282b5dda6948fbb34f",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_09.v": {
+      "blob": "blobs/0188_injection.layer_09.v_9c3123328b21c345.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "9c3123328b21c345032d2210b07f09623d1158b5f4c895abaaf9b9604459c8e9",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_10.k": {
+      "blob": "blobs/0191_injection.layer_10.k_6bde47dbbdebc0fb.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "6bde47dbbdebc0fb5d342591e0f40f8c9662d1620e18fa27f998196253ccfb22",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_10.v": {
+      "blob": "blobs/0192_injection.layer_10.v_a74c3c25fac8fa81.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "a74c3c25fac8fa8188faa7c353f982ade5c2f59022d090e28f8a6509f5eec66c",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_11.k": {
+      "blob": "blobs/0195_injection.layer_11.k_b3d889c6db7e8dfc.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "b3d889c6db7e8dfcd4d51af1941859edf6cbfe94459aedfec24a05b1f8f4394b",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_11.v": {
+      "blob": "blobs/0196_injection.layer_11.v_8d279145bea1347d.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "8d279145bea1347d468e3723e8ef1209632a73d36824b732764bb4425ee855ae",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_12.k": {
+      "blob": "blobs/0199_injection.layer_12.k_07d3cbdad6abe2e7.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "07d3cbdad6abe2e7a67430c4810b74149b67a032d2852e62825ba1b5d2cf13cd",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_12.v": {
+      "blob": "blobs/0200_injection.layer_12.v_fd6bc68ef5bf0e71.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "fd6bc68ef5bf0e718da2c9fce6d63d550f9a7662a6bbc10997e3ade983ce5980",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_13.k": {
+      "blob": "blobs/0203_injection.layer_13.k_72bc104e3cb74f92.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "72bc104e3cb74f925ac83484f7f9f576b168d637dcb41f1b331b2ec063e3707b",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_13.v": {
+      "blob": "blobs/0204_injection.layer_13.v_c214b079b0644c80.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c214b079b0644c80fa07edfd51e58f426614bbf9274e32c76776868a8022e47f",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_14.k": {
+      "blob": "blobs/0207_injection.layer_14.k_2c5db91d9d8803f9.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "2c5db91d9d8803f99c70ae2c3a0e8aafff4b33424f0ba1a18b3e73eb371c6ffe",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_14.v": {
+      "blob": "blobs/0208_injection.layer_14.v_529fd31e3c1d10d0.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "529fd31e3c1d10d0d417457c8e4bb2dbd6bfeb960bceea18d935764b55da191c",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_15.k": {
+      "blob": "blobs/0211_injection.layer_15.k_570c4fac5c07ffb9.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "570c4fac5c07ffb9e232779c5af81fca7798562e1614392cfb246256f9a257db",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_15.v": {
+      "blob": "blobs/0212_injection.layer_15.v_4d97af75716417e6.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4d97af75716417e6f4400dde6a015da51fcfed2af46e9bcbb88fa0d427e4653e",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_16.k": {
+      "blob": "blobs/0215_injection.layer_16.k_b7a96a6098d832db.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "b7a96a6098d832db527758da2f72ff6aeb8c5d0380f9bb67923d5a64b58b1de3",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_16.v": {
+      "blob": "blobs/0216_injection.layer_16.v_437615358610b223.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "437615358610b2239e992dabba3173ec247939005e6bcf71f793708f22fc0264",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_17.k": {
+      "blob": "blobs/0219_injection.layer_17.k_8840f817cf27541f.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "8840f817cf27541f80d8e960c4133d4aa03b984eec5ad83ae3268651e61a878e",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_17.v": {
+      "blob": "blobs/0220_injection.layer_17.v_cb4ae817137ea23a.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "cb4ae817137ea23acec797563122d0423243b1ec7b6be16737d1ee4285a24ac1",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_18.k": {
+      "blob": "blobs/0223_injection.layer_18.k_e6b767e8d85f326b.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "e6b767e8d85f326b906ed490b46b805f0501d5284ca0a6b57ec129b1e669e0ee",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_18.v": {
+      "blob": "blobs/0224_injection.layer_18.v_5a585dbcc66805d2.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "5a585dbcc66805d2ccf604a1568f8a3ce0fee03b9ef0286b71d894fe044f78e7",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_19.k": {
+      "blob": "blobs/0227_injection.layer_19.k_155e7dc3a1be4d7f.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "155e7dc3a1be4d7f30082ea891585f64052d25cd6c31820333af6fa6fd719ab7",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_19.v": {
+      "blob": "blobs/0228_injection.layer_19.v_55f6cfa315d6e906.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "55f6cfa315d6e906986b3c051bbd78e5e42be6551bb420b33727ef887704c1f0",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_20.k": {
+      "blob": "blobs/0231_injection.layer_20.k_a78d9b24a44c25bf.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "a78d9b24a44c25bf57aea9aa403ffdd6718358f5d78032660561775a87eb234f",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_20.v": {
+      "blob": "blobs/0232_injection.layer_20.v_cf4fe74e0d63b16f.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "cf4fe74e0d63b16ff72f4f3bb390c26466f035ac36408783331be638096d567c",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_21.k": {
+      "blob": "blobs/0235_injection.layer_21.k_c68887383a857a1f.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c68887383a857a1f0f0682e8629ef41f5bb3aaae6eb8bc583ed8acb47ee98ca7",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_21.v": {
+      "blob": "blobs/0236_injection.layer_21.v_0003cfe4252216ef.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "0003cfe4252216ef54d0406285b3610107886510fa8a288f5fe303ed61ee42ac",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_22.k": {
+      "blob": "blobs/0239_injection.layer_22.k_4ee8cb7a98bb1648.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4ee8cb7a98bb16489cef4bb05031954787dda515e41661a7fd78198cec83ca1a",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_22.v": {
+      "blob": "blobs/0240_injection.layer_22.v_c164303d067f2a3a.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c164303d067f2a3a9a6d39988e148dd852d718ab191953ade65d2b6ee3c88971",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_23.k": {
+      "blob": "blobs/0243_injection.layer_23.k_c1a75c21026a21d2.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c1a75c21026a21d2d54580a5cebc995e70a7d372b27c9c0cdb11461198384905",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "injection.layer_23.v": {
+      "blob": "blobs/0244_injection.layer_23.v_ba8913b6a0590d66.bin",
+      "bytes": 157696,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "ba8913b6a0590d66884a924678ec36deba3866ca56428fd2b7e5d3ea6bb668a1",
+      "shape": [
+        1,
+        8,
+        77,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_00": {
+      "blob": "blobs/0153_learned_sink.layer_00_c8c83994a001fe32.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c8c83994a001fe32fecca84b1db44ac253bdef1b1871188ed48ce2fbf6ef0fda",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_01": {
+      "blob": "blobs/0157_learned_sink.layer_01_1d3243047795cb10.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "1d3243047795cb10cd30dcd32de166b7848c33cc133372ba290c78a02f6170bc",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_02": {
+      "blob": "blobs/0161_learned_sink.layer_02_25e068274a11ba14.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "25e068274a11ba143427ae2c6dbfb53676f9ecf9444063846a0a254b8813b399",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_03": {
+      "blob": "blobs/0165_learned_sink.layer_03_0472135ac67ef02e.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "0472135ac67ef02e8ea51c495620087daea329904fe0ba75e9cee626ae86e105",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_04": {
+      "blob": "blobs/0169_learned_sink.layer_04_0f923615b165e06a.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "0f923615b165e06a5a4c521fbea667b14b3303b62f2fc45df228dd699d08f9d2",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_05": {
+      "blob": "blobs/0173_learned_sink.layer_05_2e46695749e4848d.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "2e46695749e4848deed791554c0540aad124ed8d96cec4c4a8d8462dc95526aa",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_06": {
+      "blob": "blobs/0177_learned_sink.layer_06_ece6a7506e6eaab8.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "ece6a7506e6eaab8e47c0035384c95467aebc603e1509e890ae386b824ccfd09",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_07": {
+      "blob": "blobs/0181_learned_sink.layer_07_416be7b3100ce570.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "416be7b3100ce570324acf41d445e3ddfcbaf7a0dbf1ffb26b12f7bcc3b2a52c",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_08": {
+      "blob": "blobs/0185_learned_sink.layer_08_3a740da01c7e4d09.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "3a740da01c7e4d09767eb8dd1164fe5570e828ad72fd3504b51254688ad71da7",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_09": {
+      "blob": "blobs/0189_learned_sink.layer_09_bcbc27d6fbb393fe.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "bcbc27d6fbb393fedfafedd88a37c88658cc2985927920701a60c9cf41b09a49",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_10": {
+      "blob": "blobs/0193_learned_sink.layer_10_3e7fa8194fdb4ae7.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "3e7fa8194fdb4ae7db36c902a0d26942807f119216427eeb3635b0b82085c787",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_11": {
+      "blob": "blobs/0197_learned_sink.layer_11_dd582bb82debb4dc.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "dd582bb82debb4dc28b647de499b85ac79d4a43a58b0cc16950aa0056a5dc93c",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_12": {
+      "blob": "blobs/0201_learned_sink.layer_12_a3958dc933e2157c.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "a3958dc933e2157c88fa38efeb3979beb503830e65f0c23e03db3802efa372b5",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_13": {
+      "blob": "blobs/0205_learned_sink.layer_13_dd7cccb6968ad057.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "dd7cccb6968ad057b132af78c144fb2933c0d0ec7fa4c003dd5a9ce8cae4d1df",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_14": {
+      "blob": "blobs/0209_learned_sink.layer_14_3d15f45dd62f0d0a.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "3d15f45dd62f0d0adc1d2f61942edddee807b1693f0f4f938eb68e215e482484",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_15": {
+      "blob": "blobs/0213_learned_sink.layer_15_0c82213560009248.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "0c8221356000924886458be3771cf64eb3084ce503d5335643bfa63beb5c3bdb",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_16": {
+      "blob": "blobs/0217_learned_sink.layer_16_d96ec0ff12098264.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "d96ec0ff120982640d8f4ae87eb5194012c6843c2bbfeabc2935704954660ccf",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_17": {
+      "blob": "blobs/0221_learned_sink.layer_17_91af5b70ab8f2dd8.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "91af5b70ab8f2dd86369eb3b29cfc81811bc445aa9e550ec66cbe8d3dc298a73",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_18": {
+      "blob": "blobs/0225_learned_sink.layer_18_d507bf353fbde9f6.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "d507bf353fbde9f69a85427def5e3e50bdf03dd8d4d062118a0d99de0d701d7d",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_19": {
+      "blob": "blobs/0229_learned_sink.layer_19_6e85ba70ea0b07b9.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "6e85ba70ea0b07b96f274588b0952089e213718e8409207b5b2c2d16d23723a0",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_20": {
+      "blob": "blobs/0233_learned_sink.layer_20_3ec8dc41ecd0b93f.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "3ec8dc41ecd0b93f85dd67f4ba7ad55b2ddc24d6326dcbea783371f61aad9562",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_21": {
+      "blob": "blobs/0237_learned_sink.layer_21_766582c26fd43568.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "766582c26fd435688d7fb8b58ca1987404b4a7cf3bfd204f1a2ca2d27f15cfc2",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_22": {
+      "blob": "blobs/0241_learned_sink.layer_22_6b36d2694ecddd71.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "6b36d2694ecddd71dd8d126da6bc9d844eec445f173ef6299fdef8492e6284ae",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "learned_sink.layer_23": {
+      "blob": "blobs/0245_learned_sink.layer_23_3d130ea1c89acaae.bin",
+      "bytes": 256,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "3d130ea1c89acaae20fbb17fde8c4dd40b01bbe87f6308b2ec140c42d6cc6675",
+      "shape": [
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mask.layer_00.allowed": {
+      "blob": "blobs/0154_mask.layer_00.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_01.allowed": {
+      "blob": "blobs/0158_mask.layer_01.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_02.allowed": {
+      "blob": "blobs/0162_mask.layer_02.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_03.allowed": {
+      "blob": "blobs/0166_mask.layer_03.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_04.allowed": {
+      "blob": "blobs/0170_mask.layer_04.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_05.allowed": {
+      "blob": "blobs/0174_mask.layer_05.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_06.allowed": {
+      "blob": "blobs/0178_mask.layer_06.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_07.allowed": {
+      "blob": "blobs/0182_mask.layer_07.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_08.allowed": {
+      "blob": "blobs/0186_mask.layer_08.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_09.allowed": {
+      "blob": "blobs/0190_mask.layer_09.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_10.allowed": {
+      "blob": "blobs/0194_mask.layer_10.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_11.allowed": {
+      "blob": "blobs/0198_mask.layer_11.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_12.allowed": {
+      "blob": "blobs/0202_mask.layer_12.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_13.allowed": {
+      "blob": "blobs/0206_mask.layer_13.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_14.allowed": {
+      "blob": "blobs/0210_mask.layer_14.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_15.allowed": {
+      "blob": "blobs/0214_mask.layer_15.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_16.allowed": {
+      "blob": "blobs/0218_mask.layer_16.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_17.allowed": {
+      "blob": "blobs/0222_mask.layer_17.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_18.allowed": {
+      "blob": "blobs/0226_mask.layer_18.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_19.allowed": {
+      "blob": "blobs/0230_mask.layer_19.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_20.allowed": {
+      "blob": "blobs/0234_mask.layer_20.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_21.allowed": {
+      "blob": "blobs/0238_mask.layer_21.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_22.allowed": {
+      "blob": "blobs/0242_mask.layer_22.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "mask.layer_23.allowed": {
+      "blob": "blobs/0246_mask.layer_23.allowed_4da2896092a2fa5b.bin",
+      "bytes": 4370,
+      "group": "masks",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da2896092a2fa5b002e50ad4b992edcc563f0cf97aae0c647ca0014c94fa2a3",
+      "shape": [
+        1,
+        1,
+        38,
+        115
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "model.rope_cos": {
+      "blob": "blobs/0005_model.rope_cos_af7ca5e02975aece.bin",
+      "bytes": 1078016,
+      "group": "positions_rope",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "af7ca5e02975aeceadd4280883865d5facb35b6f29fa8101151cf2ab46679cba",
+      "shape": [
+        4211,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "model.rope_sin": {
+      "blob": "blobs/0006_model.rope_sin_8953fb0026944d2a.bin",
+      "bytes": 1078016,
+      "group": "positions_rope",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "8953fb0026944d2a835d38815080fd7a88677ba35312979f53539144d1d622e9",
+      "shape": [
+        4211,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_00.k": {
+      "blob": "blobs/0055_mounted_graft.0.layer_00.k_fa17b478b5fc8cba.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "fa17b478b5fc8cba8b7ec064e76b7386fc75cc3f66d8075289782861b336b969",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_00.v": {
+      "blob": "blobs/0056_mounted_graft.0.layer_00.v_404059640a77aaa9.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "404059640a77aaa96650ec486ae4f39bd9e90b5b001de47368be61d233eec8ae",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_01.k": {
+      "blob": "blobs/0057_mounted_graft.0.layer_01.k_86e042da5b10509b.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "86e042da5b10509b4d2b50a668bd6d6ed30775d4c5d0e0b7092314cb0fa34fa6",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_01.v": {
+      "blob": "blobs/0058_mounted_graft.0.layer_01.v_1a909b2d8d55537b.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "1a909b2d8d55537bb563938834e134760555414f150e0fc8cc4e5db13728d4dd",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_02.k": {
+      "blob": "blobs/0059_mounted_graft.0.layer_02.k_b563cc438de22b9c.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "b563cc438de22b9c1ca138f0ed061b4c58ecdd18a278a32eea2415744c2fe051",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_02.v": {
+      "blob": "blobs/0060_mounted_graft.0.layer_02.v_295b627ad421e5b4.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "295b627ad421e5b46ef9193e381650282b33f72d3fb1913b73487bb0ccc27811",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_03.k": {
+      "blob": "blobs/0061_mounted_graft.0.layer_03.k_7c5276e102866a05.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "7c5276e102866a05b4c0801006812cad8317680b6e80b55d65ac102b388ed4f1",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_03.v": {
+      "blob": "blobs/0062_mounted_graft.0.layer_03.v_2994a9ebd9adb039.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "2994a9ebd9adb0393af0681fa69045ceb0d0c891e90e8a6f1b4d90a0e7db998c",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_04.k": {
+      "blob": "blobs/0063_mounted_graft.0.layer_04.k_6b45e55f87c0dc63.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "6b45e55f87c0dc63a3d875c71f65ab11037befff47f0b2b65c747d5004d2fca8",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_04.v": {
+      "blob": "blobs/0064_mounted_graft.0.layer_04.v_e78e3fa30ab45a08.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "e78e3fa30ab45a0887070fdc828d7230b03861d6bb10e49bd255a3782a3d932c",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_05.k": {
+      "blob": "blobs/0065_mounted_graft.0.layer_05.k_1fc5e32e2a6725ba.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "1fc5e32e2a6725ba570d918ec44ffb3ddc78f3b48b684f8447a437ec9a7c0bef",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_05.v": {
+      "blob": "blobs/0066_mounted_graft.0.layer_05.v_b3c54bdb87fde90e.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "b3c54bdb87fde90ede25bc91bb30d6ae936c7537edb25b42ec93b7a02317506e",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_06.k": {
+      "blob": "blobs/0067_mounted_graft.0.layer_06.k_88f8a41d5468a2ec.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "88f8a41d5468a2ec69ff4d3f9ae08fdb44653588911c98dd455fbd401001b0fc",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_06.v": {
+      "blob": "blobs/0068_mounted_graft.0.layer_06.v_ce12861ea631dc64.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "ce12861ea631dc64ab96fec4a8b5417367b18da9461400bf4eee7c78b0528185",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_07.k": {
+      "blob": "blobs/0069_mounted_graft.0.layer_07.k_8de52090d717d1f5.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "8de52090d717d1f547788b901c4ea514b9fb509c1f368411a2b62ee4008bb5bf",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_07.v": {
+      "blob": "blobs/0070_mounted_graft.0.layer_07.v_c4e84af41452f7ce.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c4e84af41452f7ceaf8931868c7f80a20c1025fd46e28b5b8556d2569181a7f1",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_08.k": {
+      "blob": "blobs/0071_mounted_graft.0.layer_08.k_19ea3c5f404456e0.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "19ea3c5f404456e06a8b0e3880e9b431c3dae54b6eca2180d2199158e8cfc9b3",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_08.v": {
+      "blob": "blobs/0072_mounted_graft.0.layer_08.v_e7616d9ba1e146d3.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "e7616d9ba1e146d32065c0223693ad32a8f9b4e69f1e3a4ff9efb5533ae18f02",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_09.k": {
+      "blob": "blobs/0073_mounted_graft.0.layer_09.k_7c5e5eca0a0a66ee.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "7c5e5eca0a0a66ee8faf3c4c8bb5d00b2c12cfba9ec0534dcb780312a0a9bfd5",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_09.v": {
+      "blob": "blobs/0074_mounted_graft.0.layer_09.v_9033c6ed3e96e9eb.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "9033c6ed3e96e9ebef7975c9733c299f4b0a0e85c7f40c3767bdeac592fb4b70",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_10.k": {
+      "blob": "blobs/0075_mounted_graft.0.layer_10.k_2510966f9004e934.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "2510966f9004e934fb9b13935c6a7179202336fde3c33efcdbe523165752ebfc",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_10.v": {
+      "blob": "blobs/0076_mounted_graft.0.layer_10.v_97e0d8c0067943f1.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "97e0d8c0067943f171bf679ed629e888f7ec98f601944b89e2ce4c2e1704a11a",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_11.k": {
+      "blob": "blobs/0077_mounted_graft.0.layer_11.k_5ae24fe843dd34da.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "5ae24fe843dd34daa8a4a5f26a0cc99b14beb42ab661986adb61db7f879b2d44",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_11.v": {
+      "blob": "blobs/0078_mounted_graft.0.layer_11.v_0c52eb72b1115c9b.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "0c52eb72b1115c9bbe46f29954a9de2d91eab9232e16333f8836ad94aae5c608",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_12.k": {
+      "blob": "blobs/0079_mounted_graft.0.layer_12.k_573d14ef59deb7f1.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "573d14ef59deb7f1a2350fb23dca67de46aceea172258f347e846e8b4bba3c3b",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_12.v": {
+      "blob": "blobs/0080_mounted_graft.0.layer_12.v_c1464233248f6607.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c1464233248f6607ba95f78b16bda979a98daa5ee4f1e13c2f772f248dba6978",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_13.k": {
+      "blob": "blobs/0081_mounted_graft.0.layer_13.k_08001590dec7521b.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "08001590dec7521be99fa4e98c2a3a34132ca388e848ad2d94b5ed0ce756d4c8",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_13.v": {
+      "blob": "blobs/0082_mounted_graft.0.layer_13.v_761880181d1f527d.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "761880181d1f527dad757d0f41deffeafd9bbd85d36e6599ba020c7f38d35888",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_14.k": {
+      "blob": "blobs/0083_mounted_graft.0.layer_14.k_0fbb9aecb882c064.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "0fbb9aecb882c064116521d10d5a6e52b8e703f6da5d261ff8a5c2635a7f2511",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_14.v": {
+      "blob": "blobs/0084_mounted_graft.0.layer_14.v_208299a04d534957.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "208299a04d534957e415cecd82e76c9b95be08e1b78e57f1612cfa01ad5f26e3",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_15.k": {
+      "blob": "blobs/0085_mounted_graft.0.layer_15.k_f5cd0c4aaef8f4f4.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "f5cd0c4aaef8f4f4d96cd33adb73592a5fa52c7a03ff1a087bae8d50408dc7f4",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_15.v": {
+      "blob": "blobs/0086_mounted_graft.0.layer_15.v_6f5ca7b307bb4073.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "6f5ca7b307bb40731e2d5ad3af275521a2660510aa8ab8969e726bf5272a646b",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_16.k": {
+      "blob": "blobs/0087_mounted_graft.0.layer_16.k_e02f4980fbad8e43.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "e02f4980fbad8e43db8d144709c02deecc78e4231f2d36774317f7b00ac95cf1",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_16.v": {
+      "blob": "blobs/0088_mounted_graft.0.layer_16.v_c92b4511d0a23c99.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c92b4511d0a23c9919514931eac9f62c1e53aa280ce8efb4ff9e54965f27dc51",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_17.k": {
+      "blob": "blobs/0089_mounted_graft.0.layer_17.k_3654c555fd2ab60b.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "3654c555fd2ab60b59e3b8779a14158b9c771542f452fec5f71e17e6083fb945",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_17.v": {
+      "blob": "blobs/0090_mounted_graft.0.layer_17.v_4da10fc76c421c86.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4da10fc76c421c86e6f5ddca8125e0d50290af216eb4f5044fd01392ad24367c",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_18.k": {
+      "blob": "blobs/0091_mounted_graft.0.layer_18.k_7dd9b9dd57177329.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "7dd9b9dd5717732903f24fafbbedaacf0c729973951dc8f2902620455dc7b8d1",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_18.v": {
+      "blob": "blobs/0092_mounted_graft.0.layer_18.v_1fe926d3d2bcee6d.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "1fe926d3d2bcee6dce56aefd214748bb8cd230cb8b70f18f06768e6f993be99b",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_19.k": {
+      "blob": "blobs/0093_mounted_graft.0.layer_19.k_e16f9a866affa3a4.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "e16f9a866affa3a44810fcedc1f1286b0e727d6ffea2b0c9e4b9778f50fe046c",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_19.v": {
+      "blob": "blobs/0094_mounted_graft.0.layer_19.v_f241ba612d974597.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "f241ba612d974597ff20d217003ed0b0dd91339651265b7390a202f8fa1886ad",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_20.k": {
+      "blob": "blobs/0095_mounted_graft.0.layer_20.k_2298ac8bc8a3f901.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "2298ac8bc8a3f901e826ab9e127b78c1f8e5b5c8b5ac97b32fda8c1b9188c30e",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_20.v": {
+      "blob": "blobs/0096_mounted_graft.0.layer_20.v_a3efae6788ec9058.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "a3efae6788ec9058f65fb8ebd13cac749e8dd70ff283cdd2e103c93c5eccdbfa",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_21.k": {
+      "blob": "blobs/0097_mounted_graft.0.layer_21.k_2ea17796e8ea8baf.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "2ea17796e8ea8bafe78f04d4260d30c1dc28c6f6f915bf023ad0245aceef00f4",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_21.v": {
+      "blob": "blobs/0098_mounted_graft.0.layer_21.v_ab8c22807b21c4e1.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "ab8c22807b21c4e15e28e1c109c4130f239d26cd02f553be8566dd7ff246e14b",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_22.k": {
+      "blob": "blobs/0099_mounted_graft.0.layer_22.k_7cc4bd7307f95566.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "7cc4bd7307f95566fb56981f642b0bc8d686a3d77505c384777ff6d8d11ae885",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_22.v": {
+      "blob": "blobs/0100_mounted_graft.0.layer_22.v_4bc8e7ef3a6c1b2e.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4bc8e7ef3a6c1b2e04037a44e9d5a1a05c069685362243f28a6624e2b348b09a",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_23.k": {
+      "blob": "blobs/0101_mounted_graft.0.layer_23.k_522c37a571509683.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "522c37a5715096832b98e56da2a804129619a9466c1124efa423229511d7ec98",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.0.layer_23.v": {
+      "blob": "blobs/0102_mounted_graft.0.layer_23.v_a693d36f74cd4623.bin",
+      "bytes": 112640,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "a693d36f74cd4623cdf1da3bd357259b1cd4d46a5511834f2d459e907d330b34",
+      "shape": [
+        1,
+        8,
+        55,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_00.k": {
+      "blob": "blobs/0103_mounted_graft.2.layer_00.k_d76dc92546208a84.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "d76dc92546208a84378a8a17caf750d5946698fe5d7243c2530c0edd9c7f3aa5",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_00.v": {
+      "blob": "blobs/0104_mounted_graft.2.layer_00.v_f6df00732e47369c.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "f6df00732e47369c4b1b52df25c96336d8b32a721ed5f2e2483fa8531ef78fb7",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_01.k": {
+      "blob": "blobs/0105_mounted_graft.2.layer_01.k_b7996130d73083fa.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "b7996130d73083fa8266d8b40f91ff2188dd614d03a43846458b61b779ee8b68",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_01.v": {
+      "blob": "blobs/0106_mounted_graft.2.layer_01.v_5df397ac17633f68.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "5df397ac17633f68744ca6acf28d62e13592e463ae7125a3d2a0edd9d97dbd51",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_02.k": {
+      "blob": "blobs/0107_mounted_graft.2.layer_02.k_cc38b868db4ea571.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "cc38b868db4ea5715f3b1d847c32a15a9970fb75ff4871d7a7e166742a3c6034",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_02.v": {
+      "blob": "blobs/0108_mounted_graft.2.layer_02.v_43d4d6c3d88e3a47.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "43d4d6c3d88e3a479c7928ab6f8cdb40a5afb1ec4aa325d0e803e5c4ec5985cc",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_03.k": {
+      "blob": "blobs/0109_mounted_graft.2.layer_03.k_da36b2d84360689c.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "da36b2d84360689ceef6359a285758aa4e0822c43bf06376fe39823265ac3eac",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_03.v": {
+      "blob": "blobs/0110_mounted_graft.2.layer_03.v_c92c1359c08c1991.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c92c1359c08c19915c23ac417c1606ac49302f991e02dcb35e4d7931eb80e138",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_04.k": {
+      "blob": "blobs/0111_mounted_graft.2.layer_04.k_5ef95a74c02c15cc.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "5ef95a74c02c15cc0375bfef1a3c0b7d211a20145b2c9dd3f548f6f10ce4ece3",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_04.v": {
+      "blob": "blobs/0112_mounted_graft.2.layer_04.v_782f34b9c2ad3465.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "782f34b9c2ad34650f47726f777fedba0313c9b2a7d069585a5848d6d704e4c4",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_05.k": {
+      "blob": "blobs/0113_mounted_graft.2.layer_05.k_c75124ed4557b55a.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c75124ed4557b55a5258e2012fcca3776c2981f9385c779fb4ad38f3197450fd",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_05.v": {
+      "blob": "blobs/0114_mounted_graft.2.layer_05.v_c95d67d004c9a903.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c95d67d004c9a903bc6943c8adcf75927175d80cc471fb0305d5c949b1482e67",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_06.k": {
+      "blob": "blobs/0115_mounted_graft.2.layer_06.k_0cc6a10108eb83c0.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "0cc6a10108eb83c0010632eb625104f019975dfbf699d564bfe239416985a02e",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_06.v": {
+      "blob": "blobs/0116_mounted_graft.2.layer_06.v_cd778ebfb865aeb4.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "cd778ebfb865aeb489e8bbe79794b31f6c95809ca700a7eb5436939ceaefce52",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_07.k": {
+      "blob": "blobs/0117_mounted_graft.2.layer_07.k_1d6935b38b725f41.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "1d6935b38b725f413215cbfb5a831765c80b2a2d80518bbaf21cb9b74c20e859",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_07.v": {
+      "blob": "blobs/0118_mounted_graft.2.layer_07.v_4af0ef3b1c67c947.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4af0ef3b1c67c947aa2e5ebb9da4e6dce64b8afd2f24b7a1ccf6783cd3d30920",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_08.k": {
+      "blob": "blobs/0119_mounted_graft.2.layer_08.k_cde097785414e7d2.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "cde097785414e7d26d16b0d30863a2f025a80f873096e6cc86b8e1fb5ed3da62",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_08.v": {
+      "blob": "blobs/0120_mounted_graft.2.layer_08.v_49e6ba957d604dd8.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "49e6ba957d604dd833c80d6a2d566a3cf79d8ebaf616dad3b3c25580a06927da",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_09.k": {
+      "blob": "blobs/0121_mounted_graft.2.layer_09.k_c7bfff3d0850cdff.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c7bfff3d0850cdff2ec218d618b0cea18c2499a26d02fdb28b36c47568cf291c",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_09.v": {
+      "blob": "blobs/0122_mounted_graft.2.layer_09.v_82ec14210a8cc04d.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "82ec14210a8cc04dfae57a7dcb2d0fbf536442db703b9b1eeeec89c8f50ce2ce",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_10.k": {
+      "blob": "blobs/0123_mounted_graft.2.layer_10.k_4015e311282f4df2.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4015e311282f4df2803deca16aab25f071ada999676a6275eba21047cf184d9b",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_10.v": {
+      "blob": "blobs/0124_mounted_graft.2.layer_10.v_1b718bb42bab3eb4.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "1b718bb42bab3eb4d66829df2e4b333e34ba2cb5aa37907a5cd82549bec0a3e4",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_11.k": {
+      "blob": "blobs/0125_mounted_graft.2.layer_11.k_265d669bcffcaf34.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "265d669bcffcaf34e431ba998eb3bd763a929dd825d0848af63f24cfa4614f54",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_11.v": {
+      "blob": "blobs/0126_mounted_graft.2.layer_11.v_d003500e0f2d9bf1.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "d003500e0f2d9bf1f36818b39cb9d795afa457f0d215831761492450aa81ffe1",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_12.k": {
+      "blob": "blobs/0127_mounted_graft.2.layer_12.k_b944dadac1779703.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "b944dadac1779703bf18ceef9d0aa7c4367e90ef7b6942fc5d479024a3db2e7e",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_12.v": {
+      "blob": "blobs/0128_mounted_graft.2.layer_12.v_b12df0615b1f883a.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "b12df0615b1f883ae3d349ede270d84c155303e5e908671131cd9e35ce220fcb",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_13.k": {
+      "blob": "blobs/0129_mounted_graft.2.layer_13.k_fbf446a2ef2b1e41.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "fbf446a2ef2b1e41fd3c291b62d4e13b476d940c258a8956d3db5f3130eaa37d",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_13.v": {
+      "blob": "blobs/0130_mounted_graft.2.layer_13.v_55e838e7d14cfd25.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "55e838e7d14cfd258ebb80d4f7831fb43b7eca4cf6dbd8cd6e2dc32ea6001256",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_14.k": {
+      "blob": "blobs/0131_mounted_graft.2.layer_14.k_aac35ab5dd66d577.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "aac35ab5dd66d57708cc000851b1019caa9fbe0c632779fa71f64fb45d2fe63c",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_14.v": {
+      "blob": "blobs/0132_mounted_graft.2.layer_14.v_621d12c5d49eab28.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "621d12c5d49eab282e69ac5f86bfb1757b4510a66796736456d2905c4ac04d9c",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_15.k": {
+      "blob": "blobs/0133_mounted_graft.2.layer_15.k_c14175b9b286b21a.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c14175b9b286b21a9941512184ce607445f76fdf25a3c491470f92ca1c729a43",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_15.v": {
+      "blob": "blobs/0134_mounted_graft.2.layer_15.v_df0521e052f8a063.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "df0521e052f8a063ba02c110319a6a1d90e2b8dbe0e09f7774a773e122841e24",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_16.k": {
+      "blob": "blobs/0135_mounted_graft.2.layer_16.k_d53750164c81999a.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "d53750164c81999ac2e41f9ac1c42ed3254806a9c26b67be16f443466c5a2a78",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_16.v": {
+      "blob": "blobs/0136_mounted_graft.2.layer_16.v_556d9cccaa13ac41.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "556d9cccaa13ac41b789fb36a999a1af9bdbddc761032f2328afc2dc4b8f55db",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_17.k": {
+      "blob": "blobs/0137_mounted_graft.2.layer_17.k_e6c070f4a6813c6d.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "e6c070f4a6813c6d8fb42a95c8b09c6551e2a5d61420526332fa03a5d819358a",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_17.v": {
+      "blob": "blobs/0138_mounted_graft.2.layer_17.v_cd56312eae1b8807.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "cd56312eae1b88078e2059ea3acd86d44a73c74bbc5c298c439d00b88f09d13c",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_18.k": {
+      "blob": "blobs/0139_mounted_graft.2.layer_18.k_0764659739e1bacd.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "0764659739e1bacd4b3027128d08809077d83016ca37bc89eb1ab8009294cb2a",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_18.v": {
+      "blob": "blobs/0140_mounted_graft.2.layer_18.v_a5473d5258a3968c.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "a5473d5258a3968cd51d18cf3630e1d0e70342c2823b73bdbc17245a3b1140ca",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_19.k": {
+      "blob": "blobs/0141_mounted_graft.2.layer_19.k_fe5efdf4fee2788c.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "fe5efdf4fee2788ca61a0d38ca4392d3e4e731bec358593923a7ce8ffd7b6245",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_19.v": {
+      "blob": "blobs/0142_mounted_graft.2.layer_19.v_21cfe509d2c54f40.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "21cfe509d2c54f4010d6f2a479c225723ccf5072d66f4967faf577a526edf731",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_20.k": {
+      "blob": "blobs/0143_mounted_graft.2.layer_20.k_3e357790923dab11.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "3e357790923dab114bafbbf04ebfc4c7dc4b6e3fe135a19296699254e4ed4255",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_20.v": {
+      "blob": "blobs/0144_mounted_graft.2.layer_20.v_f9c28f4771225aa2.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "f9c28f4771225aa2e9924828dbb561700f7a75ab5dbcba8ebc2238c93928f601",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_21.k": {
+      "blob": "blobs/0145_mounted_graft.2.layer_21.k_7a19bca8044c7123.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "7a19bca8044c7123b900f6105c7d9441cd0ccf96ae17a726f611fc0e5f64bb8f",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_21.v": {
+      "blob": "blobs/0146_mounted_graft.2.layer_21.v_63b076d2fe70ce61.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "63b076d2fe70ce6103969de8c40af9f8b65873f4c0e1ff80265e0af29d58295a",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_22.k": {
+      "blob": "blobs/0147_mounted_graft.2.layer_22.k_52dbc69754998b19.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "52dbc69754998b19c42cdd8604cead4e4e888241f2ef3fcfdcd8a7ceda047840",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_22.v": {
+      "blob": "blobs/0148_mounted_graft.2.layer_22.v_6cdcfd7508df181a.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "6cdcfd7508df181a0740c728125036154c6ece0998ca30747761c650c760eb95",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_23.k": {
+      "blob": "blobs/0149_mounted_graft.2.layer_23.k_b01eea0b8e4c3cb1.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "b01eea0b8e4c3cb1fd541299b37d6e27f18307a196d5a5d4fa8a13898707a293",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "mounted_graft.2.layer_23.v": {
+      "blob": "blobs/0150_mounted_graft.2.layer_23.v_70c629af10902259.bin",
+      "bytes": 6144,
+      "group": "arena_kv",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "70c629af10902259455131e28611a6d0975bb672ca6edb16929123230ff131b0",
+      "shape": [
+        1,
+        8,
+        3,
+        64
+      ],
+      "source_dtype": "bfloat16",
+      "source_representation": "exported_tensor_value"
+    },
+    "text.question_utf8": {
+      "blob": "blobs/0000_text.question_utf8_ae2d153cc27690c0.bin",
+      "bytes": 42,
+      "group": "text_tokens",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "ae2d153cc27690c082f86c55110d8177e17b65b70803d681e334865bb6d4527a",
+      "shape": [
+        42
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "text.sink_utf8": {
+      "blob": "blobs/0002_text.sink_utf8_5d73f881c2593391.bin",
+      "bytes": 87,
+      "group": "text_tokens",
+      "host_dtype": "|u1",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "5d73f881c25933919e0b13ce610533bc4880764e84ed32b94bce2041ae49c6da",
+      "shape": [
+        87
+      ],
+      "source_dtype": "uint8",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_00.k": {
+      "blob": "blobs/0007_textual_sink.layer_00.k_49802a7d5a499369.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "49802a7d5a49936987034e99f6c443874dba7b4cc3d7e6920f4d019c9b488590",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_00.v": {
+      "blob": "blobs/0008_textual_sink.layer_00.v_949c8287ea785b1e.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "949c8287ea785b1e8de31e7da156dcdb8533e2ee27eccb0dd793eebddb9e4062",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_01.k": {
+      "blob": "blobs/0009_textual_sink.layer_01.k_4c885d6a43530991.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "4c885d6a43530991aa90f626d62cb576df6f9d0df3ada28974c5023c3b7d2c79",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_01.v": {
+      "blob": "blobs/0010_textual_sink.layer_01.v_a2c8fae1d869a34c.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "a2c8fae1d869a34c434796e736ace77a7aff23334ea3073ad9ceb3d8c5ce3772",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_02.k": {
+      "blob": "blobs/0011_textual_sink.layer_02.k_34c7d525203229e9.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "34c7d525203229e902fef417893bda7852014bfccdbd948fe1e29c8e4b3b3c51",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_02.v": {
+      "blob": "blobs/0012_textual_sink.layer_02.v_483f088dd576b89e.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "483f088dd576b89ef6df644ec2706faa494d368e9ff3ed7077f8dbb9b7c42b93",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_03.k": {
+      "blob": "blobs/0013_textual_sink.layer_03.k_bd33170f69ecbcae.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "bd33170f69ecbcae72fe197d7ce778700ba661ddc8f3d046985df7663d7ab3c2",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_03.v": {
+      "blob": "blobs/0014_textual_sink.layer_03.v_6354bea6b45d8b0b.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "6354bea6b45d8b0b0f139dea364b0bc357dd5bf103a99e2cc622564561512168",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_04.k": {
+      "blob": "blobs/0015_textual_sink.layer_04.k_a24644a4b129e04e.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "a24644a4b129e04e738b40834ec31f032fd59b7f050e0fa36a485f3579b6d12a",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_04.v": {
+      "blob": "blobs/0016_textual_sink.layer_04.v_ade2076c28d6b696.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "ade2076c28d6b696c8399e4a80c175cbc22b507f256a05043e7c1ed428948552",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_05.k": {
+      "blob": "blobs/0017_textual_sink.layer_05.k_2066aef97efd6662.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "2066aef97efd66629afbabfac2f654fd05d1a76107fd90815552f6b83df28152",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_05.v": {
+      "blob": "blobs/0018_textual_sink.layer_05.v_a16f1f633ff21e2a.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "a16f1f633ff21e2a9c363de0aa5edb63015204f7cc699136d638b38e101c11a4",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_06.k": {
+      "blob": "blobs/0019_textual_sink.layer_06.k_5d56d0a483a0fd99.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "5d56d0a483a0fd992fa63a3eff7a797953c0e875f22c126257c4fd6a478eff54",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_06.v": {
+      "blob": "blobs/0020_textual_sink.layer_06.v_1849de3de4926c97.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "1849de3de4926c97c3db679b6700065163c59adeb63f13220e6e0fdba5cda851",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_07.k": {
+      "blob": "blobs/0021_textual_sink.layer_07.k_c0c7a5a0996a4baa.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c0c7a5a0996a4baae68e0a1db6c61be9468b67e3d1bf9ab6a0d1261027ed8b88",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_07.v": {
+      "blob": "blobs/0022_textual_sink.layer_07.v_6c45146f45faf941.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "6c45146f45faf9410947414b64119a9a4e3701241bfd051b530a9490fb0ab664",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_08.k": {
+      "blob": "blobs/0023_textual_sink.layer_08.k_f88b324ca750fb09.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "f88b324ca750fb096c066348742c30dd203d272938660247fec98fb6daa9cfd4",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_08.v": {
+      "blob": "blobs/0024_textual_sink.layer_08.v_cf90f0f877a87bb2.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "cf90f0f877a87bb267075cc7c3e4c82a354d065a4293343db32a8f8f74e94d2e",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_09.k": {
+      "blob": "blobs/0025_textual_sink.layer_09.k_13a356ce440889b1.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "13a356ce440889b1df75b66ffeeb361601043780985dbacbd08c7d44c4ddf8ba",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_09.v": {
+      "blob": "blobs/0026_textual_sink.layer_09.v_e729f1a1d2a994de.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "e729f1a1d2a994dee2387108f7ecc5ed771d0e1b8105a0068c80041c84dd9392",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_10.k": {
+      "blob": "blobs/0027_textual_sink.layer_10.k_c3134c3baadf242b.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c3134c3baadf242bc8a3c5bb23551baa6610d3c3e3eb58a3e380f37aa879fb75",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_10.v": {
+      "blob": "blobs/0028_textual_sink.layer_10.v_40b59d889eb13b02.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "40b59d889eb13b0285532ace1d55423d670312652d4b563e46f017c24a8a86ca",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_11.k": {
+      "blob": "blobs/0029_textual_sink.layer_11.k_632cad5cd30de982.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "632cad5cd30de98200afe1282e28737160d1912c082ec55dcbaa05355da195fe",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_11.v": {
+      "blob": "blobs/0030_textual_sink.layer_11.v_e45d1a1fca8bdff4.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "e45d1a1fca8bdff475d0ecf683260a717428d6a7635387fdc6cd5a272830df36",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_12.k": {
+      "blob": "blobs/0031_textual_sink.layer_12.k_26c0f686da9f969e.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "26c0f686da9f969e086c16f86b68a658fe587b4b1db762c1443e3eb047e496c4",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_12.v": {
+      "blob": "blobs/0032_textual_sink.layer_12.v_873483a14bba9b15.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "873483a14bba9b15f6673d41a60fc749bedd17ebb6e626108b68b6f8e0c47330",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_13.k": {
+      "blob": "blobs/0033_textual_sink.layer_13.k_fb5f560a5a693f1d.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "fb5f560a5a693f1ddf69edf9c531046d076cf89eac6f2b4b0bd4d762740d684d",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_13.v": {
+      "blob": "blobs/0034_textual_sink.layer_13.v_3c454c05d6afdf2e.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "3c454c05d6afdf2e355d07412326da94e834701833e69dc9aaf5d6f7e9a0d585",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_14.k": {
+      "blob": "blobs/0035_textual_sink.layer_14.k_90fe2502f38eca90.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "90fe2502f38eca9001a9de11d999a08d5f0138c8119516e3088409f1a7eb05c2",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_14.v": {
+      "blob": "blobs/0036_textual_sink.layer_14.v_1850e228e44e450c.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "1850e228e44e450c32ed0d9021e0d58901e80e297f5ffa21454163603e21f5ad",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_15.k": {
+      "blob": "blobs/0037_textual_sink.layer_15.k_e3aae29536150981.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "e3aae29536150981a33de65add314e6c3c17b56f2898e01766fb9489fc308cb3",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_15.v": {
+      "blob": "blobs/0038_textual_sink.layer_15.v_9bbef71a41dde6d9.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "9bbef71a41dde6d953b9a433220b4180e7f9fa112dde6ccbcef0cb2633eb4bdc",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_16.k": {
+      "blob": "blobs/0039_textual_sink.layer_16.k_b4ba5351b3bb41b4.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "b4ba5351b3bb41b4e4840ee6751db9d62f4468664e1f3823c726b2a22f33a161",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_16.v": {
+      "blob": "blobs/0040_textual_sink.layer_16.v_d1f894e6ca50f9a6.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "d1f894e6ca50f9a608c8aadecafd434ffd825f17a9e99077d287da9e4af515f8",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_17.k": {
+      "blob": "blobs/0041_textual_sink.layer_17.k_72a53ed0e4d1110b.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "72a53ed0e4d1110b3d0220991d0755bddfc191df56b553ee635df6e8af7f88de",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_17.v": {
+      "blob": "blobs/0042_textual_sink.layer_17.v_a9d4c23d1422c0f4.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "a9d4c23d1422c0f491b38b528950409db8008785a0e18c82b0797f8f0e22c59c",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_18.k": {
+      "blob": "blobs/0043_textual_sink.layer_18.k_0f7e4d4df8fed9bb.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "0f7e4d4df8fed9bb2ec3ae2ca33f533c1543fa2cbafef0b9f571cf37516fd1d0",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_18.v": {
+      "blob": "blobs/0044_textual_sink.layer_18.v_ccc7bed38e2ac011.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "ccc7bed38e2ac011aa72728134e48460dbd8704a1af130f1c4c3c5e306879966",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_19.k": {
+      "blob": "blobs/0045_textual_sink.layer_19.k_c45f1bc2cd29e77b.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "c45f1bc2cd29e77bbc5cc741da975b1966ebbfa61803b3ed472e8445cc139778",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_19.v": {
+      "blob": "blobs/0046_textual_sink.layer_19.v_bdd55eb548f8642d.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "bdd55eb548f8642d79e515153bd269d98760eac59c33ba34f5b00a5c82461118",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_20.k": {
+      "blob": "blobs/0047_textual_sink.layer_20.k_0b792a5d04cbed04.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "0b792a5d04cbed04764f0514b2d259ae5692aaee710486fa5dbf3b68aa5bff5b",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_20.v": {
+      "blob": "blobs/0048_textual_sink.layer_20.v_3ceb5211132e371e.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "3ceb5211132e371e4af381299294a15ea4143f3672e537427677e458e32e08c2",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_21.k": {
+      "blob": "blobs/0049_textual_sink.layer_21.k_782998df807b231c.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "782998df807b231cf77780e6fc33decd3623a6b79e513f0fee32f299831e33d8",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_21.v": {
+      "blob": "blobs/0050_textual_sink.layer_21.v_67f23bf7857e63ef.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "67f23bf7857e63ef738faf2aaf486d371c1c761a0bf3f72ebd584a6f0bc02488",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_22.k": {
+      "blob": "blobs/0051_textual_sink.layer_22.k_2c7b69672d86200e.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "2c7b69672d86200e3f02615f27899154205ff4bba79accc3d0dc2412486f25af",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_22.v": {
+      "blob": "blobs/0052_textual_sink.layer_22.v_e3af31e36187a176.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "e3af31e36187a176222273a709d27947b29fb554c31e4c55f6f7216d9f07ae23",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_23.k": {
+      "blob": "blobs/0053_textual_sink.layer_23.k_90d6bfb51774c952.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "90d6bfb51774c9521ff3242feef062734a6283676fee997a3980be816d9683c2",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "textual_sink.layer_23.v": {
+      "blob": "blobs/0054_textual_sink.layer_23.v_0ea6ebecda9cdec7.bin",
+      "bytes": 38912,
+      "group": "sink_rows",
+      "host_dtype": "<f4",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "0ea6ebecda9cdec775fb7ba8287a9bb71af0c4e5ac95c8a5a847998337df4ecd",
+      "shape": [
+        1,
+        8,
+        19,
+        64
+      ],
+      "source_dtype": "float32",
+      "source_representation": "host_numpy"
+    },
+    "tokens.live_ids": {
+      "blob": "blobs/0004_tokens.live_ids_e3b0c44298fc1c14.bin",
+      "bytes": 0,
+      "group": "live_tokens",
+      "host_dtype": "<i8",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "shape": [
+        0
+      ],
+      "source_dtype": "int64",
+      "source_representation": "host_numpy"
+    },
+    "tokens.prompt_ids": {
+      "blob": "blobs/0001_tokens.prompt_ids_96c8c8cdc052551f.bin",
+      "bytes": 304,
+      "group": "text_tokens",
+      "host_dtype": "<i8",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "96c8c8cdc052551f7e59e1802ea078b1fe3eb50449a4ba49c9d301f5a4f298e3",
+      "shape": [
+        38
+      ],
+      "source_dtype": "int64",
+      "source_representation": "host_numpy"
+    },
+    "tokens.sink_ids": {
+      "blob": "blobs/0003_tokens.sink_ids_ff82ff3377309e77.bin",
+      "bytes": 152,
+      "group": "text_tokens",
+      "host_dtype": "<i8",
+      "literal_device_storage_bytes": false,
+      "order": "C",
+      "sha256": "ff82ff3377309e77b6c72a81402150dd4beac014db9f77674ae311cdfabf7b8a",
+      "shape": [
+        19
+      ],
+      "source_dtype": "int64",
+      "source_representation": "host_numpy"
+    }
+  },
+  "availability": {
+    "coverage_counts": {
+      "admission_plan": 17,
+      "arena_kv": 170,
+      "identity": 22,
+      "live_tokens": 3,
+      "masks": 48,
+      "positions_rope": 70,
+      "provenance": 25,
+      "sink_rows": 72,
+      "text_tokens": 5
+    },
+    "missing_groups": [],
+    "required_field_checks": [
+      {
+        "field": "injection.layer_00.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_00.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_00.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_00.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_00.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_00.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_00.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_00.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_00.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_00.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_00",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_01.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_01.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_01.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_01.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_01.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_01.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_01.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_01.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_01.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_01.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_01",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_02.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_02.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_02.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_02.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_02.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_02.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_02.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_02.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_02.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_02.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_02",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_03.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_03.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_03.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_03.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_03.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_03.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_03.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_03.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_03.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_03.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_03",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_04.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_04.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_04.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_04.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_04.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_04.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_04.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_04.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_04.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_04.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_04",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_05.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_05.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_05.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_05.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_05.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_05.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_05.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_05.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_05.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_05.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_05",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_06.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_06.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_06.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_06.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_06.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_06.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_06.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_06.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_06.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_06.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_06",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_07.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_07.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_07.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_07.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_07.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_07.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_07.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_07.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_07.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_07.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_07",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_08.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_08.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_08.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_08.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_08.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_08.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_08.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_08.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_08.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_08.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_08",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_09.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_09.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_09.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_09.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_09.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_09.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_09.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_09.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_09.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_09.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_09",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_10.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_10.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_10.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_10.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_10.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_10.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_10.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_10.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_10.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_10.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_10",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_11.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_11.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_11.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_11.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_11.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_11.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_11.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_11.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_11.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_11.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_11",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_12.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_12.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_12.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_12.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_12.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_12.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_12.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_12.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_12.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_12.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_12",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_13.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_13.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_13.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_13.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_13.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_13.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_13.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_13.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_13.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_13.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_13",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_14.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_14.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_14.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_14.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_14.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_14.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_14.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_14.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_14.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_14.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_14",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_15.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_15.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_15.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_15.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_15.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_15.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_15.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_15.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_15.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_15.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_15",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_16.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_16.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_16.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_16.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_16.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_16.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_16.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_16.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_16.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_16.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_16",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_17.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_17.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_17.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_17.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_17.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_17.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_17.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_17.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_17.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_17.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_17",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_18.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_18.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_18.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_18.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_18.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_18.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_18.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_18.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_18.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_18.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_18",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_19.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_19.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_19.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_19.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_19.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_19.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_19.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_19.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_19.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_19.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_19",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_20.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_20.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_20.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_20.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_20.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_20.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_20.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_20.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_20.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_20.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_20",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_21.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_21.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_21.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_21.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_21.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_21.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_21.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_21.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_21.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_21.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_21",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_22.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_22.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_22.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_22.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_22.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_22.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_22.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_22.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_22.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_22.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_22",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "injection.layer_23.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_23.k",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_23.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_23.k",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "injection.layer_23.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "textual_sink.layer_23.v",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.0.layer_23.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mounted_graft.2.layer_23.v",
+        "group": "arena_kv",
+        "present": true
+      },
+      {
+        "field": "mask.layer_23.inputs",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "mask.layer_23.allowed",
+        "group": "masks",
+        "present": true
+      },
+      {
+        "field": "learned_sink.layer_23",
+        "group": "sink_rows",
+        "present": true
+      },
+      {
+        "field": "model.rope_cos",
+        "group": "positions_rope",
+        "present": true
+      },
+      {
+        "field": "model.rope_sin",
+        "group": "positions_rope",
+        "present": true
+      },
+      {
+        "field": "arena.pos",
+        "group": "positions_rope",
+        "present": true
+      },
+      {
+        "field": "arena.live_shift",
+        "group": "positions_rope",
+        "present": true
+      },
+      {
+        "field": "positions.query_absolute_rows",
+        "group": "positions_rope",
+        "present": true
+      },
+      {
+        "field": "positions.physical_sections",
+        "group": "positions_rope",
+        "present": true
+      },
+      {
+        "field": "text.question_utf8",
+        "group": "text_tokens",
+        "present": true
+      },
+      {
+        "field": "text.sink_utf8",
+        "group": "text_tokens",
+        "present": true
+      },
+      {
+        "field": "tokens.prompt_ids",
+        "group": "text_tokens",
+        "present": true
+      },
+      {
+        "field": "tokens.sink_ids",
+        "group": "text_tokens",
+        "present": true
+      },
+      {
+        "field": "tokens.live_ids",
+        "group": "live_tokens",
+        "present": true
+      },
+      {
+        "field": "admission.schema",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.probe_key_sha256",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.ranking",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.identifier_tokens",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.identified_candidates",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.policy_branch",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.rank_plan",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.ladder_attempts",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.current_attempt_ordinal",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.current_planned",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.current_clean_room",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.current_fitted",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.current_dropped",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.selection_state",
+        "group": "admission_plan",
+        "present": true
+      },
+      {
+        "field": "admission.final_mounts",
+        "group": "admission_plan",
+        "present": true
+      }
+    ],
+    "required_groups": [
+      "provenance",
+      "identity",
+      "arena_kv",
+      "positions_rope",
+      "sink_rows",
+      "masks",
+      "text_tokens",
+      "live_tokens",
+      "admission_plan"
+    ],
+    "required_unavailable_fields": [],
+    "unavailable_fields": []
+  },
+  "byte_semantics": {
+    "comparison_bytes": "C_contiguous_host_value_bytes",
+    "literal_device_storage_bytes": false,
+    "qualification": "byte equality means canonical exported value-byte equality until TensorCUDA provides a raw device-storage byte exporter",
+    "tensor_cuda_bfloat16_export": "host_float32_value_preserving"
+  },
+  "complete": true,
+  "identity": {
+    "arena_class": "scripts.grm_e2e_session.GptOssGQAArenaCache",
+    "attention_geometry": {
+      "attention_mode": "standard",
+      "attn_block": 1024,
+      "bulk_bits": 8,
+      "head_dim": 64,
+      "num_heads": 64,
+      "num_heads_per_kv": 8,
+      "num_kv_heads": 8,
+      "refine_percentile": 0.15,
+      "scaling": 0.125,
+      "sliding_window": 128
+    },
+    "compute_dtype": "bfloat16",
+    "dialect": "gqa",
+    "dialect_payload": [
+      {
+        "name": "k",
+        "sequence_dim": 2
+      },
+      {
+        "name": "v",
+        "sequence_dim": 2
+      }
+    ],
+    "engine_build_sha256": "7f438cc7ceb66a16b492d59185f2bd9940f0ecfa44d05514499c89ac2195b250",
+    "frame_sha256": "db5f1d521a352847368559c43adb45b3c343ff50e245324d85672111601745b7",
+    "layer_count": 24,
+    "layer_types": [
+      "sliding_attention",
+      "full_attention",
+      "sliding_attention",
+      "full_attention",
+      "sliding_attention",
+      "full_attention",
+      "sliding_attention",
+      "full_attention",
+      "sliding_attention",
+      "full_attention",
+      "sliding_attention",
+      "full_attention",
+      "sliding_attention",
+      "full_attention",
+      "sliding_attention",
+      "full_attention",
+      "sliding_attention",
+      "full_attention",
+      "sliding_attention",
+      "full_attention",
+      "sliding_attention",
+      "full_attention",
+      "sliding_attention",
+      "full_attention"
+    ],
+    "model_class": "core.gpt_oss20b_tc.GptOss20B_TC",
+    "model_config": {
+      "attention_bias": true,
+      "eos_token_id": 200002,
+      "group_size": 64,
+      "head_dim": 64,
+      "hidden_dim": 2880,
+      "initial_context_length": 4096,
+      "intermediate_dim": 2880,
+      "layer_types": [
+        "sliding_attention",
+        "full_attention",
+        "sliding_attention",
+        "full_attention",
+        "sliding_attention",
+        "full_attention",
+        "sliding_attention",
+        "full_attention",
+        "sliding_attention",
+        "full_attention",
+        "sliding_attention",
+        "full_attention",
+        "sliding_attention",
+        "full_attention",
+        "sliding_attention",
+        "full_attention",
+        "sliding_attention",
+        "full_attention",
+        "sliding_attention",
+        "full_attention",
+        "sliding_attention",
+        "full_attention",
+        "sliding_attention",
+        "full_attention"
+      ],
+      "max_position_embeddings": 131072,
+      "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+      "num_experts_per_tok": 4,
+      "num_heads": 64,
+      "num_kv_heads": 8,
+      "num_layers": 24,
+      "num_local_experts": 32,
+      "pad_token_id": 199999,
+      "repository": "openai/gpt-oss-20b",
+      "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+      "rms_norm_eps": 1e-05,
+      "rope_scaling": {
+        "beta_fast": 32.0,
+        "beta_slow": 1.0,
+        "factor": 32.0,
+        "original_max_position_embeddings": 4096,
+        "rope_type": "yarn",
+        "truncate": false
+      },
+      "rope_theta": 150000.0,
+      "sliding_window": 128,
+      "swiglu_alpha": 1.702,
+      "swiglu_limit": 7.0,
+      "tie_word_embeddings": false,
+      "vocab_size": 201088
+    },
+    "model_inventory_semantics": "HF cache blob names and byte sizes; weights not rehashed during bounded GPU lease",
+    "model_revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+    "model_weights_inventory_sha256": "654e15ae05f6e4aa6f10375a4fbcdd44e5d32c972913ed3390079d58fe6e1b5f",
+    "native_library_sha256": "6e984b0de89339e1ea5c7a0731323f5682aff476e3fabf48af2d173ecea3976d",
+    "prompt_template_sha256": "06ebdbe133f37b60e47212ae618fb9cb19fc205db67d50e7e549132230b91a42",
+    "route_backend": "auto",
+    "route_layer": 1,
+    "storage_bits": 8,
+    "target_model_reasoning_effort": "low (Harmony prompt)",
+    "tokenizer_sha256": "0614fe83cadab421296e664e1f48f4261fa8fef6e03e63bb75c20f38e37d07d3",
+    "x3_runtime_fingerprint": "530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683"
+  },
+  "label": "lived",
+  "manifest_payload_sha256": "3757efeaa66b64e34df2d3d244d39a72dcbe910d051820beea1aac5b041fbd1e",
+  "phase": "before_probe_prefill",
+  "provenance": {
+    "arm": "lived",
+    "attempt_ordinal": 0,
+    "boot_id": "610633ba-2ced-4048-a3b0-cd84fc89ba5f",
+    "capture_boundary": "before_probe_prefill",
+    "defer_memory": false,
+    "fixture_id": "x3_r2_05",
+    "fixture_sha256": "ab8e50cf1be7dc3bdcd03a1aeaaf7b1220d8b0514e763d37c146323c6cb32c38",
+    "max_trips": 0,
+    "order_sha256": "ae126b0456ea1a538c6ff0cb0dd9f1c5055bc468363a2eeb9577cfeca0fef844",
+    "probe_driver": "X3 controlled direct _attempt after lived feeds; diagnostic",
+    "probe_id": "r2/Fenquay",
+    "probe_ladder": false,
+    "probe_question_sha256": "ae2d153cc27690c082f86c55110d8177e17b65b70803d681e334865bb6d4527a",
+    "process_instance_sha256": "e15ddfd08917658ef74f22016e171da761655e1a65d9cd50cbb0677f5619a5c8",
+    "process_pid": 2765928,
+    "process_start_ticks": 290953804,
+    "protocol": "same_model_chronological_harmony_feed_v1",
+    "protocol_source_sha256": "e50d212fa16f023eb6488935ed1b005d0376349c9be0cd78f32f9477c7515846",
+    "registration_sha256": "99abd4dfbed92df335135cdb08f5180bba32a6cbfa8ff2e37b8d1190d236af33",
+    "run_id": "530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683",
+    "runtime_frame_sha256": "84abd0b72f4443e43f7a0ac3a896241d9dce80393d238af8a63f7c48dd424ab3",
+    "schema": "grm.det1_3.capture_provenance.v2",
+    "selection_boundary": "before_generation_and_grounding_selection",
+    "source_amendment_sha256": "a5e13f8337d305a6d6b5e380888d3a6a7c21f7d31d4ce06684f63b6296a94887",
+    "topk": 3
+  },
+  "schema": "grm.det1_3.model_visible_snapshot.v2",
+  "state": {
+    "admission.authoritative_mounts": [
+      0,
+      2
+    ],
+    "admission.current_attempt_ordinal": 0,
+    "admission.current_clean_room": true,
+    "admission.current_dropped": [],
+    "admission.current_fitted": [
+      0,
+      2
+    ],
+    "admission.current_planned": [
+      0,
+      2
+    ],
+    "admission.final_mounts": [
+      0,
+      2
+    ],
+    "admission.full_plan": {
+      "current_attempt_ordinal": 0,
+      "current_clean_room": true,
+      "current_dropped": [],
+      "current_fitted": [
+        0,
+        2
+      ],
+      "current_planned": [
+        0,
+        2
+      ],
+      "final_mounts": [
+        0,
+        2
+      ],
+      "identified_candidates": [
+        0,
+        2
+      ],
+      "identifier_tokens": [],
+      "ladder_attempts": [
+        {
+          "clean_room": true,
+          "ordinal": 0,
+          "planned": [
+            0,
+            2
+          ]
+        }
+      ],
+      "policy_branch": "X3_REGISTERED_CONTROLLED_PICKS_NOT_ROUTED",
+      "probe_key_sha256": "3f9fb6f0cadad33f76552540218a852366ef4898b6507724615e728db73430b7",
+      "rank_plan": [
+        0,
+        2
+      ],
+      "ranking": [
+        0,
+        2
+      ],
+      "schema": "grm.x3.controlled_mount_plan.v1",
+      "selection_state": "PENDING_AT_PREFILL"
+    },
+    "admission.identified_candidates": [
+      0,
+      2
+    ],
+    "admission.identifier_tokens": [],
+    "admission.ladder_attempts": [
+      {
+        "clean_room": true,
+        "ordinal": 0,
+        "planned": [
+          0,
+          2
+        ]
+      }
+    ],
+    "admission.policy_branch": "X3_REGISTERED_CONTROLLED_PICKS_NOT_ROUTED",
+    "admission.probe_key_sha256": "3f9fb6f0cadad33f76552540218a852366ef4898b6507724615e728db73430b7",
+    "admission.rank_plan": [
+      0,
+      2
+    ],
+    "admission.ranking": [
+      0,
+      2
+    ],
+    "admission.schema": "grm.x3.controlled_mount_plan.v1",
+    "admission.selection_state": "PENDING_AT_PREFILL",
+    "arena.cache_deposits": true,
+    "arena.caches_present": false,
+    "arena.cur_mount_n": 58,
+    "arena.cur_mounts": [
+      0,
+      2
+    ],
+    "arena.decisive_admission": true,
+    "arena.length_debias": false,
+    "arena.live_shift": 115,
+    "arena.live_turns": 2,
+    "arena.max_live": null,
+    "arena.n_sink": 19,
+    "arena.pos": 0,
+    "arena.revision_resolution": true,
+    "arena.route_backend": "auto",
+    "arena.route_layer": 1,
+    "arena.topk": 3,
+    "arena.width": 96,
+    "attention.layer_00.graft_seats": 77,
+    "attention.layer_00.live_shift": 115,
+    "attention.layer_01.graft_seats": 77,
+    "attention.layer_01.live_shift": 115,
+    "attention.layer_02.graft_seats": 77,
+    "attention.layer_02.live_shift": 115,
+    "attention.layer_03.graft_seats": 77,
+    "attention.layer_03.live_shift": 115,
+    "attention.layer_04.graft_seats": 77,
+    "attention.layer_04.live_shift": 115,
+    "attention.layer_05.graft_seats": 77,
+    "attention.layer_05.live_shift": 115,
+    "attention.layer_06.graft_seats": 77,
+    "attention.layer_06.live_shift": 115,
+    "attention.layer_07.graft_seats": 77,
+    "attention.layer_07.live_shift": 115,
+    "attention.layer_08.graft_seats": 77,
+    "attention.layer_08.live_shift": 115,
+    "attention.layer_09.graft_seats": 77,
+    "attention.layer_09.live_shift": 115,
+    "attention.layer_10.graft_seats": 77,
+    "attention.layer_10.live_shift": 115,
+    "attention.layer_11.graft_seats": 77,
+    "attention.layer_11.live_shift": 115,
+    "attention.layer_12.graft_seats": 77,
+    "attention.layer_12.live_shift": 115,
+    "attention.layer_13.graft_seats": 77,
+    "attention.layer_13.live_shift": 115,
+    "attention.layer_14.graft_seats": 77,
+    "attention.layer_14.live_shift": 115,
+    "attention.layer_15.graft_seats": 77,
+    "attention.layer_15.live_shift": 115,
+    "attention.layer_16.graft_seats": 77,
+    "attention.layer_16.live_shift": 115,
+    "attention.layer_17.graft_seats": 77,
+    "attention.layer_17.live_shift": 115,
+    "attention.layer_18.graft_seats": 77,
+    "attention.layer_18.live_shift": 115,
+    "attention.layer_19.graft_seats": 77,
+    "attention.layer_19.live_shift": 115,
+    "attention.layer_20.graft_seats": 77,
+    "attention.layer_20.live_shift": 115,
+    "attention.layer_21.graft_seats": 77,
+    "attention.layer_21.live_shift": 115,
+    "attention.layer_22.graft_seats": 77,
+    "attention.layer_22.live_shift": 115,
+    "attention.layer_23.graft_seats": 77,
+    "attention.layer_23.live_shift": 115,
+    "cache.lengths_by_layer": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "injection.layer_00.component_2": 1.0,
+    "injection.layer_01.component_2": 1.0,
+    "injection.layer_02.component_2": 1.0,
+    "injection.layer_03.component_2": 1.0,
+    "injection.layer_04.component_2": 1.0,
+    "injection.layer_05.component_2": 1.0,
+    "injection.layer_06.component_2": 1.0,
+    "injection.layer_07.component_2": 1.0,
+    "injection.layer_08.component_2": 1.0,
+    "injection.layer_09.component_2": 1.0,
+    "injection.layer_10.component_2": 1.0,
+    "injection.layer_11.component_2": 1.0,
+    "injection.layer_12.component_2": 1.0,
+    "injection.layer_13.component_2": 1.0,
+    "injection.layer_14.component_2": 1.0,
+    "injection.layer_15.component_2": 1.0,
+    "injection.layer_16.component_2": 1.0,
+    "injection.layer_17.component_2": 1.0,
+    "injection.layer_18.component_2": 1.0,
+    "injection.layer_19.component_2": 1.0,
+    "injection.layer_20.component_2": 1.0,
+    "injection.layer_21.component_2": 1.0,
+    "injection.layer_22.component_2": 1.0,
+    "injection.layer_23.component_2": 1.0,
+    "live.segment_token_count": 0,
+    "live.segments": [],
+    "mask.layer_00.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "sliding_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": 128
+    },
+    "mask.layer_01.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "full_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": null
+    },
+    "mask.layer_02.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "sliding_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": 128
+    },
+    "mask.layer_03.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "full_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": null
+    },
+    "mask.layer_04.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "sliding_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": 128
+    },
+    "mask.layer_05.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "full_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": null
+    },
+    "mask.layer_06.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "sliding_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": 128
+    },
+    "mask.layer_07.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "full_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": null
+    },
+    "mask.layer_08.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "sliding_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": 128
+    },
+    "mask.layer_09.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "full_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": null
+    },
+    "mask.layer_10.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "sliding_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": 128
+    },
+    "mask.layer_11.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "full_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": null
+    },
+    "mask.layer_12.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "sliding_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": 128
+    },
+    "mask.layer_13.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "full_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": null
+    },
+    "mask.layer_14.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "sliding_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": 128
+    },
+    "mask.layer_15.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "full_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": null
+    },
+    "mask.layer_16.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "sliding_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": 128
+    },
+    "mask.layer_17.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "full_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": null
+    },
+    "mask.layer_18.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "sliding_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": 128
+    },
+    "mask.layer_19.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "full_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": null
+    },
+    "mask.layer_20.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "sliding_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": 128
+    },
+    "mask.layer_21.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "full_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": null
+    },
+    "mask.layer_22.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "sliding_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": 128
+    },
+    "mask.layer_23.inputs": {
+      "attention_mode": "standard",
+      "cache_length": 0,
+      "injection_length": 77,
+      "key_length": 115,
+      "layer_type": "full_attention",
+      "query_length": 38,
+      "representation": "uint8_canonical_allowed_equivalent",
+      "sliding_window": null
+    },
+    "model.rope_len": 4211,
+    "model.rope_len_before_capture_extension": 4211,
+    "model.rope_required_for_next_forward": 153,
+    "positions.physical_sections": {
+      "live_position_origin": 115,
+      "mounted_payload": [
+        19,
+        77
+      ],
+      "textual_sink": [
+        0,
+        19
+      ]
+    },
+    "positions.query_absolute_rows": [
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139,
+      140,
+      141,
+      142,
+      143,
+      144,
+      145,
+      146,
+      147,
+      148,
+      149,
+      150,
+      151,
+      152
+    ],
+    "tokens.prompt_count": 38
+  }
+}
