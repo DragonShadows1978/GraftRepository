@@ -1,0 +1,47 @@
+{
+  "accepted": false,
+  "attempts": [
+    {
+      "coverage": 0.25,
+      "hit_count": 2,
+      "need_count": 8,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the  C7\u2011Outpost\u201102 refers to the Pearl\u20111202."
+    },
+    {
+      "coverage": 0.25,
+      "hit_count": 2,
+      "need_count": 8,
+      "prompt_index": 1,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "ARCHIVE NOTE \u2014 The conversation established that the  current C7\u2011Outpost\u201102 value is Pearl\u20111202."
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 8,
+      "prompt_index": 2,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "The facts to archive are:   \n\n| Item | Value | Reference |  \n|------|-------|------------|  \n| **C7\u2011Outpost\u201102** | \u201cPearl\u20111202\u201d | The current value of the outpost. |  \n\nNo other names, codes, numbers or times were mentioned."
+    }
+  ],
+  "digest_text": null,
+  "error": null,
+  "result": {
+    "accepted": false,
+    "best_cov": 0.25,
+    "hit_count": 2,
+    "need_count": 8
+  },
+  "source_payload_sha256": {
+    "0018.npz": "89275b84e8dbceaa70890d5bfacff484e5b3c75f30c050f494883a1dc673bce4",
+    "0033.npz": "324566c22631a012224b0ce1b199d1e5648ee04998452754ced0ba1a3b86d9fb",
+    "0038.npz": "aa4b4232fd2dd72f2a262c212847644db8f2e26f7351260582cc6438b329bf3e",
+    "0043.npz": "b6b9f12868e47432c249d44fc34c20bcd767ddd504c912ea6859c10e0033f919"
+  },
+  "turn": 74
+}

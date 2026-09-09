@@ -1,0 +1,47 @@
+{
+  "accepted": false,
+  "attempts": [
+    {
+      "coverage": 0.25,
+      "hit_count": 2,
+      "need_count": 8,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the  alias \u201cC7-Signal-0\u201d refers to \u201cC7-AliasBase-2.\u201d"
+    },
+    {
+      "coverage": 0.25,
+      "hit_count": 2,
+      "need_count": 8,
+      "prompt_index": 1,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "ARCHIVE NOTE \u2014 The conversation established that the  \u201cC7\u2011Signal\u20112\u201d is an alias for \u201cC7\u2011AliasBase\u20112.\u201d"
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 8,
+      "prompt_index": 2,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "The facts to archive are:   \n\n| **Item** | **Value** | **What it points to** |  \n|-----------|-----------|-----------------------|  \n| **C7\u2011Signal\u20110** | \u201cOnyx\u2011911\u201d | The alias that is used for the signal. |  \n| **C7\u2011AliasBase\u20110** | \u201cOnyx\u2011911\u201d | The base alias that the signal points to. |  \n\nThese are the only names, codes, numbers, and times that have been mentioned."
+    }
+  ],
+  "digest_text": null,
+  "error": null,
+  "result": {
+    "accepted": false,
+    "best_cov": 0.25,
+    "hit_count": 2,
+    "need_count": 8
+  },
+  "source_payload_sha256": {
+    "0008.npz": "6b81df7ff4c7d95bd3a3cc769528cab5607f5724d02d139b24cc316966f065b0",
+    "0009.npz": "1a9cf3c764012b9c76a486a400a6c85d27efdb89906dbe47599495fc5c97fe27",
+    "0010.npz": "a0bed078b0f12dfdee1e42e0e8cca657c00ad058a08e0a3c8c68f57b4587b86a",
+    "0011.npz": "98d019e6dbec29a78944746d77e0ee5a829a294ab7cee05f2ac6482900ab423e"
+  },
+  "turn": 26
+}

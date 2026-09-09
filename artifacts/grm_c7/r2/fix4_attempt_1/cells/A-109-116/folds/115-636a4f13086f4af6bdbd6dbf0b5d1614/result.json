@@ -1,0 +1,47 @@
+{
+  "accepted": false,
+  "attempts": [
+    {
+      "coverage": 0.25,
+      "hit_count": 2,
+      "need_count": 8,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the  C7\u2011Outpost\u201132 is Slate\u20111234."
+    },
+    {
+      "coverage": 0.25,
+      "hit_count": 2,
+      "need_count": 8,
+      "prompt_index": 1,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "ARCHIVE NOTE \u2014 The conversation established that the  current C7\u2011Outpost\u201132 value is Slate\u20111234."
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 8,
+      "prompt_index": 2,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "The facts to archive are:   \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7\u2011Outpost\u201132** | 1 | The current \u201cvalue\u201d or identifier for the outpost. |  \n| **Slate\u20111234** | 1 | The value that was assigned to the outpost. |  \n\nNo other names, codes, numbers or times were mentioned."
+    }
+  ],
+  "digest_text": null,
+  "error": null,
+  "result": {
+    "accepted": false,
+    "best_cov": 0.25,
+    "hit_count": 2,
+    "need_count": 8
+  },
+  "source_payload_sha256": {
+    "0085.npz": "8bb2c7328bfad64f224321e735caaad891a85d68b325d5b17fe95c67122bac8a",
+    "0086.npz": "ef962cd4119e685f5bf2cbd358920e0f3de7d669a617ca8688fe20ca40cf007b",
+    "0087.npz": "af19414d000d872dd79c355964591b985f116287f22f8c9402756747ea1505df",
+    "0088.npz": "4a6f5a97178af6f84b24bf2c15fe7b846e5ceea09d29433f75093f425e80c423"
+  },
+  "turn": 115
+}

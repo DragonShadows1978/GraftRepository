@@ -1,0 +1,47 @@
+{
+  "accepted": false,
+  "attempts": [
+    {
+      "coverage": 0.2222222222222222,
+      "hit_count": 2,
+      "need_count": 9,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the  name \u201cC7-Outpost-14\u201d refers to the value \u201cSlate-1212.\u201d"
+    },
+    {
+      "coverage": 0.2222222222222222,
+      "hit_count": 2,
+      "need_count": 9,
+      "prompt_index": 1,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "ARCHIVE NOTE \u2014 The conversation established that the  current C7\u2011Outpost\u201112 value is Slate\u20111212. The user\u2019s statement that \u201cC7\u2011Outpost\u201112 is Slate\u20111212\u201d was recorded verbatim. The system\u2019s reply, \u201cThe current C7\u2011Outpost\u201112 value is Slate\u20111212,\u201d was also recorded. The user\u2019s statement that \u201cC7\u2011Outpost\u201112 is Slate\u20111212\u201d was recorded. The system\u2019s reply, \u201cThe current C7\u2011Outpost\u201112 value is Slate\u20111212,\u201d was recorded. The user\u2019s statement that \u201cC7"
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 9,
+      "prompt_index": 2,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "The facts to archive are:   \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7\u2011Outpost\u201114** | 1 | The current \u201cvalue\u201d of the outpost, which is **Slate\u20111214**. |  \n| **Slate\u20111214** | 2 | The value that the outpost is currently set to. |  \n| **C7\u2011Handle\u201111** | 3 | An alias that points to the same value as **C7\u2011Outpost\u201114**. |  \n\nNo other names, codes, numbers or times were"
+    }
+  ],
+  "digest_text": null,
+  "error": null,
+  "result": {
+    "accepted": false,
+    "best_cov": 0.2222222222222222,
+    "hit_count": 2,
+    "need_count": 9
+  },
+  "source_payload_sha256": {
+    "0065.npz": "47f5d81ae9cbc66c75c9f3288f5b250d6d9d6ebe1a146c5f2f4827147f1f436b",
+    "0066.npz": "d2eb9cf4a7b71ec3e23856bd8729b13aabd52ee5526ec1662031cd6691ca4a4a",
+    "0067.npz": "804b439d5cd6f3c48d479e6373e866074e9c7682fdb0c82f89e399e406f79afd",
+    "0068.npz": "238bb9e6ea6baa22e828d9a60d13aed553185ec68f83181babbb6552b4707b08"
+  },
+  "turn": 95
+}

@@ -1,0 +1,47 @@
+{
+  "accepted": false,
+  "attempts": [
+    {
+      "coverage": 0.25,
+      "hit_count": 2,
+      "need_count": 8,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the  name \u201cC7-Outpost-29\u201d refers to a location, the code \u201cSlate-1229\u201d refers to a value, and the time \u201c12:29\u201d refers to a time."
+    },
+    {
+      "coverage": 0.25,
+      "hit_count": 2,
+      "need_count": 8,
+      "prompt_index": 1,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "ARCHIVE NOTE \u2014 The conversation established that the  current C7\u2011Outpost\u201129 value is Slate\u20111228."
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 8,
+      "prompt_index": 2,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "The facts to archive are:   \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7\u2011Outpost\u201129** | 1 | The current \u201cvalue\u201d of the outpost, a code that is being tracked. |  \n| **Slate\u20111228** | 2 | The value that the outpost is currently set to. |  \n\nNo other names, codes, numbers or times were mentioned."
+    }
+  ],
+  "digest_text": null,
+  "error": null,
+  "result": {
+    "accepted": false,
+    "best_cov": 0.25,
+    "hit_count": 2,
+    "need_count": 8
+  },
+  "source_payload_sha256": {
+    "0081.npz": "96204861c1335dccbfdcbc355ab372cfdaaa5dca27c19c495dc48cf9c8a57acd",
+    "0082.npz": "5938b5acbeb6aa47c0805df280668e32170ad87cbee9d2441b540f02badf5914",
+    "0083.npz": "3691f4b9b7d8c6b81914f3b4d851b6d65fc60990d62eaaa1c289e54e441641f5",
+    "0084.npz": "4c9fbefa17aa8485e8436bb4cd9374629e35803d90b1f49f7a0497065d0971b8"
+  },
+  "turn": 111
+}
