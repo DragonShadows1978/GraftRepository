@@ -1,0 +1,8 @@
+{
+  "evidence_class": "CPU real binding, RT1 demotion and policy with recorded ranking/margin and full pre-probe node manifests; no numerical routing or reader replay",
+  "count": 132,
+  "byte_identical": true,
+  "sha256": "eae443d91b0a18231865f397526f8e16cdee3c04aa47f8baf6db3a91114a35ce",
+  "serialization": "Recorded/replayed rank_plan compact JSON, one line per execution in green.json c2 order; each individual before/after byte string also hex-encoded there",
+  "before_after_full_c2_receipt_equal": true
+}

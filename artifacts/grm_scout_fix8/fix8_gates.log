@@ -1,0 +1,99 @@
+..........................................F.                             [100%]
+=================================== FAILURES ===================================
+_________________ test_failed_lease_charged_and_never_retried __________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1001/test_failed_lease_charged_and_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7c4ef7a5f950>
+
+    def test_failed_lease_charged_and_never_retried(tmp_path,monkeypatch):
+        r=run.verify();monkeypatch.setattr(run,'verify',lambda:r);monkeypatch.setattr(run,'OUT',tmp_path)
+        from scripts import grm_cmc1_gpu_arms as leases
+        def busy(*_):raise RuntimeError('BUSY_TEST_NO_GPU')
+        monkeypatch.setattr(leases,'gpu_lease',busy)
+        monkeypatch.setattr(run.time,'sleep',lambda _:None)
+>       with pytest.raises(RuntimeError,match='BUSY_TEST_NO_GPU'):run.batch('F1')
+                                                                  ^^^^^^^^^^^^^^^
+
+tests/test_grm_scout_fix8_replay.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch_id = 'F1'
+
+    def batch(batch_id):
+        r=verify();need(batch_id in r['batches'],'UNKNOWN_BATCH')
+        need(shutil.disk_usage(OUT).free>=r['free_space_min_bytes'],'FREE_SPACE_BELOW_20_GIB')
+        # Prior art: C7 atomic owner and pessimistic budget, no retries (2026).
+        owner=OUT/'replay.active'
+        fd=os.open(owner,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)
+        os.write(fd,str(os.getpid()).encode());os.close(fd)
+        try:
+            charged=campaign_state(r)
+            for b in list(r['batches'])[:list(r['batches']).index(batch_id)]:
+                need(read(OUT/'gpu'/b/'controller.json')['status']=='COMPLETE','PRIOR_BATCH_INCOMPLETE')
+            need(charged+r['lease_seconds']<=r['gpu_cap_seconds'],'GPU_BUDGET_RAIL')
+            destination=OUT/'gpu'/batch_id;destination.mkdir(parents=True,exist_ok=False)
+            write(destination/'reservation.json',{'seconds':r['lease_seconds'],'registration_sha256':sha(REG)})
+            started=None;elapsed=0.;status='FAILED';error=None;loaded=None
+            try:
+                from scripts.grm_c2_cells import environment
+                env=environment(r['flags'])
+                for k in list(os.environ):
+                    if k.startswith('GRM_'):del os.environ[k]
+                os.environ.update({k:v for k,v in env.items() if k.startswith('GRM_')})
+                from scripts.grm_cmc1_gpu_arms import gpu_lease
+                from scripts.grm_c7_middle_replay import open_copy
+                qs={q['probe_id']:q for q in read(OUT/'requests.json')}
+                with gpu_lease(r['lease_seconds'],0):
+                    started=time.monotonic()
+                    for pid in r['batches'][batch_id]:
+                        q=qs[pid]
+                        repo,loaded=open_copy(q,destination/'sessions'/pid,r,loaded)
+                        try:serve(repo,q,destination)
+                        finally:repo.close()
+                    elapsed=time.monotonic()-started
+                    need(elapsed<=r['lease_seconds'],'LEASE_OVERRUN_RED')
+                    write(destination/'model.json',loaded[2])
+                    status='COMPLETE'
+            except BaseException as exc:
+                error=f'{type(exc).__name__}: {exc}'
+            finally:
+                if started is not None:elapsed=time.monotonic()-started
+                write(destination/'controller.json',{'status':status,'error':error,
+                    'elapsed_seconds':elapsed,'charged_seconds':max(r['lease_seconds'],elapsed),
+                    'registration_sha256':sha(REG)})
+                time.sleep(30)  # foreground lead-only cooldown outside GPU lease
+>           if status!='COMPLETE':raise RuntimeError(error)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           RuntimeError: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-vader/pytest-1001/test_failed_lease_charged_and_0/requests.json'
+
+scripts/grm_scout_fix8_replay.py:173: RuntimeError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1001/test_failed_lease_charged_and_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7c4ef7a5f950>
+
+    def test_failed_lease_charged_and_never_retried(tmp_path,monkeypatch):
+        r=run.verify();monkeypatch.setattr(run,'verify',lambda:r);monkeypatch.setattr(run,'OUT',tmp_path)
+        from scripts import grm_cmc1_gpu_arms as leases
+        def busy(*_):raise RuntimeError('BUSY_TEST_NO_GPU')
+        monkeypatch.setattr(leases,'gpu_lease',busy)
+        monkeypatch.setattr(run.time,'sleep',lambda _:None)
+>       with pytest.raises(RuntimeError,match='BUSY_TEST_NO_GPU'):run.batch('F1')
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'BUSY_TEST_NO_GPU'
+E         Actual message: "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-vader/pytest-1001/test_failed_lease_charged_and_0/requests.json'"
+
+tests/test_grm_scout_fix8_replay.py:70: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_scout_fix8_replay.py::test_failed_lease_charged_and_never_retried
+1 failed, 43 passed, 2 warnings in 5.00s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

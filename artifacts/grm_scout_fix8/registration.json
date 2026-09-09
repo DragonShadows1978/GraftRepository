@@ -1,0 +1,25 @@
+{
+  "order": "orders/GRM_SCOUT_FIX_8_ADMISSION_NORMALIZATION.md",
+  "order_sha256": "f09d8a40085d14c9ad7e0e80f0628bc20710b793f62e0fb52e892465fba73e0a",
+  "core_scope": [
+    "core/grm_text_norm.py",
+    "core/grm_admission.py",
+    "core/graft_arena.py"
+  ],
+  "gates": {
+    "recorded_refusals": "24 unique r3 admission refusals, CPU numerical fake and recorded own texts; same probes fail binding before, bind after; record IDs and mounts; no reader-quality claim",
+    "normalization": "NFKC then Unicode 17 Dash property (31 points) to ASCII hyphen, existing emphasis and case contracts; query/own-text/split/recency/wrong digits/retired source controls",
+    "c2": "132 recorded admission plans: recompute with recorded numerical routing seams, serialized rank_plan byte identity; record missing artifacts RED",
+    "regression": "all discoverable FIX-1..6 tests, SC1.1 normalizer and RT1 split/LSR admission suites; no weakening",
+    "lead": "24 checkpoint mount+read replays; frozen scorer; <=1800 GPU seconds for FIX8, separate unchanged existing amendment7 budget; sequence amendment7 first under archived pre-FIX8 core, then FIX8; no duplicate contrast registration"
+  },
+  "rails": [
+    "no GPU in seat",
+    "no git/subagents/background/signal/kill",
+    "registration immutable; amendments separate",
+    "source/hash/budget/missing-row/failed or orphaned run stops without retry"
+  ],
+  "prior_art": "GRM SC1.1/DET1.4, ADM1/RT1, C7/FIX4/amendment7 and C2/CMC1 (GRM contributors, 2026), locally verified interfaces. Unicode Consortium UAX15 and Unicode 17 UCD (2025), verified official pages: NFKC and Dash property. Ours: shared boundary wiring and receipt-bound replay composition; no prior art known to me for this exact composition.",
+  "agent_model": "GPT-6 (system identity; exact variant not exposed)",
+  "agent_effort": "high (requested)"
+}

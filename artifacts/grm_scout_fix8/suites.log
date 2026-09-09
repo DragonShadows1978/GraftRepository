@@ -1,0 +1,845 @@
+........................................................................ [ 17%]
+.................................FFFFFFFFFF............................. [ 34%]
+.....................F....F............................................. [ 52%]
+........................................................................ [ 69%]
+........................................................................ [ 87%]
+....................................................                     [100%]
+=================================== FAILURES ===================================
+__________ test_registration_resume_checkpoint_and_historical_charge ___________
+
+    def test_registration_resume_checkpoint_and_historical_charge():
+>       r = c.verify()
+            ^^^^^^^^^^
+
+tests/test_grm_scout_fix4_continuation.py:14: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        # Prior art: C7 fresh revision manifests (GRM contributors, 2026).
+        # r3 explicitly re-registers current FIX3/4/5 sources and its own fixture;
+        # historical chained registrations remain immutable and fail closed.
+        if os.environ.get('GRM_C7_REVISION') == 'r3':
+            from scripts.grm_c7_register_r3 import verify_r3
+            return verify_r3()
+        if sha(REG) != (OUT / 'registration.sha256').read_text().split()[0]:
+            raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r = read(REG)
+        inputs = dict(r['immutable_inputs'])
+        amendment = OUT/'amendment_A1.json'
+        if amendment.exists():
+            # Prior art: C2 sha-bound amendments (GRM, 2026). A1 changes only
+            # campaign code for restoring registered cold state, never the plan.
+            if sha(amendment) != (OUT/'amendment_A1.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a = read(amendment)
+            if a['registration_sha256'] != sha(REG):
+                raise ValueError('AMENDMENT_REGISTRATION_MISMATCH')
+            if set(a['overrides']) != {'scripts/grm_c7_common.py', 'scripts/grm_c7_run.py'}:
+                raise ValueError('AMENDMENT_SCOPE_MISMATCH')
+            if set(a['new_inputs']) != {'tests/test_grm_c7_a1.py'}:
+                raise ValueError('AMENDMENT_NEW_INPUT_SCOPE_MISMATCH')
+            for path, change in a['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['amendment_sha256'] = sha(amendment)
+        a2path = OUT/'amendment_A2.json'
+        if a2path.exists():
+            a2 = read(a2path)
+            if sha(a2path) != (OUT/'amendment_A2.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_A2_SHA_MISMATCH')
+            if a2['registration_sha256'] != sha(REG) or a2['previous_amendment_sha256'] != r.get('amendment_sha256'):
+                raise ValueError('AMENDMENT_A2_CHAIN_MISMATCH')
+            if set(a2['overrides']) != {'scripts/grm_c7_common.py','scripts/grm_c7_run.py'} or set(a2['new_inputs']) != {'tests/test_grm_c7_a2.py'}:
+                raise ValueError('AMENDMENT_A2_SCOPE_MISMATCH')
+            for path, change in a2['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_A2_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a2['new_inputs'])
+            r['amendment_A2_sha256'] = sha(a2path)
+            r['pressure']['controlled_source_turn'] = 6
+            r['acceptance']['paging'] = 'each pressure forces registered old source hot -> durable cold -> production loader return; report controlled return separately from probe-selected return'
+        verify_lead_1(r, inputs)
+        if os.environ.get('GRM_C7_REVISION') == 'r2':
+            # Prior art: local C7 amendment chain (GRM contributors, 2026).
+            # r2 explicitly binds changed core/harness before live SHA checks.
+            from scripts.grm_c7_register_r2 import verify_r2
+            verify_r2(r, inputs, ROOT, OUT)
+        elif os.environ.get('GRM_C7_REVISION', 'r1') != 'r1':
+            raise ValueError('UNKNOWN_C7_REVISION')
+        # Prior art: C7 explicit chained source overrides (GRM, 2026).
+        # FIX-4 is opt-in and separately SHA-bound; old r2 remains fail-closed.
+        if os.environ.get('GRM_C7_FIX4') == '1':
+            from scripts.grm_c7_fix4 import verify_fix4
+            verify_fix4(r, inputs)
+        for path, digest in inputs.items():
+            p = Path(path) if Path(path).is_absolute() else ROOT / path
+            if sha(p) != digest:
+>               raise ValueError(f'INPUT_SHA_MISMATCH: {path}')
+E               ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_c7_common.py:160: ValueError
+________________ test_forged_continuation_rejected[scope-SCOPE] ________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1000/test_forged_continuation_rejec0')
+attack = 'scope', error = 'SCOPE'
+
+    @pytest.mark.parametrize('attack,error', [('scope','SCOPE'), ('chain','CHAIN'),
+        ('budget','PROTOCOL'), ('cells','PROTOCOL'), ('quarantine','PROTOCOL'),
+        ('before','BEFORE'), ('history','HISTORY'), ('charge','HISTORICAL_CHARGE')])
+    def test_forged_continuation_rejected(tmp_path, attack, error):
+>       r = c.verify()
+            ^^^^^^^^^^
+
+tests/test_grm_scout_fix4_continuation.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        # Prior art: C7 fresh revision manifests (GRM contributors, 2026).
+        # r3 explicitly re-registers current FIX3/4/5 sources and its own fixture;
+        # historical chained registrations remain immutable and fail closed.
+        if os.environ.get('GRM_C7_REVISION') == 'r3':
+            from scripts.grm_c7_register_r3 import verify_r3
+            return verify_r3()
+        if sha(REG) != (OUT / 'registration.sha256').read_text().split()[0]:
+            raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r = read(REG)
+        inputs = dict(r['immutable_inputs'])
+        amendment = OUT/'amendment_A1.json'
+        if amendment.exists():
+            # Prior art: C2 sha-bound amendments (GRM, 2026). A1 changes only
+            # campaign code for restoring registered cold state, never the plan.
+            if sha(amendment) != (OUT/'amendment_A1.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a = read(amendment)
+            if a['registration_sha256'] != sha(REG):
+                raise ValueError('AMENDMENT_REGISTRATION_MISMATCH')
+            if set(a['overrides']) != {'scripts/grm_c7_common.py', 'scripts/grm_c7_run.py'}:
+                raise ValueError('AMENDMENT_SCOPE_MISMATCH')
+            if set(a['new_inputs']) != {'tests/test_grm_c7_a1.py'}:
+                raise ValueError('AMENDMENT_NEW_INPUT_SCOPE_MISMATCH')
+            for path, change in a['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['amendment_sha256'] = sha(amendment)
+        a2path = OUT/'amendment_A2.json'
+        if a2path.exists():
+            a2 = read(a2path)
+            if sha(a2path) != (OUT/'amendment_A2.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_A2_SHA_MISMATCH')
+            if a2['registration_sha256'] != sha(REG) or a2['previous_amendment_sha256'] != r.get('amendment_sha256'):
+                raise ValueError('AMENDMENT_A2_CHAIN_MISMATCH')
+            if set(a2['overrides']) != {'scripts/grm_c7_common.py','scripts/grm_c7_run.py'} or set(a2['new_inputs']) != {'tests/test_grm_c7_a2.py'}:
+                raise ValueError('AMENDMENT_A2_SCOPE_MISMATCH')
+            for path, change in a2['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_A2_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a2['new_inputs'])
+            r['amendment_A2_sha256'] = sha(a2path)
+            r['pressure']['controlled_source_turn'] = 6
+            r['acceptance']['paging'] = 'each pressure forces registered old source hot -> durable cold -> production loader return; report controlled return separately from probe-selected return'
+        verify_lead_1(r, inputs)
+        if os.environ.get('GRM_C7_REVISION') == 'r2':
+            # Prior art: local C7 amendment chain (GRM contributors, 2026).
+            # r2 explicitly binds changed core/harness before live SHA checks.
+            from scripts.grm_c7_register_r2 import verify_r2
+            verify_r2(r, inputs, ROOT, OUT)
+        elif os.environ.get('GRM_C7_REVISION', 'r1') != 'r1':
+            raise ValueError('UNKNOWN_C7_REVISION')
+        # Prior art: C7 explicit chained source overrides (GRM, 2026).
+        # FIX-4 is opt-in and separately SHA-bound; old r2 remains fail-closed.
+        if os.environ.get('GRM_C7_FIX4') == '1':
+            from scripts.grm_c7_fix4 import verify_fix4
+            verify_fix4(r, inputs)
+        for path, digest in inputs.items():
+            p = Path(path) if Path(path).is_absolute() else ROOT / path
+            if sha(p) != digest:
+>               raise ValueError(f'INPUT_SHA_MISMATCH: {path}')
+E               ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_c7_common.py:160: ValueError
+________________ test_forged_continuation_rejected[chain-CHAIN] ________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1000/test_forged_continuation_rejec1')
+attack = 'chain', error = 'CHAIN'
+
+    @pytest.mark.parametrize('attack,error', [('scope','SCOPE'), ('chain','CHAIN'),
+        ('budget','PROTOCOL'), ('cells','PROTOCOL'), ('quarantine','PROTOCOL'),
+        ('before','BEFORE'), ('history','HISTORY'), ('charge','HISTORICAL_CHARGE')])
+    def test_forged_continuation_rejected(tmp_path, attack, error):
+>       r = c.verify()
+            ^^^^^^^^^^
+
+tests/test_grm_scout_fix4_continuation.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        # Prior art: C7 fresh revision manifests (GRM contributors, 2026).
+        # r3 explicitly re-registers current FIX3/4/5 sources and its own fixture;
+        # historical chained registrations remain immutable and fail closed.
+        if os.environ.get('GRM_C7_REVISION') == 'r3':
+            from scripts.grm_c7_register_r3 import verify_r3
+            return verify_r3()
+        if sha(REG) != (OUT / 'registration.sha256').read_text().split()[0]:
+            raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r = read(REG)
+        inputs = dict(r['immutable_inputs'])
+        amendment = OUT/'amendment_A1.json'
+        if amendment.exists():
+            # Prior art: C2 sha-bound amendments (GRM, 2026). A1 changes only
+            # campaign code for restoring registered cold state, never the plan.
+            if sha(amendment) != (OUT/'amendment_A1.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a = read(amendment)
+            if a['registration_sha256'] != sha(REG):
+                raise ValueError('AMENDMENT_REGISTRATION_MISMATCH')
+            if set(a['overrides']) != {'scripts/grm_c7_common.py', 'scripts/grm_c7_run.py'}:
+                raise ValueError('AMENDMENT_SCOPE_MISMATCH')
+            if set(a['new_inputs']) != {'tests/test_grm_c7_a1.py'}:
+                raise ValueError('AMENDMENT_NEW_INPUT_SCOPE_MISMATCH')
+            for path, change in a['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['amendment_sha256'] = sha(amendment)
+        a2path = OUT/'amendment_A2.json'
+        if a2path.exists():
+            a2 = read(a2path)
+            if sha(a2path) != (OUT/'amendment_A2.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_A2_SHA_MISMATCH')
+            if a2['registration_sha256'] != sha(REG) or a2['previous_amendment_sha256'] != r.get('amendment_sha256'):
+                raise ValueError('AMENDMENT_A2_CHAIN_MISMATCH')
+            if set(a2['overrides']) != {'scripts/grm_c7_common.py','scripts/grm_c7_run.py'} or set(a2['new_inputs']) != {'tests/test_grm_c7_a2.py'}:
+                raise ValueError('AMENDMENT_A2_SCOPE_MISMATCH')
+            for path, change in a2['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_A2_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a2['new_inputs'])
+            r['amendment_A2_sha256'] = sha(a2path)
+            r['pressure']['controlled_source_turn'] = 6
+            r['acceptance']['paging'] = 'each pressure forces registered old source hot -> durable cold -> production loader return; report controlled return separately from probe-selected return'
+        verify_lead_1(r, inputs)
+        if os.environ.get('GRM_C7_REVISION') == 'r2':
+            # Prior art: local C7 amendment chain (GRM contributors, 2026).
+            # r2 explicitly binds changed core/harness before live SHA checks.
+            from scripts.grm_c7_register_r2 import verify_r2
+            verify_r2(r, inputs, ROOT, OUT)
+        elif os.environ.get('GRM_C7_REVISION', 'r1') != 'r1':
+            raise ValueError('UNKNOWN_C7_REVISION')
+        # Prior art: C7 explicit chained source overrides (GRM, 2026).
+        # FIX-4 is opt-in and separately SHA-bound; old r2 remains fail-closed.
+        if os.environ.get('GRM_C7_FIX4') == '1':
+            from scripts.grm_c7_fix4 import verify_fix4
+            verify_fix4(r, inputs)
+        for path, digest in inputs.items():
+            p = Path(path) if Path(path).is_absolute() else ROOT / path
+            if sha(p) != digest:
+>               raise ValueError(f'INPUT_SHA_MISMATCH: {path}')
+E               ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_c7_common.py:160: ValueError
+______________ test_forged_continuation_rejected[budget-PROTOCOL] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1000/test_forged_continuation_rejec2')
+attack = 'budget', error = 'PROTOCOL'
+
+    @pytest.mark.parametrize('attack,error', [('scope','SCOPE'), ('chain','CHAIN'),
+        ('budget','PROTOCOL'), ('cells','PROTOCOL'), ('quarantine','PROTOCOL'),
+        ('before','BEFORE'), ('history','HISTORY'), ('charge','HISTORICAL_CHARGE')])
+    def test_forged_continuation_rejected(tmp_path, attack, error):
+>       r = c.verify()
+            ^^^^^^^^^^
+
+tests/test_grm_scout_fix4_continuation.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        # Prior art: C7 fresh revision manifests (GRM contributors, 2026).
+        # r3 explicitly re-registers current FIX3/4/5 sources and its own fixture;
+        # historical chained registrations remain immutable and fail closed.
+        if os.environ.get('GRM_C7_REVISION') == 'r3':
+            from scripts.grm_c7_register_r3 import verify_r3
+            return verify_r3()
+        if sha(REG) != (OUT / 'registration.sha256').read_text().split()[0]:
+            raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r = read(REG)
+        inputs = dict(r['immutable_inputs'])
+        amendment = OUT/'amendment_A1.json'
+        if amendment.exists():
+            # Prior art: C2 sha-bound amendments (GRM, 2026). A1 changes only
+            # campaign code for restoring registered cold state, never the plan.
+            if sha(amendment) != (OUT/'amendment_A1.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a = read(amendment)
+            if a['registration_sha256'] != sha(REG):
+                raise ValueError('AMENDMENT_REGISTRATION_MISMATCH')
+            if set(a['overrides']) != {'scripts/grm_c7_common.py', 'scripts/grm_c7_run.py'}:
+                raise ValueError('AMENDMENT_SCOPE_MISMATCH')
+            if set(a['new_inputs']) != {'tests/test_grm_c7_a1.py'}:
+                raise ValueError('AMENDMENT_NEW_INPUT_SCOPE_MISMATCH')
+            for path, change in a['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['amendment_sha256'] = sha(amendment)
+        a2path = OUT/'amendment_A2.json'
+        if a2path.exists():
+            a2 = read(a2path)
+            if sha(a2path) != (OUT/'amendment_A2.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_A2_SHA_MISMATCH')
+            if a2['registration_sha256'] != sha(REG) or a2['previous_amendment_sha256'] != r.get('amendment_sha256'):
+                raise ValueError('AMENDMENT_A2_CHAIN_MISMATCH')
+            if set(a2['overrides']) != {'scripts/grm_c7_common.py','scripts/grm_c7_run.py'} or set(a2['new_inputs']) != {'tests/test_grm_c7_a2.py'}:
+                raise ValueError('AMENDMENT_A2_SCOPE_MISMATCH')
+            for path, change in a2['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_A2_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a2['new_inputs'])
+            r['amendment_A2_sha256'] = sha(a2path)
+            r['pressure']['controlled_source_turn'] = 6
+            r['acceptance']['paging'] = 'each pressure forces registered old source hot -> durable cold -> production loader return; report controlled return separately from probe-selected return'
+        verify_lead_1(r, inputs)
+        if os.environ.get('GRM_C7_REVISION') == 'r2':
+            # Prior art: local C7 amendment chain (GRM contributors, 2026).
+            # r2 explicitly binds changed core/harness before live SHA checks.
+            from scripts.grm_c7_register_r2 import verify_r2
+            verify_r2(r, inputs, ROOT, OUT)
+        elif os.environ.get('GRM_C7_REVISION', 'r1') != 'r1':
+            raise ValueError('UNKNOWN_C7_REVISION')
+        # Prior art: C7 explicit chained source overrides (GRM, 2026).
+        # FIX-4 is opt-in and separately SHA-bound; old r2 remains fail-closed.
+        if os.environ.get('GRM_C7_FIX4') == '1':
+            from scripts.grm_c7_fix4 import verify_fix4
+            verify_fix4(r, inputs)
+        for path, digest in inputs.items():
+            p = Path(path) if Path(path).is_absolute() else ROOT / path
+            if sha(p) != digest:
+>               raise ValueError(f'INPUT_SHA_MISMATCH: {path}')
+E               ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_c7_common.py:160: ValueError
+______________ test_forged_continuation_rejected[cells-PROTOCOL] _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1000/test_forged_continuation_rejec3')
+attack = 'cells', error = 'PROTOCOL'
+
+    @pytest.mark.parametrize('attack,error', [('scope','SCOPE'), ('chain','CHAIN'),
+        ('budget','PROTOCOL'), ('cells','PROTOCOL'), ('quarantine','PROTOCOL'),
+        ('before','BEFORE'), ('history','HISTORY'), ('charge','HISTORICAL_CHARGE')])
+    def test_forged_continuation_rejected(tmp_path, attack, error):
+>       r = c.verify()
+            ^^^^^^^^^^
+
+tests/test_grm_scout_fix4_continuation.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        # Prior art: C7 fresh revision manifests (GRM contributors, 2026).
+        # r3 explicitly re-registers current FIX3/4/5 sources and its own fixture;
+        # historical chained registrations remain immutable and fail closed.
+        if os.environ.get('GRM_C7_REVISION') == 'r3':
+            from scripts.grm_c7_register_r3 import verify_r3
+            return verify_r3()
+        if sha(REG) != (OUT / 'registration.sha256').read_text().split()[0]:
+            raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r = read(REG)
+        inputs = dict(r['immutable_inputs'])
+        amendment = OUT/'amendment_A1.json'
+        if amendment.exists():
+            # Prior art: C2 sha-bound amendments (GRM, 2026). A1 changes only
+            # campaign code for restoring registered cold state, never the plan.
+            if sha(amendment) != (OUT/'amendment_A1.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a = read(amendment)
+            if a['registration_sha256'] != sha(REG):
+                raise ValueError('AMENDMENT_REGISTRATION_MISMATCH')
+            if set(a['overrides']) != {'scripts/grm_c7_common.py', 'scripts/grm_c7_run.py'}:
+                raise ValueError('AMENDMENT_SCOPE_MISMATCH')
+            if set(a['new_inputs']) != {'tests/test_grm_c7_a1.py'}:
+                raise ValueError('AMENDMENT_NEW_INPUT_SCOPE_MISMATCH')
+            for path, change in a['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['amendment_sha256'] = sha(amendment)
+        a2path = OUT/'amendment_A2.json'
+        if a2path.exists():
+            a2 = read(a2path)
+            if sha(a2path) != (OUT/'amendment_A2.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_A2_SHA_MISMATCH')
+            if a2['registration_sha256'] != sha(REG) or a2['previous_amendment_sha256'] != r.get('amendment_sha256'):
+                raise ValueError('AMENDMENT_A2_CHAIN_MISMATCH')
+            if set(a2['overrides']) != {'scripts/grm_c7_common.py','scripts/grm_c7_run.py'} or set(a2['new_inputs']) != {'tests/test_grm_c7_a2.py'}:
+                raise ValueError('AMENDMENT_A2_SCOPE_MISMATCH')
+            for path, change in a2['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_A2_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a2['new_inputs'])
+            r['amendment_A2_sha256'] = sha(a2path)
+            r['pressure']['controlled_source_turn'] = 6
+            r['acceptance']['paging'] = 'each pressure forces registered old source hot -> durable cold -> production loader return; report controlled return separately from probe-selected return'
+        verify_lead_1(r, inputs)
+        if os.environ.get('GRM_C7_REVISION') == 'r2':
+            # Prior art: local C7 amendment chain (GRM contributors, 2026).
+            # r2 explicitly binds changed core/harness before live SHA checks.
+            from scripts.grm_c7_register_r2 import verify_r2
+            verify_r2(r, inputs, ROOT, OUT)
+        elif os.environ.get('GRM_C7_REVISION', 'r1') != 'r1':
+            raise ValueError('UNKNOWN_C7_REVISION')
+        # Prior art: C7 explicit chained source overrides (GRM, 2026).
+        # FIX-4 is opt-in and separately SHA-bound; old r2 remains fail-closed.
+        if os.environ.get('GRM_C7_FIX4') == '1':
+            from scripts.grm_c7_fix4 import verify_fix4
+            verify_fix4(r, inputs)
+        for path, digest in inputs.items():
+            p = Path(path) if Path(path).is_absolute() else ROOT / path
+            if sha(p) != digest:
+>               raise ValueError(f'INPUT_SHA_MISMATCH: {path}')
+E               ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_c7_common.py:160: ValueError
+____________ test_forged_continuation_rejected[quarantine-PROTOCOL] ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1000/test_forged_continuation_rejec4')
+attack = 'quarantine', error = 'PROTOCOL'
+
+    @pytest.mark.parametrize('attack,error', [('scope','SCOPE'), ('chain','CHAIN'),
+        ('budget','PROTOCOL'), ('cells','PROTOCOL'), ('quarantine','PROTOCOL'),
+        ('before','BEFORE'), ('history','HISTORY'), ('charge','HISTORICAL_CHARGE')])
+    def test_forged_continuation_rejected(tmp_path, attack, error):
+>       r = c.verify()
+            ^^^^^^^^^^
+
+tests/test_grm_scout_fix4_continuation.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        # Prior art: C7 fresh revision manifests (GRM contributors, 2026).
+        # r3 explicitly re-registers current FIX3/4/5 sources and its own fixture;
+        # historical chained registrations remain immutable and fail closed.
+        if os.environ.get('GRM_C7_REVISION') == 'r3':
+            from scripts.grm_c7_register_r3 import verify_r3
+            return verify_r3()
+        if sha(REG) != (OUT / 'registration.sha256').read_text().split()[0]:
+            raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r = read(REG)
+        inputs = dict(r['immutable_inputs'])
+        amendment = OUT/'amendment_A1.json'
+        if amendment.exists():
+            # Prior art: C2 sha-bound amendments (GRM, 2026). A1 changes only
+            # campaign code for restoring registered cold state, never the plan.
+            if sha(amendment) != (OUT/'amendment_A1.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a = read(amendment)
+            if a['registration_sha256'] != sha(REG):
+                raise ValueError('AMENDMENT_REGISTRATION_MISMATCH')
+            if set(a['overrides']) != {'scripts/grm_c7_common.py', 'scripts/grm_c7_run.py'}:
+                raise ValueError('AMENDMENT_SCOPE_MISMATCH')
+            if set(a['new_inputs']) != {'tests/test_grm_c7_a1.py'}:
+                raise ValueError('AMENDMENT_NEW_INPUT_SCOPE_MISMATCH')
+            for path, change in a['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['amendment_sha256'] = sha(amendment)
+        a2path = OUT/'amendment_A2.json'
+        if a2path.exists():
+            a2 = read(a2path)
+            if sha(a2path) != (OUT/'amendment_A2.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_A2_SHA_MISMATCH')
+            if a2['registration_sha256'] != sha(REG) or a2['previous_amendment_sha256'] != r.get('amendment_sha256'):
+                raise ValueError('AMENDMENT_A2_CHAIN_MISMATCH')
+            if set(a2['overrides']) != {'scripts/grm_c7_common.py','scripts/grm_c7_run.py'} or set(a2['new_inputs']) != {'tests/test_grm_c7_a2.py'}:
+                raise ValueError('AMENDMENT_A2_SCOPE_MISMATCH')
+            for path, change in a2['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_A2_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a2['new_inputs'])
+            r['amendment_A2_sha256'] = sha(a2path)
+            r['pressure']['controlled_source_turn'] = 6
+            r['acceptance']['paging'] = 'each pressure forces registered old source hot -> durable cold -> production loader return; report controlled return separately from probe-selected return'
+        verify_lead_1(r, inputs)
+        if os.environ.get('GRM_C7_REVISION') == 'r2':
+            # Prior art: local C7 amendment chain (GRM contributors, 2026).
+            # r2 explicitly binds changed core/harness before live SHA checks.
+            from scripts.grm_c7_register_r2 import verify_r2
+            verify_r2(r, inputs, ROOT, OUT)
+        elif os.environ.get('GRM_C7_REVISION', 'r1') != 'r1':
+            raise ValueError('UNKNOWN_C7_REVISION')
+        # Prior art: C7 explicit chained source overrides (GRM, 2026).
+        # FIX-4 is opt-in and separately SHA-bound; old r2 remains fail-closed.
+        if os.environ.get('GRM_C7_FIX4') == '1':
+            from scripts.grm_c7_fix4 import verify_fix4
+            verify_fix4(r, inputs)
+        for path, digest in inputs.items():
+            p = Path(path) if Path(path).is_absolute() else ROOT / path
+            if sha(p) != digest:
+>               raise ValueError(f'INPUT_SHA_MISMATCH: {path}')
+E               ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_c7_common.py:160: ValueError
+_______________ test_forged_continuation_rejected[before-BEFORE] _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1000/test_forged_continuation_rejec5')
+attack = 'before', error = 'BEFORE'
+
+    @pytest.mark.parametrize('attack,error', [('scope','SCOPE'), ('chain','CHAIN'),
+        ('budget','PROTOCOL'), ('cells','PROTOCOL'), ('quarantine','PROTOCOL'),
+        ('before','BEFORE'), ('history','HISTORY'), ('charge','HISTORICAL_CHARGE')])
+    def test_forged_continuation_rejected(tmp_path, attack, error):
+>       r = c.verify()
+            ^^^^^^^^^^
+
+tests/test_grm_scout_fix4_continuation.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        # Prior art: C7 fresh revision manifests (GRM contributors, 2026).
+        # r3 explicitly re-registers current FIX3/4/5 sources and its own fixture;
+        # historical chained registrations remain immutable and fail closed.
+        if os.environ.get('GRM_C7_REVISION') == 'r3':
+            from scripts.grm_c7_register_r3 import verify_r3
+            return verify_r3()
+        if sha(REG) != (OUT / 'registration.sha256').read_text().split()[0]:
+            raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r = read(REG)
+        inputs = dict(r['immutable_inputs'])
+        amendment = OUT/'amendment_A1.json'
+        if amendment.exists():
+            # Prior art: C2 sha-bound amendments (GRM, 2026). A1 changes only
+            # campaign code for restoring registered cold state, never the plan.
+            if sha(amendment) != (OUT/'amendment_A1.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a = read(amendment)
+            if a['registration_sha256'] != sha(REG):
+                raise ValueError('AMENDMENT_REGISTRATION_MISMATCH')
+            if set(a['overrides']) != {'scripts/grm_c7_common.py', 'scripts/grm_c7_run.py'}:
+                raise ValueError('AMENDMENT_SCOPE_MISMATCH')
+            if set(a['new_inputs']) != {'tests/test_grm_c7_a1.py'}:
+                raise ValueError('AMENDMENT_NEW_INPUT_SCOPE_MISMATCH')
+            for path, change in a['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['amendment_sha256'] = sha(amendment)
+        a2path = OUT/'amendment_A2.json'
+        if a2path.exists():
+            a2 = read(a2path)
+            if sha(a2path) != (OUT/'amendment_A2.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_A2_SHA_MISMATCH')
+            if a2['registration_sha256'] != sha(REG) or a2['previous_amendment_sha256'] != r.get('amendment_sha256'):
+                raise ValueError('AMENDMENT_A2_CHAIN_MISMATCH')
+            if set(a2['overrides']) != {'scripts/grm_c7_common.py','scripts/grm_c7_run.py'} or set(a2['new_inputs']) != {'tests/test_grm_c7_a2.py'}:
+                raise ValueError('AMENDMENT_A2_SCOPE_MISMATCH')
+            for path, change in a2['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_A2_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a2['new_inputs'])
+            r['amendment_A2_sha256'] = sha(a2path)
+            r['pressure']['controlled_source_turn'] = 6
+            r['acceptance']['paging'] = 'each pressure forces registered old source hot -> durable cold -> production loader return; report controlled return separately from probe-selected return'
+        verify_lead_1(r, inputs)
+        if os.environ.get('GRM_C7_REVISION') == 'r2':
+            # Prior art: local C7 amendment chain (GRM contributors, 2026).
+            # r2 explicitly binds changed core/harness before live SHA checks.
+            from scripts.grm_c7_register_r2 import verify_r2
+            verify_r2(r, inputs, ROOT, OUT)
+        elif os.environ.get('GRM_C7_REVISION', 'r1') != 'r1':
+            raise ValueError('UNKNOWN_C7_REVISION')
+        # Prior art: C7 explicit chained source overrides (GRM, 2026).
+        # FIX-4 is opt-in and separately SHA-bound; old r2 remains fail-closed.
+        if os.environ.get('GRM_C7_FIX4') == '1':
+            from scripts.grm_c7_fix4 import verify_fix4
+            verify_fix4(r, inputs)
+        for path, digest in inputs.items():
+            p = Path(path) if Path(path).is_absolute() else ROOT / path
+            if sha(p) != digest:
+>               raise ValueError(f'INPUT_SHA_MISMATCH: {path}')
+E               ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_c7_common.py:160: ValueError
+______________ test_forged_continuation_rejected[history-HISTORY] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1000/test_forged_continuation_rejec6')
+attack = 'history', error = 'HISTORY'
+
+    @pytest.mark.parametrize('attack,error', [('scope','SCOPE'), ('chain','CHAIN'),
+        ('budget','PROTOCOL'), ('cells','PROTOCOL'), ('quarantine','PROTOCOL'),
+        ('before','BEFORE'), ('history','HISTORY'), ('charge','HISTORICAL_CHARGE')])
+    def test_forged_continuation_rejected(tmp_path, attack, error):
+>       r = c.verify()
+            ^^^^^^^^^^
+
+tests/test_grm_scout_fix4_continuation.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        # Prior art: C7 fresh revision manifests (GRM contributors, 2026).
+        # r3 explicitly re-registers current FIX3/4/5 sources and its own fixture;
+        # historical chained registrations remain immutable and fail closed.
+        if os.environ.get('GRM_C7_REVISION') == 'r3':
+            from scripts.grm_c7_register_r3 import verify_r3
+            return verify_r3()
+        if sha(REG) != (OUT / 'registration.sha256').read_text().split()[0]:
+            raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r = read(REG)
+        inputs = dict(r['immutable_inputs'])
+        amendment = OUT/'amendment_A1.json'
+        if amendment.exists():
+            # Prior art: C2 sha-bound amendments (GRM, 2026). A1 changes only
+            # campaign code for restoring registered cold state, never the plan.
+            if sha(amendment) != (OUT/'amendment_A1.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a = read(amendment)
+            if a['registration_sha256'] != sha(REG):
+                raise ValueError('AMENDMENT_REGISTRATION_MISMATCH')
+            if set(a['overrides']) != {'scripts/grm_c7_common.py', 'scripts/grm_c7_run.py'}:
+                raise ValueError('AMENDMENT_SCOPE_MISMATCH')
+            if set(a['new_inputs']) != {'tests/test_grm_c7_a1.py'}:
+                raise ValueError('AMENDMENT_NEW_INPUT_SCOPE_MISMATCH')
+            for path, change in a['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['amendment_sha256'] = sha(amendment)
+        a2path = OUT/'amendment_A2.json'
+        if a2path.exists():
+            a2 = read(a2path)
+            if sha(a2path) != (OUT/'amendment_A2.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_A2_SHA_MISMATCH')
+            if a2['registration_sha256'] != sha(REG) or a2['previous_amendment_sha256'] != r.get('amendment_sha256'):
+                raise ValueError('AMENDMENT_A2_CHAIN_MISMATCH')
+            if set(a2['overrides']) != {'scripts/grm_c7_common.py','scripts/grm_c7_run.py'} or set(a2['new_inputs']) != {'tests/test_grm_c7_a2.py'}:
+                raise ValueError('AMENDMENT_A2_SCOPE_MISMATCH')
+            for path, change in a2['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_A2_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a2['new_inputs'])
+            r['amendment_A2_sha256'] = sha(a2path)
+            r['pressure']['controlled_source_turn'] = 6
+            r['acceptance']['paging'] = 'each pressure forces registered old source hot -> durable cold -> production loader return; report controlled return separately from probe-selected return'
+        verify_lead_1(r, inputs)
+        if os.environ.get('GRM_C7_REVISION') == 'r2':
+            # Prior art: local C7 amendment chain (GRM contributors, 2026).
+            # r2 explicitly binds changed core/harness before live SHA checks.
+            from scripts.grm_c7_register_r2 import verify_r2
+            verify_r2(r, inputs, ROOT, OUT)
+        elif os.environ.get('GRM_C7_REVISION', 'r1') != 'r1':
+            raise ValueError('UNKNOWN_C7_REVISION')
+        # Prior art: C7 explicit chained source overrides (GRM, 2026).
+        # FIX-4 is opt-in and separately SHA-bound; old r2 remains fail-closed.
+        if os.environ.get('GRM_C7_FIX4') == '1':
+            from scripts.grm_c7_fix4 import verify_fix4
+            verify_fix4(r, inputs)
+        for path, digest in inputs.items():
+            p = Path(path) if Path(path).is_absolute() else ROOT / path
+            if sha(p) != digest:
+>               raise ValueError(f'INPUT_SHA_MISMATCH: {path}')
+E               ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_c7_common.py:160: ValueError
+_________ test_forged_continuation_rejected[charge-HISTORICAL_CHARGE] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1000/test_forged_continuation_rejec7')
+attack = 'charge', error = 'HISTORICAL_CHARGE'
+
+    @pytest.mark.parametrize('attack,error', [('scope','SCOPE'), ('chain','CHAIN'),
+        ('budget','PROTOCOL'), ('cells','PROTOCOL'), ('quarantine','PROTOCOL'),
+        ('before','BEFORE'), ('history','HISTORY'), ('charge','HISTORICAL_CHARGE')])
+    def test_forged_continuation_rejected(tmp_path, attack, error):
+>       r = c.verify()
+            ^^^^^^^^^^
+
+tests/test_grm_scout_fix4_continuation.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        # Prior art: C7 fresh revision manifests (GRM contributors, 2026).
+        # r3 explicitly re-registers current FIX3/4/5 sources and its own fixture;
+        # historical chained registrations remain immutable and fail closed.
+        if os.environ.get('GRM_C7_REVISION') == 'r3':
+            from scripts.grm_c7_register_r3 import verify_r3
+            return verify_r3()
+        if sha(REG) != (OUT / 'registration.sha256').read_text().split()[0]:
+            raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r = read(REG)
+        inputs = dict(r['immutable_inputs'])
+        amendment = OUT/'amendment_A1.json'
+        if amendment.exists():
+            # Prior art: C2 sha-bound amendments (GRM, 2026). A1 changes only
+            # campaign code for restoring registered cold state, never the plan.
+            if sha(amendment) != (OUT/'amendment_A1.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a = read(amendment)
+            if a['registration_sha256'] != sha(REG):
+                raise ValueError('AMENDMENT_REGISTRATION_MISMATCH')
+            if set(a['overrides']) != {'scripts/grm_c7_common.py', 'scripts/grm_c7_run.py'}:
+                raise ValueError('AMENDMENT_SCOPE_MISMATCH')
+            if set(a['new_inputs']) != {'tests/test_grm_c7_a1.py'}:
+                raise ValueError('AMENDMENT_NEW_INPUT_SCOPE_MISMATCH')
+            for path, change in a['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['amendment_sha256'] = sha(amendment)
+        a2path = OUT/'amendment_A2.json'
+        if a2path.exists():
+            a2 = read(a2path)
+            if sha(a2path) != (OUT/'amendment_A2.sha256').read_text().split()[0]:
+                raise ValueError('AMENDMENT_A2_SHA_MISMATCH')
+            if a2['registration_sha256'] != sha(REG) or a2['previous_amendment_sha256'] != r.get('amendment_sha256'):
+                raise ValueError('AMENDMENT_A2_CHAIN_MISMATCH')
+            if set(a2['overrides']) != {'scripts/grm_c7_common.py','scripts/grm_c7_run.py'} or set(a2['new_inputs']) != {'tests/test_grm_c7_a2.py'}:
+                raise ValueError('AMENDMENT_A2_SCOPE_MISMATCH')
+            for path, change in a2['overrides'].items():
+                if change['before_sha256'] != inputs[path] or sha(ROOT/change['before_archive']) != inputs[path]:
+                    raise ValueError('AMENDMENT_A2_BEFORE_MISMATCH')
+                inputs[path] = change['after_sha256']
+            inputs.update(a2['new_inputs'])
+            r['amendment_A2_sha256'] = sha(a2path)
+            r['pressure']['controlled_source_turn'] = 6
+            r['acceptance']['paging'] = 'each pressure forces registered old source hot -> durable cold -> production loader return; report controlled return separately from probe-selected return'
+        verify_lead_1(r, inputs)
+        if os.environ.get('GRM_C7_REVISION') == 'r2':
+            # Prior art: local C7 amendment chain (GRM contributors, 2026).
+            # r2 explicitly binds changed core/harness before live SHA checks.
+            from scripts.grm_c7_register_r2 import verify_r2
+            verify_r2(r, inputs, ROOT, OUT)
+        elif os.environ.get('GRM_C7_REVISION', 'r1') != 'r1':
+            raise ValueError('UNKNOWN_C7_REVISION')
+        # Prior art: C7 explicit chained source overrides (GRM, 2026).
+        # FIX-4 is opt-in and separately SHA-bound; old r2 remains fail-closed.
+        if os.environ.get('GRM_C7_FIX4') == '1':
+            from scripts.grm_c7_fix4 import verify_fix4
+            verify_fix4(r, inputs)
+        for path, digest in inputs.items():
+            p = Path(path) if Path(path).is_absolute() else ROOT / path
+            if sha(p) != digest:
+>               raise ValueError(f'INPUT_SHA_MISMATCH: {path}')
+E               ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_c7_common.py:160: ValueError
+_________ test_owned_child_retains_fix4_and_budget_counts_old_failures _________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1000/test_owned_child_retains_fix4_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x78bfeafaac00>
+
+    def test_owned_child_retains_fix4_and_budget_counts_old_failures(tmp_path, monkeypatch):
+        from scripts import grm_cmc1_gpu_arms as leases
+        r = c.read(c.REG)
+        r['effective_inputs'] = {}
+        cell = next(x for x in r['cells'] if x['id'] == 'A-024-031')
+        old = tmp_path/'old'
+        c.create(old/'A-017-023/controller.json', {'status':'COMPLETE','charged_seconds':243.163476883434})
+        c.create(old/'A-024-031/controller.json', {'status':'FAILED','charged_seconds':280})
+        monkeypatch.setattr(run, 'OUT', tmp_path/'attempt')
+        run.OUT.mkdir()
+        monkeypatch.setattr(run, 'verify', lambda: r)
+        monkeypatch.setattr(run, 'binding', lambda arm: {'arm':arm})
+        monkeypatch.setattr(f, 'cell_directory', lambda out, cid: old/cid)
+        monkeypatch.setattr(f, 'accounting_directories', lambda out: [old,out/'cells'])
+        monkeypatch.setattr(leases, 'gpu_lease', lambda *a: nullcontext())
+        monkeypatch.setattr(run.time, 'sleep', lambda _: None)
+        calls, charges = [], []
+        real_check = run.reserve_check
+        def charge(r, cell, done, reserved):
+            charges.append((done,reserved))
+            real_check(r,cell,done,reserved)
+        monkeypatch.setattr(run, 'reserve_check', charge)
+        def child(cmd, **kw):
+            calls.append((kw['env'].get('GRM_C7_FIX4'),kw['env'].get('GRM_C7_REVISION')))
+            return SimpleNamespace(returncode=0)
+        monkeypatch.setattr(run.subprocess, 'run', child)
+        assert run.run_leased(cell) == 0
+        assert charges == [(523.163476883434,0)]
+>       assert calls == [('1','r2')]
+E       AssertionError: assert [(None, 'r1')] == [('1', 'r2')]
+E         
+E         At index 0 diff: (None, 'r1') != ('1', 'r2')
+E         Use -v to get more diff
+
+tests/test_grm_scout_fix4_continuation.py:87: AssertionError
+________________________ test_gpu_registration_bindings ________________________
+
+    def test_gpu_registration_bindings():
+>       assert len(run.verify()['folds']) == 13
+                   ^^^^^^^^^^^^
+
+tests/test_grm_scout_fix5_runner.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG) != REG.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('GPU_REGISTRATION_SHA_MISMATCH')
+        r = read(REG)
+        for path, expected in r['inputs'].items():
+            if sha(ROOT/path) != expected:
+>               raise ValueError(f'INPUT_SHA_MISMATCH: {path}')
+E               ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_scout_fix5.py:46: ValueError
+_______________ test_core_delta_scope_and_unchanged_qc_coverage ________________
+
+    def test_core_delta_scope_and_unchanged_qc_coverage():
+        before = ast.parse((run.OUT/'before/core/graft_arena.py').read_text())
+        after = ast.parse((run.ROOT/'core/graft_arena.py').read_text())
+        changed = set()
+        old = next(n for n in before.body if isinstance(n, ast.ClassDef) and n.name=='ArenaCache')
+        new = next(n for n in after.body if isinstance(n, ast.ClassDef) and n.name=='ArenaCache')
+        assert len(old.body) == len(new.body)
+        for a,b in zip(old.body,new.body):
+            if ast.dump(a) != ast.dump(b):
+                assert isinstance(a, ast.FunctionDef) and a.name==b.name
+                changed.add(a.name)
+>       assert changed == {'consolidate','_consolidation_prompts'}
+E       AssertionError: assert {'_consolidat...'consolidate'} == {'_consolidat...'consolidate'}
+E         
+E         Extra items in the left set:
+E         '_query_content_tokens'
+E         '_node_text_tokens'
+E         '_rare_tokens'
+E         '_norm_text'
+E         Use -v to get more diff
+
+tests/test_grm_scout_fix5_runner.py:90: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_scout_fix4_continuation.py::test_registration_resume_checkpoint_and_historical_charge
+FAILED tests/test_grm_scout_fix4_continuation.py::test_forged_continuation_rejected[scope-SCOPE]
+FAILED tests/test_grm_scout_fix4_continuation.py::test_forged_continuation_rejected[chain-CHAIN]
+FAILED tests/test_grm_scout_fix4_continuation.py::test_forged_continuation_rejected[budget-PROTOCOL]
+FAILED tests/test_grm_scout_fix4_continuation.py::test_forged_continuation_rejected[cells-PROTOCOL]
+FAILED tests/test_grm_scout_fix4_continuation.py::test_forged_continuation_rejected[quarantine-PROTOCOL]
+FAILED tests/test_grm_scout_fix4_continuation.py::test_forged_continuation_rejected[before-BEFORE]
+FAILED tests/test_grm_scout_fix4_continuation.py::test_forged_continuation_rejected[history-HISTORY]
+FAILED tests/test_grm_scout_fix4_continuation.py::test_forged_continuation_rejected[charge-HISTORICAL_CHARGE]
+FAILED tests/test_grm_scout_fix4_continuation.py::test_owned_child_retains_fix4_and_budget_counts_old_failures
+FAILED tests/test_grm_scout_fix5_runner.py::test_gpu_registration_bindings - ...
+FAILED tests/test_grm_scout_fix5_runner.py::test_core_delta_scope_and_unchanged_qc_coverage
+12 failed, 400 passed, 2 warnings in 18.93s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

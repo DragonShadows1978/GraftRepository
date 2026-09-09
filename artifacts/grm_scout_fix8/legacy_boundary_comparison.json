@@ -1,0 +1,12 @@
+{
+  "core/graft_arena.py": {
+    "fix4_registered_after_sha256": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+    "pre_fix8_sha256": "67f00ba365dee64b5efc414d2a48c711062658bbfe6dc8c9f30efd1c3b7dc37e",
+    "fix4_already_differs_before_fix8": true
+  },
+  "core/grm_admission.py": {
+    "fix4_registered_after_sha256": "2deb9d91ac5c723e67de06d3c71def9a3d06ba30b72fe1bbeb5eb18710c4cc46",
+    "pre_fix8_sha256": "2deb9d91ac5c723e67de06d3c71def9a3d06ba30b72fe1bbeb5eb18710c4cc46",
+    "fix4_already_differs_before_fix8": false
+  }
+}

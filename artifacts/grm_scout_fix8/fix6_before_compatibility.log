@@ -1,0 +1,182 @@
+core.grm_text_norm /mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/before/core/grm_text_norm.py
+core.grm_admission /mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/before/core/grm_admission.py
+core.graft_arena /mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/before/core/graft_arena.py
+FFFFFFFFFF                                                               [100%]
+=================================== FAILURES ===================================
+_________________ test_rule2_exact_reference_and_refusal[0.0] __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7751a1e75cd0>
+margin = 0.0
+
+    @pytest.mark.parametrize('margin',[0.,.01,adm.MARGIN_THRESHOLD,adm.MARGIN_THRESHOLD+1e-12])
+    def test_rule2_exact_reference_and_refusal(monkeypatch,margin):
+        monkeypatch.setenv('GRM_ADMISSION_RULE','margin_first')
+        s=dict(question='What did we settle on at Harbor?',nodes=[dict(text='Promenade 9'),dict(text='Harbor 12'),dict(text='elsewhere')],eligible=[0,1,2],ranking=[0,1,2],split_members=[0],margin=margin,scores={'0':margin,'1':0.,'2':-1.})
+        p=adm.decisive_admission_profile(FrozenArena(s),s['question'],exclude=[])
+>       assert p['rank_plan']==evaluate(s,2)['plan']
+E       assert [0, 1, 2] == [1, 0, 2]
+E         
+E         At index 0 diff: 0 != 1
+E         Use -v to get more diff
+
+../grm-lt1/tests/test_grm_scout_fix6.py:32: AssertionError
+_________________ test_rule2_exact_reference_and_refusal[0.01] _________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7751a1e76f60>
+margin = 0.01
+
+    @pytest.mark.parametrize('margin',[0.,.01,adm.MARGIN_THRESHOLD,adm.MARGIN_THRESHOLD+1e-12])
+    def test_rule2_exact_reference_and_refusal(monkeypatch,margin):
+        monkeypatch.setenv('GRM_ADMISSION_RULE','margin_first')
+        s=dict(question='What did we settle on at Harbor?',nodes=[dict(text='Promenade 9'),dict(text='Harbor 12'),dict(text='elsewhere')],eligible=[0,1,2],ranking=[0,1,2],split_members=[0],margin=margin,scores={'0':margin,'1':0.,'2':-1.})
+        p=adm.decisive_admission_profile(FrozenArena(s),s['question'],exclude=[])
+        assert p['rank_plan']==evaluate(s,2)['plan']
+>       assert adm.identifier_unbound_abstention(p) is None
+E       AssertionError: assert {'abstain_identifier_tokens': ['settle', 'harbor'], 'abstain_reason': 'identifier_unbound', 'abstain_text': 'Not in memory: no stored record matches settle, harbor.', 'abstained': True} is None
+E        +  where {'abstain_identifier_tokens': ['settle', 'harbor'], 'abstain_reason': 'identifier_unbound', 'abstain_text': 'Not in memory: no stored record matches settle, harbor.', 'abstained': True} = <function identifier_unbound_abstention at 0x7751f4118220>({'admission_ranking_before_demotion': [0, 1, 2], 'admission_split_child_demoted': False, 'admission_split_demoted_ids': [], 'admission_split_family_ids': [0], ...})
+E        +    where <function identifier_unbound_abstention at 0x7751f4118220> = adm.identifier_unbound_abstention
+
+../grm-lt1/tests/test_grm_scout_fix6.py:33: AssertionError
+__________ test_rule2_exact_reference_and_refusal[0.1385774091529802] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7751a1e76210>
+margin = 0.1385774091529802
+
+    @pytest.mark.parametrize('margin',[0.,.01,adm.MARGIN_THRESHOLD,adm.MARGIN_THRESHOLD+1e-12])
+    def test_rule2_exact_reference_and_refusal(monkeypatch,margin):
+        monkeypatch.setenv('GRM_ADMISSION_RULE','margin_first')
+        s=dict(question='What did we settle on at Harbor?',nodes=[dict(text='Promenade 9'),dict(text='Harbor 12'),dict(text='elsewhere')],eligible=[0,1,2],ranking=[0,1,2],split_members=[0],margin=margin,scores={'0':margin,'1':0.,'2':-1.})
+        p=adm.decisive_admission_profile(FrozenArena(s),s['question'],exclude=[])
+        assert p['rank_plan']==evaluate(s,2)['plan']
+>       assert adm.identifier_unbound_abstention(p) is None
+E       AssertionError: assert {'abstain_identifier_tokens': ['settle', 'harbor'], 'abstain_reason': 'identifier_unbound', 'abstain_text': 'Not in memory: no stored record matches settle, harbor.', 'abstained': True} is None
+E        +  where {'abstain_identifier_tokens': ['settle', 'harbor'], 'abstain_reason': 'identifier_unbound', 'abstain_text': 'Not in memory: no stored record matches settle, harbor.', 'abstained': True} = <function identifier_unbound_abstention at 0x7751f4118220>({'admission_ranking_before_demotion': [0, 1, 2], 'admission_split_child_demoted': False, 'admission_split_demoted_ids': [], 'admission_split_family_ids': [0], ...})
+E        +    where <function identifier_unbound_abstention at 0x7751f4118220> = adm.identifier_unbound_abstention
+
+../grm-lt1/tests/test_grm_scout_fix6.py:33: AssertionError
+__________ test_rule2_exact_reference_and_refusal[0.1385774091539802] __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7751a1e76630>
+margin = 0.1385774091539802
+
+    @pytest.mark.parametrize('margin',[0.,.01,adm.MARGIN_THRESHOLD,adm.MARGIN_THRESHOLD+1e-12])
+    def test_rule2_exact_reference_and_refusal(monkeypatch,margin):
+        monkeypatch.setenv('GRM_ADMISSION_RULE','margin_first')
+        s=dict(question='What did we settle on at Harbor?',nodes=[dict(text='Promenade 9'),dict(text='Harbor 12'),dict(text='elsewhere')],eligible=[0,1,2],ranking=[0,1,2],split_members=[0],margin=margin,scores={'0':margin,'1':0.,'2':-1.})
+        p=adm.decisive_admission_profile(FrozenArena(s),s['question'],exclude=[])
+>       assert p['rank_plan']==evaluate(s,2)['plan']
+E       assert [0, 1, 2] == [0]
+E         
+E         Left contains 2 more items, first extra item: 1
+E         Use -v to get more diff
+
+../grm-lt1/tests/test_grm_scout_fix6.py:32: AssertionError
+__________________ test_default_and_unknown_stay_rule0[None] ___________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7751a1e77200>
+value = None
+
+    @pytest.mark.parametrize('value',[None,'','typo','all_tokens_bind'])
+    def test_default_and_unknown_stay_rule0(monkeypatch,value):
+        if value is None:monkeypatch.delenv('GRM_ADMISSION_RULE',raising=False)
+        else:monkeypatch.setenv('GRM_ADMISSION_RULE',value)
+        s=dict(question='What is at Harbor?',nodes=[dict(text='Harbor 12')],eligible=[0],ranking=[0],split_members=[],margin=0.,scores={'0':0.})
+        p=adm.decisive_admission_profile(FrozenArena(s),s['question'],exclude=[])
+        assert p['rank_plan']==evaluate(s,0)['proposed_plan']
+        assert bool(adm.identifier_unbound_abstention(p))==evaluate(s,0)['refused']
+>       assert p['admission_rule']=='all_tokens_bind'
+               ^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'admission_rule'
+
+../grm-lt1/tests/test_grm_scout_fix6.py:45: KeyError
+____________________ test_default_and_unknown_stay_rule0[] _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7751a1e77c50>
+value = ''
+
+    @pytest.mark.parametrize('value',[None,'','typo','all_tokens_bind'])
+    def test_default_and_unknown_stay_rule0(monkeypatch,value):
+        if value is None:monkeypatch.delenv('GRM_ADMISSION_RULE',raising=False)
+        else:monkeypatch.setenv('GRM_ADMISSION_RULE',value)
+        s=dict(question='What is at Harbor?',nodes=[dict(text='Harbor 12')],eligible=[0],ranking=[0],split_members=[],margin=0.,scores={'0':0.})
+        p=adm.decisive_admission_profile(FrozenArena(s),s['question'],exclude=[])
+        assert p['rank_plan']==evaluate(s,0)['proposed_plan']
+        assert bool(adm.identifier_unbound_abstention(p))==evaluate(s,0)['refused']
+>       assert p['admission_rule']=='all_tokens_bind'
+               ^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'admission_rule'
+
+../grm-lt1/tests/test_grm_scout_fix6.py:45: KeyError
+__________________ test_default_and_unknown_stay_rule0[typo] ___________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7751a1ec39e0>
+value = 'typo'
+
+    @pytest.mark.parametrize('value',[None,'','typo','all_tokens_bind'])
+    def test_default_and_unknown_stay_rule0(monkeypatch,value):
+        if value is None:monkeypatch.delenv('GRM_ADMISSION_RULE',raising=False)
+        else:monkeypatch.setenv('GRM_ADMISSION_RULE',value)
+        s=dict(question='What is at Harbor?',nodes=[dict(text='Harbor 12')],eligible=[0],ranking=[0],split_members=[],margin=0.,scores={'0':0.})
+        p=adm.decisive_admission_profile(FrozenArena(s),s['question'],exclude=[])
+        assert p['rank_plan']==evaluate(s,0)['proposed_plan']
+        assert bool(adm.identifier_unbound_abstention(p))==evaluate(s,0)['refused']
+>       assert p['admission_rule']=='all_tokens_bind'
+               ^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'admission_rule'
+
+../grm-lt1/tests/test_grm_scout_fix6.py:45: KeyError
+_____________ test_default_and_unknown_stay_rule0[all_tokens_bind] _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7751a1ec0650>
+value = 'all_tokens_bind'
+
+    @pytest.mark.parametrize('value',[None,'','typo','all_tokens_bind'])
+    def test_default_and_unknown_stay_rule0(monkeypatch,value):
+        if value is None:monkeypatch.delenv('GRM_ADMISSION_RULE',raising=False)
+        else:monkeypatch.setenv('GRM_ADMISSION_RULE',value)
+        s=dict(question='What is at Harbor?',nodes=[dict(text='Harbor 12')],eligible=[0],ranking=[0],split_members=[],margin=0.,scores={'0':0.})
+        p=adm.decisive_admission_profile(FrozenArena(s),s['question'],exclude=[])
+        assert p['rank_plan']==evaluate(s,0)['proposed_plan']
+        assert bool(adm.identifier_unbound_abstention(p))==evaluate(s,0)['refused']
+>       assert p['admission_rule']=='all_tokens_bind'
+               ^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'admission_rule'
+
+../grm-lt1/tests/test_grm_scout_fix6.py:45: KeyError
+_____________________ test_rule2_forces_margin_large_bank ______________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7751a1e77440>
+
+    def test_rule2_forces_margin_large_bank(monkeypatch):
+        monkeypatch.setenv('GRM_ADMISSION_RULE','margin_first')
+        s=dict(question='What is at Absentport?',nodes=[dict(text='unrelated') for _ in range(20)],eligible=list(range(20)),ranking=list(range(6)),split_members=[],margin=1.,scores={str(i):float(20-i) for i in range(20)})
+        p=adm.decisive_admission_profile(FrozenArena(s),s['question'],exclude=[],route_limit=6)
+>       assert p['route_margin_evaluated'] and p['rank_plan']==[0]
+E       assert (False)
+
+../grm-lt1/tests/test_grm_scout_fix6.py:51: AssertionError
+______________________ test_empty_and_profile_bound_rule _______________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7751a1e77740>
+
+    def test_empty_and_profile_bound_rule(monkeypatch):
+        monkeypatch.setenv('GRM_ADMISSION_RULE','margin_first')
+        s=dict(question='Missing?',nodes=[],eligible=[],ranking=[],scores={})
+        p=adm.decisive_admission_profile(FrozenArena(s),s['question'],exclude=[])
+>       assert p['rank_plan']==[] and p['admission_rule']=='margin_first'
+                                      ^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'admission_rule'
+
+../grm-lt1/tests/test_grm_scout_fix6.py:58: KeyError
+=========================== short test summary info ============================
+FAILED ../grm-lt1/tests/test_grm_scout_fix6.py::test_rule2_exact_reference_and_refusal[0.0]
+FAILED ../grm-lt1/tests/test_grm_scout_fix6.py::test_rule2_exact_reference_and_refusal[0.01]
+FAILED ../grm-lt1/tests/test_grm_scout_fix6.py::test_rule2_exact_reference_and_refusal[0.1385774091529802]
+FAILED ../grm-lt1/tests/test_grm_scout_fix6.py::test_rule2_exact_reference_and_refusal[0.1385774091539802]
+FAILED ../grm-lt1/tests/test_grm_scout_fix6.py::test_default_and_unknown_stay_rule0[None]
+FAILED ../grm-lt1/tests/test_grm_scout_fix6.py::test_default_and_unknown_stay_rule0[]
+FAILED ../grm-lt1/tests/test_grm_scout_fix6.py::test_default_and_unknown_stay_rule0[typo]
+FAILED ../grm-lt1/tests/test_grm_scout_fix6.py::test_default_and_unknown_stay_rule0[all_tokens_bind]
+FAILED ../grm-lt1/tests/test_grm_scout_fix6.py::test_rule2_forces_margin_large_bank
+FAILED ../grm-lt1/tests/test_grm_scout_fix6.py::test_empty_and_profile_bound_rule
+10 failed in 0.12s

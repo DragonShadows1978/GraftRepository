@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-c7
+# Prior art: C7/A7 foreground leased batches (GRM contributors, 2026).
+# Existing A7 contrast first on archived A7 core, then FIX8 mount+read.
+# Separate registrations/caps: A7 <=1800s, FIX8 <=1800s. Never concurrent.
+if [[ $# -gt 1 || ( $# -eq 1 && "$1" != '--check-only' ) ]]; then
+    echo 'Unsupported argument' >&2
+    exit 2
+fi
+CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 python scripts/grm_scout_fix8_replay.py --dry-run
+CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 python scripts/grm_scout_fix8_replay.py --middle-check
+if [[ "${1:-}" == '--check-only' ]]; then exit 0; fi
+for batch in B1 B2 B3 B4 B5 B6; do
+    python scripts/grm_scout_fix8_replay.py --middle-batch "$batch"
+done
+python scripts/grm_scout_fix8_replay.py --middle-summary > artifacts/grm_scout_fix8/middle_summary.json
+for batch in F1 F2 F3 F4 F5 F6; do
+    python scripts/grm_scout_fix8_replay.py --batch "$batch"
+done
+python scripts/grm_scout_fix8_replay.py --summary > artifacts/grm_scout_fix8/gpu_summary.json

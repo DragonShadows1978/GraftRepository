@@ -1,0 +1,22 @@
+{
+  "python": "3.12.3",
+  "unicode_database": "15.0.0",
+  "core_files": {
+    "core/grm_text_norm.py": {
+      "before_sha256": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8",
+      "after_sha256": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a"
+    },
+    "core/grm_admission.py": {
+      "before_sha256": "2deb9d91ac5c723e67de06d3c71def9a3d06ba30b72fe1bbeb5eb18710c4cc46",
+      "after_sha256": "2c733d469dc4b12a1828c844b4c4f638730083ff58ec133fcdb627f401994a4a"
+    },
+    "core/graft_arena.py": {
+      "before_sha256": "67f00ba365dee64b5efc414d2a48c711062658bbfe6dc8c9f30efd1c3b7dc37e",
+      "after_sha256": "0421eb41e992240e256159675ee65e2bfbf788320ac087478659f6d21250a4ef"
+    }
+  },
+  "order_unchanged": true,
+  "a7_registration_sha256": "f4f1aa27f4db79e1fd95c995d4e72e8b70ea0f29140effaa56462bcc31a294f1",
+  "a7_inputs_verified_with_explicit_archived_core": true,
+  "gpu_executed": false
+}
