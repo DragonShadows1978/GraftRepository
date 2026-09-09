@@ -1,0 +1,37 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+________________________ test_control_casefold[unknown] ________________________
+
+answer = 'unknown'
+
+    @pytest.mark.parametrize('answer', ['unknown', 'Unknown', 'uNkNoWn'])
+    def test_control_casefold(answer):
+>       assert common.score(answer, {'answerable':False,'expected':'UNKNOWN'})['exact_correct']
+E       assert False
+
+tests/test_grm_c7_r3.py:44: AssertionError
+________________________ test_control_casefold[Unknown] ________________________
+
+answer = 'Unknown'
+
+    @pytest.mark.parametrize('answer', ['unknown', 'Unknown', 'uNkNoWn'])
+    def test_control_casefold(answer):
+>       assert common.score(answer, {'answerable':False,'expected':'UNKNOWN'})['exact_correct']
+E       assert False
+
+tests/test_grm_c7_r3.py:44: AssertionError
+________________________ test_control_casefold[uNkNoWn] ________________________
+
+answer = 'uNkNoWn'
+
+    @pytest.mark.parametrize('answer', ['unknown', 'Unknown', 'uNkNoWn'])
+    def test_control_casefold(answer):
+>       assert common.score(answer, {'answerable':False,'expected':'UNKNOWN'})['exact_correct']
+E       assert False
+
+tests/test_grm_c7_r3.py:44: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_c7_r3.py::test_control_casefold[unknown] - assert False
+FAILED tests/test_grm_c7_r3.py::test_control_casefold[Unknown] - assert False
+FAILED tests/test_grm_c7_r3.py::test_control_casefold[uNkNoWn] - assert False
+3 failed in 0.06s

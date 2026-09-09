@@ -1,0 +1,21 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____________________________ test_plain_questions _____________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ff067eca180>
+
+    def test_plain_questions(monkeypatch):
+        monkeypatch.setenv('GRM_C7_REVISION', 'r3')
+        for p in fixture()['probes']:
+            expected = p['question'].replace('; if unspecified, reply UNKNOWN.', '.')
+>           assert run.effective_question(p['question']) == expected
+E           AssertionError: assert 'What is the ...eply UNKNOWN.' == 'What is the ...h the answer.'
+E             
+E             Skipping 54 identical leading characters in diff, use -v to show
+E             - the answer.
+E             + the answer; if unspecified, reply UNKNOWN.
+
+tests/test_grm_c7_r3.py:38: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_c7_r3.py::test_plain_questions - AssertionError: assert...
+1 failed in 0.05s

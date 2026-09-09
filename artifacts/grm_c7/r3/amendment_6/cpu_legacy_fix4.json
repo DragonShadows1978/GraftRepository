@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/usr/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_grm_scout_fix4.py"
+  ],
+  "evidence_class": "author CPU historical byte regression",
+  "gpu_executed": false,
+  "registration_sha256": "65c543b1904e6e3bd81d95316dbc092fd72f70ae164044cce036ce8a6ec04b1c",
+  "returncode": 0,
+  "revision": "r1 historical prompt mode"
+}

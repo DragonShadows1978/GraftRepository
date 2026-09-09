@@ -1,0 +1,23 @@
+F..                                                                      [100%]
+=================================== FAILURES ===================================
+__________________ test_preflight_boundary[19999999999-False] __________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-994/test_preflight_boundary_1999990')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x71336be61eb0>
+free = 19999999999, passes = False
+
+    @pytest.mark.parametrize('free,passes', [(19_999_999_999,False),(20_000_000_000,True),(21_000_000_000,True)])
+    def test_preflight_boundary(tmp_path, monkeypatch, free, passes):
+        from scripts import grm_c7_register_r3 as reg
+        from types import SimpleNamespace
+        monkeypatch.setattr(reg.shutil, 'disk_usage', lambda p: SimpleNamespace(free=free))
+        if passes:
+            assert reg.preflight(tmp_path)['pass']
+        else:
+>           with pytest.raises(ValueError, match='R3_FREE_SPACE_RED'):
+E           Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_grm_c7_r3.py:143: Failed
+=========================== short test summary info ============================
+FAILED tests/test_grm_c7_r3.py::test_preflight_boundary[19999999999-False] - ...
+1 failed, 2 passed in 0.05s

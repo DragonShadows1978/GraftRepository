@@ -1,0 +1,34 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_r3_child_keeps_revision_and_no_alias_switch _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-993/test_r3_child_keeps_revision_a0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d9d7a3882c0>
+
+    def test_r3_child_keeps_revision_and_no_alias_switch(tmp_path, monkeypatch):
+        from contextlib import nullcontext
+        from types import SimpleNamespace
+        from scripts import grm_c7_register_r3 as reg
+        from scripts import grm_cmc1_gpu_arms as leases
+        r=common.verify()
+        monkeypatch.setattr(run, 'OUT', tmp_path)
+        monkeypatch.setattr(reg, 'check_ready', lambda:r)
+        monkeypatch.setattr(reg, 'preflight', lambda:None)
+        monkeypatch.setattr(leases, 'gpu_lease', lambda *a:nullcontext())
+        monkeypatch.setattr(run.time, 'sleep', lambda s:None)
+        observed=[]
+        def child(cmd, **kwargs):
+            env=kwargs['env']
+            observed.append({k:v for k,v in env.items() if k.startswith('GRM_')})
+            return SimpleNamespace(returncode=0)
+        monkeypatch.setattr(run.subprocess, 'run', child)
+        assert run.run_leased(r['cells'][0]) == 0
+        assert len(observed) == 1
+>       assert observed[0]['GRM_C7_REVISION'] == 'r3'
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'GRM_C7_REVISION'
+
+tests/test_grm_c7_r3.py:206: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_grm_c7_r3.py::test_r3_child_keeps_revision_and_no_alias_switch
+1 failed in 0.30s

@@ -1,0 +1,40 @@
+{
+  "evidence_class": "author source-copy mutation, no blind review",
+  "kill_rate": 1.0,
+  "live_sources_unchanged": true,
+  "pass": true,
+  "registration_sha256": "65c543b1904e6e3bd81d95316dbc092fd72f70ae164044cce036ce8a6ec04b1c",
+  "rows": [
+    {
+      "id": "case_sensitive_control",
+      "mutant_sha256": "faa5e288e076b787559e3d807c2bba016926af3d55bad3d089b08896bfd34068",
+      "returncode": 1,
+      "status": "KILLED"
+    },
+    {
+      "id": "retain_abstention_clause",
+      "mutant_sha256": "dff9e04f7e7af5db9694c4b2271ae28eb82827c7f4772a86d335cafae4d388c9",
+      "returncode": 1,
+      "status": "KILLED"
+    },
+    {
+      "id": "wrong_budget_7200",
+      "mutant_sha256": "b6d5c96e2539e7f7f8ac7853423f29460651bc2bb68fd39953f29222d1da42d9",
+      "returncode": 1,
+      "status": "KILLED"
+    },
+    {
+      "id": "drop_child_revision",
+      "mutant_sha256": "efed39c7e34fb1d4e692f44b12ae35f964468eae6f0e0ad48a892f0abc3b028c",
+      "returncode": 1,
+      "status": "KILLED"
+    },
+    {
+      "id": "weaken_space_preflight",
+      "mutant_sha256": "7378616b3e20f4a6f70e9201a70b6064bb76ffe417b954840631996b90947763",
+      "returncode": 1,
+      "status": "KILLED"
+    }
+  ],
+  "threshold": 0.8
+}

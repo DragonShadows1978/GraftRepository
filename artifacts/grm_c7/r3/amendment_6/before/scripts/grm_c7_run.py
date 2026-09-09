@@ -28,12 +28,6 @@ OUT = BASE / 'r2' if os.environ.get('GRM_C7_REVISION') == 'r2' else BASE
 from scripts import grm_c7_fix4 as fix4
 if fix4.enabled():
     OUT = fix4.ATTEMPT
-if os.environ.get('GRM_C7_REVISION') == 'r3':
-    # Prior art: r2 isolated receipt namespaces (GRM contributors, 2026).
-    # Fresh r3 has no old checkpoint bridge and uses its amended fixture.
-    OUT = BASE / 'r3'
-    FIX = OUT / 'fixture.json'
-    REG = OUT / 'registration.json'
 
 
 def binding(arm):
@@ -41,8 +35,6 @@ def binding(arm):
     # the same contract with verified lead amendment and effective core SHA.
     r = verify()
     value = {'registration_sha256': sha(REG), 'fixture_sha256': sha(FIX), 'arm': arm}
-    if os.environ.get('GRM_C7_REVISION') == 'r3':
-        return dict(value, revision='r3', source_manifest_sha256=r['source_manifest_sha256'])
     if (BASE/'amendment_A1.json').exists():
         value['amendment_sha256'] = sha(BASE/'amendment_A1.json')
     if (BASE/'amendment_A2.json').exists():
@@ -72,12 +64,6 @@ def lines(path):
 
 def dry_run():
     r = verify()
-    if os.environ.get('GRM_C7_REVISION') == 'r3':
-        return {'status':'NOT_RUN_NO_GPU_ORDER', 'gpu_executed':False,
-                'binding':binding('A'), 'receipt_directory':str(OUT),
-                'cells':r['cells'], 'arms':r['arms'],
-                'budget_seconds_arm_A':r['budget_seconds_arm_A'],
-                'prediction':r['prediction'], 'denominator_note':r['denominator_note']}
     return {'status': 'BLOCKED_NO_GPU_IN_SANDBOX', 'gpu_executed': False,
             'registration_sha256': sha(REG), 'fixture_manifest_sha256': sha(BASE/'fixture_manifest.json'),
             'amendment_sha256': r.get('amendment_sha256'),
@@ -97,7 +83,7 @@ def reserve_check(r, cell, completed, reserved):
     # orphaned reservations in full. No automatic retry after controller loss.
     if r['arms'][cell['arm']]['status'] != 'FIT_ESTIMATE':
         raise ValueError('NON_FIT: registered arm never launched/retried')
-    if completed + reserved + cell['worker_seconds'] > r.get('budget_seconds_arm_A', 7200):
+    if completed + reserved + cell['worker_seconds'] > 7200:
         raise ValueError('BUDGET_RAIL: next cell cannot be reserved')
 
 
@@ -126,14 +112,6 @@ def seats(arena, info=None):
 
 
 def effective_question(question):
-    # Prior art: RD1 A2 plain-prompt contrast and production e2e template
-    # (GRM contributors, 2026). Reuse its exact suffix removal at execution;
-    # preserve all historical fixture turns and answer identifiers.
-    if os.environ.get('GRM_C7_REVISION') == 'r3':
-        for suffix in ('; if unspecified, reply UNKNOWN.', '; if unspecified, reply unknown.'):
-            if question.endswith(suffix):
-                return question[:-len(suffix)] + '.'
-        return question
     # Prior art: C7 lead-2 diagnosis (GRM contributors, 2026), confirmed
     # counterfactual. Lowercase ONLY the frozen fallback instruction suffix;
     # preserve entity identifiers and immutable fixture bytes. Core admission
@@ -488,10 +466,6 @@ def worker(cell):
 
 def run_leased(cell):
     r = verify()
-    if os.environ.get('GRM_C7_REVISION') == 'r3':
-        from scripts.grm_c7_register_r3 import check_ready, preflight
-        check_ready()
-        preflight()
     arm = cell['arm']
     if fix4.enabled() and OUT == fix4.ATTEMPT:
         if cell['arm'] != 'A' or cell['start'] < 24:
@@ -603,18 +577,6 @@ def summary(arm):
             'folded_path_exercised': folded, 'restart_scores': restarts, 'paging': paging,
             'fold_count': len(folds), 'failed_fold_count': sum(not x['accepted'] for x in folds),
             'fold_coverage_rule': fold_rule if folds else None, 'complete': complete}
-    if os.environ.get('GRM_C7_REVISION') == 'r3':
-        # Prior art: C7 exhaustive strata (GRM, 2026). Keep alias failures
-        # in acceptance; expected failure is a prediction, never an exclusion.
-        value['prediction'] = r['prediction']
-        value['prediction_evaluation'] = 'UNRESOLVED_DENOMINATORS'
-        value['denominator_note'] = r['denominator_note']
-        value['by_class'] = {c: {side: {
-            'expected_n':sum(p['class']==c for p in f['probes']),
-            'n':sum(x['class']==c for x in rows),
-            'exact_correct':sum(score(x[side]['answer'], next(p for p in f['probes']
-                if p['id']==x['probe_id']))['exact_correct'] for x in rows if x['class']==c)}
-            for side in ('memory','oracle')} for c in CLASSES}
     return fix4.quarantine_summary(value) if fix4.enabled() else value
 
 

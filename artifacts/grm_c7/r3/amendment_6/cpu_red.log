@@ -1,0 +1,97 @@
+FFFFF.F                                                                  [100%]
+=================================== FAILURES ===================================
+__________________________ test_turn2_real_correction __________________________
+
+    def test_turn2_real_correction():
+        f = fixture()
+        event = f['turns'][1]
+>       assert event['kind'] == 'supersede'
+E       AssertionError: assert 'fact' == 'supersede'
+E         
+E         - supersede
+E         + fact
+
+tests/test_grm_c7_r3.py:26: AssertionError
+_____________________________ test_plain_questions _____________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d19c2666390>
+
+    def test_plain_questions(monkeypatch):
+        monkeypatch.setenv('GRM_C7_REVISION', 'r3')
+        for p in fixture()['probes']:
+            expected = p['question'].replace('; if unspecified, reply UNKNOWN.', '.')
+>           assert run.effective_question(p['question']) == expected
+E           AssertionError: assert 'What is the ...eply unknown.' == 'What is the ...h the answer.'
+E             
+E             Skipping 54 identical leading characters in diff, use -v to show
+E             - the answer.
+E             + the answer; if unspecified, reply unknown.
+
+tests/test_grm_c7_r3.py:38: AssertionError
+________________________ test_control_casefold[unknown] ________________________
+
+answer = 'unknown'
+
+    @pytest.mark.parametrize('answer', ['unknown', 'Unknown', 'uNkNoWn'])
+    def test_control_casefold(answer):
+>       assert common.score(answer, {'answerable':False,'expected':'UNKNOWN'})['exact_correct']
+E       assert False
+
+tests/test_grm_c7_r3.py:44: AssertionError
+________________________ test_control_casefold[Unknown] ________________________
+
+answer = 'Unknown'
+
+    @pytest.mark.parametrize('answer', ['unknown', 'Unknown', 'uNkNoWn'])
+    def test_control_casefold(answer):
+>       assert common.score(answer, {'answerable':False,'expected':'UNKNOWN'})['exact_correct']
+E       assert False
+
+tests/test_grm_c7_r3.py:44: AssertionError
+________________________ test_control_casefold[uNkNoWn] ________________________
+
+answer = 'uNkNoWn'
+
+    @pytest.mark.parametrize('answer', ['unknown', 'Unknown', 'uNkNoWn'])
+    def test_control_casefold(answer):
+>       assert common.score(answer, {'answerable':False,'expected':'UNKNOWN'})['exact_correct']
+E       assert False
+
+tests/test_grm_c7_r3.py:44: AssertionError
+__________________ test_correction_real_repository_and_reload __________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-985/test_correction_real_repositor0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d19c2497c50>
+
+    def test_correction_real_repository_and_reload(tmp_path, monkeypatch):
+        from scripts.grm_c7_diagnose import repository
+        repo = repository(tmp_path/'repo', monkeypatch)
+        f = fixture()
+        try:
+            original = repo.add_document(f['turns'][0]['user'])
+            event = f['turns'][1]
+            repo.add_document(event['user'])
+>           assert event['kind'] == 'supersede'
+E           AssertionError: assert 'fact' == 'supersede'
+E             
+E             - supersede
+E             + fact
+
+tests/test_grm_c7_r3.py:62: AssertionError
+=============================== warnings summary ===============================
+tests/test_grm_c7_r3.py::test_correction_real_repository_and_reload
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+tests/test_grm_c7_r3.py::test_correction_real_repository_and_reload
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_c7_r3.py::test_turn2_real_correction - AssertionError: ...
+FAILED tests/test_grm_c7_r3.py::test_plain_questions - AssertionError: assert...
+FAILED tests/test_grm_c7_r3.py::test_control_casefold[unknown] - assert False
+FAILED tests/test_grm_c7_r3.py::test_control_casefold[Unknown] - assert False
+FAILED tests/test_grm_c7_r3.py::test_control_casefold[uNkNoWn] - assert False
+FAILED tests/test_grm_c7_r3.py::test_correction_real_repository_and_reload - ...
+6 failed, 1 passed, 2 warnings in 4.71s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

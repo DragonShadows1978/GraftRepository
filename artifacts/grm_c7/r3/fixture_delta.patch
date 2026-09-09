@@ -1,0 +1,15 @@
+--- artifacts/grm_c7/fixture.json
++++ artifacts/grm_c7/r3/fixture.json
+@@ -1452,9 +1452,11 @@
+     },
+     {
+       "assistant": "Recorded.",
++      "correction_command": "correct memory: current C7-Vesper-0 value is Mica-431 => Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+       "fact_id": "C7-Vesper-0",
+       "fact_phrase": "current C7-Vesper-0 value is Flint-511",
+-      "kind": "fact",
++      "kind": "supersede",
++      "old_value": "Mica-431",
+       "turn": 2,
+       "user": "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+       "value": "Flint-511"

@@ -95,12 +95,6 @@ def hashes(directory):
 
 
 def verify():
-    # Prior art: C7 fresh revision manifests (GRM contributors, 2026).
-    # r3 explicitly re-registers current FIX3/4/5 sources and its own fixture;
-    # historical chained registrations remain immutable and fail closed.
-    if os.environ.get('GRM_C7_REVISION') == 'r3':
-        from scripts.grm_c7_register_r3 import verify_r3
-        return verify_r3()
     if sha(REG) != (OUT / 'registration.sha256').read_text().split()[0]:
         raise ValueError('REGISTRATION_SHA_MISMATCH')
     r = read(REG)
@@ -187,12 +181,6 @@ def score(answer, probe):
         r"(?:do not|don't) have (?:that|the|this) information)\b", low))
     required = bool(probe['answerable'])
     exact = text == normalize(probe['expected'])
-    # Prior art: local amendment-4 control contract (GRM, 2026), and
-    # SQuAD answerability controls (Rajpurkar/Jia/Liang, 2018).
-    # Reuse full-string comparison; r3 changes case only for UNKNOWN controls,
-    # not answerable values or free-form abstention synonyms.
-    if not required and normalize(probe['expected']).casefold() == 'unknown':
-        exact = text.casefold() == normalize(probe['expected']).casefold()
     # Disjoint errors: an answerable abstention is not ALSO an exact-value
     # error. Total exact-answer failure remains available for acceptance.
     return {'exact_correct': exact,

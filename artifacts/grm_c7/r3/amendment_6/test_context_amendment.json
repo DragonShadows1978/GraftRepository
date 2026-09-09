@@ -1,0 +1,9 @@
+{
+  "schema": "grm.c7.amendment6-test-context.v1",
+  "previous_gate_registration_sha256": "018a2385b9395d554bd14d9c30d3d91192e8d3461c11fdf9d54573fdb8ae382a",
+  "finding": "Staging 83 passed / 2 failed. New lifecycle test requested manifest before flush, but CPU double lazily populates rare at flush; read persisted manifest after flush. Unchanged FIX4 byte receipt uses historical prompt; execute entire FIX4 suite in original r1 prompt mode, retain independent r3 prompt/core tests. No tolerance, assertion or product change.",
+  "receipts": [
+    "cpu_green_staging.log"
+  ],
+  "gate_thresholds_changed": false
+}
