@@ -58,10 +58,13 @@ class Snapshot:
             'layers':self.layers,'arrays':{k:array_digest(v) for k,v in self.arrays.items()}})
 
 def load_capture(path, spans):
-    from scripts.grm_det1_3_snapshot import load_snapshot,load_snapshot_array,require_snapshot_member_coverage
+    # Prior art: house DET1 (2026) separates manifest validation from validated
+    # blob reads. Reuse that contract here: one whole-snapshot validation, then
+    # each blob is still hashed and geometry-checked when read. No shared cache.
+    from scripts.grm_det1_3_snapshot import load_snapshot,_load_validated_snapshot_array,require_snapshot_member_coverage
     m=load_snapshot(Path(path));require_snapshot_member_coverage(m,'X3 live source')
     if not m['complete']: raise X3Error('incomplete live capture')
-    return Snapshot(copy.deepcopy(m['state']),{k:freeze_array(load_snapshot_array(m,k)) for k in m['arrays']},
+    return Snapshot(copy.deepcopy(m['state']),{k:freeze_array(_load_validated_snapshot_array(m,k)) for k in m['arrays']},
         spans,'cache' if m['state']['arena.caches_present'] else 'injection',m['identity']['layer_count'])
 
 def fork(base,arm,replacement=None):
@@ -203,9 +206,26 @@ def summarize(rows,reg):
         'Q1':equal==20 and sham_good>=18 if full else None,'Q2':sum(correct)<=5 if valid else None,
         'Q3':accuracy['all']['lesion']<=accuracy['all']['mass'] if valid else None}
     killed=full and (comparable>=3 or accuracy['all']['lesion']<=accuracy['all']['mass'])
+    # Prior art: ordinary descriptive counts, extrema, mean and median; no
+    # specific prior art known to me for this reporting repair. No new gate.
+    controls={}
+    for arm in ('same_payload','sham','zero'):
+        values=[r['forks'][arm]['kl_nats'] for r in rows]
+        controls[arm]={'n':len(values),'kl_below_0_05_count':sum(v<.05 for v in values),
+            'kl_min_nats':min(values) if values else None,'kl_max_nats':max(values) if values else None,
+            'kl_mean_nats':float(np.mean(values)) if values else None,
+            'kl_median_nats':float(np.median(values)) if values else None,
+            'raw_logits_byte_equal_count':sum(r['forks'][arm]['raw_logits_byte_equal'] for r in rows),
+            'top1_changed_count':sum(r['forks'][arm]['top1_changed'] for r in rows)
+                if all('top1_changed' in r['forks'][arm] for r in rows) else None}
+    strata={g:{'intended':sum(r['intended_group']==g for r in rows),
+        'realized_untruncated':sum(r['intended_group']==g and r['outcome']['category_realized']
+            and not r['outcome']['truncated'] for r in rows)} for g in ('correct','decoy','refusal')}
     return {'schema':'grm.x3.summary.v1','evidence_class':'E2E session receipt' if rows else 'reasoning; GPU blocked',
         'status':'RED_KILL' if killed else 'RED_STRATA_OR_INCOMPLETE' if not valid else 'COMPLETE',
-        'observed_snapshots':len(rows),'realized_strata':realized,'table':list(table.values()),'predictions':predictions,
+        'observed_snapshots':len(rows),'realized_strata':realized,'strata':strata,
+        'truncated_count':sum(r['outcome']['truncated'] for r in rows),
+        'controls':controls,'table':list(table.values()),'predictions':predictions,
         'accuracy':accuracy,'controls_comparable_count':comparable,'P1_joint_count':control_good,'P2_high_count':sum(correct),
         'decoy_mass_high_count':sum(x[0] for x in dec),'same_payload_equal_count':equal,
         'no_serving_adoption':True,'limitations':['canonical host value bytes only','fixed first token may precede fact','tiny or constant-class decoy subset; accuracy not discrimination/AUROC','controlled diagnostic attempts, not natural routing acceptance']}

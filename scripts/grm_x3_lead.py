@@ -65,9 +65,8 @@ def validate_worker(path,runtime_info):
     _,fixtures=validate_fixtures();fixture_map={f['id']:f for f in fixtures}
     for r in data['results']:
         if r['snapshot']['sha256']!=sha(ROOT/r['snapshot']['path']):raise X3Error('snapshot receipt drift')
-        from scripts.grm_det1_3_snapshot import load_snapshot,load_snapshot_array
-        m=load_snapshot(ROOT/r['snapshot']['path'])
-        for key in m['arrays']:load_snapshot_array(m,key)
+        # Prior art: house DET1/X3 (2026). load_capture validates the manifest,
+        # every blob and member coverage; a second full traversal is redundant.
         if r['donor_payload']['sha256']!=sha(ROOT/r['donor_payload']['path']):raise X3Error('donor receipt drift')
         with np.load(ROOT/r['donor_payload']['path'],allow_pickle=False) as archive:donor={k:archive[k] for k in archive.files}
         base=load_capture(ROOT/r['snapshot']['path'],{k:tuple(v) for k,v in r['spans'].items()})
@@ -83,22 +82,63 @@ def validate_worker(path,runtime_info):
             if rec['sha256']!=sha(ROOT/rec['path']):raise X3Error('logits receipt drift')
     return data
 
-def summary(rt):
+def summary(fingerprint=None):
+    # Prior art: house DET1 content-addressed receipts and X3 (2026) runtime
+    # pins. Select one recorded run, never merge environments or require the
+    # historical worker source to equal this repaired reporting code. No prior
+    # art known to me for this particular repair; no new experimental rule.
     reg,fixtures=validate_fixtures();rows=[];receipt_errors=[]
-    for d in state_dirs():
+    runs=sorted(p for p in (OUT/'runs').glob('*') if p.is_dir())
+    if fingerprint is None:
+        if len(runs)!=1:raise X3Error('summary requires exactly one run or explicit fingerprint')
+        run=runs[0]
+    else:
+        matches=[p for p in runs if p.name==fingerprint]
+        if len(matches)!=1:raise X3Error('unknown summary run fingerprint')
+        run=matches[0]
+    fingerprint=run.name;runtime_info=None;sources=[]
+    expected_cells={c['cell']:c['snapshot_ids'] for c in cells(fixtures)}
+    unexpected={d.name for d in run.iterdir() if d.is_dir()}-set(expected_cells)
+    if unexpected:raise X3Error('unexpected run cell directories: '+str(sorted(unexpected)))
+    for cell,expected_ids in expected_cells.items():
+        d=run/cell
         start=d/'started.json'
-        if not start.exists():continue
+        if not start.exists():receipt_errors.append(str(d)+': missing start');continue
         started=json.loads(start.read_text())
-        if started['fingerprint']!=rt['fingerprint']:
-            receipt_errors.append(str(d)+': stale fingerprint');continue
+        rt=started['runtime'];unsigned=dict(rt);unsigned.pop('fingerprint',None)
+        if (started['cell']!=cell or started['fingerprint']!=fingerprint
+                or rt['fingerprint']!=fingerprint or digest(unsigned)!=fingerprint):
+            raise X3Error('recorded runtime fingerprint/cell drift')
+        for key,path in (('registration_sha256',OUT/'registration.json'),
+                         ('fixtures_sha256',OUT/'fixtures/manifest.json'),
+                         ('implementation_sha256',OUT/'implementation_manifest.json')):
+            if rt[key]!=sha(path):raise X3Error('historical input pin drift: '+key)
+        if rt['model_id']!=reg['model_id'] or rt['frame']!=reg['frame']:raise X3Error('recorded model/frame drift')
+        if runtime_info is not None and runtime_info!=rt:raise X3Error('mixed recorded runtimes')
+        runtime_info=rt
         end=d/'receipt.json'
         if not end.exists():receipt_errors.append(str(d)+': abandoned/incomplete start; budget consumed');continue
         receipt=json.loads(end.read_text())
+        if receipt['cell']!=cell or receipt['fingerprint']!=fingerprint:raise X3Error('cell receipt identity drift')
         if receipt['status']!='COMPLETE':receipt_errors.append(str(d)+': '+receipt['status']);continue
         worker=d/'worker_result.json'
         if receipt.get('worker_result_sha256')!=sha(worker):raise X3Error('worker result receipt drift')
-        rows.extend(validate_worker(worker,rt)['results'])
+        data=validate_worker(worker,rt)
+        if data['cell']!=cell or [r['id'] for r in data['results']]!=expected_ids:
+            raise X3Error('worker cell/snapshot allocation drift')
+        for r in data['results']:
+            result_path=d/r['id']/'result.json'
+            if json.loads(result_path.read_text())!=r:raise X3Error('per-snapshot result differs from worker')
+            fixture=next(f for f in fixtures if f['id']==r['id'])
+            if r['intended_group']!=fixture['intended_group']:raise X3Error('result stratum drift')
+            sources.append({'path':str(result_path.relative_to(ROOT)),'sha256':sha(result_path)})
+        sources.extend({'path':str(p.relative_to(ROOT)),'sha256':sha(p)} for p in (start,end,worker))
+        rows.extend(data['results'])
     result=summarize(rows,reg);result['receipt_errors']=receipt_errors
+    result['run_fingerprint']=fingerprint;result['recorded_runtime']=runtime_info
+    result['source_receipts']=sources
+    result['summary_sources']=[{'path':str(p.relative_to(ROOT)),'sha256':sha(p)}
+        for p in (ROOT/'scripts/grm_x3_lead.py',ROOT/'scripts/grm_x3_diagnostic.py')]
     if receipt_errors:result['status']='RED_RECEIPTS'
     return result
 
@@ -161,15 +201,16 @@ def main():
     reg,fixtures=validate_fixtures()
     if command in ('list','--dry-run'):
         print(json.dumps(cells(fixtures),indent=2));return 0
-    rt=runtime()
-    if command=='preflight':
-        errors=preflight();print(json.dumps({'status':'BLOCKED' if errors else 'READY','errors':errors,'runtime':rt},indent=2));return 2 if errors else 0
     if command=='summary':
-        result=summary(rt);p=OUT/'summaries'/f'{digest(result)}.json'
+        if len(args)>2:raise X3Error('usage: summary [RUN_FINGERPRINT]')
+        result=summary(args[1] if len(args)==2 else None);p=OUT/'summaries'/f'{digest(result)}.json'
         if p.exists():
             if json.loads(p.read_text())!=result:raise X3Error('summary address collision')
         else:create(p,result)
         print(json.dumps(result,indent=2));return 0
+    rt=runtime()
+    if command=='preflight':
+        errors=preflight();print(json.dumps({'status':'BLOCKED' if errors else 'READY','errors':errors,'runtime':rt},indent=2));return 2 if errors else 0
     if command not in ('run','resume'):raise X3Error('unknown command')
     cell=choose_cell(command,args[1] if len(args)>1 else None)
     if cell is None:print('All four cells already complete.');return 0

@@ -213,3 +213,111 @@ def test_direct_attempt_pins_rs3_query_origin_and_width(monkeypatch):
     assert arena.caches is None and arena.pos==0 and arena.live_segs==[]
     arena.width=2
     with pytest.raises(x.X3Error,match='width'):prepare_attempt(arena,[1,0])
+
+@pytest.fixture
+def synthetic_run(tmp_path,monkeypatch):
+    """Real four-cell receipt layout, real DET1 blobs, CPU logits; no GPU mocks.
+    Prior art: house DET1 FakeArena/capture oracle (2026), reused unchanged.
+    Own fixture exercises discovery through validation to registered reporting.
+    """
+    import importlib.util
+    from scripts import grm_x3_lead as lead, grm_det1_3_snapshot as snap
+    reg,fixtures=x.validate_fixtures()
+    spec=importlib.util.spec_from_file_location('x3_summary_helpers',x.ROOT/'tests/test_grm_det1_3_snapshot.py')
+    helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(helper)
+    out=tmp_path/'artifacts/grm_x3'
+    x.create(out/'registration.json',reg)
+    x.create(out/'fixtures/manifest.json',{'synthetic':True})
+    x.create(out/'implementation_manifest.json',{'synthetic':True})
+    for name in ('grm_x3_lead.py','grm_x3_diagnostic.py'):
+        p=tmp_path/'scripts'/name;p.parent.mkdir(exist_ok=True);p.write_bytes((x.ROOT/'scripts'/name).read_bytes())
+    rt={'registration_sha256':x.sha(out/'registration.json'),'fixtures_sha256':x.sha(out/'fixtures/manifest.json'),
+        'implementation_sha256':x.sha(out/'implementation_manifest.json'),'model_id':reg['model_id'],'frame':reg['frame']}
+    rt['fingerprint']=x.digest(rt);run=out/'runs'/rt['fingerprint']
+    def record(path):return {'path':str(path.relative_to(tmp_path)),'sha256':x.sha(path)}
+    for ci in range(4):
+        d=run/f'cell_{ci:02d}';rows=[]
+        for fixture in fixtures[ci*5:(ci+1)*5]:
+            i=int(fixture['id'].split('_')[1]);rd=d/fixture['id']
+            path=snap.capture_arena_snapshot(helper._multi_mount_arena('injection'),rd/'snapshot',label='lived',
+                provenance=helper.provenance('lived','lived-process'),question='What is the value?',prompt_ids=[7,8,9],
+                admission_plan=helper._declared_synthesis_admission(),live_token_ids=[],sink_text='<sink>',
+                sink_token_ids=[1,2],explicit_identity=helper.IDENTITY)
+            spans={'sham':(2,3),'target':(3,5)};base=x.load_capture(path,spans)
+            payload={k:np.full_like(v[:,:,3:5,:],7) for k,v in base.arrays.items() if k.startswith('injection.')}
+            np.savez(rd/'donor_payload.npz',**payload)
+            logits=np.array([3.,0.]);np.save(rd/'unforked.npy',logits)
+            group=fixture['intended_group']
+            answer=fixture['expected_values'][0] if group=='correct' else fixture['decoy_value'] if group=='decoy' else 'unknown'
+            r={'id':fixture['id'],'intended_group':group,'mass':.5 if i%4>=2 else .1,
+                'outcome':x.outcome(answer,fixture),'snapshot':record(path),'spans':spans,
+                'donor_payload':record(rd/'donor_payload.npz'),'unforked_logits':record(rd/'unforked.npy'),'forks':{}}
+            for arm in x.ARMS:
+                other=logits[::-1].copy() if arm in ('remove','swap') and i%2 else logits.copy()
+                np.save(rd/f'{arm}.npy',other)
+                r['forks'][arm]={**x.distribution_delta(logits,other),'logits':record(rd/f'{arm}.npy'),
+                    'delta_pin':x.verify_delta(base,x.fork(base,arm,payload),arm,payload)}
+            x.create(rd/'result.json',r);rows.append(r)
+        x.create(d/'started.json',{'cell':d.name,'fingerprint':rt['fingerprint'],'runtime':rt})
+        x.create(d/'worker_result.json',{'cell':d.name,'fingerprint':rt['fingerprint'],'results':rows})
+        x.create(d/'receipt.json',{'cell':d.name,'fingerprint':rt['fingerprint'],'status':'COMPLETE',
+            'worker_result_sha256':x.sha(d/'worker_result.json')})
+    monkeypatch.setattr(lead,'ROOT',tmp_path);monkeypatch.setattr(lead,'OUT',out)
+    monkeypatch.setattr(lead,'validate_fixtures',lambda:(reg,fixtures))
+    # validate_worker imports this validator locally too.
+    monkeypatch.setattr(x,'validate_fixtures',lambda:(reg,fixtures))
+    return lead,run
+
+
+def test_summary_existing_run_directory_real_layout(synthetic_run,monkeypatch):
+    from scripts import grm_det1_3_snapshot as snap
+    lead,run=synthetic_run
+    original=snap.load_snapshot;calls=[]
+    def counted(path):calls.append(path);return original(path)
+    monkeypatch.setattr(snap,'load_snapshot',counted)
+    # Historical summary must not depend on the current runtime/GPU/source pins.
+    monkeypatch.setattr(lead,'runtime',lambda:pytest.fail('live runtime queried'))
+    s=lead.summary()
+    assert len(calls)==20  # one manifest validation per snapshot, not per array
+    assert s['run_fingerprint']==run.name and s['observed_snapshots']==20
+    assert not s['receipt_errors'] and s['realized_strata']
+    assert all(c['n']==5 and c['exact_errors']==3 and c['error_rate']==.6 for c in s['table'])
+    assert s['predictions']=={'P1':True,'P2':False,'P3':False,'Q1':True,'Q2':True,'Q3':True}
+    assert s['controls']['sham']['kl_max_nats']==0
+    assert s['controls']['same_payload']['raw_logits_byte_equal_count']==20
+    assert len(s['source_receipts'])==32
+    assert s['status']=='RED_KILL'
+
+
+def test_summary_ambiguous_run_requires_explicit_fingerprint(synthetic_run):
+    lead,run=synthetic_run
+    (run.parent/'another_run').mkdir()
+    with pytest.raises(x.X3Error,match='exactly one run'):lead.summary()
+    assert lead.summary(run.name)['observed_snapshots']==20
+    with pytest.raises(x.X3Error,match='unknown summary'):lead.summary('../escape')
+
+
+@pytest.mark.parametrize('corruption',['runtime','receipt','worker','result','blob'])
+def test_summary_rejects_corrupt_existing_receipts(synthetic_run,corruption):
+    from scripts.grm_det1_3_snapshot import SnapshotError
+    lead,run=synthetic_run;d=run/'cell_00'
+    if corruption=='blob':
+        p=next((d/'x3_00/snapshot/blobs').iterdir());b=bytearray(p.read_bytes());b[0]^=1;p.write_bytes(b)
+    else:
+        p=d/{'runtime':'started.json','receipt':'receipt.json','worker':'worker_result.json','result':'x3_00/result.json'}[corruption]
+        data=json.loads(p.read_text())
+        if corruption=='runtime':data['runtime']['model_id']='wrong'
+        elif corruption=='receipt':data['fingerprint']='wrong'
+        elif corruption=='worker':data['results']=[]
+        else:data['mass']=.99
+        p.write_text(json.dumps(data))
+    with pytest.raises((x.X3Error,SnapshotError)):lead.summary()
+
+
+def test_summary_missing_start_reports_receipt_error(synthetic_run):
+    lead,run=synthetic_run
+    (run/'cell_00/started.json').unlink()
+    s=lead.summary()
+    assert s['status']=='RED_RECEIPTS' and s['observed_snapshots']==15
+    assert any('missing start' in e for e in s['receipt_errors'])
+    assert all(v is None for v in s['predictions'].values())
