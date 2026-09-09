@@ -1,0 +1,63 @@
+{
+  "cpu_files_total": 66,
+  "extra_commands": [
+    [
+      "tests/test_gpt_oss20b_context_ladder.py"
+    ],
+    [
+      "tests/test_gqa_ragged_cuda_bank.py"
+    ],
+    [
+      "tests/test_qwen35_translation_poc.py"
+    ],
+    [
+      "tests/test_gpt_oss20b_scaffold.py::test_gpt_oss_config_parses_pinned_metadata",
+      "tests/test_gpt_oss20b_scaffold.py::test_resolve_gpt_oss_attention_mode_scopes_apa_to_full_layers",
+      "tests/test_gpt_oss20b_scaffold.py::test_gpt_oss_grm_dialect_uses_native_gqa_remount_profile",
+      "tests/test_gpt_oss20b_scaffold.py::test_mxfp4_dequantize_blocks_matches_reference_layout",
+      "tests/test_gpt_oss20b_scaffold.py::test_gpt_oss_expert_activation_np_matches_formula",
+      "tests/test_gpt_oss20b_scaffold.py::test_gpt_oss_20b_tc_dialect_kwargs_key_off_type_name"
+    ]
+  ],
+  "known_attempted_gpu_nodes": "ten tests in initial quant-format/importance-telemetry lanes; errors retained and separately classified",
+  "mixed_file_gpu_only_exclusion": "tests/test_gpt_oss20b_scaffold.py tests calling _require_tensor_cuda; CPU nodes run individually",
+  "per_call_seconds": 285,
+  "prior_art": "WC1 CPU sharding (project,2026); no new algorithm, additional source-reviewed inventory only",
+  "reason": "Audit excluded files by actual test bodies, not filename. Add three full CPU modules and six CPU-only scaffold nodes; remaining scaffold tests require real CUDA. No test assertion changes.",
+  "registration_sha256": "8a3a27302c41f2980f883666657f7d871c5ad01d195953e017804717d3644eb0",
+  "remaining_exclusions": [
+    "tests/test_gemma4_apa.py",
+    "tests/test_gemma4_longctx.py",
+    "tests/test_gemma4_parity.py",
+    "tests/test_gemma4_state.py",
+    "tests/test_graft_corpus100.py",
+    "tests/test_graft_descent.py",
+    "tests/test_graft_e1_mla.py",
+    "tests/test_graft_e1_mla_round1.py",
+    "tests/test_graft_e1_round1.py",
+    "tests/test_graft_e1_router.py",
+    "tests/test_graft_e2_digest.py",
+    "tests/test_graft_e4_arena.py",
+    "tests/test_graft_e4_consolidated.py",
+    "tests/test_graft_e4_conversation.py",
+    "tests/test_graft_e4_trips.py",
+    "tests/test_graft_gqa_arena.py",
+    "tests/test_graft_gqa_descent.py",
+    "tests/test_graft_gqa_features.py",
+    "tests/test_graft_gqa_repository.py",
+    "tests/test_graft_infinite.py",
+    "tests/test_graft_librarian.py",
+    "tests/test_graft_migrate.py",
+    "tests/test_graft_mla_gate.py",
+    "tests/test_graft_paging.py",
+    "tests/test_graft_repository.py",
+    "tests/test_quant_linear_tc_intn.py",
+    "tests/test_qwen35_apa.py",
+    "tests/test_qwen35_parity.py",
+    "tests/test_qwen35_state.py",
+    "tests/test_scribe_fit_probe.py",
+    "tests/test_scribe_floor_gates.py",
+    "tests/test_scribe_g0.py",
+    "tests/test_scribe_resume_kill.py"
+  ]
+}

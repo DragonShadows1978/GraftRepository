@@ -1,0 +1,123 @@
+{
+  "batteries": {
+    "census": {
+      "arms": {
+        "profile": {
+          "phases": {
+            "fresh": {
+              "complete": false,
+              "correct": 0,
+              "rows": {}
+            },
+            "restart": {
+              "complete": false,
+              "correct": 0,
+              "rows": {}
+            }
+          },
+          "restart_retained": false,
+          "evidence_complete": true
+        },
+        "defaults": {
+          "phases": {
+            "fresh": {
+              "complete": false,
+              "correct": 0,
+              "rows": {}
+            },
+            "restart": {
+              "complete": false,
+              "correct": 0,
+              "rows": {}
+            }
+          },
+          "restart_retained": false,
+          "evidence_complete": true
+        }
+      },
+      "controls_unchanged": false,
+      "fix_validation_exact": false,
+      "adoption_acceptance": false
+    },
+    "longhistory": {
+      "arms": {
+        "profile": {
+          "phases": {
+            "fresh": {
+              "complete": false,
+              "correct": 0,
+              "rows": {}
+            },
+            "restart": {
+              "complete": false,
+              "correct": 0,
+              "rows": {}
+            }
+          },
+          "restart_retained": false,
+          "evidence_complete": true
+        },
+        "defaults": {
+          "phases": {
+            "fresh": {
+              "complete": false,
+              "correct": 0,
+              "rows": {}
+            },
+            "restart": {
+              "complete": false,
+              "correct": 0,
+              "rows": {}
+            }
+          },
+          "restart_retained": false,
+          "evidence_complete": true
+        }
+      },
+      "controls_unchanged": false,
+      "fix_validation_exact": false,
+      "adoption_acceptance": false
+    },
+    "sup": {
+      "arms": {
+        "profile": {
+          "phases": {
+            "fresh": {
+              "complete": false,
+              "correct": 0,
+              "rows": {}
+            },
+            "restart": {
+              "complete": false,
+              "correct": 0,
+              "rows": {}
+            }
+          },
+          "restart_retained": false,
+          "evidence_complete": true
+        },
+        "defaults": {
+          "phases": {
+            "fresh": {
+              "complete": false,
+              "correct": 0,
+              "rows": {}
+            },
+            "restart": {
+              "complete": false,
+              "correct": 0,
+              "rows": {}
+            }
+          },
+          "restart_retained": false,
+          "evidence_complete": true
+        }
+      },
+      "controls_unchanged": false,
+      "fix_validation_exact": false,
+      "adoption_acceptance": false
+    }
+  },
+  "adopt": false,
+  "fix_validation": false
+}

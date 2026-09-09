@@ -1,0 +1,16 @@
+{
+  "files": {
+    "scripts/grm_c2_cells.py": "fb942daf29086ed5a8e2b5a9e70da2571cd5e29cd6bda3a66fd9468df9f5826b",
+    "tests/test_grm_c2_payload.py": "b64bd2a85df930c7286b3b3e8891b1afb76eb38c5022c0b01fdf9b2959fed1a4"
+  },
+  "gates": [
+    "payload_pending rejected",
+    "missing durable NPZ rejected",
+    "existing durable NPZ accepted; checkpoint content hash remains separately verified"
+  ],
+  "prior_driver": "artifacts/grm_c2/driver_A4.py",
+  "prior_driver_sha256": "4a083a05069423e8a06d5019cbfa2d59381f9278317d6c9e418b885872964839",
+  "reason": "Apply payload presence and prior content fingerprint checks to fresh-session continuation too, not only post-capture restart. Inherited/missing payload remains RED; no recapture.",
+  "registration_sha256": "8a3a27302c41f2980f883666657f7d871c5ad01d195953e017804717d3644eb0",
+  "unchanged": "registry/order/thresholds/predictions/budget/product code"
+}

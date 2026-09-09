@@ -1,0 +1,16 @@
+{
+  "budget_deviation": "Campaign exceeds total registered budget; no worker authorized until a separate lead-reviewed planning amendment. Per-cell estimates are not measured GPU results.",
+  "files": {
+    "scripts/grm_c2_cells.py": "a743704a2cb5501822e26b4630d684f7f59fd2b3ad35d0b7b51b1e30452e1205",
+    "tests/test_grm_c2_profile.py": "2328379accafab1083f04aeaa7c9e178c37db7def1349a701f27d6e455d577c8"
+  },
+  "gates": [
+    "opt-in exactly registered flags; no ambient effects",
+    "shipped width256 and 19-token sink",
+    "52 cells exact coverage and dependency ordering;3140>2880 non-fit must refuse GPU",
+    "capture grades, B5 sum, missing/duplicate/changed evidence",
+    "CPU ordinary manifest checkpoint and new subprocess reload without recapture"
+  ],
+  "prior_art": "Local DET1/EB1/WC1/RT1.1/RS3/SCOUT-FIX-1 (2026); reuse serving and persistence by import. New checkpoint replay and opt-in adapter; no new algorithm claim.",
+  "registration_sha256": "8a3a27302c41f2980f883666657f7d871c5ad01d195953e017804717d3644eb0"
+}
