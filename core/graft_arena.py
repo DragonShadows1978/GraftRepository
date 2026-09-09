@@ -48,6 +48,7 @@ from core import grm_demand
 from core.grm_text_norm import normalize_glyphs
 from core.grm_admission import (
     admission_info_fields,
+    admission_rule,
     adm_decisive_enabled,
     chunk_trip_cap,
     decisive_admission_profile,
@@ -210,6 +211,7 @@ class ArenaCache:
             return None
         receipt = {
             "schema": "grm_route_seams_route_v1",
+            "admission_rule": admission_rule(),
             "requested_backend": self._route_backend_request(),
             "epoch": int(getattr(self, "_cuda_gqa_epoch", 0)),
             "terms_ms": {},

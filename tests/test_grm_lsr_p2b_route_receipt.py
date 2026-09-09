@@ -114,8 +114,9 @@ def test_route_receipt_sha_is_canonical_and_stable():
     assert first["schema"] == ROUTE_RECEIPT_SCHEMA
     assert first == second
     assert first["receipt_sha256"] == route_receipt_sha256(first)
-    # Registered value: this exact fixture hashes here.  A change to the
-    # record's shape must be a NEW schema version, not a silent re-stamp.
+    # Prior art: P2B canonical receipt hash pin (GRM, 2026).
+    # FIX6 explicitly authorizes one additive rule key; pin both the new
+    # receipt and the old projection so no other shape/value change hides.
     #
     # RE-BLESSED once, at the P2A/P2B merge:
     #   ac66373ed5c9cdce08b2c92389177155331350358074f76cd3113eababe28c2f
@@ -124,6 +125,11 @@ def test_route_receipt_sha_is_canonical_and_stable():
     #   shuttle rungs are distinguishable from ordinary trips.  Sole pin in
     #   the tree; no persisted artifact carried the old value.
     assert first["receipt_sha256"] == (
+        "12207f5b597d0e54830a405f128a8012b8e26f7f63cf71aebac98bbeb04e20aa")
+    import copy
+    legacy = copy.deepcopy(first)
+    assert legacy["admission"].pop("admission_rule") == "all_tokens_bind"
+    assert route_receipt_sha256(legacy) == (
         "0610400b35176d14fca9e37fb7b9a8ce2530156f7d7936e6479a44d13de04614")
     # The sha covers the record MINUS the stamp.
     payload = {k: v for k, v in first.items() if k != "receipt_sha256"}

@@ -70,6 +70,51 @@ def adm_decisive_cli_argv(enabled: bool) -> list[str]:
     return ["--adm-decisive"] if enabled else ["--no-adm-decisive"]
 
 
+ADMISSION_RULE_ENV = "GRM_ADMISSION_RULE"
+
+
+def admission_rule(environ: Mapping[str, str] | None = None) -> str:
+    """FIX-6 is opt-in; unset/unknown values retain the frozen default."""
+    env = os.environ if environ is None else environ
+    return "margin_first" if env.get(ADMISSION_RULE_ENV) == "margin_first" else "all_tokens_bind"
+
+
+def shaped_identifier_tokens(arena: Any, question: str) -> list[str]:
+    # Prior art: LT1 offline shaped_tokens, GRM contributors (2026).
+    # Exact port of the lexical proxy and stop list, not an entity recognizer.
+    normalized = arena._norm_text(question)
+    selected = set(arena._rare_tokens(question))
+    for raw in re.findall(r"[A-Za-z0-9][\w:.,\-]*", normalized):
+        raw = raw.rstrip(".,:;")
+        low = raw.casefold()
+        if low in arena._QUERY_LEX_STOP or len(low) < 2:
+            continue
+        if raw[:1].isupper() or "-" in raw:
+            selected.add(low)
+    return list(dict.fromkeys(w for w in normalized_words(normalized) if w in selected))
+
+
+def margin_first_plan(*, ranking: Sequence[int], route_margin_1_2: float,
+                      identified_candidates: Iterable[int],
+                      scores: Mapping[int, float] | None = None) -> tuple[list[int], str, list[int]]:
+    # Prior art: LT1 offline Rule2 / A-DEC / RT1 stable partition, GRM (2026).
+    # Borrow strict frozen margin and EXACT top-score tie-break verbatim.
+    # New: shared production entrypoint; no prior art known for exact composition.
+    ranked = list(ranking)
+    if not ranked:
+        return [], "empty_ranking", ranked
+    if route_margin_1_2 > MARGIN_THRESHOLD:
+        return ranked[:1], "fit_margin_decisive_rank1", ranked
+    hits = set(identified_candidates)
+    if scores:
+        tied = [i for i in ranked if scores.get(i) == scores.get(ranked[0])]
+        ranked = ([i for i in tied if i in hits] + [i for i in tied if i not in hits]
+                  + [i for i in ranked if i not in tied])
+    elif route_margin_1_2 == 0.0 and len(ranked) > 1 and hits.intersection(ranked):
+        raise AdmissionPolicyError("MISSING_TIED_SCORE_GROUP")
+    return ranked[:3], "margin_insurance_k3_identifier_tiebreak", ranked
+
+
 def normalized_words(text: str) -> list[str]:
     """ADM1's frozen word normalization, byte-for-byte in semantics."""
     return [
@@ -359,6 +404,8 @@ def decisive_admission_profile(
     binding makes the fitted margin branch decision-relevant (and for small
     diagnostic banks where it is bounded).
     """
+    rule = admission_rule()
+    margin_first = rule == "margin_first"
     excluded = {int(value) for value in exclude}
     eligible = [
         int(value) for value in arena._route_cand_base()
@@ -368,6 +415,7 @@ def decisive_admission_profile(
         plan, branch = policy_plan(
             ranking=(), identified_candidates=(), route_margin_1_2=0.0)
         empty = {
+            "admission_rule": rule,
             "ranking": [],
             "identified_candidates": [],
             "identifier_tokens": [],
@@ -401,6 +449,9 @@ def decisive_admission_profile(
     route_backend = str(getattr(arena, "last_route_backend", "unknown"))
 
     ordered, rare = ordered_identifier_tokens(arena, question)
+    if margin_first:
+        ordered = shaped_identifier_tokens(arena, question)
+        rare = set(ordered)
     identified_set = {
         index for index in eligible
         if is_identifier_binding(
@@ -424,7 +475,7 @@ def decisive_admission_profile(
     ranking_before = list(ranking)
     rt1_demoted: list[int] = []
     rt1_members: set[int] = set()
-    if rt1_enabled(arena) and ranking:
+    if not margin_first and rt1_enabled(arena) and ranking:
         member_probe = getattr(arena, "_split_family_members", None)
         if callable(member_probe):
             rt1_members = {int(value) for value in member_probe(ranking)}
@@ -458,7 +509,8 @@ def decisive_admission_profile(
         and ranking
         and identified[0] != ranking[0]
     )
-    if len(eligible) <= 16 or margin_relevant:
+    scores = None
+    if margin_first or len(eligible) <= 16 or margin_relevant:
         base = arena._vector_route_scores(probe_key, eligible)
         if base is None:
             base = {}
@@ -504,7 +556,12 @@ def decisive_admission_profile(
         identified_candidates=identified,
         route_margin_1_2=margin,
     )
+    if margin_first:
+        plan, branch, ranking = margin_first_plan(
+            ranking=ranking_before, route_margin_1_2=margin,
+            identified_candidates=identified, scores=scores)
     profile = {
+        "admission_rule": rule,
         "ranking": [int(value) for value in ranking],
         "identified_candidates": [int(value) for value in identified],
         "identifier_tokens": list(ordered),
@@ -700,7 +757,7 @@ def identifier_unbound_abstention(
     falls through.  That class is an open David question, deliberately
     untouched.
     """
-    if not profile:
+    if not profile or profile.get("admission_rule") == "margin_first":
         return None
     tokens = [str(value) for value in profile.get("identifier_tokens", ())]
     if not tokens:
@@ -811,6 +868,7 @@ def split_info_fields(
 def admission_info_fields(profile: Mapping[str, Any]) -> dict[str, Any]:
     """Compact deterministic arena receipt fields for a selected plan."""
     fields = {
+        "admission_rule": profile.get("admission_rule", "all_tokens_bind"),
         "admission_policy": "A-DEC",
         "admission_policy_branch": str(profile["policy_branch"]),
         "admission_rank_plan": [int(value) for value in profile["rank_plan"]],
