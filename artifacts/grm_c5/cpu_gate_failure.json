@@ -1,0 +1,120 @@
+{
+  "schema": "grm.c5.receipt_failure.v1",
+  "exitstatus": 1,
+  "passed": false,
+  "error": "FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c5/_classes.py'",
+  "log": {
+    "path": "/mnt/ForgeRealm/wt/grm-c5/artifacts/grm_c5/cpu_gate.log",
+    "sha256": "eb4a0141dc15e89b3c220bbe1c0a161dd783c4238eb3895231f1eef741d78434"
+  },
+  "registration_sha256": "8127ddcf3768b2a30fa789abf5f61d0ba55ef58a8e56d4230838d4fc411c8964",
+  "execution_source_fingerprints": [
+    {
+      "bytes": 0,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/adapters/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2003,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/adapters/tokenizer.py",
+      "sha256": "e7c5ec1340910318708418963e55fc4dd334eefdd75fa0b902ae2446dd3d0859"
+    },
+    {
+      "bytes": 0,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 265082,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/graft_arena.py",
+      "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b"
+    },
+    {
+      "bytes": 14227,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/graft_quant.py",
+      "sha256": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130"
+    },
+    {
+      "bytes": 35998,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_admission.py",
+      "sha256": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f"
+    },
+    {
+      "bytes": 29224,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_demand.py",
+      "sha256": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3"
+    },
+    {
+      "bytes": 9742,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_frame.py",
+      "sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2"
+    },
+    {
+      "bytes": 1789,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_supersession.py",
+      "sha256": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e"
+    },
+    {
+      "bytes": 3576,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_text_norm.py",
+      "sha256": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8"
+    },
+    {
+      "bytes": 11171,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/kv_graft.py",
+      "sha256": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d"
+    },
+    {
+      "bytes": 34465,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/mistral7b_tc.py",
+      "sha256": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4"
+    },
+    {
+      "bytes": 13451,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_c5_offline.py",
+      "sha256": "3f21d993993b6beb878b3d4d279c7f13ae23100ccc8f60295bb6b987a0e18cbd"
+    },
+    {
+      "bytes": 13137,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_c5_register.py",
+      "sha256": "9fb1f609f973e60fe06cd144710817bf601b31c253d0ee54a3e44d1436b5396e"
+    },
+    {
+      "bytes": 5465,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_c5_rules.py",
+      "sha256": "15cafb21100314e852b7c6bd8ef7ede84a36caaa7aa31963c3960eb256011dd8"
+    },
+    {
+      "bytes": 41298,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_det1_common.py",
+      "sha256": "f13f44cfa6f87dc57cec4ae9bf7fe509a6fbd0be983746202ad64da18a4d8343"
+    }
+  ],
+  "fingerprint_limit": "Pytest hook failed; prior offline source fingerprints plus submitted test/plugin fingerprints retained, full failed-process import inventory unavailable.",
+  "submitted_test_and_plugin_sources": [
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_c5_pytest_receipt.py",
+      "sha256": "a4378623c853eff7e0254c676f36c0a17959b5084aa7532d0f05c9509bea83b2"
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c5/tests/test_grm_c5_grounding.py",
+      "sha256": "0975d554603073890e7891e002bdb594c20ff207d6c215940d9b2d6cfc95c940"
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c5/tests/test_grm_sc1_1_grounding_glyphs.py",
+      "sha256": "56baf065687cf83df5018e6db507111fe8f1d1e4a2a3424421f81e13835d439b"
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c5/tests/test_grm_admission.py",
+      "sha256": "9bed2cb348b83ed847e1ddf3894bea94d529d8d20c15518dac515e67f22936ef"
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c5/tests/test_grm_eb1_ephemeral_frame.py",
+      "sha256": "434f051fc2528e08f38f7c62442ee336770e6dd6818e18f37e6b01aa574816a3"
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c5/tests/test_grm_rt1_split_child_routing.py",
+      "sha256": "97360ee9c2078a18d2e7e2fca7835ac12a5899a798726d8a431da1b255da3ed0"
+    }
+  ]
+}

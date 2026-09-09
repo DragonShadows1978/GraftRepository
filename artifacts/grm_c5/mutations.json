@@ -1,0 +1,222 @@
+{
+  "baseline": {
+    "bytes": 6663,
+    "path": "/mnt/ForgeRealm/wt/grm-c5/artifacts/grm_c5/cpu_gate_r2.json",
+    "sha256": "9a8c4527c596a9ec5bd8d000018155006178fe7119e4058c3450534cd86f838a"
+  },
+  "cell": "mutation-gate",
+  "evidence_class": "CPU finite validation",
+  "executable": "/usr/bin/python",
+  "executed_sources": [
+    {
+      "bytes": 0,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/adapters/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2003,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/adapters/tokenizer.py",
+      "sha256": "e7c5ec1340910318708418963e55fc4dd334eefdd75fa0b902ae2446dd3d0859"
+    },
+    {
+      "bytes": 0,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 265082,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/graft_arena.py",
+      "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b"
+    },
+    {
+      "bytes": 14227,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/graft_quant.py",
+      "sha256": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130"
+    },
+    {
+      "bytes": 35998,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_admission.py",
+      "sha256": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f"
+    },
+    {
+      "bytes": 29224,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_demand.py",
+      "sha256": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3"
+    },
+    {
+      "bytes": 9742,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_frame.py",
+      "sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2"
+    },
+    {
+      "bytes": 1789,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_supersession.py",
+      "sha256": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e"
+    },
+    {
+      "bytes": 3576,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_text_norm.py",
+      "sha256": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8"
+    },
+    {
+      "bytes": 11171,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/kv_graft.py",
+      "sha256": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d"
+    },
+    {
+      "bytes": 34465,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/mistral7b_tc.py",
+      "sha256": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4"
+    },
+    {
+      "bytes": 14151,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_c5_offline.py",
+      "sha256": "feb0d1bc7c9c655b0eba6e78dfbd6d4d5c431dadc92ab12c1adcc5800010603a"
+    },
+    {
+      "bytes": 13137,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_c5_register.py",
+      "sha256": "9fb1f609f973e60fe06cd144710817bf601b31c253d0ee54a3e44d1436b5396e"
+    },
+    {
+      "bytes": 5465,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_c5_rules.py",
+      "sha256": "15cafb21100314e852b7c6bd8ef7ede84a36caaa7aa31963c3960eb256011dd8"
+    },
+    {
+      "bytes": 41298,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_det1_common.py",
+      "sha256": "f13f44cfa6f87dc57cec4ae9bf7fe509a6fbd0be983746202ad64da18a4d8343"
+    }
+  ],
+  "gpu_seconds": 0,
+  "kill_fraction": 1.0,
+  "passed": true,
+  "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+  "registration": {
+    "bytes": 94329,
+    "path": "/mnt/ForgeRealm/wt/grm-c5/artifacts/grm_c5/registration.json",
+    "sha256": "8127ddcf3768b2a30fa789abf5f61d0ba55ef58a8e56d4230838d4fc411c8964"
+  },
+  "rows": [
+    {
+      "edit": {
+        "new": "DEFAULT_RULE = \"S\"",
+        "old": "DEFAULT_RULE = \"0\""
+      },
+      "error_mutant": false,
+      "executed_copy": {
+        "bytes": 5465,
+        "path": "/tmp/grm_c5_mutants_vunstn_s/default_S.py",
+        "sha256": "3156013c13058884a4c3946c953f61bc7764080097ee5ae5fb25cc1ae1f8f8de"
+      },
+      "failed_checks": [
+        "default_pin"
+      ],
+      "killed": true,
+      "mutant": "default_S"
+    },
+    {
+      "edit": {
+        "new": "return True, {0}",
+        "old": "return bool(contributors), contributors"
+      },
+      "error_mutant": false,
+      "executed_copy": {
+        "bytes": 5442,
+        "path": "/tmp/grm_c5_mutants_vunstn_s/accept_all.py",
+        "sha256": "6c4a35835bbcbc9271dc8c0a325071858113c50edb454c7c015f8c25debcb764"
+      },
+      "failed_checks": [
+        "control:S:changed_digit:S",
+        "control:S:changed_digit:N",
+        "control:S:omitted_token:S",
+        "control:S:omitted_token:N",
+        "control:S:swapped_relation:S",
+        "control:S:swapped_relation:N",
+        "control:S:negation:S",
+        "control:S:negation:N",
+        "control:S:scattered_word:S",
+        "control:S:scattered_word:N",
+        "control:S:alias_collision:S",
+        "control:S:alias_collision:N",
+        "control:S:source_negation:S",
+        "control:S:source_negation:N",
+        "control:S:split_across_mounts:S",
+        "control:S:split_across_mounts:N",
+        "control:S:extra_token:S",
+        "control:S:extra_token:N",
+        "control:S:source_suffix:S",
+        "control:S:source_suffix:N",
+        "control:N:changed_digit:S",
+        "control:N:changed_digit:N",
+        "control:N:omitted_token:S",
+        "control:N:omitted_token:N",
+        "control:N:scattered_word:S",
+        "control:N:scattered_word:N",
+        "control:N:split_across_mounts:S",
+        "control:N:split_across_mounts:N",
+        "control:N:extra_token:S",
+        "control:N:extra_token:N",
+        "control:N:source_suffix:S",
+        "control:N:source_suffix:N"
+      ],
+      "killed": true,
+      "mutant": "accept_all"
+    },
+    {
+      "edit": {
+        "new": "separator_fold=False",
+        "old": "separator_fold=rule == \"S\""
+      },
+      "error_mutant": false,
+      "executed_copy": {
+        "bytes": 5459,
+        "path": "/tmp/grm_c5_mutants_vunstn_s/S_uses_N.py",
+        "sha256": "e1e535e03ff986d54db575f938e5c122f10d707b2b66bf10428c0fd2e1767468"
+      },
+      "failed_checks": [
+        "S_recovery"
+      ],
+      "killed": true,
+      "mutant": "S_uses_N"
+    },
+    {
+      "edit": {
+        "new": "if rule == \"W\":\n        return baseline",
+        "old": "if rule == \"W\":"
+      },
+      "error_mutant": false,
+      "executed_copy": {
+        "bytes": 5489,
+        "path": "/tmp/grm_c5_mutants_vunstn_s/W_uses_baseline.py",
+        "sha256": "3af238fd248a998dd41ec7dbfb5e3af77f6a0a29eea2facd8134129b19ff9ee1"
+      },
+      "failed_checks": [
+        "W_prediction"
+      ],
+      "killed": true,
+      "mutant": "W_uses_baseline"
+    },
+    {
+      "edit": {
+        "new": "if rule == \"N\":\n        return baseline\n    contributors = _span_support(",
+        "old": "contributors = _span_support("
+      },
+      "error_mutant": false,
+      "executed_copy": {
+        "bytes": 5509,
+        "path": "/tmp/grm_c5_mutants_vunstn_s/N_uses_baseline.py",
+        "sha256": "3bb0bc59e87ed03bb4437981d7fb5021cc377442aa20ab7ea4e5f2c5489abde4"
+      },
+      "failed_checks": [
+        "N_bound_name"
+      ],
+      "killed": true,
+      "mutant": "N_uses_baseline"
+    }
+  ],
+  "schema": "grm.c5.receipt.v1",
+  "source_unchanged": true,
+  "unresolvable_module_file_metadata": []
+}

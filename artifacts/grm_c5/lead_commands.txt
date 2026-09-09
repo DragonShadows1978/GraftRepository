@@ -1,0 +1,31 @@
+#!/bin/sh
+# GRM-C5: exact foreground CPU replay, in dependency order.
+# Prior art: GRM immutable cell/receipt workflow (2026); reused as-is.
+# Registration already exists and MUST NOT be regenerated or overwritten.
+# Fresh output directory preserves every prior RED and successful receipt.
+set -eu
+cd /mnt/ForgeRealm/wt/grm-c5
+export PYTHONDONTWRITEBYTECODE=1
+export CUDA_VISIBLE_DEVICES=''
+export PYTHONPATH=/mnt/ForgeRealm/wt/grm-c5
+c5_lead_output=$(mktemp -d /tmp/grm-c5-lead.XXXXXX)
+
+python scripts/grm_c5_offline.py --dry-run --output "$c5_lead_output/dry_run.json"
+
+# Exit 2 is the scientific RED result, not a harness error. Preserve it.
+if python scripts/grm_c5_offline.py --offline --output "$c5_lead_output/offline.json"
+then
+    c5_science_exit=0
+else
+    c5_science_exit=$?
+    test "$c5_science_exit" -eq 2
+fi
+
+python scripts/grm_c5_offline.py --cpu-gate --output "$c5_lead_output/cpu_gate.json"
+python scripts/grm_c5_offline.py --mutations --baseline "$c5_lead_output/cpu_gate.json" --output "$c5_lead_output/mutations.json"
+python scripts/grm_c5_offline.py --integrity --output "$c5_lead_output/integrity.json"
+printf 'Receipts: %s\nScientific exit status: %s\n' "$c5_lead_output" "$c5_science_exit"
+
+# GPU CELLS: NONE. All selected served texts exist; missing RT1 mount text
+# is a historical data blocker. Do not rerun a GPU session as a substitute.
+# Lead blind verification is a separate dispatch under HOUSE_RULES section 8.

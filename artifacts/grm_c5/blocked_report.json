@@ -1,0 +1,169 @@
+{
+  "blind_verification": "Pending lead-owned independent dispatch; prohibited to this seat by order",
+  "blocked_cells": 72,
+  "blocked_fixtures": [
+    "RT1:rule_off:sup_harbor_restatement",
+    "RT1:rule_off:sup_reserve_juniper_pass",
+    "RT1:rule_off:sup_praxis_fresh",
+    "RT1:rule_off:sup_solace_fresh",
+    "RT1:rule_off:sup_reserve_tundra_ledger",
+    "RT1:rule_off:sup_lumen_head",
+    "RT1:rule_off:sup_reserve_meridian_docket",
+    "RT1:rule_off:sup_orion_current",
+    "RT1:rule_off:sup_reserve_falcon_registry",
+    "RT1:rule_on:sup_harbor_restatement",
+    "RT1:rule_on:sup_reserve_juniper_pass",
+    "RT1:rule_on:sup_praxis_fresh",
+    "RT1:rule_on:sup_solace_fresh",
+    "RT1:rule_on:sup_reserve_tundra_ledger",
+    "RT1:rule_on:sup_lumen_head",
+    "RT1:rule_on:sup_reserve_meridian_docket",
+    "RT1:rule_on:sup_orion_current",
+    "RT1:rule_on:sup_reserve_falcon_registry"
+  ],
+  "cell": "blocked-report",
+  "claim_scope": "A passing rule is a narrower grounding rule for a named class, not a prose-grounding certificate.",
+  "cpu_receipt": {
+    "bytes": 6663,
+    "path": "/mnt/ForgeRealm/wt/grm-c5/artifacts/grm_c5/cpu_gate_r2.json",
+    "sha256": "9a8c4527c596a9ec5bd8d000018155006178fe7119e4058c3450534cd86f838a"
+  },
+  "evidence_class": "CPU finite validation",
+  "executable": "/usr/bin/python",
+  "executed_sources": [
+    {
+      "bytes": 0,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/adapters/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2003,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/adapters/tokenizer.py",
+      "sha256": "e7c5ec1340910318708418963e55fc4dd334eefdd75fa0b902ae2446dd3d0859"
+    },
+    {
+      "bytes": 0,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 265082,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/graft_arena.py",
+      "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b"
+    },
+    {
+      "bytes": 14227,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/graft_quant.py",
+      "sha256": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130"
+    },
+    {
+      "bytes": 35998,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_admission.py",
+      "sha256": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f"
+    },
+    {
+      "bytes": 29224,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_demand.py",
+      "sha256": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3"
+    },
+    {
+      "bytes": 9742,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_frame.py",
+      "sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2"
+    },
+    {
+      "bytes": 1789,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_supersession.py",
+      "sha256": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e"
+    },
+    {
+      "bytes": 3576,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_text_norm.py",
+      "sha256": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8"
+    },
+    {
+      "bytes": 11171,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/kv_graft.py",
+      "sha256": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d"
+    },
+    {
+      "bytes": 34465,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/mistral7b_tc.py",
+      "sha256": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4"
+    },
+    {
+      "bytes": 14151,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_c5_offline.py",
+      "sha256": "feb0d1bc7c9c655b0eba6e78dfbd6d4d5c431dadc92ab12c1adcc5800010603a"
+    },
+    {
+      "bytes": 13137,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_c5_register.py",
+      "sha256": "9fb1f609f973e60fe06cd144710817bf601b31c253d0ee54a3e44d1436b5396e"
+    },
+    {
+      "bytes": 5465,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_c5_rules.py",
+      "sha256": "15cafb21100314e852b7c6bd8ef7ede84a36caaa7aa31963c3960eb256011dd8"
+    },
+    {
+      "bytes": 41298,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_det1_common.py",
+      "sha256": "f13f44cfa6f87dc57cec4ae9bf7fe509a6fbd0be983746202ad64da18a4d8343"
+    }
+  ],
+  "generator_note": "Document assembly from hash-bound gate receipts; source functions imported from scripts/grm_c5_offline.py. No model or GPU execution.",
+  "gpu_budget_hours_if_later_eligible": 0.4,
+  "gpu_cells": [],
+  "gpu_condition_met": false,
+  "gpu_condition_reason": "Every selected served answer exists. Missing mount text does not satisfy missing-served-text regeneration condition.",
+  "gpu_hours_estimate": 0,
+  "gpu_hours_used": 0,
+  "gpu_rails": {
+    "cooldown_seconds": 30,
+    "lock": "/tmp/forge-gpu.lock",
+    "non_fit": "Register non-fit; never extend or retry into a longer lease",
+    "outer_seconds": 590,
+    "worker_seconds": 285
+  },
+  "gpu_seconds": 0,
+  "initial_cpu_failure": {
+    "bytes": 4678,
+    "path": "/mnt/ForgeRealm/wt/grm-c5/artifacts/grm_c5/cpu_gate_failure.json",
+    "sha256": "3b326985d6549067f1e4e13d24d63648fa021fce576beffa3864c468b77e9bae"
+  },
+  "lead_commands": {
+    "bytes": 1445,
+    "path": "/mnt/ForgeRealm/wt/grm-c5/artifacts/grm_c5/lead_commands.txt",
+    "sha256": "1d6fb18dc40cd6bc1f20614485aa544fa5c5179ace0329c9bc32e3dc6f6a37b2"
+  },
+  "missing_input": "Exact RT1 historical mounted text indexed by the recorded mounted IDs, including split children; linked served receipts do not contain it.",
+  "needed_lead_action": "Locate or supply historical mounted-text receipts with source hashes; register an amendment binding them before rescoring those cells. No fixture-parent substitution.",
+  "not_claimed_fixed": [
+    "EB1/WC1 t33 admission eligibility",
+    "baseline relation and negation false acceptances",
+    "complete RT1 offline grounding"
+  ],
+  "offline_receipt": {
+    "bytes": 122089,
+    "path": "/mnt/ForgeRealm/wt/grm-c5/artifacts/grm_c5/offline_r2.json",
+    "sha256": "f40b639d1823d546c863de2553cb87829d4b2a2c7be6cbbf12b38d1ae5e07082"
+  },
+  "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+  "registration": {
+    "bytes": 94329,
+    "path": "/mnt/ForgeRealm/wt/grm-c5/artifacts/grm_c5/registration.json",
+    "sha256": "8127ddcf3768b2a30fa789abf5f61d0ba55ef58a8e56d4230838d4fc411c8964"
+  },
+  "schema": "grm.c5.receipt.v1",
+  "status": "RED",
+  "t33": {
+    "reason": "Existing output is an admission abstention, not an ungrounded correct value. Grounding-only alternatives do not change eligibility.",
+    "recorded_infer_calls": 0,
+    "recorded_mounts": [],
+    "served_text_exists": true,
+    "source_binds_under_0_and_N_if_eligible": true,
+    "source_excluded_live": true
+  },
+  "unresolvable_module_file_metadata": []
+}
