@@ -1,0 +1,17 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_forecast_all_24_reservations_fit_and_overrun_refused ___________
+
+    def test_forecast_all_24_reservations_fit_and_overrun_refused():
+        r = c.effective_registration()
+        used = 0
+        for cell in r['cells']:
+            reserved = c.reservation_seconds(r, cell, used)
+            assert cell['estimate_seconds'] <= reserved - 5
+>           assert used + reserved <= 2700 and reserved <= 285
+E           assert ((2421 + 285) <= 2700)
+
+tests/test_grm_c8_amendment.py:164: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_c8_amendment.py::test_forecast_all_24_reservations_fit_and_overrun_refused
+1 failed in 0.13s

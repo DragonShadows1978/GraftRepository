@@ -1,0 +1,64 @@
+{
+  "evidence_class": "author mutation baseline, not blind verification",
+  "results": [
+    {
+      "name": "default_on",
+      "returncode": 1,
+      "valid": true,
+      "killed": true,
+      "seconds": 0.6150539577938616,
+      "mutated_source_sha256": "999ca02012fdf0c2c5ddedcf6bc71c61dfe4a2d64686c2d38bf6a49cba96a8dc",
+      "log": "artifacts/grm_c8/mutation_default_on.log",
+      "log_sha256": "bf871f4e7e0af2b301be1b4b4fedae23f02a37366fbe5fd803223c3cf5d8533e"
+    },
+    {
+      "name": "threshold_lte",
+      "returncode": 1,
+      "valid": true,
+      "killed": true,
+      "seconds": 0.4145655883476138,
+      "mutated_source_sha256": "ef609cd23c733be68e92deeaba079ec72c1eadfe773a9b1bd9e972b9d727ca77",
+      "log": "artifacts/grm_c8/mutation_threshold_lte.log",
+      "log_sha256": "c7c131952ea234e378ffb5cc081ea3ee94b32ea7c1fdb3cda1c0256c3b991026"
+    },
+    {
+      "name": "missing_count",
+      "returncode": 1,
+      "valid": true,
+      "killed": true,
+      "seconds": 0.4646239969879389,
+      "mutated_source_sha256": "8cf47f4e0a72b112404d6ded0d50db5a015f4fb3423b6c3c34ba48518b114de2",
+      "log": "artifacts/grm_c8/mutation_missing_count.log",
+      "log_sha256": "abc43adad9861407db8e8524abc6d2bc9478bb74ddabe9c5880e56abcf6fc8b1"
+    },
+    {
+      "name": "drop_fold_ownership",
+      "returncode": 1,
+      "valid": true,
+      "killed": true,
+      "seconds": 0.4145697969943285,
+      "mutated_source_sha256": "ff4cfb53b7d2f7b976981e283d97fff76708ab3aee3caa5f42f35c2a47ceba75",
+      "log": "artifacts/grm_c8/mutation_drop_fold_ownership.log",
+      "log_sha256": "3622ddf6da9b6df0458bd8b04284f95b186a164978589fdd810908c83b673cd1"
+    },
+    {
+      "name": "p95_floor",
+      "returncode": 1,
+      "valid": true,
+      "killed": true,
+      "seconds": 0.41463422775268555,
+      "mutated_source_sha256": "6e9e9ca9e91f9dc1fc9e14a04f76eb0bfb2791a31a8cea05a66dcc4daf57b000",
+      "log": "artifacts/grm_c8/mutation_p95_floor.log",
+      "log_sha256": "85253c7f40a28c1927dccf4ababf2c21ce0186e1126de304c72d67a07b1bd910"
+    }
+  ],
+  "valid_mutants": 5,
+  "killed_mutants": 5,
+  "kill_fraction": 1.0,
+  "pass": true,
+  "original_source_unchanged": true,
+  "source_sha256": "5e80f16c24ffc1bbdb1a60f0d61e39e345b6e8f9e781d6be6555e0377dfbc3b9",
+  "harness_sha256": "de68be838117f35e9eb96ce5b990f262bac3a4636f9313a01b54cdb3d091749a",
+  "registration_sha256": "264ccd493f9f73fd157c47a7fa0ded3be60e0b3530e0ad3b42fae13d872d8345",
+  "baseline_sha256": "f2fb80e437c5a248f35132a49597a0edf5859c2b6592958e75369f511fb83ac7"
+}

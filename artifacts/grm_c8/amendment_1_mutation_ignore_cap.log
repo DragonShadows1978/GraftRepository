@@ -1,0 +1,17 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_amendment_cap_all_cells_and_original_registration_immutable _______
+
+    def test_amendment_cap_all_cells_and_original_registration_immutable():
+        before = c.REG.read_bytes()
+        original = c.registration()
+        effective = c.effective_registration()
+        assert c.sha(c.AMENDMENT) == c.AMENDMENT_ANCHOR
+        assert original['budget_seconds'] == 1800
+>       assert effective['budget_seconds'] == 2700
+E       assert 1800 == 2700
+
+tests/test_grm_c8_amendment.py:57: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_c8_amendment.py::test_amendment_cap_all_cells_and_original_registration_immutable
+1 failed in 0.22s

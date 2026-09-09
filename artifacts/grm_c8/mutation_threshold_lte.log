@@ -1,0 +1,18 @@
+.F.                                                                      [100%]
+=================================== FAILURES ===================================
+__________________ test_registered_decision_boundary[0.5-APA] __________________
+
+fraction = 0.5, expected = 'APA'
+
+    @pytest.mark.parametrize('fraction,expected', [(.499, 'session'), (.5, 'APA'), (.501, 'APA')])
+    def test_registered_decision_boundary(fraction, expected):
+        report = p.summarize(rows_with_fraction(fraction))
+>       assert report['decision'].startswith(expected)
+E       AssertionError: assert False
+E        +  where False = <built-in method startswith of str object at 0x73cbb1a00350>('APA')
+E        +    where <built-in method startswith of str object at 0x73cbb1a00350> = 'session routing/admission wins'.startswith
+
+tests/test_grm_c8_profiler.py:190: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_c8_profiler.py::test_registered_decision_boundary[0.5-APA]
+1 failed, 2 passed in 0.09s

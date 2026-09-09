@@ -1,0 +1,70 @@
+..FF.                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_summary_withholds_allocation_for_missing_red_demand_identity_or_conflict[demand_not_taken] _
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-856/test_summary_withholds_allocat2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7cd939921a90>
+defect = 'demand_not_taken'
+
+    @pytest.mark.parametrize('defect', ['missing', 'red', 'demand_not_taken', 'identity_missing', 'conflict'])
+    def test_summary_withholds_allocation_for_missing_red_demand_identity_or_conflict(tmp_path, monkeypatch, defect):
+        r = c.effective_registration()
+        monkeypatch.setattr(c, 'OUT', tmp_path)
+        monkeypatch.setattr(c, 'bindings', lambda: {})
+        for cell in r['cells']:
+            if defect == 'missing' and cell['battery'] == 'census':
+                continue
+            if defect == 'identity_missing' and cell['battery'] == 'identity':
+                continue
+            directory = make_receipt(cell, status='RED' if defect == 'red' and cell['battery'] == 'sup' else 'COMPLETE',
+                fraction=.75 if defect == 'conflict' and cell['battery'] == 'census' else .25)
+            if defect == 'demand_not_taken' and cell['battery'] == 'demand':
+                # A self-consistent worker/controller hash is insufficient if the
+                # registered demand observation itself fails.
+                worker = c.read(directory / 'worker.json')
+                worker['rows'][0]['demand_info']['demand_trip_taken'] = False
+                (directory / 'worker.json').write_text(json.dumps(worker))
+                ctl = c.read(directory / 'controller.json')
+                ctl['worker_sha256'] = c.sha(directory / 'worker.json')
+                (directory / 'controller.json').write_text(json.dumps(ctl))
+        result = c.summary()
+>       assert result['allocation_decision'] is None
+E       AssertionError: assert 'session routing/admission wins' is None
+
+tests/test_grm_c8_amendment.py:246: AssertionError
+_ test_summary_withholds_allocation_for_missing_red_demand_identity_or_conflict[identity_missing] _
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-856/test_summary_withholds_allocat3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7cd9399221b0>
+defect = 'identity_missing'
+
+    @pytest.mark.parametrize('defect', ['missing', 'red', 'demand_not_taken', 'identity_missing', 'conflict'])
+    def test_summary_withholds_allocation_for_missing_red_demand_identity_or_conflict(tmp_path, monkeypatch, defect):
+        r = c.effective_registration()
+        monkeypatch.setattr(c, 'OUT', tmp_path)
+        monkeypatch.setattr(c, 'bindings', lambda: {})
+        for cell in r['cells']:
+            if defect == 'missing' and cell['battery'] == 'census':
+                continue
+            if defect == 'identity_missing' and cell['battery'] == 'identity':
+                continue
+            directory = make_receipt(cell, status='RED' if defect == 'red' and cell['battery'] == 'sup' else 'COMPLETE',
+                fraction=.75 if defect == 'conflict' and cell['battery'] == 'census' else .25)
+            if defect == 'demand_not_taken' and cell['battery'] == 'demand':
+                # A self-consistent worker/controller hash is insufficient if the
+                # registered demand observation itself fails.
+                worker = c.read(directory / 'worker.json')
+                worker['rows'][0]['demand_info']['demand_trip_taken'] = False
+                (directory / 'worker.json').write_text(json.dumps(worker))
+                ctl = c.read(directory / 'controller.json')
+                ctl['worker_sha256'] = c.sha(directory / 'worker.json')
+                (directory / 'controller.json').write_text(json.dumps(ctl))
+        result = c.summary()
+>       assert result['allocation_decision'] is None
+E       AssertionError: assert 'session routing/admission wins' is None
+
+tests/test_grm_c8_amendment.py:246: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_c8_amendment.py::test_summary_withholds_allocation_for_missing_red_demand_identity_or_conflict[demand_not_taken]
+FAILED tests/test_grm_c8_amendment.py::test_summary_withholds_allocation_for_missing_red_demand_identity_or_conflict[identity_missing]
+2 failed, 3 passed in 0.64s

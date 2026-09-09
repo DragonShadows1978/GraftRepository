@@ -1,0 +1,229 @@
+C8 summary: BLOCKED_NOT_MEASURED
+Forecast: 2591s / cap 2700s
+Evidence: GPU end-to-end gates only when COMPLETE; absent values are NOT_MEASURED.
+Rule: Per battery ratio of summed decode wall to summed complete turn wall: <0.5 session routing/admission wins, otherwise APA competitive and lead reports both. No allocation decision until all cells and GPU identity complete. Conflicting batteries reported individually.
+
+sup: INCOMPLETE_CELLS; turns=0
+| stage | metric | mean | p50 | p95 |
+|---|---|---:|---:|---:|
+| lexical_scan | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| lexical_scan | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| lexical_scan | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| lexical_scan | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+Turn wall ms (mean / p50 / p95): NOT_MEASURED / NOT_MEASURED / NOT_MEASURED
+Decode share of turn wall: NOT_MEASURED
+Non-decode share: NOT_MEASURED
+Decision: NOT_MEASURED_OR_INCOMPLETE
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/sup-correction_then_restatement/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/sup-fresh_fact_controls/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/sup-multi_hop_a_b_c/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/sup-short_correction_long_competitor/controller.json'
+
+census: INCOMPLETE_CELLS; turns=0
+| stage | metric | mean | p50 | p95 |
+|---|---|---:|---:|---:|
+| lexical_scan | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| lexical_scan | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| lexical_scan | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| lexical_scan | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+Turn wall ms (mean / p50 / p95): NOT_MEASURED / NOT_MEASURED / NOT_MEASURED
+Decode share of turn wall: NOT_MEASURED
+Non-decode share: NOT_MEASURED
+Decision: NOT_MEASURED_OR_INCOMPLETE
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/census-000-008/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/census-008-016/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/census-016-024/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/census-024-032/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/census-032-034/controller.json'
+
+longhistory: INCOMPLETE_CELLS; turns=0
+| stage | metric | mean | p50 | p95 |
+|---|---|---:|---:|---:|
+| lexical_scan | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| lexical_scan | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| lexical_scan | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| lexical_scan | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+Turn wall ms (mean / p50 / p95): NOT_MEASURED / NOT_MEASURED / NOT_MEASURED
+Decode share of turn wall: NOT_MEASURED
+Non-decode share: NOT_MEASURED
+Decision: NOT_MEASURED_OR_INCOMPLETE
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/longhistory-000-008/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/longhistory-008-016/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/longhistory-016-024/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/longhistory-024-032/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/longhistory-032-040/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/longhistory-040-048/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/longhistory-048-056/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/longhistory-056-064/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/longhistory-064-072/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/longhistory-072-080/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/longhistory-080-088/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/longhistory-088-096/controller.json'
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/longhistory-096-104/controller.json'
+
+demand: INCOMPLETE_CELLS; turns=0
+| stage | metric | mean | p50 | p95 |
+|---|---|---:|---:|---:|
+| lexical_scan | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| lexical_scan | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| lexical_scan | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| lexical_scan | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| route | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| admission | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| cold_fetch | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| seat_mount | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| prefill | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| decode | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| deposit_harvest | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| fold | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | wall_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | gpu_ms | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | peak_pool_used_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+| other | device_used_boundary_peak_bytes | NOT_MEASURED | NOT_MEASURED | NOT_MEASURED |
+Turn wall ms (mean / p50 / p95): NOT_MEASURED / NOT_MEASURED / NOT_MEASURED
+Decode share of turn wall: NOT_MEASURED
+Non-decode share: NOT_MEASURED
+Decision: NOT_MEASURED_OR_INCOMPLETE
+RED/missing: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c8/artifacts/grm_c8/cells/demand-lh033/controller.json'
+
+Demand-trip turn: {"cell": "demand-lh033", "observation": null, "status": "INCOMPLETE_CELLS", "turn": 33}
+Allocation decision: WITHHELD
+Conflicting batteries: False
+Side B [external receipt: synced decode microbenchmark, SP5 section 4]:
+S=2,048 tokens, 32 synced steps: standard 82.6, 2P 84.0, SP 84.2 ms/token.
+APA is 1.4 / 1.6 ms/token slower (saving -1.4 / -1.6). No positive saving demonstrated.
+The order's 12,288-token decode context was the lead's error (that is a memory ceiling).
+No measurement at W96 or S=12,288; transfer to C8 is reasoning only.
+SP5 source: /mnt/Shared/APA_SP5_GPTOSS20B_Model_Test_Report_2026-09-08.md
