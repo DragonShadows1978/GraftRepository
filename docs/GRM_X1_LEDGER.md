@@ -227,3 +227,72 @@ writes, sibling edits or existing core-code edits. Author GPT-6; exact model
 deployment ID unavailable; reasoning effort high (requested and followed).
 Target reader remains registered openai/gpt-oss-20b with low inference effort;
 no confusion with this author session's high reasoning effort.
+
+## 2026-09-08 — amendment 2: pre-gate registration
+
+Read HOUSE_RULES and immutable orders/GRM_X1_AMENDMENT_2.md. Created
+artifacts/grm_x1/continuation_02_registration.json before edits or gates;
+it binds the order, pre-edit sources, original claim/RED receipt bytes,
+and five named continuation gates. CPU author verification only; lead runs
+the card under the explicit no-GPU seat rule. No core or worker changes planned.
+
+Lead-authorized budget: 2565 + 285 = 2850 worker reservation seconds
+(0.7916667 GPU-hours), exceeding COMMON 2700 seconds by 150 seconds.
+This is a reservation limit, not measured GPU consumption. Preserve r1
+claim and RED receipt; new r2 receipts/claims use receipts/r2 and claims/r2.
+Manifest and checksum are create-only; any r2 RED or incomplete claim stops
+without a second retry. Natural arm keeps its original positive-oracle gate.
+
+Prior art: house X1 controller (2026), verified in local source, supplies
+SHA-addressed receipts, exclusive creation, reservations and stop behavior.
+SHA-256 antecedent NIST FIPS 180-4 (2015), unverified — lead to check; search
+terms: NIST FIPS 180-4 2015 SHA-256. New integration: amendment-bound epoch
+partition and exactly one paid retry; no new hash or experiment algorithm.
+Hash bindings assume trusted local code/order storage; they are not signatures.
+
+## 2026-09-08 — amendment 2: sealed continuation and CPU results
+
+Ran `PYTHONDONTWRITEBYTECODE=1 python3 scripts/grm_x1_campaign.py seal-continuation`
+after final source edits and before gates. Create-only manifest
+`artifacts/grm_x1/continuation_02.json`, SHA `a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20`.
+No sealed source changed afterward. Receipt/claim partitions are
+`receipts/r2/gpu_{cell}_{content_sha}.json` and
+`claims/r2/{cell}_{continuation_sha}.json`; receipt fingerprint is continuation SHA.
+
+Ran `PYTHONDONTWRITEBYTECODE=1 python3 scripts/grm_x1_cpu.py baseline`: **174 passed**,
+2 existing SWIG warnings (author unit tests). Baseline receipt:
+`artifacts/grm_x1/receipts/cpu_baseline_b1a5012ed9e8c8d294b710e1a02731a93e153a354b20d4a09d650a7d3eeb222c.json`.
+Five named gate results: continuation accepted PASS (1); forged continuation
+refused PASS (9); stale continuation refused PASS (1); second retry refused
+PASS (3: RED, incomplete claim, completed claim); r1 receipt untouched PASS (1).
+Exact test names/evidence in `artifacts/grm_x1/receipts/continuation_02_gates.json`.
+Original-handoff compatibility and synthetic all-nine-cell ordered controller
+simulation also PASS. The latter reserved 285 historical + 2565 continuation
+= 2850 synthetic seconds; no GPU observations are inferred. Mutation suite
+not rerun because core source and existing mutations are unchanged.
+
+Live CPU `bash scripts/grm_x1_lead_gpu.sh preflight`, `--dry-run`, `summary`,
+and `bash -n artifacts/grm_x1/lead_commands.txt` all returned 0. Receipt:
+`artifacts/grm_x1/receipts/continuation_02_lead_checks.json`. Actual next cell
+is oracle_m1_s0; dry-run enumerates nine cells in order and flags only its
+retry. Active r2 verdict PENDING, failed=false, zero r2 claims/receipts/rows;
+r1 RED remains historical and unchanged. Reservation used: r1 285, r2 0;
+authorized total cap 2850 seconds (0.7916667 GPU-hours, explicit lead overage).
+
+Refreshed executable lead_commands.txt preserves all stop conditions and
+conditional natural gate; old commands saved create-only as
+lead_commands_amendment_01.txt. Full file/line inventory, exact commands,
+prior-art attribution and residuals: artifacts/grm_x1/AMENDMENT_2_REPORT.md.
+Prior art remains house X1 (2026) verified local controller, and NIST FIPS
+180-4 (2015) SHA-256, unverified — lead to check; new work is epoch partition
+and lead-authorized one-retry integration, no novel algorithm claimed.
+
+RED: r1 `TypeError: 'NoneType' object is not iterable` remains visible; not
+claimed fixed on the card. GPU campaign execution is pending at the lead,
+as amendment 2 explicitly forbids GPU use in this seat. No prediction or
+latency outcome inferred. Existing non-returning-native-call hard-bound
+limitation unchanged. No deviations from dispatched scope; no independent
+blind verification. No git, subagents, GPU, background jobs/waits, kills,
+service writes, sibling edits, core changes or worker changes. Author GPT-6
+(exact deployment variant unavailable), reasoning high; reader GPT-OSS-20B
+low unchanged and not loaded.

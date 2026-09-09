@@ -212,3 +212,163 @@ def test_flock_descriptor_survives_exec_and_busy_lock_yields(tmp_path):
         fcntl.flock(stream, fcntl.LOCK_EX)
         busy = subprocess.run(["flock", "--wait", "0.1", "--no-fork", str(lock), sys.executable, "-c", "raise AssertionError('must not launch')"], capture_output=True, text=True)
         assert busy.returncode == 1 and "AssertionError" not in busy.stderr
+
+
+@pytest.fixture
+def continuation_tree(tmp_path, monkeypatch):
+    # Prior art: house X1 (2026) isolated CPU fixtures and synthetic paired
+    # rows. New: amendment-2 state transitions; these are never E2E evidence.
+    import shutil
+    root = c.ROOT
+    sources = c.source_manifest()
+    out = tmp_path / "artifacts/grm_x1"
+    shutil.copytree(c.OUT, out, ignore=shutil.ignore_patterns("sessions", "r2"))
+    order = tmp_path / "orders/GRM_X1_AMENDMENT_2.md"
+    order.parent.mkdir()
+    shutil.copyfile(root / "orders/GRM_X1_AMENDMENT_2.md", order)
+    monkeypatch.setattr(c, "ROOT", tmp_path)
+    monkeypatch.setattr(c, "OUT", out)
+    monkeypatch.setattr(c, "FIX", out / "fixtures")
+    monkeypatch.setattr(c, "source_manifest", lambda: sources.copy())
+    # The five gates target continuation identity/state; the full baseline
+    # separately checks real fixtures, and live preflight checks dependencies.
+    monkeypatch.setattr(c, "verify_fixtures", lambda: {"status": "PASS"})
+    monkeypatch.setattr(c, "dependency_inventory", lambda: c.read(out / "handoff_manifest.json")["dependencies"])
+    return out, sources
+
+
+def rewrite_test_continuation(out, value, *, refresh_checksum=True):
+    # Deliberate forgery in a private temporary tree only.
+    path = out / "continuation_02.json"
+    path.write_bytes(c.raw_json(value))
+    if refresh_checksum:
+        (out / "continuation_02.sha256").write_text(c.sha(path) + "  continuation_02.json\n")
+
+
+def simulated_cell(out, cell, status, rows=None, *, claim_only=False):
+    fp = c.fingerprint()
+    create(out / "claims/r2" / f"{cell}_{fp}.json", c.raw_json(
+        {"cell": cell, "fingerprint": fp, "reserved_gpu_s": 285}))
+    if not claim_only:
+        c.emit_receipt("gpu_" + cell, {"cell": cell, "fingerprint": fp,
+            "registration_sha256": c.sha(out / "registration.json"),
+            "status": status, "rows": rows or [], "error": "synthetic CPU operand" if status == "RED" else None},
+            directory=out / "receipts/r2")
+
+
+def test_continuation_accepted(continuation_tree):
+    out, _ = continuation_tree
+    assert c.fingerprint() == c.sha(out / "continuation_02.json")
+    assert c.next_cell()["cell"] == "oracle_m1_s0"
+    state = c.summary()
+    assert state["active_epoch"] == "r2" and not state["failed"]
+    assert state["campaign_verdict"] == "PENDING" and state["rows"] == 0
+    assert state["epochs"]["r1"]["cell_status"] == {"oracle_m1_s0": "RED"}
+    assert state["epochs"]["r2"]["cell_status"] == {}
+    assert len(state["historical_red"]) == 1
+    assert state["retry_eligible"] == ["oracle_m1_s0"]
+    assert (state["reserved_gpu_s"], state["reservation_cap_s"]) == (285, 2850)
+    matrix = c.dry_run()
+    assert [row["cell"] for row in matrix["cells"]] == [row["cell"] for row in c.read(c.FIX / "cells.json")]
+    assert [row["retry"] for row in matrix["cells"]] == [True] + [False] * 8
+    assert matrix["campaign_reservation_max_s"] == 2850
+    before = (out / "continuation_02.json").read_bytes()
+    with pytest.raises(FileExistsError, match="immutable"):
+        c.seal_continuation()
+    assert (out / "continuation_02.json").read_bytes() == before
+
+
+@pytest.mark.parametrize("attack", ["checksum", "order", "payload_handoff", "registration", "r1_handoff", "budget", "retry_limit", "retry_cell", "receipt_directory"])
+def test_forged_continuation_refused(continuation_tree, attack):
+    out, _ = continuation_tree
+    value = c.read(out / "continuation_02.json")
+    if attack in {"order", "payload_handoff", "registration", "r1_handoff"}:
+        key = {"order": "orders/GRM_X1_AMENDMENT_2.md",
+               "payload_handoff": "artifacts/grm_x1/payload_amendment_01_handoff.json",
+               "registration": "artifacts/grm_x1/registration.json",
+               "r1_handoff": "artifacts/grm_x1/handoff_manifest.json"}[attack]
+        value["bindings"][key] = "0" * 64
+    elif attack == "budget":
+        value["budget"]["total_worker_s"] = 3135
+    elif attack == "retry_limit":
+        value["retry_limit"] = 2
+    elif attack == "retry_cell":
+        value["retry_cells"].append("oracle_m1_s1")
+    else:
+        value["receipt_directory"] = "artifacts/grm_x1/receipts"
+    rewrite_test_continuation(out, value, refresh_checksum=attack != "checksum")
+    with pytest.raises(ValueError, match="continuation"):
+        c.fingerprint()
+
+
+def test_stale_continuation_refused(continuation_tree):
+    _, sources = continuation_tree
+    sources["scripts/grm_x1_campaign.py"] = "0" * 64
+    with pytest.raises(ValueError, match="stale continuation: source SHA mismatch"):
+        c.fingerprint()
+
+
+@pytest.mark.parametrize("outcome", ["RED", "INCOMPLETE_CLAIM", "COMPLETE"])
+def test_second_retry_refused(continuation_tree, outcome):
+    out, _ = continuation_tree
+    assert c.next_cell("oracle_m1_s0")["cell"] == "oracle_m1_s0"
+    simulated_cell(out, "oracle_m1_s0", outcome, claim_only=outcome == "INCOMPLETE_CLAIM")
+    with pytest.raises(ValueError, match="stop|already consumed"):
+        c.next_cell("oracle_m1_s0")
+    assert c.summary()["retry_eligible"] == []
+    if outcome != "COMPLETE":
+        assert c.summary()["campaign_verdict"] == "RED"
+        with pytest.raises(ValueError, match="registered stop"):
+            c.next_cell("oracle_m1_s1")
+        with pytest.raises(ValueError, match="registered stop"):
+            c.next_cell()
+
+
+def test_r1_receipt_untouched(continuation_tree):
+    out, _ = continuation_tree
+    historical = c.validated_continuation()["historical_files"]
+    before = {path: (c.ROOT / path).read_bytes() for path in historical}
+    simulated_cell(out, "oracle_m1_s0", "RED")
+    assert c.summary()["historical_red"][0]["error"]["message"] == "'NoneType' object is not iterable"
+    for path, original in before.items():
+        assert (c.ROOT / path).read_bytes() == original
+        assert c.sha(c.ROOT / path) == historical[path]
+
+
+def test_original_handoff_still_accepted_without_continuation(continuation_tree):
+    out, sources = continuation_tree
+    (out / "continuation_02.json").unlink()  # private CPU fixture only
+    sources.update(c.read(out / "handoff_manifest.json")["sources"])
+    assert c.fingerprint() == c.sha(out / "handoff_manifest.json")
+    with pytest.raises(ValueError, match="registered stop"):
+        c.next_cell()
+
+
+def test_lead_commands_order_cpu_simulation(continuation_tree):
+    import shlex
+    out, _ = continuation_tree
+    commands = [shlex.split(line)[2:] for line in (out / "lead_commands.txt").read_text().splitlines()
+                if line.startswith("bash scripts/grm_x1_lead_gpu.sh ")]
+    cells = c.read(c.FIX / "cells.json")
+    assert commands == [["preflight"], *[["run", cell["cell"]] for cell in cells], ["summary"]]
+    oracle = synthetic_rows()
+    natural = [{**row, "arm": "N"} for row in oracle if row["arm"] == "C"]
+    def cpu_worker(args, **kwargs):
+        cell_id = args[args.index("_worker") + 1]
+        cell = next(item for item in cells if item["cell"] == cell_id)
+        rows = [row for row in oracle + natural if row["query_id"] in cell["query_ids"]
+                and row["multiplicity"] == cell["multiplicity"] and row["arm"] in cell["arms"]]
+        assert len(rows) == len(cell["query_ids"]) * len(cell["conditions"]) * len(cell["arms"])
+        simulated_cell(out, cell_id, "COMPLETE", rows)
+        return type("Result", (), {"returncode": 0})()
+    with patch.object(c.subprocess, "run", side_effect=cpu_worker), patch.object(c.time, "sleep"):
+        assert c.preflight()["fingerprint"] == c.sha(out / "continuation_02.json")
+        for command in commands[1:-1]:
+            assert c.run_controller(command[1])["status"] == "RETURNED"
+    result = c.summary()
+    assert result["rows"] == 576 and result["oracle_positive"]
+    assert not result["failed"] and len(result["historical_red"]) == 1
+    assert result["reserved_gpu_s"] == 2850
+    assert result["epochs"]["r1"]["reserved_gpu_s"] == 285
+    assert result["epochs"]["r2"]["reserved_gpu_s"] == 2565
+    assert c.next_cell() is None

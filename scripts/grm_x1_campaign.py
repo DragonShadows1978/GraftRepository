@@ -30,6 +30,16 @@ OUT = ROOT / "artifacts/grm_x1"
 FIX = OUT / "fixtures"
 TC_ROOT = Path("/mnt/ForgeRealm/Project-Tensor/tensor_cuda")
 SEED = 20260908
+CONTINUATION_BINDINGS = {
+    "orders/GRM_X1_AMENDMENT_2.md": "f8d29fba246fbbc6f30495d1b430c86ec2004fb5022bb4b443f8d38e3dc2445c",
+    "artifacts/grm_x1/payload_amendment_01_handoff.json": "e208379019aa2dc59091def442b3cb9eae5923af4e8aeecc20f605cef22cae4b",
+    "artifacts/grm_x1/registration.json": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+    "artifacts/grm_x1/handoff_manifest.json": "bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121",
+    "artifacts/grm_x1/continuation_02_registration.json": "26dc26ddae0e505421c192a0b15ed89ad8d83b7589bc4e518054fcb3a726b293",
+}
+CONTINUATION_BUDGET = {"original_worker_s": 2565, "extra_retry_worker_s": 285,
+    "total_worker_s": 2850, "gpu_hours": 2850 / 3600, "common_cap_s": 2700,
+    "authority": "Lead amendment 2 explicitly authorizes overage."}
 
 
 def read(path):
@@ -87,13 +97,18 @@ def verify_fixtures():
 
 def dry_run():
     verify_fixtures()
+    continuation = validated_continuation() if (OUT / "continuation_02.json").exists() else None
     return {"evidence_class": "reasoning: enumeration, zero GPU work",
             "registration_sha256": sha(OUT / "registration.json"),
+            "fingerprint": sha(OUT / "continuation_02.json") if continuation else None,
             "cells": [{**c, "turns": len(c["query_ids"]) * len(c["arms"]) * len(c["conditions"]),
                        "command": f"bash scripts/grm_x1_lead_gpu.sh run {c['cell']}",
+                       "retry": bool(continuation and c["cell"] in continuation["retry_cells"]),
                        "conditional": c["phase"] == "natural"} for c in read(FIX / "cells.json")],
             "primary_worker_max_s": 1710, "conditional_worker_max_s": 855,
             "all_worker_max_s": 2565, "cooldown_per_invocation_s": 30,
+            "campaign_reservation_max_s": 2850 if continuation else 2565,
+            "historical_reserved_s": 285 if continuation else 0,
             "wall_no_contention_max_estimate_s": 2835,
             "wall_with_all_lock_waits_max_estimate_s": 5085,
             "wall_per_call_max_estimate_s": 565, "outer_rail_s": 590,
@@ -250,47 +265,163 @@ def seal():
 def fingerprint():
     verify_fixtures()
     frozen = read(OUT / "handoff_manifest.json")
-    if frozen["registration_sha256"] != sha(OUT / "registration.json") or frozen["sources"] != source_manifest():
+    # Prefer the explicit continuation; never silently fall back on a forged
+    # or stale continuation even if somebody restores the original sources.
+    continuation = validated_continuation() if (OUT / "continuation_02.json").exists() else None
+    if frozen["registration_sha256"] != sha(OUT / "registration.json") or (
+            continuation is None and frozen["sources"] != source_manifest()):
         raise ValueError("handoff source drift; do not start a new campaign silently")
     current = dependency_inventory()
     if current != frozen["dependencies"] or current["missing"]:
         raise ValueError("lead dependencies missing or drifted from handoff")
-    return sha(OUT / "handoff_manifest.json")
+    return sha(OUT / ("continuation_02.json" if continuation else "handoff_manifest.json"))
 
 
-def emit_receipt(stem, payload, directory=OUT / "receipts"):
+def continuation_payload():
+    # Prior art: house X1 (2026) exclusive claims and content-addressed receipts;
+    # NIST FIPS 180-4 (2015), SHA-256 (unverified — lead to check these terms).
+    # Borrow integrity hashes, not signatures. New: this lead-authorized epoch
+    # partition, fixed 285-second retry, and preservation of the exact r1 RED.
+    for path, digest in CONTINUATION_BINDINGS.items():
+        if sha(ROOT / path) != digest:
+            raise ValueError(f"continuation authority binding mismatch: {path}")
+    reg = read(OUT / "continuation_02_registration.json")
+    prior = read(OUT / "payload_amendment_01_handoff.json")
+    sources = source_manifest()
+    allowed = {"scripts/grm_x1_campaign.py", "tests/test_grm_x1_campaign.py"}
+    if set(sources) != set(prior["sources"]) or any(
+            value != prior["sources"][path] for path, value in sources.items() if path not in allowed):
+        raise ValueError("continuation changes sources outside amendment 2 scope")
+    historical = {str(p.relative_to(ROOT)): sha(p)
+                  for p in [*sorted((OUT / "claims").glob("*.json")),
+                            *sorted((OUT / "receipts").glob("gpu_*.json"))]}
+    if historical != reg["historical_files"]:
+        raise ValueError("r1 evidence changed since continuation registration")
+    return {"schema": "grm.x1.continuation.v2", "bindings": CONTINUATION_BINDINGS,
+            "sources": sources, "historical_files": historical,
+            "r1_fingerprint": sha(OUT / "handoff_manifest.json"),
+            "retry_cells": ["oracle_m1_s0"], "retry_limit": 1,
+            "budget": CONTINUATION_BUDGET,
+            "receipt_directory": "artifacts/grm_x1/receipts/r2",
+            "claim_directory": "artifacts/grm_x1/claims/r2",
+            "receipt_naming": "gpu_{cell}_{receipt_content_sha256}.json; fingerprint = continuation file SHA-256",
+            "evidence_class": "reasoning: lead-authorized registration before CPU gates; no GPU execution"}
+
+
+def seal_continuation():
+    verify_fixtures()
+    payload = continuation_payload()
+    path = OUT / "continuation_02.json"
+    checksum = OUT / "continuation_02.sha256"
+    if path.exists() or checksum.exists():
+        raise FileExistsError("continuation already sealed; immutable")
+    create(path, raw_json(payload))
+    create(checksum, f"{sha(path)}  continuation_02.json\n".encode())
+    return {"continuation": str(path), "sha256": sha(path)}
+
+
+def validated_continuation():
+    path = OUT / "continuation_02.json"
+    if sha(path) != (OUT / "continuation_02.sha256").read_text().split()[0]:
+        raise ValueError("continuation SHA mismatch")
+    payload = read(path)
+    expected = continuation_payload()
+    if payload.get("sources") != expected["sources"]:
+        raise ValueError("stale continuation: source SHA mismatch")
+    if payload != expected:
+        raise ValueError("forged continuation: binding or policy mismatch")
+    return payload
+
+
+def emit_receipt(stem, payload, directory=None):
+    directory = directory if directory is not None else OUT / "receipts"
     data = raw_json(payload)
     path = directory / f"{stem}_{hashlib.sha256(data).hexdigest()}.json"
     create(path, data)
     return path
 
 
-def summary():
-    claims = sorted((OUT / "claims").glob("*.json"))
-    receipts = sorted((OUT / "receipts").glob("gpu_*.json"))
-    rows, statuses, prints = [], {}, set()
-    for path in receipts:
+def campaign_epoch(directory, fp):
+    # Prior art: house X1 (2026), create-only reservations and receipt hashes.
+    # New: independently validate each epoch so historical RED cannot enter
+    # the amended verdict, and an incomplete retry still consumes its slot.
+    cells = {cell["cell"] for cell in read(FIX / "cells.json")}
+    claims, receipts, statuses, rows = {}, {}, {}, []
+    for path in sorted((OUT / "claims" / directory).glob("*.json")):
         payload = read(path)
-        if not path.stem.endswith(hashlib.sha256(raw_json(payload)).hexdigest()):
-            raise ValueError(f"receipt content digest mismatch: {path}")
-        if payload["cell"] in statuses:
+        cell = payload["cell"]
+        if (cell not in cells or payload["fingerprint"] != fp
+                or path.name != f"{cell}_{fp}.json" or payload["reserved_gpu_s"] != 285):
+            raise ValueError(f"invalid claim identity/reservation: {path}")
+        if cell in claims:
+            raise ValueError("duplicate cell claim")
+        claims[cell] = {"path": str(path.relative_to(ROOT)), "sha256": sha(path), **payload}
+        statuses[cell] = "INCOMPLETE_CLAIM"
+    for path in sorted((OUT / "receipts" / directory).glob("gpu_*.json")):
+        payload = read(path)
+        cell = payload["cell"]
+        digest = hashlib.sha256(raw_json(payload)).hexdigest()
+        if (cell not in cells or path.name != f"gpu_{cell}_{digest}.json"
+                or payload["fingerprint"] != fp
+                or payload["registration_sha256"] != sha(OUT / "registration.json")
+                or payload["status"] not in ("COMPLETE", "RED")):
+            raise ValueError(f"invalid receipt digest/identity: {path}")
+        if cell in receipts:
             raise ValueError("duplicate cell receipt")
-        statuses[payload["cell"]] = payload["status"]
-        prints.add(payload["fingerprint"])
+        if cell not in claims:
+            raise ValueError("receipt without reservation")
+        receipts[cell] = {"path": str(path.relative_to(ROOT)), "sha256": sha(path), **payload}
+        statuses[cell] = payload["status"]
         if payload["status"] == "COMPLETE":
             rows.extend(payload["rows"])
-    for path in claims:
-        claim = read(path)
-        prints.add(claim["fingerprint"])
-        statuses.setdefault(claim["cell"], "INCOMPLETE_CLAIM")
-    if len(prints) > 1:
-        raise ValueError("mixed campaign fingerprints")
-    if prints and (not (OUT / "handoff_manifest.json").exists() or prints != {sha(OUT / "handoff_manifest.json")}):
-        raise ValueError("campaign fingerprint differs from handoff")
-    result = aggregate(rows)
-    result.update({"cell_status": statuses, "reserved_gpu_s": len(claims) * 285,
-                   "gpu_status": "BLOCKED_NO_GPU_EXECUTED" if not statuses else "RECEIPTS_PRESENT",
-                   "failed": any(v != "COMPLETE" for v in statuses.values())})
+    return {"fingerprint": fp, "cell_status": statuses, "claims": claims,
+            "receipts": receipts, "reserved_gpu_s": len(claims) * 285, "rows": rows,
+            "failed": any(value != "COMPLETE" for value in statuses.values())}
+
+
+def summary():
+    continuation = validated_continuation() if (OUT / "continuation_02.json").exists() else None
+    r1 = campaign_epoch("", sha(OUT / "handoff_manifest.json"))
+    r2 = campaign_epoch("r2", sha(OUT / "continuation_02.json")) if continuation else None
+    if not continuation and (any((OUT / "claims/r2").glob("*.json"))
+                             or any((OUT / "receipts/r2").glob("gpu_*.json"))):
+        raise ValueError("r2 evidence without continuation")
+    retry = []
+    if continuation:
+        # This order authorizes only the frozen r1 RED, never r1 COMPLETE,
+        # unknown fingerprints, duplicate receipts, or an incomplete r1 claim.
+        if set(r1["cell_status"]) != set(continuation["retry_cells"]) or any(
+                value != "RED" for value in r1["cell_status"].values()):
+            raise ValueError("continuation requires the sole registered r1 RED receipt")
+        retry = [cell for cell in continuation["retry_cells"] if cell not in r2["cell_status"]]
+    active = r2 if continuation else r1
+    reserved = r1["reserved_gpu_s"] + (r2["reserved_gpu_s"] if r2 else 0)
+    cap = 2850 if continuation else 2565
+    if reserved > cap:
+        raise ValueError("campaign reservation exceeds registered budget")
+    result = aggregate(active["rows"])
+    # Report the existing registered forks; no new accuracy threshold.
+    verdict = "PENDING"
+    if active["failed"]:
+        verdict = "RED"
+    elif result["oracle_complete"]:
+        if any(result["kill"].values()):
+            verdict = "KILLED"
+        elif not result["oracle_positive"]:
+            verdict = "ORACLE_NOT_POSITIVE"
+        elif result["predictions"]["S5"] is None:
+            verdict = "ORACLE_POSITIVE_NATURAL_PENDING"
+        else:
+            verdict = "COMPLETE_REGISTERED_BENEFIT_RETAINED"
+    result.update({"active_epoch": "r2" if continuation else "r1",
+                   "fingerprint": active["fingerprint"], "cell_status": active["cell_status"],
+                   "reserved_gpu_s": reserved, "reservation_cap_s": cap,
+                   "epochs": {"r1": r1, "r2": r2}, "retry_eligible": retry,
+                   "historical_red": [receipt for receipt in r1["receipts"].values()
+                                      if receipt["status"] == "RED"] if continuation else [],
+                   "gpu_status": "BLOCKED_NO_GPU_EXECUTED" if not active["cell_status"] else "RECEIPTS_PRESENT",
+                   "campaign_verdict": verdict,
+                   "failed": active["failed"]})
     return result
 
 
@@ -338,7 +469,7 @@ def run_controller(requested=None):
                "outer_wall_s": time.monotonic() - started, "outer_cap_s": 590,
                "fingerprint": fp, "evidence_class": "process receipt", "command": command}
     payload["outer_within_rail"] = payload["outer_wall_s"] <= 590
-    emit_receipt("controller", payload)
+    emit_receipt("controller", payload, directory=OUT / "receipts" / ("r2" if (OUT / "continuation_02.json").exists() else ""))
     return payload
 
 
@@ -368,7 +499,8 @@ def worker(cell_id, fp):
     cell = next_cell(cell_id)
     claim = {"cell": cell_id, "fingerprint": fp, "reserved_gpu_s": 285,
              "pid": os.getpid(), "started_unix": time.time(), "evidence_class": "process reservation"}
-    create(OUT / "claims" / f"{cell_id}_{fp}.json", raw_json(claim))
+    epoch = "r2" if (OUT / "continuation_02.json").exists() else ""
+    create(OUT / "claims" / epoch / f"{cell_id}_{fp}.json", raw_json(claim))
     rows = []
     status, error = "COMPLETE", None
     try:
@@ -394,7 +526,7 @@ def worker(cell_id, fp):
     payload = {"schema": "grm.x1.gpu-cell.v1", "evidence_class": "E2E session receipt",
                "cell": cell_id, "fingerprint": fp, "status": status, "error": error,
                "worker_wall_s": elapsed, "rows": rows, "registration_sha256": sha(OUT / "registration.json")}
-    path = emit_receipt("gpu_" + cell_id, payload)
+    path = emit_receipt("gpu_" + cell_id, payload, directory=OUT / "receipts" / epoch)
     print(json.dumps({"receipt": str(path), "status": status, "worker_wall_s": elapsed}), flush=True)
     return 0 if status == "COMPLETE" else 1
 
@@ -402,7 +534,7 @@ def worker(cell_id, fp):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("command", nargs="?", default="list",
-                        choices=("list", "check", "preflight", "seal", "summary", "run", "resume", "_worker"))
+                        choices=("list", "check", "preflight", "seal", "seal-continuation", "summary", "run", "resume", "_worker"))
     parser.add_argument("cell", nargs="?")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--fingerprint")
@@ -417,6 +549,8 @@ def main():
         result = preflight()
     elif args.command == "seal":
         result = seal()
+    elif args.command == "seal-continuation":
+        result = seal_continuation()
     elif args.command == "summary":
         result = summary()
     else:

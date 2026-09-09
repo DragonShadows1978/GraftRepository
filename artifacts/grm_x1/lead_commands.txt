@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Lead only: dispatch each command separately in the foreground (<590 s rail).
+# A RED stops the sequence. Natural cells require the complete positive oracle.
+# If invoked as a script, stop on error and still report summary on exit.
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-x1
+trap 'bash scripts/grm_x1_lead_gpu.sh summary' EXIT
+bash scripts/grm_x1_lead_gpu.sh preflight
+bash scripts/grm_x1_lead_gpu.sh run oracle_m1_s0
+bash scripts/grm_x1_lead_gpu.sh run oracle_m1_s1
+bash scripts/grm_x1_lead_gpu.sh run oracle_m10_s0
+bash scripts/grm_x1_lead_gpu.sh run oracle_m10_s1
+bash scripts/grm_x1_lead_gpu.sh run oracle_m100_s0
+bash scripts/grm_x1_lead_gpu.sh run oracle_m100_s1
+bash scripts/grm_x1_lead_gpu.sh run natural_m1
+bash scripts/grm_x1_lead_gpu.sh run natural_m10
+bash scripts/grm_x1_lead_gpu.sh run natural_m100
+trap - EXIT
+bash scripts/grm_x1_lead_gpu.sh summary
