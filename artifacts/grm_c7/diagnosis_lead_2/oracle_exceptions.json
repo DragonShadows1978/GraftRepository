@@ -1,0 +1,197 @@
+[
+  {
+    "path": "artifacts/grm_c7/cells/A-017-023/probes.jsonl",
+    "line": 2,
+    "probe_id": "c7_correction_0_d005",
+    "answer": "Onyx-511",
+    "score": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Onyx-511",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 1
+    }
+  },
+  {
+    "path": "artifacts/grm_c7/cells/A-017-023/probes.jsonl",
+    "line": 3,
+    "probe_id": "c7_correction_1_d005",
+    "answer": "Onyx-512",
+    "score": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Onyx-512",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 1
+    }
+  },
+  {
+    "path": "artifacts/grm_c7/cells/A-024-031/probes.jsonl",
+    "line": 2,
+    "probe_id": "c7_folded_0_d005",
+    "answer": "Reed-<|channel|>analysis<|message|>Reed-1011",
+    "score": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Reed-<|channel|>analysis<|message|>Reed-1011",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 1
+    }
+  },
+  {
+    "path": "artifacts/grm_c7/cells/A-040-047/probes.jsonl",
+    "line": 3,
+    "probe_id": "c7_correction_0_d030",
+    "answer": "Onyx-911",
+    "score": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Onyx-911",
+      "exact_answer_error": 0,
+      "exact_correct": true,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 0
+    }
+  },
+  {
+    "path": "artifacts/grm_c7/cells/A-048-055/probes.jsonl",
+    "line": 1,
+    "probe_id": "c7_correction_1_d030",
+    "answer": "Onyx-512",
+    "score": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Onyx-512",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 1
+    }
+  },
+  {
+    "path": "artifacts/grm_c7/cells/A-048-055/probes.jsonl",
+    "line": 3,
+    "probe_id": "c7_folded_0_d030",
+    "answer": "Reed-<|channel|>analysis<|message|>Reed-1011",
+    "score": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Reed-<|channel|>analysis<|message|>Reed-1011",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 1
+    }
+  },
+  {
+    "path": "artifacts/grm_c7/cells/A-056-062/probes.jsonl",
+    "line": 1,
+    "probe_id": "c7_folded_1_d030",
+    "answer": "Reed-<|channel|><|constrain|><|constrain|>=UNKNOWN",
+    "score": {
+      "abstained": true,
+      "abstention_error": 1,
+      "answer": "Reed-<|channel|><|constrain|><|constrain|>=UNKNOWN",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 0
+    }
+  },
+  {
+    "path": "artifacts/grm_c7/cells/A-071-077/probes.jsonl",
+    "line": 2,
+    "probe_id": "c7_correction_0_d060",
+    "answer": "Onyx-511",
+    "score": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Onyx-511",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 1
+    }
+  },
+  {
+    "path": "artifacts/grm_c7/cells/A-078-085/probes.jsonl",
+    "line": 1,
+    "probe_id": "c7_correction_1_d060",
+    "answer": "Onyx-512",
+    "score": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Onyx-512",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 1
+    }
+  },
+  {
+    "path": "artifacts/grm_c7/cells/A-078-085/probes.jsonl",
+    "line": 3,
+    "probe_id": "c7_folded_0_d060",
+    "answer": "Reed-<|channel|>analysis<|message|>Reed-1011",
+    "score": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Reed-<|channel|>analysis<|message|>Reed-1011",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 1
+    }
+  },
+  {
+    "path": "artifacts/grm_c7/cells/A-086-093/probes.jsonl",
+    "line": 1,
+    "probe_id": "c7_folded_1_d060",
+    "answer": "Reed-<|channel|><|constrain|><|constrain|>=UNKNOWN",
+    "score": {
+      "abstained": true,
+      "abstention_error": 1,
+      "answer": "Reed-<|channel|><|constrain|><|constrain|>=UNKNOWN",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 0
+    }
+  },
+  {
+    "path": "artifacts/grm_c7/cells/A-133-140/probes.jsonl",
+    "line": 2,
+    "probe_id": "c7_correction_0_d120",
+    "answer": "Onyx-911",
+    "score": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Onyx-911",
+      "exact_answer_error": 0,
+      "exact_correct": true,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 0
+    }
+  },
+  {
+    "path": "artifacts/grm_c7/cells/A-265-272/probes.jsonl",
+    "line": 2,
+    "probe_id": "c7_correction_0_d250",
+    "answer": "Onyx-911",
+    "score": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Onyx-911",
+      "exact_answer_error": 0,
+      "exact_correct": true,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 0
+    }
+  }
+]

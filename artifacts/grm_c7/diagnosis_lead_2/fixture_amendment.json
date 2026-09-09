@@ -1,0 +1,12 @@
+{
+  "schema": "grm.c7.lead2.diagnostic_fixture_amendment.v1",
+  "parent_registration_sha256": "3513ca93f29ece5794ba66eb017792e460b7167b9c2171cbcb3fcf1943eb33a3",
+  "failure_log_sha256": "473943d0f92ee942635fc6c9b6ec81f48f8e1e660081239c51cc8660f915e3de",
+  "before_test_sha256": "ade35656e2b1efd3e1a4b7e2bd15d2f86684b070af5b2cceee9cfa5452c6fbb6",
+  "after_test_sha256": "44cf68b9fddc16ecff937012bafc335d30bcbded25372aa6fc578cec79b8eacf",
+  "reason": "CPU fixture add_document defaults to kind=document, selecting ERA_PROMPTS. C7 folds turn nodes. Set that source kind to turn before real repository fold; unchanged production and thresholds.",
+  "scope": "Only rerun the previously failed fold pin; five passed pins remain evidence against original hash.",
+  "criteria_unchanged": true,
+  "command": "CUDA_VISIBLE_DEVICES='' PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 GRM_C7_DIAG_OUT=artifacts/grm_c7/diagnosis_lead_2/fixture_amended python -m pytest -q tests/test_grm_c7_lead_2_diagnosis.py::test_fold_uses_core_raw_prompts_120_steps_and_ignores_harmony_stop",
+  "prior_art": "Local GRM lifecycle fixture metadata (GRM contributors, 2026); no new algorithm."
+}

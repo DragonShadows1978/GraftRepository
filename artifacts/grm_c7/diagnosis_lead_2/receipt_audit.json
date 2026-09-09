@@ -1,0 +1,550 @@
+{
+  "answerable_probes": 40,
+  "best_cov_values": [
+    0.1,
+    0.2,
+    0.25,
+    0.3333333333333333,
+    0.375
+  ],
+  "cells": 39,
+  "charged_seconds": 2674.948811272625,
+  "comparisons": [
+    {
+      "assistant": "Auric-4-Alpha",
+      "instrumentation_line": 6,
+      "instrumentation_path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/instrumentation.jsonl",
+      "instrumentation_sha256": "ec626c53e5ba9ca5aac2f33a8084edafd2a584efed926eb4131fe7b0171358c5",
+      "label": "EB1",
+      "mounted": [
+        0
+      ],
+      "profile": {
+        "identified_candidates": [
+          0
+        ],
+        "identifier_hit_count": 1,
+        "identifier_tokens": [
+          "orion",
+          "pin"
+        ],
+        "margin_threshold": 0.1385774091529802,
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "rank_plan": [
+          0
+        ],
+        "ranking": [
+          0,
+          2,
+          1
+        ],
+        "rare_identifier_tokens": [],
+        "route_backend": "python",
+        "route_margin_1_2": 1.0178184629421092,
+        "route_margin_evaluated": true,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+      },
+      "transcript_line": 6,
+      "transcript_path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/transcript.jsonl",
+      "transcript_sha256": "9a91ea2b41ffda531231cdfa370638a06ac83fe3d9a1945daaaa685d90daef2b",
+      "user": "Recall probe. What is the current orion pin value? Reply with only the value."
+    },
+    {
+      "assistant": "Auric-4-Alpha",
+      "instrumentation_line": 6,
+      "instrumentation_path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/census/run/arm1/e2e-2/session/instrumentation.jsonl",
+      "instrumentation_sha256": "38c86ff80ca9174e65fb2e26d80b69ce1d2b42eb08e99a7c608c912f4cfbad31",
+      "label": "WC1",
+      "mounted": [
+        0
+      ],
+      "profile": {
+        "admission_ranking_before_demotion": [
+          0,
+          2,
+          1
+        ],
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [],
+        "identified_candidates": [
+          0
+        ],
+        "identifier_hit_count": 1,
+        "identifier_tokens": [
+          "orion",
+          "pin"
+        ],
+        "margin_threshold": 0.1385774091529802,
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "rank_plan": [
+          0
+        ],
+        "ranking": [
+          0,
+          2,
+          1
+        ],
+        "rare_identifier_tokens": [],
+        "route_backend": "python",
+        "route_margin_1_2": 1.0165544102280362,
+        "route_margin_evaluated": true,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+      },
+      "transcript_line": 6,
+      "transcript_path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/census/run/arm1/e2e-2/session/transcript.jsonl",
+      "transcript_sha256": "a3b2f4e0178c48d1fcd924fc57e1a68c24335dfb8684902ac2a50636fe00a61e",
+      "user": "Recall probe. What is the current orion pin value? Reply with only the value."
+    }
+  ],
+  "complete": 39,
+  "evidence_class": "read-only lead-run E2E receipt census, not a new GPU run",
+  "fold_count": 13,
+  "fold_quotes": [
+    {
+      "attempts": [
+        {
+          "coverage": 0.0,
+          "hit_count": 0,
+          "need_count": 10,
+          "prompt_index": 0,
+          "qc": false,
+          "relaxed_list": false,
+          "text": "For the archive: the ………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.0,
+          "hit_count": 0,
+          "need_count": 10,
+          "prompt_index": 1,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "ARCHIVE NOTE — The conversation established that the  “……………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.1,
+          "hit_count": 1,
+          "need_count": 10,
+          "prompt_index": 2,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "The facts to archive are:  ... (…). \nWe need to list every name, code, number, time. Provide references.<|end|><|start|>assistant<|channel|>analysis<|message|>We need to list all facts: names, codes, numbers, times, and what each refers to. Provide references.<|end|><|start|>assistant<|channel|>final<|message|>**Facts from the conversation**\n\n| # | **Name / Code / Number / Time** | **What it refers to** | **Reference** |\n|---|----------------------------------|-----------------------|----------------|\n| 1 | **C7‑Vesper‑0** | The outbound tag for the “C7"
+        }
+      ],
+      "path": "artifacts/grm_c7/cells/A-001-008/folds/008-230997aa79504f2ebd570d5cbc000ee5/result.json"
+    },
+    {
+      "attempts": [
+        {
+          "coverage": 0.0,
+          "hit_count": 0,
+          "need_count": 10,
+          "prompt_index": 0,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "For the archive: the  conversation has recorded a fact that “……………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.2,
+          "hit_count": 2,
+          "need_count": 10,
+          "prompt_index": 1,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "ARCHIVE NOTE — The conversation established that the  current value for the C7‑FRESH‑2 identifier is “Basalt‑812.” This statement is recorded in the archive.<|return|><|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>."
+        },
+        {
+          "coverage": 0.2,
+          "hit_count": 2,
+          "need_count": 10,
+          "prompt_index": 2,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "The facts to archive are:  ... (the rest).<|end|><|start|>assistant<|channel|>analysis<|message|>We need to list every fact: every name, code, number, time, and what each refers to. The conversation: \"The current C7-Fresh-2 value is Basalt-812.\" So we have a fact: C7-Fresh-2 value is Basalt-812. Also mention names? There's no names. So list: C7-Fresh-2 refers to Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>**Facts from the conversation**\n\n| # | Item | Value | Reference |\n|---|------"
+        }
+      ],
+      "path": "artifacts/grm_c7/cells/A-017-023/folds/017-e58dd8fb4e514839bd7681f72827546f/result.json"
+    },
+    {
+      "attempts": [
+        {
+          "coverage": 0.0,
+          "hit_count": 0,
+          "need_count": 8,
+          "prompt_index": 0,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "For the archive: the  conversation has recorded a list of references: ...? The…...…………………………………………………………………………………………………………………………?………………………………………………………………………………………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.125,
+          "hit_count": 1,
+          "need_count": 8,
+          "prompt_index": 1,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "ARCHIVE NOTE — The conversation established that the  alias “C7-Signal-2” refers to “C7-AliasBase-‑1” and that “Onyx‑………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.375,
+          "hit_count": 3,
+          "need_count": 8,
+          "prompt_index": 2,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "The facts to archive are:  ... (the rest).<|end|><|start|>assistant<|channel|>analysis<|message|>We need to list every fact: every name, code, number, time, and what each refers to. So list all names, codes, numbers, times, and their referents. Let's extract: Names: C7-Signal-0, C7-AliasBase-2, Onyx-911. Codes: C7-Signal-0 refers to C7-AliasBase-2. Number: 911 refers to Onyx. Time: not given. So list.<|end|><|start|>assistant<|channel|>final<|message|>**Facts from the conversation"
+        }
+      ],
+      "path": "artifacts/grm_c7/cells/A-024-031/folds/026-4f13fe3daf6546478af55dbaca89ef40/result.json"
+    },
+    {
+      "attempts": [
+        {
+          "coverage": 0.0,
+          "hit_count": 0,
+          "need_count": 8,
+          "prompt_index": 0,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "For the archive: the ………………………………………………………………………………………………………………………………………………... The…………………………………………………………………………………………………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.375,
+          "hit_count": 3,
+          "need_count": 8,
+          "prompt_index": 1,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "ARCHIVE NOTE — The conversation established that the  “…”…...\nWe need to produce a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to. The conversation: \"The current C7-Vesper-1 value is Onyx-912.\" So we need to produce an archive note that includes that. Also mention that the inbound tag is Cedar-1012. So we need to mention both. Also mention that the inbound tag refers to something. The instruction: \"Write a brief archive note covering everything above in complete sentences, preserving every name,"
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 2,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "The facts to archive are:  ... (…). \nWe need to list every fact: names, codes, numbers, times, and what each refers to. So we need to parse conversation. The conversation: \"The current C7-Vesper-1 value is Onyx-913.\" So we have C7-Vesper-1 refers to Onyx-913. So we list: C7-Vesper-1: Onyx-913.<|end|><|start|>assistant<|channel|>analysis<|message|>We need to produce list of every fact: every name, code, number, time, and what each one refers to. So we need to list"
+        }
+      ],
+      "path": "artifacts/grm_c7/cells/A-048-055/folds/055-e8e93a5dfe2141ce8c78ea0eff872f37/result.json"
+    },
+    {
+      "attempts": [
+        {
+          "coverage": 0.5,
+          "hit_count": 4,
+          "need_count": 8,
+          "prompt_index": 0,
+          "qc": false,
+          "relaxed_list": false,
+          "text": "For the archive: the  “…”…...\nWe need to restate every fact from conversation as a complete sentence that says what each name, code, number, and time refers to. So list: C7-Outpost-02 refers to Pearl-1202. Also mention C7-Outpost-01 refers to Pearl-1201. Also mention C7-Outpost-02 refers to Pearl-1202. Also mention C7-Outpost-02 refers to 1202. Also mention C7-... etc.<|end|><|start|>assistant<|channel|>analysis<|message|>We need to produce sentences that restate each fact. Provide sentences"
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 1,
+          "qc": false,
+          "relaxed_list": false,
+          "text": "ARCHIVE NOTE — The conversation established that the  current C7‑Outpost‑02 value is Pearl‑1202.<|return|> The current C7‑Outpost‑02 value is Pearl‑1202.<|return|> The current C7‑Outpost‑02 value is **Pearl‑1202**.<|return|> The current C7‑Outpost‑02 value is **Pearl‑1202**.<|return|> The current C7‑Outpost‑02 value is **Pearl‑1202**.<|return|> The current C7‑Outpost‑02 value is **Pearl‑1202**.<|return|> The current C7‑Outpost"
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 2,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "The facts to archive are:  ... (…). \nWe need list all.<|end|><|start|>assistant<|channel|>analysis<|message|>We need list every fact: names, codes, numbers, times, what each refers to. So list: C7-Outpost-02 value Pearl-1202. Also mention names? There's no names. Just that.<|end|><|start|>assistant<|channel|>final<|message|>**Facts from the conversation**\n\n| # | Item | Type | Value | Reference |\n|---|------|------|-------|------------|\n| 1 | **C7‑Outpost‑02** | Code/Identifier | **Pearl‑1202**"
+        }
+      ],
+      "path": "artifacts/grm_c7/cells/A-071-077/folds/074-d451af6e1e6c406e8e1238d95cc5d259/result.json"
+    },
+    {
+      "attempts": [
+        {
+          "coverage": 0.0,
+          "hit_count": 0,
+          "need_count": 9,
+          "prompt_index": 0,
+          "qc": false,
+          "relaxed_list": false,
+          "text": "For the archive: the  conversation above refers to the names, codes, numbers, and time.\n\nThe conversation above references the names, codes, numbers, and time.<|return|> The conversation above references the names, codes, numbers, and time.<|return|> the names, codes, numbers, and time.<|return|> the names, codes, numbers, and time.<|return|> the names, codes, numbers, and time.<|return|> the names, codes, numbers, and time.<|return|> the names, codes, numbers, and time.<|return|> the names, codes, numbers, and time.<|return|> the names, codes, numbers, and time"
+        },
+        {
+          "coverage": 0.3333333333333333,
+          "hit_count": 3,
+          "need_count": 9,
+          "prompt_index": 1,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "ARCHIVE NOTE — The conversation established that the  current value of C7‑Outpost‑06 is “Pearl‑1205,” and that “C7‑Handle‑06” is an alias for “Pearl‑120….” (…). The…...\nWe have a conversation. The user says: \"The current C7-Outpost-06 value is Pearl-1205. C7-Handle-06 is an alias for C7-Outpost-06.\" The assistant says: \"Recorded.\" The user says: \"Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and"
+        },
+        {
+          "coverage": 0.3333333333333333,
+          "hit_count": 3,
+          "need_count": 9,
+          "prompt_index": 2,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "The facts to archive are:  ... (…).\n\n- **C7-Outpost-06** – the current value is **Pearl‑1205**.  \n- **C7-Handle-06** – an alias that points to the same value as **C7‑Outpost‑06**.<|return|><|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>.<|return|>."
+        }
+      ],
+      "path": "artifacts/grm_c7/cells/A-078-085/folds/085-714010a2079843be86c09a45e5780c54/result.json"
+    },
+    {
+      "attempts": [
+        {
+          "coverage": 0.25,
+          "hit_count": 3,
+          "need_count": 12,
+          "prompt_index": 0,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "For the archive: the  names, codes, numbers, and times refer to the following: ...\n\nThe conversation so far: The user says: \"The current C7-Outpost-08 value is Slate-1207. C7-Handle-08 is an alias for C7-Outpost-08.\" The assistant says: \"Recorded.\" The user says: \"For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.\" The assistant: \"The names, codes, numbers, and times refer to the following: ...\""
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 3,
+          "need_count": 12,
+          "prompt_index": 1,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "ARCHIVE NOTE — The conversation established that the  current value of C7‑Outpost‑08 is Slate‑1200 and that C7‑Handle‑08 is an alias for this same entity. The “…”…...\nWe need to produce a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to. The conversation: The current C7-Outpost-08 value is Slate-1209. C7-Handle-08 is an alias for C7-Outpost-08. So we need to produce an archive note that states that. Use"
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 3,
+          "need_count": 12,
+          "prompt_index": 2,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "The facts to archive are:  ... (…). \nWe need to list all facts: names, codes, numbers, times, references.<|end|><|start|>assistant<|channel|>analysis<|message|>We need to list every fact: names, code, number, time, what each refers to. So list: C7-Outpost-10 value Slate-1207, C7-Handle-10 alias for C7-Outpost-10. Also mention that C7-Handle-10 is alias. Also mention that C7-Outpost-10 is value Slate-1207. Also mention that C7-Handle-10 refers to C7-Out"
+        }
+      ],
+      "path": "artifacts/grm_c7/cells/A-086-093/folds/091-c6bdc6101ee9410cbfc37f6e4bd2666a/result.json"
+    },
+    {
+      "attempts": [
+        {
+          "coverage": 0.0,
+          "hit_count": 0,
+          "need_count": 9,
+          "prompt_index": 0,
+          "qc": false,
+          "relaxed_list": false,
+          "text": "For the archive: the  “…”………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.3333333333333333,
+          "hit_count": 3,
+          "need_count": 9,
+          "prompt_index": 1,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "ARCHIVE NOTE — The conversation established that the  current value of the C7‑Outpost‑12 is Slate‑1212. The user also noted that the C7‑Handle‑11 is an alias for the same out‑post. The system’s “‑”‑… (the rest is omitted).<|return|> The conversation recorded that **C7‑Outpost‑12** …………………………………………………………………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.4444444444444444,
+          "hit_count": 4,
+          "need_count": 9,
+          "prompt_index": 2,
+          "qc": false,
+          "relaxed_list": false,
+          "text": "The facts to archive are:  ... (…). \nWe need list all names, etc.<|end|><|start|>assistant<|channel|>analysis<|message|>We need to list every fact: every name, code, number, time, and what each refers to. So list: C7-Outpost-12 refers to Slate-1212. Also C7-Outpost-13 refers to Slate-1213. Also C7-Handle-12 refers to C7-Outpost-12. Also C7-Handle-13 refers to C7-Outpost-13. Also C7-Handle-12 refers to Slate-1212. Also C7"
+        }
+      ],
+      "path": "artifacts/grm_c7/cells/A-094-100/folds/095-9c9f656ac72c432a9407ae3bdd641ca2/result.json"
+    },
+    {
+      "attempts": [
+        {
+          "coverage": 0.0,
+          "hit_count": 0,
+          "need_count": 8,
+          "prompt_index": 0,
+          "qc": false,
+          "relaxed_list": false,
+          "text": "For the archive: the  “…”………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 1,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "ARCHIVE NOTE — The conversation established that the  current value of the C7‑Outpost‑17 is Slate‑1218. The user’s statement “The current C7‑Outpost‑17 value is Slate‑1218” was noted and the system’s response was “Recorded.”<|return|> The user’s statement “The current … …” was recorded.<|return|> The conversation recorded that **C7‑Outpost‑17** is **Slate‑1218**. The **“………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 2,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "The facts to archive are:  ... (the rest).<|end|><|start|>assistant<|channel|>analysis<|message|>We need to list every fact: every name, code, number, time, and what each refers to. So list: C7-Outpost-18 refers to Slate-1218. Also maybe mention that Slate-1218 is the value. So answer: The conversation includes the name \"C7-Outpost-18\" which refers to the code or identifier for a location or entity, and \"Slate-1218\" which is the value associated with that identifier.<|end|><|start|>assistant<|channel|>final<|message|>Here’s a quick rundown of the key"
+        }
+      ],
+      "path": "artifacts/grm_c7/cells/A-094-100/folds/099-d57ff85cc205427e846ebe160d9e9d05/result.json"
+    },
+    {
+      "attempts": [
+        {
+          "coverage": 0.0,
+          "hit_count": 0,
+          "need_count": 8,
+          "prompt_index": 0,
+          "qc": false,
+          "relaxed_list": false,
+          "text": "For the archive: the ………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 1,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "ARCHIVE NOTE — The conversation established that the  current value of the C7‑Outpost‑22 is Slate‑1221.<|return|> The current C7‑Outpost‑22 value is Slate‑1221.<|return|> The current C7‑Outpost‑22 value is Slate‑1221.<|return|>... etc.<|end|><|start|>assistant<|channel|>analysis<|message|>We need to produce a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to. The conversation: user says \"The current C7-Outpost-22 value is Slate-1221.\" So we need"
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 2,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "The facts to archive are:  ... (the rest).<|end|><|start|>assistant<|channel|>analysis<|message|>We need to list every fact: every name, code, number, time, and what each refers to. We have conversation: \"The current C7-Outpost-21 value is Slate-1221.\" So facts: C7-Outpost-21 refers to value Slate-1221. Also maybe \"Slate-1221\" refers to something. We need list all.<|end|><|start|>assistant<|channel|>final<|message|>**Facts from the conversation**\n\n| # | Name / Code / Number | Time | What it refers to |\n|---|----------------------"
+        }
+      ],
+      "path": "artifacts/grm_c7/cells/A-101-108/folds/103-a2cab5d7dda04ce585276279ddc0aada/result.json"
+    },
+    {
+      "attempts": [
+        {
+          "coverage": 0.0,
+          "hit_count": 0,
+          "need_count": 8,
+          "prompt_index": 0,
+          "qc": false,
+          "relaxed_list": false,
+          "text": "For the archive: the ………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.0,
+          "hit_count": 0,
+          "need_count": 8,
+          "prompt_index": 1,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "ARCHIVE NOTE — The conversation established that the  “…”………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 2,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "The facts to archive are:  ... (the conversation).<|end|><|start|>assistant<|channel|>analysis<|message|>We need to list every fact: every name, code, number, time, and what each refers to. We have conversation: \"The current C7-Outpost-26 value is Slate-1225.\" So facts: C7-Outpost-26 refers to value Slate-1225. Also Slate-1225 is a value. Also maybe \"current\" refers to now. So list.<|end|><|start|>assistant<|channel|>final<|message|>Here’s a quick rundown of the key bits from our chat:\n\n| **Item** | **What it is**"
+        }
+      ],
+      "path": "artifacts/grm_c7/cells/A-101-108/folds/107-669469d0a01a41279d17313e282199fc/result.json"
+    },
+    {
+      "attempts": [
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 0,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "For the archive: the …?\n\nThe user says: \"The current C7-Outpost-30 value is Slate-1227.\" The assistant says: \"Recorded.\" The user says: \"For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number and time refers to.\" So we need to restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to. The conversation: The user says: \"The current C7-Outpost-30 value is Slate-1227.\" The"
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 1,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "ARCHIVE NOTE — The conversation established that the  current value of the C7‑Outpost‑27 is Slate‑1228. The user’s statement “Slate‑1228” is the value. The “Slate” part is “Slate” and “1228” is “…………………….” The “……………………………………………………………………………………………………………………………………………………………………"
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 2,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "The facts to archive are:  ... (the rest).<|end|><|start|>assistant<|channel|>analysis<|message|>We need to list every fact: every name, code, number, time, and what each refers to. So list: C7-Outpost-29 refers to Slate-1228. Also Slate-1228 refers to C7-Outpost-29. Also maybe mention that Slate-1228 is a value. So answer.<|end|><|start|>assistant<|channel|>final<|message|>Here’s a quick reference of the key pieces of information that were mentioned in our conversation:\n\n| **Item** | **What it refers to** |\n|-----------|-----------------------|"
+        }
+      ],
+      "path": "artifacts/grm_c7/cells/A-109-116/folds/111-6000d2c67f2e45f1bb15ac26f83828e8/result.json"
+    },
+    {
+      "attempts": [
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 0,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "For the archive: the …?\n\nThe user says: \"The current C7-Outpost-33 value is Slate-1234.\" The assistant says: \"Recorded.\" The user says: \"For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number and time refers to.\" So we need to restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to. The conversation: The user says: \"The current C7-Outpost-33 value is Slate-1234.\" The"
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 1,
+          "qc": false,
+          "relaxed_list": false,
+          "text": "ARCHIVE NOTE — The conversation established that the  current value for the C7‑Outpost‑34 is Slate‑1234.<|return|> The current C7‑Outpost‑34 value is Slate‑1234.<|return|> The current C7‑Outpost‑34 value is Slate‑1234.<|return|> The current C7‑Outpost‑34 value is **Slate‑1234**.<|return|> The current C7‑Outpost‑34 value is **Slate‑1234**.<|return|> The current C7‑Outpost‑34 value is **Slate‑1234**.<|return|> The current C7‑... etc.<|end|><|start|>assistant"
+        },
+        {
+          "coverage": 0.25,
+          "hit_count": 2,
+          "need_count": 8,
+          "prompt_index": 2,
+          "qc": true,
+          "relaxed_list": false,
+          "text": "The facts to archive are:  ... (the rest).<|end|><|start|>assistant<|channel|>analysis<|message|>We need to list every fact: every name, code, number, time, and what each refers to. We have conversation: user says \"The current C7-Outpost-32 value is Slate-1234.\" So we need to list facts: name: C7-Outpost-32, value: Slate-1234. Also maybe refer to what? It's a value. So answer: \"C7-Outpost-32 refers to Slate-1234.\"<|end|><|start|>assistant<|channel|>final<|message|>**Facts from the conversation**\n\n| **Name"
+        }
+      ],
+      "path": "artifacts/grm_c7/cells/A-109-116/folds/115-052af57424844ad9835495607ad47edf/result.json"
+    }
+  ],
+  "fold_rejected": 13,
+  "memory_identifier_unbound": 60,
+  "memory_zero_mounts": 60,
+  "oracle_UNKNOWN": 47,
+  "post_turn_count": 300,
+  "post_turn_zero_seats": 300,
+  "probe_count": 60,
+  "quotes": [
+    {
+      "admission_identifiers": [
+        "c7-fresh-0",
+        "unknown"
+      ],
+      "line": 1,
+      "memory_answer": "Not in memory: no stored record matches c7-fresh-0, unknown.",
+      "mounted_ids": [],
+      "oracle_answer": "UNKNOWN",
+      "oracle_live_prompt": "Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "path": "artifacts/grm_c7/cells/A-009-016/probes.jsonl",
+      "ranked": [
+        5,
+        0,
+        1,
+        4,
+        3,
+        7
+      ]
+    }
+  ]
+}

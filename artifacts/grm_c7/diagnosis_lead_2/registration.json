@@ -1,0 +1,65 @@
+{
+  "boundaries": {
+    "fake": [
+      "model logits",
+      "reversible CPU codec (not GPT-OSS tokens)",
+      "payload harvest/storage/injection",
+      "uniform semantic keys",
+      "no-op cache eviction/cleanup",
+      "NumPy concatenate and no_grad context"
+    ],
+    "not_tested": [
+      "GPU attention or position effects",
+      "GPT-OSS generation quality",
+      "r2 repair",
+      "blind verification"
+    ],
+    "real": [
+      "GraftRepository construction/add_document/_fold_once",
+      "ArenaCache routing/admission/identifier/attempt/forward/consolidate/QC",
+      "e2e._probe_ladder_chat",
+      "grm_c7_run.oracle"
+    ]
+  },
+  "command": "CUDA_VISIBLE_DEVICES='' PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q tests/test_grm_c7_lead_2_diagnosis.py",
+  "criteria": [
+    "Exact original fresh probe abstains and mounts zero; only lowercasing UNKNOWN or removing the suffix permits real admission/mount. Entity case changes do not prevent mount.",
+    "EB1/WC1 orion pin control mounts; all 60 original C7 query/source pairs fail identifier binding, lowercase UNKNOWN pairs bind at least one source. No answer-quality assertion for alias/correction/folded cases.",
+    "C7 oracle sends exact sources inside the same Harmony wrapper as EB1 through real _attempt; fake reader answers Basalt-811 from live prompt; state restored. Layer live_shift remains unset, a setup omission, without claiming its GPU consequence.",
+    "Real repository fold calls core consolidate: 3 raw prompts, 120 model calls per prompt; Harmony stop emitted immediately is not honored; low coverage rejects; sources no_fold.",
+    "At least one recorded ellipsis run passes core QC on replay, coverage remains below 0.70.",
+    "All 60 rows omit question and expected, while immutable fixture retains both."
+  ],
+  "effort": "high requested; effective runtime setting not independently exposed",
+  "gates": [
+    "test_identifier_unknown_suffix_blocks_real_repository_admission",
+    "test_eb1_wc1_identifier_controls_and_all_c7_binding_pairs",
+    "test_oracle_exact_source_reaches_real_attempt_harmony_live_input",
+    "test_fold_uses_core_raw_prompts_120_steps_and_ignores_harmony_stop",
+    "test_fold_recorded_ellipsis_can_pass_core_qc_but_coverage_rejects",
+    "test_probe_question_expected_omitted_at_c7_serialization"
+  ],
+  "inputs": {
+    "artifacts/grm_c7/amendment_lead_1.json": "e7c8bb527953ae82512ce1fa13e8118288a7223d162b3b15f5f3c6c10f1984d5",
+    "artifacts/grm_c7/fixture.json": "18c4bc891115ac6d96f7c443ad023f3e923ee92ab6aac21a1f1150bd14408ff0",
+    "artifacts/grm_c7/fixture_manifest.json": "182a65d3e5c975b5de83966dce5edb293cbabc342436b3d9f3884e43934fd307",
+    "artifacts/grm_c7/lead_commands.txt": "a0320cf79b5d2ba3f86f16e13673802fa316e65d0d66db2123683dc09f695ee7",
+    "artifacts/grm_c7/registration.json": "7bc0a0d1ad4cca02a02ae7653ce4b841a8f2fcd0c1e8e051d46b5f5ed7c70c1c",
+    "core/graft_arena.py": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b",
+    "core/graft_repository.py": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db",
+    "core/grm_admission.py": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f",
+    "orders/GRM_C7_AMENDMENT_2.md": "854773643d4f9a2c2e439fdb6b77594e029eeb804bb69dd7a43b574dc67bfffc",
+    "scripts/grm_c7_common.py": "652707551085d37696de4ded43080afc7c12d4ee1896c1f0e4e9aeaff33e477e",
+    "scripts/grm_c7_diagnose.py": "f3165a31792ce3576e8b6c52c77a1ae930e2a3b208f3f864842c1e6047b1c5a1",
+    "scripts/grm_c7_run.py": "9ddcf91d7fc1d1ff7ff3b032804b3fc74d6e11540b8865e230b5525e981a2031",
+    "scripts/grm_e2e_session.py": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450",
+    "tests/test_grm_c7_lead_2_diagnosis.py": "ade35656e2b1efd3e1a4b7e2bd15d2f86684b070af5b2cceee9cfa5452c6fbb6"
+  },
+  "model": "GPT-6 system identity; exact deployment model id not exposed",
+  "order_sha256": "854773643d4f9a2c2e439fdb6b77594e029eeb804bb69dd7a43b574dc67bfffc",
+  "prior_art": "Local GRM LSR-P2B, EB1/WC1 and lifecycle CPU test doubles (GRM contributors, 2026), verified local code; no prior art known to me for exact diagnostic composition.",
+  "protected_before_sha256": "29de2ddca9b897bba153d9f3adebe0fb30e36559ae73da63e1b9acf39660ec97",
+  "schema": "grm.c7.lead2.diagnostic_registration.v1",
+  "status": "DIAGNOSIS_ONLY_NOT_R2",
+  "stop_rule": "Any core defect => SCOUT-FIX finding; no C7 repair, r2 registration or GPU lead commands."
+}

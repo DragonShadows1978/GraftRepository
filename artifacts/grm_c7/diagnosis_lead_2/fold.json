@@ -1,0 +1,2926 @@
+{
+  "attempts": [
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 2,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "CHRONICLE — In this period, <|end|> …………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 2,
+      "prompt_index": 1,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "Combined record: during these conversations, <|end|> …………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 2,
+      "prompt_index": 2,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "The facts to archive are: <|end|> …………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+    }
+  ],
+  "configured_stops": [
+    "<|return|>",
+    "<|end|>",
+    "<|start|>user",
+    "<|start|>assistant"
+  ],
+  "model_calls": [
+    {
+      "initial": true,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: CHRONICLE — In this period,",
+      "live_shift": null,
+      "output_token": 49,
+      "position_offset": 0
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "<|end|>",
+      "live_shift": null,
+      "output_token": 2,
+      "position_offset": 67
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": " ",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 68
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 69
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 70
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 71
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 72
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 73
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 74
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 75
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 76
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 77
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 78
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 79
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 80
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 81
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 82
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 83
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 84
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 85
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 86
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 87
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 88
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 89
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 90
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 91
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 92
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 93
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 94
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 95
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 96
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 97
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 98
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 99
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 100
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 101
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 102
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 103
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 104
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 105
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 106
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 107
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 108
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 109
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 110
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 111
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 112
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 113
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 114
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 115
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 116
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 117
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 118
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 119
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 120
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 121
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 122
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 123
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 124
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 125
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 126
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 127
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 128
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 129
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 130
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 131
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 132
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 133
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 134
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 135
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 136
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 137
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 138
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 139
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 140
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 141
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 142
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 143
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 144
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 145
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 146
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 147
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 148
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 149
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 150
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 151
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 152
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 153
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 154
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 155
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 156
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 157
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 158
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 159
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 160
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 161
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 162
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 163
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 164
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 165
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 166
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 167
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 168
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 169
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 170
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 171
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 172
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 173
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 174
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 175
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 176
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 177
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 178
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 179
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 180
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 181
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 182
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 183
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 184
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 185
+    },
+    {
+      "initial": true,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "User: Combine the notes above into flowing sentences that state each fact together with what it means, quoting every name, code, number, and time exactly.\nAssistant: Combined record: during these conversations,",
+      "live_shift": null,
+      "output_token": 49,
+      "position_offset": 0
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "<|end|>",
+      "live_shift": null,
+      "output_token": 2,
+      "position_offset": 61
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": " ",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 62
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 63
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 64
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 65
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 66
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 67
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 68
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 69
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 70
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 71
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 72
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 73
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 74
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 75
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 76
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 77
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 78
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 79
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 80
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 81
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 82
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 83
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 84
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 85
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 86
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 87
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 88
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 89
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 90
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 91
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 92
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 93
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 94
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 95
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 96
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 97
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 98
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 99
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 100
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 101
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 102
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 103
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 104
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 105
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 106
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 107
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 108
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 109
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 110
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 111
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 112
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 113
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 114
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 115
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 116
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 117
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 118
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 119
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 120
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 121
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 122
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 123
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 124
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 125
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 126
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 127
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 128
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 129
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 130
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 131
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 132
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 133
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 134
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 135
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 136
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 137
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 138
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 139
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 140
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 141
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 142
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 143
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 144
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 145
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 146
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 147
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 148
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 149
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 150
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 151
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 152
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 153
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 154
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 155
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 156
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 157
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 158
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 159
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 160
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 161
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 162
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 163
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 164
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 165
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 166
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 167
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 168
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 169
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 170
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 171
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 172
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 173
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 174
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 175
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 176
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 177
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 178
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 179
+    },
+    {
+      "initial": true,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "User: List every fact from the notes above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:",
+      "live_shift": null,
+      "output_token": 49,
+      "position_offset": 0
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "<|end|>",
+      "live_shift": null,
+      "output_token": 2,
+      "position_offset": 51
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": " ",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 52
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 53
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 54
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 55
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 56
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 57
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 58
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 59
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 60
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 61
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 62
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 63
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 64
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 65
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 66
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 67
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 68
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 69
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 70
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 71
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 72
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 73
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 74
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 75
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 76
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 77
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 78
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 79
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 80
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 81
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 82
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 83
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 84
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 85
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 86
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 87
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 88
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 89
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 90
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 91
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 92
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 93
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 94
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 95
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 96
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 97
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 98
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 99
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 100
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 101
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 102
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 103
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 104
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 105
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 106
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 107
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 108
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 109
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 110
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 111
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 112
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 113
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 114
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 115
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 116
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 117
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 118
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 119
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 120
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 121
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 122
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 123
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 124
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 125
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 126
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 127
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 128
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 129
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 130
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 131
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 132
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 133
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 134
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 135
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 136
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 137
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 138
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 139
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 140
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 141
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 142
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 143
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 144
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 145
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 146
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 147
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 148
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 149
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 150
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 151
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 152
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 153
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 154
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 155
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 156
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 157
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 158
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 159
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 160
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 161
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 162
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 163
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 164
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 165
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 166
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 167
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 168
+    },
+    {
+      "initial": false,
+      "injected": "The current C7-Fresh-0 value is Basalt-811.",
+      "input": "…",
+      "live_shift": null,
+      "output_token": 50,
+      "position_offset": 169
+    }
+  ],
+  "no_fold": true,
+  "result": {
+    "accepted": false,
+    "best_cov": 0.0,
+    "hit_count": 0,
+    "need_count": 2
+  }
+}

@@ -1,0 +1,566 @@
+[
+  {
+    "answer": "Not in memory: no stored record matches c7-fresh-0, unknown.",
+    "identifiers": [
+      "c7-fresh-0",
+      "unknown"
+    ],
+    "info": {
+      "_route_observation": {
+        "admission_profile": {
+          "admission_ranking_before_demotion": [
+            0
+          ],
+          "admission_split_child_demoted": false,
+          "admission_split_demoted_ids": [],
+          "admission_split_family_ids": [],
+          "identified_candidates": [],
+          "identifier_hit_count": 0,
+          "identifier_tokens": [
+            "c7-fresh-0",
+            "unknown"
+          ],
+          "margin_threshold": 0.1385774091529802,
+          "policy_branch": "ambiguous_zero_identifier_hits_k3",
+          "rank_plan": [
+            0
+          ],
+          "ranking": [
+            0
+          ],
+          "rare_identifier_tokens": [
+            "c7-fresh-0",
+            "unknown"
+          ],
+          "route_backend": "python",
+          "route_margin_1_2": 0.0,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+        },
+        "excluded_live_ids": [],
+        "route_limit": 6,
+        "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+        "trips": []
+      },
+      "abstain_identifier_tokens": [
+        "c7-fresh-0",
+        "unknown"
+      ],
+      "abstain_reason": "identifier_unbound",
+      "abstained": true,
+      "admission_identified_candidates": [],
+      "admission_identifier_hit_count": 0,
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+      "admission_rank_plan": [
+        0
+      ],
+      "admission_ranking_before_demotion": [
+        0
+      ],
+      "admission_route_margin_1_2": 0.0,
+      "admission_route_margin_evaluated": true,
+      "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+      "admission_split_child_demoted": false,
+      "admission_split_demoted_ids": [],
+      "admission_split_family_ids": [],
+      "driver_probe_ladder": true,
+      "driver_probe_multimount": true,
+      "driver_topk": 3,
+      "frame_ephemeral": true,
+      "frame_escape_active": false,
+      "live_segments_after_turn": [],
+      "live_segments_carried_into_turn": [],
+      "live_segments_inherited": [],
+      "mount_dropped_for_width": [],
+      "mount_fitted": [],
+      "mount_plan": [],
+      "point_lookup": true,
+      "precise_first": false,
+      "ranking_ids": [
+        0
+      ],
+      "recency_mounted_ids": [],
+      "recency_seats": {
+        "arena_width": 96,
+        "budget_after_charge": null,
+        "charge_waived_reason": null,
+        "charged_ntok": null,
+        "nominated_ids": [],
+        "nominated_ntok": 0
+      },
+      "trip": 0
+    },
+    "mounted_ids": [],
+    "question": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+  },
+  {
+    "answer": "Basalt-811",
+    "identifiers": [
+      0
+    ],
+    "info": {
+      "_deferred_memory": {
+        "deposited": false,
+        "importance_committed": false,
+        "picks": [
+          0
+        ],
+        "route_key_prepared": true,
+        "route_key_token": 1,
+        "seg_cache_ntok": 43,
+        "turn_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>Basalt-811<|end|>",
+        "user_text": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply unknown."
+      },
+      "_route_observation": {
+        "admission_profile": {
+          "admission_ranking_before_demotion": [
+            0
+          ],
+          "admission_split_child_demoted": false,
+          "admission_split_demoted_ids": [],
+          "admission_split_family_ids": [],
+          "identified_candidates": [
+            0
+          ],
+          "identifier_hit_count": 1,
+          "identifier_tokens": [
+            "c7-fresh-0"
+          ],
+          "margin_threshold": 0.1385774091529802,
+          "policy_branch": "exactly_one_identifier_decisive_rank1",
+          "rank_plan": [
+            0
+          ],
+          "ranking": [
+            0
+          ],
+          "rare_identifier_tokens": [
+            "c7-fresh-0"
+          ],
+          "route_backend": "python",
+          "route_margin_1_2": 0.0,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+        },
+        "excluded_live_ids": [],
+        "route_limit": 6,
+        "serving_path": "grm_e2e_session._probe_ladder_chat",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              0
+            ],
+            "ordinal": 0,
+            "planned": [
+              0
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "admission_identified_candidates": [
+        0
+      ],
+      "admission_identifier_hit_count": 1,
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+      "admission_rank_plan": [
+        0
+      ],
+      "admission_ranking_before_demotion": [
+        0
+      ],
+      "admission_route_margin_1_2": 0.0,
+      "admission_route_margin_evaluated": true,
+      "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+      "admission_split_child_demoted": false,
+      "admission_split_demoted_ids": [],
+      "admission_split_family_ids": [],
+      "clean_room": true,
+      "driver_probe_ladder": true,
+      "driver_probe_multimount": true,
+      "driver_topk": 3,
+      "evicted": 0,
+      "fit_chunk_trips": [],
+      "fit_descended_head": [],
+      "fit_dropped_filler": [],
+      "fit_dropped_planned": [],
+      "fit_planned": [
+        0
+      ],
+      "fit_seated": [
+        0
+      ],
+      "fit_shuttle": false,
+      "fit_shuttle_trips": [],
+      "fit_split_children": [],
+      "fit_split_ephemeral": null,
+      "fit_split_parent": null,
+      "fit_unseatable": [],
+      "frame_ephemeral": true,
+      "frame_escape_active": false,
+      "grounding_glyph_rescued": false,
+      "grounding_normalized": true,
+      "live_segments_after_turn": [
+        {
+          "graft_id": null,
+          "ntok": 43
+        }
+      ],
+      "live_segments_carried_into_turn": [],
+      "live_segments_inherited": [],
+      "live_tokens": 43,
+      "mount_dropped_for_width": [],
+      "mount_fitted": [
+        0
+      ],
+      "mount_plan": [
+        0
+      ],
+      "mounts": [
+        1
+      ],
+      "point_lookup": true,
+      "precise_first": true,
+      "ranking_ids": [
+        0
+      ],
+      "recency_mounted_ids": [],
+      "recency_seats": {
+        "arena_width": 96,
+        "budget_after_charge": 96,
+        "charge_waived_reason": null,
+        "charged_ntok": 0,
+        "nominated_ids": [],
+        "nominated_ntok": 0
+      },
+      "resident": 69,
+      "served_without_plan_head": false,
+      "trip": 0
+    },
+    "mounted_ids": [
+      0
+    ],
+    "question": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply unknown."
+  },
+  {
+    "answer": "Basalt-811",
+    "identifiers": [
+      0
+    ],
+    "info": {
+      "_deferred_memory": {
+        "deposited": false,
+        "importance_committed": false,
+        "picks": [
+          0
+        ],
+        "route_key_prepared": true,
+        "route_key_token": 2,
+        "seg_cache_ntok": 43,
+        "turn_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current c7-fresh-0 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>Basalt-811<|end|>",
+        "user_text": "What is the current c7-fresh-0 value? Reply only with the answer; if unspecified, reply unknown."
+      },
+      "_route_observation": {
+        "admission_profile": {
+          "admission_ranking_before_demotion": [
+            0
+          ],
+          "admission_split_child_demoted": false,
+          "admission_split_demoted_ids": [],
+          "admission_split_family_ids": [],
+          "identified_candidates": [
+            0
+          ],
+          "identifier_hit_count": 1,
+          "identifier_tokens": [
+            "c7-fresh-0"
+          ],
+          "margin_threshold": 0.1385774091529802,
+          "policy_branch": "exactly_one_identifier_decisive_rank1",
+          "rank_plan": [
+            0
+          ],
+          "ranking": [
+            0
+          ],
+          "rare_identifier_tokens": [
+            "c7-fresh-0"
+          ],
+          "route_backend": "python",
+          "route_margin_1_2": 0.0,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+        },
+        "excluded_live_ids": [],
+        "route_limit": 6,
+        "serving_path": "grm_e2e_session._probe_ladder_chat",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              0
+            ],
+            "ordinal": 0,
+            "planned": [
+              0
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "admission_identified_candidates": [
+        0
+      ],
+      "admission_identifier_hit_count": 1,
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+      "admission_rank_plan": [
+        0
+      ],
+      "admission_ranking_before_demotion": [
+        0
+      ],
+      "admission_route_margin_1_2": 0.0,
+      "admission_route_margin_evaluated": true,
+      "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+      "admission_split_child_demoted": false,
+      "admission_split_demoted_ids": [],
+      "admission_split_family_ids": [],
+      "clean_room": true,
+      "driver_probe_ladder": true,
+      "driver_probe_multimount": true,
+      "driver_topk": 3,
+      "evicted": 0,
+      "fit_chunk_trips": [],
+      "fit_descended_head": [],
+      "fit_dropped_filler": [],
+      "fit_dropped_planned": [],
+      "fit_planned": [
+        0
+      ],
+      "fit_seated": [
+        0
+      ],
+      "fit_shuttle": false,
+      "fit_shuttle_trips": [],
+      "fit_split_children": [],
+      "fit_split_ephemeral": null,
+      "fit_split_parent": null,
+      "fit_unseatable": [],
+      "frame_ephemeral": true,
+      "frame_escape_active": false,
+      "grounding_glyph_rescued": false,
+      "grounding_normalized": true,
+      "live_segments_after_turn": [
+        {
+          "graft_id": null,
+          "ntok": 43
+        }
+      ],
+      "live_segments_carried_into_turn": [],
+      "live_segments_inherited": [],
+      "live_tokens": 43,
+      "mount_dropped_for_width": [],
+      "mount_fitted": [
+        0
+      ],
+      "mount_plan": [
+        0
+      ],
+      "mounts": [
+        1
+      ],
+      "point_lookup": true,
+      "precise_first": true,
+      "ranking_ids": [
+        0
+      ],
+      "recency_mounted_ids": [],
+      "recency_seats": {
+        "arena_width": 96,
+        "budget_after_charge": 96,
+        "charge_waived_reason": null,
+        "charged_ntok": 0,
+        "nominated_ids": [],
+        "nominated_ntok": 0
+      },
+      "resident": 69,
+      "served_without_plan_head": false,
+      "trip": 0
+    },
+    "mounted_ids": [
+      0
+    ],
+    "question": "What is the current c7-fresh-0 value? Reply only with the answer; if unspecified, reply unknown."
+  },
+  {
+    "answer": "Basalt-811",
+    "identifiers": [
+      0
+    ],
+    "info": {
+      "_deferred_memory": {
+        "deposited": false,
+        "importance_committed": false,
+        "picks": [
+          0
+        ],
+        "route_key_prepared": true,
+        "route_key_token": 3,
+        "seg_cache_ntok": 25,
+        "turn_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-0 value?<|end|><|start|>assistant<|channel|>final<|message|>Basalt-811<|end|>",
+        "user_text": "What is the current C7-Fresh-0 value?"
+      },
+      "_route_observation": {
+        "admission_profile": {
+          "admission_ranking_before_demotion": [
+            0
+          ],
+          "admission_split_child_demoted": false,
+          "admission_split_demoted_ids": [],
+          "admission_split_family_ids": [],
+          "identified_candidates": [
+            0
+          ],
+          "identifier_hit_count": 1,
+          "identifier_tokens": [
+            "c7-fresh-0"
+          ],
+          "margin_threshold": 0.1385774091529802,
+          "policy_branch": "exactly_one_identifier_decisive_rank1",
+          "rank_plan": [
+            0
+          ],
+          "ranking": [
+            0
+          ],
+          "rare_identifier_tokens": [
+            "c7-fresh-0"
+          ],
+          "route_backend": "python",
+          "route_margin_1_2": 0.0,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+        },
+        "excluded_live_ids": [],
+        "route_limit": 6,
+        "serving_path": "grm_e2e_session._probe_ladder_chat",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              0
+            ],
+            "ordinal": 0,
+            "planned": [
+              0
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "admission_identified_candidates": [
+        0
+      ],
+      "admission_identifier_hit_count": 1,
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+      "admission_rank_plan": [
+        0
+      ],
+      "admission_ranking_before_demotion": [
+        0
+      ],
+      "admission_route_margin_1_2": 0.0,
+      "admission_route_margin_evaluated": true,
+      "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+      "admission_split_child_demoted": false,
+      "admission_split_demoted_ids": [],
+      "admission_split_family_ids": [],
+      "clean_room": true,
+      "driver_probe_ladder": true,
+      "driver_probe_multimount": true,
+      "driver_topk": 3,
+      "evicted": 0,
+      "fit_chunk_trips": [],
+      "fit_descended_head": [],
+      "fit_dropped_filler": [],
+      "fit_dropped_planned": [],
+      "fit_planned": [
+        0
+      ],
+      "fit_seated": [
+        0
+      ],
+      "fit_shuttle": false,
+      "fit_shuttle_trips": [],
+      "fit_split_children": [],
+      "fit_split_ephemeral": null,
+      "fit_split_parent": null,
+      "fit_unseatable": [],
+      "frame_ephemeral": true,
+      "frame_escape_active": false,
+      "grounding_glyph_rescued": false,
+      "grounding_normalized": true,
+      "live_segments_after_turn": [
+        {
+          "graft_id": null,
+          "ntok": 25
+        }
+      ],
+      "live_segments_carried_into_turn": [],
+      "live_segments_inherited": [],
+      "live_tokens": 25,
+      "mount_dropped_for_width": [],
+      "mount_fitted": [
+        0
+      ],
+      "mount_plan": [
+        0
+      ],
+      "mounts": [
+        1
+      ],
+      "point_lookup": true,
+      "precise_first": true,
+      "ranking_ids": [
+        0
+      ],
+      "recency_mounted_ids": [],
+      "recency_seats": {
+        "arena_width": 96,
+        "budget_after_charge": 96,
+        "charge_waived_reason": null,
+        "charged_ntok": 0,
+        "nominated_ids": [],
+        "nominated_ntok": 0
+      },
+      "resident": 51,
+      "served_without_plan_head": false,
+      "trip": 0
+    },
+    "mounted_ids": [
+      0
+    ],
+    "question": "What is the current C7-Fresh-0 value?"
+  }
+]
