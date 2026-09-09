@@ -96,6 +96,9 @@ def verify_fixtures():
 
 
 def dry_run():
+    if (OUT / "continuation_03.json").exists():
+        from scripts import grm_x1_units
+        return grm_x1_units.dry_run()
     verify_fixtures()
     continuation = validated_continuation() if (OUT / "continuation_02.json").exists() else None
     return {"evidence_class": "reasoning: enumeration, zero GPU work",
@@ -263,6 +266,9 @@ def seal():
 
 
 def fingerprint():
+    if (OUT / "continuation_03.json").exists():
+        from scripts import grm_x1_units
+        return grm_x1_units.fingerprint()
     verify_fixtures()
     frozen = read(OUT / "handoff_manifest.json")
     # Prefer the explicit continuation; never silently fall back on a forged
@@ -380,6 +386,9 @@ def campaign_epoch(directory, fp):
 
 
 def summary():
+    if (OUT / "continuation_03.json").exists():
+        from scripts import grm_x1_units
+        return grm_x1_units.state()
     continuation = validated_continuation() if (OUT / "continuation_02.json").exists() else None
     r1 = campaign_epoch("", sha(OUT / "handoff_manifest.json"))
     r2 = campaign_epoch("r2", sha(OUT / "continuation_02.json")) if continuation else None
@@ -453,6 +462,9 @@ def preflight():
 
 
 def run_controller(requested=None):
+    if (OUT / "continuation_03.json").exists():
+        from scripts import grm_x1_units
+        return grm_x1_units.controller(requested)
     fp = fingerprint()
     cell = next_cell(requested)
     if cell is None:
@@ -534,12 +546,18 @@ def worker(cell_id, fp):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("command", nargs="?", default="list",
-                        choices=("list", "check", "preflight", "seal", "seal-continuation", "summary", "run", "resume", "_worker"))
+                        choices=("list", "check", "preflight", "seal", "seal-continuation", "seal-units", "summary", "run", "resume", "_worker"))
     parser.add_argument("cell", nargs="?")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--fingerprint")
+    parser.add_argument("--unit")
+    parser.add_argument("--attempt", type=int, choices=(1, 2), default=1)
+    parser.add_argument("--retry-unit")
     args = parser.parse_args()
     if args.command == "_worker":
+        if (OUT / "continuation_03.json").exists():
+            from scripts import grm_x1_units
+            return grm_x1_units.worker(args.cell, args.fingerprint, args.unit, args.attempt)
         return worker(args.cell, args.fingerprint)
     if args.dry_run or args.command == "list":
         result = dry_run()
@@ -551,14 +569,21 @@ def main():
         result = seal()
     elif args.command == "seal-continuation":
         result = seal_continuation()
+    elif args.command == "seal-units":
+        from scripts import grm_x1_units
+        result = grm_x1_units.seal()
     elif args.command == "summary":
         result = summary()
     else:
         if args.command == "run" and args.cell is None:
             parser.error("run requires CELL")
-        result = run_controller(args.cell if args.command == "run" else None)
+        if args.retry_unit:
+            from scripts import grm_x1_units
+            result = grm_x1_units.controller(args.cell, args.retry_unit)
+        else:
+            result = run_controller(args.cell if args.command == "run" else None)
     print(json.dumps(result, indent=2, sort_keys=True))
-    return 1 if result.get("status") == "RED" else 0
+    return 1 if result.get("status") == "RED" or str(result.get("status", "")).startswith("STOP_") else 0
 
 
 if __name__ == "__main__":

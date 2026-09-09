@@ -1,19 +1,31 @@
 #!/usr/bin/env bash
-# Lead only: dispatch each command separately in the foreground (<590 s rail).
-# A RED stops the sequence. Natural cells require the complete positive oracle.
-# If invoked as a script, stop on error and still report summary on exit.
+# Lead only. Each run below is one foreground lease (<=590 s outer rail).
+# Prior art: house X1 foreground controller (2026); new per-query resume loop.
+# NON_FIT_BUDGET and registered stops exit for lead decision. A lone UNIT_RED
+# continues; a timeout unit is NON_FIT in summary and the next unit is tried.
 set -euo pipefail
 cd /mnt/ForgeRealm/wt/grm-x1
 trap 'bash scripts/grm_x1_lead_gpu.sh summary' EXIT
 bash scripts/grm_x1_lead_gpu.sh preflight
-bash scripts/grm_x1_lead_gpu.sh run oracle_m1_s0
-bash scripts/grm_x1_lead_gpu.sh run oracle_m1_s1
-bash scripts/grm_x1_lead_gpu.sh run oracle_m10_s0
-bash scripts/grm_x1_lead_gpu.sh run oracle_m10_s1
-bash scripts/grm_x1_lead_gpu.sh run oracle_m100_s0
-bash scripts/grm_x1_lead_gpu.sh run oracle_m100_s1
-bash scripts/grm_x1_lead_gpu.sh run natural_m1
-bash scripts/grm_x1_lead_gpu.sh run natural_m10
-bash scripts/grm_x1_lead_gpu.sh run natural_m100
+for cell in oracle_m1_s0 oracle_m1_s1 oracle_m10_s0 oracle_m10_s1 oracle_m100_s0 oracle_m100_s1 natural_m1 natural_m10 natural_m100; do
+    while true; do
+        result=$(bash scripts/grm_x1_lead_gpu.sh run "$cell")
+        printf '%s\n' "$result"
+        # Worker progress may precede the final controller JSON. Parse the last
+        # JSON object without suppressing malformed/unrecognized controller output.
+        status=$(printf '%s\n' "$result" | python3 -c 'import json,sys; s=sys.stdin.read(); i=s.rfind("\n{\n"); v=json.loads(s[i+1:] if i>=0 else s); print(v["status"]); print(v.get("reason", ""))')
+        outcome=${status%%$'\n'*}
+        reason=${status#*$'\n'}
+        if [[ "$reason" == NON_FIT_BUDGET ]]; then
+            exit 2
+        fi
+        case "$outcome" in
+            UNIT_COMPLETE|UNIT_RED) ;;
+            CELL_COMPLETE|NON_FIT) break ;;
+            NATURAL_LOCKED) exit 0 ;;
+            *) exit 1 ;;
+        esac
+    done
+done
 trap - EXIT
 bash scripts/grm_x1_lead_gpu.sh summary

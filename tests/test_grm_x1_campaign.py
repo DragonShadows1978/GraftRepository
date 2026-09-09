@@ -16,8 +16,12 @@ def test_frozen_fixture_hashes_queries_and_gpu_matrix():
     assert c.verify_fixtures()["queries"] == 24
     matrix = c.dry_run()
     assert [row["turns"] for row in matrix["cells"]] == [72] * 6 + [48] * 3
-    assert matrix["primary_worker_max_s"] <= 1800
-    assert matrix["all_worker_max_s"] <= 2700
+    if (c.OUT / "continuation_03.json").exists():
+        assert matrix["budget"]["total_s"] == 5400
+        assert matrix["unit_count"] == 144
+    else:
+        assert matrix["primary_worker_max_s"] <= 1800
+        assert matrix["all_worker_max_s"] <= 2700
     pairs = [(q, row["multiplicity"], arm, cond) for row in matrix["cells"]
              for q in row["query_ids"] for arm in row["arms"] for cond in row["conditions"]]
     assert len(pairs) == len(set(pairs)) == 576
@@ -185,7 +189,7 @@ def test_duplicate_stress_uses_real_family_identity_and_shared_native_payload(mu
         duplicate_children([{"metadata": {}}], 0, 1)
 
 
-def test_controller_has_foreground_bounded_flock_and_one_cooldown(tmp_path):
+def test_controller_has_foreground_bounded_flock_and_one_cooldown(tmp_path, continuation_tree):
     observed = []
     with patch.object(c, "fingerprint", return_value="f" * 64), patch.object(c, "next_cell", return_value={"cell": "oracle_m1_s0"}), \
          patch.object(c.subprocess, "run", side_effect=lambda args, **kw: (observed.append((args, kw)) or type("Result", (), {"returncode": 1})())), \
@@ -220,9 +224,10 @@ def continuation_tree(tmp_path, monkeypatch):
     # rows. New: amendment-2 state transitions; these are never E2E evidence.
     import shutil
     root = c.ROOT
-    sources = c.source_manifest()
+    sources = c.read(c.OUT / "continuation_02.json")["sources"].copy()
     out = tmp_path / "artifacts/grm_x1"
-    shutil.copytree(c.OUT, out, ignore=shutil.ignore_patterns("sessions", "r2"))
+    shutil.copytree(c.OUT, out, ignore=shutil.ignore_patterns("sessions", "r2", "r3", "continuation_03*"))
+    shutil.copyfile(out / "lead_commands_r2.txt", out / "lead_commands.txt")
     order = tmp_path / "orders/GRM_X1_AMENDMENT_2.md"
     order.parent.mkdir()
     shutil.copyfile(root / "orders/GRM_X1_AMENDMENT_2.md", order)

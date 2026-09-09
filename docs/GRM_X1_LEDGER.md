@@ -296,3 +296,45 @@ blind verification. No git, subagents, GPU, background jobs/waits, kills,
 service writes, sibling edits, core changes or worker changes. Author GPT-6
 (exact deployment variant unavailable), reasoning high; reader GPT-OSS-20B
 low unchanged and not loaded.
+
+## 2026-09-09 — amendment 3 registration before edits/gates
+
+Create-only `artifacts/grm_x1/continuation_03_registration.json`, SHA 0262299553a7123b297488383de9cfd4bf3922a1195e9f23e7068ac4f00a4729. Immutable order: `orders/GRM_X1_AMENDMENT_3.md`. One query per unit, in original cell/global-ordinal order: 12 per oracle cell, 24 per natural cell; 144 total. Capture, install, all paired forwards and score stay inside each lease. Work alarm 280 s, worker allowance 285 s, outer 590 s, cooldown 30 s. No per-unit wall known; r2 timeout is cell-level evidence only. Budget 5400 s including 570 historical; r3 actual completed worker wall, outstanding claims 285 s, admission reserves 285 s. First successful unit projects 144 units; NON_FIT_BUDGET requires lead decision. Unit RED advances; explicit retry once, second RED stops; timeout NON_FIT never chunks forward. Historical claims/receipts and prior manifests bound before edits. Gates/criteria frozen in registration.
+
+Prior art: house X1 (2026), locally verified exclusive claims, SHA receipts and query pairing; new query-sized checkpoint/lease integration and budget projection, no new scientific algorithm. NIST FIPS 180-4 (2015), unverified — lead to check: NIST FIPS 180-4 SHA-256. No literature claim independently verified here. Author GPT-6, exact deployment variant unavailable; effort high. GPU reader openai/gpt-oss-20b low remains unloaded.
+
+## 2026-09-09 — amendment 3 sealed implementation and CPU results
+
+Sealed continuation_03 before gates: `e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10`; path
+`artifacts/grm_x1/continuation_03.json`. Source hashes unchanged after seal.
+Added unit harness and single-query GPU wrapper, routed campaign CLI, included
+r3 CPU tests and isolated historical r2 fixtures, refreshed lead loop. Exact
+files/lines and tests: `artifacts/grm_x1/AMENDMENT_3_REPORT.md`.
+
+`PYTHONDONTWRITEBYTECODE=1 python3 scripts/grm_x1_cpu.py baseline`: 196 passed,
+2 existing SWIG warnings, pytest 3.74 s; 22 r3 cases. Baseline receipt:
+`artifacts/grm_x1/receipts/cpu_baseline_0d8b663a1e90e0204f3a43c9b0d0eb20b7c35420ca62d40916768519ca929f07.json`.
+Named gates/results: `receipts/continuation_03_gates.json`. Preflight, --dry-run,
+summary and bash syntax PASS; 24 historical files hash-identical; receipt
+`receipts/continuation_03_lead_checks.json`. Additional lead-loop CPU protocol
+gate registered before execution in `continuation_03_shell_gate_registration.json`: all-unit/one-RED path 144 calls exit 0, budget NON_FIT one call exit 2, natural lock 73 calls exit 0, registered stop one call exit 1, all PASS. Receipt `receipts/continuation_03_shell_gates.json`. No GPU/stub confused with real worker evidence.
+
+Live state: r3 PENDING, zero claims/receipts/rows, 570 historical charged seconds
+of 5400 authorized; estimate null. Next unit oracle_m1_s0__alias_00. r1 and r2
+RED unchanged. Evidence correction: r2 actual receipt has 17 partial rows,
+not the empty list stated by the lead prose, and wall 280.00282101891935 s;
+no fresh r3 unit timing is inferable. Error verbatim: TimeoutError: GRM-X1
+worker reached its 280 s work rail (285 s outer worker allowance). r1 error:
+TypeError: 'NoneType' object is not iterable. No GPU fit/accuracy fix claimed.
+
+Prior art: house X1 (2026), verified local exclusive creation, SHA receipts,
+leased workers and paired query templates; new query-unit checkpoint/resume
+and planning integration only. NIST FIPS 180-4 (2015) SHA-256, unverified —
+lead to check those search terms. No new scientific algorithm claimed.
+
+No scope deviation, git, subagents, GPU probes/runs, background jobs/waits,
+kills, service writes or core/sibling edits. Foreground CPU only. Existing
+cooperative-timer hard-preemption residual retained, not tested on GPU.
+Author verification only; unchanged-core mutants not rerun; blind verification
+left to lead. Author GPT-6 (exact variant unavailable), effort high; reader
+openai/gpt-oss-20b low unchanged and unloaded.

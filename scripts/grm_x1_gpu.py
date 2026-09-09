@@ -255,3 +255,15 @@ def run_cell(cell, rows, directory):
     finally:
         snapshots.clear()
         kv_graft.clear_injection(model)
+
+
+def run_unit(unit, rows, directory):
+    """House X1 (2026) query filtering and shared template, reused unchanged.
+
+    New: one self-contained query per lease. run_cell retains the original
+    global ordinal, seed and arm rotation, captures inside this invocation,
+    and loads a fresh model. No forward is chunked or shared across leases.
+    """
+    if len(unit["query_ids"]) != 1:
+        raise ValueError("r3 unit must contain exactly one query")
+    run_cell(unit, rows, directory)
