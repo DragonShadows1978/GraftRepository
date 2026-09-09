@@ -1,0 +1,4292 @@
+[
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-024-031",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/cells/A-017-023/checkpoint",
+    "checkpoint_sha256": "c00cfedd2a3e76e8c34c1b5c75f7f0d1be00477d49a370a0a6f8a777c75e4e84",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      3
+    ],
+    "prefix_turns": [
+      24
+    ],
+    "probe_id": "c7_folded_0_d005",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 25,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-024-031",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/cells/A-017-023/checkpoint",
+    "checkpoint_sha256": "c00cfedd2a3e76e8c34c1b5c75f7f0d1be00477d49a370a0a6f8a777c75e4e84",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30
+    ],
+    "probe_id": "c7_folded_1_d005",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 31,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35
+    ],
+    "probe_id": "c7_fresh_0_d030",
+    "prompt": "Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 36,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      6
+    ],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35,
+      36
+    ],
+    "probe_id": "c7_fresh_1_d030",
+    "prompt": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 37,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35,
+      36
+    ],
+    "probe_id": "c7_fresh_1_d030",
+    "prompt": "Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 37,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      8
+    ],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38
+    ],
+    "probe_id": "c7_alias_0_d030",
+    "prompt": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 39,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38
+    ],
+    "probe_id": "c7_alias_0_d030",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 39,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-040-047",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint",
+    "checkpoint_sha256": "9165ebd3d6a2653697db0306cc8c5802cb95b087038d53723dc9db3f6726e3ff",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      9
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_alias_1_d030",
+    "prompt": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 40,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-040-047",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint",
+    "checkpoint_sha256": "9165ebd3d6a2653697db0306cc8c5802cb95b087038d53723dc9db3f6726e3ff",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [],
+    "probe_id": "c7_alias_1_d030",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 40,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-040-047",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint",
+    "checkpoint_sha256": "9165ebd3d6a2653697db0306cc8c5802cb95b087038d53723dc9db3f6726e3ff",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "prefix_turns": [
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "probe_id": "c7_correction_0_d030",
+    "prompt": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 47,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-048-055",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-040-047/checkpoint",
+    "checkpoint_sha256": "fd677e4771128bf9d7cb24d7309f7e7710b03078ddd7fae6a43eedc9d3d796b5",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_correction_1_d030",
+    "prompt": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 48,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-048-055",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-040-047/checkpoint",
+    "checkpoint_sha256": "fd677e4771128bf9d7cb24d7309f7e7710b03078ddd7fae6a43eedc9d3d796b5",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "prefix_turns": [
+      48,
+      49
+    ],
+    "probe_id": "c7_folded_0_d030",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 50,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-056-062",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/checkpoint",
+    "checkpoint_sha256": "7b1dde018da834e7ccc4678024505587dfe9985315e76dc0503d429f52810df6",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_folded_1_d030",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 56,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      63,
+      64,
+      65
+    ],
+    "probe_id": "c7_fresh_0_d060",
+    "prompt": "Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 66,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      6
+    ],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66
+    ],
+    "probe_id": "c7_fresh_1_d060",
+    "prompt": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 67,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66
+    ],
+    "probe_id": "c7_fresh_1_d060",
+    "prompt": "Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 67,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      8
+    ],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68
+    ],
+    "probe_id": "c7_alias_0_d060",
+    "prompt": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 69,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68
+    ],
+    "probe_id": "c7_alias_0_d060",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 69,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      9
+    ],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69
+    ],
+    "probe_id": "c7_alias_1_d060",
+    "prompt": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 70,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69
+    ],
+    "probe_id": "c7_alias_1_d060",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 70,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-071-077",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/checkpoint",
+    "checkpoint_sha256": "2a938c5c03a3a47ce56b6a0de8a16e51b450bdacb6e107a81862ad484bab0b19",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "prefix_turns": [
+      71,
+      72,
+      73,
+      74,
+      75,
+      76
+    ],
+    "probe_id": "c7_correction_0_d060",
+    "prompt": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 77,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-078-085",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-071-077/checkpoint",
+    "checkpoint_sha256": "ab344b485552028f9b60576d1f74dce80ba07a55dd9d19daab41a80f7c309620",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_correction_1_d060",
+    "prompt": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 78,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-078-085",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-071-077/checkpoint",
+    "checkpoint_sha256": "ab344b485552028f9b60576d1f74dce80ba07a55dd9d19daab41a80f7c309620",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "prefix_turns": [
+      78,
+      79
+    ],
+    "probe_id": "c7_folded_0_d060",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 80,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-086-093",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/checkpoint",
+    "checkpoint_sha256": "c3c6c1603f759c701d1089497d88fa0b66473a995a1329d1777ccb22c6db930f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_folded_1_d060",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 86,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      125
+    ],
+    "probe_id": "c7_fresh_0_d120",
+    "prompt": "Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 126,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      6
+    ],
+    "prefix_turns": [
+      125,
+      126
+    ],
+    "probe_id": "c7_fresh_1_d120",
+    "prompt": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 127,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      125,
+      126
+    ],
+    "probe_id": "c7_fresh_1_d120",
+    "prompt": "Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 127,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      8
+    ],
+    "prefix_turns": [
+      125,
+      126,
+      127,
+      128
+    ],
+    "probe_id": "c7_alias_0_d120",
+    "prompt": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 129,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      125,
+      126,
+      127,
+      128
+    ],
+    "probe_id": "c7_alias_0_d120",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 129,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      9
+    ],
+    "prefix_turns": [
+      125,
+      126,
+      127,
+      128,
+      129
+    ],
+    "probe_id": "c7_alias_1_d120",
+    "prompt": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 130,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      125,
+      126,
+      127,
+      128,
+      129
+    ],
+    "probe_id": "c7_alias_1_d120",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 130,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-133-140",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint",
+    "checkpoint_sha256": "5051c768d4537f3063c62a8ec4e1de4ac1987cced048f4f2b55873ae92f3f04f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "prefix_turns": [
+      133,
+      134,
+      135,
+      136
+    ],
+    "probe_id": "c7_correction_0_d120",
+    "prompt": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 137,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-133-140",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint",
+    "checkpoint_sha256": "5051c768d4537f3063c62a8ec4e1de4ac1987cced048f4f2b55873ae92f3f04f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "prefix_turns": [
+      133,
+      134,
+      135,
+      136,
+      137
+    ],
+    "probe_id": "c7_correction_1_d120",
+    "prompt": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 138,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-133-140",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint",
+    "checkpoint_sha256": "5051c768d4537f3063c62a8ec4e1de4ac1987cced048f4f2b55873ae92f3f04f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "prefix_turns": [
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139
+    ],
+    "probe_id": "c7_folded_0_d120",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 140,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-141-148",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/checkpoint",
+    "checkpoint_sha256": "1a409baea58bfe282889c1cc222ea4dc535bac36d82b680f5ca3b84f33c77aff",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [
+      141,
+      142,
+      143,
+      144,
+      145
+    ],
+    "probe_id": "c7_folded_1_d120",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 146,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-249-256",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-241-248/checkpoint",
+    "checkpoint_sha256": "d6402424ed32ddd49ed36c1e7eab9fc9e2a82c3a8c89826c7d804d3352d4384c",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      249,
+      250,
+      251,
+      252,
+      253,
+      254,
+      255
+    ],
+    "probe_id": "c7_fresh_0_d250",
+    "prompt": "Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 256,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      6
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_fresh_1_d250",
+    "prompt": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 257,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [],
+    "probe_id": "c7_fresh_1_d250",
+    "prompt": "Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 257,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      8
+    ],
+    "prefix_turns": [
+      257,
+      258
+    ],
+    "probe_id": "c7_alias_0_d250",
+    "prompt": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 259,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      257,
+      258
+    ],
+    "probe_id": "c7_alias_0_d250",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 259,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      9
+    ],
+    "prefix_turns": [
+      257,
+      258,
+      259
+    ],
+    "probe_id": "c7_alias_1_d250",
+    "prompt": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 260,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      257,
+      258,
+      259
+    ],
+    "probe_id": "c7_alias_1_d250",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 260,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-265-272",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint",
+    "checkpoint_sha256": "51785e3f8429367eb388686a8fe9611636e76f2ff317fe24a67f2f5b98b968e4",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "prefix_turns": [
+      265,
+      266
+    ],
+    "probe_id": "c7_correction_0_d250",
+    "prompt": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 267,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-265-272",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint",
+    "checkpoint_sha256": "51785e3f8429367eb388686a8fe9611636e76f2ff317fe24a67f2f5b98b968e4",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "prefix_turns": [
+      265,
+      266,
+      267
+    ],
+    "probe_id": "c7_correction_1_d250",
+    "prompt": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 268,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-265-272",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint",
+    "checkpoint_sha256": "51785e3f8429367eb388686a8fe9611636e76f2ff317fe24a67f2f5b98b968e4",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "prefix_turns": [
+      265,
+      266,
+      267,
+      268,
+      269
+    ],
+    "probe_id": "c7_folded_0_d250",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 270,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-273-280",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/checkpoint",
+    "checkpoint_sha256": "7cbf8d257cee2173403675d43eea5c65e39e6f11040855cf14ef7c0b6fbc2e66",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [
+      273,
+      274,
+      275
+    ],
+    "probe_id": "c7_folded_1_d250",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 276,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-024-031",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/cells/A-017-023/checkpoint",
+    "checkpoint_sha256": "c00cfedd2a3e76e8c34c1b5c75f7f0d1be00477d49a370a0a6f8a777c75e4e84",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      3
+    ],
+    "prefix_turns": [
+      24
+    ],
+    "probe_id": "c7_folded_0_d005",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 25,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-024-031",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/cells/A-017-023/checkpoint",
+    "checkpoint_sha256": "c00cfedd2a3e76e8c34c1b5c75f7f0d1be00477d49a370a0a6f8a777c75e4e84",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30
+    ],
+    "probe_id": "c7_folded_1_d005",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 31,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35
+    ],
+    "probe_id": "c7_fresh_0_d030",
+    "prompt": "Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 36,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      6
+    ],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35,
+      36
+    ],
+    "probe_id": "c7_fresh_1_d030",
+    "prompt": "What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 37,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35,
+      36
+    ],
+    "probe_id": "c7_fresh_1_d030",
+    "prompt": "Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 37,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      8
+    ],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38
+    ],
+    "probe_id": "c7_alias_0_d030",
+    "prompt": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 39,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38
+    ],
+    "probe_id": "c7_alias_0_d030",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 39,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-040-047",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint",
+    "checkpoint_sha256": "9165ebd3d6a2653697db0306cc8c5802cb95b087038d53723dc9db3f6726e3ff",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      9
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_alias_1_d030",
+    "prompt": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 40,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-040-047",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint",
+    "checkpoint_sha256": "9165ebd3d6a2653697db0306cc8c5802cb95b087038d53723dc9db3f6726e3ff",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [],
+    "probe_id": "c7_alias_1_d030",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 40,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-040-047",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint",
+    "checkpoint_sha256": "9165ebd3d6a2653697db0306cc8c5802cb95b087038d53723dc9db3f6726e3ff",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "prefix_turns": [
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "probe_id": "c7_correction_0_d030",
+    "prompt": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 47,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-048-055",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-040-047/checkpoint",
+    "checkpoint_sha256": "fd677e4771128bf9d7cb24d7309f7e7710b03078ddd7fae6a43eedc9d3d796b5",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_correction_1_d030",
+    "prompt": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 48,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-048-055",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-040-047/checkpoint",
+    "checkpoint_sha256": "fd677e4771128bf9d7cb24d7309f7e7710b03078ddd7fae6a43eedc9d3d796b5",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "prefix_turns": [
+      48,
+      49
+    ],
+    "probe_id": "c7_folded_0_d030",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 50,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-056-062",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/checkpoint",
+    "checkpoint_sha256": "7b1dde018da834e7ccc4678024505587dfe9985315e76dc0503d429f52810df6",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_folded_1_d030",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 56,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      63,
+      64,
+      65
+    ],
+    "probe_id": "c7_fresh_0_d060",
+    "prompt": "Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 66,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      6
+    ],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66
+    ],
+    "probe_id": "c7_fresh_1_d060",
+    "prompt": "What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 67,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66
+    ],
+    "probe_id": "c7_fresh_1_d060",
+    "prompt": "Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 67,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      8
+    ],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68
+    ],
+    "probe_id": "c7_alias_0_d060",
+    "prompt": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 69,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68
+    ],
+    "probe_id": "c7_alias_0_d060",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 69,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      9
+    ],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69
+    ],
+    "probe_id": "c7_alias_1_d060",
+    "prompt": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 70,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69
+    ],
+    "probe_id": "c7_alias_1_d060",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 70,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-071-077",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/checkpoint",
+    "checkpoint_sha256": "2a938c5c03a3a47ce56b6a0de8a16e51b450bdacb6e107a81862ad484bab0b19",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "prefix_turns": [
+      71,
+      72,
+      73,
+      74,
+      75,
+      76
+    ],
+    "probe_id": "c7_correction_0_d060",
+    "prompt": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 77,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-078-085",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-071-077/checkpoint",
+    "checkpoint_sha256": "ab344b485552028f9b60576d1f74dce80ba07a55dd9d19daab41a80f7c309620",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_correction_1_d060",
+    "prompt": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 78,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-078-085",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-071-077/checkpoint",
+    "checkpoint_sha256": "ab344b485552028f9b60576d1f74dce80ba07a55dd9d19daab41a80f7c309620",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "prefix_turns": [
+      78,
+      79
+    ],
+    "probe_id": "c7_folded_0_d060",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 80,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-086-093",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/checkpoint",
+    "checkpoint_sha256": "c3c6c1603f759c701d1089497d88fa0b66473a995a1329d1777ccb22c6db930f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_folded_1_d060",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 86,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      125
+    ],
+    "probe_id": "c7_fresh_0_d120",
+    "prompt": "Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 126,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      6
+    ],
+    "prefix_turns": [
+      125,
+      126
+    ],
+    "probe_id": "c7_fresh_1_d120",
+    "prompt": "What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 127,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      125,
+      126
+    ],
+    "probe_id": "c7_fresh_1_d120",
+    "prompt": "Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 127,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      8
+    ],
+    "prefix_turns": [
+      125,
+      126,
+      127,
+      128
+    ],
+    "probe_id": "c7_alias_0_d120",
+    "prompt": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 129,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      125,
+      126,
+      127,
+      128
+    ],
+    "probe_id": "c7_alias_0_d120",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 129,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      9
+    ],
+    "prefix_turns": [
+      125,
+      126,
+      127,
+      128,
+      129
+    ],
+    "probe_id": "c7_alias_1_d120",
+    "prompt": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 130,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      125,
+      126,
+      127,
+      128,
+      129
+    ],
+    "probe_id": "c7_alias_1_d120",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 130,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-133-140",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint",
+    "checkpoint_sha256": "5051c768d4537f3063c62a8ec4e1de4ac1987cced048f4f2b55873ae92f3f04f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "prefix_turns": [
+      133,
+      134,
+      135,
+      136
+    ],
+    "probe_id": "c7_correction_0_d120",
+    "prompt": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 137,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-133-140",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint",
+    "checkpoint_sha256": "5051c768d4537f3063c62a8ec4e1de4ac1987cced048f4f2b55873ae92f3f04f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "prefix_turns": [
+      133,
+      134,
+      135,
+      136,
+      137
+    ],
+    "probe_id": "c7_correction_1_d120",
+    "prompt": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 138,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-133-140",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint",
+    "checkpoint_sha256": "5051c768d4537f3063c62a8ec4e1de4ac1987cced048f4f2b55873ae92f3f04f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "prefix_turns": [
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139
+    ],
+    "probe_id": "c7_folded_0_d120",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 140,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-141-148",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/checkpoint",
+    "checkpoint_sha256": "1a409baea58bfe282889c1cc222ea4dc535bac36d82b680f5ca3b84f33c77aff",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [
+      141,
+      142,
+      143,
+      144,
+      145
+    ],
+    "probe_id": "c7_folded_1_d120",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 146,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-249-256",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-241-248/checkpoint",
+    "checkpoint_sha256": "d6402424ed32ddd49ed36c1e7eab9fc9e2a82c3a8c89826c7d804d3352d4384c",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      249,
+      250,
+      251,
+      252,
+      253,
+      254,
+      255
+    ],
+    "probe_id": "c7_fresh_0_d250",
+    "prompt": "Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 256,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      6
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_fresh_1_d250",
+    "prompt": "What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 257,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [],
+    "probe_id": "c7_fresh_1_d250",
+    "prompt": "Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 257,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      8
+    ],
+    "prefix_turns": [
+      257,
+      258
+    ],
+    "probe_id": "c7_alias_0_d250",
+    "prompt": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 259,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      257,
+      258
+    ],
+    "probe_id": "c7_alias_0_d250",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 259,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      9
+    ],
+    "prefix_turns": [
+      257,
+      258,
+      259
+    ],
+    "probe_id": "c7_alias_1_d250",
+    "prompt": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 260,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      257,
+      258,
+      259
+    ],
+    "probe_id": "c7_alias_1_d250",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 260,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-265-272",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint",
+    "checkpoint_sha256": "51785e3f8429367eb388686a8fe9611636e76f2ff317fe24a67f2f5b98b968e4",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "prefix_turns": [
+      265,
+      266
+    ],
+    "probe_id": "c7_correction_0_d250",
+    "prompt": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 267,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-265-272",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint",
+    "checkpoint_sha256": "51785e3f8429367eb388686a8fe9611636e76f2ff317fe24a67f2f5b98b968e4",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "prefix_turns": [
+      265,
+      266,
+      267
+    ],
+    "probe_id": "c7_correction_1_d250",
+    "prompt": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 268,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-265-272",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint",
+    "checkpoint_sha256": "51785e3f8429367eb388686a8fe9611636e76f2ff317fe24a67f2f5b98b968e4",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "prefix_turns": [
+      265,
+      266,
+      267,
+      268,
+      269
+    ],
+    "probe_id": "c7_folded_0_d250",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 270,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-273-280",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/checkpoint",
+    "checkpoint_sha256": "7cbf8d257cee2173403675d43eea5c65e39e6f11040855cf14ef7c0b6fbc2e66",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [
+      273,
+      274,
+      275
+    ],
+    "probe_id": "c7_folded_1_d250",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 276,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-024-031",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/cells/A-017-023/checkpoint",
+    "checkpoint_sha256": "c00cfedd2a3e76e8c34c1b5c75f7f0d1be00477d49a370a0a6f8a777c75e4e84",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      3
+    ],
+    "prefix_turns": [
+      24
+    ],
+    "probe_id": "c7_folded_0_d005",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 25,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-024-031",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/cells/A-017-023/checkpoint",
+    "checkpoint_sha256": "c00cfedd2a3e76e8c34c1b5c75f7f0d1be00477d49a370a0a6f8a777c75e4e84",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30
+    ],
+    "probe_id": "c7_folded_1_d005",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 31,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35
+    ],
+    "probe_id": "c7_fresh_0_d030",
+    "prompt": "Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 36,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      6
+    ],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35,
+      36
+    ],
+    "probe_id": "c7_fresh_1_d030",
+    "prompt": "What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 37,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35,
+      36
+    ],
+    "probe_id": "c7_fresh_1_d030",
+    "prompt": "Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 37,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      8
+    ],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38
+    ],
+    "probe_id": "c7_alias_0_d030",
+    "prompt": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 39,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-032-039",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+    "checkpoint_sha256": "4aefff1acbfa43316135df6a84fe236d7890eae43bafb798c7a9597aa7aef126",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38
+    ],
+    "probe_id": "c7_alias_0_d030",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 39,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-040-047",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint",
+    "checkpoint_sha256": "9165ebd3d6a2653697db0306cc8c5802cb95b087038d53723dc9db3f6726e3ff",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      9
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_alias_1_d030",
+    "prompt": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 40,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-040-047",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint",
+    "checkpoint_sha256": "9165ebd3d6a2653697db0306cc8c5802cb95b087038d53723dc9db3f6726e3ff",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [],
+    "probe_id": "c7_alias_1_d030",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 40,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-040-047",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint",
+    "checkpoint_sha256": "9165ebd3d6a2653697db0306cc8c5802cb95b087038d53723dc9db3f6726e3ff",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "prefix_turns": [
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "probe_id": "c7_correction_0_d030",
+    "prompt": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 47,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-048-055",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-040-047/checkpoint",
+    "checkpoint_sha256": "fd677e4771128bf9d7cb24d7309f7e7710b03078ddd7fae6a43eedc9d3d796b5",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_correction_1_d030",
+    "prompt": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 48,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-048-055",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-040-047/checkpoint",
+    "checkpoint_sha256": "fd677e4771128bf9d7cb24d7309f7e7710b03078ddd7fae6a43eedc9d3d796b5",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "prefix_turns": [
+      48,
+      49
+    ],
+    "probe_id": "c7_folded_0_d030",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 50,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-056-062",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/checkpoint",
+    "checkpoint_sha256": "7b1dde018da834e7ccc4678024505587dfe9985315e76dc0503d429f52810df6",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_folded_1_d030",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 56,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      63,
+      64,
+      65
+    ],
+    "probe_id": "c7_fresh_0_d060",
+    "prompt": "Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 66,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      6
+    ],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66
+    ],
+    "probe_id": "c7_fresh_1_d060",
+    "prompt": "What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 67,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66
+    ],
+    "probe_id": "c7_fresh_1_d060",
+    "prompt": "Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 67,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      8
+    ],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68
+    ],
+    "probe_id": "c7_alias_0_d060",
+    "prompt": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 69,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68
+    ],
+    "probe_id": "c7_alias_0_d060",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 69,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      9
+    ],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69
+    ],
+    "probe_id": "c7_alias_1_d060",
+    "prompt": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 70,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-063-070",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+    "checkpoint_sha256": "fd6bc6f4cdf1a2af115faeb7a86abc9ed0070189617804ea7e0c6f0b342e439f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69
+    ],
+    "probe_id": "c7_alias_1_d060",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 70,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-071-077",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/checkpoint",
+    "checkpoint_sha256": "2a938c5c03a3a47ce56b6a0de8a16e51b450bdacb6e107a81862ad484bab0b19",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "prefix_turns": [
+      71,
+      72,
+      73,
+      74,
+      75,
+      76
+    ],
+    "probe_id": "c7_correction_0_d060",
+    "prompt": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 77,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-078-085",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-071-077/checkpoint",
+    "checkpoint_sha256": "ab344b485552028f9b60576d1f74dce80ba07a55dd9d19daab41a80f7c309620",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_correction_1_d060",
+    "prompt": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 78,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-078-085",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-071-077/checkpoint",
+    "checkpoint_sha256": "ab344b485552028f9b60576d1f74dce80ba07a55dd9d19daab41a80f7c309620",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "prefix_turns": [
+      78,
+      79
+    ],
+    "probe_id": "c7_folded_0_d060",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 80,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-086-093",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/checkpoint",
+    "checkpoint_sha256": "c3c6c1603f759c701d1089497d88fa0b66473a995a1329d1777ccb22c6db930f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_folded_1_d060",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 86,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      125
+    ],
+    "probe_id": "c7_fresh_0_d120",
+    "prompt": "Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 126,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      6
+    ],
+    "prefix_turns": [
+      125,
+      126
+    ],
+    "probe_id": "c7_fresh_1_d120",
+    "prompt": "What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 127,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      125,
+      126
+    ],
+    "probe_id": "c7_fresh_1_d120",
+    "prompt": "Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 127,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      8
+    ],
+    "prefix_turns": [
+      125,
+      126,
+      127,
+      128
+    ],
+    "probe_id": "c7_alias_0_d120",
+    "prompt": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 129,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      125,
+      126,
+      127,
+      128
+    ],
+    "probe_id": "c7_alias_0_d120",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 129,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      9
+    ],
+    "prefix_turns": [
+      125,
+      126,
+      127,
+      128,
+      129
+    ],
+    "probe_id": "c7_alias_1_d120",
+    "prompt": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 130,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      125,
+      126,
+      127,
+      128,
+      129
+    ],
+    "probe_id": "c7_alias_1_d120",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 130,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-133-140",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint",
+    "checkpoint_sha256": "5051c768d4537f3063c62a8ec4e1de4ac1987cced048f4f2b55873ae92f3f04f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "prefix_turns": [
+      133,
+      134,
+      135,
+      136
+    ],
+    "probe_id": "c7_correction_0_d120",
+    "prompt": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 137,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-133-140",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint",
+    "checkpoint_sha256": "5051c768d4537f3063c62a8ec4e1de4ac1987cced048f4f2b55873ae92f3f04f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "prefix_turns": [
+      133,
+      134,
+      135,
+      136,
+      137
+    ],
+    "probe_id": "c7_correction_1_d120",
+    "prompt": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 138,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-133-140",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint",
+    "checkpoint_sha256": "5051c768d4537f3063c62a8ec4e1de4ac1987cced048f4f2b55873ae92f3f04f",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "prefix_turns": [
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139
+    ],
+    "probe_id": "c7_folded_0_d120",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 140,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-141-148",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/checkpoint",
+    "checkpoint_sha256": "1a409baea58bfe282889c1cc222ea4dc535bac36d82b680f5ca3b84f33c77aff",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [
+      141,
+      142,
+      143,
+      144,
+      145
+    ],
+    "probe_id": "c7_folded_1_d120",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 146,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-249-256",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-241-248/checkpoint",
+    "checkpoint_sha256": "d6402424ed32ddd49ed36c1e7eab9fc9e2a82c3a8c89826c7d804d3352d4384c",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      249,
+      250,
+      251,
+      252,
+      253,
+      254,
+      255
+    ],
+    "probe_id": "c7_fresh_0_d250",
+    "prompt": "Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 256,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 6] The current C7-Fresh-0 value is Basalt-811.\nUse only those records.\nWhat is the current C7-Fresh-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      6
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_fresh_1_d250",
+    "prompt": "What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 257,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [],
+    "probe_id": "c7_fresh_1_d250",
+    "prompt": "Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 257,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 7] The current C7-Fresh-1 value is Basalt-812.\nUse only those records.\nWhat is the current C7-Fresh-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      8
+    ],
+    "prefix_turns": [
+      257,
+      258
+    ],
+    "probe_id": "c7_alias_0_d250",
+    "prompt": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 259,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      257,
+      258
+    ],
+    "probe_id": "c7_alias_0_d250",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 259,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 9] C7-Signal-0 is an alias for C7-AliasBase-0.\nUse only those records.\nWhat is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      9
+    ],
+    "prefix_turns": [
+      257,
+      258,
+      259
+    ],
+    "probe_id": "c7_alias_1_d250",
+    "prompt": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 260,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-257-264",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "cb055f4ab49ca51a41857aaff4f0b5588a06e9a830fec252404428a4e5ddf1f7",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [],
+    "prefix_turns": [
+      257,
+      258,
+      259
+    ],
+    "probe_id": "c7_alias_1_d250",
+    "prompt": "Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "oracle_live_records",
+    "served_from_recorded": null,
+    "side": "oracle",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 260,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 5] The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.\n[turn 10] C7-Signal-1 is an alias for C7-AliasBase-1.\nUse only those records.\nWhat is the current value for C7-Signal-1? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-265-272",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint",
+    "checkpoint_sha256": "51785e3f8429367eb388686a8fe9611636e76f2ff317fe24a67f2f5b98b968e4",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "prefix_turns": [
+      265,
+      266
+    ],
+    "probe_id": "c7_correction_0_d250",
+    "prompt": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 267,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-265-272",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint",
+    "checkpoint_sha256": "51785e3f8429367eb388686a8fe9611636e76f2ff317fe24a67f2f5b98b968e4",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "prefix_turns": [
+      265,
+      266,
+      267
+    ],
+    "probe_id": "c7_correction_1_d250",
+    "prompt": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 268,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-265-272",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint",
+    "checkpoint_sha256": "51785e3f8429367eb388686a8fe9611636e76f2ff317fe24a67f2f5b98b968e4",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "prefix_turns": [
+      265,
+      266,
+      267,
+      268,
+      269
+    ],
+    "probe_id": "c7_folded_0_d250",
+    "prompt": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 270,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-273-280",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/checkpoint",
+    "checkpoint_sha256": "7cbf8d257cee2173403675d43eea5c65e39e6f11040855cf14ef7c0b6fbc2e66",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [
+      273,
+      274,
+      275
+    ],
+    "probe_id": "c7_folded_1_d250",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 276,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  }
+]

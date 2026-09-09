@@ -1,0 +1,77 @@
+{
+  "A0_numerical_r2_reproduction": "NOT_RUN",
+  "amendment_sha256": "72f7ba59d705e2107627321557ab047de762cb149d29143380bcacfcc3634593",
+  "baseline_cases_passed": 13,
+  "evidence_class": "author CPU baseline and source-copy mutation; not GPT-OSS numerical reproduction or blind verification",
+  "gates": {
+    "A0_campaign_barrier": {
+      "status": "PASS"
+    },
+    "A0_difference_receipted_and_stops": {
+      "status": "PASS"
+    },
+    "budget_and_incomplete_summary_fail_closed": {
+      "status": "PASS"
+    },
+    "checkpoint_tree_and_boundary": {
+      "status": "PASS"
+    },
+    "dry_run_no_gpu": {
+      "status": "PASS"
+    },
+    "fake_arm_fields_and_isolation": {
+      "status": "PASS"
+    },
+    "fake_checkpoint_production_attempt_A0": {
+      "status": "PASS"
+    },
+    "fake_prefix_creates_missing_mount": {
+      "status": "PASS"
+    },
+    "mount_mismatch_rejected_before_forward": {
+      "status": "PASS"
+    },
+    "registered_mutations_at_least_80_percent": {
+      "kill_rate": 1.0,
+      "mutants": [
+        {
+          "error": "AssertionError: Regex pattern did not match.\n  Expected regex: 'REQUEST_RESIDENCY_MISMATCH'\n  Actual message: 'MISSING_OR_DUPLICATE_MOUNT'",
+          "name": "erase_mount_guard",
+          "status": "KILLED"
+        },
+        {
+          "error": "Failed: DID NOT RAISE <class 'ValueError'>",
+          "name": "force_A0_equal",
+          "status": "KILLED"
+        },
+        {
+          "error": "ValueError: WRAPPED_PROMPT_MISMATCH",
+          "name": "force_A4_low",
+          "status": "KILLED"
+        },
+        {
+          "error": "AssertionError: assert ('; if unspecified, reply unknown.' in '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What i... value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>') == ('A2' == 'A0'\n +  where '; if unspecified, reply unknown.' = old.SUFFIX\n  \n  - A0\n  + A2)",
+          "name": "erase_prompt_suffix_change",
+          "status": "KILLED"
+        },
+        {
+          "error": "ValueError: MISSING_OR_DUPLICATE_MOUNT",
+          "name": "skip_prefix_advance",
+          "status": "KILLED"
+        }
+      ],
+      "status": "PASS",
+      "threshold": 0.8
+    },
+    "registration_and_138_intended_diffs": {
+      "status": "PASS"
+    }
+  },
+  "gpu_executed": false,
+  "logs": {
+    "cpu_baseline_1.log": "77d279b84254849169c04ef1c61846fe0b7b9e368faad9c09cfd21a9a72f61ad",
+    "cpu_mutations_1.log": "413bb4d144ef09d814094236caf8ed83016b1e4e41e3f5ca23f4a666e6179595"
+  },
+  "mutation_case_passed": 1,
+  "reader_verdict": "NOT_MEASURED"
+}

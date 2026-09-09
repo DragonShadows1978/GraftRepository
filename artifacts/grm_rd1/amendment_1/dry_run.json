@@ -1,0 +1,9 @@
+{
+  "batches": 48,
+  "estimate_seconds": 3129.896567259705,
+  "fit": "FIT_ESTIMATE",
+  "gpu_cap_seconds": 3600,
+  "gpu_executed": false,
+  "request_count": 138,
+  "status": "BLOCKED_NO_GPU_IN_SANDBOX"
+}

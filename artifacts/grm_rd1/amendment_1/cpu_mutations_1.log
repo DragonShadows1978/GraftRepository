@@ -1,0 +1,12 @@
+{"kill_rate": 1.0, "mutants": [{"error": "AssertionError: Regex pattern did not match.\n  Expected regex: 'REQUEST_RESIDENCY_MISMATCH'\n  Actual message: 'MISSING_OR_DUPLICATE_MOUNT'", "name": "erase_mount_guard", "status": "KILLED"}, {"error": "Failed: DID NOT RAISE <class 'ValueError'>", "name": "force_A0_equal", "status": "KILLED"}, {"error": "ValueError: WRAPPED_PROMPT_MISMATCH", "name": "force_A4_low", "status": "KILLED"}, {"error": "AssertionError: assert ('; if unspecified, reply unknown.' in '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What i... value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>') == ('A2' == 'A0'\n +  where '; if unspecified, reply unknown.' = old.SUFFIX\n  \n  - A0\n  + A2)", "name": "erase_prompt_suffix_change", "status": "KILLED"}, {"error": "ValueError: MISSING_OR_DUPLICATE_MOUNT", "name": "skip_prefix_advance", "status": "KILLED"}], "threshold": 0.8}
+.
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 passed, 13 deselected, 2 warnings in 5.76s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
