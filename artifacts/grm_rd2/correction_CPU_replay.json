@@ -1,0 +1,30 @@
+{
+  "evidence_class": "CPU exact Python correct_memory body with I/O stubs; checkpoint starting state; metadata only",
+  "turn2": {
+    "assistant": "Recorded.",
+    "fact_id": "C7-Vesper-0",
+    "fact_phrase": "current C7-Vesper-0 value is Flint-511",
+    "kind": "fact",
+    "turn": 2,
+    "user": "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+    "value": "Flint-511"
+  },
+  "mutation_results": [
+    {
+      "turn": 17,
+      "command": "correct memory: current C7-Vesper-0 value is Flint-511 => The current C7-Vesper-0 value is Onyx-911.",
+      "replacement_id": 12,
+      "supersedes": [
+        1
+      ]
+    },
+    {
+      "turn": 18,
+      "command": "correct memory: current C7-Vesper-1 value is Flint-512 => The current C7-Vesper-1 value is Onyx-912.",
+      "replacement_id": 14,
+      "supersedes": []
+    }
+  ],
+  "node0_retired": false,
+  "node1_retired": true
+}

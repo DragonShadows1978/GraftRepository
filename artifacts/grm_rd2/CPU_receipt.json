@@ -1,0 +1,25 @@
+{
+  "status": "PASS_METADATA_DIAGNOSIS",
+  "rows": 16,
+  "class_counts": {
+    "a": 0,
+    "b": 8,
+    "c": 8,
+    "d": 0
+  },
+  "retired_mounted": 0,
+  "A0_payload_matches": 16,
+  "gates": [
+    "original receipt identity",
+    "A2 wrong census",
+    "predecessor/end metadata projection",
+    "identifier binding",
+    "A-DEC policy",
+    "L2 resolution",
+    "plan priority fit",
+    "RS3 order/offset",
+    "correction metadata replay",
+    "C2 census"
+  ],
+  "limits": "No model, GPU, native router, logits or numerical KV replay; unchanged source methods with original rankings and I/O stubs. No treatment effect tested."
+}
