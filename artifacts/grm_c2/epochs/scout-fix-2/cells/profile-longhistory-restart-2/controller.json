@@ -3,21 +3,31 @@
   "cell": {
     "battery": "longhistory",
     "depends": [
-      "profile-longhistory-6"
+      "profile-longhistory-0",
+      "profile-longhistory-1",
+      "profile-longhistory-2",
+      "profile-longhistory-3",
+      "profile-longhistory-4",
+      "profile-longhistory-5",
+      "profile-longhistory-6",
+      "profile-longhistory-7"
     ],
-    "estimate_seconds": 100,
-    "id": "profile-longhistory-7",
-    "index": 7,
-    "phase": "fresh",
-    "side": "profile",
-    "start": 91,
-    "stop": 104
+    "estimate_seconds": 55,
+    "id": "profile-longhistory-restart-2",
+    "phase": "restart",
+    "probes": [
+      "lh_t030",
+      "lh_t033",
+      "lh_t070",
+      "lh_t080"
+    ],
+    "side": "profile"
   },
-  "charged_seconds": 156.11251427000389,
+  "charged_seconds": 53.50657696928829,
   "epoch": "scout-fix-2",
   "epoch_amendment_sha256": "218cbc8cff58762dee57f4fe399d4440f13db74956d6a5cc18bd6859708d9b22",
   "error": null,
-  "finished_at": 1788951178.986039,
+  "finished_at": 1788951813.916339,
   "registration_sha256": "8a3a27302c41f2980f883666657f7d871c5ad01d195953e017804717d3644eb0",
   "registry_sha256": "cfee19259a071d1314dde602978d8f83880f7fd3cca04a9d41b26ed42d4fb74e",
   "sources": {
@@ -399,5 +409,5 @@
     "/usr/lib/python3/dist-packages/apport_python_hook.py": "2aac4de740babcc6038483cccc7fa71f7f06405da9b9d102aafe8ac55f509c4b"
   },
   "status": "COMPLETE",
-  "worker_sha256": "650148b1bcb295a03326e7375822221f66ab9d469e18b391a67fb303c171e5da"
+  "worker_sha256": "5568c113c3d1180050732b048f50db9ed45258f3b7cf903ac3220245164630a4"
 }
