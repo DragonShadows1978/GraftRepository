@@ -1,0 +1,78 @@
+{
+  "classes": {
+    "alias": {
+      "answerable": {
+        "abstention_error": 4,
+        "exact_correct": 0,
+        "n": 10,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 6
+      },
+      "controls": {
+        "abstention_error": 0,
+        "exact_correct": 0,
+        "n": 5,
+        "unsupported_answer_error": 5,
+        "wrong_value_error": 0
+      }
+    },
+    "correction": {
+      "answerable": {
+        "abstention_error": 0,
+        "exact_correct": 9,
+        "n": 10,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 1
+      },
+      "controls": {
+        "abstention_error": 0,
+        "exact_correct": 0,
+        "n": 5,
+        "unsupported_answer_error": 2,
+        "wrong_value_error": 0
+      }
+    },
+    "folded": {
+      "answerable": {
+        "abstention_error": 6,
+        "exact_correct": 0,
+        "n": 10,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 4
+      },
+      "controls": {
+        "abstention_error": 0,
+        "exact_correct": 0,
+        "n": 5,
+        "unsupported_answer_error": 2,
+        "wrong_value_error": 0
+      }
+    },
+    "fresh": {
+      "answerable": {
+        "abstention_error": 8,
+        "exact_correct": 2,
+        "n": 10,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      },
+      "controls": {
+        "abstention_error": 0,
+        "exact_correct": 0,
+        "n": 5,
+        "unsupported_answer_error": 1,
+        "wrong_value_error": 0
+      }
+    }
+  },
+  "evidence_class": "CPU aggregation of lead E2E receipts",
+  "launch_negative_gates": {
+    "existing_batch_rejected": true,
+    "existing_owner_preserved": true,
+    "existing_owner_rejected": true,
+    "failed_campaign_stops": true,
+    "orphan_stops": true,
+    "own_owner_cleaned": true
+  },
+  "no_gpu_executed": true
+}

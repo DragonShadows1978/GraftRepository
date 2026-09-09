@@ -1,0 +1,644 @@
+[
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "coverage": 0.0,
+        "hit_count": 0,
+        "need_count": 12,
+        "prompt_index": 0,
+        "qc": false,
+        "relaxed_list": false,
+        "text": "For the archive: the  current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete. For C7-Archive-0 the outbound tag is Reed-611. For C7-Archive-1 the outbound tag is Reed-612. The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712."
+      },
+      {
+        "coverage": 1.0,
+        "hit_count": 12,
+        "need_count": 12,
+        "prompt_index": 1,
+        "qc": true,
+        "relaxed_list": false,
+        "text": "ARCHIVE NOTE — The conversation established that the  current C7‑Vesper‑0 tag is Flint‑511 and the current C7‑Vesper‑1 tag is Flint‑512, while the earlier Mica values are no longer relevant. The current C7‑Archive‑0 outbound tag is Reed‑611 and the current C7‑Archive‑1 outbound tag is Reed‑612. The current C7‑AliasBase‑0 value is Jasper‑711 and the current C7‑AliasBase‑1 value is Jasper‑712."
+      }
+    ],
+    "digest_text": "ARCHIVE NOTE — The conversation established that the  current C7‑Vesper‑0 tag is Flint‑511 and the current C7‑Vesper‑1 tag is Flint‑512, while the earlier Mica values are no longer relevant. The current C7‑Archive‑0 outbound tag is Reed‑611 and the current C7‑Archive‑1 outbound tag is Reed‑612. The current C7‑AliasBase‑0 value is Jasper‑711 and the current C7‑AliasBase‑1 value is Jasper‑712.",
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-009-016/folds/009-c13aa9d99c854db890903ab7c56359ad/result.json",
+    "result": {
+      "accepted": true,
+      "best_cov": 1.0,
+      "hit_count": 12,
+      "need_count": 12
+    },
+    "source_ids": [
+      1,
+      3,
+      4,
+      5
+    ],
+    "source_payload_sha256": {
+      "0001.npz": "b4f9712ec82196ed72fb01835f2752a0039ee1a42d81775e098f8c4196b53cfd",
+      "0003.npz": "76fedd1942c840d7f2b9378a72fce5e1357eb40540b1e45936e633111fdfe985",
+      "0004.npz": "b7d57b0d02d9b012200b12871dabe395449ce84648b00c58f25bdf0e8f318e08",
+      "0005.npz": "53adb12bd875d22d77d5db7a763f3ba5bc7758548fd6d8cebcfdc26d6e173e2a"
+    },
+    "turn": 9
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "coverage": 1.0,
+        "hit_count": 8,
+        "need_count": 8,
+        "prompt_index": 0,
+        "qc": true,
+        "relaxed_list": false,
+        "text": "For the archive: the  current C7‑Fresh‑0 value is Basalt‑811, the current C7‑Fresh‑1 value is Basalt‑812, the current C7‑Fresh‑2 value is Basalt‑813, and C7‑Signal‑0 is an alias for C7‑AliasBase‑0."
+      }
+    ],
+    "digest_text": "For the archive: the  current C7‑Fresh‑0 value is Basalt‑811, the current C7‑Fresh‑1 value is Basalt‑812, the current C7‑Fresh‑2 value is Basalt‑813, and C7‑Signal‑0 is an alias for C7‑AliasBase‑0.",
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+    "result": {
+      "accepted": true,
+      "best_cov": 1.0,
+      "hit_count": 8,
+      "need_count": 8
+    },
+    "source_ids": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "source_payload_sha256": {
+      "0006.npz": "a192abe3e61dc3fa1c8f76ec55b2e672e61ab7c26f9e5fe1dcd7af24e9f227e6",
+      "0007.npz": "29eda11b1d74a33914dbfccf96b7e991b96fa07f0f98d4685016d97bcff86687",
+      "0008.npz": "12679cd116fff1fe1e307da9b846b878947cc690df147b72e543cca8a735303f",
+      "0009.npz": "6b81df7ff4c7d95bd3a3cc769528cab5607f5724d02d139b24cc316966f065b0"
+    },
+    "turn": 18
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "coverage": 1.0,
+        "hit_count": 8,
+        "need_count": 8,
+        "prompt_index": 0,
+        "qc": true,
+        "relaxed_list": false,
+        "text": "For the archive: the  C7-Signal-1 is an alias for C7-AliasBase-1, the C7-Signal-2 is an alias for C7-AliasBase-2, the current C7-Vesper-0 value is Onyx-911, and the current C7-Vesper-1 value is Onyx-912."
+      }
+    ],
+    "digest_text": "For the archive: the  C7-Signal-1 is an alias for C7-AliasBase-1, the C7-Signal-2 is an alias for C7-AliasBase-2, the current C7-Vesper-0 value is Onyx-911, and the current C7-Vesper-1 value is Onyx-912.",
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-024-031/folds/027-a63706178e164e9081e7007964d754b6/result.json",
+    "result": {
+      "accepted": true,
+      "best_cov": 1.0,
+      "hit_count": 8,
+      "need_count": 8
+    },
+    "source_ids": [
+      11,
+      12,
+      13,
+      15
+    ],
+    "source_payload_sha256": {
+      "0011.npz": "1a9cf3c764012b9c76a486a400a6c85d27efdb89906dbe47599495fc5c97fe27",
+      "0012.npz": "a0bed078b0f12dfdee1e42e0e8cca657c00ad058a08e0a3c8c68f57b4587b86a",
+      "0013.npz": "98d019e6dbec29a78944746d77e0ee5a829a294ab7cee05f2ac6482900ab423e",
+      "0015.npz": "653ab667d820b47cfbc2a857bd556857cc8854c54d2b4727d70800ea2889250e"
+    },
+    "turn": 27
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "coverage": 1.0,
+        "hit_count": 8,
+        "need_count": 8,
+        "prompt_index": 0,
+        "qc": true,
+        "relaxed_list": false,
+        "text": "For the archive: the  current C7‑Vesper‑2 value is Onyx‑913; for C7‑Archive‑0 the inbound tag is Cedar‑1011; for C7‑Archive‑1 the inbound tag is Cedar‑1012; for C7‑Archive‑2 the inbound tag is Cedar‑1013."
+      }
+    ],
+    "digest_text": "For the archive: the  current C7‑Vesper‑2 value is Onyx‑913; for C7‑Archive‑0 the inbound tag is Cedar‑1011; for C7‑Archive‑1 the inbound tag is Cedar‑1012; for C7‑Archive‑2 the inbound tag is Cedar‑1013.",
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+    "result": {
+      "accepted": true,
+      "best_cov": 1.0,
+      "hit_count": 8,
+      "need_count": 8
+    },
+    "source_ids": [
+      18,
+      19,
+      20,
+      21
+    ],
+    "source_payload_sha256": {
+      "0018.npz": "9c882d94396ad0476a71969729cef6e44cb8043de52b7ff65bf40fcaa8a9cea3",
+      "0019.npz": "49a073351cefa1dc89c811dbaa43c2fe2a6b1c6270fd532894d0e02f5e956edf",
+      "0020.npz": "56c498c47671305405ef06e8f6037b6a5d942ceeab61c1626f2d5c032646fcb4",
+      "0021.npz": "89275b84e8dbceaa70890d5bfacff484e5b3c75f30c050f494883a1dc673bce4"
+    },
+    "turn": 60
+  },
+  {
+    "accepted": false,
+    "attempts": [
+      {
+        "coverage": 0.0,
+        "hit_count": 0,
+        "need_count": 22,
+        "prompt_index": 0,
+        "qc": false,
+        "relaxed_list": false,
+        "text": "CHRONICLE — In this period,  the C7‑Fresh‑0 tag holds Basalt‑811, the C7‑Fresh‑1 tag holds Basalt‑812, and the C7‑Fresh‑2 tag holds Basalt‑813. The C7‑Signal‑0 tag is an alias for the C7‑AliasBase‑0 tag, while the C7‑Signal‑1 tag is an alias for the C7‑AliasBase‑1 tag and the C7‑Signal‑2 tag is an alias for the C7‑AliasBase‑2 tag. The C7‑Vesper‑0 tag holds Onyx‑911, the C7‑Vesper‑1 tag holds Onyx‑912, and the C7‑Vesper‑0 tag also holds Flint‑511. The C7‑Vesper‑1 tag also holds Flint‑512. The C7‑Archive‑0 tag holds Reed‑611, and the C7‑Archive‑1 tag holds Reed‑612."
+      },
+      {
+        "coverage": 0.0,
+        "hit_count": 0,
+        "need_count": 22,
+        "prompt_index": 1,
+        "qc": false,
+        "relaxed_list": false,
+        "text": "Combined record: during these conversations,  the current C7‑Fresh‑0 tag was Basalt‑811, the current C7‑Fresh‑1 tag was Basalt‑812, the current C7‑Fresh‑2 tag was Basalt‑813, and the current C7‑Signal‑0 tag was an alias for C7‑AliasBase‑0. The current C7‑Signal‑1 tag was an alias for C7‑AliasBase‑1, the current C7‑Signal‑2 tag was an alias for C7‑AliasBase‑2, the current C7‑Vesper‑0 tag was Onyx‑911, and the current C7‑Vesper‑1 tag was Onyx‑912. The current C7‑Vesper‑0 tag was also an alias for Flint‑511, the current C7‑Vesper‑1 tag was also an alias for Flint‑512, and the earlier Mica values were no longer relevant. The current C7‑Archive‑0 outbound tag was Reed‑611, and the current C7‑Archive‑1 outbound tag was Reed‑612."
+      },
+      {
+        "coverage": 0.0,
+        "hit_count": 0,
+        "need_count": 22,
+        "prompt_index": 2,
+        "qc": false,
+        "relaxed_list": false,
+        "text": "The facts to archive are:  the C7‑Fresh‑0 tag is Basalt‑811, the C7‑Fresh‑1 tag is Basalt‑812, the C7‑Fresh‑2 tag is Basalt‑813, the C7‑Signal‑0 tag is an alias for the C7‑AliasBase‑0 tag, the C7‑Signal‑1 tag is an alias for the C7‑AliasBase‑1 tag, the C7‑Signal‑2 tag is an alias for the C7‑AliasBase‑2 tag, the C7‑Vesper‑0 tag is Onyx‑911, the C7‑Vesper‑1 tag is Onyx‑912, the C7‑Vesper‑0 tag is also Flint‑511, the C7‑Vesper‑1 tag is also Flint‑512, the C7‑Archive‑0 tag is Reed‑611, and the C7‑Archive‑1 tag is Reed‑612."
+      }
+    ],
+    "digest_text": null,
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-078-085/folds/082-47ccf3bebd1846428504503b1796bebc/result.json",
+    "result": {
+      "accepted": false,
+      "best_cov": -1.0,
+      "hit_count": 0,
+      "need_count": 22
+    },
+    "source_ids": [
+      16,
+      22,
+      26
+    ],
+    "source_payload_sha256": {
+      "0016.npz": "453308adaf43b84d7ef15b0b92c7bde381fb5c8203599620892d77d95d43e7ba",
+      "0022.npz": "544941820580cf2ad4b3a6909972599e991d48f7ec0c40afb6c14fd8b0d015f2",
+      "0026.npz": "4d925b156534fb76e40a5740b1b16398cac8f7d26e7d50f984a9436cf2ec79b1"
+    },
+    "turn": 82
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "coverage": 1.0,
+        "hit_count": 8,
+        "need_count": 8,
+        "prompt_index": 0,
+        "qc": true,
+        "relaxed_list": false,
+        "text": "For the archive: the  current C7-Outpost-00 value is Pearl-1200, the current C7-Outpost-01 value is Pearl-1201, the current C7-Outpost-02 value is Pearl-1202, and the current C7-Outpost-03 value is Pearl-1203."
+      }
+    ],
+    "digest_text": "For the archive: the  current C7-Outpost-00 value is Pearl-1200, the current C7-Outpost-01 value is Pearl-1201, the current C7-Outpost-02 value is Pearl-1202, and the current C7-Outpost-03 value is Pearl-1203.",
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-078-085/folds/082-c83463d39fd0464d8897e0b1eee4c828/result.json",
+    "result": {
+      "accepted": true,
+      "best_cov": 1.0,
+      "hit_count": 8,
+      "need_count": 8
+    },
+    "source_ids": [
+      39,
+      44,
+      50,
+      55
+    ],
+    "source_payload_sha256": {
+      "0039.npz": "324566c22631a012224b0ce1b199d1e5648ee04998452754ced0ba1a3b86d9fb",
+      "0044.npz": "aa4b4232fd2dd72f2a262c212847644db8f2e26f7351260582cc6438b329bf3e",
+      "0050.npz": "b6b9f12868e47432c249d44fc34c20bcd767ddd504c912ea6859c10e0033f919",
+      "0055.npz": "24a2e8fd27ad904ed18a38bbc7cb21b063c3636c121db732e8780e5fdb815424"
+    },
+    "turn": 82
+  },
+  {
+    "accepted": false,
+    "attempts": [
+      {
+        "coverage": 0.0,
+        "hit_count": 0,
+        "need_count": 10,
+        "prompt_index": 0,
+        "qc": false,
+        "relaxed_list": false,
+        "text": "For the archive: the  current C7-Outpost-04 value is Pearl-1204. The current C7-Outpost-05 value is Pearl-1205. The current C7-Outpost-06 value is Slate-1206. C7-Handle-06 is an alias for C7-Outpost-06. The current C7-Outpost-07 value is Slate-1207. C7-Handle-07 is an alias for C7-Outpost-07."
+      },
+      {
+        "coverage": 0.0,
+        "hit_count": 0,
+        "need_count": 10,
+        "prompt_index": 1,
+        "qc": false,
+        "relaxed_list": false,
+        "text": "ARCHIVE NOTE — The conversation established that the  current value for the identifier C7‑Outpost‑04 is Pearl‑1204. The current value for the identifier C7‑Outpost‑05 is Pearl‑1205. The current value for the identifier C7‑Outpost‑06 is Slate‑1206, and the identifier C7‑Handle‑06 is an alias for C7‑Outpost‑06. The current value for the identifier C7‑Outpost‑07 is Slate‑1207, and the identifier C7‑Handle‑07 is an alias for C7‑Outpost‑07."
+      },
+      {
+        "coverage": 0.0,
+        "hit_count": 0,
+        "need_count": 10,
+        "prompt_index": 2,
+        "qc": false,
+        "relaxed_list": false,
+        "text": "The facts to archive are:  1. The current C7‑Outpost‑04 value is Pearl‑1204. 2. The current C7‑Outpost‑05 value is Pearl‑1205. 3. The current C7‑Outpost‑06 value is Slate‑1206, and C7‑Handle‑06 is an alias for that same outpost. 4. The current C7‑Outpost‑07 value is Slate‑1207, with C7‑Handle‑07 serving as an alias for that outpost."
+      }
+    ],
+    "digest_text": null,
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-086-093/folds/088-1ef58cb6c7db4fd2a801e07e7993f91f/result.json",
+    "result": {
+      "accepted": false,
+      "best_cov": -1.0,
+      "hit_count": 0,
+      "need_count": 10
+    },
+    "source_ids": [
+      60,
+      65,
+      67,
+      68
+    ],
+    "source_payload_sha256": {
+      "0060.npz": "cb7f8bf6c304a80c1511647aea9b8dcd91733f9d382d673a00dca5a15b7c8c7c",
+      "0065.npz": "8f00db10ebdd517210d9e0b485f54a58ddb35f1f578f984390796ef52f7e75d7",
+      "0067.npz": "565a6e5429d999930571c6918b941cb1dfd5006690d808c5432d3c6769bdf4c2",
+      "0068.npz": "119875d5a7d6befb5f4b7b44f407f2d1a70b16ccc493800d3679efd23aff6bd7"
+    },
+    "turn": 88
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "coverage": 1.0,
+        "hit_count": 12,
+        "need_count": 12,
+        "prompt_index": 0,
+        "qc": true,
+        "relaxed_list": false,
+        "text": "For the archive: the  current C7-Outpost-08 value is Slate-1208, and C7-Handle-08 is an alias for C7-Outpost-08. The current C7-Outpost-09 value is Slate-1209, and C7-Handle-09 is an alias for C7-Outpost-09. The current C7-Outpost-10 value is Slate-1210, and C7-Handle-10 is an alias for C7-Outpost-10. The current C7-Outpost-11 value is Slate-1211, and C7-Handle-11 is an alias for C7-Outpost-11."
+      }
+    ],
+    "digest_text": "For the archive: the  current C7-Outpost-08 value is Slate-1208, and C7-Handle-08 is an alias for C7-Outpost-08. The current C7-Outpost-09 value is Slate-1209, and C7-Handle-09 is an alias for C7-Outpost-09. The current C7-Outpost-10 value is Slate-1210, and C7-Handle-10 is an alias for C7-Outpost-10. The current C7-Outpost-11 value is Slate-1211, and C7-Handle-11 is an alias for C7-Outpost-11.",
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-086-093/folds/092-864d8482f3a141898b1b71cd4410b8f2/result.json",
+    "result": {
+      "accepted": true,
+      "best_cov": 1.0,
+      "hit_count": 12,
+      "need_count": 12
+    },
+    "source_ids": [
+      70,
+      71,
+      72,
+      73
+    ],
+    "source_payload_sha256": {
+      "0070.npz": "ecffd30855022adc6698559110eccc56fbb8a908b84fe667295bf35c1d5f2551",
+      "0071.npz": "e390a11dfd007b7a125e3a1007c8634510b4ca957eb56d91cfd14152b7be9d4d",
+      "0072.npz": "4dda4b7669fac699414ebc60bff1161e2f28807870852cb17876f9280aa00009",
+      "0073.npz": "47f5d81ae9cbc66c75c9f3288f5b250d6d9d6ebe1a146c5f2f4827147f1f436b"
+    },
+    "turn": 92
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "coverage": 1.0,
+        "hit_count": 8,
+        "need_count": 8,
+        "prompt_index": 0,
+        "qc": true,
+        "relaxed_list": false,
+        "text": "For the archive: the  current C7‑Outpost‑12 value is Slate‑1212, the current C7‑Outpost‑13 value is Slate‑1213, the current C7‑Outpost‑14 value is Slate‑1214, and the current C7‑Outpost‑15 value is Slate‑1215."
+      }
+    ],
+    "digest_text": "For the archive: the  current C7‑Outpost‑12 value is Slate‑1212, the current C7‑Outpost‑13 value is Slate‑1213, the current C7‑Outpost‑14 value is Slate‑1214, and the current C7‑Outpost‑15 value is Slate‑1215.",
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-094-100/folds/096-c5ebacf8c4884731b808e181d2f7b987/result.json",
+    "result": {
+      "accepted": true,
+      "best_cov": 1.0,
+      "hit_count": 8,
+      "need_count": 8
+    },
+    "source_ids": [
+      74,
+      75,
+      76,
+      77
+    ],
+    "source_payload_sha256": {
+      "0074.npz": "d2eb9cf4a7b71ec3e23856bd8729b13aabd52ee5526ec1662031cd6691ca4a4a",
+      "0075.npz": "804b439d5cd6f3c48d479e6373e866074e9c7682fdb0c82f89e399e406f79afd",
+      "0076.npz": "238bb9e6ea6baa22e828d9a60d13aed553185ec68f83181babbb6552b4707b08",
+      "0077.npz": "f63b3dd8b3955c899d64a2bcf76b92849e15e50f57acc3060018a3f66272d796"
+    },
+    "turn": 96
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "coverage": 0.0,
+        "hit_count": 0,
+        "need_count": 20,
+        "prompt_index": 0,
+        "qc": false,
+        "relaxed_list": false,
+        "text": "CHRONICLE — In this period,  the C7‑AliasBase‑0 identifier holds the value Jasper‑711, while the C7‑AliasBase‑1 identifier holds the value Jasper‑712. The C7‑Vesper‑2 identifier holds the value Onyx‑913. The C7‑Archive‑0 identifier holds the inbound tag Cedar‑1011. The C7‑Archive‑1 identifier holds the inbound tag Cedar‑1012. The C7‑Archive‑2 identifier holds the inbound tag Cedar‑1013. The C7‑Outpost‑00 identifier holds the value Pearl‑1200. The C7‑Outpost‑01 identifier holds the value Pearl‑1201. The C7‑Outpost‑02 identifier holds the value Pearl‑1202. The C7‑Outpost‑03 identifier holds the value Pearl‑1203."
+      },
+      {
+        "coverage": 1.0,
+        "hit_count": 20,
+        "need_count": 20,
+        "prompt_index": 1,
+        "qc": true,
+        "relaxed_list": false,
+        "text": "Combined record: during these conversations,  the current C7‑AliasBase‑0 value is Jasper‑711 and the current C7‑AliasBase‑1 value is Jasper‑712. The current C7‑Vesper‑2 value is Onyx‑913. The inbound tag for C7‑Archive‑0 is Cedar‑1011, for C7‑Archive‑1 is Cedar‑1012, and for C7‑Archive‑2 is Cedar‑1013. The current C7‑Outpost‑00 value is Pearl‑1200, the current C7‑Outpost‑01 value is Pearl‑1201, the current C7‑Outpost‑02 value is Pearl‑1202, and the current C7‑Outpost‑03 value is Pearl‑1203."
+      }
+    ],
+    "digest_text": "Combined record: during these conversations,  the current C7‑AliasBase‑0 value is Jasper‑711 and the current C7‑AliasBase‑1 value is Jasper‑712. The current C7‑Vesper‑2 value is Onyx‑913. The inbound tag for C7‑Archive‑0 is Cedar‑1011, for C7‑Archive‑1 is Cedar‑1012, and for C7‑Archive‑2 is Cedar‑1013. The current C7‑Outpost‑00 value is Pearl‑1200, the current C7‑Outpost‑01 value is Pearl‑1201, the current C7‑Outpost‑02 value is Pearl‑1202, and the current C7‑Outpost‑03 value is Pearl‑1203.",
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-094-100/folds/100-6357d9f7813645e0a6c8a7c5b599f844/result.json",
+    "result": {
+      "accepted": true,
+      "best_cov": 1.0,
+      "hit_count": 20,
+      "need_count": 20
+    },
+    "source_ids": [
+      27,
+      48,
+      69
+    ],
+    "source_payload_sha256": {
+      "0027.npz": "fc864052a56222e2583ffbed2e183d15020d353ff35d4fed047bd7a30bedde95",
+      "0048.npz": "a7138ad2036aa7c4e379769272546979124785f80afc386bc0dbc8df63f4a158",
+      "0069.npz": "14696bcfaa110374bb44f8f4f11cce09081e779af2c18db14c4e0fa1cb5d0644"
+    },
+    "turn": 100
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "coverage": 1.0,
+        "hit_count": 8,
+        "need_count": 8,
+        "prompt_index": 0,
+        "qc": true,
+        "relaxed_list": false,
+        "text": "For the archive: the  current C7-Outpost-16 value is Slate-1216, the current C7-Outpost-17 value is Slate-1217, the current C7-Outpost-18 value is Slate-1218, and the current C7-Outpost-19 value is Slate-1219."
+      }
+    ],
+    "digest_text": "For the archive: the  current C7-Outpost-16 value is Slate-1216, the current C7-Outpost-17 value is Slate-1217, the current C7-Outpost-18 value is Slate-1218, and the current C7-Outpost-19 value is Slate-1219.",
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-094-100/folds/100-6ebc6d3d34d345b6a962d2b48bed95b9/result.json",
+    "result": {
+      "accepted": true,
+      "best_cov": 1.0,
+      "hit_count": 8,
+      "need_count": 8
+    },
+    "source_ids": [
+      79,
+      80,
+      81,
+      82
+    ],
+    "source_payload_sha256": {
+      "0079.npz": "88e6cd37fb60d0397c1d6b63d8220e0f4f729213e237e0be5e4face75f34e300",
+      "0080.npz": "5e22922f77acb2d062d059e7b7b4c4ce1240d6937224f3eadfeefbf9c016bdba",
+      "0081.npz": "a56ab9cd83dda1453b1d1211763a48a774f07d448def8b3e46c7192b9d540a9c",
+      "0082.npz": "d1fc5e7032d58eea208e305353c3f6abdc4ae5d16c52c9c87d2be37ae89e3789"
+    },
+    "turn": 100
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "coverage": 1.0,
+        "hit_count": 8,
+        "need_count": 8,
+        "prompt_index": 0,
+        "qc": true,
+        "relaxed_list": false,
+        "text": "For the archive: the  current C7‑Outpost‑20 value is Slate‑1220, the current C7‑Outpost‑21 value is Slate‑1221, the current C7‑Outpost‑22 value is Slate‑1222, and the current C7‑Outpost‑23 value is Slate‑1223."
+      }
+    ],
+    "digest_text": "For the archive: the  current C7‑Outpost‑20 value is Slate‑1220, the current C7‑Outpost‑21 value is Slate‑1221, the current C7‑Outpost‑22 value is Slate‑1222, and the current C7‑Outpost‑23 value is Slate‑1223.",
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-101-108/folds/104-1a4d157e77e44702896ae540ef1059b3/result.json",
+    "result": {
+      "accepted": true,
+      "best_cov": 1.0,
+      "hit_count": 8,
+      "need_count": 8
+    },
+    "source_ids": [
+      84,
+      85,
+      86,
+      87
+    ],
+    "source_payload_sha256": {
+      "0084.npz": "f2e61addda709ae9f253daab50a2c2215f5a42463dcec8cefa8cecc864762c4d",
+      "0085.npz": "31fbb3b46efb13bb537a9bd9e338ed896d634e431d7bc8405c6fec66811240fb",
+      "0086.npz": "7e8b1557387f69998cbada81caebae31f656a641a7666b43f8f2721f23d8f8fc",
+      "0087.npz": "aea47c836d0af81c5eb1036cebeb145fbe48d19d207a929c6d0ed77544136935"
+    },
+    "turn": 104
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "coverage": 1.0,
+        "hit_count": 8,
+        "need_count": 8,
+        "prompt_index": 0,
+        "qc": true,
+        "relaxed_list": false,
+        "text": "For the archive: the  current C7‑Outpost‑24 value is Slate‑1224, the current C7‑Outpost‑25 value is Slate‑1225, the current C7‑Outpost‑26 value is Slate‑1226, and the current C7‑Outpost‑27 value is Slate‑1227."
+      }
+    ],
+    "digest_text": "For the archive: the  current C7‑Outpost‑24 value is Slate‑1224, the current C7‑Outpost‑25 value is Slate‑1225, the current C7‑Outpost‑26 value is Slate‑1226, and the current C7‑Outpost‑27 value is Slate‑1227.",
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-101-108/folds/108-10dc9e1860a04611af2dea08db21c29f/result.json",
+    "result": {
+      "accepted": true,
+      "best_cov": 1.0,
+      "hit_count": 8,
+      "need_count": 8
+    },
+    "source_ids": [
+      90,
+      91,
+      92,
+      93
+    ],
+    "source_payload_sha256": {
+      "0090.npz": "c864d2518df5a20f26d7c3f9af5c1ef4489c01fc0009c6385be138e53b156044",
+      "0091.npz": "3e0ed3781649627f4a68f2b490c6e9517e7b063e9c21f843d432ec128965cd22",
+      "0092.npz": "1256421fd043a64d1ec98e963ffe825ccdbae0ab44a14d751705ed7ed3a0cdc9",
+      "0093.npz": "96204861c1335dccbfdcbc355ab372cfdaaa5dca27c19c495dc48cf9c8a57acd"
+    },
+    "turn": 108
+  },
+  {
+    "accepted": false,
+    "attempts": [
+      {
+        "coverage": 0.0,
+        "hit_count": 0,
+        "need_count": 28,
+        "prompt_index": 0,
+        "qc": false,
+        "relaxed_list": false,
+        "text": "CHRONICLE — In this period,  the archive records that the current C7‑Outpost‑08 holds the value Slate‑1208, and that C7‑Handle‑08 is an alias for this same outpost. The archive further notes that the current C7‑Outpost‑09 contains the value Slate‑1209, with C7‑Handle‑09 serving as its alias. The archive also records that the current C7‑Outpost‑10 holds the value Slate‑1210, and that C7‑Handle‑10 is an alias for this outpost. The archive records that the current C7‑Outpost‑11 holds the value Slate‑1211, and that C7‑Handle‑11 is an alias for this outpost. The archive records that the current C7‑Outpost‑12 holds the value Slate‑1212, and that C7‑Handle‑12 is an alias for this outpost. The archive records that the current C7‑Outpost‑13 holds the value Slate‑1213, and that C7‑Handle‑13 is an alias for this outpost. The archive records that the current C7‑Outpost‑14 holds the value Slate‑1214, and that C7‑Handle‑14 is an alias for this outpost. The archive records that the current C7‑Outpost‑15 holds the value Slate‑1215, and that C7‑Handle‑15 is an alias for this outpost. The archive records that the current C7‑Outpost‑16 holds the value Slate‑1216, and that C7‑Handle‑16 is an alias for"
+      },
+      {
+        "coverage": 0.0,
+        "hit_count": 0,
+        "need_count": 28,
+        "prompt_index": 1,
+        "qc": false,
+        "relaxed_list": false,
+        "text": "Combined record: during these conversations,  the current C7‑Outpost‑08 value is Slate‑1208, and C7‑Handle‑08 is an alias for C7‑Outpost‑08; the current C7‑Outpost‑09 value is Slate‑1209, and C7‑Handle‑09 is an alias for C7‑Outpost‑09; the current C7‑Outpost‑10 value is Slate‑1210, and C7‑Handle‑10 is an alias for C7‑Outpost‑10; the current C7‑Outpost‑11 value is Slate‑1211, and C7‑Handle‑11 is an alias for C7‑Outpost‑11; the current C7‑Outpost‑12 value is Slate‑1212; the current C7‑Outpost‑13 value is Slate‑1213; the current C7‑Outpost‑14 value is Slate‑1214; the current C7‑Outpost‑15 value is Slate‑1215; the current C7‑Outpost‑16 value is Slate‑1216; the current C7‑Outpost‑17 value is Slate‑1217; the current C7‑Outpost‑18 value is Slate‑1218; the current C7‑Outpost‑19 value is Slate‑1219."
+      },
+      {
+        "coverage": 0.0,
+        "hit_count": 0,
+        "need_count": 28,
+        "prompt_index": 2,
+        "qc": false,
+        "relaxed_list": false,
+        "text": "The facts to archive are:  the current C7‑Outpost‑08 value is Slate‑1208, and C7‑Handle‑08 is an alias for C7‑Outpost‑08; the current C7‑Outpost‑09 value is Slate‑1209, and C7‑Handle‑09 is an alias for C7‑Outpost‑09; the current C7‑Outpost‑10 value is Slate‑1210, and C7‑Handle‑10 is an alias for C7‑Outpost‑10; the current C7‑Outpost‑11 value is Slate‑1211, and C7‑Handle‑11 is an alias for C7‑Outpost‑11; the current C7‑Outpost‑12 value is Slate‑1212; the current C7‑Outpost‑13 value is Slate‑1213; the current C7‑Outpost‑14 value is Slate‑1214; the current C7‑Outpost‑15 value is Slate‑1215; the current C7‑Outpost‑16 value is Slate‑1216; the current C7‑Outpost‑17 value is Slate‑1217; the current C7‑Outpost‑18 value is Slate‑1218; and the current C7‑Outpost‑19 value is Slate‑1219."
+      }
+    ],
+    "digest_text": null,
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-109-116/folds/112-4dfd25098660427f992e4dea53d26e19/result.json",
+    "result": {
+      "accepted": false,
+      "best_cov": -1.0,
+      "hit_count": 0,
+      "need_count": 28
+    },
+    "source_ids": [
+      78,
+      83,
+      88
+    ],
+    "source_payload_sha256": {
+      "0078.npz": "7180e7cc683a147cd7c8380582cd91b434b92453e8ca479ba3bb086c9d5609db",
+      "0083.npz": "c1a602178d8510e152e1842e4b6ba7125b4f6da0585c4ffe5afa9d0399915cd6",
+      "0088.npz": "a46ccf3ad6a223937c29f4117d1996d8c56639bf448cceaac36623b40335e049"
+    },
+    "turn": 112
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "coverage": 1.0,
+        "hit_count": 8,
+        "need_count": 8,
+        "prompt_index": 0,
+        "qc": true,
+        "relaxed_list": false,
+        "text": "For the archive: the  current C7-Outpost-28 value is Slate-1228, the current C7-Outpost-29 value is Slate-1229, the current C7-Outpost-30 value is Slate-1230, and the current C7-Outpost-31 value is Slate-1231."
+      }
+    ],
+    "digest_text": "For the archive: the  current C7-Outpost-28 value is Slate-1228, the current C7-Outpost-29 value is Slate-1229, the current C7-Outpost-30 value is Slate-1230, and the current C7-Outpost-31 value is Slate-1231.",
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-109-116/folds/112-e2ae93ed3dee41bd8932047c290be6b4/result.json",
+    "result": {
+      "accepted": true,
+      "best_cov": 1.0,
+      "hit_count": 8,
+      "need_count": 8
+    },
+    "source_ids": [
+      95,
+      96,
+      97,
+      98
+    ],
+    "source_payload_sha256": {
+      "0095.npz": "5938b5acbeb6aa47c0805df280668e32170ad87cbee9d2441b540f02badf5914",
+      "0096.npz": "3691f4b9b7d8c6b81914f3b4d851b6d65fc60990d62eaaa1c289e54e441641f5",
+      "0097.npz": "4c9fbefa17aa8485e8436bb4cd9374629e35803d90b1f49f7a0497065d0971b8",
+      "0098.npz": "8bb2c7328bfad64f224321e735caaad891a85d68b325d5b17fe95c67122bac8a"
+    },
+    "turn": 112
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "coverage": 1.0,
+        "hit_count": 8,
+        "need_count": 8,
+        "prompt_index": 0,
+        "qc": true,
+        "relaxed_list": false,
+        "text": "For the archive: the  current C7‑Outpost‑32 value is Slate‑1232, the current C7‑Outpost‑33 value is Slate‑1233, the current C7‑Outpost‑34 value is Slate‑1234, and the current C7‑Outpost‑35 value is Slate‑1235."
+      }
+    ],
+    "digest_text": "For the archive: the  current C7‑Outpost‑32 value is Slate‑1232, the current C7‑Outpost‑33 value is Slate‑1233, the current C7‑Outpost‑34 value is Slate‑1234, and the current C7‑Outpost‑35 value is Slate‑1235.",
+    "error": null,
+    "receipt": "artifacts/grm_c7/r3/cells/A-109-116/folds/116-8bb82c745e394ad395f80239d9cc8fab/result.json",
+    "result": {
+      "accepted": true,
+      "best_cov": 1.0,
+      "hit_count": 8,
+      "need_count": 8
+    },
+    "source_ids": [
+      100,
+      101,
+      102,
+      103
+    ],
+    "source_payload_sha256": {
+      "0100.npz": "ef962cd4119e685f5bf2cbd358920e0f3de7d669a617ca8688fe20ca40cf007b",
+      "0101.npz": "af19414d000d872dd79c355964591b985f116287f22f8c9402756747ea1505df",
+      "0102.npz": "4a6f5a97178af6f84b24bf2c15fe7b846e5ceea09d29433f75093f425e80c423",
+      "0103.npz": "f1272e39d041ffe7f5fe90d347f79c7bc0c9309fead9c98b6333abade0343de8"
+    },
+    "turn": 116
+  }
+]
