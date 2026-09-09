@@ -1,0 +1,97 @@
+# GRM-C4 lead commands, dependency order. Generated from immutable registration.
+# Execute each command in its own foreground invocation; do NOT run this entire file as one tool call.
+# Stop on any nonzero exit. Never retry a started unit, clear a marker/lock, or extend a lease.
+# Existing source fingerprints match WC1: do not rerun the historical diagonals.
+# Full fixed-geometry factorial remains NON_FIT/INCONCLUSIVE; these are only the two new cells.
+cd /mnt/ForgeRealm/wt/grm-c4
+python scripts/grm_c4_campaign.py preflight --dry-run
+python -m pytest -q tests/test_grm_c4_campaign.py tests/test_grm_lsr_p2c_split_descent.py
+# GPU lead only from here. gpu_lease(285,0) owns /tmp/forge-gpu.lock inside each worker.
+# 590s outer hard timeout targets only the worker started by this command. No shell-wide/process-name signals.
+# Interleave corresponding units across cells; each session chain still advances in order.
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery sup --spec correction_then_restatement
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery sup --spec correction_then_restatement
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery sup --spec fresh_fact_controls
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery sup --spec fresh_fact_controls
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery sup --spec multi_hop_a_b_c
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery sup --spec multi_hop_a_b_c
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery sup --spec short_correction_long_competitor
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery sup --spec short_correction_long_competitor
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery census --spec e2e-1
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery census --spec e2e-1
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery census --spec e2e-2
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery census --spec e2e-2
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery census --spec e2e-3
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery census --spec e2e-3
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery census --spec e2e-4
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery census --spec e2e-4
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery longhorizon --spec c4-lh-01
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-01
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery longhorizon --spec c4-lh-02
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-02
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery longhorizon --spec c4-lh-03
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-03
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery longhorizon --spec c4-lh-04
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-04
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery longhorizon --spec c4-lh-05
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-05
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery longhorizon --spec c4-lh-06
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-06
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery longhorizon --spec c4-lh-07
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-07
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery longhorizon --spec c4-lh-08
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-08
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery longhorizon --spec c4-lh-09
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-09
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery longhorizon --spec c4-lh-10
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-10
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery longhorizon --spec c4-lh-11
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-11
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery longhorizon --spec c4-lh-12
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-12
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c64_w96 --battery longhorizon --spec c4-lh-13
+sleep 30
+timeout --signal=KILL 590s python scripts/grm_c4_campaign.py worker --cell c96_w64 --battery longhorizon --spec c4-lh-13
+sleep 30
+python scripts/grm_c4_campaign.py score --cell c64_w96
+python scripts/grm_c4_campaign.py score --cell c96_w64
