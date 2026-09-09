@@ -450,7 +450,10 @@ class StagedWorkingSetResolver:
 ROUTE_RECEIPT_INFO_PREFIXES = ("fit_", "abstain", "demand_", "grounding_",
                                "frame_", "recency_", "live_segments_",
                                "admission_")
-ROUTE_RECEIPT_INFO_KEYS = ("served_without_plan_head",)
+# Prior art: GRM P2B receipt pass-through (GRM contributors, 2026).
+# FIX-4 live-service evidence must survive the same route receipt boundary.
+ROUTE_RECEIPT_INFO_KEYS = ("served_without_plan_head", "served_from",
+                           "served_from_node_ids")
 
 # ``info`` keys already projected into named receipt sections, so the generic
 # pass-through does not duplicate them.
