@@ -398,7 +398,12 @@ class DemandObserver:
             # non-aborting forward would have left it in: that is the resume
             # point, and it is why resuming is byte-identical rather than
             # approximately identical.
-            if (observer.early_abort and observer.aborted_at is None
+            # Prior art: GRM-SC2 / SC1 flush-drop convention (project, 2026).
+            # Keep the unused final prediction as raw evidence, but only
+            # answer positions may suspend. This boundary repair is new;
+            # the detector rule and completed-answer decision are unchanged.
+            if (observer.early_abort and index < observer.ngen
+                    and observer.aborted_at is None
                     and float(mass["mounted_mass"]) < observer.threshold):
                 observer.aborted_at = int(index)
                 raise DemandAbort(index, float(mass["mounted_mass"]))
