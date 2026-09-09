@@ -1,0 +1,3110 @@
+{
+ "dialect": "GptOss20B_TC:24x2880:g8x64",
+ "dialect_descriptor": {
+  "model_type": "GptOss20B_TC",
+  "num_layers": 24,
+  "hidden_dim": 2880,
+  "payload_kind": "gqa",
+  "vals_per_tok_layer": 1024,
+  "route_layer": 1,
+  "latent_rank": 0,
+  "rope_dim": 0,
+  "num_kv_heads": 8,
+  "head_dim": 64,
+  "position_law": "rope_full_yarn",
+  "state_kind": "kv",
+  "graftability": "seat_remountable",
+  "remountable": true,
+  "composition": "multi_mount"
+ },
+ "route_layer": 1,
+ "durability_mode": "session_safe",
+ "native_checkpoint": "native/grm_store.bin",
+ "wal_lsn": 208,
+ "review_buffer": [],
+ "nodes": [
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 61,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-vesper-0",
+    "c7-vesper-1",
+    "mica-431",
+    "mica-432"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {
+     "s4": {
+      "n_routed": 11,
+      "n_mounted": 0,
+      "n_grounded": 0,
+      "last_grounded_turn": null
+     }
+    }
+   },
+   "host_present": true,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 0,
+   "provenance": [
+    {
+     "segment_id": 0,
+     "node_id": 0,
+     "segment_type": "exchange_span",
+     "created_at": 1788956402.68143
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 73,
+   "sources": [],
+   "retired": true,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-vesper-0",
+    "c7-vesper-1",
+    "flint-511",
+    "flint-512"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     12
+    ]
+   },
+   "host_present": true,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 1,
+   "provenance": [
+    {
+     "segment_id": 1,
+     "node_id": 1,
+     "segment_type": "exchange_span",
+     "created_at": 1788956405.0640943
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-archive-0",
+    "reed-611"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 2,
+   "provenance": [
+    {
+     "segment_id": 2,
+     "node_id": 2,
+     "segment_type": "exchange_span",
+     "created_at": 1788956406.6677132
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-archive-1",
+    "reed-612"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {
+     "s4": {
+      "n_routed": 1,
+      "n_mounted": 0,
+      "n_grounded": 0,
+      "last_grounded_turn": null
+     }
+    }
+   },
+   "host_present": true,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 3,
+   "provenance": [
+    {
+     "segment_id": 3,
+     "node_id": 3,
+     "segment_type": "exchange_span",
+     "created_at": 1788956408.2250412
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 61,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-aliasbase-0",
+    "c7-aliasbase-1",
+    "jasper-711",
+    "jasper-712"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {
+     "s4": {
+      "n_routed": 11,
+      "n_mounted": 0,
+      "n_grounded": 0,
+      "last_grounded_turn": null
+     }
+    }
+   },
+   "host_present": true,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 4,
+   "provenance": [
+    {
+     "segment_id": 4,
+     "node_id": 4,
+     "segment_type": "exchange_span",
+     "created_at": 1788956410.208847
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-0 value is Basalt-811.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "basalt-811",
+    "c7-fresh-0"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 5,
+   "provenance": [
+    {
+     "segment_id": 5,
+     "node_id": 5,
+     "segment_type": "exchange_span",
+     "created_at": 1788956411.7930968
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "basalt-812",
+    "c7-fresh-1"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 6,
+   "provenance": [
+    {
+     "segment_id": 6,
+     "node_id": 6,
+     "segment_type": "exchange_span",
+     "created_at": 1788956413.355302
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "basalt-813",
+    "c7-fresh-2"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 7,
+   "provenance": [
+    {
+     "segment_id": 7,
+     "node_id": 7,
+     "segment_type": "exchange_span",
+     "created_at": 1788956414.922638
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 49,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-aliasbase-0",
+    "c7-signal-0"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {
+     "s4": {
+      "n_routed": 11,
+      "n_mounted": 0,
+      "n_grounded": 0,
+      "last_grounded_turn": null
+     }
+    }
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 8,
+   "provenance": [
+    {
+     "segment_id": 0,
+     "node_id": 8,
+     "segment_type": "exchange_span",
+     "created_at": 1788956490.660838
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 49,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-aliasbase-1",
+    "c7-signal-1"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {
+     "s4": {
+      "n_routed": 11,
+      "n_mounted": 0,
+      "n_grounded": 0,
+      "last_grounded_turn": null
+     }
+    }
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 9,
+   "provenance": [
+    {
+     "segment_id": 1,
+     "node_id": 9,
+     "segment_type": "exchange_span",
+     "created_at": 1788956492.2422957
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-2 is an alias for C7-AliasBase-2.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 49,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-aliasbase-2",
+    "c7-signal-2"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {
+     "s4": {
+      "n_routed": 11,
+      "n_mounted": 0,
+      "n_grounded": 0,
+      "last_grounded_turn": null
+     }
+    }
+   },
+   "host_present": true,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 10,
+   "provenance": [
+    {
+     "segment_id": 2,
+     "node_id": 10,
+     "segment_type": "exchange_span",
+     "created_at": 1788956547.2574134
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-0 value is Onyx-911.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-vesper-0",
+    "onyx-911"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {
+     "s4": {
+      "n_routed": 2,
+      "n_mounted": 0,
+      "n_grounded": 0,
+      "last_grounded_turn": null
+     }
+    }
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 11,
+   "provenance": [
+    {
+     "segment_id": 0,
+     "node_id": 11,
+     "segment_type": "exchange_span",
+     "created_at": 1788956600.225984
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Vesper-0 value is Onyx-911.",
+   "ntok": 15,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-vesper-0",
+    "onyx-911"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     1
+    ],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 12,
+   "provenance": [
+    {
+     "segment_id": 1,
+     "node_id": 12,
+     "segment_type": "fact_span",
+     "created_at": 1788956616.7659426
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-1 value is Onyx-912.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-vesper-1",
+    "onyx-912"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 13,
+   "provenance": [
+    {
+     "segment_id": 2,
+     "node_id": 13,
+     "segment_type": "exchange_span",
+     "created_at": 1788956618.2065935
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Vesper-1 value is Onyx-912.",
+   "ntok": 15,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-vesper-1",
+    "onyx-912"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 14,
+   "provenance": [
+    {
+     "segment_id": 3,
+     "node_id": 14,
+     "segment_type": "fact_span",
+     "created_at": 1788956618.7380414
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-2 value is Onyx-913.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-vesper-2",
+    "onyx-913"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {
+     "s4": {
+      "n_routed": 3,
+      "n_mounted": 0,
+      "n_grounded": 0,
+      "last_grounded_turn": null
+     }
+    }
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 15,
+   "provenance": [
+    {
+     "segment_id": 4,
+     "node_id": 15,
+     "segment_type": "exchange_span",
+     "created_at": 1788956620.2248592
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 47,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-archive-0",
+    "cedar-1011"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 16,
+   "provenance": [
+    {
+     "segment_id": 5,
+     "node_id": 16,
+     "segment_type": "exchange_span",
+     "created_at": 1788956621.6914654
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 47,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-archive-1",
+    "cedar-1012"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {
+     "s4": {
+      "n_routed": 1,
+      "n_mounted": 0,
+      "n_grounded": 0,
+      "last_grounded_turn": null
+     }
+    }
+   },
+   "host_present": true,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 17,
+   "provenance": [
+    {
+     "segment_id": 0,
+     "node_id": 17,
+     "segment_type": "exchange_span",
+     "created_at": 1788961547.251409
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 47,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-archive-2",
+    "cedar-1013"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {
+     "s4": {
+      "n_routed": 4,
+      "n_mounted": 0,
+      "n_grounded": 0,
+      "last_grounded_turn": null
+     }
+    }
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 18,
+   "provenance": [
+    {
+     "segment_id": 1,
+     "node_id": 18,
+     "segment_type": "exchange_span",
+     "created_at": 1788961567.0417385
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Log marker 28. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values.<|end|><|start|>assistant<|channel|>final<|message|>Not in memory: no stored record matches 28.<|end|>",
+   "ntok": 64,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "28"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 19,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Log marker 29. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values.<|end|><|start|>assistant<|channel|>final<|message|>Not in memory: no stored record matches 29.<|end|>",
+   "ntok": 64,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "29"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 20,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Log marker 30. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values.<|end|><|start|>assistant<|channel|>final<|message|>Not in memory: no stored record matches 30.<|end|>",
+   "ntok": 64,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "30"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 21,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Log marker 33. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values.<|end|><|start|>assistant<|channel|>final<|message|>Not in memory: no stored record matches 33.<|end|>",
+   "ntok": 64,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "33"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 22,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Log marker 34. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values.<|end|><|start|>assistant<|channel|>final<|message|>Not in memory: no stored record matches 34.<|end|>",
+   "ntok": 64,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "34"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 23,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Log marker 35. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values.<|end|><|start|>assistant<|channel|>final<|message|>Not in memory: no stored record matches 35.<|end|>",
+   "ntok": 64,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "35"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 24,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Log marker 41. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values.<|end|><|start|>assistant<|channel|>final<|message|>Not in memory: no stored record matches 41.<|end|>",
+   "ntok": 64,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "41"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 25,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Log marker 42. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values.<|end|><|start|>assistant<|channel|>final<|message|>Not in memory: no stored record matches 42.<|end|>",
+   "ntok": 64,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "42"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 26,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Log marker 43. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values.<|end|><|start|>assistant<|channel|>final<|message|>Not in memory: no stored record matches 43.<|end|>",
+   "ntok": 64,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "43"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 27,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Log marker 44. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values.<|end|><|start|>assistant<|channel|>final<|message|>Not in memory: no stored record matches 44.<|end|>",
+   "ntok": 64,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "44"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 28,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "recall",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Log marker 45. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values.<|end|><|start|>assistant<|channel|>final<|message|>Not in memory: no stored record matches 45.<|end|>",
+   "ntok": 64,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "45"
+   ],
+   "metadata": {
+    "kind": "recall",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 29,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-00 value is Slate-1200. C7-Handle-00 is an alias for C7-Outpost-00.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 63,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-handle-00",
+    "c7-outpost-00",
+    "slate-1200"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     32
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 30,
+   "provenance": [
+    {
+     "segment_id": 0,
+     "node_id": 30,
+     "segment_type": "exchange_span",
+     "created_at": 1788961957.1681108
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-00 value is Coral-1200.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-00",
+    "coral-1200"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     34
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 31,
+   "provenance": [
+    {
+     "segment_id": 1,
+     "node_id": 31,
+     "segment_type": "exchange_span",
+     "created_at": 1788961958.6680026
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Outpost-00 value is Coral-1200.",
+   "ntok": 15,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-00",
+    "coral-1200"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     30
+    ],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     34
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 32,
+   "provenance": [
+    {
+     "segment_id": 2,
+     "node_id": 32,
+     "segment_type": "fact_span",
+     "created_at": 1788961959.2039828
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-00 value is Pearl-1200.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-outpost-00",
+    "pearl-1200"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 33,
+   "provenance": [
+    {
+     "segment_id": 3,
+     "node_id": 33,
+     "segment_type": "exchange_span",
+     "created_at": 1788961960.670476
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Outpost-00 value is Pearl-1200.",
+   "ntok": 15,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-00",
+    "pearl-1200"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     31,
+     32
+    ],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 34,
+   "provenance": [
+    {
+     "segment_id": 4,
+     "node_id": 34,
+     "segment_type": "fact_span",
+     "created_at": 1788961961.2079787
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-01 value is Slate-1201. C7-Handle-01 is an alias for C7-Outpost-01.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 63,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-handle-01",
+    "c7-outpost-01",
+    "slate-1201"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     37
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 35,
+   "provenance": [
+    {
+     "segment_id": 5,
+     "node_id": 35,
+     "segment_type": "exchange_span",
+     "created_at": 1788961963.186999
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-01 value is Coral-1201.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-01",
+    "coral-1201"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     39
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 36,
+   "provenance": [
+    {
+     "segment_id": 6,
+     "node_id": 36,
+     "segment_type": "exchange_span",
+     "created_at": 1788961964.6585772
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Outpost-01 value is Coral-1201.",
+   "ntok": 15,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-01",
+    "coral-1201"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     35
+    ],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     39
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 37,
+   "provenance": [
+    {
+     "segment_id": 7,
+     "node_id": 37,
+     "segment_type": "fact_span",
+     "created_at": 1788961986.1919427
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-01 value is Pearl-1201.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-outpost-01",
+    "pearl-1201"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 38,
+   "provenance": [
+    {
+     "segment_id": 0,
+     "node_id": 38,
+     "segment_type": "exchange_span",
+     "created_at": 1788962072.8320572
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Outpost-01 value is Pearl-1201.",
+   "ntok": 15,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-01",
+    "pearl-1201"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     36,
+     37
+    ],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 39,
+   "provenance": [
+    {
+     "segment_id": 1,
+     "node_id": 39,
+     "segment_type": "fact_span",
+     "created_at": 1788962073.3720303
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-02 value is Slate-1202. C7-Handle-02 is an alias for C7-Outpost-02.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 63,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-handle-02",
+    "c7-outpost-02",
+    "slate-1202"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     42
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 40,
+   "provenance": [
+    {
+     "segment_id": 2,
+     "node_id": 40,
+     "segment_type": "exchange_span",
+     "created_at": 1788962075.3420358
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-02 value is Coral-1202.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-02",
+    "coral-1202"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     44
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 41,
+   "provenance": [
+    {
+     "segment_id": 3,
+     "node_id": 41,
+     "segment_type": "exchange_span",
+     "created_at": 1788962076.8072634
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Outpost-02 value is Coral-1202.",
+   "ntok": 15,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-02",
+    "coral-1202"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     40
+    ],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     44
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 42,
+   "provenance": [
+    {
+     "segment_id": 4,
+     "node_id": 42,
+     "segment_type": "fact_span",
+     "created_at": 1788962077.3459997
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-02 value is Pearl-1202.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": true,
+   "tags": [],
+   "rare": [
+    "c7-outpost-02",
+    "pearl-1202"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 43,
+   "provenance": [
+    {
+     "segment_id": 5,
+     "node_id": 43,
+     "segment_type": "exchange_span",
+     "created_at": 1788962079.8507376
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Outpost-02 value is Pearl-1202.",
+   "ntok": 15,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-02",
+    "pearl-1202"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     41,
+     42
+    ],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 44,
+   "provenance": [
+    {
+     "segment_id": 6,
+     "node_id": 44,
+     "segment_type": "fact_span",
+     "created_at": 1788962080.4093041
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-03 value is Slate-1203. C7-Handle-03 is an alias for C7-Outpost-03.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 63,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-handle-03",
+    "c7-outpost-03",
+    "slate-1203"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     47
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 45,
+   "provenance": [
+    {
+     "segment_id": 7,
+     "node_id": 45,
+     "segment_type": "exchange_span",
+     "created_at": 1788962082.3871646
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-03 value is Coral-1203.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-03",
+    "coral-1203"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     49
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 46,
+   "provenance": [
+    {
+     "segment_id": 0,
+     "node_id": 46,
+     "segment_type": "exchange_span",
+     "created_at": 1788962137.84358
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Outpost-03 value is Coral-1203.",
+   "ntok": 15,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-03",
+    "coral-1203"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     45
+    ],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     49
+    ]
+   },
+   "host_present": false,
+   "device_present": false,
+   "dirty": false,
+   "durable": true,
+   "cold_only": true,
+   "payload_pending": false,
+   "native_node_id": 47,
+   "provenance": [
+    {
+     "segment_id": 1,
+     "node_id": 47,
+     "segment_type": "fact_span",
+     "created_at": 1788962138.3721235
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-03 value is Pearl-1203.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-03",
+    "pearl-1203"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 48,
+   "provenance": [
+    {
+     "segment_id": 2,
+     "node_id": 48,
+     "segment_type": "exchange_span",
+     "created_at": 1788962139.834714
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Outpost-03 value is Pearl-1203.",
+   "ntok": 15,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-03",
+    "pearl-1203"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     46,
+     47
+    ],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 49,
+   "provenance": [
+    {
+     "segment_id": 3,
+     "node_id": 49,
+     "segment_type": "fact_span",
+     "created_at": 1788962140.3767662
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-04 value is Slate-1204. C7-Handle-04 is an alias for C7-Outpost-04.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 63,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-handle-04",
+    "c7-outpost-04",
+    "slate-1204"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     52
+    ]
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 50,
+   "provenance": [
+    {
+     "segment_id": 4,
+     "node_id": 50,
+     "segment_type": "exchange_span",
+     "created_at": 1788962142.3362231
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-04 value is Coral-1204.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-04",
+    "coral-1204"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     54
+    ]
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 51,
+   "provenance": [
+    {
+     "segment_id": 0,
+     "node_id": 51,
+     "segment_type": "exchange_span",
+     "created_at": 1788970500.947575
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Outpost-04 value is Coral-1204.",
+   "ntok": 15,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-04",
+    "coral-1204"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     50
+    ],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     54
+    ]
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 52,
+   "provenance": [
+    {
+     "segment_id": 1,
+     "node_id": 52,
+     "segment_type": "fact_span",
+     "created_at": 1788970501.5006251
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-04 value is Pearl-1204.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-04",
+    "pearl-1204"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 53,
+   "provenance": [
+    {
+     "segment_id": 2,
+     "node_id": 53,
+     "segment_type": "exchange_span",
+     "created_at": 1788970502.9595375
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Outpost-04 value is Pearl-1204.",
+   "ntok": 15,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-04",
+    "pearl-1204"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     51,
+     52
+    ],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 54,
+   "provenance": [
+    {
+     "segment_id": 3,
+     "node_id": 54,
+     "segment_type": "fact_span",
+     "created_at": 1788970503.5015755
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-05 value is Slate-1205. C7-Handle-05 is an alias for C7-Outpost-05.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 63,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-handle-05",
+    "c7-outpost-05",
+    "slate-1205"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     57
+    ]
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 55,
+   "provenance": [
+    {
+     "segment_id": 4,
+     "node_id": 55,
+     "segment_type": "exchange_span",
+     "created_at": 1788970505.4839587
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-05 value is Coral-1205.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-05",
+    "coral-1205"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     59
+    ]
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 56,
+   "provenance": [
+    {
+     "segment_id": 5,
+     "node_id": 56,
+     "segment_type": "exchange_span",
+     "created_at": 1788970506.9442394
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Outpost-05 value is Coral-1205.",
+   "ntok": 15,
+   "sources": [],
+   "retired": true,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-05",
+    "coral-1205"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     55
+    ],
+    "active": false,
+    "importance": {},
+    "superseded_by": [
+     59
+    ]
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 57,
+   "provenance": [
+    {
+     "segment_id": 6,
+     "node_id": 57,
+     "segment_type": "fact_span",
+     "created_at": 1788970519.5710983
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "turn",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-05 value is Pearl-1205.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+   "ntok": 46,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-05",
+    "pearl-1205"
+   ],
+   "metadata": {
+    "kind": "turn",
+    "durability": "session",
+    "mutability": "ephemeral",
+    "scope": "conversation",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 58,
+   "provenance": [
+    {
+     "segment_id": 7,
+     "node_id": 58,
+     "segment_type": "exchange_span",
+     "created_at": 1788970521.0246382
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "The current C7-Outpost-05 value is Pearl-1205.",
+   "ntok": 15,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "c7-outpost-05",
+    "pearl-1205"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "user_asserted",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     56,
+     57
+    ],
+    "active": true,
+    "importance": {}
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 59,
+   "provenance": [
+    {
+     "segment_id": 8,
+     "node_id": 59,
+     "segment_type": "fact_span",
+     "created_at": 1788970521.5626986
+    }
+   ],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  }
+ ]
+}

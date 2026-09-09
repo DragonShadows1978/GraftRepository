@@ -1,0 +1,155 @@
+{
+  "amendment_sha256": "72f7ba59d705e2107627321557ab047de762cb149d29143380bcacfcc3634593",
+  "arm": "A2",
+  "cell_id": "A-056-062",
+  "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/checkpoint",
+  "checkpoint_sha256": "7b1dde018da834e7ccc4678024505587dfe9985315e76dc0503d429f52810df6",
+  "class": "folded",
+  "difference": {
+    "actual_utf8_hex": "526565642d3631327c43656461722d31303132",
+    "expected_utf8_hex": "4f7574626f756e643a2043656461722d31303132207c20496e626f756e643a20756e6b6e6f776e",
+    "reason": "production fixed-mount raw _attempt text differs from historical served text; no normalization waiver"
+  },
+  "evidence_class": "checkpoint production attempt; numerical backend identified in worker receipt",
+  "historical_served_from": null,
+  "mounted_ids": [
+    3,
+    17
+  ],
+  "mounted_payload_sha256": {
+    "17": "56c498c47671305405ef06e8f6037b6a5d942ceeab61c1626f2d5c032646fcb4",
+    "3": "b7d57b0d02d9b012200b12871dabe395449ce84648b00c58f25bdf0e8f318e08"
+  },
+  "probe_id": "c7_folded_1_d030",
+  "production_attempt_info": {
+    "_deferred_memory": {
+      "deposited": false,
+      "importance_committed": false,
+      "picks": [
+        3,
+        17
+      ],
+      "route_key_prepared": true,
+      "route_key_token": 1,
+      "seg_cache_ntok": 61,
+      "turn_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>Reed-612|Cedar-1012<|end|>",
+      "user_text": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer."
+    },
+    "evicted": 0,
+    "live_tokens": 61,
+    "mounts": [
+      4,
+      18
+    ],
+    "resident": 173
+  },
+  "prompt_token_ids": [
+    200006,
+    17360,
+    200008,
+    3575,
+    553,
+    17554,
+    162016,
+    13,
+    57369,
+    289,
+    25,
+    4465,
+    13,
+    13888,
+    9334,
+    25,
+    1721,
+    13,
+    200007,
+    200006,
+    1428,
+    200008,
+    2653,
+    363,
+    22,
+    12,
+    34870,
+    12,
+    16,
+    11,
+    3644,
+    119764,
+    1815,
+    97801,
+    16613,
+    33930,
+    656,
+    1022,
+    13,
+    40500,
+    1606,
+    483,
+    290,
+    6052,
+    13,
+    200007,
+    200006,
+    173781,
+    200005,
+    17196,
+    200008
+  ],
+  "r2_byte_equal": false,
+  "r2_served_text": "Outbound: Cedar-1012 | Inbound: unknown",
+  "raw_attempt_text": "Reed-612|Cedar-1012",
+  "request": {
+    "answer_budget": 32,
+    "arm": "A2",
+    "cell_id": "A-056-062",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/checkpoint",
+    "checkpoint_sha256": "7b1dde018da834e7ccc4678024505587dfe9985315e76dc0503d429f52810df6",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "prefix_turns": [],
+    "probe_id": "c7_folded_1_d030",
+    "prompt": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 56,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  "schema": "grm.rd1.replay.row.1",
+  "scores": {
+    "control_case_fixed": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Reed-612|Cedar-1012",
+      "exact_answer_error": 0,
+      "exact_correct": true,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 0
+    },
+    "frozen": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Reed-612|Cedar-1012",
+      "exact_answer_error": 0,
+      "exact_correct": true,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 0
+    }
+  },
+  "served_from": "production_fixed_recorded_mounts",
+  "served_text": "Reed-612|Cedar-1012",
+  "side": "memory",
+  "turn": 56
+}
