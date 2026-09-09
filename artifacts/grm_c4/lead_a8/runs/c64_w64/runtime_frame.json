@@ -1,0 +1,61 @@
+{
+  "ambient_env_before_pin": {
+    "GRM_ADM_DECISIVE": "",
+    "GRM_GQA_CUDA_ROUTE": "",
+    "GRM_GRAFT_STORAGE_BITS": "",
+    "GRM_PROBE_LADDER": "",
+    "GRM_ROUTE_QUERY_LEX": "",
+    "GRM_SUP_RESOLVE": ""
+  },
+  "cuda_visible_devices": "0",
+  "git": {
+    "branch": "lc1-wip",
+    "head": "93d19f1c15bc91db14906cefbd59969bb864816a",
+    "status_short": "M core/graft_arena.py\n M scripts/grm_adm1_3_dual_frame.py\n M scripts/grm_adm1_gpu.py\n M scripts/grm_cmc1_gpu_arms.py\n M scripts/grm_cmc2_gpu_sweep.py\n M scripts/grm_sup_l2_default_on_gate.py\n?? core/grm_admission.py\n?? scripts/grm_det1_analyze.py\n?? scripts/grm_det1_common.py\n?? scripts/grm_det1_e2e.py\n?? scripts/grm_det1_gpu.py\n?? scripts/grm_det1_register.py"
+  },
+  "gpu_lease": {
+    "actual_cap_seconds": 580,
+    "default_cap_seconds": 580,
+    "hard_cap_seconds": 590,
+    "inter_stage_gap_seconds": 30,
+    "lock": "/tmp/forge-gpu.lock",
+    "lock_wait_seconds": 7200
+  },
+  "model": {
+    "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "repository": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee"
+  },
+  "native_library": {
+    "bytes": 455656,
+    "path": "/mnt/ForgeRealm/GraftRepository/cpp/build/libgrm_runtime.so",
+    "sha256": "6e984b0de89339e1ea5c7a0731323f5682aff476e3fabf48af2d173ecea3976d"
+  },
+  "registration": {
+    "bytes": 21406,
+    "path": "artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json",
+    "sha256": "62cb6c09cbec211d8cf897b1e67975ff7cbcd30f6d949f2c0b7d65dcc121fcc7"
+  },
+  "resolved_flags": {
+    "adm_decisive": true,
+    "admission_mode": "A-DEC",
+    "arena_width": 64,
+    "gqa_cuda_route": true,
+    "graft_storage_bits": 8,
+    "length_debias": false,
+    "live_turns": 2,
+    "max_live": 4096,
+    "max_trips": 1,
+    "ngen": 32,
+    "probe_ladder": true,
+    "route_query_lex": true,
+    "sup_resolve": true,
+    "topk": 3,
+    "turn_pipeline": "single",
+    "vram_budget_mb": null
+  },
+  "resolved_unix_ns": 1788192656952556611,
+  "resolved_utc": "2026-08-31T16:10:56.952546Z",
+  "schema": "grm.det1.runtime_frame.v1",
+  "source_inventory_match": true
+}

@@ -1,0 +1,634 @@
+{
+  "amendment": {
+    "bytes": 42570,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/amendment_a8.json",
+    "sha256": "4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e"
+  },
+  "battery": "sup",
+  "budget": {
+    "authorized_by": "Lead, orders/GRM_C4_AMENDMENT_1.md, 2026-09-09",
+    "cooldown_seconds": 30,
+    "estimate_class": "Planning assumption: sup 60s/fixture, census and 8-turn LH segments 80s each including load/save; unvalidated on this sandbox; stop at rail without retry.",
+    "full_fixed_geometry_estimate_seconds": 4800,
+    "full_fixed_geometry_status": "PLANNING_FIT_AT_CAP_UNVALIDATED",
+    "gpu_seconds": 6600,
+    "lock": "/tmp/forge-gpu.lock",
+    "lock_wait_seconds": 0,
+    "new_cells_estimate_seconds": 4800,
+    "outer_seconds": 590,
+    "planning_cooldown_seconds": 1890,
+    "reserve_note": "285s full-worker reservation unchanged. At exactly estimated unit times the final worker needs 5005s cumulative reservation, so a 4800s estimate does not guarantee completion under the 4800s cap; stop NON_FIT if reserve fails. Cooldown is outside GPU budget.",
+    "stop": "One timeout stops its chain; no retry or longer lease. Reserve full 285s before each worker against remaining total.",
+    "worker_seconds": 285
+  },
+  "budget_amendment": {
+    "bytes": 42570,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/amendment_a8.json",
+    "sha256": "4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e"
+  },
+  "campaign_gpu_seconds_before": 2157.6785489856265,
+  "cell": "c96_w64",
+  "chunk": 96,
+  "events": [
+    {
+      "arena_width": 64,
+      "capture_pin": "live",
+      "ephemeral": true,
+      "event": "geometry",
+      "live_shift": 115,
+      "live_turns": 2,
+      "n_sink": 19,
+      "seat_near_live": true
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "event": "seat",
+      "observed": {
+        "arena_width": 64,
+        "delta_positions": 32,
+        "live_shift": 115,
+        "mount_ntok": 64,
+        "mount_pos0": 51,
+        "mount_pos0_legacy": 19,
+        "n_sink": 19,
+        "plan_head": 1,
+        "plan_head_adjacent_to_live_shift": true,
+        "plan_head_last_position": 114,
+        "plan_head_ntok": 64,
+        "seat_near_live": true,
+        "seat_offset_plan_head": 51,
+        "seat_order": [
+          1
+        ],
+        "seat_order_legacy": [
+          1
+        ],
+        "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "attempt_residency",
+      "live_shift": 115,
+      "live_token_seats": 50,
+      "mounted_ids": [
+        1
+      ],
+      "mounted_token_seats": 64,
+      "physical_cache_token_seats": 133,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 3,
+      "parent_preserved": true,
+      "phase": "explicit_budget_repair",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          4,
+          5,
+          6
+        ],
+        "parent": 3,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "event": "seat",
+      "observed": {
+        "arena_width": 64,
+        "delta_positions": 38,
+        "live_shift": 115,
+        "mount_ntok": 58,
+        "mount_pos0": 57,
+        "mount_pos0_legacy": 19,
+        "n_sink": 19,
+        "plan_head": 5,
+        "plan_head_adjacent_to_live_shift": true,
+        "plan_head_last_position": 114,
+        "plan_head_ntok": 58,
+        "seat_near_live": true,
+        "seat_offset_plan_head": 57,
+        "seat_order": [
+          5
+        ],
+        "seat_order_legacy": [
+          5
+        ],
+        "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "attempt_residency",
+      "live_shift": 115,
+      "live_token_seats": 49,
+      "mounted_ids": [
+        5
+      ],
+      "mounted_token_seats": 58,
+      "physical_cache_token_seats": 126,
+      "sink_token_seats": 19
+    },
+    {
+      "event": "seat",
+      "observed": {
+        "arena_width": 64,
+        "delta_positions": 35,
+        "live_shift": 115,
+        "mount_ntok": 61,
+        "mount_pos0": 54,
+        "mount_pos0_legacy": 19,
+        "n_sink": 19,
+        "plan_head": 2,
+        "plan_head_adjacent_to_live_shift": true,
+        "plan_head_last_position": 114,
+        "plan_head_ntok": 61,
+        "seat_near_live": true,
+        "seat_offset_plan_head": 54,
+        "seat_order": [
+          2
+        ],
+        "seat_order_legacy": [
+          2
+        ],
+        "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "attempt_residency",
+      "live_shift": 115,
+      "live_token_seats": 49,
+      "mounted_ids": [
+        2
+      ],
+      "mounted_token_seats": 61,
+      "physical_cache_token_seats": 129,
+      "sink_token_seats": 19
+    },
+    {
+      "ephemeral_split_members": 0,
+      "event": "split_census",
+      "nodes": 7,
+      "split_children": 3,
+      "split_nodes": 4,
+      "split_parents": 1
+    }
+  ],
+  "evidence_class": "GPU E2E worker; lead A5 split and independent cells",
+  "finished_unix": 1788947289.6275215,
+  "geometry_pin": {
+    "capture_pin": "live",
+    "ephemeral": true,
+    "live_shift": "n_sink + 96",
+    "live_turns": 2,
+    "max_live": 4096,
+    "plan_head_last_position": "n_sink + 95",
+    "remaining_flags": {
+      "adm_decisive": true,
+      "admission_mode": "A-DEC",
+      "arena_width": 96,
+      "gqa_cuda_route": true,
+      "graft_storage_bits": 8,
+      "length_debias": false,
+      "live_turns": 2,
+      "max_live": 4096,
+      "max_trips": 1,
+      "ngen": 32,
+      "probe_ladder": true,
+      "route_query_lex": true,
+      "sup_resolve": true,
+      "topk": 3,
+      "turn_pipeline": "single",
+      "vram_budget_mb": null
+    },
+    "seat_near_live": true,
+    "sink": "unchanged tokenizer-derived n_sink"
+  },
+  "gpu_seconds": 47.64083048515022,
+  "prior_receipt": null,
+  "registration": {
+    "bytes": 67067,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/registration.json",
+    "sha256": "7fb561c70dd8c04abc18ef99a7a2a5ec4d37cbc2a22b1de1f89ab2119bd285e8"
+  },
+  "result": {
+    "arena_width": 64,
+    "arm": 1,
+    "arm_label": "arm1_p2a_p2c_fixes_on",
+    "census": {
+      "bytes": 33028,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_det1/run_20260831T160525Z_2/det1_11/census/lived_serving_census_98ef71e88dec17a1.json",
+      "sha256": "98ef71e88dec17a1ef5263e5a6d7ca32017ef092da10d955cd43d0be38cb0021"
+    },
+    "declares_in_det_envelope": false,
+    "deposit_protocol": "CHRONOLOGICAL_ARENA_FEED (grm_det1_3_gpu._install_lived_nodes), the LIVED arm \u2014 not the DET1.3 fixture-install replay arm",
+    "fixture_node_to_idx": {
+      "harbor_a": 0,
+      "harbor_b": 1,
+      "harbor_c": 2,
+      "opal_competitor": 3
+    },
+    "frame": {
+      "arm0_reproduction_claimed": false,
+      "arm0_reproduction_note": "A different frame is a NEW baseline. This run does NOT claim or attempt Arm-0 reproduction of persistent-frame rows; the lived/P2C columns are carried for CHANGE, not for identity.",
+      "ephemeral": true,
+      "escape_active": false,
+      "escape_env": "0",
+      "recency_mounts": 2,
+      "spec": "GRM-EB1: the chat log is not kept in memory context; any chat recall on facts is pulled via GRM"
+    },
+    "live_graft_ids_after_install": [],
+    "lsr_fixes_env": "1",
+    "model": {
+      "expert_mode": "resident_packed_mxfp4",
+      "framework": "tensor_cuda GptOss20B_TC",
+      "full_attention_layers": [
+        1,
+        3,
+        5,
+        7,
+        9,
+        11,
+        13,
+        15,
+        17,
+        19,
+        21,
+        23
+      ],
+      "head_dim": 64,
+      "hidden_dim": 2880,
+      "layers": 24,
+      "loaded": "GPT-OSS-20B (resident_packed_mxfp4)",
+      "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+      "num_heads": 64,
+      "num_kv_heads": 8,
+      "repository": "openai/gpt-oss-20b",
+      "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+      "sliding_attention_layers": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18,
+        20,
+        22
+      ]
+    },
+    "phase": "2C",
+    "probes": [
+      {
+        "arena_cur_mount_n": 64,
+        "elapsed_ns": 5472660468,
+        "expected_values": [
+          "nacre-6-blue"
+        ],
+        "info": {
+          "admission_policy_branch": "declared_synthesis_identified_set",
+          "admission_rank_plan": [
+            1,
+            0
+          ],
+          "fit_chunk_trips": [],
+          "fit_descended_head": [],
+          "fit_dropped_filler": [],
+          "fit_dropped_planned": [],
+          "fit_planned": [
+            1,
+            0
+          ],
+          "fit_seated": [
+            1
+          ],
+          "fit_shuttle": false,
+          "fit_shuttle_trips": [],
+          "fit_split_children": [],
+          "fit_split_ephemeral": null,
+          "fit_split_parent": null,
+          "fit_unseatable": [],
+          "frame_ephemeral": true,
+          "frame_escape_active": false,
+          "live_segments_after_turn": [
+            {
+              "graft_id": null,
+              "ntok": 50
+            }
+          ],
+          "live_segments_carried_into_turn": [],
+          "live_segments_inherited": [],
+          "mount_fitted": [
+            1
+          ],
+          "mount_plan": [
+            1,
+            0
+          ],
+          "ranking_ids": [
+            3,
+            2,
+            1,
+            0
+          ],
+          "recency_mounted_ids": [],
+          "recency_seats": {
+            "arena_width": 64,
+            "budget_after_charge": 64,
+            "charge_waived_reason": null,
+            "charged_ntok": 0,
+            "nominated_ids": [],
+            "nominated_ntok": 0
+          },
+          "served_without_plan_head": false,
+          "trip": 0
+        },
+        "lived_answer": "The current Harbor token value is **Nacre\u20116\u2011Blue**.",
+        "lived_correct": true,
+        "lived_mounted_ids": [
+          1
+        ],
+        "mounted_ids": [
+          1
+        ],
+        "probe_id": "sup_harbor_restatement",
+        "question": "What is the current Harbor token value?",
+        "rejected_values": [
+          "morrow-5-red",
+          "opal-7-green"
+        ],
+        "reproduction": {
+          "lived": "The current Harbor token value is **Nacre\u20116\u2011Blue**.",
+          "lived_values": [
+            "Nacre\u20116\u2011Blue"
+          ],
+          "mode": "semantic_value",
+          "reproduced": true,
+          "served": "The Harbor token is currently **Nacre\u20116\u2011Blue**."
+        },
+        "role": "registered_slot",
+        "served_answer": "The Harbor token is currently **Nacre\u20116\u2011Blue**.",
+        "session_id": "correction_then_restatement",
+        "verdict": {
+          "correct": true,
+          "expected_hits": [
+            "nacre-6-blue"
+          ],
+          "rejected_hits": []
+        }
+      },
+      {
+        "arena_cur_mount_n": 58,
+        "elapsed_ns": 12285012031,
+        "expected_values": [
+          "Opal-7-Green"
+        ],
+        "info": {
+          "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+          "admission_rank_plan": [
+            3
+          ],
+          "fit_chunk_trips": [],
+          "fit_descended_head": [
+            5
+          ],
+          "fit_dropped_filler": [],
+          "fit_dropped_planned": [],
+          "fit_planned": [
+            5
+          ],
+          "fit_seated": [
+            5
+          ],
+          "fit_shuttle": false,
+          "fit_shuttle_trips": [],
+          "fit_split_children": [
+            4,
+            5,
+            6
+          ],
+          "fit_split_ephemeral": false,
+          "fit_split_parent": 3,
+          "fit_unseatable": [],
+          "frame_ephemeral": true,
+          "frame_escape_active": false,
+          "live_segments_after_turn": [
+            {
+              "graft_id": null,
+              "ntok": 49
+            }
+          ],
+          "live_segments_carried_into_turn": [],
+          "live_segments_inherited": [
+            {
+              "graft_id": null,
+              "ntok": 50
+            }
+          ],
+          "mount_fitted": [
+            5
+          ],
+          "mount_plan": [
+            5
+          ],
+          "ranking_ids": [
+            3,
+            2,
+            1,
+            0
+          ],
+          "recency_mounted_ids": [],
+          "recency_seats": {
+            "arena_width": 64,
+            "budget_after_charge": 64,
+            "charge_waived_reason": null,
+            "charged_ntok": 0,
+            "nominated_ids": [],
+            "nominated_ntok": 0
+          },
+          "served_without_plan_head": false,
+          "trip": 0
+        },
+        "lived_answer": "The Juniper pass value is currently 0.",
+        "lived_correct": false,
+        "lived_mounted_ids": [
+          2
+        ],
+        "mounted_ids": [
+          5
+        ],
+        "probe_id": "sup_reserve_juniper_pass",
+        "question": "What is the current Juniper pass value?",
+        "rejected_values": [
+          "Morrow-5-Red",
+          "Nacre-6-Blue"
+        ],
+        "reproduction": {
+          "lived": "The Juniper pass value is currently 0.",
+          "lived_values": [
+            "0"
+          ],
+          "mode": "semantic_value",
+          "reproduced": false,
+          "served": "I\u2019m sorry, but I can\u2019t help with that."
+        },
+        "role": "reserve",
+        "served_answer": "I\u2019m sorry, but I can\u2019t help with that.",
+        "session_id": "correction_then_restatement",
+        "verdict": {
+          "correct": false,
+          "expected_hits": [],
+          "rejected_hits": []
+        }
+      }
+    ],
+    "program": "LSR",
+    "reproduced": false,
+    "rs3_levers": {
+      "both_off_is_the_legacy_run": false,
+      "capture_pin": "live",
+      "capture_pin_env": "live",
+      "seat_near_live": true,
+      "seat_near_live_env": "1"
+    },
+    "runtime_frame": {
+      "bytes": 2212,
+      "path": "artifacts/grm_c4/lead_a5/runs/c96_w64/runtime_frame.json",
+      "sha256": "fba7f3a0d017d49a0b1d29c1f625603e88ad4819ef83bdaf919faa53468cd410"
+    },
+    "schema": "grm.lsr_p2c.fixture_replay.v1",
+    "session_id": "correction_then_restatement",
+    "sources": {
+      "graft_arena": {
+        "bytes": 265082,
+        "path": "core/graft_arena.py",
+        "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b"
+      },
+      "graft_repository": {
+        "bytes": 219615,
+        "path": "core/graft_repository.py",
+        "sha256": "e0a0fc777d3c0f535ec915238390d7c1f1a6d43e927976351b8441a1b1358e89"
+      },
+      "grm_admission": {
+        "bytes": 35998,
+        "path": "core/grm_admission.py",
+        "sha256": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f"
+      },
+      "grm_e2e_session": {
+        "bytes": 139819,
+        "path": "scripts/grm_e2e_session.py",
+        "sha256": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450"
+      },
+      "grm_runtime": {
+        "bytes": 23837,
+        "path": "core/grm_runtime.py",
+        "sha256": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e"
+      },
+      "lsr_p2c_replay_gpu": {
+        "bytes": 27681,
+        "path": "scripts/lsr_p2c_replay_gpu.py",
+        "sha256": "833d3f520f6ad17925b7371407032a792a60176d86445117627e44fddaa6b617"
+      }
+    }
+  },
+  "sources": [
+    {
+      "bytes": 8943,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_skip_a6.py",
+      "sha256": "d8e19ec120da027d067e3e8f00ac40226dcbbc954ed954a5206a01e7aa87943d"
+    },
+    {
+      "bytes": 1081,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_register_a6.py",
+      "sha256": "5fd8bfcc4d742f3cf824faf060e3d9b3d370e015f9775b486ae68d8eb64877c6"
+    },
+    {
+      "bytes": 9046,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/tests/test_grm_c4_skip_a6.py",
+      "sha256": "29bd054481a23242808dbd634c2201f6a59fb1b9df453cb13795a78a93129e2b"
+    },
+    {
+      "bytes": 1472,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_6.md",
+      "sha256": "f003ef8c6b3f40bced73c5d753b94961bdbd4065d55d7ab8572313d3a01df8f0"
+    },
+    {
+      "bytes": 6699,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_commands_a6.txt",
+      "sha256": "70b9935128af97766e6f4d6b86a62b40a44ac147bcfb937d9e891b53667382bb"
+    },
+    {
+      "bytes": 1915,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/pre_registration.json",
+      "sha256": "3b7d87aa5584173356815babee66768eff96b283824c358d1e1f1f345c9fb4d9"
+    },
+    {
+      "bytes": 685768,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/before.json",
+      "sha256": "d1161fc314185486061472154d67c842fa167e2d0f8acf9ca6801e05312104c0"
+    }
+  ],
+  "spec": "correction_then_restatement",
+  "status": "PASS",
+  "width": 64
+}

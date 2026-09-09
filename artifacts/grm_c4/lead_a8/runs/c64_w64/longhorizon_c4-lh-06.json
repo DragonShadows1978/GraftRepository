@@ -1,0 +1,1184 @@
+{
+  "amendment": {
+    "bytes": 4826,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/amendment_a10.json",
+    "sha256": "8108af9b123c31508bf1a5b99703b832653efd6176ba5e612ff5a09cb4e42431"
+  },
+  "battery": "longhorizon",
+  "budget": {
+    "authorized_by": "Lead, orders/GRM_C4_AMENDMENT_1.md, 2026-09-09",
+    "cooldown_seconds": 30,
+    "estimate_class": "Planning assumption: sup 60s/fixture, census and 8-turn LH segments 80s each including load/save; unvalidated on this sandbox; stop at rail without retry.",
+    "full_fixed_geometry_estimate_seconds": 4800,
+    "full_fixed_geometry_status": "PLANNING_FIT_AT_CAP_UNVALIDATED",
+    "gpu_seconds": 6600,
+    "lock": "/tmp/forge-gpu.lock",
+    "lock_wait_seconds": 0,
+    "new_cells_estimate_seconds": 4800,
+    "outer_seconds": 590,
+    "planning_cooldown_seconds": 1890,
+    "reserve_note": "285s full-worker reservation unchanged. At exactly estimated unit times the final worker needs 5005s cumulative reservation, so a 4800s estimate does not guarantee completion under the 4800s cap; stop NON_FIT if reserve fails. Cooldown is outside GPU budget.",
+    "stop": "One timeout stops its chain; no retry or longer lease. Reserve full 285s before each worker against remaining total.",
+    "worker_seconds": 285
+  },
+  "budget_amendment": {
+    "bytes": 42570,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/amendment_a8.json",
+    "sha256": "4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e"
+  },
+  "campaign_gpu_seconds_before": 4714.80365326535,
+  "cell": "c64_w64",
+  "chunk": 64,
+  "events": [
+    {
+      "arena_width": 64,
+      "capture_pin": "live",
+      "ephemeral": true,
+      "event": "geometry",
+      "live_shift": 115,
+      "live_turns": 2,
+      "n_sink": 19,
+      "seat_near_live": true
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 106,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          107,
+          108
+        ],
+        "parent": 106,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 109,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          110,
+          111
+        ],
+        "parent": 109,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 112,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 113,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          114,
+          115
+        ],
+        "parent": 113,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 116,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          117,
+          118
+        ],
+        "parent": 116,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 119,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 120,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          121,
+          122
+        ],
+        "parent": 120,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 123,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          124,
+          125
+        ],
+        "parent": 123,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 126,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 127,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          128,
+          129
+        ],
+        "parent": 127,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 130,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          131,
+          132
+        ],
+        "parent": 130,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 133,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "ephemeral_split_members": 0,
+      "event": "split_census",
+      "nodes": 134,
+      "split_children": 76,
+      "split_nodes": 114,
+      "split_parents": 38
+    }
+  ],
+  "evidence_class": "GPU E2E worker; lead A5 split and independent cells",
+  "finished_unix": 1788955409.9673314,
+  "geometry_pin": {
+    "capture_pin": "live",
+    "ephemeral": true,
+    "live_shift": "n_sink + 96",
+    "live_turns": 2,
+    "max_live": 4096,
+    "plan_head_last_position": "n_sink + 95",
+    "remaining_flags": {
+      "adm_decisive": true,
+      "admission_mode": "A-DEC",
+      "arena_width": 96,
+      "gqa_cuda_route": true,
+      "graft_storage_bits": 8,
+      "length_debias": false,
+      "live_turns": 2,
+      "max_live": 4096,
+      "max_trips": 1,
+      "ngen": 32,
+      "probe_ladder": true,
+      "route_query_lex": true,
+      "sup_resolve": true,
+      "topk": 3,
+      "turn_pipeline": "single",
+      "vram_budget_mb": null
+    },
+    "seat_near_live": true,
+    "sink": "unchanged tokenizer-derived n_sink"
+  },
+  "gpu_seconds": 74.51849847612903,
+  "prior_receipt": {
+    "bytes": 42755,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon_c4-lh-05.json",
+    "sha256": "d04d9af2490eac861ca626456f304f9f77ebafd7c3035255fce724248971996e"
+  },
+  "registration": {
+    "bytes": 67067,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/registration.json",
+    "sha256": "7fb561c70dd8c04abc18ef99a7a2a5ec4d37cbc2a22b1de1f89ab2119bd285e8"
+  },
+  "result": {
+    "elapsed_seconds": 67.96719754114747,
+    "probe_rows": 10,
+    "resumed": true,
+    "scorecard": {
+      "bytes": 43462,
+      "path": "artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/probe_scorecard.json",
+      "sha256": "4df04cbf704a2be0091634fec72e7ba10b21c2b4ac28b28a3b448c2d4a867a4f"
+    },
+    "session_dir": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session",
+    "spec": "c4-lh-06",
+    "stop_after_turns": 48
+  },
+  "session_state": [
+    {
+      "bytes": 278750,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/instrumentation.jsonl",
+      "sha256": "ded81c55e0a89c849f8ef3c665a10066a774ffa61f61781e21bbdb17ff642c32"
+    },
+    {
+      "bytes": 43462,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/probe_scorecard.json",
+      "sha256": "4df04cbf704a2be0091634fec72e7ba10b21c2b4ac28b28a3b448c2d4a867a4f"
+    },
+    {
+      "bytes": 6946748,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/index.npz",
+      "sha256": "6fa1cc309d234a53217886ddd28b94c5b504252f369320967658ac64330bb2d7"
+    },
+    {
+      "bytes": 170037,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/manifest.json",
+      "sha256": "45ec74add65ab8c840a6f200adcd83a066c892d7992f08aeba6789ab9e9635ae"
+    },
+    {
+      "bytes": 278587995,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/native/grm_store.bin",
+      "sha256": "a2d2b17309a8f50b947e132e8548dfe1ef04dd95e1b7e301cd657368ffb7ce00"
+    },
+    {
+      "bytes": 1975154,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0000.npz",
+      "sha256": "0e2a161a67fd679a5d8f8e55f90c12484408f162e21491dc92284f3875ae3f02"
+    },
+    {
+      "bytes": 1047183,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0001.npz",
+      "sha256": "9447301adc33674c24adf8f3254af9a7cfc78a8ee2f1c77df53e7709f9e0e615"
+    },
+    {
+      "bytes": 951147,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0002.npz",
+      "sha256": "7c78ec3916d77c0f2c68c31771e3d61a160aa474fd9d1b3c1a695ff318d5ec19"
+    },
+    {
+      "bytes": 1797015,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0003.npz",
+      "sha256": "763b520e0ebd2d7c811950088427c903ca5486a6dda903768953c5455276e8f8"
+    },
+    {
+      "bytes": 771619,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0004.npz",
+      "sha256": "1a174dfbb57c0766ce6b00f7e9b9ce99067ca2f8b776d1e52a30c50a372ebc22"
+    },
+    {
+      "bytes": 1041952,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0005.npz",
+      "sha256": "58b0ab8701ee111d42be5d6d75c6fb3b45466594b2ec930a59dd78deef19f734"
+    },
+    {
+      "bytes": 1974732,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0006.npz",
+      "sha256": "f809823fbb8e20eafd4d71c1e9e547eb55a07a9c4ec62bb7290f4a794dc8d759"
+    },
+    {
+      "bytes": 1046983,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0007.npz",
+      "sha256": "3b8ce89a328f22f5af5808721300671c6c9643ccbdf42b7142b89d445af34db7"
+    },
+    {
+      "bytes": 950973,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0008.npz",
+      "sha256": "ccce1d4826f8008718f0f4fee846bd9d5aa1988b262d1c2af4d5104382b46907"
+    },
+    {
+      "bytes": 1797002,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0009.npz",
+      "sha256": "210da6aee810451e27c4e5570e27f71e56d89540118e446e3f86e71aaa78b543"
+    },
+    {
+      "bytes": 771658,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0010.npz",
+      "sha256": "40f924f05a23a8ee482a3bfc6c3fdb51f2d937ea42ff0d08e6b8b8bea586646a"
+    },
+    {
+      "bytes": 1041951,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0011.npz",
+      "sha256": "ec511a15759a1706d6e310aa2a6d95bf7e4efe35c8c8562bea5b724bbd7af721"
+    },
+    {
+      "bytes": 1975430,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0012.npz",
+      "sha256": "0b4e8bbcad7824aab44ae977b4263390e340b19decc35504c8adc5c470776b52"
+    },
+    {
+      "bytes": 1047544,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0013.npz",
+      "sha256": "2826d6423f8d6188be1c06d1e8c61df29f785a68d8444ac3ef264f697400d6eb"
+    },
+    {
+      "bytes": 951981,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0014.npz",
+      "sha256": "f932fe310dea096e97d8fad2e7ca50a1936c3260737d6bca82c087d36781439e"
+    },
+    {
+      "bytes": 1210401,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0015.npz",
+      "sha256": "9ecc72c05fdd024dccfc1c6847ea62e6bafa552a3386631257717d46dc4233cf"
+    },
+    {
+      "bytes": 2112622,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0016.npz",
+      "sha256": "49e6ae272f3747b13ad350fd11c9b7410318c3d37070659db4c4cb4465acf76d"
+    },
+    {
+      "bytes": 1231167,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0017.npz",
+      "sha256": "1a734151191463fa5d42890b1f20c7bb4921fed135b64f2f11217eecd6a90944"
+    },
+    {
+      "bytes": 907330,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0018.npz",
+      "sha256": "6753656234b5e139191e6c2874da5b9245e465a22a30ad699e84dd143e888842"
+    },
+    {
+      "bytes": 355909,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0019.npz",
+      "sha256": "64c237489755c8dfdcc9097559d8d03ce931da3d3401df907680ded1d189fd8a"
+    },
+    {
+      "bytes": 1818110,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0020.npz",
+      "sha256": "33ae6463ae086a742fcad9bf4cc7de3b0f0e66ba9d2cfa6723e0730faff05a55"
+    },
+    {
+      "bytes": 978709,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0021.npz",
+      "sha256": "93684d1423ea214e79657280ebd4f59e6e4669bef4667c3c67124642a73c5ccf"
+    },
+    {
+      "bytes": 860326,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0022.npz",
+      "sha256": "dddb14c9ccbb586cc7cc1d7d7adcf69332ab6015d754a50a9720d677d74a308c"
+    },
+    {
+      "bytes": 1797109,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0023.npz",
+      "sha256": "9a0bb9ea9fb97427cc938a49b8367a04ec693ccabe20b64298b72d66ae57222f"
+    },
+    {
+      "bytes": 771514,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0024.npz",
+      "sha256": "767970209cc532b6a65b44cf0060be078ea4aa2af67360608617afc0eb1325d7"
+    },
+    {
+      "bytes": 1041973,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0025.npz",
+      "sha256": "db48497b250a5a1caf8f9d82d288501356f8f6a6dc52d0045feb8dc4209de6c8"
+    },
+    {
+      "bytes": 1210467,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0026.npz",
+      "sha256": "fb236b9d03acf7d6eac8ae83b4d71292a74e7d7656a6f80e19541a967b12c518"
+    },
+    {
+      "bytes": 1886289,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0027.npz",
+      "sha256": "698d5718a6d3e2711498630a133b9d58720955da7d6267208df67e52ce33e30b"
+    },
+    {
+      "bytes": 1002082,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0028.npz",
+      "sha256": "5dd3fb9b00f0cf8fff77331420b5424c36b6f952719f6ef528cd4941dfaa946c"
+    },
+    {
+      "bytes": 906068,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0029.npz",
+      "sha256": "65394758e1cc700427ffb99b74591d0517e634c161b4ecd8d0e6eaf614567709"
+    },
+    {
+      "bytes": 1976829,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0030.npz",
+      "sha256": "ef47247c43a587c1fa8f353cdf54689d23dcd74c3e59c0ccc5c233d206ecd2ee"
+    },
+    {
+      "bytes": 1184113,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0031.npz",
+      "sha256": "6eabf50b4a7da22eb73cd99e3a4d8e098336c5243c5777599ae8561cb912fcce"
+    },
+    {
+      "bytes": 816257,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0032.npz",
+      "sha256": "631163142cdf010243d6abcd1340317ba58b9e5610cd8579f894548e4658dce3"
+    },
+    {
+      "bytes": 308806,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0033.npz",
+      "sha256": "c9fb7b67bfdc6e26034d3e381cf3d4841a747e4ca54eca17bf01aeda414c74cd"
+    },
+    {
+      "bytes": 1797164,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0034.npz",
+      "sha256": "d365273484c83c722a020cfe684d14c1976aa321f6757f3a80a9ac6e5b2c56c8"
+    },
+    {
+      "bytes": 771561,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0035.npz",
+      "sha256": "d110cfb21d21042c76e1ac9e317831bf4f89fdb7b0350b46929e08f95e848ffd"
+    },
+    {
+      "bytes": 1041980,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0036.npz",
+      "sha256": "ae15cb61b9ed1d8da4a5762558e5373a9232c3ffc327270e92aecf1d5b812a12"
+    },
+    {
+      "bytes": 1234242,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0037.npz",
+      "sha256": "e62021c3e0db6be239f6d7f64817f13669684de28475b67bd333466b69ef711d"
+    },
+    {
+      "bytes": 1818127,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0038.npz",
+      "sha256": "b94be7e5a696abe713a28c254cf36f74489c7d0ea7d294d2f1274c9215f39d8d"
+    },
+    {
+      "bytes": 978560,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0039.npz",
+      "sha256": "9134392105820d29a185960808a36b93b210d2e86c48c13c5e75db425748347d"
+    },
+    {
+      "bytes": 860361,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0040.npz",
+      "sha256": "3ddfbad4d1ae025dce134f3e9b0fd4d2ac010050ef514226adfe58a4718f8d55"
+    },
+    {
+      "bytes": 1797163,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0041.npz",
+      "sha256": "5356ee3a14aca59ff2c101b5b92b07b624e4763fc5a5dafc388133acbdef30ca"
+    },
+    {
+      "bytes": 771503,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0042.npz",
+      "sha256": "ceb146b865a7a51b0f7fecc6d25f4b406bb4b95dd8b78f8e12206383244bccfc"
+    },
+    {
+      "bytes": 1042028,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0043.npz",
+      "sha256": "382cb5460e7c00da0ce9493c546a91341c3ca457cbe74afda9c3b60f82d8d0bb"
+    },
+    {
+      "bytes": 1211136,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0044.npz",
+      "sha256": "8717f25ad4b44e64c45a391edf259aacb5c1eadf8c567bc782ba15205db9c4ec"
+    },
+    {
+      "bytes": 2044749,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0045.npz",
+      "sha256": "428fe2eae932c4ddbcc8f9a6aada07d0cc4b78403ae6ce3a7dc4f8a4f90fd232"
+    },
+    {
+      "bytes": 1185115,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0046.npz",
+      "sha256": "82df76698d9b366228aacb9cc653c81b8df4b235a24a12a4def601dbd8ec2a7b"
+    },
+    {
+      "bytes": 884770,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0047.npz",
+      "sha256": "db62d1ce16846d68d19525b2908ed49d84d03cdc9268caa9aa089f6c68f3e4e9"
+    },
+    {
+      "bytes": 332490,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0048.npz",
+      "sha256": "12abe002c7f833049d315f88bc8355ba62834bfceec7af12ce248a83b2760881"
+    },
+    {
+      "bytes": 1842582,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0049.npz",
+      "sha256": "da22545266b440e8f289aa0bcec1053bf96ed53123412b03da4793bed6e7a930"
+    },
+    {
+      "bytes": 795314,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0050.npz",
+      "sha256": "72d30783bc0e2ccd8936810caa82529d5c739fb6d6d4c6327e8e59289c49b1ad"
+    },
+    {
+      "bytes": 1065474,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0051.npz",
+      "sha256": "303c988b7803a84a2bcd99b996e6a7e04c7b25c767329cde3971296fbe199316"
+    },
+    {
+      "bytes": 1163897,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0052.npz",
+      "sha256": "707637eb33b192ced196062cfab8fd4c34cf511c8fc692a64ed35917d0aa1676"
+    },
+    {
+      "bytes": 1817762,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0053.npz",
+      "sha256": "129af37b9a9d972a6c7d21b12eef4fb6d03e24ce5dc670b703488eea441b0bb5"
+    },
+    {
+      "bytes": 978485,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0054.npz",
+      "sha256": "f1f9693d5868de87083f72418109b0e97f994a3d0a440782c27db02ccfb65269"
+    },
+    {
+      "bytes": 860097,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0055.npz",
+      "sha256": "3f1ab4b9d7897871aabd1afd714bcd032c50271c02aac13fb6ad708e0e509382"
+    },
+    {
+      "bytes": 1797087,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0056.npz",
+      "sha256": "67ccee0ff2dfa895b4b6a401b934ec037e0ed281b3992f0e30fb28f2cccdefda"
+    },
+    {
+      "bytes": 771541,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0057.npz",
+      "sha256": "08e8b064d7528bae883cc89e2b4e7d398b3f7e9a5d69cf2c54b0106c70b2dcbb"
+    },
+    {
+      "bytes": 1041983,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0058.npz",
+      "sha256": "2eb67167ae34a4b6610a33ea98a8100665ef75981aaa2c42696ec48ed630e839"
+    },
+    {
+      "bytes": 1211212,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0059.npz",
+      "sha256": "aa731b791659f5467c30385842ca36327ef28fb66019998e2086703ea01ab032"
+    },
+    {
+      "bytes": 1797160,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0060.npz",
+      "sha256": "f9d1e9e0a1c845831ea13d7eb402af80b972e09b8f2318e9ff3826b9899fa7e0"
+    },
+    {
+      "bytes": 771627,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0061.npz",
+      "sha256": "ccbbbdc973455d3e45c73cece5da26a0b272b91af0604c5baa38b4e83a3bab1a"
+    },
+    {
+      "bytes": 1042017,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0062.npz",
+      "sha256": "c368339add1965973e49d3275872a8e5ba0a0896b67faee82ee116fe3dec0764"
+    },
+    {
+      "bytes": 1187028,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0063.npz",
+      "sha256": "3519101604047cb2bed8851218af4a468fb9e81495617fab50bc16ae61c6c213"
+    },
+    {
+      "bytes": 1842343,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0064.npz",
+      "sha256": "ffa00f6a923b4a0512dd976abdd7420452620c39e7fa75b228d4e2bfbaa6ec53"
+    },
+    {
+      "bytes": 795298,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0065.npz",
+      "sha256": "dc95475c8bccb615321958412a69fa9d8fa882a8e7bfb74aeabf99d5722e714b"
+    },
+    {
+      "bytes": 1065410,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0066.npz",
+      "sha256": "bd583b4d8d7c9dc01acb954fe12d0e82728eb2b2002d5b563a77cb556a6538ca"
+    },
+    {
+      "bytes": 1187533,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0067.npz",
+      "sha256": "3a633d8d53ec8184aac84594b24ad48151f19df3ee9abac4f888529d8495674b"
+    },
+    {
+      "bytes": 1885474,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0068.npz",
+      "sha256": "b5640b650b7cd906e62a55283c06761735e297188dde62c7da71b9f11ddb7c30"
+    },
+    {
+      "bytes": 1001127,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0069.npz",
+      "sha256": "c45986015e5e8b53f8e2d9c8c46228ac7f5cc7a4d69bc6e18e9336d819391cfb"
+    },
+    {
+      "bytes": 905516,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0070.npz",
+      "sha256": "4d117cc3c3cc356340210257bdeed3d5d724374b7e50a7934b5d91fab516f98a"
+    },
+    {
+      "bytes": 1842274,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0071.npz",
+      "sha256": "b02316f15f4a678679a33f718ea0be6844f182549d619d4bf3fddf0efa1e374e"
+    },
+    {
+      "bytes": 795162,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0072.npz",
+      "sha256": "1e6c09d1dd498dc2454f6e4d46bf9af6475bcc3e133e065eff14dd048fdbd36a"
+    },
+    {
+      "bytes": 1065340,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0073.npz",
+      "sha256": "daeca7502450a57d4615732415d64f9d4a9ba843575f6f3664d062791896288b"
+    },
+    {
+      "bytes": 1796962,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0074.npz",
+      "sha256": "a9187848776ea93865890c6c52e9d92fc85aff04ccf2030e369dc6264bacf57a"
+    },
+    {
+      "bytes": 771512,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0075.npz",
+      "sha256": "4cf9b84c0ef8054a3274ca6c1c0cfc253403a393297a35e5c247900a79df8435"
+    },
+    {
+      "bytes": 1041820,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0076.npz",
+      "sha256": "5e29691890740e1305804b0be86043ed39dfd26d9ab68b9381f1b368446fbad5"
+    },
+    {
+      "bytes": 1186372,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0077.npz",
+      "sha256": "d5c0320cb499502157e91fefcbee9bf5d353ca483d8c90226431797a7490f035"
+    },
+    {
+      "bytes": 1797075,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0078.npz",
+      "sha256": "34e60d48f25dc0557627b7dc156575637954f20b6736054b9e285dd4f34b5ec1"
+    },
+    {
+      "bytes": 771597,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0079.npz",
+      "sha256": "96b79a7e4d22e27c32953c69c5b3780664042409aa7de7fa5c00923a79d57976"
+    },
+    {
+      "bytes": 1041919,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0080.npz",
+      "sha256": "887af812d653a0a1c098134ac042016843d8d5beb1fc297f7748da8c360cf7ba"
+    },
+    {
+      "bytes": 1908333,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0081.npz",
+      "sha256": "53cf50d59da2d4f7380687e91c8fdab98edd36d084295ec362acc25e4d37a545"
+    },
+    {
+      "bytes": 1024588,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0082.npz",
+      "sha256": "aba41302ac934ad97f20fbcb4e22e31e4f2eaecbd3c3374666c35eb4ad2da6b5"
+    },
+    {
+      "bytes": 906268,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0083.npz",
+      "sha256": "046f339aeb49402a651ba09276cb11ab20ed8fc14649dd9c4df09d8cfeb4ea15"
+    },
+    {
+      "bytes": 1210759,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0084.npz",
+      "sha256": "b80403028190d5424e4401624e243a67ddb67f9c5fd83bc99456229ec259d4d6"
+    },
+    {
+      "bytes": 1886134,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0085.npz",
+      "sha256": "cb145da5d18bb8f1a0eb3043b3a2111e1b8dcc2aa1c7a44f51d2b41983f5cc3b"
+    },
+    {
+      "bytes": 1001923,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0086.npz",
+      "sha256": "6a63439214c8cf05908c2956004c84990e815e5cd3fdd540cecf071cd4288949"
+    },
+    {
+      "bytes": 906398,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0087.npz",
+      "sha256": "415a4ff6ad8d3a80e12c0410038f418297dedb2166b81ed54720c612a399f374"
+    },
+    {
+      "bytes": 1976696,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0088.npz",
+      "sha256": "fd31b2739a7281d575343d9cb5cbbc0353e4498289cee290b158d5ae239d4ea1"
+    },
+    {
+      "bytes": 1184041,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0089.npz",
+      "sha256": "08ce170acbc229a43f2acc74ae79f864829feacd9ec52a2e8fd46f6d80e87948"
+    },
+    {
+      "bytes": 816276,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0090.npz",
+      "sha256": "693182912b95b2c385d79f5354bac513c32a4a3c22852d6ebb321a32c2ad4014"
+    },
+    {
+      "bytes": 308826,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0091.npz",
+      "sha256": "888086a83f5aac5e8abd5e38b227a9dbb4f024617c663c1ede7e3f4c34307d26"
+    },
+    {
+      "bytes": 1976181,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0092.npz",
+      "sha256": "c3cd4e1c782b3d19c0fb7f99172dd012597e9cc65043d1f4fab3653e4ff7df14"
+    },
+    {
+      "bytes": 1048019,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0093.npz",
+      "sha256": "dfbb4d54299d9150eb7a3a0adc4770236a27a364e642b901e618359c2458eb63"
+    },
+    {
+      "bytes": 952073,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0094.npz",
+      "sha256": "69ce5dcd93151e3f6a04aedaed15af89effb40a2c378623df2bba67c6d144f18"
+    },
+    {
+      "bytes": 1976924,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0095.npz",
+      "sha256": "6cdd377f60f7d630fcbf67dc42a7afa00f5b7c18f147e42880f0fe15fe9a95ff"
+    },
+    {
+      "bytes": 1161823,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0096.npz",
+      "sha256": "a1e87c7772e713e90102dfed7c250e16eb882072ac4bbd39794bc0db57817647"
+    },
+    {
+      "bytes": 838690,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0097.npz",
+      "sha256": "260f07a5bcb855b9c3f08d454d1ba4cdc44704ddb1fc237b1236d1339b6f7cef"
+    },
+    {
+      "bytes": 309027,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0098.npz",
+      "sha256": "331ab6a6da544fda91e4325e3c38d6adba48bab275302d283a204a7cbeb0b6d7"
+    },
+    {
+      "bytes": 2112504,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0099.npz",
+      "sha256": "2e59be3e0b54adaab343d3eed8043b5980fdcec3192f78e394d24f96a3d56af4"
+    },
+    {
+      "bytes": 1094937,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0100.npz",
+      "sha256": "70fd9e8a073b2dee7c58f0f7c9e68d351ea8d7dd56df0a3ef60c53b68944b265"
+    },
+    {
+      "bytes": 1043726,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0101.npz",
+      "sha256": "c143b812274ed87beff9bdc8849e698d71855dea867e8b774b9a3473bb204275"
+    },
+    {
+      "bytes": 1976061,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0102.npz",
+      "sha256": "be948685bc7407bfd4e6fea4a2d967bb2550c605513b5e8940300b8c321946d3"
+    },
+    {
+      "bytes": 1160749,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0103.npz",
+      "sha256": "451d89386ba21c0fe9fa70e05a1610719e93737bf30a4bb3e8af06b31e37237c"
+    },
+    {
+      "bytes": 838059,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0104.npz",
+      "sha256": "d5fff8630a49537b76b2712f891b941911fe3567f5bd010687aec0cc1fa504fb"
+    },
+    {
+      "bytes": 307913,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0105.npz",
+      "sha256": "76cb409875aedd4685c85b1e7527637c6729ace41661f4724e917c71c84d4fb9"
+    },
+    {
+      "bytes": 1908097,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0106.npz",
+      "sha256": "60fe8e7ba64fa99ab28e379ff7a8ae4e3be211c8767667bf1d0dc88b3028b558"
+    },
+    {
+      "bytes": 1024482,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0107.npz",
+      "sha256": "f585747f376c611f5259388371a038cfa08ed853ecec9d3d3c5e670edba47501"
+    },
+    {
+      "bytes": 906251,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0108.npz",
+      "sha256": "022db7bb9b9392bdf352e7ea8e624981321e021e6e697c0638451e587753df2d"
+    },
+    {
+      "bytes": 1908865,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0109.npz",
+      "sha256": "637e467ed35cdcd097f145b3b88e2dd898cb2dcac0371d76b1c97fad7fcb9c73"
+    },
+    {
+      "bytes": 1138058,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0110.npz",
+      "sha256": "fecd3545e0c9cbe38ac5936aa7483239df2be9d51b82ee5426b454430f4a8647"
+    },
+    {
+      "bytes": 793157,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0111.npz",
+      "sha256": "6a930b4a0fd3c74fbaacf1a847eeefbe62d1cebcfff086f4b705afdfecaa373c"
+    },
+    {
+      "bytes": 285153,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0112.npz",
+      "sha256": "9b0d636ca5e7a27bb73144ddefe7ff13b8f5a5c5a2935e1f0dc57bc9a069712a"
+    },
+    {
+      "bytes": 1954053,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0113.npz",
+      "sha256": "43506437c81041694580bef236b52f1e72066e343d2cc4a4d269d99d7a3354af"
+    },
+    {
+      "bytes": 1025560,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0114.npz",
+      "sha256": "3caa213d81282fe6e01264fedcf6da66d05931b5b064bc327c6068ee3e57ca56"
+    },
+    {
+      "bytes": 951896,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0115.npz",
+      "sha256": "7ec7ded4f516ea290d11cc8f75086d079d6478235fef0a7bd4c3782f31bd12fe"
+    },
+    {
+      "bytes": 1976773,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0116.npz",
+      "sha256": "37d2665254631db62f016e4c1f69c16f1fcb5135945de75132baedb8ee99113c"
+    },
+    {
+      "bytes": 1183976,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0117.npz",
+      "sha256": "89d51f5add3cba742443ad6ce4be0cd90ae248670299f2931243388d2eb349dc"
+    },
+    {
+      "bytes": 816238,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0118.npz",
+      "sha256": "b057f5d0996c28979b3822f74f6775d6cda23060d057909baac962f4c458c367"
+    },
+    {
+      "bytes": 308750,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0119.npz",
+      "sha256": "93fd4482da716774f3ce8ddd08e01da2b78dddd562753cbdecdf5150a975f881"
+    },
+    {
+      "bytes": 1817308,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0120.npz",
+      "sha256": "3c9e38d8e0fecec4a6e86d242dd93520d38c2c7c692ab476a15943afb185ac46"
+    },
+    {
+      "bytes": 977682,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0121.npz",
+      "sha256": "575882d706d2bd27ffe6fab9468bc5cd16b5ff72c39852207c25390b36d3b20d"
+    },
+    {
+      "bytes": 859430,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0122.npz",
+      "sha256": "e5221fcdfcef1dbea430ed29f28781037d8549147c71891bc15c3220a901797a"
+    },
+    {
+      "bytes": 2044595,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0123.npz",
+      "sha256": "a344f22d83764a41988d8770927de3b77a3fc220de4bacd148c37c921eb973b0"
+    },
+    {
+      "bytes": 1207133,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0124.npz",
+      "sha256": "fd431b9c22705046ecce585994b728060e4d6ff38c2d55f7a2b341eb396ea49c"
+    },
+    {
+      "bytes": 861742,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0125.npz",
+      "sha256": "c7be7012dfb3502456f249b8153f0fae65f0963755fbb5874ecfad5a804ad4e8"
+    },
+    {
+      "bytes": 332083,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0126.npz",
+      "sha256": "70191b078c47c0657aa561730d3f701d87ef47daff196b73e23b144124363381"
+    },
+    {
+      "bytes": 1954558,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0127.npz",
+      "sha256": "129f4a1848cf8d2ed1e8d2cef878b8b2955cc5feb7843334074119cab9d7b3bb"
+    },
+    {
+      "bytes": 1025723,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0128.npz",
+      "sha256": "d821ec0d70116dd2aa00cd40ba0754c07ec3c7b4ead8a9a6825d64f1290e239e"
+    },
+    {
+      "bytes": 952151,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0129.npz",
+      "sha256": "146ec2bbcd1e3240af0f0d1514cdd2134acd9d27dc74ec844940401aae15b9d6"
+    },
+    {
+      "bytes": 1976254,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0130.npz",
+      "sha256": "d3f468386f843c1f6ad4cb01d4c28bdfcb251260c9700d7f8a784541b43d8492"
+    },
+    {
+      "bytes": 1160915,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0131.npz",
+      "sha256": "81e64d7400c6cfc400c3e14a693d024c8cb3b642cc81d698676c58094af5b11f"
+    },
+    {
+      "bytes": 838023,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0132.npz",
+      "sha256": "24ebb928acc2a724c551e9ba7dfecb7bcb984dd19acd00b8e9f8a5ac3b79a794"
+    },
+    {
+      "bytes": 308071,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/nodes/0133.npz",
+      "sha256": "a8eef940eb37bccdbadbad30f4a841159da9b1b137970ab6feccbca172216736"
+    },
+    {
+      "bytes": 233805,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/repository/wal/000001.wal",
+      "sha256": "10145535347152d3e8fa2bb30128ade8cea4ecd2cd07ec92b255a34c860606f2"
+    },
+    {
+      "bytes": 310,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/restart.json",
+      "sha256": "d2828947ee557cb4dc5263909cb0b91a33659e438973acf14112a5aa48b0cb63"
+    },
+    {
+      "bytes": 52311,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/run_config.json",
+      "sha256": "749a4dadbb6211fc893bb2c9befc8349f8f8f14ee1cabb694c3e01dd204b9f99"
+    },
+    {
+      "bytes": 16311,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c64_w64/longhorizon/c4-lh-06/session/transcript.jsonl",
+      "sha256": "7e122f865ca74191c00c9b08495fc7a955facf05f72e8445c25fa1ea8e8725b5"
+    }
+  ],
+  "sources": [
+    {
+      "bytes": 19626,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_recovery_a8.py",
+      "sha256": "8fa6ac4ca33863ed8ac63d34087e544b447e725681a0772c6f45d9d124e73d4d"
+    },
+    {
+      "bytes": 11582,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/tests/test_grm_c4_recovery_a8.py",
+      "sha256": "482f24177d3112a610f0420335c7c34da56463e1c5cf3573ef69a73163398caf"
+    }
+  ],
+  "spec": "c4-lh-06",
+  "status": "PASS",
+  "turn_range": {
+    "completed": [
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47
+    ],
+    "start_inclusive": 40,
+    "stop_exclusive": 48
+  },
+  "width": 64
+}

@@ -1,0 +1,1501 @@
+{
+  "amendment": {
+    "bytes": 42570,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/amendment_a8.json",
+    "sha256": "4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e"
+  },
+  "battery": "census",
+  "budget": {
+    "authorized_by": "Lead, orders/GRM_C4_AMENDMENT_1.md, 2026-09-09",
+    "cooldown_seconds": 30,
+    "estimate_class": "Planning assumption: sup 60s/fixture, census and 8-turn LH segments 80s each including load/save; unvalidated on this sandbox; stop at rail without retry.",
+    "full_fixed_geometry_estimate_seconds": 4800,
+    "full_fixed_geometry_status": "PLANNING_FIT_AT_CAP_UNVALIDATED",
+    "gpu_seconds": 6600,
+    "lock": "/tmp/forge-gpu.lock",
+    "lock_wait_seconds": 0,
+    "new_cells_estimate_seconds": 4800,
+    "outer_seconds": 590,
+    "planning_cooldown_seconds": 1890,
+    "reserve_note": "285s full-worker reservation unchanged. At exactly estimated unit times the final worker needs 5005s cumulative reservation, so a 4800s estimate does not guarantee completion under the 4800s cap; stop NON_FIT if reserve fails. Cooldown is outside GPU budget.",
+    "stop": "One timeout stops its chain; no retry or longer lease. Reserve full 285s before each worker against remaining total.",
+    "worker_seconds": 285
+  },
+  "budget_amendment": {
+    "bytes": 42570,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/amendment_a8.json",
+    "sha256": "4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e"
+  },
+  "campaign_gpu_seconds_before": 2349.4915574681945,
+  "cell": "c96_w64",
+  "chunk": 96,
+  "events": [
+    {
+      "arena_width": 64,
+      "capture_pin": "live",
+      "ephemeral": true,
+      "event": "geometry",
+      "live_shift": 115,
+      "live_turns": 2,
+      "n_sink": 19,
+      "seat_near_live": true
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 0,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "event": "seat",
+      "observed": {
+        "arena_width": 64,
+        "declined_reason": "no_mounts_to_seat",
+        "delta_positions": 0,
+        "live_shift": 115,
+        "mount_ntok": 0,
+        "mount_pos0": 19,
+        "mount_pos0_legacy": 19,
+        "n_sink": 19,
+        "plan_head": null,
+        "seat_near_live": false,
+        "seat_near_live_requested": true,
+        "seat_offset_plan_head": null,
+        "seat_order": [],
+        "seat_order_legacy": [],
+        "seat_rule": "LEGACY: the block is seated at [n_sink, n_sink + mount_ntok) and the plan head (picks[0]) takes the band's SINK end"
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "attempt_residency",
+      "live_shift": 115,
+      "live_token_seats": 50,
+      "mounted_ids": [],
+      "mounted_token_seats": 0,
+      "physical_cache_token_seats": 69,
+      "sink_token_seats": 19
+    },
+    {
+      "arena_width": 64,
+      "event": "turn",
+      "info": {
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "empty_ranking",
+        "admission_rank_plan": [],
+        "admission_ranking_before_demotion": [],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [],
+        "evicted": 0,
+        "fit_chunk_trips": [],
+        "fit_descended_head": [],
+        "fit_dropped_filler": [],
+        "fit_dropped_planned": [],
+        "fit_planned": [],
+        "fit_seated": [],
+        "fit_shuttle": false,
+        "fit_shuttle_trips": [],
+        "fit_split_children": [],
+        "fit_split_ephemeral": null,
+        "fit_split_parent": null,
+        "fit_unseatable": [],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": 1,
+            "ntok": 50
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "live_tokens": 50,
+        "mounts": [],
+        "no_mount_fit": true,
+        "recency_mounted_ids": [
+          0
+        ],
+        "recency_seats": {
+          "arena_width": 64,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            0
+          ],
+          "nominated_ntok": 86
+        },
+        "resident": 69,
+        "route_receipt_record": {
+          "admission": {
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": null,
+            "margin_threshold": 0.1385774091529802,
+            "policy": "A-DEC",
+            "policy_branch": "empty_ranking",
+            "rank_plan": [],
+            "rare_identifier_tokens": null,
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "fit": {
+            "cur_mount_n": 0,
+            "dropped": [],
+            "final_mounts": [],
+            "info_pass_through": {
+              "fit_chunk_trips": [],
+              "fit_descended_head": [],
+              "fit_dropped_filler": [],
+              "fit_dropped_planned": [],
+              "fit_planned": [],
+              "fit_seated": [],
+              "fit_shuttle": false,
+              "fit_shuttle_trips": [],
+              "fit_split_children": [],
+              "fit_split_ephemeral": null,
+              "fit_split_parent": null,
+              "fit_unseatable": [],
+              "frame_ephemeral": true,
+              "frame_escape_active": false,
+              "live_segments_after_turn": [
+                {
+                  "graft_id": 1,
+                  "ntok": 50
+                }
+              ],
+              "live_segments_carried_into_turn": [],
+              "live_segments_inherited": [],
+              "recency_mounted_ids": [
+                0
+              ],
+              "recency_seats": {
+                "arena_width": 64,
+                "budget_after_charge": null,
+                "charge_waived_reason": null,
+                "charged_ntok": null,
+                "nominated_ids": [
+                  0
+                ],
+                "nominated_ntok": 86
+              },
+              "served_without_plan_head": false
+            },
+            "no_mount_fit": true,
+            "planned": [],
+            "seated": [],
+            "trip_count": 1,
+            "trips": [
+              {
+                "clean_room": false,
+                "grounded": null,
+                "mount_set": [],
+                "ordinal": 0,
+                "planned": [],
+                "shuttle": false
+              }
+            ],
+            "width": 64
+          },
+          "provenance": {
+            "arena_state_sha256_before_serve": "80eec3ff0a038fb393efe740d73a75bc85d00d83b1bb737e4f27043c3ae9dcd4",
+            "output_sha256": "334328a126b2f6fb3fe237920c70a4e64c64ca657fde58eee492f624684de3e4",
+            "repository_size_at_probe": 2,
+            "request_sha256": "e1bb25980fba18784516f0bd700f882430b05698f05844774c3326acb7cc29f4"
+          },
+          "receipt_sha256": "bea8b59b1f7799ece821f2290191c46aab290071c97be83fda9744189bfc69af",
+          "route": {
+            "arena_route_receipt": null,
+            "backend": "python",
+            "candidate_count": null,
+            "excluded_live_ids": [],
+            "excluded_recency_ids": [],
+            "fallbacks": [],
+            "ranking_ids": [],
+            "ranking_length": 0,
+            "ranking_scores": null,
+            "route_limit": 6
+          },
+          "schema": "grm.route_receipt.v1",
+          "serving_path": "core.grm_runtime.GRMRuntime.chat",
+          "session_id": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository",
+          "turn_id": "0",
+          "turn_kind": "chat"
+        },
+        "route_receipt_sink": {
+          "reason": "no_ledger_location_configured",
+          "sink": "info"
+        },
+        "served_without_plan_head": false,
+        "trip": 0
+      },
+      "live_shift": 115,
+      "live_token_seats": 50,
+      "mounted_ids": [],
+      "mounted_token_seats": 0,
+      "physical_cache_token_seats": 69,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 1,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 1,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 2,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "turn",
+      "info": {
+        "abstain_deposited_graft": 3,
+        "abstain_identifier_tokens": [
+          "session",
+          "continuity",
+          "filler",
+          "full",
+          "beta",
+          "acknowledge",
+          "briefly",
+          "change",
+          "stored",
+          "fact",
+          "values"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          0
+        ],
+        "admission_ranking_before_demotion": [
+          0
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [],
+        "evicted": 0,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [
+          {
+            "graft_id": 1,
+            "ntok": 50
+          }
+        ],
+        "live_tokens": 0,
+        "mounts": [],
+        "no_mount_fit": false,
+        "recency_mounted_ids": [
+          1,
+          2
+        ],
+        "recency_seats": {
+          "arena_width": 64,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            1,
+            2
+          ],
+          "nominated_ntok": 136
+        },
+        "resident": 0,
+        "route_receipt_record": {
+          "admission": {
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": null,
+            "margin_threshold": 0.1385774091529802,
+            "policy": "A-DEC",
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              0
+            ],
+            "rare_identifier_tokens": null,
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": true,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "fit": {
+            "cur_mount_n": 0,
+            "dropped": [],
+            "final_mounts": [],
+            "info_pass_through": {
+              "abstain_deposited_graft": 3,
+              "abstain_identifier_tokens": [
+                "session",
+                "continuity",
+                "filler",
+                "full",
+                "beta",
+                "acknowledge",
+                "briefly",
+                "change",
+                "stored",
+                "fact",
+                "values"
+              ],
+              "abstain_reason": "identifier_unbound",
+              "abstained": true,
+              "frame_ephemeral": true,
+              "frame_escape_active": false,
+              "live_segments_after_turn": [],
+              "live_segments_carried_into_turn": [],
+              "live_segments_inherited": [
+                {
+                  "graft_id": 1,
+                  "ntok": 50
+                }
+              ],
+              "recency_mounted_ids": [
+                1,
+                2
+              ],
+              "recency_seats": {
+                "arena_width": 64,
+                "budget_after_charge": null,
+                "charge_waived_reason": null,
+                "charged_ntok": null,
+                "nominated_ids": [
+                  1,
+                  2
+                ],
+                "nominated_ntok": 136
+              }
+            },
+            "no_mount_fit": false,
+            "planned": [],
+            "seated": [],
+            "trip_count": 1,
+            "trips": [
+              {
+                "clean_room": false,
+                "grounded": null,
+                "mount_set": [],
+                "ordinal": 0,
+                "planned": [],
+                "shuttle": false
+              }
+            ],
+            "width": 64
+          },
+          "provenance": {
+            "arena_state_sha256_before_serve": "09d1ddba14c82045e4c4515e30f931f0203893cfc214f8ad15d803b486e02523",
+            "output_sha256": "271608412fb252381aaa336da42f5a4b6bcda2af55a6e647f3ac14f53345c596",
+            "repository_size_at_probe": 4,
+            "request_sha256": "cb269900d87bef5fe18bfbfb62071c328cf64b83614305272be5473da27e1918"
+          },
+          "receipt_sha256": "7834c9a7e98b499e40ebaad4997ecba131b0def03707d44788791553975d2f9a",
+          "route": {
+            "arena_route_receipt": null,
+            "backend": "python",
+            "candidate_count": null,
+            "excluded_live_ids": [],
+            "excluded_recency_ids": [],
+            "fallbacks": [],
+            "ranking_ids": [],
+            "ranking_length": 0,
+            "ranking_scores": null,
+            "route_limit": 6
+          },
+          "schema": "grm.route_receipt.v1",
+          "serving_path": "core.grm_runtime.GRMRuntime.chat",
+          "session_id": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository",
+          "turn_id": "1",
+          "turn_kind": "chat"
+        },
+        "route_receipt_sink": {
+          "reason": "no_ledger_location_configured",
+          "sink": "info"
+        },
+        "trip": 0
+      },
+      "live_shift": 115,
+      "live_token_seats": null,
+      "mounted_ids": [],
+      "mounted_token_seats": 0,
+      "physical_cache_token_seats": null,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 3,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 3,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 4,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 0,
+      "parent_preserved": true,
+      "phase": "explicit_budget_repair",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          5,
+          6
+        ],
+        "parent": 0,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "event": "seat",
+      "observed": {
+        "arena_width": 64,
+        "delta_positions": 51,
+        "live_shift": 115,
+        "mount_ntok": 45,
+        "mount_pos0": 70,
+        "mount_pos0_legacy": 19,
+        "n_sink": 19,
+        "plan_head": 5,
+        "plan_head_adjacent_to_live_shift": true,
+        "plan_head_last_position": 114,
+        "plan_head_ntok": 45,
+        "seat_near_live": true,
+        "seat_offset_plan_head": 70,
+        "seat_order": [
+          5
+        ],
+        "seat_order_legacy": [
+          5
+        ],
+        "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "attempt_residency",
+      "live_shift": 115,
+      "live_token_seats": 52,
+      "mounted_ids": [
+        5
+      ],
+      "mounted_token_seats": 45,
+      "physical_cache_token_seats": 116,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 5,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 6,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 7,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 8,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 9,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 10,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "turn",
+      "info": {
+        "abstain_deposited_graft": 11,
+        "abstain_identifier_tokens": [
+          "session",
+          "continuity",
+          "filler",
+          "full",
+          "gamma",
+          "acknowledge",
+          "briefly",
+          "change",
+          "stored",
+          "fact",
+          "values"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          1,
+          4,
+          2
+        ],
+        "admission_ranking_before_demotion": [
+          1,
+          4,
+          2,
+          9
+        ],
+        "admission_route_margin_1_2": 0.7727010439820345,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [],
+        "evicted": 0,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [
+          {
+            "graft_id": 7,
+            "ntok": 52
+          }
+        ],
+        "live_tokens": 0,
+        "mounts": [],
+        "no_mount_fit": false,
+        "recency_mounted_ids": [
+          8,
+          10
+        ],
+        "recency_seats": {
+          "arena_width": 64,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            8,
+            10
+          ],
+          "nominated_ntok": 171
+        },
+        "resident": 0,
+        "route_receipt_record": {
+          "admission": {
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": null,
+            "margin_threshold": 0.1385774091529802,
+            "policy": "A-DEC",
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              1,
+              4,
+              2
+            ],
+            "rare_identifier_tokens": null,
+            "route_margin_1_2": 0.7727010439820345,
+            "route_margin_evaluated": true,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "fit": {
+            "cur_mount_n": 0,
+            "dropped": [],
+            "final_mounts": [],
+            "info_pass_through": {
+              "abstain_deposited_graft": 11,
+              "abstain_identifier_tokens": [
+                "session",
+                "continuity",
+                "filler",
+                "full",
+                "gamma",
+                "acknowledge",
+                "briefly",
+                "change",
+                "stored",
+                "fact",
+                "values"
+              ],
+              "abstain_reason": "identifier_unbound",
+              "abstained": true,
+              "frame_ephemeral": true,
+              "frame_escape_active": false,
+              "live_segments_after_turn": [],
+              "live_segments_carried_into_turn": [],
+              "live_segments_inherited": [
+                {
+                  "graft_id": 7,
+                  "ntok": 52
+                }
+              ],
+              "recency_mounted_ids": [
+                8,
+                10
+              ],
+              "recency_seats": {
+                "arena_width": 64,
+                "budget_after_charge": null,
+                "charge_waived_reason": null,
+                "charged_ntok": null,
+                "nominated_ids": [
+                  8,
+                  10
+                ],
+                "nominated_ntok": 171
+              }
+            },
+            "no_mount_fit": false,
+            "planned": [],
+            "seated": [],
+            "trip_count": 1,
+            "trips": [
+              {
+                "clean_room": false,
+                "grounded": null,
+                "mount_set": [],
+                "ordinal": 0,
+                "planned": [],
+                "shuttle": false
+              }
+            ],
+            "width": 64
+          },
+          "provenance": {
+            "arena_state_sha256_before_serve": "ce49fd6d34ef2b6bfe17ba11bc405f42b7bdb1bbcb56194074a66edce21aba62",
+            "output_sha256": "a7e738a70cfeadad85f73521dfd0be66d1e4b61cbe8da1709055b9dcca209105",
+            "repository_size_at_probe": 12,
+            "request_sha256": "9f337e7ef475e9f885b717db14bbb8656171a6e560bfc7eba675d3e2da1ee816"
+          },
+          "receipt_sha256": "84951778ac669927df3f69e8bd9738fc65fd10442c7f941a92a40bf0978a4892",
+          "route": {
+            "arena_route_receipt": null,
+            "backend": "python",
+            "candidate_count": null,
+            "excluded_live_ids": [],
+            "excluded_recency_ids": [],
+            "fallbacks": [],
+            "ranking_ids": [],
+            "ranking_length": 0,
+            "ranking_scores": null,
+            "route_limit": 6
+          },
+          "schema": "grm.route_receipt.v1",
+          "serving_path": "core.grm_runtime.GRMRuntime.chat",
+          "session_id": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository",
+          "turn_id": "2",
+          "turn_kind": "chat"
+        },
+        "route_receipt_sink": {
+          "reason": "no_ledger_location_configured",
+          "sink": "info"
+        },
+        "trip": 0
+      },
+      "live_shift": 115,
+      "live_token_seats": null,
+      "mounted_ids": [],
+      "mounted_token_seats": 0,
+      "physical_cache_token_seats": null,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 11,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 11,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 4,
+      "parent_preserved": true,
+      "phase": "explicit_budget_repair",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          12,
+          13
+        ],
+        "parent": 4,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "event": "seat",
+      "observed": {
+        "arena_width": 64,
+        "delta_positions": 51,
+        "live_shift": 115,
+        "mount_ntok": 45,
+        "mount_pos0": 70,
+        "mount_pos0_legacy": 19,
+        "n_sink": 19,
+        "plan_head": 12,
+        "plan_head_adjacent_to_live_shift": true,
+        "plan_head_last_position": 114,
+        "plan_head_ntok": 45,
+        "seat_near_live": true,
+        "seat_offset_plan_head": 70,
+        "seat_order": [
+          12
+        ],
+        "seat_order_legacy": [
+          12
+        ],
+        "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "attempt_residency",
+      "live_shift": 115,
+      "live_token_seats": 52,
+      "mounted_ids": [
+        12
+      ],
+      "mounted_token_seats": 45,
+      "physical_cache_token_seats": 116,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 12,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 13,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 14,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "ephemeral_split_members": 0,
+      "event": "split_census",
+      "nodes": 15,
+      "split_children": 4,
+      "split_nodes": 6,
+      "split_parents": 2
+    }
+  ],
+  "evidence_class": "GPU E2E worker; lead A5 split and independent cells",
+  "finished_unix": 1788947627.9448407,
+  "geometry_pin": {
+    "capture_pin": "live",
+    "ephemeral": true,
+    "live_shift": "n_sink + 96",
+    "live_turns": 2,
+    "max_live": 4096,
+    "plan_head_last_position": "n_sink + 95",
+    "remaining_flags": {
+      "adm_decisive": true,
+      "admission_mode": "A-DEC",
+      "arena_width": 96,
+      "gqa_cuda_route": true,
+      "graft_storage_bits": 8,
+      "length_debias": false,
+      "live_turns": 2,
+      "max_live": 4096,
+      "max_trips": 1,
+      "ngen": 32,
+      "probe_ladder": true,
+      "route_query_lex": true,
+      "sup_resolve": true,
+      "topk": 3,
+      "turn_pipeline": "single",
+      "vram_budget_mb": null
+    },
+    "seat_near_live": true,
+    "sink": "unchanged tokenizer-derived n_sink"
+  },
+  "gpu_seconds": 66.06672716792673,
+  "prior_receipt": null,
+  "registration": {
+    "bytes": 67067,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/registration.json",
+    "sha256": "7fb561c70dd8c04abc18ef99a7a2a5ec4d37cbc2a22b1de1f89ab2119bd285e8"
+  },
+  "result": {
+    "elapsed_seconds": 61.52223518770188,
+    "probe_rows": [
+      {
+        "accepts": [
+          "Auric-4-Alpha"
+        ],
+        "admission": {
+          "admission_identified_candidates": [
+            0
+          ],
+          "admission_identifier_hit_count": 1,
+          "admission_margin_threshold": 0.1385774091529802,
+          "admission_policy": "A-DEC",
+          "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+          "admission_rank_plan": [
+            0
+          ],
+          "admission_route_margin_1_2": 1.0165544102280362,
+          "admission_route_margin_evaluated": true,
+          "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+        },
+        "answer": "Auric-4-Alpha",
+        "contains_expected": true,
+        "contains_stale": false,
+        "eviction_check": {
+          "live_node_ids_before": [],
+          "live_turns": 2,
+          "policy_evicted_before_probe": true,
+          "source_node_id": 0,
+          "source_node_live_before": false,
+          "source_turn": 0
+        },
+        "expected": "Auric-4-Alpha",
+        "fact_id": "orion pin",
+        "frame": {
+          "frame_ephemeral": true,
+          "frame_escape_active": false,
+          "live_segments_after_turn": [
+            {
+              "graft_id": 7,
+              "ntok": 52
+            }
+          ],
+          "live_segments_carried_into_turn": [],
+          "live_segments_inherited": [],
+          "recency_mounted_ids": [
+            3,
+            4
+          ],
+          "recency_seats": {
+            "arena_width": 64,
+            "budget_after_charge": 64,
+            "charge_waived_reason": "identifier_query_point_lookup",
+            "charged_ntok": 0,
+            "nominated_ids": [
+              3,
+              4
+            ],
+            "nominated_ntok": 164
+          }
+        },
+        "mount_plan": [
+          5
+        ],
+        "mounted_ids": [
+          5
+        ],
+        "mounts": [
+          6
+        ],
+        "old_value": null,
+        "pass": true,
+        "resumed": false,
+        "route_backend": "python",
+        "route_ranking": {
+          "live_excluded": [],
+          "mount_dropped_for_width": [],
+          "mount_fitted": [
+            5
+          ],
+          "mount_plan": [
+            5
+          ],
+          "ranking_ids": [
+            0,
+            4,
+            2,
+            1
+          ],
+          "ranking_len": 4,
+          "route_backend": "python",
+          "score_error": null,
+          "source_node_id": 0,
+          "source_rank": 1,
+          "top5": [
+            {
+              "contains_value_hint": true,
+              "node_id": 0,
+              "rank": 1,
+              "score": 0.9487071966369287,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 4,
+              "rank": 2,
+              "score": 0.9999999983770004,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 2,
+              "rank": 3,
+              "score": 0.9330019084906431,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": false,
+              "node_id": 1,
+              "rank": 4,
+              "score": 0.9045479839880245,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session c"
+            }
+          ]
+        },
+        "turn": 5
+      },
+      {
+        "accepts": [
+          "Vortex-3-Sierra"
+        ],
+        "admission": {
+          "admission_identified_candidates": [
+            4
+          ],
+          "admission_identifier_hit_count": 1,
+          "admission_margin_threshold": 0.1385774091529802,
+          "admission_policy": "A-DEC",
+          "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+          "admission_rank_plan": [
+            4
+          ],
+          "admission_route_margin_1_2": 1.0602309975560393,
+          "admission_route_margin_evaluated": true,
+          "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+        },
+        "answer": "Vortex-3-Sierra",
+        "contains_expected": true,
+        "contains_stale": false,
+        "eviction_check": {
+          "live_node_ids_before": [],
+          "live_turns": 2,
+          "policy_evicted_before_probe": true,
+          "source_node_id": 4,
+          "source_node_live_before": false,
+          "source_turn": 4
+        },
+        "expected": "Vortex-3-Sierra",
+        "fact_id": "cypher bridge",
+        "frame": {
+          "frame_ephemeral": true,
+          "frame_escape_active": false,
+          "live_segments_after_turn": [
+            {
+              "graft_id": 14,
+              "ntok": 52
+            }
+          ],
+          "live_segments_carried_into_turn": [],
+          "live_segments_inherited": [],
+          "recency_mounted_ids": [
+            10,
+            11
+          ],
+          "recency_seats": {
+            "arena_width": 64,
+            "budget_after_charge": 64,
+            "charge_waived_reason": "identifier_query_point_lookup",
+            "charged_ntok": 0,
+            "nominated_ids": [
+              10,
+              11
+            ],
+            "nominated_ntok": 157
+          }
+        },
+        "mount_plan": [
+          12
+        ],
+        "mounted_ids": [
+          12
+        ],
+        "mounts": [
+          13
+        ],
+        "old_value": null,
+        "pass": true,
+        "resumed": false,
+        "route_backend": "python",
+        "route_ranking": {
+          "live_excluded": [],
+          "mount_dropped_for_width": [],
+          "mount_fitted": [
+            12
+          ],
+          "mount_plan": [
+            12
+          ],
+          "ranking_ids": [
+            4,
+            10,
+            8,
+            2,
+            1,
+            9
+          ],
+          "ranking_len": 6,
+          "route_backend": "python",
+          "score_error": null,
+          "source_node_id": 4,
+          "source_rank": 1,
+          "top5": [
+            {
+              "contains_value_hint": true,
+              "node_id": 4,
+              "rank": 1,
+              "score": 0.9999999983708072,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 10,
+              "rank": 2,
+              "score": 0.9636492194358562,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 8,
+              "rank": 3,
+              "score": 0.9397690008147679,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 2,
+              "rank": 4,
+              "score": 0.939529020976075,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": false,
+              "node_id": 1,
+              "rank": 5,
+              "score": 0.9056999995045578,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session c"
+            }
+          ]
+        },
+        "turn": 9
+      }
+    ],
+    "resumed": false,
+    "rs3_levers": {
+      "both_off_is_the_legacy_run": false,
+      "capture_pin": "live",
+      "capture_pin_env": "live",
+      "seat_near_live": true,
+      "seat_near_live_env": "1"
+    },
+    "scorecard": {
+      "bytes": 7744,
+      "path": "artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/probe_scorecard.json",
+      "sha256": "9ec5583b8d3b136488e00a923fd49d240ecf28162597d2773a0b8ec41caf9b62"
+    },
+    "session_dir": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session",
+    "spec": "e2e-1",
+    "stop_after_turns": 10
+  },
+  "session_state": [
+    {
+      "bytes": 58252,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/instrumentation.jsonl",
+      "sha256": "61ea8ca99469448369be20c14ab726bc56668cbcf2c56fe093c530d5f8e0e27b"
+    },
+    {
+      "bytes": 7744,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/probe_scorecard.json",
+      "sha256": "9ec5583b8d3b136488e00a923fd49d240ecf28162597d2773a0b8ec41caf9b62"
+    },
+    {
+      "bytes": 925029,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/index.npz",
+      "sha256": "dad575a9aafc578d630dcb1f67d51c3012cb7cbd385b03b91939e32441020672"
+    },
+    {
+      "bytes": 18341,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/manifest.json",
+      "sha256": "531bb56052e47e7e2fbfa3415086c5287a2168affd76b59b0ced302fe2f2c795"
+    },
+    {
+      "bytes": 26999007,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/native/grm_store.bin",
+      "sha256": "9bc67e6876791e12c58fa8bee6595bd1c8deec25576e642844cbf55b0ad897be"
+    },
+    {
+      "bytes": 1975154,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0000.npz",
+      "sha256": "0e2a161a67fd679a5d8f8e55f90c12484408f162e21491dc92284f3875ae3f02"
+    },
+    {
+      "bytes": 1164911,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0001.npz",
+      "sha256": "2d8c633adbde9bfce2b0a7e4b50b6611fa74c19122b99ea09d4340fd5031e3e1"
+    },
+    {
+      "bytes": 1974732,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0002.npz",
+      "sha256": "f809823fbb8e20eafd4d71c1e9e547eb55a07a9c4ec62bb7290f4a794dc8d759"
+    },
+    {
+      "bytes": 1797002,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0003.npz",
+      "sha256": "210da6aee810451e27c4e5570e27f71e56d89540118e446e3f86e71aaa78b543"
+    },
+    {
+      "bytes": 1975430,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0004.npz",
+      "sha256": "0b4e8bbcad7824aab44ae977b4263390e340b19decc35504c8adc5c470776b52"
+    },
+    {
+      "bytes": 1047183,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0005.npz",
+      "sha256": "9447301adc33674c24adf8f3254af9a7cfc78a8ee2f1c77df53e7709f9e0e615"
+    },
+    {
+      "bytes": 951147,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0006.npz",
+      "sha256": "7c78ec3916d77c0f2c68c31771e3d61a160aa474fd9d1b3c1a695ff318d5ec19"
+    },
+    {
+      "bytes": 1210401,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0007.npz",
+      "sha256": "9ecc72c05fdd024dccfc1c6847ea62e6bafa552a3386631257717d46dc4233cf"
+    },
+    {
+      "bytes": 2112622,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0008.npz",
+      "sha256": "49e6ae272f3747b13ad350fd11c9b7410318c3d37070659db4c4cb4465acf76d"
+    },
+    {
+      "bytes": 355909,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0009.npz",
+      "sha256": "64c237489755c8dfdcc9097559d8d03ce931da3d3401df907680ded1d189fd8a"
+    },
+    {
+      "bytes": 1818110,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0010.npz",
+      "sha256": "33ae6463ae086a742fcad9bf4cc7de3b0f0e66ba9d2cfa6723e0730faff05a55"
+    },
+    {
+      "bytes": 1797109,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0011.npz",
+      "sha256": "9a0bb9ea9fb97427cc938a49b8367a04ec693ccabe20b64298b72d66ae57222f"
+    },
+    {
+      "bytes": 1047544,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0012.npz",
+      "sha256": "2826d6423f8d6188be1c06d1e8c61df29f785a68d8444ac3ef264f697400d6eb"
+    },
+    {
+      "bytes": 951981,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0013.npz",
+      "sha256": "f932fe310dea096e97d8fad2e7ca50a1936c3260737d6bca82c087d36781439e"
+    },
+    {
+      "bytes": 1210467,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/nodes/0014.npz",
+      "sha256": "fb236b9d03acf7d6eac8ae83b4d71292a74e7d7656a6f80e19541a967b12c518"
+    },
+    {
+      "bytes": 20176,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/repository/wal/000001.wal",
+      "sha256": "4429bdc123beb04d499f9ecf2393c6fe6bc40451e43954f13274e51d2f45957f"
+    },
+    {
+      "bytes": 310,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/restart.json",
+      "sha256": "12bf10fcf16d758adc631c8931194b148c31bd8dceeb00431f22ed6dcd31d48e"
+    },
+    {
+      "bytes": 11731,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/run_config.json",
+      "sha256": "2dc49a0183f45cd5397566c883b1fa133b98be3f5a72fa1501cb9226c7f53314"
+    },
+    {
+      "bytes": 3245,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-1/session/transcript.jsonl",
+      "sha256": "6122c708ce2140c69d2d53201e0791af1f778abd6bf2382d8fae11c1bbf82b52"
+    }
+  ],
+  "sources": [
+    {
+      "bytes": 8943,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_skip_a6.py",
+      "sha256": "d8e19ec120da027d067e3e8f00ac40226dcbbc954ed954a5206a01e7aa87943d"
+    },
+    {
+      "bytes": 1081,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_register_a6.py",
+      "sha256": "5fd8bfcc4d742f3cf824faf060e3d9b3d370e015f9775b486ae68d8eb64877c6"
+    },
+    {
+      "bytes": 9046,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/tests/test_grm_c4_skip_a6.py",
+      "sha256": "29bd054481a23242808dbd634c2201f6a59fb1b9df453cb13795a78a93129e2b"
+    },
+    {
+      "bytes": 1472,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_6.md",
+      "sha256": "f003ef8c6b3f40bced73c5d753b94961bdbd4065d55d7ab8572313d3a01df8f0"
+    },
+    {
+      "bytes": 6699,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_commands_a6.txt",
+      "sha256": "70b9935128af97766e6f4d6b86a62b40a44ac147bcfb937d9e891b53667382bb"
+    },
+    {
+      "bytes": 1915,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/pre_registration.json",
+      "sha256": "3b7d87aa5584173356815babee66768eff96b283824c358d1e1f1f345c9fb4d9"
+    },
+    {
+      "bytes": 685768,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/before.json",
+      "sha256": "d1161fc314185486061472154d67c842fa167e2d0f8acf9ca6801e05312104c0"
+    }
+  ],
+  "spec": "e2e-1",
+  "status": "PASS",
+  "width": 64
+}

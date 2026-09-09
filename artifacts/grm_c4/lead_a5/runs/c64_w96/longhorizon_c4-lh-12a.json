@@ -1,0 +1,108 @@
+{
+  "amendment": {
+    "bytes": 42570,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/amendment_a8.json",
+    "sha256": "4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e"
+  },
+  "battery": "longhorizon",
+  "budget": {
+    "authorized_by": "Lead, orders/GRM_C4_AMENDMENT_1.md, 2026-09-09",
+    "cooldown_seconds": 30,
+    "estimate_class": "Planning assumption: sup 60s/fixture, census and 8-turn LH segments 80s each including load/save; unvalidated on this sandbox; stop at rail without retry.",
+    "full_fixed_geometry_estimate_seconds": 4800,
+    "full_fixed_geometry_status": "PLANNING_FIT_AT_CAP_UNVALIDATED",
+    "gpu_seconds": 6600,
+    "lock": "/tmp/forge-gpu.lock",
+    "lock_wait_seconds": 0,
+    "new_cells_estimate_seconds": 4800,
+    "outer_seconds": 590,
+    "planning_cooldown_seconds": 1890,
+    "reserve_note": "285s full-worker reservation unchanged. At exactly estimated unit times the final worker needs 5005s cumulative reservation, so a 4800s estimate does not guarantee completion under the 4800s cap; stop NON_FIT if reserve fails. Cooldown is outside GPU budget.",
+    "stop": "One timeout stops its chain; no retry or longer lease. Reserve full 285s before each worker against remaining total.",
+    "worker_seconds": 285
+  },
+  "budget_amendment": {
+    "bytes": 42570,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/amendment_a8.json",
+    "sha256": "4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e"
+  },
+  "cell": "c64_w96",
+  "chunk": 64,
+  "evidence_class": "Planning/dependency admission; no GPU execution",
+  "geometry_pin": {
+    "capture_pin": "live",
+    "ephemeral": true,
+    "live_shift": "n_sink + 96",
+    "live_turns": 2,
+    "max_live": 4096,
+    "plan_head_last_position": "n_sink + 95",
+    "remaining_flags": {
+      "adm_decisive": true,
+      "admission_mode": "A-DEC",
+      "arena_width": 96,
+      "gqa_cuda_route": true,
+      "graft_storage_bits": 8,
+      "length_debias": false,
+      "live_turns": 2,
+      "max_live": 4096,
+      "max_trips": 1,
+      "ngen": 32,
+      "probe_ladder": true,
+      "route_query_lex": true,
+      "sup_resolve": true,
+      "topk": 3,
+      "turn_pipeline": "single",
+      "vram_budget_mb": null
+    },
+    "seat_near_live": true,
+    "sink": "unchanged tokenizer-derived n_sink"
+  },
+  "gpu_executed": false,
+  "gpu_seconds": 0,
+  "reason": "Registered split estimate >=200s: NON_FIT",
+  "registration": {
+    "bytes": 67067,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/registration.json",
+    "sha256": "7fb561c70dd8c04abc18ef99a7a2a5ec4d37cbc2a22b1de1f89ab2119bd285e8"
+  },
+  "sources": [
+    {
+      "bytes": 8943,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_skip_a6.py",
+      "sha256": "d8e19ec120da027d067e3e8f00ac40226dcbbc954ed954a5206a01e7aa87943d"
+    },
+    {
+      "bytes": 1081,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_register_a6.py",
+      "sha256": "5fd8bfcc4d742f3cf824faf060e3d9b3d370e015f9775b486ae68d8eb64877c6"
+    },
+    {
+      "bytes": 9046,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/tests/test_grm_c4_skip_a6.py",
+      "sha256": "29bd054481a23242808dbd634c2201f6a59fb1b9df453cb13795a78a93129e2b"
+    },
+    {
+      "bytes": 1472,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_6.md",
+      "sha256": "f003ef8c6b3f40bced73c5d753b94961bdbd4065d55d7ab8572313d3a01df8f0"
+    },
+    {
+      "bytes": 6699,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_commands_a6.txt",
+      "sha256": "70b9935128af97766e6f4d6b86a62b40a44ac147bcfb937d9e891b53667382bb"
+    },
+    {
+      "bytes": 1915,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/pre_registration.json",
+      "sha256": "3b7d87aa5584173356815babee66768eff96b283824c358d1e1f1f345c9fb4d9"
+    },
+    {
+      "bytes": 685768,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/before.json",
+      "sha256": "d1161fc314185486061472154d67c842fa167e2d0f8acf9ca6801e05312104c0"
+    }
+  ],
+  "spec": "c4-lh-12a",
+  "status": "NON_FIT",
+  "width": 96
+}
