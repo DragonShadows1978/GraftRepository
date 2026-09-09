@@ -163,3 +163,23 @@ lead_commands_expanded.txt. Final report AMENDMENT_1_REPORT.md; shared REPORT.md
 continued. Historical full CPU failures remain; no broad rerun or GPU claims.
 No git/subagents/GPU/background waits/process kills/signals/service actions.
 Codex/GPT-6; exact serving API ID unavailable; effort high.
+
+## 2026-09-09 amendment 2 diagnosis and STOP registration, before CPU replay
+
+Lead receipt: `ValueError: invalid persisted capture evidence`, status RED, charged 46.348182500805706 seconds. End capture exists with valid=false: nodes0-3 FRESH_LIVE_PINNED, nodes4-5 null capture / INHERITED_UNATTESTED. Full verbatim value saved in amendment_2_end_capture_verbatim.json.
+
+Source evidence: core/graft_repository.py:957-1005 creates parent-payload slice children without capture fields; width guard calls it at1241-1247; B3 projects only existing fields at4619-4642. Persisted nodes4-5 are width_guard_span children of3. Ruling: real core provenance coverage gap; STOP as SCOUT-FIX-1, no core/harness patch or retry activation. Ordinary fresh flush path confirmed; no alternate manifest path.
+
+Registered amendment_lead_2.json SHA256 ab785d0556d5c5a5857b5b06a7cf4876bae10f4faa03132b3f43814aeb8f77e9 binds order, amendment1, registration, source, diagnostic, and original evidence. Gates: exact existing-grader RED replay, exact validator error, lineage/spans, original amendment verification/accounting, worker source hash match. Post-fix GREEN/retry gates inapplicable under core STOP. No new GPU command; lead_commands.txt remains immutable under amendment1 binding.
+
+Prior art: B3/RS3 capture receipts, LSR-P2C width guard and librarian cull payload slicing, C2 strict capture validation; project contributors (2026), locally inspected. Taken: unchanged production lineage/persistence and existing C2 validators. New: diagnostic replay and bindings only. No prior art known to me for this diagnostic glue beyond these local systems. No novelty claim or new algorithm.
+
+CPU file reads/replay only; no GPU, git, subagents, background waits, signals, process killing or service changes. Codex / GPT-6; exact serving API model ID unavailable; effort high
+
+## Amendment 2 CPU replay result and final stop report
+
+Command: `CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 python scripts/grm_c2_amendment2_diagnose.py --amendment-sha256 ab785d0556d5c5a5857b5b06a7cf4876bae10f4faa03132b3f43814aeb8f77e9`. Exit0; receipt amendment_2_cpu_replay.json. Exact persisted end_capture reproduced, valid=false; unchanged validator raises `ValueError: invalid persisted capture evidence`. Nodes4/5 child spans verified. Source hashes match lead worker. Amendment1 still verifies; charge46.348182500805706s, cap3600s. Evidence class: author-run CPU persisted-fixture replay, no core/model execution. No post-fix GREEN or retry tests claimed.
+
+Report: AMENDMENT_2_REPORT.md quotes full persisted end_capture verbatim, names core seams and SCOUT-FIX-1 successor scope. STOP, not claimed fixed. No refreshed GPU command or retry activation. Original core/C2/lead commands/order/registration/RED evidence unchanged under registered hashes. Prior-art and process-safety annotations are above and in the report.
+
+Location erratum after line-number verification: end_capture producer is scripts/grm_c2_cells.py:287-289 (not285-287 in the immutable amendment JSON). Separate amendment_2_location_erratum.json binds that amendment; report uses correct lines. No gate, diagnosis or source changed.
