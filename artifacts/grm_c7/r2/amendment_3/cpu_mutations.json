@@ -1,0 +1,28 @@
+{
+  "evidence_class": "author CPU mutation tests, not blind verification",
+  "gpu_executed": false,
+  "kill_rate": 1.0,
+  "live_sources_unchanged": true,
+  "pass": true,
+  "registration_sha256": "1ad182e2ce24e50f87559b31ad0743ee8828483a2be8162d5f40c59bfa91a1bf",
+  "rows": [
+    {
+      "name": "direct_shift_read",
+      "returncode": 1,
+      "source_copy_sha256": "b0f67d513008063dc43e5249a450a524a0fea15881a91ea47bb1d616d903e4cd",
+      "status": "KILLED"
+    },
+    {
+      "name": "leave_shift_after_oracle",
+      "returncode": 1,
+      "source_copy_sha256": "18fbf6731ee7ac421f02150f17985a4fab05fb84d073194993d7e67fabefbeb5",
+      "status": "KILLED"
+    },
+    {
+      "name": "fake_precreates_live_shift",
+      "returncode": 1,
+      "source_copy_sha256": "a147afce6f2972f1193bf408d77908775836359950599e49e3c8a5ad1799d99c",
+      "status": "KILLED"
+    }
+  ]
+}

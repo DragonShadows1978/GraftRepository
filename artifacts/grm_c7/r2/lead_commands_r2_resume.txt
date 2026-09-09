@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-c7
+# Prior art: C7 SHA-bound, fail-closed launch rails (GRM contributors, 2026).
+# Amendment 3 core STOP. Diagnostic-only entrypoint; it launches no worker.
+CUDA_VISIBLE_DEVICES='' python - <<'CHECK_BLOCK'
+import hashlib, json
+from pathlib import Path
+p=Path('artifacts/grm_c7/r2/amendment_3/continuation_registration.json')
+assert hashlib.sha256(p.read_bytes()).hexdigest()==p.with_suffix('.sha256').read_text().split()[0]
+r=json.loads(p.read_text())
+assert r['status']=='BLOCKED_CORE' and r['gpu_resume_authorized'] is False
+for name, expected in r['current_inputs'].items():
+    assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==expected, name
+raise SystemExit('RED: amendment 3 core STOP. A-024-031 is NOT armed; see amendment_3/REPORT.md.')
+CHECK_BLOCK

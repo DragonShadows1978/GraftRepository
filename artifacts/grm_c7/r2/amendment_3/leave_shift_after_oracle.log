@@ -1,0 +1,63 @@
+.FF.....                                                                 [100%]
+=================================== FAILURES ===================================
+________ test_real_attention_without_live_shift_oracle_restores_absence ________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-932/test_real_attention_without_li0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x751728400170>
+
+    def test_real_attention_without_live_shift_oracle_restores_absence(tmp_path, monkeypatch):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        a = repo.arena
+        att = real_attention()
+        a.m.layers[0].self_attn = att
+        before = (a.caches, a.pos, list(a.live_segs), list(a.cur_mounts), a.cur_mount_n)
+        try:
+            result = c7.oracle(a, read(FIX)['probes'][0], 32)
+            assert result['answer'] == 'Basalt-811'
+            assert a.m.calls[0]['live_shift'] == a.live_shift
+            assert a.m.calls[0]['input'] == result['wrapped_prompt']
+            assert a.encode(result['wrapped_prompt']) == result['prompt_token_ids']
+>           assert not hasattr(att, 'live_shift')
+E           AssertionError: assert not True
+E            +  where True = hasattr(<core.gpt_oss20b_tc.GptOssAttentionTC object at 0x7517283ce6c0>, 'live_shift')
+
+tests/test_grm_c7_amendment3.py:47: AssertionError
+_________ test_oracle_restores_optional_shift_after_exception[absent] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-932/test_oracle_restores_optional_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7517239295b0>
+previous = 'absent'
+
+    @pytest.mark.parametrize('previous', ['absent', None, 991])
+    def test_oracle_restores_optional_shift_after_exception(tmp_path, monkeypatch, previous):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        a = repo.arena
+        att = real_attention()
+        a.m.layers[0].self_attn = att
+        if previous != 'absent':
+            att.live_shift = previous
+        def fail(*args, **kwargs):
+            assert att.live_shift == a.live_shift
+            raise RuntimeError('registered oracle fault')
+        monkeypatch.setattr(a, '_attempt', fail)
+        try:
+            with pytest.raises(RuntimeError, match='registered oracle fault'):
+                c7.oracle(a, read(FIX)['probes'][0], 32)
+>           assert hasattr(att, 'live_shift') == (previous != 'absent')
+E           AssertionError: assert True == ('absent' != 'absent')
+E            +  where True = hasattr(<core.gpt_oss20b_tc.GptOssAttentionTC object at 0x751723929a00>, 'live_shift')
+
+tests/test_grm_c7_amendment3.py:68: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_c7_amendment3.py::test_real_attention_without_live_shift_oracle_restores_absence
+FAILED tests/test_grm_c7_amendment3.py::test_oracle_restores_optional_shift_after_exception[absent]
+2 failed, 6 passed, 2 warnings in 4.39s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

@@ -64,13 +64,7 @@ class Model:
 
     def __init__(self, codec):
         self.codec = codec
-        # Prior art: GptOssAttentionTC constructor (GRM contributors, 2026).
-        # Use the real metadata-only constructor as the CPU double's surface;
-        # numerical forwards remain stubbed. No weights or GPU allocation.
-        # In particular, live_shift does NOT exist until the arena sets it.
-        from core.gpt_oss20b_tc import GptOss20BConfig, GptOssAttentionTC
-        cfg = GptOss20BConfig(layer_types=('full_attention',))
-        self.layers = [SimpleNamespace(self_attn=GptOssAttentionTC(cfg, 0))]
+        self.layers = [SimpleNamespace(self_attn=SimpleNamespace(live_shift=None))]
         self.calls = []
         self.injected = ''
         self.remaining = []
@@ -93,7 +87,7 @@ class Model:
             self.remaining = self.codec.encode(answer)
         token = self.remaining.pop(0) if self.remaining else self.codec.encode('…')[0]
         self.calls.append({'input': text, 'position_offset': position_offset,
-                           'live_shift': getattr(self.layers[0].self_attn, 'live_shift', None),
+                           'live_shift': self.layers[0].self_attn.live_shift,
                            'initial': kv_caches is None, 'output_token': token,
                            'injected': self.injected})
         logits = np.zeros((1, 1, len(self.codec.words)), dtype=np.float32)

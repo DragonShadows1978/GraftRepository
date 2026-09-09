@@ -134,13 +134,7 @@ def oracle(arena, probe, ngen):
     question = effective_question(probe['question'])
     prompt += '\nUse only those records.\n' + question
     saved = (arena.caches, arena.pos, list(arena.live_segs), list(arena.cur_mounts), arena.cur_mount_n)
-    # Prior art: ArenaCache._capture_geometry and GptOssAttentionTC
-    # (GRM contributors, 2026): live_shift is optional, read with getattr and
-    # set dynamically. Reuse that contract; our sentinel also restores ABSENCE
-    # on a fresh real attention object. No new positioning algorithm.
-    missing_shift = object()
-    shifts = [getattr(layer.self_attn, 'live_shift', missing_shift)
-              for layer in arena.m.layers]
+    shifts = [layer.self_attn.live_shift for layer in arena.m.layers]
     arena.reset_live_cache()
     try:
         # Prior art: EB1 _probe_ladder_chat layer-position setup (GRM, 2026).
@@ -160,10 +154,7 @@ def oracle(arena, probe, ngen):
         arena.reset_live_cache()
         arena.caches, arena.pos, arena.live_segs, arena.cur_mounts, arena.cur_mount_n = saved
         for layer, shift in zip(arena.m.layers, shifts):
-            if shift is missing_shift:
-                delattr(layer.self_attn, 'live_shift')
-            else:
-                layer.self_attn.live_shift = shift
+            layer.self_attn.live_shift = shift
 
 
 def install_observers(repo, directory, context, state=None):
