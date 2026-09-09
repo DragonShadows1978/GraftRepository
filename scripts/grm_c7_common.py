@@ -16,6 +16,60 @@ REG = OUT / 'registration.json'
 FIX = OUT / 'fixture.json'
 DISTANCES = (5, 30, 60, 120, 250)
 CLASSES = ('fresh', 'alias', 'correction', 'folded')
+SOURCE_PATH = 'core/graft_repository.py'
+SOURCE_BEFORE = '2bb38b8efd8f75f3d189ade592133f3a40b245182b98c04b485976d5b2ed4311'
+SOURCE_AFTER = 'fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db'
+LEAD_ORDER = 'orders/GRM_C7_AMENDMENT_1.md'
+LEAD_ORDER_SHA = '5e23a7f9fd06ac9442129fcbf28345a5ff88b2e149a2843171499665ca8d7215'
+LEAD_COMMANDS_SHA = 'a0320cf79b5d2ba3f86f16e13673802fa316e65d0d66db2123683dc09f695ee7'
+
+
+def verify_lead_1(r, inputs):
+    # Prior art: C7 A1/A2 and C2 (GRM contributors, 2026), inspected locally.
+    # Taken: SHA-bound chain, before archives and exact scope allowlists.
+    # Ours: pin the authorized SCOUT-FIX-2 delta and preserve C7 acceptance.
+    # No prior art known to me for this exact composition; no new algorithm.
+    path = OUT / 'amendment_lead_1.json'
+    checksum = path.with_suffix('.sha256')
+    if not path.is_file() or not checksum.is_file():
+        raise ValueError('LEAD_1_AMENDMENT_REQUIRED')
+    if sha(path) != checksum.read_text().split()[0]:
+        raise ValueError('LEAD_1_SHA_MISMATCH')
+    a = read(path)
+    if a['schema'] != 'grm.c7.lead-amendment.v1':
+        raise ValueError('LEAD_1_SCHEMA_MISMATCH')
+    if (a['registration_sha256'] != sha(REG)
+            or a['previous_amendment_sha256'] != r.get('amendment_A2_sha256')
+            or a['previous_amendment_sha256'] !=
+            '41b70efdf1735684322a8762c2b716348180bb51ec48a6cc05c630b13c2285fb'):
+        raise ValueError('LEAD_1_CHAIN_MISMATCH')
+    if a['order'] != {'path': LEAD_ORDER, 'sha256': LEAD_ORDER_SHA} or sha(ROOT/LEAD_ORDER) != LEAD_ORDER_SHA:
+        raise ValueError('LEAD_1_ORDER_MISMATCH')
+    if (set(a['overrides']) != {SOURCE_PATH, 'scripts/grm_c7_common.py', 'scripts/grm_c7_run.py'}
+            or set(a['new_inputs']) != {LEAD_ORDER, 'tests/test_grm_c7_lead_1.py',
+                                       'tests/test_grm_scout_fix2_capture.py'}):
+        raise ValueError('LEAD_1_SCOPE_MISMATCH')
+    source = a['overrides'][SOURCE_PATH]
+    if source['before_sha256'] != SOURCE_BEFORE or source['after_sha256'] != SOURCE_AFTER:
+        raise ValueError('LEAD_1_SOURCE_MISMATCH')
+    if (a['acceptance'] != r['acceptance'] or a['acceptance_wording_changed'] is not False
+            or a['registered_items'] != {
+                'fixtures': 'unchanged', 'probes': 'unchanged', 'oracle': 'unchanged',
+                'restart_metadata_scope': 'all persisted nodes including split children',
+                'paging': 'A2 controlled roundtrip unchanged; child capture retained',
+                'cells_budgets_thresholds': 'unchanged'}):
+        raise ValueError('LEAD_1_ACCEPTANCE_MISMATCH')
+    if (a['lead_commands_sha256'] != LEAD_COMMANDS_SHA
+            or sha(OUT/'lead_commands.txt') != LEAD_COMMANDS_SHA):
+        raise ValueError('LEAD_1_COMMANDS_MISMATCH')
+    for name, change in a['overrides'].items():
+        if (change['before_sha256'] != inputs[name]
+                or sha(ROOT/change['before_archive']) != inputs[name]):
+            raise ValueError('LEAD_1_BEFORE_MISMATCH')
+        inputs[name] = change['after_sha256']
+    inputs.update(a['new_inputs'])
+    r['amendment_lead_1_sha256'] = sha(path)
+    r['amended_source_sha256'] = SOURCE_AFTER
 
 
 def sha(path):
@@ -80,6 +134,7 @@ def verify():
         r['amendment_A2_sha256'] = sha(a2path)
         r['pressure']['controlled_source_turn'] = 6
         r['acceptance']['paging'] = 'each pressure forces registered old source hot -> durable cold -> production loader return; report controlled return separately from probe-selected return'
+    verify_lead_1(r, inputs)
     for path, digest in inputs.items():
         p = Path(path) if Path(path).is_absolute() else ROOT / path
         if sha(p) != digest:

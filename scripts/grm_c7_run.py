@@ -23,11 +23,16 @@ from scripts.grm_c7_common import (ROOT, OUT, FIX, REG, DISTANCES, CLASSES, crea
 
 
 def binding(arm):
+    # Prior art: C7 A1/A2 receipt/checkpoint bindings (GRM, 2026). Extend
+    # the same contract with verified lead amendment and effective core SHA.
+    r = verify()
     value = {'registration_sha256': sha(REG), 'fixture_sha256': sha(FIX), 'arm': arm}
     if (OUT/'amendment_A1.json').exists():
         value['amendment_sha256'] = sha(OUT/'amendment_A1.json')
     if (OUT/'amendment_A2.json').exists():
         value['amendment_A2_sha256'] = sha(OUT/'amendment_A2.json')
+    value['amendment_lead_1_sha256'] = r['amendment_lead_1_sha256']
+    value['amended_source_sha256'] = r['amended_source_sha256']
     return value
 
 
@@ -50,6 +55,8 @@ def dry_run():
             'registration_sha256': sha(REG), 'fixture_manifest_sha256': sha(OUT/'fixture_manifest.json'),
             'amendment_sha256': r.get('amendment_sha256'),
             'amendment_A2_sha256': r.get('amendment_A2_sha256'),
+            'amendment_lead_1_sha256': r['amendment_lead_1_sha256'],
+            'amended_source_sha256': r['amended_source_sha256'],
             'arms': r['arms'], 'cells': r['cells'], 'timing': read(OUT/'timing.json'),
             'B_within_combined_7200_status': r['B_within_combined_7200_status'],
             'model_quality': 'NOT_RUN', 'paging_folding_restart_quality': 'NOT_RUN'}
