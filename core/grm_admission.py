@@ -19,6 +19,8 @@ import os
 import re
 from typing import Any
 
+from core.grm_text_norm import normalize_glyphs
+
 
 ENV_NAME = "GRM_ADM_DECISIVE"
 FROZEN_RULE_SHA256 = (
@@ -71,10 +73,14 @@ def adm_decisive_cli_argv(enabled: bool) -> list[str]:
 
 
 def normalized_words(text: str) -> list[str]:
-    """ADM1's frozen word normalization, byte-for-byte in semantics."""
+    """ADM1 word scan with the shared routing glyph projection."""
+    # Prior art: SC1.1/DET1.4 (GRM contributors, 2026), Unicode UAX15/UCD17
+    # (Unicode Consortium, 2025). FIX-8 applies the existing normalizer to
+    # own-text evidence, including digest/split/recency nodes; no inherited
+    # routing-key union is accepted as proof of identifier presence.
     return [
         token.rstrip(".,:;").casefold()
-        for token in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text or "")
+        for token in re.findall(r"[A-Za-z0-9][\w:.,\-]*", normalize_glyphs(text or ""))
         if token.rstrip(".,:;")
     ]
 
