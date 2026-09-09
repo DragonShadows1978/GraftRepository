@@ -1,0 +1,23 @@
+{
+  "cell": "oracle_m1_s0",
+  "command": [
+    "flock",
+    "--wait",
+    "250",
+    "--no-fork",
+    "/tmp/forge-gpu.lock",
+    "/usr/bin/python3",
+    "/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_campaign.py",
+    "_worker",
+    "oracle_m1_s0",
+    "--fingerprint",
+    "a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20"
+  ],
+  "evidence_class": "process receipt",
+  "fingerprint": "a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20",
+  "outer_cap_s": 590,
+  "outer_wall_s": 311.326811473351,
+  "outer_within_rail": true,
+  "returncode": 1,
+  "status": "RED"
+}

@@ -1,0 +1,8 @@
+{
+  "cell": "oracle_m1_s0",
+  "evidence_class": "process reservation",
+  "fingerprint": "a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20",
+  "pid": 2741237,
+  "reserved_gpu_s": 285,
+  "started_unix": 1788926445.4970224
+}
