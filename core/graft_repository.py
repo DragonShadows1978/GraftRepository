@@ -35,6 +35,7 @@ API:
 """
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
+from copy import deepcopy
 import json
 import os
 import re
@@ -1001,6 +1002,17 @@ class GraftRepository:
                 "h": None,
             }
             child_idx = len(self.arena.grafts)
+            # Prior art: B3/RS3 capture projection and LSR-P2C payload slicing
+            # (project contributors, 2026). Preserve recorded parent evidence;
+            # new markers identify inheritance, not a fresh child harvest.
+            # No prior art known to me beyond these local systems.
+            capture = {key: deepcopy(value) for key, value in parent.items()
+                       if key.startswith("capture_")
+                       or key in ("n_sink", "arena_width", "live_shift")}
+            if capture:
+                child.update(capture)
+                child["capture_inherited_from_parent"] = True
+                child["capture_parent_graft_id"] = idx
             self._ensure_lifecycle(child_idx, child)
             self.arena.grafts.append(child)
             self._mark_dirty(child_idx, payload=True, metadata=True)
