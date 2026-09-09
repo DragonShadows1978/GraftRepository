@@ -1,0 +1,2 @@
+gpu_lease_acquired=/tmp/forge-gpu.lock cap_s=80
+gpu_lease_released_s=30.518
