@@ -1,0 +1,10 @@
+{
+  "registration_verified": true,
+  "bound_inputs": 247,
+  "initial_artifact_hashes_verified": 23,
+  "ast_parse_files": 4,
+  "lead_commands_bash_n_exit": 0,
+  "cells_directory_exists": false,
+  "gpu_executed": false,
+  "note": "CPU only; no new live evidence"
+}

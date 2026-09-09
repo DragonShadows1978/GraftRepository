@@ -1,0 +1,19 @@
+# GRM-C8 implementation ledger
+
+2026-09-09 — Read HOUSE_RULES, immutable C8 order, C2 registration/amendment and live source. No git commands, subagents, services or GPU actions. Workspace path verified from cwd and .git text only; branch not independently verified via git. Order remains the immutable plan.
+
+Built new scripts/grm_c8_profiler.py, scripts/grm_c8_cells.py and tests/test_grm_c8_profiler.py. Additive-only: no product/config/battery edits. Registration and separate demand registration written before any gate; source and order SHA bound with verifier code anchor. Forecast uses archived C2 A3 totals plus explicitly heuristic overhead. Campaign NON_FIT is a stop condition, not a reason to shrink the long-history script or reduce turns.
+
+Side B discovery: SP5 section4 assigns 82.6/84.0/84.2 to S=2048, not 12288. The latter is memory ceiling. Saving standard minus APA is -1.4/-1.6ms/tok; no positive saving established. No new measurement.
+
+Prior art: local C2/EB1/DET1/CMC1 (GRM contributors,2026), reused profile/fixtures/serving/durable replay/flock; gprof Graham/Kessler/McKusick1982 exclusive accounting; Python trace API van Rossum1991 onward; CUDA events NVIDIA2007 onward and async-pool counters CUDA11.2/2020; Amdahl1967 component bound. External attribution unverified — lead to check search terms gprof1982, Python sys.settrace, CUDA UsedMemHigh, Amdahl1967. Ours: EB1 source map and experiment glue. Quantiles: ordinary nearest rank, specific origin not known to me. No new routing algorithm.
+
+Limitations registered: exact memory peak covers only default async pool; whole-device sampled lower bound separately named. GPU event intervals include idle time, not kernel-active-time. Instrumentation serializes GPU stage boundaries and adds trace overhead; allocation fraction is instrumented wall. 36 sup repeats represent nine unique questions, restored identical input per turn. Census/longhistory include scripted feed turns and original harness diagnostics. Demand lh033 is a single natural-fire prediction, not a known width96 success; no trip = RED.
+
+Author gates and registered five mutation checks pending. Blind verification belongs to lead, not author. Agent GPT-6; exact deployment identifier not exposed. Effort high. Served model openai/gpt-oss-20b at C2 revision, frozen Harmony reasoning low.
+
+2026-09-09 — CPU baseline exit0: 88 passed, 2 warnings in9.69s (C8 + existing EB1 + C2 profile). Raw cpu_baseline.log retained, including Swig deprecations. GPU visibility disabled. Five registered in-memory mutants executed after the passing baseline: 5/5 valid/killed; original profiler SHA unchanged. Added grm_c8_cpu_mutations.py; prior art DeMillo/Lipton/Sayward1978 mutation testing, unverified lead search Hints on test data selection1978; borrowed seeded-defect detection, new harness glue only. No original file was mutated.
+
+Dry-run exit0 enumerates24 cells; blocked-report exit0; summary exit2 BLOCKED_NOT_MEASURED with null decisions. Preflight exit1 expected: ValueError: NON_FIT_BUDGET: 2591s > 1800s; never execute/retry this plan. No lease or reservation acquired. Full stage/metric/CPU scope, all cell estimates, prior-art leads, deviations and model/effort recorded in REPORT.md; exact dependency-ordered lead_commands.txt stops at mandatory preflight. CPU author tests do not certify GPU or blind verification.
+
+Final CPU-only verification: registration247 bound inputs matched; all23 initial deliverable hashes matched; four new Python files parsed via AST; bash -n lead_commands.txt exit0; no artifacts/grm_c8/cells directory exists, hence no cell or reservation was created. No additional GPU or test run. Closing manifest refreshed only to include this ledger entry and final verification receipt; immutable registration/demand registration/code/tests unchanged.
