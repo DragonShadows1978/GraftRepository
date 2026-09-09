@@ -92,7 +92,7 @@ def test_full_fixture_fake_mounts_answers_and_restarts(tmp_path,arm):
 def test_c7_checkpoint_roundtrip_and_corruption(tmp_path):
     binding=lt.binding('A'); (tmp_path/'repository').mkdir()
     (tmp_path/'repository/payload').write_text('cpu payload')
-    lt.checkpoint(tmp_path,dict(next_turn=71,transcript=['natural dialogue']),binding)
+    lt.checkpoint(tmp_path,dict(next_turn=71,process_id='cpu-checkpoint',transcript=['natural dialogue']),binding)
     assert lt.validate_checkpoint(tmp_path,71,binding)['next_turn']==71
     (tmp_path/'repository/payload').write_text('corrupt')
     with pytest.raises(ValueError):lt.validate_checkpoint(tmp_path,71,binding)

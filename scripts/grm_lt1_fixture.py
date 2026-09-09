@@ -8,17 +8,44 @@ from scripts.grm_c7_common import create, sha
 ROOT = Path(__file__).resolve().parents[1]
 
 def build():
+    # Prior art: no prior art known to me for this authored acknowledgment set.
+    # Editorial variation only; no values, user turns or scored fields change.
+    acknowledgments = [
+        "All right, I'll keep that in mind as we work through the layout.",
+        "That helps me picture how this part of the station should feel.",
+        "Okay, we can carry that into the next sketch.",
+        "I can see how that fits with the rest of the expansion.",
+        "Understood. Let's keep going through the details.",
+        "That gives this area a clearer identity.",
+        "Sounds good; I'm following the direction.",
+        "I'll treat that as our working choice.",
+        "That should help when we think through the player experience.",
+        "Okay, that part of the design is clearer now.",
+        "I like having that settled before we get into the smaller details.",
+        "Got it. We can build the surrounding discussion from there.",
+        "That fits the practical feel we've been aiming for.",
+        "Yes, I can work with that.",
+        "I'll keep that choice in view while we think about the rest.",
+        "That helps connect the setting to everyday station life.",
+        "All right, let's see how the other pieces fit around it.",
+        "Understood; that gives me a better sense of the space.",
+        "Okay. It's useful to have a concrete choice for that.",
+        "That sounds consistent with the direction of the session.",
+    ]
     events, probes, chains = {}, [], {}
+    fact_ordinal = 0
     def fact(t, entity, attr, value, kind='fact', prefix=''):
+        nonlocal fact_ordinal
         key = entity + '/' + attr
         old = chains.get(key, [])
         text = f"{prefix}{entity}'s {attr} will be {value}."
         if kind == 'correction':
             text = f"Actually, {entity}'s {attr} will be {value}, replacing the earlier choice."
         events[t] = dict(turn=t, kind=kind, user=text,
-            assistant={'fact':"That gives us something concrete to design around.",
+            assistant={'fact':acknowledgments[fact_ordinal % len(acknowledgments)],
                        'correction':"Understood; I'll use the revised choice."}[kind],
             entity=entity, attribute=attr, value=value, previous_turn=old[-1] if old else None)
+        if kind == 'fact': fact_ordinal += 1
         chains.setdefault(key, []).append(t)
         return key
     k0=fact(1,'Vega','docking fee','17 credits')

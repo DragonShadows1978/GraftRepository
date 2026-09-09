@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LT1 CPU contracts and fail-closed lead entrypoint.
+"""LT1 CPU contracts and Rule 0 resumable lead entrypoint.
 
 Prior art: GRM contributors, C7/C2/EB1 and amendment 3 (2026), verified
 local source: checkpoint hashes, real serving ladder, isolated live oracle,
@@ -25,6 +25,8 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'artifacts/grm_lt1'
 FIX=ROOT/'fixtures/lt1/dialogue.json'
 REG=OUT/'registration.json'
+AMEND=OUT/'amendment1/registration_amendment.json'
+RUN=OUT/'amendment1/run_rule0'
 
 
 def normalize(value):
@@ -49,17 +51,34 @@ def score(answer, expected):
 
 
 def binding(arm):
-    return dict(arm=arm,registration_sha256=sha(REG),fixture_sha256=sha(FIX))
+    return dict(arm=arm,registration_sha256=sha(REG),fixture_sha256=sha(FIX),
+                amendment_sha256=sha(AMEND),admission_rule=0)
 
 
 def verify():
     if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
     r=read(REG)
-    for name,digest in r['immutable_inputs'].items():
+    # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+    inputs=dict(r['immutable_inputs'])
+    if AMEND.exists():
+        if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+        a=read(AMEND)
+        if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+        for name,change in a['overrides'].items():
+            if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a['new_inputs'])
+        r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+        for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+        r['effective_admission_rule']=0
+    for name,digest in inputs.items():
         if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
     m=read(ROOT/'fixtures/lt1/manifest.json')
     for name,digest in m['files'].items():
         if sha(ROOT/'fixtures/lt1'/name)!=digest: raise ValueError('FIXTURE_SHA_MISMATCH')
+    r['effective_inputs']=inputs
     return r
 
 
@@ -95,7 +114,7 @@ def fixture_gate(f):
 def summary(arm):
     r=verify(); f=read(FIX); ps={p['id']:p for p in f['probes']}
     rows=[]
-    for p in sorted((OUT/'cells').glob(f'{arm}-*/probes.jsonl')):
+    for p in sorted((RUN/'cells').glob(f'{arm}-*/probes.jsonl')):
         rows.extend(json.loads(line) for line in p.read_text().splitlines())
     ids=[x['probe_id'] for x in rows]
     if len(ids)!=len(set(ids)) or set(ids)-set(ps): raise ValueError('DUPLICATE_OR_UNKNOWN_PROBE')
@@ -110,17 +129,29 @@ def summary(arm):
                 counts=Counter(s['category'] for s in scores)
                 row[side]=dict(counts,exact_rate=counts['correct']/len(scores) if scores else None)
             table.append(row)
-    recaps=list((OUT/'cells').glob(f'{arm}-*/recap.json'))
+    recaps=list((RUN/'cells').glob(f'{arm}-*/recap.json'))
     recap=None
     if len(recaps)>1: raise ValueError('DUPLICATE_RECAP')
     if recaps:
         answer=read(recaps[0])['answer']
         recap=dict(answer=answer,out_of=5,matched=sum(score(answer,p['expected'])['exact_correct'] for p in f['decisions']))
-    # Completeness alone never establishes a residency or restart pass.
-    return dict(arm=arm,status='NOT_RUN' if not rows else 'INCOMPLETE_UNVALIDATED',
+    # Prior art: C7 complete-cell plus seat/restart receipts (GRM, 2026).
+    # Completeness alone never establishes quality, residency or restart pass.
+    completed=list((RUN/'cells').glob(f'{arm}-*/controller.json'))
+    workers=[read(p.with_name('worker.json')) for p in completed if p.with_name('worker.json').exists()]
+    complete=len(completed)==26 and len(workers)==26 and len(rows)==35 and recap is not None and all(read(p)['status']=='COMPLETE' for p in completed)
+    seats=[]
+    for path in (RUN/'cells').glob(f'{arm}-*/residency.jsonl'):
+        seats.extend(json.loads(line) for line in path.read_text().splitlines())
+    residency=bool(seats) and all(x['summed_token_seats']<=2*x['width']+x['actual_recency_token_seats'] for x in seats) if complete else None
+    restarts=[w for w in workers if w['cell']['start'] in (71,141)]
+    retained=len(restarts)==2 and all(w['restart_retained_scores'] and w['metadata_retained'] and w['pid']!=w['previous_pid'] for w in restarts) if complete else None
+    quality=all(row['memory']['exact_rate']>=0.8 for row in table if row['category'] in ('fresh','correction')) if complete else None
+    status=('PASS' if quality and residency and retained else 'RED') if complete else 'NOT_RUN' if not rows else 'INCOMPLETE_UNVALIDATED'
+    return dict(arm=arm,status=status,complete=complete,quality_threshold_met=quality,
         registration_status=r['status'],evidence_class='no GPU evidence' if not rows else 'partial raw E2E rows',
         measured_recalls=len(rows),by_distance=table,recap=recap,
-        residency_bounded=None,restart_retained=None,binding=binding(arm))
+        residency_bounded=residency,restart_retained=retained,binding=binding(arm))
 
 
 def preflight():
@@ -128,9 +159,9 @@ def preflight():
     reasons=[]
     if free<20_000_000_000: reasons.append('FREE_SPACE_BELOW_20_GB')
     if r['status']!='FIT_ESTIMATE': reasons.append(r['status'])
-    receipt=OUT/'cpu_receipt.json'
+    receipt=OUT/'amendment1/cpu_receipt.json'
     if not receipt.exists() or read(receipt).get('status')!='PASS': reasons.append('CPU_GATES_NOT_GREEN')
-    elif read(receipt).get('registration_sha256')!=sha(REG): reasons.append('CPU_RECEIPT_BINDING_MISMATCH')
+    elif read(receipt).get('amendment_sha256')!=sha(AMEND): reasons.append('CPU_RECEIPT_BINDING_MISMATCH')
     return dict(status='BLOCKED' if reasons else 'READY',reasons=reasons,free_bytes=free,
         minimum_free_bytes=20_000_000_000,gpu_executed=False,projection=r['projection'],
         model=r['model'],agent_model=r['agent_model'],agent_effort=r['agent_effort'])
@@ -142,13 +173,13 @@ def main():
     p.add_argument('--resume',action='store_true'); args=p.parse_args()
     if args.summary:
         value=summary(args.summary) if args.summary!='both' else dict(A=summary('A'),B=summary('B'),
-            comparison='NOT_MEASURED: no paired complete GPU run',recap_comparison='NOT_MEASURED')
+            comparison='See per-arm complete/status and matched per-distance rates; no reader claim from offline admission',recap_comparison='See per-arm recap; null means NOT_RUN')
         print(json.dumps(value,indent=2)); return 0
     result=preflight(); print(json.dumps(result,indent=2))
     if result['status']!='READY': return 2
-    # NON_FIT is a stop rail, not permission to run a subset or invent a
-    # bounded launch. A future authorized amendment must register a launcher
-    # satisfying strict never-kill and cooperative worker/outer deadlines.
-    if args.cell or args.resume: raise ValueError('NO_GPU_LAUNCH_AUTHORIZED_BY_THIS_REGISTRATION')
+    if args.cell: raise ValueError('USE_RESUME_FOR_REGISTERED_INTERLEAVING')
+    if args.resume:
+        from scripts.grm_lt1_worker import resume
+        return resume()
     return 0
 if __name__=='__main__': raise SystemExit(main())

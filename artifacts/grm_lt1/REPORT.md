@@ -95,3 +95,8 @@ GRM contributors (2026), locally inspected C7/C2/EB1 and C7 amendment 3: SHA-bou
 Process safety: all started CPU child processes returned; no GPU, git commands, subagents, background shell, service changes, or process kills. Read-only branch metadata says `grm-lt1`; product files and order were not edited. No external messages sent.
 
 Target reader: **openai/gpt-oss-20b**, revision **6cee5e81ee83917806bbde320786a8fb61efebee**, registered C2 EB1 frame explicitly says **Reasoning: low**. Author: **GPT-6**, exact deployment model ID not exposed; **high requested** by order, inference setting not independently exposed. Author effort and target model prompt effort are distinct.
+
+
+## Amendment 1 continuation (2026-09-09)
+
+Worker is runnable under Rule 0; 17 CPU infrastructure tests pass. Natural Rule0 refusal remains RED; no GPU evidence. Offline LT1 admissions per arm: 0/35,35/35,35/35. Full historical three-rule replay remains incomplete because exact states/margins are missing. Authoritative continuation: [amendment1/REPORT.md](amendment1/REPORT.md), with per-question receipts and explicit unresolved coverage. Original r1 findings above remain historical and unchanged.
