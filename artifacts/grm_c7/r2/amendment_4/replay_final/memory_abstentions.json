@@ -1,0 +1,1674 @@
+[
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+    "answerable": false,
+    "category": "c_FIX4_recency",
+    "class": "correction",
+    "distance": 5,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      15
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 15,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-2 value is Onyx-913.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_correction_2_d005",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/probes.jsonl:1",
+    "served_from": "recency_mount",
+    "served_from_node_ids": [
+      15
+    ],
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        15
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 5,
+    "expected": "Reed-611|Cedar-1011",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      2,
+      3
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 2,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 3,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_0_d005",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Reed-611 | unknown",
+    "trip_mounts": [
+      [
+        2
+      ],
+      [
+        2,
+        3
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 5,
+    "expected": "Reed-612|Cedar-1012",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 3,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 17,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_1_d005",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/probes.jsonl:3",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Outbound: Cedar-1012 | Inbound: unknown.",
+    "trip_mounts": [
+      [
+        3,
+        17
+      ],
+      [
+        3,
+        17
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 5,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      18
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 18,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_2_d005",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/probes.jsonl:1",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        18
+      ],
+      [
+        15,
+        18
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "fresh",
+    "distance": 30,
+    "expected": "Basalt-812",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      6
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 6,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_fresh_1_d030",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/probes.jsonl:3",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        6
+      ],
+      [
+        6,
+        15
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "fresh",
+    "distance": 30,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      7
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 7,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_fresh_2_d030",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/probes.jsonl:4",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        7
+      ],
+      [
+        7,
+        15
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "alias",
+    "distance": 30,
+    "expected": "Jasper-711",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      8
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 8,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_alias_0_d030",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/probes.jsonl:5",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        8
+      ],
+      [
+        8
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "alias",
+    "distance": 30,
+    "expected": "Jasper-712",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-040-047/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      9
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 9,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_alias_1_d030",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-040-047/probes.jsonl:1",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        9
+      ],
+      [
+        9
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "alias",
+    "distance": 30,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-040-047/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      10
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 10,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-2 is an alias for C7-AliasBase-2.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_alias_2_d030",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-040-047/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        10
+      ],
+      [
+        10
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "correction",
+    "distance": 30,
+    "expected": "Onyx-911",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-040-047/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 0,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 12,
+        "text": "The current C7-Vesper-0 value is Onyx-911."
+      }
+    ],
+    "probe_id": "c7_correction_0_d030",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-040-047/probes.jsonl:3",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        0,
+        12
+      ],
+      [
+        0
+      ],
+      [
+        11
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "correction",
+    "distance": 30,
+    "expected": "Onyx-912",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 0,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 14,
+        "text": "The current C7-Vesper-1 value is Onyx-912."
+      }
+    ],
+    "probe_id": "c7_correction_1_d030",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/probes.jsonl:1",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        0,
+        14
+      ],
+      [
+        0
+      ],
+      [
+        13
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "correction",
+    "distance": 30,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      15
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 15,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-2 value is Onyx-913.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_correction_2_d030",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        15
+      ],
+      [
+        13,
+        15
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 30,
+    "expected": "Reed-611|Cedar-1011",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 2,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 16,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_0_d030",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/probes.jsonl:3",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Reed-611 | unknown",
+    "trip_mounts": [
+      [
+        2,
+        16
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 30,
+    "expected": "Reed-612|Cedar-1012",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 3,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 17,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_1_d030",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/probes.jsonl:1",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Outbound: Cedar-1012 | Inbound: unknown",
+    "trip_mounts": [
+      [
+        3,
+        17
+      ],
+      [
+        3,
+        17
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 30,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      18
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 18,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_2_d030",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        18
+      ],
+      [
+        15,
+        18
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "fresh",
+    "distance": 60,
+    "expected": "Basalt-812",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      6
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 6,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_fresh_1_d060",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        6
+      ],
+      [
+        6,
+        15
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "fresh",
+    "distance": 60,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      7
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 7,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_fresh_2_d060",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/probes.jsonl:3",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        7
+      ],
+      [
+        7,
+        15
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "alias",
+    "distance": 60,
+    "expected": "Jasper-711",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      8
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 8,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_alias_0_d060",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/probes.jsonl:4",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        8
+      ],
+      [
+        8
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "alias",
+    "distance": 60,
+    "expected": "Jasper-712",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      9
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 9,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_alias_1_d060",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/probes.jsonl:5",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        9
+      ],
+      [
+        9
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "alias",
+    "distance": 60,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-071-077/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      10
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 10,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-2 is an alias for C7-AliasBase-2.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_alias_2_d060",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-071-077/probes.jsonl:1",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        10
+      ],
+      [
+        10
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "correction",
+    "distance": 60,
+    "expected": "Onyx-911",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-071-077/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 0,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 12,
+        "text": "The current C7-Vesper-0 value is Onyx-911."
+      }
+    ],
+    "probe_id": "c7_correction_0_d060",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-071-077/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        0,
+        12
+      ],
+      [
+        0
+      ],
+      [
+        11
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "correction",
+    "distance": 60,
+    "expected": "Onyx-912",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 0,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 14,
+        "text": "The current C7-Vesper-1 value is Onyx-912."
+      }
+    ],
+    "probe_id": "c7_correction_1_d060",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/probes.jsonl:1",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        0,
+        14
+      ],
+      [
+        0
+      ],
+      [
+        13
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "correction",
+    "distance": 60,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      15
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 15,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-2 value is Onyx-913.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_correction_2_d060",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        15
+      ],
+      [
+        13,
+        15
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 60,
+    "expected": "Reed-611|Cedar-1011",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 2,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 16,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_0_d060",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/probes.jsonl:3",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Reed-611 | unknown",
+    "trip_mounts": [
+      [
+        2,
+        16
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 60,
+    "expected": "Reed-612|Cedar-1012",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 3,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 17,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_1_d060",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/probes.jsonl:1",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Outbound: Cedar-1012 | Inbound: unknown",
+    "trip_mounts": [
+      [
+        3,
+        17
+      ],
+      [
+        3,
+        17
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 60,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      18
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 18,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_2_d060",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        18
+      ],
+      [
+        18
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "fresh",
+    "distance": 120,
+    "expected": "Basalt-812",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      6
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 6,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_fresh_1_d120",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        6
+      ],
+      [
+        6
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "fresh",
+    "distance": 120,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      7
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 7,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_fresh_2_d120",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/probes.jsonl:3",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        7
+      ],
+      [
+        7,
+        81
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "alias",
+    "distance": 120,
+    "expected": "Jasper-711",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      8
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 8,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_alias_0_d120",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/probes.jsonl:4",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        8
+      ],
+      [
+        8
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "alias",
+    "distance": 120,
+    "expected": "Jasper-712",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      9
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 9,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_alias_1_d120",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/probes.jsonl:5",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        9
+      ],
+      [
+        9
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "alias",
+    "distance": 120,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      10
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 10,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-2 is an alias for C7-AliasBase-2.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_alias_2_d120",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/probes.jsonl:1",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        10
+      ],
+      [
+        10
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "correction",
+    "distance": 120,
+    "expected": "Onyx-911",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 0,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 12,
+        "text": "The current C7-Vesper-0 value is Onyx-911."
+      }
+    ],
+    "probe_id": "c7_correction_0_d120",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        0,
+        12
+      ],
+      [
+        0
+      ],
+      [
+        11
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "correction",
+    "distance": 120,
+    "expected": "Onyx-912",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 0,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 14,
+        "text": "The current C7-Vesper-1 value is Onyx-912."
+      }
+    ],
+    "probe_id": "c7_correction_1_d120",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/probes.jsonl:3",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        0,
+        14
+      ],
+      [
+        0
+      ],
+      [
+        13
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "correction",
+    "distance": 120,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      15
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 15,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-2 value is Onyx-913.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_correction_2_d120",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/probes.jsonl:4",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        15
+      ],
+      [
+        15
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 120,
+    "expected": "Reed-611|Cedar-1011",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 2,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 16,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_0_d120",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/probes.jsonl:5",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Reed-611 | unknown",
+    "trip_mounts": [
+      [
+        2,
+        16
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 120,
+    "expected": "Reed-612|Cedar-1012",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-141-148/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 3,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 17,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_1_d120",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-141-148/probes.jsonl:1",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Outbound: Cedar-1012 | Inbound: unknown",
+    "trip_mounts": [
+      [
+        3,
+        17
+      ],
+      [
+        3,
+        17
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 120,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-141-148/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      18
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 18,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_2_d120",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-141-148/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        18
+      ],
+      [
+        18,
+        81
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "fresh",
+    "distance": 250,
+    "expected": "Basalt-812",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      6
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 6,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_fresh_1_d250",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/probes.jsonl:1",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        6
+      ],
+      [
+        6
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "fresh",
+    "distance": 250,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      7
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 7,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_fresh_2_d250",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        7
+      ],
+      [
+        7,
+        81
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "alias",
+    "distance": 250,
+    "expected": "Jasper-711",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      8
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 8,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_alias_0_d250",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/probes.jsonl:3",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        8
+      ],
+      [
+        8
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "alias",
+    "distance": 250,
+    "expected": "Jasper-712",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      9
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 9,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_alias_1_d250",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/probes.jsonl:4",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        9
+      ],
+      [
+        9
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "alias",
+    "distance": 250,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      10
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 10,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-2 is an alias for C7-AliasBase-2.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_alias_2_d250",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/probes.jsonl:1",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        10
+      ],
+      [
+        10
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "correction",
+    "distance": 250,
+    "expected": "Onyx-911",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      0,
+      12
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 0,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 12,
+        "text": "The current C7-Vesper-0 value is Onyx-911."
+      }
+    ],
+    "probe_id": "c7_correction_0_d250",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        0,
+        12
+      ],
+      [
+        0
+      ],
+      [
+        11
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "correction",
+    "distance": 250,
+    "expected": "Onyx-912",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 0,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 14,
+        "text": "The current C7-Vesper-1 value is Onyx-912."
+      }
+    ],
+    "probe_id": "c7_correction_1_d250",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/probes.jsonl:3",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        0,
+        14
+      ],
+      [
+        0
+      ],
+      [
+        13
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "correction",
+    "distance": 250,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      15
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 15,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-2 value is Onyx-913.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_correction_2_d250",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/probes.jsonl:4",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Unknown.",
+    "trip_mounts": [
+      [
+        15
+      ],
+      [
+        15
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 250,
+    "expected": "Reed-611|Cedar-1011",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      2,
+      16
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 2,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 16,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_0_d250",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/probes.jsonl:5",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Reed-611 | unknown",
+    "trip_mounts": [
+      [
+        2,
+        16
+      ]
+    ]
+  },
+  {
+    "abstention_error": 1,
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "answerable": true,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 250,
+    "expected": "Reed-612|Cedar-1012",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-273-280/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      3,
+      17
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 3,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "node_id": 17,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_1_d250",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-273-280/probes.jsonl:1",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "Outbound: Cedar-1012 | Inbound: unknown",
+    "trip_mounts": [
+      [
+        3,
+        17
+      ],
+      [
+        3,
+        17
+      ]
+    ]
+  },
+  {
+    "abstention_error": 0,
+    "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+    "answerable": false,
+    "category": "b_mounted_reader",
+    "class": "folded",
+    "distance": 250,
+    "expected": "UNKNOWN",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-273-280/checkpoint/repository/manifest.json",
+    "mounted_ids": [
+      18
+    ],
+    "mounted_source_texts": [
+      {
+        "node_id": 18,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "probe_id": "c7_folded_2_d250",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-273-280/probes.jsonl:2",
+    "served_from": null,
+    "served_from_node_ids": null,
+    "served_text": "unknown",
+    "trip_mounts": [
+      [
+        18
+      ],
+      [
+        18,
+        81
+      ]
+    ]
+  }
+]

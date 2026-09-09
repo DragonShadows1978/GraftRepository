@@ -1,0 +1,9 @@
+{
+  "additional_gate": "Preserved core file SHA equals worker and fold bindings; replayed method ASTs and fold configuration constants equal current source.",
+  "additional_inputs": {
+    "artifacts/grm_c7/r2/fix4_continuation/before/core/graft_arena.py": "cf242ddfe0ff29ac2114e98768f5cf66939f0ff46886658e50a4f492fcdb1fa4",
+    "core/grm_text_norm.py": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8"
+  },
+  "previous_registration_sha256": "fa59abaf6ea34b224d03d34cdb5dc5ef127d1773a8b1f7bb0cb8359f808fc37a",
+  "reason": "CPU audit stopped on exact whole-file hash equality for inherited pre-FIX4 folds. Respect their historical source hash; require AST identity of consolidation, coverage and QC with current source before replay. No historical bindings changed."
+}

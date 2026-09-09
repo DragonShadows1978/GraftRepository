@@ -1,0 +1,84 @@
+{
+  "CPU_replay_gates": "PASS",
+  "cells": {
+    "continuation": 36,
+    "preserved": 3,
+    "total": 39
+  },
+  "core_fold_ruling": "STOP_AND_REPORT_SCOUT_FIX_5_CANDIDATE; not claimed fixed",
+  "evidence_class": "CPU replay of lead-run model receipts; no model execution",
+  "fold_QC_rejections": 12,
+  "fold_budget_exhausted": 4,
+  "fold_candidates": 39,
+  "fold_stopped_early": 35,
+  "folds": 13,
+  "historical_probe_rows_excluded": 8,
+  "max_continuation_residency": 93,
+  "memory_all_abstained_split": {
+    "b_mounted_reader": 47,
+    "c_FIX4_recency": 1
+  },
+  "memory_answerable_split": {
+    "b_mounted_reader": 30
+  },
+  "memory_beats_oracle_rows": [
+    "c7_fresh_0_d030",
+    "c7_fresh_0_d060",
+    "c7_fresh_0_d120",
+    "c7_fresh_0_d250"
+  ],
+  "memory_by_class": {
+    "alias": {
+      "b_mounted_reader": 8
+    },
+    "correction": {
+      "b_mounted_reader": 8
+    },
+    "folded": {
+      "b_mounted_reader": 10
+    },
+    "fresh": {
+      "b_mounted_reader": 4
+    }
+  },
+  "model_ids": [
+    [
+      "openai/gpt-oss-20b",
+      "6cee5e81ee83917806bbde320786a8fb61efebee"
+    ]
+  ],
+  "oracle_classes": {
+    "ANSWERABLE_ALIAS_ABSTENTION": 8,
+    "ANSWERABLE_DIRECT_ABSTENTION": 8,
+    "VALID_UNANSWERABLE_CONTROL_CASE_MISMATCH": 18
+  },
+  "probe_rows": 52,
+  "proposal_model_quality": "NOT_RUN",
+  "registration_sha256": "fa59abaf6ea34b224d03d34cdb5dc5ef127d1773a8b1f7bb0cb8359f808fc37a",
+  "score_totals": {
+    "memory": {
+      "abstained": 48,
+      "abstention_error": 30,
+      "exact_answer_error": 48,
+      "exact_correct": 4,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 0
+    },
+    "oracle": {
+      "abstained": 34,
+      "abstention_error": 16,
+      "exact_answer_error": 34,
+      "exact_correct": 18,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 0
+    }
+  },
+  "start_prompt_mismatch_turns": [
+    8,
+    85,
+    99,
+    107,
+    115
+  ],
+  "tokenizer_sha256": "0614fe83cadab421296e664e1f48f4261fa8fef6e03e63bb75c20f38e37d07d3"
+}

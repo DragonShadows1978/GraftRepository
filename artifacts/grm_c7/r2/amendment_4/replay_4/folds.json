@@ -1,0 +1,2012 @@
+[
+  {
+    "FIX3_path": "YES: bound executed source, configured Harmony oracle, recorded stop short-circuit",
+    "accepted": false,
+    "all_attempts": [
+      {
+        "budget_exhausted": false,
+        "coverage": 0.2,
+        "covered_facts": [
+          "c7-archive-1",
+          "reed-612"
+        ],
+        "generated_tokens_from_decode_trace": 60,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.2,
+        "missing_facts": [
+          "c7-archive-0",
+          "c7-vesper-0",
+          "c7-vesper-1",
+          "flint-511",
+          "flint-512",
+          "mica-431",
+          "mica-432",
+          "reed-611"
+        ],
+        "need_count": 10,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 0,
+        "qc": true,
+        "raw_final_decode": " name “C7-Archive-1” refers to a specific record; the code “Reed-612” is the outbound tag associated with that record; the number “511” is the value linked to that tag; the time “12:00” is the timestamp for the record.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "For the archive: the  name “C7-Archive-1” refers to a specific record; the code “Reed-612” is the outbound tag associated with that record; the number “511” is the value linked to that tag; the time “12:00” is the timestamp for the record.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.3,
+        "covered_facts": [
+          "c7-vesper-0",
+          "c7-vesper-1",
+          "reed-612"
+        ],
+        "generated_tokens_from_decode_trace": 59,
+        "hit_count": 3,
+        "lexical_coverage_before_QC": 0.3,
+        "missing_facts": [
+          "c7-archive-0",
+          "c7-archive-1",
+          "flint-511",
+          "flint-512",
+          "mica-431",
+          "mica-432",
+          "reed-611"
+        ],
+        "need_count": 10,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 1,
+        "qc": true,
+        "raw_final_decode": " “outbound tag” for the C7‑Vesper‑0 record is “Reed‑612,” and the “outbound tag” for the C7‑Vesper‑1 record is “Reed‑512.” The prior “Mica” values are no longer relevant.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "ARCHIVE NOTE — The conversation established that the  “outbound tag” for the C7‑Vesper‑0 record is “Reed‑612,” and the “outbound tag” for the C7‑Vesper‑1 record is “Reed‑512.” The prior “Mica” values are no longer relevant.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE — The conversation established that the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.0,
+        "covered_facts": [
+          "c7-vesper-0",
+          "reed-612"
+        ],
+        "generated_tokens_from_decode_trace": 67,
+        "hit_count": 0,
+        "lexical_coverage_before_QC": 0.2,
+        "missing_facts": [
+          "c7-archive-0",
+          "c7-archive-1",
+          "c7-vesper-1",
+          "flint-511",
+          "flint-512",
+          "mica-431",
+          "mica-432",
+          "reed-611"
+        ],
+        "need_count": 10,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 2,
+        "qc": false,
+        "raw_final_decode": "  \n\n- **C7‑Vesper‑0** – the outbound tag that is currently in use.  \n- **Reed‑612** – the value that the tag has been updated to.  \n- **Mica** – the previous tag that has been replaced.  \n\nThese are the only items that have been mentioned.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "The facts to archive are:   \n\n- **C7‑Vesper‑0** – the outbound tag that is currently in use.  \n- **Reed‑612** – the value that the tag has been updated to.  \n- **Mica** – the previous tag that has been replaced.  \n\nThese are the only items that have been mentioned.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+      }
+    ],
+    "best_coverage": 0.3,
+    "best_hit_count": 3,
+    "best_missing_facts": [
+      "c7-archive-0",
+      "c7-archive-1",
+      "flint-511",
+      "flint-512",
+      "mica-431",
+      "mica-432",
+      "reed-611"
+    ],
+    "best_text": "ARCHIVE NOTE — The conversation established that the  “outbound tag” for the C7‑Vesper‑0 record is “Reed‑612,” and the “outbound tag” for the C7‑Vesper‑1 record is “Reed‑512.” The prior “Mica” values are no longer relevant.",
+    "binding_constraint": "coverage below 0.70; budget hits are additional candidate-level failures",
+    "digest_text": null,
+    "executed_arena_sha256": "cf242ddfe0ff29ac2114e98768f5cf66939f0ff46886658e50a4f492fcdb1fa4",
+    "need": [
+      "c7-archive-0",
+      "c7-archive-1",
+      "c7-vesper-0",
+      "c7-vesper-1",
+      "flint-511",
+      "flint-512",
+      "mica-431",
+      "mica-432",
+      "reed-611",
+      "reed-612"
+    ],
+    "need_count": 10,
+    "origin": "inherited_pre_FIX4",
+    "receipt": "artifacts/grm_c7/r2/cells/A-001-008/folds/008-533d6c5a5b0c4e568b5d9f7410ce2587/result.json",
+    "recorded_start_prompts": [
+      "User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: CHRONICLE — In this period,",
+      "User: Combine the notes above into flowing sentences that state each fact together with what it means, quoting every name, code, number, and time exactly.\nAssistant: Combined record: during these conversations,",
+      "User: List every fact from the notes above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:"
+    ],
+    "required_hits": 7,
+    "sources": [
+      {
+        "id": 0,
+        "kind": null,
+        "ntok": 61,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 1,
+        "kind": null,
+        "ntok": 73,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 2,
+        "kind": null,
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 3,
+        "kind": null,
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "start_prompt_mismatch": true,
+    "turn": 8
+  },
+  {
+    "FIX3_path": "YES: bound executed source, configured Harmony oracle, recorded stop short-circuit",
+    "accepted": false,
+    "all_attempts": [
+      {
+        "budget_exhausted": false,
+        "coverage": 0.2,
+        "covered_facts": [
+          "basalt-813",
+          "c7-fresh-2"
+        ],
+        "generated_tokens_from_decode_trace": 20,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.2,
+        "missing_facts": [
+          "basalt-811",
+          "basalt-812",
+          "c7-aliasbase-0",
+          "c7-aliasbase-1",
+          "c7-fresh-0",
+          "c7-fresh-1",
+          "jasper-711",
+          "jasper-712"
+        ],
+        "need_count": 10,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 0,
+        "qc": true,
+        "raw_final_decode": " name “C7‑Fresh‑2” refers to the value “Basalt‑813.”<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "For the archive: the  name “C7‑Fresh‑2” refers to the value “Basalt‑813.”",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.2,
+        "covered_facts": [
+          "basalt-813",
+          "c7-fresh-2"
+        ],
+        "generated_tokens_from_decode_trace": 15,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.2,
+        "missing_facts": [
+          "basalt-811",
+          "basalt-812",
+          "c7-aliasbase-0",
+          "c7-aliasbase-1",
+          "c7-fresh-0",
+          "c7-fresh-1",
+          "jasper-711",
+          "jasper-712"
+        ],
+        "need_count": 10,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 1,
+        "qc": true,
+        "raw_final_decode": " current C7‑Fresh‑2 value is Basalt‑813.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "ARCHIVE NOTE — The conversation established that the  current C7‑Fresh‑2 value is Basalt‑813.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE — The conversation established that the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.0,
+        "covered_facts": [
+          "basalt-811",
+          "basalt-812",
+          "c7-fresh-1",
+          "c7-fresh-2"
+        ],
+        "generated_tokens_from_decode_trace": 80,
+        "hit_count": 0,
+        "lexical_coverage_before_QC": 0.4,
+        "missing_facts": [
+          "basalt-813",
+          "c7-aliasbase-0",
+          "c7-aliasbase-1",
+          "c7-fresh-0",
+          "jasper-711",
+          "jasper-712"
+        ],
+        "need_count": 10,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 2,
+        "qc": false,
+        "raw_final_decode": "  \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Fresh‑2** |  | The current value is **Basalt‑812**. |  \n| **C7‑Fresh‑1** |  | The current value is **Basalt‑811**. |  \n\nNo other names, codes, numbers or times were mentioned.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "The facts to archive are:   \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Fresh‑2** |  | The current value is **Basalt‑812**. |  \n| **C7‑Fresh‑1** |  | The current value is **Basalt‑811**. |  \n\nNo other names, codes, numbers or times were mentioned.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+      }
+    ],
+    "best_coverage": 0.2,
+    "best_hit_count": 2,
+    "best_missing_facts": [
+      "basalt-811",
+      "basalt-812",
+      "c7-aliasbase-0",
+      "c7-aliasbase-1",
+      "c7-fresh-0",
+      "c7-fresh-1",
+      "jasper-711",
+      "jasper-712"
+    ],
+    "best_text": "For the archive: the  name “C7‑Fresh‑2” refers to the value “Basalt‑813.”",
+    "binding_constraint": "coverage below 0.70; budget hits are additional candidate-level failures",
+    "digest_text": null,
+    "executed_arena_sha256": "cf242ddfe0ff29ac2114e98768f5cf66939f0ff46886658e50a4f492fcdb1fa4",
+    "need": [
+      "basalt-811",
+      "basalt-812",
+      "basalt-813",
+      "c7-aliasbase-0",
+      "c7-aliasbase-1",
+      "c7-fresh-0",
+      "c7-fresh-1",
+      "c7-fresh-2",
+      "jasper-711",
+      "jasper-712"
+    ],
+    "need_count": 10,
+    "origin": "inherited_pre_FIX4",
+    "receipt": "artifacts/grm_c7/r2/cells/A-017-023/folds/017-ac4a09b2490441678f6a5e9289942d5d/result.json",
+    "recorded_start_prompts": [
+      "User: For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.\nAssistant: For the archive: the",
+      "User: Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: ARCHIVE NOTE — The conversation established that the",
+      "User: List every fact from the conversation above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:"
+    ],
+    "required_hits": 7,
+    "sources": [
+      {
+        "id": 4,
+        "kind": "turn",
+        "ntok": 61,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 5,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-0 value is Basalt-811.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 6,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 7,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "start_prompt_mismatch": false,
+    "turn": 17
+  },
+  {
+    "FIX3_path": "YES: bound executed source, configured Harmony oracle, recorded stop short-circuit",
+    "accepted": false,
+    "all_attempts": [
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-aliasbase-2",
+          "c7-signal-0"
+        ],
+        "generated_tokens_from_decode_trace": 21,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-aliasbase-0",
+          "c7-aliasbase-1",
+          "c7-signal-1",
+          "c7-signal-2",
+          "c7-vesper-0",
+          "onyx-911"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 0,
+        "qc": true,
+        "raw_final_decode": " alias “C7-Signal-0” refers to “C7-AliasBase-2.”<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "For the archive: the  alias “C7-Signal-0” refers to “C7-AliasBase-2.”",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-aliasbase-2",
+          "c7-signal-2"
+        ],
+        "generated_tokens_from_decode_trace": 22,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-aliasbase-0",
+          "c7-aliasbase-1",
+          "c7-signal-0",
+          "c7-signal-1",
+          "c7-vesper-0",
+          "onyx-911"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 1,
+        "qc": true,
+        "raw_final_decode": " “C7‑Signal‑2” is an alias for “C7‑AliasBase‑2.”<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "ARCHIVE NOTE — The conversation established that the  “C7‑Signal‑2” is an alias for “C7‑AliasBase‑2.”",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE — The conversation established that the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.0,
+        "covered_facts": [
+          "c7-aliasbase-0",
+          "c7-signal-0",
+          "onyx-911"
+        ],
+        "generated_tokens_from_decode_trace": 102,
+        "hit_count": 0,
+        "lexical_coverage_before_QC": 0.375,
+        "missing_facts": [
+          "c7-aliasbase-1",
+          "c7-aliasbase-2",
+          "c7-signal-1",
+          "c7-signal-2",
+          "c7-vesper-0"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 2,
+        "qc": false,
+        "raw_final_decode": "  \n\n| **Item** | **Value** | **What it points to** |  \n|-----------|-----------|-----------------------|  \n| **C7‑Signal‑0** | “Onyx‑911” | The alias that is used for the signal. |  \n| **C7‑AliasBase‑0** | “Onyx‑911” | The base alias that the signal points to. |  \n\nThese are the only names, codes, numbers, and times that have been mentioned.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "The facts to archive are:   \n\n| **Item** | **Value** | **What it points to** |  \n|-----------|-----------|-----------------------|  \n| **C7‑Signal‑0** | “Onyx‑911” | The alias that is used for the signal. |  \n| **C7‑AliasBase‑0** | “Onyx‑911” | The base alias that the signal points to. |  \n\nThese are the only names, codes, numbers, and times that have been mentioned.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+      }
+    ],
+    "best_coverage": 0.25,
+    "best_hit_count": 2,
+    "best_missing_facts": [
+      "c7-aliasbase-0",
+      "c7-aliasbase-1",
+      "c7-signal-1",
+      "c7-signal-2",
+      "c7-vesper-0",
+      "onyx-911"
+    ],
+    "best_text": "For the archive: the  alias “C7-Signal-0” refers to “C7-AliasBase-2.”",
+    "binding_constraint": "coverage below 0.70; budget hits are additional candidate-level failures",
+    "digest_text": null,
+    "executed_arena_sha256": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+    "need": [
+      "c7-aliasbase-0",
+      "c7-aliasbase-1",
+      "c7-aliasbase-2",
+      "c7-signal-0",
+      "c7-signal-1",
+      "c7-signal-2",
+      "c7-vesper-0",
+      "onyx-911"
+    ],
+    "need_count": 8,
+    "origin": "FIX4_continuation",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/folds/026-681f4264c9fa4c2c9a7096d30106a8a0/result.json",
+    "recorded_start_prompts": [
+      "User: For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.\nAssistant: For the archive: the",
+      "User: Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: ARCHIVE NOTE — The conversation established that the",
+      "User: List every fact from the conversation above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:"
+    ],
+    "required_hits": 6,
+    "sources": [
+      {
+        "id": 8,
+        "kind": "turn",
+        "ntok": 49,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 9,
+        "kind": "turn",
+        "ntok": 49,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 10,
+        "kind": "turn",
+        "ntok": 49,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-2 is an alias for C7-AliasBase-2.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 11,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-0 value is Onyx-911.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "start_prompt_mismatch": false,
+    "turn": 26
+  },
+  {
+    "FIX3_path": "YES: bound executed source, configured Harmony oracle, recorded stop short-circuit",
+    "accepted": false,
+    "all_attempts": [
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-archive-1",
+          "cedar-1012"
+        ],
+        "generated_tokens_from_decode_trace": 63,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-archive-0",
+          "c7-vesper-1",
+          "c7-vesper-2",
+          "cedar-1011",
+          "onyx-912",
+          "onyx-913"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 0,
+        "qc": true,
+        "raw_final_decode": " name “C7-Archive-1” refers to a specific item or record, the code “Cedar-1012” is an identifier linked to that item, the number “1012” is part of that identifier, and the time “C7” is a label or tag associated with it.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "For the archive: the  name “C7-Archive-1” refers to a specific item or record, the code “Cedar-1012” is an identifier linked to that item, the number “1012” is part of that identifier, and the time “C7” is a label or tag associated with it.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-vesper-2",
+          "cedar-1012"
+        ],
+        "generated_tokens_from_decode_trace": 63,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-archive-0",
+          "c7-archive-1",
+          "c7-vesper-1",
+          "cedar-1011",
+          "onyx-912",
+          "onyx-913"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 1,
+        "qc": true,
+        "raw_final_decode": " inbound tag for the C7‑Vesper‑2 system is “Cedar‑1012.”  The user’s statement was recorded verbatim.  The system’s tag is a code that identifies the inbound tag for the C7‑Vesper‑2 system.  The user’s statement was recorded.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "ARCHIVE NOTE — The conversation established that the  inbound tag for the C7‑Vesper‑2 system is “Cedar‑1012.”  The user’s statement was recorded verbatim.  The system’s tag is a code that identifies the inbound tag for the C7‑Vesper‑2 system.  The user’s statement was recorded.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE — The conversation established that the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-archive-1",
+          "cedar-1012"
+        ],
+        "generated_tokens_from_decode_trace": 51,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-archive-0",
+          "c7-vesper-1",
+          "c7-vesper-2",
+          "cedar-1011",
+          "onyx-912",
+          "onyx-913"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 2,
+        "qc": true,
+        "raw_final_decode": "  \n\n- **C7‑Archive‑1** – the name of the archive.  \n- **Cedar‑1012** – the inbound tag that is linked to that archive.  \n\nNo other names, codes, numbers or times were mentioned.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "The facts to archive are:   \n\n- **C7‑Archive‑1** – the name of the archive.  \n- **Cedar‑1012** – the inbound tag that is linked to that archive.  \n\nNo other names, codes, numbers or times were mentioned.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+      }
+    ],
+    "best_coverage": 0.25,
+    "best_hit_count": 2,
+    "best_missing_facts": [
+      "c7-archive-0",
+      "c7-vesper-1",
+      "c7-vesper-2",
+      "cedar-1011",
+      "onyx-912",
+      "onyx-913"
+    ],
+    "best_text": "For the archive: the  name “C7-Archive-1” refers to a specific item or record, the code “Cedar-1012” is an identifier linked to that item, the number “1012” is part of that identifier, and the time “C7” is a label or tag associated with it.",
+    "binding_constraint": "coverage below 0.70; budget hits are additional candidate-level failures",
+    "digest_text": null,
+    "executed_arena_sha256": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+    "need": [
+      "c7-archive-0",
+      "c7-archive-1",
+      "c7-vesper-1",
+      "c7-vesper-2",
+      "cedar-1011",
+      "cedar-1012",
+      "onyx-912",
+      "onyx-913"
+    ],
+    "need_count": 8,
+    "origin": "FIX4_continuation",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/folds/055-1b44742dab454a6685c75b4e4a614895/result.json",
+    "recorded_start_prompts": [
+      "User: For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.\nAssistant: For the archive: the",
+      "User: Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: ARCHIVE NOTE — The conversation established that the",
+      "User: List every fact from the conversation above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:"
+    ],
+    "required_hits": 6,
+    "sources": [
+      {
+        "id": 13,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-1 value is Onyx-912.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 15,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Vesper-2 value is Onyx-913.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 16,
+        "kind": "turn",
+        "ntok": 47,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 17,
+        "kind": "turn",
+        "ntok": 47,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "start_prompt_mismatch": false,
+    "turn": 55
+  },
+  {
+    "FIX3_path": "YES: bound executed source, configured Harmony oracle, recorded stop short-circuit",
+    "accepted": false,
+    "all_attempts": [
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-outpost-02",
+          "pearl-1202"
+        ],
+        "generated_tokens_from_decode_trace": 16,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-archive-2",
+          "c7-outpost-00",
+          "c7-outpost-01",
+          "cedar-1013",
+          "pearl-1200",
+          "pearl-1201"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 0,
+        "qc": true,
+        "raw_final_decode": " C7‑Outpost‑02 refers to the Pearl‑1202.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "For the archive: the  C7‑Outpost‑02 refers to the Pearl‑1202.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-outpost-02",
+          "pearl-1202"
+        ],
+        "generated_tokens_from_decode_trace": 16,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-archive-2",
+          "c7-outpost-00",
+          "c7-outpost-01",
+          "cedar-1013",
+          "pearl-1200",
+          "pearl-1201"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 1,
+        "qc": true,
+        "raw_final_decode": " current C7‑Outpost‑02 value is Pearl‑1202.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "ARCHIVE NOTE — The conversation established that the  current C7‑Outpost‑02 value is Pearl‑1202.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE — The conversation established that the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.0,
+        "covered_facts": [
+          "c7-outpost-02",
+          "pearl-1202"
+        ],
+        "generated_tokens_from_decode_trace": 59,
+        "hit_count": 0,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-archive-2",
+          "c7-outpost-00",
+          "c7-outpost-01",
+          "cedar-1013",
+          "pearl-1200",
+          "pearl-1201"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 2,
+        "qc": false,
+        "raw_final_decode": "  \n\n| Item | Value | Reference |  \n|------|-------|------------|  \n| **C7‑Outpost‑02** | “Pearl‑1202” | The current value of the outpost. |  \n\nNo other names, codes, numbers or times were mentioned.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "The facts to archive are:   \n\n| Item | Value | Reference |  \n|------|-------|------------|  \n| **C7‑Outpost‑02** | “Pearl‑1202” | The current value of the outpost. |  \n\nNo other names, codes, numbers or times were mentioned.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+      }
+    ],
+    "best_coverage": 0.25,
+    "best_hit_count": 2,
+    "best_missing_facts": [
+      "c7-archive-2",
+      "c7-outpost-00",
+      "c7-outpost-01",
+      "cedar-1013",
+      "pearl-1200",
+      "pearl-1201"
+    ],
+    "best_text": "For the archive: the  C7‑Outpost‑02 refers to the Pearl‑1202.",
+    "binding_constraint": "coverage below 0.70; budget hits are additional candidate-level failures",
+    "digest_text": null,
+    "executed_arena_sha256": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+    "need": [
+      "c7-archive-2",
+      "c7-outpost-00",
+      "c7-outpost-01",
+      "c7-outpost-02",
+      "cedar-1013",
+      "pearl-1200",
+      "pearl-1201",
+      "pearl-1202"
+    ],
+    "need_count": 8,
+    "origin": "FIX4_continuation",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-071-077/folds/074-542293a8731d432da4e42a6af5120f3c/result.json",
+    "recorded_start_prompts": [
+      "User: For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.\nAssistant: For the archive: the",
+      "User: Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: ARCHIVE NOTE — The conversation established that the",
+      "User: List every fact from the conversation above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:"
+    ],
+    "required_hits": 6,
+    "sources": [
+      {
+        "id": 18,
+        "kind": "turn",
+        "ntok": 47,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 33,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-00 value is Pearl-1200.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 38,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-01 value is Pearl-1201.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 43,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-02 value is Pearl-1202.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "start_prompt_mismatch": false,
+    "turn": 74
+  },
+  {
+    "FIX3_path": "YES: bound executed source, configured Harmony oracle, recorded stop short-circuit",
+    "accepted": false,
+    "all_attempts": [
+      {
+        "budget_exhausted": false,
+        "coverage": 0.3333333333333333,
+        "covered_facts": [
+          "c7-handle-06",
+          "c7-outpost-06",
+          "pearl-1205"
+        ],
+        "generated_tokens_from_decode_trace": 37,
+        "hit_count": 3,
+        "lexical_coverage_before_QC": 0.3333333333333333,
+        "missing_facts": [
+          "c7-outpost-03",
+          "c7-outpost-04",
+          "c7-outpost-05",
+          "pearl-1203",
+          "pearl-1204",
+          "slate-1206"
+        ],
+        "need_count": 9,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 0,
+        "qc": true,
+        "raw_final_decode": " name “C7-Outpost-06” refers to the value “Pearl-1205”; the name “C7-Handle-06” refers to the same value.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "For the archive: the  name “C7-Outpost-06” refers to the value “Pearl-1205”; the name “C7-Handle-06” refers to the same value.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.3333333333333333,
+        "covered_facts": [
+          "c7-handle-06",
+          "c7-outpost-06",
+          "pearl-1205"
+        ],
+        "generated_tokens_from_decode_trace": 31,
+        "hit_count": 3,
+        "lexical_coverage_before_QC": 0.3333333333333333,
+        "missing_facts": [
+          "c7-outpost-03",
+          "c7-outpost-04",
+          "c7-outpost-05",
+          "pearl-1203",
+          "pearl-1204",
+          "slate-1206"
+        ],
+        "need_count": 9,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 1,
+        "qc": true,
+        "raw_final_decode": " current C7‑Outpost‑06 value is Pearl‑1205.  The alias C7‑Handle‑06 refers to the same value.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "ARCHIVE NOTE — The conversation established that the  current C7‑Outpost‑06 value is Pearl‑1205.  The alias C7‑Handle‑06 refers to the same value.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE — The conversation established that the"
+      },
+      {
+        "budget_exhausted": true,
+        "coverage": 0.0,
+        "covered_facts": [
+          "c7-handle-06",
+          "c7-outpost-06",
+          "pearl-1205"
+        ],
+        "generated_tokens_from_decode_trace": 120,
+        "hit_count": 0,
+        "lexical_coverage_before_QC": 0.3333333333333333,
+        "missing_facts": [
+          "c7-outpost-03",
+          "c7-outpost-04",
+          "c7-outpost-05",
+          "pearl-1203",
+          "pearl-1204",
+          "slate-1206"
+        ],
+        "need_count": 9,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 2,
+        "qc": false,
+        "raw_final_decode": "  \n\n|  Item |  Meaning |  Notes |  \n|---|---|---|  \n| **C7‑Outpost‑06** |  The current “outpost” code that the user is referencing. |  The user says it is “Pearl‑1205.” |  \n| **Pearl‑1205** |  The value that the user says is associated with the outpost. |  No other context is given. |  \n| **C7‑Handle‑06** |  The alias that the user says refers to the same outpost. | ",
+        "relaxed_list": false,
+        "stop": null,
+        "text": "The facts to archive are:   \n\n|  Item |  Meaning |  Notes |  \n|---|---|---|  \n| **C7‑Outpost‑06** |  The current “outpost” code that the user is referencing. |  The user says it is “Pearl‑1205.” |  \n| **Pearl‑1205** |  The value that the user says is associated with the outpost. |  No other context is given. |  \n| **C7‑Handle‑06** |  The alias that the user says refers to the same outpost. |",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+      }
+    ],
+    "best_coverage": 0.3333333333333333,
+    "best_hit_count": 3,
+    "best_missing_facts": [
+      "c7-outpost-03",
+      "c7-outpost-04",
+      "c7-outpost-05",
+      "pearl-1203",
+      "pearl-1204",
+      "slate-1206"
+    ],
+    "best_text": "For the archive: the  name “C7-Outpost-06” refers to the value “Pearl-1205”; the name “C7-Handle-06” refers to the same value.",
+    "binding_constraint": "coverage below 0.70; budget hits are additional candidate-level failures",
+    "digest_text": null,
+    "executed_arena_sha256": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+    "need": [
+      "c7-handle-06",
+      "c7-outpost-03",
+      "c7-outpost-04",
+      "c7-outpost-05",
+      "c7-outpost-06",
+      "pearl-1203",
+      "pearl-1204",
+      "pearl-1205",
+      "slate-1206"
+    ],
+    "need_count": 9,
+    "origin": "FIX4_continuation",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/folds/085-d15b5a88d2d94e56a2915cde4a8b0dfa/result.json",
+    "recorded_start_prompts": [
+      "User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: CHRONICLE — In this period,",
+      "User: Combine the notes above into flowing sentences that state each fact together with what it means, quoting every name, code, number, and time exactly.\nAssistant: Combined record: during these conversations,",
+      "User: List every fact from the notes above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:"
+    ],
+    "required_hits": 7,
+    "sources": [
+      {
+        "id": 48,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-03 value is Pearl-1203.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 53,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-04 value is Pearl-1204.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 58,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-05 value is Pearl-1205.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 60,
+        "kind": null,
+        "ntok": 63,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-06 value is Slate-1206. C7-Handle-06 is an alias for C7-Outpost-06.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "start_prompt_mismatch": true,
+    "turn": 85
+  },
+  {
+    "FIX3_path": "YES: bound executed source, configured Harmony oracle, recorded stop short-circuit",
+    "accepted": false,
+    "all_attempts": [
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-handle-10",
+          "c7-outpost-10",
+          "slate-1209"
+        ],
+        "generated_tokens_from_decode_trace": 42,
+        "hit_count": 3,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-handle-07",
+          "c7-handle-08",
+          "c7-handle-09",
+          "c7-outpost-07",
+          "c7-outpost-08",
+          "c7-outpost-09",
+          "slate-1207",
+          "slate-1208",
+          "slate-1210"
+        ],
+        "need_count": 12,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 0,
+        "qc": true,
+        "raw_final_decode": " name “C7-Outpost-10” refers to the value “Slate-1209”; the name “C7-Handle-10” is an alias for “C7-Outpost-10.”<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "For the archive: the  name “C7-Outpost-10” refers to the value “Slate-1209”; the name “C7-Handle-10” is an alias for “C7-Outpost-10.”",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-handle-10",
+          "c7-outpost-10",
+          "slate-1209"
+        ],
+        "generated_tokens_from_decode_trace": 51,
+        "hit_count": 3,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-handle-07",
+          "c7-handle-08",
+          "c7-handle-09",
+          "c7-outpost-07",
+          "c7-outpost-08",
+          "c7-outpost-09",
+          "slate-1207",
+          "slate-1208",
+          "slate-1210"
+        ],
+        "need_count": 12,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 1,
+        "qc": true,
+        "raw_final_decode": " current value for the code **C7‑Outpost‑10** is **Slate‑1209**.  The handle **C7‑Handle‑10** is an alias that points to the same value, **Slate‑1209**.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "ARCHIVE NOTE — The conversation established that the  current value for the code **C7‑Outpost‑10** is **Slate‑1209**.  The handle **C7‑Handle‑10** is an alias that points to the same value, **Slate‑1209**.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE — The conversation established that the"
+      },
+      {
+        "budget_exhausted": true,
+        "coverage": 0.0,
+        "covered_facts": [
+          "c7-handle-10",
+          "c7-outpost-09",
+          "c7-outpost-10",
+          "slate-1207"
+        ],
+        "generated_tokens_from_decode_trace": 120,
+        "hit_count": 0,
+        "lexical_coverage_before_QC": 0.3333333333333333,
+        "missing_facts": [
+          "c7-handle-07",
+          "c7-handle-08",
+          "c7-handle-09",
+          "c7-outpost-07",
+          "c7-outpost-08",
+          "slate-1208",
+          "slate-1209",
+          "slate-1210"
+        ],
+        "need_count": 12,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 2,
+        "qc": false,
+        "raw_final_decode": "  \n\n| **Name / Code** | **Value** | **What it points to** | **Notes** |\n|------------------|-----------|-----------------------|-----------|\n| **C7‑Outpost‑10** | **Slate‑1207** | The current value of the outpost. |  |\n| **C7‑Handle‑10** | **Alias for C7‑Outpost‑10** |  |\n| **C7‑Outpost‑09** | **Slate‑1207** | The outpost’s value. |  |\n| **C7‑Handle",
+        "relaxed_list": false,
+        "stop": null,
+        "text": "The facts to archive are:   \n\n| **Name / Code** | **Value** | **What it points to** | **Notes** |\n|------------------|-----------|-----------------------|-----------|\n| **C7‑Outpost‑10** | **Slate‑1207** | The current value of the outpost. |  |\n| **C7‑Handle‑10** | **Alias for C7‑Outpost‑10** |  |\n| **C7‑Outpost‑09** | **Slate‑1207** | The outpost’s value. |  |\n| **C7‑Handle",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+      }
+    ],
+    "best_coverage": 0.25,
+    "best_hit_count": 3,
+    "best_missing_facts": [
+      "c7-handle-07",
+      "c7-handle-08",
+      "c7-handle-09",
+      "c7-outpost-07",
+      "c7-outpost-08",
+      "c7-outpost-09",
+      "slate-1207",
+      "slate-1208",
+      "slate-1210"
+    ],
+    "best_text": "For the archive: the  name “C7-Outpost-10” refers to the value “Slate-1209”; the name “C7-Handle-10” is an alias for “C7-Outpost-10.”",
+    "binding_constraint": "coverage below 0.70; budget hits are additional candidate-level failures",
+    "digest_text": null,
+    "executed_arena_sha256": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+    "need": [
+      "c7-handle-07",
+      "c7-handle-08",
+      "c7-handle-09",
+      "c7-handle-10",
+      "c7-outpost-07",
+      "c7-outpost-08",
+      "c7-outpost-09",
+      "c7-outpost-10",
+      "slate-1207",
+      "slate-1208",
+      "slate-1209",
+      "slate-1210"
+    ],
+    "need_count": 12,
+    "origin": "FIX4_continuation",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/folds/091-b0a742d7fa0f498ea4ab9d653be59f4c/result.json",
+    "recorded_start_prompts": [
+      "User: For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.\nAssistant: For the archive: the",
+      "User: Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: ARCHIVE NOTE — The conversation established that the",
+      "User: List every fact from the conversation above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:"
+    ],
+    "required_hits": 9,
+    "sources": [
+      {
+        "id": 61,
+        "kind": "turn",
+        "ntok": 63,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-07 value is Slate-1207. C7-Handle-07 is an alias for C7-Outpost-07.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 62,
+        "kind": "turn",
+        "ntok": 63,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-08 value is Slate-1208. C7-Handle-08 is an alias for C7-Outpost-08.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 63,
+        "kind": "turn",
+        "ntok": 63,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-09 value is Slate-1209. C7-Handle-09 is an alias for C7-Outpost-09.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 64,
+        "kind": "turn",
+        "ntok": 63,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-10 value is Slate-1210. C7-Handle-10 is an alias for C7-Outpost-10.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "start_prompt_mismatch": false,
+    "turn": 91
+  },
+  {
+    "FIX3_path": "YES: bound executed source, configured Harmony oracle, recorded stop short-circuit",
+    "accepted": false,
+    "all_attempts": [
+      {
+        "budget_exhausted": false,
+        "coverage": 0.2222222222222222,
+        "covered_facts": [
+          "c7-outpost-14",
+          "slate-1212"
+        ],
+        "generated_tokens_from_decode_trace": 20,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.2222222222222222,
+        "missing_facts": [
+          "c7-handle-11",
+          "c7-outpost-11",
+          "c7-outpost-12",
+          "c7-outpost-13",
+          "slate-1211",
+          "slate-1213",
+          "slate-1214"
+        ],
+        "need_count": 9,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 0,
+        "qc": true,
+        "raw_final_decode": " name “C7-Outpost-14” refers to the value “Slate-1212.”<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "For the archive: the  name “C7-Outpost-14” refers to the value “Slate-1212.”",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+      },
+      {
+        "budget_exhausted": true,
+        "coverage": 0.2222222222222222,
+        "covered_facts": [
+          "c7-outpost-12",
+          "slate-1212"
+        ],
+        "generated_tokens_from_decode_trace": 120,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.2222222222222222,
+        "missing_facts": [
+          "c7-handle-11",
+          "c7-outpost-11",
+          "c7-outpost-13",
+          "c7-outpost-14",
+          "slate-1211",
+          "slate-1213",
+          "slate-1214"
+        ],
+        "need_count": 9,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 1,
+        "qc": true,
+        "raw_final_decode": " current C7‑Outpost‑12 value is Slate‑1212. The user’s statement that “C7‑Outpost‑12 is Slate‑1212” was recorded verbatim. The system’s reply, “The current C7‑Outpost‑12 value is Slate‑1212,” was also recorded. The user’s statement that “C7‑Outpost‑12 is Slate‑1212” was recorded. The system’s reply, “The current C7‑Outpost‑12 value is Slate‑1212,” was recorded. The user’s statement that “C7",
+        "relaxed_list": false,
+        "stop": null,
+        "text": "ARCHIVE NOTE — The conversation established that the  current C7‑Outpost‑12 value is Slate‑1212. The user’s statement that “C7‑Outpost‑12 is Slate‑1212” was recorded verbatim. The system’s reply, “The current C7‑Outpost‑12 value is Slate‑1212,” was also recorded. The user’s statement that “C7‑Outpost‑12 is Slate‑1212” was recorded. The system’s reply, “The current C7‑Outpost‑12 value is Slate‑1212,” was recorded. The user’s statement that “C7",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE — The conversation established that the"
+      },
+      {
+        "budget_exhausted": true,
+        "coverage": 0.0,
+        "covered_facts": [
+          "c7-handle-11",
+          "c7-outpost-14",
+          "slate-1214"
+        ],
+        "generated_tokens_from_decode_trace": 120,
+        "hit_count": 0,
+        "lexical_coverage_before_QC": 0.3333333333333333,
+        "missing_facts": [
+          "c7-outpost-11",
+          "c7-outpost-12",
+          "c7-outpost-13",
+          "slate-1211",
+          "slate-1212",
+          "slate-1213"
+        ],
+        "need_count": 9,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 2,
+        "qc": false,
+        "raw_final_decode": "  \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Outpost‑14** | 1 | The current “value” of the outpost, which is **Slate‑1214**. |  \n| **Slate‑1214** | 2 | The value that the outpost is currently set to. |  \n| **C7‑Handle‑11** | 3 | An alias that points to the same value as **C7‑Outpost‑14**. |  \n\nNo other names, codes, numbers or times were",
+        "relaxed_list": false,
+        "stop": null,
+        "text": "The facts to archive are:   \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Outpost‑14** | 1 | The current “value” of the outpost, which is **Slate‑1214**. |  \n| **Slate‑1214** | 2 | The value that the outpost is currently set to. |  \n| **C7‑Handle‑11** | 3 | An alias that points to the same value as **C7‑Outpost‑14**. |  \n\nNo other names, codes, numbers or times were",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+      }
+    ],
+    "best_coverage": 0.2222222222222222,
+    "best_hit_count": 2,
+    "best_missing_facts": [
+      "c7-handle-11",
+      "c7-outpost-11",
+      "c7-outpost-12",
+      "c7-outpost-13",
+      "slate-1211",
+      "slate-1213",
+      "slate-1214"
+    ],
+    "best_text": "For the archive: the  name “C7-Outpost-14” refers to the value “Slate-1212.”",
+    "binding_constraint": "coverage below 0.70; budget hits are additional candidate-level failures",
+    "digest_text": null,
+    "executed_arena_sha256": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+    "need": [
+      "c7-handle-11",
+      "c7-outpost-11",
+      "c7-outpost-12",
+      "c7-outpost-13",
+      "c7-outpost-14",
+      "slate-1211",
+      "slate-1212",
+      "slate-1213",
+      "slate-1214"
+    ],
+    "need_count": 9,
+    "origin": "FIX4_continuation",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-094-100/folds/095-3df9be1aee50442c8a0fe437490940c1/result.json",
+    "recorded_start_prompts": [
+      "User: For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.\nAssistant: For the archive: the",
+      "User: Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: ARCHIVE NOTE — The conversation established that the",
+      "User: List every fact from the conversation above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:"
+    ],
+    "required_hits": 7,
+    "sources": [
+      {
+        "id": 65,
+        "kind": "turn",
+        "ntok": 63,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-11 value is Slate-1211. C7-Handle-11 is an alias for C7-Outpost-11.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 66,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-12 value is Slate-1212.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 67,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-13 value is Slate-1213.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 68,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-14 value is Slate-1214.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "start_prompt_mismatch": false,
+    "turn": 95
+  },
+  {
+    "FIX3_path": "YES: bound executed source, configured Harmony oracle, recorded stop short-circuit",
+    "accepted": false,
+    "all_attempts": [
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-outpost-17",
+          "slate-1218"
+        ],
+        "generated_tokens_from_decode_trace": 44,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-15",
+          "c7-outpost-16",
+          "c7-outpost-18",
+          "slate-1215",
+          "slate-1216",
+          "slate-1217"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 0,
+        "qc": true,
+        "raw_final_decode": " name “C7‑Outpost‑17” refers to a location, the code “Slate‑1218” refers to a value, and the time “10:00 AM” refers to a time.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "For the archive: the  name “C7‑Outpost‑17” refers to a location, the code “Slate‑1218” refers to a value, and the time “10:00 AM” refers to a time.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-outpost-18",
+          "slate-1218"
+        ],
+        "generated_tokens_from_decode_trace": 16,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-15",
+          "c7-outpost-16",
+          "c7-outpost-17",
+          "slate-1215",
+          "slate-1216",
+          "slate-1217"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 1,
+        "qc": true,
+        "raw_final_decode": " current C7‑Outpost‑18 value is Slate‑1218.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "ARCHIVE NOTE — The conversation established that the  current C7‑Outpost‑18 value is Slate‑1218.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE — The conversation established that the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.0,
+        "covered_facts": [
+          "c7-outpost-18",
+          "slate-1217"
+        ],
+        "generated_tokens_from_decode_trace": 82,
+        "hit_count": 0,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-15",
+          "c7-outpost-16",
+          "c7-outpost-17",
+          "slate-1215",
+          "slate-1216",
+          "slate-1218"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 2,
+        "qc": false,
+        "raw_final_decode": "  \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Outpost‑18** | 1 | The current “value” or designation of the outpost. |  \n| **Slate‑1217** | 2 | The value that the outpost is currently set to. |  \n\nNo other names, codes, numbers or times were mentioned.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "The facts to archive are:   \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Outpost‑18** | 1 | The current “value” or designation of the outpost. |  \n| **Slate‑1217** | 2 | The value that the outpost is currently set to. |  \n\nNo other names, codes, numbers or times were mentioned.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+      }
+    ],
+    "best_coverage": 0.25,
+    "best_hit_count": 2,
+    "best_missing_facts": [
+      "c7-outpost-15",
+      "c7-outpost-16",
+      "c7-outpost-18",
+      "slate-1215",
+      "slate-1216",
+      "slate-1217"
+    ],
+    "best_text": "For the archive: the  name “C7‑Outpost‑17” refers to a location, the code “Slate‑1218” refers to a value, and the time “10:00 AM” refers to a time.",
+    "binding_constraint": "coverage below 0.70; budget hits are additional candidate-level failures",
+    "digest_text": null,
+    "executed_arena_sha256": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+    "need": [
+      "c7-outpost-15",
+      "c7-outpost-16",
+      "c7-outpost-17",
+      "c7-outpost-18",
+      "slate-1215",
+      "slate-1216",
+      "slate-1217",
+      "slate-1218"
+    ],
+    "need_count": 8,
+    "origin": "FIX4_continuation",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-094-100/folds/099-71a7a9d8b7324a65934f918d78828724/result.json",
+    "recorded_start_prompts": [
+      "User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: CHRONICLE — In this period,",
+      "User: Combine the notes above into flowing sentences that state each fact together with what it means, quoting every name, code, number, and time exactly.\nAssistant: Combined record: during these conversations,",
+      "User: List every fact from the notes above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:"
+    ],
+    "required_hits": 6,
+    "sources": [
+      {
+        "id": 69,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-15 value is Slate-1215.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 70,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-16 value is Slate-1216.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 71,
+        "kind": null,
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-17 value is Slate-1217.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 72,
+        "kind": null,
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-18 value is Slate-1218.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "start_prompt_mismatch": true,
+    "turn": 99
+  },
+  {
+    "FIX3_path": "YES: bound executed source, configured Harmony oracle, recorded stop short-circuit",
+    "accepted": false,
+    "all_attempts": [
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-outpost-22",
+          "slate-1222"
+        ],
+        "generated_tokens_from_decode_trace": 14,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-19",
+          "c7-outpost-20",
+          "c7-outpost-21",
+          "slate-1219",
+          "slate-1220",
+          "slate-1221"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 0,
+        "qc": true,
+        "raw_final_decode": " C7‑Outpost‑22 is Slate‑1222.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "For the archive: the  C7‑Outpost‑22 is Slate‑1222.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-outpost-22",
+          "slate-1222"
+        ],
+        "generated_tokens_from_decode_trace": 16,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-19",
+          "c7-outpost-20",
+          "c7-outpost-21",
+          "slate-1219",
+          "slate-1220",
+          "slate-1221"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 1,
+        "qc": true,
+        "raw_final_decode": " current C7‑Outpost‑22 value is Slate‑1222.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "ARCHIVE NOTE — The conversation established that the  current C7‑Outpost‑22 value is Slate‑1222.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE — The conversation established that the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.0,
+        "covered_facts": [
+          "c7-outpost-22",
+          "slate-1221"
+        ],
+        "generated_tokens_from_decode_trace": 87,
+        "hit_count": 0,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-19",
+          "c7-outpost-20",
+          "c7-outpost-21",
+          "slate-1219",
+          "slate-1220",
+          "slate-1222"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 2,
+        "qc": false,
+        "raw_final_decode": "  \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Outpost‑22** | 1 | The current “value” of the outpost, a code that is being tracked. |  \n| **Slate‑1221** | 2 | The value that the outpost is currently set to. |  \n\nNo other names, codes, numbers or times were mentioned.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "The facts to archive are:   \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Outpost‑22** | 1 | The current “value” of the outpost, a code that is being tracked. |  \n| **Slate‑1221** | 2 | The value that the outpost is currently set to. |  \n\nNo other names, codes, numbers or times were mentioned.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+      }
+    ],
+    "best_coverage": 0.25,
+    "best_hit_count": 2,
+    "best_missing_facts": [
+      "c7-outpost-19",
+      "c7-outpost-20",
+      "c7-outpost-21",
+      "slate-1219",
+      "slate-1220",
+      "slate-1221"
+    ],
+    "best_text": "For the archive: the  C7‑Outpost‑22 is Slate‑1222.",
+    "binding_constraint": "coverage below 0.70; budget hits are additional candidate-level failures",
+    "digest_text": null,
+    "executed_arena_sha256": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+    "need": [
+      "c7-outpost-19",
+      "c7-outpost-20",
+      "c7-outpost-21",
+      "c7-outpost-22",
+      "slate-1219",
+      "slate-1220",
+      "slate-1221",
+      "slate-1222"
+    ],
+    "need_count": 8,
+    "origin": "FIX4_continuation",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-101-108/folds/103-2d04027c210443289c63a9655b90470e/result.json",
+    "recorded_start_prompts": [
+      "User: For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.\nAssistant: For the archive: the",
+      "User: Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: ARCHIVE NOTE — The conversation established that the",
+      "User: List every fact from the conversation above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:"
+    ],
+    "required_hits": 6,
+    "sources": [
+      {
+        "id": 73,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-19 value is Slate-1219.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 74,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-20 value is Slate-1220.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 75,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-21 value is Slate-1221.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 76,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-22 value is Slate-1222.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "start_prompt_mismatch": false,
+    "turn": 103
+  },
+  {
+    "FIX3_path": "YES: bound executed source, configured Harmony oracle, recorded stop short-circuit",
+    "accepted": false,
+    "all_attempts": [
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-outpost-26",
+          "slate-1226"
+        ],
+        "generated_tokens_from_decode_trace": 40,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-23",
+          "c7-outpost-24",
+          "c7-outpost-25",
+          "slate-1223",
+          "slate-1224",
+          "slate-1225"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 0,
+        "qc": true,
+        "raw_final_decode": " name “C7-Outpost-26” refers to a location, the code “Slate-1226” refers to a value, and the time “1226” refers to a time.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "For the archive: the  name “C7-Outpost-26” refers to a location, the code “Slate-1226” refers to a value, and the time “1226” refers to a time.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-outpost-26",
+          "slate-1226"
+        ],
+        "generated_tokens_from_decode_trace": 16,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-23",
+          "c7-outpost-24",
+          "c7-outpost-25",
+          "slate-1223",
+          "slate-1224",
+          "slate-1225"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 1,
+        "qc": true,
+        "raw_final_decode": " current C7‑Outpost‑26 value is Slate‑1226.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "ARCHIVE NOTE — The conversation established that the  current C7‑Outpost‑26 value is Slate‑1226.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE — The conversation established that the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.0,
+        "covered_facts": [
+          "c7-outpost-26",
+          "slate-1225"
+        ],
+        "generated_tokens_from_decode_trace": 80,
+        "hit_count": 0,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-23",
+          "c7-outpost-24",
+          "c7-outpost-25",
+          "slate-1223",
+          "slate-1224",
+          "slate-1226"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 2,
+        "qc": false,
+        "raw_final_decode": "  \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Outpost‑26** | 1 | The current “value” or designation of the outpost. |  \n| **Slate‑1225** | 2 | The value that the outpost was assigned. |  \n\nNo other names, codes, numbers or times were mentioned.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "The facts to archive are:   \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Outpost‑26** | 1 | The current “value” or designation of the outpost. |  \n| **Slate‑1225** | 2 | The value that the outpost was assigned. |  \n\nNo other names, codes, numbers or times were mentioned.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+      }
+    ],
+    "best_coverage": 0.25,
+    "best_hit_count": 2,
+    "best_missing_facts": [
+      "c7-outpost-23",
+      "c7-outpost-24",
+      "c7-outpost-25",
+      "slate-1223",
+      "slate-1224",
+      "slate-1225"
+    ],
+    "best_text": "For the archive: the  name “C7-Outpost-26” refers to a location, the code “Slate-1226” refers to a value, and the time “1226” refers to a time.",
+    "binding_constraint": "coverage below 0.70; budget hits are additional candidate-level failures",
+    "digest_text": null,
+    "executed_arena_sha256": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+    "need": [
+      "c7-outpost-23",
+      "c7-outpost-24",
+      "c7-outpost-25",
+      "c7-outpost-26",
+      "slate-1223",
+      "slate-1224",
+      "slate-1225",
+      "slate-1226"
+    ],
+    "need_count": 8,
+    "origin": "FIX4_continuation",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-101-108/folds/107-037ea1021147420cae7505b99d7bc897/result.json",
+    "recorded_start_prompts": [
+      "User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: CHRONICLE — In this period,",
+      "User: Combine the notes above into flowing sentences that state each fact together with what it means, quoting every name, code, number, and time exactly.\nAssistant: Combined record: during these conversations,",
+      "User: List every fact from the notes above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:"
+    ],
+    "required_hits": 6,
+    "sources": [
+      {
+        "id": 77,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-23 value is Slate-1223.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 78,
+        "kind": null,
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-24 value is Slate-1224.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 79,
+        "kind": null,
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-25 value is Slate-1225.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 80,
+        "kind": null,
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-26 value is Slate-1226.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "start_prompt_mismatch": true,
+    "turn": 107
+  },
+  {
+    "FIX3_path": "YES: bound executed source, configured Harmony oracle, recorded stop short-circuit",
+    "accepted": false,
+    "all_attempts": [
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-outpost-29",
+          "slate-1229"
+        ],
+        "generated_tokens_from_decode_trace": 41,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-27",
+          "c7-outpost-28",
+          "c7-outpost-30",
+          "slate-1227",
+          "slate-1228",
+          "slate-1230"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 0,
+        "qc": true,
+        "raw_final_decode": " name “C7-Outpost-29” refers to a location, the code “Slate-1229” refers to a value, and the time “12:29” refers to a time.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "For the archive: the  name “C7-Outpost-29” refers to a location, the code “Slate-1229” refers to a value, and the time “12:29” refers to a time.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-outpost-29",
+          "slate-1228"
+        ],
+        "generated_tokens_from_decode_trace": 16,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-27",
+          "c7-outpost-28",
+          "c7-outpost-30",
+          "slate-1227",
+          "slate-1229",
+          "slate-1230"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 1,
+        "qc": true,
+        "raw_final_decode": " current C7‑Outpost‑29 value is Slate‑1228.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "ARCHIVE NOTE — The conversation established that the  current C7‑Outpost‑29 value is Slate‑1228.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE — The conversation established that the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.0,
+        "covered_facts": [
+          "c7-outpost-29",
+          "slate-1228"
+        ],
+        "generated_tokens_from_decode_trace": 87,
+        "hit_count": 0,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-27",
+          "c7-outpost-28",
+          "c7-outpost-30",
+          "slate-1227",
+          "slate-1229",
+          "slate-1230"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 2,
+        "qc": false,
+        "raw_final_decode": "  \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Outpost‑29** | 1 | The current “value” of the outpost, a code that is being tracked. |  \n| **Slate‑1228** | 2 | The value that the outpost is currently set to. |  \n\nNo other names, codes, numbers or times were mentioned.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "The facts to archive are:   \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Outpost‑29** | 1 | The current “value” of the outpost, a code that is being tracked. |  \n| **Slate‑1228** | 2 | The value that the outpost is currently set to. |  \n\nNo other names, codes, numbers or times were mentioned.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+      }
+    ],
+    "best_coverage": 0.25,
+    "best_hit_count": 2,
+    "best_missing_facts": [
+      "c7-outpost-27",
+      "c7-outpost-28",
+      "c7-outpost-30",
+      "slate-1227",
+      "slate-1228",
+      "slate-1230"
+    ],
+    "best_text": "For the archive: the  name “C7-Outpost-29” refers to a location, the code “Slate-1229” refers to a value, and the time “12:29” refers to a time.",
+    "binding_constraint": "coverage below 0.70; budget hits are additional candidate-level failures",
+    "digest_text": null,
+    "executed_arena_sha256": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+    "need": [
+      "c7-outpost-27",
+      "c7-outpost-28",
+      "c7-outpost-29",
+      "c7-outpost-30",
+      "slate-1227",
+      "slate-1228",
+      "slate-1229",
+      "slate-1230"
+    ],
+    "need_count": 8,
+    "origin": "FIX4_continuation",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-109-116/folds/111-3ea748aa13dd40cfb399e9c3b3b7ce82/result.json",
+    "recorded_start_prompts": [
+      "User: For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.\nAssistant: For the archive: the",
+      "User: Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: ARCHIVE NOTE — The conversation established that the",
+      "User: List every fact from the conversation above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:"
+    ],
+    "required_hits": 6,
+    "sources": [
+      {
+        "id": 81,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-27 value is Slate-1227.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 82,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-28 value is Slate-1228.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 83,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-29 value is Slate-1229.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 84,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-30 value is Slate-1230.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "start_prompt_mismatch": false,
+    "turn": 111
+  },
+  {
+    "FIX3_path": "YES: bound executed source, configured Harmony oracle, recorded stop short-circuit",
+    "accepted": false,
+    "all_attempts": [
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-outpost-32",
+          "slate-1234"
+        ],
+        "generated_tokens_from_decode_trace": 14,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-31",
+          "c7-outpost-33",
+          "c7-outpost-34",
+          "slate-1231",
+          "slate-1232",
+          "slate-1233"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 0,
+        "qc": true,
+        "raw_final_decode": " C7‑Outpost‑32 is Slate‑1234.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "For the archive: the  C7‑Outpost‑32 is Slate‑1234.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.25,
+        "covered_facts": [
+          "c7-outpost-32",
+          "slate-1234"
+        ],
+        "generated_tokens_from_decode_trace": 16,
+        "hit_count": 2,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-31",
+          "c7-outpost-33",
+          "c7-outpost-34",
+          "slate-1231",
+          "slate-1232",
+          "slate-1233"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 1,
+        "qc": true,
+        "raw_final_decode": " current C7‑Outpost‑32 value is Slate‑1234.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "ARCHIVE NOTE — The conversation established that the  current C7‑Outpost‑32 value is Slate‑1234.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE — The conversation established that the"
+      },
+      {
+        "budget_exhausted": false,
+        "coverage": 0.0,
+        "covered_facts": [
+          "c7-outpost-32",
+          "slate-1234"
+        ],
+        "generated_tokens_from_decode_trace": 81,
+        "hit_count": 0,
+        "lexical_coverage_before_QC": 0.25,
+        "missing_facts": [
+          "c7-outpost-31",
+          "c7-outpost-33",
+          "c7-outpost-34",
+          "slate-1231",
+          "slate-1232",
+          "slate-1233"
+        ],
+        "need_count": 8,
+        "prompt_evidence_class": "source-bound reconstruction; runtime input token IDs not recorded",
+        "prompt_index": 2,
+        "qc": false,
+        "raw_final_decode": "  \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Outpost‑32** | 1 | The current “value” or identifier for the outpost. |  \n| **Slate‑1234** | 1 | The value that was assigned to the outpost. |  \n\nNo other names, codes, numbers or times were mentioned.<|return|>",
+        "relaxed_list": false,
+        "stop": "<|return|>",
+        "text": "The facts to archive are:   \n\n| Item | Reference | Meaning |  \n|------|-----------|---------|  \n| **C7‑Outpost‑32** | 1 | The current “value” or identifier for the outpost. |  \n| **Slate‑1234** | 1 | The value that was assigned to the outpost. |  \n\nNo other names, codes, numbers or times were mentioned.",
+        "wrapped_prompt_reconstruction": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+      }
+    ],
+    "best_coverage": 0.25,
+    "best_hit_count": 2,
+    "best_missing_facts": [
+      "c7-outpost-31",
+      "c7-outpost-33",
+      "c7-outpost-34",
+      "slate-1231",
+      "slate-1232",
+      "slate-1233"
+    ],
+    "best_text": "For the archive: the  C7‑Outpost‑32 is Slate‑1234.",
+    "binding_constraint": "coverage below 0.70; budget hits are additional candidate-level failures",
+    "digest_text": null,
+    "executed_arena_sha256": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+    "need": [
+      "c7-outpost-31",
+      "c7-outpost-32",
+      "c7-outpost-33",
+      "c7-outpost-34",
+      "slate-1231",
+      "slate-1232",
+      "slate-1233",
+      "slate-1234"
+    ],
+    "need_count": 8,
+    "origin": "FIX4_continuation",
+    "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-109-116/folds/115-636a4f13086f4af6bdbd6dbf0b5d1614/result.json",
+    "recorded_start_prompts": [
+      "User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: CHRONICLE — In this period,",
+      "User: Combine the notes above into flowing sentences that state each fact together with what it means, quoting every name, code, number, and time exactly.\nAssistant: Combined record: during these conversations,",
+      "User: List every fact from the notes above: every name, code, number, and time, and what each one refers to.\nAssistant: The facts to archive are:"
+    ],
+    "required_hits": 6,
+    "sources": [
+      {
+        "id": 85,
+        "kind": "turn",
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-31 value is Slate-1231.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 86,
+        "kind": null,
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-32 value is Slate-1232.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 87,
+        "kind": null,
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-33 value is Slate-1233.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      {
+        "id": 88,
+        "kind": null,
+        "ntok": 46,
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Outpost-34 value is Slate-1234.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      }
+    ],
+    "start_prompt_mismatch": true,
+    "turn": 115
+  }
+]
