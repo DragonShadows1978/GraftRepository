@@ -32,7 +32,7 @@ MUTANTS = {
     "physical_mount_guard_removed": ('if page_fault and tuple(mounted) != row.page_ids:', 'if False:'),
     "relation_identity_collapsed": ('normalize(self.relation)', '"any_relation"'),
 }
-BASELINE = ["tests/test_grm_x1_units.py", "tests/test_grm_x1_addresses.py", "tests/test_grm_x1_campaign.py",
+BASELINE = ["tests/test_grm_x1_reduced.py", "tests/test_grm_x1_units.py", "tests/test_grm_x1_addresses.py", "tests/test_grm_x1_campaign.py",
             "tests/test_grm_rt1_split_child_routing.py", "tests/test_grm_rs3_capture_pin_seat.py"]
 
 

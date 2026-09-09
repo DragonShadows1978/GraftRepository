@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# r4: 72 units, 71 new leases; validated r3 alias_00 reused, never rerun.
 # Lead only. Each run below is one foreground lease (<=590 s outer rail).
 # Prior art: house X1 foreground controller (2026); new per-query resume loop.
 # NON_FIT_BUDGET and registered stops exit for lead decision. A lone UNIT_RED
@@ -7,7 +8,7 @@ set -euo pipefail
 cd /mnt/ForgeRealm/wt/grm-x1
 trap 'bash scripts/grm_x1_lead_gpu.sh summary' EXIT
 bash scripts/grm_x1_lead_gpu.sh preflight
-for cell in oracle_m1_s0 oracle_m1_s1 oracle_m10_s0 oracle_m10_s1 oracle_m100_s0 oracle_m100_s1 natural_m1 natural_m10 natural_m100; do
+for cell in oracle_m1_s0 oracle_m100_s0 natural_m1 natural_m100; do
     while true; do
         result=$(bash scripts/grm_x1_lead_gpu.sh run "$cell")
         printf '%s\n' "$result"

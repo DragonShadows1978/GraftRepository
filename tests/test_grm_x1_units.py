@@ -17,8 +17,9 @@ from test_grm_x1_campaign import synthetic_rows
 def r3_tree(tmp_path, monkeypatch):
     original = c.ROOT
     out = tmp_path / 'artifacts/grm_x1'
-    frozen_sources = c.source_manifest()
-    shutil.copytree(c.OUT, out, ignore=shutil.ignore_patterns('sessions', 'r3'))
+    frozen_sources = c.read(c.OUT / 'continuation_03.json')['sources']
+    shutil.copytree(c.OUT, out, ignore=shutil.ignore_patterns('sessions', 'r3', 'r4', 'continuation_04*'))
+    shutil.copyfile(out / 'lead_commands_r3.txt', out / 'lead_commands.txt')
     registration = c.read(out / 'continuation_03_registration.json')
     for name in ['orders/GRM_X1_AMENDMENT_3.md', 'orders/GRM_X1_AMENDMENT_2.md']:
         target = tmp_path / name

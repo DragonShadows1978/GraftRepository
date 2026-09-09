@@ -24,13 +24,32 @@ from scripts.grm_x1_register import create, raw_json, sha
 REG_SHA = "0262299553a7123b297488383de9cfd4bf3922a1195e9f23e7068ac4f00a4729"
 
 
-def units():
+def epoch():
+    return 'r4' if (c.OUT / 'continuation_04.json').exists() else 'r3'
+
+
+def continuation_path():
+    supplement = c.OUT / 'continuation_04_source_amendment_01.json'
+    if epoch() == 'r4' and supplement.exists():
+        return supplement
+    return c.OUT / ('continuation_04.json' if epoch() == 'r4' else 'continuation_03.json')
+
+
+def active_cells():
+    layout = c.read(c.FIX / 'cells.json')
+    if epoch() == 'r4':
+        selected = c.read(c.OUT / 'continuation_04_registration.json')['cells']
+        return [cell for cell in layout if cell['cell'] in selected]
+    return layout
+
+
+def units(full=False):
     # House X1 (2026): retain global ordinal for RNG/arm rotation; filtering
     # to one query changes checkpoint boundaries only, never the paired order.
     queries = {q['query_id']: (i, q) for i, q in enumerate(c.queries())}
     return [{**cell, 'unit_id': f"{cell['cell']}__{qid}", 'query_ids': [qid],
              'query_ordinal': queries[qid][0], 'family_id': queries[qid][1]['family_id']}
-            for cell in c.read(c.FIX / 'cells.json') for qid in cell['query_ids']]
+            for cell in (c.read(c.FIX / 'cells.json') if full else active_cells()) for qid in cell['query_ids']]
 
 
 def sources():
@@ -82,6 +101,9 @@ def seal():
 
 
 def validate():
+    if epoch() == 'r4':
+        from scripts.grm_x1_reduced import validate as reduced_validate
+        return reduced_validate()
     path = c.OUT / 'continuation_03.json'
     if sha(path) != (c.OUT / 'continuation_03.sha256').read_text().split()[0]:
         raise ValueError('r3 continuation SHA mismatch')
@@ -98,7 +120,7 @@ def fingerprint():
     current = c.dependency_inventory()
     if current != frozen['dependencies'] or current['missing']:
         raise ValueError('lead dependencies missing or drifted from handoff')
-    return sha(c.OUT / 'continuation_03.json')
+    return sha(continuation_path())
 
 
 def key(unit, attempt):
@@ -122,8 +144,11 @@ def check_rows(unit, rows, complete):
 def record(unit, attempt, fp, status, rows, wall, error=None, non_fit=False, session_digests=None):
     # House X1 create-only receipts (2026). Deterministic attempt pathname
     # prevents a changed payload from creating a second receipt for one unit.
+    if epoch() == 'r4':
+        from scripts.grm_x1_reduced import classify_rows
+        rows = classify_rows(rows)
     check_rows(unit, rows, status == 'COMPLETE')
-    value = {'schema': 'grm.x1.gpu-unit.v3', 'unit_id': unit['unit_id'],
+    value = {'schema': 'grm.x1.gpu-unit.v4' if epoch() == 'r4' else 'grm.x1.gpu-unit.v3', 'unit_id': unit['unit_id'],
              'cell': unit['cell'], 'attempt': attempt, 'fingerprint': fp,
              'registration_sha256': sha(c.OUT / 'registration.json'),
              'status': status, 'fit_status': 'NON_FIT' if non_fit else 'FIT' if status == 'COMPLETE' else 'UNKNOWN',
@@ -131,19 +156,24 @@ def record(unit, attempt, fp, status, rows, wall, error=None, non_fit=False, ses
              'session_digests': session_digests or {}, 'error': error,
              'completed_unix_ns': time.time_ns(), 'evidence_class': 'E2E session receipt'}
     value['content_sha256'] = rows_digest(value)
-    path = c.OUT / 'receipts/r3' / f'{key(unit, attempt)}_{fp}.json'
+    path = c.OUT / 'receipts' / epoch() / f'{key(unit, attempt)}_{fp}.json'
     create(path, raw_json(value))
     return path
 
 
 def state():
     manifest = validate()
-    fp = sha(c.OUT / 'continuation_03.json')
+    fp = sha(continuation_path())
     layout = manifest['units']
     index = {u['unit_id']: u for u in layout}
     claims, receipts = {}, {}
     for folder, target in [('claims', claims), ('receipts', receipts)]:
-        for path in sorted((c.OUT / folder / 'r3').glob('*.json')):
+        paths = sorted((c.OUT / folder / epoch()).glob('*.json'))
+        reused = None
+        if epoch() == 'r4':
+            reused = c.ROOT / manifest['reuse']['claim_path' if folder == 'claims' else 'receipt_path']
+            paths = [reused, *paths]
+        for path in paths:
             if path.name.startswith('controller_'):
                 continue
             value = c.read(path)
@@ -152,7 +182,8 @@ def state():
                 raise ValueError('invalid unit/attempt identity')
             unit = index[uid]
             identity = key(unit, attempt)
-            if path.name != f'{identity}_{fp}.json' or value['fingerprint'] != fp or value['cell'] != unit['cell']:
+            expected_fp = c.read(c.OUT / 'continuation_04_registration.json')['predecessor_sha256'] if path == reused else fp
+            if path.name != f'{identity}_{expected_fp}.json' or value['fingerprint'] != expected_fp or value['cell'] != unit['cell']:
                 raise ValueError('invalid unit fingerprint/path/cell')
             if identity in target:
                 raise ValueError('duplicate unit evidence')
@@ -171,6 +202,10 @@ def state():
                 if value['status'] == 'COMPLETE' and (wall > 280 or value['fit_status'] != 'FIT'):
                     raise ValueError('completed unit exceeds work rail')
                 check_rows(unit, value['rows'], value['status'] == 'COMPLETE')
+                if epoch() == 'r4' and path != reused:
+                    from scripts.grm_x1_reduced import served_text_class
+                    if any(row.get('served_text_class') != served_text_class(row) for row in value['rows']):
+                        raise ValueError('invalid served text class')
             target[identity] = {**value, 'path': str(path.relative_to(c.ROOT)), 'sha256': sha(path)}
     if receipts.keys() - claims.keys():
         raise ValueError('unit receipt without claim')
@@ -190,20 +225,21 @@ def state():
         # in the aggregate. Failed units can never unlock the natural phase.
         if latest:
             all_rows.extend(latest['rows'])
-    result = c.aggregate(all_rows)
+    result = c.aggregate(all_rows, cells=active_cells() if epoch() == 'r4' else None)
     stop = any(s['red_count'] >= 2 or s['status'] == 'INCOMPLETE_CLAIM' for s in unit_states.values())
     red = any(s['red_count'] for s in unit_states.values())
     incomplete = len(claims.keys() - receipts.keys())
     actual_wall = sum(r['worker_wall_s'] for r in receipts.values())
+    cap = manifest['budget']['total_s']
     charged = 570 + actual_wall + 285 * incomplete
     successful = sorted((r for r in receipts.values() if r['status'] == 'COMPLETE'), key=lambda r: (r['completed_unix_ns'], r['unit_id']))
     estimate = successful[0]['worker_wall_s'] if successful else None
     remaining = sum(s['status'] == 'PENDING' for s in unit_states.values())
     projection = 570 + len(layout) * estimate if estimate is not None else None
     remaining_projection = charged + remaining * estimate if estimate is not None else None
-    budget_nonfit = charged > 5400 or (projection is not None and max(projection, remaining_projection) > 5400)
+    budget_nonfit = charged > cap or (projection is not None and max(projection, remaining_projection) > cap)
     cells = {}
-    for cell in c.read(c.FIX / 'cells.json'):
+    for cell in active_cells():
         selected = [unit_states[u['unit_id']] for u in layout if u['cell'] == cell['cell']]
         cells[cell['cell']] = {'status': 'COMPLETE' if all(s['attempts'] for s in selected) else 'PENDING',
                 'unit_count': len(selected), 'receipted_units': sum(bool(s['attempts']) for s in selected),
@@ -220,16 +256,29 @@ def state():
         verdict = ('KILLED' if any(result['kill'].values()) else 'ORACLE_NOT_POSITIVE' if not result['oracle_positive']
                    else 'ORACLE_POSITIVE_NATURAL_PENDING' if result['predictions']['S5'] is None
                    else 'COMPLETE_REGISTERED_BENEFIT_RETAINED')
-    return {**result, 'active_epoch': 'r3', 'fingerprint': fp, 'units': unit_states, 'cells': cells,
+    if epoch() == 'r4':
+        from scripts.grm_x1_reduced import text_counts, classify_rows
+        result.update({'served_text_counts': text_counts(all_rows),
+                       'served_text_by_arm_condition': {f'{arm}/{cond}': text_counts([
+                           r for r in all_rows if r['arm'] == arm and r['condition'] == cond])
+                           for arm in ('A', 'B', 'C', 'N') for cond in ('present', 'absent')},
+                       'reused_unit': manifest['reuse'],
+                       'reused_rows_diagnostic': classify_rows(c.read(c.ROOT / manifest['reuse']['receipt_path'])['rows']),
+                       'not_run': manifest['not_run'],
+                       'r4_worker_wall_s': sum(r['worker_wall_s'] for r in receipts.values() if r['fingerprint'] == fp),
+                       'r3_worker_wall_s': manifest['reuse']['worker_wall_s'],
+                       'population_note': manifest['natural_unlock']})
+    return {**result, 'active_epoch': epoch(), 'fingerprint': fp, 'units': unit_states, 'cells': cells,
             'cell_status': {k: v['status'] for k, v in cells.items()}, 'historical_red': historical,
             'claims': claims, 'receipts': receipts, 'failed': bool(red or stop), 'stop': stop,
             'campaign_verdict': verdict, 'budget_nonfit': budget_nonfit,
-            'reservation_cap_s': 5400, 'historical_consumed_s': 570, 'charged_gpu_s': charged,
-            'r3_worker_wall_s': actual_wall, 'outstanding_reserved_s': incomplete * 285,
+            'reservation_cap_s': cap, 'historical_consumed_s': 570, 'charged_gpu_s': charged,
+            'active_and_reused_worker_wall_s': actual_wall,
+            **({'r3_worker_wall_s': actual_wall} if epoch() == 'r3' else {}), 'outstanding_reserved_s': incomplete * 285,
             'first_completed_unit': successful[0]['unit_id'] if successful else None,
             'planning_estimate_s': estimate, 'projected_total_s': projection,
             'projected_remaining_total_s': remaining_projection, 'unit_count': len(layout),
-            'timing_note': 'Per-unit wall unknown until first completed r3 unit; r2 was a cell timeout.'}
+            'timing_note': 'Planning uses first completed unit measured wall; not a bound on later units.'}
 
 
 def next_unit(requested=None, retry_unit=None):
@@ -264,7 +313,7 @@ def next_unit(requested=None, retry_unit=None):
             break
     if unit is None:
         return None, 'CELL_COMPLETE' if requested else 'NO_ELIGIBLE_UNIT', 1
-    if current['charged_gpu_s'] + 285 > 5400:
+    if current['charged_gpu_s'] + 285 > current['reservation_cap_s']:
         return None, 'NON_FIT_BUDGET', attempt
     return unit, 'READY', attempt
 
@@ -281,7 +330,8 @@ def dry_run():
                        'units': [u for u in manifest['units'] if u['cell'] == cell['cell']],
                        'turns': len(cell['query_ids']) * len(cell['arms']) * len(cell['conditions']),
                        'command': f"bash scripts/grm_x1_lead_gpu.sh run {cell['cell']}",
-                       'conditional': cell['phase'] == 'natural'} for cell in c.read(c.FIX / 'cells.json')]}
+                       'conditional': cell['phase'] == 'natural'} for cell in active_cells()],
+            'not_run': manifest.get('not_run', [])}
 
 
 def controller(requested=None, retry_unit=None):
@@ -318,7 +368,7 @@ def controller(requested=None, retry_unit=None):
               'returncode': run.returncode, 'fingerprint': fp, 'outer_wall_s': wall,
               'outer_within_rail': wall <= 590, 'reason': current['campaign_verdict'],
               'evidence_class': 'process receipt', 'command': command}
-    c.emit_receipt('controller', result, directory=c.OUT / 'receipts/r3')
+    c.emit_receipt('controller', result, directory=c.OUT / 'receipts' / epoch())
     return result
 
 
@@ -356,9 +406,9 @@ def worker(cell_id, fp, unit_id, attempt):
     claim = {'cell': cell_id, 'unit_id': unit_id, 'attempt': attempt, 'fingerprint': fp,
              'reserved_gpu_s': 285, 'pid': os.getpid(), 'started_unix': time.time(),
              'evidence_class': 'process reservation'}
-    create(c.OUT / 'claims/r3' / f'{key(unit, attempt)}_{fp}.json', raw_json(claim))
+    create(c.OUT / 'claims' / epoch() / f'{key(unit, attempt)}_{fp}.json', raw_json(claim))
     rows, error, status, non_fit = [], None, 'COMPLETE', False
-    directory = c.OUT / 'sessions/r3' / f'{key(unit, attempt)}_{fp}'
+    directory = c.OUT / 'sessions' / epoch() / f'{key(unit, attempt)}_{fp}'
     def expired(_sig, _frame):
         raise TimeoutError('GRM-X1 unit reached its 280 s work rail (285 s worker allowance)')
     previous = signal.signal(signal.SIGALRM, expired)

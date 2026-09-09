@@ -166,12 +166,18 @@ def metric(rows):
             "mean_wall_s": sum(r["wall_s"] for r in rows) / n}
 
 
-def aggregate(rows):
+def aggregate(rows, cells=None):
+    # Prior art: house X1 r1 (2026) thresholds reused verbatim. Amendment 4
+    # (lead, 2026) changes required population only, not row scoring or gates.
+    multiplicities = sorted({cell['multiplicity'] for cell in cells}) if cells is not None else (1, 10, 100)
     table = {f"{arm}/{m}/{cond}": metric([r for r in rows if r["arm"] == arm
                 and r["multiplicity"] == m and (cond == "all" or r["condition"] == cond)])
              for arm in ("A", "B", "C", "N") for m in (1, 10, 100) for cond in ("present", "absent", "all")}
     required = {(q["query_id"], m, arm, cond) for q in queries()
                 for m in (1, 10, 100) for arm in ("A", "B", "C") for cond in ("present", "absent")}
+    if cells is not None:
+        required = {(qid, cell['multiplicity'], arm, cond) for cell in cells if cell['phase'] == 'oracle'
+                    for qid in cell['query_ids'] for arm in cell['arms'] for cond in cell['conditions']}
     observed = [(r["query_id"], r["multiplicity"], r["arm"], r["condition"]) for r in rows if r["arm"] != "N"]
     complete = len(observed) == len(required) and set(observed) == required
     result = {"evidence_class": "E2E session receipt" if rows else "reasoning: GPU blocked/no observations",
@@ -188,14 +194,14 @@ def aggregate(rows):
     if not complete:
         return result
     exact = lambda a, m: table[f"{a}/{m}/present"]["exact_rate"]
-    b = [exact("B", m) for m in (1, 10, 100)]
+    b = [exact("B", m) for m in multiplicities]
     coverage = all(r.get("address_coverage") is True for r in rows
                    if r["arm"] in ("B", "C") and r["condition"] == "present")
     a_false = table["A/100/all"]["false_rate"]
     ratios = {f"{a}/{m}": table[f"{a}/{m}/all"]["mean_wall_s"] / table[f"A/{m}/all"]["mean_wall_s"]
-              for a in ("B", "C") for m in (1, 10, 100)}
-    c_faults = all(table[f"C/{m}/absent"]["false_rate"] == 0 for m in (1, 10, 100))
-    c_retains = all(exact("C", m) >= exact("B", m) - .05 for m in (1, 10, 100))
+              for a in ("B", "C") for m in multiplicities}
+    c_faults = all(table[f"C/{m}/absent"]["false_rate"] == 0 for m in multiplicities)
+    c_retains = all(exact("C", m) >= exact("B", m) - .05 for m in multiplicities)
     result["oracle_positive"] = bool(min(b) >= .80 and max(b) - min(b) <= .05
         and exact("B", 100) - exact("A", 100) >= .20 and coverage and c_faults and c_retains)
     result["kill"] = {"ranking_dependence_with_correct_address": not coverage,
@@ -211,9 +217,12 @@ def aggregate(rows):
     result["wall_ratios"] = ratios
     natural = [r for r in rows if r["arm"] == "N"]
     required_n = {(q["query_id"], m, cond) for q in queries() for m in (1, 10, 100) for cond in ("present", "absent")}
+    if cells is not None:
+        required_n = {(qid, cell['multiplicity'], cond) for cell in cells if cell['phase'] == 'natural'
+                      for qid in cell['query_ids'] for cond in cell['conditions']}
     observed_n = [(r["query_id"], r["multiplicity"], r["condition"]) for r in natural]
     if len(observed_n) == len(required_n) and set(observed_n) == required_n:
-        result["predictions"]["S5"] = all(exact("N", m) >= exact("C", m) - .05 for m in (1, 10, 100))
+        result["predictions"]["S5"] = all(exact("N", m) >= exact("C", m) - .05 for m in multiplicities)
         result["kill"]["natural_erases_benefit"] = (not result["predictions"]["S5"] or exact("N", 100) - exact("A", 100) < .20)
     return result
 
@@ -546,7 +555,7 @@ def worker(cell_id, fp):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("command", nargs="?", default="list",
-                        choices=("list", "check", "preflight", "seal", "seal-continuation", "seal-units", "summary", "run", "resume", "_worker"))
+                        choices=("list", "check", "preflight", "seal", "seal-continuation", "seal-units", "seal-reduced", "summary", "run", "resume", "_worker"))
     parser.add_argument("cell", nargs="?")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--fingerprint")
@@ -572,6 +581,9 @@ def main():
     elif args.command == "seal-units":
         from scripts import grm_x1_units
         result = grm_x1_units.seal()
+    elif args.command == "seal-reduced":
+        from scripts.grm_x1_reduced import seal as seal_reduced
+        result = seal_reduced()
     elif args.command == "summary":
         result = summary()
     else:

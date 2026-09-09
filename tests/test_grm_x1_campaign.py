@@ -12,8 +12,11 @@ from scripts.grm_x1_gpu import clone_node, duplicate_children, payload_digest
 from scripts.grm_x1_register import create
 
 
-def test_frozen_fixture_hashes_queries_and_gpu_matrix():
+def test_frozen_fixture_hashes_queries():
     assert c.verify_fixtures()["queries"] == 24
+
+
+def test_frozen_fixture_hashes_queries_and_gpu_matrix(continuation_tree):
     matrix = c.dry_run()
     assert [row["turns"] for row in matrix["cells"]] == [72] * 6 + [48] * 3
     if (c.OUT / "continuation_03.json").exists():
@@ -226,7 +229,7 @@ def continuation_tree(tmp_path, monkeypatch):
     root = c.ROOT
     sources = c.read(c.OUT / "continuation_02.json")["sources"].copy()
     out = tmp_path / "artifacts/grm_x1"
-    shutil.copytree(c.OUT, out, ignore=shutil.ignore_patterns("sessions", "r2", "r3", "continuation_03*"))
+    shutil.copytree(c.OUT, out, ignore=shutil.ignore_patterns("sessions", "r2", "r3", "r4", "continuation_03*", "continuation_04*"))
     shutil.copyfile(out / "lead_commands_r2.txt", out / "lead_commands.txt")
     order = tmp_path / "orders/GRM_X1_AMENDMENT_2.md"
     order.parent.mkdir()
