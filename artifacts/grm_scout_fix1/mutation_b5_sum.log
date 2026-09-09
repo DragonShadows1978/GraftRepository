@@ -1,0 +1,19 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________________ test_wc1_token_seats_and_resume_dedup _____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-739/test_wc1_token_seats_and_resum0')
+
+    def test_wc1_token_seats_and_resume_dedup(tmp_path):
+        first = write_session(tmp_path/'first', [row(1, [0, 1], 70), row(2, [], 0)])
+        resumed = write_session(tmp_path/'resume', [row(1, [0], 900), row(3, [3], 20)])
+        result = wc1._turn_stats([first, resumed])
+        assert result['turns_counted'] == 3
+        assert result['mean_resident_seats_per_turn'] == 1.0  # old graft-count key
+>       assert result['mean_resident_token_seats_per_turn'] == 30.0
+E       assert 1.0 == 30.0
+
+tests/test_grm_scout_fix1_wc1.py:26: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_scout_fix1_wc1.py::test_wc1_token_seats_and_resume_dedup
+1 failed in 0.14s

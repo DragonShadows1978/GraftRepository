@@ -1,0 +1,8 @@
+{
+  "core/grm_demand.py": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3",
+  "core/grm_three_pass.py": "71e0e4f8503d4e132101fc79cce9d64daf399ffe73892e2f0102c8568d0ec0f3",
+  "core/graft_repository.py": "e0a0fc777d3c0f535ec915238390d7c1f1a6d43e927976351b8441a1b1358e89",
+  "scripts/grm_wc1_results.py": "9c1e3650977857d47bb8fd20613219d562372ee5e510ffd9bb38843ef9e97980",
+  "orders/GRM_SCOUT_FIX_1.md": "422bcc150b2359c2e1158c1ecee56215880c612af79cac0e4fe92dce25392b92",
+  "artifacts/grm_scout_fix1/REGISTRATION.md": "55bf547490f8b1c749b875966fb5b1e26eb157ad58c1107fac3390ae9076f158"
+}

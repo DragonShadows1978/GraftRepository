@@ -1,0 +1,81 @@
+{
+  "results": [
+    {
+      "name": "b1_flush_guard",
+      "exit_code": 1,
+      "killed": true,
+      "test": "tests/test_grm_scout_fix1_demand.py::test_final_flush_only_fire_keeps_completed_answer",
+      "log": "artifacts/grm_scout_fix1/mutation_b1_flush_guard.log",
+      "command": [
+        "/usr/bin/python",
+        "/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_scout_fix1/run_snapshot_tests.py",
+        "/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_scout_fix1/mutants/b1_flush_guard",
+        "-q",
+        "tests/test_grm_scout_fix1_demand.py::test_final_flush_only_fire_keeps_completed_answer"
+      ]
+    },
+    {
+      "name": "b2_admission_prefix",
+      "exit_code": 1,
+      "killed": true,
+      "test": "tests/test_grm_scout_fix1_receipt.py::test_rt1_receipt_projection",
+      "log": "artifacts/grm_scout_fix1/mutation_b2_admission_prefix.log",
+      "command": [
+        "/usr/bin/python",
+        "/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_scout_fix1/run_snapshot_tests.py",
+        "/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_scout_fix1/mutants/b2_admission_prefix",
+        "-q",
+        "tests/test_grm_scout_fix1_receipt.py::test_rt1_receipt_projection"
+      ]
+    },
+    {
+      "name": "b3_serialize",
+      "exit_code": 1,
+      "killed": true,
+      "test": "tests/test_grm_scout_fix1_manifest.py::test_capture_save_reload_round_trip",
+      "log": "artifacts/grm_scout_fix1/mutation_b3_serialize.log",
+      "command": [
+        "/usr/bin/python",
+        "/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_scout_fix1/run_snapshot_tests.py",
+        "/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_scout_fix1/mutants/b3_serialize",
+        "-q",
+        "tests/test_grm_scout_fix1_manifest.py::test_capture_save_reload_round_trip"
+      ]
+    },
+    {
+      "name": "b3_reload",
+      "exit_code": 1,
+      "killed": true,
+      "test": "tests/test_grm_scout_fix1_manifest.py::test_capture_save_reload_round_trip",
+      "log": "artifacts/grm_scout_fix1/mutation_b3_reload.log",
+      "command": [
+        "/usr/bin/python",
+        "/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_scout_fix1/run_snapshot_tests.py",
+        "/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_scout_fix1/mutants/b3_reload",
+        "-q",
+        "tests/test_grm_scout_fix1_manifest.py::test_capture_save_reload_round_trip"
+      ]
+    },
+    {
+      "name": "b5_sum",
+      "exit_code": 1,
+      "killed": true,
+      "test": "tests/test_grm_scout_fix1_wc1.py::test_wc1_token_seats_and_resume_dedup",
+      "log": "artifacts/grm_scout_fix1/mutation_b5_sum.log",
+      "command": [
+        "/usr/bin/python",
+        "/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_scout_fix1/run_snapshot_tests.py",
+        "/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_scout_fix1/mutants/b5_sum",
+        "-q",
+        "tests/test_grm_scout_fix1_wc1.py::test_wc1_token_seats_and_resume_dedup"
+      ]
+    }
+  ],
+  "production_sources_unchanged": true,
+  "source_sha256": {
+    "core/graft_repository.py": "2bb38b8efd8f75f3d189ade592133f3a40b245182b98c04b485976d5b2ed4311",
+    "core/grm_demand.py": "daf787a95abbfd206638f5fbf74de2ee57efaaa54b4eac39509402e1386650e0",
+    "core/grm_three_pass.py": "f8ad848165bba7f28a13757fb2e9644ff0eb63a4127158ce2a20ce6189cd11ae",
+    "scripts/grm_wc1_results.py": "1d8e9bc957b59f26c98dad021c020cb8ab26bc0c1acadba30f96f52d5fde36ec"
+  }
+}

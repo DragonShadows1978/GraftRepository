@@ -1,0 +1,40 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+____________________ test_rt1_receipt_projection[demoted0] _____________________
+
+demoted = []
+
+    @pytest.mark.parametrize('demoted', [[], [2]])
+    def test_rt1_receipt_projection(demoted):
+        fields = rt1_info_fields(demoted=demoted, split_members=[2, 3], ranking_before=[2, 0, 3])
+        base = build_route_receipt(session_id='fix1', turn_id='0', info={'admission_policy': 'A-DEC'})
+        result = build_route_receipt(session_id='fix1', turn_id='0', info={'admission_policy': 'A-DEC', **fields})
+        assert result['schema'] == base['schema'] == 'grm.route_receipt.v1'
+        for key, value in fields.items():
+            assert result['admission'][key.removeprefix('admission_')] == value
+>           assert result['fit']['info_pass_through'][key] == value
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'admission_split_child_demoted'
+
+tests/test_grm_scout_fix1_receipt.py:18: KeyError
+____________________ test_rt1_receipt_projection[demoted1] _____________________
+
+demoted = [2]
+
+    @pytest.mark.parametrize('demoted', [[], [2]])
+    def test_rt1_receipt_projection(demoted):
+        fields = rt1_info_fields(demoted=demoted, split_members=[2, 3], ranking_before=[2, 0, 3])
+        base = build_route_receipt(session_id='fix1', turn_id='0', info={'admission_policy': 'A-DEC'})
+        result = build_route_receipt(session_id='fix1', turn_id='0', info={'admission_policy': 'A-DEC', **fields})
+        assert result['schema'] == base['schema'] == 'grm.route_receipt.v1'
+        for key, value in fields.items():
+            assert result['admission'][key.removeprefix('admission_')] == value
+>           assert result['fit']['info_pass_through'][key] == value
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'admission_split_child_demoted'
+
+tests/test_grm_scout_fix1_receipt.py:18: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_grm_scout_fix1_receipt.py::test_rt1_receipt_projection[demoted0]
+FAILED tests/test_grm_scout_fix1_receipt.py::test_rt1_receipt_projection[demoted1]
+2 failed in 0.05s
