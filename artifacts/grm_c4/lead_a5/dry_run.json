@@ -1,0 +1,1119 @@
+{
+  "gpu_executed": false,
+  "amendment": {
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/amendment_a7.json",
+    "sha256": "e3ab21e4974a11b2d8499233b220ed02dbd2778b9e2023ca1272f1ea416a6d65",
+    "bytes": 36076
+  },
+  "budget_amendment": {
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a4/amendment_a6.json",
+    "sha256": "f28963404f0e0498d11cbc8368c83846eb0b33945df95583ddb301174425359d",
+    "bytes": 4516
+  },
+  "budget": {
+    "authorized_by": "Lead, orders/GRM_C4_AMENDMENT_1.md, 2026-09-09",
+    "cooldown_seconds": 30,
+    "estimate_class": "Planning assumption: sup 60s/fixture, census and 8-turn LH segments 80s each including load/save; unvalidated on this sandbox; stop at rail without retry.",
+    "full_fixed_geometry_estimate_seconds": 4800,
+    "full_fixed_geometry_status": "PLANNING_FIT_AT_CAP_UNVALIDATED",
+    "gpu_seconds": 5400,
+    "lock": "/tmp/forge-gpu.lock",
+    "lock_wait_seconds": 0,
+    "new_cells_estimate_seconds": 4800,
+    "outer_seconds": 590,
+    "planning_cooldown_seconds": 1890,
+    "reserve_note": "285s full-worker reservation unchanged. At exactly estimated unit times the final worker needs 5005s cumulative reservation, so a 4800s estimate does not guarantee completion under the 4800s cap; stop NON_FIT if reserve fails. Cooldown is outside GPU budget.",
+    "stop": "One timeout stops its chain; no retry or longer lease. Reserve full 285s before each worker against remaining total.",
+    "worker_seconds": 285
+  },
+  "unit_count": 50,
+  "estimation": {
+    "limit": "No <200 estimate is possible for a unit containing measured turn90=225.512s. Such units are registered NON_FIT, not authorized for GPU. lh13 is an unvalidated extrapolation.",
+    "method": "ceil(sum observed turns + max observed overhead); lh13 ordinary turns use observed max, probe100 uses probe90 plus max adjacent probe increase. Existing other estimates retained; lh06..11 updated to ceil observed walls for both remaining cells.",
+    "ordinary_turn_seconds": 6.64873337186873,
+    "overhead_seconds": 39,
+    "probe_increment_seconds": 63.01217490620911
+  },
+  "projection": {
+    "accounting": "All recorded walls, including both REDs, plus full untrimmed plan; 285s reservation also checked per admission; cooldown excluded.",
+    "cap_seconds": 5400,
+    "overflow_seconds": 2498.6785489856265,
+    "recorded_seconds": 2157.6785489856265,
+    "registered_seconds": 5741.0,
+    "status": "NON_FIT",
+    "total_seconds": 7898.678548985627
+  },
+  "scheduled_units": [
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c64_w96",
+      "estimate_seconds": 284,
+      "planning_status": "NON_FIT",
+      "projection_before_seconds": 2157.6785489856265,
+      "reason": "Turn-range split cannot meet <200s planning target",
+      "resume": "c4-lh-11",
+      "spec": "c4-lh-12a",
+      "start_inclusive": 88,
+      "stop_after_turns": 92
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c64_w96",
+      "estimate_seconds": 63,
+      "planning_status": "FIT",
+      "projection_before_seconds": 2441.6785489856265,
+      "reason": null,
+      "resume": "c4-lh-12a",
+      "spec": "c4-lh-12b",
+      "start_inclusive": 92,
+      "stop_after_turns": 96
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c64_w96",
+      "estimate_seconds": 66,
+      "planning_status": "FIT",
+      "projection_before_seconds": 2504.6785489856265,
+      "reason": null,
+      "resume": "c4-lh-12b",
+      "spec": "c4-lh-13a",
+      "start_inclusive": 96,
+      "stop_after_turns": 100
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c64_w96",
+      "estimate_seconds": 348,
+      "planning_status": "NON_FIT",
+      "projection_before_seconds": 2570.6785489856265,
+      "reason": "Turn-range split cannot meet <200s planning target",
+      "resume": "c4-lh-13a",
+      "spec": "c4-lh-13b",
+      "start_inclusive": 100,
+      "stop_after_turns": 104
+    },
+    {
+      "battery": "sup",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 60,
+      "projection_before_seconds": 2918.6785489856265,
+      "spec": "correction_then_restatement"
+    },
+    {
+      "battery": "sup",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 60,
+      "projection_before_seconds": 2978.6785489856265,
+      "spec": "fresh_fact_controls"
+    },
+    {
+      "battery": "sup",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 60,
+      "projection_before_seconds": 3038.6785489856265,
+      "spec": "multi_hop_a_b_c"
+    },
+    {
+      "battery": "sup",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 60,
+      "projection_before_seconds": 3098.6785489856265,
+      "spec": "short_correction_long_competitor"
+    },
+    {
+      "battery": "census",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 3158.6785489856265,
+      "spec": "e2e-1"
+    },
+    {
+      "battery": "census",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 3238.6785489856265,
+      "spec": "e2e-2"
+    },
+    {
+      "battery": "census",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 3318.6785489856265,
+      "spec": "e2e-3"
+    },
+    {
+      "battery": "census",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 3398.6785489856265,
+      "spec": "e2e-4"
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 3478.6785489856265,
+      "resume": null,
+      "spec": "c4-lh-01",
+      "stop_after_turns": 8
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 3558.6785489856265,
+      "resume": "c4-lh-01",
+      "spec": "c4-lh-02",
+      "stop_after_turns": 16
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 3638.6785489856265,
+      "resume": "c4-lh-02",
+      "spec": "c4-lh-03",
+      "stop_after_turns": 24
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 3718.6785489856265,
+      "resume": "c4-lh-03",
+      "spec": "c4-lh-04",
+      "stop_after_turns": 32
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 3798.6785489856265,
+      "resume": "c4-lh-04",
+      "spec": "c4-lh-05",
+      "stop_after_turns": 40
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 75,
+      "projection_before_seconds": 3878.6785489856265,
+      "resume": "c4-lh-05",
+      "spec": "c4-lh-06",
+      "stop_after_turns": 48
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 79,
+      "projection_before_seconds": 3953.6785489856265,
+      "resume": "c4-lh-06",
+      "spec": "c4-lh-07",
+      "stop_after_turns": 56
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 82,
+      "projection_before_seconds": 4032.6785489856265,
+      "resume": "c4-lh-07",
+      "spec": "c4-lh-08",
+      "stop_after_turns": 64
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 191,
+      "projection_before_seconds": 4114.678548985627,
+      "resume": "c4-lh-08",
+      "spec": "c4-lh-09",
+      "stop_after_turns": 72
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 85,
+      "projection_before_seconds": 4305.678548985627,
+      "resume": "c4-lh-09",
+      "spec": "c4-lh-10",
+      "stop_after_turns": 80
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 257,
+      "projection_before_seconds": 4390.678548985627,
+      "resume": "c4-lh-10",
+      "spec": "c4-lh-11",
+      "stop_after_turns": 88
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 284,
+      "planning_status": "NON_FIT",
+      "projection_before_seconds": 4647.678548985627,
+      "reason": "Turn-range split cannot meet <200s planning target",
+      "resume": "c4-lh-11",
+      "spec": "c4-lh-12a",
+      "start_inclusive": 88,
+      "stop_after_turns": 92
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 63,
+      "planning_status": "FIT",
+      "projection_before_seconds": 4931.678548985627,
+      "reason": null,
+      "resume": "c4-lh-12a",
+      "spec": "c4-lh-12b",
+      "start_inclusive": 92,
+      "stop_after_turns": 96
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 66,
+      "planning_status": "FIT",
+      "projection_before_seconds": 4994.678548985627,
+      "reason": null,
+      "resume": "c4-lh-12b",
+      "spec": "c4-lh-13a",
+      "start_inclusive": 96,
+      "stop_after_turns": 100
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c96_w64",
+      "estimate_seconds": 348,
+      "planning_status": "NON_FIT",
+      "projection_before_seconds": 5060.678548985627,
+      "reason": "Turn-range split cannot meet <200s planning target",
+      "resume": "c4-lh-13a",
+      "spec": "c4-lh-13b",
+      "start_inclusive": 100,
+      "stop_after_turns": 104
+    },
+    {
+      "battery": "sup",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 60,
+      "projection_before_seconds": 5408.678548985627,
+      "spec": "correction_then_restatement"
+    },
+    {
+      "battery": "sup",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 60,
+      "projection_before_seconds": 5468.678548985627,
+      "spec": "fresh_fact_controls"
+    },
+    {
+      "battery": "sup",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 60,
+      "projection_before_seconds": 5528.678548985627,
+      "spec": "multi_hop_a_b_c"
+    },
+    {
+      "battery": "sup",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 60,
+      "projection_before_seconds": 5588.678548985627,
+      "spec": "short_correction_long_competitor"
+    },
+    {
+      "battery": "census",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 5648.678548985627,
+      "spec": "e2e-1"
+    },
+    {
+      "battery": "census",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 5728.678548985627,
+      "spec": "e2e-2"
+    },
+    {
+      "battery": "census",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 5808.678548985627,
+      "spec": "e2e-3"
+    },
+    {
+      "battery": "census",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 5888.678548985627,
+      "spec": "e2e-4"
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 5968.678548985627,
+      "resume": null,
+      "spec": "c4-lh-01",
+      "stop_after_turns": 8
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 6048.678548985627,
+      "resume": "c4-lh-01",
+      "spec": "c4-lh-02",
+      "stop_after_turns": 16
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 6128.678548985627,
+      "resume": "c4-lh-02",
+      "spec": "c4-lh-03",
+      "stop_after_turns": 24
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 6208.678548985627,
+      "resume": "c4-lh-03",
+      "spec": "c4-lh-04",
+      "stop_after_turns": 32
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 80,
+      "projection_before_seconds": 6288.678548985627,
+      "resume": "c4-lh-04",
+      "spec": "c4-lh-05",
+      "stop_after_turns": 40
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 75,
+      "projection_before_seconds": 6368.678548985627,
+      "resume": "c4-lh-05",
+      "spec": "c4-lh-06",
+      "stop_after_turns": 48
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 79,
+      "projection_before_seconds": 6443.678548985627,
+      "resume": "c4-lh-06",
+      "spec": "c4-lh-07",
+      "stop_after_turns": 56
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 82,
+      "projection_before_seconds": 6522.678548985627,
+      "resume": "c4-lh-07",
+      "spec": "c4-lh-08",
+      "stop_after_turns": 64
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 191,
+      "projection_before_seconds": 6604.678548985627,
+      "resume": "c4-lh-08",
+      "spec": "c4-lh-09",
+      "stop_after_turns": 72
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 85,
+      "projection_before_seconds": 6795.678548985627,
+      "resume": "c4-lh-09",
+      "spec": "c4-lh-10",
+      "stop_after_turns": 80
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 257,
+      "projection_before_seconds": 6880.678548985627,
+      "resume": "c4-lh-10",
+      "spec": "c4-lh-11",
+      "stop_after_turns": 88
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 284,
+      "planning_status": "NON_FIT",
+      "projection_before_seconds": 7137.678548985627,
+      "reason": "Turn-range split cannot meet <200s planning target",
+      "resume": "c4-lh-11",
+      "spec": "c4-lh-12a",
+      "start_inclusive": 88,
+      "stop_after_turns": 92
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 63,
+      "planning_status": "FIT",
+      "projection_before_seconds": 7421.678548985627,
+      "reason": null,
+      "resume": "c4-lh-12a",
+      "spec": "c4-lh-12b",
+      "start_inclusive": 92,
+      "stop_after_turns": 96
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 66,
+      "planning_status": "FIT",
+      "projection_before_seconds": 7484.678548985627,
+      "reason": null,
+      "resume": "c4-lh-12b",
+      "spec": "c4-lh-13a",
+      "start_inclusive": 96,
+      "stop_after_turns": 100
+    },
+    {
+      "battery": "longhorizon",
+      "cap_status": "NON_FIT",
+      "cell": "c64_w64",
+      "estimate_seconds": 348,
+      "planning_status": "NON_FIT",
+      "projection_before_seconds": 7550.678548985627,
+      "reason": "Turn-range split cannot meet <200s planning target",
+      "resume": "c4-lh-13a",
+      "spec": "c4-lh-13b",
+      "start_inclusive": 100,
+      "stop_after_turns": 104
+    }
+  ],
+  "timing_evidence": [
+    {
+      "instrumentation": {
+        "bytes": 279280,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon/c4-lh-06/session/instrumentation.jsonl",
+        "sha256": "aab2bab01503027b12bac060c0fab239e5a0ca5a0680bf1b5d91ccb53539058a"
+      },
+      "overhead_seconds": 30.49990041507408,
+      "receipt": {
+        "bytes": 99746,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-06.json",
+        "sha256": "c78ee50a992f91d46a7113cb9a38d366060dbe6d53224b2f1f43398fce29770d"
+      },
+      "spec": "c4-lh-06",
+      "status": "PASS",
+      "turn_seconds": [
+        {
+          "kind": "fact",
+          "seconds": 5.1793217970989645,
+          "turn": 40
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.784927458036691,
+          "turn": 41
+        },
+        {
+          "kind": "fact",
+          "seconds": 5.164898696821183,
+          "turn": 42
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.908480503130704,
+          "turn": 43
+        },
+        {
+          "kind": "fact",
+          "seconds": 4.80212447186932,
+          "turn": 44
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.143942863680422,
+          "turn": 45
+        },
+        {
+          "kind": "fact",
+          "seconds": 5.246811022982001,
+          "turn": 46
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.042777331080288,
+          "turn": 47
+        }
+      ],
+      "wall_seconds": 74.77318455977365
+    },
+    {
+      "instrumentation": {
+        "bytes": 304945,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon/c4-lh-07/session/instrumentation.jsonl",
+        "sha256": "7255ceb96bd5c1a84519b2293f142217adb227a29cc451576feb03375a32090a"
+      },
+      "overhead_seconds": 31.303948155604303,
+      "receipt": {
+        "bytes": 109199,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-07.json",
+        "sha256": "120c0477caca1c8397a4b6fd3b5ae27bccc83fea05ab3dba15a5bd672ce277ed"
+      },
+      "spec": "c4-lh-07",
+      "status": "PASS",
+      "turn_seconds": [
+        {
+          "kind": "fact",
+          "seconds": 5.2890356737188995,
+          "turn": 48
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.82495287200436,
+          "turn": 49
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.045933912973851,
+          "turn": 50
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.1312076728791,
+          "turn": 51
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.148596915882081,
+          "turn": 52
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.264929867815226,
+          "turn": 53
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.1354798641987145,
+          "turn": 54
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.7084915060549974,
+          "turn": 55
+        }
+      ],
+      "wall_seconds": 78.85257644113153
+    },
+    {
+      "instrumentation": {
+        "bytes": 330704,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon/c4-lh-08/session/instrumentation.jsonl",
+        "sha256": "76b36dd3247917d9bb5a7b125870a4e8db7c84b547c1c2b2b51e00dbbc2bb60e"
+      },
+      "overhead_seconds": 32.64084629295394,
+      "receipt": {
+        "bytes": 117950,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-08.json",
+        "sha256": "933031ee8249cb65e028ff9e66a0bf07089b0e0a06bd0ef23ce3d9d2b9311180"
+      },
+      "spec": "c4-lh-08",
+      "status": "PASS",
+      "turn_seconds": [
+        {
+          "kind": "supersede",
+          "seconds": 6.061026360839605,
+          "turn": 56
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.090844037011266,
+          "turn": 57
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.434677309822291,
+          "turn": 58
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.063248423859477,
+          "turn": 59
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.025814880151302,
+          "turn": 60
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.058092137798667,
+          "turn": 61
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.478309518657625,
+          "turn": 62
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.06213059509173,
+          "turn": 63
+        }
+      ],
+      "wall_seconds": 81.9149895561859
+    },
+    {
+      "instrumentation": {
+        "bytes": 364905,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon/c4-lh-09/session/instrumentation.jsonl",
+        "sha256": "f4ea32bc8cb318be18ce2af40218e312c731f8a473cf292c5df768907f785d43"
+      },
+      "overhead_seconds": 33.566358604468405,
+      "receipt": {
+        "bytes": 125707,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-09.json",
+        "sha256": "b629d1e34e54bdf9944ddfe92e9529ee13b5d878a42d32f05f20440674f15cbe"
+      },
+      "spec": "c4-lh-09",
+      "status": "PASS",
+      "turn_seconds": [
+        {
+          "kind": "supersede",
+          "seconds": 5.864649653900415,
+          "turn": 64
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.939537120983005,
+          "turn": 65
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.181938240304589,
+          "turn": 66
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.964121636003256,
+          "turn": 67
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.980696334969252,
+          "turn": 68
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.897597339004278,
+          "turn": 69
+        },
+        {
+          "kind": "probe",
+          "seconds": 115.31308803055435,
+          "turn": 70
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.232250384055078,
+          "turn": 71
+        }
+      ],
+      "wall_seconds": 190.94023734424263
+    },
+    {
+      "instrumentation": {
+        "bytes": 390670,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon/c4-lh-10/session/instrumentation.jsonl",
+        "sha256": "4a9ab1f06015250ead6792c81ec8b6f5e2448fd7600aaac7315bbcceac796c3f"
+      },
+      "overhead_seconds": 35.39205187000334,
+      "receipt": {
+        "bytes": 133537,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-10.json",
+        "sha256": "d7cce965454860728842d41f3d081e57043ba25b9217ea7d4f2c53494a8699f7"
+      },
+      "spec": "c4-lh-10",
+      "status": "PASS",
+      "turn_seconds": [
+        {
+          "kind": "supersede",
+          "seconds": 6.230451551731676,
+          "turn": 72
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.296803549863398,
+          "turn": 73
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.274868702981621,
+          "turn": 74
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.071117816027254,
+          "turn": 75
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.779938791878521,
+          "turn": 76
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.953669315669686,
+          "turn": 77
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.085276103112847,
+          "turn": 78
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.64873337186873,
+          "turn": 79
+        }
+      ],
+      "wall_seconds": 84.73291107313707
+    },
+    {
+      "instrumentation": {
+        "bytes": 425016,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon/c4-lh-11/session/instrumentation.jsonl",
+        "sha256": "239c2a950e5ccb8b92878ac08e4d13ef5e91ef8d1668d45881d2dff742b68abc"
+      },
+      "overhead_seconds": 36.46445750631392,
+      "receipt": {
+        "bytes": 141293,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-11.json",
+        "sha256": "c44c6a3a620b2a920844e65b73b869d0c94f399113ee1e6579fbda8bde7348f9"
+      },
+      "spec": "c4-lh-11",
+      "status": "PASS",
+      "turn_seconds": [
+        {
+          "kind": "probe",
+          "seconds": 178.32526293676347,
+          "turn": 80
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.149680456146598,
+          "turn": 81
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.872620846144855,
+          "turn": 82
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.018736158963293,
+          "turn": 83
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.125096711330116,
+          "turn": 84
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.67053542425856,
+          "turn": 85
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.726185286883265,
+          "turn": 86
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.966140659991652,
+          "turn": 87
+        }
+      ],
+      "wall_seconds": 256.3187159867957
+    },
+    {
+      "instrumentation": {
+        "bytes": 459412,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon/c4-lh-12/session/instrumentation.jsonl",
+        "sha256": "fd4410982d2dc5db4613ec23405316bb28f6c9766ad5c5b2f53f6509a29fe6d4"
+      },
+      "overhead_seconds": 38.75575694767758,
+      "receipt": {
+        "bytes": 148758,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-12.json",
+        "sha256": "ad0594eece33628c8f103bf2fec1cd8214439d602bf44bbb46312f3d03cc6c0d"
+      },
+      "spec": "c4-lh-12",
+      "status": "RED",
+      "turn_seconds": [
+        {
+          "kind": "supersede",
+          "seconds": 6.116215971764177,
+          "turn": 88
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.144026985857636,
+          "turn": 89
+        },
+        {
+          "kind": "probe",
+          "seconds": 225.51221895590425,
+          "turn": 90
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.327956604771316,
+          "turn": 91
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.022770414594561,
+          "turn": 92
+        },
+        {
+          "kind": "supersede",
+          "seconds": 6.201335291843861,
+          "turn": 93
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.00283540179953,
+          "turn": 94
+        },
+        {
+          "kind": "supersede",
+          "seconds": 5.9881831258535385,
+          "turn": 95
+        }
+      ],
+      "wall_seconds": 306.07129970006645
+    }
+  ],
+  "units_per_cell": [
+    {
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "correction_then_restatement"
+    },
+    {
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "fresh_fact_controls"
+    },
+    {
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "multi_hop_a_b_c"
+    },
+    {
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "short_correction_long_competitor"
+    },
+    {
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-1"
+    },
+    {
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-2"
+    },
+    {
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-3"
+    },
+    {
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-4"
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": null,
+      "spec": "c4-lh-01",
+      "stop_after_turns": 8
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-01",
+      "spec": "c4-lh-02",
+      "stop_after_turns": 16
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-02",
+      "spec": "c4-lh-03",
+      "stop_after_turns": 24
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-03",
+      "spec": "c4-lh-04",
+      "stop_after_turns": 32
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-04",
+      "spec": "c4-lh-05",
+      "stop_after_turns": 40
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 75,
+      "resume": "c4-lh-05",
+      "spec": "c4-lh-06",
+      "stop_after_turns": 48
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 79,
+      "resume": "c4-lh-06",
+      "spec": "c4-lh-07",
+      "stop_after_turns": 56
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 82,
+      "resume": "c4-lh-07",
+      "spec": "c4-lh-08",
+      "stop_after_turns": 64
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 191,
+      "resume": "c4-lh-08",
+      "spec": "c4-lh-09",
+      "stop_after_turns": 72
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 85,
+      "resume": "c4-lh-09",
+      "spec": "c4-lh-10",
+      "stop_after_turns": 80
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 257,
+      "resume": "c4-lh-10",
+      "spec": "c4-lh-11",
+      "stop_after_turns": 88
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 284,
+      "planning_status": "NON_FIT",
+      "reason": "Turn-range split cannot meet <200s planning target",
+      "resume": "c4-lh-11",
+      "spec": "c4-lh-12a",
+      "start_inclusive": 88,
+      "stop_after_turns": 92
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 63,
+      "planning_status": "FIT",
+      "reason": null,
+      "resume": "c4-lh-12a",
+      "spec": "c4-lh-12b",
+      "start_inclusive": 92,
+      "stop_after_turns": 96
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 66,
+      "planning_status": "FIT",
+      "reason": null,
+      "resume": "c4-lh-12b",
+      "spec": "c4-lh-13a",
+      "start_inclusive": 96,
+      "stop_after_turns": 100
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 348,
+      "planning_status": "NON_FIT",
+      "reason": "Turn-range split cannot meet <200s planning target",
+      "resume": "c4-lh-13a",
+      "spec": "c4-lh-13b",
+      "start_inclusive": 100,
+      "stop_after_turns": 104
+    }
+  ]
+}

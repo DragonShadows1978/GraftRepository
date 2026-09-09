@@ -1,0 +1,62 @@
+{
+  "all_state_bytes_unchanged_gate": "test_real_existing_bytes_unchanged PASSED; all2567 full hashes",
+  "amendment": {
+    "bytes": 36076,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/amendment_a7.json",
+    "sha256": "e3ab21e4974a11b2d8499233b220ed02dbd2778b9e2023ca1272f1ea416a6d65"
+  },
+  "cap_overflow_units": 24,
+  "command_file": {
+    "bytes": 6969,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_commands_a5.txt",
+    "sha256": "4e7be8088541e3c0509761e0414840bfbd2bb4d4b8969f1f7110586750f4ef9b"
+  },
+  "cpu_suite": {
+    "exit_code": 0,
+    "passed": 181,
+    "receipt": {
+      "bytes": 18168,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/cpu_gate.txt",
+      "sha256": "4b6dd73022bfad038c06fb178cffde96a20eaf6ed3c6d3c292cdc2eeb01b5c8c"
+    },
+    "seconds": 40.66,
+    "warnings": 2
+  },
+  "dry_run": {
+    "exit_code": 0,
+    "receipt": {
+      "bytes": 31150,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/dry_run.json",
+      "sha256": "9bfae1c46d7bf6adff4993ed575a2900c6509005318dcd750bdcdf515d7f45e7"
+    }
+  },
+  "evidence_class": "CPU author gates and read-only artifact validation",
+  "existing_receipt_and_claim_json": 44,
+  "existing_run_file_set_unchanged": true,
+  "existing_run_files": 2567,
+  "new_real_worker_receipts": 0,
+  "order": {
+    "bytes": 2431,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_5.md",
+    "sha256": "8eb729c2454a1ee1da1f43ff9a288472c74541720911623455037a4f9646f0e4"
+  },
+  "previous_amendment": {
+    "bytes": 4516,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a4/amendment_a6.json",
+    "sha256": "f28963404f0e0498d11cbc8368c83846eb0b33945df95583ddb301174425359d"
+  },
+  "projection": {
+    "accounting": "All recorded walls, including both REDs, plus full untrimmed plan; 285s reservation also checked per admission; cooldown excluded.",
+    "cap_seconds": 5400,
+    "overflow_seconds": 2498.6785489856265,
+    "recorded_seconds": 2157.6785489856265,
+    "registered_seconds": 5741.0,
+    "status": "NON_FIT",
+    "total_seconds": 7898.678548985627
+  },
+  "receipt_and_claim_bytes_unchanged": true,
+  "scheduled_units": 50,
+  "scope": "No git, subagents, GPU, shell background jobs/waits, signals, lock or service changes; lead command file not executed.",
+  "shell_syntax_exit_code": 0,
+  "worker_gpu_executed": false
+}
