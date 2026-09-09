@@ -1,7 +1,13 @@
 # Graft Translation Primer — Cross-Model Memory Portability
 
-**Status: REGISTERED HYPOTHESIS — no experiments run. Nothing in this
-document is a result.**
+**Status: HYPOTHESIS TESTED (PoC, 2026-07-04) — banner corrected
+2026-09-08.** The July Qwen3.5 2B→9B PoC (`QWEN35_TRANSLATION_FINAL_WRITEUP.md`)
+reports translated 25/32 on the frozen G3 binding threshold (pass line
+≥14/32), amnesia control 20/32, source- and target-native 32/32, and a
+strict G0 logit-identity failure (top-1 stable). The amnesia floor also
+clears 14/32, so the surviving claim is a qualified binding-transfer
+signal, not portability. The sections below are the original registered
+hypothesis and are unchanged.
 
 Idea: David Perry, 2026-07-02 (the evening the GRM/APA/Ghost Geometry
 trifecta published). Primer drafted same session. Successor question to
