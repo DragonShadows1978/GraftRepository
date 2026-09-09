@@ -2042,6 +2042,12 @@ class ArenaCache:
         rule: keep >= min_keep of the sources' code/number-shaped tokens.
         forbid_lists (depth>=1 folds): bullet/numbered enumerations strip
         the relations probes traverse — require prose."""
+        # Prior art: local GRM digest repetition QC (GRM contributors, 2026).
+        # Extend word-level QC to character runs seen in C7. No prior art
+        # known to me for this exact rule: >=3 ellipses or >=6 punctuation
+        # characters, allowing whitespace. Ordinary "..." remains valid.
+        if re.search(r"(?:…\s*){3,}|(?:[^\w\s]\s*){6,}", text):
+            return False
         toks = text.split()
         if len(toks) < 6:
             return False
@@ -2193,6 +2199,21 @@ class ArenaCache:
             for prompt_idx, prompt in enumerate(prompts):
                 ids = out = lg = caches = None
                 primer = prompt.rsplit("Assistant:", 1)[1]
+                # Prior art: EB1 harmony_turn + Arena._attempt stop contract
+                # (GRM contributors, 2026), reused via configured template.
+                # New: apply that same contract to standalone folds. No
+                # duplicate Harmony formatter or model-name detection.
+                # Dispatch on the configured wrapper's final-channel suffix;
+                # other model templates keep legacy prompt/decode bytes.
+                formatted = None
+                if self.prompt_template is not None:
+                    user_text = prompt.removeprefix("User: ").rsplit("\nAssistant:", 1)[0]
+                    formatted = self._format_step_prompt(user_text)
+                harmony = formatted is not None and formatted.endswith(
+                    "<|start|>assistant<|channel|>final<|message|>")
+                stops = self.stop_sequences if harmony else ()
+                if harmony:
+                    prompt = formatted + primer
                 try:
                     ids = self.encode(prompt)
                     with tc.no_grad():
@@ -2201,6 +2222,8 @@ class ArenaCache:
                     pos = len(ids)
                     out = [int(lg.numpy()[0, -1].argmax())]
                     for _ in range(ngen - 1):
+                        if any(s in self.decode(out) for s in stops):
+                            break
                         with tc.no_grad():
                             lg, caches = self.m(
                                 np.array([[out[-1]]], dtype=np.int64),
@@ -2208,19 +2231,25 @@ class ArenaCache:
                                 last_token_only=True)
                         pos += 1
                         out.append(int(lg.numpy()[0, -1].argmax()))
-                    t = (primer + " " + self.decode(out)).strip()
+                    decoded = self.decode(out)
+                    for stop in stops:
+                        decoded = decoded.split(stop, 1)[0]
+                    t = (primer + " " + decoded).strip()
                     for stop in ("\nUser:", "User:"):
                         if stop in t:
                             t = t.split(stop)[0]
                     t = t.strip()
-                    cov = self._coverage(t, need)
                     qc = self._digest_qc(t, None, forbid_lists=True)
                     relaxed_list = False
-                    if (not qc and self.ALLOW_HIGH_COVERAGE_LIST_DIGESTS
-                            and cov >= self.MIN_FOLD_KEEP):
-                        relaxed_list = self._digest_qc(
+                    if not qc and self.ALLOW_HIGH_COVERAGE_LIST_DIGESTS:
+                        qc = self._digest_qc(
                             t, None, forbid_lists=False)
-                        qc = relaxed_list
+                        relaxed_list = qc
+                    # Shape QC runs before coverage; a punctuation collapse
+                    # cannot be rescued by fact tokens or list relaxation.
+                    cov = self._coverage(t, need) if qc else 0.0
+                    if relaxed_list and cov < self.MIN_FOLD_KEEP:
+                        relaxed_list = qc = False
                     self.last_consolidation_attempts.append({
                         "prompt_index": prompt_idx,
                         "qc": bool(qc),
