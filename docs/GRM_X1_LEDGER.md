@@ -139,3 +139,91 @@ rows / zero reservations (CPU artifact check, no GPU probe). Verified report
 contains the actual handoff and registration SHAs. Final delivery manifest
 is `artifacts/grm_x1/delivery_manifest.json`; it includes file paths, line counts
 and SHA-256 values. No later source change was made after the passing baseline.
+
+## 2026-09-08 — amendment 1: nonresident payload digest (pre-gate record)
+
+Read immutable `orders/GRM_X1_AMENDMENT_1.md` and HOUSE_RULES. Original GPU
+receipt `artifacts/grm_x1/receipts/gpu_oracle_m1_s0_0c1bf61590059cad2b207f0edef2da421f64639f69c41d4b6282cc7ba3c35bba.json`
+is RED: `TypeError: 'NoneType' object is not iterable` at the old
+`payload_digest -> for layer in node["h"]`. Confirmed verbatim locally
+before editing; unit-test reproduction receipt:
+`artifacts/grm_x1/receipts/payload_amendment_01_reproduction.json`.
+
+Registered `artifacts/grm_x1/payload_amendment_01.json` create-only BEFORE
+reproduction or CPU gates. This entry records that sequence; original order,
+registration, fixtures, handoff and GPU receipts remain immutable. No change
+to core modules, flags, predictions, gate thresholds, campaign retry rules
+or GPU budgets. Scope is worker fix, CPU tests and handoff documentation.
+
+Root cause (source inspection): `h` is optional. `_native_sync_node` resolves
+packed host backing through `_ensure_host_payload`; `_load_node` reads that
+backing from RAM or NPZ for device reconstruction. The worker now uses the
+same host accessor on ORIGINAL repository nodes before cloning. Thus cold
+NPZ backing is copied to RAM while the owning repository is available and
+shared in subsequent private-arm clones. Hash sorted packed keys, shapes,
+dtypes and bytes, including scales. Mark page receipts with format
+`packed-host-key-shape-dtype-bytes-v1`; these digests are not comparable to
+r1 device-h digests. Missing/empty backing remains an explicit error, never
+an empty-payload success. No placeholder fabricated from text or node IDs.
+
+Prior art: GraftRepository (house, 2026), `_native_sync_node`,
+`_ensure_host_payload`, `_read_payload_file` and `_load_node`, verified in
+local source. Borrow its packed RAM/durable-file storage access and existing
+X1 SHA-256 hashing structure. New work is the X1 snapshot/digest integration;
+no novel hashing, selection or paging algorithm. Existing SHA-256 antecedent
+NIST FIPS 180-4 (2015) remains unverified — lead to check; search terms:
+“NIST FIPS 180-4 2015 SHA-256”.
+
+CPU baseline launched:
+`PYTHONDONTWRITEBYTECODE=1 python3 scripts/grm_x1_cpu.py baseline`.
+New regression: `test_payload_digest_h_none_host_backing_and_cold_file_match`;
+also packed-content identity, missing backing (durable/nondurable), and empty
+backing checks. Uses actual repository accessor/file reads without model or
+native-store construction; resident pack method is a CPU stub. This is author
+unit evidence, not independent verification or GPU clearance.
+
+## 2026-09-08 — amendment 1: results and refreshed handoff
+
+CPU baseline PASS: **157 passed**, 2 existing pytest SWIG warnings, in 0.87 s
+(unit test). Receipt:
+`artifacts/grm_x1/receipts/cpu_baseline_cbb1b285a457ec672461c6580f8c891b46b63eb12e5d3474656fd8fd6bb32bd1.json`.
+Includes frozen fixture integrity, original Harmony/local tokenizer fit,
+9-cell GPU dry-run enumeration and shell syntax. No GPU model instantiated.
+Default-OFF pin remains passing:
+`test_grm_x1_default_off_passthrough_identity`.
+
+Ran `PYTHONDONTWRITEBYTECODE=1 python3 scripts/grm_x1_cpu.py mutations`:
+**5 runnable, 5 killed, fraction 1.00 >= registered 0.80**, PASS (author unit
+mutation gate). Receipt:
+`artifacts/grm_x1/receipts/cpu_mutations_7112056e61db4558269ca982c03c15f6b843b44228bd749a68dc87905206e4b8.json`.
+Original core-module hash unchanged; temporary mutant copies only.
+
+CPU handoff checks: lead entry `--dry-run` and `summary` return successfully;
+`preflight` rejects with `ValueError: handoff source drift; do not start a new
+campaign silently`. Direct `next_cell()` rejects with
+`ValueError: failed/incomplete cell: registered stop; no automatic retry`.
+Both are EXPECTED safeguards, not passing GPU preflight. Original registration,
+handoff and RED receipt hashes verified unchanged. Only source deltas against
+r1 handoff are `scripts/grm_x1_gpu.py` and `tests/test_grm_x1_campaign.py`.
+Receipt: `artifacts/grm_x1/receipts/payload_amendment_01_handoff_check.json`.
+
+Preserved original commands as `artifacts/grm_x1/lead_commands_r1.txt` and
+refreshed `artifacts/grm_x1/lead_commands.txt` with runnable CPU inspection
+commands, expected preflight failure and explicitly BLOCKED GPU commands.
+New create-only `artifacts/grm_x1/payload_amendment_01_handoff.json` binds amended
+sources and CPU receipts; it is a review artifact, not an activated campaign.
+This amendment does not change the campaign controller or retry semantics.
+Lead continuation must bind the new source identity and account for the old
+285-second reservation while preserving the RED evidence. That accounting
+number is the registered reservation, not the observed 34.6-second worker
+failure reported by the lead.
+
+Current report: `artifacts/grm_x1/AMENDMENT_1_REPORT.md` supersedes r1's
+zero-GPU-reservations status and source inventory for this repair only.
+RED: original oracle cell remains RED; no GPU rerun, recall or latency claim;
+native-call hard-bound residual unchanged. Not claimed fixed on the card.
+Process safety: no git, subagents, background waits, GPU calls, kills, service
+writes, sibling edits or existing core-code edits. Author GPT-6; exact model
+deployment ID unavailable; reasoning effort high (requested and followed).
+Target reader remains registered openai/gpt-oss-20b with low inference effort;
+no confusion with this author session's high reasoning effort.

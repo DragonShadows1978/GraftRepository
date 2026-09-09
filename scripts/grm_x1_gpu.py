@@ -115,16 +115,28 @@ def install(repo, e2e, family):
     return ids, index
 
 
-def payload_digest(node):
+def payload_digest(repo, idx):
+    """Hash the packed backing used by native sync and the repository loader.
+
+    Prior art: GraftRepository (house, 2026), _native_sync_node and
+    _ensure_host_payload/_read_payload_file; verified in local source.
+    Reuse its RAM-first/durable-file accessor and existing X1 SHA-256
+    key/shape/dtype/bytes hashing. New: resolve backing before X1 snapshots;
+    no new hashing or paging algorithm. These are packed-payload digests,
+    not the former device-h digests, and must not be compared across r1/r2.
+    """
     import numpy as np
+    node = repo.arena.grafts[idx]
+    repo._ensure_host_payload(idx, node)
+    payload = node["host_payload"]
+    if not payload:
+        raise RuntimeError(f"graft {idx} has no packed payload to hash")
     digest = hashlib.sha256()
-    for layer in node["h"]:
-        for key in sorted(layer):
-            value = layer[key]
-            array = value if isinstance(value, np.ndarray) else value.numpy()
-            digest.update(key.encode())
-            digest.update(str((array.shape, array.dtype)).encode())
-            digest.update(np.ascontiguousarray(array).tobytes())
+    for key in sorted(payload):
+        array = np.asarray(payload[key])
+        digest.update(key.encode())
+        digest.update(str((array.shape, array.dtype)).encode())
+        digest.update(np.ascontiguousarray(array).tobytes())
     return digest.hexdigest()
 
 
@@ -159,6 +171,10 @@ def run_cell(cell, rows, directory):
                 template = new_repo(model, tokenizer, e2e, directory / (query["family_id"] + "_capture"), frame)
                 try:
                     ids, index = install(template, e2e, family)
+                    # Resolve cold backing in its owning repository BEFORE
+                    # cloning/closing it; private arm repos share these arrays.
+                    hashes = {i: payload_digest(template, i)
+                              for i in range(len(template.arena.grafts))}
                     nodes = [clone_node(g) for g in template.arena.grafts]
                     target_pages = index.resolve(Address(*family["address"])).page_ids
                     if sum(nodes[i]["ntok"] for i in target_pages) > 96:
@@ -166,12 +182,12 @@ def run_cell(cell, rows, directory):
                     duplicate_ids = duplicate_children(nodes, ids[family["decoy_node"]], cell["multiplicity"])
                     # Captured hashes identify shared payloads and the stress
                     # inventory separately. Hashing is excluded from turn wall.
-                    hashes = {i: payload_digest(nodes[i]) for i in range(len(nodes)) if i not in duplicate_ids}
                     hashes.update({i: hashes[nodes[i]["metadata"]["x1_duplicate_of"]] for i in duplicate_ids})
                     snapshots[query["family_id"]] = nodes, index.dump(), target_pages, hashes
                     index.save(directory / (query["family_id"] + "_addresses.json"))
                     create(directory / (query["family_id"] + "_pages.json"), raw_json({
                         "target_pages": target_pages, "duplicate_ids": duplicate_ids,
+                        "payload_digest_format": "packed-host-key-shape-dtype-bytes-v1",
                         "page_payload_shas": hashes, "seed": SEED,
                         "duplicate_metadata": {i: nodes[i]["metadata"] for i in duplicate_ids}}))
                 finally:

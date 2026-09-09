@@ -8,7 +8,7 @@ from unittest.mock import patch
 import pytest
 
 from scripts import grm_x1_campaign as c
-from scripts.grm_x1_gpu import clone_node, duplicate_children
+from scripts.grm_x1_gpu import clone_node, duplicate_children, payload_digest
 from scripts.grm_x1_register import create
 
 
@@ -95,6 +95,75 @@ def test_receipts_are_create_only(tmp_path):
     with pytest.raises(FileExistsError):
         create(path, b"second")
     assert path.read_bytes() == b"first"
+
+
+def payload_repo(tmp_path, node, pack_node=None):
+    # House GraftRepository (2026): exercise the real host/durable accessor
+    # without constructing a model, native store or CUDA arena.
+    from types import SimpleNamespace
+    from core.graft_repository import GraftRepository
+    repo = GraftRepository.__new__(GraftRepository)
+    repo.path = str(tmp_path)
+    repo.arena = SimpleNamespace(grafts=[node], pack_node=pack_node)
+    return repo
+
+
+def test_payload_digest_h_none_host_backing_and_cold_file_match(tmp_path):
+    import numpy as np
+    payload = {"0_k": np.arange(6, dtype=np.int8).reshape(2, 3),
+               "0_ks": np.array([0.5], dtype=np.float32)}
+    host = {"h": None, "host_payload": payload}
+    expected = payload_digest(payload_repo(tmp_path, host), 0)
+    assert host["h"] is None
+    assert host["host_payload"] is payload
+    (tmp_path / "nodes").mkdir()
+    np.savez(tmp_path / "nodes/0000.npz", **payload)
+    cold = {"h": None, "host_payload": None, "durable": True}
+    assert payload_digest(payload_repo(tmp_path, cold), 0) == expected
+    assert cold["h"] is None  # no device rehydration
+    snapshot = clone_node(cold)
+    assert snapshot["host_payload"] is cold["host_payload"]
+    # A fresh arm has no capture NPZ file; its clone must carry usable backing.
+    assert payload_digest(payload_repo(tmp_path / "fresh_arm", snapshot), 0) == expected
+    resident_h = object()
+    calls = []
+    def pack(h):
+        calls.append(h)
+        return payload
+    resident = {"h": resident_h, "host_payload": None}
+    assert payload_digest(payload_repo(tmp_path, resident, pack), 0) == expected
+    assert calls == [resident_h]
+
+
+def test_payload_digest_packed_content_identity(tmp_path):
+    import numpy as np
+    payload = {"0_k": np.arange(6, dtype=np.int8).reshape(2, 3),
+               "0_ks": np.array([0.5], dtype=np.float32)}
+    def digest(backing):
+        return payload_digest(payload_repo(tmp_path, {"h": None, "host_payload": backing}), 0)
+    expected = digest(payload)
+    assert digest(dict(reversed(list(payload.items())))) == expected
+    assert digest({**payload, "0_k": np.asfortranarray(payload["0_k"])}) == expected
+    assert digest({**payload, "0_k": payload["0_k"] + 1}) != expected
+    assert digest({**payload, "0_ks": payload["0_ks"] * 2}) != expected
+    assert digest({**payload, "0_k": payload["0_k"].reshape(3, 2)}) != expected
+    assert digest({**payload, "0_k": payload["0_k"].view(np.uint8)}) != expected
+    assert digest({"1_k": payload["0_k"], "0_ks": payload["0_ks"]}) != expected
+
+
+@pytest.mark.parametrize("durable", [False, True])
+def test_payload_digest_missing_backing_remains_red(tmp_path, durable):
+    node = {"h": None, "host_payload": None, "durable": durable,
+            "payload_pending": True}
+    repo = payload_repo(tmp_path, node)
+    with pytest.raises(FileNotFoundError if durable else RuntimeError):
+        payload_digest(repo, 0)
+
+
+def test_payload_digest_empty_backing_remains_red(tmp_path):
+    repo = payload_repo(tmp_path, {"h": None, "host_payload": {}})
+    with pytest.raises(RuntimeError, match="no packed payload"):
+        payload_digest(repo, 0)
 
 
 @pytest.mark.parametrize("multiplicity", [1, 10, 100])
