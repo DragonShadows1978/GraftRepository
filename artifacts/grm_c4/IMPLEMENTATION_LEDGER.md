@@ -168,3 +168,35 @@ files. Base-source comparison includes adapter differences already present
 in r1; adapter current SHA2638f87714f32af58cce32065a635107058c09de8e7635ae1d9da46303fd41e4
 matches the preserved r1 SHA256SUMS. This turn changed only the existing C4
 campaign/test files and added the amendment writer, besides scoped artifacts.
+
+## 2026-09-09 — lead amendment 2, diagnosis and gates registered before implementation
+Order orders/GRM_C4_AMENDMENT_2.md remains immutable. Read HOUSE_RULES.
+Source/receipt evidence CONFIRMS [40,48) has four fact and four supersede turns,
+no probe or answer; saved instrumentation is exactly turns0..47. Stored error
+is exactly `AssertionError: No serving observed` (exception-class prefix is
+part of receipt format). Full probe plan:5,9,13,16,19,22,24,26,30,33,70,80,90,100.
+The later-cell prediction is conditional: existing global RED guard prevents
+any later worker starting. Currently only c64_w96 has receipts:13PASS,1RED.
+Registered gates and isolation decision in lead_a2/pre_registration.json;
+original top-level receipt hashes in lead_a2/original_receipts_before.json.
+Use additive entry point and nested A4, leaving original binding/code/commands
+unchanged for the live lead chain. New rerun receipts and session copies are
+create-only in lead_a2/runs; commands enumerate only evidenced eligible suffixes.
+Prior art: verified local C4/WC1/EB1/DET1 house systems(2026), reuse SHA-chain,
+create-only claims, state-copy resume and scorer; add per-cell guard and exact
+one-time recovery selection per this order. No novel algorithm claimed.
+No git,subagents,GPU,background waits,signals,lock or service manipulation.
+Author GPT-6(Codex; specific deployment id not exposed), effort high(order).
+
+## 2026-09-09 — lead amendment 2 registered and CPU PASS
+A4 SHA014ae519a3b27ff0598d1d5a5ae3e4dcb7c3785ae2a52b7cf966d6c6fd10a16e; nested opt-in lead_a2/amendment_a4.json.
+93 tests passed,2 upstream SWIG warnings,6.13s; lead_a2/cpu_gate.txt.
+Read-only validation:29 original files unchanged(13PASS,1RED);115 lastPASS
+state files checked; original A3 binding and A4 preflight pass. No GPU run.
+Exact eligible commands:lead_commands_a2.txt,8 c64_w96 recovery units then
+score; other cells have no receipts and remain outside recovery eligibility.
+Prior art:local C4/WC1/EB1/DET1(2026),same reuse/contribution as preregistration.
+Full per-order ledger and report:lead_a2/IMPLEMENTATION_LEDGER.md and
+lead_a2/FINAL_REPORT.md. RED/GPU recovery pending,not claimed fixed.
+No git,subagents,GPU,background waits,signals,kills or original runs writes.
+GPT-6(Codex;specific deployment id not exposed),high(order).
