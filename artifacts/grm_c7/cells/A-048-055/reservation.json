@@ -1,0 +1,24 @@
+{
+  "binding": {
+    "amended_source_sha256": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db",
+    "amendment_A2_sha256": "41b70efdf1735684322a8762c2b716348180bb51ec48a6cc05c630b13c2285fb",
+    "amendment_lead_1_sha256": "e7c8bb527953ae82512ce1fa13e8118288a7223d162b3b15f5f3c6c10f1984d5",
+    "amendment_sha256": "3f69ac4537b503c214af0b34e1364ad1ad3f040f16a20b411dad4228eea57e2a",
+    "arm": "A",
+    "fixture_sha256": "18c4bc891115ac6d96f7c443ad023f3e923ee92ab6aac21a1f1150bd14408ff0",
+    "registration_sha256": "7bc0a0d1ad4cca02a02ae7653ce4b841a8f2fcd0c1e8e051d46b5f5ed7c70c1c"
+  },
+  "cell": {
+    "arm": "A",
+    "cooldown_seconds": 30,
+    "depends": "A-040-047",
+    "estimate_seconds": 255.030359,
+    "id": "A-048-055",
+    "lease_seconds": 285,
+    "outer_seconds": 590,
+    "start": 48,
+    "stop": 55,
+    "worker_seconds": 280
+  },
+  "seconds": 280
+}
