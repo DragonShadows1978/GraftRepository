@@ -1,0 +1,48 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0 -- /usr/bin/python
+rootdir: /mnt/ForgeRealm/wt/grm-c4
+plugins: anyio-4.13.0
+collecting ... collected 31 items
+
+tests/test_grm_c4_skip_a6.py::test_registered_projection_commands_and_unchanged_rules PASSED [  3%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[sha] PASSED [  6%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[order] PASSED [  9%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[previous_amendment] PASSED [ 12%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[registration] PASSED [ 16%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[plan] PASSED [ 19%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[budget] PASSED [ 22%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[previous_budget] PASSED [ 25%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[sources] PASSED [ 29%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[executor] PASSED [ 32%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[receipt_root] PASSED [ 35%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[policy] PASSED [ 38%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_amendment_refused[extra] PASSED [ 41%]
+tests/test_grm_c4_skip_a6.py::test_stale_bound_bytes_refused[source] PASSED [ 45%]
+tests/test_grm_c4_skip_a6.py::test_stale_bound_bytes_refused[order] PASSED [ 48%]
+tests/test_grm_c4_skip_a6.py::test_stale_bound_bytes_refused[predecessor] PASSED [ 51%]
+tests/test_grm_c4_skip_a6.py::test_stale_bound_bytes_refused[executor] PASSED [ 54%]
+tests/test_grm_c4_skip_a6.py::test_stale_bound_bytes_refused[commands] PASSED [ 58%]
+tests/test_grm_c4_skip_a6.py::test_all_registered_skips_zero_attempt_lease_reserve_or_charge PASSED [ 61%]
+tests/test_grm_c4_skip_a6.py::test_all_fitting_units_dispatched_dependencies_preserved_partial_summary PASSED [ 64%]
+tests/test_grm_c4_skip_a6.py::test_forged_skip_receipt_refused[pass] PASSED [ 67%]
+tests/test_grm_c4_skip_a6.py::test_forged_skip_receipt_refused[charge] PASSED [ 70%]
+tests/test_grm_c4_skip_a6.py::test_forged_skip_receipt_refused[attempt] PASSED [ 74%]
+tests/test_grm_c4_skip_a6.py::test_forged_skip_receipt_refused[source] PASSED [ 77%]
+tests/test_grm_c4_skip_a6.py::test_forged_skip_receipt_refused[reason] PASSED [ 80%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_partial_score_refused[scores] PASSED [ 83%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_partial_score_refused[completed] PASSED [ 87%]
+tests/test_grm_c4_skip_a6.py::test_forged_or_stale_partial_score_refused[amendment] PASSED [ 90%]
+tests/test_grm_c4_skip_a6.py::test_actual_cap_reserves_285_at_6600[6315-True] PASSED [ 93%]
+tests/test_grm_c4_skip_a6.py::test_actual_cap_reserves_285_at_6600[6315.001-False] PASSED [ 96%]
+tests/test_grm_c4_skip_a6.py::test_existing_artifacts_byte_unchanged_and_no_real_attempts PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/test_grm_c4_skip_a6.py::test_all_fitting_units_dispatched_dependencies_preserved_partial_summary
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+tests/test_grm_c4_skip_a6.py::test_all_fitting_units_dispatched_dependencies_preserved_partial_summary
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 31 passed, 2 warnings in 21.86s ========================
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

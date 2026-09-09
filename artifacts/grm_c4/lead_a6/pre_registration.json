@@ -1,0 +1,20 @@
+{
+  "decision": "Preserve A5 NON_FIT classification: lh12a284s (below285 lease but exceeds unchanged <200 planning target), lh13b348s. No lease increase or state bypass. lh12b63s and lh13a66s remain fitting estimates but cannot run without skipped predecessor.",
+  "gates": [
+    "Exact 50-unit membership; six CPU skips, 44 fitting worker dispatches; 6002.6785489856265s projection below6600 including all dependency-blocked fitting estimates.",
+    "All six registered skips create only NON_FIT receipt; no attempt, lease, readiness, reserve or harness; retry refused.",
+    "Synthetic all-unit dispatch: 38 reachable worker leases, six dependency-blocked fitting segments, all three partial cells NON_FIT with19 completed units each; original battery scorers unchanged.",
+    "Forged and stale amendment, order, predecessor, sources, command file, skip receipts and partial scores refused even with recomputed sidecar.",
+    "Actual wall accounting uses6600 cap with285 reserve; older CPU suites retained; historical source/receipt bytes unchanged; no real workers; CLI dry-run and shell syntax."
+  ],
+  "immutable": true,
+  "model_id": "GPT-6 (Codex; exact deployment identifier not exposed)",
+  "order": {
+    "bytes": 1472,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_6.md",
+    "sha256": "f003ef8c6b3f40bced73c5d753b94961bdbd4065d55d7ab8572313d3a01df8f0"
+  },
+  "prior_art": "Local C4/A4/A5 and DET1 (house,2026), verified source: SHA closure, runtime overlays, create-only status receipts, state dependencies, reserve accounting and complete-battery scorers. A6 adds lead-directed fitting-only projection and explicit skip commands; no novel algorithm claimed. Specific inherited A5 timing heuristic: no prior art known to me.",
+  "reasoning_effort": "high (requested)",
+  "scope": "CPU author gates; no git, subagents, GPU, background waits, process signals, lock or service changes."
+}
