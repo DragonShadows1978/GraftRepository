@@ -1,0 +1,20 @@
+--- before/tests/test_grm_scout_fix3.py
++++ tests/test_grm_scout_fix3.py
+@@ -23,7 +23,7 @@
+         a.m.fold_output = SOURCE + stop + ' LEAK'
+         assert repo._fold_once(jobs=[('digest', [idx])])
+         first = a.m.calls[0]['input']
+-        raw = (a.DIGEST_PROMPTS if kind == 'turn' else a.ERA_PROMPTS)[0]
++        raw = a._consolidation_prompts(kind != 'turn', [a.grafts[idx]['text']])[0]
+         user, primer = raw.removeprefix('User: ').rsplit('\nAssistant:', 1)
+         assert first == harmony_turn(user, None) + primer
+         assert len(a.m.calls) == len(a.encode(SOURCE + stop))
+@@ -44,7 +44,7 @@
+         a.prompt_template = template
+         a.m.fold_output = SOURCE + '<|end|> more unique prose words here'
+         a.consolidate([idx], ngen=19)
+-        assert a.m.calls[0]['input'] == a.DIGEST_PROMPTS[0]
++        assert a.m.calls[0]['input'] == a._consolidation_prompts(False, [a.grafts[idx]['text']])[0]
+         assert len(a.m.calls) == 19
+         assert '<|end|>' in a.last_consolidation_attempts[0]['text']
+         a.m.calls.clear()

@@ -1,0 +1,11 @@
+{
+  "gates": [
+    "GPU runner verify CPU binding pass; 13 restore_sources replays with CPU payload adapter and original index arrays; originals read-only",
+    "GPU verify rejects tampered local core hash in copied registration; direct --worker refuses without owned parent",
+    "AST delta limited to _consolidation_prompts/consolidate; facts, QC and .70 identical",
+    "two registered in-process mutations killed after green, no live source edits"
+  ],
+  "immutable": true,
+  "parent_registration_sha256": "7d6e7c74d659b0b0b8022f85fe4538db74f2ef526281cecbed1639d69ef48dee",
+  "prior_art": "GRM C7 CPU doubles, SHA receipt checks and Python AST extraction (local contributors, 2026); reuse methodology. New harness checks; no prior art known to me for exact suite."
+}

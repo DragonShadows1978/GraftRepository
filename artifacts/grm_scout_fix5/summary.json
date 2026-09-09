@@ -1,0 +1,127 @@
+{
+  "cpu_pins": {
+    "green": "62 passed",
+    "red": "28 failed, 34 passed",
+    "runner_and_regression": "45 passed"
+  },
+  "folds": [
+    {
+      "N": 10,
+      "accepted": true,
+      "budget": 240,
+      "green_coverage": 1.0,
+      "red_coverage": 0.0,
+      "turn": 8
+    },
+    {
+      "N": 10,
+      "accepted": true,
+      "budget": 240,
+      "green_coverage": 1.0,
+      "red_coverage": 0.0,
+      "turn": 17
+    },
+    {
+      "N": 8,
+      "accepted": true,
+      "budget": 192,
+      "green_coverage": 1.0,
+      "red_coverage": 0.0,
+      "turn": 26
+    },
+    {
+      "N": 8,
+      "accepted": true,
+      "budget": 192,
+      "green_coverage": 1.0,
+      "red_coverage": 0.0,
+      "turn": 55
+    },
+    {
+      "N": 8,
+      "accepted": true,
+      "budget": 192,
+      "green_coverage": 1.0,
+      "red_coverage": 0.0,
+      "turn": 74
+    },
+    {
+      "N": 9,
+      "accepted": true,
+      "budget": 216,
+      "green_coverage": 1.0,
+      "red_coverage": 0.0,
+      "turn": 85
+    },
+    {
+      "N": 12,
+      "accepted": true,
+      "budget": 288,
+      "green_coverage": 1.0,
+      "red_coverage": 0.0,
+      "turn": 91
+    },
+    {
+      "N": 9,
+      "accepted": true,
+      "budget": 216,
+      "green_coverage": 1.0,
+      "red_coverage": 0.0,
+      "turn": 95
+    },
+    {
+      "N": 8,
+      "accepted": true,
+      "budget": 192,
+      "green_coverage": 1.0,
+      "red_coverage": 0.0,
+      "turn": 99
+    },
+    {
+      "N": 8,
+      "accepted": true,
+      "budget": 192,
+      "green_coverage": 1.0,
+      "red_coverage": 0.0,
+      "turn": 103
+    },
+    {
+      "N": 8,
+      "accepted": true,
+      "budget": 192,
+      "green_coverage": 1.0,
+      "red_coverage": 0.0,
+      "turn": 107
+    },
+    {
+      "N": 8,
+      "accepted": true,
+      "budget": 192,
+      "green_coverage": 1.0,
+      "red_coverage": 0.0,
+      "turn": 111
+    },
+    {
+      "N": 8,
+      "accepted": true,
+      "budget": 192,
+      "green_coverage": 1.0,
+      "red_coverage": 0.0,
+      "turn": 115
+    }
+  ],
+  "gpu": "NOT_RUN",
+  "gpu_registration_sha256": "631b6ad9891149ec6efdbfbab4409afdf5a4e34c1e29cce326fd76cbf755cb46",
+  "mutation_kill_rate": 1.0,
+  "mutation_threshold": 0.8,
+  "mutations": {
+    "remove_enumeration": {
+      "killed": true,
+      "receipt": "mutation_remove_enumeration.log"
+    },
+    "remove_scaling": {
+      "killed": true,
+      "receipt": "mutation_remove_scaling.log"
+    }
+  }
+}

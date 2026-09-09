@@ -1,0 +1,15 @@
+{
+  "agent": "Codex GPT-6 family; exact backend ID not exposed",
+  "core_after_sha256": "67f00ba365dee64b5efc414d2a48c711062658bbfe6dc8c9f30efd1c3b7dc37e",
+  "core_before_sha256": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+  "effort": "high requested",
+  "gpu_bound_files_verified": 139,
+  "gpu_directory_absent": true,
+  "gpu_executed": false,
+  "gpu_registration_sha256": "631b6ad9891149ec6efdbfbab4409afdf5a4e34c1e29cce326fd76cbf755cb46",
+  "historical_input_files_verified": 78,
+  "order_unchanged": true,
+  "registration_sha256": "7d6e7c74d659b0b0b8022f85fe4538db74f2ef526281cecbed1639d69ef48dee",
+  "source_restored_after_mutations": "Live source never modified by mutations; registered post-fix hash matches",
+  "status": "PASS"
+}

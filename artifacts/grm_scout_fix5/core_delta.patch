@@ -1,0 +1,55 @@
+--- before/core/graft_arena.py
++++ core/graft_arena.py
+@@ -1928,6 +1928,31 @@
+ 
+     def _consolidation_prompts(self, deep, source_texts):
+         prompts = self.ERA_PROMPTS if deep else self.DIGEST_PROMPTS
++        # Prior art: GRM source scaffold / fact-set fidelity (contributors,
++        # 2026), reused below. FIX-5 makes source facts explicit without
++        # truncating their relations. No prior art known to me for this
++        # exact prompt and 24-tokens-per-fact default budget combination.
++        need = self._fact_set(source_texts)
++        if need:
++            lines = []
++            for source in source_texts:
++                # Strip transport markers, retaining fact-bearing source
++                # spans verbatim (including corrections and alias edges).
++                for span in re.split(r"<\|[^|]+\|>", source):
++                    span = re.sub(r"(?m)^(?:User|Assistant):\s*", "", span).strip()
++                    if self._fact_set([span]) & need:
++                        lines.append(f"[source {len(lines) + 1}] {span}")
++            instruction = (
++                f"\n\nKeep every one of these {len(need)} facts (fact tokens "
++                "across the source spans below), with their relationships "
++                "and corrections intact:\n" + "\n".join(lines) +
++                "\n\nWrite a single prose archive block in complete sentences. "
++                "Do not copy the sources or their list format; combine their "
++                "facts, preserving identifiers verbatim. Do not invent times "
++                "or other unstated details.\n")
++            prompts = tuple(head + instruction + "\nAssistant:" + tail
++                            for head, tail in
++                            (p.rsplit("\nAssistant:", 1) for p in prompts))
+         if not self.TEXT_SCAFFOLD_CONSOLIDATION:
+             return prompts
+         source_block = self._source_scaffold(source_texts)
+@@ -2141,8 +2166,6 @@
+         standalone (clean key + payload), RETIRE the sources from routing.
+         The digest node carries its children's centroids for hierarchical
+         descent. Returns (digest_idx, digest_text)."""
+-        if ngen is None:
+-            ngen = int(self.CONSOLIDATE_NGEN)
+         # Even extractive era folds retire their sources. Validate that every
+         # source has a recoverable payload before either folding path can
+         # alter cache state or make that lifecycle change.
+@@ -2154,6 +2177,11 @@
+         srcs = [self.grafts[i]["text"] for i in idxs]
+         deep = any(self.grafts[i].get("kind", "turn") != "turn" for i in idxs)
+         need = self._fact_set(srcs)
++        # FIX-5 default allowance scales with the existing fidelity fact set;
++        # explicit caller budgets and the zero-fact path retain their values.
++        if ngen is None:
++            ngen = (max(int(self.CONSOLIDATE_NGEN), 24 * len(need))
++                    if need else int(self.CONSOLIDATE_NGEN))
+         self.last_consolidation_attempts = []
+         self.last_consolidation_result = {"accepted": False,
+                                           "best_cov": -1.0,
