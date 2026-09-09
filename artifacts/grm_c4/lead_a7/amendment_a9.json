@@ -1,0 +1,92 @@
+{
+  "added_sources": [
+    {
+      "bytes": 4323,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_accounting_a7.py",
+      "sha256": "45c47e984bd4c076396f9f31945341202f6586c0eb03bd2795455b3006379383"
+    },
+    {
+      "bytes": 7804,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/tests/test_grm_c4_accounting_a7.py",
+      "sha256": "67ec9b24c8c482c7db4aeb08aacdef8bc8253ba778b6ee0bfb6fc3c0d5526e06"
+    },
+    {
+      "bytes": 1110,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_7.md",
+      "sha256": "e7176e6a0d11602f35f88a49cffcd65a13834d200a22c1ea9cbdda27b6af0b33"
+    },
+    {
+      "bytes": 6699,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_commands_a7.txt",
+      "sha256": "70b9935128af97766e6f4d6b86a62b40a44ac147bcfb937d9e891b53667382bb"
+    },
+    {
+      "bytes": 2105,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a7/pre_registration.json",
+      "sha256": "85860218e7079ba30e0f92ad63c7a8a740876930638d72711929b19cbc66bb77"
+    },
+    {
+      "bytes": 685272,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a7/before.json",
+      "sha256": "d16fd22bcad2fff203d226abb59b81565a0717af51085c966b96a8f343965985"
+    },
+    {
+      "bytes": 36361,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a7/grm_c4_split_a5.py.before",
+      "sha256": "b02c180ece58668c42e4750e34219651ad983684dcd8100ea14b7662d8421e2d"
+    },
+    {
+      "bytes": 8943,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a7/grm_c4_skip_a6.py.before",
+      "sha256": "d8e19ec120da027d067e3e8f00ac40226dcbbc954ed954a5206a01e7aa87943d"
+    }
+  ],
+  "artifact_sequence": 9,
+  "before": {
+    "bytes": 685272,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a7/before.json",
+    "sha256": "d16fd22bcad2fff203d226abb59b81565a0717af51085c966b96a8f343965985"
+  },
+  "immutable": true,
+  "lead_amendment_number": 7,
+  "order": {
+    "bytes": 1110,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_7.md",
+    "sha256": "e7176e6a0d11602f35f88a49cffcd65a13834d200a22c1ea9cbdda27b6af0b33"
+  },
+  "policy": "No budget, plan, projection, skip, retry, dependency, scoring or GPU lease changes. Metadata/attempt/score files are excluded with diagnostics; incomplete worker evidence blocks admission.",
+  "previous_amendment": {
+    "bytes": 42570,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/amendment_a8.json",
+    "sha256": "4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e"
+  },
+  "prior_art": "Local C4/A4/A5/A6 and DET1 (house,2026), verified local source: exact source replacement manifests, completed-worker accounting, create-only claims, reserves and cooldown. A7 adds filename/schema filtering and per-file diagnostics plus exact-disk-layout regression; no novel algorithm claimed.",
+  "receipt_identity": "A6 identities retained, as with the A4 source replacement overlay. A7 authorizes exact accounting source replacements only; historical manifests and receipts are not rewritten.",
+  "schema": "grm.c4.accounting-repair.v1",
+  "source_replacements": [
+    {
+      "after": {
+        "bytes": 38791,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_split_a5.py",
+        "sha256": "273e3cf552df18461fdfea342bf481e89f23f48ae6b3fa574e521d9cb72a1476"
+      },
+      "before": {
+        "bytes": 36361,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_split_a5.py",
+        "sha256": "b02c180ece58668c42e4750e34219651ad983684dcd8100ea14b7662d8421e2d"
+      }
+    },
+    {
+      "after": {
+        "bytes": 9203,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_skip_a6.py",
+        "sha256": "1f7bad72c5a8174ffa36f190de02ef33c4755d3e47aa7396ef6fc7297b654060"
+      },
+      "before": {
+        "bytes": 8943,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_skip_a6.py",
+        "sha256": "d8e19ec120da027d067e3e8f00ac40226dcbbc954ed954a5206a01e7aa87943d"
+      }
+    }
+  ]
+}

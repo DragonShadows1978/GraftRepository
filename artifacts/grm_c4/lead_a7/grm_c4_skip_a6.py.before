@@ -19,7 +19,6 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts import grm_c4_campaign as c
 from scripts import grm_c4_split_a5 as a5
-from scripts import grm_c4_accounting_a7 as accounting_a7
 
 OUT = c.OUT / 'lead_a6'
 ORDER = c.ROOT / 'orders/GRM_C4_AMENDMENT_6.md'
@@ -84,10 +83,8 @@ def expected_payload(previous):
         'previous_budget': previous['budget'],
         'budget': {**previous['budget'], 'gpu_seconds': 6600},
         'receipt_root': str(a5.OUT/'runs'),
-        # Prior art: A4 exact source replacements (house,2026), reused by A7.
-        # Preserve A6 identity only after verifying the separate A7 manifest.
-        'sources': [accounting_a7.historical_record(c.ROOT/p) for p in ADDITIONS],
-        'executor': accounting_a7.historical_record(a5.__file__),
+        'sources': [c.record(c.ROOT/p) for p in ADDITIONS],
+        'executor': c.record(a5.__file__),
         'policy': 'Explicit A6 entrypoint overlays the unchanged A5 executor at runtime. Planning NON_FIT skips create only a zero-work status receipt, never an attempt. No longer lease, retries, dependency bypass or partial battery scores.',
         'prior_art': c.read(OUT/'pre_registration.json')['prior_art']}
 

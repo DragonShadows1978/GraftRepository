@@ -21,7 +21,6 @@ from scripts import grm_c4_campaign as c
 from scripts import grm_c4_resume_a2 as a2
 from scripts import grm_c4_remaining_a3 as a3
 from scripts import grm_c4_cap_a4 as cap
-from scripts import grm_c4_accounting_a7 as accounting_a7
 
 OUT = c.OUT/'lead_a5'
 ORDER = c.ROOT/'orders/GRM_C4_AMENDMENT_5.md'
@@ -122,7 +121,7 @@ def expected_payload(previous):
         'registration':c.record(c.REG),'plan':plan(previous),
         'decoupling':{'prior_cell_scores_required':False,'within_cell_dependencies_required':True},
         'receipt_root':str(OUT/'runs'),'budget':previous['budget'],
-        'sources':[accounting_a7.historical_record(c.ROOT/p) for p in ADDITIONS],
+        'sources':[c.record(c.ROOT/p) for p in ADDITIONS],
         'legacy_executor':c.record(a3.__file__),
         'receipt_policy':'Create-only, one run each. Known planning/cap/dependency NON_FIT makes a receipt without GPU execution. Full score only after every registered PASS; partial summary contains no battery score.',
         'activation':'Explicit A5 successor to A3; historic entrypoints and source manifests remain byte-unchanged.',
@@ -214,66 +213,24 @@ def ready(reg, cell, battery, spec):
 def accounting(reg, *, reserve=True):
     # Prior art: DET1/A4 reserve accounting (house,2026). Charge immutable
     # historical REDs exactly; new RED blocks its cell but not independent cells.
-    # A7: C4/A5 completed-worker accounting and claim guard (house,2026),
-    # reused. Added filename filtering and per-file diagnostics; no novelty.
-    # Metadata is not a receipt. Incomplete worker evidence still fails closed
-    # so skipping it cannot undercount work and authorize a new lease.
     workers=[]
-    completed=set()
-    claims=[]
-    blocked=[]
     pins={p['path']:p for p in c.read(OUT/'before.json')['files']}
-    def skip(path, reason):
-        print(json.dumps({'accounting_skip':str(path),'reason':reason}), file=sys.stderr)
     for root in (c.OUT,a2.OUT,a3.OUT,OUT):
-        for path in sorted((root/'runs').glob('*/*.json')):
-            if path.name.endswith('.attempt.json'):
-                skip(path, 'attempt marker; not a completed receipt')
-                claims.append(path)
-                continue
-            if path.name=='score.json':
-                skip(path, 'score summary; not a worker receipt')
-                continue
-            if not path.name.startswith(('sup_', 'census_', 'longhorizon_')):
-                skip(path, 'metadata/non-worker filename; not a worker receipt')
-                continue
-            try:
-                row=c.read(path)
-            except (ValueError, OSError) as exc:
-                skip(path, f'unreadable worker receipt: {type(exc).__name__}: {exc}')
-                blocked.append(str(path))
-                continue
-            if not isinstance(row, dict) or row.get('status') not in ('PASS','RED','NON_FIT'):
-                skip(path, 'incomplete worker receipt: missing/invalid status')
-                blocked.append(str(path))
-                continue
-            if not all(k in row for k in ('cell','battery','spec')):
-                skip(path, 'incomplete worker receipt: missing cell/battery/spec')
-                blocked.append(str(path))
-                continue
-            assert path.parent.name == row['cell'] and path.name == f"{row['battery']}_{row['spec']}.json", f'Worker identity mismatch: {path}'
-            if row['status'] != 'NON_FIT' and not all(k in row for k in ('finished_unix','gpu_seconds')):
-                skip(path, 'incomplete worker receipt: missing finished_unix/gpu_seconds')
-                blocked.append(str(path))
+        for claim in (root/'runs').glob('*/*.attempt.json'):
+            assert claim.with_name(claim.name.replace('.attempt.json','.json')).is_file(), 'Unfinished worker claim: campaign blocked'
+        for path in (root/'runs').glob('*/*.json'):
+            row=c.read(path)
+            if path.name.endswith('.attempt.json') or path.name=='score.json':
                 continue
             if root != OUT:
                 assert str(path) in pins and c.record(path)==pins[str(path)], 'Unregistered or stale historical worker'
             else:
                 row=validate_receipt(path,reg,row['cell'],row['battery'],row['spec'])
             if row['status']=='NON_FIT':
-                assert row.get('gpu_executed') is False and row.get('gpu_seconds') == 0, f'Invalid NON_FIT accounting: {path}'
-                skip(path, 'NON_FIT status receipt; no executed work, zero charge')
                 continue
-            assert all(type(row[k]) in (int,float) and math.isfinite(row[k]) and row[k]>=0
-                       for k in ('gpu_seconds','finished_unix')), f'Invalid wall accounting: {path}'
-            completed.add(path)
+            assert row['status'] in ('PASS','RED') and 'finished_unix' in row, 'Incomplete worker receipt'
+            assert math.isfinite(row['gpu_seconds']) and row['gpu_seconds']>=0 and math.isfinite(row['finished_unix']), 'Invalid wall accounting'
             workers.append(row)
-    for claim in claims:
-        receipt=claim.with_name(claim.name.removesuffix('.attempt.json')+'.json')
-        if receipt not in completed:
-            skip(claim, 'unfinished worker claim: no completed PASS/RED receipt; campaign blocked')
-            blocked.append(str(claim))
-    assert not blocked, 'Unfinished worker claim or incomplete worker receipt: campaign blocked: '+', '.join(blocked)
     used=sum(r['gpu_seconds'] for r in workers)
     if reserve:
         assert used+285<=reg['budget']['gpu_seconds'], 'GPU budget non-fit; no run'

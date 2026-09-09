@@ -1,0 +1,51 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0 -- /usr/bin/python
+rootdir: /mnt/ForgeRealm/wt/grm-c4
+plugins: anyio-4.13.0
+collecting ... collected 34 items
+
+tests/test_grm_c4_accounting_a7.py::test_exact_crashed_disk_layout_keyerror_then_completed_receipts PASSED [  2%]
+tests/test_grm_c4_accounting_a7.py::test_metadata_attempt_and_score_are_excluded_before_read PASSED [  5%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[False-{] PASSED [  8%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[False-[]] PASSED [ 11%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[False-{}] PASSED [ 14%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[False-{"status":"PASS"}] PASSED [ 17%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[False-{"status":"PASS","cell":"c96_w64","battery":"sup","spec":"partial"}] PASSED [ 20%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[True-{] PASSED [ 23%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[True-[]] PASSED [ 26%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[True-{}] PASSED [ 29%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[True-{"status":"PASS"}] PASSED [ 32%]
+tests/test_grm_c4_accounting_a7.py::test_partial_worker_diagnosed_and_blocks_admission[True-{"status":"PASS","cell":"c96_w64","battery":"sup","spec":"partial"}] PASSED [ 35%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[gpu_seconds-nan] PASSED [ 38%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[gpu_seconds-inf] PASSED [ 41%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[gpu_seconds--1] PASSED [ 44%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[gpu_seconds-True] PASSED [ 47%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[gpu_seconds-1] PASSED [ 50%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[finished_unix-nan] PASSED [ 52%]
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[finished_unix--1] PASSED [ 55%]
+tests/test_grm_c4_accounting_a7.py::test_a6_plan_budget_commands_and_historical_artifacts_unchanged PASSED [ 58%]
+tests/test_grm_c4_accounting_a7.py::test_a7_forged_manifest_refused[sha] PASSED [ 61%]
+tests/test_grm_c4_accounting_a7.py::test_a7_forged_manifest_refused[source_replacements] PASSED [ 64%]
+tests/test_grm_c4_accounting_a7.py::test_a7_forged_manifest_refused[added_sources] PASSED [ 67%]
+tests/test_grm_c4_accounting_a7.py::test_a7_forged_manifest_refused[policy] PASSED [ 70%]
+tests/test_grm_c4_accounting_a7.py::test_a7_forged_manifest_refused[extra] PASSED [ 73%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[executor] PASSED [ 76%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[entrypoint] PASSED [ 79%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[helper] PASSED [ 82%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[test] PASSED [ 85%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[commands] PASSED [ 88%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[order] PASSED [ 91%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[before] PASSED [ 94%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[predecessor] PASSED [ 97%]
+tests/test_grm_c4_accounting_a7.py::test_a7_stale_bound_bytes_refused[snapshot] PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[gpu_seconds-nan]
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+tests/test_grm_c4_accounting_a7.py::test_invalid_completed_wall_refused[gpu_seconds-nan]
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 34 passed, 2 warnings in 18.87s ========================
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

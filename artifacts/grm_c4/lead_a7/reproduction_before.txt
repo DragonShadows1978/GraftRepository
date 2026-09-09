@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "<stdin>", line 6, in <module>
+  File "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_split_a5.py", line 229, in accounting
+    if row['status']=='NON_FIT':
+       ~~~^^^^^^^^^^
+KeyError: 'status'
+OFFENDING_FILE: /mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/runtime_frame.json
+ROW_KEYS: ['ambient_env_before_pin', 'cuda_visible_devices', 'git', 'gpu_lease', 'model', 'native_library', 'registration', 'resolved_flags', 'resolved_unix_ns', 'resolved_utc', 'schema', 'source_inventory_match']
+QUOTE: '  "schema": "grm.det1.runtime_frame.v1",'

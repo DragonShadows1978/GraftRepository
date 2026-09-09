@@ -1,0 +1,19 @@
+{
+  "gates": [
+    "Reproduce the original accounting KeyError on the actual disk scan, identify and quote the offending path; preserve byte copies for treatment-effect test.",
+    "Copy exact top-level scan layout (runs, lead_a2/runs, lead_a3/runs, lead_a5/runs) to temporary storage. Original accounting must raise KeyError status; fixed accounting must total only completed PASS/RED walls and report every skipped path and reason.",
+    "Attempt files and score/runtime metadata skipped before JSON parsing; malformed/incomplete files diagnosed. Unfinished claims and incomplete worker-shaped files block admission; no unaccounted work can permit a lease. Completed invalid walls, historical drift, reserve285 and cooldown30 remain refused.",
+    "Exact A6 skip list, budget6600, full plan/projection and command bytes unchanged; source replacements in a new sealed amendment without rewriting predecessor registrations. Current historical receipts/claims remain byte-identical.",
+    "CPU regression tests, A5/A6 behavior tests and legacy suites; historical no-run snapshot assertions will be reported as stale after lead run, never weakened. CLI dry-run and bash -n only; no GPU command execution."
+  ],
+  "immutable": true,
+  "model_id": "GPT-6 (Codex; exact deployment identifier not exposed)",
+  "order": {
+    "bytes": 1110,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_7.md",
+    "sha256": "e7176e6a0d11602f35f88a49cffcd65a13834d200a22c1ea9cbdda27b6af0b33"
+  },
+  "prior_art": "Local C4/A4/A5/A6 and DET1 (house,2026), verified local source: exact source replacement manifests, completed-worker accounting, create-only claims, reserves and cooldown. A7 adds filename/schema filtering and per-file diagnostics plus exact-disk-layout regression; no novel algorithm claimed.",
+  "reasoning_effort": "high (requested)",
+  "scope": "Accounting fix and exact source replacement closure only. Existing zero-work lead outputs retained; rerun commands must resume after them, not retry or overwrite. No git, subagents, GPU, background jobs/waits, process signals, locks or services."
+}
