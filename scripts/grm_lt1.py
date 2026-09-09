@@ -27,6 +27,7 @@ FIX=ROOT/'fixtures/lt1/dialogue.json'
 REG=OUT/'registration.json'
 AMEND=OUT/'amendment1/registration_amendment.json'
 AMEND2=OUT/'amendment2/registration_amendment.json'
+AMEND3=OUT/'amendment3/registration_amendment_r3.json'
 RUN=OUT/'amendment2/run_margin_first'
 
 
@@ -53,7 +54,8 @@ def score(answer, expected):
 
 def binding(arm):
     return dict(arm=arm,registration_sha256=sha(REG),fixture_sha256=sha(FIX),
-                amendment_sha256=sha(AMEND2),admission_rule="margin_first")
+                amendment_sha256=sha(AMEND3),admission_rule="margin_first",
+                core_shas={n:c["after_sha256"] for n,c in read(AMEND3)["core_shas"].items()})
 
 
 def verify():
@@ -88,6 +90,9 @@ def verify():
             raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
         inputs[name]=change['after_sha256']
     inputs.update(a2['new_inputs'])
+    # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+    from scripts.grm_lt1_amendment3 import apply
+    apply(sys.modules[__name__], inputs, a2)
     r['effective_admission_rule']='margin_first'
     for arm in r['arms'].values():arm['admission_rule']='margin_first'
     for name,digest in inputs.items():
@@ -176,25 +181,34 @@ def preflight():
     reasons=[]
     if free<20_000_000_000: reasons.append('FREE_SPACE_BELOW_20_GB')
     if r['status']!='FIT_ESTIMATE': reasons.append(r['status'])
-    receipt=OUT/'amendment2/cpu_receipt.json'
+    receipt=OUT/'amendment3/r3/cpu_receipt.json'
     if os.environ.get('GRM_ADMISSION_RULE')!='margin_first': reasons.append('REGISTERED_ADMISSION_RULE_MISMATCH')
     if not receipt.exists() or read(receipt).get('status')!='PASS': reasons.append('CPU_GATES_NOT_GREEN')
-    elif read(receipt).get('amendment_sha256')!=sha(AMEND2): reasons.append('CPU_RECEIPT_BINDING_MISMATCH')
+    elif read(receipt).get('binding')!=binding('CPU'): reasons.append('CPU_RECEIPT_BINDING_MISMATCH')
+    elif read(receipt).get('fix4_check')!='PASS': reasons.append('FIX4_PREREQUISITE_NOT_GREEN')
     return dict(status='BLOCKED' if reasons else 'READY',reasons=reasons,free_bytes=free,
         minimum_free_bytes=20_000_000_000,gpu_executed=False,projection=r['projection'],
-        model=r['model'],agent_model=r['agent_model'],agent_effort=r['agent_effort'])
+        model=r['model'],agent_model=r['agent_model'],agent_effort=r['agent_effort'],
+        binding=binding('CPU'),fix4_check=read(receipt).get('fix4_check') if receipt.exists() else 'NOT_RUN')
 
 
 def main():
     p=argparse.ArgumentParser(); p.add_argument('--preflight',action='store_true')
     p.add_argument('--summary',choices=['A','B','both']); p.add_argument('--cell')
-    p.add_argument('--resume',action='store_true'); args=p.parse_args()
+    p.add_argument('--resume',action='store_true'); p.add_argument('--dry-run',action='store_true'); args=p.parse_args()
+    if args.dry_run and args.resume: p.error('--dry-run and --resume are mutually exclusive')
     if args.summary:
         value=summary(args.summary) if args.summary!='both' else dict(A=summary('A'),B=summary('B'),
             comparison='See per-arm complete/status and matched per-distance rates; no reader claim from offline admission',recap_comparison='See per-arm recap; null means NOT_RUN')
         print(json.dumps(value,indent=2)); return 0
     result=preflight(); print(json.dumps(result,indent=2))
     if result['status']!='READY': return 2
+    if args.dry_run:
+        from scripts.grm_lt1_worker import pending
+        r=verify()
+        print(json.dumps(dict(status='PASS',mode='CPU_DRY_RUN',gpu_executed=False,
+            next_cell=pending(r),cells=len(r['cells']),binding=binding('CPU')),indent=2))
+        return 0
     if args.cell: raise ValueError('USE_RESUME_FOR_REGISTERED_INTERLEAVING')
     if args.resume:
         from scripts.grm_lt1_worker import resume

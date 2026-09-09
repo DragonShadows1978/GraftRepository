@@ -105,3 +105,7 @@ Worker is runnable under Rule 0; 17 CPU infrastructure tests pass. Natural Rule0
 ## FIX6 / amendment2 continuation (2026-09-09)
 
 Margin-first is implemented as an OFF-by-default core option. C2 OFF132 plans preserved; ON31 known currently-correct execution changes registered, 20 unresolved. Both CPU shared-worker arms completed 200 turns with35/35 admissions.101 author tests passed. Overall RED: this checkout lacks FIX4, whose required recency/live fixtures fail. No GPU run. See artifacts/grm_scout_fix6/REPORT.md and artifacts/grm_lt1/amendment2/preflight.json. Prior art: GRM contributors (2026), LT1 Rule2/A-DEC/RT1/C2/C7; existing decision and checkpoint contracts reused, new opt-in integration.
+
+## Amendment 3 continuation (2026-09-09)
+
+Current CPU gate PASS: FIX4 7, FIX5 37, FIX6 10, LT1 42; total96 passed. Historical LT1 remains18 passed/6 failed. Preflight READY (FIX4 PASS), CPU dry-run PASS. No GPU/model-quality claim. Effective amendment3/r3 SHA 809f906c5e7d057f8cffcf067d4eee7ec990a996f62a05f789916d2f8d47e193. Full source table, corrections, tests, prior art and receipts: amendment3/REPORT.md and amendment3/r3/. Original findings above remain historical evidence.

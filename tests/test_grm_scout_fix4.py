@@ -86,6 +86,12 @@ def test_nonrecency_existing_fixture_receipt_byte_identical(tmp_path, monkeypatc
             assert answer == 'Basalt-811'
             assert repo.arena.cur_mounts == [5]
             assert info['admission_rank_plan'] == [5]
+            # Prior art: FIX6 additive receipt contract (GRM contributors,
+            # 2026). Assert the authorized new key independently, then compare
+            # EVERY legacy receipt byte against the unchanged FIX4 baseline.
+            assert info.pop('admission_rule') == 'all_tokens_bind'
+            if path == 'ladder':
+                assert info['_route_observation']['admission_profile'].pop('admission_rule') == 'all_tokens_bind'
             result[path] = {'answer': answer, 'info': info}
         finally:
             repo.close()
