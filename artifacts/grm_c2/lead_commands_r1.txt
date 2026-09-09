@@ -1,0 +1,113 @@
+# GRM-C2 exact lead commands; execute foreground, in this order.
+# CURRENTLY NON_FIT_BUDGET: 3140 estimated GPU seconds > 2880 allowed.
+# Do not execute GPU commands until a separate planning amendment is reviewed.
+# The runner intentionally refuses --cell under the current registration.
+# No lease extension, automatic retry, lock clearing, git, or process killing.
+cd /mnt/ForgeRealm/wt/grm-c2
+CUDA_VISIBLE_DEVICES='' timeout 120 python -m pytest -q tests/test_grm_c2_profile.py tests/test_grm_c2_capture.py tests/test_grm_c2_payload.py
+python scripts/grm_c2_cells.py --dry-run
+# profile-sup-correction_then_restatement: estimate=45s; deps=none
+timeout 590 python scripts/grm_c2_cells.py --cell profile-sup-correction_then_restatement || exit $?
+# defaults-sup-correction_then_restatement: estimate=45s; deps=none
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-sup-correction_then_restatement || exit $?
+# profile-sup-fresh_fact_controls: estimate=45s; deps=none
+timeout 590 python scripts/grm_c2_cells.py --cell profile-sup-fresh_fact_controls || exit $?
+# defaults-sup-fresh_fact_controls: estimate=45s; deps=none
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-sup-fresh_fact_controls || exit $?
+# profile-sup-multi_hop_a_b_c: estimate=45s; deps=none
+timeout 590 python scripts/grm_c2_cells.py --cell profile-sup-multi_hop_a_b_c || exit $?
+# defaults-sup-multi_hop_a_b_c: estimate=45s; deps=none
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-sup-multi_hop_a_b_c || exit $?
+# profile-sup-short_correction_long_competitor: estimate=45s; deps=none
+timeout 590 python scripts/grm_c2_cells.py --cell profile-sup-short_correction_long_competitor || exit $?
+# defaults-sup-short_correction_long_competitor: estimate=45s; deps=none
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-sup-short_correction_long_competitor || exit $?
+# profile-census-0: estimate=55s; deps=none
+timeout 590 python scripts/grm_c2_cells.py --cell profile-census-0 || exit $?
+# defaults-census-0: estimate=55s; deps=none
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-census-0 || exit $?
+# profile-census-1: estimate=55s; deps=profile-census-0
+timeout 590 python scripts/grm_c2_cells.py --cell profile-census-1 || exit $?
+# defaults-census-1: estimate=55s; deps=defaults-census-0
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-census-1 || exit $?
+# profile-census-2: estimate=55s; deps=profile-census-1
+timeout 590 python scripts/grm_c2_cells.py --cell profile-census-2 || exit $?
+# defaults-census-2: estimate=55s; deps=defaults-census-1
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-census-2 || exit $?
+# profile-census-3: estimate=55s; deps=profile-census-2
+timeout 590 python scripts/grm_c2_cells.py --cell profile-census-3 || exit $?
+# defaults-census-3: estimate=55s; deps=defaults-census-2
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-census-3 || exit $?
+# profile-longhistory-0: estimate=55s; deps=none
+timeout 590 python scripts/grm_c2_cells.py --cell profile-longhistory-0 || exit $?
+# defaults-longhistory-0: estimate=55s; deps=none
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-longhistory-0 || exit $?
+# profile-longhistory-1: estimate=55s; deps=profile-longhistory-0
+timeout 590 python scripts/grm_c2_cells.py --cell profile-longhistory-1 || exit $?
+# defaults-longhistory-1: estimate=55s; deps=defaults-longhistory-0
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-longhistory-1 || exit $?
+# profile-longhistory-2: estimate=55s; deps=profile-longhistory-1
+timeout 590 python scripts/grm_c2_cells.py --cell profile-longhistory-2 || exit $?
+# defaults-longhistory-2: estimate=55s; deps=defaults-longhistory-1
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-longhistory-2 || exit $?
+# profile-longhistory-3: estimate=55s; deps=profile-longhistory-2
+timeout 590 python scripts/grm_c2_cells.py --cell profile-longhistory-3 || exit $?
+# defaults-longhistory-3: estimate=55s; deps=defaults-longhistory-2
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-longhistory-3 || exit $?
+# profile-longhistory-4: estimate=100s; deps=profile-longhistory-3
+timeout 590 python scripts/grm_c2_cells.py --cell profile-longhistory-4 || exit $?
+# defaults-longhistory-4: estimate=100s; deps=defaults-longhistory-3
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-longhistory-4 || exit $?
+# profile-longhistory-5: estimate=100s; deps=profile-longhistory-4
+timeout 590 python scripts/grm_c2_cells.py --cell profile-longhistory-5 || exit $?
+# defaults-longhistory-5: estimate=100s; deps=defaults-longhistory-4
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-longhistory-5 || exit $?
+# profile-longhistory-6: estimate=100s; deps=profile-longhistory-5
+timeout 590 python scripts/grm_c2_cells.py --cell profile-longhistory-6 || exit $?
+# defaults-longhistory-6: estimate=100s; deps=defaults-longhistory-5
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-longhistory-6 || exit $?
+# profile-longhistory-7: estimate=100s; deps=profile-longhistory-6
+timeout 590 python scripts/grm_c2_cells.py --cell profile-longhistory-7 || exit $?
+# defaults-longhistory-7: estimate=100s; deps=defaults-longhistory-6
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-longhistory-7 || exit $?
+# profile-sup-restart-0: estimate=55s; deps=profile-sup-correction_then_restatement,profile-sup-fresh_fact_controls,profile-sup-multi_hop_a_b_c,profile-sup-short_correction_long_competitor
+timeout 590 python scripts/grm_c2_cells.py --cell profile-sup-restart-0 || exit $?
+# defaults-sup-restart-0: estimate=55s; deps=defaults-sup-correction_then_restatement,defaults-sup-fresh_fact_controls,defaults-sup-multi_hop_a_b_c,defaults-sup-short_correction_long_competitor
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-sup-restart-0 || exit $?
+# profile-sup-restart-1: estimate=55s; deps=profile-sup-correction_then_restatement,profile-sup-fresh_fact_controls,profile-sup-multi_hop_a_b_c,profile-sup-short_correction_long_competitor
+timeout 590 python scripts/grm_c2_cells.py --cell profile-sup-restart-1 || exit $?
+# defaults-sup-restart-1: estimate=55s; deps=defaults-sup-correction_then_restatement,defaults-sup-fresh_fact_controls,defaults-sup-multi_hop_a_b_c,defaults-sup-short_correction_long_competitor
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-sup-restart-1 || exit $?
+# profile-sup-restart-2: estimate=55s; deps=profile-sup-correction_then_restatement,profile-sup-fresh_fact_controls,profile-sup-multi_hop_a_b_c,profile-sup-short_correction_long_competitor
+timeout 590 python scripts/grm_c2_cells.py --cell profile-sup-restart-2 || exit $?
+# defaults-sup-restart-2: estimate=55s; deps=defaults-sup-correction_then_restatement,defaults-sup-fresh_fact_controls,defaults-sup-multi_hop_a_b_c,defaults-sup-short_correction_long_competitor
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-sup-restart-2 || exit $?
+# profile-census-restart-0: estimate=55s; deps=profile-census-0,profile-census-1,profile-census-2,profile-census-3
+timeout 590 python scripts/grm_c2_cells.py --cell profile-census-restart-0 || exit $?
+# defaults-census-restart-0: estimate=55s; deps=defaults-census-0,defaults-census-1,defaults-census-2,defaults-census-3
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-census-restart-0 || exit $?
+# profile-census-restart-1: estimate=55s; deps=profile-census-0,profile-census-1,profile-census-2,profile-census-3
+timeout 590 python scripts/grm_c2_cells.py --cell profile-census-restart-1 || exit $?
+# defaults-census-restart-1: estimate=55s; deps=defaults-census-0,defaults-census-1,defaults-census-2,defaults-census-3
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-census-restart-1 || exit $?
+# profile-census-restart-2: estimate=55s; deps=profile-census-0,profile-census-1,profile-census-2,profile-census-3
+timeout 590 python scripts/grm_c2_cells.py --cell profile-census-restart-2 || exit $?
+# defaults-census-restart-2: estimate=55s; deps=defaults-census-0,defaults-census-1,defaults-census-2,defaults-census-3
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-census-restart-2 || exit $?
+# profile-longhistory-restart-0: estimate=55s; deps=profile-longhistory-0,profile-longhistory-1,profile-longhistory-2,profile-longhistory-3,profile-longhistory-4,profile-longhistory-5,profile-longhistory-6,profile-longhistory-7
+timeout 590 python scripts/grm_c2_cells.py --cell profile-longhistory-restart-0 || exit $?
+# defaults-longhistory-restart-0: estimate=55s; deps=defaults-longhistory-0,defaults-longhistory-1,defaults-longhistory-2,defaults-longhistory-3,defaults-longhistory-4,defaults-longhistory-5,defaults-longhistory-6,defaults-longhistory-7
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-longhistory-restart-0 || exit $?
+# profile-longhistory-restart-1: estimate=55s; deps=profile-longhistory-0,profile-longhistory-1,profile-longhistory-2,profile-longhistory-3,profile-longhistory-4,profile-longhistory-5,profile-longhistory-6,profile-longhistory-7
+timeout 590 python scripts/grm_c2_cells.py --cell profile-longhistory-restart-1 || exit $?
+# defaults-longhistory-restart-1: estimate=55s; deps=defaults-longhistory-0,defaults-longhistory-1,defaults-longhistory-2,defaults-longhistory-3,defaults-longhistory-4,defaults-longhistory-5,defaults-longhistory-6,defaults-longhistory-7
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-longhistory-restart-1 || exit $?
+# profile-longhistory-restart-2: estimate=55s; deps=profile-longhistory-0,profile-longhistory-1,profile-longhistory-2,profile-longhistory-3,profile-longhistory-4,profile-longhistory-5,profile-longhistory-6,profile-longhistory-7
+timeout 590 python scripts/grm_c2_cells.py --cell profile-longhistory-restart-2 || exit $?
+# defaults-longhistory-restart-2: estimate=55s; deps=defaults-longhistory-0,defaults-longhistory-1,defaults-longhistory-2,defaults-longhistory-3,defaults-longhistory-4,defaults-longhistory-5,defaults-longhistory-6,defaults-longhistory-7
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-longhistory-restart-2 || exit $?
+# profile-longhistory-restart-3: estimate=55s; deps=profile-longhistory-0,profile-longhistory-1,profile-longhistory-2,profile-longhistory-3,profile-longhistory-4,profile-longhistory-5,profile-longhistory-6,profile-longhistory-7
+timeout 590 python scripts/grm_c2_cells.py --cell profile-longhistory-restart-3 || exit $?
+# defaults-longhistory-restart-3: estimate=55s; deps=defaults-longhistory-0,defaults-longhistory-1,defaults-longhistory-2,defaults-longhistory-3,defaults-longhistory-4,defaults-longhistory-5,defaults-longhistory-6,defaults-longhistory-7
+timeout 590 python scripts/grm_c2_cells.py --cell defaults-longhistory-restart-3 || exit $?
+python scripts/grm_c2_cells.py --score > artifacts/grm_c2/lead_score.json

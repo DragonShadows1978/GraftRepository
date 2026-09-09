@@ -1,0 +1,50 @@
+{
+  "evidence_class": "author CPU seeded behavioral mutations; not blind verification",
+  "registered": 5,
+  "killed": 5,
+  "threshold": 0.8,
+  "records": [
+    {
+      "name": "raised_cap_forged_in_runner",
+      "test": "test_amended_budget_preserves_all_52_cells_and_registers_defaults96_nonfit",
+      "returncode": 1,
+      "killed": true,
+      "log": "artifacts/grm_c2/amendment_mutant_raised_cap_forged_in_runner.log",
+      "log_sha256": "950e6db089cc69f20049dc59914c0f1f57bb3ebe1117e2373eb4e058069b6d64"
+    },
+    {
+      "name": "orphan_uncharged",
+      "test": "test_red_and_orphan_cells_never_retried_and_orphan_fully_charged",
+      "returncode": 1,
+      "killed": true,
+      "log": "artifacts/grm_c2/amendment_mutant_orphan_uncharged.log",
+      "log_sha256": "1c54fe1b1e2e5477e3e014674f1ce36c276298c0645ebd548db5e57452015c14"
+    },
+    {
+      "name": "summary_false_green",
+      "test": "test_summary_reports_denominators_width_seats_rt1_and_missing",
+      "returncode": 1,
+      "killed": true,
+      "log": "artifacts/grm_c2/amendment_mutant_summary_false_green.log",
+      "log_sha256": "fbb2eaa1522d7424d279e52f9107d86799198501fa693adaa8e762729fa93b0f"
+    },
+    {
+      "name": "missing_token_seats_accepted",
+      "test": "test_cell_evidence_refuses_missing_or_duplicate_fields[token_seats]",
+      "returncode": 1,
+      "killed": true,
+      "log": "artifacts/grm_c2/amendment_mutant_missing_token_seats_accepted.log",
+      "log_sha256": "61d63689d9e1c65dbd899ee3e1165bafa5be75412e875b38db2e56912d839c7a"
+    },
+    {
+      "name": "red_exit_success",
+      "test": "test_stop_on_red_resume_next_unstarted_never_retry",
+      "returncode": 1,
+      "killed": true,
+      "log": "artifacts/grm_c2/amendment_mutant_red_exit_success.log",
+      "log_sha256": "371d185e03321af1753527906b1e3bb7b438c14eb4abebe1704247ea57d905d1"
+    }
+  ],
+  "integrity_guard": "original source identity retained intentionally to test post-load logic",
+  "production_sources_modified": false
+}

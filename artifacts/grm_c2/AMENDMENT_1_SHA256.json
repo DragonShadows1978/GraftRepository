@@ -1,0 +1,41 @@
+{
+  "amendment_sha256": "91df018adaa90e9db3fd32981ad72a5564cee2cc8360b462775248945859807c",
+  "cap_seconds": 3600,
+  "cell_count": 52,
+  "cpu_baseline": "45 passed, 2 warnings",
+  "estimated_seconds": 3140,
+  "evidence_class": "CPU artifact/source integrity audit",
+  "files": {
+    "artifacts/grm_c2/AMENDMENT_1_REPORT.md": "577829b8fa8eac122f9b0c9e40b5443d143f0a51aeedb44c2d7176b071a0a100",
+    "artifacts/grm_c2/LEDGER.md": "a420467e2773d88908b03fc8f6c3355d794a5a032e27ade1fddb76e85d1703b4",
+    "artifacts/grm_c2/REPORT.md": "501206431384ce105ed27ee8b591f3d4844255a3e7b60f641fc2a8594d9a235e",
+    "artifacts/grm_c2/amendment_lead_1.json": "91df018adaa90e9db3fd32981ad72a5564cee2cc8360b462775248945859807c",
+    "artifacts/grm_c2/amendment_lead_1.sha256": "476b8072aeeb741f28c24d37a6fe21808465cefea0c7d889bdaadc68305cd8ce",
+    "artifacts/grm_c2/amendment_lead_1_cpu_initial.log": "8dd7914d3fd038a60ef7ad154d6b91371f60ec443c39f8710d67c98185b057e1",
+    "artifacts/grm_c2/amendment_lead_1_dry_run.json": "6a07773f80347d21e608a9f89e509568582d5725d6bfc48255aa266ae2b2842c",
+    "artifacts/grm_c2/amendment_lead_1_mutation_registration.json": "baa7a312b39a6dad7889fa6b5e5d4d37d24ccda797293c314975755a7fa7bcc0",
+    "artifacts/grm_c2/amendment_lead_1_mutation_results.json": "443bbc6b513c94bd7ddef69b596e172acff625aec2154c0bfe63c75cf103d755",
+    "artifacts/grm_c2/amendment_lead_1_mutations.log": "443bbc6b513c94bd7ddef69b596e172acff625aec2154c0bfe63c75cf103d755",
+    "artifacts/grm_c2/amendment_lead_1_summary_not_run.txt": "59054fbb89d45f4beb578a70bfbc2d647af198dc43dd24f9b34efec052dec2f7",
+    "artifacts/grm_c2/amendment_mutant_missing_token_seats_accepted.log": "61d63689d9e1c65dbd899ee3e1165bafa5be75412e875b38db2e56912d839c7a",
+    "artifacts/grm_c2/amendment_mutant_orphan_uncharged.log": "1c54fe1b1e2e5477e3e014674f1ce36c276298c0645ebd548db5e57452015c14",
+    "artifacts/grm_c2/amendment_mutant_raised_cap_forged_in_runner.log": "950e6db089cc69f20049dc59914c0f1f57bb3ebe1117e2373eb4e058069b6d64",
+    "artifacts/grm_c2/amendment_mutant_red_exit_success.log": "371d185e03321af1753527906b1e3bb7b438c14eb4abebe1704247ea57d905d1",
+    "artifacts/grm_c2/amendment_mutant_summary_false_green.log": "fbb2eaa1522d7424d279e52f9107d86799198501fa693adaa8e762729fa93b0f",
+    "artifacts/grm_c2/lead_commands.txt": "ec4ec5ac84bd47f1d4ea2b3ca27f3894217d282e5155c6cadadbc47dc4f2fcb3",
+    "artifacts/grm_c2/lead_commands_expanded.txt": "e89772caa3f814b3c489fd7d7ed9265fb24c1a8840f05a3eb6a022af6b526c20",
+    "artifacts/grm_c2/lead_commands_r1.txt": "98d6b82cca0b623b6e1419f6cdc7c29354c573e1a7187a0224c323f0a9c646f4",
+    "artifacts/grm_c2/run_amendment_mutations.py": "20ce9686f00f154755279a561d0a0900dcef6e0f40b6434166449486c1623381",
+    "scripts/grm_c2_amended.py": "f69624f1d06c4fafd79ca05271e8a3c7e5aa35c1d32761d23b7c8555bbb80a58",
+    "tests/test_grm_c2_amendment.py": "81537b11cfd0544540388f8273ee999993521df932af1f22cd7afe30cbd57940"
+  },
+  "gpu_cells_on_disk": 0,
+  "gpu_executed": false,
+  "historical_sha_differences": [
+    "artifacts/grm_c2/LEDGER.md",
+    "artifacts/grm_c2/REPORT.md",
+    "artifacts/grm_c2/lead_commands.txt"
+  ],
+  "mutation_kills": "5/5",
+  "r1_registration_sha256": "8a3a27302c41f2980f883666657f7d871c5ad01d195953e017804717d3644eb0"
+}

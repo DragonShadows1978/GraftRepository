@@ -175,3 +175,12 @@ No production files, shipped defaults or live baseline registry were changed.
 Seat identity supplied by system: **Codex / GPT-6**; exact serving API model ID
 is not exposed. Requested reasoning effort: **high**; no runtime effort change
 is claimed. Target model prompt effort is separately pinned **low** by Harmony.
+
+
+## 2026-09-09 lead amendment 1 continuation
+The lead raised the cap to3600 GPU seconds without changing r1 cells.
+Current amendment report: AMENDMENT_1_REPORT.md; amendment SHA 91df018adaa90e9db3fd32981ad72a5564cee2cc8360b462775248945859807c.
+New executable lead_commands.txt dry-runs successfully at52 cells/3140s.
+Author CPU baseline45 passed, five behavioral mutants killed5/5.
+GPU remains NOT_RUN; historical broader CPU RED above remains un-revalidated.
+Defaults96 NON_FIT:26 extra cells/1570s, total4710s. No width-matched claim.

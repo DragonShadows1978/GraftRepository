@@ -1,0 +1,11 @@
+shipped defaults vs proposed profile: defaults width 256, profile width 96; this is not a width-matched pair.
+defaults96: NON_FIT; +26 cells / +1570 s; total 4710 s > 3600 s cap.
+battery | arm(width) | pre-restart | post-restart | token seats pre/post | RT1 fields present pre/post | restart retained
+sup | profile(96) | NOT_RUN/INCOMPLETE (0/9 probes) | NOT_RUN/INCOMPLETE (0/9 probes) | UNKNOWN/UNKNOWN | UNKNOWN/MISSING/UNKNOWN/MISSING | False
+sup | defaults(256) | NOT_RUN/INCOMPLETE (0/9 probes) | NOT_RUN/INCOMPLETE (0/9 probes) | UNKNOWN/UNKNOWN | UNKNOWN/MISSING/UNKNOWN/MISSING | False
+census | profile(96) | NOT_RUN/INCOMPLETE (0/10 probes) | NOT_RUN/INCOMPLETE (0/10 probes) | UNKNOWN/UNKNOWN | UNKNOWN/MISSING/UNKNOWN/MISSING | False
+census | defaults(256) | NOT_RUN/INCOMPLETE (0/10 probes) | NOT_RUN/INCOMPLETE (0/10 probes) | UNKNOWN/UNKNOWN | UNKNOWN/MISSING/UNKNOWN/MISSING | False
+longhistory | profile(96) | NOT_RUN/INCOMPLETE (0/14 probes) | NOT_RUN/INCOMPLETE (0/14 probes) | UNKNOWN/UNKNOWN | UNKNOWN/MISSING/UNKNOWN/MISSING | False
+longhistory | defaults(256) | NOT_RUN/INCOMPLETE (0/14 probes) | NOT_RUN/INCOMPLETE (0/14 probes) | UNKNOWN/UNKNOWN | UNKNOWN/MISSING/UNKNOWN/MISSING | False
+RT1 required fields: admission_split_child_demoted, admission_split_demoted_ids, admission_split_family_ids, admission_ranking_before_demotion
+summary: NOT_RUN; cells complete=0/52; charged GPU seconds=0.000/3600; estimate=3140 s

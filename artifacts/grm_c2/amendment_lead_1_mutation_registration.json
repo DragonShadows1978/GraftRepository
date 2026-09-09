@@ -1,0 +1,18 @@
+{
+  "schema": "grm.c2.lead-amendment.cpu-mutation.v1",
+  "amendment_sha256": "91df018adaa90e9db3fd32981ad72a5564cee2cc8360b462775248945859807c",
+  "baseline_receipt": "artifacts/grm_c2/amendment_lead_1_cpu_initial.log",
+  "baseline_sha256": "8dd7914d3fd038a60ef7ad154d6b91371f60ec443c39f8710d67c98185b057e1",
+  "mutator_sha256": "20ce9686f00f154755279a561d0a0900dcef6e0f40b6434166449486c1623381",
+  "mutations": [
+    "raised cap in runner +1",
+    "orphan charge 285 to0",
+    "summary green forced false",
+    "missing token seat evidence accepted",
+    "RED cell returncode changed to success"
+  ],
+  "test_count": 5,
+  "minimum_kill_fraction": 0.8,
+  "scope": "CPU post-load behavioral mutants in /tmp, original __file__ retained for independent trusted SHA validation; production files unchanged",
+  "before_gates": true
+}

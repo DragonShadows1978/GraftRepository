@@ -111,3 +111,55 @@ final dry-run dry_run_A6.json, exact commands lead_commands.txt. No GPU gate,
 bisect, blind review, production/default edit or adoption performed.
 No git/subagents/background waits/process kills/services/external delivery.
 Identity Codex/GPT-6, exact API ID unavailable, requested effort high.
+
+## Lead amendment 1 registration, before CPU gates (2026-09-09)
+Evidence class: registration / source inspection / planning reasoning. Immutable
+lead order raises cap to3600s; r1 registration SHA 8a3a27302c41f2980f883666657f7d871c5ad01d195953e017804717d3644eb0 unchanged.
+Created amendment_lead_1.json SHA 91df018adaa90e9db3fd32981ad72a5564cee2cc8360b462775248945859807c.
+52 original cells /3140s unchanged; defaults96 NON_FIT +26 cells/+1570s, total4710s
+(1110s over cap). Width256 shipped defaults vs width96 proposed profile is not a
+width-matched comparison. Stable battery order scores sup then census then longhistory
+as soon as each paired fresh/restart battery completes. Lead commands now invoke
+new additive grm_c2_amended.py; original r1 runner/tests remain unchanged and preserve
+the old non-fit historical contract. Resume and accounting rules and CPU gates are
+registered in JSON before execution. No product edits. Old commands archived
+as lead_commands_r1.txt. Registration JSON and command hashes anchored in verifier
+code; normalized verifier source is itself bound without a circular hash. This is
+content integrity assuming trusted code, not a cryptographic lead signature.
+
+Prior art: C2 r1 / CMC1 / WC1 / RT1.1 / SCOUT-FIX-1, project contributors (2026),
+verified local sources; reused worker, battery comparator, flock lease, immutable
+reservations and persisted checkpoints. New glue: cap binding, battery scheduling,
+resume and summary. SHA-256 content binding is established practice, no novelty
+claim. No prior art known to me for this adapter beyond those local systems.
+
+RED: GPU gates NOT_RUN; earlier CPU-suite RED and A3 timing caveats remain.
+No GPU, git, subagents, background waits, process kills/signals or live-service
+actions. Identity Codex/GPT-6; exact serving API ID unavailable; effort high.
+
+### Amendment 1 baseline and registered mutation lane
+Author CPU unit tests:45 passed,2 warnings in1.44s; receipt
+amendment_lead_1_cpu_initial.log. Original21 tests unchanged,24 new cases passed.
+Executable shell syntax and --dry-run passed:52 cells/3140s/3600s cap.
+Actual no-measurement summary exited1 as required, receipt
+amendment_lead_1_summary_not_run.txt. Registered five explicit CPU behavioral
+mutations in amendment_lead_1_mutation_registration.json before running them.
+Prior art: House Rules/AtlasForge mutation-testing workflow (project,2026),
+reused seeded defects and >=0.80 kill threshold. New C2 defects are listed
+in the registration; no prior art known to me for this specific adapter.
+The source integrity guard retains original file identity intentionally so
+mutation kills must come from behavioral assertions, not hash rejection.
+
+### Amendment 1 verification complete
+Evidence class: author-run CPU tests/mutations, not blind or GPU evidence.
+All five registered behavioral mutants killed (5/5=1.00>=0.80), each by
+assertion rather than hash rejection; logs and SHA records in
+amendment_lead_1_mutation_results.json. Temporary copies only, originals
+unchanged. Executable shell --dry-run: exit0,52 cells,3140s estimate,3600s cap.
+Actual summary: exit1,NOT_RUN,all six rows with denominators9/10/14 and explicit
+unknown seats/RT1; no invented measured scores. Synthetic CPU cases cover complete
+pre/post table and named provenance fields. Commands expanded for audit in
+lead_commands_expanded.txt. Final report AMENDMENT_1_REPORT.md; shared REPORT.md
+continued. Historical full CPU failures remain; no broad rerun or GPU claims.
+No git/subagents/GPU/background waits/process kills/signals/service actions.
+Codex/GPT-6; exact serving API ID unavailable; effort high.

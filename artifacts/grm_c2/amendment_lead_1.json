@@ -1,0 +1,54 @@
+{
+  "accounting": "GPU budget is cumulative measured lease worker wall time; reserve 285s before each cell, charge unfinished reservation 285s. Lock waiting, CPU scoring, fingerprinting after lease and 30s inter-cell cooldown do not consume GPU budget. Full plan estimate 3140s plus 51 cooldowns (1530s) gives at least 4670s estimated foreground wall time excluding lock waits and CPU overhead. The 3140s heuristic is not a completion guarantee; A3 timing caveat remains.",
+  "authority": "Lead order GRM_C2_AMENDMENT_1.md, 2026-09-09",
+  "bindings": {
+    "artifacts/grm_c2/amendment_A6_continuation_payload.json": "b8b8b16fc2bbccd85389753ab72df0ab58412642827be3924d4232db6c6f2e69",
+    "artifacts/grm_c2/lead_commands.txt": "ec4ec5ac84bd47f1d4ea2b3ca27f3894217d282e5155c6cadadbc47dc4f2fcb3",
+    "artifacts/grm_c2/registration.json": "8a3a27302c41f2980f883666657f7d871c5ad01d195953e017804717d3644eb0",
+    "orders/GRM_C2_AMENDMENT_1.md": "9691e38ec06fa3289b0258f3968500c335d3ad4ef7ca4ed6445774eca183e790",
+    "orders/GRM_C2_EB1_PROFILE_REGISTRATION.md": "10bd9c55bf2bf86c4b4522d50a46a3362b9d90b2419962ddcffe9071859da1a5",
+    "scripts/grm_c2_cells.py": "fb942daf29086ed5a8e2b5a9e70da2571cd5e29cd6bda3a66fd9468df9f5826b",
+    "tests/test_grm_c2_amendment.py": "81537b11cfd0544540388f8273ee999993521df932af1f22cd7afe30cbd57940"
+  },
+  "budget_seconds": 3600,
+  "cell_count": 52,
+  "cooldown_seconds": 30,
+  "decision": "Raise cap from 2880s to 3600s; no r1 arm dropped and no cell shortened",
+  "defaults96": {
+    "basis": "Duplicate the complete defaults arm at width96, preserving r1 cells/probes/restarts and estimates; no unmeasured width speedup credit. Remaining headroom 460s.",
+    "extra_cells": 26,
+    "extra_estimated_seconds": 1570,
+    "flags": {
+      "arena_width": 96,
+      "capture_pin": "off",
+      "rt1_rule": true,
+      "seat_near_live": false
+    },
+    "over_cap_seconds": 1110,
+    "status": "NON_FIT",
+    "total_cells": 78,
+    "total_estimated_seconds": 4710
+  },
+  "estimated_seconds": 3140,
+  "gates": [
+    "test_grm_c2_amendment.py all CPU cases; forged amendment and sidecar substitution, stale order/r1/worker, absent amendment",
+    "preserve all52 cells and exact3140 estimate; amended reservation permits3080+285, refuses3420+285",
+    "mock52-cell campaign dependencies and per-battery scoring; stop-on-RED and next-unstarted resume",
+    "orphan charged285, no RED retry, failed persist no worker, cooldown across resume",
+    "summary sup9/census10/longhistory14 both phases, token-seat sums, named RT1 fields, width distinction; missing evidence not green",
+    "existing21 C2 CPU tests unchanged",
+    "mutation lane after passing baseline: five seeded runner defects in temporary copies, >=0.80 killed; no production or original registered source mutation"
+  ],
+  "lock_wait_seconds": 240,
+  "model_identity": "Codex / GPT-6; exact serving API model ID unavailable; effort high",
+  "original_budget_seconds": 2880,
+  "outer_seconds": 590,
+  "prior_art": "C2 r1, CMC1, WC1/RT1.1 and SCOUT-FIX-1, project contributors (2026), verified local source. Reuse worker/comparator/lease and create-only persistence. New: cap binding, stable battery scheduling, resume and summary glue. SHA-256 binding is established practice, not a signature. No prior art known to me for this adapter beyond these local systems.",
+  "process_safety": "This seat runs CPU tests and dry-run only; no GPU, git, subagents, background waits, signals, process killing or live services. Lead commands use foreground subprocesses and existing flock; timeout targets only descendants started for that command.",
+  "registration_sha256": "8a3a27302c41f2980f883666657f7d871c5ad01d195953e017804717d3644eb0",
+  "resume_rule": "Explicit --resume only: next unstarted cell in battery order; COMPLETE, RED and STARTED_UNFINISHED cells never retried. Unfinished cells remain charged 285s. An unmet persist dependency makes the next cell RED without a worker, never recapture. First newly observed RED stops. Previously recorded RED scores remain immutable on resume; final summary remains RED. A campaign mutex prevents concurrent controllers.",
+  "schedule": "stable r1 cell order within sup, then census, then longhistory; all fresh/persist cells precede dependent restart; score after last cell of each battery",
+  "schema": "grm.c2.lead-amendment.v1",
+  "verifier_template_sha256": "01c7aef01ab03293280dcff5fcab4944cf8b96f3a9d84ad7ff440c24d5767729",
+  "worker_seconds": 285
+}
