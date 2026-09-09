@@ -1,0 +1,29 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/mnt/ForgeRealm/wt/grm-lt1/scripts/grm_lt1_worker.py", line 280, in <module>
+    if args.worker:worker(next(c for c in lt.verify()['cells'] if c['id']==args.worker))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ForgeRealm/wt/grm-lt1/scripts/grm_lt1_worker.py", line 183, in worker
+    result=execute(cell,directory,lt.verify(),loader,run=RUN/'cells',deadline=deadline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ForgeRealm/wt/grm-lt1/scripts/grm_lt1_worker.py", line 125, in execute
+    answer,info=e2e._probe_ladder_chat(repo,p['question'],topk=3,ngen=32,max_trips=1,defer_memory=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ForgeRealm/wt/grm-lt1/scripts/grm_e2e_session.py", line 1889, in _probe_ladder_chat
+    ans, info = _serve(
+                ^^^^^^^
+  File "/mnt/ForgeRealm/wt/grm-lt1/scripts/grm_e2e_session.py", line 1628, in _serve
+    return arena._attempt(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ForgeRealm/wt/grm-lt1/scripts/grm_lt1_worker.py", line 45, in traced
+    answer,info=original(*args,**kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ForgeRealm/wt/grm-lt1/core/graft_arena.py", line 4443, in _attempt
+    self._commit_native_mount(picks, self.cur_mount_n)
+  File "/mnt/ForgeRealm/wt/grm-lt1/core/graft_arena.py", line 2373, in _commit_native_mount
+    store.commit_mount(self._native_mount_ids(picks), int(mount_tokens))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ForgeRealm/wt/grm-lt1/core/graft_arena.py", line 2365, in _native_mount_ids
+    raise RuntimeError(f"graft {i} has no native_node_id")
+RuntimeError: graft 25 has no native_node_id
