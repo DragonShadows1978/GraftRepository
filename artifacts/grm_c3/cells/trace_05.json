@@ -1,0 +1,51 @@
+{
+  "cell": {
+    "id": "trace_05",
+    "case_ids": [
+      "c3_05_correct",
+      "c3_05_decoy",
+      "c3_05_unavailable",
+      "c3_05_weak"
+    ],
+    "estimate_seconds": 200,
+    "worker_cap_seconds": 225,
+    "outer_cap_seconds": 590,
+    "cooldown_seconds": 30,
+    "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+  },
+  "registration": {
+    "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/registration.json",
+    "sha256": "048e4c7e786be8bb26685abbdd21ce710c9d0f4f2f8fa5e6b3722538820c5666",
+    "bytes": 45383
+  },
+  "execution_manifest": {
+    "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/execution_manifest.json",
+    "sha256": "f120564fa2e5224f3a5a86a883d2016d239571e3e92c3a7cb6e175eb3be0a9c3",
+    "bytes": 71327
+  },
+  "status": "COMPLETE",
+  "traces": [
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/runs/c3_05_correct/trace.json",
+      "sha256": "93c3743af567da6f81a944ae574c7700c9cbbb9a5aa1842626461b74b1e32942",
+      "bytes": 5327
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/runs/c3_05_decoy/trace.json",
+      "sha256": "6167e438c59370c29fdf5fcf25676914c0e4bc9fe08c0262c3d490e3509ca22c",
+      "bytes": 5318
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/runs/c3_05_unavailable/trace.json",
+      "sha256": "00a4aaf80308fd9b3cf25f02c2552f179e2eba6f95f3c4fd9f5903110f27f55d",
+      "bytes": 4651
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/runs/c3_05_weak/trace.json",
+      "sha256": "02c5e8124666b7ddf63aa342dcfaa9eb7884a2925ecdeaaea3d38f53f7948b11",
+      "bytes": 8578
+    }
+  ],
+  "threshold_caveat": "THIN ENVELOPE: this threshold was fit on 2 calibration turns (served controls only, strict minimum-of-minima envelope). It is CARRIED verbatim from the GRM-DET1 race and is never refit or adjusted from serving traffic. Any receipt that reports a D-NGH decision must restate this caveat.",
+  "lease_elapsed_seconds": 99.81549769407138
+}

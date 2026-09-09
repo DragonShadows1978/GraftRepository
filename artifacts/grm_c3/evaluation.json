@@ -1,0 +1,1503 @@
+{
+  "evidence_class": "offline CPU evaluation of detector-OFF GPU traces; finite 48-case controlled-mount experiment",
+  "rules": {
+    "carried": {
+      "TP": 24,
+      "FP": 24,
+      "TN": 0,
+      "FN": 0,
+      "correct_answers_at_risk": 11,
+      "miss_detection": 1.0,
+      "false_fire_rate": 1.0,
+      "detection_bar_pass": false,
+      "conservative_offline_eligible": false,
+      "lost_correct_answers": null,
+      "full_demand_flip_bar": "UNMEASURED: demand-ON preservation"
+    },
+    "candidate": {
+      "TP": 24,
+      "FP": 24,
+      "TN": 0,
+      "FN": 0,
+      "correct_answers_at_risk": 11,
+      "miss_detection": 1.0,
+      "false_fire_rate": 1.0,
+      "detection_bar_pass": false,
+      "conservative_offline_eligible": false,
+      "lost_correct_answers": null,
+      "full_demand_flip_bar": "UNMEASURED: demand-ON preservation"
+    },
+    "near_zero": {
+      "TP": 12,
+      "FP": 0,
+      "TN": 24,
+      "FN": 12,
+      "correct_answers_at_risk": 0,
+      "miss_detection": 0.5,
+      "false_fire_rate": 0.0,
+      "detection_bar_pass": false,
+      "conservative_offline_eligible": false,
+      "lost_correct_answers": null,
+      "full_demand_flip_bar": "UNMEASURED: demand-ON preservation"
+    },
+    "empty_band": {
+      "TP": 12,
+      "FP": 0,
+      "TN": 24,
+      "FN": 12,
+      "correct_answers_at_risk": 0,
+      "miss_detection": 0.5,
+      "false_fire_rate": 0.0,
+      "detection_bar_pass": false,
+      "conservative_offline_eligible": false,
+      "lost_correct_answers": null,
+      "full_demand_flip_bar": "UNMEASURED: demand-ON preservation"
+    }
+  },
+  "per_case": [
+    {
+      "id": "c3_01_correct",
+      "class": "correct",
+      "answer": "vermil.",
+      "answer_correct": false,
+      "min_mass": 0.306904091189305,
+      "mounted_tokens": 45,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_01_decoy",
+      "class": "decoy",
+      "answer": "turquoise",
+      "answer_correct": false,
+      "min_mass": 0.2835054968794187,
+      "mounted_tokens": 43,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_01_unavailable",
+      "class": "unavailable",
+      "answer": "Red\n\n(Note: The user wants: \"Red\n\n(Note: The color of the Averin archive beacon is red.",
+      "answer_correct": false,
+      "min_mass": 0.0,
+      "mounted_tokens": 0,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": true,
+          "first_index": 0
+        },
+        "empty_band": {
+          "fire": true,
+          "first_index": 0,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_01_weak",
+      "class": "weak",
+      "answer": "482- 482-17",
+      "answer_correct": false,
+      "min_mass": 0.314786110073328,
+      "mounted_tokens": 47,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 5
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_02_decoy",
+      "class": "decoy",
+      "answer": "Aluminum<|channel|>assistant<|channel|>analysis<|message|>Aluminum",
+      "answer_correct": false,
+      "min_mass": 0.24995315819978714,
+      "mounted_tokens": 43,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_02_unavailable",
+      "class": "unavailable",
+      "answer": "Woodenriched\n\n(Note: The user: \"Woodenriched\n\nThe Belora archive cabinet is made of wood.",
+      "answer_correct": false,
+      "min_mass": 0.0,
+      "mounted_tokens": 0,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": true,
+          "first_index": 0
+        },
+        "empty_band": {
+          "fire": true,
+          "first_index": 0,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_02_weak",
+      "class": "weak",
+      "answer": "Ner.",
+      "answer_correct": false,
+      "min_mass": 0.29932011539737385,
+      "mounted_tokens": 44,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_02_correct",
+      "class": "correct",
+      "answer": "Titanium<|channel|>analysis<|message|>Titanium",
+      "answer_correct": true,
+      "min_mass": 0.28088029225667316,
+      "mounted_tokens": 43,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_03_unavailable",
+      "class": "unavailable",
+      "answer": "I’m sorry, I’m sorry, I can’t comply.",
+      "answer_correct": false,
+      "min_mass": 0.0,
+      "mounted_tokens": 0,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": true,
+          "first_index": 0
+        },
+        "empty_band": {
+          "fire": true,
+          "first_index": 0,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_03_weak",
+      "class": "weak",
+      "answer": "731<|channel|>analysis<|message|>731-06<|channel|>analysis<|message|>731",
+      "answer_correct": false,
+      "min_mass": 0.2539474753042062,
+      "mounted_tokens": 48,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_03_correct",
+      "class": "correct",
+      "answer": "Hexagon.",
+      "answer_correct": true,
+      "min_mass": 0.29046808431545895,
+      "mounted_tokens": 45,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_03_decoy",
+      "class": "decoy",
+      "answer": "Pentagon.",
+      "answer_correct": false,
+      "min_mass": 0.2953052980204423,
+      "mounted_tokens": 45,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_04_weak",
+      "class": "weak",
+      "answer": "Ostefin:<|channel|>analysis<|message|>Ostelin.",
+      "answer_correct": true,
+      "min_mass": 0.26647329702973366,
+      "mounted_tokens": 45,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_04_correct",
+      "class": "correct",
+      "answer": "indigo",
+      "answer_correct": true,
+      "min_mass": 0.2963622373839219,
+      "mounted_tokens": 45,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_04_decoy",
+      "class": "decoy",
+      "answer": "scarlet.",
+      "answer_correct": false,
+      "min_mass": 0.2846907724936803,
+      "mounted_tokens": 45,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_04_unavailable",
+      "class": "unavailable",
+      "answer": "#Answer: The color: #0000000\n\nThe Dovela archive banner color: #000000",
+      "answer_correct": false,
+      "min_mass": 0.0,
+      "mounted_tokens": 0,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": true,
+          "first_index": 0
+        },
+        "empty_band": {
+          "fire": true,
+          "first_index": 0,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_05_correct",
+      "class": "correct",
+      "answer": "Ceramic.",
+      "answer_correct": true,
+      "min_mass": 0.29765064020951587,
+      "mounted_tokens": 44,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_05_decoy",
+      "class": "decoy",
+      "answer": "rubber.",
+      "answer_correct": false,
+      "min_mass": 0.28842878590027493,
+      "mounted_tokens": 44,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_05_unavailable",
+      "class": "unavailable",
+      "answer": "Crystalline",
+      "answer_correct": false,
+      "min_mass": 0.0,
+      "mounted_tokens": 0,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": true,
+          "first_index": 0
+        },
+        "empty_band": {
+          "fire": true,
+          "first_index": 0,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_05_weak",
+      "class": "weak",
+      "answer": "926<|channel|>analysis<|message|>926-43<|channel|>analysis<|message|>926",
+      "answer_correct": false,
+      "min_mass": 0.25556588421265286,
+      "mounted_tokens": 48,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_06_decoy",
+      "class": "decoy",
+      "answer": "Square.",
+      "answer_correct": false,
+      "min_mass": 0.28319378942251205,
+      "mounted_tokens": 44,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_06_unavailable",
+      "class": "unavailable",
+      "answer": "The Faly",
+      "answer_correct": false,
+      "min_mass": 0.0,
+      "mounted_tokens": 0,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": true,
+          "first_index": 0
+        },
+        "empty_band": {
+          "fire": true,
+          "first_index": 0,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_06_weak",
+      "class": "weak",
+      "answer": "Pherald\n\nPherald<|message|>P<|channel|>",
+      "answer_correct": false,
+      "min_mass": 0.24922924116253853,
+      "mounted_tokens": 46,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_06_correct",
+      "class": "correct",
+      "answer": "crescent.",
+      "answer_correct": true,
+      "min_mass": 0.30238951618472737,
+      "mounted_tokens": 45,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_07_unavailable",
+      "class": "unavailable",
+      "answer": "#Answer: The color: #0000000\n\nThe color of the panel is #0000",
+      "answer_correct": false,
+      "min_mass": 0.0,
+      "mounted_tokens": 0,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": true,
+          "first_index": 0
+        },
+        "empty_band": {
+          "fire": true,
+          "first_index": 0,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_07_weak",
+      "class": "weak",
+      "answer": "365",
+      "answer_correct": false,
+      "min_mass": 0.3158849999308586,
+      "mounted_tokens": 47,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_07_correct",
+      "class": "correct",
+      "answer": "ochre.",
+      "answer_correct": true,
+      "min_mass": 0.29981354996562004,
+      "mounted_tokens": 44,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_07_decoy",
+      "class": "decoy",
+      "answer": "violet.",
+      "answer_correct": false,
+      "min_mass": 0.2809281001488368,
+      "mounted_tokens": 43,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_08_weak",
+      "class": "weak",
+      "answer": "Quen.",
+      "answer_correct": false,
+      "min_mass": 0.2956491746008396,
+      "mounted_tokens": 45,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_08_correct",
+      "class": "correct",
+      "answer": "NickName<|channel|>assistant<|channel|>analysis<|message|>Nicknamed<|message|>",
+      "answer_correct": false,
+      "min_mass": 0.2684162234266599,
+      "mounted_tokens": 43,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_08_decoy",
+      "class": "decoy",
+      "answer": "Leather.",
+      "answer_correct": false,
+      "min_mass": 0.28252609198292095,
+      "mounted_tokens": 43,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_08_unavailable",
+      "class": "unavailable",
+      "answer": "The Hesora",
+      "answer_correct": false,
+      "min_mass": 0.0,
+      "mounted_tokens": 0,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": true,
+          "first_index": 0
+        },
+        "empty_band": {
+          "fire": true,
+          "first_index": 0,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_09_correct",
+      "class": "correct",
+      "answer": "Triangle.",
+      "answer_correct": true,
+      "min_mass": 0.2913917079567909,
+      "mounted_tokens": 44,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_09_decoy",
+      "class": "decoy",
+      "answer": "Circle.",
+      "answer_correct": false,
+      "min_mass": 0.2782073716322581,
+      "mounted_tokens": 44,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_09_unavailable",
+      "class": "unavailable",
+      "answer": "Square",
+      "answer_correct": false,
+      "min_mass": 0.0,
+      "mounted_tokens": 0,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": true,
+          "first_index": 0
+        },
+        "empty_band": {
+          "fire": true,
+          "first_index": 0,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_09_weak",
+      "class": "weak",
+      "answer": "814<|channel|>analysis<|message|>814-59 <|constrain|>_output<|message|>814-59",
+      "answer_correct": false,
+      "min_mass": 0.2313815380136172,
+      "mounted_tokens": 48,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_10_decoy",
+      "class": "decoy",
+      "answer": "Amber.",
+      "answer_correct": false,
+      "min_mass": 0.2812090218067169,
+      "mounted_tokens": 43,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_10_unavailable",
+      "class": "unavailable",
+      "answer": "The Jaspen: <|constrain|>\n\nThe user wants the Jaspen lamp color.",
+      "answer_correct": false,
+      "min_mass": 0.0,
+      "mounted_tokens": 0,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": true,
+          "first_index": 0
+        },
+        "empty_band": {
+          "fire": true,
+          "first_index": 0,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_10_weak",
+      "class": "weak",
+      "answer": "Roveth.",
+      "answer_correct": false,
+      "min_mass": 0.2965865420798461,
+      "mounted_tokens": 45,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_10_correct",
+      "class": "correct",
+      "answer": "magenta.",
+      "answer_correct": true,
+      "min_mass": 0.294882882386446,
+      "mounted_tokens": 44,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_11_unavailable",
+      "class": "unavailable",
+      "answer": "Polycarbonate",
+      "answer_correct": false,
+      "min_mass": 0.0,
+      "mounted_tokens": 0,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": true,
+          "first_index": 0
+        },
+        "empty_band": {
+          "fire": true,
+          "first_index": 0,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_11_weak",
+      "class": "weak",
+      "answer": "597- 597-24 <|constrain|>analysis<|message|>597- 597-24-24 597-24-24 597<|channel|> 24-24-",
+      "answer_correct": false,
+      "min_mass": 0.20800583933790526,
+      "mounted_tokens": 47,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 7
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_11_correct",
+      "class": "correct",
+      "answer": "Copper.",
+      "answer_correct": true,
+      "min_mass": 0.2789638911684354,
+      "mounted_tokens": 43,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_11_decoy",
+      "class": "decoy",
+      "answer": "glass.",
+      "answer_correct": false,
+      "min_mass": 0.27624180043737095,
+      "mounted_tokens": 43,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_12_weak",
+      "class": "weak",
+      "answer": "Seluvinfinity.",
+      "answer_correct": false,
+      "min_mass": 0.30486663927634555,
+      "mounted_tokens": 46,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_12_correct",
+      "class": "correct",
+      "answer": "diamond",
+      "answer_correct": true,
+      "min_mass": 0.2978804136315982,
+      "mounted_tokens": 44,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_12_decoy",
+      "class": "decoy",
+      "answer": "Oval.",
+      "answer_correct": false,
+      "min_mass": 0.287640955299139,
+      "mounted_tokens": 44,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": false,
+          "first_index": null
+        },
+        "empty_band": {
+          "fire": false,
+          "first_index": null,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    },
+    {
+      "id": "c3_12_unavailable",
+      "class": "unavailable",
+      "answer": "Square\nThe user wants: The L",
+      "answer_correct": false,
+      "min_mass": 0.0,
+      "mounted_tokens": 0,
+      "decisions": {
+        "carried": {
+          "fire": true,
+          "first_index": 0
+        },
+        "candidate": {
+          "fire": true,
+          "first_index": 0
+        },
+        "near_zero": {
+          "fire": true,
+          "first_index": 0
+        },
+        "empty_band": {
+          "fire": true,
+          "first_index": 0,
+          "timing": "pre-generation structural decision"
+        }
+      }
+    }
+  ],
+  "separating_cases": [
+    "c3_01_correct",
+    "c3_01_decoy",
+    "c3_01_weak",
+    "c3_02_decoy",
+    "c3_02_weak",
+    "c3_02_correct",
+    "c3_03_weak",
+    "c3_03_correct",
+    "c3_03_decoy",
+    "c3_04_weak",
+    "c3_04_correct",
+    "c3_04_decoy",
+    "c3_05_correct",
+    "c3_05_decoy",
+    "c3_05_weak",
+    "c3_06_decoy",
+    "c3_06_weak",
+    "c3_06_correct",
+    "c3_07_weak",
+    "c3_07_correct",
+    "c3_07_decoy",
+    "c3_08_weak",
+    "c3_08_correct",
+    "c3_08_decoy",
+    "c3_09_correct",
+    "c3_09_decoy",
+    "c3_09_weak",
+    "c3_10_decoy",
+    "c3_10_weak",
+    "c3_10_correct",
+    "c3_11_weak",
+    "c3_11_correct",
+    "c3_11_decoy",
+    "c3_12_weak",
+    "c3_12_correct",
+    "c3_12_decoy"
+  ],
+  "qualification_failures": [
+    "c3_01_correct",
+    "c3_01_weak",
+    "c3_02_weak",
+    "c3_03_weak",
+    "c3_05_weak",
+    "c3_06_weak",
+    "c3_07_weak",
+    "c3_08_weak",
+    "c3_08_correct",
+    "c3_09_weak",
+    "c3_10_weak",
+    "c3_11_weak",
+    "c3_12_weak"
+  ],
+  "prediction_evidence": {
+    "near_zero_nonempty_decoy_misses": [
+      "c3_01_decoy",
+      "c3_02_decoy",
+      "c3_03_decoy",
+      "c3_04_decoy",
+      "c3_05_decoy",
+      "c3_06_decoy",
+      "c3_07_decoy",
+      "c3_08_decoy",
+      "c3_09_decoy",
+      "c3_10_decoy",
+      "c3_11_decoy",
+      "c3_12_decoy"
+    ],
+    "weak_avoidable_carried_fires": [
+      "c3_04_weak"
+    ],
+    "near_zero_detects_all_empty": true
+  },
+  "recommendation": "No rule meets the conservative offline bar. Do not flip demand.",
+  "threshold_caveat": "THIN ENVELOPE: this threshold was fit on 2 calibration turns (served controls only, strict minimum-of-minima envelope). It is CARRIED verbatim from the GRM-DET1 race and is never refit or adjusted from serving traffic. Any receipt that reports a D-NGH decision must restate this caveat.",
+  "registration": {
+    "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/registration.json",
+    "sha256": "048e4c7e786be8bb26685abbdd21ce710c9d0f4f2f8fa5e6b3722538820c5666",
+    "bytes": 45383
+  },
+  "execution_manifest": {
+    "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/execution_manifest.json",
+    "sha256": "f120564fa2e5224f3a5a86a883d2016d239571e3e92c3a7cb6e175eb3be0a9c3",
+    "bytes": 71327
+  },
+  "cell_receipts": [
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/cells/trace_01.json",
+      "sha256": "9563931ce2cd49ee7b3a583ad000321a129fb8c392fc7007201e61b9c619e93a",
+      "bytes": 2069
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/cells/trace_02.json",
+      "sha256": "d1137a76dc10414065c107264f5057d61e98f0dff303a3799143a64212a62eac",
+      "bytes": 2069
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/cells/trace_03.json",
+      "sha256": "3cb939b99aa28266b97ea0b4fdca2f3c92c8151ebde4c9b0f9118cd1fa505182",
+      "bytes": 2068
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/cells/trace_04.json",
+      "sha256": "1319dbd173bfa2966629fab4944296564d3d85c7ae836ecf63808212ddce7ddd",
+      "bytes": 2069
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/cells/trace_05.json",
+      "sha256": "9bb927bd7f0c59159b7ed210ee01054449a19d54c7048e8e99fc7778dc658fc8",
+      "bytes": 2067
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/cells/trace_06.json",
+      "sha256": "4a0f320611f07f8f71f0a573072e1bcfb6c3a06f52a20a6b0e0d60ec3beeb9f5",
+      "bytes": 2067
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/cells/trace_07.json",
+      "sha256": "68b56ed9583211dfb89d0d2932cfdb647208802fe36a380f5b884edbf6fbe988",
+      "bytes": 2068
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/cells/trace_08.json",
+      "sha256": "f6023cb299d7658a55a5300524c5b8e9ef47058036472006984ad9a0a4744ead",
+      "bytes": 2067
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/cells/trace_09.json",
+      "sha256": "364c8df5a8f11d662dfdaf5b82405d0f996c92df0f18ef905b25e06c558e2ca6",
+      "bytes": 2067
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/cells/trace_10.json",
+      "sha256": "2e0a924e6294aead1ee5ef0162cb6dd553e6477a85da846b5f48181c8c3301f0",
+      "bytes": 2067
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/cells/trace_11.json",
+      "sha256": "982619a8dbd9b3ec32be8396adfb298be24eec3e8761100d0fbe74f0af9760f8",
+      "bytes": 2067
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/cells/trace_12.json",
+      "sha256": "74f447d39e612eeea0d987c7559c1dbf984a2c8613f43327b35454936d6ad592",
+      "bytes": 2067
+    }
+  ],
+  "prior_art": "GRM-DET1/SC2/SC1.2, GraftRepository contributors 2026: import planting, observer, scoring and strict crossing/minimum helpers. Fisher 1935 blocked design and NIST 2015 SHA-256 are leads; external references unverified — lead to check. New: fixture text, balanced controlled-mount protocol, offline comparison and safety wrapper; no detector novelty claimed."
+}

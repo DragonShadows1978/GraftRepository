@@ -1,0 +1,308 @@
+{
+  "id": "c3_08_correct",
+  "class": "correct",
+  "case_sha256": "73cc617342d479d70bf12613ef5d2141324ad00f5327745d4fe9f12017fc7eff",
+  "registration": {
+    "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/registration.json",
+    "sha256": "048e4c7e786be8bb26685abbdd21ce710c9d0f4f2f8fa5e6b3722538820c5666",
+    "bytes": 45383
+  },
+  "execution_manifest": {
+    "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/execution_manifest.json",
+    "sha256": "f120564fa2e5224f3a5a86a883d2016d239571e3e92c3a7cb6e175eb3be0a9c3",
+    "bytes": 71327
+  },
+  "answer": "NickName<|channel|>assistant<|channel|>analysis<|message|>Nicknamed<|message|>",
+  "answer_correct": false,
+  "signals": {
+    "schema": "grm.det1.signals.v1",
+    "active_detectors": [
+      "D-NGH"
+    ],
+    "ngh_schedule": "legacy_inline",
+    "token_indexing": "zero_based_generated_prediction",
+    "tokens": [
+      {
+        "token_index": 0,
+        "prediction_token_id": 40661,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.057100769908477865,
+          "mounted_mass": 0.2927801174422105,
+          "live_mass": 0.41352815677722293,
+          "learned_sink_mass": 0.23660847544670105
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 1,
+        "prediction_token_id": 864,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.0904814397605757,
+          "mounted_mass": 0.31865983953078586,
+          "live_mass": 0.23310713097453117,
+          "learned_sink_mass": 0.3577993977814913
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 2,
+        "prediction_token_id": 200005,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.10041698192556699,
+          "mounted_mass": 0.3094986267387867,
+          "live_mass": 0.23655887817343077,
+          "learned_sink_mass": 0.35358023767669994
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 3,
+        "prediction_token_id": 173781,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.1069246834764878,
+          "mounted_mass": 0.2953762449324131,
+          "live_mass": 0.2419497768084208,
+          "learned_sink_mass": 0.35563160106539726
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 4,
+        "prediction_token_id": 200005,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.123038984524707,
+          "mounted_mass": 0.3667696490883827,
+          "live_mass": 0.26496303888658684,
+          "learned_sink_mass": 0.24530808441340923
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 5,
+        "prediction_token_id": 35644,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.09616787452250719,
+          "mounted_mass": 0.3097587327162425,
+          "live_mass": 0.26505761841932934,
+          "learned_sink_mass": 0.32897231603662175
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 6,
+        "prediction_token_id": 200008,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.15763748825217286,
+          "mounted_mass": 0.3276486409207185,
+          "live_mass": 0.19757046985129514,
+          "learned_sink_mass": 0.31712822678188485
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 7,
+        "prediction_token_id": 40661,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.08599378416935603,
+          "mounted_mass": 0.35192106415828067,
+          "live_mass": 0.31076225141684216,
+          "learned_sink_mass": 0.2514101192355156
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 8,
+        "prediction_token_id": 55057,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.08480781937638919,
+          "mounted_mass": 0.2684162234266599,
+          "live_mass": 0.29453329121073085,
+          "learned_sink_mass": 0.35215280453364056
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 9,
+        "prediction_token_id": 200008,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.08398031458879511,
+          "mounted_mass": 0.2922739802549283,
+          "live_mass": 0.2906649447977543,
+          "learned_sink_mass": 0.33315327763557434
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 10,
+        "prediction_token_id": 200002,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.08356161570797364,
+          "mounted_mass": 0.3021003343164921,
+          "live_mass": 0.35206862166523933,
+          "learned_sink_mass": 0.2623052792623639
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      }
+    ],
+    "prediction_token_ids": [
+      40661,
+      864,
+      200005,
+      173781,
+      200005,
+      35644,
+      200008,
+      40661,
+      55057,
+      200008,
+      200002
+    ],
+    "unused_final_cache_flush_dropped": false,
+    "lqr_semantics": "contextual_pre_rope_q_semantic_only_post_l2_logical_index",
+    "ngh_semantics": "actual_standard_attention_operands_full_layers_only_absolute_mounted_probability",
+    "ent_semantics": "exact_host_fp32_logit_row_entropy_and_top1_top2_margin"
+  },
+  "mounted_ids": [
+    0
+  ],
+  "mounted_node_ids": [
+    "c3_08_correct_node"
+  ],
+  "mounted_token_count": 43,
+  "repository_node_ids": [
+    "c3_08_correct_node"
+  ],
+  "token_ledgers": {
+    "0": [
+      200006,
+      17360,
+      200008,
+      3575,
+      553,
+      17554,
+      162016,
+      13,
+      57369,
+      289,
+      25,
+      4465,
+      13,
+      13888,
+      9334,
+      25,
+      1721,
+      13,
+      200007,
+      200006,
+      1428,
+      200008,
+      43605,
+      495,
+      3704,
+      13,
+      200007,
+      200006,
+      173781,
+      200005,
+      17196,
+      200008,
+      976,
+      99826,
+      2505,
+      8664,
+      7295,
+      1890,
+      3785,
+      382,
+      75840,
+      13,
+      200007
+    ]
+  },
+  "qualification_pass": false,
+  "weakness_empirically_confirmed": null,
+  "detector_on": false,
+  "model": {
+    "id": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+    "generation": "greedy, no explicit reasoning-effort override; inherited Harmony prompt"
+  },
+  "model_info": {
+    "loaded": "GPT-OSS-20B (resident_packed_mxfp4)",
+    "framework": "tensor_cuda GptOss20B_TC",
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "repository": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+    "layers": 24,
+    "full_attention_layers": [
+      1,
+      3,
+      5,
+      7,
+      9,
+      11,
+      13,
+      15,
+      17,
+      19,
+      21,
+      23
+    ],
+    "sliding_attention_layers": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+      22
+    ],
+    "hidden_dim": 2880,
+    "num_heads": 64,
+    "num_kv_heads": 8,
+    "head_dim": 64,
+    "expert_mode": "resident_packed_mxfp4"
+  },
+  "environment": {
+    "GRM_DEMAND_NGH": "0",
+    "GRM_DEMAND_EARLY_ABORT": "0",
+    "GRM_PERSISTENT_BOAT": "0",
+    "GRM_CAPTURE_PIN": "off",
+    "GRM_SEAT_NEAR_LIVE": "0",
+    "GRM_ADM_DECISIVE": "1",
+    "GRM_LSR_FIXES": "1",
+    "GRM_RT1_RULE": "1",
+    "CUDA_VISIBLE_DEVICES": "0"
+  },
+  "pid": 2760881,
+  "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+  "elapsed_seconds": 23.681509223766625,
+  "threshold_caveat": "THIN ENVELOPE: this threshold was fit on 2 calibration turns (served controls only, strict minimum-of-minima envelope). It is CARRIED verbatim from the GRM-DET1 race and is never refit or adjusted from serving traffic. Any receipt that reports a D-NGH decision must restate this caveat."
+}
