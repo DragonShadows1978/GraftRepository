@@ -1,0 +1,186 @@
+{
+  "amendment": {
+    "bytes": 62728,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a3/amendment_a5.json",
+    "sha256": "ffc9a66afe9c27ae9d56b6d5b35ad119666db60d6f9459687dec67f35126cdf1"
+  },
+  "cells": {
+    "c64_w64": {
+      "receipt": {
+        "bytes": 70010,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a3/synthetic_four_cells/a5/runs/c64_w64/score.json",
+        "sha256": "742db67e09f58bd5aa4603cdc497b3fedeb3aea9ed1f23823d896e7ebfca0a88"
+      },
+      "required_probes": {
+        "e2e_t33_polaris_mark": true,
+        "longhorizon_turn_33": true,
+        "sup_reserve_juniper_pass": true
+      },
+      "scores": {
+        "census": 10,
+        "longhorizon": 14,
+        "sup": 9
+      }
+    },
+    "c64_w96": {
+      "receipt": {
+        "bytes": 68624,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a3/synthetic_four_cells/a4/runs/c64_w96/score.json",
+        "sha256": "32211612fef48d84559b2bd6a9f41f2984a67af6d10eed6ecc7f4ecfaf92f422"
+      },
+      "required_probes": {
+        "e2e_t33_polaris_mark": true,
+        "longhorizon_turn_33": true,
+        "sup_reserve_juniper_pass": true
+      },
+      "scores": {
+        "census": 10,
+        "longhorizon": 14,
+        "sup": 9
+      }
+    },
+    "c96_w64": {
+      "receipt": {
+        "bytes": 70010,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a3/synthetic_four_cells/a5/runs/c96_w64/score.json",
+        "sha256": "91c0c38e97dee5459e646fedcd24ec36adb7e128ee3c05a41e490ffa7c813fb3"
+      },
+      "required_probes": {
+        "e2e_t33_polaris_mark": true,
+        "longhorizon_turn_33": true,
+        "sup_reserve_juniper_pass": true
+      },
+      "scores": {
+        "census": 10,
+        "longhorizon": 14,
+        "sup": 9
+      }
+    },
+    "c96_w96": {
+      "evidence_class": "WC1 archived E2E; registered geometry reuse; token residency unavailable",
+      "probe_receipts": [
+        {
+          "bytes": 4386,
+          "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_score_bf0b4d60b6ea941f.json",
+          "sha256": "bf0b4d60b6ea941fe78db65239c5f7a596f8294a5a3246f53a12d9a1c66e12d7"
+        },
+        {
+          "bytes": 8017,
+          "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_score_d91c1dd36c10dff7.json",
+          "sha256": "d91c1dd36c10dff7ad9a631624237cf28c5d952b17b7d260fafda5982a1d5c8f"
+        },
+        {
+          "bytes": 5604,
+          "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_correction_then_restatement_ad61a11154fbabfd.json",
+          "sha256": "ad61a11154fbabfd2394fdcd297d71a3b96e7a38687c6dae09bb5ea4e860b400"
+        },
+        {
+          "bytes": 7652,
+          "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_fresh_fact_controls_5ed53221b0012dcc.json",
+          "sha256": "5ed53221b0012dcc80afe5d5092e169f29513d404791d27e62a098cea357c659"
+        },
+        {
+          "bytes": 5574,
+          "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_multi_hop_a_b_c_7621d7746e2ca835.json",
+          "sha256": "7621d7746e2ca8358c0b0a9e3a737ad7eccc16e8060eb160045319d65b2ed5cd"
+        },
+        {
+          "bytes": 5590,
+          "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_short_correction_long_competitor_c4a9170fef1de770.json",
+          "sha256": "c4a9170fef1de770894fc381e1a1cbf2b1e0f9e69e3bfc4e8b45c1ed06eba559"
+        }
+      ],
+      "receipt": {
+        "bytes": 31275,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/grm_wc1_results.json",
+        "sha256": "087338e42a7d8be5340876b58f172023583732d9b6356836365b82486ff8d09d"
+      },
+      "required_probes": {
+        "e2e_t33_polaris_mark": false,
+        "longhorizon_turn_33": false,
+        "sup_reserve_juniper_pass": true
+      },
+      "scores": {
+        "census": 9,
+        "longhorizon": 13,
+        "sup": 9
+      }
+    }
+  },
+  "counts": {
+    "census": 10,
+    "longhorizon": 14,
+    "sup": 9
+  },
+  "diagonal_comparison": {
+    "delta_correct": {
+      "census": 0,
+      "longhorizon": 0,
+      "sup": 1
+    },
+    "fixed": {
+      "census": 10,
+      "longhorizon": 14,
+      "sup": 9
+    },
+    "fixed_required_probes": {
+      "e2e_t33_polaris_mark": true,
+      "longhorizon_turn_33": true,
+      "sup_reserve_juniper_pass": true
+    },
+    "historical": {
+      "census": 10,
+      "longhorizon": 14,
+      "sup": 8
+    },
+    "historical_probe_receipts": [
+      {
+        "bytes": 4346,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_score_5c40a707ec2ac8eb.json",
+        "sha256": "5c40a707ec2ac8eb0fb3a0117a1d8efb90494724b58162ec30d400cb663dc054"
+      },
+      {
+        "bytes": 8012,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_score_d720f2403529c7e2.json",
+        "sha256": "d720f2403529c7e27da1e4cfd5bca89e9cda388f76e051759e6cc27d75900976"
+      },
+      {
+        "bytes": 5613,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_correction_then_restatement_abe6eb76bb840979.json",
+        "sha256": "abe6eb76bb8409794f97a7fb48097f908da06df54b6363e8ce3be598b129c491"
+      },
+      {
+        "bytes": 7711,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_fresh_fact_controls_e60af39db0afc8bd.json",
+        "sha256": "e60af39db0afc8bd04f8a418e54d9b8710ad06fba7dd703f5b14d0c7c0bf93e5"
+      },
+      {
+        "bytes": 5673,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_multi_hop_a_b_c_ad7efbd6b387f60a.json",
+        "sha256": "ad7efbd6b387f60a8cadc7879a2829bd9bd1e4eace2d054e6a01b5a698fa15f5"
+      },
+      {
+        "bytes": 5673,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_short_correction_long_competitor_0a2f81c65bdfe27b.json",
+        "sha256": "0a2f81c65bdfe27b451a2b28943d2bba23204cbc499f833335ec8700b6a0adf8"
+      }
+    ],
+    "historical_required_probes": {
+      "e2e_t33_polaris_mark": true,
+      "longhorizon_turn_33": true,
+      "sup_reserve_juniper_pass": false
+    },
+    "note": "Report all three scores, componentwise deltas and t33/Juniper probe identities against 8/9,10/10,14/14. Retaining census10 and LH14 retains those aggregate benefits; failure loses at least part. Juniper remains separately reported. This comparison alone does not support chunking."
+  },
+  "evidence_class": "CPU aggregation of bound E2E scores; finite registered batteries",
+  "factorial_verdict": "SUPPORTED_FINITE",
+  "limits": "Missing or stale cells/observations refuse summary: INCONCLUSIVE. WC1 token residency unavailable. No universal or statistical causal claim.",
+  "prediction": "c64_w96 recovers t33, reaches 14/14 long-history, and keeps Juniper",
+  "prediction_met": true,
+  "registration": {
+    "bytes": 67067,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/registration.json",
+    "sha256": "7fb561c70dd8c04abc18ef99a7a2a5ec4d37cbc2a22b1de1f89ab2119bd285e8"
+  },
+  "rejection": "Chunking claim rejected if improvement needs narrower seating; wide chunk64 must recover t33 and retain Juniper. Missing cells/geometry/observations => INCONCLUSIVE, never support."
+}

@@ -1,0 +1,1298 @@
+{
+  "amendment": {
+    "bytes": 54409,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/amendment_a4.json",
+    "sha256": "014ae519a3b27ff0598d1d5a5ae3e4dcb7c3785ae2a52b7cf966d6c6fd10a16e"
+  },
+  "battery": "sup",
+  "cell": "c64_w96",
+  "chunk": 64,
+  "geometry_pin": {
+    "capture_pin": "live",
+    "ephemeral": true,
+    "live_shift": "n_sink + 96",
+    "live_turns": 2,
+    "max_live": 4096,
+    "plan_head_last_position": "n_sink + 95",
+    "remaining_flags": {
+      "adm_decisive": true,
+      "admission_mode": "A-DEC",
+      "arena_width": 96,
+      "gqa_cuda_route": true,
+      "graft_storage_bits": 8,
+      "length_debias": false,
+      "live_turns": 2,
+      "max_live": 4096,
+      "max_trips": 1,
+      "ngen": 32,
+      "probe_ladder": true,
+      "route_query_lex": true,
+      "sup_resolve": true,
+      "topk": 3,
+      "turn_pipeline": "single",
+      "vram_budget_mb": null
+    },
+    "seat_near_live": true,
+    "sink": "unchanged tokenizer-derived n_sink"
+  },
+  "registration": {
+    "bytes": 67067,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/registration.json",
+    "sha256": "7fb561c70dd8c04abc18ef99a7a2a5ec4d37cbc2a22b1de1f89ab2119bd285e8"
+  },
+  "sources": [
+    {
+      "bytes": 1806,
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/config.json",
+      "sha256": "3a2a26ded679375b7928ddeca59764df7cea83220c1961035f6d6e232659e9ce"
+    },
+    {
+      "bytes": 177,
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/generation_config.json",
+      "sha256": "f9970ada892d2d1f72e3ed0a6535ccebadd11897318794ca671d8c7014c957da"
+    },
+    {
+      "bytes": 36355,
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/model.safetensors.index.json",
+      "sha256": "0e085b977c4c9942f85938828e8c989ed7d5cdabf852e4da6a67c116cd502cd1"
+    },
+    {
+      "bytes": 98,
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/special_tokens_map.json",
+      "sha256": "dd5e191d20c12d2fee1da5bae14ca1db0f5f4215300af691f23cdee97120a293"
+    },
+    {
+      "bytes": 27868174,
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/tokenizer.json",
+      "sha256": "0614fe83cadab421296e664e1f48f4261fa8fef6e03e63bb75c20f38e37d07d3"
+    },
+    {
+      "bytes": 4200,
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/tokenizer_config.json",
+      "sha256": "9279e942392b742d633c7adbb89ebe002c98399db8926a7af5125c726f404070"
+    },
+    {
+      "bytes": 33028,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_det1/run_20260831T160525Z_2/det1_11/census/lived_serving_census_98ef71e88dec17a1.json",
+      "sha256": "98ef71e88dec17a1ef5263e5a6d7ca32017ef092da10d955cd43d0be38cb0021"
+    },
+    {
+      "bytes": 2180,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json",
+      "sha256": "28b3196f8fb04a4123fcf21b1e61f8bb1b8a0e64fadcfc6643801f3e19c4ac02"
+    },
+    {
+      "bytes": 41413,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_rs3/registration.json",
+      "sha256": "1f37c0eab788ed88c09012a6de8d539ceb531729f14ab9e3cbce0783ac2f7534"
+    },
+    {
+      "bytes": 2521,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/frames/runtime_frame_w96_590846a9fbab95c0.json",
+      "sha256": "590846a9fbab95c083a4f5080d05cb5b04e6851713ba53bb6278e78cd6194fb4"
+    },
+    {
+      "bytes": 31275,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/grm_wc1_results.json",
+      "sha256": "087338e42a7d8be5340876b58f172023583732d9b6356836365b82486ff8d09d"
+    },
+    {
+      "bytes": 9164,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/registration.json",
+      "sha256": "5bc6717f9ed10d674e255a268f0a7d72146981f20ffa130d4ae523c49aeb691e"
+    },
+    {
+      "bytes": 4346,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_score_5c40a707ec2ac8eb.json",
+      "sha256": "5c40a707ec2ac8eb0fb3a0117a1d8efb90494724b58162ec30d400cb663dc054"
+    },
+    {
+      "bytes": 8012,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_score_d720f2403529c7e2.json",
+      "sha256": "d720f2403529c7e27da1e4cfd5bca89e9cda388f76e051759e6cc27d75900976"
+    },
+    {
+      "bytes": 5613,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_correction_then_restatement_abe6eb76bb840979.json",
+      "sha256": "abe6eb76bb8409794f97a7fb48097f908da06df54b6363e8ce3be598b129c491"
+    },
+    {
+      "bytes": 7711,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_fresh_fact_controls_e60af39db0afc8bd.json",
+      "sha256": "e60af39db0afc8bd04f8a418e54d9b8710ad06fba7dd703f5b14d0c7c0bf93e5"
+    },
+    {
+      "bytes": 5673,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_multi_hop_a_b_c_ad7efbd6b387f60a.json",
+      "sha256": "ad7efbd6b387f60a8cadc7879a2829bd9bd1e4eace2d054e6a01b5a698fa15f5"
+    },
+    {
+      "bytes": 5673,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_short_correction_long_competitor_0a2f81c65bdfe27b.json",
+      "sha256": "0a2f81c65bdfe27b451a2b28943d2bba23204cbc499f833335ec8700b6a0adf8"
+    },
+    {
+      "bytes": 9940,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_e2e-1_349d068f20555358.json",
+      "sha256": "349d068f20555358f55313d73aaf7aa926df00d6bbae79e5b9bed9d1edf05f23"
+    },
+    {
+      "bytes": 18567,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_e2e-2_4432ad0fa2beb0ab.json",
+      "sha256": "4432ad0fa2beb0ab752f973c6275eb4c3296b4532bb0c6fb54f9ca78510f5cb8"
+    },
+    {
+      "bytes": 31589,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_e2e-3_302768c3a43335d7.json",
+      "sha256": "302768c3a43335d769baf0959b511e82c3a58e2442e9d8eb3f2d015625304d00"
+    },
+    {
+      "bytes": 44480,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_e2e-4_9b547acfc4c8d80e.json",
+      "sha256": "9b547acfc4c8d80e8ff58355e8d82352169e32b2a7a1608e54b8f5d97a06e5cf"
+    },
+    {
+      "bytes": 4386,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_score_bf0b4d60b6ea941f.json",
+      "sha256": "bf0b4d60b6ea941fe78db65239c5f7a596f8294a5a3246f53a12d9a1c66e12d7"
+    },
+    {
+      "bytes": 11755,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-1/session/run_config.json",
+      "sha256": "4a7ad69658494c90f47a27d743b153a88f2cfad16de97300289ea47142b7afde"
+    },
+    {
+      "bytes": 11755,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-2/session/run_config.json",
+      "sha256": "4a7ad69658494c90f47a27d743b153a88f2cfad16de97300289ea47142b7afde"
+    },
+    {
+      "bytes": 11755,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-3/session/run_config.json",
+      "sha256": "4a7ad69658494c90f47a27d743b153a88f2cfad16de97300289ea47142b7afde"
+    },
+    {
+      "bytes": 40406,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-4/session/repository/manifest.json",
+      "sha256": "ff4debda822cc41516188f626c6a2a82ba797fe5f9c991605489c879a431b153"
+    },
+    {
+      "bytes": 11755,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-4/session/run_config.json",
+      "sha256": "4a7ad69658494c90f47a27d743b153a88f2cfad16de97300289ea47142b7afde"
+    },
+    {
+      "bytes": 1682,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-1_f37d03a43ec801e1.json",
+      "sha256": "f37d03a43ec801e189643efa744ac303a972a6f32c6ade84aab3f4a15e3f5aaa"
+    },
+    {
+      "bytes": 1680,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-2_f447f5901661a21c.json",
+      "sha256": "f447f5901661a21c4ef25b9e580107a04687c8ee0019c8d8ca82bddfbc96bc2f"
+    },
+    {
+      "bytes": 1681,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-3_49be4ff76e0df50c.json",
+      "sha256": "49be4ff76e0df50c3e87688ffe2ddfe1e94b1e77d1f31e374227e5b66ce48aec"
+    },
+    {
+      "bytes": 1681,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-4_d7bb547bdffb3d4d.json",
+      "sha256": "d7bb547bdffb3d4d424c2ee5f828de2253612eb3251a81080760d1c0a3335606"
+    },
+    {
+      "bytes": 1682,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-5_f299b53624a181f5.json",
+      "sha256": "f299b53624a181f583ef012a21499bd54c10ddf4db7dccabd638b6bfdc263091"
+    },
+    {
+      "bytes": 8017,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_score_d91c1dd36c10dff7.json",
+      "sha256": "d91c1dd36c10dff7ad9a631624237cf28c5d952b17b7d260fafda5982a1d5c8f"
+    },
+    {
+      "bytes": 52322,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-1/session/run_config.json",
+      "sha256": "a7c0044079ecdbc685838a1b2a352eb0b4ac7783f8f6c3a3fa37fdf848bd0b00"
+    },
+    {
+      "bytes": 52322,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-2/session/run_config.json",
+      "sha256": "a7c0044079ecdbc685838a1b2a352eb0b4ac7783f8f6c3a3fa37fdf848bd0b00"
+    },
+    {
+      "bytes": 52322,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-3/session/run_config.json",
+      "sha256": "a7c0044079ecdbc685838a1b2a352eb0b4ac7783f8f6c3a3fa37fdf848bd0b00"
+    },
+    {
+      "bytes": 52322,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-4/session/run_config.json",
+      "sha256": "a7c0044079ecdbc685838a1b2a352eb0b4ac7783f8f6c3a3fa37fdf848bd0b00"
+    },
+    {
+      "bytes": 52322,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-5/session/run_config.json",
+      "sha256": "a7c0044079ecdbc685838a1b2a352eb0b4ac7783f8f6c3a3fa37fdf848bd0b00"
+    },
+    {
+      "bytes": 5604,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_correction_then_restatement_ad61a11154fbabfd.json",
+      "sha256": "ad61a11154fbabfd2394fdcd297d71a3b96e7a38687c6dae09bb5ea4e860b400"
+    },
+    {
+      "bytes": 7652,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_fresh_fact_controls_5ed53221b0012dcc.json",
+      "sha256": "5ed53221b0012dcc80afe5d5092e169f29513d404791d27e62a098cea357c659"
+    },
+    {
+      "bytes": 5574,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_multi_hop_a_b_c_7621d7746e2ca835.json",
+      "sha256": "7621d7746e2ca8358c0b0a9e3a737ad7eccc16e8060eb160045319d65b2ed5cd"
+    },
+    {
+      "bytes": 5590,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_short_correction_long_competitor_c4a9170fef1de770.json",
+      "sha256": "c4a9170fef1de770894fc381e1a1cbf2b1e0f9e69e3bfc4e8b45c1ed06eba559"
+    },
+    {
+      "bytes": 455656,
+      "path": "/mnt/ForgeRealm/GraftRepository/cpp/build/libgrm_runtime.so",
+      "sha256": "6e984b0de89339e1ea5c7a0731323f5682aff476e3fabf48af2d173ecea3976d"
+    },
+    {
+      "bytes": 6436,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/original_receipts_before.json",
+      "sha256": "7d8aaa638dd34b004efbfed2560dd7e26a5dc895c3f2095ab9880d53ee68bb80"
+    },
+    {
+      "bytes": 1586,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/pre_registration.json",
+      "sha256": "eb14fbf5d79e8ff66e53462fc827c5020d1e8604ffdb8e2e2fa86b8d3f3784a1"
+    },
+    {
+      "bytes": 9353,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_commands.txt",
+      "sha256": "46423c59623e54001a125cf9553888ccbcc2566acf1f3f709ad6571a8490bba7"
+    },
+    {
+      "bytes": 1108,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_commands_a2.txt",
+      "sha256": "fbaafca244cd0fdc73d28eb1effe5dfd67222980af9ba874e67d0808481face4"
+    },
+    {
+      "bytes": 0,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 34286,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/deepseek_v2_lite_tc.py",
+      "sha256": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07"
+    },
+    {
+      "bytes": 55339,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/gemma4_tc.py",
+      "sha256": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b"
+    },
+    {
+      "bytes": 53672,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/gpt_oss20b_tc.py",
+      "sha256": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1"
+    },
+    {
+      "bytes": 265082,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/graft_arena.py",
+      "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b"
+    },
+    {
+      "bytes": 14227,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/graft_quant.py",
+      "sha256": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130"
+    },
+    {
+      "bytes": 219615,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/graft_repository.py",
+      "sha256": "e0a0fc777d3c0f535ec915238390d7c1f1a6d43e927976351b8441a1b1358e89"
+    },
+    {
+      "bytes": 35998,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/grm_admission.py",
+      "sha256": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f"
+    },
+    {
+      "bytes": 20297,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/grm_cuda_router.py",
+      "sha256": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5"
+    },
+    {
+      "bytes": 29224,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/grm_demand.py",
+      "sha256": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3"
+    },
+    {
+      "bytes": 9742,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/grm_frame.py",
+      "sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2"
+    },
+    {
+      "bytes": 88004,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/grm_native.py",
+      "sha256": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df"
+    },
+    {
+      "bytes": 23837,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/grm_runtime.py",
+      "sha256": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e"
+    },
+    {
+      "bytes": 1789,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/grm_supersession.py",
+      "sha256": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e"
+    },
+    {
+      "bytes": 3576,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/grm_text_norm.py",
+      "sha256": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8"
+    },
+    {
+      "bytes": 33605,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/grm_three_pass.py",
+      "sha256": "71e0e4f8503d4e132101fc79cce9d64daf399ffe73892e2f0102c8568d0ec0f3"
+    },
+    {
+      "bytes": 11171,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/kv_graft.py",
+      "sha256": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d"
+    },
+    {
+      "bytes": 22115,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/minicpm3_tc.py",
+      "sha256": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69"
+    },
+    {
+      "bytes": 34465,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/mistral7b_tc.py",
+      "sha256": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4"
+    },
+    {
+      "bytes": 12284,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/paging_telemetry.py",
+      "sha256": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c"
+    },
+    {
+      "bytes": 27384,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/qwen35_tc.py",
+      "sha256": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b"
+    },
+    {
+      "bytes": 217167,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/qwen35_translation_poc.py",
+      "sha256": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1"
+    },
+    {
+      "bytes": 68885,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/qwen38_tc.py",
+      "sha256": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e"
+    },
+    {
+      "bytes": 24486,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/qwen3_1p7b_tc.py",
+      "sha256": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f"
+    },
+    {
+      "bytes": 6277,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/qwen3_tc.py",
+      "sha256": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa"
+    },
+    {
+      "bytes": 4594,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/core/qwen_tc.py",
+      "sha256": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3"
+    },
+    {
+      "bytes": 2080,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_1.md",
+      "sha256": "2bb3e59d54f62895a072718613dc4768aae6513b49e7203c94310f83936d03f7"
+    },
+    {
+      "bytes": 2744,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_2.md",
+      "sha256": "efe3465f4a220a80e9a97cbeee0e7ff62a1ef0a8f9b7740ee1db0a23f123b76f"
+    },
+    {
+      "bytes": 3763,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_WIDTH_VS_CHUNKING.md",
+      "sha256": "e58f5136cb0cc6b71904414510bddd7f691af29d145c1b2e48f003c8e46b14bf"
+    },
+    {
+      "bytes": 26667,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/_diag_step_vs_manual_ab.py",
+      "sha256": "c27bafa149d6155866fac73fb472115e1fcfd636779784a5ded9d573c2efc7c3"
+    },
+    {
+      "bytes": 32962,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/apamq_e3_attrib.py",
+      "sha256": "24b2e7b03a93526d0a780b772d244031ac0aeb84d4efc645c74f6d5f3ecc4e71"
+    },
+    {
+      "bytes": 35467,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/apamq_fbd1_diag.py",
+      "sha256": "53776a5ad1897971a630c1fb97ccb90d86f57cb28bc25c3d00ee8315b88435a7"
+    },
+    {
+      "bytes": 43552,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/apamq_fc_ppl.py",
+      "sha256": "b170b085e0cb1fa843435642b2a42db76d104b4e0185e9af65030439c5b5f23b"
+    },
+    {
+      "bytes": 9030,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gemma4_server.py",
+      "sha256": "ae0a64b3b4a2177aa964e1190a386e7c217a6a03eebff6badd5fd96ffa2d22e1"
+    },
+    {
+      "bytes": 30193,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/glc_p0_audit.py",
+      "sha256": "b23e07d28ee398f2f390f091486a81616fa5cfa2b972c6b4faf77e4a6c367f4b"
+    },
+    {
+      "bytes": 13833,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/glc_p0_common.py",
+      "sha256": "89e189a33fa5bec760cc4b779a97277da4ef7214c0e6abc7be706637a3941467"
+    },
+    {
+      "bytes": 37130,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/glc_p0_divergence.py",
+      "sha256": "1abc7c08d682da41900ad96616997682f21745f51b8179c97e949a50ff2e7376"
+    },
+    {
+      "bytes": 18773,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/glc_p0_hf_reference.py",
+      "sha256": "14dbc7091bee24632879f0c5868a988ce15568c9fdeedafc436649dde51dfc31"
+    },
+    {
+      "bytes": 47271,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/glc_p0d_harmony_discriminator.py",
+      "sha256": "13e78f0f1d2d30dde531fe614a00cafc95dbb6e8c8e321073d18a1ca2b460339"
+    },
+    {
+      "bytes": 14974,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_bulk_graft_gate.py",
+      "sha256": "e94d1496702831e73907a87707ef656433bcdb211c43cbae280ba64d3dd6636f"
+    },
+    {
+      "bytes": 14608,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_context_ladder.py",
+      "sha256": "f28da16cc4824076241c8b608e9ac63af29dcf14f5cccb6345df1b9d8a371c0f"
+    },
+    {
+      "bytes": 70134,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_e13b_position_controls.py",
+      "sha256": "9f769f67c1044f541ee32efdd522c297dea9ef692366824f93676c4f63159256"
+    },
+    {
+      "bytes": 74519,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_e14_backend_fix.py",
+      "sha256": "6bba1978bf3761aa593e2e4dd616b1a7648126a396d8facff9ee0a5677a08fac"
+    },
+    {
+      "bytes": 152667,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_e1_diag.py",
+      "sha256": "f0d8192dd95962dc5bae38145d8d262de1fa00283ed0f2a2750d8e2088c35d46"
+    },
+    {
+      "bytes": 20560,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_exact_value_graft_gate.py",
+      "sha256": "9813eca3c54577c7fc0773880dc64e7484370803aa7dac09bb5b69dc4933c7b1"
+    },
+    {
+      "bytes": 231131,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_expert_e1.py",
+      "sha256": "976d703295f2c383e21f6da8dadc9d3b139dd333f41146d2eb976edf8b3f79f4"
+    },
+    {
+      "bytes": 12065,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_grm_output_eval.py",
+      "sha256": "5aadf91cd0b4fb3f19d868b24ac4956d067cac5acda65c35cc2722d57957ee02"
+    },
+    {
+      "bytes": 72907,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_key_refinement.py",
+      "sha256": "bbec07d76c42ddab89817172c811200e7a1addf7970a7c749d8890b48c8df562"
+    },
+    {
+      "bytes": 4602,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_layer_smoke.py",
+      "sha256": "d1d3126db3f106bf6d3145d6c60305c030bb4ad4742b2496071fbbd0dbdc60aa"
+    },
+    {
+      "bytes": 6332,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_moe_diag_smoke.py",
+      "sha256": "a624a00960d6d587f060ab7df4f2a710f97c193b7d52dbe42876e7f1cc361243"
+    },
+    {
+      "bytes": 20032,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_multifact_addressing_gate.py",
+      "sha256": "9f0bb3339b47d1e7fb1bf78031798234857c27d881c655480f81f58def5a34b8"
+    },
+    {
+      "bytes": 19711,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_multifact_graft_gate.py",
+      "sha256": "fb26909b1622f4ee3e5c00e5ca4a9212544d6a189cc47936310ff5f90672b017"
+    },
+    {
+      "bytes": 14058,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_preference_graft_gate.py",
+      "sha256": "2a1143d8c96a6f430781f37f65786604ffe19a1c169e7d6cd7352f14465384be"
+    },
+    {
+      "bytes": 11852,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_realtext_ppl_gate.py",
+      "sha256": "019bd3b98a71859715c41fb733f0f0bc153562d9780dadeac6180c87535dda7e"
+    },
+    {
+      "bytes": 11462,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_repetition_drift_gate.py",
+      "sha256": "ee3a6b494ef87b847064f0cd85e88b076f130f1d82c35e0b5f3eafaa1f798157"
+    },
+    {
+      "bytes": 66895,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_router_telemetry.py",
+      "sha256": "e1c35332e1e6bd0911c0402af5eeb3e9309107138a3c78ed445dff4490bfb64e"
+    },
+    {
+      "bytes": 27329,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_stream_forward_smoke.py",
+      "sha256": "c9fc9ee2e67f00fc033f87784d231640b538a3f83ff47f4678d121ad1dca22a5"
+    },
+    {
+      "bytes": 7684,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_stream_greedy_smoke.py",
+      "sha256": "498646bd81141b07431828b23d95c51d2b894bf5b192c3458ea6ebfa500f7f40"
+    },
+    {
+      "bytes": 16480,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_supersession_graft_gate.py",
+      "sha256": "2f105cb1a535b2a830810822b59571d2c31cc03e60711ef21296f84ae793cea4"
+    },
+    {
+      "bytes": 101820,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_synthetic_key.py",
+      "sha256": "a43e9cdac078ab1948809fb9a54a653ea63e0befabea142463c470321e1e7057"
+    },
+    {
+      "bytes": 9685,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss20b_turn_prompt_sweep.py",
+      "sha256": "923d7245a996e5359949da1393c6800f317f902f7ee741a8bb8ed010a9194ee0"
+    },
+    {
+      "bytes": 7440,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss_20b_ollama_smoke.py",
+      "sha256": "8349864f92a765d3f64bc121a341c4ccefb3b955c3c88d8529bf1706ce419587"
+    },
+    {
+      "bytes": 11283,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/gpt_oss_20b_phase0_snapshot.py",
+      "sha256": "43f3c7f19def4310192ccbd576be0cff3d2522e8189d46c823249d264f2b7c20"
+    },
+    {
+      "bytes": 22223,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm3p_contam_analyze.py",
+      "sha256": "a5b0d895a6f55d45da2b33e3f08036b0b460341e18f9552db186afeeff2c7e51"
+    },
+    {
+      "bytes": 65385,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_adm1_3_dual_frame.py",
+      "sha256": "4391c2f13c43a18740cfc188536c279131d5d1d34233893789f1e366c3416d7c"
+    },
+    {
+      "bytes": 12289,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_adm1_3_prod_e2e.py",
+      "sha256": "182f29a52820b1c33dedccde9cf5bf8031241e8a5fc11503bddc6f5c73300987"
+    },
+    {
+      "bytes": 45914,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_adm1_analysis.py",
+      "sha256": "0c2933b74206b80e0d621ea7c638a2505bf08786f66c6195324d41f6f1378084"
+    },
+    {
+      "bytes": 10275,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_adm1_e2e.py",
+      "sha256": "8e3197e9657391ef65acbe5c2758e3e797954a9b2dfe5c88a276164c73e3171e"
+    },
+    {
+      "bytes": 38677,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_adm1_gpu.py",
+      "sha256": "61e1eac6c0f4c59d3a5e07ad086e0902146038499003d128c92094c86383155a"
+    },
+    {
+      "bytes": 22074,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_adm1_probe_adjudication.py",
+      "sha256": "e8931bc8800588d4e3e8a002d0bb871060b28b78b10b4befa5f7021da928fe69"
+    },
+    {
+      "bytes": 39972,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_adm2_default_on_gate.py",
+      "sha256": "eb4484e45f3653a5f6c15daec9a4424d2fa961633981af7fe3628d5e99c55e7e"
+    },
+    {
+      "bytes": 7133,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_adapter.py",
+      "sha256": "2638f87714f32af58cce32065a635107058c09de8e7635ae1d9da46303fd41e4"
+    },
+    {
+      "bytes": 9464,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_amendment_1.py",
+      "sha256": "76a197be108cdad9adaaaab6ea52ea3e879e645e5d5906dd567c1c3a69160a8c"
+    },
+    {
+      "bytes": 22558,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_campaign.py",
+      "sha256": "5a34b764ab93a5db490df599a912125fa3dba6dd3172dcc363e25b42d54c3caa"
+    },
+    {
+      "bytes": 3943,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_register_a2.py",
+      "sha256": "d585d9f1173f28fc5e251749dc07c05fd348596508b586bb478d466b9f252d5e"
+    },
+    {
+      "bytes": 18626,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_resume_a2.py",
+      "sha256": "7ab0a4bcc3838c53d0fc39af761b75f37cd5e32caa9ad0f27b2f2d0b6b0b550f"
+    },
+    {
+      "bytes": 43748,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_cmc1_gpu_arms.py",
+      "sha256": "663760d175bb35ed6c4df2b252bf909bcf52577f3ad5eb1c518167b6bb5e39ba"
+    },
+    {
+      "bytes": 16109,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_cmc1_gpu_gate.py",
+      "sha256": "8a84f86e5a30b0258efcb2d03fc1b979995d92fe36c2cfbe1b525dab083c86d1"
+    },
+    {
+      "bytes": 31767,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_cmc1_mechanism.py",
+      "sha256": "cef3a4bc9d8b5ca6d5951e5bdfcff048533914fee2e63e91afbcfc70058573c5"
+    },
+    {
+      "bytes": 13082,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_cmc1_preflight.py",
+      "sha256": "86ea546bce3732e6a55e4e1f298d2382194ba756fde57dc15dc8232b8526f071"
+    },
+    {
+      "bytes": 29605,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_cmc2_depth_sweep.py",
+      "sha256": "9e076b0c9fb7082adcedfbf237a55bc096fe51af58e021c250f2e2aed67ddeed"
+    },
+    {
+      "bytes": 24647,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_cmc2_gpu_sweep.py",
+      "sha256": "929a3f940d7d4f3a7493968fb859a746228111ac8fb1d4258628493a6a3f3c58"
+    },
+    {
+      "bytes": 28159,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_11_census.py",
+      "sha256": "b5f88597f031903d7c3a68a38131fb1a8466d32b2f183aedaf81b6df9ccb90d6"
+    },
+    {
+      "bytes": 50730,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_2_gpu.py",
+      "sha256": "a0be3e62133aae30cf233c57948e6d8af66b2319d50bae0e3222e86e00cc8e2f"
+    },
+    {
+      "bytes": 52144,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_3_gpu.py",
+      "sha256": "fef8442aa9cb17e194982b92ae53d8d4f2a7a65fd100ed28bdc8a7da7e29c58f"
+    },
+    {
+      "bytes": 120743,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_3_snapshot.py",
+      "sha256": "1da5c10d1ff658f3f09f6649ab0dc849f182c171d045bfea149f440ab4f2035b"
+    },
+    {
+      "bytes": 43888,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_4_gpu.py",
+      "sha256": "6f5c5dc9502912f48e4247118e9110eca75076c6b4e7dbc94eb49e3966929cc0"
+    },
+    {
+      "bytes": 115370,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_5_analyze.py",
+      "sha256": "253c7ed9c39dabeae84ea28da0f19b50a56edf191da6836d11935a1355583259"
+    },
+    {
+      "bytes": 226864,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_5_gpu.py",
+      "sha256": "d1ade7d4029b1717471822bd7c74e9c32b87026c93668a0aa500a8d75f14ad52"
+    },
+    {
+      "bytes": 45359,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_5_workers.py",
+      "sha256": "9f27b116b16a6b8ff0719f2444877ddd6db757bf18cded2a2ffe801d3f04f682"
+    },
+    {
+      "bytes": 67195,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_7_registry.py",
+      "sha256": "c042b14e726458613b459d967b958e221da6609b75c0069b3a9629606930633e"
+    },
+    {
+      "bytes": 24827,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_7_source_auth.py",
+      "sha256": "2b85d7a5489b5895de6c2724118b7e99f7d02c41da12d07d6f975e632f201eb9"
+    },
+    {
+      "bytes": 22905,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_8_source_auth.py",
+      "sha256": "faab7798dfbb1aa7d8b046a1f967dc7e3eb3ec5a808f7506d222fe4f9f6c1498"
+    },
+    {
+      "bytes": 31342,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_9_findings.py",
+      "sha256": "39a5b6d5b3b66b0872af66abec2323e0428da03745af94f37d6ac3bdde272162"
+    },
+    {
+      "bytes": 24580,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_9_source_auth.py",
+      "sha256": "01c4511c354fe0e6a6160ef0b34ec9e7458b5f0edbdafdf61b952ba62a9c26a4"
+    },
+    {
+      "bytes": 29141,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_analyze.py",
+      "sha256": "3c873355f391a6291b9c40c5c55b2c39bef0615e7425b21549ade861e22ee1cf"
+    },
+    {
+      "bytes": 30991,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_baseline_registry.py",
+      "sha256": "d89f5bd81aec2dda291edb5f8320cf031f35488abb2d3218a896bf0d204a0524"
+    },
+    {
+      "bytes": 41298,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_common.py",
+      "sha256": "f13f44cfa6f87dc57cec4ae9bf7fe509a6fbd0be983746202ad64da18a4d8343"
+    },
+    {
+      "bytes": 40225,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_e2e.py",
+      "sha256": "21035fb2cb96707207143b45015d7b0fa78e6ad1127c9344ab9908f5568ed734"
+    },
+    {
+      "bytes": 66360,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_gpu.py",
+      "sha256": "ca1b051760885f64eea53b7039c54575e670c1174d6aa387817586fe3998bdeb"
+    },
+    {
+      "bytes": 14984,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_register.py",
+      "sha256": "e7161f826a57abd08e75b0ed7839b240ca60a954bda9129e1aa8e47deec16b61"
+    },
+    {
+      "bytes": 139819,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_e2e_session.py",
+      "sha256": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450"
+    },
+    {
+      "bytes": 20110,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_eb1_longhorizon_gpu.py",
+      "sha256": "8814c4502764303aea66ab647711771cebd6373a83193478ea018ea9ec00a3cc"
+    },
+    {
+      "bytes": 9958,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_gqa_cuda_bridge_profile.py",
+      "sha256": "7ddc673bb5247a4821eb0ff0d7cb0acff402be1c186fe33d20fb0431305e50ac"
+    },
+    {
+      "bytes": 9864,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_gqa_cuda_bridge_smoke.py",
+      "sha256": "7cc7ef98fc61f31b76ab882c5078f0a83d10de7263d7f48e5be010afab36f6eb"
+    },
+    {
+      "bytes": 4873,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_gqa_cuda_device_entry_parity.py",
+      "sha256": "9b1de16e56221657a2f771ee4cec070e76f72e478cba5454200f7d65449e974e"
+    },
+    {
+      "bytes": 37428,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_gqa_cuda_probe.py",
+      "sha256": "ea7a9d529279073460f66f1da96c0db1633a15ecd79127555ae09dfb39f7c272"
+    },
+    {
+      "bytes": 23773,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_gqa_exact_ragged_cuda_gate.py",
+      "sha256": "68595438a95cf73609b28d2f5ba971d4743ddb6574e820282a137c88a48d797f"
+    },
+    {
+      "bytes": 8833,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_gqa_layer_sweep.py",
+      "sha256": "d6c7ce4a7a2363ff0ecb39d7271cf61b3b76c096bd34f02e737487ff72761065"
+    },
+    {
+      "bytes": 36713,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_gqa_router_benchmark.py",
+      "sha256": "b4531fcb0649b8657eae51bbac0eace8173263bab543ad85ed6e651a00555797"
+    },
+    {
+      "bytes": 2437,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_graft_quant_p3_mount_speed_receipt.py",
+      "sha256": "ab238a064ccb9012fc276a2e798a9e659596521a3c11aabcbca0abb12757382f"
+    },
+    {
+      "bytes": 3112,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_graft_quant_p3_recall_receipt.py",
+      "sha256": "0e0685211804eb19a93516461ab4994d03307d965fc694c203d7ff28ea0998d6"
+    },
+    {
+      "bytes": 3469,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_graft_quant_p3_roundtrip_receipt.py",
+      "sha256": "ad933d1ff58492fb01a6ce67c818f065a3046d103928a441346fd0978466d4c6"
+    },
+    {
+      "bytes": 5002,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_graft_quant_pack_dir.py",
+      "sha256": "eb0bea8025c7276f52c45393c262b20debf3d64e41eced0ab1f8d224579e3764"
+    },
+    {
+      "bytes": 15000,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_graft_quant_sweep.py",
+      "sha256": "68ab65f1faa2024713db86f3af4d5d5593edbcc4e11dbbf6312036ba90f19bb7"
+    },
+    {
+      "bytes": 11024,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_graft_quant_transform.py",
+      "sha256": "ef3711e15f434f69c7434b955140b4461551df3987244498d2c263f37a5df78e"
+    },
+    {
+      "bytes": 17944,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_importance_diagnostics.py",
+      "sha256": "bdbc7c7837576d6fc5e74b138e8cf52db6434339bc0a04dca215361b0125845e"
+    },
+    {
+      "bytes": 37928,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_lsr_p2c_1_census.py",
+      "sha256": "823a45432d93ba744347098a4619f7cb2653b9b008ab1b058fb852e5969261e8"
+    },
+    {
+      "bytes": 42422,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_lsr_p2c_1_gpu.py",
+      "sha256": "5c901bed496156202ca733e36190766aeac3cbf2cdd4f2b9112a5fc4407ebf98"
+    },
+    {
+      "bytes": 3843,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_mla_cuda_device_entry_parity.py",
+      "sha256": "3df43b7d37a3d6de5016986cb02c8102f06841a93c102b2aa692c34aa4165fda"
+    },
+    {
+      "bytes": 30721,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_mla_cuda_probe.py",
+      "sha256": "0e62b3c1c299fa48c6e945cf5959af20bc4c4f2581fb0800196b82137cfaf1c9"
+    },
+    {
+      "bytes": 10600,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_mla_cuda_route_gate.py",
+      "sha256": "5902b154f790a93e7721a22379a06470685a63c7136eac54c74654894e89ece4"
+    },
+    {
+      "bytes": 16399,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_mla_route_profile.py",
+      "sha256": "3628f192e046c3243486a114cbf8dc7e10fb0f7088822b2c2c12f2545190a3b6"
+    },
+    {
+      "bytes": 6183,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_mla_route_wall_curve.py",
+      "sha256": "3a634955d78b8dbe43201047935eb6cfea53b6211073ae20c0bfd97a1e5db58f"
+    },
+    {
+      "bytes": 4433,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_probe_ladder.py",
+      "sha256": "d1ad0ad74ba522b96c39c634c86ba3292b887af39321f7fc105a62f82fa26d0d"
+    },
+    {
+      "bytes": 22508,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_router_baseline.py",
+      "sha256": "e76637b72e7539081084602d69158c7b91c2b625a0335dcf9dca8f13e54e1a5d"
+    },
+    {
+      "bytes": 10385,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_router_tsan_gate.py",
+      "sha256": "61ca289362b42d5147734dbd86fb5df340c8e583c14198dcfcd2c9cdd68459dc"
+    },
+    {
+      "bytes": 11471,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs1_amendment.py",
+      "sha256": "50ad868089407559859555a191c49705078339e52693b33a1226a32649de72c6"
+    },
+    {
+      "bytes": 51278,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs1_read_strength_gpu.py",
+      "sha256": "dde95a2dc46683def3e13aeee439b6eb6f552a6325318e7365c0c656da05b284"
+    },
+    {
+      "bytes": 17290,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs1_registration.py",
+      "sha256": "765bfb769fb78583b7ab6e2ffa47f6ac3eabc5ac5e939f0f59dfdc5e2c73e3af"
+    },
+    {
+      "bytes": 13179,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs1_results.py",
+      "sha256": "8ccc2e1a192847071c376e5a811ebb7a5aee41bc6d123608ffe4da3b98a61e46"
+    },
+    {
+      "bytes": 13102,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs2_amendment.py",
+      "sha256": "be8575889c2c0b268d3fa2f53257312deab303b84e5dc5da586ebc3c13ec0eef"
+    },
+    {
+      "bytes": 73824,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs2_mount_read_gpu.py",
+      "sha256": "96c7efe99adf0ced6387b7697cd3a79ba0f7a1a50162dee86ae97d3fc3eb7bcb"
+    },
+    {
+      "bytes": 37061,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs2_registration.py",
+      "sha256": "b15d9c8b167b2ed151881bd79abbf7675e8bbe665c76e199af94d01360c69488"
+    },
+    {
+      "bytes": 25530,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs2_results.py",
+      "sha256": "d48a22a3f64ea6588b58bd57742e7d5bc25835162b4a3c397615328e0a98b8ff"
+    },
+    {
+      "bytes": 38391,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs3_capture_seat_gpu.py",
+      "sha256": "231b7b79424f9a1cd18ccffb328377ebf3667ab540279e9a473a8af6aefcda80"
+    },
+    {
+      "bytes": 15087,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs3_part4.py",
+      "sha256": "ad6d7f6731fc9f48bd0ebf484d279df2dc7bdbf79f213710dbd37051e32b3ea9"
+    },
+    {
+      "bytes": 30806,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs3_registration.py",
+      "sha256": "225cc4cd3aa82361c7cef85673143885d6e929121e6a924941a7a79539f5c5ee"
+    },
+    {
+      "bytes": 21735,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs3_results.py",
+      "sha256": "957d54216654b388331739717dd3aede5f9edd6afbf72cd9cb9535e593e7de69"
+    },
+    {
+      "bytes": 56729,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs4_ceiling_gpu.py",
+      "sha256": "7009821ad8caaa3357ca0c7316cf25dfe08a83f94c797a36e8036bde18fd547d"
+    },
+    {
+      "bytes": 27747,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs4_registration.py",
+      "sha256": "ba6882075e3572a0cf998c40cf0bb524cf9bd5df3f9695e60060893f7a6b3487"
+    },
+    {
+      "bytes": 20392,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs4_results.py",
+      "sha256": "911750227e096848a277fd7916ff4b2be7601325d87d3b7681a74136ff5c70c1"
+    },
+    {
+      "bytes": 11223,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rs4_row_split.py",
+      "sha256": "4c7d2a1dbf852f638d64c7c01adf9e75edc32577dc26ff26b535682a06f2f590"
+    },
+    {
+      "bytes": 12931,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rt1_diagnose.py",
+      "sha256": "9c4d5d7b9444ef11a9a163c33e050606b3c5c7ed5ce6edd56da42085405fc9aa"
+    },
+    {
+      "bytes": 10012,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_rt1_g2_table.py",
+      "sha256": "492464fca9617bdae40fae40a3bae8f8f779606028e819d9a3a84e7aa60dbc78"
+    },
+    {
+      "bytes": 41407,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_sc1_2_e2e_recovery_gpu.py",
+      "sha256": "fd274050bbebf836950f1bf057477f52b803f5239c589bc70c8d6aa4e220b5f8"
+    },
+    {
+      "bytes": 2982,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_sc1_2_pytest_shard.py",
+      "sha256": "300865c64b8d32494728749aabb0363b1d9388c40221f920680e7fae47481717"
+    },
+    {
+      "bytes": 36287,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_sc1_2_session.py",
+      "sha256": "9480f6c0f2540426020a1510dc0436bfffc1102f3593369a729502566086bbc9"
+    },
+    {
+      "bytes": 12390,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_sc1_bit_identity_gpu.py",
+      "sha256": "8176617065b8dac8a2c28ee2f4c022a1560d49748fa591aa173a5104c35753cd"
+    },
+    {
+      "bytes": 17111,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_sc1_lived_battery_gpu.py",
+      "sha256": "499153d9d09dc3f04b612177f7a29a487fefb8e057929961b8615d4f46c45a3d"
+    },
+    {
+      "bytes": 11593,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_sc1_overhead_gpu.py",
+      "sha256": "3580c8b32868b5d4e0d1b34c239afa5cc0d95fba7a86059521830fa263f0352d"
+    },
+    {
+      "bytes": 45470,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_sc1_recovery_gpu.py",
+      "sha256": "8519d45bc8333754463ea69e4313aad259b5f236b13991d6541744a019debb49"
+    },
+    {
+      "bytes": 36696,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_sc2_calibration.py",
+      "sha256": "da86fa02245d9a05677b006c778ee5b24371bb5aec53fc2ff80dfedac75cb3e5"
+    },
+    {
+      "bytes": 33054,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_sc2_e2e_abort_gpu.py",
+      "sha256": "bfb6c61e2334e1999ec7149ebcea81f2885512c9decdd8ba802e5580bb78bc60"
+    },
+    {
+      "bytes": 10195,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_sc2_results.py",
+      "sha256": "e0e8b3dc2538d21b9d7f9e8a360130e64f12c632a3dea66bf27ce09115abbd2b"
+    },
+    {
+      "bytes": 17812,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_sup_l2_default_on_gate.py",
+      "sha256": "132937757ad06ef80894242ce5d76d868f4ded1d0a5a798683d0248fdb577dc8"
+    },
+    {
+      "bytes": 10867,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_three_pass_gate.py",
+      "sha256": "1951f3e8ab8c5a3405a8df904065532561c311f16434dbe47461f89f113124fe"
+    },
+    {
+      "bytes": 12274,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_three_pass_p2_gate.py",
+      "sha256": "27503575085df3d33e2527de0d70f7d8ec368a45ad7693ca3d876215fec1e7ac"
+    },
+    {
+      "bytes": 9087,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_three_pass_p4_gate.py",
+      "sha256": "6b96cac186034fda1a89c27ce4a76a2f33967e068ebbb5c5a2c1a3b4a2aef8ce"
+    },
+    {
+      "bytes": 5826,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_wc1_amend.py",
+      "sha256": "d3cb151d0130c7afd3848e15f298e03e4853bb01504494aea9ec759231f6eda2"
+    },
+    {
+      "bytes": 14836,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_wc1_common.py",
+      "sha256": "0666eefc45e483f39e0d3a07301eac60dd8e11a5e57098bca98ca32a4a26695d"
+    },
+    {
+      "bytes": 11771,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_wc1_g1_pytest.py",
+      "sha256": "fce3005adbec478e5499eaaa94cfdd2030bdabc165e05e253cc6b7f907372c28"
+    },
+    {
+      "bytes": 9070,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_wc1_g2_reproduction.py",
+      "sha256": "37a18026003e015c458e047c63bb763c8312f6e2d706cb9323fd235fe1cbf0de"
+    },
+    {
+      "bytes": 12259,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_wc1_registration.py",
+      "sha256": "c54cc33bcbf8e8d2a29bfacdce7e041b0789d94dcf7864d6a641b32c2cec1358"
+    },
+    {
+      "bytes": 17655,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_wc1_results.py",
+      "sha256": "9c1e3650977857d47bb8fd20613219d562372ee5e510ffd9bb38843ef9e97980"
+    },
+    {
+      "bytes": 22122,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_wc1_sweep_gpu.py",
+      "sha256": "9dcdba3f65b295dc237fb8b88989453b815b649c1ba912c0d8767fb01ea3757a"
+    },
+    {
+      "bytes": 60594,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p0_core.py",
+      "sha256": "dafdc400f8fb4f8852658283d5c18c37d9bfa21d872c06eefae30aad39bbd017"
+    },
+    {
+      "bytes": 50084,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p0_gpu.py",
+      "sha256": "0f60a715af808452a9b112b460ea340ef3a0a1199862854e3b67220ef0a6c02c"
+    },
+    {
+      "bytes": 14009,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p0_survey.py",
+      "sha256": "e5689ccb81cee10fbb0717257d2796e64953215f99f661f1e2904799e2c25335"
+    },
+    {
+      "bytes": 22501,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p1_adjudicate.py",
+      "sha256": "cfd9e17bd0471d00b2b59cf2c478d5b5ee56b36dd2a719abff5ca0136c53bc4d"
+    },
+    {
+      "bytes": 5232,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p1_harvest.py",
+      "sha256": "23d2a94a405947fba9baa5ccdac11ff7155a036cc9d25b91a37768331579f889"
+    },
+    {
+      "bytes": 15485,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p1_reconcile.py",
+      "sha256": "8c3ce5b0a0021981a4192ccb8885d3a2778fb9b648e062581b4ab319a3dd9f24"
+    },
+    {
+      "bytes": 35772,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p1_route_probe.py",
+      "sha256": "be2c48a988821fc34c968ffe4ab41b99bef5c52c1b7af5de4394a6e580178c95"
+    },
+    {
+      "bytes": 11785,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p1_stage_replay.py",
+      "sha256": "684697b16055659a5a616c006cf7a70de1360261db4f2df5520ce56e629ba6b2"
+    },
+    {
+      "bytes": 16124,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p2a_replay_gpu.py",
+      "sha256": "f59c6e937721a520b46554b3315f8c7f67315e7ad5e21b1860d8582b8d0b4631"
+    },
+    {
+      "bytes": 10585,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p2b_g2_replay.py",
+      "sha256": "cbbd51d4ac9dc2a524247543c3545c862756db47650826b265358d6b2560f5a6"
+    },
+    {
+      "bytes": 9137,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p2b_route_receipt_dump.py",
+      "sha256": "761a0d4e5cdb513f9ce6320b1c27b780ec27b9140a01c19744be6d7bcc6280c4"
+    },
+    {
+      "bytes": 16900,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p2c_e2e_gpu.py",
+      "sha256": "631d838603168026b29f0b6241417ec6b20446da47978a2b82f21e699243f7c4"
+    },
+    {
+      "bytes": 27681,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p2c_replay_gpu.py",
+      "sha256": "833d3f520f6ad17925b7371407032a792a60176d86445117627e44fddaa6b617"
+    },
+    {
+      "bytes": 291147,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/olmoe_e2_experiment.py",
+      "sha256": "d7aedec3a62ba50fab404d571496c397467ad4a6e05e6d780f75e3a37deb5448"
+    },
+    {
+      "bytes": 58851,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/olmoe_e3_1_episode_key.py",
+      "sha256": "e1438e8f008cdee7cdc7bbe699dce3600fcab53a8462c60a4127185bfd5048e7"
+    },
+    {
+      "bytes": 158076,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/olmoe_e3_experiment.py",
+      "sha256": "f69a44162bf49e5ea97b8237db8f964fee78a6e46a0eb69a263fee682f226662"
+    },
+    {
+      "bytes": 144442,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/olmoe_e4_experiment.py",
+      "sha256": "83c869efb94980ce744d38e7e00080ee8b10b7c139b42c84bc902f18e57d7cc4"
+    },
+    {
+      "bytes": 12166,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/qwen35_document_graft_recall_gate.py",
+      "sha256": "fd55157e855df21c7d21e861be1dd9118acb340f623fa9996f57ec5bca3ecab4"
+    },
+    {
+      "bytes": 4367,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/qwen35_generate.py",
+      "sha256": "3306f64bdf7f966be70e20a110642219366798559869f3329a38f1eeca75a6ed"
+    },
+    {
+      "bytes": 357,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/qwen35_graft_translate_poc.py",
+      "sha256": "e1d9614fadb9c7dcfcc64a2621caceceeaa35141b9943b4f45763c19209a7227"
+    },
+    {
+      "bytes": 3162,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/qwen35_graph_parity.py",
+      "sha256": "a305f13e4453f7cd0285fd29140f73b247cfc35d7856d0753f253d868f5290d8"
+    },
+    {
+      "bytes": 10786,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/qwen35_intn_usability_gate.py",
+      "sha256": "80dc52d82dcbf322a89e2332e01052a66258edbf5cc1808a707bec7731091286"
+    },
+    {
+      "bytes": 10095,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/qwen35_intn_weight_ppl_sweep.py",
+      "sha256": "3d3610d723654b3d114bc5263793cfa3cd945d321543ed852921075033f09521"
+    },
+    {
+      "bytes": 7558,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/qwen35_server.py",
+      "sha256": "6727c5ea18888a6f8143083d64c545071d239ece4bfbf6e6a8b7755314d3f4af"
+    },
+    {
+      "bytes": 19196,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/qwen38_gates.py",
+      "sha256": "b28d7cad4c578f4c80ea094b35a44b4bb94cc6f2c9141d7d0a9034ae6a23f288"
+    },
+    {
+      "bytes": 15175,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/qwen38_generate.py",
+      "sha256": "6e24af08bc372ff7913245963acf3d4f8eeeb2c0aff8421fa43d0a472c2eeb95"
+    },
+    {
+      "bytes": 19084,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/qwen38_longctx_gate.py",
+      "sha256": "893b69b819983a836b9a8b4cfc6ba481c082f4b1a488fc97cec1e79ec640f2c2"
+    },
+    {
+      "bytes": 48615,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/trinity_nope_graft_width_sweep.py",
+      "sha256": "920a861cf43096a16c6817eaeef6811ecebcc3f0e1bf77ed20fb19a689b56951"
+    },
+    {
+      "bytes": 64497,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/trinity_t1_floor_reverb.py",
+      "sha256": "62fcdd3dbcd7ec276535d2f5dc719c1885ff89e9f3a6410238eb719deb8b4f55"
+    },
+    {
+      "bytes": 31008,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/trinity_t1_natural_absolute.py",
+      "sha256": "09eb86ac55b66df177b056049ffb31f44ac4fc91da6f6ce2513e5cd6f075cb82"
+    },
+    {
+      "bytes": 2303,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/tests/fixtures/supersession_battery/correction_then_restatement.json",
+      "sha256": "ea97d4007d66357442f0424f76200984e8c2f39311618a4b892e88db9ad90f4b"
+    },
+    {
+      "bytes": 2357,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/tests/fixtures/supersession_battery/fresh_fact_controls.json",
+      "sha256": "9b75e1e4f70d77524d7d099f1416ae34ea3cafc149e749e26e7a5dd47b298d75"
+    },
+    {
+      "bytes": 2300,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/tests/fixtures/supersession_battery/multi_hop_a_b_c.json",
+      "sha256": "036f291dc4f91d7e38b23d033f97d45b8d4b1176afa1741624f7728355a13d90"
+    },
+    {
+      "bytes": 2101,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/tests/fixtures/supersession_battery/short_correction_long_competitor.json",
+      "sha256": "c06decbe127dd228bdf6529b002ccdaaf5f628addda003692e5e49d9e47c1221"
+    },
+    {
+      "bytes": 14037,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/tests/test_grm_c4_campaign.py",
+      "sha256": "2265e8d3d77d427ebc7c17b068b2194329dfc5a0f8efaea2a06488001e9859cb"
+    },
+    {
+      "bytes": 17938,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/tests/test_grm_c4_resume_a2.py",
+      "sha256": "87898f8161414174a460ac74699f8ce547c6f3f76e20b10eba2451df6b6e7f69"
+    }
+  ],
+  "spec": "multi_hop_a_b_c",
+  "status": "PASS",
+  "width": 96
+}

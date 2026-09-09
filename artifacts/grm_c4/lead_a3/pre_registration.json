@@ -1,0 +1,26 @@
+{
+  "gates": [
+    "dry-run: exactly 42 registered units, order, estimates and bound resume",
+    "SHA/order/source/chain/scope/budget/receipt-root forgery or drift refused",
+    "existing receipts byte-unchanged; one attempt; no earlier-tree writes",
+    "CPU fake harness all batteries with A4 per-cell serving and bound resume",
+    "three-root accounting: original RED charged; other RED/orphans/cooldown/non-fit stop",
+    "synthetic four-cell summary: WC1 full14 diagonal, historical comparison, prediction outcomes; missing/stale/probe mismatch refused",
+    "existing C4 and A4 CPU suites and shell syntax"
+  ],
+  "model_id": "GPT-6 (Codex; deployment identifier not exposed)",
+  "order": {
+    "bytes": 1947,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_3.md",
+    "sha256": "d93e6479d6e613c06c8a86a3da3deffb6185b92d028651aeeb23b927fda28c4c"
+  },
+  "prediction_interpretation": "MET only if wide chunk64 meets registered 9/10/14 and named probes. Narrow-only required-probe/full-LH recovery gives REJECTED_FINITE; other failure is MIXED. Missing evidence refuses summary as INCONCLUSIVE.",
+  "previous_amendment": {
+    "bytes": 54409,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/amendment_a4.json",
+    "sha256": "014ae519a3b27ff0598d1d5a5ae3e4dcb7c3785ae2a52b7cf966d6c6fd10a16e"
+  },
+  "prior_art": "Verified local C4/A4/WC1/RS3/EB1/DET1 (house, 2026): SHA manifests, create-only receipts, ordered saved-state resume, lease accounting, imported scorers and probe comparison. Added executor scope and cross-summary assembly; no novel algorithm claimed.",
+  "reasoning_effort": "high (order)",
+  "scope": "CPU author gates only; no GPU, git, subagents, background waits, process signals or lock changes."
+}
