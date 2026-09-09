@@ -1,0 +1,30 @@
+{
+  "cells": 16,
+  "gpu_cap_seconds": 2880,
+  "gpu_executed": false,
+  "mandatory_only_proxy_seconds": 4823.666819271108,
+  "model_effect": "NOT_RUN",
+  "oversize_cells": [
+    "A-024-031",
+    "A-032-039",
+    "A-040-047",
+    "A-048-055",
+    "A-056-062",
+    "A-063-070",
+    "A-071-077",
+    "A-078-085",
+    "A-086-093",
+    "A-125-132",
+    "A-133-140",
+    "A-141-148",
+    "A-249-256",
+    "A-257-264",
+    "A-265-272",
+    "A-273-280"
+  ],
+  "reason": "Immutable estimate exceeds bound; no trimming or model worker permitted.",
+  "registration_sha256": "941f0d9db78a4748c80165da9456601731c5b0b3c651c68ec449c70da74310a1",
+  "requests": 520,
+  "status": "BLOCKED_NON_FIT",
+  "total_estimate_seconds": 11793.81315199309
+}
