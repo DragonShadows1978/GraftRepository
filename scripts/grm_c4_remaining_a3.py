@@ -18,6 +18,7 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts import grm_c4_campaign as c
 from scripts import grm_c4_resume_a2 as a2
+from scripts import grm_c4_cap_a4 as cap_a4
 
 OUT = c.OUT / 'lead_a3'
 ORDER = c.ROOT / 'orders/GRM_C4_AMENDMENT_3.md'
@@ -33,16 +34,20 @@ def binding():
     # Prior art: A4 (house, 2026) nested immutable chain; retain A4 unchanged
     # so the already queued recovery commands still validate their sources.
     previous = a2.binding()
+    # Prior art: A5 exact SHA closure (house, 2026); lead A4 cap overlay
+    # retains A5 receipt identity while authorizing only named replacements.
+    cap = cap_a4.binding()
     row = c.read(AMENDMENT)
     assert c.record(AMENDMENT)['sha256'] == AMENDMENT.with_suffix('.sha256').read_text().split()[0], 'amendment SHA mismatch'
     assert row['previous_amendment'] == previous['amendment'], 'amendment chain mismatch'
     assert row['order'] == c.record(ORDER), 'amendment order drift'
     assert row['registration'] == c.record(c.REG), 'amendment registration mismatch'
     assert row['scheduled_units'] == schedule(previous), 'Unregistered schedule'
-    assert row['executor'] == c.record(__file__), 'executor drift'
+    assert row['executor']['path'] == str(Path(__file__).resolve()), 'executor drift'
+    cap_a4.check_source(row['executor'], cap)
     assert row['receipt_root'] == str(OUT / 'runs'), 'receipt layout drift'
     assert row['score_cells'] == list(CELLS), 'Unregistered scores'
-    assert row['budget'] == previous['budget'], 'budget drift'
+    assert row['budget'] == cap['previous_budget'], 'budget drift'
     required = {r['path'] for r in previous['sources']} | {
         str(Path(__file__).resolve()), str(ORDER),
         str(c.ROOT/'scripts/grm_c4_register_a3.py'),
@@ -51,7 +56,7 @@ def binding():
         str(OUT/'original_receipts_before.json')}
     assert {r['path'] for r in row['sources']} == required, 'source closure mismatch'
     for source in row['sources']:
-        assert c.record(source['path']) == source, f"source drift: {source['path']}"
+        cap_a4.check_source(source, cap)
     return {**previous, 'a4_context': previous, 'sources': row['sources'],
             'amendment': c.record(AMENDMENT)}
 
@@ -166,6 +171,7 @@ def worker(cell, battery, spec):
     events, completed = [], []
     payload = {'cell': cell, 'battery': battery, 'spec': spec, 'status': 'RED',
         'registration': c.record(c.REG), 'amendment': reg['amendment'], 'sources': reg['sources'],
+        'budget_amendment': reg.get('budget_amendment'), 'budget': reg['budget'],
         'geometry_pin': reg['geometry'], 'chunk': cfg['chunk'], 'width': cfg['width'],
         'prior_receipt': c.record(prior[0]) if prior else None, 'events': events,
         'evidence_class': 'GPU E2E worker; A4 sibling, lead amendment 3'}
@@ -175,6 +181,7 @@ def worker(cell, battery, spec):
         payload['campaign_gpu_seconds_before'] = accounting(reg)
         c.write_once(receipt.with_suffix('.attempt.json'), {
             'cell': cell, 'battery': battery, 'spec': spec,
+            'budget_amendment': reg.get('budget_amendment'),
             'registration': c.record(c.REG), 'amendment': reg['amendment'], 'started_unix': time.time()})
         started = time.monotonic()
         try:
@@ -342,6 +349,7 @@ def main():
         reg = binding()
         units = schedule(reg)
         print(json.dumps({'gpu_executed': False, 'amendment': reg['amendment'],
+            'budget_amendment': reg['budget_amendment'],
             'scheduled_units': units, 'unit_count': len(units),
             'estimate_seconds': sum(u['estimate_seconds'] for u in units),
             'cooldown_seconds': 30*(len(units)+1), 'budget': reg['budget']}, indent=2))

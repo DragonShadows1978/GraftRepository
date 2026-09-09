@@ -74,3 +74,25 @@ Not claimed fixed: observed live campaign RED until authorized recovery passes.
 No budget increase or waiving recorded failed wall time. No process signals,
 lock changes, git, subagents, GPU execution or edits outside worktree.
 Model: GPT-6 (Codex; exact deployment identifier not exposed). Effort: high.
+
+2026-09-09 — lead amendment4 accounting refresh (append-only).
+Immutable order:orders/GRM_C4_AMENDMENT_4.md. SHA-bound overlay:
+lead_a4/amendment_a6.json,
+f28963404f0e0498d11cbc8368c83846eb0b33945df95583ddb301174425359d.
+Both A2 and A3 now read the authorized5400 s cap at runtime. lead_commands_a2.txt
+and lead_commands_a3.txt remain byte-unchanged. Earlier4800 s statements above
+are historical; no old registration or amendment has been overwritten.
+Receipt evidence:lead_a4/validation.json:14 original workers1084.0746343242936 s,
+including RED73.72084314282984 s; A2 and A3 have no real worker receipts.
+Registered remaining estimates640+3200 s =>4924.074634324294 s versus5400,
+headroom475.9253656757064 s. Final-worker reservation at estimates is
+5129.074634324294 s, headroom270.9253656757064 s. Estimates do not guarantee
+completion; actual recorded walls and unchanged285 s reservation govern.
+Prior art:local C4/A4/A5 SHA manifests and DET1 accounting (house,2026), verified
+from source; reused closure/content binding and reserve checks. Added cap-only
+overlay with exact source replacements, no novel algorithm claimed.
+CPU author gates146 PASS; both CLI checks and shell syntax PASS. Detailed names,
+source lines and caveats in lead_a4/FINAL_REPORT.md. Original RED not claimed
+fixed; GPU recovery/cross results pending. No git, subagents, GPU execution,
+background jobs/waits, process signals or lock changes. No scope deviations.
+Model:GPT-6 (Codex; exact deployment identifier not exposed); effort:high.

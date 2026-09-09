@@ -18,6 +18,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts import grm_c4_campaign as c
+from scripts import grm_c4_cap_a4 as cap_a4
 
 OUT = c.OUT / 'lead_a2'
 AMENDMENT = OUT / 'amendment_a4.json'
@@ -30,15 +31,18 @@ def binding():
     # Prior art: C4/RS3 immutable SHA chain (house, 2026). Nested opt-in
     # amendment avoids changing the manifest of the still-running A3 chain.
     reg = c.binding()
+    # Prior art: C4/A5 SHA closure (house, 2026); lead A4 adds only a
+    # verified runtime cap/source overlay, preserving old receipt identities.
+    cap = cap_a4.binding()
     a = c.read(AMENDMENT)
     assert c.record(AMENDMENT)['sha256'] == AMENDMENT.with_suffix('.sha256').read_text().split()[0], 'amendment SHA mismatch'
     assert a['previous_amendment'] == reg['amendment'], 'amendment chain mismatch'
     assert a['registration'] == c.record(c.REG), 'amendment registration mismatch'
     assert c.record(a['order']['path']) == a['order'], 'amendment order drift'
     for row in a['sources']:
-        assert c.record(row['path']) == row, f"source drift: {row['path']}"
-    return {**reg, 'legacy_sources': reg['sources'], 'legacy_amendment': reg['amendment'],
-            'sources': a['sources'], 'amendment': c.record(AMENDMENT)}
+        cap_a4.check_source(row, cap)
+    return cap_a4.apply_budget({**reg, 'legacy_sources': reg['sources'], 'legacy_amendment': reg['amendment'],
+            'sources': a['sources'], 'amendment': c.record(AMENDMENT)}, cap)
 
 
 def lh_units(reg):
@@ -206,6 +210,7 @@ def worker(cell, spec):
     events, completed = [], []
     payload = {'cell': cell, 'battery': 'longhorizon', 'spec': spec,
         'registration': c.record(c.REG), 'amendment': reg['amendment'],
+        'budget_amendment': reg.get('budget_amendment'), 'budget': reg['budget'],
         'sources': reg['sources'], 'geometry_pin': reg['geometry'],
         'chunk': cfg['chunk'], 'width': cfg['width'], 'status': 'RED',
         'prior_receipt': c.record(prior[0]) if prior else None,
@@ -217,6 +222,7 @@ def worker(cell, spec):
         payload['campaign_gpu_seconds_before'] = accounting(reg)
         c.write_once(receipt.with_suffix('.attempt.json'), {
             'cell': cell, 'battery': 'longhorizon', 'spec': spec,
+            'budget_amendment': reg.get('budget_amendment'),
             'registration': c.record(c.REG), 'amendment': reg['amendment'], 'started_unix': time.time()})
         started = time.monotonic()
         try:
@@ -346,6 +352,7 @@ def main():
     else:
         reg = binding()
         print(json.dumps({'amendment': reg['amendment'], 'gpu_executed': False,
+            'budget_amendment': reg['budget_amendment'],
             'eligible_suffixes': {cell: eligible_suffix(reg, cell) for cell in c.executable_cells(reg)},
             'budget': reg['budget']}, indent=2))
 

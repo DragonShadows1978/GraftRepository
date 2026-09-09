@@ -243,7 +243,9 @@ def test_three_root_accounting(layout,case):
     assert row['campaign_gpu_seconds_before']==90
     row['finished_unix']=0
     row['gpu_seconds']=11
-    if case=='cap': row['gpu_seconds']=4500
+    # Prior art: C4 reserve-boundary gate (house, 2026). Lead A4 changes
+    # the cap only; derive an over-cap fixture from the effective budget.
+    if case=='cap': row['gpu_seconds']=layout.reg['budget']['gpu_seconds']-90-285+1
     if case=='cooldown': row['finished_unix']=199999
     if case=='other_red': row['status']='RED'
     p.write_text(json.dumps(row))
