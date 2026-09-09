@@ -1,0 +1,21 @@
+{
+  "amendment": {
+    "bytes": 54409,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/amendment_a4.json",
+    "sha256": "014ae519a3b27ff0598d1d5a5ae3e4dcb7c3785ae2a52b7cf966d6c6fd10a16e"
+  },
+  "battery": "longhorizon",
+  "budget_amendment": {
+    "bytes": 4516,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a4/amendment_a6.json",
+    "sha256": "f28963404f0e0498d11cbc8368c83846eb0b33945df95583ddb301174425359d"
+  },
+  "cell": "c64_w96",
+  "registration": {
+    "bytes": 67067,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/registration.json",
+    "sha256": "7fb561c70dd8c04abc18ef99a7a2a5ec4d37cbc2a22b1de1f89ab2119bd285e8"
+  },
+  "spec": "c4-lh-08",
+  "started_unix": 1788934281.0733867
+}
