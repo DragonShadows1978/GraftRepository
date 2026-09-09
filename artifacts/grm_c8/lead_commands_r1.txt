@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-c8
+export PYTHONDONTWRITEBYTECODE=1
+CUDA_VISIBLE_DEVICES='' python scripts/grm_c8_cells.py --dry-run
+CUDA_VISIBLE_DEVICES='' python scripts/grm_c8_cells.py --blocked-report
+# Mandatory stop: current immutable plan is NON_FIT_BUDGET. This preflight exits nonzero.
+# Do not remove it. No listed cell is authorized to run under this non-fit plan.
+CUDA_VISIBLE_DEVICES='' python scripts/grm_c8_cells.py --preflight
+# Dependency-ordered exact invocations, unreachable for current NON_FIT registration.
+# Each foreground timeout owns only its newly launched process group.
+# 585s TERM + 5s KILL <=590s outer; inner lease 285s, child timeout280s.
+# Controller enforces 30s between cells; never clear /tmp/forge-gpu.lock.
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell gpu-identity --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell sup-correction_then_restatement --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell sup-fresh_fact_controls --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell sup-multi_hop_a_b_c --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell sup-short_correction_long_competitor --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell census-000-008 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell census-008-016 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell census-016-024 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell census-024-032 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell census-032-034 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-000-008 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-008-016 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-016-024 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-024-032 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-032-040 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-040-048 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-048-056 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-056-064 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-064-072 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-072-080 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-080-088 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-088-096 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-096-104 --profile-turn
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell demand-lh033 --profile-turn
+CUDA_VISIBLE_DEVICES='' python scripts/grm_c8_cells.py --summary

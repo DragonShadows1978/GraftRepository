@@ -101,3 +101,243 @@ RED: GPU prohibited in sandbox; 791 s forecast budget excess; SP5 context mismat
 No plan/registration/threshold amendments after gates; no test weakening. Added only new scripts/tests/artifacts in the writable worktree, plus a temporary registration builder in `/tmp`. No git commands, subagents, background jobs, GPU probes, GPU allocations, service operations, foreign-process signaling, process kills, or external messages were performed. Normal CPU tests/imports ran with `CUDA_VISIBLE_DEVICES=''`. Existing services were not inspected or altered. cwd and worktree pointer text were inspected; branch was not independently verified via git.
 
 Agent identity: **GPT-6**, exact deployment identifier not exposed in this session; requested reasoning effort **high**. Served model: **openai/gpt-oss-20b**, revision **6cee5e81ee83917806bbde320786a8fb61efebee**; frozen C2 Harmony sink says **Reasoning: low** (model inference setting, distinct from agent effort).
+
+
+# Amendment 1 — 2026-09-09 (supersedes r1 cap/context disposition)
+
+**READY_FOR_LEAD; CPU author baseline PASS. GPU results NOT_MEASURED.**
+The lead raised the cap to 2,700 seconds (0.75 GPU-h) and accepted the SP5
+context correction. All 24 original cells remain: estimated 2,591 seconds
+(0.7197 GPU-h), 109 seconds below the cap. This is a forecast from the
+original registered reasoning/archived C2 timings, not a new timing result
+or a guarantee of completion within the cap. Runtime overrun still stops.
+The original order, registration and separate demand registration retain
+their bytes and hashes. Historical r1 reports/receipts above are retained;
+the r1 NON_FIT decision was correct under its then-authorized 1,800 seconds.
+
+## 1. Amendment path + sha; test names; total estimate under the cap.
+
+- Amendment: `artifacts/grm_c8/amendment_1.json`
+- SHA-256: `91d080971bde54bf2c35ae20dc9955e533e9d112c20e915926c1aee296ca4a60`
+- Original registration SHA-256: `264ccd493f9f73fd157c47a7fa0ded3be60e0b3530e0ad3b42fae13d872d8345`
+- Preflight receipt: `artifacts/grm_c8/amendment_1_preflight.log`, exit0,
+  `READY_FOR_LEAD`, 24 cells, estimate2591s, cap2700s.
+
+The amendment pins the original registration, predecessor runner template,
+new runner template, lead amendment order, unchanged demand registration,
+new tests and exact executable commands. The runtime checks these before
+GPU imports or reservations. The original registration is available through
+`registration()`; execution uses an amended copy through
+`effective_registration()`. The SHA is a reviewed integrity anchor, not a
+cryptographic signature or protection against an attacker rewriting the
+verifier itself. The registration and amendment were written before gates.
+
+**Evidence class: CPU suite run, author baseline only.**
+`amendment_1_cpu_baseline.log`: **113 passed, 2 warnings in 10.02s**, exit0.
+This includes the 25 new parametrized amendment cases and all 88 original
+C8/EB1/C2 cases. Original tests and profiler source were not edited.
+The Swig deprecation warnings are retained verbatim in the log.
+
+New test function names (`tests/test_grm_c8_amendment.py`):
+
+- `test_amendment_cap_all_cells_and_original_registration_immutable`
+- `test_preflight_reads_amendment_without_gpu`
+- `test_forged_amendment_refused_before_reservation`
+- `test_stale_amendment_semantics_even_with_rehashed_file`
+- `test_stale_amendment_input_refused`
+- `test_missing_amendment_refused`
+- `test_resume_skips_all_started_states_without_launch`
+- `test_resume_stale_receipt_is_red`
+- `test_prior_red_blocks_unstarted_cell`
+- `test_forecast_all_24_reservations_fit_and_overrun_refused`
+- `test_unstarted_final_cell_uses_remaining_lease_cpu_fake`
+- `test_complete_summary_stage_table_demand_and_decision`
+- `test_summary_withholds_allocation_for_missing_red_demand_identity_or_conflict`
+- `test_lead_commands_all_cells_in_order_resume_and_final_summary`
+
+**Evidence class: author mutation baseline, not independent verification.**
+`amendment_1_mutation_registration.json` froze five mutations after the
+passing CPU baseline and before mutation gates. All5 were valid/rejected,
+kill fraction1.0 >=0.80: ignore_cap, retry_complete, red_skip_success,
+unclipped_reservation, ignore_incomplete_allocation. Receipts:
+`amendment_1_mutation_results.json` and individual logs. Original source
+remained unchanged. Harness: `scripts/grm_c8_amendment_cpu_mutations.py`.
+
+**Evidence class: CPU command checks.**
+`amendment_1_cpu_command_results.json`: dry-run0, preflight0,
+blocked-report0, JSON summary2, text summary2, shell syntax0. Summary exit2
+is expected because no GPU receipts exist. Machine data:
+`amendment_1_unmeasured_summary.log`; readable per-stage table:
+`amendment_1_summary_table.log`. All missing timings are NOT_MEASURED,
+not zeros supplied as results. Decode/nondecode shares and allocation
+remain null/WITHHELD. No cells directory or GPU reservation was created.
+
+## 2. Exact lead commands.
+
+Run on the authorized leased runner from this worktree:
+
+```bash
+cd /mnt/ForgeRealm/wt/grm-c8
+./artifacts/grm_c8/lead_commands.txt
+```
+
+The file is executable (0755). Its exact contents follow. The EXIT trap
+prints the final per-stage mean/p50/p95 table, turn wall, decode/nondecode
+shares, demand-lh033 observation and registered decision outcome on both
+success and early RED. `--summary --json` selects machine-readable output.
+
+```bash
+#!/usr/bin/env bash
+# Lead-only GPU campaign. Prior art: C8/C2/CMC1 (GRM, 2026), sequential
+# create-only cells and foreground lease rails; ours: resume and final summary.
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-c8
+export PYTHONDONTWRITEBYTECODE=1
+# EXIT always prints the final summary, including after a RED/preflight failure.
+finish() {
+    campaign_status=$?
+    trap - EXIT
+    set +e
+    CUDA_VISIBLE_DEVICES='' python scripts/grm_c8_cells.py --summary
+    summary_status=$?
+    if (( campaign_status != 0 )); then
+        exit "$campaign_status"
+    fi
+    exit "$summary_status"
+}
+trap finish EXIT
+CUDA_VISIBLE_DEVICES='' python scripts/grm_c8_cells.py --dry-run
+CUDA_VISIBLE_DEVICES='' python scripts/grm_c8_cells.py --preflight
+# All 24 cells, original dependency order. COMPLETE skips; RED/unfinished
+# skips without retry and stops. Never clear a reservation or a shared lock.
+# Foreground: <=285s lease, child <=lease-5s; <=590s outer; 30s cooldown.
+# Timeout signals apply only to the command it starts. Sandbox: do not execute.
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell gpu-identity --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell sup-correction_then_restatement --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell sup-fresh_fact_controls --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell sup-multi_hop_a_b_c --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell sup-short_correction_long_competitor --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell census-000-008 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell census-008-016 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell census-016-024 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell census-024-032 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell census-032-034 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-000-008 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-008-016 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-016-024 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-024-032 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-032-040 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-040-048 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-048-056 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-056-064 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-064-072 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-072-080 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-080-088 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-088-096 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell longhistory-096-104 --profile-turn --resume
+timeout --signal=TERM --kill-after=5s 585s python scripts/grm_c8_cells.py --cell demand-lh033 --profile-turn --resume
+# Final summary is printed by the EXIT trap above.
+```
+
+Resume is conservative: any existing cell directory means started.
+Verified COMPLETE skips without rerunning. RED, incomplete, stale and
+unreadable receipts skip without rerunning, return nonzero and stop the
+campaign. A restart cannot clear a RED or find a substitute prompt.
+The shell was exercised with CPU fake python/timeout executables: all24
+cells appear in registered order with --resume; simulated third-cell RED
+stops further cells, still runs summary, preserves its exit7. This proves
+shell/control wiring only, not a GPU lease or model run.
+
+The remaining-cap reservation is clipped to min(285,floor(remaining)).
+A cell must fit its registered forecast plus5 seconds before launch.
+At forecast, the final60s demand cell reserves169s and times out its child
+at164s. This corrects the unconditional285s reservation that would
+otherwise require2816s at the last cell. Forecasts, dependencies, turn
+counts and gates remain unchanged. Per-worker lease <=285s, outer <=590s,
+foreground cooldown30s; actual worker time is charged and failed/unfinished
+reservations fail closed. Budget accounting retains r1's worker-wall scope;
+queue wait and cooldown are outside GPU compute seconds, so elapsed campaign
+wall is longer than the compute forecast.
+
+The registered decision remains per-battery ratio of summed decode wall to
+summed instrumented turn wall: strictly <0.5 means session routing/admission
+wins; exactly0.5 and above means APA decode integration is competitive and
+the lead reports both. All batteries, demand and GPU identity must complete
+before an allocation conclusion. Conflicting batteries stay separate.
+CPU hand-computed tables and boundary tests validate reporting logic only.
+
+## Side B and evidence class
+
+SP5 report `/mnt/Shared/APA_SP5_GPTOSS20B_Model_Test_Report_2026-09-08.md`,
+section4, clean decode bullet: **S=2,048 tokens,32 synced steps**.
+Evidence class: **external receipt, synced decode microbenchmark**;
+locally inspected source report, not remeasured by this seat.
+
+| Arm | ms/token | Saving vs standard, ms/token |
+|---|---:|---:|
+| Standard | 82.6 | 0.0 |
+| APA two-pass | 84.0 | -1.4 |
+| APA single-pass | 84.2 | -1.6 |
+
+APA is1.4–1.6ms/token slower here, about1.69–1.94% of standard decode
+wall. No positive decode saving is demonstrated. **The order's
+12,288-token decode context was the lead's error**; that number is the
+resident-memory ceiling, not the context of this decode timing table.
+There is no SP5 S=12,288 or C8 W96 decode-speed measurement in this claim.
+The report supplies both decode and nondecode share when C8 measurements
+exist; none exist here. Transferring SP5's single-pass ratio to a C8 decode
+fraction d would give turn saving d*(82.6-84.2)/82.6 (negative): **reasoning
+only**, not a measured C8 speedup or allocation result.
+
+## Prior art
+
+- **C8/C2/CMC1, GRM contributors,2026**, inspected locally: SHA bindings,
+  create-only reservations, durable continuation and foreground flock lease.
+  Taken: those control and receipt methods. Ours: amendment successor binding,
+  skip/stop CLI, remaining-cap clipping, shell finalizer and table rendering.
+- **C8 summarize, GRM contributors,2026**: existing nearest-rank empirical
+  quantiles and ratio of summed components. Taken unchanged; no new
+  statistical algorithm. Specific historical origin of nearest-rank
+  quantiles is not known to me.
+- **Amdahl,1967**: fixed-component end-to-end speedup reasoning; the actual
+  strict50% allocation rule is the GRM Scout/lead's registered2026 rule.
+  Taken: component-fraction reasoning, not a novel optimization. External
+  bibliographic attribution unverified — lead to check: `Amdahl 1967
+  Validity of the single processor approach`.
+- **DeMillo/Lipton/Sayward,1978**, mutation testing: seeded-defect rejection,
+  plus the local C8 in-memory module-copy harness. Ours: five amendment
+  substitutions. External attribution unverified — lead to check:
+  `Hints on test data selection 1978`.
+- Existing profiler prior art (gprof1982, Python tracing, CUDA event/pool
+  metrics) remains as recorded in r1 and code; profiler unchanged. No new
+  routing, selection or profiling algorithm is claimed. No prior art known
+  to me for this precise adapter beyond the local systems listed above.
+
+## Deviations; RED; process safety; model id and effort
+
+Authorized deviations: cap1800→2700s and correction of the lead's SP5
+context error. Necessary implementation detail: clip the final reservation
+within the raised cap; no cell dropped or estimate changed. No other order,
+product, kernel, battery, registry, config or flag-default changes.
+The original command file is archived byte-for-byte as `lead_commands_r1.txt`.
+New amendment receipts supplement r1 receipts instead of overwriting them.
+
+**RED / not claimed fixed:** GPU identity, actual stage timings, natural
+W96 demand-trip success, and allocation remain NOT_MEASURED. No end-to-end
+GPU result or independent blind verification is claimed. The old budget
+refusal is preserved as historical evidence; the cap now permits preflight.
+SP5's slower APA decode result remains negative evidence, not a speed win.
+Author tests and mutants cannot replace the lead's blind verification.
+
+Process safety: no git commands, subagents, GPU work, service changes,
+background shell jobs, shared-lock clearing or process-kill operations.
+CPU children ran synchronously; no process was signaled. Tool transport
+briefly yielded the running CPU-suite session, which was polled to completion
+without launching parallel work; this was not a detached/background job.
+The timeout commands in the lead artifact were only syntax/fake-shell tested;
+no real GPU/timeout campaign ran. Never kill a foreign process. No cells
+or reservations were created in the actual campaign directory.
+
+Agent model: **GPT-6; exact deployment identifier not exposed**. Effort:
+**high**. Served model registration remains **openai/gpt-oss-20b**, revision
+`6cee5e81ee83917806bbde320786a8fb61efebee` (immutable r1 artifact metadata).

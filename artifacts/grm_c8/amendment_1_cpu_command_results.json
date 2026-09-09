@@ -1,0 +1,81 @@
+[
+  {
+    "name": "dry_run",
+    "command": [
+      "python",
+      "scripts/grm_c8_cells.py",
+      "--dry-run"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "pass": true,
+    "log": "artifacts/grm_c8/amendment_1_dry_run.log",
+    "sha256": "248744e7ef5a5020be0e87eb5e03109153a9676e855479cd6f069d9e19351925"
+  },
+  {
+    "name": "preflight",
+    "command": [
+      "python",
+      "scripts/grm_c8_cells.py",
+      "--preflight"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "pass": true,
+    "log": "artifacts/grm_c8/amendment_1_preflight.log",
+    "sha256": "7cc51020c7afecea21a969ef45b292916b1f8c8fc11c82ffd2d63794c6c73a12"
+  },
+  {
+    "name": "blocked_report",
+    "command": [
+      "python",
+      "scripts/grm_c8_cells.py",
+      "--blocked-report"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "pass": true,
+    "log": "artifacts/grm_c8/amendment_1_blocked_report.log",
+    "sha256": "d559eba9a564daaf5d8c132b2010e89eeb47a0ea1cc4b3fa1b6eff2df712c4a7"
+  },
+  {
+    "name": "unmeasured_summary",
+    "command": [
+      "python",
+      "scripts/grm_c8_cells.py",
+      "--summary",
+      "--json"
+    ],
+    "exit_code": 2,
+    "expected_exit_code": 2,
+    "pass": true,
+    "log": "artifacts/grm_c8/amendment_1_unmeasured_summary.log",
+    "sha256": "554c4def22bdcc93275c7a7dbe42e557659a608436042fb033b644017eedd97a"
+  },
+  {
+    "name": "summary_table",
+    "command": [
+      "python",
+      "scripts/grm_c8_cells.py",
+      "--summary"
+    ],
+    "exit_code": 2,
+    "expected_exit_code": 2,
+    "pass": true,
+    "log": "artifacts/grm_c8/amendment_1_summary_table.log",
+    "sha256": "801ea1af30f4e0361e1c503a4ffa6943b8cf836ddac558bc93034ecef2850a4d"
+  },
+  {
+    "name": "shell_syntax",
+    "command": [
+      "bash",
+      "-n",
+      "artifacts/grm_c8/lead_commands.txt"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "pass": true,
+    "log": "artifacts/grm_c8/amendment_1_shell_syntax.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

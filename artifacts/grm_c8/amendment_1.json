@@ -1,0 +1,49 @@
+{
+  "acceptance": [
+    "Forged, stale, missing amendment refused before reservation or GPU imports",
+    "All 24 forecasts fit 2700s with bounded remaining-cap reservations",
+    "Resume never launches started COMPLETE/RED/unfinished/stale cells",
+    "CPU fake shell executes 24 cells in order, stops on RED and always prints final summary",
+    "Hand-computed stage quantiles, ratio of sums and exact 50 percent boundary unchanged; missing/RED/demand/identity suppress allocation",
+    "No GPU sandbox execution; CPU author baseline is not blind verification"
+  ],
+  "agent_effort": "high",
+  "agent_model": "GPT-6 (exact deployment identifier not exposed)",
+  "authority": "Lead amendment 1, 2026-09-09; orders/GRM_C8_AMENDMENT_1.md",
+  "budget_seconds": 2700,
+  "cell_count": 24,
+  "cells_policy": "All original cells, order, counts, forecasts, decision rule and demand registration unchanged.",
+  "cpu_command": "CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 python -m pytest -q tests/test_grm_c8_amendment.py tests/test_grm_c8_profiler.py tests/test_grm_eb1_ephemeral_frame.py tests/test_grm_c2_profile.py",
+  "estimated_seconds": 2591,
+  "gpu_hours": 0.75,
+  "immutable": true,
+  "inputs": {
+    "artifacts/grm_c8/demand_registration.json": "1d5d65642e47d19644c512a63c0b9d76ab958499dc9ec08fcf7a2f3ffe62467e",
+    "artifacts/grm_c8/lead_commands.txt": "a7abac78c21a9b82ee178396a81902c565ed4dd3035d1f2d508090e86590c497",
+    "orders/GRM_C8_AMENDMENT_1.md": "17d68456e1a48b9565a3ebae1b37d8f75aafe7a46ebef196ea6b50ea2045e277",
+    "tests/test_grm_c8_amendment.py": "dabe21a85abf5b64c8d7406c3e9eeba13d93da889ddee464765ffe1571ec04c8"
+  },
+  "previous_budget_seconds": 1800,
+  "previous_runner_sha256": "557a557d3674417c8c629eec7bc3ce0433a1ab4aad3bc509c7280602604aeb75",
+  "previous_runner_template_sha256": "94a9ffc2ee4cfbc1c2d78f15e9140e4fce7ee4b07b0b42d638a4ad81dc2df8f6",
+  "prior_art": "Local C8/C2/CMC1 (GRM contributors, 2026): immutable SHA bindings, create-only reservations, durable continuation and foreground flock lease rails. New adapter work: cap successor, resume skip/stop, clipped remaining-cap reservation and table rendering. C8 summarize retains nearest-rank statistics and Amdahl (1967) fixed-component reasoning; external attribution unverified \u2014 lead to check: Amdahl 1967 Validity of the single processor approach. No novel profiling or scheduling algorithm claimed.",
+  "registered_before_gates": true,
+  "registration_sha256": "264ccd493f9f73fd157c47a7fa0ded3be60e0b3530e0ad3b42fae13d872d8345",
+  "reservation_policy": "Under campaign flock, reserve min(285, floor(cap minus charged seconds)); require cell forecast <= reservation minus 5s; lease <=285s, child timeout lease minus 5s, outer <=590s, cooldown30s. Actual charged worker wall; failed/unfinished reservations conservatively consume full reserve and stop. Forecasts are not guaranteed timings.",
+  "resume_policy": "Existing cell directory means started: verified COMPLETE skips with exit0; RED, unfinished, missing or stale receipt skips with exit1 and stops campaign. Never retry or delete a started cell.",
+  "runner_template_sha256": "837285bc1c2175bc1d38b7c56fa0bd0c93f234d7f39eef6953c0bb4618fbb346",
+  "schema": "grm.c8.amendment.v1",
+  "sequence": 1,
+  "side_b": {
+    "context_tokens": 2048,
+    "correction": "The order's 12,288-token decode context was the lead's error; 12,288 was the memory ceiling.",
+    "evidence_class": "external receipt: synced decode microbenchmark",
+    "scope": "No positive saving; no C8 W96 or S12288 decode measurement; cross-context transfer is reasoning only.",
+    "section": 4,
+    "single_pass_ms_tok": 84.2,
+    "source": "/mnt/Shared/APA_SP5_GPTOSS20B_Model_Test_Report_2026-09-08.md",
+    "standard_ms_tok": 82.6,
+    "synced_steps": 32,
+    "two_pass_ms_tok": 84.0
+  }
+}

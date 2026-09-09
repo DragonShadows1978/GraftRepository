@@ -1,0 +1,42 @@
+{
+  "acceptance": "Passing CPU baseline required; 5 valid non-error mutants, kill fraction >=0.80. Any nonzero pytest test failure rejects mutant; collection/syntax errors invalid. No GPU or lease execution; original source never modified. Author baseline only, blind verification belongs to lead.",
+  "amendment_sha256": "91d080971bde54bf2c35ae20dc9955e533e9d112c20e915926c1aee296ca4a60",
+  "baseline_sha256": "157ee888df474728d1df6d267fffbda9ddcc15e580da05f895fd641d3b103aae",
+  "immutable": true,
+  "mutations": [
+    {
+      "name": "ignore_cap",
+      "new": "result['budget_seconds'] = original['budget_seconds']",
+      "old": "result['budget_seconds'] = amendment()['budget_seconds']",
+      "test": "test_amendment_cap_all_cells_and_original_registration_immutable"
+    },
+    {
+      "name": "retry_complete",
+      "new": "print(json.dumps({'cell': cell['id'], 'status': 'SKIPPED_COMPLETE', 'retry': False}), flush=True)\n    return None",
+      "old": "print(json.dumps({'cell': cell['id'], 'status': 'SKIPPED_COMPLETE', 'retry': False}), flush=True)\n    return 0",
+      "test": "test_resume_skips_all_started_states_without_launch"
+    },
+    {
+      "name": "red_skip_success",
+      "new": "'error': str(exc), 'retry': False}), flush=True)\n        return 0",
+      "old": "'error': str(exc), 'retry': False}), flush=True)\n        return 1",
+      "test": "test_resume_skips_all_started_states_without_launch"
+    },
+    {
+      "name": "unclipped_reservation",
+      "new": "seconds = 285",
+      "old": "seconds = min(285, math.floor(r['budget_seconds'] - used))",
+      "test": "test_forecast_all_24_reservations_fit_and_overrun_refused"
+    },
+    {
+      "name": "ignore_incomplete_allocation",
+      "new": "if len(decisions) == 1 else None)",
+      "old": "if complete and len(decisions) == 1 else None)",
+      "test": "test_summary_withholds_allocation_for_missing_red_demand_identity_or_conflict"
+    }
+  ],
+  "prior_art": "DeMillo/Lipton/Sayward 1978, mutation testing; unverified \u2014 lead to check: Hints on test data selection 1978. Taken: seed defects and require baseline tests to reject them; ours: C8 cap/resume/summary substitutions. Local C8 2026 in-memory module-copy harness reused.",
+  "runner_sha256": "e469ddc29c673ae4bb880c4dbc5f42e03446e7fcfeac78ee605979fc1d31c678",
+  "schema": "grm.c8.amendment.author_mutations.v1",
+  "tests_sha256": "dabe21a85abf5b64c8d7406c3e9eeba13d93da889ddee464765ffe1571ec04c8"
+}

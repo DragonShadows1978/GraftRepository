@@ -13,6 +13,7 @@ import copy
 import fcntl
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import shutil
@@ -24,19 +25,45 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts.grm_c2_profile import create, read, sha, REGISTRY
 from scripts import grm_c2_cells as c2
-from scripts.grm_c8_profiler import TurnProfiler, CudaMeter, summarize
+from scripts.grm_c8_profiler import TurnProfiler, CudaMeter, summarize, STAGES
 OUT = ROOT / 'artifacts/grm_c8'
 REG = OUT / 'registration.json'
 ANCHOR = '264ccd493f9f73fd157c47a7fa0ded3be60e0b3530e0ad3b42fae13d872d8345'
+AMENDMENT = OUT / 'amendment_1.json'
+AMENDMENT_ANCHOR = '91d080971bde54bf2c35ae20dc9955e533e9d112c20e915926c1aee296ca4a60'
+
+
+def amendment():
+    # Prior art: C8/C2 content-addressed registrations (GRM, 2026).
+    # Taken: code-rooted SHA pin, source-template binding. Ours: an explicit
+    # successor binding that leaves the original registration bytes intact.
+    # A hash is an integrity pin reviewed by the lead, not a digital signature.
+    if sha(AMENDMENT) != AMENDMENT_ANCHOR:
+        raise ValueError('amendment SHA differs from code anchor')
+    value = read(AMENDMENT)
+    if (value['schema'] != 'grm.c8.amendment.v1' or value['sequence'] != 1
+            or value['registration_sha256'] != ANCHOR
+            or value['registration_sha256'] != sha(REG)):
+        raise ValueError('stale amendment registration binding')
+    if value['previous_budget_seconds'] != 1800 or value['budget_seconds'] != 2700:
+        raise ValueError('unauthorized amendment cap')
+    template = Path(__file__).read_text().replace(AMENDMENT_ANCHOR, 'PENDING_AMENDMENT')
+    if hashlib.sha256(template.encode()).hexdigest() != value['runner_template_sha256']:
+        raise ValueError('amended runner template changed')
+    for name, digest in value['inputs'].items():
+        path = Path(name) if Path(name).is_absolute() else ROOT / name
+        if sha(path) != digest:
+            raise ValueError(f'amendment bound input changed: {name}')
+    return value
 
 
 def registration():
     if sha(REG) != ANCHOR:
         raise ValueError('registration SHA differs from code anchor')
     value = read(REG)
-    template = Path(__file__).read_text().replace(ANCHOR, 'PENDING_REGISTRATION')
-    if hashlib.sha256(template.encode()).hexdigest() != value['runner_template_sha256']:
-        raise ValueError('runner template changed')
+    successor = amendment()
+    if successor['previous_runner_template_sha256'] != value['runner_template_sha256']:
+        raise ValueError('stale amendment runner binding')
     for name, digest in value['inputs'].items():
         path = Path(name) if Path(name).is_absolute() else ROOT / name
         if sha(path) != digest:
@@ -46,8 +73,17 @@ def registration():
     return value
 
 
+def effective_registration():
+    original = registration()
+    result = copy.deepcopy(original)
+    result['budget_seconds'] = amendment()['budget_seconds']
+    result['campaign_status'] = 'AMENDED_READY_FOR_LEAD'
+    return result
+
+
 def bindings():
-    return {'registration_sha256': sha(REG), 'executed_sources': c2.sources()}
+    return {'registration_sha256': sha(REG), 'amendment_sha256': sha(AMENDMENT),
+            'executed_sources': c2.sources()}
 
 
 def side_b():
@@ -56,7 +92,10 @@ def side_b():
     return {'evidence_class': 'external receipt: synced decode microbenchmark',
         'source': '/mnt/Shared/APA_SP5_GPTOSS20B_Model_Test_Report_2026-09-08.md',
         'receipt_context_tokens': 2048, 'order_claimed_context_tokens': 12288,
-        'context_status': 'RED_CONTEXT_MISMATCH', 'standard_ms_tok': 82.6,
+        'context_status': 'CORRECTED_BY_LEAD_AMENDMENT_1', 'standard_ms_tok': 82.6,
+        'correction': "The order's 12,288-token decode context was the lead's error.",
+        'source_section': '4. Memory and decode on 12 GB, resident-expert mode',
+        'synced_decode_steps': 32,
         'two_pass_ms_tok': 84.0, 'single_pass_ms_tok': 84.2,
         'two_pass_saving_ms_tok': 82.6 - 84., 'single_pass_saving_ms_tok': 82.6 - 84.2,
         'two_pass_saving_fraction': (82.6 - 84.) / 82.6,
@@ -67,7 +106,7 @@ def side_b():
 
 
 def dry_run():
-    r = registration()
+    r = effective_registration()
     return {'status': 'NON_FIT_BUDGET' if r['estimated_seconds'] > r['budget_seconds'] else 'READY_FOR_LEAD',
         'gpu_executed': False, 'cells': r['cells'], 'cell_count': len(r['cells']),
         'estimated_seconds': r['estimated_seconds'], 'budget_seconds': r['budget_seconds'],
@@ -87,6 +126,14 @@ def completed(cell_id):
         raise ValueError(f'dependency RED: {cell_id}')
     if ctl['registration_sha256'] != sha(REG) or rec['registration_sha256'] != sha(REG):
         raise ValueError('stale receipt')
+    reservation = read(directory / 'reservation.json')
+    if any(x.get('amendment_sha256') != AMENDMENT_ANCHOR for x in (ctl, rec, reservation)):
+        raise ValueError('stale amendment receipt')
+    if reservation.get('registration_sha256') != ANCHOR or rec.get('status') != 'COMPLETE':
+        raise ValueError('invalid completed receipt')
+    expected = cell_spec(read(REG), cell_id)
+    if rec.get('cell') != expected or reservation.get('cell') != expected:
+        raise ValueError('receipt cell mismatch')
     return rec
 
 
@@ -100,7 +147,7 @@ def fit(r):
 def worker(cell, *, enabled=False):
     if os.environ.get('GRM_C8_LEASE_PARENT') != str(os.getppid()):
         raise RuntimeError('worker requires its foreground leased parent')
-    r = registration(); fit(r)
+    r = effective_registration(); fit(r)
     if not enabled:
         raise ValueError('measurement requires explicit --profile-turn')
     # GPU imports only below authorization, source binding and budget gates.
@@ -252,46 +299,86 @@ def worker(cell, *, enabled=False):
             meter.close()
 
 
-def run_cell(r, cell):
+def reservation_seconds(r, cell, used):
+    # Prior art: C8/CMC1 bounded reservations (GRM, 2026). Taken: charge
+    # before launching, cap each worker. Ours: clip the final reservation to
+    # remaining authorized seconds; keep a five-second controller margin.
+    seconds = min(285, math.floor(r['budget_seconds'] - used))
+    if cell['estimate_seconds'] > seconds - 5:
+        raise ValueError('remaining budget cannot fit cell forecast plus 5s margin; never retry')
+    return seconds
+
+
+def resume_started(cell):
+    # Prior art: C8 create-only reservations and C2 durable continuation
+    # (GRM, 2026). Taken: a started cell is never rerun. Ours: CLI skip
+    # receipt and exit status; RED/unfinished blocks all subsequent launches.
+    directory = OUT / 'cells' / cell['id']
+    if not directory.exists():
+        return None
+    try:
+        completed(cell['id'])
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        print(json.dumps({'cell': cell['id'], 'status': 'SKIPPED_STARTED_RED_OR_UNFINISHED',
+                          'error': str(exc), 'retry': False}), flush=True)
+        return 1
+    print(json.dumps({'cell': cell['id'], 'status': 'SKIPPED_COMPLETE', 'retry': False}), flush=True)
+    return 0
+
+
+def run_cell(r, cell, *, resume=False):
     fit(r)  # Before reservation, lease, imports or CUDA. NON_FIT never starts.
     OUT.mkdir(exist_ok=True)
     # Prior art: C2/CMC1 (2026), OS flock. Serialize campaign reservations as
     # well as the shared GPU; no lock clearing and no foreign process signals.
     with (OUT / 'campaign.lock').open('a') as campaign:
         fcntl.flock(campaign, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        if resume:
+            skipped = resume_started(cell)
+            if skipped is not None:
+                return skipped
         for dep in cell['depends']:
             completed(dep)
         used = 0.
         last_end = 0.
-        for reservation in (OUT / 'cells').glob('*/reservation.json'):
-            ctl = reservation.with_name('controller.json')
+        for prior in (OUT / 'cells').glob('*'):
+            reservation = prior / 'reservation.json'
+            ctl = prior / 'controller.json'
+            if not reservation.exists():
+                raise ValueError('unfinished cell directory: fail closed, never retry')
             if not ctl.exists():
                 raise ValueError('unfinished reservation: fail closed, never retry')
             record = read(ctl)
             if record['status'] != 'COMPLETE':
                 raise ValueError('prior RED: stop campaign, never retry')
+            completed(prior.name)
+            charge = record['charged_seconds']
+            reserved = read(reservation)['seconds']
+            if (not isinstance(charge, (int, float)) or not math.isfinite(charge)
+                    or charge <= 0 or charge > reserved or reserved > 285
+                    or not math.isfinite(record['ended_epoch'])):
+                raise ValueError('invalid prior budget accounting; never retry')
             used += record['charged_seconds']
             last_end = max(last_end, record['ended_epoch'])
-        if used + 285 > r['budget_seconds']:
-            raise ValueError('remaining budget cannot reserve 285s')
+        seconds = reservation_seconds(r, cell, used)
         delay = max(0., 30 - (time.time() - last_end))
         if delay:
             time.sleep(delay)
         directory = OUT / 'cells' / cell['id']
         directory.mkdir(parents=True, exist_ok=False)
-        create(directory / 'reservation.json', {'seconds': 285, 'cell': cell, **bindings()})
-        started = None; status = 'RED'; error = None; charge = 285.
+        create(directory / 'reservation.json', {'seconds': seconds, 'cell': cell, **bindings()})
+        started = None; status = 'RED'; error = None; charge = float(seconds)
         try:
             from scripts.grm_cmc1_gpu_arms import gpu_lease
-            with gpu_lease(285, 240):
+            with gpu_lease(seconds, 240):
                 flags = c2.flags_for('profile'); flags['demand_ngh'] = cell['battery'] == 'demand'
                 env = c2.environment(flags); env['GRM_C8_LEASE_PARENT'] = str(os.getpid())
                 started = time.monotonic()
                 with (directory / 'worker.log').open('x') as stream:
                     result = subprocess.run([sys.executable, __file__, '--worker', cell['id'], '--profile-turn'],
-                        env=env, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT, timeout=280)
+                        env=env, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT, timeout=seconds - 5)
                 charge = time.monotonic() - started
-                if result.returncode:
+                if result.returncode or charge > seconds:
                     raise RuntimeError(f'worker returncode={result.returncode}')
                 status = 'COMPLETE'
         except Exception as exc:
@@ -305,7 +392,7 @@ def run_cell(r, cell):
 
 
 def summary():
-    r = registration(); result = {'batteries': {}, 'side_b': side_b()}
+    r = effective_registration(); result = {'batteries': {}, 'side_b': side_b()}
     complete = True
     for battery in ('sup', 'census', 'longhistory', 'demand'):
         rows = []; errors = []
@@ -315,6 +402,10 @@ def summary():
                 rec = completed(cell['id'])
                 if len(rec['rows']) != cell['turns']:
                     raise ValueError('turn count mismatch')
+                if battery == 'demand' and any(
+                    rec['rows'][0].get('demand_info', {}).get(key) is not True
+                    for key in ('demand_fired', 'demand_trip_taken')):
+                    raise ValueError('RED_DEMAND_TRIP_NOT_OBSERVED')
                 rows.extend(rec['rows'])
             except (OSError, ValueError, KeyError) as exc:
                 errors.append(str(exc))
@@ -323,7 +414,7 @@ def summary():
         if errors:
             result['batteries'][battery]['status'] = 'INCOMPLETE_CELLS'
             result['batteries'][battery]['decision'] = None
-        complete = complete and not errors
+        complete = complete and not errors and result['batteries'][battery]['status'] == 'COMPLETE'
     try:
         completed('gpu-identity')
     except (OSError, ValueError, KeyError):
@@ -333,8 +424,50 @@ def summary():
     decisions = {result['batteries'][b]['decision'] for b in ('sup', 'census', 'longhistory')}
     result['allocation_decision'] = (next(iter(decisions)) if complete and len(decisions) == 1 else None)
     result['conflicting_batteries'] = complete and len(decisions) > 1
+    result['demand_trip_turn'] = {'cell': 'demand-lh033', 'turn': 33,
+        'status': result['batteries']['demand']['status'],
+        'observation': (rows[0].get('demand_info') if len(rows) == 1 else None)}
+    result['registered_decision_rule'] = r['decision_rule']
+    result['estimated_seconds'] = r['estimated_seconds']
+    result['budget_seconds'] = r['budget_seconds']
     result.update(bindings())
     return result
+
+
+def render_summary(result):
+    # Prior art: C8 summarize()/nearest-rank tables (GRM, 2026), reused
+    # without changing quantiles, weighting, or the Scout's 50% decision rule.
+    lines = [f"C8 summary: {result['status']}",
+             f"Forecast: {result['estimated_seconds']}s / cap {result['budget_seconds']}s",
+             'Evidence: GPU end-to-end gates only when COMPLETE; absent values are NOT_MEASURED.',
+             'Rule: ' + result['registered_decision_rule']]
+    def number(value):
+        return 'NOT_MEASURED' if value is None else f'{value:.6f}'
+    for battery, report in result['batteries'].items():
+        lines += ['', f"{battery}: {report['status']}; turns={report['turns']}",
+                  '| stage | metric | mean | p50 | p95 |', '|---|---|---:|---:|---:|']
+        for stage in STAGES:
+            for metric in ('wall_ms', 'gpu_ms', 'peak_pool_used_bytes', 'device_used_boundary_peak_bytes'):
+                values = report.get('stages', {}).get(stage, {}).get(metric, {})
+                lines.append('| ' + ' | '.join([stage, metric] + [number(values.get(k))
+                    for k in ('mean', 'p50', 'p95')]) + ' |')
+        lines += ['Turn wall ms (mean / p50 / p95): ' + ' / '.join(
+                    number(report.get('turn_wall_ms', {}).get(k)) for k in ('mean', 'p50', 'p95')),
+                  'Decode share of turn wall: ' + number(report['decode_fraction']),
+                  'Non-decode share: ' + number(report['nondecode_fraction']),
+                  'Decision: ' + (report['decision'] or 'NOT_MEASURED_OR_INCOMPLETE')]
+        for error in report.get('errors', []):
+            lines.append('RED/missing: ' + error)
+    lines += ['', 'Demand-trip turn: ' + json.dumps(result['demand_trip_turn'], sort_keys=True),
+              'Allocation decision: ' + (result['allocation_decision'] or 'WITHHELD'),
+              'Conflicting batteries: ' + str(result['conflicting_batteries']),
+              'Side B [external receipt: synced decode microbenchmark, SP5 section 4]:',
+              'S=2,048 tokens, 32 synced steps: standard 82.6, 2P 84.0, SP 84.2 ms/token.',
+              'APA is 1.4 / 1.6 ms/token slower (saving -1.4 / -1.6). No positive saving demonstrated.',
+              "The order's 12,288-token decode context was the lead's error (that is a memory ceiling).",
+              'No measurement at W96 or S=12,288; transfer to C8 is reasoning only.',
+              'SP5 source: ' + result['side_b']['source']]
+    return '\n'.join(lines)
 
 
 def main(argv=None):
@@ -347,25 +480,32 @@ def main(argv=None):
     group.add_argument('--cell')
     group.add_argument('--worker')
     parser.add_argument('--profile-turn', action='store_true', default=False)
+    parser.add_argument('--resume', action='store_true', help='skip started cells; RED/unfinished stops campaign')
+    parser.add_argument('--json', action='store_true', help='machine-readable summary')
     args = parser.parse_args(argv)
+    if args.resume and not args.cell:
+        parser.error('--resume requires --cell')
     if args.dry_run or args.blocked_report:
         value = dry_run()
         if args.blocked_report:
-            value.update(status='BLOCKED', reasons=['NO_GPU_IN_SANDBOX', value['status'],
-                'SP5_CONTEXT_MISMATCH'], allocation_decision=None)
+            value.update(status='BLOCKED', reasons=['NO_GPU_IN_SANDBOX'], allocation_decision=None)
         print(json.dumps(value, indent=2)); return 0
     if args.summary:
-        value = summary(); print(json.dumps(value, indent=2))
+        value = summary(); print(json.dumps(value, indent=2) if args.json else render_summary(value))
         return 0 if value['status'] == 'COMPLETE' else 2
-    r = registration()
+    r = effective_registration()
     if args.preflight:
-        fit(r); return 0
+        fit(r)
+        print(json.dumps({'status': 'READY_FOR_LEAD', 'cell_count': len(r['cells']),
+            'estimated_seconds': r['estimated_seconds'], 'budget_seconds': r['budget_seconds'],
+            'amendment_path': str(AMENDMENT), 'amendment_sha256': AMENDMENT_ANCHOR}))
+        return 0
     cell = cell_spec(r, args.worker or args.cell)
     if args.worker:
         worker(cell, enabled=args.profile_turn); return 0
     if not args.profile_turn:
         raise ValueError('explicit --profile-turn required')
-    return run_cell(r, cell)
+    return run_cell(r, cell, resume=args.resume)
 
 
 if __name__ == '__main__':
