@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LT1 foreground resumable worker/controller, Rule 0 only.
+"""LT1 foreground resumable worker/controller, registered margin-first mode.
 
 Prior art: GRM C7/C2/EB1 (contributors, 2026), reuse profile loader, real
 ladder, a3 oracle, metadata projection, payload checks and SHA checkpoints.
@@ -22,7 +22,7 @@ import uuid
 from scripts import grm_lt1 as lt
 from scripts.grm_c7_common import hashes
 from scripts.grm_c7_run import emit, lines, oracle, seats
-RUN = lt.OUT/'amendment1/run_rule0'
+RUN = lt.RUN
 
 
 def bind(arm):
@@ -50,7 +50,7 @@ def observe(arena, directory, context):
 
 
 def record_seats(arena,directory,context,info=None):
-    row=dict(context,**seats(arena,info),admission_rule=0)
+    row=dict(context,**seats(arena,info),admission_rule="margin_first")
     emit(directory/'residency.jsonl',row)
     if row['summed_token_seats']>2*row['width']+row['actual_recency_token_seats']:
         raise ValueError('RESIDENCY_BOUND_EXCEEDED')
@@ -64,8 +64,8 @@ def sentinels(repo,fixture,registration,directory,context):
         p=next(p for p in fixture['probes'] if p['id']==pid)
         answer,info=_probe_ladder_chat(repo,p['question'],topk=3,ngen=32,max_trips=1,defer_memory=True)
         rows.append(dict(probe_id=pid,answer=str(answer),score=lt.score(answer,p['expected']),
-                         route_info=info,residency=record_seats(repo.arena,directory,context,info),admission_rule=0))
-    emit(directory/'restart.jsonl',dict(context,pid=os.getpid(),rows=rows,admission_rule=0))
+                         route_info=info,residency=record_seats(repo.arena,directory,context,info),admission_rule="margin_first"))
+    emit(directory/'restart.jsonl',dict(context,pid=os.getpid(),rows=rows,admission_rule="margin_first"))
     return rows
 
 
@@ -73,6 +73,10 @@ def execute(cell, directory, registration, loader, *, run=RUN, deadline=float('i
     """Shared worker body; CPU gates replace only model/payload loader boundary."""
     from scripts import grm_e2e_session as e2e
     from scripts.grm_c2_cells import manifest_projection, assert_payloads, strict_capture_grade
+    # Prior art: C2 explicit frame pin (GRM, 2026). Refuse mixed-rule resume.
+    from core.grm_admission import admission_rule
+    if admission_rule()!=registration['effective_admission_rule']:
+        raise ValueError('REGISTERED_ADMISSION_RULE_MISMATCH')
     fixture=lt.read(lt.FIX); flags=registration['arms'][cell['arm']]['flags']
     session=directory/'session';session.mkdir()
     state=initial_state();prior=None;previous_nodes=None
@@ -120,18 +124,18 @@ def execute(cell, directory, registration, loader, *, run=RUN, deadline=float('i
                 # redeposit; source IDs are audit-only, never passed to route.
                 answer,info=e2e._probe_ladder_chat(repo,p['question'],topk=3,ngen=32,max_trips=1,defer_memory=True)
                 memory=dict(answer=str(answer),score=lt.score(answer,p['expected']),route_info=info,
-                            residency=record_seats(a,directory,context,info),admission_rule=0)
+                            residency=record_seats(a,directory,context,info),admission_rule="margin_first")
                 context['phase']='oracle';check_deadline(deadline)
                 upper=oracle(a,p,32);upper['score']=lt.score(upper['answer'],p['expected'])
                 upper['admission_rule']='oracle_no_admission'
                 if not all(s in upper['wrapped_prompt'] for s in p['oracle_source_texts']):raise ValueError('ORACLE_SOURCE_MISSING')
                 emit(directory/'probes.jsonl',dict(probe_id=p['id'],turn=turn,question=p['question'],
                      expected=p['expected'],source_ids=source_ids,recency_ids=nominees,
-                     memory=memory,oracle=upper,binding=bind(cell['arm']),admission_rule=0))
+                     memory=memory,oracle=upper,binding=bind(cell['arm']),admission_rule="margin_first"))
                 nrows+=1
             elif event['kind']=='recap':
                 answer,info=e2e._probe_ladder_chat(repo,event['user'],topk=3,ngen=160,max_trips=1,defer_memory=True)
-                lt.create(directory/'recap.json',dict(answer=str(answer),route_info=info,admission_rule=0,
+                lt.create(directory/'recap.json',dict(answer=str(answer),route_info=info,admission_rule="margin_first",
                     matched=sum(lt.score(answer,p['expected'])['exact_correct'] for p in fixture['decisions']),out_of=5,binding=bind(cell['arm'])))
             else:
                 # Prior art: LT1 r1 / EB1 frozen complete-turn replay (2026).
@@ -154,7 +158,7 @@ def execute(cell, directory, registration, loader, *, run=RUN, deadline=float('i
         if not fake:assert_payloads(cp/'repository')
         lt.checkpoint(cp,state,bind(cell['arm']))
         check_deadline(deadline)
-        return dict(cell=cell,binding=bind(cell['arm']),admission_rule=0,process_id=state['process_id'],pid=os.getpid(),
+        return dict(cell=cell,binding=bind(cell['arm']),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
                     previous_process_id=old_process,previous_pid=old_pid,metadata_retained=True if prior else None,
                     restart_before=restart_before,restart_retained_scores=restart_ok,capture=capture,
                     rows=nrows,model_info=model_info,checkpoint_sha256=lt.sha(cp/'checkpoint.json'),
@@ -213,7 +217,7 @@ def run_cell(cell,registration):
     from scripts.grm_cmc1_gpu_arms import LOCK_PATH
     if accounting()+cell['lease_seconds']>10800:raise ValueError('COMBINED_GPU_BUDGET_RAIL')
     directory=RUN/'cells'/cell['id'];directory.mkdir(parents=True)
-    lt.create(directory/'reservation.json',dict(seconds=285,cell=cell,binding=bind(cell['arm']),admission_rule=0))
+    lt.create(directory/'reservation.json',dict(seconds=285,cell=cell,binding=bind(cell['arm']),admission_rule="margin_first"))
     outer=time.monotonic();status='RED';error=None;charged=285.0;acquired=None
     try:
         # Prior art: CMC1 flock lease (2026), same shared lock, bounded wait.
@@ -229,6 +233,7 @@ def run_cell(cell,registration):
             busy=subprocess.run(['nvidia-smi','--query-compute-apps=pid','--format=csv,noheader'],capture_output=True,text=True)
             if busy.returncode or busy.stdout.strip():raise ValueError('GPU_NOT_IDLE: '+busy.stdout.strip())
             env=environment(registration['arms'][cell['arm']]['flags']);env['GRM_LT1_LEASE_PARENT']=str(os.getpid())
+            env['GRM_ADMISSION_RULE']=registration['effective_admission_rule']
             with (directory/'worker.log').open('x') as stream:
                 child=subprocess.Popen([sys.executable,'-m','scripts.grm_lt1_worker','--worker',cell['id']],
                     cwd=lt.ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT)
@@ -250,7 +255,7 @@ def run_cell(cell,registration):
     finally:
         if acquired is not None:charged=max(charged,time.monotonic()-acquired)
         lt.create(directory/'controller.json',dict(status=status,error=error,charged_seconds=charged,
-             cell=cell,binding=bind(cell['arm']),admission_rule=0,outer_seconds_before_cooldown=time.monotonic()-outer))
+             cell=cell,binding=bind(cell['arm']),admission_rule="margin_first",outer_seconds_before_cooldown=time.monotonic()-outer))
         time.sleep(30)
     return status=='COMPLETE'
 

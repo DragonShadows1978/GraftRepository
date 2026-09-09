@@ -100,3 +100,8 @@ Target reader: **openai/gpt-oss-20b**, revision **6cee5e81ee83917806bbde320786a8
 ## Amendment 1 continuation (2026-09-09)
 
 Worker is runnable under Rule 0; 17 CPU infrastructure tests pass. Natural Rule0 refusal remains RED; no GPU evidence. Offline LT1 admissions per arm: 0/35,35/35,35/35. Full historical three-rule replay remains incomplete because exact states/margins are missing. Authoritative continuation: [amendment1/REPORT.md](amendment1/REPORT.md), with per-question receipts and explicit unresolved coverage. Original r1 findings above remain historical and unchanged.
+
+
+## FIX6 / amendment2 continuation (2026-09-09)
+
+Margin-first is implemented as an OFF-by-default core option. C2 OFF132 plans preserved; ON31 known currently-correct execution changes registered, 20 unresolved. Both CPU shared-worker arms completed 200 turns with35/35 admissions.101 author tests passed. Overall RED: this checkout lacks FIX4, whose required recency/live fixtures fail. No GPU run. See artifacts/grm_scout_fix6/REPORT.md and artifacts/grm_lt1/amendment2/preflight.json. Prior art: GRM contributors (2026), LT1 Rule2/A-DEC/RT1/C2/C7; existing decision and checkpoint contracts reused, new opt-in integration.

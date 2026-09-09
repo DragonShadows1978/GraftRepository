@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LT1 CPU contracts and Rule 0 resumable lead entrypoint.
+"""LT1 CPU contracts and registered margin-first resumable lead entrypoint.
 
 Prior art: GRM contributors, C7/C2/EB1 and amendment 3 (2026), verified
 local source: checkpoint hashes, real serving ladder, isolated live oracle,
@@ -26,7 +26,8 @@ OUT=ROOT/'artifacts/grm_lt1'
 FIX=ROOT/'fixtures/lt1/dialogue.json'
 REG=OUT/'registration.json'
 AMEND=OUT/'amendment1/registration_amendment.json'
-RUN=OUT/'amendment1/run_rule0'
+AMEND2=OUT/'amendment2/registration_amendment.json'
+RUN=OUT/'amendment2/run_margin_first'
 
 
 def normalize(value):
@@ -52,7 +53,7 @@ def score(answer, expected):
 
 def binding(arm):
     return dict(arm=arm,registration_sha256=sha(REG),fixture_sha256=sha(FIX),
-                amendment_sha256=sha(AMEND),admission_rule=0)
+                amendment_sha256=sha(AMEND2),admission_rule="margin_first")
 
 
 def verify():
@@ -73,6 +74,22 @@ def verify():
         r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
         for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
         r['effective_admission_rule']=0
+    # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+    # these core overrides; preserve both preceding registrations byte-for-byte.
+    if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+        raise ValueError('AMENDMENT2_SHA_MISMATCH')
+    a2=read(AMEND2)
+    if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+        raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+    if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+        raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+    for name,change in a2['overrides'].items():
+        if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+            raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+        inputs[name]=change['after_sha256']
+    inputs.update(a2['new_inputs'])
+    r['effective_admission_rule']='margin_first'
+    for arm in r['arms'].values():arm['admission_rule']='margin_first'
     for name,digest in inputs.items():
         if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
     m=read(ROOT/'fixtures/lt1/manifest.json')
@@ -159,9 +176,10 @@ def preflight():
     reasons=[]
     if free<20_000_000_000: reasons.append('FREE_SPACE_BELOW_20_GB')
     if r['status']!='FIT_ESTIMATE': reasons.append(r['status'])
-    receipt=OUT/'amendment1/cpu_receipt.json'
+    receipt=OUT/'amendment2/cpu_receipt.json'
+    if os.environ.get('GRM_ADMISSION_RULE')!='margin_first': reasons.append('REGISTERED_ADMISSION_RULE_MISMATCH')
     if not receipt.exists() or read(receipt).get('status')!='PASS': reasons.append('CPU_GATES_NOT_GREEN')
-    elif read(receipt).get('amendment_sha256')!=sha(AMEND): reasons.append('CPU_RECEIPT_BINDING_MISMATCH')
+    elif read(receipt).get('amendment_sha256')!=sha(AMEND2): reasons.append('CPU_RECEIPT_BINDING_MISMATCH')
     return dict(status='BLOCKED' if reasons else 'READY',reasons=reasons,free_bytes=free,
         minimum_free_bytes=20_000_000_000,gpu_executed=False,projection=r['projection'],
         model=r['model'],agent_model=r['agent_model'],agent_effort=r['agent_effort'])
