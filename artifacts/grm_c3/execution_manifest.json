@@ -1,0 +1,1754 @@
+{
+  "schema": "grm.c3.execution_manifest.v1",
+  "registration": {
+    "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/registration.json",
+    "sha256": "048e4c7e786be8bb26685abbdd21ce710c9d0f4f2f8fa5e6b3722538820c5666",
+    "bytes": 45383
+  },
+  "files": [
+    {
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/chat_template.jinja",
+      "sha256": "a4c9919cbbd4acdd51ccffe22da049264b1b73e59055fa58811a99efbd7c8146",
+      "bytes": 16738
+    },
+    {
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/config.json",
+      "sha256": "3a2a26ded679375b7928ddeca59764df7cea83220c1961035f6d6e232659e9ce",
+      "bytes": 1806
+    },
+    {
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/generation_config.json",
+      "sha256": "f9970ada892d2d1f72e3ed0a6535ccebadd11897318794ca671d8c7014c957da",
+      "bytes": 177
+    },
+    {
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/model-00000-of-00002.safetensors",
+      "sha256": "16d0f997dcfc4462089d536bffe51b4bcea2f872f5c430be09ef8ed392312427",
+      "bytes": 4792272488
+    },
+    {
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/model-00001-of-00002.safetensors",
+      "sha256": "4fbe328ab445455d6f58dc73852b85873bd626986310abd91cd4d2ce3245eaea",
+      "bytes": 4798702184
+    },
+    {
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/model-00002-of-00002.safetensors",
+      "sha256": "a18106b209e9ab35c3406db4f6f12a927364a058b21e9d1373d682e20674b303",
+      "bytes": 4170342232
+    },
+    {
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/model.safetensors.index.json",
+      "sha256": "0e085b977c4c9942f85938828e8c989ed7d5cdabf852e4da6a67c116cd502cd1",
+      "bytes": 36355
+    },
+    {
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/special_tokens_map.json",
+      "sha256": "dd5e191d20c12d2fee1da5bae14ca1db0f5f4215300af691f23cdee97120a293",
+      "bytes": 98
+    },
+    {
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/tokenizer.json",
+      "sha256": "0614fe83cadab421296e664e1f48f4261fa8fef6e03e63bb75c20f38e37d07d3",
+      "bytes": 27868174
+    },
+    {
+      "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/tokenizer_config.json",
+      "sha256": "9279e942392b742d633c7adbb89ebe002c98399db8926a7af5125c726f404070",
+      "bytes": 4200
+    },
+    {
+      "path": "/mnt/ForgeRealm/GraftRepository/cpp/build/libgrm_runtime.so",
+      "sha256": "6e984b0de89339e1ea5c7a0731323f5682aff476e3fabf48af2d173ecea3976d",
+      "bytes": 455656
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/bench/__init__.py",
+      "sha256": "358ff382dc9b7e0e2d1049fb2172022bd161612940862611d35568f8483758ab",
+      "bytes": 84
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/bench/geometries.py",
+      "sha256": "cb18e161b6ebd40f88fd617b05c916ecd60aa967507c007f48f4c49427fb86ba",
+      "bytes": 4728
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/bench/harness.py",
+      "sha256": "d4b02b736b9bf2a236897d1646e62ace51a455df20f1408e33e0b7dd536bf57a",
+      "bytes": 24789
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/docs/benchmark.py",
+      "sha256": "b4efd0619751538a2cbee0efb2d6e84546092b32f982499b6d3740ae5443be58",
+      "bytes": 2853
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/docs/conf.py",
+      "sha256": "002e0d53aa5d23de9e293211bdb57fd382c888a2d8b42632f384426d8d81ece5",
+      "bytes": 11574
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/noxfile.py",
+      "sha256": "054e23e92c75ee8a8d59392f6e40041f5bc45150d592eecdbe4163267e6b9637",
+      "bytes": 2746
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/pybind11/__init__.py",
+      "sha256": "e3e5a11fd01ce8ff03fc5aa77e5a4e721f1795a66b9176def7916ca5b32fc2ed",
+      "bytes": 429
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/pybind11/__main__.py",
+      "sha256": "0132e58459610710d7c715c47e77f617545c461b96375ce23306e6ac6ba189fd",
+      "bytes": 1544
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/pybind11/_version.py",
+      "sha256": "bf7c5a6156d8831c97c5844f8d809a6a78a83e8911da668dc57898d94e37f4d9",
+      "bytes": 228
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/pybind11/commands.py",
+      "sha256": "8890455a15c7aa50bf24c0203233089fa1ff862cefa2b4b9ef6ba9194d6ba060",
+      "bytes": 1207
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/pybind11/setup_helpers.py",
+      "sha256": "0d97eb25e093ac7643529615ba2ec10e7b5962d229eb9514422560f3ffd77774",
+      "bytes": 17492
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/setup.py",
+      "sha256": "4846b1d3c96ff561dfb11611e8d05dfa419ce191375cf01a138f8bd02a135d78",
+      "bytes": 4855
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/conftest.py",
+      "sha256": "bc2a2f3711b7709bb6be265e4065129cbcbb28fd33b022e3027a61ea734fcfda",
+      "bytes": 5692
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/env.py",
+      "sha256": "981bf2e2706e600446ab87b45858aa4478b69457e6f8cba297684f226a7bed05",
+      "bytes": 926
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/extra_python_package/test_files.py",
+      "sha256": "d1e299f5c38ecea7f04e6f67b8f4f227a7aeb7e8efcd390a39e3a0b6829a07e7",
+      "bytes": 8481
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/extra_setuptools/test_setuphelper.py",
+      "sha256": "9ac814c7b652eb9d6f199f4983f7f82c1750da8b6474e6fad5d2c10699af0ba9",
+      "bytes": 4153
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_async.py",
+      "sha256": "b9830ebd34545da3f9c4d03268157a750f8cd419a234bb1a51e9393afe937ba8",
+      "bytes": 536
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_buffers.py",
+      "sha256": "d45b4f04297510d64b9bc069add07a06abebda5174a1c48c9c2a541d83cc9c3b",
+      "bytes": 7124
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_builtin_casters.py",
+      "sha256": "f3994a1a667d3153de380546a99e8f0a14e1d1ccebe9f0c0ca7329fc8914b2fd",
+      "bytes": 17243
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_call_policies.py",
+      "sha256": "4a1e96f26665ffa5844b7c25d17837ef00d12adc2f7d360de0a56b6cc8e01828",
+      "bytes": 6549
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_callbacks.py",
+      "sha256": "78eb157cf7e78b01400aa27fef97989dd5daae8e0e44559d8c4ff51bd04ab421",
+      "bytes": 6955
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_chrono.py",
+      "sha256": "c16463e2db9bf7deb3b6f338ec8df6537578661e05cabb2db35d8d5950ba29f1",
+      "bytes": 5691
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_class.py",
+      "sha256": "8e4ee712650809a6e97580c03af267d2abb4c47256ab37a9391b76dbc6f67305",
+      "bytes": 15187
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_cmake_build/test.py",
+      "sha256": "53f197ffaa78253ceafb33f39a8a4d0280ff32e3df13430b8a225fe3ebb6e0ef",
+      "bytes": 198
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_const_name.py",
+      "sha256": "e26d811f344f8a8df525d22f2cd372239b28a0bf528cf2f1da63c4097b03db2e",
+      "bytes": 593
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_constants_and_functions.py",
+      "sha256": "db03aad0a35959e11539cb1916fdb89bf653d904261e3034a5cd8226efe736e0",
+      "bytes": 1551
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_copy_move.py",
+      "sha256": "8372a8fe588f5c7d47a06311175f2b2b9b823e667756644ce0d678345973af9d",
+      "bytes": 4796
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_custom_type_casters.py",
+      "sha256": "bbf2de8f7d5fc7ad663f3a25ed4e17af75864b20f86982802a99be9e361b479b",
+      "bytes": 3992
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_custom_type_setup.py",
+      "sha256": "66fc491612f5549f8a30249aa22742b3eee02493d3effad3f1db0abb2ba2ade5",
+      "bytes": 1091
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_docstring_options.py",
+      "sha256": "f522320abd60ee644a0a92f9635a29fd6be8d969f27ecd5e5437508efa3657ae",
+      "bytes": 2423
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_eigen_matrix.py",
+      "sha256": "adad3cc40992442a4b57442df3eb97ccc8e67262a8edbb08dcf238781a9f0be3",
+      "bytes": 29175
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_eigen_tensor.py",
+      "sha256": "d43a470feb4323f75246242ee7278dde61d9e495f93a5ba69c475b5712181ee1",
+      "bytes": 9414
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_embed/test_interpreter.py",
+      "sha256": "f483a4abdcc012f1f049f6298627d7e3886273423150b8abb12c69398ca578f9",
+      "bytes": 237
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_embed/test_trampoline.py",
+      "sha256": "226c1eab9fd204c5401eadd9d9993604185db14d39d6f9500834cf08dfd51c53",
+      "bytes": 275
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_enum.py",
+      "sha256": "37632e252fd31e18a71c94498cc4e1951e0077f6df1b6db0e599c178db9fd2e6",
+      "bytes": 9069
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_eval.py",
+      "sha256": "3960129660e6229fd854159d7c95aa42c5675cd35701ff5b6d3adb61f5e792db",
+      "bytes": 1143
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_eval_call.py",
+      "sha256": "4afeb1460f0ee8f173f5bbb813e4a780a98a0090d1fb3a2b681e03271888c2c4",
+      "bytes": 119
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_exceptions.py",
+      "sha256": "43acb027a2379bbbe6c6bcf0c32abb8d96b3279130cc1ec68b4d92ac9151369a",
+      "bytes": 14537
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_factory_constructors.py",
+      "sha256": "40f6461dcba1927ca4ec35c489007bb659dd062cc94d6f7d15b1707dde15cc12",
+      "bytes": 16491
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_gil_scoped.py",
+      "sha256": "8b3506c31a019ce9a03db4cb57735cafb9f3747394ec6b13e64ac9c0cca4773c",
+      "bytes": 8507
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_iostream.py",
+      "sha256": "c46790c318c6cf518a496041c62d57652ea51361813fc56d3d1ffb4aa0d3c892",
+      "bytes": 7144
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_kwargs_and_defaults.py",
+      "sha256": "63ce57ecf3990ab20e1a0a470404f50d8f219af2a30a16229163d546e21441f0",
+      "bytes": 14856
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_local_bindings.py",
+      "sha256": "6786aea5d77c56ac042ff62da9ab8f8ac3060d0f7a5aadaed165fb4e582cdcfa",
+      "bytes": 8054
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_methods_and_attributes.py",
+      "sha256": "79e2affca4d3ec01a1e71c7ffe5fbee62a43216a36b1eec8225ea1640ba3440f",
+      "bytes": 18426
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_modules.py",
+      "sha256": "fdb44d5e500c68fd002758353c2e395c695a1598b3696276b7b1fdf9036dbf8e",
+      "bytes": 3963
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_multiple_inheritance.py",
+      "sha256": "4cc7c572204a0964ff1cc12225de2bb0ce5401a874bf00ced9c7bcd2099a8c25",
+      "bytes": 11874
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_numpy_array.py",
+      "sha256": "02b62aed324ea2240a1d66cc51686d101d23a3a1f17276858783aea05b42ac8a",
+      "bytes": 23073
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_numpy_dtypes.py",
+      "sha256": "d3b4768201a93123dcdb95e7070f5457b0d530b31cc32596b059ef260b6ad5ee",
+      "bytes": 14645
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_numpy_vectorize.py",
+      "sha256": "4e268bfce7f7215e7810bd367714901f14226913df5c4d88a3fadc34c45b4a49",
+      "bytes": 9658
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_opaque_types.py",
+      "sha256": "f4d0bd0956d32027201d138f0c42f0a7c700383984862009668ae15c954eb05c",
+      "bytes": 1847
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_operator_overloading.py",
+      "sha256": "1176153bec55719ec91aab5b7fd92bfe34abe33f6f58fa7d5a5ce459d5cc2f14",
+      "bytes": 4332
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_pickling.py",
+      "sha256": "61d401e796de4368ccddc85d96d0c374380315381a7c1da9fc2fa46117dec8d1",
+      "bytes": 2720
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_python_multiple_inheritance.py",
+      "sha256": "bb875a9d0327696bce347de6794d4248204c24a3ba1d6349382b837b32d6ef06",
+      "bytes": 859
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_pytypes.py",
+      "sha256": "257e0a7e9c765b948938e734f73f9bf16857f9ae4bf7a7adfeb47cadc17bd8e0",
+      "bytes": 25274
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_sequences_and_iterators.py",
+      "sha256": "94499ca0402ce01445e7afe75b8b385416a3429c1b0f22853fab6582187a9915",
+      "bytes": 8659
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_smart_ptr.py",
+      "sha256": "3e0e2caae91d5972d06f390fa56fee270083f2ddc2fbeb5746192b41a395e8ba",
+      "bytes": 9530
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_stl.py",
+      "sha256": "9f1395070bce5e473492f528bc45b5d50042bd07f20ff16e74c6a0626a8d7dbf",
+      "bytes": 12307
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_stl_binders.py",
+      "sha256": "7db0f1708908f88c46bffbcf620361c126135442e9634608a297a681c0e7e356",
+      "bytes": 11043
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_tagbased_polymorphic.py",
+      "sha256": "48e651bc3edd3be77cc8dd2b77074dc2e89ead9fd048607119d1f2afc8c08392",
+      "bytes": 741
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_thread.py",
+      "sha256": "d14398453814e029f637232a2974c244fbcb3d5d95669d6dbf983f1828895512",
+      "bytes": 826
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_type_caster_pyobject_ptr.py",
+      "sha256": "399f160f761f6bfaf25d3ed61eaa7d4da634df88ad883c65b38dc8fc04fa89b4",
+      "bytes": 3260
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_union.py",
+      "sha256": "93cd2ff2b453ca0bc3289d60940f0fa6d975fc95b19f68474886549f327f33ee",
+      "bytes": 148
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_unnamed_namespace_a.py",
+      "sha256": "c966a8aab398a161cc926a076337d672b18c84d7286690551717b3259d236e62",
+      "bytes": 1141
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_unnamed_namespace_b.py",
+      "sha256": "ecd4a959e099f200e3ea047f34213213756052b37f3e3ccea2a75d0a8ed9c6f4",
+      "bytes": 143
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_vector_unique_ptr_member.py",
+      "sha256": "187dd6f570a3b3ee191956cf4b02fab5632ec07de5a368d64c8cbfe44ae89483",
+      "bytes": 329
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tests/test_virtual_functions.py",
+      "sha256": "93f96a4c0ba5286eb84b61f82544aeac2b3a4747820f96968019cb8aa41d948e",
+      "bytes": 12913
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tools/codespell_ignore_lines_from_errors.py",
+      "sha256": "6d3b3b412d7eade58bd38712e82f8587817e4d35c180b2217a63b881f45a220a",
+      "bytes": 1117
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tools/libsize.py",
+      "sha256": "dcc0590c28b4fa474a7a2ffa45c4db995260b664f8b9d07e58817e98e3cb043e",
+      "bytes": 1031
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/build/_deps/pybind11-src/tools/make_changelog.py",
+      "sha256": "f377bf9071275a46f7aa817f18400093cd0dfd941d548980c383cdf8bc7b5e01",
+      "bytes": 2090
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tensor_cuda/__init__.py",
+      "sha256": "2aa0435a1157ae2b10965575248dc215e4961ba1ed7d1ceaa127cc1dfca58fc9",
+      "bytes": 50057
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tensor_cuda/_tensor_cuda.cpython-312-x86_64-linux-gnu.so",
+      "sha256": "7f438cc7ceb66a16b492d59185f2bd9940f0ecfa44d05514499c89ac2195b250",
+      "bytes": 10798464
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tensor_cuda/apa_sp2.py",
+      "sha256": "018a26b6bf7acfd85bc23e5084d0367952e1b2c81898da8585c8ecda302a9f07",
+      "bytes": 4264
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tensor_cuda/functional.py",
+      "sha256": "418ee285bdeefacbd9d5a1ccaf39700b8e83ea339377230c79f1d4480a1e3d9c",
+      "bytes": 8047
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tensor_cuda/nn.py",
+      "sha256": "4659cdfa382c0166543a555ef5101e0e3b7ceb8d930bb822be95a0324263517d",
+      "bytes": 25792
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tensor_cuda/optim.py",
+      "sha256": "41693c324d5ea2f081ec7777ce8165fbc65d04a7b557fce27ff6d9b9a24457ee",
+      "bytes": 11080
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tensor_cuda/quant.py",
+      "sha256": "f5ceea6a862d7950217441c8aae3b5b957c99c922412ef9489f464f62c72b00a",
+      "bytes": 7686
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tensor_cuda/quantization/__init__.py",
+      "sha256": "d29a048409906800e68bbed774978764045451b4451eb2d31ec9d5343293658f",
+      "bytes": 757
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tensor_cuda/quantization/affine.py",
+      "sha256": "8bf31258f8635fa4948d08805fb4909ea6a36189d40f0ee2cc589b796c5e3943",
+      "bytes": 8405
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/apa_sp1_1_reference.py",
+      "sha256": "3c20289a6de0ccd96bdbc9ba1274aaac292c1c8a132e40bc2e4efb1648a45c2c",
+      "bytes": 4306
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/apa_sp1_reference.py",
+      "sha256": "aadbaaa1ff8385a612d73fb764b72f3a13a6b06da87bcca9860219062a3964aa",
+      "bytes": 7840
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/bench_paint_bake.py",
+      "sha256": "e177a6dcb55128d0deb2c1d9dba50443f22885ecaff4c214f8daaadd60c7b998",
+      "bytes": 7862
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/bench_paint_inpaint.py",
+      "sha256": "7b61f80521c440a9a47715a2d35b82ddf9c3537038d5885a0b6186a4aa6efbcd",
+      "bytes": 12853
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/bench_paint_raster.py",
+      "sha256": "9c3aaa50a391e939503b6ede6c0a2411b3d3b684ad7a7b8bfe60aad76a59d703",
+      "bytes": 5465
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/bench_w8a16_k0b.py",
+      "sha256": "a23df5b1254bef8fafac7f84f15715cd85eebb2a2716f97e1c83f5b974693ad9",
+      "bytes": 5808
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/bench_wo1a_sdpa.py",
+      "sha256": "05e80c2441bc032918e2e086ed7ab3a7f69f85068b3f2fb058528621bf5507e9",
+      "bytes": 7122
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_int4_sdpa_noncausal.py",
+      "sha256": "f4975b0b7cd7868670402b3ab186b045923c0e43d2e5bbf39ea082eb9c5269f6",
+      "bytes": 8726
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_phase6.py",
+      "sha256": "0e01d13f5e636ef9a043331df3293d90a8c0d3d0b3b7d031ea0b158f2b82b963",
+      "bytes": 3720
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_selective.py",
+      "sha256": "4ee3785af6b38e67e4ed423481e2c046bd05d61aef049c51065b004910d7d748",
+      "bytes": 9867
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_selective_int4.py",
+      "sha256": "41fb9a17e5b430dc8fa2ed6f2c3ce77702f5d5d1483298b64b93e8a5fb46188b",
+      "bytes": 8425
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_selective_splitk.py",
+      "sha256": "2df1b90d1622fbf3565357785d7c6dd1697bf45d4211d4f400488751ff0ac77e",
+      "bytes": 10039
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp1_1.py",
+      "sha256": "bbf5d2c12a73d5b4208a5cab53c1193633ffea84779dd6acefb57b1f4353d9e7",
+      "bytes": 7975
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp1_harness.py",
+      "sha256": "9dc4b9ee39447bc710529e27c0f18528e93455a77874a314db359d057cbcc049",
+      "bytes": 1681
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp1_host.py",
+      "sha256": "d10675340a99e67f50a79910a0ec327c6e2f2a7651e4f69a40b232dd542c2f12",
+      "bytes": 2194
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp1_reference.py",
+      "sha256": "a7c663199fb8af448c78367cc961a61f6eebd5fdd2bfe9307922069bb0066c4e",
+      "bytes": 7221
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp2.py",
+      "sha256": "1a23945ba67e434a06fe4776c2dc270bcca549339744d41646c0213b2a4e4d24",
+      "bytes": 13855
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp3.py",
+      "sha256": "58fabda2eb7bdee60e7e8e08ef5ed092b366bda56a0ef578ecc137f748827e6c",
+      "bytes": 24039
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp3_a4.py",
+      "sha256": "117be0b4f86746296be1304e2a854e91e86971597efdcba35bebcc5c15310534",
+      "bytes": 20527
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp3_a5.py",
+      "sha256": "b8182092cad3640924096926792cfb2dab4d89c9e58d875688bd773b0c3af040",
+      "bytes": 16047
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp3_a6.py",
+      "sha256": "bf6e0ed883e73c3366b2b222d3725bd6ccbee73c5f7c08f1c426e34bec75c784",
+      "bytes": 15760
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp4g.py",
+      "sha256": "32c2529018951302641bd81ed1e2eecabd774852b1f20f561f2a983382bd8fdf",
+      "bytes": 23907
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp4g_a2.py",
+      "sha256": "6067a244e38bba484422144cd16b272b4a97042ae13d8bb9dac778bc31b2f3de",
+      "bytes": 14910
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp4g_a3.py",
+      "sha256": "220220f39656d94c684164b5755261e4e11ea914f6d40aae8fce36e826282fed",
+      "bytes": 15351
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp4g_a4.py",
+      "sha256": "fedce6ef9412272c3c57f831915941a950a8d0941be05151b0a70c2112de442a",
+      "bytes": 11515
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp4g_a5.py",
+      "sha256": "3e9fdf88504c421ee542616ae180ab345f4c7265959b48aed5e33096a817f971",
+      "bytes": 13943
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp4g_a6.py",
+      "sha256": "4fc8e200ac0b4c47950adde85ac55da159f311343517aa55854fbd3204a1711d",
+      "bytes": 13736
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_sp4g_a7.py",
+      "sha256": "8cec091e91b66989ea88bb273a9faba4c4b51f70ef4871ad925a9ecb2045c22f",
+      "bytes": 16524
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_spd1.py",
+      "sha256": "a44da0526d60a54eaeacfd524618fd996c193c725d6e025c57dc1746525f56f3",
+      "bytes": 10671
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_tiled.py",
+      "sha256": "fcd44dd16e0a590231417a1d2850497a76e625a3448e320cdd3e8999a03678c5",
+      "bytes": 353
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apa_value_dim.py",
+      "sha256": "581c0e99798ed46cf48ecc87802bbee032ab773ae5561d627f783039b4857a5e",
+      "bytes": 2826
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apamq_df1.py",
+      "sha256": "58c7e1dfe3496c22c9d977e085a7aea3c844446b281f63e24e05b1c32813fb3a",
+      "bytes": 5989
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_apamq_sb1.py",
+      "sha256": "a647603875be2ace487a7172975c64bbbecec8fe0fa0f87e489626ae55c76b0f",
+      "bytes": 13085
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_argmax_last_axis.py",
+      "sha256": "d0facd87f24f8d749d7fb4c43cc10c63471d2e893243506124f87eeacadb2e37",
+      "bytes": 4982
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_attention_phase5.py",
+      "sha256": "23e533cf0b5742cdef46f1a731cbd96c8535e41f2a05da6c6f71a9fdc28961a7",
+      "bytes": 2601
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_checkpoint.py",
+      "sha256": "1afcb79603810163cee7134790c311d3eb866e96d7726cfca23019e80dd0ca7f",
+      "bytes": 871
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_conv_phase3b.py",
+      "sha256": "2e225ab94c2ded7b559a3c8d8f4d751be91ca848587e41574b17a3f24d8430a8",
+      "bytes": 2449
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_dda_raycast.py",
+      "sha256": "820f6fccb0e4f4106d5132cdf834b9f790f07731c094f630fc06c4b1c9c23c59",
+      "bytes": 8725
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_engine.py",
+      "sha256": "7333fb7be5d18b0ac3407c47100be9111b1878eef176e714b58d88535fca7cdd",
+      "bytes": 4006
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_export_rows.py",
+      "sha256": "4c2ede3150a653d11fca4a8c3958979065c941b4a89c23ba3054043cb9f8c648",
+      "bytes": 4542
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_ext_phase7.py",
+      "sha256": "8ec82d0438a28057036fca1721c990e19ced5828b5cb57918762326fd7e47455",
+      "bytes": 2751
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_gated_delta_step.py",
+      "sha256": "0d3c499ed29d7d6f612f2281dc869a2d36e9dccd7f0ac6e478d962367de2b2f1",
+      "bytes": 3120
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_hy3d_engine_ops.py",
+      "sha256": "55b30170c63711b44f5efc41f4250e3c69b6e969d58378f619576227931efe9d",
+      "bytes": 9190
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_int4_linear.py",
+      "sha256": "3f9d90f0442577d561535960e111180c9dda3ecc8761a410e0249df2d364ccf7",
+      "bytes": 4624
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_int4_symmetric.py",
+      "sha256": "e2437a70af323e6950635c965071a6c30f6790df8e9c40ed1ccc53f271766854",
+      "bytes": 3215
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_integration.py",
+      "sha256": "ffc947c62c2028890d47030817a2611e6a936c80fffe57f5af8a58115d1bdf1c",
+      "bytes": 2800
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_intn_linear.py",
+      "sha256": "65866a2c09a3768e4b03b2d030f4705e7ba55128dff1c6c2205866c39139d206",
+      "bytes": 4556
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_mxfp4_linear.py",
+      "sha256": "185895591114f643cb6a8154291536ac6e1592d1b1a1de9e19df2b102ef22a24",
+      "bytes": 3789
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_nn_phase3.py",
+      "sha256": "2c0a66f3bff5ec2a920d4939fe1d986fc203036d5bb767dbb12693ef0478b1f5",
+      "bytes": 2364
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_ops_phase2.py",
+      "sha256": "a83ef8c8542cd7380eecde3a6f89c0e0bf691af06c859d8e50d66cd6a1dd7797",
+      "bytes": 2799
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_paint_bake.py",
+      "sha256": "f5f1c84672c7055b7849da9290d5442655d25c72d065ebaafbb284f172e5e9f8",
+      "bytes": 19610
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_paint_inpaint.py",
+      "sha256": "ad38e1a8aa29457254481cf6a0bf46e19929f8b801ef54d55dfc2172027fbabf",
+      "bytes": 15181
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_paint_raster.py",
+      "sha256": "c0622c59133ffa906c4001820cae2f00bda2c4f77a93d78ca5848b8d0c759e58",
+      "bytes": 20313
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_phase9.py",
+      "sha256": "db0de76dc3d1d5d76cbcfcf6d816c77700836b1e143ae5b718a2904318f37f95",
+      "bytes": 2652
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_qtile_attention.py",
+      "sha256": "982b8d5b10c7c655b9373a20db2077af844bddacccfa875cfd1d949a4de35f92",
+      "bytes": 13037
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_quantization_math.py",
+      "sha256": "660ea2901f4d582cf82df2c93a40779d95a3570b513d64dcf9045f153f48c576",
+      "bytes": 1678
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_rnn_phase5b.py",
+      "sha256": "0a87495014abe357185eaf5a589666d9e49722cf3bd21895eb170e394ad54f29",
+      "bytes": 1891
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_rope_apply.py",
+      "sha256": "fd4ce937781dffa13df82df721a661e288255b775d417504dab69480658a1d34",
+      "bytes": 2489
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_selector_accuracy.py",
+      "sha256": "54af6d2f2404a029fdda29acad87ae2d51623d33674a9028a2972e14bbc1ac57",
+      "bytes": 6542
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_splice_rows.py",
+      "sha256": "02d683f26c83d83bd6eb4d26649105c005f45de2b6cb26a58f2335cf4bb2b32e",
+      "bytes": 7017
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_terrain_render.py",
+      "sha256": "d11a75dd32c8ee1a627a7445091e547f026bd4cbeb028ac9c3d8367d83e0a460",
+      "bytes": 158951
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_w8a16_matmul.py",
+      "sha256": "3cfb33d86f518efa1e26f6666fd7a70a173b6b31cae17847998e12a3ebb51f9d",
+      "bytes": 14937
+    },
+    {
+      "path": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tests/test_write_rows.py",
+      "sha256": "e3509a7d1fe8a47cb988af7145e6abd67dc06e61aabbef2c6e3182401aca7a1d",
+      "bytes": 2309
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/registration.json",
+      "sha256": "048e4c7e786be8bb26685abbdd21ce710c9d0f4f2f8fa5e6b3722538820c5666",
+      "bytes": 45383
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/config/grm_demand_registered.json",
+      "sha256": "1408d0b1c2ecd91ce89172add0f7d25248953f55e0dd1594cf8d54eab8a14a98",
+      "bytes": 5052
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/deepseek_v2_lite_tc.py",
+      "sha256": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07",
+      "bytes": 34286
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/gemma4_tc.py",
+      "sha256": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b",
+      "bytes": 55339
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/gpt_oss20b_tc.py",
+      "sha256": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1",
+      "bytes": 53672
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/graft_arena.py",
+      "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b",
+      "bytes": 265082
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/graft_quant.py",
+      "sha256": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130",
+      "bytes": 14227
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/graft_repository.py",
+      "sha256": "e0a0fc777d3c0f535ec915238390d7c1f1a6d43e927976351b8441a1b1358e89",
+      "bytes": 219615
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/grm_admission.py",
+      "sha256": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f",
+      "bytes": 35998
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/grm_cuda_router.py",
+      "sha256": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5",
+      "bytes": 20297
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/grm_demand.py",
+      "sha256": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3",
+      "bytes": 29224
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/grm_frame.py",
+      "sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2",
+      "bytes": 9742
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/grm_native.py",
+      "sha256": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df",
+      "bytes": 88004
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/grm_runtime.py",
+      "sha256": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e",
+      "bytes": 23837
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/grm_supersession.py",
+      "sha256": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e",
+      "bytes": 1789
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/grm_text_norm.py",
+      "sha256": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8",
+      "bytes": 3576
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/grm_three_pass.py",
+      "sha256": "71e0e4f8503d4e132101fc79cce9d64daf399ffe73892e2f0102c8568d0ec0f3",
+      "bytes": 33605
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/kv_graft.py",
+      "sha256": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d",
+      "bytes": 11171
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/minicpm3_tc.py",
+      "sha256": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69",
+      "bytes": 22115
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/mistral7b_tc.py",
+      "sha256": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4",
+      "bytes": 34465
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/paging_telemetry.py",
+      "sha256": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c",
+      "bytes": 12284
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/qwen35_tc.py",
+      "sha256": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b",
+      "bytes": 27384
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/qwen35_translation_poc.py",
+      "sha256": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1",
+      "bytes": 217167
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/qwen38_tc.py",
+      "sha256": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e",
+      "bytes": 68885
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/qwen3_1p7b_tc.py",
+      "sha256": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f",
+      "bytes": 24486
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/qwen3_tc.py",
+      "sha256": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa",
+      "bytes": 6277
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/core/qwen_tc.py",
+      "sha256": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3",
+      "bytes": 4594
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/orders/GRM_C3_DNGH_DECOY_CALIBRATION.md",
+      "sha256": "301054d96220dafd4d40b3d38ce985045c507c74c7e566e1254d8c751fe6214b",
+      "bytes": 4134
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/_diag_step_vs_manual_ab.py",
+      "sha256": "c27bafa149d6155866fac73fb472115e1fcfd636779784a5ded9d573c2efc7c3",
+      "bytes": 26667
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/apamq_e3_attrib.py",
+      "sha256": "24b2e7b03a93526d0a780b772d244031ac0aeb84d4efc645c74f6d5f3ecc4e71",
+      "bytes": 32962
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/apamq_fbd1_diag.py",
+      "sha256": "53776a5ad1897971a630c1fb97ccb90d86f57cb28bc25c3d00ee8315b88435a7",
+      "bytes": 35467
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/apamq_fc_ppl.py",
+      "sha256": "b170b085e0cb1fa843435642b2a42db76d104b4e0185e9af65030439c5b5f23b",
+      "bytes": 43552
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gemma4_server.py",
+      "sha256": "ae0a64b3b4a2177aa964e1190a386e7c217a6a03eebff6badd5fd96ffa2d22e1",
+      "bytes": 9030
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/glc_p0_audit.py",
+      "sha256": "b23e07d28ee398f2f390f091486a81616fa5cfa2b972c6b4faf77e4a6c367f4b",
+      "bytes": 30193
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/glc_p0_common.py",
+      "sha256": "89e189a33fa5bec760cc4b779a97277da4ef7214c0e6abc7be706637a3941467",
+      "bytes": 13833
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/glc_p0_divergence.py",
+      "sha256": "1abc7c08d682da41900ad96616997682f21745f51b8179c97e949a50ff2e7376",
+      "bytes": 37130
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/glc_p0_hf_reference.py",
+      "sha256": "14dbc7091bee24632879f0c5868a988ce15568c9fdeedafc436649dde51dfc31",
+      "bytes": 18773
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/glc_p0d_harmony_discriminator.py",
+      "sha256": "13e78f0f1d2d30dde531fe614a00cafc95dbb6e8c8e321073d18a1ca2b460339",
+      "bytes": 47271
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_bulk_graft_gate.py",
+      "sha256": "e94d1496702831e73907a87707ef656433bcdb211c43cbae280ba64d3dd6636f",
+      "bytes": 14974
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_context_ladder.py",
+      "sha256": "f28da16cc4824076241c8b608e9ac63af29dcf14f5cccb6345df1b9d8a371c0f",
+      "bytes": 14608
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_e13b_position_controls.py",
+      "sha256": "9f769f67c1044f541ee32efdd522c297dea9ef692366824f93676c4f63159256",
+      "bytes": 70134
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_e14_backend_fix.py",
+      "sha256": "6bba1978bf3761aa593e2e4dd616b1a7648126a396d8facff9ee0a5677a08fac",
+      "bytes": 74519
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_e1_diag.py",
+      "sha256": "f0d8192dd95962dc5bae38145d8d262de1fa00283ed0f2a2750d8e2088c35d46",
+      "bytes": 152667
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_exact_value_graft_gate.py",
+      "sha256": "9813eca3c54577c7fc0773880dc64e7484370803aa7dac09bb5b69dc4933c7b1",
+      "bytes": 20560
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_expert_e1.py",
+      "sha256": "976d703295f2c383e21f6da8dadc9d3b139dd333f41146d2eb976edf8b3f79f4",
+      "bytes": 231131
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_grm_output_eval.py",
+      "sha256": "5aadf91cd0b4fb3f19d868b24ac4956d067cac5acda65c35cc2722d57957ee02",
+      "bytes": 12065
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_key_refinement.py",
+      "sha256": "bbec07d76c42ddab89817172c811200e7a1addf7970a7c749d8890b48c8df562",
+      "bytes": 72907
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_layer_smoke.py",
+      "sha256": "d1d3126db3f106bf6d3145d6c60305c030bb4ad4742b2496071fbbd0dbdc60aa",
+      "bytes": 4602
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_moe_diag_smoke.py",
+      "sha256": "a624a00960d6d587f060ab7df4f2a710f97c193b7d52dbe42876e7f1cc361243",
+      "bytes": 6332
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_multifact_addressing_gate.py",
+      "sha256": "9f0bb3339b47d1e7fb1bf78031798234857c27d881c655480f81f58def5a34b8",
+      "bytes": 20032
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_multifact_graft_gate.py",
+      "sha256": "fb26909b1622f4ee3e5c00e5ca4a9212544d6a189cc47936310ff5f90672b017",
+      "bytes": 19711
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_preference_graft_gate.py",
+      "sha256": "2a1143d8c96a6f430781f37f65786604ffe19a1c169e7d6cd7352f14465384be",
+      "bytes": 14058
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_realtext_ppl_gate.py",
+      "sha256": "019bd3b98a71859715c41fb733f0f0bc153562d9780dadeac6180c87535dda7e",
+      "bytes": 11852
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_repetition_drift_gate.py",
+      "sha256": "ee3a6b494ef87b847064f0cd85e88b076f130f1d82c35e0b5f3eafaa1f798157",
+      "bytes": 11462
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_router_telemetry.py",
+      "sha256": "e1c35332e1e6bd0911c0402af5eeb3e9309107138a3c78ed445dff4490bfb64e",
+      "bytes": 66895
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_stream_forward_smoke.py",
+      "sha256": "c9fc9ee2e67f00fc033f87784d231640b538a3f83ff47f4678d121ad1dca22a5",
+      "bytes": 27329
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_stream_greedy_smoke.py",
+      "sha256": "498646bd81141b07431828b23d95c51d2b894bf5b192c3458ea6ebfa500f7f40",
+      "bytes": 7684
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_supersession_graft_gate.py",
+      "sha256": "2f105cb1a535b2a830810822b59571d2c31cc03e60711ef21296f84ae793cea4",
+      "bytes": 16480
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_synthetic_key.py",
+      "sha256": "a43e9cdac078ab1948809fb9a54a653ea63e0befabea142463c470321e1e7057",
+      "bytes": 101820
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss20b_turn_prompt_sweep.py",
+      "sha256": "923d7245a996e5359949da1393c6800f317f902f7ee741a8bb8ed010a9194ee0",
+      "bytes": 9685
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss_20b_ollama_smoke.py",
+      "sha256": "8349864f92a765d3f64bc121a341c4ccefb3b955c3c88d8529bf1706ce419587",
+      "bytes": 7440
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/gpt_oss_20b_phase0_snapshot.py",
+      "sha256": "43f3c7f19def4310192ccbd576be0cff3d2522e8189d46c823249d264f2b7c20",
+      "bytes": 11283
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm3p_contam_analyze.py",
+      "sha256": "a5b0d895a6f55d45da2b33e3f08036b0b460341e18f9552db186afeeff2c7e51",
+      "bytes": 22223
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_adm1_3_dual_frame.py",
+      "sha256": "4391c2f13c43a18740cfc188536c279131d5d1d34233893789f1e366c3416d7c",
+      "bytes": 65385
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_adm1_3_prod_e2e.py",
+      "sha256": "182f29a52820b1c33dedccde9cf5bf8031241e8a5fc11503bddc6f5c73300987",
+      "bytes": 12289
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_adm1_analysis.py",
+      "sha256": "0c2933b74206b80e0d621ea7c638a2505bf08786f66c6195324d41f6f1378084",
+      "bytes": 45914
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_adm1_e2e.py",
+      "sha256": "8e3197e9657391ef65acbe5c2758e3e797954a9b2dfe5c88a276164c73e3171e",
+      "bytes": 10275
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_adm1_gpu.py",
+      "sha256": "61e1eac6c0f4c59d3a5e07ad086e0902146038499003d128c92094c86383155a",
+      "bytes": 38677
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_adm1_probe_adjudication.py",
+      "sha256": "e8931bc8800588d4e3e8a002d0bb871060b28b78b10b4befa5f7021da928fe69",
+      "bytes": 22074
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_adm2_default_on_gate.py",
+      "sha256": "eb4484e45f3653a5f6c15daec9a4424d2fa961633981af7fe3628d5e99c55e7e",
+      "bytes": 39972
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_c3.py",
+      "sha256": "d49e7c99f9349dbd448b3dc7519f20c245609d43d6120c04a5ed83b78e20b522",
+      "bytes": 24039
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_c3_register.py",
+      "sha256": "8ddecfdc67d88a62d0520acebe113d9ac5baf88b189cff18e1dde81194acf365",
+      "bytes": 8143
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_cmc1_gpu_arms.py",
+      "sha256": "663760d175bb35ed6c4df2b252bf909bcf52577f3ad5eb1c518167b6bb5e39ba",
+      "bytes": 43748
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_cmc1_gpu_gate.py",
+      "sha256": "8a84f86e5a30b0258efcb2d03fc1b979995d92fe36c2cfbe1b525dab083c86d1",
+      "bytes": 16109
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_cmc1_mechanism.py",
+      "sha256": "cef3a4bc9d8b5ca6d5951e5bdfcff048533914fee2e63e91afbcfc70058573c5",
+      "bytes": 31767
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_cmc1_preflight.py",
+      "sha256": "86ea546bce3732e6a55e4e1f298d2382194ba756fde57dc15dc8232b8526f071",
+      "bytes": 13082
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_cmc2_depth_sweep.py",
+      "sha256": "9e076b0c9fb7082adcedfbf237a55bc096fe51af58e021c250f2e2aed67ddeed",
+      "bytes": 29605
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_cmc2_gpu_sweep.py",
+      "sha256": "929a3f940d7d4f3a7493968fb859a746228111ac8fb1d4258628493a6a3f3c58",
+      "bytes": 24647
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_11_census.py",
+      "sha256": "b5f88597f031903d7c3a68a38131fb1a8466d32b2f183aedaf81b6df9ccb90d6",
+      "bytes": 28159
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_2_gpu.py",
+      "sha256": "a0be3e62133aae30cf233c57948e6d8af66b2319d50bae0e3222e86e00cc8e2f",
+      "bytes": 50730
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_3_gpu.py",
+      "sha256": "fef8442aa9cb17e194982b92ae53d8d4f2a7a65fd100ed28bdc8a7da7e29c58f",
+      "bytes": 52144
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_3_snapshot.py",
+      "sha256": "1da5c10d1ff658f3f09f6649ab0dc849f182c171d045bfea149f440ab4f2035b",
+      "bytes": 120743
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_4_gpu.py",
+      "sha256": "6f5c5dc9502912f48e4247118e9110eca75076c6b4e7dbc94eb49e3966929cc0",
+      "bytes": 43888
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_5_analyze.py",
+      "sha256": "253c7ed9c39dabeae84ea28da0f19b50a56edf191da6836d11935a1355583259",
+      "bytes": 115370
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_5_gpu.py",
+      "sha256": "d1ade7d4029b1717471822bd7c74e9c32b87026c93668a0aa500a8d75f14ad52",
+      "bytes": 226864
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_5_workers.py",
+      "sha256": "9f27b116b16a6b8ff0719f2444877ddd6db757bf18cded2a2ffe801d3f04f682",
+      "bytes": 45359
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_7_registry.py",
+      "sha256": "c042b14e726458613b459d967b958e221da6609b75c0069b3a9629606930633e",
+      "bytes": 67195
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_7_source_auth.py",
+      "sha256": "2b85d7a5489b5895de6c2724118b7e99f7d02c41da12d07d6f975e632f201eb9",
+      "bytes": 24827
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_8_source_auth.py",
+      "sha256": "faab7798dfbb1aa7d8b046a1f967dc7e3eb3ec5a808f7506d222fe4f9f6c1498",
+      "bytes": 22905
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_9_findings.py",
+      "sha256": "39a5b6d5b3b66b0872af66abec2323e0428da03745af94f37d6ac3bdde272162",
+      "bytes": 31342
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_9_source_auth.py",
+      "sha256": "01c4511c354fe0e6a6160ef0b34ec9e7458b5f0edbdafdf61b952ba62a9c26a4",
+      "bytes": 24580
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_analyze.py",
+      "sha256": "3c873355f391a6291b9c40c5c55b2c39bef0615e7425b21549ade861e22ee1cf",
+      "bytes": 29141
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_baseline_registry.py",
+      "sha256": "d89f5bd81aec2dda291edb5f8320cf031f35488abb2d3218a896bf0d204a0524",
+      "bytes": 30991
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_common.py",
+      "sha256": "f13f44cfa6f87dc57cec4ae9bf7fe509a6fbd0be983746202ad64da18a4d8343",
+      "bytes": 41298
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_e2e.py",
+      "sha256": "21035fb2cb96707207143b45015d7b0fa78e6ad1127c9344ab9908f5568ed734",
+      "bytes": 40225
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_gpu.py",
+      "sha256": "ca1b051760885f64eea53b7039c54575e670c1174d6aa387817586fe3998bdeb",
+      "bytes": 66360
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_det1_register.py",
+      "sha256": "e7161f826a57abd08e75b0ed7839b240ca60a954bda9129e1aa8e47deec16b61",
+      "bytes": 14984
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_e2e_session.py",
+      "sha256": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450",
+      "bytes": 139819
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_eb1_longhorizon_gpu.py",
+      "sha256": "8814c4502764303aea66ab647711771cebd6373a83193478ea018ea9ec00a3cc",
+      "bytes": 20110
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_gqa_cuda_bridge_profile.py",
+      "sha256": "7ddc673bb5247a4821eb0ff0d7cb0acff402be1c186fe33d20fb0431305e50ac",
+      "bytes": 9958
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_gqa_cuda_bridge_smoke.py",
+      "sha256": "7cc7ef98fc61f31b76ab882c5078f0a83d10de7263d7f48e5be010afab36f6eb",
+      "bytes": 9864
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_gqa_cuda_device_entry_parity.py",
+      "sha256": "9b1de16e56221657a2f771ee4cec070e76f72e478cba5454200f7d65449e974e",
+      "bytes": 4873
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_gqa_cuda_probe.py",
+      "sha256": "ea7a9d529279073460f66f1da96c0db1633a15ecd79127555ae09dfb39f7c272",
+      "bytes": 37428
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_gqa_exact_ragged_cuda_gate.py",
+      "sha256": "68595438a95cf73609b28d2f5ba971d4743ddb6574e820282a137c88a48d797f",
+      "bytes": 23773
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_gqa_layer_sweep.py",
+      "sha256": "d6c7ce4a7a2363ff0ecb39d7271cf61b3b76c096bd34f02e737487ff72761065",
+      "bytes": 8833
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_gqa_router_benchmark.py",
+      "sha256": "b4531fcb0649b8657eae51bbac0eace8173263bab543ad85ed6e651a00555797",
+      "bytes": 36713
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_graft_quant_p3_mount_speed_receipt.py",
+      "sha256": "ab238a064ccb9012fc276a2e798a9e659596521a3c11aabcbca0abb12757382f",
+      "bytes": 2437
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_graft_quant_p3_recall_receipt.py",
+      "sha256": "0e0685211804eb19a93516461ab4994d03307d965fc694c203d7ff28ea0998d6",
+      "bytes": 3112
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_graft_quant_p3_roundtrip_receipt.py",
+      "sha256": "ad933d1ff58492fb01a6ce67c818f065a3046d103928a441346fd0978466d4c6",
+      "bytes": 3469
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_graft_quant_pack_dir.py",
+      "sha256": "eb0bea8025c7276f52c45393c262b20debf3d64e41eced0ab1f8d224579e3764",
+      "bytes": 5002
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_graft_quant_sweep.py",
+      "sha256": "68ab65f1faa2024713db86f3af4d5d5593edbcc4e11dbbf6312036ba90f19bb7",
+      "bytes": 15000
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_graft_quant_transform.py",
+      "sha256": "ef3711e15f434f69c7434b955140b4461551df3987244498d2c263f37a5df78e",
+      "bytes": 11024
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_importance_diagnostics.py",
+      "sha256": "bdbc7c7837576d6fc5e74b138e8cf52db6434339bc0a04dca215361b0125845e",
+      "bytes": 17944
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_lsr_p2c_1_census.py",
+      "sha256": "823a45432d93ba744347098a4619f7cb2653b9b008ab1b058fb852e5969261e8",
+      "bytes": 37928
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_lsr_p2c_1_gpu.py",
+      "sha256": "5c901bed496156202ca733e36190766aeac3cbf2cdd4f2b9112a5fc4407ebf98",
+      "bytes": 42422
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_mla_cuda_device_entry_parity.py",
+      "sha256": "3df43b7d37a3d6de5016986cb02c8102f06841a93c102b2aa692c34aa4165fda",
+      "bytes": 3843
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_mla_cuda_probe.py",
+      "sha256": "0e62b3c1c299fa48c6e945cf5959af20bc4c4f2581fb0800196b82137cfaf1c9",
+      "bytes": 30721
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_mla_cuda_route_gate.py",
+      "sha256": "5902b154f790a93e7721a22379a06470685a63c7136eac54c74654894e89ece4",
+      "bytes": 10600
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_mla_route_profile.py",
+      "sha256": "3628f192e046c3243486a114cbf8dc7e10fb0f7088822b2c2c12f2545190a3b6",
+      "bytes": 16399
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_mla_route_wall_curve.py",
+      "sha256": "3a634955d78b8dbe43201047935eb6cfea53b6211073ae20c0bfd97a1e5db58f",
+      "bytes": 6183
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_probe_ladder.py",
+      "sha256": "d1ad0ad74ba522b96c39c634c86ba3292b887af39321f7fc105a62f82fa26d0d",
+      "bytes": 4433
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_router_baseline.py",
+      "sha256": "e76637b72e7539081084602d69158c7b91c2b625a0335dcf9dca8f13e54e1a5d",
+      "bytes": 22508
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_router_tsan_gate.py",
+      "sha256": "61ca289362b42d5147734dbd86fb5df340c8e583c14198dcfcd2c9cdd68459dc",
+      "bytes": 10385
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs1_amendment.py",
+      "sha256": "50ad868089407559859555a191c49705078339e52693b33a1226a32649de72c6",
+      "bytes": 11471
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs1_read_strength_gpu.py",
+      "sha256": "dde95a2dc46683def3e13aeee439b6eb6f552a6325318e7365c0c656da05b284",
+      "bytes": 51278
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs1_registration.py",
+      "sha256": "765bfb769fb78583b7ab6e2ffa47f6ac3eabc5ac5e939f0f59dfdc5e2c73e3af",
+      "bytes": 17290
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs1_results.py",
+      "sha256": "8ccc2e1a192847071c376e5a811ebb7a5aee41bc6d123608ffe4da3b98a61e46",
+      "bytes": 13179
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs2_amendment.py",
+      "sha256": "be8575889c2c0b268d3fa2f53257312deab303b84e5dc5da586ebc3c13ec0eef",
+      "bytes": 13102
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs2_mount_read_gpu.py",
+      "sha256": "96c7efe99adf0ced6387b7697cd3a79ba0f7a1a50162dee86ae97d3fc3eb7bcb",
+      "bytes": 73824
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs2_registration.py",
+      "sha256": "b15d9c8b167b2ed151881bd79abbf7675e8bbe665c76e199af94d01360c69488",
+      "bytes": 37061
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs2_results.py",
+      "sha256": "d48a22a3f64ea6588b58bd57742e7d5bc25835162b4a3c397615328e0a98b8ff",
+      "bytes": 25530
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs3_capture_seat_gpu.py",
+      "sha256": "231b7b79424f9a1cd18ccffb328377ebf3667ab540279e9a473a8af6aefcda80",
+      "bytes": 38391
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs3_part4.py",
+      "sha256": "ad6d7f6731fc9f48bd0ebf484d279df2dc7bdbf79f213710dbd37051e32b3ea9",
+      "bytes": 15087
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs3_registration.py",
+      "sha256": "225cc4cd3aa82361c7cef85673143885d6e929121e6a924941a7a79539f5c5ee",
+      "bytes": 30806
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs3_results.py",
+      "sha256": "957d54216654b388331739717dd3aede5f9edd6afbf72cd9cb9535e593e7de69",
+      "bytes": 21735
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs4_ceiling_gpu.py",
+      "sha256": "7009821ad8caaa3357ca0c7316cf25dfe08a83f94c797a36e8036bde18fd547d",
+      "bytes": 56729
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs4_registration.py",
+      "sha256": "ba6882075e3572a0cf998c40cf0bb524cf9bd5df3f9695e60060893f7a6b3487",
+      "bytes": 27747
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs4_results.py",
+      "sha256": "911750227e096848a277fd7916ff4b2be7601325d87d3b7681a74136ff5c70c1",
+      "bytes": 20392
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rs4_row_split.py",
+      "sha256": "4c7d2a1dbf852f638d64c7c01adf9e75edc32577dc26ff26b535682a06f2f590",
+      "bytes": 11223
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rt1_diagnose.py",
+      "sha256": "9c4d5d7b9444ef11a9a163c33e050606b3c5c7ed5ce6edd56da42085405fc9aa",
+      "bytes": 12931
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_rt1_g2_table.py",
+      "sha256": "492464fca9617bdae40fae40a3bae8f8f779606028e819d9a3a84e7aa60dbc78",
+      "bytes": 10012
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_sc1_2_e2e_recovery_gpu.py",
+      "sha256": "fd274050bbebf836950f1bf057477f52b803f5239c589bc70c8d6aa4e220b5f8",
+      "bytes": 41407
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_sc1_2_pytest_shard.py",
+      "sha256": "300865c64b8d32494728749aabb0363b1d9388c40221f920680e7fae47481717",
+      "bytes": 2982
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_sc1_2_session.py",
+      "sha256": "9480f6c0f2540426020a1510dc0436bfffc1102f3593369a729502566086bbc9",
+      "bytes": 36287
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_sc1_bit_identity_gpu.py",
+      "sha256": "8176617065b8dac8a2c28ee2f4c022a1560d49748fa591aa173a5104c35753cd",
+      "bytes": 12390
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_sc1_lived_battery_gpu.py",
+      "sha256": "499153d9d09dc3f04b612177f7a29a487fefb8e057929961b8615d4f46c45a3d",
+      "bytes": 17111
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_sc1_overhead_gpu.py",
+      "sha256": "3580c8b32868b5d4e0d1b34c239afa5cc0d95fba7a86059521830fa263f0352d",
+      "bytes": 11593
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_sc1_recovery_gpu.py",
+      "sha256": "8519d45bc8333754463ea69e4313aad259b5f236b13991d6541744a019debb49",
+      "bytes": 45470
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_sc2_calibration.py",
+      "sha256": "da86fa02245d9a05677b006c778ee5b24371bb5aec53fc2ff80dfedac75cb3e5",
+      "bytes": 36696
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_sc2_e2e_abort_gpu.py",
+      "sha256": "bfb6c61e2334e1999ec7149ebcea81f2885512c9decdd8ba802e5580bb78bc60",
+      "bytes": 33054
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_sc2_results.py",
+      "sha256": "e0e8b3dc2538d21b9d7f9e8a360130e64f12c632a3dea66bf27ce09115abbd2b",
+      "bytes": 10195
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_sup_l2_default_on_gate.py",
+      "sha256": "132937757ad06ef80894242ce5d76d868f4ded1d0a5a798683d0248fdb577dc8",
+      "bytes": 17812
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_three_pass_gate.py",
+      "sha256": "1951f3e8ab8c5a3405a8df904065532561c311f16434dbe47461f89f113124fe",
+      "bytes": 10867
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_three_pass_p2_gate.py",
+      "sha256": "27503575085df3d33e2527de0d70f7d8ec368a45ad7693ca3d876215fec1e7ac",
+      "bytes": 12274
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_three_pass_p4_gate.py",
+      "sha256": "6b96cac186034fda1a89c27ce4a76a2f33967e068ebbb5c5a2c1a3b4a2aef8ce",
+      "bytes": 9087
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_wc1_amend.py",
+      "sha256": "d3cb151d0130c7afd3848e15f298e03e4853bb01504494aea9ec759231f6eda2",
+      "bytes": 5826
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_wc1_common.py",
+      "sha256": "0666eefc45e483f39e0d3a07301eac60dd8e11a5e57098bca98ca32a4a26695d",
+      "bytes": 14836
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_wc1_g1_pytest.py",
+      "sha256": "fce3005adbec478e5499eaaa94cfdd2030bdabc165e05e253cc6b7f907372c28",
+      "bytes": 11771
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_wc1_g2_reproduction.py",
+      "sha256": "37a18026003e015c458e047c63bb763c8312f6e2d706cb9323fd235fe1cbf0de",
+      "bytes": 9070
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_wc1_registration.py",
+      "sha256": "c54cc33bcbf8e8d2a29bfacdce7e041b0789d94dcf7864d6a641b32c2cec1358",
+      "bytes": 12259
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_wc1_results.py",
+      "sha256": "9c1e3650977857d47bb8fd20613219d562372ee5e510ffd9bb38843ef9e97980",
+      "bytes": 17655
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/grm_wc1_sweep_gpu.py",
+      "sha256": "9dcdba3f65b295dc237fb8b88989453b815b649c1ba912c0d8767fb01ea3757a",
+      "bytes": 22122
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/lsr_p0_core.py",
+      "sha256": "dafdc400f8fb4f8852658283d5c18c37d9bfa21d872c06eefae30aad39bbd017",
+      "bytes": 60594
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/lsr_p0_gpu.py",
+      "sha256": "0f60a715af808452a9b112b460ea340ef3a0a1199862854e3b67220ef0a6c02c",
+      "bytes": 50084
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/lsr_p0_survey.py",
+      "sha256": "e5689ccb81cee10fbb0717257d2796e64953215f99f661f1e2904799e2c25335",
+      "bytes": 14009
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/lsr_p1_adjudicate.py",
+      "sha256": "cfd9e17bd0471d00b2b59cf2c478d5b5ee56b36dd2a719abff5ca0136c53bc4d",
+      "bytes": 22501
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/lsr_p1_harvest.py",
+      "sha256": "23d2a94a405947fba9baa5ccdac11ff7155a036cc9d25b91a37768331579f889",
+      "bytes": 5232
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/lsr_p1_reconcile.py",
+      "sha256": "8c3ce5b0a0021981a4192ccb8885d3a2778fb9b648e062581b4ab319a3dd9f24",
+      "bytes": 15485
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/lsr_p1_route_probe.py",
+      "sha256": "be2c48a988821fc34c968ffe4ab41b99bef5c52c1b7af5de4394a6e580178c95",
+      "bytes": 35772
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/lsr_p1_stage_replay.py",
+      "sha256": "684697b16055659a5a616c006cf7a70de1360261db4f2df5520ce56e629ba6b2",
+      "bytes": 11785
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/lsr_p2a_replay_gpu.py",
+      "sha256": "f59c6e937721a520b46554b3315f8c7f67315e7ad5e21b1860d8582b8d0b4631",
+      "bytes": 16124
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/lsr_p2b_g2_replay.py",
+      "sha256": "cbbd51d4ac9dc2a524247543c3545c862756db47650826b265358d6b2560f5a6",
+      "bytes": 10585
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/lsr_p2b_route_receipt_dump.py",
+      "sha256": "761a0d4e5cdb513f9ce6320b1c27b780ec27b9140a01c19744be6d7bcc6280c4",
+      "bytes": 9137
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/lsr_p2c_e2e_gpu.py",
+      "sha256": "631d838603168026b29f0b6241417ec6b20446da47978a2b82f21e699243f7c4",
+      "bytes": 16900
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/lsr_p2c_replay_gpu.py",
+      "sha256": "833d3f520f6ad17925b7371407032a792a60176d86445117627e44fddaa6b617",
+      "bytes": 27681
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/olmoe_e2_experiment.py",
+      "sha256": "d7aedec3a62ba50fab404d571496c397467ad4a6e05e6d780f75e3a37deb5448",
+      "bytes": 291147
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/olmoe_e3_1_episode_key.py",
+      "sha256": "e1438e8f008cdee7cdc7bbe699dce3600fcab53a8462c60a4127185bfd5048e7",
+      "bytes": 58851
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/olmoe_e3_experiment.py",
+      "sha256": "f69a44162bf49e5ea97b8237db8f964fee78a6e46a0eb69a263fee682f226662",
+      "bytes": 158076
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/olmoe_e4_experiment.py",
+      "sha256": "83c869efb94980ce744d38e7e00080ee8b10b7c139b42c84bc902f18e57d7cc4",
+      "bytes": 144442
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/qwen35_document_graft_recall_gate.py",
+      "sha256": "fd55157e855df21c7d21e861be1dd9118acb340f623fa9996f57ec5bca3ecab4",
+      "bytes": 12166
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/qwen35_generate.py",
+      "sha256": "3306f64bdf7f966be70e20a110642219366798559869f3329a38f1eeca75a6ed",
+      "bytes": 4367
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/qwen35_graft_translate_poc.py",
+      "sha256": "e1d9614fadb9c7dcfcc64a2621caceceeaa35141b9943b4f45763c19209a7227",
+      "bytes": 357
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/qwen35_graph_parity.py",
+      "sha256": "a305f13e4453f7cd0285fd29140f73b247cfc35d7856d0753f253d868f5290d8",
+      "bytes": 3162
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/qwen35_intn_usability_gate.py",
+      "sha256": "80dc52d82dcbf322a89e2332e01052a66258edbf5cc1808a707bec7731091286",
+      "bytes": 10786
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/qwen35_intn_weight_ppl_sweep.py",
+      "sha256": "3d3610d723654b3d114bc5263793cfa3cd945d321543ed852921075033f09521",
+      "bytes": 10095
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/qwen35_server.py",
+      "sha256": "6727c5ea18888a6f8143083d64c545071d239ece4bfbf6e6a8b7755314d3f4af",
+      "bytes": 7558
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/qwen38_gates.py",
+      "sha256": "b28d7cad4c578f4c80ea094b35a44b4bb94cc6f2c9141d7d0a9034ae6a23f288",
+      "bytes": 19196
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/qwen38_generate.py",
+      "sha256": "6e24af08bc372ff7913245963acf3d4f8eeeb2c0aff8421fa43d0a472c2eeb95",
+      "bytes": 15175
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/qwen38_longctx_gate.py",
+      "sha256": "893b69b819983a836b9a8b4cfc6ba481c082f4b1a488fc97cec1e79ec640f2c2",
+      "bytes": 19084
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/trinity_nope_graft_width_sweep.py",
+      "sha256": "920a861cf43096a16c6817eaeef6811ecebcc3f0e1bf77ed20fb19a689b56951",
+      "bytes": 48615
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/trinity_t1_floor_reverb.py",
+      "sha256": "62fcdd3dbcd7ec276535d2f5dc719c1885ff89e9f3a6410238eb719deb8b4f55",
+      "bytes": 64497
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/scripts/trinity_t1_natural_absolute.py",
+      "sha256": "09eb86ac55b66df177b056049ffb31f44ac4fc91da6f6ce2513e5cd6f075cb82",
+      "bytes": 31008
+    },
+    {
+      "path": "/mnt/ForgeRealm/wt/grm-c3/tests/test_grm_c3.py",
+      "sha256": "a9b1c7fe42bb4f4a605a9fe6109658d674d90963e48d815c273be21b0f5b349d",
+      "bytes": 7456
+    }
+  ],
+  "python": "/usr/bin/python",
+  "python_version": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+  "environment": {
+    "GRM_DEMAND_NGH": "0",
+    "GRM_DEMAND_EARLY_ABORT": "0",
+    "GRM_PERSISTENT_BOAT": "0",
+    "GRM_CAPTURE_PIN": "off",
+    "GRM_SEAT_NEAR_LIVE": "0",
+    "GRM_ADM_DECISIVE": "1",
+    "GRM_LSR_FIXES": "1",
+    "GRM_RT1_RULE": "1",
+    "CUDA_VISIBLE_DEVICES": "0"
+  },
+  "evidence_class": "source and model byte inventory"
+}

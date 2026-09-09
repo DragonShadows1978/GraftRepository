@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-c3
+export PYTHONDONTWRITEBYTECODE=1
+# Prior art: DET1 leased-cell discipline (GraftRepository contributors, 2026); POSIX flock and GNU timeout. New C3 wrapper; no runtime defaults changed.
+# No GPU command has been run by this seat. Each command below remains foreground.
+# CPU/source prerequisites. These are read-only repetitions, not registration rewrites.
+sha256sum -c artifacts/grm_c3/registration.sha256
+CUDA_VISIBLE_DEVICES='' python -m pytest -q -p no:cacheprovider tests/test_grm_c3.py
+python -c 'from scripts.grm_c3 import check_pins,PINS; print(check_pins(PINS))'
+python scripts/grm_c3.py --dry-run
+# Each cell: automatic 30s foreground cooldown BEFORE flock, immediate busy-lock failure,
+# four fresh child processes sharing ONE 225s GPU deadline. Outer watchdog 590s.
+# Stop on any failure. NON_FIT is terminal; never retry or extend a started cell.
+# A busy lock before .started.json is not a GPU attempt. Never remove/clear the lock.
+# trace_01: c3_01_correct, c3_01_decoy, c3_01_unavailable, c3_01_weak; estimate 200s, cap 225s.
+timeout --foreground --signal=TERM 590s python scripts/grm_c3.py --run-cell trace_01
+# trace_02: c3_02_decoy, c3_02_unavailable, c3_02_weak, c3_02_correct; estimate 200s, cap 225s.
+timeout --foreground --signal=TERM 590s python scripts/grm_c3.py --run-cell trace_02
+# trace_03: c3_03_unavailable, c3_03_weak, c3_03_correct, c3_03_decoy; estimate 200s, cap 225s.
+timeout --foreground --signal=TERM 590s python scripts/grm_c3.py --run-cell trace_03
+# trace_04: c3_04_weak, c3_04_correct, c3_04_decoy, c3_04_unavailable; estimate 200s, cap 225s.
+timeout --foreground --signal=TERM 590s python scripts/grm_c3.py --run-cell trace_04
+# trace_05: c3_05_correct, c3_05_decoy, c3_05_unavailable, c3_05_weak; estimate 200s, cap 225s.
+timeout --foreground --signal=TERM 590s python scripts/grm_c3.py --run-cell trace_05
+# trace_06: c3_06_decoy, c3_06_unavailable, c3_06_weak, c3_06_correct; estimate 200s, cap 225s.
+timeout --foreground --signal=TERM 590s python scripts/grm_c3.py --run-cell trace_06
+# trace_07: c3_07_unavailable, c3_07_weak, c3_07_correct, c3_07_decoy; estimate 200s, cap 225s.
+timeout --foreground --signal=TERM 590s python scripts/grm_c3.py --run-cell trace_07
+# trace_08: c3_08_weak, c3_08_correct, c3_08_decoy, c3_08_unavailable; estimate 200s, cap 225s.
+timeout --foreground --signal=TERM 590s python scripts/grm_c3.py --run-cell trace_08
+# trace_09: c3_09_correct, c3_09_decoy, c3_09_unavailable, c3_09_weak; estimate 200s, cap 225s.
+timeout --foreground --signal=TERM 590s python scripts/grm_c3.py --run-cell trace_09
+# trace_10: c3_10_decoy, c3_10_unavailable, c3_10_weak, c3_10_correct; estimate 200s, cap 225s.
+timeout --foreground --signal=TERM 590s python scripts/grm_c3.py --run-cell trace_10
+# trace_11: c3_11_unavailable, c3_11_weak, c3_11_correct, c3_11_decoy; estimate 200s, cap 225s.
+timeout --foreground --signal=TERM 590s python scripts/grm_c3.py --run-cell trace_11
+# trace_12: c3_12_weak, c3_12_correct, c3_12_decoy, c3_12_unavailable; estimate 200s, cap 225s.
+timeout --foreground --signal=TERM 590s python scripts/grm_c3.py --run-cell trace_12
+# CPU evaluation requires all 12 complete, SHA-bound cells and exactly 48 unique traces.
+python scripts/grm_c3.py --evaluate
+# Outputs: artifacts/grm_c3/evaluation.json and measured_report.md.
+# Do not rerun this command file after any cell started. Resume only the NEXT unstarted
+# cell after COMPLETE predecessors; a RED or NON_FIT predecessor forbids continuation.

@@ -1,0 +1,1430 @@
+{
+  "schema": "grm.c3.registration.v1",
+  "order": "orders/GRM_C3_DNGH_DECOY_CALIBRATION.md",
+  "order_sha256": "301054d96220dafd4d40b3d38ce985045c507c74c7e566e1254d8c751fe6214b",
+  "cases": [
+    {
+      "id": "c3_01_correct",
+      "class": "correct",
+      "entity": "Averin observatory",
+      "question": "What is the Averin observatory beacon color? Reply with only the value.",
+      "oracle_fact": "The Averin observatory beacon color is vermilion.",
+      "expected_values": [
+        "vermilion"
+      ],
+      "wrong_fact_values": [
+        "turquoise"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_01_correct_node",
+          "text": "User: Remember this record.\nAssistant: The Averin observatory beacon color is vermilion.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_01_correct_node"
+      ],
+      "weakness_target": null,
+      "sha256": "af9197466b7767d2947f3e6262e72730a744f426a0185bdd6a326067b19f1530"
+    },
+    {
+      "id": "c3_01_decoy",
+      "class": "decoy",
+      "entity": "Averin relay",
+      "question": "What is the Averin relay beacon color? Reply with only the value.",
+      "oracle_fact": "The Averin relay beacon color is vermilion.",
+      "expected_values": [
+        "vermilion"
+      ],
+      "wrong_fact_values": [
+        "turquoise"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_01_decoy_node",
+          "text": "User: Remember this record.\nAssistant: The Averin relay training beacon color is turquoise.",
+          "supersedes": [],
+          "role": "decoy"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_01_decoy_node"
+      ],
+      "weakness_target": null,
+      "sha256": "1949fc34d0f245c76bd7b0dd84703a0e0cac9ae7e01b0b93bc9d8cfae3f6e7f8"
+    },
+    {
+      "id": "c3_01_unavailable",
+      "class": "unavailable",
+      "entity": "Averin archive",
+      "question": "What is the Averin archive beacon color? Reply with only the value.",
+      "oracle_fact": "The Averin archive beacon color is vermilion.",
+      "expected_values": [
+        "vermilion"
+      ],
+      "wrong_fact_values": [
+        "turquoise"
+      ],
+      "stale_values": [],
+      "nodes": [],
+      "mount_node_ids": [],
+      "weakness_target": null,
+      "sha256": "669d63dd45cad782f70ad76186e455f6840ee00de8a602880bc76e060bff3912"
+    },
+    {
+      "id": "c3_01_weak",
+      "class": "weak",
+      "entity": "Averin annex",
+      "question": "What is the Averin annex access number? Reply with only the value.",
+      "oracle_fact": "The Averin annex access number is 482-17-936.",
+      "expected_values": [
+        "482-17-936"
+      ],
+      "wrong_fact_values": [
+        "999-88-777"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_01_weak_node",
+          "text": "User: Remember this record.\nAssistant: The Averin annex access number is 482-17-936.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_01_weak_node"
+      ],
+      "weakness_target": "separator_number",
+      "sha256": "59ae5fb6666052ce67efc18da99701126cf337337bd19dc454692be8a9d2fa94"
+    },
+    {
+      "id": "c3_02_correct",
+      "class": "correct",
+      "entity": "Belora observatory",
+      "question": "What is the Belora observatory cabinet material? Reply with only the value.",
+      "oracle_fact": "The Belora observatory cabinet material is titanium.",
+      "expected_values": [
+        "titanium"
+      ],
+      "wrong_fact_values": [
+        "aluminum"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_02_correct_node",
+          "text": "User: Remember this record.\nAssistant: The Belora observatory cabinet material is titanium.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_02_correct_node"
+      ],
+      "weakness_target": null,
+      "sha256": "6dc26e0f6933f19814974d62aa3b906a74ebf1e2901fe90fcc70c18e82db66ba"
+    },
+    {
+      "id": "c3_02_decoy",
+      "class": "decoy",
+      "entity": "Belora relay",
+      "question": "What is the Belora relay cabinet material? Reply with only the value.",
+      "oracle_fact": "The Belora relay cabinet material is titanium.",
+      "expected_values": [
+        "titanium"
+      ],
+      "wrong_fact_values": [
+        "aluminum"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_02_decoy_node",
+          "text": "User: Remember this record.\nAssistant: The Belora relay training cabinet material is aluminum.",
+          "supersedes": [],
+          "role": "decoy"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_02_decoy_node"
+      ],
+      "weakness_target": null,
+      "sha256": "7ae60154c81029472176e05eb772de0292ab73dab9f8bb6973dfa9bbdca5b19a"
+    },
+    {
+      "id": "c3_02_unavailable",
+      "class": "unavailable",
+      "entity": "Belora archive",
+      "question": "What is the Belora archive cabinet material? Reply with only the value.",
+      "oracle_fact": "The Belora archive cabinet material is titanium.",
+      "expected_values": [
+        "titanium"
+      ],
+      "wrong_fact_values": [
+        "aluminum"
+      ],
+      "stale_values": [],
+      "nodes": [],
+      "mount_node_ids": [],
+      "weakness_target": null,
+      "sha256": "b8828a09911356ff2a380b6d173d0e3df4c03033110bef154bf3efcede2b02c4"
+    },
+    {
+      "id": "c3_02_weak",
+      "class": "weak",
+      "entity": "Belora annex",
+      "question": "What is the Belora annex custodian name? Reply with only the value.",
+      "oracle_fact": "The Belora annex custodian name is Neravel.",
+      "expected_values": [
+        "Neravel"
+      ],
+      "wrong_fact_values": [
+        "Talomer"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_02_weak_node",
+          "text": "User: Remember this record.\nAssistant: The Belora annex custodian name is Neravel.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_02_weak_node"
+      ],
+      "weakness_target": "proper_name",
+      "sha256": "2bb518198fbb13f4ddb2f22ffa020bfea61eea1c89eeb4c01632260d709c7f69"
+    },
+    {
+      "id": "c3_03_correct",
+      "class": "correct",
+      "entity": "Cadrin observatory",
+      "question": "What is the Cadrin observatory signal shape? Reply with only the value.",
+      "oracle_fact": "The Cadrin observatory signal shape is hexagon.",
+      "expected_values": [
+        "hexagon"
+      ],
+      "wrong_fact_values": [
+        "pentagon"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_03_correct_node",
+          "text": "User: Remember this record.\nAssistant: The Cadrin observatory signal shape is hexagon.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_03_correct_node"
+      ],
+      "weakness_target": null,
+      "sha256": "bc9a183272dd847d8921aa7a1fb545daad3c3fc85e8a4c726eff0cbf985a47d7"
+    },
+    {
+      "id": "c3_03_decoy",
+      "class": "decoy",
+      "entity": "Cadrin relay",
+      "question": "What is the Cadrin relay signal shape? Reply with only the value.",
+      "oracle_fact": "The Cadrin relay signal shape is hexagon.",
+      "expected_values": [
+        "hexagon"
+      ],
+      "wrong_fact_values": [
+        "pentagon"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_03_decoy_node",
+          "text": "User: Remember this record.\nAssistant: The Cadrin relay training signal shape is pentagon.",
+          "supersedes": [],
+          "role": "decoy"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_03_decoy_node"
+      ],
+      "weakness_target": null,
+      "sha256": "b603e877e43686f458fc64ca129cbe3d854cdfe2d3231e32a2ad726fdf75fba2"
+    },
+    {
+      "id": "c3_03_unavailable",
+      "class": "unavailable",
+      "entity": "Cadrin archive",
+      "question": "What is the Cadrin archive signal shape? Reply with only the value.",
+      "oracle_fact": "The Cadrin archive signal shape is hexagon.",
+      "expected_values": [
+        "hexagon"
+      ],
+      "wrong_fact_values": [
+        "pentagon"
+      ],
+      "stale_values": [],
+      "nodes": [],
+      "mount_node_ids": [],
+      "weakness_target": null,
+      "sha256": "ffc13e06121fa2709cfbfc3a57565730de9a5449d215a9dec6f3e743c36fa008"
+    },
+    {
+      "id": "c3_03_weak",
+      "class": "weak",
+      "entity": "Cadrin annex",
+      "question": "What is the Cadrin annex access number? Reply with only the value.",
+      "oracle_fact": "The Cadrin annex access number is 731-06-284.",
+      "expected_values": [
+        "731-06-284"
+      ],
+      "wrong_fact_values": [
+        "999-88-777"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_03_weak_node",
+          "text": "User: Remember this record.\nAssistant: The Cadrin annex access number is 731-06-284.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_03_weak_node"
+      ],
+      "weakness_target": "separator_number",
+      "sha256": "ce9921aedebec03068263db14049d5d5e22eb52df0daa2cc03099576853499ab"
+    },
+    {
+      "id": "c3_04_correct",
+      "class": "correct",
+      "entity": "Dovela observatory",
+      "question": "What is the Dovela observatory banner color? Reply with only the value.",
+      "oracle_fact": "The Dovela observatory banner color is indigo.",
+      "expected_values": [
+        "indigo"
+      ],
+      "wrong_fact_values": [
+        "scarlet"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_04_correct_node",
+          "text": "User: Remember this record.\nAssistant: The Dovela observatory banner color is indigo.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_04_correct_node"
+      ],
+      "weakness_target": null,
+      "sha256": "af07aa01284d0f6b2c9da195e1abab1df26d44c510f79845240d8d7ee445c3c2"
+    },
+    {
+      "id": "c3_04_decoy",
+      "class": "decoy",
+      "entity": "Dovela relay",
+      "question": "What is the Dovela relay banner color? Reply with only the value.",
+      "oracle_fact": "The Dovela relay banner color is indigo.",
+      "expected_values": [
+        "indigo"
+      ],
+      "wrong_fact_values": [
+        "scarlet"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_04_decoy_node",
+          "text": "User: Remember this record.\nAssistant: The Dovela relay training banner color is scarlet.",
+          "supersedes": [],
+          "role": "decoy"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_04_decoy_node"
+      ],
+      "weakness_target": null,
+      "sha256": "cc8521331b66c774c12d774f73bf7afeec1335b963fc9fe08629b886edd99bfe"
+    },
+    {
+      "id": "c3_04_unavailable",
+      "class": "unavailable",
+      "entity": "Dovela archive",
+      "question": "What is the Dovela archive banner color? Reply with only the value.",
+      "oracle_fact": "The Dovela archive banner color is indigo.",
+      "expected_values": [
+        "indigo"
+      ],
+      "wrong_fact_values": [
+        "scarlet"
+      ],
+      "stale_values": [],
+      "nodes": [],
+      "mount_node_ids": [],
+      "weakness_target": null,
+      "sha256": "1c9e1f35ca507a80283e04452b65d2a55e89ae3969a0c956f4817479e8ac81c3"
+    },
+    {
+      "id": "c3_04_weak",
+      "class": "weak",
+      "entity": "Dovela annex",
+      "question": "What is the Dovela annex custodian name? Reply with only the value.",
+      "oracle_fact": "The Dovela annex custodian name is Ostelin.",
+      "expected_values": [
+        "Ostelin"
+      ],
+      "wrong_fact_values": [
+        "Talomer"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_04_weak_node",
+          "text": "User: Remember this record.\nAssistant: The Dovela annex custodian name is Ostelin.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_04_weak_node"
+      ],
+      "weakness_target": "proper_name",
+      "sha256": "3b882ae9e0f1798f03ad650d43bfef6962c3bf7b6364b6bf7a894ba4bbe7c931"
+    },
+    {
+      "id": "c3_05_correct",
+      "class": "correct",
+      "entity": "Eshrin observatory",
+      "question": "What is the Eshrin observatory cradle material? Reply with only the value.",
+      "oracle_fact": "The Eshrin observatory cradle material is ceramic.",
+      "expected_values": [
+        "ceramic"
+      ],
+      "wrong_fact_values": [
+        "rubber"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_05_correct_node",
+          "text": "User: Remember this record.\nAssistant: The Eshrin observatory cradle material is ceramic.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_05_correct_node"
+      ],
+      "weakness_target": null,
+      "sha256": "b096a0ed71186cbaea5c63ee93c461e341b18261ae59f7e08d67159374005a3f"
+    },
+    {
+      "id": "c3_05_decoy",
+      "class": "decoy",
+      "entity": "Eshrin relay",
+      "question": "What is the Eshrin relay cradle material? Reply with only the value.",
+      "oracle_fact": "The Eshrin relay cradle material is ceramic.",
+      "expected_values": [
+        "ceramic"
+      ],
+      "wrong_fact_values": [
+        "rubber"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_05_decoy_node",
+          "text": "User: Remember this record.\nAssistant: The Eshrin relay training cradle material is rubber.",
+          "supersedes": [],
+          "role": "decoy"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_05_decoy_node"
+      ],
+      "weakness_target": null,
+      "sha256": "25a31199a863b3e16eca474023077594e1fad7495a1e85a8721bb9ec6ebb3d10"
+    },
+    {
+      "id": "c3_05_unavailable",
+      "class": "unavailable",
+      "entity": "Eshrin archive",
+      "question": "What is the Eshrin archive cradle material? Reply with only the value.",
+      "oracle_fact": "The Eshrin archive cradle material is ceramic.",
+      "expected_values": [
+        "ceramic"
+      ],
+      "wrong_fact_values": [
+        "rubber"
+      ],
+      "stale_values": [],
+      "nodes": [],
+      "mount_node_ids": [],
+      "weakness_target": null,
+      "sha256": "efda8071f98056b64a7e37a813a68689045b6fd88a8329d564384e920265662f"
+    },
+    {
+      "id": "c3_05_weak",
+      "class": "weak",
+      "entity": "Eshrin annex",
+      "question": "What is the Eshrin annex access number? Reply with only the value.",
+      "oracle_fact": "The Eshrin annex access number is 926-43-815.",
+      "expected_values": [
+        "926-43-815"
+      ],
+      "wrong_fact_values": [
+        "999-88-777"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_05_weak_node",
+          "text": "User: Remember this record.\nAssistant: The Eshrin annex access number is 926-43-815.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_05_weak_node"
+      ],
+      "weakness_target": "separator_number",
+      "sha256": "bfb2c5400a27566b14579fb0471161013514a020f32103f1c5ee5df5df89efbf"
+    },
+    {
+      "id": "c3_06_correct",
+      "class": "correct",
+      "entity": "Falyra observatory",
+      "question": "What is the Falyra observatory marker shape? Reply with only the value.",
+      "oracle_fact": "The Falyra observatory marker shape is crescent.",
+      "expected_values": [
+        "crescent"
+      ],
+      "wrong_fact_values": [
+        "square"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_06_correct_node",
+          "text": "User: Remember this record.\nAssistant: The Falyra observatory marker shape is crescent.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_06_correct_node"
+      ],
+      "weakness_target": null,
+      "sha256": "5da5180ad63c949f57cc77e3cd815ba9c7e2537a0d5c28ed84c0bbfff1b106d0"
+    },
+    {
+      "id": "c3_06_decoy",
+      "class": "decoy",
+      "entity": "Falyra relay",
+      "question": "What is the Falyra relay marker shape? Reply with only the value.",
+      "oracle_fact": "The Falyra relay marker shape is crescent.",
+      "expected_values": [
+        "crescent"
+      ],
+      "wrong_fact_values": [
+        "square"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_06_decoy_node",
+          "text": "User: Remember this record.\nAssistant: The Falyra relay training marker shape is square.",
+          "supersedes": [],
+          "role": "decoy"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_06_decoy_node"
+      ],
+      "weakness_target": null,
+      "sha256": "395275e233aff16246eb7ab87d9973684f902a6d9696ecd940f7a8e52ac22a16"
+    },
+    {
+      "id": "c3_06_unavailable",
+      "class": "unavailable",
+      "entity": "Falyra archive",
+      "question": "What is the Falyra archive marker shape? Reply with only the value.",
+      "oracle_fact": "The Falyra archive marker shape is crescent.",
+      "expected_values": [
+        "crescent"
+      ],
+      "wrong_fact_values": [
+        "square"
+      ],
+      "stale_values": [],
+      "nodes": [],
+      "mount_node_ids": [],
+      "weakness_target": null,
+      "sha256": "8ca55f3aa49bfc7e87a05274bf6b07f259817480297c9bdc62e2e60faa6bc096"
+    },
+    {
+      "id": "c3_06_weak",
+      "class": "weak",
+      "entity": "Falyra annex",
+      "question": "What is the Falyra annex custodian name? Reply with only the value.",
+      "oracle_fact": "The Falyra annex custodian name is Pheradis.",
+      "expected_values": [
+        "Pheradis"
+      ],
+      "wrong_fact_values": [
+        "Talomer"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_06_weak_node",
+          "text": "User: Remember this record.\nAssistant: The Falyra annex custodian name is Pheradis.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_06_weak_node"
+      ],
+      "weakness_target": "proper_name",
+      "sha256": "e56271f898a45e4976179ce92d59fe270366c9643145bb25e23253a280e6ce90"
+    },
+    {
+      "id": "c3_07_correct",
+      "class": "correct",
+      "entity": "Gavren observatory",
+      "question": "What is the Gavren observatory panel color? Reply with only the value.",
+      "oracle_fact": "The Gavren observatory panel color is ochre.",
+      "expected_values": [
+        "ochre"
+      ],
+      "wrong_fact_values": [
+        "violet"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_07_correct_node",
+          "text": "User: Remember this record.\nAssistant: The Gavren observatory panel color is ochre.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_07_correct_node"
+      ],
+      "weakness_target": null,
+      "sha256": "76001ce2b1e2fed84ba759e6a96e4bd6c1c75a0ecf241c973970c5452dbf122f"
+    },
+    {
+      "id": "c3_07_decoy",
+      "class": "decoy",
+      "entity": "Gavren relay",
+      "question": "What is the Gavren relay panel color? Reply with only the value.",
+      "oracle_fact": "The Gavren relay panel color is ochre.",
+      "expected_values": [
+        "ochre"
+      ],
+      "wrong_fact_values": [
+        "violet"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_07_decoy_node",
+          "text": "User: Remember this record.\nAssistant: The Gavren relay training panel color is violet.",
+          "supersedes": [],
+          "role": "decoy"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_07_decoy_node"
+      ],
+      "weakness_target": null,
+      "sha256": "6dc6222ec7feb6e4112620a1619c8baa179aced0722b2abfbc78b206d0a9ffc6"
+    },
+    {
+      "id": "c3_07_unavailable",
+      "class": "unavailable",
+      "entity": "Gavren archive",
+      "question": "What is the Gavren archive panel color? Reply with only the value.",
+      "oracle_fact": "The Gavren archive panel color is ochre.",
+      "expected_values": [
+        "ochre"
+      ],
+      "wrong_fact_values": [
+        "violet"
+      ],
+      "stale_values": [],
+      "nodes": [],
+      "mount_node_ids": [],
+      "weakness_target": null,
+      "sha256": "0cf0809365ceb3674e596eaafa18f8f7f047053e6fbd9773fd003bee96f9ed1b"
+    },
+    {
+      "id": "c3_07_weak",
+      "class": "weak",
+      "entity": "Gavren annex",
+      "question": "What is the Gavren annex access number? Reply with only the value.",
+      "oracle_fact": "The Gavren annex access number is 365-82-147.",
+      "expected_values": [
+        "365-82-147"
+      ],
+      "wrong_fact_values": [
+        "999-88-777"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_07_weak_node",
+          "text": "User: Remember this record.\nAssistant: The Gavren annex access number is 365-82-147.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_07_weak_node"
+      ],
+      "weakness_target": "separator_number",
+      "sha256": "1faebe6e099c2b355bee00be100c6f35dd9a4fcfab656c5bc2af49b1273b21d3"
+    },
+    {
+      "id": "c3_08_correct",
+      "class": "correct",
+      "entity": "Hesora observatory",
+      "question": "What is the Hesora observatory case material? Reply with only the value.",
+      "oracle_fact": "The Hesora observatory case material is nickel.",
+      "expected_values": [
+        "nickel"
+      ],
+      "wrong_fact_values": [
+        "leather"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_08_correct_node",
+          "text": "User: Remember this record.\nAssistant: The Hesora observatory case material is nickel.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_08_correct_node"
+      ],
+      "weakness_target": null,
+      "sha256": "73cc617342d479d70bf12613ef5d2141324ad00f5327745d4fe9f12017fc7eff"
+    },
+    {
+      "id": "c3_08_decoy",
+      "class": "decoy",
+      "entity": "Hesora relay",
+      "question": "What is the Hesora relay case material? Reply with only the value.",
+      "oracle_fact": "The Hesora relay case material is nickel.",
+      "expected_values": [
+        "nickel"
+      ],
+      "wrong_fact_values": [
+        "leather"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_08_decoy_node",
+          "text": "User: Remember this record.\nAssistant: The Hesora relay training case material is leather.",
+          "supersedes": [],
+          "role": "decoy"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_08_decoy_node"
+      ],
+      "weakness_target": null,
+      "sha256": "14be3fd515cec08f8a8100f00abbee54c1131041700ad050e6ac6816e6a4a959"
+    },
+    {
+      "id": "c3_08_unavailable",
+      "class": "unavailable",
+      "entity": "Hesora archive",
+      "question": "What is the Hesora archive case material? Reply with only the value.",
+      "oracle_fact": "The Hesora archive case material is nickel.",
+      "expected_values": [
+        "nickel"
+      ],
+      "wrong_fact_values": [
+        "leather"
+      ],
+      "stale_values": [],
+      "nodes": [],
+      "mount_node_ids": [],
+      "weakness_target": null,
+      "sha256": "f17bcc0fe066b10d331e94420d37f960fd98b5dd38ddef4c21b7c36eb3a29348"
+    },
+    {
+      "id": "c3_08_weak",
+      "class": "weak",
+      "entity": "Hesora annex",
+      "question": "What is the Hesora annex custodian name? Reply with only the value.",
+      "oracle_fact": "The Hesora annex custodian name is Quenivar.",
+      "expected_values": [
+        "Quenivar"
+      ],
+      "wrong_fact_values": [
+        "Talomer"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_08_weak_node",
+          "text": "User: Remember this record.\nAssistant: The Hesora annex custodian name is Quenivar.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_08_weak_node"
+      ],
+      "weakness_target": "proper_name",
+      "sha256": "ef95cb046b0ba1c78f5f26665a2171fc38d7d4ea732733d6a04658b15c78cd08"
+    },
+    {
+      "id": "c3_09_correct",
+      "class": "correct",
+      "entity": "Ivrali observatory",
+      "question": "What is the Ivrali observatory badge shape? Reply with only the value.",
+      "oracle_fact": "The Ivrali observatory badge shape is triangle.",
+      "expected_values": [
+        "triangle"
+      ],
+      "wrong_fact_values": [
+        "circle"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_09_correct_node",
+          "text": "User: Remember this record.\nAssistant: The Ivrali observatory badge shape is triangle.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_09_correct_node"
+      ],
+      "weakness_target": null,
+      "sha256": "a8020cab5c8c2b5941453b1bd839b3c715d9ac0d5b0974098f1c0f8e3fc81501"
+    },
+    {
+      "id": "c3_09_decoy",
+      "class": "decoy",
+      "entity": "Ivrali relay",
+      "question": "What is the Ivrali relay badge shape? Reply with only the value.",
+      "oracle_fact": "The Ivrali relay badge shape is triangle.",
+      "expected_values": [
+        "triangle"
+      ],
+      "wrong_fact_values": [
+        "circle"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_09_decoy_node",
+          "text": "User: Remember this record.\nAssistant: The Ivrali relay training badge shape is circle.",
+          "supersedes": [],
+          "role": "decoy"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_09_decoy_node"
+      ],
+      "weakness_target": null,
+      "sha256": "e82cd2782a2a58b5521782d8367d763d9741326d0f5db10ad0a46de37c320a32"
+    },
+    {
+      "id": "c3_09_unavailable",
+      "class": "unavailable",
+      "entity": "Ivrali archive",
+      "question": "What is the Ivrali archive badge shape? Reply with only the value.",
+      "oracle_fact": "The Ivrali archive badge shape is triangle.",
+      "expected_values": [
+        "triangle"
+      ],
+      "wrong_fact_values": [
+        "circle"
+      ],
+      "stale_values": [],
+      "nodes": [],
+      "mount_node_ids": [],
+      "weakness_target": null,
+      "sha256": "d70169a60da9ab35b6b3f9281fd3e9bfcba27a4b9ef8986794b8051b854256d8"
+    },
+    {
+      "id": "c3_09_weak",
+      "class": "weak",
+      "entity": "Ivrali annex",
+      "question": "What is the Ivrali annex access number? Reply with only the value.",
+      "oracle_fact": "The Ivrali annex access number is 814-59-263.",
+      "expected_values": [
+        "814-59-263"
+      ],
+      "wrong_fact_values": [
+        "999-88-777"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_09_weak_node",
+          "text": "User: Remember this record.\nAssistant: The Ivrali annex access number is 814-59-263.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_09_weak_node"
+      ],
+      "weakness_target": "separator_number",
+      "sha256": "a5e60609f56929c71d86182a1fad154a441c8b53802cf026a68b5d8490256109"
+    },
+    {
+      "id": "c3_10_correct",
+      "class": "correct",
+      "entity": "Jaspen observatory",
+      "question": "What is the Jaspen observatory lamp color? Reply with only the value.",
+      "oracle_fact": "The Jaspen observatory lamp color is magenta.",
+      "expected_values": [
+        "magenta"
+      ],
+      "wrong_fact_values": [
+        "amber"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_10_correct_node",
+          "text": "User: Remember this record.\nAssistant: The Jaspen observatory lamp color is magenta.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_10_correct_node"
+      ],
+      "weakness_target": null,
+      "sha256": "450af275d275b23cfaffa00838c708ea1a176a1cd8f0fbbff27a31eb0c91e042"
+    },
+    {
+      "id": "c3_10_decoy",
+      "class": "decoy",
+      "entity": "Jaspen relay",
+      "question": "What is the Jaspen relay lamp color? Reply with only the value.",
+      "oracle_fact": "The Jaspen relay lamp color is magenta.",
+      "expected_values": [
+        "magenta"
+      ],
+      "wrong_fact_values": [
+        "amber"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_10_decoy_node",
+          "text": "User: Remember this record.\nAssistant: The Jaspen relay training lamp color is amber.",
+          "supersedes": [],
+          "role": "decoy"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_10_decoy_node"
+      ],
+      "weakness_target": null,
+      "sha256": "346b8b4219543b611413a9cbd9664182efe99d0ec2b413c283a5d4ce232ce333"
+    },
+    {
+      "id": "c3_10_unavailable",
+      "class": "unavailable",
+      "entity": "Jaspen archive",
+      "question": "What is the Jaspen archive lamp color? Reply with only the value.",
+      "oracle_fact": "The Jaspen archive lamp color is magenta.",
+      "expected_values": [
+        "magenta"
+      ],
+      "wrong_fact_values": [
+        "amber"
+      ],
+      "stale_values": [],
+      "nodes": [],
+      "mount_node_ids": [],
+      "weakness_target": null,
+      "sha256": "75c5ddafefdb420b8fd8485fd778eaff6e8095b3e960947b496fa321d68c3b82"
+    },
+    {
+      "id": "c3_10_weak",
+      "class": "weak",
+      "entity": "Jaspen annex",
+      "question": "What is the Jaspen annex custodian name? Reply with only the value.",
+      "oracle_fact": "The Jaspen annex custodian name is Rovethan.",
+      "expected_values": [
+        "Rovethan"
+      ],
+      "wrong_fact_values": [
+        "Talomer"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_10_weak_node",
+          "text": "User: Remember this record.\nAssistant: The Jaspen annex custodian name is Rovethan.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_10_weak_node"
+      ],
+      "weakness_target": "proper_name",
+      "sha256": "0526c16c0727ec899ea9d6c62bc2d49b83ad4afe549b2f7bf6b396e841522d08"
+    },
+    {
+      "id": "c3_11_correct",
+      "class": "correct",
+      "entity": "Kovira observatory",
+      "question": "What is the Kovira observatory tray material? Reply with only the value.",
+      "oracle_fact": "The Kovira observatory tray material is copper.",
+      "expected_values": [
+        "copper"
+      ],
+      "wrong_fact_values": [
+        "glass"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_11_correct_node",
+          "text": "User: Remember this record.\nAssistant: The Kovira observatory tray material is copper.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_11_correct_node"
+      ],
+      "weakness_target": null,
+      "sha256": "71e8d376c910456b3bbe94271bcd4a368f48cbbae56f67eef54b8b62358b6ce9"
+    },
+    {
+      "id": "c3_11_decoy",
+      "class": "decoy",
+      "entity": "Kovira relay",
+      "question": "What is the Kovira relay tray material? Reply with only the value.",
+      "oracle_fact": "The Kovira relay tray material is copper.",
+      "expected_values": [
+        "copper"
+      ],
+      "wrong_fact_values": [
+        "glass"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_11_decoy_node",
+          "text": "User: Remember this record.\nAssistant: The Kovira relay training tray material is glass.",
+          "supersedes": [],
+          "role": "decoy"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_11_decoy_node"
+      ],
+      "weakness_target": null,
+      "sha256": "8b20ee184fdd0b85c5cb6dda47ea362220542f0321287e1f36a1698c40fd8c51"
+    },
+    {
+      "id": "c3_11_unavailable",
+      "class": "unavailable",
+      "entity": "Kovira archive",
+      "question": "What is the Kovira archive tray material? Reply with only the value.",
+      "oracle_fact": "The Kovira archive tray material is copper.",
+      "expected_values": [
+        "copper"
+      ],
+      "wrong_fact_values": [
+        "glass"
+      ],
+      "stale_values": [],
+      "nodes": [],
+      "mount_node_ids": [],
+      "weakness_target": null,
+      "sha256": "ca31e9cdfe56d26d282d24957f5211de3ae926b71e84a6e92dbe215ba5c817ff"
+    },
+    {
+      "id": "c3_11_weak",
+      "class": "weak",
+      "entity": "Kovira annex",
+      "question": "What is the Kovira annex access number? Reply with only the value.",
+      "oracle_fact": "The Kovira annex access number is 597-24-681.",
+      "expected_values": [
+        "597-24-681"
+      ],
+      "wrong_fact_values": [
+        "999-88-777"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_11_weak_node",
+          "text": "User: Remember this record.\nAssistant: The Kovira annex access number is 597-24-681.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_11_weak_node"
+      ],
+      "weakness_target": "separator_number",
+      "sha256": "f61484e73337f84d021715cac68e886a2f9bf90d4003f5085dfed7f68d5fd1cc"
+    },
+    {
+      "id": "c3_12_correct",
+      "class": "correct",
+      "entity": "Lurien observatory",
+      "question": "What is the Lurien observatory seal shape? Reply with only the value.",
+      "oracle_fact": "The Lurien observatory seal shape is diamond.",
+      "expected_values": [
+        "diamond"
+      ],
+      "wrong_fact_values": [
+        "oval"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_12_correct_node",
+          "text": "User: Remember this record.\nAssistant: The Lurien observatory seal shape is diamond.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_12_correct_node"
+      ],
+      "weakness_target": null,
+      "sha256": "fbe165b85b3379f2215e488c9b55cd5bb5ca45176df0dae93309b4e7e8b41c8e"
+    },
+    {
+      "id": "c3_12_decoy",
+      "class": "decoy",
+      "entity": "Lurien relay",
+      "question": "What is the Lurien relay seal shape? Reply with only the value.",
+      "oracle_fact": "The Lurien relay seal shape is diamond.",
+      "expected_values": [
+        "diamond"
+      ],
+      "wrong_fact_values": [
+        "oval"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_12_decoy_node",
+          "text": "User: Remember this record.\nAssistant: The Lurien relay training seal shape is oval.",
+          "supersedes": [],
+          "role": "decoy"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_12_decoy_node"
+      ],
+      "weakness_target": null,
+      "sha256": "e698a5cda347d36b63e6a6dcd0ef5f0789283a86b24734fbef977110ca9c6a42"
+    },
+    {
+      "id": "c3_12_unavailable",
+      "class": "unavailable",
+      "entity": "Lurien archive",
+      "question": "What is the Lurien archive seal shape? Reply with only the value.",
+      "oracle_fact": "The Lurien archive seal shape is diamond.",
+      "expected_values": [
+        "diamond"
+      ],
+      "wrong_fact_values": [
+        "oval"
+      ],
+      "stale_values": [],
+      "nodes": [],
+      "mount_node_ids": [],
+      "weakness_target": null,
+      "sha256": "87685fb395009857f40a7d2d3ca2d8d52acf92752977a1bdbe8f550515fdeb9b"
+    },
+    {
+      "id": "c3_12_weak",
+      "class": "weak",
+      "entity": "Lurien annex",
+      "question": "What is the Lurien annex custodian name? Reply with only the value.",
+      "oracle_fact": "The Lurien annex custodian name is Seluvin.",
+      "expected_values": [
+        "Seluvin"
+      ],
+      "wrong_fact_values": [
+        "Talomer"
+      ],
+      "stale_values": [],
+      "nodes": [
+        {
+          "node_id": "c3_12_weak_node",
+          "text": "User: Remember this record.\nAssistant: The Lurien annex custodian name is Seluvin.",
+          "supersedes": [],
+          "role": "target"
+        }
+      ],
+      "mount_node_ids": [
+        "c3_12_weak_node"
+      ],
+      "weakness_target": "proper_name",
+      "sha256": "31d3e1d66debf487ce0fde5f51794f6a2cde9d40377682e59e663af2d0808972"
+    }
+  ],
+  "class_counts": {
+    "correct": 12,
+    "decoy": 12,
+    "unavailable": 12,
+    "weak": 12
+  },
+  "case_set_sha256": "c46535aec23824a876f9198eebf58a67e73cab7faa12c42f45980e07938c6f30",
+  "rules": {
+    "carried": {
+      "threshold": 0.3380523274342219,
+      "comparison": "lt"
+    },
+    "candidate": {
+      "threshold": 0.3181141105790933,
+      "comparison": "lt"
+    },
+    "near_zero": {
+      "threshold": 1e-08,
+      "comparison": "lt"
+    },
+    "empty_band": {
+      "comparison": "mounted_token_count_eq_zero"
+    }
+  },
+  "threshold_caveat": "THIN ENVELOPE: this threshold was fit on 2 calibration turns (served controls only, strict minimum-of-minima envelope). It is CARRIED verbatim from the GRM-DET1 race and is never refit or adjusted from serving traffic. Any receipt that reports a D-NGH decision must restate this caveat.",
+  "near_zero_rationale": "fixed numerical near-zero tolerance 1e-8, chosen before traces, never refit; exact 0 fires and equality 1e-8 does not",
+  "acceptance": {
+    "miss_detection_min": 0.9,
+    "false_fire_max": 0.05,
+    "tp_min_of_24": 22,
+    "fp_max_of_24": 1,
+    "lost_correct_answers_max": 0
+  },
+  "prediction": [
+    "near_zero fires on empty bands but misses at least one nonempty decoy",
+    "carried causes avoidable false fires on weak correct reads"
+  ],
+  "qualification": "all 48 retained; target/decoy mount and oracle absence checked; correct and weak must answer correctly for achieved class qualification. Weakness is targeted, not guaranteed by fixture text. No replacement or filtering.",
+  "preservation": "count rule fires on every actually correct OFF answer as correct_answers_at_risk; require zero for conservative offline eligibility. Actual demand-ON lost answers are UNMEASURED; no production flip certification from OFF traces.",
+  "design": "controlled mount intervention with production _attempt and EB1 clean live state, not natural routing or a chronological-session replication; empty-band means actual seated token count zero",
+  "trace": {
+    "ngen": 32,
+    "detector_on": false,
+    "observer": "D-NGH only, full-layer mean mounted mass, every generated prediction including stop tokens, unused final flush dropped"
+  },
+  "model": {
+    "id": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+    "generation": "greedy, no explicit reasoning-effort override; inherited Harmony prompt"
+  },
+  "agent": {
+    "model": "GPT-6 (exact backend variant not exposed)",
+    "requested_effort": "high"
+  },
+  "cells": [
+    {
+      "id": "trace_01",
+      "case_ids": [
+        "c3_01_correct",
+        "c3_01_decoy",
+        "c3_01_unavailable",
+        "c3_01_weak"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_02",
+      "case_ids": [
+        "c3_02_decoy",
+        "c3_02_unavailable",
+        "c3_02_weak",
+        "c3_02_correct"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_03",
+      "case_ids": [
+        "c3_03_unavailable",
+        "c3_03_weak",
+        "c3_03_correct",
+        "c3_03_decoy"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_04",
+      "case_ids": [
+        "c3_04_weak",
+        "c3_04_correct",
+        "c3_04_decoy",
+        "c3_04_unavailable"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_05",
+      "case_ids": [
+        "c3_05_correct",
+        "c3_05_decoy",
+        "c3_05_unavailable",
+        "c3_05_weak"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_06",
+      "case_ids": [
+        "c3_06_decoy",
+        "c3_06_unavailable",
+        "c3_06_weak",
+        "c3_06_correct"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_07",
+      "case_ids": [
+        "c3_07_unavailable",
+        "c3_07_weak",
+        "c3_07_correct",
+        "c3_07_decoy"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_08",
+      "case_ids": [
+        "c3_08_weak",
+        "c3_08_correct",
+        "c3_08_decoy",
+        "c3_08_unavailable"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_09",
+      "case_ids": [
+        "c3_09_correct",
+        "c3_09_decoy",
+        "c3_09_unavailable",
+        "c3_09_weak"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_10",
+      "case_ids": [
+        "c3_10_decoy",
+        "c3_10_unavailable",
+        "c3_10_weak",
+        "c3_10_correct"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_11",
+      "case_ids": [
+        "c3_11_unavailable",
+        "c3_11_weak",
+        "c3_11_correct",
+        "c3_11_decoy"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_12",
+      "case_ids": [
+        "c3_12_weak",
+        "c3_12_correct",
+        "c3_12_decoy",
+        "c3_12_unavailable"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    }
+  ],
+  "gpu_budget_seconds": 2700,
+  "stop": "225s child timeout => terminal NON_FIT, stop campaign; never retry, extend, replace or reuse partial results for acceptance; any other child failure stops campaign RED",
+  "cpu_gates": [
+    "fixture validity and novelty",
+    "hand-computed trace table and strict boundaries",
+    "24/24 acceptance integer boundaries",
+    "malformed/incomplete receipts rejected",
+    "observer adapter fake-arena one-answer call",
+    "dry-run all cells"
+  ],
+  "prior_art": "GRM-DET1/SC2/SC1.2, GraftRepository contributors 2026: import planting, observer, scoring and strict crossing/minimum helpers. Fisher 1935 blocked design and NIST 2015 SHA-256 are leads; external references unverified — lead to check. New: fixture text, balanced controlled-mount protocol, offline comparison and safety wrapper; no detector novelty claimed."
+}
