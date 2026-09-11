@@ -82,7 +82,13 @@ TRANSITIONS = ('unchanged_correct', 'unchanged_wrong', 'correct_to_wrong',
 #: they did not exist when it was written.  Strictly the amendment's own
 #: builder: an amendment can never smuggle in a new core or scoring source.
 REBINDABLE_NEW = ('scripts/grm_r1_amend_1.py', 'scripts/grm_r1_amend_2.py',
-                  'scripts/grm_r1_amend_3.py')
+                  'scripts/grm_r1_amend_3.py', 'scripts/grm_r1_amend_4.py')
+
+#: A card holding more than this before the lease is NOT ours to use.
+#: Chosen from the receipts: an idle card in this arc reads 314-327 MiB,
+#: and the holder that broke R4 held ~3,144 MiB. 1000 MiB is FIX-8's
+#: registered limit and sits cleanly between the two.
+IDLE_LIMIT_MIB = 1000
 
 
 # --------------------------------------------------------------------------
@@ -343,6 +349,127 @@ def open_arm(c, session, flags, loaded):
     return GraftRepository(*ctor_args, **ctor_kwargs), loaded
 
 
+def device_snapshot():
+    """Full device sample: total, used, and the compute-process list.
+
+    AMENDMENT 4.  ``device_memory_mib`` returns one number, which is enough
+    for a receipt and NOT enough to decide whether the card is free: the R4
+    OOM happened with ~3,144 MiB held by a display-side program on :0 that
+    lists NO compute process.  FIX-8's ``parse_memory`` states the rule this
+    reuses verbatim -- "never infer an idle card merely from an empty compute
+    list" -- so the gate below keys on TOTAL framebuffer used, not on the
+    process table.
+
+    Prior art: NVIDIA nvidia-smi XML framebuffer/process reporting
+    (docs.nvidia.com, accessed 2026-09-09) and GRM FIX-8
+    ``grm_scout_fix8_resume.parse_memory`` / ``memory_gate`` (GRM
+    contributors, 2026).  TAKEN: the XML fields, the conservative
+    total-used reading, and the empty-compute-list warning.  OURS: only the
+    receipt shape and its use as a pre-lease gate in this worker.
+    """
+    import subprocess
+    import xml.etree.ElementTree as ET
+    value = {'time_unix': time.time(), 'status': 'ERROR',
+             'scope': ('point sample, not peak; device total includes '
+                       'unattributed memory such as display-side programs')}
+    try:
+        proc = subprocess.run(['nvidia-smi', '-q', '-x'], capture_output=True,
+                              text=True, timeout=10, check=False)
+        if proc.returncode != 0:
+            value['error'] = f'nvidia-smi returncode={proc.returncode}'
+            return value
+        root = ET.fromstring(proc.stdout)
+        gpus = root.findall('gpu')
+        if len(gpus) != 1:
+            value['error'] = f'expected one GPU, found {len(gpus)}'
+            return value
+        gpu = gpus[0]
+
+        def _mib(text):
+            parts = (text or '').split()
+            if len(parts) != 2 or parts[1] != 'MiB':
+                raise ValueError('MEMORY_VALUE_UNAVAILABLE')
+            return int(parts[0])
+
+        used = _mib(gpu.findtext('fb_memory_usage/used'))
+        total = _mib(gpu.findtext('fb_memory_usage/total'))
+        processes = []
+        node = gpu.find('processes')
+        for entry in (node.findall('process_info') if node is not None else []):
+            processes.append({'pid': int(entry.findtext('pid')),
+                              'type': entry.findtext('type'),
+                              'name': entry.findtext('process_name'),
+                              'memory.used': _mib(entry.findtext('used_memory'))})
+        own = os.getpid()
+        value.update(status='OK', gpu_uuid=gpu.findtext('uuid'),
+                     memory_used_mib=used, memory_total_mib=total,
+                     memory_free_mib=total - used, unit='MiB',
+                     processes=processes,
+                     own_memory_mib=sum(x['memory.used'] for x in processes
+                                        if x['pid'] == own),
+                     other_process_pids=sorted({x['pid'] for x in processes
+                                                if x['pid'] != own}),
+                     compute_list_empty=not processes,
+                     foreign_holder_suspected=bool(
+                         used > IDLE_LIMIT_MIB and not processes))
+    except Exception as exc:                 # noqa: BLE001 -- receipt only
+        value['error'] = f'{type(exc).__name__}: {exc}'
+    return value
+
+
+def idle_gate(snapshot, limit=None):
+    """Is the card free enough to start?  Returns (ok, reason).
+
+    Keys on TOTAL used, never on the compute-process list, because the
+    holder that broke R4 listed no compute process at all.  This NEVER
+    signals, kills or waits on another process -- it only declines to start.
+    """
+    limit = IDLE_LIMIT_MIB if limit is None else int(limit)
+    if snapshot.get('status') != 'OK':
+        return False, ('DEVICE_PROBE_FAILED: '
+                       + str(snapshot.get('error', 'unknown')))
+    used = int(snapshot['memory_used_mib'])
+    if used > limit:
+        return False, (f"DEVICE_BUSY: memory.used={used} MiB > {limit} MiB"
+                       f" (free={snapshot['memory_free_mib']} MiB;"
+                       f" compute_list_empty={snapshot['compute_list_empty']};"
+                       f" other_pids={snapshot['other_process_pids']})")
+    return True, f"IDLE: memory.used={used} MiB <= {limit} MiB"
+
+
+def await_idle(limit=None, wait_seconds=0, poll_seconds=15):
+    """Wait up to ``wait_seconds`` for the card to fall below the limit.
+
+    Foreground and bounded; polls a read-only probe and never signals
+    anything.  ``wait_seconds=0`` makes it a single check.
+    """
+    wait_seconds = max(0, int(wait_seconds))
+    # The bound is STRUCTURAL, not a break: the loop counter caps the number
+    # of probes up front.  This is a bounded WAIT for a resource somebody
+    # else holds, not a retry of our own failed work -- a distinction the
+    # no-retry guard in tests/test_grm_r1_replay.py enforces by forbidding
+    # `while True` anywhere in this file.  Nothing here re-runs a cell.
+    attempts_allowed = 1 + (wait_seconds // max(1, int(poll_seconds)))
+    deadline = time.monotonic() + wait_seconds
+    attempts = []
+    snapshot, ok, reason = {}, False, 'NOT_PROBED'
+    for _ in range(int(attempts_allowed)):
+        snapshot = device_snapshot()
+        ok, reason = idle_gate(snapshot, limit)
+        attempts.append({'time_unix': snapshot.get('time_unix'),
+                         'memory_used_mib': snapshot.get('memory_used_mib'),
+                         'ok': ok, 'reason': reason})
+        if ok:
+            break
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            break
+        time.sleep(min(poll_seconds, max(1, remaining)))
+    return ok, {'attempts': attempts, 'final': snapshot, 'reason': reason,
+                'waited_for_seconds': wait_seconds,
+                'attempts_allowed': int(attempts_allowed)}
+
+
 def device_memory_mib():
     """Point-sample of device framebuffer use, in MiB, or None off-GPU.
 
@@ -545,6 +672,49 @@ class _FakeRepo:
 
     def close(self):
         self.closed = True
+
+
+def is_oom(exc):
+    """Is this exception a device out-of-memory?  Text match, deliberately.
+
+    The engine raises a plain ``RuntimeError('cudaMalloc failed: out of
+    memory')``; there is no typed OOM to catch.  Matching the text is the
+    honest option and is kept narrow so an unrelated RuntimeError still
+    propagates and still stops the campaign.
+    """
+    text = f'{type(exc).__name__}: {exc}'.casefold()
+    return 'out of memory' in text or 'cudamalloc failed' in text
+
+
+def non_fit_receipt(c, destination, exc, snapshot, stage):
+    """A cell that could not be loaded is RECORDED, not silently skipped.
+
+    AMENDMENT 4, rail (b).  An OOM at checkpoint load or payload harvest
+    writes a create-only NON_FIT receipt carrying the reason, the stage, and
+    a device-memory snapshot (total/used/free, the compute-process list, and
+    whether a foreign holder is suspected), and the batch CONTINUES to the
+    next cell.  The campaign is not failed by one cell that could not start.
+
+    A NON_FIT cell is UNMEASURED.  ``summary()`` counts it as not-measured
+    and never as ``unchanged``: a cell that did not run cannot be evidence
+    that the rule changed nothing.  That distinction is the whole point of
+    recording it rather than skipping it.
+
+    Prior art: GRM C7/FIX8 create-only failure receipts (GRM contributors,
+    2026) -- TAKEN: record the failure as evidence rather than retrying.
+    OURS: the NON_FIT class and its unmeasured accounting.  No new algorithm.
+    """
+    value = {'cell': c, 'status': 'NON_FIT', 'stage': stage,
+             'error': f'{type(exc).__name__}: {exc}',
+             'device_memory': snapshot,
+             'measured': False, 'answer_measured': False,
+             'arms': {}, 'off_plan_parity': None,
+             'evidence_class': ('cell could not be loaded on this device; '
+                                'NOT a measurement and NOT evidence that the '
+                                'rule left the answer unchanged'),
+             'registration_sha256': sha(REG)}
+    write(destination / 'cells' / (c['id'] + '.json'), value)
+    return value
 
 
 def run_cell(c, destination, loaded, fake=False):
@@ -940,7 +1110,7 @@ def _cpu_context():
     return nullcontext()
 
 
-def batch(batch_id, fake=False, root=None):
+def batch(batch_id, fake=False, root=None, idle_wait=0):
     """Run one batch of cells under ONE foreground GPU lease.
 
     Resumable: a batch whose controller already says COMPLETE is skipped and
@@ -1011,6 +1181,8 @@ def batch(batch_id, fake=False, root=None):
         loaded = None
         red = []
         ids = []
+        non_fit = []
+        idle_receipt = None
         try:
             # FIX-6 state contract: environment(flags) strips every ambient
             # GRM_ var, so the rule is pinned AFTER it, per arm, in pin_rule.
@@ -1030,16 +1202,44 @@ def batch(batch_id, fake=False, root=None):
                         del os.environ[key]
                 os.environ.update({k: v for k, v in env.items()
                                    if k.startswith('GRM_')})
+                # AMENDMENT 4: refuse to start on a card somebody else is
+                # holding.  R4 died 13 s into its lease with ~3,144 MiB held
+                # by a display-side program that listed NO compute process;
+                # the run burned a full 238 s reservation for nothing.  This
+                # only DECLINES to start -- it never signals, kills or clears
+                # anything, and the operator always has right of way.
+                if not fake:
+                    ok, idle = await_idle(wait_seconds=idle_wait)
+                    idle_receipt = idle
+                    need(ok, 'R1_DEVICE_NOT_IDLE: ' + str(idle['reason']))
                 with (_cpu_context() if fake else _gpu_lease(lease)):
                     started = time.monotonic()
                     for cell_id in ids:
+                        c = cell_by_id(cell_id)
                         try:
-                            _, loaded = run_cell(cell_by_id(cell_id),
-                                                 destination, loaded, fake=fake)
+                            _, loaded = run_cell(c, destination, loaded,
+                                                 fake=fake)
                         except ValueError as exc:
                             if 'R1_OFF_PLAN_PARITY_RED_STOP' in str(exc):
                                 red.append(str(exc))
                             raise
+                        except BaseException as exc:   # noqa: BLE001
+                            # AMENDMENT 4 rail (b): a cell that cannot be
+                            # LOADED is recorded NON_FIT and the batch goes
+                            # on.  Anything that is not an OOM still stops
+                            # the campaign.
+                            if not is_oom(exc):
+                                raise
+                            snapshot = ({} if fake else device_snapshot())
+                            non_fit.append(non_fit_receipt(
+                                c, destination, exc, snapshot,
+                                stage='load_or_harvest'))
+                            # Flush whatever the failed load did allocate:
+                            # _FakeRepo(0) holds no payloads, so this reduces
+                            # to arena reset + tc.empty_cache(), which is
+                            # exactly what is wanted after a partial load.
+                            release_arm(_FakeRepo(0))
+                            loaded = None               # force a clean reload
                     elapsed = time.monotonic() - started
                     need(fake or elapsed <= lease, 'R1_LEASE_OVERRUN_RED')
                     status = 'COMPLETE'
@@ -1050,6 +1250,8 @@ def batch(batch_id, fake=False, root=None):
                 elapsed = time.monotonic() - started
             write(destination / 'controller.json',
                   {'status': status, 'error': error, 'red': red,
+                   'non_fit_cells': [x['cell']['id'] for x in non_fit],
+                   'idle_check': idle_receipt,
                    'elapsed_seconds': elapsed,
                    'charged_seconds': (elapsed if status == 'COMPLETE'
                                        else max(float(lease), elapsed)),
@@ -1100,6 +1302,7 @@ def summary(root=None):
     root = Path(root) if root is not None else OUT
     r = verify(root)
     values = {}
+    non_fit = {}
     complete = True
     charged = 0.0
     for batch_id in r['batch_ids']:
@@ -1128,6 +1331,14 @@ def summary(root=None):
             row = read(p)
             need(row['registration_sha256'] == sha(REG),
                  'R1_ROW_BINDING_MISMATCH: ' + cell_id)
+            # AMENDMENT 4: a NON_FIT cell did not run. It is recorded, it is
+            # NOT a measurement, and it must never be counted as
+            # 'unchanged' -- a cell that never executed cannot be evidence
+            # that the rule left its answer alone.
+            if row.get('status') == 'NON_FIT':
+                non_fit[cell_id] = row
+                complete = False
+                continue
             values[cell_id] = row
     complete &= len(values) == r['cell_count'] and charged <= r['gpu_cap_seconds']
     parity = bool(values) and all(v['off_plan_parity'] for v in values.values())
@@ -1147,7 +1358,12 @@ def summary(root=None):
     # The registered verdict rule applied VERBATIM -- never adjusted after
     # seeing results (house rule: thresholds registered before the gate).
     adopt = complete and parity and measured and sup_c2w == 0 and other_c2w <= 1
-    return {'status': ('NOT_MEASURED' if not (complete and measured) else
+    unmeasured = [c['id'] for c in cells()
+                  if c['id'] not in values]
+    return {'non_fit_cells': sorted(non_fit),
+            'non_fit_count': len(non_fit),
+            'unmeasured_cells': len(unmeasured),
+            'status': ('NOT_MEASURED' if not (complete and measured) else
                        'RED' if not parity else
                        'ADOPT' if adopt else 'DO_NOT_ADOPT'),
             'complete': complete, 'answers_measured': measured,
@@ -1178,6 +1394,10 @@ def main():
     p.add_argument('--fake', action='store_true',
                    help='CPU fake-model gate: real admission, no GPU, no reader')
     p.add_argument('--out', help='alternate receipt root (gates/tests only)')
+    p.add_argument('--idle-wait', type=int, default=0,
+                   help=('seconds to wait for the card to fall below '
+                         f'{IDLE_LIMIT_MIB} MiB before starting; polls a '
+                         'read-only probe, never signals anything'))
     a = p.parse_args()
     if a.dry_run:
         print(json.dumps(dry_run(), indent=2))
@@ -1186,7 +1406,8 @@ def main():
         print(json.dumps(summary(a.out), indent=2))
         return 0
     if a.batch:
-        return batch(a.batch, fake=a.fake, root=a.out)
+        return batch(a.batch, fake=a.fake, root=a.out,
+                     idle_wait=a.idle_wait)
     r = verify()
     print(json.dumps({'status': 'REGISTERED_NOT_RUN', 'gpu_executed': False,
                       'registration_sha256': sha(REG),

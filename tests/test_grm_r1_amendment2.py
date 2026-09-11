@@ -22,7 +22,7 @@ import pytest
 from scripts import grm_r1_replay as run
 
 
-def _chain_into(tmp_path, rearm=None, links=(1, 2, 3)):
+def _chain_into(tmp_path, rearm=None, links=(1, 2, 3, 4)):
     """Copy the real amendment chain into ``tmp_path``, optionally re-scoped.
 
     The chain grows as the arc goes on, so this plants EVERY link by default;

@@ -10,6 +10,37 @@
 #   sha256     : d62d9a2c43fcb89c7ea8d3ff8a799e9c4691ce706bb32d1e69cf31aaf59da076
 # Amendment 3  : artifacts/grm_r1/amendment_3.json
 #   sha256     : e23a91c8d267b185a589cc67b71a1df5fb96dd4adca3fd542519fce00448f349
+# Amendment 4  : artifacts/grm_r1/amendment_4.json
+#   sha256     : 003539cd8afdfbac0f78ddae807271184553d73251d90566315b026a806abe6d
+#   chains to amendment 3; re-binds the worker sha; re-arms R4 (0 retained,
+#   8 re-issued). R5 is NOT re-armed -- it never started, so it is a normal
+#   first run. Budget unchanged.
+#
+# WHY AMENDMENT 4: --batch R4 died 13.0 s into its lease with cudaMalloc OOM,
+# before any probe line and with 0 receipts; a display-side program on :0 held
+# ~3,144 MiB and listed NO compute process. NOT a fit problem -- the counts:
+#
+#     batch  cells  max nodes  max npz MiB  batch total MiB
+#     R1     8      25         36.7         221.5
+#     R2     5      25         36.7         130.0
+#     R3     8      25         36.6         220.8   <- all COMPLETE
+#     R4     8      25         36.6         151.6   <- died on cell 1
+#     R5     2       3          6.1          12.3
+#
+# R4's first cell (25 nodes / 36.6 MiB) is the SAME size as one R3 completed
+# on the same frame, and R4 is the SMALLEST profile batch by total payload.
+# Largest single cell is 2.8% of the ~1,286 MiB headroom (~35x margin), so
+# lever (a) host-resident payloads was DECLINED -- it would add a page-in path
+# for a problem the numbers say does not exist.
+#
+# Two rails added instead:
+#  * idle pre-check on the lease path, keyed on TOTAL framebuffer used and
+#    NEVER on the compute-process list (the R4 holder listed none). Bounded by
+#    --idle-wait; it only DECLINES to start and never signals anything.
+#  * NON_FIT: an OOM at load/harvest writes a create-only receipt (reason,
+#    stage, memory snapshot) and the batch CONTINUES. NON_FIT is UNMEASURED in
+#    the summary and never counted as unchanged. Any non-OOM error, and the
+#    parity RED, still stop the campaign.
 #   chains to amendment 2; re-binds the worker sha; no scope/budget change.
 #
 # WHY AMENDMENT 3: after R1's re-issue COMPLETED (8/8 receipts, 79 s),
@@ -82,17 +113,21 @@ python3 scripts/grm_r1_replay.py --dry-run
 # receipts, x3 cells, + one model load + 60 s headroom).
 # python3 scripts/grm_r1_replay.py --batch R1     # DONE, do not re-run
 
-# ------------------------------------------------------------ R2..R5 (next)
-# R2 is the next command to run. Its preconditions are verified green:
-#   R2 scope from amendment : None  (a normal first run, not a re-issue)
-#   priors ['R1'] complete  : True
-#   budget rail             : 476.1 + 194 = 670.1 <= 3600
-# Unchanged by the amendment: the release fix removes cross-cell accumulation
-# rather than changing per-cell cost, so the registered estimates stand.
-python3 scripts/grm_r1_replay.py --batch R2     # 5 cells, defaults, lease 194 s
-python3 scripts/grm_r1_replay.py --batch R3     # 8 cells, profile,  lease 238 s
-python3 scripts/grm_r1_replay.py --batch R4     # 8 cells, profile,  lease 238 s
-python3 scripts/grm_r1_replay.py --batch R5     # 2 cells, profile,  lease 124 s
+# ------------------------------------------------------------- R2, R3: DONE
+# python3 scripts/grm_r1_replay.py --batch R2   # DONE
+# python3 scripts/grm_r1_replay.py --batch R3   # DONE
+#
+# ------------------------------------------------------------ R4, R5 (next)
+# R4 preconditions verified green:
+#   scope  : retain 0 / reissue 8 (re-armed; the FAILED record is archived)
+#   priors : ['R1','R2','R3'] all complete
+#   budget : 988.5 + 238 + 124 = 1350.5 <= 3600
+#
+# --idle-wait is optional and bounded. It polls a READ-ONLY probe and then
+# declines; it never signals, kills or clears anything, and the operator
+# always has right of way. Use 0 (default) to check once and stop.
+python3 scripts/grm_r1_replay.py --batch R4 --idle-wait 600   # 8 cells, 238 s
+python3 scripts/grm_r1_replay.py --batch R5 --idle-wait 600   # 2 cells, 124 s
 
 # ------------------------------------------------------------------ summary
 python3 scripts/grm_r1_replay.py --summary
@@ -113,10 +148,12 @@ for p in sorted(glob.glob('artifacts/grm_r1/gpu/*/cells/*.json')):
 PY
 
 # ------------------------------------------------------------- BUDGET STATE
-# Charged so far 476.1 s = 263 s (OOM attempt 1) + 134 s (collision attempt 2)
-# + 79.1 s (the successful R1 re-issue). All three are REAL GPU time and none
-# is refunded; campaign_state sums archived controller_attempt_*.json too.
-# R2-R5 add 794 s -> 1270 s = 0.353 GPU-h, under the 3600 s = 1.0 GPU-h cap.
+# Charged so far 988.5 s: R1 263 (OOM attempt 1) + 134 (collision attempt 2)
+# + 79.1 (successful re-issue), R2, R3, and R4's 238 s foreign-holder failure.
+# All are REAL GPU time and none is refunded; campaign_state and summary both
+# sum archived controller_attempt_*.json.
+# R4 re-issue adds 238 s, R5 adds 124 s -> 1350.5 s = 0.375 GPU-h, under the
+# registered 3600 s = 1.0 GPU-h cap.
 
 # --------------------------------------------------------------- STOP rules
 # * A checkpoint hash mismatch is RED and is NOT retried.
@@ -128,7 +165,10 @@ PY
 #   lists, the run STOPS (R1_AMENDMENT_RETAIN_MISMATCH / _REISSUE_MISMATCH)
 #   rather than silently re-scoping.  That needs a new amendment, not a nudge.
 # * Never kill or signal a process this campaign did not start; wait on the
-#   flock, never clear it.
+#   flock, never clear it. The idle pre-check only DECLINES to start.
+# * A NON_FIT receipt means that cell did not run. It is UNMEASURED, never
+#   'unchanged'. Re-issue it under a new amendment once the card is free;
+#   do not read it as evidence the rule changed nothing.
 # * A re-issued cell archives its own stale scratch to
 #   sessions/<cell>/attempt_<n>/ and leaves it there. Do NOT delete those:
 #   they are the failed attempt's evidence. No cell receipt is ever touched.
@@ -136,7 +176,7 @@ PY
 # ------------------------------------------------------- CPU gate (no GPU)
 # R1 runs FIRST on purpose: if the worker ever leaks GRM_ADMISSION_RULE
 # again, the FIX-4 and admission suites after it go red instead of hiding it.
-python3 -m pytest -q tests/test_grm_r1_replay.py tests/test_grm_r1_cpu_gate.py tests/test_grm_r1_amendment1.py tests/test_grm_r1_amendment2.py tests/test_grm_r1_amendment3.py tests/test_grm_scout_fix4.py tests/test_grm_admission.py
+python3 -m pytest -q tests/test_grm_r1_replay.py tests/test_grm_r1_cpu_gate.py tests/test_grm_r1_amendment1.py tests/test_grm_r1_amendment2.py tests/test_grm_r1_amendment3.py tests/test_grm_r1_amendment4.py tests/test_grm_scout_fix4.py tests/test_grm_admission.py
 
 # The full battery (order-independent now, but keep R1 first by habit):
 python3 -m pytest -q tests/test_grm_r1*.py tests/test_grm_scout_fix4.py tests/test_grm_admission.py tests/test_grm_scout_fix6*.py

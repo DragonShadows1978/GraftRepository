@@ -22,7 +22,7 @@ def _chain_into(tmp_path, mutate=None):
     Amendment 2 chains to amendment 1, so a fixture that plants only link 1
     would break the chain.  ``mutate`` receives each link's dict.
     """
-    for index in (1, 2, 3):
+    for index in (1, 2, 3, 4):
         a = json.loads((run.OUT / f'amendment_{index}.json').read_text())
         if mutate is not None:
             mutate(a, index)
@@ -153,7 +153,7 @@ def test_amendment_chain_drift_is_rejected(tmp_path):
 
 def test_amendment_cannot_rebind_an_unlisted_source(tmp_path):
     def poison(a, index):
-        if index == 3:
+        if index == 4:
             a['rebound_inputs'] = dict(a['rebound_inputs'])
             a['rebound_inputs']['core/graft_arena.py.evil'] = 'deadbeef'
 
@@ -175,7 +175,7 @@ def test_rebinding_does_not_weaken_the_other_inputs(monkeypatch):
 def test_amendment_scope_matches_the_receipts_on_disk():
     r = run.verify()
     scope = run.resume_scope(r, run.OUT)
-    assert set(scope) == {'R1'}, 'only the failed batch is re-armed'
+    assert 'R1' in scope, 'the failed batch is re-armed'
     # The amendment RECORDED retain 5 / reissue 3 ...
     recorded = run.read(run.OUT / 'amendment_1.json')['rearm']['R1']
     assert len(recorded['retain']) == 5 and len(recorded['reissue']) == 3
@@ -187,7 +187,9 @@ def test_amendment_scope_matches_the_receipts_on_disk():
     assert scope['R1']['reissue'] == []
     assert scope['R1']['retain'] == r['batches']['R1']
     # R2-R5 are untouched by the amendment.
-    assert run.amendment()['unchanged_batches'] == ['R2', 'R3', 'R4', 'R5']
+    # amendment 1 left R2-R5 alone; later links re-arm what later fails.
+    assert (run.read(run.OUT / 'amendment_1.json')['unchanged_batches']
+            == ['R2', 'R3', 'R4', 'R5'])
 
 
 def test_amendment_budget_stays_under_the_cap():

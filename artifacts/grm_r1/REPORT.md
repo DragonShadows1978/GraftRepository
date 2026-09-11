@@ -495,3 +495,105 @@ full gate in the leak order: 110 passed
 
 Nothing killed or signalled. No GPU lease taken, no GPU work run, no model
 loaded. Every Bash call foreground and completed. No git command run.
+
+---
+
+# Amendment 4 — idle-card pre-check + NON_FIT rail
+
+## The counts settle the premise (item 1)
+
+`--batch R4` died **13.4 s** into its lease with `cudaMalloc failed: out of
+memory`, after the copytree and before any probe line: 0 cell receipts, only
+the first cell's `off` session dir. Node and payload counts from the recorded
+checkpoint manifests:
+
+| batch | cells | max nodes | max npz MiB | batch total MiB |
+|---|---|---|---|---|
+| R1 | 8 | 25 | 36.7 | 221.5 |
+| R2 | 5 | 25 | 36.7 | 130.0 |
+| R3 | 8 | 25 | 36.6 | 220.8 |
+| **R4** | 8 | 25 | 36.6 | **151.6** |
+| R5 | 2 | 3 | 6.1 | 12.3 |
+
+**This is not a fit problem.** R4's first cell (25 nodes / 36.6 MiB) is the
+same size as `profile-census-2--e2e_t22_mira_seal`, which R3 **completed** on
+the same profile frame. R4 is the *smallest* profile batch by total payload.
+Against ~1,286 MiB of headroom, the largest single cell is 2.8% (5.7% for
+both arms) — roughly **35x margin**.
+
+## Lever chosen (item 2): (b) only; (a) declined with its receipt
+
+Lever (a), host-resident payloads, is **not implemented**. It would add a
+page-in path to solve a problem the evidence says does not exist, and every
+added path is another guard to get wrong — a lesson this arc has taught
+repeatedly. Recorded in the amendment as
+`lever_2a_host_resident_payloads.implemented: false` with the reasoning.
+
+**Idle pre-check.** Keyed on TOTAL framebuffer used, never on the
+compute-process list — the holder that broke R4 listed none, and FIX-8's
+`parse_memory` states exactly that rule. Bounded by `--idle-wait`, read-only,
+and it **only declines to start**: it never signals, kills or clears
+anything. A test asserts the source contains no `os.kill`/`SIGTERM`/`pkill`.
+
+**NON_FIT rail.** An OOM at load/harvest writes a create-only receipt
+(reason, stage, memory snapshot) and the batch continues. `is_oom` is
+narrow: any other error, and the parity RED, still stop the campaign. NON_FIT
+is **unmeasured** in `summary()` and never counted as `unchanged` — a cell
+that did not execute cannot be evidence that the rule left its answer alone.
+
+## Amendment
+
+`artifacts/grm_r1/amendment_4.json`, sha
+`003539cd8afdfbac0f78ddae807271184553d73251d90566315b026a806abe6d`, chained to
+amendment 3, re-binding the worker. **R4 re-armed with 0 retained / 8
+re-issued** (its FAILED record archived). **R5 is not re-armed** — it never
+started, so it is a normal first run. Budget unchanged; neither lever changes
+per-cell cost.
+
+## The guard that caught me
+
+The full gate came back **1 failed**: my own no-retry test from amendment 1
+flagged `while True:` in the new `await_idle`. The loop was genuinely bounded
+by a deadline, but the test is right to be strict, so rather than loosen it I
+rewrote the wait as a **counted `for` loop** — the bound is now structural,
+and "waiting on a resource someone else holds" is visibly different from
+"retrying our own failed work" in the code rather than in a comment. I also
+tightened the test: `run_cell` must have exactly one call site.
+
+## Gate lines
+
+```
+OOM site        : 13.4 s elapsed, 0 receipts, first cell 'off' dir only
+counts          : R4 max 25 nodes / 36.6 MiB; R3 completed the same size
+headroom        : 36.6 of ~1286 MiB = 2.8% (~35x margin) -> lever (a) declined
+amendment 4     : R4 retain 0 / reissue 8; R5 not re-armed (normal first run)
+campaign        : charged 988.5 s, complete ['R1','R2','R3']
+R4 priors       : all complete; budget 988.5 + 238 + 124 = 1350.5 <= 3600
+summary         : NOT_MEASURED, 21/31 measured, parity 21/21, non_fit 0
+transitions     : 20 unchanged_correct, 1 wrong_to_correct, 0 correct_to_wrong
+amendment tests : 20 passed
+full gate (leak order): 130 passed
+```
+
+## Prior art (new in amendment 4)
+
+* **GRM FIX-8 `grm_scout_fix8_resume`** (`parse_memory` / `memory_gate` /
+  `snapshot`, GRM contributors, 2026) and **NVIDIA nvidia-smi XML
+  framebuffer/process reporting** (docs.nvidia.com, accessed 2026-09-09) —
+  TAKEN: the XML fields, the conservative total-used reading, the 1000 MiB
+  registered limit, and the explicit warning against inferring idleness from
+  an empty compute list. That warning is the whole reason this gate is
+  correct for the R4 case.
+* **GRM C7/FIX8 create-only failure receipts** (GRM, 2026) — TAKEN: record a
+  failure as evidence rather than retrying it.
+* **OURS**: the NON_FIT class and its unmeasured accounting, and the use of
+  the idle probe as a pre-lease gate in this worker. **No prior art known to
+  me** for that composition. **No new algorithm.**
+
+## Process safety
+
+Nothing killed or signalled. No GPU lease taken, no GPU work run, no model
+loaded; the only device interaction was the read-only `nvidia-smi -q -x`
+probe. The worker was deliberately left unedited until the lead reported the
+R4/R5 run finished. Every Bash call foreground and completed. No git command
+run.

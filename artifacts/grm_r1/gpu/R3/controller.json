@@ -1,0 +1,23 @@
+{
+  "amendment": null,
+  "attempt": 1,
+  "cells_retained": [],
+  "cells_run": [
+    "fix6-replay-profile-census-1--e2e_t13_orion_pin",
+    "fix6-replay-profile-census-1--e2e_t16_lyra_dock",
+    "fix6-replay-profile-census-2--e2e_t22_mira_seal",
+    "fix6-replay-profile-census-restart-0--e2e_t13_orion_pin",
+    "fix6-replay-profile-census-restart-0--e2e_t16_lyra_dock",
+    "fix6-replay-profile-census-restart-1--e2e_t22_mira_seal",
+    "fix6-replay-profile-longhistory-1--lh_t013",
+    "fix6-replay-profile-longhistory-1--lh_t016"
+  ],
+  "charged_seconds": 153.1152954781428,
+  "elapsed_seconds": 153.1152954781428,
+  "error": null,
+  "fake": false,
+  "red": [],
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "reservation_seconds": 238,
+  "status": "COMPLETE"
+}

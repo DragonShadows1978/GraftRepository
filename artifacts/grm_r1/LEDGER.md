@@ -448,3 +448,104 @@ None outstanding.
 
 No process killed or signalled. No GPU lease taken, no GPU work run, no model
 loaded. Every Bash call foreground and completed. No git command run.
+
+---
+
+# Amendment 4 — idle-card pre-check + NON_FIT rail (2026-09-11)
+
+## Item 1: the OOM site and the counts
+
+Site: the controller records `RuntimeError: cudaMalloc failed: out of memory`
+at **13.4 s elapsed**, with `cells_run` listing all 8 but **0 cell receipts**
+and only the first cell's `off` session dir present. So it died AFTER the
+copytree, during model load or payload harvest, before any probe line.
+
+Counts, from the recorded checkpoint manifests:
+
+| batch | cells | max nodes | max npz MiB | batch total MiB |
+|---|---|---|---|---|
+| R1 | 8 | 25 | 36.7 | 221.5 |
+| R2 | 5 | 25 | 36.7 | 130.0 |
+| R3 | 8 | 25 | 36.6 | 220.8 |
+| **R4** | 8 | 25 | 36.6 | **151.6** |
+| R5 | 2 | 3 | 6.1 | 12.3 |
+
+## Item 3: lever (a) DECLINED, with its receipt
+
+* R4's first cell (`profile-longhistory-2--lh_t022`, 25 nodes / 36.6 MiB) is
+  the SAME size as `profile-census-2--e2e_t22_mira_seal`, which **R3
+  completed** on the same profile frame (freeing 23 payloads per arm).
+* R4 is the **smallest profile batch** by total payload (151.6 vs 220.8 MiB).
+* Largest single cell = 36.6 MiB against ~1,286 MiB headroom: **2.8%**
+  (5.7% for both arms), i.e. **~35x margin**.
+
+So there is no fit problem, and lever (a) would add a page-in path for a
+problem the numbers say does not exist. Declined and recorded as
+`lever_2a_host_resident_payloads.implemented: false`.
+
+Corroborating: my probe read 10,994 MiB with 6 foreign PIDs mid-analysis —
+which the lead confirms were the lead's own runs. And R3's receipts show the
+plateau pinned to the MiB across 15- and 25-node cells alike, which is a
+shared card, not a leak.
+
+## Item 2: what was implemented
+
+**Idle pre-check.** `device_snapshot()` reads the full nvidia-smi XML;
+`idle_gate()` keys on TOTAL framebuffer used and NEVER on the
+compute-process list — the R4 holder listed none, and FIX-8's `parse_memory`
+states exactly this rule. `await_idle()` polls a read-only probe for a
+bounded `--idle-wait`. It only DECLINES to start; it never signals, kills or
+clears anything. Recorded as `idle_check` in the controller.
+
+**NON_FIT rail.** An OOM at load/harvest writes a create-only receipt
+(reason, stage, memory snapshot incl. `foreign_holder_suspected`) and the
+batch CONTINUES. `is_oom` is a deliberately narrow text match; any non-OOM
+error and the parity RED still stop the campaign. NON_FIT is UNMEASURED in
+`summary()` and never counted as `unchanged`.
+
+## Commands and results
+
+| # | Command | Result |
+|---|---|---|
+| 1 | read `batch_R4_a3.log`, R4 controller, sessions | died 13.4 s, 0 receipts, first cell `off` only |
+| 2 | node/payload counts from every manifest | table above; R4 smallest profile batch |
+| 3 | compare R4 cell 1 vs R3's completed cells | identical size (25 nodes / 36.6 MiB) |
+| 4 | draft worker + amendment + tests in scratchpad | held unapplied while the lead's run held the lease |
+| 5 | apply drafts after the lead reported finished | worker 1200 -> 1408 lines |
+| 6 | `python3 scripts/grm_r1_amend_4.py` | R4 re-armed 0 retain / 8 reissue; R5 not re-armed (no controller) |
+| 7 | `pytest tests/test_grm_r1_amendment4.py` | 18 passed, then 20 with the zero-receipt fixture |
+| 8 | full gate, leak order | **1 failed** — my own no-retry guard caught `while True` in `await_idle` |
+| 9 | rewrite `await_idle` as a counted `for` loop | bound is now structural, guard stays strict |
+| 10 | rebuild amendment, full gate, leak order | **130 passed** |
+
+## Findings
+
+1. **The guard I wrote in amendment 1 caught my own amendment-4 code.**
+   `await_idle` used `while True` with a deadline break; the no-retry test
+   forbids that string outright. Rather than loosen the test I rewrote the
+   loop with a counted bound, so waiting-on-a-resource is visibly different
+   from retrying-our-own-work in the code, not just in a comment. I also
+   strengthened the test: `run_cell` must have exactly one call site.
+2. **Check the premise against the counts.** "Bigger cells did not fit" was
+   the natural reading of an OOM, and it was wrong: R4 is the smallest
+   profile batch and R3 had already run an identical-size cell. The
+   manifests settled it in one query.
+3. **A shared machine needs a pre-flight, not just a lease.** The flock
+   coordinates the agents that agreed to use it; it says nothing about a
+   display-side program that never did.
+4. Chain drift again: a3/a2/a1 helpers planted 3 links, the chain is now 4,
+   and two tests asserted "latest == 3" / "only R1 re-armed". Expected-shape
+   drift, corrected the same way as before.
+
+## RED items
+
+None outstanding. R4 remains unrun (0 receipts) by design — it is re-armed
+and waiting for the lead's GPU run behind the new idle check.
+
+## Process safety (amendment 4)
+
+No process killed or signalled. No GPU lease taken, no GPU work run, no model
+loaded; the only device interaction was the read-only `nvidia-smi -q -x`
+probe, which allocates nothing. `scripts/grm_r1_replay.py` was deliberately
+left unedited until the lead reported the R4/R5 run finished. Every Bash call
+foreground and completed. No git command run.

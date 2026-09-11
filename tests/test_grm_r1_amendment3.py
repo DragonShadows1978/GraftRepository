@@ -24,7 +24,7 @@ import pytest
 from scripts import grm_r1_replay as run
 
 
-def _chain_into(tmp_path, rearm=None, links=(1, 2, 3)):
+def _chain_into(tmp_path, rearm=None, links=(1, 2, 3, 4)):
     """Copy the real amendment chain into ``tmp_path``, optionally re-scoped."""
     for index in links:
         a = json.loads((run.OUT / f'amendment_{index}.json').read_text())
@@ -203,12 +203,16 @@ def test_retained_receipt_binding_is_still_checked(tmp_path):
 # --------------------------------------------------------------------------
 
 def test_amendment_3_chains_to_amendment_2():
-    a = run.amendment()
-    assert a['amendment'] == 3
-    assert a['registration_sha256'] == run.sha(run.REG)
-    assert a['previous_amendment_sha256'] == run.sha(
+    # amendment() returns the LATEST link; assert link 3's own contents and
+    # its place in the chain rather than "latest == 3".
+    a3 = run.read(run.OUT / 'amendment_3.json')
+    assert a3['amendment'] == 3
+    assert a3['registration_sha256'] == run.sha(run.REG)
+    assert a3['previous_amendment_sha256'] == run.sha(
         run.OUT / 'amendment_2.json')
-    assert len(a['_chain']) == 3
+    a = run.amendment()
+    assert run.sha(run.OUT / 'amendment_3.json') in a['_chain']
+    assert len(a['_chain']) >= 3
     assert a['acceptance_unchanged'] is True
     r = run.verify()
     assert a['prediction'] == r['prediction']
@@ -216,7 +220,7 @@ def test_amendment_3_chains_to_amendment_2():
 
 
 def test_amendment_3_records_the_completed_rearm():
-    a = run.amendment()
+    a = run.read(run.OUT / 'amendment_3.json')
     status = a['rearm_status']['R1']
     assert status['satisfied'] is True
     assert status['controller_status'] == 'COMPLETE'
@@ -228,6 +232,7 @@ def test_amendment_3_records_the_completed_rearm():
     # The re-arm entry is kept verbatim for the record.
     assert a['rearm_retained_for_the_record'] is True
     assert len(a['rearm']['R1']['retain']) == 5
+    assert run.amendment()['rearm']['R1']['retain'] == a['rearm']['R1']['retain']
 
 
 def test_real_campaign_is_open_with_r1_complete():
@@ -236,7 +241,7 @@ def test_real_campaign_is_open_with_r1_complete():
     scope = run.resume_scope(r, run.OUT)['R1']
     assert scope['scope_satisfied'] is True and scope['reissue'] == []
     charged, complete = run.campaign_state(r, run.OUT)
-    assert complete == ['R1']
+    assert 'R1' in complete
     assert charged > 0
     # R2 is a normal first run: the amendment does not scope it.
     assert run.resume_scope(r, run.OUT).get('R2') is None

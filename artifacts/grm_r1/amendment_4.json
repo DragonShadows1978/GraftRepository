@@ -1,0 +1,136 @@
+{
+  "acceptance_unchanged": true,
+  "added_reserved_seconds": 134,
+  "amendment": 4,
+  "defects": [
+    {
+      "cause": "A display-side program on :0 held ~3,144 MiB and listed NO compute process. The card was not ours to use and the worker started anyway. This machine is shared; that holder is never to be touched.",
+      "evidence": "artifacts/grm_r1/batch_R4_a3.log",
+      "fix": "An idle-card pre-check on the lease path keyed on TOTAL framebuffer used (never on the compute-process list), bounded by --idle-wait, recorded as idle_check. It only declines to start; it never signals, kills or clears anything.",
+      "id": "R1-D6-foreign-device-holder",
+      "not_the_cause": "NOT a payload-fit problem. R4 cell 1 (25 nodes / 36.6 MiB) is the same size as a cell R3 completed on the same frame, and R4 is the smallest profile batch by total payload. See node_payload_counts.",
+      "symptom": "cudaMalloc failed: out of memory 13.0 s into the lease, before any probe line, 0 cell receipts; the full 238 s reservation charged for nothing."
+    },
+    {
+      "cause": "No rail existed between \"cell runs\" and \"campaign dies\".",
+      "evidence": "artifacts/grm_r1/gpu/R4/controller.json",
+      "fix": "An OOM at load/harvest writes a create-only NON_FIT receipt (reason, stage, memory snapshot) and the batch CONTINUES. NON_FIT is unmeasured in summary() and is never counted as unchanged. Only an OOM takes this path; any other error still stops the campaign.",
+      "id": "R1-D7-one-unloadable-cell-failed-the-campaign",
+      "symptom": "One cell that could not load failed the whole batch."
+    }
+  ],
+  "evidence_class": "Campaign-control amendment. Adds a device pre-check and a non-fit rail; no admission, routing or scoring logic is touched, and the prediction and verdict rule are unchanged.",
+  "fit_analysis": {
+    "conclusion": "No R4/R5 cell is near a fit boundary. Lever 2(a) is NOT indicated and NOT implemented.",
+    "headroom_mib_at_observed_plateau": 1286,
+    "headroom_multiple_over_largest_cell": 35,
+    "largest_cell_both_arms_mib": 73.2,
+    "largest_single_cell_mib": 36.6,
+    "r3_completed_same_size_cell": "profile-census-2--e2e_t22_mira_seal, 25 nodes / 36.6 MiB, freed 23 payloads per arm"
+  },
+  "gpu_cap_seconds": 3600,
+  "idle_limit_basis": "FIX-8 registered the same 1000 MiB limit. The receipts bracket it cleanly: an idle card in this arc reads 314-327 MiB, and the holder that broke R4 held ~3,144 MiB.",
+  "idle_limit_mib": 1000,
+  "lessons": [
+    "Check the premise against the counts before building the fix the symptom suggests. \"Bigger cells did not fit\" was the natural reading of an OOM; the manifests said R4 was the smallest profile batch and R3 had already run an identical-size cell.",
+    "A shared machine needs a pre-flight, not just a lease. The flock coordinates the agents that agreed to use it; it says nothing about a display-side program that never did."
+  ],
+  "lever_2a_host_resident_payloads": {
+    "implemented": false,
+    "reason": "The counts show ~35x headroom over the largest cell and R3 already ran an identical-size cell to completion. Adding a page-in path would solve a problem the evidence says does not exist, and every added path is another guard to get wrong."
+  },
+  "node_payload_counts": {
+    "R1": {
+      "cells": 8,
+      "max_nodes": 25,
+      "max_npz_mib": 36.7,
+      "total_mib": 221.5
+    },
+    "R2": {
+      "cells": 5,
+      "max_nodes": 25,
+      "max_npz_mib": 36.7,
+      "total_mib": 130.0
+    },
+    "R3": {
+      "cells": 8,
+      "max_nodes": 25,
+      "max_npz_mib": 36.6,
+      "total_mib": 220.8
+    },
+    "R4": {
+      "cells": 8,
+      "max_nodes": 25,
+      "max_npz_mib": 36.6,
+      "total_mib": 151.6
+    },
+    "R5": {
+      "cells": 2,
+      "max_nodes": 3,
+      "max_npz_mib": 6.1,
+      "total_mib": 12.3
+    }
+  },
+  "order": "orders/GRM_R1_MARGIN_FIRST_REPLAY.md",
+  "order_sha256": "b351d8c25d1c2f5ab5a9a439e00adfb70a3535f9a5242508583ee83edd3dcda7",
+  "prediction": "Registered prediction: <= 2 of 31 executions change their answer; 0 correct->wrong on supersession.",
+  "previous_amendment_sha256": "e23a91c8d267b185a589cc67b71a1df5fb96dd4adca3fd542519fce00448f349",
+  "prior_art": "GRM-R1 amendment 4: idle-card pre-check + NON_FIT rail; R4/R5 re-armed.\n\nDefect (lead): `--batch R4` died 13.0 s into its lease with\n`cudaMalloc failed: out of memory`, before any probe line and with zero cell\nreceipts (`artifacts/grm_r1/batch_R4_a3.log`).  The A1 seat's worker died the\nsame way 60 s later at 15 s, and `nvidia-smi` at that moment showed ~3,144\nMiB used with NO compute process listed -- a display-side program on :0.\nThis machine is shared; that holder is never ours to touch.\n\nNOT A FIT PROBLEM -- the counts say so plainly (item 1 of the order):\n\n    batch  cells  max nodes  max npz MiB  batch total MiB\n    R1     8      25         36.7         221.5\n    R2     5      25         36.7         130.0\n    R3     8      25         36.6         220.8   <- all COMPLETE\n    R4     8      25         36.6         151.6   <- died on cell 1\n    R5     2       3          6.1          12.3\n\nR4's first cell (`profile-longhistory-2--lh_t022`, 25 nodes / 36.6 MiB) is\nthe SAME size as `profile-census-2--e2e_t22_mira_seal`, which R3 completed on\nthe same profile frame (freeing 23 payloads per arm).  R4 is in fact the\nSMALLEST profile batch by total payload.  Against the ~1,286 MiB of headroom\nthe receipts show, the largest single cell is 36.6 MiB -- roughly 2.8%, or\n5.7% counting both arms.  There is ~35x headroom over the largest cell, so\nlever 2(a) (host-resident payloads) is NOT indicated and is NOT implemented:\nit would add a page-in path to solve a problem the numbers say does not\nexist, and every added path is another guard to get wrong.\n\nWhat IS implemented:\n\n(2) An idle-card pre-check on the lease path, modelled on FIX-8's replay.\n    `device_snapshot()` reads the full nvidia-smi XML (total, used, free,\n    compute-process list); `idle_gate()` keys on TOTAL framebuffer used,\n    never on the process list, because the holder that broke R4 listed no\n    compute process at all -- FIX-8's `parse_memory` states exactly this\n    rule (\"never infer an idle card merely from an empty compute list\").\n    `await_idle()` polls a read-only probe for a bounded `--idle-wait` and\n    then declines.  It NEVER signals, kills or clears anything; the operator\n    has absolute right of way.  The result is recorded as `idle_check`.\n\n(b) A cell that cannot be loaded is recorded as a create-only NON_FIT\n    receipt -- reason, stage, and a device-memory snapshot including whether\n    a foreign holder is suspected -- and the batch CONTINUES to the next\n    cell.  Only an OOM takes this path (`is_oom`, a deliberately narrow text\n    match, since the engine raises a plain RuntimeError); anything else\n    still stops the campaign.  A NON_FIT cell is UNMEASURED in `summary()`\n    and is NEVER counted as `unchanged`: a cell that did not execute cannot\n    be evidence that the rule left its answer alone.\n\nScope: rebind the worker sha; re-arm R4 and R5 (both open, 0 receipts);\nbudget unchanged, since neither lever changes per-cell cost.  Admission,\nrouting and scoring are untouched; the prediction, verdict rule and parity\nbarrier are unchanged.\n\nPrior art: GRM C7/C2 sha-bound amendment chains (GRM contributors, 2026) --\nTAKEN verbatim, including chaining to the previous amendment's hash.  GRM\nFIX-8 `grm_scout_fix8_resume.parse_memory` / `memory_gate` / `snapshot`\n(GRM, 2026) and the NVIDIA nvidia-smi XML framebuffer and process reporting\n(docs.nvidia.com, accessed 2026-09-09) -- TAKEN: the XML fields, the\nconservative total-used reading, the 1000 MiB registered limit, and the\nexplicit warning against inferring idleness from an empty compute list.\nGRM C7/FIX8 create-only failure receipts (GRM, 2026) -- TAKEN: record a\nfailure as evidence instead of retrying it.  OURS: the NON_FIT class and its\nunmeasured accounting, and the use of the idle probe as a pre-lease gate in\nthis worker.  No prior art known to me for that exact composition, and no\nnew algorithm.\n",
+  "prior_charged_seconds": 263.0,
+  "rearm": {
+    "R1": {
+      "estimate_basis": "max both-arm wall over this batch's retained receipts, plus one model load and 60 s headroom; measured, not guessed",
+      "lease_seconds": 134,
+      "measured_per_cell_seconds": 18.12,
+      "prior_charged_seconds": 263.0,
+      "prior_error": "RuntimeError: turn 22 failed: RuntimeError('cudaMalloc failed: out of memory')",
+      "prior_status": "FAILED",
+      "reissue": [
+        "fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal",
+        "fix6-replay-defaults-longhistory-1--lh_t013",
+        "fix6-replay-defaults-longhistory-1--lh_t016"
+      ],
+      "retain": [
+        "fix6-replay-defaults-census-1--e2e_t13_orion_pin",
+        "fix6-replay-defaults-census-1--e2e_t16_lyra_dock",
+        "fix6-replay-defaults-census-2--e2e_t22_mira_seal",
+        "fix6-replay-defaults-census-restart-0--e2e_t13_orion_pin",
+        "fix6-replay-defaults-census-restart-0--e2e_t16_lyra_dock"
+      ]
+    },
+    "R4": {
+      "estimate_basis": "registered lease unchanged: neither lever changes per-cell cost",
+      "lease_seconds": 238,
+      "prior_charged_seconds": 238.0,
+      "prior_error": "RuntimeError: cudaMalloc failed: out of memory",
+      "prior_status": "FAILED",
+      "reissue": [
+        "fix6-replay-profile-longhistory-2--lh_t022",
+        "fix6-replay-profile-longhistory-restart-0--lh_t013",
+        "fix6-replay-profile-longhistory-restart-0--lh_t016",
+        "fix6-replay-profile-longhistory-restart-1--lh_t022",
+        "fix6-replay-profile-sup-correction_then_restatement--sup_harbor_restatement",
+        "fix6-replay-profile-sup-multi_hop_a_b_c--sup_lumen_head",
+        "fix6-replay-profile-sup-restart-0--sup_harbor_restatement",
+        "fix6-replay-profile-sup-restart-1--sup_lumen_head"
+      ],
+      "retain": []
+    }
+  },
+  "rebound_inputs": {
+    "scripts/grm_r1_amend_4.py": "0d759857d1c2aea2b6de910b0d7acd887c6ee13e27ed71a35e7632639d39b2a8",
+    "scripts/grm_r1_replay.py": "176aa775ead3c7a89f603a5c735358c857d50a845c583d1d66b0a54dab84a034"
+  },
+  "rebound_reason": "Both the idle gate and the NON_FIT rail live in the worker, so its hash changes; every other registered input keeps its original hash.",
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "retained_receipts_policy": "Completed cell receipts are VALID create-only receipts: retained byte-for-byte, never re-run, never rewritten. Only cells with no receipt are re-issued. resume_scope() compares the amendment's retain/reissue lists against what is actually on disk and STOPS (R1_AMENDMENT_RETAIN_MISMATCH / _REISSUE_MISMATCH) if they disagree, rather than silently re-scoping.",
+  "schema": "grm.r1.amendment.v1",
+  "total_reserved_seconds": 397.0,
+  "unchanged_batches": [
+    "R2",
+    "R3",
+    "R5"
+  ],
+  "unchanged_reason": "Neither lever changes per-cell cost: one declines to start on a busy card, the other records a cell that could not load.",
+  "verdict_rule": "Verdict rule: margin_first is adoptable as the profile default iff correct->wrong = 0 on sup and <= 1 elsewhere."
+}
