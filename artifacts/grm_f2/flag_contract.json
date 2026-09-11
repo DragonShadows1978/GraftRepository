@@ -1,52 +1,63 @@
 {
-  "item": "F2",
-  "title": "Chronicle fold alias guard",
-  "env_name": "GRM_FOLD_ALIAS_GUARD",
   "constructor_kwarg": "fold_alias_guard",
-  "default": "OFF",
-  "resolution_order": "explicit constructor value > GRM_FOLD_ALIAS_GUARD > OFF",
-  "unknown_token_behavior": "fails CLOSED to OFF (A1 / L2 / A-DEC precedent)",
-  "resolved_once": "in GraftRepository.__init__, so a mid-session environment change cannot alter a repository's fold semantics halfway through a conversation",
-  "off_is_byte_identical": true,
-  "off_byte_identity_proof": "tests/test_grm_f2_alias_guard.py::test_flag_off_byte_identical",
-  "owner_registration": "LT1.1 r3 (F1)",
-  "what_the_lead_pins": {
-    "arm": "LT1.1 r3 arm A only, alias flag GRM_ALIAS_FOLD_MERGE OFF (the r2 arm-A baseline), same frozen conversation, same worker",
-    "env_on": "GRM_FOLD_ALIAS_GUARD=1",
-    "env_off_baseline": "GRM_FOLD_ALIAS_GUARD unset (do NOT set it to 0 for the baseline arm: absent is the pre-F2 world and is what the byte-identity gate compares against)",
-    "interaction_with_F1": "independent env names; F2 changes the fold WINDOW and adds a post-generation QC, F1 (GRM_FOLD_RETAIN_SOURCES) changes what a fold does to its sources afterwards. If both are ON in the same arm, a per-flag attribution cannot be made from that arm alone -- run the flags separately, or accept the joint reading and say so.",
-    "no_gpu_run_by_this_seat": true
-  },
-  "registered_predictions": {
-    "primary": "No digest in the LT1.1 r3 arm-A store is attributed to 'the Beacon' or to any other alias of an entity that does not own the fact. Checkable mechanically: grep the store manifest for digest nodes, run core.grm_fold_alias_guard.attribution_violations over each digest against its recorded sources; expect zero violations across the run.",
-    "secondary": "Breakwater and Commtower facts stay entity-correct in every digest that carries them; grepping the ON store for 'Breakwater' finds MORE than the r2 arm-A count of 1 node.",
-    "residency": "The excluded alias turns are NOT retired by the window fold, so the active turn-node population is higher than r2 arm A by the number of exclusions. On the r2 arm-A conversation that is 10 alias turns (the CPU replay itemization in artifacts/grm_d1/alias_cpu_aplus.json lists 10 alias pairs), so expect up to 10 additional un-retired turn nodes and correspondingly more fold windows.",
-    "abort_risk_named_before_the_run": "The attribution QC can abort a fold that coverage would have accepted. Each abort marks its sources no_fold, so a run with many aborts compresses less. Registered expectation: aborts are RARE -- zero on all 13 FIX-5 GPU-contrast folds (tests/test_grm_f2_alias_guard.py::test_control_fix5_gpu_contrast_digests_still_pass). If the r3 arm shows a high abort count, that is a result, not a bug to be tuned away after the fact."
-  },
-  "not_claimed": [
-    "No model-quality claim. Every gate in this item is a CPU double over the real production consolidation path; whether GPT-OSS-20B writes an entity-correct digest once the alias turn is gone is the lead's GPU contrast, not this seat's evidence.",
-    "No claim that the guard improves fresh recall, corrections, aliases or recap. Those are LT1.1 scorer columns and no CPU fixture here measures them.",
-    "No routing claim. The Breakwater routing miss (round-1 top residual, F3) is untouched by this item: F2 changes what is STORED, not what is ranked."
-  ],
-  "when_the_guard_stops_applying": [
-    "It is a LEXICAL entity proxy (capitalized word, possessive-tolerant), not an entity recognizer. A lower-case entity is invisible to it and the fold behaves exactly as with the flag OFF.",
-    "It judges ATTRIBUTION, not truth or completeness. A value the digest never carries raises nothing here -- that stays MIN_FOLD_KEEP's question.",
-    "It cannot adjudicate a fact whose source clause names no entity; such a fact is skipped, never guessed.",
-    "The alias allowance is scoped to ONE entity: an alias registered for Lantern is accepted in place of Lantern and of nothing else."
-  ],
   "core_files": [
     "core/grm_fold_alias_guard.py",
     "core/graft_repository.py",
     "core/graft_arena.py"
   ],
+  "default": "OFF",
+  "env_name": "GRM_FOLD_ALIAS_GUARD",
+  "item": "F2",
+  "not_claimed": [
+    "No model-quality claim. Every gate in this item is a CPU double over the real production consolidation path; whether GPT-OSS-20B writes an entity-correct digest once the alias turn is gone is the lead's GPU contrast, not this seat's evidence.",
+    "No claim that the guard improves fresh recall, corrections, aliases or recap. Those are LT1.1 scorer columns and no CPU fixture here measures them.",
+    "No routing claim. The Breakwater routing miss (round-1 top residual, F3) is untouched by this item: F2 changes what is STORED, not what is ranked."
+  ],
+  "off_byte_identity_proof": "tests/test_grm_f2_alias_guard.py::test_flag_off_byte_identical",
+  "off_is_byte_identical": true,
+  "owner_registration": "LT1.1 r3 (F1)",
+  "pin_relocations": [
+    {
+      "copy_verified": "cmp -s against the r2 source: byte-identical",
+      "from": "artifacts/grm_d1/lt1_1/run_A/cells/A-025-032/session/repository/manifest.json",
+      "pin": "r2_arm_a_source_store",
+      "relocated_by": "GRM-F1 follow-up 3 (lead order 2026-09-11)",
+      "sha256": "a2e6811eb2574e04fe846960deef12fb5da5401457cee552fa8ab03d85ca3f7c",
+      "to": "artifacts/grm_f2/r2_arm_a_A-025-032_session_manifest.json",
+      "why": "The pin pointed INSIDE a LIVE campaign run root. r3 resumes into run roots, and a contract pin that requires a file to exist under one makes the frozen r2 receipts load-bearing for a test -- which is how a partial restore of that directory got made in the first place. The manifest is now archived under artifacts/grm_f2/ as a byte-identical copy, so the contract depends on F2's own artifact rather than on the state of someone else's campaign directory."
+    }
+  ],
+  "registered_predictions": {
+    "abort_risk_named_before_the_run": "The attribution QC can abort a fold that coverage would have accepted. Each abort marks its sources no_fold, so a run with many aborts compresses less. Registered expectation: aborts are RARE -- zero on all 13 FIX-5 GPU-contrast folds (tests/test_grm_f2_alias_guard.py::test_control_fix5_gpu_contrast_digests_still_pass). If the r3 arm shows a high abort count, that is a result, not a bug to be tuned away after the fact.",
+    "primary": "No digest in the LT1.1 r3 arm-A store is attributed to 'the Beacon' or to any other alias of an entity that does not own the fact. Checkable mechanically: grep the store manifest for digest nodes, run core.grm_fold_alias_guard.attribution_violations over each digest against its recorded sources; expect zero violations across the run.",
+    "residency": "The excluded alias turns are NOT retired by the window fold, so the active turn-node population is higher than r2 arm A by the number of exclusions. On the r2 arm-A conversation that is 10 alias turns (the CPU replay itemization in artifacts/grm_d1/alias_cpu_aplus.json lists 10 alias pairs), so expect up to 10 additional un-retired turn nodes and correspondingly more fold windows.",
+    "secondary": "Breakwater and Commtower facts stay entity-correct in every digest that carries them; grepping the ON store for 'Breakwater' finds MORE than the r2 arm-A count of 1 node."
+  },
   "repo_relative_pins": {
-    "guard_module": "core/grm_fold_alias_guard.py",
+    "fix5_gpu_contrast_registration": "artifacts/grm_scout_fix5/registration.json",
     "fixtures": "tests/test_grm_f2_alias_guard.py",
-    "receipt": "artifacts/grm_f2/receipt_digest24.json",
+    "guard_module": "core/grm_fold_alias_guard.py",
     "ledger": "artifacts/grm_f2/LEDGER.md",
+    "r2_arm_a_source_store": "artifacts/grm_f2/r2_arm_a_A-025-032_session_manifest.json",
+    "receipt": "artifacts/grm_f2/receipt_digest24.json",
     "report": "artifacts/grm_f2/REPORT.md",
-    "r2_arm_a_source_store": "artifacts/grm_d1/lt1_1/run_A/cells/A-025-032/session/repository/manifest.json",
-    "round_1_report": "artifacts/grm_d1/REPORT.md",
-    "fix5_gpu_contrast_registration": "artifacts/grm_scout_fix5/registration.json"
-  }
+    "round_1_report": "artifacts/grm_d1/REPORT.md"
+  },
+  "resolution_order": "explicit constructor value > GRM_FOLD_ALIAS_GUARD > OFF",
+  "resolved_once": "in GraftRepository.__init__, so a mid-session environment change cannot alter a repository's fold semantics halfway through a conversation",
+  "title": "Chronicle fold alias guard",
+  "unknown_token_behavior": "fails CLOSED to OFF (A1 / L2 / A-DEC precedent)",
+  "what_the_lead_pins": {
+    "arm": "LT1.1 r3 arm A only, alias flag GRM_ALIAS_FOLD_MERGE OFF (the r2 arm-A baseline), same frozen conversation, same worker",
+    "env_off_baseline": "GRM_FOLD_ALIAS_GUARD unset (do NOT set it to 0 for the baseline arm: absent is the pre-F2 world and is what the byte-identity gate compares against)",
+    "env_on": "GRM_FOLD_ALIAS_GUARD=1",
+    "interaction_with_F1": "independent env names; F2 changes the fold WINDOW and adds a post-generation QC, F1 (GRM_FOLD_RETAIN_SOURCES) changes what a fold does to its sources afterwards. If both are ON in the same arm, a per-flag attribution cannot be made from that arm alone -- run the flags separately, or accept the joint reading and say so.",
+    "no_gpu_run_by_this_seat": true
+  },
+  "when_the_guard_stops_applying": [
+    "It is a LEXICAL entity proxy (capitalized word, possessive-tolerant), not an entity recognizer. A lower-case entity is invisible to it and the fold behaves exactly as with the flag OFF.",
+    "It judges ATTRIBUTION, not truth or completeness. A value the digest never carries raises nothing here -- that stays MIN_FOLD_KEEP's question.",
+    "It cannot adjudicate a fact whose source clause names no entity; such a fact is skipped, never guessed.",
+    "The alias allowance is scoped to ONE entity: an alias registered for Lantern is accepted in place of Lantern and of nothing else."
+  ]
 }

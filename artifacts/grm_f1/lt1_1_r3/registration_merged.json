@@ -619,7 +619,7 @@
   ],
   "worker": {
     "path": "scripts/grm_lt1_1.py",
-    "sha256": "c9874c41f46e95493c78d76cab8eccf62544647350a0d6172ea0e9aa5447c5d4",
+    "sha256": "3725dc3fe2a34e9a31f652e4f009e490ae125d7f6df3b30fd6b0acef420737b4",
     "statement": "the REAL LT1.1 worker, same for all arms"
   }
 }

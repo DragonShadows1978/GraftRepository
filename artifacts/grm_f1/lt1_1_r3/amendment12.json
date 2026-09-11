@@ -1,0 +1,124 @@
+{
+  "amendment": 12,
+  "arms": [
+    "A'",
+    "A+'",
+    "A0"
+  ],
+  "core_rebind": {
+    "attribution_note": "CARRIED FORWARD VERBATIM from amendment 11. GRM-F1 follow-up 3 is a RUNNER change only; all 8 core pins were re-measured against the tree at registration time and every one matches. The script raises F1_UNEXPECTED_CORE_DRIFT rather than rebinding a core file this order had no business touching.",
+    "changed": {
+      "core/graft_arena.py": {
+        "after_sha256": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62",
+        "attribution": "GRM-F1 + GRM-F2. F1: `_deposit_consolidation(..., retain=)` and the once-resolved `fold_retain_sources`. F2: the `fold_attribution_guard` hook and `_fold_attribution_ok`, which rejects on BOTH fold paths before `_deposit_consolidation` is reached. Verified at the code site by this seat: the attribution check returns (None, None) ahead of every deposit, so an F2 rejection can never leave F1 lineage behind.",
+        "before_sha256": "7f86633daca7c32f74967834018f3bb8853b9319464f0758273061eb907a7d72"
+      },
+      "core/graft_repository.py": {
+        "after_sha256": "758c62dc49ed89ddec7a0c6b78c1d36c55b9bae38fb7553a806036ddc4c7771c",
+        "attribution": "GRM-F1 + GRM-F2, merge resolved by this seat. F1: `_fold_once` retain lifecycle + fold-event lineage; `_alias_consolidate` pins retain=False so A1 keeps retiring its alias edge. F2: `_guard_fold_windows` on BOTH `_librarian_jobs` return paths, the attribution hook install, and `fold_guard_history`. Composition: F2 excludes from the window BEFORE job selection; F1 applies its lifecycle to whatever the guarded window folded; the shared abort branch absorbs an attribution rejection before any F1 lineage is written.",
+        "before_sha256": "c3aa3c92a20352016448467374e19bb409efd905248e0f4e02a81d218aa04920"
+      },
+      "core/grm_admission.py": {
+        "after_sha256": "7912f29108f0aaa9bc8f51d7a613b2866596aa6b93f99f4fa0b5bde69b2c3494",
+        "attribution": "GRM-F5. `GRM_ROUTE_SOLE_BINDER_INSURANCE` inserts the sole binder into the k=3 rank plan. Not modified by this seat; pinned here because r3 must run on the merged tree and an unpinned input is an unnoticed input.",
+        "before_sha256": "ebdfd84af435a163dfe4a37281d489047acd974bf76190b79622340c29af7ab6"
+      }
+    },
+    "new_inputs": {
+      "core/grm_fold_alias_guard.py": {
+        "attribution": "GRM-F2 NEW INPUT. The alias-guard flag resolver, the entity/clause vocabulary, `fold_window_excludes` and `attribution_violations`. Not authored by this seat.",
+        "sha256": "45b5640cb6e2138f3b26b8d45ae2e36cbdbee052ea71437dac6b805ca27962ed"
+      }
+    },
+    "source_binding": "artifacts/grm_d1/lt1_1/amendment11.json",
+    "source_binding_sha256": "7e0562f6d65bf0d3e9bb46d8054d23ef0fe1a663c62dbab463e45f1d31e84302",
+    "supersedes": "amendment11.core_rebind",
+    "unchanged": {
+      "core/grm_alias_fold.py": {
+        "attribution": "unchanged by the lc1-wip merge",
+        "sha256": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5"
+      },
+      "core/grm_fold_retain.py": {
+        "attribution": "unchanged by the lc1-wip merge",
+        "sha256": "f1d1df10743bf6c15df33d2644a234ba582cf6478211ae482583d4a4be3d6fa7"
+      },
+      "core/grm_runtime.py": {
+        "attribution": "unchanged by the lc1-wip merge",
+        "sha256": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646"
+      },
+      "core/grm_text_norm.py": {
+        "attribution": "unchanged by the lc1-wip merge",
+        "sha256": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a"
+      }
+    },
+    "unchanged_count": 4
+  },
+  "f2_pin_relocation": {
+    "moved_from": "artifacts/grm_d1/lt1_1/run_A/cells/A-025-032/session/repository/manifest.json",
+    "moved_to": "artifacts/grm_f2/r2_arm_a_A-025-032_session_manifest.json",
+    "pin": "r2_arm_a_source_store",
+    "run_root_state": "artifacts/grm_d1/lt1_1/run_A holds no session/ directories; the 26 r2 cells are otherwise exactly as the campaign left them",
+    "why": "a contract pin must not require a file inside a LIVE campaign run root; the copy is byte-identical and the stray restored session/ directory has been removed from the run root"
+  },
+  "follow_up_instruction": "Amendment 12 supersedes amendment 11's core_rebind and runner under the chain rule grm_lt1_1.governing_core_rebind implements. The THREE-ARM registration (A0 / A' / A+') from amendment 11 stands unchanged; only the runner sha moves.",
+  "order": "orders/GRM_F1_FOLD_RETAIN_SOURCES.md",
+  "order_sha256": "1d307c41e12356bf7181b073d8002bba36d103491a231cb51fa4c1de20a82bd5",
+  "previous_amendment": "amendment11.json",
+  "previous_amendment_sha256": "7e0562f6d65bf0d3e9bb46d8054d23ef0fe1a663c62dbab463e45f1d31e84302",
+  "process_safety": {
+    "core_writes": "none -- follow-up 3 edits the runner only",
+    "display": "no windowed gate; CPU gates only",
+    "git": "the lead commits; the seat never runs git",
+    "gpu": "single lease via flock --wait; the operator has absolute right of way; no process this run did not start is ever signalled",
+    "scratch": "pytest uses --basetemp artifacts/grm_f1/tmp and the directory is removed afterwards",
+    "subagents": "none spawned"
+  },
+  "purpose": "Rebind the LT1.1 RUNNER after GRM-F1 follow-up 3 made --out govern every root the runner and the worker consult on the resume route, and made the r3 treatment flags cross into the leased child. No core file moves; amendment 11's core_rebind is carried forward verbatim and re-verified.",
+  "root_isolation_contract": {
+    "printed_in": [
+      "the --dry-lease JSON receipt (resolved_roots)",
+      "the operator log line \"LT1.1 roots {...}\""
+    ],
+    "proof": "tests/test_grm_f1_resume_out_root.py",
+    "statement": "With --out given, the arm default root is never read. resolved_roots() reports campaign_root, cells_root, owner_file, worker_RUN and arm_default_root; assert_root_isolation() raises LT11_OUT_EQUALS_ARM_DEFAULT, LT11_OUT_INSIDE_ARM_DEFAULT or LT11_WORKER_RUN_NOT_ISOLATED rather than proceeding."
+  },
+  "runner": {
+    "carried_from": "amendment11.json",
+    "change": "GRM-F1 follow-up 3, THREE changes, all confined to the runner; core is untouched. (1) main() forwards --out to the real resume(): it read `return resume(args.arm)` and DROPPED the flag on the only route that spends GPU, which is why the lead's arm-A' run resumed into r2's frozen run root and died in pending() with COMPLETED_CELL_BINDING_OR_STATUS on the FIRST cell. (2) lt1_1_seams(arm, root) pins worker.RUN -- read by run_cell, accounting and the leased child -- to the campaign root instead of out_dir(arm), with resolved_roots()/assert_root_isolation() refusing a root that is, or sits inside, the arm default and printing the resolved roots into the receipt and the operator log. (3) spawn_env carries GRM_FOLD_RETAIN_SOURCES / GRM_FOLD_ALIAS_GUARD / GRM_ROUTE_SOLE_BINDER_INSURANCE across the environment() strip into the leased child; measured before the fix, all three were ABSENT there, so a treatment arm would have executed as the control while its receipts claimed otherwise. Each flag is carried only when actually set, so a caller with none set gets a byte-identical child environment.",
+    "path": "scripts/grm_lt1_1.py",
+    "red_receipts": [
+      "artifacts/grm_f1/red/red_resume_drops_out.log",
+      "artifacts/grm_f1/red/red_child_env_strip.json"
+    ],
+    "sha256": "3725dc3fe2a34e9a31f652e4f009e490ae125d7f6df3b30fd6b0acef420737b4",
+    "superseded_sha256": "c9874c41f46e95493c78d76cab8eccf62544647350a0d6172ea0e9aa5447c5d4",
+    "tests": [
+      "tests/test_grm_lt1_1_runner.py",
+      "tests/test_grm_lt1_1_resume_route.py",
+      "tests/test_grm_lt1_1_preflight.py",
+      "tests/test_grm_lt1_1_child_spawn.py",
+      "tests/test_grm_lt1_1_idle_wait.py",
+      "tests/test_grm_lt1_1_production_turns.py"
+    ],
+    "tests_added_by_f1": [
+      "tests/test_grm_f1_fold_retain.py"
+    ],
+    "tests_added_by_follow_up_3": [
+      "tests/test_grm_f1_resume_out_root.py"
+    ],
+    "worker": "scripts/grm_lt1_worker.py",
+    "worker_change": "UNCHANGED by follow-up 3; amendment 11's worker sha re-measured against the tree and carried verbatim.",
+    "worker_sha256": "79492eafe9176510a649c5477bf78bf1eb5c129ecaeaf4094221c67e22646c71"
+  },
+  "treatment_flag_carry": {
+    "flags": [
+      "GRM_FOLD_RETAIN_SOURCES",
+      "GRM_FOLD_ALIAS_GUARD",
+      "GRM_ROUTE_SOLE_BINDER_INSURANCE"
+    ],
+    "measured_before_fix": "all three ABSENT from the child environment",
+    "proof": "tests/test_grm_f1_resume_out_root.py",
+    "receipt": "artifacts/grm_f1/red/red_child_env_strip.json",
+    "statement": "grm_c2_cells.environment() strips every ambient GRM_* name; arm_environment (in-process) and spawn_env (into the leased child) re-apply these three when, and only when, they are actually set."
+  }
+}
