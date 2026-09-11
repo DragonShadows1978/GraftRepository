@@ -52,6 +52,7 @@ import argparse
 import copy
 import json
 import os
+from contextlib import contextmanager
 import shutil
 import sys
 import time
@@ -80,7 +81,14 @@ TRANSITIONS = ('unchanged_correct', 'unchanged_wrong', 'correct_to_wrong',
 #: Paths an amendment may bind that the registration could not list, because
 #: they did not exist when it was written.  Strictly the amendment's own
 #: builder: an amendment can never smuggle in a new core or scoring source.
-REBINDABLE_NEW = ('scripts/grm_r1_amend_1.py',)
+REBINDABLE_NEW = ('scripts/grm_r1_amend_1.py', 'scripts/grm_r1_amend_2.py',
+                  'scripts/grm_r1_amend_3.py', 'scripts/grm_r1_amend_4.py')
+
+#: A card holding more than this before the lease is NOT ours to use.
+#: Chosen from the receipts: an idle card in this arc reads 314-327 MiB,
+#: and the holder that broke R4 held ~3,144 MiB. 1000 MiB is FIX-8's
+#: registered limit and sits cleanly between the two.
+IDLE_LIMIT_MIB = 1000
 
 
 # --------------------------------------------------------------------------
@@ -106,7 +114,9 @@ def verify(root=None):
             need(path in inputs or path in REBINDABLE_NEW,
                  'R1_AMENDMENT_REBIND_OUT_OF_SCOPE: ' + path)
             inputs[path] = digest
-        r['amendment_1_sha256'] = a['_self_sha256']
+        r['amendment_sha256'] = a['_self_sha256']
+        r['amendment_chain_sha256'] = a.get('_chain', [])
+        r['amendment_index'] = a['amendment']
     for path, digest in inputs.items():
         p = Path(path) if Path(path).is_absolute() else ROOT / path
         need(sha(p) == digest, 'R1_INPUT_SHA_MISMATCH: ' + path)
@@ -260,6 +270,47 @@ def pin_rule(arm):
     return observed
 
 
+@contextmanager
+def scoped_env(keys=None):
+    """Restore the EXACT prior environment on the way out, always.
+
+    AMENDMENT-2 DEFECT FIX.  ``pin_rule`` and ``environment(flags)`` both
+    mutate ``os.environ`` process-wide, and ``core.grm_admission.
+    admission_rule()`` reads ``os.environ`` at CALL time.  Without
+    restoration the pin outlives the run: in one pytest process every module
+    imported after a R1 test saw ``GRM_ADMISSION_RULE=margin_first`` and was
+    silently re-ruled (the lead observed 3 FIX-4 and 20 A1 failures that
+    vanish when R1 runs alone).  A leaked experimental flag that changes
+    OTHER suites' results is a correctness defect, not untidiness.
+
+    ``keys=None`` snapshots and restores every ``GRM_`` variable plus the
+    rule; a explicit key list narrows that.  Restoration is exact: a key
+    absent before is REMOVED, not set to ''.
+
+    Prior art: ``unittest.mock.patch.dict(os.environ)`` and pytest's
+    ``monkeypatch.setenv`` (Python/pytest contributors) -- the standard
+    snapshot/restore idiom, reproduced here because the worker must restore
+    in production too, where no pytest fixture exists.  Nothing novel.
+    """
+    if keys is None:
+        names = {k for k in os.environ if k.startswith('GRM_')} | {RULE_ENV}
+    else:
+        names = set(keys)
+    saved = {k: os.environ.get(k) for k in names}
+    try:
+        yield
+    finally:
+        # Re-read: the body may have ADDED GRM_ keys that were not in the
+        # snapshot (environment(flags) sets a whole frame), so drop those too.
+        current = {k for k in os.environ if k.startswith('GRM_')} | names
+        for k in current:
+            before = saved.get(k, None) if k in saved else None
+            if before is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = before
+
+
 def open_arm(c, session, flags, loaded):
     """Copy the RECORDED repository for this arm and open it.
 
@@ -296,6 +347,127 @@ def open_arm(c, session, flags, loaded):
     ctor_args = list(ctor_args)
     ctor_args[3] = str(session / 'repository')
     return GraftRepository(*ctor_args, **ctor_kwargs), loaded
+
+
+def device_snapshot():
+    """Full device sample: total, used, and the compute-process list.
+
+    AMENDMENT 4.  ``device_memory_mib`` returns one number, which is enough
+    for a receipt and NOT enough to decide whether the card is free: the R4
+    OOM happened with ~3,144 MiB held by a display-side program on :0 that
+    lists NO compute process.  FIX-8's ``parse_memory`` states the rule this
+    reuses verbatim -- "never infer an idle card merely from an empty compute
+    list" -- so the gate below keys on TOTAL framebuffer used, not on the
+    process table.
+
+    Prior art: NVIDIA nvidia-smi XML framebuffer/process reporting
+    (docs.nvidia.com, accessed 2026-09-09) and GRM FIX-8
+    ``grm_scout_fix8_resume.parse_memory`` / ``memory_gate`` (GRM
+    contributors, 2026).  TAKEN: the XML fields, the conservative
+    total-used reading, and the empty-compute-list warning.  OURS: only the
+    receipt shape and its use as a pre-lease gate in this worker.
+    """
+    import subprocess
+    import xml.etree.ElementTree as ET
+    value = {'time_unix': time.time(), 'status': 'ERROR',
+             'scope': ('point sample, not peak; device total includes '
+                       'unattributed memory such as display-side programs')}
+    try:
+        proc = subprocess.run(['nvidia-smi', '-q', '-x'], capture_output=True,
+                              text=True, timeout=10, check=False)
+        if proc.returncode != 0:
+            value['error'] = f'nvidia-smi returncode={proc.returncode}'
+            return value
+        root = ET.fromstring(proc.stdout)
+        gpus = root.findall('gpu')
+        if len(gpus) != 1:
+            value['error'] = f'expected one GPU, found {len(gpus)}'
+            return value
+        gpu = gpus[0]
+
+        def _mib(text):
+            parts = (text or '').split()
+            if len(parts) != 2 or parts[1] != 'MiB':
+                raise ValueError('MEMORY_VALUE_UNAVAILABLE')
+            return int(parts[0])
+
+        used = _mib(gpu.findtext('fb_memory_usage/used'))
+        total = _mib(gpu.findtext('fb_memory_usage/total'))
+        processes = []
+        node = gpu.find('processes')
+        for entry in (node.findall('process_info') if node is not None else []):
+            processes.append({'pid': int(entry.findtext('pid')),
+                              'type': entry.findtext('type'),
+                              'name': entry.findtext('process_name'),
+                              'memory.used': _mib(entry.findtext('used_memory'))})
+        own = os.getpid()
+        value.update(status='OK', gpu_uuid=gpu.findtext('uuid'),
+                     memory_used_mib=used, memory_total_mib=total,
+                     memory_free_mib=total - used, unit='MiB',
+                     processes=processes,
+                     own_memory_mib=sum(x['memory.used'] for x in processes
+                                        if x['pid'] == own),
+                     other_process_pids=sorted({x['pid'] for x in processes
+                                                if x['pid'] != own}),
+                     compute_list_empty=not processes,
+                     foreign_holder_suspected=bool(
+                         used > IDLE_LIMIT_MIB and not processes))
+    except Exception as exc:                 # noqa: BLE001 -- receipt only
+        value['error'] = f'{type(exc).__name__}: {exc}'
+    return value
+
+
+def idle_gate(snapshot, limit=None):
+    """Is the card free enough to start?  Returns (ok, reason).
+
+    Keys on TOTAL used, never on the compute-process list, because the
+    holder that broke R4 listed no compute process at all.  This NEVER
+    signals, kills or waits on another process -- it only declines to start.
+    """
+    limit = IDLE_LIMIT_MIB if limit is None else int(limit)
+    if snapshot.get('status') != 'OK':
+        return False, ('DEVICE_PROBE_FAILED: '
+                       + str(snapshot.get('error', 'unknown')))
+    used = int(snapshot['memory_used_mib'])
+    if used > limit:
+        return False, (f"DEVICE_BUSY: memory.used={used} MiB > {limit} MiB"
+                       f" (free={snapshot['memory_free_mib']} MiB;"
+                       f" compute_list_empty={snapshot['compute_list_empty']};"
+                       f" other_pids={snapshot['other_process_pids']})")
+    return True, f"IDLE: memory.used={used} MiB <= {limit} MiB"
+
+
+def await_idle(limit=None, wait_seconds=0, poll_seconds=15):
+    """Wait up to ``wait_seconds`` for the card to fall below the limit.
+
+    Foreground and bounded; polls a read-only probe and never signals
+    anything.  ``wait_seconds=0`` makes it a single check.
+    """
+    wait_seconds = max(0, int(wait_seconds))
+    # The bound is STRUCTURAL, not a break: the loop counter caps the number
+    # of probes up front.  This is a bounded WAIT for a resource somebody
+    # else holds, not a retry of our own failed work -- a distinction the
+    # no-retry guard in tests/test_grm_r1_replay.py enforces by forbidding
+    # `while True` anywhere in this file.  Nothing here re-runs a cell.
+    attempts_allowed = 1 + (wait_seconds // max(1, int(poll_seconds)))
+    deadline = time.monotonic() + wait_seconds
+    attempts = []
+    snapshot, ok, reason = {}, False, 'NOT_PROBED'
+    for _ in range(int(attempts_allowed)):
+        snapshot = device_snapshot()
+        ok, reason = idle_gate(snapshot, limit)
+        attempts.append({'time_unix': snapshot.get('time_unix'),
+                         'memory_used_mib': snapshot.get('memory_used_mib'),
+                         'ok': ok, 'reason': reason})
+        if ok:
+            break
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            break
+        time.sleep(min(poll_seconds, max(1, remaining)))
+    return ok, {'attempts': attempts, 'final': snapshot, 'reason': reason,
+                'waited_for_seconds': wait_seconds,
+                'attempts_allowed': int(attempts_allowed)}
 
 
 def device_memory_mib():
@@ -434,6 +606,46 @@ def run_arm(repo, c, descriptor, flags, arm, session, process_id):
             'registration_sha256': sha(REG)}
 
 
+def archive_stale_sessions(destination, c):
+    """Move a re-issued cell's stale session dirs aside before it runs.
+
+    AMENDMENT-2 DEFECT FIX.  A cell that died part-way (cell 6 of batch R1:
+    arm OFF finished, arm ON OOMed) leaves its ``sessions/<cell>/off`` and
+    ``.../on`` behind.  ``open_arm`` creates the session with
+    ``mkdir(exist_ok=False)``, so the re-issue collided with its own debris:
+    ``FileExistsError: .../sessions/<cell>/off``.
+
+    THE DISTINCTION THAT MATTERS: cell RECEIPTS are create-only evidence and
+    are never touched -- a retained receipt stays byte-identical, and a cell
+    that already HAS a receipt is never re-run, so this function never sees
+    it.  Session directories are SCRATCH (a copied repository plus driver
+    stage files), so they are ARCHIVED, not deleted: the failed attempt's
+    scratch stays inspectable under ``sessions/<cell>/attempt_<n>/``.
+
+    Nothing outside this cell's own session directory is touched.
+
+    Prior art: FIX8/C7 "archive the prior attempt, never overwrite it"
+    (GRM contributors, 2026) -- the same rule amendment 1 applies to the
+    batch controller, here applied to per-cell scratch.  Nothing novel.
+    """
+    root = Path(destination) / 'sessions' / c['id']
+    stale = [p for p in (root / arm for arm in ARMS) if p.exists()]
+    if not stale:
+        return None
+    attempt = 1
+    while (root / f'attempt_{attempt}').exists():
+        attempt += 1
+    target = root / f'attempt_{attempt}'
+    target.mkdir(parents=True, exist_ok=False)
+    moved = []
+    for p in stale:
+        p.rename(target / p.name)
+        moved.append(p.name)
+    return {'attempt': attempt, 'archived_arms': moved,
+            'archived_to': str(target),
+            'note': 'scratch session dirs only; no cell receipt is touched'}
+
+
 class _FakeArena:
     """Minimal arena stand-in so the CPU gate exercises the real release path.
 
@@ -462,6 +674,49 @@ class _FakeRepo:
         self.closed = True
 
 
+def is_oom(exc):
+    """Is this exception a device out-of-memory?  Text match, deliberately.
+
+    The engine raises a plain ``RuntimeError('cudaMalloc failed: out of
+    memory')``; there is no typed OOM to catch.  Matching the text is the
+    honest option and is kept narrow so an unrelated RuntimeError still
+    propagates and still stops the campaign.
+    """
+    text = f'{type(exc).__name__}: {exc}'.casefold()
+    return 'out of memory' in text or 'cudamalloc failed' in text
+
+
+def non_fit_receipt(c, destination, exc, snapshot, stage):
+    """A cell that could not be loaded is RECORDED, not silently skipped.
+
+    AMENDMENT 4, rail (b).  An OOM at checkpoint load or payload harvest
+    writes a create-only NON_FIT receipt carrying the reason, the stage, and
+    a device-memory snapshot (total/used/free, the compute-process list, and
+    whether a foreign holder is suspected), and the batch CONTINUES to the
+    next cell.  The campaign is not failed by one cell that could not start.
+
+    A NON_FIT cell is UNMEASURED.  ``summary()`` counts it as not-measured
+    and never as ``unchanged``: a cell that did not run cannot be evidence
+    that the rule changed nothing.  That distinction is the whole point of
+    recording it rather than skipping it.
+
+    Prior art: GRM C7/FIX8 create-only failure receipts (GRM contributors,
+    2026) -- TAKEN: record the failure as evidence rather than retrying.
+    OURS: the NON_FIT class and its unmeasured accounting.  No new algorithm.
+    """
+    value = {'cell': c, 'status': 'NON_FIT', 'stage': stage,
+             'error': f'{type(exc).__name__}: {exc}',
+             'device_memory': snapshot,
+             'measured': False, 'answer_measured': False,
+             'arms': {}, 'off_plan_parity': None,
+             'evidence_class': ('cell could not be loaded on this device; '
+                                'NOT a measurement and NOT evidence that the '
+                                'rule left the answer unchanged'),
+             'registration_sha256': sha(REG)}
+    write(destination / 'cells' / (c['id'] + '.json'), value)
+    return value
+
+
 def run_cell(c, destination, loaded, fake=False):
     """Both arms of one cell from the SAME recorded checkpoint."""
     from scripts.grm_c2_cells import flags_for
@@ -476,26 +731,31 @@ def run_cell(c, destination, loaded, fake=False):
     # on them.  ``None`` off-GPU (the fake path) rather than a fabricated 0.
     device = {'before_cell_mib': None if fake else device_memory_mib(),
               'arms': {}, 'after_cell_mib': None}
+    archived = archive_stale_sessions(destination, c)
     for arm in ARMS:
-        pins[arm] = pin_rule(arm)
         session = destination / 'sessions' / c['id'] / arm
-        if fake:
-            arms[arm] = fake_arm(c, descriptor, arm, session)
-            device['arms'][arm] = {'before_mib': None, 'after_mib': None,
-                                   'released': release_arm(_FakeRepo())}
-        else:
-            before = device_memory_mib()
-            repo, loaded = open_arm(c, session, flags, loaded)
-            try:
-                arms[arm] = run_arm(repo, c, descriptor, flags, arm,
-                                    session, process_id)
-            finally:
-                # Release BEFORE the next arm allocates, not at cell end:
-                # otherwise arm ON runs on top of arm OFF's resident payloads.
-                released = release_arm(repo)
-            device['arms'][arm] = {'before_mib': before,
-                                   'after_mib': device_memory_mib(),
-                                   'released': released}
+        # AMENDMENT 2: the rule pin is scoped.  It mutates os.environ, which
+        # admission_rule() reads at call time, so an unrestored pin re-rules
+        # every module that runs later in the process.
+        with scoped_env():
+            pins[arm] = pin_rule(arm)
+            if fake:
+                arms[arm] = fake_arm(c, descriptor, arm, session)
+                device['arms'][arm] = {'before_mib': None, 'after_mib': None,
+                                       'released': release_arm(_FakeRepo())}
+            else:
+                before = device_memory_mib()
+                repo, loaded = open_arm(c, session, flags, loaded)
+                try:
+                    arms[arm] = run_arm(repo, c, descriptor, flags, arm,
+                                        session, process_id)
+                finally:
+                    # Release BEFORE the next arm allocates, not at cell end:
+                    # otherwise arm ON runs on arm OFF's resident payloads.
+                    released = release_arm(repo)
+                device['arms'][arm] = {'before_mib': before,
+                                       'after_mib': device_memory_mib(),
+                                       'released': released}
     device['after_cell_mib'] = None if fake else device_memory_mib()
     # PARITY BARRIER (RD1 A0 shape): arm OFF must reproduce the FIX-6 recorded
     # plan byte-for-byte.  A mismatch means the replayed frame is NOT the
@@ -507,6 +767,7 @@ def run_cell(c, destination, loaded, fake=False):
     on_bytes = json.dumps(arms['on']['rank_plan'], separators=(',', ':')).encode()
     value = {'cell': c, 'arms': arms, 'process_id': process_id,
              'rule_pins': pins, 'device_memory': device,
+             'archived_stale_sessions': archived,
              'off_plan_parity': parity,
              'off_plan_bytes_hex': off_bytes.hex(),
              'recorded_off_plan_bytes_hex': recorded_bytes.hex(),
@@ -645,27 +906,8 @@ def fake_arm(c, descriptor, arm, session):
 # campaign: leases, reservations, resume
 # --------------------------------------------------------------------------
 
-def amendment(root=None):
-    """Load amendment 1 if present: sha-bound, create-only, never inferred.
-
-    Prior art: GRM C7/C2 sha-bound amendment chains (GRM contributors, 2026).
-    TAKEN verbatim: an amendment is a SEPARATE create-only file bound to the
-    registration hash, which widens scope explicitly and never edits the
-    immutable registration.  OURS: the "re-arm one FAILED batch for its
-    MISSING cells only, retaining completed receipts" scope.
-    """
-    root = Path(root) if root is not None else OUT
-    path = root / 'amendment_1.json'
-    if not path.is_file():
-        # An amendment binds the CAMPAIGN (registration + sources), not a
-        # particular receipt directory.  A gate or test pointed at an
-        # alternate --out still runs the amended worker, so it must see the
-        # canonical amendment; otherwise the re-bound source hash would fail
-        # closed against the pre-amendment registration.
-        path = OUT / 'amendment_1.json'
-        if not path.is_file():
-            return None
-        root = OUT
+def _load_amendment(path):
+    """One link: sha-bound, create-only, schema- and order-checked."""
     checksum = path.with_suffix('.sha256')
     need(checksum.is_file(), 'R1_AMENDMENT_SHA_MISSING')
     need(sha(path) == checksum.read_text().split()[0],
@@ -678,6 +920,54 @@ def amendment(root=None):
     a['_self_sha256'] = sha(path)
     a['_path'] = str(path)
     return a
+
+
+def amendment(root=None):
+    """Load the LATEST amendment in the chain: sha-bound, never inferred.
+
+    Amendments chain: each one binds the registration hash, and every one
+    after the first also binds its PREDECESSOR's hash, so a link cannot be
+    swapped or skipped.  The newest link is the effective one; its
+    ``rebound_inputs`` supersede earlier re-binds of the same path.
+
+    Prior art: GRM C7/C2 sha-bound amendment chains (GRM contributors, 2026).
+    TAKEN verbatim: a SEPARATE create-only file bound to the registration
+    hash (and, from A2 on, to the previous amendment) which widens scope
+    explicitly and never edits the immutable registration.  OURS: the
+    "re-arm one FAILED batch for its MISSING cells only, retaining completed
+    receipts" scope.
+    """
+    root = Path(root) if root is not None else OUT
+    if not (root / 'amendment_1.json').is_file():
+        # An amendment binds the CAMPAIGN (registration + sources), not a
+        # particular receipt directory.  A gate or test pointed at an
+        # alternate --out still runs the amended worker, so it must see the
+        # canonical amendment; otherwise the re-bound source hash would fail
+        # closed against the pre-amendment registration.
+        if not (OUT / 'amendment_1.json').is_file():
+            return None
+        root = OUT
+    chain = []
+    index = 1
+    while (root / f'amendment_{index}.json').is_file():
+        link = _load_amendment(root / f'amendment_{index}.json')
+        need(link['amendment'] == index, 'R1_AMENDMENT_INDEX_MISMATCH')
+        if index > 1:
+            need(link.get('previous_amendment_sha256')
+                 == chain[-1]['_self_sha256'],
+                 f'R1_AMENDMENT_{index}_CHAIN_MISMATCH')
+        chain.append(link)
+        index += 1
+    need(chain, 'R1_AMENDMENT_CHAIN_EMPTY')
+    latest = dict(chain[-1])
+    # Re-binds accumulate along the chain; a later link wins on a path both
+    # touched, and an earlier link's re-bind is NOT silently dropped.
+    rebound = {}
+    for link in chain:
+        rebound.update(link.get('rebound_inputs', {}))
+    latest['rebound_inputs'] = rebound
+    latest['_chain'] = [link['_self_sha256'] for link in chain]
+    return latest
 
 
 def resume_scope(r, root, a=None):
@@ -716,9 +1006,38 @@ def resume_scope(r, root, a=None):
                 retained.append(cell_id)
             else:
                 missing.append(cell_id)
-        # The amendment states what it expects to find.  If the receipts on
-        # disk disagree with it, that is a RED stop, not a silent re-scope:
-        # the amendment was written against a state that no longer holds.
+        # AMENDMENT-3 FIX.  The retain/reissue cross-check is a PRECONDITION
+        # for re-issuing an OPEN batch: it asks "is the state I am about to
+        # act on still the state this amendment was written against?".  Once
+        # the batch's controller says COMPLETE the re-issue has happened and
+        # the amendment's scope is SATISFIED -- every registered cell now has
+        # a receipt, which is the outcome the amendment existed to produce.
+        # Re-applying the check then compares the finished state against the
+        # pre-re-issue expectation and closes the campaign on its own success
+        # (the lead hit exactly this: R1 COMPLETE with 8/8 receipts,
+        # on_disk=8 vs amendment retain=5, and R2 refused to start).
+        controller = d / 'controller.json'
+        done = controller.exists() and read(controller)['status'] == 'COMPLETE'
+        if done:
+            # Satisfied means satisfied ON THE REGISTERED COHORT: every cell
+            # has a parity-clean, registration-bound receipt.  Anything less
+            # is still a genuine disagreement and still STOPS.
+            need(not missing,
+                 'R1_AMENDMENT_SCOPE_UNSATISFIED: ' + batch_id
+                 + ' controller=COMPLETE but missing=' + str(missing))
+            scope[batch_id] = {
+                'retain': retained, 'reissue': [],
+                'lease_seconds': entry['lease_seconds'],
+                'scope_satisfied': True,
+                'receipts': {cell_id: sha(d / 'cells' / (cell_id + '.json'))
+                             for cell_id in retained},
+                'note': ('re-issue complete; the amendment\'s retain/reissue '
+                         'precondition no longer applies to this batch')}
+            continue
+        # Still OPEN: the amendment states what it expects to find.  If the
+        # receipts on disk disagree, that is a RED stop, not a silent
+        # re-scope -- the amendment was written against a state that no
+        # longer holds, and a new amendment is required.
         need(retained == entry['retain'],
              'R1_AMENDMENT_RETAIN_MISMATCH: ' + batch_id
              + ' on_disk=' + str(retained) + ' amendment=' + str(entry['retain']))
@@ -726,7 +1045,8 @@ def resume_scope(r, root, a=None):
              'R1_AMENDMENT_REISSUE_MISMATCH: ' + batch_id
              + ' on_disk=' + str(missing) + ' amendment=' + str(entry['reissue']))
         scope[batch_id] = {'retain': retained, 'reissue': missing,
-                           'lease_seconds': entry['lease_seconds']}
+                           'lease_seconds': entry['lease_seconds'],
+                           'scope_satisfied': False}
     return scope
 
 
@@ -756,6 +1076,15 @@ def campaign_state(r, root):
         need(p.with_name('controller.json').exists()
              or p.parent.name in rearmed,
              'R1_ORPHAN_RESERVATION_STOP: ' + p.parent.name)
+    # AMENDMENT-2 ACCOUNTING FIX: an ARCHIVED attempt's charge is still real
+    # GPU time and stays on the books.  Reading only controller.json would
+    # silently refund every re-issued attempt -- batch R1 showed 134 s after
+    # its second attempt, having actually spent 263 + 134 = 397 s.
+    for p in sorted(gpu.glob('*/controller_attempt_*.json')):
+        archived = read(p)
+        need(archived['registration_sha256'] == sha(REG),
+             'R1_ARCHIVED_RESULT_BINDING_MISMATCH: ' + p.parent.name)
+        charged += float(archived['charged_seconds'])
     for p in sorted(gpu.glob('*/controller.json')):
         controller = read(p)
         need(controller['registration_sha256'] == sha(REG),
@@ -781,7 +1110,7 @@ def _cpu_context():
     return nullcontext()
 
 
-def batch(batch_id, fake=False, root=None):
+def batch(batch_id, fake=False, root=None, idle_wait=0):
     """Run one batch of cells under ONE foreground GPU lease.
 
     Resumable: a batch whose controller already says COMPLETE is skipped and
@@ -793,6 +1122,11 @@ def batch(batch_id, fake=False, root=None):
     need(batch_id in r['batches'], 'R1_UNKNOWN_BATCH: ' + str(batch_id))
     destination = root / 'gpu' / batch_id
     scope = resume_scope(r, root).get(batch_id)
+    # A SATISFIED scope is a record, not a re-issue instruction: the batch it
+    # describes is already COMPLETE, so it must not put this run on the
+    # amendment's re-issue path (archive controllers, narrow the cell list).
+    if scope is not None and scope.get('scope_satisfied'):
+        scope = None
     if (destination / 'controller.json').exists():
         controller = read(destination / 'controller.json')
         if controller['status'] == 'COMPLETE':
@@ -847,6 +1181,8 @@ def batch(batch_id, fake=False, root=None):
         loaded = None
         red = []
         ids = []
+        non_fit = []
+        idle_receipt = None
         try:
             # FIX-6 state contract: environment(flags) strips every ambient
             # GRM_ var, so the rule is pinned AFTER it, per arm, in pin_rule.
@@ -857,24 +1193,56 @@ def batch(batch_id, fake=False, root=None):
             sides = {cell_by_id(i)['side'] for i in ids}
             need(len(sides) == 1, 'R1_MIXED_SIDE_BATCH: ' + batch_id)
             env = environment(flags_for(sides.pop()))
-            for key in list(os.environ):
-                if key.startswith('GRM_'):
-                    del os.environ[key]
-            os.environ.update({k: v for k, v in env.items()
-                               if k.startswith('GRM_')})
-            with (_cpu_context() if fake else _gpu_lease(lease)):
-                started = time.monotonic()
-                for cell_id in ids:
-                    try:
-                        _, loaded = run_cell(cell_by_id(cell_id), destination,
-                                             loaded, fake=fake)
-                    except ValueError as exc:
-                        if 'R1_OFF_PLAN_PARITY_RED_STOP' in str(exc):
-                            red.append(str(exc))
-                        raise
-                elapsed = time.monotonic() - started
-                need(fake or elapsed <= lease, 'R1_LEASE_OVERRUN_RED')
-                status = 'COMPLETE'
+            # AMENDMENT 2: the whole frame pin is scoped too, so a batch (in
+            # a test, a gate, or any caller that runs more afterwards) cannot
+            # leave the process re-framed or re-ruled on the way out.
+            with scoped_env():
+                for key in list(os.environ):
+                    if key.startswith('GRM_'):
+                        del os.environ[key]
+                os.environ.update({k: v for k, v in env.items()
+                                   if k.startswith('GRM_')})
+                # AMENDMENT 4: refuse to start on a card somebody else is
+                # holding.  R4 died 13 s into its lease with ~3,144 MiB held
+                # by a display-side program that listed NO compute process;
+                # the run burned a full 238 s reservation for nothing.  This
+                # only DECLINES to start -- it never signals, kills or clears
+                # anything, and the operator always has right of way.
+                if not fake:
+                    ok, idle = await_idle(wait_seconds=idle_wait)
+                    idle_receipt = idle
+                    need(ok, 'R1_DEVICE_NOT_IDLE: ' + str(idle['reason']))
+                with (_cpu_context() if fake else _gpu_lease(lease)):
+                    started = time.monotonic()
+                    for cell_id in ids:
+                        c = cell_by_id(cell_id)
+                        try:
+                            _, loaded = run_cell(c, destination, loaded,
+                                                 fake=fake)
+                        except ValueError as exc:
+                            if 'R1_OFF_PLAN_PARITY_RED_STOP' in str(exc):
+                                red.append(str(exc))
+                            raise
+                        except BaseException as exc:   # noqa: BLE001
+                            # AMENDMENT 4 rail (b): a cell that cannot be
+                            # LOADED is recorded NON_FIT and the batch goes
+                            # on.  Anything that is not an OOM still stops
+                            # the campaign.
+                            if not is_oom(exc):
+                                raise
+                            snapshot = ({} if fake else device_snapshot())
+                            non_fit.append(non_fit_receipt(
+                                c, destination, exc, snapshot,
+                                stage='load_or_harvest'))
+                            # Flush whatever the failed load did allocate:
+                            # _FakeRepo(0) holds no payloads, so this reduces
+                            # to arena reset + tc.empty_cache(), which is
+                            # exactly what is wanted after a partial load.
+                            release_arm(_FakeRepo(0))
+                            loaded = None               # force a clean reload
+                    elapsed = time.monotonic() - started
+                    need(fake or elapsed <= lease, 'R1_LEASE_OVERRUN_RED')
+                    status = 'COMPLETE'
         except BaseException as exc:            # noqa: BLE001 -- receipt first
             error = f'{type(exc).__name__}: {exc}'
         finally:
@@ -882,6 +1250,8 @@ def batch(batch_id, fake=False, root=None):
                 elapsed = time.monotonic() - started
             write(destination / 'controller.json',
                   {'status': status, 'error': error, 'red': red,
+                   'non_fit_cells': [x['cell']['id'] for x in non_fit],
+                   'idle_check': idle_receipt,
                    'elapsed_seconds': elapsed,
                    'charged_seconds': (elapsed if status == 'COMPLETE'
                                        else max(float(lease), elapsed)),
@@ -932,6 +1302,7 @@ def summary(root=None):
     root = Path(root) if root is not None else OUT
     r = verify(root)
     values = {}
+    non_fit = {}
     complete = True
     charged = 0.0
     for batch_id in r['batch_ids']:
@@ -945,6 +1316,13 @@ def summary(root=None):
                  'R1_RESULT_BINDING_MISMATCH: ' + batch_id)
             complete &= value['status'] == 'COMPLETE'
             charged += float(value['charged_seconds'])
+        # Archived attempts are real GPU time too (amendment 2's accounting
+        # fix, applied here as well so summary and campaign_state agree).
+        for p in sorted(d.glob('controller_attempt_*.json')):
+            archived = read(p)
+            need(archived['registration_sha256'] == sha(REG),
+                 'R1_ARCHIVED_RESULT_BINDING_MISMATCH: ' + batch_id)
+            charged += float(archived['charged_seconds'])
         for cell_id in r['batches'][batch_id]:
             p = d / 'cells' / (cell_id + '.json')
             if not p.exists():
@@ -953,6 +1331,14 @@ def summary(root=None):
             row = read(p)
             need(row['registration_sha256'] == sha(REG),
                  'R1_ROW_BINDING_MISMATCH: ' + cell_id)
+            # AMENDMENT 4: a NON_FIT cell did not run. It is recorded, it is
+            # NOT a measurement, and it must never be counted as
+            # 'unchanged' -- a cell that never executed cannot be evidence
+            # that the rule left its answer alone.
+            if row.get('status') == 'NON_FIT':
+                non_fit[cell_id] = row
+                complete = False
+                continue
             values[cell_id] = row
     complete &= len(values) == r['cell_count'] and charged <= r['gpu_cap_seconds']
     parity = bool(values) and all(v['off_plan_parity'] for v in values.values())
@@ -972,7 +1358,12 @@ def summary(root=None):
     # The registered verdict rule applied VERBATIM -- never adjusted after
     # seeing results (house rule: thresholds registered before the gate).
     adopt = complete and parity and measured and sup_c2w == 0 and other_c2w <= 1
-    return {'status': ('NOT_MEASURED' if not (complete and measured) else
+    unmeasured = [c['id'] for c in cells()
+                  if c['id'] not in values]
+    return {'non_fit_cells': sorted(non_fit),
+            'non_fit_count': len(non_fit),
+            'unmeasured_cells': len(unmeasured),
+            'status': ('NOT_MEASURED' if not (complete and measured) else
                        'RED' if not parity else
                        'ADOPT' if adopt else 'DO_NOT_ADOPT'),
             'complete': complete, 'answers_measured': measured,
@@ -1003,6 +1394,10 @@ def main():
     p.add_argument('--fake', action='store_true',
                    help='CPU fake-model gate: real admission, no GPU, no reader')
     p.add_argument('--out', help='alternate receipt root (gates/tests only)')
+    p.add_argument('--idle-wait', type=int, default=0,
+                   help=('seconds to wait for the card to fall below '
+                         f'{IDLE_LIMIT_MIB} MiB before starting; polls a '
+                         'read-only probe, never signals anything'))
     a = p.parse_args()
     if a.dry_run:
         print(json.dumps(dry_run(), indent=2))
@@ -1011,7 +1406,8 @@ def main():
         print(json.dumps(summary(a.out), indent=2))
         return 0
     if a.batch:
-        return batch(a.batch, fake=a.fake, root=a.out)
+        return batch(a.batch, fake=a.fake, root=a.out,
+                     idle_wait=a.idle_wait)
     r = verify()
     print(json.dumps({'status': 'REGISTERED_NOT_RUN', 'gpu_executed': False,
                       'registration_sha256': sha(REG),

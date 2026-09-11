@@ -1,0 +1,568 @@
+{
+  "abstain_transition": null,
+  "answer_changed": false,
+  "arms": {
+    "off": {
+      "admission_rule": "A-DEC",
+      "answer": "Gold-7-Foxtrot",
+      "answer_measured": true,
+      "arena_cur_mount_n": 189,
+      "arm": "off",
+      "battery": "census",
+      "capture_valid": true,
+      "cell": "fix6-replay-defaults-census-2--e2e_t22_mira_seal",
+      "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/census/e2e_t22_mira_seal/checkpoint.json",
+      "checkpoint_sha256": "f0b9d03863bb4cd5507a9f9972cdc537d57a42af7e7cc4a435033d79879d25ea",
+      "correct": true,
+      "evidence_class": "production ladder on a recorded C2 checkpoint; the admission rule is the only difference between the two arms",
+      "expected_values": [
+        "Gold-7-Foxtrot"
+      ],
+      "geometry": {
+        "arena_width": 256,
+        "live_shift": 275,
+        "n_sink": 19
+      },
+      "identified_candidates": [
+        19,
+        20
+      ],
+      "mounted_ids": [
+        4,
+        19,
+        20
+      ],
+      "policy_branch": "declared_synthesis_identified_set",
+      "question": "Recall probe. What is the current mira seal value? Reply with only the value.",
+      "question_id": "e2e_t22_mira_seal",
+      "rank_plan": [
+        19,
+        20
+      ],
+      "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+      "rejected_values": [],
+      "route_margin_1_2": 0.11413244671561174,
+      "route_margin_evaluated": true,
+      "route_receipt": {
+        "admission": {
+          "admission_rule": "all_tokens_bind",
+          "identified_candidates": [
+            19,
+            20
+          ],
+          "identifier_hit_count": 2,
+          "identifier_tokens": null,
+          "margin_threshold": 0.1385774091529802,
+          "policy": "A-DEC",
+          "policy_branch": "declared_synthesis_identified_set",
+          "rank_plan": [
+            19,
+            20
+          ],
+          "ranking_before_demotion": [
+            19,
+            20,
+            4,
+            8,
+            12,
+            6
+          ],
+          "rare_identifier_tokens": null,
+          "route_margin_1_2": 0.11413244671561174,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+          "split_child_demoted": false,
+          "split_demoted_ids": [],
+          "split_family_ids": []
+        },
+        "fit": {
+          "cur_mount_n": 189,
+          "dropped": [],
+          "final_mounts": [
+            4,
+            19,
+            20
+          ],
+          "info_pass_through": {
+            "admission_ranking_before_demotion": [
+              19,
+              20,
+              4,
+              8,
+              12,
+              6
+            ],
+            "admission_rule": "all_tokens_bind",
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [],
+            "fit_chunk_trips": [],
+            "fit_descended_head": [],
+            "fit_dropped_filler": [],
+            "fit_dropped_planned": [],
+            "fit_planned": [
+              19,
+              20
+            ],
+            "fit_seated": [
+              4,
+              19,
+              20
+            ],
+            "fit_shuttle": false,
+            "fit_shuttle_trips": [],
+            "fit_split_children": [],
+            "fit_split_ephemeral": null,
+            "fit_split_parent": null,
+            "fit_unseatable": [],
+            "frame_ephemeral": true,
+            "frame_escape_active": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "live_segments_after_turn": [
+              {
+                "graft_id": 25,
+                "ntok": 52
+              }
+            ],
+            "live_segments_carried_into_turn": [],
+            "live_segments_inherited": [],
+            "recency_mounted_ids": [
+              23,
+              24
+            ],
+            "recency_seats": {
+              "arena_width": 256,
+              "budget_after_charge": 256,
+              "charge_waived_reason": "identifier_query_point_lookup",
+              "charged_ntok": 0,
+              "nominated_ids": [
+                23,
+                24
+              ],
+              "nominated_ntok": 157
+            },
+            "served_without_plan_head": false
+          },
+          "no_mount_fit": false,
+          "planned": [
+            19,
+            20,
+            4
+          ],
+          "seated": [
+            4,
+            19,
+            20
+          ],
+          "trip_count": 1,
+          "trips": [
+            {
+              "clean_room": true,
+              "grounded": null,
+              "mount_set": [
+                4,
+                19,
+                20
+              ],
+              "ordinal": 1,
+              "planned": [
+                19,
+                20,
+                4
+              ],
+              "shuttle": false
+            }
+          ],
+          "width": 256
+        },
+        "provenance": {
+          "arena_state_sha256_before_serve": null,
+          "output_sha256": null,
+          "repository_size_at_probe": 26,
+          "request_sha256": null
+        },
+        "receipt_sha256": "8bcd5444367050d7bb46125ab88ed09268ac717fd1e30ebf31674d53413626da",
+        "route": {
+          "arena_route_receipt": null,
+          "backend": "python",
+          "candidate_count": null,
+          "excluded_live_ids": [],
+          "excluded_recency_ids": [],
+          "fallbacks": [],
+          "ranking_ids": [
+            19,
+            20,
+            4,
+            8,
+            12,
+            6
+          ],
+          "ranking_length": 6,
+          "ranking_scores": null,
+          "route_limit": null
+        },
+        "schema": "grm.route_receipt.v1",
+        "serving_path": "unknown",
+        "session_id": "fix6-replay-defaults-census-2--e2e_t22_mira_seal",
+        "turn_id": "e2e_t22_mira_seal",
+        "turn_kind": null
+      },
+      "rt1": {
+        "admission_ranking_before_demotion": [
+          19,
+          20,
+          4,
+          8,
+          12,
+          6
+        ],
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": []
+      },
+      "side": "defaults",
+      "token_seats": 189,
+      "verdict": {
+        "abstained": false,
+        "answer": "Gold-7-Foxtrot",
+        "correct": true,
+        "expected_hits": [
+          "Gold-7-Foxtrot"
+        ],
+        "rejected_hits": []
+      },
+      "wall_seconds": 10.243406695779413
+    },
+    "on": {
+      "admission_rule": "A-DEC",
+      "answer": "Gold-7-Foxtrot",
+      "answer_measured": true,
+      "arena_cur_mount_n": 189,
+      "arm": "on",
+      "battery": "census",
+      "capture_valid": true,
+      "cell": "fix6-replay-defaults-census-2--e2e_t22_mira_seal",
+      "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/census/e2e_t22_mira_seal/checkpoint.json",
+      "checkpoint_sha256": "f0b9d03863bb4cd5507a9f9972cdc537d57a42af7e7cc4a435033d79879d25ea",
+      "correct": true,
+      "evidence_class": "production ladder on a recorded C2 checkpoint; the admission rule is the only difference between the two arms",
+      "expected_values": [
+        "Gold-7-Foxtrot"
+      ],
+      "geometry": {
+        "arena_width": 256,
+        "live_shift": 275,
+        "n_sink": 19
+      },
+      "identified_candidates": [],
+      "mounted_ids": [
+        4,
+        19,
+        20
+      ],
+      "policy_branch": "margin_insurance_k3_identifier_tiebreak",
+      "question": "Recall probe. What is the current mira seal value? Reply with only the value.",
+      "question_id": "e2e_t22_mira_seal",
+      "rank_plan": [
+        19,
+        20,
+        4
+      ],
+      "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+      "rejected_values": [],
+      "route_margin_1_2": 0.11413244671561174,
+      "route_margin_evaluated": true,
+      "route_receipt": {
+        "admission": {
+          "admission_rule": "margin_first",
+          "identified_candidates": [],
+          "identifier_hit_count": 0,
+          "identifier_tokens": null,
+          "margin_threshold": 0.1385774091529802,
+          "policy": "A-DEC",
+          "policy_branch": "margin_insurance_k3_identifier_tiebreak",
+          "rank_plan": [
+            19,
+            20,
+            4
+          ],
+          "ranking_before_demotion": [
+            19,
+            20,
+            4,
+            8,
+            12,
+            6
+          ],
+          "rare_identifier_tokens": null,
+          "route_margin_1_2": 0.11413244671561174,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+          "split_child_demoted": false,
+          "split_demoted_ids": [],
+          "split_family_ids": []
+        },
+        "fit": {
+          "cur_mount_n": 189,
+          "dropped": [],
+          "final_mounts": [
+            4,
+            19,
+            20
+          ],
+          "info_pass_through": {
+            "admission_ranking_before_demotion": [
+              19,
+              20,
+              4,
+              8,
+              12,
+              6
+            ],
+            "admission_rule": "margin_first",
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [],
+            "fit_chunk_trips": [],
+            "fit_descended_head": [],
+            "fit_dropped_filler": [],
+            "fit_dropped_planned": [],
+            "fit_planned": [
+              19,
+              20,
+              4
+            ],
+            "fit_seated": [
+              4,
+              19,
+              20
+            ],
+            "fit_shuttle": false,
+            "fit_shuttle_trips": [],
+            "fit_split_children": [],
+            "fit_split_ephemeral": null,
+            "fit_split_parent": null,
+            "fit_unseatable": [],
+            "frame_ephemeral": true,
+            "frame_escape_active": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "live_segments_after_turn": [
+              {
+                "graft_id": 25,
+                "ntok": 52
+              }
+            ],
+            "live_segments_carried_into_turn": [],
+            "live_segments_inherited": [],
+            "recency_mounted_ids": [
+              23,
+              24
+            ],
+            "recency_seats": {
+              "arena_width": 256,
+              "budget_after_charge": 256,
+              "charge_waived_reason": "identifier_query_point_lookup",
+              "charged_ntok": 0,
+              "nominated_ids": [
+                23,
+                24
+              ],
+              "nominated_ntok": 157
+            },
+            "served_without_plan_head": false
+          },
+          "no_mount_fit": false,
+          "planned": [
+            19,
+            20,
+            4
+          ],
+          "seated": [
+            4,
+            19,
+            20
+          ],
+          "trip_count": 1,
+          "trips": [
+            {
+              "clean_room": true,
+              "grounded": null,
+              "mount_set": [
+                4,
+                19,
+                20
+              ],
+              "ordinal": 0,
+              "planned": [
+                19,
+                20,
+                4
+              ],
+              "shuttle": false
+            }
+          ],
+          "width": 256
+        },
+        "provenance": {
+          "arena_state_sha256_before_serve": null,
+          "output_sha256": null,
+          "repository_size_at_probe": 26,
+          "request_sha256": null
+        },
+        "receipt_sha256": "fa2212780124600390a09740df2f8e0d4e7602cca1c3847614423493dd3081ed",
+        "route": {
+          "arena_route_receipt": null,
+          "backend": "python",
+          "candidate_count": null,
+          "excluded_live_ids": [],
+          "excluded_recency_ids": [],
+          "fallbacks": [],
+          "ranking_ids": [
+            19,
+            20,
+            4,
+            8,
+            12,
+            6
+          ],
+          "ranking_length": 6,
+          "ranking_scores": null,
+          "route_limit": null
+        },
+        "schema": "grm.route_receipt.v1",
+        "serving_path": "unknown",
+        "session_id": "fix6-replay-defaults-census-2--e2e_t22_mira_seal",
+        "turn_id": "e2e_t22_mira_seal",
+        "turn_kind": null
+      },
+      "rt1": {
+        "admission_ranking_before_demotion": [
+          19,
+          20,
+          4,
+          8,
+          12,
+          6
+        ],
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": []
+      },
+      "side": "defaults",
+      "token_seats": 189,
+      "verdict": {
+        "abstained": false,
+        "answer": "Gold-7-Foxtrot",
+        "correct": true,
+        "expected_hits": [
+          "Gold-7-Foxtrot"
+        ],
+        "rejected_hits": []
+      },
+      "wall_seconds": 7.016860413830727
+    }
+  },
+  "cell": {
+    "admission_rule": "margin_first",
+    "battery": "census",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/census/e2e_t22_mira_seal/checkpoint.json",
+    "checkpoint_files": {
+      "index.npz": "8cb3b8a96648535f55a7887f2f1a5656a197305c1e7a9451b804261914c996f5",
+      "manifest.json": "f40247337dcda8b12c4b046b6aa9148fecb4a7b0b75bb58eac0eb685ef7c8bf2",
+      "native/grm_store.bin": "2e06402dec2360ce672fc49a82c3fcc406a42b3d2e5d14f19df1ec3c7254caa8",
+      "nodes/0000.npz": "532515944849f558de91504e41e8aea6a3769e6381f416c949b0579daf995644",
+      "nodes/0001.npz": "6f31366aeb34dccbf68d907dee2554137c2c4e12467d70a7e9bd1cbacdee5146",
+      "nodes/0002.npz": "1143fe96b4ad5a7a81cc4f1cad29cc40422caae7ed8af34d29cf589665f3389f",
+      "nodes/0003.npz": "955304f43839add57d4279ba590b229a6e4b060d06d016982641f3aef7ab28ab",
+      "nodes/0004.npz": "b9625b73425da45ef0ee678aaaef4efb03e6b8705f5d641196044dbfa4785de7",
+      "nodes/0005.npz": "13ab3e110b499ce68354d8de5017761122d2d7b4ced07e0d91ba9e98dd45cad3",
+      "nodes/0006.npz": "497ec2c87dc4a501db7d302932a8396bf0df3775e5223229d859a986b15102e1",
+      "nodes/0007.npz": "cb2f47db1672eed7514d7336157e85f7db98b4b107148684fbcfede2746f5c3f",
+      "nodes/0008.npz": "dac66e976db5652d8fe06b427abe78c692d34cfec706c18cabf25e80aa127be6",
+      "nodes/0009.npz": "58f033e152afb9ab6448e7b244314bc3d945469e9e55c5c341bc4f8851e247b9",
+      "nodes/0010.npz": "b8e4af9c8e05609a0fcb4b4b9be8bb67c3ce7d590ecaa7774d34af0baac59ab3",
+      "nodes/0011.npz": "edff821769080b6ee51a931dc2078dbdde76f58a613dde611e24c0557b04d37f",
+      "nodes/0012.npz": "e06c521ed471367750d75c98789395f0db5f79f990fc531474337d2058b10676",
+      "nodes/0013.npz": "56b12b6e66e2e78f728e13c5068b592035e385e7c16b518529e3f8ca437064ab",
+      "nodes/0014.npz": "a5d0e98710428ddde0208fe7cad808e6016c4e4f5eefdb62f97170a10f4c15e4",
+      "nodes/0015.npz": "cce61b69be2abc797c89679b316eafee5431e48890ae58efd84a5b3c485c57c4",
+      "nodes/0016.npz": "53a89e2208f183c44abe94ee9ae314b29d494c93c64ee97d042344d0c0f8ae3f",
+      "nodes/0017.npz": "fc28f9e0385e33680e737415248ac55626753ca9dfdee79c4757bb966bc2332c",
+      "nodes/0018.npz": "51650b97081b936ec12b54eb5c5a6c612ca33668bbb474c71998c894983e423b",
+      "nodes/0019.npz": "5f9065a88b09d733766d34405b4e8119ac424c8643dceda41158df2bd8f6331a",
+      "nodes/0020.npz": "4af0dd897169ef3b6c6a01c15ff22f36be04c50be9c75b9d388bc071222f0a71",
+      "nodes/0021.npz": "0125b87854c42853b107ac3443c3f2ce357ca407de96ddfc5046776adedb95fb",
+      "nodes/0022.npz": "85e6f4fb8d36bebaf1dc4b5a0e9ade50269b27aff2c5a1cd737ceb3932398efa",
+      "nodes/0023.npz": "ec67fda8182bb3a7be11e3f4ca080ab9b00fbf3da62a7f4f33823b432191eae8",
+      "nodes/0024.npz": "2251db4d97039e95a93ce80c1edc3af66918f1711bf99f084c3ba52ec2685a79",
+      "wal/000001.wal": "f356f1013ceeecc8ad9a0fb4f8bf00c0e9ee0e51bef561f87b16945db61f1fa0"
+    },
+    "checkpoint_sha256": "f0b9d03863bb4cd5507a9f9972cdc537d57a42af7e7cc4a435033d79879d25ea",
+    "cooldown_seconds": 30,
+    "depends": [],
+    "id": "fix6-replay-defaults-census-2--e2e_t22_mira_seal",
+    "lease_seconds": 285,
+    "off_plan": [
+      19,
+      20
+    ],
+    "on_plan": [
+      19,
+      20,
+      4
+    ],
+    "outer_seconds": 590,
+    "phase": "restart",
+    "policy_state": "artifacts/grm_scout_fix6/c2_states/defaults-census-2--e2e_t22_mira_seal.json",
+    "policy_state_sha256": "dfbf3ebd4c95fafb72d219abec63c33222ecb82e49f83bd3e6cfeb86fe4d52a8",
+    "probes": [
+      "e2e_t22_mira_seal"
+    ],
+    "question": "Recall probe. What is the current mira seal value? Reply with only the value.",
+    "question_id": "e2e_t22_mira_seal",
+    "row_ordinal": 1,
+    "side": "defaults",
+    "source_execution_id": "defaults-census-2:e2e_t22_mira_seal",
+    "source_phase": "fresh",
+    "source_worker": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/cells/defaults-census-2/worker.json",
+    "source_worker_sha256": "91fd9a42b360fbcade95656d7c66ae225575807b2054d968edd2f25b20e6cad0",
+    "state_manifest": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/census/e2e_t22_mira_seal/repository/manifest.json",
+    "state_manifest_sha256": "f40247337dcda8b12c4b046b6aa9148fecb4a7b0b75bb58eac0eb685ef7c8bf2",
+    "worker_seconds": 280
+  },
+  "fake": false,
+  "off_correct": true,
+  "off_plan_bytes_hex": "5b31392c32305d",
+  "off_plan_parity": true,
+  "on_correct": true,
+  "on_plan_bytes_hex": "5b31392c32302c345d",
+  "on_plan_matches_registered": true,
+  "process_id": "c717c60f-4fde-4a32-af20-db732b66ffe6",
+  "recorded_c2_answer": "Gold-7-Foxtrot",
+  "recorded_c2_correct": true,
+  "recorded_off_plan_bytes_hex": "5b31392c32305d",
+  "recorded_on_plan": [
+    19,
+    20,
+    4
+  ],
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "rule_pins": {
+    "off": "all_tokens_bind",
+    "on": "margin_first"
+  },
+  "same_state_proof": {
+    "arms_share_one_checkpoint": true,
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/census/e2e_t22_mira_seal/checkpoint.json",
+    "checkpoint_files_verified": 29,
+    "checkpoint_sha256": "f0b9d03863bb4cd5507a9f9972cdc537d57a42af7e7cc4a435033d79879d25ea",
+    "differing_environment_keys": [
+      "GRM_ADMISSION_RULE"
+    ],
+    "note": "Both arms copytree the SAME hash-verified recorded repository before any model call; GRM_ADMISSION_RULE is the only environment difference between them.",
+    "per_arm_private_copy": true
+  },
+  "transition": "unchanged_correct"
+}

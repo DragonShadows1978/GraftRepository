@@ -1,0 +1,581 @@
+{
+  "abstain_transition": null,
+  "answer_changed": false,
+  "archived_stale_sessions": null,
+  "arms": {
+    "off": {
+      "admission_rule": "A-DEC",
+      "answer": "Kestrel-9-Tango",
+      "answer_measured": true,
+      "arena_cur_mount_n": 193,
+      "arm": "off",
+      "battery": "longhistory",
+      "capture_valid": true,
+      "cell": "fix6-replay-defaults-longhistory-restart-0--lh_t013",
+      "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/longhistory/lh_t013/checkpoint.json",
+      "checkpoint_sha256": "63bcb3b12a442a767b321bf0e378d81737eff9a363ce9d7b4aac5bd0b4901af7",
+      "correct": true,
+      "evidence_class": "production ladder on a recorded C2 checkpoint; the admission rule is the only difference between the two arms",
+      "expected_values": [
+        "Kestrel-9-Tango"
+      ],
+      "geometry": {
+        "arena_width": 256,
+        "live_shift": 275,
+        "n_sink": 19
+      },
+      "identified_candidates": [
+        6,
+        7
+      ],
+      "mounted_ids": [
+        4,
+        6,
+        7
+      ],
+      "policy_branch": "declared_synthesis_identified_set",
+      "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+      "question_id": "lh_t013",
+      "rank_plan": [
+        6,
+        7
+      ],
+      "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+      "rejected_values": [],
+      "route_margin_1_2": 0.0789357272546849,
+      "route_margin_evaluated": true,
+      "route_receipt": {
+        "admission": {
+          "admission_rule": "all_tokens_bind",
+          "identified_candidates": [
+            6,
+            7
+          ],
+          "identifier_hit_count": 2,
+          "identifier_tokens": null,
+          "margin_threshold": 0.1385774091529802,
+          "policy": "A-DEC",
+          "policy_branch": "declared_synthesis_identified_set",
+          "rank_plan": [
+            6,
+            7
+          ],
+          "ranking_before_demotion": [
+            6,
+            7,
+            4,
+            11,
+            8,
+            1
+          ],
+          "rare_identifier_tokens": null,
+          "route_margin_1_2": 0.0789357272546849,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+          "split_child_demoted": false,
+          "split_demoted_ids": [],
+          "split_family_ids": []
+        },
+        "fit": {
+          "cur_mount_n": 193,
+          "dropped": [],
+          "final_mounts": [
+            4,
+            6,
+            7
+          ],
+          "info_pass_through": {
+            "admission_ranking_before_demotion": [
+              6,
+              7,
+              4,
+              11,
+              8,
+              1
+            ],
+            "admission_rule": "all_tokens_bind",
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [],
+            "fit_chunk_trips": [],
+            "fit_descended_head": [],
+            "fit_dropped_filler": [],
+            "fit_dropped_planned": [],
+            "fit_planned": [
+              6,
+              7
+            ],
+            "fit_seated": [
+              4,
+              6,
+              7
+            ],
+            "fit_shuttle": false,
+            "fit_shuttle_trips": [],
+            "fit_split_children": [],
+            "fit_split_ephemeral": null,
+            "fit_split_parent": null,
+            "fit_unseatable": [],
+            "frame_ephemeral": true,
+            "frame_escape_active": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "live_segments_after_turn": [
+              {
+                "graft_id": 15,
+                "ntok": 53
+              }
+            ],
+            "live_segments_carried_into_turn": [],
+            "live_segments_inherited": [],
+            "recency_mounted_ids": [
+              12,
+              14
+            ],
+            "recency_seats": {
+              "arena_width": 256,
+              "budget_after_charge": 256,
+              "charge_waived_reason": "identifier_query_point_lookup",
+              "charged_ntok": 0,
+              "nominated_ids": [
+                12,
+                14
+              ],
+              "nominated_ntok": 164
+            },
+            "served_without_plan_head": false
+          },
+          "no_mount_fit": false,
+          "planned": [
+            6,
+            7,
+            4
+          ],
+          "seated": [
+            4,
+            6,
+            7
+          ],
+          "trip_count": 1,
+          "trips": [
+            {
+              "clean_room": true,
+              "grounded": null,
+              "mount_set": [
+                4,
+                6,
+                7
+              ],
+              "ordinal": 1,
+              "planned": [
+                6,
+                7,
+                4
+              ],
+              "shuttle": false
+            }
+          ],
+          "width": 256
+        },
+        "provenance": {
+          "arena_state_sha256_before_serve": null,
+          "output_sha256": null,
+          "repository_size_at_probe": 16,
+          "request_sha256": null
+        },
+        "receipt_sha256": "446265d71a31f6632cc4b0eebe333928534f0f95ff6b7c267ebfc20368a1197e",
+        "route": {
+          "arena_route_receipt": null,
+          "backend": "python",
+          "candidate_count": null,
+          "excluded_live_ids": [],
+          "excluded_recency_ids": [],
+          "fallbacks": [],
+          "ranking_ids": [
+            6,
+            7,
+            4,
+            11,
+            8,
+            1
+          ],
+          "ranking_length": 6,
+          "ranking_scores": null,
+          "route_limit": null
+        },
+        "schema": "grm.route_receipt.v1",
+        "serving_path": "unknown",
+        "session_id": "fix6-replay-defaults-longhistory-restart-0--lh_t013",
+        "turn_id": "lh_t013",
+        "turn_kind": null
+      },
+      "rt1": {
+        "admission_ranking_before_demotion": [
+          6,
+          7,
+          4,
+          11,
+          8,
+          1
+        ],
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": []
+      },
+      "side": "defaults",
+      "token_seats": 193,
+      "verdict": {
+        "abstained": false,
+        "answer": "Kestrel-9-Tango",
+        "correct": true,
+        "expected_hits": [
+          "Kestrel-9-Tango"
+        ],
+        "rejected_hits": []
+      },
+      "wall_seconds": 10.454895120114088
+    },
+    "on": {
+      "admission_rule": "A-DEC",
+      "answer": "Kestrel-9-Tango",
+      "answer_measured": true,
+      "arena_cur_mount_n": 193,
+      "arm": "on",
+      "battery": "longhistory",
+      "capture_valid": true,
+      "cell": "fix6-replay-defaults-longhistory-restart-0--lh_t013",
+      "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/longhistory/lh_t013/checkpoint.json",
+      "checkpoint_sha256": "63bcb3b12a442a767b321bf0e378d81737eff9a363ce9d7b4aac5bd0b4901af7",
+      "correct": true,
+      "evidence_class": "production ladder on a recorded C2 checkpoint; the admission rule is the only difference between the two arms",
+      "expected_values": [
+        "Kestrel-9-Tango"
+      ],
+      "geometry": {
+        "arena_width": 256,
+        "live_shift": 275,
+        "n_sink": 19
+      },
+      "identified_candidates": [],
+      "mounted_ids": [
+        4,
+        6,
+        7
+      ],
+      "policy_branch": "margin_insurance_k3_identifier_tiebreak",
+      "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+      "question_id": "lh_t013",
+      "rank_plan": [
+        6,
+        7,
+        4
+      ],
+      "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+      "rejected_values": [],
+      "route_margin_1_2": 0.0789357272546849,
+      "route_margin_evaluated": true,
+      "route_receipt": {
+        "admission": {
+          "admission_rule": "margin_first",
+          "identified_candidates": [],
+          "identifier_hit_count": 0,
+          "identifier_tokens": null,
+          "margin_threshold": 0.1385774091529802,
+          "policy": "A-DEC",
+          "policy_branch": "margin_insurance_k3_identifier_tiebreak",
+          "rank_plan": [
+            6,
+            7,
+            4
+          ],
+          "ranking_before_demotion": [
+            6,
+            7,
+            4,
+            11,
+            8,
+            1
+          ],
+          "rare_identifier_tokens": null,
+          "route_margin_1_2": 0.0789357272546849,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+          "split_child_demoted": false,
+          "split_demoted_ids": [],
+          "split_family_ids": []
+        },
+        "fit": {
+          "cur_mount_n": 193,
+          "dropped": [],
+          "final_mounts": [
+            4,
+            6,
+            7
+          ],
+          "info_pass_through": {
+            "admission_ranking_before_demotion": [
+              6,
+              7,
+              4,
+              11,
+              8,
+              1
+            ],
+            "admission_rule": "margin_first",
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [],
+            "fit_chunk_trips": [],
+            "fit_descended_head": [],
+            "fit_dropped_filler": [],
+            "fit_dropped_planned": [],
+            "fit_planned": [
+              6,
+              7,
+              4
+            ],
+            "fit_seated": [
+              4,
+              6,
+              7
+            ],
+            "fit_shuttle": false,
+            "fit_shuttle_trips": [],
+            "fit_split_children": [],
+            "fit_split_ephemeral": null,
+            "fit_split_parent": null,
+            "fit_unseatable": [],
+            "frame_ephemeral": true,
+            "frame_escape_active": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "live_segments_after_turn": [
+              {
+                "graft_id": 15,
+                "ntok": 53
+              }
+            ],
+            "live_segments_carried_into_turn": [],
+            "live_segments_inherited": [],
+            "recency_mounted_ids": [
+              12,
+              14
+            ],
+            "recency_seats": {
+              "arena_width": 256,
+              "budget_after_charge": 256,
+              "charge_waived_reason": "identifier_query_point_lookup",
+              "charged_ntok": 0,
+              "nominated_ids": [
+                12,
+                14
+              ],
+              "nominated_ntok": 164
+            },
+            "served_without_plan_head": false
+          },
+          "no_mount_fit": false,
+          "planned": [
+            6,
+            7,
+            4
+          ],
+          "seated": [
+            4,
+            6,
+            7
+          ],
+          "trip_count": 1,
+          "trips": [
+            {
+              "clean_room": true,
+              "grounded": null,
+              "mount_set": [
+                4,
+                6,
+                7
+              ],
+              "ordinal": 0,
+              "planned": [
+                6,
+                7,
+                4
+              ],
+              "shuttle": false
+            }
+          ],
+          "width": 256
+        },
+        "provenance": {
+          "arena_state_sha256_before_serve": null,
+          "output_sha256": null,
+          "repository_size_at_probe": 16,
+          "request_sha256": null
+        },
+        "receipt_sha256": "6a3076853c74c60aeba10010b7335bb2be5a2695712597c416b87393006ed72c",
+        "route": {
+          "arena_route_receipt": null,
+          "backend": "python",
+          "candidate_count": null,
+          "excluded_live_ids": [],
+          "excluded_recency_ids": [],
+          "fallbacks": [],
+          "ranking_ids": [
+            6,
+            7,
+            4,
+            11,
+            8,
+            1
+          ],
+          "ranking_length": 6,
+          "ranking_scores": null,
+          "route_limit": null
+        },
+        "schema": "grm.route_receipt.v1",
+        "serving_path": "unknown",
+        "session_id": "fix6-replay-defaults-longhistory-restart-0--lh_t013",
+        "turn_id": "lh_t013",
+        "turn_kind": null
+      },
+      "rt1": {
+        "admission_ranking_before_demotion": [
+          6,
+          7,
+          4,
+          11,
+          8,
+          1
+        ],
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": []
+      },
+      "side": "defaults",
+      "token_seats": 193,
+      "verdict": {
+        "abstained": false,
+        "answer": "Kestrel-9-Tango",
+        "correct": true,
+        "expected_hits": [
+          "Kestrel-9-Tango"
+        ],
+        "rejected_hits": []
+      },
+      "wall_seconds": 7.008746084757149
+    }
+  },
+  "cell": {
+    "admission_rule": "margin_first",
+    "battery": "longhistory",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/longhistory/lh_t013/checkpoint.json",
+    "checkpoint_files": {
+      "index.npz": "ae506a2df8b2a2d59be071cfcd8273fbe87f6b6ac761ce3cc257f908fd10ec2f",
+      "manifest.json": "eea13ea1317d878a8f7032039b7890680262107714e09b6335ee25455837eb78",
+      "native/grm_store.bin": "0b0db758850ef8b38443db15ba8eab958a84903cec5df13e2d0b31c76f1e69f3",
+      "nodes/0000.npz": "532515944849f558de91504e41e8aea6a3769e6381f416c949b0579daf995644",
+      "nodes/0001.npz": "6f31366aeb34dccbf68d907dee2554137c2c4e12467d70a7e9bd1cbacdee5146",
+      "nodes/0002.npz": "1143fe96b4ad5a7a81cc4f1cad29cc40422caae7ed8af34d29cf589665f3389f",
+      "nodes/0003.npz": "955304f43839add57d4279ba590b229a6e4b060d06d016982641f3aef7ab28ab",
+      "nodes/0004.npz": "b9625b73425da45ef0ee678aaaef4efb03e6b8705f5d641196044dbfa4785de7",
+      "nodes/0005.npz": "13ab3e110b499ce68354d8de5017761122d2d7b4ced07e0d91ba9e98dd45cad3",
+      "nodes/0006.npz": "497ec2c87dc4a501db7d302932a8396bf0df3775e5223229d859a986b15102e1",
+      "nodes/0007.npz": "cb2f47db1672eed7514d7336157e85f7db98b4b107148684fbcfede2746f5c3f",
+      "nodes/0008.npz": "dac66e976db5652d8fe06b427abe78c692d34cfec706c18cabf25e80aa127be6",
+      "nodes/0009.npz": "58f033e152afb9ab6448e7b244314bc3d945469e9e55c5c341bc4f8851e247b9",
+      "nodes/0010.npz": "b8e4af9c8e05609a0fcb4b4b9be8bb67c3ce7d590ecaa7774d34af0baac59ab3",
+      "nodes/0011.npz": "edff821769080b6ee51a931dc2078dbdde76f58a613dde611e24c0557b04d37f",
+      "nodes/0012.npz": "e06c521ed471367750d75c98789395f0db5f79f990fc531474337d2058b10676",
+      "nodes/0013.npz": "56b12b6e66e2e78f728e13c5068b592035e385e7c16b518529e3f8ca437064ab",
+      "nodes/0014.npz": "a5d0e98710428ddde0208fe7cad808e6016c4e4f5eefdb62f97170a10f4c15e4",
+      "wal/000001.wal": "2091ab94dfffdd5baaec0bf1e7f3ea9834e4732c92c8e2acb757562a58585e0f"
+    },
+    "checkpoint_sha256": "63bcb3b12a442a767b321bf0e378d81737eff9a363ce9d7b4aac5bd0b4901af7",
+    "cooldown_seconds": 30,
+    "depends": [],
+    "id": "fix6-replay-defaults-longhistory-restart-0--lh_t013",
+    "lease_seconds": 285,
+    "off_plan": [
+      6,
+      7
+    ],
+    "on_plan": [
+      6,
+      7,
+      4
+    ],
+    "outer_seconds": 590,
+    "phase": "restart",
+    "policy_state": "artifacts/grm_scout_fix6/c2_states/defaults-longhistory-restart-0--lh_t013.json",
+    "policy_state_sha256": "e546da54e3971c54b50f9aef08882dafb6f1d70878cc871a320064be69bb7803",
+    "probes": [
+      "lh_t013"
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "question_id": "lh_t013",
+    "row_ordinal": 2,
+    "side": "defaults",
+    "source_execution_id": "defaults-longhistory-restart-0:lh_t013",
+    "source_phase": "restart",
+    "source_worker": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/cells/defaults-longhistory-restart-0/worker.json",
+    "source_worker_sha256": "dccae5be96b4d96ee78904f7b66e01cb449b9af1016a62fc9f021410320ddf39",
+    "state_manifest": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/longhistory/lh_t013/repository/manifest.json",
+    "state_manifest_sha256": "eea13ea1317d878a8f7032039b7890680262107714e09b6335ee25455837eb78",
+    "worker_seconds": 280
+  },
+  "device_memory": {
+    "after_cell_mib": 10996,
+    "arms": {
+      "off": {
+        "after_mib": 10996,
+        "before_mib": 10996,
+        "released": {
+          "payloads_freed": 14,
+          "pool_emptied": true
+        }
+      },
+      "on": {
+        "after_mib": 10996,
+        "before_mib": 10996,
+        "released": {
+          "payloads_freed": 14,
+          "pool_emptied": true
+        }
+      }
+    },
+    "before_cell_mib": 10996
+  },
+  "fake": false,
+  "off_correct": true,
+  "off_plan_bytes_hex": "5b362c375d",
+  "off_plan_parity": true,
+  "on_correct": true,
+  "on_plan_bytes_hex": "5b362c372c345d",
+  "on_plan_matches_registered": true,
+  "process_id": "65228fd6-1059-49ba-b703-c9cf0ae60f29",
+  "recorded_c2_answer": "Kestrel-9-Tango",
+  "recorded_c2_correct": true,
+  "recorded_off_plan_bytes_hex": "5b362c375d",
+  "recorded_on_plan": [
+    6,
+    7,
+    4
+  ],
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "rule_pins": {
+    "off": "all_tokens_bind",
+    "on": "margin_first"
+  },
+  "same_state_proof": {
+    "arms_share_one_checkpoint": true,
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/longhistory/lh_t013/checkpoint.json",
+    "checkpoint_files_verified": 19,
+    "checkpoint_sha256": "63bcb3b12a442a767b321bf0e378d81737eff9a363ce9d7b4aac5bd0b4901af7",
+    "differing_environment_keys": [
+      "GRM_ADMISSION_RULE"
+    ],
+    "note": "Both arms copytree the SAME hash-verified recorded repository before any model call; GRM_ADMISSION_RULE is the only environment difference between them.",
+    "per_arm_private_copy": true
+  },
+  "transition": "unchanged_correct"
+}

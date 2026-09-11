@@ -293,3 +293,307 @@ Nothing killed or signalled. No GPU lease taken and no GPU work run; the only
 device interaction was a read-only `nvidia-smi --query-gpu=memory.used` point
 sample (327 MiB, card idle), which allocates nothing. Every Bash call
 foreground and completed. No git command run.
+
+---
+
+# Amendment 2 — stale-session archiving + environment restoration
+
+Two defects, both mine, both found by the lead after amendment 1 was verified
+and committed (c2c8865). Neither touches admission, routing or scoring; the
+prediction, verdict rule and parity barrier are unchanged.
+
+## Defect 1 — the re-issue collided with its own scratch
+
+`batch_R1_a1.log`: lease acquired, released 4.67 s later, with
+`FileExistsError: .../sessions/fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal/off`.
+
+That is cell 6 — the one whose arm OFF finished and whose arm ON hit the OOM —
+so it still holds both `off/` and `on/`. `open_arm` creates the session with
+`mkdir(exist_ok=False)`: correct for a first run, fatal for a re-issue.
+
+The underlying mistake is mine and worth naming: **I applied create-only
+uniformly.** It is right for *evidence* and wrong for *scratch*. Amendment 1
+taught the campaign to re-issue a cell but left that cell's own working
+directory in the way. `archive_stale_sessions()` now moves the cell's own
+stale arm dirs to `sessions/<cell>/attempt_<n>/` before the arms run —
+archived, not deleted, so the failed attempt stays inspectable. Nothing
+outside that cell's session directory is touched, and a cell that already has
+a receipt is never re-run, so this code never sees a receipt.
+
+## Defect 2 — the rule pin leaked into the process environment
+
+`pin_rule` set `GRM_ADMISSION_RULE`, `environment(flags)` rewrote the whole
+`GRM_` frame, and neither restored. `admission_rule()` reads `os.environ` at
+CALL time, so every module importing after a R1 test in the same process was
+silently re-ruled to `margin_first`.
+
+Reproduced before the fix — the lead's exact symptom:
+
+```
+$ pytest -q tests/test_grm_r1_replay.py tests/test_grm_scout_fix4.py tests/test_grm_admission.py
+4 failed, 54 passed
+```
+
+**My earlier "91 passed" ran R1 LAST, which is precisely why I never saw it.**
+A suite whose greenness depends on file order is not green. That is the real
+lesson here, and it is now built into the gate: `lead_commands.txt` runs R1
+FIRST on purpose, so a future leak turns the following suites red rather than
+hiding behind ordering.
+
+`scoped_env()` restores the exact prior environment in a `finally` around each
+arm's pin and the batch frame pin: a key absent before is REMOVED (not set to
+`''`), and keys the body added are dropped. It lives in the worker, not only
+in tests, because production has no `monkeypatch`. After the fix a fake batch
+leaves `GRM_ADMISSION_RULE` absent, no `GRM_` vars at all, and
+`admission_rule() == 'all_tokens_bind'`.
+
+## Amendment
+
+`artifacts/grm_r1/amendment_2.json`, sha
+`e2d4b7439a78f07400ecd12dcfc403adeb46770d368cd01cf798c4a638d6ddfc`, bound to
+registration `b02593ec…a56cf5`, to the order file, and to amendment 1's hash.
+`amendment()` now walks the chain, checks each link's index and predecessor
+hash, and accumulates re-binds (a later link wins; an earlier link's re-bind
+is not silently dropped). R1 keeps retain-5 / reissue-3 / 134 s; R2–R5
+unchanged — neither fix changes per-cell cost.
+
+## Gate lines
+
+```
+BEFORE the fix (the lead's ordering):            4 failed, 54 passed
+R1 suites (replay + cpu_gate + a1 + a2):         80 passed
+R1 FIRST + scout_fix4 + admission (the gate):    98 passed
+env after a fake batch: None | leaked GRM_ vars: NONE | admission_rule(): all_tokens_bind
+collision fixture: archived to attempt_1/, fresh arms created,
+                   retained receipts byte-identical, all cells have receipts
+```
+
+## Prior art (new in amendment 2)
+
+* **GRM C7/C2 sha-bound amendment chains** (GRM contributors, 2026) — TAKEN
+  verbatim, extended to chain each link to its predecessor's hash.
+* **FIX8/C7 "archive the prior attempt, never overwrite"** (GRM, 2026) —
+  TAKEN, applied to per-cell scratch instead of the batch controller.
+* **GRM-A1 `grm_a1_gpu_contrast.pin_flags`** (GRM, 2026) — independently hit
+  the same "pin AFTER `environment()`" trap, and its comment records that
+  pinning before it "fails silently, and that exact mistake produced a wrong
+  reading earlier in this arc". A1 pins and asserts but does not RESTORE;
+  restoration is the half this amendment adds. Found via the local
+  code-similarity index, not searched for — worth the lead knowing two
+  independent seats hit one trap.
+* **`unittest.mock.patch.dict(os.environ)` / pytest `monkeypatch.setenv`**
+  (Python and pytest contributors) — the standard environment snapshot and
+  restore idiom, reproduced in the worker because production has no pytest
+  fixture. Nothing novel; no new algorithm.
+
+## Process safety (amendment 2)
+
+Nothing killed or signalled. No GPU lease taken, no GPU work run, no model
+loaded. Every Bash call foreground and completed. No git command run.
+
+## Third defect, found while verifying amendment 2 (accounting)
+
+Checking `campaign_state` against the real receipts after the lead's second
+attempt, the campaign reported **134 s charged for a batch that had actually
+spent 263 + 134 = 397 s**. Cause: amendment 1 archives the prior attempt's
+controller to `controller_attempt_1.json`, but `campaign_state` globbed only
+`controller.json` -- so every re-issue silently REFUNDED the failed attempt's
+GPU time. On a 1.0 GPU-h cap that is a budget rail that does not hold.
+
+Fix: `campaign_state` now also sums `controller_attempt_*.json` (binding-
+checked the same way). Verified on the real receipts: 397.0 s, complete=[].
+A test asserts a re-issue ADDS to the prior charge rather than replacing it.
+
+This one was mine too, introduced by amendment 1's archiving and caught only
+because I re-read the live numbers instead of trusting the passing suite.
+
+---
+
+# Amendment 3 — a satisfied re-arm scope must stop gating the campaign
+
+## First, the result the lead's run actually produced
+
+Batch R1's re-issue **COMPLETED**: 8/8 cell receipts, **parity 8/8**, ON plans
+match the registered margin_first plans **8/8**, every transition
+`unchanged_correct`, **0 answers changed**, lease released at 79.1 s. The
+amendment-1 device fix is confirmed by its own receipts — payloads freed per
+arm (23/23, 14/14, 17/17) and device memory **flat at 10996 MiB across all
+three cells** rather than climbing. That is the first real evidence that the
+OOM mechanism is actually fixed, not merely argued.
+
+Campaign now: **8 of 31 executions measured**, parity clean, `NOT_MEASURED`
+overall (correct — 23 cells remain).
+
+## The defect
+
+`--batch R2` refused before running:
+`R1_AMENDMENT_RETAIN_MISMATCH: R1 on_disk=[8 cells] amendment=[5 cells]`.
+
+`resume_scope()` re-applied amendment 1's retain/reissue cross-check on every
+invocation. That check is a **precondition** — "is the state I am about to act
+on still the state this amendment was written against?" Once R1 completed,
+the scope was **satisfied**: all 8 registered cells had receipts, the exact
+outcome the amendment existed to produce. Re-evaluating a precondition against
+the state its own action produced closed the campaign on its own success.
+
+Amendment 2 fixed a self-collision on scratch; this is the same family one
+level up, and it is mine.
+
+## Fix
+
+The cross-check applies only while the re-armed batch's controller is not
+COMPLETE. Once complete, `resume_scope()` returns `scope_satisfied: true`,
+an empty `reissue`, and `receipts` mapping every cell id to its receipt
+sha256. `batch()` treats a satisfied scope as a record, never a re-issue
+instruction.
+
+**Not relaxed:** an OPEN batch's cross-check is unchanged; a COMPLETE
+controller with cells still missing is a new RED
+(`R1_AMENDMENT_SCOPE_UNSATISFIED`); per-receipt binding and parity checks
+still run on satisfied scopes. Four tests cover those.
+
+## A fifth defect, found while verifying
+
+`summary()` reported **79.1 s** where `campaign_state()` reported **476.1 s**:
+amendment 2's archived-charge fix had gone into `campaign_state` only. Fixed;
+both now report 476.1 s and a test asserts they agree. A fix applied to one
+reader of a fact has to be applied to every reader of it.
+
+## Amendment
+
+`artifacts/grm_r1/amendment_3.json`, sha
+`e23a91c8d267b185a589cc67b71a1df5fb96dd4adca3fd542519fce00448f349`, chained to
+amendment 2, re-binding the worker. R1's re-arm entry is kept verbatim for the
+record and annotated `rearm_status.R1.satisfied: true` with all 8 receipt
+hashes. R2–R5 unchanged; no budget change.
+
+## Gate lines
+
+```
+RED-before / GREEN-after on one state:
+  WITH amendment 3   : resume_scope OK, scope_satisfied = True
+  WITHOUT amendment 3: R1_AMENDMENT_RETAIN_MISMATCH: R1   <-- the lead's stop
+
+live receipts: scope satisfied True, reissue 0, receipts 8, complete ['R1']
+R2 preconditions: scope None (normal first run) | priors complete True
+                  budget 476.1 + 194 = 670.1 <= 3600
+campaign_state 476.1 s == summary 476.1 s (agree)
+summary: NOT_MEASURED, 8/31 measured, parity True
+full gate in the leak order: 110 passed
+```
+
+## Prior art (new in amendment 3)
+
+* **GRM C7/C2 sha-bound amendment chains** (GRM contributors, 2026) — TAKEN
+  verbatim, including chaining to the previous amendment's hash.
+* The **precondition vs postcondition** distinction (a guard checked before an
+  action must not be re-evaluated against the state that action produced) is
+  ordinary defensive-programming practice. **No specific prior art known to
+  me** for this composition, and **no new algorithm**.
+
+## Process safety (amendment 3)
+
+Nothing killed or signalled. No GPU lease taken, no GPU work run, no model
+loaded. Every Bash call foreground and completed. No git command run.
+
+---
+
+# Amendment 4 — idle-card pre-check + NON_FIT rail
+
+## The counts settle the premise (item 1)
+
+`--batch R4` died **13.4 s** into its lease with `cudaMalloc failed: out of
+memory`, after the copytree and before any probe line: 0 cell receipts, only
+the first cell's `off` session dir. Node and payload counts from the recorded
+checkpoint manifests:
+
+| batch | cells | max nodes | max npz MiB | batch total MiB |
+|---|---|---|---|---|
+| R1 | 8 | 25 | 36.7 | 221.5 |
+| R2 | 5 | 25 | 36.7 | 130.0 |
+| R3 | 8 | 25 | 36.6 | 220.8 |
+| **R4** | 8 | 25 | 36.6 | **151.6** |
+| R5 | 2 | 3 | 6.1 | 12.3 |
+
+**This is not a fit problem.** R4's first cell (25 nodes / 36.6 MiB) is the
+same size as `profile-census-2--e2e_t22_mira_seal`, which R3 **completed** on
+the same profile frame. R4 is the *smallest* profile batch by total payload.
+Against ~1,286 MiB of headroom, the largest single cell is 2.8% (5.7% for
+both arms) — roughly **35x margin**.
+
+## Lever chosen (item 2): (b) only; (a) declined with its receipt
+
+Lever (a), host-resident payloads, is **not implemented**. It would add a
+page-in path to solve a problem the evidence says does not exist, and every
+added path is another guard to get wrong — a lesson this arc has taught
+repeatedly. Recorded in the amendment as
+`lever_2a_host_resident_payloads.implemented: false` with the reasoning.
+
+**Idle pre-check.** Keyed on TOTAL framebuffer used, never on the
+compute-process list — the holder that broke R4 listed none, and FIX-8's
+`parse_memory` states exactly that rule. Bounded by `--idle-wait`, read-only,
+and it **only declines to start**: it never signals, kills or clears
+anything. A test asserts the source contains no `os.kill`/`SIGTERM`/`pkill`.
+
+**NON_FIT rail.** An OOM at load/harvest writes a create-only receipt
+(reason, stage, memory snapshot) and the batch continues. `is_oom` is
+narrow: any other error, and the parity RED, still stop the campaign. NON_FIT
+is **unmeasured** in `summary()` and never counted as `unchanged` — a cell
+that did not execute cannot be evidence that the rule left its answer alone.
+
+## Amendment
+
+`artifacts/grm_r1/amendment_4.json`, sha
+`003539cd8afdfbac0f78ddae807271184553d73251d90566315b026a806abe6d`, chained to
+amendment 3, re-binding the worker. **R4 re-armed with 0 retained / 8
+re-issued** (its FAILED record archived). **R5 is not re-armed** — it never
+started, so it is a normal first run. Budget unchanged; neither lever changes
+per-cell cost.
+
+## The guard that caught me
+
+The full gate came back **1 failed**: my own no-retry test from amendment 1
+flagged `while True:` in the new `await_idle`. The loop was genuinely bounded
+by a deadline, but the test is right to be strict, so rather than loosen it I
+rewrote the wait as a **counted `for` loop** — the bound is now structural,
+and "waiting on a resource someone else holds" is visibly different from
+"retrying our own failed work" in the code rather than in a comment. I also
+tightened the test: `run_cell` must have exactly one call site.
+
+## Gate lines
+
+```
+OOM site        : 13.4 s elapsed, 0 receipts, first cell 'off' dir only
+counts          : R4 max 25 nodes / 36.6 MiB; R3 completed the same size
+headroom        : 36.6 of ~1286 MiB = 2.8% (~35x margin) -> lever (a) declined
+amendment 4     : R4 retain 0 / reissue 8; R5 not re-armed (normal first run)
+campaign        : charged 988.5 s, complete ['R1','R2','R3']
+R4 priors       : all complete; budget 988.5 + 238 + 124 = 1350.5 <= 3600
+summary         : NOT_MEASURED, 21/31 measured, parity 21/21, non_fit 0
+transitions     : 20 unchanged_correct, 1 wrong_to_correct, 0 correct_to_wrong
+amendment tests : 20 passed
+full gate (leak order): 130 passed
+```
+
+## Prior art (new in amendment 4)
+
+* **GRM FIX-8 `grm_scout_fix8_resume`** (`parse_memory` / `memory_gate` /
+  `snapshot`, GRM contributors, 2026) and **NVIDIA nvidia-smi XML
+  framebuffer/process reporting** (docs.nvidia.com, accessed 2026-09-09) —
+  TAKEN: the XML fields, the conservative total-used reading, the 1000 MiB
+  registered limit, and the explicit warning against inferring idleness from
+  an empty compute list. That warning is the whole reason this gate is
+  correct for the R4 case.
+* **GRM C7/FIX8 create-only failure receipts** (GRM, 2026) — TAKEN: record a
+  failure as evidence rather than retrying it.
+* **OURS**: the NON_FIT class and its unmeasured accounting, and the use of
+  the idle probe as a pre-lease gate in this worker. **No prior art known to
+  me** for that composition. **No new algorithm.**
+
+## Process safety
+
+Nothing killed or signalled. No GPU lease taken, no GPU work run, no model
+loaded; the only device interaction was the read-only `nvidia-smi -q -x`
+probe. The worker was deliberately left unedited until the lead reported the
+R4/R5 run finished. Every Bash call foreground and completed. No git command
+run.

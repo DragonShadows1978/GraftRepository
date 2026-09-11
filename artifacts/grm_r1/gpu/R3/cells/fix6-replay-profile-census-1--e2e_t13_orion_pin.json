@@ -1,0 +1,575 @@
+{
+  "abstain_transition": null,
+  "answer_changed": false,
+  "archived_stale_sessions": null,
+  "arms": {
+    "off": {
+      "admission_rule": "A-DEC",
+      "answer": "Kestrel-9-Tango",
+      "answer_measured": true,
+      "arena_cur_mount_n": 92,
+      "arm": "off",
+      "battery": "census",
+      "capture_valid": true,
+      "cell": "fix6-replay-profile-census-1--e2e_t13_orion_pin",
+      "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/profile/census/e2e_t13_orion_pin/checkpoint.json",
+      "checkpoint_sha256": "4900608ad162a28beb25b46f08a6939e59097306246834fedaa2c7bbd829aada",
+      "correct": true,
+      "evidence_class": "production ladder on a recorded C2 checkpoint; the admission rule is the only difference between the two arms",
+      "expected_values": [
+        "Kestrel-9-Tango"
+      ],
+      "geometry": {
+        "arena_width": 96,
+        "live_shift": 115,
+        "n_sink": 19
+      },
+      "identified_candidates": [
+        6,
+        7
+      ],
+      "mounted_ids": [
+        6
+      ],
+      "policy_branch": "declared_synthesis_identified_set",
+      "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+      "question_id": "e2e_t13_orion_pin",
+      "rank_plan": [
+        6,
+        7
+      ],
+      "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+      "rejected_values": [],
+      "route_margin_1_2": 0.07993370211927697,
+      "route_margin_evaluated": true,
+      "route_receipt": {
+        "admission": {
+          "admission_rule": "all_tokens_bind",
+          "identified_candidates": [
+            6,
+            7
+          ],
+          "identifier_hit_count": 2,
+          "identifier_tokens": null,
+          "margin_threshold": 0.1385774091529802,
+          "policy": "A-DEC",
+          "policy_branch": "declared_synthesis_identified_set",
+          "rank_plan": [
+            6,
+            7
+          ],
+          "ranking_before_demotion": [
+            6,
+            7,
+            4,
+            11,
+            8,
+            1
+          ],
+          "rare_identifier_tokens": null,
+          "route_margin_1_2": 0.07993370211927697,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+          "split_child_demoted": false,
+          "split_demoted_ids": [],
+          "split_family_ids": []
+        },
+        "fit": {
+          "cur_mount_n": 92,
+          "dropped": [
+            7
+          ],
+          "final_mounts": [
+            6
+          ],
+          "info_pass_through": {
+            "admission_ranking_before_demotion": [
+              6,
+              7,
+              4,
+              11,
+              8,
+              1
+            ],
+            "admission_rule": "all_tokens_bind",
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [],
+            "fit_chunk_trips": [],
+            "fit_descended_head": [],
+            "fit_dropped_filler": [],
+            "fit_dropped_planned": [],
+            "fit_planned": [
+              6,
+              7
+            ],
+            "fit_seated": [
+              6
+            ],
+            "fit_shuttle": true,
+            "fit_shuttle_trips": [
+              [
+                7
+              ]
+            ],
+            "fit_split_children": [],
+            "fit_split_ephemeral": null,
+            "fit_split_parent": null,
+            "fit_unseatable": [],
+            "frame_ephemeral": true,
+            "frame_escape_active": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "live_segments_after_turn": [
+              {
+                "graft_id": 15,
+                "ntok": 53
+              }
+            ],
+            "live_segments_carried_into_turn": [],
+            "live_segments_inherited": [],
+            "recency_mounted_ids": [
+              12,
+              14
+            ],
+            "recency_seats": {
+              "arena_width": 96,
+              "budget_after_charge": 96,
+              "charge_waived_reason": "identifier_query_point_lookup",
+              "charged_ntok": 0,
+              "nominated_ids": [
+                12,
+                14
+              ],
+              "nominated_ntok": 164
+            },
+            "served_without_plan_head": false
+          },
+          "no_mount_fit": false,
+          "planned": [
+            6,
+            7
+          ],
+          "seated": [
+            6
+          ],
+          "trip_count": 1,
+          "trips": [
+            {
+              "clean_room": true,
+              "grounded": null,
+              "mount_set": [
+                6
+              ],
+              "ordinal": 0,
+              "planned": [
+                6,
+                7
+              ],
+              "shuttle": false
+            }
+          ],
+          "width": 96
+        },
+        "provenance": {
+          "arena_state_sha256_before_serve": null,
+          "output_sha256": null,
+          "repository_size_at_probe": 16,
+          "request_sha256": null
+        },
+        "receipt_sha256": "218490ddad62de83584cd688971c8188be945eb498660b475c99c1be055c32e1",
+        "route": {
+          "arena_route_receipt": null,
+          "backend": "python",
+          "candidate_count": null,
+          "excluded_live_ids": [],
+          "excluded_recency_ids": [],
+          "fallbacks": [],
+          "ranking_ids": [
+            6,
+            7,
+            4,
+            11,
+            8,
+            1
+          ],
+          "ranking_length": 6,
+          "ranking_scores": null,
+          "route_limit": null
+        },
+        "schema": "grm.route_receipt.v1",
+        "serving_path": "unknown",
+        "session_id": "fix6-replay-profile-census-1--e2e_t13_orion_pin",
+        "turn_id": "e2e_t13_orion_pin",
+        "turn_kind": null
+      },
+      "rt1": {
+        "admission_ranking_before_demotion": [
+          6,
+          7,
+          4,
+          11,
+          8,
+          1
+        ],
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": []
+      },
+      "side": "profile",
+      "token_seats": 92,
+      "verdict": {
+        "abstained": false,
+        "answer": "Kestrel-9-Tango",
+        "correct": true,
+        "expected_hits": [
+          "Kestrel-9-Tango"
+        ],
+        "rejected_hits": []
+      },
+      "wall_seconds": 6.92688117409125
+    },
+    "on": {
+      "admission_rule": "A-DEC",
+      "answer": "Kestrel-9-Tango",
+      "answer_measured": true,
+      "arena_cur_mount_n": 92,
+      "arm": "on",
+      "battery": "census",
+      "capture_valid": true,
+      "cell": "fix6-replay-profile-census-1--e2e_t13_orion_pin",
+      "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/profile/census/e2e_t13_orion_pin/checkpoint.json",
+      "checkpoint_sha256": "4900608ad162a28beb25b46f08a6939e59097306246834fedaa2c7bbd829aada",
+      "correct": true,
+      "evidence_class": "production ladder on a recorded C2 checkpoint; the admission rule is the only difference between the two arms",
+      "expected_values": [
+        "Kestrel-9-Tango"
+      ],
+      "geometry": {
+        "arena_width": 96,
+        "live_shift": 115,
+        "n_sink": 19
+      },
+      "identified_candidates": [],
+      "mounted_ids": [
+        6
+      ],
+      "policy_branch": "margin_insurance_k3_identifier_tiebreak",
+      "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+      "question_id": "e2e_t13_orion_pin",
+      "rank_plan": [
+        6,
+        7,
+        4
+      ],
+      "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+      "rejected_values": [],
+      "route_margin_1_2": 0.07978507693809678,
+      "route_margin_evaluated": true,
+      "route_receipt": {
+        "admission": {
+          "admission_rule": "margin_first",
+          "identified_candidates": [],
+          "identifier_hit_count": 0,
+          "identifier_tokens": null,
+          "margin_threshold": 0.1385774091529802,
+          "policy": "A-DEC",
+          "policy_branch": "margin_insurance_k3_identifier_tiebreak",
+          "rank_plan": [
+            6,
+            7,
+            4
+          ],
+          "ranking_before_demotion": [
+            6,
+            7,
+            4,
+            11,
+            8,
+            1
+          ],
+          "rare_identifier_tokens": null,
+          "route_margin_1_2": 0.07978507693809678,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+          "split_child_demoted": false,
+          "split_demoted_ids": [],
+          "split_family_ids": []
+        },
+        "fit": {
+          "cur_mount_n": 92,
+          "dropped": [
+            7,
+            4
+          ],
+          "final_mounts": [
+            6
+          ],
+          "info_pass_through": {
+            "admission_ranking_before_demotion": [
+              6,
+              7,
+              4,
+              11,
+              8,
+              1
+            ],
+            "admission_rule": "margin_first",
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [],
+            "fit_chunk_trips": [],
+            "fit_descended_head": [],
+            "fit_dropped_filler": [],
+            "fit_dropped_planned": [],
+            "fit_planned": [
+              6,
+              7,
+              4
+            ],
+            "fit_seated": [
+              6
+            ],
+            "fit_shuttle": true,
+            "fit_shuttle_trips": [
+              [
+                7
+              ],
+              [
+                4
+              ]
+            ],
+            "fit_split_children": [],
+            "fit_split_ephemeral": null,
+            "fit_split_parent": null,
+            "fit_unseatable": [],
+            "frame_ephemeral": true,
+            "frame_escape_active": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "live_segments_after_turn": [
+              {
+                "graft_id": 15,
+                "ntok": 53
+              }
+            ],
+            "live_segments_carried_into_turn": [],
+            "live_segments_inherited": [],
+            "recency_mounted_ids": [
+              12,
+              14
+            ],
+            "recency_seats": {
+              "arena_width": 96,
+              "budget_after_charge": 96,
+              "charge_waived_reason": "identifier_query_point_lookup",
+              "charged_ntok": 0,
+              "nominated_ids": [
+                12,
+                14
+              ],
+              "nominated_ntok": 164
+            },
+            "served_without_plan_head": false
+          },
+          "no_mount_fit": false,
+          "planned": [
+            6,
+            7,
+            4
+          ],
+          "seated": [
+            6
+          ],
+          "trip_count": 1,
+          "trips": [
+            {
+              "clean_room": true,
+              "grounded": null,
+              "mount_set": [
+                6
+              ],
+              "ordinal": 0,
+              "planned": [
+                6,
+                7,
+                4
+              ],
+              "shuttle": false
+            }
+          ],
+          "width": 96
+        },
+        "provenance": {
+          "arena_state_sha256_before_serve": null,
+          "output_sha256": null,
+          "repository_size_at_probe": 16,
+          "request_sha256": null
+        },
+        "receipt_sha256": "14a655329ab99e2a8e81cf5465d73a435dc50ef419a1562fbcba844ce110e683",
+        "route": {
+          "arena_route_receipt": null,
+          "backend": "python",
+          "candidate_count": null,
+          "excluded_live_ids": [],
+          "excluded_recency_ids": [],
+          "fallbacks": [],
+          "ranking_ids": [
+            6,
+            7,
+            4,
+            11,
+            8,
+            1
+          ],
+          "ranking_length": 6,
+          "ranking_scores": null,
+          "route_limit": null
+        },
+        "schema": "grm.route_receipt.v1",
+        "serving_path": "unknown",
+        "session_id": "fix6-replay-profile-census-1--e2e_t13_orion_pin",
+        "turn_id": "e2e_t13_orion_pin",
+        "turn_kind": null
+      },
+      "rt1": {
+        "admission_ranking_before_demotion": [
+          6,
+          7,
+          4,
+          11,
+          8,
+          1
+        ],
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": []
+      },
+      "side": "profile",
+      "token_seats": 92,
+      "verdict": {
+        "abstained": false,
+        "answer": "Kestrel-9-Tango",
+        "correct": true,
+        "expected_hits": [
+          "Kestrel-9-Tango"
+        ],
+        "rejected_hits": []
+      },
+      "wall_seconds": 6.91323665715754
+    }
+  },
+  "cell": {
+    "admission_rule": "margin_first",
+    "battery": "census",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/profile/census/e2e_t13_orion_pin/checkpoint.json",
+    "checkpoint_files": {
+      "index.npz": "714b9c32c7ba4054883b617912c8d0cdcad5f11f6a909896a84f0b584e4ad75b",
+      "manifest.json": "942b251f5a13366a10207e5052def02b6c819ed3a979d95dde996b6efa11c669",
+      "native/grm_store.bin": "2e686fb5ddd51e02051336f82e96359beaf1e368ac5f1e958129cb2396973bcc",
+      "nodes/0000.npz": "0e2a161a67fd679a5d8f8e55f90c12484408f162e21491dc92284f3875ae3f02",
+      "nodes/0001.npz": "2d8c633adbde9bfce2b0a7e4b50b6611fa74c19122b99ea09d4340fd5031e3e1",
+      "nodes/0002.npz": "f809823fbb8e20eafd4d71c1e9e547eb55a07a9c4ec62bb7290f4a794dc8d759",
+      "nodes/0003.npz": "210da6aee810451e27c4e5570e27f71e56d89540118e446e3f86e71aaa78b543",
+      "nodes/0004.npz": "0b4e8bbcad7824aab44ae977b4263390e340b19decc35504c8adc5c470776b52",
+      "nodes/0005.npz": "f59b1ec7bc877a6a7a857f2f164cbfce98e36bc7d3c34e31cabcad0b6a6765b1",
+      "nodes/0006.npz": "49e6ae272f3747b13ad350fd11c9b7410318c3d37070659db4c4cb4465acf76d",
+      "nodes/0007.npz": "64c237489755c8dfdcc9097559d8d03ce931da3d3401df907680ded1d189fd8a",
+      "nodes/0008.npz": "33ae6463ae086a742fcad9bf4cc7de3b0f0e66ba9d2cfa6723e0730faff05a55",
+      "nodes/0009.npz": "9a0bb9ea9fb97427cc938a49b8367a04ec693ccabe20b64298b72d66ae57222f",
+      "nodes/0010.npz": "c21176517c47ac9fb1c34a401ae6e3a240ddec53f37036a7964940bb3be7ff6f",
+      "nodes/0011.npz": "698d5718a6d3e2711498630a133b9d58720955da7d6267208df67e52ce33e30b",
+      "nodes/0012.npz": "ef47247c43a587c1fa8f353cdf54689d23dcd74c3e59c0ccc5c233d206ecd2ee",
+      "nodes/0013.npz": "c9fb7b67bfdc6e26034d3e381cf3d4841a747e4ca54eca17bf01aeda414c74cd",
+      "nodes/0014.npz": "d365273484c83c722a020cfe684d14c1976aa321f6757f3a80a9ac6e5b2c56c8",
+      "wal/000001.wal": "81c21318012732a81910e5417fd4aa03b0e56e086d0de7c657626b7f2e41ccfe"
+    },
+    "checkpoint_sha256": "4900608ad162a28beb25b46f08a6939e59097306246834fedaa2c7bbd829aada",
+    "cooldown_seconds": 30,
+    "depends": [],
+    "id": "fix6-replay-profile-census-1--e2e_t13_orion_pin",
+    "lease_seconds": 285,
+    "off_plan": [
+      6,
+      7
+    ],
+    "on_plan": [
+      6,
+      7,
+      4
+    ],
+    "outer_seconds": 590,
+    "phase": "restart",
+    "policy_state": "artifacts/grm_scout_fix6/c2_states/profile-census-1--e2e_t13_orion_pin.json",
+    "policy_state_sha256": "01ea9322c8dbfc67fc6806ea30eda391f59bb632998f8edbd5547c056fd6779d",
+    "probes": [
+      "e2e_t13_orion_pin"
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "question_id": "e2e_t13_orion_pin",
+    "row_ordinal": 1,
+    "side": "profile",
+    "source_execution_id": "profile-census-1:e2e_t13_orion_pin",
+    "source_phase": "fresh",
+    "source_worker": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/cells/profile-census-1/worker.json",
+    "source_worker_sha256": "4c0e84f365dc908a84792f633a7eb2915cffa3dbd0442f3805617f1a78b55622",
+    "state_manifest": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/profile/census/e2e_t13_orion_pin/repository/manifest.json",
+    "state_manifest_sha256": "942b251f5a13366a10207e5052def02b6c819ed3a979d95dde996b6efa11c669",
+    "worker_seconds": 280
+  },
+  "device_memory": {
+    "after_cell_mib": 10996,
+    "arms": {
+      "off": {
+        "after_mib": 10996,
+        "before_mib": 324,
+        "released": {
+          "payloads_freed": 14,
+          "pool_emptied": true
+        }
+      },
+      "on": {
+        "after_mib": 10996,
+        "before_mib": 10996,
+        "released": {
+          "payloads_freed": 14,
+          "pool_emptied": true
+        }
+      }
+    },
+    "before_cell_mib": 324
+  },
+  "fake": false,
+  "off_correct": true,
+  "off_plan_bytes_hex": "5b362c375d",
+  "off_plan_parity": true,
+  "on_correct": true,
+  "on_plan_bytes_hex": "5b362c372c345d",
+  "on_plan_matches_registered": true,
+  "process_id": "cdb13caf-2bf1-4ed8-9c7f-7fab34bd3df3",
+  "recorded_c2_answer": "Kestrel-9-Tango",
+  "recorded_c2_correct": true,
+  "recorded_off_plan_bytes_hex": "5b362c375d",
+  "recorded_on_plan": [
+    6,
+    7,
+    4
+  ],
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "rule_pins": {
+    "off": "all_tokens_bind",
+    "on": "margin_first"
+  },
+  "same_state_proof": {
+    "arms_share_one_checkpoint": true,
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/profile/census/e2e_t13_orion_pin/checkpoint.json",
+    "checkpoint_files_verified": 19,
+    "checkpoint_sha256": "4900608ad162a28beb25b46f08a6939e59097306246834fedaa2c7bbd829aada",
+    "differing_environment_keys": [
+      "GRM_ADMISSION_RULE"
+    ],
+    "note": "Both arms copytree the SAME hash-verified recorded repository before any model call; GRM_ADMISSION_RULE is the only environment difference between them.",
+    "per_arm_private_copy": true
+  },
+  "transition": "unchanged_correct"
+}

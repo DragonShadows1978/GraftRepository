@@ -1,0 +1,85 @@
+{
+  "acceptance_unchanged": true,
+  "added_reserved_seconds": 134,
+  "amendment": 3,
+  "defects": [
+    {
+      "cause": "resume_scope() re-applied the retain/reissue cross-check on every invocation. It is a PRECONDITION for re-issuing an open batch, so re-evaluating it against the state the re-issue produced closed the campaign on its own success.",
+      "evidence": "artifacts/grm_r1/batch_R2_a2.log",
+      "fix": "The cross-check applies only while the re-armed batch's controller is not COMPLETE. Once complete, resume_scope records scope_satisfied: true with the receipt hashes and an empty reissue list, and later batches proceed. batch() treats a satisfied scope as a record, never a re-issue instruction.",
+      "id": "R1-D4-satisfied-scope-still-gating",
+      "still_red": "A genuine disagreement while the batch is OPEN still STOPS. A COMPLETE controller with cells still missing is a new RED: R1_AMENDMENT_SCOPE_UNSATISFIED.",
+      "symptom": "R1_AMENDMENT_RETAIN_MISMATCH raised from --batch R2 after R1 completed with 8/8 receipts; on_disk=8 vs amendment retain=5."
+    }
+  ],
+  "evidence_class": "Campaign-control amendment. Changes when the re-arm precondition is evaluated; no admission, routing or scoring logic is touched, and the prediction and verdict rule are unchanged.",
+  "gpu_cap_seconds": 3600,
+  "lessons": [
+    "A precondition must not be re-evaluated against the state its own action produced. Amendment 2 fixed a self-collision on scratch; this is the same family one level up.",
+    "Three of the four defects in this arc were guards that were correct in the state they were written for and wrong in the state that followed. Each new guard needs an explicit answer to \"when does this stop applying?\"."
+  ],
+  "order": "orders/GRM_R1_MARGIN_FIRST_REPLAY.md",
+  "order_sha256": "b351d8c25d1c2f5ab5a9a439e00adfb70a3535f9a5242508583ee83edd3dcda7",
+  "prediction": "Registered prediction: <= 2 of 31 executions change their answer; 0 correct->wrong on supersession.",
+  "previous_amendment_sha256": "d62d9a2c43fcb89c7ea8d3ff8a799e9c4691ce706bb32d1e69cf31aaf59da076",
+  "prior_art": "GRM-R1 amendment 3: a satisfied re-arm scope must stop gating the campaign.\n\nDefect (lead, `artifacts/grm_r1/batch_R2_a2.log`): batch R1's re-issue\nCOMPLETED -- 8/8 cell receipts, both arms, payloads released, lease released\nat 79 s -- and then `--batch R2` refused to start:\n\n    ValueError: R1_AMENDMENT_RETAIN_MISMATCH: R1 on_disk=[...8 cells...]\n    amendment=[...5 cells...]\n\nCause, and it is mine: `resume_scope()` re-applies amendment 1's\n\"R1 retains 5 / reissues 3\" cross-check on EVERY invocation, including from\nbatches that have nothing to do with R1.  That check is a PRECONDITION -- it\nasks \"is the state I am about to act on still the state this amendment was\nwritten against?\"  Once R1's controller says COMPLETE the re-issue has\nhappened and the amendment's scope is SATISFIED: every registered cell has a\nreceipt, which is precisely the outcome the amendment existed to produce.\nRe-applying the check then compares the finished state against the\npre-re-issue expectation, so the guard closes the campaign on its own\nsuccess.  Amendment 2 fixed a self-collision on scratch; this is the same\nfamily of mistake one level up -- a guard that was correct while the batch\nwas open and became wrong the moment it succeeded.\n\nFix: the retain/reissue cross-check now applies only while the re-armed\nbatch's controller is NOT COMPLETE.  Once complete, `resume_scope()` records\n`scope_satisfied: true` with the sha256 of every cell receipt and an empty\nreissue list, and later batches proceed.  `batch()` treats a satisfied scope\nas a RECORD, never as a re-issue instruction.\n\nWhat is deliberately NOT relaxed: a genuine disagreement still STOPS.  While\nthe batch is open, retain/reissue must match the amendment exactly\n(`R1_AMENDMENT_RETAIN_MISMATCH` / `_REISSUE_MISMATCH`).  And a controller\nthat says COMPLETE while cells are still missing is a new RED,\n`R1_AMENDMENT_SCOPE_UNSATISFIED` -- \"complete\" is only accepted as satisfying\nthe amendment when the whole registered cohort really does have receipts.\n\nScope: rebind the worker sha.  R1's re-arm entry is retained verbatim for the\nrecord (it is now satisfied); R2-R5 unchanged; no budget change.  Neither\nadmission, routing nor scoring is touched, and the prediction, verdict rule\nand parity barrier are unchanged.\n\nPrior art: GRM C7/C2 sha-bound amendment chains (GRM contributors, 2026) --\nTAKEN verbatim, including chaining to the previous amendment's hash.  The\n\"precondition vs postcondition\" distinction is ordinary defensive-programming\npractice (a guard checked before an action must not be re-evaluated against\nthe state that action produced); no specific prior art known to me for this\ncomposition, and no new algorithm.\n",
+  "prior_charged_seconds": 263.0,
+  "rearm": {
+    "R1": {
+      "estimate_basis": "max both-arm wall over this batch's retained receipts, plus one model load and 60 s headroom; measured, not guessed",
+      "lease_seconds": 134,
+      "measured_per_cell_seconds": 18.12,
+      "prior_charged_seconds": 263.0,
+      "prior_error": "RuntimeError: turn 22 failed: RuntimeError('cudaMalloc failed: out of memory')",
+      "prior_status": "FAILED",
+      "reissue": [
+        "fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal",
+        "fix6-replay-defaults-longhistory-1--lh_t013",
+        "fix6-replay-defaults-longhistory-1--lh_t016"
+      ],
+      "retain": [
+        "fix6-replay-defaults-census-1--e2e_t13_orion_pin",
+        "fix6-replay-defaults-census-1--e2e_t16_lyra_dock",
+        "fix6-replay-defaults-census-2--e2e_t22_mira_seal",
+        "fix6-replay-defaults-census-restart-0--e2e_t13_orion_pin",
+        "fix6-replay-defaults-census-restart-0--e2e_t16_lyra_dock"
+      ]
+    }
+  },
+  "rearm_retained_for_the_record": true,
+  "rearm_status": {
+    "R1": {
+      "cells": 8,
+      "charged_seconds": 79.1356867752038,
+      "controller_status": "COMPLETE",
+      "receipts_sha256": {
+        "fix6-replay-defaults-census-1--e2e_t13_orion_pin": "0772e897ab2aaefcb11a3c42e8adf0ed1074b665aa9e4c8f2aaf9e4b768fe0c5",
+        "fix6-replay-defaults-census-1--e2e_t16_lyra_dock": "28104d1253ec10fad45a61e44a98179962214368c744848b70d5068505aa5867",
+        "fix6-replay-defaults-census-2--e2e_t22_mira_seal": "f13acb10139780acabb6ff14a33a706f442a2e5ce91fe9f50e7d065f6ec4c17a",
+        "fix6-replay-defaults-census-restart-0--e2e_t13_orion_pin": "0e9b11e7ff59ba9afc617e394a90aded783ccf6df398ade0f42d712cd2803ab2",
+        "fix6-replay-defaults-census-restart-0--e2e_t16_lyra_dock": "eeb320839eccc474f34b4b2e7cd4ac762c33ea322ea4a96aebd21f52f882a08e",
+        "fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal": "407181c0a10135f3f012a083c092d8f3d1ad97a35c39968aba831ab25a46a98d",
+        "fix6-replay-defaults-longhistory-1--lh_t013": "a0edfd5d9e14b26948ea0577fc2be2bd3ac8d143d7d833e3c709382ac9b3697b",
+        "fix6-replay-defaults-longhistory-1--lh_t016": "881ce8c5f10d63d5b6f951c2053e999dc8c62de1e05e577a1e3b6d0c2c3b2a1e"
+      },
+      "satisfied": true
+    }
+  },
+  "rebound_inputs": {
+    "scripts/grm_r1_amend_3.py": "5f7642d0008bc27c1bac8455a5d182f19d7f474a5d3e94bd39e831461007b511",
+    "scripts/grm_r1_replay.py": "e6b27c866989697e4f607b2b290c548e50ee80fad6c33eeb93ec9f60c01d9bbf"
+  },
+  "rebound_reason": "The fix lives in the worker, so its hash changes; every other registered input keeps its original hash and still fails closed.",
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "retained_receipts_policy": "Completed cell receipts are VALID create-only receipts: retained byte-for-byte, never re-run, never rewritten. Only cells with no receipt are re-issued. resume_scope() compares the amendment's retain/reissue lists against what is actually on disk and STOPS (R1_AMENDMENT_RETAIN_MISMATCH / _REISSUE_MISMATCH) if they disagree, rather than silently re-scoping.",
+  "schema": "grm.r1.amendment.v1",
+  "total_reserved_seconds": 397.0,
+  "unchanged_batches": [
+    "R2",
+    "R3",
+    "R4",
+    "R5"
+  ],
+  "unchanged_reason": "The fix changes when a guard is evaluated, not what any batch costs.",
+  "verdict_rule": "Verdict rule: margin_first is adoptable as the profile default iff correct->wrong = 0 on sup and <= 1 elsewhere."
+}

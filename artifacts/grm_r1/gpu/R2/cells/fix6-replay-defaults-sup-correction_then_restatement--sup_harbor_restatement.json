@@ -1,0 +1,543 @@
+{
+  "abstain_transition": null,
+  "answer_changed": true,
+  "archived_stale_sessions": null,
+  "arms": {
+    "off": {
+      "admission_rule": "A-DEC",
+      "answer": "The token.",
+      "answer_measured": true,
+      "arena_cur_mount_n": 64,
+      "arm": "off",
+      "battery": "sup",
+      "capture_valid": true,
+      "cell": "fix6-replay-defaults-sup-correction_then_restatement--sup_harbor_restatement",
+      "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/sup/sup_harbor_restatement/checkpoint.json",
+      "checkpoint_sha256": "ed1158e7457ea1271c5c92b6a04ac8cb6c99f37c9a6dad25df09c3e5485c54d5",
+      "correct": false,
+      "evidence_class": "production ladder on a recorded C2 checkpoint; the admission rule is the only difference between the two arms",
+      "expected_values": [
+        "nacre-6-blue"
+      ],
+      "geometry": {
+        "arena_width": 256,
+        "live_shift": 275,
+        "n_sink": 19
+      },
+      "identified_candidates": [
+        1,
+        0
+      ],
+      "mounted_ids": [
+        1
+      ],
+      "policy_branch": "declared_synthesis_identified_set",
+      "question": "What is the current Harbor token value?",
+      "question_id": "sup_harbor_restatement",
+      "rank_plan": [
+        1,
+        0
+      ],
+      "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+      "rejected_values": [
+        "morrow-5-red",
+        "opal-7-green"
+      ],
+      "route_margin_1_2": 0.042278025707567224,
+      "route_margin_evaluated": true,
+      "route_receipt": {
+        "admission": {
+          "admission_rule": "all_tokens_bind",
+          "identified_candidates": [
+            1,
+            0
+          ],
+          "identifier_hit_count": 2,
+          "identifier_tokens": null,
+          "margin_threshold": 0.1385774091529802,
+          "policy": "A-DEC",
+          "policy_branch": "declared_synthesis_identified_set",
+          "rank_plan": [
+            1,
+            0
+          ],
+          "ranking_before_demotion": [
+            3,
+            2,
+            1,
+            0
+          ],
+          "rare_identifier_tokens": null,
+          "route_margin_1_2": 0.042278025707567224,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+          "split_child_demoted": false,
+          "split_demoted_ids": [],
+          "split_family_ids": []
+        },
+        "fit": {
+          "cur_mount_n": 64,
+          "dropped": [],
+          "final_mounts": [
+            1
+          ],
+          "info_pass_through": {
+            "admission_ranking_before_demotion": [
+              3,
+              2,
+              1,
+              0
+            ],
+            "admission_rule": "all_tokens_bind",
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [],
+            "fit_chunk_trips": [],
+            "fit_descended_head": [],
+            "fit_dropped_filler": [],
+            "fit_dropped_planned": [],
+            "fit_planned": [
+              1,
+              0
+            ],
+            "fit_seated": [
+              0,
+              1
+            ],
+            "fit_shuttle": false,
+            "fit_shuttle_trips": [],
+            "fit_split_children": [],
+            "fit_split_ephemeral": null,
+            "fit_split_parent": null,
+            "fit_unseatable": [],
+            "frame_ephemeral": true,
+            "frame_escape_active": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "live_segments_after_turn": [
+              {
+                "graft_id": null,
+                "ntok": 39
+              }
+            ],
+            "live_segments_carried_into_turn": [],
+            "live_segments_inherited": [],
+            "recency_mounted_ids": [],
+            "recency_seats": {
+              "arena_width": 256,
+              "budget_after_charge": 256,
+              "charge_waived_reason": null,
+              "charged_ntok": 0,
+              "nominated_ids": [],
+              "nominated_ntok": 0
+            },
+            "served_without_plan_head": false
+          },
+          "no_mount_fit": false,
+          "planned": [
+            1,
+            0
+          ],
+          "seated": [
+            0,
+            1
+          ],
+          "trip_count": 1,
+          "trips": [
+            {
+              "clean_room": true,
+              "grounded": null,
+              "mount_set": [
+                1
+              ],
+              "ordinal": 0,
+              "planned": [
+                1,
+                0
+              ],
+              "shuttle": false
+            }
+          ],
+          "width": 256
+        },
+        "provenance": {
+          "arena_state_sha256_before_serve": null,
+          "output_sha256": null,
+          "repository_size_at_probe": 4,
+          "request_sha256": null
+        },
+        "receipt_sha256": "b45859bff82e32fb44d29a9f34a0685072e47321a55336071e16637a6494cdce",
+        "route": {
+          "arena_route_receipt": null,
+          "backend": "python",
+          "candidate_count": null,
+          "excluded_live_ids": [],
+          "excluded_recency_ids": [],
+          "fallbacks": [],
+          "ranking_ids": [
+            3,
+            2,
+            1,
+            0
+          ],
+          "ranking_length": 4,
+          "ranking_scores": null,
+          "route_limit": null
+        },
+        "schema": "grm.route_receipt.v1",
+        "serving_path": "unknown",
+        "session_id": "fix6-replay-defaults-sup-correction_then_restatement--sup_harbor_restatement",
+        "turn_id": "sup_harbor_restatement",
+        "turn_kind": null
+      },
+      "rt1": {
+        "admission_ranking_before_demotion": [
+          3,
+          2,
+          1,
+          0
+        ],
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": []
+      },
+      "side": "defaults",
+      "token_seats": 64,
+      "verdict": {
+        "abstained": false,
+        "answer": "The token.",
+        "correct": false,
+        "expected_hits": [],
+        "rejected_hits": []
+      },
+      "wall_seconds": 8.832098609302193
+    },
+    "on": {
+      "admission_rule": "A-DEC",
+      "answer": "The Harbor token is currently **Nacre‑6‑Blue**.",
+      "answer_measured": true,
+      "arena_cur_mount_n": 211,
+      "arm": "on",
+      "battery": "sup",
+      "capture_valid": true,
+      "cell": "fix6-replay-defaults-sup-correction_then_restatement--sup_harbor_restatement",
+      "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/sup/sup_harbor_restatement/checkpoint.json",
+      "checkpoint_sha256": "ed1158e7457ea1271c5c92b6a04ac8cb6c99f37c9a6dad25df09c3e5485c54d5",
+      "correct": true,
+      "evidence_class": "production ladder on a recorded C2 checkpoint; the admission rule is the only difference between the two arms",
+      "expected_values": [
+        "nacre-6-blue"
+      ],
+      "geometry": {
+        "arena_width": 256,
+        "live_shift": 275,
+        "n_sink": 19
+      },
+      "identified_candidates": [
+        3,
+        2,
+        1,
+        0
+      ],
+      "mounted_ids": [
+        2,
+        3
+      ],
+      "policy_branch": "margin_insurance_k3_identifier_tiebreak",
+      "question": "What is the current Harbor token value?",
+      "question_id": "sup_harbor_restatement",
+      "rank_plan": [
+        3,
+        2,
+        1
+      ],
+      "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+      "rejected_values": [
+        "morrow-5-red",
+        "opal-7-green"
+      ],
+      "route_margin_1_2": 0.042278025707567224,
+      "route_margin_evaluated": true,
+      "route_receipt": {
+        "admission": {
+          "admission_rule": "margin_first",
+          "identified_candidates": [
+            3,
+            2,
+            1,
+            0
+          ],
+          "identifier_hit_count": 4,
+          "identifier_tokens": null,
+          "margin_threshold": 0.1385774091529802,
+          "policy": "A-DEC",
+          "policy_branch": "margin_insurance_k3_identifier_tiebreak",
+          "rank_plan": [
+            3,
+            2,
+            1
+          ],
+          "ranking_before_demotion": [
+            3,
+            2,
+            1,
+            0
+          ],
+          "rare_identifier_tokens": null,
+          "route_margin_1_2": 0.042278025707567224,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+          "split_child_demoted": false,
+          "split_demoted_ids": [],
+          "split_family_ids": []
+        },
+        "fit": {
+          "cur_mount_n": 211,
+          "dropped": [
+            1
+          ],
+          "final_mounts": [
+            2,
+            3
+          ],
+          "info_pass_through": {
+            "admission_ranking_before_demotion": [
+              3,
+              2,
+              1,
+              0
+            ],
+            "admission_rule": "margin_first",
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [],
+            "fit_chunk_trips": [],
+            "fit_descended_head": [],
+            "fit_dropped_filler": [],
+            "fit_dropped_planned": [],
+            "fit_planned": [
+              3,
+              2,
+              1
+            ],
+            "fit_seated": [
+              2,
+              3
+            ],
+            "fit_shuttle": false,
+            "fit_shuttle_trips": [],
+            "fit_split_children": [],
+            "fit_split_ephemeral": null,
+            "fit_split_parent": null,
+            "fit_unseatable": [],
+            "frame_ephemeral": true,
+            "frame_escape_active": false,
+            "grounding_glyph_rescued": true,
+            "grounding_normalized": true,
+            "live_segments_after_turn": [
+              {
+                "graft_id": null,
+                "ntok": 50
+              }
+            ],
+            "live_segments_carried_into_turn": [],
+            "live_segments_inherited": [],
+            "recency_mounted_ids": [],
+            "recency_seats": {
+              "arena_width": 256,
+              "budget_after_charge": 256,
+              "charge_waived_reason": null,
+              "charged_ntok": 0,
+              "nominated_ids": [],
+              "nominated_ntok": 0
+            },
+            "served_without_plan_head": false
+          },
+          "no_mount_fit": false,
+          "planned": [
+            3,
+            2,
+            1
+          ],
+          "seated": [
+            2,
+            3
+          ],
+          "trip_count": 1,
+          "trips": [
+            {
+              "clean_room": true,
+              "grounded": null,
+              "mount_set": [
+                2,
+                3
+              ],
+              "ordinal": 0,
+              "planned": [
+                3,
+                2,
+                1
+              ],
+              "shuttle": false
+            }
+          ],
+          "width": 256
+        },
+        "provenance": {
+          "arena_state_sha256_before_serve": null,
+          "output_sha256": null,
+          "repository_size_at_probe": 4,
+          "request_sha256": null
+        },
+        "receipt_sha256": "025961f9a4a8df1f8fbd55da9f2ab131a2cc76be127ca324498e322b620513e7",
+        "route": {
+          "arena_route_receipt": null,
+          "backend": "python",
+          "candidate_count": null,
+          "excluded_live_ids": [],
+          "excluded_recency_ids": [],
+          "fallbacks": [],
+          "ranking_ids": [
+            3,
+            2,
+            1,
+            0
+          ],
+          "ranking_length": 4,
+          "ranking_scores": null,
+          "route_limit": null
+        },
+        "schema": "grm.route_receipt.v1",
+        "serving_path": "unknown",
+        "session_id": "fix6-replay-defaults-sup-correction_then_restatement--sup_harbor_restatement",
+        "turn_id": "sup_harbor_restatement",
+        "turn_kind": null
+      },
+      "rt1": {
+        "admission_ranking_before_demotion": [
+          3,
+          2,
+          1,
+          0
+        ],
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": []
+      },
+      "side": "defaults",
+      "token_seats": 211,
+      "verdict": {
+        "abstained": false,
+        "answer": "The Harbor token is currently **Nacre‑6‑Blue**.",
+        "correct": true,
+        "expected_hits": [
+          "nacre-6-blue"
+        ],
+        "rejected_hits": []
+      },
+      "wall_seconds": 5.610669357236475
+    }
+  },
+  "cell": {
+    "admission_rule": "margin_first",
+    "battery": "sup",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/sup/sup_harbor_restatement/checkpoint.json",
+    "checkpoint_files": {
+      "index.npz": "6f5c0890ea79989c6847d8792858e97af89270c3f21154cacb17e651ef5135b7",
+      "manifest.json": "deb78a32fd1a1670ed92f8555a930a1851ed7dc3d68780b959f1858af7fc5373",
+      "native/grm_store.bin": "220ecb37a0c23291c5cddd8bb0ed6016a09d847d6da296b300cbe79b3fed0f8c",
+      "nodes/0000.npz": "116101c4a21143414268ec3d06a7624f60aae0a0161621c0fb0febcdc55bfc54",
+      "nodes/0001.npz": "6433d26faa66ce1b72261740c40f471c23c385ea1f1036edced5a8396bd14930",
+      "nodes/0002.npz": "ec6e765be5a49bc9ad42eb881d4bcb115b64305a461f1df4933bc1af6befee38",
+      "nodes/0003.npz": "19db6285de5682cef88438b0e564a0339cfe86fc80c17e178f4a319bde4dce5e",
+      "wal/000001.wal": "d201acf10ec0d08d170c1a8b9ea1e4a86616753ebf5a9b196d692468272f6ec3"
+    },
+    "checkpoint_sha256": "ed1158e7457ea1271c5c92b6a04ac8cb6c99f37c9a6dad25df09c3e5485c54d5",
+    "cooldown_seconds": 30,
+    "depends": [],
+    "id": "fix6-replay-defaults-sup-correction_then_restatement--sup_harbor_restatement",
+    "lease_seconds": 285,
+    "off_plan": [
+      1,
+      0
+    ],
+    "on_plan": [
+      3,
+      1,
+      2
+    ],
+    "outer_seconds": 590,
+    "phase": "restart",
+    "policy_state": "artifacts/grm_scout_fix6/c2_states/defaults-sup-correction_then_restatement--sup_harbor_restatement.json",
+    "policy_state_sha256": "ce60b9df400a4fec4904c446967f7d899dbb82e90aba589a31b8e57f47ce81d1",
+    "probes": [
+      "sup_harbor_restatement"
+    ],
+    "question": "What is the current Harbor token value?",
+    "question_id": "sup_harbor_restatement",
+    "row_ordinal": 0,
+    "side": "defaults",
+    "source_execution_id": "defaults-sup-correction_then_restatement:sup_harbor_restatement",
+    "source_phase": "fresh",
+    "source_worker": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/cells/defaults-sup-correction_then_restatement/worker.json",
+    "source_worker_sha256": "5dbefb564df76a60457e4857725535a0f374625d2c2dc1d96c2989d526a85afb",
+    "state_manifest": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/sup/sup_harbor_restatement/repository/manifest.json",
+    "state_manifest_sha256": "deb78a32fd1a1670ed92f8555a930a1851ed7dc3d68780b959f1858af7fc5373",
+    "worker_seconds": 280
+  },
+  "device_memory": {
+    "after_cell_mib": 10996,
+    "arms": {
+      "off": {
+        "after_mib": 10996,
+        "before_mib": 10996,
+        "released": {
+          "payloads_freed": 4,
+          "pool_emptied": true
+        }
+      },
+      "on": {
+        "after_mib": 10996,
+        "before_mib": 10996,
+        "released": {
+          "payloads_freed": 4,
+          "pool_emptied": true
+        }
+      }
+    },
+    "before_cell_mib": 10996
+  },
+  "fake": false,
+  "off_correct": false,
+  "off_plan_bytes_hex": "5b312c305d",
+  "off_plan_parity": true,
+  "on_correct": true,
+  "on_plan_bytes_hex": "5b332c322c315d",
+  "on_plan_matches_registered": false,
+  "process_id": "4ef0561f-2c9b-4eef-a5d6-1e4f6b95d74c",
+  "recorded_c2_answer": "The current Harbor token value is **Nacre‑6‑Blue**.",
+  "recorded_c2_correct": true,
+  "recorded_off_plan_bytes_hex": "5b312c305d",
+  "recorded_on_plan": [
+    3,
+    1,
+    2
+  ],
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "rule_pins": {
+    "off": "all_tokens_bind",
+    "on": "margin_first"
+  },
+  "same_state_proof": {
+    "arms_share_one_checkpoint": true,
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/defaults/sup/sup_harbor_restatement/checkpoint.json",
+    "checkpoint_files_verified": 8,
+    "checkpoint_sha256": "ed1158e7457ea1271c5c92b6a04ac8cb6c99f37c9a6dad25df09c3e5485c54d5",
+    "differing_environment_keys": [
+      "GRM_ADMISSION_RULE"
+    ],
+    "note": "Both arms copytree the SAME hash-verified recorded repository before any model call; GRM_ADMISSION_RULE is the only environment difference between them.",
+    "per_arm_private_copy": true
+  },
+  "transition": "wrong_to_correct"
+}
