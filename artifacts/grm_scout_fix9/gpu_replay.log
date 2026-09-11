@@ -1,0 +1,32 @@
+GRM chat — profile: eb1_c2  (--profile)
+  frame            : EB1 ephemeral boat  (chat log NEVER in context)
+  arena width      : 96
+  capture pin      : live
+  seat near live   : True
+  RT1 rule         : True
+  admission rule   : margin_first
+  topk / ngen      : 3 / 32
+  env:
+    GRM_PERSISTENT_BOAT=0
+    GRM_CAPTURE_PIN=live
+    GRM_SEAT_NEAR_LIVE=1
+    GRM_LSR_FIXES=1
+    GRM_RT1_RULE=1
+    GRM_DEMAND_NGH=0
+    GRM_GQA_CUDA_ROUTE=1
+    GRM_GRAFT_STORAGE_BITS=8
+    GRM_ROUTE_QUERY_LEX=1
+    GRM_PROBE_LADDER=1
+    GRM_SUP_RESOLVE=1
+    GRM_ADM_DECISIVE=1
+    GRM_ADMISSION_RULE=margin_first
+you> /recap
+grm> Sure! Here’s a quick recap of the five biggest decisions we made in the past week:
+
+1. **Choosing a new project** – We decided to start a new project that aligns with our goals and interests.
+2. **Planning the timeline** – We mapped out a timeline to keep the project on track and avoid delays.
+3. **Selecting the team** – We selected a team that brings the right mix of skills and experience to the project.
+4. **Defining the budget** – We set a budget that ensures we can deliver the project without overspending.
+5. **Deciding on the next steps** – We outlined the next steps to keep the project moving forward and stay on track.
+
+Let me know if you’d like more details on any of these points!
