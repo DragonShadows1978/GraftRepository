@@ -1,0 +1,29 @@
+# LT1.1 r3 -- arm A only, 26 cells
+# reservation ceiling 7410 s (2.06 GPU-h), r2 unchanged
+# ORDER CAP on MEASURED work: 4680 s (1.30 GPU-h). See
+# registration.budget_conflict -- lead decision requested.
+# registration sha256: bf3711a7ab539c9c876368f67b333c593f5280bf87d98ac3913d840712addd55
+# amendment10  sha256: d1a24b45db241a8cf837250c7b13f9acd1cb098b8e7cc995fcde1dc7188355fc
+#
+# THE SINGLE VARIABLE under test:
+#   GRM_FOLD_RETAIN_SOURCES=1  (default OFF; OFF is byte-identical)
+#
+# OPTIONAL, lead may pin -- if pinned, the columns measure the PAIR:
+#   export GRM_F2_SUPERSEDE_DIGEST_BY_ENTITY=1
+# NOT pinned by default (r2 arm A ran with it false):
+#   export GRM_ALIAS_FOLD_MERGE=1
+#
+# EVERY line below ends in --dry-run. Removing it is a deliberate
+# act by the lead after reading the registration, never a paste.
+#
+export GRM_ADMISSION_RULE=margin_first
+export GRM_PROFILE=eb1_c2
+export GRM_FOLD_RETAIN_SOURCES=1
+#
+# 1. document chain + core pins (amendment 10 must govern):
+python3 -m scripts.grm_lt1_1 --arm A --preflight --dry-run
+# 2. cell schedule and budget:
+python3 -m scripts.grm_lt1_1 --arm A --dry-run
+# 3. the campaign itself -- under flock, operator has right of way:
+flock --wait 7200 /var/lock/grm_gpu.lock \
+  python3 -m scripts.grm_lt1_1 --arm A --resume --dry-run

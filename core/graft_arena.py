@@ -44,6 +44,7 @@ from core.grm_frame import (
     seat_near_live_enabled,
 )
 from core.grm_supersession import sup_resolve_enabled
+from core import grm_fold_retain
 from core import grm_demand
 from core.grm_text_norm import normalize_glyphs
 from core.grm_admission import (
@@ -80,7 +81,7 @@ class ArenaCache:
                  ephemeral=None, recency_mounts=2, prompt_template=None,
                  stop_sequences=None, length_debias=False,
                  revision_resolution=None, decisive_admission=None,
-                 route_backend="auto",
+                 route_backend="auto", fold_retain_sources=None,
                  route_profile=False, route_parity_check=False):
         # EPHEMERAL MODE ("clear the boat"): the live cache is reset at the
         # START of every turn — each turn runs on [sink | mounts | turn]
@@ -99,6 +100,14 @@ class ArenaCache:
         # ephemeral on an unknown token. An explicit bool still wins, so a
         # harness can pin either frame regardless of the ambient setting.
         self.ephemeral = ephemeral_frame_enabled(ephemeral)
+        # GRM-F1: source retention after a fold. DEFAULT OFF. Resolved ONCE
+        # here (explicit constructor value > GRM_FOLD_RETAIN_SOURCES > OFF)
+        # so a mid-session environment change cannot alter a conversation's
+        # fold lifecycle halfway through — the same freeze A1, L2 and A-DEC
+        # take. See core/grm_fold_retain.py for the LT1.1 r2 receipt this
+        # addresses (source nodes in route_info.mounts: 0/57 correct rows).
+        self.fold_retain_sources = grm_fold_retain.retain_sources_enabled(
+            fold_retain_sources)
         self.recency_mounts = recency_mounts
         self.m = model
         self.encode = encode            # text -> list of token ids
@@ -2154,7 +2163,27 @@ class ArenaCache:
         have = cls._rare_tokens(text) | cls._caps_tokens(text, False)
         return len(need & have) / len(need)
 
-    def _deposit_consolidation(self, idxs, text, prefix="ARCHIVE NOTE."):
+    def _deposit_consolidation(self, idxs, text, prefix="ARCHIVE NOTE.",
+                               retain=None):
+        """Deposit the accepted digest and settle the sources' lifecycle.
+
+        GRM-F1. ``retain`` resolves to ``self.fold_retain_sources`` unless a
+        caller pins it. OFF (the default) is the pre-F1 path verbatim: every
+        source is RETIRED, leaving the digest as the only routable record.
+        ON: the digest is ADDED — the sources keep ``retired`` unset, so
+        ``_route_cand_base`` still admits them, and they are marked
+        ``no_fold`` so the stateless librarian plan does not re-select the
+        same window forever. Lineage is recorded on both ends
+        (``metadata.digest_of`` / ``metadata.retained_sources``).
+
+        GRM-A1 pins ``retain=False`` explicitly: ``_alias_fold_once`` makes
+        its own lineage decision immediately after this returns (the edge is
+        ALWAYS superseded — a bare active alias edge that wins admission and
+        answers nothing IS the RD2 defect A1 exists to fix), and must not
+        inherit a retention policy meant for ordinary window folds.
+        """
+        if retain is None:
+            retain = bool(getattr(self, "fold_retain_sources", False))
         note = f"{prefix} {text}\n"
         didx = self.deposit(note)
         self.grafts[didx]["kind"] = "digest"
@@ -2173,19 +2202,42 @@ class ArenaCache:
             rare |= g["rare"]
         self.grafts[didx]["child_cents"] = child
         self.grafts[didx]["rare"] = rare | self._rare_tokens(note)
-        for i in idxs:
-            self.grafts[i]["retired"] = True
+        if retain:
+            # GRM-F1 ON: the digest is ADDED, not substituted. Sources keep
+            # `retired` unset (they stay in _route_cand_base) and gain the
+            # `no_fold` exemption the width guard's rejected-split path
+            # already uses for exactly this state — an ACTIVE source
+            # alongside a derived node. Metadata is written directly rather
+            # than through the repository's _default_metadata because the
+            # arena owns no metadata schema; the repository's own
+            # `_ensure_lifecycle` fills the rest on its next pass.
+            for i in idxs:
+                g = self.grafts[i]
+                g["no_fold"] = True
+                meta = g.setdefault("metadata", {})
+                meta.update(grm_fold_retain.source_lineage(didx))
+            dmeta = self.grafts[didx].setdefault("metadata", {})
+            dmeta.update(grm_fold_retain.digest_lineage(True, idxs))
+        else:
+            for i in idxs:
+                self.grafts[i]["retired"] = True
         # kind/child_cents/retired all changed after deposit()'s own bump —
         # each is read by the CUDA route bank eligibility/signature walk.
         self._bump_cuda_gqa_epoch()
         return didx, text
 
-    def consolidate(self, idxs, ngen=None):
+    def consolidate(self, idxs, ngen=None, retain=None):
         """Phase-2 seat compression: mount the given grafts, generate ONE
         QC'd digest (E2-validated verbatim-preservation prompt), deposit it
         standalone (clean key + payload), RETIRE the sources from routing.
         The digest node carries its children's centroids for hierarchical
-        descent. Returns (digest_idx, digest_text)."""
+        descent. Returns (digest_idx, digest_text).
+
+        GRM-F1: ``retain`` is a pass-through to ``_deposit_consolidation``
+        and defaults to ``self.fold_retain_sources`` (permanently OFF unless
+        the flag is set). Only GRM-A1 pins it, to ``False``; see that
+        method's docstring for why the alias merge must keep retiring its
+        edge whatever the window-fold policy is."""
         # Even extractive era folds retire their sources. Validate that every
         # source has a recoverable payload before either folding path can
         # alter cache state or make that lifecycle change.
@@ -2232,7 +2284,8 @@ class ArenaCache:
                 return None, None
             self.last_consolidation_result["accepted"] = True
             return self._deposit_consolidation(idxs, text,
-                                               prefix="ERA INDEX.")
+                                               prefix="ERA INDEX.",
+                                               retain=retain)
 
         for li, layer in enumerate(self.m.layers):
             att = layer.self_attn
@@ -2339,7 +2392,7 @@ class ArenaCache:
         if text is None or best_cov < self.MIN_FOLD_KEEP:
             return None, None
         self.last_consolidation_result["accepted"] = True
-        return self._deposit_consolidation(idxs, text)
+        return self._deposit_consolidation(idxs, text, retain=retain)
 
     # ------------------------------------------------------------ cache ops
     def _ensure_h(self, idxs):

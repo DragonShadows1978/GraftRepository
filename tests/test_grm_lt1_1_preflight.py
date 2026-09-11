@@ -194,11 +194,20 @@ def test_a_planted_drift_in_a_new_input_goes_red(monkeypatch, tmp_path):
     staged = _stage(monkeypatch, tmp_path)
     name, doc = _governing(staged)
     victim = 'core/grm_alias_fold.py'
-    # The governing rebind may carry this pin under `changed` (amendment 8
-    # rebound it) rather than `new_inputs`. The branch under test is the
-    # new-input one, so plant it there and drop any `changed` duplicate.
+    # The governing rebind may carry this pin under ANY of the three
+    # sections: `changed` (amendment 8 rebound it) or `unchanged`
+    # (amendment 10 records it as untouched by GRM-F1). The branch under
+    # test is the new-input one, so plant it there and drop EVERY other
+    # section's copy first.
+    #
+    # Dropping only `changed` used to be enough and silently stopped being
+    # so: `governing_core_pins` applies `unchanged` LAST, so a surviving
+    # `unchanged` entry overwrites the planted sha and the test passed
+    # vacuously. Clearing all sections keeps the teeth independent of which
+    # section a future rebind happens to file this pin under.
     doc['core_rebind'].setdefault('new_inputs', {})
-    doc['core_rebind']['changed'].pop(victim, None)
+    for section in ('changed', 'unchanged'):
+        doc['core_rebind'].get(section, {}).pop(victim, None)
     doc['core_rebind']['new_inputs'][victim] = dict(
         sha256='deadbeef' * 8, attribution='planted by the teeth test')
     _replant(staged, name, doc)

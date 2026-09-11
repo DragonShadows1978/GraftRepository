@@ -130,6 +130,9 @@ def governing_core_pins():
 
 
 ALIAS_ENV = 'GRM_ALIAS_FOLD_MERGE'
+#: GRM-F1's flag. Carried across the `environment()` strip by
+#: `arm_environment` exactly as the arm pin is; see that docstring.
+RETAIN_ENV = 'GRM_FOLD_RETAIN_SOURCES'
 RULE_ENV = 'GRM_ADMISSION_RULE'
 ARMS = ('A', 'A+')
 
@@ -294,13 +297,25 @@ def arm_environment(arm, flags):
 
     `environment(flags)` deletes every ambient `GRM_*`, so the pin MUST come
     after it or the arm silently runs the default.
+
+    GRM-F1 rides the SAME rail. `GRM_FOLD_RETAIN_SOURCES` is a `GRM_*` name,
+    so `environment()` strips it along with everything else; without the
+    re-apply below an r3 campaign launched with the flag exported would run
+    the OFF arm and report it as ON -- the exact failure mode this
+    docstring already warns about for the arm pin. The flag is carried only
+    when it is ACTUALLY set in the ambient environment: absent stays absent,
+    so every pre-F1 caller's environment is byte-identical.
     """
     from scripts.grm_c2_cells import environment
+    retain = os.environ.get(RETAIN_ENV)
     env = environment(flags)
     env[RULE_ENV] = 'margin_first'
     env.pop(ALIAS_ENV, None)
     if ARM_ALIAS[arm] is not None:
         env[ALIAS_ENV] = ARM_ALIAS[arm]
+    env.pop(RETAIN_ENV, None)
+    if retain is not None:
+        env[RETAIN_ENV] = retain
     return env
 
 
