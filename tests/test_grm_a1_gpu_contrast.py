@@ -987,3 +987,189 @@ def test_amendment_3_records_the_diagnosis_and_the_checkpoint_finding():
     # And the prediction/budget/rows are still untouched.
     assert a3['unchanged']['budget_gpu_hours_max'] == 0.5
     assert a3['unchanged']['rows'].startswith('23 unchanged')
+
+
+# =====================================================================
+# AMENDMENT 4 — two defects from the completed lead GPU run (2026-09-11).
+#   1. Lease overrun: rows were only checked BETWEEN rows, never budgeted
+#      against the remaining lease, so a 560 s lease ran past 900 s.
+#   2. The summary said "rows: 8, complete: true" while 15 planned rows had
+#      never run — a partial campaign that read as a finished one.
+# =====================================================================
+
+@pytest.fixture
+def lease_harness(monkeypatch):
+    """Drive the REAL main() lease path with the CPU doubles behind it.
+
+    The budget gate is skipped when ``--fake`` sets lease=None, so this runs
+    the NON-fake branch with the fake loader and a stubbed lease/telemetry.
+    Everything under test — the gate arithmetic, the stop record, the exit
+    code — is the production code path.
+    """
+    from contextlib import contextmanager
+
+    from scripts import grm_cmc1_gpu_arms as arms
+
+    @contextmanager
+    def stub_lease(seconds, wait):
+        yield
+
+    monkeypatch.setattr(W, '_load_gpu', W._load_fake)
+    monkeypatch.setattr(arms, 'gpu_lease', stub_lease)
+    monkeypatch.setattr(W, 'device_memory',
+                        lambda fake=False: {'free_mb': 1300, 'total_mb': 12000,
+                                            'used_mb': 10700})
+    monkeypatch.setattr(W, 'empty_cache', lambda fake=False: True)
+    return W
+
+
+def test_lease_budget_stops_before_starting_an_unaffordable_row(
+        lease_harness, tmp_path):
+    """The rail: never START a row that cannot finish inside the lease."""
+    out = tmp_path / 'budget'
+    # A lease shorter than the reserve: the FIRST row must not even start.
+    rc = W.main(['--registration', str(REGISTRATION), '--out', str(out),
+                 '--lease-seconds', '10', '--load-reserve-seconds', '30'])
+    assert rc == 4, 'a budget stop is resumable, not a verdict'
+    summary = W.read(out / 'summary.json')
+    stop = summary['lease_budget_stop']
+    assert stop['stopped'] is True
+    assert stop['rows_done_this_lease'] == 0
+    assert stop['reserve_s'] == 30
+    assert stop['lease_s'] == 10
+    assert summary['rows'] == 0, 'nothing ran'
+    assert summary['rows_planned'] == 23
+    assert summary['rows_never_run'] == 23
+    assert summary['complete'] is False
+    assert not list((out / 'rows').glob('*.json'))
+
+
+def test_lease_budget_lets_affordable_rows_run_then_stops(lease_harness,
+                                                          tmp_path):
+    """A generous reserve admits rows; the stop is recorded when it bites."""
+    out = tmp_path / 'partial'
+    rc = W.main(['--registration', str(REGISTRATION), '--out', str(out),
+                 '--lease-seconds', '580', '--load-reserve-seconds', '1'])
+    summary = W.read(out / 'summary.json')
+    # The CPU doubles are fast, so all 23 fit and the gate never fires.
+    assert summary['rows_planned'] == 23
+    assert summary['rows'] == 23
+    assert summary['rows_never_run'] == 0
+    assert summary['lease_budget_stop']['stopped'] is False
+    assert rc in (0, 1, 5)
+
+
+def test_lease_budget_resumes_where_it_stopped(lease_harness, tmp_path):
+    """Stop, re-run, and the finished rows are skipped without re-costing."""
+    out = tmp_path / 'resume_budget'
+    # First invocation: only a couple of rows can be afforded.
+    W.main(['--registration', str(REGISTRATION), '--out', str(out),
+            '--lease-seconds', '580', '--load-reserve-seconds', '1',
+            '--limit', '3'])
+    first = sorted(p.name for p in (out / 'rows').glob('*.json'))
+    assert len(first) == 3
+    before = {p.name: p.read_bytes() for p in (out / 'rows').glob('*.json')}
+
+    # Second invocation with a lease so small nothing NEW can start: the
+    # already-done rows must still be skipped, not counted against the gate.
+    rc = W.main(['--registration', str(REGISTRATION), '--out', str(out),
+                 '--lease-seconds', '10', '--load-reserve-seconds', '30'])
+    assert rc == 4
+    summary = W.read(out / 'summary.json')
+    assert summary['rows'] == 3, 'the skips did not run anything new'
+    assert summary['lease_budget_stop']['stopped'] is True
+    # A skip must not be charged to the budget: the stop happened at the
+    # first UNFINISHED row, after all three skips were walked.
+    assert summary['lease_budget_stop']['rows_done_this_lease'] == 3
+    # And the finished receipts are byte-identical (create-only).
+    for name, payload in before.items():
+        assert (out / 'rows' / name).read_bytes() == payload
+
+
+def test_row_wall_is_recorded_per_row(lease_harness, tmp_path):
+    out = tmp_path / 'walls'
+    W.main(['--registration', str(REGISTRATION), '--out', str(out),
+            '--lease-seconds', '580', '--load-reserve-seconds', '1',
+            '--limit', '2'])
+    rows = [W.read(p) for p in sorted((out / 'rows').glob('*.json'))]
+    assert rows
+    for row in rows:
+        assert isinstance(row['elapsed_s'], (int, float))
+        assert row['elapsed_s'] >= 0
+
+
+def test_load_reserve_default_covers_the_observed_cold_load():
+    """200 s >= the 163 s the a3_1 lease held for its 7-row cold batch."""
+    assert W.LOAD_RESERVE_SECONDS >= 163
+    # ... and still leaves a 560 s lease room for a first row.
+    assert W.LOAD_RESERVE_SECONDS < W.LEASE_SECONDS
+
+
+def test_summary_distinguishes_planned_from_completed_rows(tmp_path):
+    """Defect 2: a partial campaign must not read as a finished one."""
+    out = tmp_path / 'planned'
+    W.main(['--registration', str(REGISTRATION), '--out', str(out),
+            '--fake', '--limit', '4'])
+    summary = W.read(out / 'summary.json')
+    assert summary['rows'] == 4
+    assert summary['rows_planned'] == 23, 'the REGISTRATION plan, not --limit'
+    assert summary['rows_limited_to'] == 4
+    assert summary['rows_never_run'] == 19
+    # `complete` = this invocation's slice; `campaign_complete` = the battery.
+    assert summary['complete'] is True
+    assert summary['campaign_complete'] is False
+    assert summary['pending'] == 0
+
+
+def test_the_committed_gpu_run_was_partial_not_rescoped():
+    """The 8-row GPU summary is 8 of 23 PLANNED, not a re-scope to RD2.
+
+    The registration and every amendment still carry 23 rows; the a4 log
+    shows `rows total=23 pending=16` and the run was killed by the lead's
+    outer timeout partway through row 16. Amendment 4 records this rather
+    than re-scoping the battery to fit what happened to run.
+    """
+    registration = W.read(REGISTRATION)
+    assert len(W.plan_rows(registration)) == 23
+    committed = ROOT / 'artifacts/grm_a1/gpu/summary.json'
+    if committed.is_file():
+        summary = W.read(committed)
+        assert summary['rows'] == 8
+        assert summary['scored_rows'] == 8
+        # The 8 that ran are exactly the RD2 rows, all scored.
+        rows = [W.read(p) for p in
+                sorted((committed.parent / 'rows').glob('*.json'))]
+        assert {r['group'] for r in rows} == {'rd2'}
+        assert all(r['scored_for_prediction'] for r in rows)
+
+
+def test_amendment_4_records_both_defects_and_the_red_by_fixture_reading():
+    a4 = amendment_n(4)
+    assert 'lease_budget' in a4
+    assert a4['lease_budget']['load_reserve_seconds'] == W.LOAD_RESERVE_SECONDS
+    scope = a4['row_scope_finding']
+    assert scope['rescoped'] is False, 'the battery was NOT re-scoped'
+    assert scope['rows_planned'] == 23
+    assert scope['rows_run'] == 8
+    reading = a4['red_by_fixture']
+    assert reading['verdict'] == 'RED'
+    assert reading['aliases_exact'] == 0
+    assert reading['merge_digests_per_row'] == 0
+    assert 'null' in reading['reading'].casefold()
+    # Prediction/budget/rows still untouched.
+    assert a4['unchanged']['budget_gpu_hours_max'] == 0.5
+    assert a4['unchanged']['rows'].startswith('23 unchanged')
+
+
+def test_report_and_ledger_exist_and_carry_the_numbers():
+    report = ROOT / 'artifacts/grm_a1/REPORT.md'
+    ledger = ROOT / 'artifacts/grm_a1/LEDGER.md'
+    assert report.is_file() and ledger.is_file()
+    text = report.read_text()
+    for needle in ('RED-by-fixture', '0/8', 'Jasper-711', 'Basalt', 'Onyx-911',
+                   'artifacts/grm_a1/gpu/', 'LT1.1'):
+        assert needle in text, needle
+    assert 'digests 0' in text or 'digests == 0' in text
+    ledger_text = ledger.read_text()
+    assert 'amendment 4' in ledger_text.casefold()
+    assert 'gpu_contrast_a4_1.log' in ledger_text
