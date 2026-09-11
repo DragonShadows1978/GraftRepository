@@ -74,6 +74,121 @@ def adm_decisive_cli_argv(enabled: bool) -> list[str]:
 
 ADMISSION_RULE_ENV = "GRM_ADMISSION_RULE"
 
+# ---------------------------------------------------------------------------
+# GRM-F5 — sole-binder insurance.
+#
+# F3 proved (docs/GRM_F3_ROUTING_AT_DISTANCE_LEDGER.md, row 10) that BOTH
+# shipping admission rules have a branch NAMED for an identifier insurance
+# they do not provide:
+#
+#   * ``margin_first_plan`` -> ``margin_insurance_k3_identifier_tiebreak``
+#     reorders only WITHIN rank-1's exact-score tie group, then returns
+#     ``ranking[:3]``;
+#   * ``policy_plan`` -> ``one_off_rank_identifier_insurance_k3`` fires
+#     precisely when there is exactly one off-rank binder, then returns
+#     ``ranking[:3]``.
+#
+# Either way a sole binder outside the top 3 -- or outside the route window
+# entirely -- is silently dropped.  The asymmetry that makes this a defect
+# rather than a design choice: with TWO OR MORE binders the frozen rule takes
+# ``declared_synthesis_identified_set`` and admits EVERY identified candidate,
+# explicitly including ones the router never ranked.  With exactly one, it
+# admits none.
+#
+# The rule this flag installs is structural and carries NO new threshold and
+# nothing refit: when the identifier scan yields exactly one binder, that
+# binder IS in the plan.  It REORDERS/SUBSTITUTES; it never scores.
+#
+# Prior art
+# ---------
+# * RT1 (``demote_non_binding_split_members``, ~200 lines below in this same
+#   file; GRM contributors, 2026).  TAKEN VERBATIM: the reorder-never-score
+#   stance and the "stable, the only thing that moves is the one node the rule
+#   is named for" discipline.  OURS: nothing of the stance; only its
+#   application to the identifier-insurance branches.
+# * Maximal Marginal Relevance -- Carbonell & Goldstein, SIGIR 1998.  TAKEN:
+#   the general shape of reordering an already-scored ranked list under a
+#   secondary criterion without rescoring.  NOT taken: MMR's diversity
+#   objective and its lambda; there is no tunable here.  Cited by F3 for the
+#   same reason.
+# * Feathers, *Working Effectively with Legacy Code* (2004), ch. 13 --
+#   characterization tests.  TAKEN: the F3 pinned-defect tests stay untouched
+#   and the ON-arm counterparts are ADDED beside them, so the pin still
+#   records what OFF does.
+# * UNVERIFIED against the wider literature (no network in this sandbox) --
+#   lead to check.  Search terms: "must-include constraint top-k retrieval",
+#   "constrained re-ranking guarantee matched entity", "hard inclusion
+#   constraint re-ranking", "maximal marginal relevance reorder".
+#
+# WHEN THIS RULE STOPS APPLYING (stated with the rule, as every guard here is):
+# * EXACTLY ONE binder.  Zero binders -> nothing to insure.  Two or more ->
+#   ``declared_synthesis_identified_set`` already admits them all and this
+#   rule declines to touch it.
+# * It never changes WHICH candidates bind; it consumes the identifier scan's
+#   verdict and does not re-run or widen it.
+# * It never rescores and never changes ``route_margin_1_2``: a margin-
+#   decisive rank-1 plan is left alone, because a decisive margin means the
+#   plan is a deliberate singleton, not an insurance window.
+# * It costs the plan's LAST slot, never its head.  If a plan of three is the
+#   fit stage's contract, the substituted-out node is the one the ranker
+#   trusted least.
+ROUTE_SOLE_BINDER_INSURANCE_ENV = "GRM_ROUTE_SOLE_BINDER_INSURANCE"
+
+#: The names the two insurance branches take once they actually insure.  New
+#: names, not amended old ones: a receipt reader must be able to tell an
+#: insured plan from a pre-F5 one by the branch string alone.
+SOLE_BINDER_BRANCH_MARGIN_FIRST = "margin_insurance_k3_sole_binder_inserted"
+SOLE_BINDER_BRANCH_ALL_TOKENS_BIND = "one_off_rank_identifier_insurance_k3_sole_binder_inserted"
+
+
+def route_sole_binder_insurance_enabled(
+    environ: Mapping[str, str] | None = None,
+) -> bool:
+    """Resolve the F5 switch.  Default OFF; unknown tokens fail CLOSED to OFF.
+
+    OFF is the direction an unknown token falls because this flag is not yet
+    a default: an operator who mistypes it gets the pre-F5 world, which is
+    the world every frozen receipt on disk was recorded in.  (A-DEC's own
+    ``env_adm_decisive_override`` fails closed the same way; RT1 fails closed
+    to ON because RT1 *is* the default.)
+    """
+    env = os.environ if environ is None else environ
+    value = str(env.get(ROUTE_SOLE_BINDER_INSURANCE_ENV, "")).strip().casefold()
+    return value in _ENV_TRUE
+
+
+def insure_sole_binder(
+    *,
+    plan: Sequence[int],
+    identified_candidates: Sequence[int],
+    enabled: bool,
+) -> tuple[list[int], bool]:
+    """Put the sole identifier binder in ``plan``; return ``(plan, inserted)``.
+
+    STABLE and MINIMAL, RT1's stance: the binder takes the plan's LAST slot
+    and every other member keeps both its membership and its relative order.
+    Nothing is scored, nothing is appended beyond the incoming width, and an
+    empty plan is left empty (there is no slot to spend).
+
+    NO-OP CONDITIONS, all structural:
+
+    * the flag is OFF -- the returned list is the caller's, unchanged;
+    * the scan did not yield EXACTLY one binder;
+    * the binder is already in the plan (at any position -- including rank 1,
+      which is the control the F5 fixtures pin);
+    * the plan is empty.
+    """
+    planned = [int(value) for value in plan]
+    if not enabled:
+        return planned, False
+    identified = [int(value) for value in identified_candidates]
+    if len(identified) != 1 or not planned:
+        return planned, False
+    binder = identified[0]
+    if binder in planned:
+        return planned, False
+    return [*planned[:-1], binder], True
+
 
 def admission_rule(environ: Mapping[str, str] | None = None) -> str:
     """FIX-6 is opt-in; unset/unknown values retain the frozen default."""
@@ -98,7 +213,9 @@ def shaped_identifier_tokens(arena: Any, question: str) -> list[str]:
 
 def margin_first_plan(*, ranking: Sequence[int], route_margin_1_2: float,
                       identified_candidates: Iterable[int],
-                      scores: Mapping[int, float] | None = None) -> tuple[list[int], str, list[int]]:
+                      scores: Mapping[int, float] | None = None,
+                      sole_binder_insurance: bool | None = None,
+                      ) -> tuple[list[int], str, list[int]]:
     # Prior art: LT1 offline Rule2 / A-DEC / RT1 stable partition, GRM (2026).
     # Borrow strict frozen margin and EXACT top-score tie-break verbatim.
     # New: shared production entrypoint; no prior art known for exact composition.
@@ -107,6 +224,11 @@ def margin_first_plan(*, ranking: Sequence[int], route_margin_1_2: float,
         return [], "empty_ranking", ranked
     if route_margin_1_2 > MARGIN_THRESHOLD:
         return ranked[:1], "fit_margin_decisive_rank1", ranked
+    # GRM-F5: ``identified_candidates`` is declared Iterable and was consumed
+    # exactly once before this item; it is now read TWICE (tie group, then the
+    # insurance), so materialize it before the first read rather than letting a
+    # generator argument silently yield an empty second pass.
+    identified_candidates = list(identified_candidates)
     hits = set(identified_candidates)
     if scores:
         tied = [i for i in ranked if scores.get(i) == scores.get(ranked[0])]
@@ -114,7 +236,18 @@ def margin_first_plan(*, ranking: Sequence[int], route_margin_1_2: float,
                   + [i for i in ranked if i not in tied])
     elif route_margin_1_2 == 0.0 and len(ranked) > 1 and hits.intersection(ranked):
         raise AdmissionPolicyError("MISSING_TIED_SCORE_GROUP")
-    return ranked[:3], "margin_insurance_k3_identifier_tiebreak", ranked
+    # GRM-F5: the branch is named for an insurance it did not provide.  Under
+    # the flag the sole binder takes the last of the three slots; OFF, the
+    # call is a no-op and both the plan and the branch string are pre-F5.
+    plan, inserted = insure_sole_binder(
+        plan=ranked[:3],
+        identified_candidates=list(identified_candidates),
+        enabled=route_sole_binder_insurance_enabled()
+        if sole_binder_insurance is None else bool(sole_binder_insurance),
+    )
+    branch = (SOLE_BINDER_BRANCH_MARGIN_FIRST if inserted
+              else "margin_insurance_k3_identifier_tiebreak")
+    return plan, branch, ranked
 
 
 def normalized_words(text: str) -> list[str]:
@@ -363,6 +496,7 @@ def policy_plan(
     identified_candidates: Sequence[int],
     route_margin_1_2: float,
     margin_threshold: float = MARGIN_THRESHOLD,
+    sole_binder_insurance: bool | None = None,
 ) -> tuple[list[int], str]:
     """Apply the frozen A-DEC branch precedence to one complete ranking."""
     ranked = [int(value) for value in ranking]
@@ -390,7 +524,17 @@ def policy_plan(
         return [ranked[0]], "exactly_one_identifier_decisive_rank1"
     if float(route_margin_1_2) > float(margin_threshold):
         return [ranked[0]], "fit_margin_decisive_rank1"
-    return ranked[:3], "one_off_rank_identifier_insurance_k3"
+    # GRM-F5: this branch fires precisely when there is EXACTLY ONE off-rank
+    # binder, and pre-F5 it returned a window that need not contain it.
+    plan, inserted = insure_sole_binder(
+        plan=ranked[:3],
+        identified_candidates=identified,
+        enabled=route_sole_binder_insurance_enabled()
+        if sole_binder_insurance is None else bool(sole_binder_insurance),
+    )
+    branch = (SOLE_BINDER_BRANCH_ALL_TOKENS_BIND if inserted
+              else "one_off_rank_identifier_insurance_k3")
+    return plan, branch
 
 
 def decisive_admission_profile(
@@ -586,6 +730,18 @@ def decisive_admission_profile(
         split_members=rt1_members,
         ranking_before=ranking_before,
     ))
+    # GRM-F5 receipt.  NEVER SILENT *within the flag's own world*: whenever
+    # GRM_ROUTE_SOLE_BINDER_INSURANCE is ON the key is present on EVERY
+    # profile, true or false, so a reader cannot mistake a missing field for
+    # an insurance that did not get recorded.  When the flag is OFF the key is
+    # ABSENT, and that absence is deliberate: OFF must be byte-identical to
+    # the pre-F5 world that every frozen receipt on disk (FIX-4's
+    # tests/fixtures/grm_scout_fix4/*.json among them) was recorded in.  The
+    # presence of the key is therefore itself the "flag was ON" marker.
+    if route_sole_binder_insurance_enabled():
+        profile["sole_binder_inserted"] = bool(
+            branch in (SOLE_BINDER_BRANCH_MARGIN_FIRST,
+                       SOLE_BINDER_BRANCH_ALL_TOKENS_BIND))
     return profile
 
 

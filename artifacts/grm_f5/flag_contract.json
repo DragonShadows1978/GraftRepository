@@ -1,0 +1,89 @@
+{
+  "item": "F5",
+  "title": "Sole-binder insurance in the admission plan",
+  "env_name": "GRM_ROUTE_SOLE_BINDER_INSURANCE",
+  "constructor_kwarg": "sole_binder_insurance",
+  "default": "OFF",
+  "resolution_order": "explicit keyword argument (margin_first_plan / policy_plan) > GRM_ROUTE_SOLE_BINDER_INSURANCE > OFF",
+  "unknown_token_behavior": "fails CLOSED to OFF. Opposite of RT1, which fails closed to ON because RT1 is the default; F5 fails closed to OFF because every frozen receipt on disk was recorded with F5 absent, so a mistyped token must not silently move a plan.",
+  "resolved_per_call": "read at each margin_first_plan / policy_plan call rather than once per repository, because these are pure functions with no object to hold the resolution; a replay harness that must pin an arm passes the explicit keyword instead of mutating the process environment.",
+  "off_is_byte_identical": true,
+  "off_byte_identity_proof": [
+    "scripts/grm_f5_c2_replay_gate.py -> artifacts/grm_f5/c2_replay_off.json: the C2 132-plan replay, 132/132 OFF plans byte-identical to their GPU-recorded rank_plan, both with the variable unset and with it set to 0.",
+    "tests/test_grm_scout_fix4.py::test_nonrecency_existing_fixture_receipt_byte_identical: the frozen FIX-4 receipt bytes are unchanged, which is why the sole_binder_inserted receipt key is emitted ONLY when the flag is ON.",
+    "tests/test_grm_f3_routing_at_distance.py: F3's three DEFECT-PINNED characterization tests still pass unedited with the flag OFF."
+  ],
+  "owner_registration": "LT1.1 r3 (F1)",
+  "the_rule": "When the identifier scan yields EXACTLY ONE binder and that binder is not already in the plan, it takes the plan's LAST slot. Every other plan member keeps both its membership and its relative order. Nothing is rescored, no threshold is introduced, no plan is widened. Reorder-never-score, the stance RT1 takes two hundred lines above it in the same file.",
+  "branch_names": {
+    "margin_first": "margin_insurance_k3_sole_binder_inserted",
+    "all_tokens_bind": "one_off_rank_identifier_insurance_k3_sole_binder_inserted",
+    "why_new_names": "A receipt reader must be able to tell an insured plan from a pre-F5 one by the policy_branch string alone; the pre-F5 names are kept verbatim for the not-inserted case."
+  },
+  "receipt_fields": {
+    "sole_binder_inserted": "bool. Present on EVERY decisive_admission_profile when the flag is ON (true or false, never silent within the flag's own world); ABSENT when the flag is OFF, which is what makes OFF byte-identical to every frozen receipt on disk. The presence of the key is therefore itself the flag-was-ON marker.",
+    "policy_branch": "carries the new branch name whenever sole_binder_inserted is true."
+  },
+  "what_the_lead_pins": {
+    "arm": "LT1.1 r3 arm A only (alias flag GRM_ALIAS_FOLD_MERGE OFF, the r2 arm-A baseline), same frozen conversation, same worker. NOTE: the defect row F5 is named for (row 10) is an arm A+ row; on arm A the sole-binder case is not exercised by the r2 receipts, so a lead who wants F5's registered prediction tested must ALSO run the A+ probes, or accept that arm A alone cannot confirm or refute it.",
+    "env_on": "GRM_ROUTE_SOLE_BINDER_INSURANCE=1",
+    "env_off_baseline": "GRM_ROUTE_SOLE_BINDER_INSURANCE unset (do NOT set it to 0 for the baseline arm: absent is the pre-F5 world and is what the byte-identity gate compares against)",
+    "pin_after_environment_flags": "Pin the variable AFTER environment(flags), which removes ambient GRM variables -- the same placement FIX-6 required for GRM_ADMISSION_RULE.",
+    "interaction_with_F1_and_F2": "Independent env names, and independent surfaces: F1 (GRM_FOLD_RETAIN_SOURCES) and F2 (GRM_FOLD_ALIAS_GUARD) change what is STORED; F5 changes only which stored nodes are PLANNED. F5 is, however, DOWNSTREAM of both: if F1 keeps sources routable, more nodes bind the identifier and the scan may yield two or more binders, at which point F5 is a structural no-op and declared_synthesis_identified_set takes over. If all three are ON in one arm, a per-flag attribution cannot be made from that arm alone -- run them separately, or accept the joint reading and say so.",
+    "interaction_with_GRM_ADMISSION_RULE": "F5 patches BOTH rules, so the flag is meaningful whether GRM_ADMISSION_RULE is unset (all_tokens_bind) or margin_first. The r2 runs used margin_first.",
+    "no_gpu_run_by_this_seat": true
+  },
+  "registered_predictions": {
+    "primary": "On a re-run of LT1.1 r2 arm A+ probe recall_3_150 (turn 164) with the flag ON, node 64 -- the intact Breakwater era record and the sole identifier binder -- is in rank_plan. Checkable mechanically: the route receipt's rank_plan contains 64 and policy_branch == margin_insurance_k3_sole_binder_inserted with sole_binder_inserted true.",
+    "secondary": "Being IN the plan is not being SEATED and is not a correct answer. F3 row 10 recorded width 96 with summed_seats 90 and unseatable [132, 116]; a plan of [168, 132, 64] may still fail to co-seat 64. The honest prediction is therefore about the PLAN only. Any answer-quality change is the lead's GPU contrast, not this seat's evidence.",
+    "blast_radius": "SMALL and measured, not asserted. Over the 132 recorded C2 executions (112 evaluable, 20 unresolved and left unresolved), the ON arm changes ZERO plans -- artifacts/grm_f5/c2_replay_on_risk.json. Over the 10 F3 route rows, exactly TWO change (rows 9 and 10, both arm A+ Breakwater probes), and F3 already scored row 9's served answer correct under the F4 secondary, so the one row with something to gain is row 10.",
+    "expected_rows_moved_on_r2": 1,
+    "registered_before_the_run": true,
+    "risk_named_before_the_run": "The rule SPENDS the plan's last slot. On a row where the ranker's third choice would have been served and the binder would not, F5 makes the answer worse. Zero such rows exist in the 112 evaluable C2 executions and none in the 10 F3 rows, but the mechanism is real and a regression on r3 is a RESULT, not a bug to be tuned away after the fact."
+  },
+  "not_claimed": [
+    "No model-quality claim. Every gate in this item is a pure-CPU replay of the admission rule over frozen rankings and margins; no router, reader or scorer was re-run.",
+    "No claim that the intact record is SEATED, mounted, grounded, or served. F5 changes the PLAN. Seating is the fit stage's, grounding is the ladder's.",
+    "No claim about the other nine F3 rows. F3 attributed three of them to F2's alias capture, two to reader dilution with the record already mounted and grounded, and one to the scorer; none of those has a sole binder to insure.",
+    "No claim that this fixes the >= 2 binder asymmetry in margin_first_plan -- see the residual below.",
+    "No fresh/corrections/aliases/recap column claim: no CPU fixture here measures them."
+  ],
+  "when_the_rule_stops_applying": [
+    "EXACTLY ONE binder. Zero binders -> nothing to insure. Two or more -> declared_synthesis_identified_set already admits them all (in the all_tokens_bind rule) and F5 declines to touch it.",
+    "It never changes WHICH candidates bind. It consumes the identifier scan's verdict and does not re-run, widen, or second-guess it -- so an identifier the scan misses (F2's alias capture is exactly this) is invisible to F5.",
+    "It never rescores and never changes route_margin_1_2. A margin-decisive rank-1 plan is left alone, because a decisive margin means the plan is a deliberate singleton, not an insurance window.",
+    "It costs the plan's LAST slot and never its head, and it never widens a plan. An empty plan stays empty; a width-1 plan is replaced outright.",
+    "It is a PLAN rule, not a seat rule. If the arena cannot co-seat the planned set, F5 has still done its whole job and the record can still go unmounted."
+  ],
+  "known_residual_not_fixed_by_this_item": {
+    "what": "margin_first_plan has no declared_synthesis_identified_set branch. With TWO OR MORE binders it returns ranking[:3] and can admit NEITHER of them -- the same asymmetry F3 named for the one-binder case, surviving one rule higher.",
+    "evidence": "tests/test_grm_f5_sole_binder_insurance.py::test_control_two_binders_under_margin_first_is_also_unchanged pins it, ON and OFF.",
+    "why_not_fixed_here": "The order scopes this flag to the SOLE-binder case, and widening margin_first to admit an arbitrary identified set is a different rule with a different blast radius (it can grow a plan beyond three) that needs its own order and its own RED->GREEN.",
+    "disposition": "REGISTERED for the lead, not landed."
+  },
+  "core_files": [
+    "core/grm_admission.py"
+  ],
+  "core_diff_summary": {
+    "core/grm_admission.py": [
+      "ADDED after ADMISSION_RULE_ENV: the F5 rationale/prior-art block, ROUTE_SOLE_BINDER_INSURANCE_ENV, SOLE_BINDER_BRANCH_MARGIN_FIRST, SOLE_BINDER_BRANCH_ALL_TOKENS_BIND, route_sole_binder_insurance_enabled(), insure_sole_binder().",
+      "margin_first_plan: new sole_binder_insurance keyword; identified_candidates materialized before its first read (it is now read twice); the final return routed through insure_sole_binder and the branch name switched only when inserted.",
+      "policy_plan: new sole_binder_insurance keyword; the one_off_rank_identifier_insurance_k3 return routed through insure_sole_binder and the branch name switched only when inserted.",
+      "decisive_admission_profile: emits sole_binder_inserted ONLY when the flag is ON."
+    ]
+  },
+  "repo_relative_pins": {
+    "core_module": "core/grm_admission.py",
+    "fixtures": "tests/test_grm_f5_sole_binder_insurance.py",
+    "f3_pinned_defect_tests": "tests/test_grm_f3_routing_at_distance.py",
+    "f3_route_table": "artifacts/grm_f3/route_rows.json",
+    "f3_ledger": "docs/GRM_F3_ROUTING_AT_DISTANCE_LEDGER.md",
+    "c2_replay_gate": "scripts/grm_f5_c2_replay_gate.py",
+    "c2_replay_off_receipt": "artifacts/grm_f5/c2_replay_off.json",
+    "c2_replay_on_risk_receipt": "artifacts/grm_f5/c2_replay_on_risk.json",
+    "c2_epoch_states": "artifacts/grm_c2/epochs/scout-fix-2",
+    "fix6_c2_receipt": "artifacts/grm_scout_fix6/c2_receipt.json",
+    "ledger": "docs/GRM_F5_SOLE_BINDER_INSURANCE_LEDGER.md",
+    "order": "orders/GRM_F5_SOLE_BINDER_INSURANCE.md"
+  }
+}
