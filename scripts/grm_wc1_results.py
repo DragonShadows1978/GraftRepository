@@ -14,8 +14,11 @@ EVERY COLUMN NAMES ITS SOURCE.  Nothing here is retyped from a log:
   * split nodes           — the repository manifests the runs persisted, read
                             through ``split_census``, which looks only at the
                             flags the existing width-guard writers set;
-  * resident seats / turn — ``info.mount_fitted`` on each turn, i.e. the
-                            mounts that actually took seats after fit;
+  * resident grafts / turn — length of ``info.mount_fitted`` (legacy key
+                            ``mean_resident_seats_per_turn`` retained);
+  * token seats / turn    — ``route_receipt.fit.cur_mount_n``, the serving
+                            sum of mounted graft ntok, over the same turns;
+                            unavailable measurements remain null;
   * wall ms per turn      — ``turn_wall_ms`` from the driver's own
                             instrumentation.jsonl;
   * mounted mass          — the OPTIONAL column. RS2's LayerTypeMassObserver
@@ -65,6 +68,32 @@ MASS_COLUMN_NOTE = (
     "The order registers this as an optional column that must not block the "
     "gate, so it is reported null with the reason rather than approximated.")
 
+TOKEN_SEATS_NOTE = (
+    "Mean of recorded route_receipt.fit.cur_mount_n (sum of mounted ntok), "
+    "over the same observations as the legacy graft-count mean. Null if any "
+    "observation lacks a token sum; coverage is reported separately. "
+    "Sup fixture receipts may lack this evidence. Counts exclude sink/live rows.")
+
+
+def _token_seats(row: dict[str, Any]) -> int | None:
+    # Prior art: WC1 turn means and ArenaCache.cur_mount_n's ntok sum
+    # (project contributors, 2026). Reuse the measured sum, not list length;
+    # this is a reporting repair, with no new residency estimator.
+    info = row.get("info") or {}
+    receipt = row.get("route_receipt") or info.get("route_receipt_record") or {}
+    value = (receipt.get("fit") or {}).get("cur_mount_n")
+    return None if value is None else int(value)
+
+
+def _token_seat_stats(values: Sequence[int | None]) -> dict[str, Any]:
+    measured = [v for v in values if v is not None]
+    return {
+        "mean_resident_token_seats_per_turn": (
+            mean_or_none(measured) if len(measured) == len(values) else None),
+        "turns_with_token_seat_measurement": len(measured),
+        "token_seats_note": TOKEN_SEATS_NOTE,
+    }
+
 
 def _one(run_dir: Path, pattern: str) -> Path | None:
     hits = sorted(run_dir.glob(pattern))
@@ -109,9 +138,10 @@ def sup_cell(width: int) -> dict[str, Any] | None:
     cell["fixture_elapsed_seconds"] = elapsed
     cell["reproduced_lived_count"] = sum(
         1 for r in rows if r.get("reproduced_lived"))
-    # Seats actually taken at readout, from the fit receipts.
+    # Grafts actually fitted at readout; retain the legacy field name.
     seats = [len(r.get("fit", {}).get("mount_fitted") or ()) for r in rows]
     cell["mean_resident_seats_per_turn"] = mean_or_none(seats)
+    cell.update(_token_seat_stats([_token_seats(r) for r in rows]))
     cell["mean_wall_ms_per_turn"] = mean_or_none(
         [float(r.get("elapsed_ns", 0)) / 1e6 for r in rows])
     cell["mounted_mass_at_readout"] = None
@@ -128,7 +158,7 @@ def _session_dirs(run_dir: Path, battery: str) -> list[Path]:
 
 
 def _turn_stats(session_dirs: Sequence[Path]) -> dict[str, Any]:
-    """Wall ms per turn and resident seats per turn, from the driver's own log.
+    """Wall ms, fitted grafts and token seats, from the driver's own log.
 
     Shards RESUME one another, so a turn a later shard replays would be
     counted twice.  Turn numbers are therefore de-duplicated across the chain:
@@ -136,6 +166,7 @@ def _turn_stats(session_dirs: Sequence[Path]) -> dict[str, Any]:
     """
     wall: list[float] = []
     seats: list[int] = []
+    token_seats: list[int | None] = []
     stages: dict[str, list[float]] = {
         "route_wall_ms": [], "deposit_wall_ms": [], "mount_wall_ms": []}
     dropped = 0
@@ -162,6 +193,7 @@ def _turn_stats(session_dirs: Sequence[Path]) -> dict[str, Any]:
             fitted = info.get("mount_fitted")
             if fitted is not None:
                 seats.append(len(fitted))
+                token_seats.append(_token_seats(row))
             dropped += len(info.get("mount_dropped_for_width") or ())
             if row.get("repo_node_count") is not None:
                 node_counts.append(int(row["repo_node_count"]))
@@ -180,6 +212,7 @@ def _turn_stats(session_dirs: Sequence[Path]) -> dict[str, Any]:
             "/tmp/forge-gpu.lock. The route/deposit/mount means are in-process "
             "GPU work and are the cleaner width signal."),
         "mean_resident_seats_per_turn": mean_or_none(seats),
+        **_token_seat_stats(token_seats),
         "turns_with_a_mount_decision": len(seats),
         "mounts_dropped_for_width": dropped,
         "final_repo_node_count": max(node_counts) if node_counts else None,
@@ -300,6 +333,11 @@ def build_results() -> dict[str, Any]:
                 "wall_ms_confound_note": cell.get("wall_ms_confound_note"),
                 "mean_resident_seats_per_turn": cell.get(
                     "mean_resident_seats_per_turn"),
+                "mean_resident_token_seats_per_turn": cell.get(
+                    "mean_resident_token_seats_per_turn"),
+                "turns_with_token_seat_measurement": cell.get(
+                    "turns_with_token_seat_measurement"),
+                "token_seats_note": cell.get("token_seats_note"),
                 "mounts_dropped_for_width": cell.get(
                     "mounts_dropped_for_width"),
                 "split_nodes": (cell.get("splits") or {}).get("split_nodes"),
@@ -376,7 +414,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.print_table:
         print()
         header = (f"{'width':>6} {'sup':>6} {'census':>8} {'lh':>6} "
-                  f"{'lh_all':>7} {'splits':>7} {'seats':>7} {'wall_ms':>9}  "
+                  f"{'lh_all':>7} {'splits':>7} {'grafts':>7} "
+                  f"{'token_seats':>11} {'wall_ms':>9}  "
                   f"regressions vs 96")
         print(header)
         print("-" * len(header))
@@ -399,6 +438,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"{lh.get('all_probes', '-'):>7} "
                 f"{_fmt(census.get('split_nodes'), 7)} "
                 f"{_fmt(census.get('mean_resident_seats_per_turn'), 7)} "
+                f"{_fmt(census.get('mean_resident_token_seats_per_turn'), 11)} "
                 f"{_fmt(census.get('mean_wall_ms_per_turn'), 9)}  "
                 f"{', '.join(regs) if regs else '(none)'}")
         print()

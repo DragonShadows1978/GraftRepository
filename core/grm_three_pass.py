@@ -448,7 +448,8 @@ class StagedWorkingSetResolver:
 # fields to arena/driver ``info``; naming them by PREFIX means P2B persists
 # them the moment they exist and needs no re-edit when P2A lands.
 ROUTE_RECEIPT_INFO_PREFIXES = ("fit_", "abstain", "demand_", "grounding_",
-                               "frame_", "recency_", "live_segments_")
+                               "frame_", "recency_", "live_segments_",
+                               "admission_")
 ROUTE_RECEIPT_INFO_KEYS = ("served_without_plan_head",)
 
 # ``info`` keys already projected into named receipt sections, so the generic
@@ -688,6 +689,15 @@ def build_route_receipt(
                 if info.get("admission_margin_threshold") is not None
                 else None),
             "rule_sha256": info.get("admission_rule_sha256"),
+            # Prior art: LSR-P2B projection and RT1 receipts (project, 2026).
+            # Carry existing RT1 evidence additively; absence is not False.
+            **{key.removeprefix("admission_"): info[key]
+               for key in (
+                   "admission_split_child_demoted",
+                   "admission_split_demoted_ids",
+                   "admission_split_family_ids",
+                   "admission_ranking_before_demotion")
+               if key in info},
         },
         "fit": {
             "planned": planned,

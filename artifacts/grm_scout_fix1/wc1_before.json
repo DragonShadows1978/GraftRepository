@@ -1,0 +1,959 @@
+{
+  "detail": {
+    "128": {
+      "census": {
+        "correct": 9,
+        "final_repo_node_count": 37,
+        "mean_deposit_ms_per_turn": 2758.5430922644105,
+        "mean_mount_ms_per_turn": 0.0,
+        "mean_resident_seats_per_turn": 1.2,
+        "mean_route_ms_per_turn": 1493.6979051871115,
+        "mean_wall_ms_per_turn": 6662.518655908678,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": 0,
+        "score": "9/10",
+        "sources": [
+          {
+            "bytes": 4390,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/census_score_73ba2b6b26bbbbba.json",
+            "sha256": "73ba2b6b26bbbbba2e713479894d1be2a282c7ba7bfbed15d7385b58abc2f501"
+          }
+        ],
+        "split_children": 0,
+        "split_nodes": 0,
+        "split_parents": 0,
+        "total": 10,
+        "vs_96": {
+          "absent_from_reference": [],
+          "battery": "census",
+          "comparable": true,
+          "delta_correct": 0,
+          "missing_from_this_width": [],
+          "recoveries": [],
+          "recovery_count": 0,
+          "reference_width": 96,
+          "regression_count": 0,
+          "regressions": [],
+          "width": 128
+        },
+        "wall_ms_confound_note": "mean_wall_ms_per_turn includes any stall while another seat held /tmp/forge-gpu.lock. The route/deposit/mount means are in-process GPU work and are the cleaner width signal."
+      },
+      "longhorizon": {
+        "all_probes": "13/14",
+        "correct": 4,
+        "final_repo_node_count": 165,
+        "mean_deposit_ms_per_turn": 3319.9874212329564,
+        "mean_mount_ms_per_turn": 0.0,
+        "mean_resident_seats_per_turn": 1.1428571428571428,
+        "mean_route_ms_per_turn": 613.1764809565188,
+        "mean_wall_ms_per_turn": 10518.88813665853,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": 0,
+        "recall_by_distance_bucket": {
+          "<=10": {
+            "correct": 8,
+            "n": 9
+          },
+          "<=20": {
+            "correct": 1,
+            "n": 1
+          },
+          "<=40": {
+            "correct": 1,
+            "n": 1
+          },
+          "<=60": {
+            "correct": 3,
+            "n": 3
+          }
+        },
+        "score": "4/4",
+        "sources": [
+          {
+            "bytes": 8056,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_score_57e5d9e4a2aa7e2a.json",
+            "sha256": "57e5d9e4a2aa7e2afdead64ffaf0aa3abf377090210679fd58d1f88592d717ed"
+          }
+        ],
+        "split_children": 0,
+        "split_nodes": 0,
+        "split_parents": 0,
+        "total": 4,
+        "vs_96": {
+          "absent_from_reference": [],
+          "battery": "longhorizon",
+          "comparable": true,
+          "delta_correct": 0,
+          "missing_from_this_width": [],
+          "recoveries": [],
+          "recovery_count": 0,
+          "reference_width": 96,
+          "regression_count": 0,
+          "regressions": [],
+          "width": 128
+        },
+        "wall_ms_confound_note": "mean_wall_ms_per_turn includes any stall while another seat held /tmp/forge-gpu.lock. The route/deposit/mount means are in-process GPU work and are the cleaner width signal."
+      },
+      "sup": {
+        "correct": 7,
+        "final_repo_node_count": null,
+        "mean_deposit_ms_per_turn": null,
+        "mean_mount_ms_per_turn": null,
+        "mean_resident_seats_per_turn": 1.4444444444444444,
+        "mean_route_ms_per_turn": null,
+        "mean_wall_ms_per_turn": 7300.221633333333,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": null,
+        "score": "7/9",
+        "sources": [
+          {
+            "bytes": 5621,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/sup_correction_then_restatement_dcc32ccbfde2d891.json",
+            "sha256": "dcc32ccbfde2d8915c55543ae0ab35f28a8fe0665f07e5b40ce422104cb18ad6"
+          },
+          {
+            "bytes": 7644,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/sup_fresh_fact_controls_5f4049fe55c29c5f.json",
+            "sha256": "5f4049fe55c29c5f1140ec80f01e4d6a64ac9dc21877375a6804ecda8ac03881"
+          },
+          {
+            "bytes": 5668,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/sup_multi_hop_a_b_c_c1e79d7f632e92dd.json",
+            "sha256": "c1e79d7f632e92dda1e69ffe201decf4be94f2765dd16212cdc0a3f78bbd987b"
+          },
+          {
+            "bytes": 5620,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/sup_short_correction_long_competitor_ba2e9c15d99962c6.json",
+            "sha256": "ba2e9c15d99962c66f8814d3427ac11aa62afb30a71d6ef216d35d899245d3b1"
+          }
+        ],
+        "split_children": null,
+        "split_nodes": null,
+        "split_parents": null,
+        "total": 9,
+        "vs_96": {
+          "absent_from_reference": [],
+          "battery": "sup",
+          "comparable": true,
+          "delta_correct": -2,
+          "missing_from_this_width": [],
+          "recoveries": [],
+          "recovery_count": 0,
+          "reference_width": 96,
+          "regression_count": 2,
+          "regressions": [
+            "sup_reserve_juniper_pass",
+            "sup_reserve_tundra_ledger"
+          ],
+          "width": 128
+        },
+        "wall_ms_confound_note": null
+      }
+    },
+    "192": {
+      "census": {
+        "correct": 9,
+        "final_repo_node_count": 37,
+        "mean_deposit_ms_per_turn": 2456.139218445648,
+        "mean_mount_ms_per_turn": 0.0,
+        "mean_resident_seats_per_turn": 1.2,
+        "mean_route_ms_per_turn": 1235.4383091853165,
+        "mean_wall_ms_per_turn": 5780.379209023736,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": 0,
+        "score": "9/10",
+        "sources": [
+          {
+            "bytes": 4441,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/census_score_885327c3ecf3aad2.json",
+            "sha256": "885327c3ecf3aad2dec88e1d62e00f8042b35e3cc32df547a92729d2adbd25c1"
+          }
+        ],
+        "split_children": 0,
+        "split_nodes": 0,
+        "split_parents": 0,
+        "total": 10,
+        "vs_96": {
+          "absent_from_reference": [],
+          "battery": "census",
+          "comparable": true,
+          "delta_correct": 0,
+          "missing_from_this_width": [],
+          "recoveries": [],
+          "recovery_count": 0,
+          "reference_width": 96,
+          "regression_count": 0,
+          "regressions": [],
+          "width": 192
+        },
+        "wall_ms_confound_note": "mean_wall_ms_per_turn includes any stall while another seat held /tmp/forge-gpu.lock. The route/deposit/mount means are in-process GPU work and are the cleaner width signal."
+      },
+      "longhorizon": {
+        "all_probes": "13/14",
+        "correct": 4,
+        "final_repo_node_count": 165,
+        "mean_deposit_ms_per_turn": 3402.591599361935,
+        "mean_mount_ms_per_turn": 0.0,
+        "mean_resident_seats_per_turn": 1.1428571428571428,
+        "mean_route_ms_per_turn": 620.9005715209059,
+        "mean_wall_ms_per_turn": 10816.392379109926,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": 0,
+        "recall_by_distance_bucket": {
+          "<=10": {
+            "correct": 8,
+            "n": 9
+          },
+          "<=20": {
+            "correct": 1,
+            "n": 1
+          },
+          "<=40": {
+            "correct": 1,
+            "n": 1
+          },
+          "<=60": {
+            "correct": 3,
+            "n": 3
+          }
+        },
+        "score": "4/4",
+        "sources": [
+          {
+            "bytes": 8175,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_score_9d4e2c8e8cf21f7e.json",
+            "sha256": "9d4e2c8e8cf21f7e96d0c43a4a5201f55ac5b228182b19a17b320ec5cc12a715"
+          }
+        ],
+        "split_children": 0,
+        "split_nodes": 0,
+        "split_parents": 0,
+        "total": 4,
+        "vs_96": {
+          "absent_from_reference": [],
+          "battery": "longhorizon",
+          "comparable": true,
+          "delta_correct": 0,
+          "missing_from_this_width": [],
+          "recoveries": [],
+          "recovery_count": 0,
+          "reference_width": 96,
+          "regression_count": 0,
+          "regressions": [],
+          "width": 192
+        },
+        "wall_ms_confound_note": "mean_wall_ms_per_turn includes any stall while another seat held /tmp/forge-gpu.lock. The route/deposit/mount means are in-process GPU work and are the cleaner width signal."
+      },
+      "sup": {
+        "correct": 8,
+        "final_repo_node_count": null,
+        "mean_deposit_ms_per_turn": null,
+        "mean_mount_ms_per_turn": null,
+        "mean_resident_seats_per_turn": 1.4444444444444444,
+        "mean_route_ms_per_turn": null,
+        "mean_wall_ms_per_turn": 7048.876765222222,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": null,
+        "score": "8/9",
+        "sources": [
+          {
+            "bytes": 5572,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/sup_correction_then_restatement_460d1282e355c1ff.json",
+            "sha256": "460d1282e355c1ff9e97b304226fbe8c086ebb879393d50e4c455f6d2ee4f857"
+          },
+          {
+            "bytes": 7601,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/sup_fresh_fact_controls_5c4efe4f601e1a32.json",
+            "sha256": "5c4efe4f601e1a326c4b4fedd0bc3edb7853a586330a3720b8bb5302245593a4"
+          },
+          {
+            "bytes": 5574,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/sup_multi_hop_a_b_c_66b39a2c0eba81e1.json",
+            "sha256": "66b39a2c0eba81e18297469ab2d1e23b1fef0fc5d47bacd65c19017aa6dedaf5"
+          },
+          {
+            "bytes": 5569,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/sup_short_correction_long_competitor_9b607d9b58e87634.json",
+            "sha256": "9b607d9b58e87634dd13134cc05ab4ee49ba127d6908af838a9fa9380e17c3bd"
+          }
+        ],
+        "split_children": null,
+        "split_nodes": null,
+        "split_parents": null,
+        "total": 9,
+        "vs_96": {
+          "absent_from_reference": [],
+          "battery": "sup",
+          "comparable": true,
+          "delta_correct": -1,
+          "missing_from_this_width": [],
+          "recoveries": [],
+          "recovery_count": 0,
+          "reference_width": 96,
+          "regression_count": 1,
+          "regressions": [
+            "sup_orion_current"
+          ],
+          "width": 192
+        },
+        "wall_ms_confound_note": null
+      }
+    },
+    "256": {
+      "census": {
+        "correct": 8,
+        "final_repo_node_count": 37,
+        "mean_deposit_ms_per_turn": 3196.347725810483,
+        "mean_mount_ms_per_turn": 0.0,
+        "mean_resident_seats_per_turn": 1.8,
+        "mean_route_ms_per_turn": 1484.729080570533,
+        "mean_wall_ms_per_turn": 7653.481270939878,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": 2,
+        "score": "8/10",
+        "sources": [
+          {
+            "bytes": 4785,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_score_bec9b6b92f6236d5.json",
+            "sha256": "bec9b6b92f6236d5fc1b5b8bef227f4dfc969053efb5455f0c5f91e3edf0d7c0"
+          }
+        ],
+        "split_children": 0,
+        "split_nodes": 0,
+        "split_parents": 0,
+        "total": 10,
+        "vs_96": {
+          "absent_from_reference": [],
+          "battery": "census",
+          "comparable": true,
+          "delta_correct": -1,
+          "missing_from_this_width": [],
+          "recoveries": [],
+          "recovery_count": 0,
+          "reference_width": 96,
+          "regression_count": 1,
+          "regressions": [
+            "e2e_t09_cypher_bridge"
+          ],
+          "width": 256
+        },
+        "wall_ms_confound_note": "mean_wall_ms_per_turn includes any stall while another seat held /tmp/forge-gpu.lock. The route/deposit/mount means are in-process GPU work and are the cleaner width signal."
+      },
+      "longhorizon": {
+        "all_probes": "12/14",
+        "correct": 4,
+        "final_repo_node_count": 165,
+        "mean_deposit_ms_per_turn": 3571.0295492541404,
+        "mean_mount_ms_per_turn": 0.0,
+        "mean_resident_seats_per_turn": 1.8571428571428572,
+        "mean_route_ms_per_turn": 614.7966307113305,
+        "mean_wall_ms_per_turn": 11291.826734592458,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": 4,
+        "recall_by_distance_bucket": {
+          "<=10": {
+            "correct": 7,
+            "n": 9
+          },
+          "<=20": {
+            "correct": 1,
+            "n": 1
+          },
+          "<=40": {
+            "correct": 1,
+            "n": 1
+          },
+          "<=60": {
+            "correct": 3,
+            "n": 3
+          }
+        },
+        "score": "4/4",
+        "sources": [
+          {
+            "bytes": 8532,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_score_cda9737d77be8d7c.json",
+            "sha256": "cda9737d77be8d7c20aab484d87d9898a641c1126017ac3800eb4ada69ce8a06"
+          }
+        ],
+        "split_children": 0,
+        "split_nodes": 0,
+        "split_parents": 0,
+        "total": 4,
+        "vs_96": {
+          "absent_from_reference": [],
+          "battery": "longhorizon",
+          "comparable": true,
+          "delta_correct": 0,
+          "missing_from_this_width": [],
+          "recoveries": [],
+          "recovery_count": 0,
+          "reference_width": 96,
+          "regression_count": 0,
+          "regressions": [],
+          "width": 256
+        },
+        "wall_ms_confound_note": "mean_wall_ms_per_turn includes any stall while another seat held /tmp/forge-gpu.lock. The route/deposit/mount means are in-process GPU work and are the cleaner width signal."
+      },
+      "sup": {
+        "correct": 7,
+        "final_repo_node_count": null,
+        "mean_deposit_ms_per_turn": null,
+        "mean_mount_ms_per_turn": null,
+        "mean_resident_seats_per_turn": 1.6666666666666667,
+        "mean_route_ms_per_turn": null,
+        "mean_wall_ms_per_turn": 6071.354975777777,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": null,
+        "score": "7/9",
+        "sources": [
+          {
+            "bytes": 5623,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/sup_correction_then_restatement_1a51eb65f7f9ac67.json",
+            "sha256": "1a51eb65f7f9ac6765417a748b95c2b63967c1fbdbb56f525a77d04a443e16b6"
+          },
+          {
+            "bytes": 7648,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/sup_fresh_fact_controls_e8a3027bf20c1029.json",
+            "sha256": "e8a3027bf20c1029b6d2c7b927a33ffa1665cad788799b5f352203a3f5761942"
+          },
+          {
+            "bytes": 5542,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/sup_multi_hop_a_b_c_ac288c1bf57b6777.json",
+            "sha256": "ac288c1bf57b67775c4fa5672ee4f6ce1036485085714c5b7e2f589325b2be9e"
+          },
+          {
+            "bytes": 5560,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/sup_short_correction_long_competitor_592e95da353ad025.json",
+            "sha256": "592e95da353ad0251317b1fdb8bb9117a55f0615df8659abd56830115902a04b"
+          }
+        ],
+        "split_children": null,
+        "split_nodes": null,
+        "split_parents": null,
+        "total": 9,
+        "vs_96": {
+          "absent_from_reference": [],
+          "battery": "sup",
+          "comparable": true,
+          "delta_correct": -2,
+          "missing_from_this_width": [],
+          "recoveries": [],
+          "recovery_count": 0,
+          "reference_width": 96,
+          "regression_count": 2,
+          "regressions": [
+            "sup_lumen_head",
+            "sup_orion_current"
+          ],
+          "width": 256
+        },
+        "wall_ms_confound_note": null
+      }
+    },
+    "64": {
+      "census": {
+        "correct": 10,
+        "final_repo_node_count": 85,
+        "mean_deposit_ms_per_turn": 2252.5609846446005,
+        "mean_mount_ms_per_turn": 0.0,
+        "mean_resident_seats_per_turn": 1.1,
+        "mean_route_ms_per_turn": 3288.8325360357103,
+        "mean_wall_ms_per_turn": 8633.922632701477,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": 0,
+        "score": "10/10",
+        "sources": [
+          {
+            "bytes": 4346,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_score_5c40a707ec2ac8eb.json",
+            "sha256": "5c40a707ec2ac8eb0fb3a0117a1d8efb90494724b58162ec30d400cb663dc054"
+          }
+        ],
+        "split_children": 48,
+        "split_nodes": 72,
+        "split_parents": 24,
+        "total": 10,
+        "vs_96": {
+          "absent_from_reference": [],
+          "battery": "census",
+          "comparable": true,
+          "delta_correct": 1,
+          "missing_from_this_width": [],
+          "recoveries": [
+            "e2e_t33_polaris_mark"
+          ],
+          "recovery_count": 1,
+          "reference_width": 96,
+          "regression_count": 0,
+          "regressions": [],
+          "width": 64
+        },
+        "wall_ms_confound_note": "mean_wall_ms_per_turn includes any stall while another seat held /tmp/forge-gpu.lock. The route/deposit/mount means are in-process GPU work and are the cleaner width signal."
+      },
+      "longhorizon": {
+        "all_probes": "14/14",
+        "correct": 4,
+        "final_repo_node_count": 345,
+        "mean_deposit_ms_per_turn": 2759.8717272630893,
+        "mean_mount_ms_per_turn": 0.0,
+        "mean_resident_seats_per_turn": 1.0714285714285714,
+        "mean_route_ms_per_turn": 7534.571809286717,
+        "mean_wall_ms_per_turn": 13429.422564065764,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": 0,
+        "recall_by_distance_bucket": {
+          "<=10": {
+            "correct": 9,
+            "n": 9
+          },
+          "<=20": {
+            "correct": 1,
+            "n": 1
+          },
+          "<=40": {
+            "correct": 1,
+            "n": 1
+          },
+          "<=60": {
+            "correct": 3,
+            "n": 3
+          }
+        },
+        "score": "4/4",
+        "sources": [
+          {
+            "bytes": 8012,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_score_d720f2403529c7e2.json",
+            "sha256": "d720f2403529c7e27da1e4cfd5bca89e9cda388f76e051759e6cc27d75900976"
+          }
+        ],
+        "split_children": 180,
+        "split_nodes": 270,
+        "split_parents": 90,
+        "total": 4,
+        "vs_96": {
+          "absent_from_reference": [],
+          "battery": "longhorizon",
+          "comparable": true,
+          "delta_correct": 0,
+          "missing_from_this_width": [],
+          "recoveries": [],
+          "recovery_count": 0,
+          "reference_width": 96,
+          "regression_count": 0,
+          "regressions": [],
+          "width": 64
+        },
+        "wall_ms_confound_note": "mean_wall_ms_per_turn includes any stall while another seat held /tmp/forge-gpu.lock. The route/deposit/mount means are in-process GPU work and are the cleaner width signal."
+      },
+      "sup": {
+        "correct": 8,
+        "final_repo_node_count": null,
+        "mean_deposit_ms_per_turn": null,
+        "mean_mount_ms_per_turn": null,
+        "mean_resident_seats_per_turn": 1.0,
+        "mean_route_ms_per_turn": null,
+        "mean_wall_ms_per_turn": 7170.012057666667,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": null,
+        "score": "8/9",
+        "sources": [
+          {
+            "bytes": 5613,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_correction_then_restatement_abe6eb76bb840979.json",
+            "sha256": "abe6eb76bb8409794f97a7fb48097f908da06df54b6363e8ce3be598b129c491"
+          },
+          {
+            "bytes": 7711,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_fresh_fact_controls_e60af39db0afc8bd.json",
+            "sha256": "e60af39db0afc8bd04f8a418e54d9b8710ad06fba7dd703f5b14d0c7c0bf93e5"
+          },
+          {
+            "bytes": 5673,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_multi_hop_a_b_c_ad7efbd6b387f60a.json",
+            "sha256": "ad7efbd6b387f60a8cadc7879a2829bd9bd1e4eace2d054e6a01b5a698fa15f5"
+          },
+          {
+            "bytes": 5673,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_short_correction_long_competitor_0a2f81c65bdfe27b.json",
+            "sha256": "0a2f81c65bdfe27b451a2b28943d2bba23204cbc499f833335ec8700b6a0adf8"
+          }
+        ],
+        "split_children": null,
+        "split_nodes": null,
+        "split_parents": null,
+        "total": 9,
+        "vs_96": {
+          "absent_from_reference": [],
+          "battery": "sup",
+          "comparable": true,
+          "delta_correct": -1,
+          "missing_from_this_width": [],
+          "recoveries": [],
+          "recovery_count": 0,
+          "reference_width": 96,
+          "regression_count": 1,
+          "regressions": [
+            "sup_reserve_juniper_pass"
+          ],
+          "width": 64
+        },
+        "wall_ms_confound_note": null
+      }
+    },
+    "96": {
+      "census": {
+        "correct": 9,
+        "final_repo_node_count": 37,
+        "mean_deposit_ms_per_turn": 2463.92843444996,
+        "mean_mount_ms_per_turn": 0.0,
+        "mean_resident_seats_per_turn": 0.9,
+        "mean_route_ms_per_turn": 1262.033385813565,
+        "mean_wall_ms_per_turn": 5936.364131513983,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": 3,
+        "score": "9/10",
+        "sources": [
+          {
+            "bytes": 4386,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_score_bf0b4d60b6ea941f.json",
+            "sha256": "bf0b4d60b6ea941fe78db65239c5f7a596f8294a5a3246f53a12d9a1c66e12d7"
+          }
+        ],
+        "split_children": 0,
+        "split_nodes": 0,
+        "split_parents": 0,
+        "total": 10,
+        "vs_96": "reference",
+        "wall_ms_confound_note": "mean_wall_ms_per_turn includes any stall while another seat held /tmp/forge-gpu.lock. The route/deposit/mount means are in-process GPU work and are the cleaner width signal."
+      },
+      "longhorizon": {
+        "all_probes": "13/14",
+        "correct": 4,
+        "final_repo_node_count": 165,
+        "mean_deposit_ms_per_turn": 2870.471774224335,
+        "mean_mount_ms_per_turn": 0.0,
+        "mean_resident_seats_per_turn": 0.9285714285714286,
+        "mean_route_ms_per_turn": 493.3047989795271,
+        "mean_wall_ms_per_turn": 8976.907705955315,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": 3,
+        "recall_by_distance_bucket": {
+          "<=10": {
+            "correct": 8,
+            "n": 9
+          },
+          "<=20": {
+            "correct": 1,
+            "n": 1
+          },
+          "<=40": {
+            "correct": 1,
+            "n": 1
+          },
+          "<=60": {
+            "correct": 3,
+            "n": 3
+          }
+        },
+        "score": "4/4",
+        "sources": [
+          {
+            "bytes": 8017,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_score_d91c1dd36c10dff7.json",
+            "sha256": "d91c1dd36c10dff7ad9a631624237cf28c5d952b17b7d260fafda5982a1d5c8f"
+          }
+        ],
+        "split_children": 0,
+        "split_nodes": 0,
+        "split_parents": 0,
+        "total": 4,
+        "vs_96": "reference",
+        "wall_ms_confound_note": "mean_wall_ms_per_turn includes any stall while another seat held /tmp/forge-gpu.lock. The route/deposit/mount means are in-process GPU work and are the cleaner width signal."
+      },
+      "sup": {
+        "correct": 9,
+        "final_repo_node_count": null,
+        "mean_deposit_ms_per_turn": null,
+        "mean_mount_ms_per_turn": null,
+        "mean_resident_seats_per_turn": 1.0,
+        "mean_route_ms_per_turn": null,
+        "mean_wall_ms_per_turn": 7075.550432888889,
+        "mounted_mass_at_readout": null,
+        "mounts_dropped_for_width": null,
+        "score": "9/9",
+        "sources": [
+          {
+            "bytes": 5604,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_correction_then_restatement_ad61a11154fbabfd.json",
+            "sha256": "ad61a11154fbabfd2394fdcd297d71a3b96e7a38687c6dae09bb5ea4e860b400"
+          },
+          {
+            "bytes": 7652,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_fresh_fact_controls_5ed53221b0012dcc.json",
+            "sha256": "5ed53221b0012dcc80afe5d5092e169f29513d404791d27e62a098cea357c659"
+          },
+          {
+            "bytes": 5574,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_multi_hop_a_b_c_7621d7746e2ca835.json",
+            "sha256": "7621d7746e2ca8358c0b0a9e3a737ad7eccc16e8060eb160045319d65b2ed5cd"
+          },
+          {
+            "bytes": 5590,
+            "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_short_correction_long_competitor_c4a9170fef1de770.json",
+            "sha256": "c4a9170fef1de770894fc381e1a1cbf2b1e0f9e69e3bfc4e8b45c1ed06eba559"
+          }
+        ],
+        "split_children": null,
+        "split_nodes": null,
+        "split_parents": null,
+        "total": 9,
+        "vs_96": "reference",
+        "wall_ms_confound_note": null
+      }
+    }
+  },
+  "gate": "G3",
+  "mounted_mass_column": {
+    "measured": false,
+    "note": "NOT MEASURED. RS2's LayerTypeMassObserver wraps the arena's forward and the sliding-attention kernel; none of the three registered batteries attaches it, and attaching it inside them would change the serve path this sweep is measuring (RS3 used a SEPARATE build path, grm_rs1_read_strength_gpu._load_lived_repo, for exactly that reason). The order registers this as an optional column that must not block the gate, so it is reported null with the reason rather than approximated."
+  },
+  "order": "orders/GRM_WC1_ARENA_WIDTH_CURVE.md",
+  "phase": "WC1",
+  "predictions": [
+    {
+      "check": "96_not_optimum",
+      "claim": "96 is NOT the optimum: 128 and 192 match or beat 96 on all three batteries (fewer splits, no co-mount blending because admission is k=1 on these probes).",
+      "evidence": {
+        "128": {
+          "census": {
+            "matched_or_beat": true,
+            "ref96": "9/10",
+            "width": "9/10"
+          },
+          "longhorizon": {
+            "matched_or_beat": true,
+            "ref96": "4/4",
+            "width": "4/4"
+          },
+          "sup": {
+            "matched_or_beat": false,
+            "ref96": "9/9",
+            "width": "7/9"
+          }
+        },
+        "192": {
+          "census": {
+            "matched_or_beat": true,
+            "ref96": "9/10",
+            "width": "9/10"
+          },
+          "longhorizon": {
+            "matched_or_beat": true,
+            "ref96": "4/4",
+            "width": "4/4"
+          },
+          "sup": {
+            "matched_or_beat": false,
+            "ref96": "9/9",
+            "width": "8/9"
+          }
+        }
+      },
+      "id": "P1",
+      "verdict": "MISS"
+    },
+    {
+      "check": "64_loses_two_sup",
+      "claim": "64 loses at least 2 sup probes (unseatable-after-split class).",
+      "evidence": {
+        "correct_lost": 1,
+        "regressions_vs_96": [
+          "sup_reserve_juniper_pass"
+        ],
+        "sup_64": "8/9",
+        "sup_96": "9/9"
+      },
+      "id": "P2",
+      "verdict": "MISS"
+    },
+    {
+      "check": "256_yarn_wall",
+      "claim": "256 shows the first sign of the YaRN wall: wall ms per turn rises and at least one census probe degrades; if it does not, say so — the 384 collapse may be a cliff, not a slope.",
+      "evidence": {
+        "census_regressions_vs_96": [
+          "e2e_t09_cypher_bridge"
+        ],
+        "mean_wall_ms_per_turn_256": 7653.481270939878,
+        "mean_wall_ms_per_turn_96": 5936.364131513983,
+        "wall_rose": true
+      },
+      "id": "P3",
+      "verdict": "HIT"
+    },
+    {
+      "check": "longhorizon_4_of_4",
+      "claim": "Long-horizon 4/4 at every width >= 96.",
+      "evidence": {
+        "96": "4/4",
+        "128": "4/4",
+        "192": "4/4",
+        "256": "4/4"
+      },
+      "id": "P4",
+      "verdict": "HIT"
+    }
+  ],
+  "program": "GRM",
+  "reference_width": 96,
+  "registration": {
+    "bytes": 9164,
+    "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/registration.json",
+    "sha256": "5bc6717f9ed10d674e255a268f0a7d72146981f20ffa130d4ae523c49aeb691e"
+  },
+  "schema": "grm.wc1.results.v1",
+  "sources": {
+    "grm_wc1_common": {
+      "bytes": 14836,
+      "path": "scripts/grm_wc1_common.py",
+      "sha256": "0666eefc45e483f39e0d3a07301eac60dd8e11a5e57098bca98ca32a4a26695d"
+    },
+    "grm_wc1_results": {
+      "bytes": 17655,
+      "path": "artifacts/grm_scout_fix1/before/scripts/grm_wc1_results.py",
+      "sha256": "9c1e3650977857d47bb8fd20613219d562372ee5e510ffd9bb38843ef9e97980"
+    },
+    "grm_wc1_sweep_gpu": {
+      "bytes": 22122,
+      "path": "scripts/grm_wc1_sweep_gpu.py",
+      "sha256": "9dcdba3f65b295dc237fb8b88989453b815b649c1ba912c0d8767fb01ea3757a"
+    }
+  },
+  "table": [
+    {
+      "census": {
+        "correct": 10,
+        "score": "10/10",
+        "total": 10
+      },
+      "census_regressions_vs_96": [],
+      "longhorizon": {
+        "correct": 4,
+        "score": "4/4",
+        "total": 4
+      },
+      "longhorizon_regressions_vs_96": [],
+      "sup": {
+        "correct": 8,
+        "score": "8/9",
+        "total": 9
+      },
+      "sup_regressions_vs_96": [
+        "sup_reserve_juniper_pass"
+      ],
+      "width": 64
+    },
+    {
+      "census": {
+        "correct": 9,
+        "score": "9/10",
+        "total": 10
+      },
+      "census_regressions_vs_96": [],
+      "longhorizon": {
+        "correct": 4,
+        "score": "4/4",
+        "total": 4
+      },
+      "longhorizon_regressions_vs_96": [],
+      "sup": {
+        "correct": 9,
+        "score": "9/9",
+        "total": 9
+      },
+      "sup_regressions_vs_96": [],
+      "width": 96
+    },
+    {
+      "census": {
+        "correct": 9,
+        "score": "9/10",
+        "total": 10
+      },
+      "census_regressions_vs_96": [],
+      "longhorizon": {
+        "correct": 4,
+        "score": "4/4",
+        "total": 4
+      },
+      "longhorizon_regressions_vs_96": [],
+      "sup": {
+        "correct": 7,
+        "score": "7/9",
+        "total": 9
+      },
+      "sup_regressions_vs_96": [
+        "sup_reserve_juniper_pass",
+        "sup_reserve_tundra_ledger"
+      ],
+      "width": 128
+    },
+    {
+      "census": {
+        "correct": 9,
+        "score": "9/10",
+        "total": 10
+      },
+      "census_regressions_vs_96": [],
+      "longhorizon": {
+        "correct": 4,
+        "score": "4/4",
+        "total": 4
+      },
+      "longhorizon_regressions_vs_96": [],
+      "sup": {
+        "correct": 8,
+        "score": "8/9",
+        "total": 9
+      },
+      "sup_regressions_vs_96": [
+        "sup_orion_current"
+      ],
+      "width": 192
+    },
+    {
+      "census": {
+        "correct": 8,
+        "score": "8/10",
+        "total": 10
+      },
+      "census_regressions_vs_96": [
+        "e2e_t09_cypher_bridge"
+      ],
+      "longhorizon": {
+        "correct": 4,
+        "score": "4/4",
+        "total": 4
+      },
+      "longhorizon_regressions_vs_96": [],
+      "sup": {
+        "correct": 7,
+        "score": "7/9",
+        "total": 9
+      },
+      "sup_regressions_vs_96": [
+        "sup_lumen_head",
+        "sup_orion_current"
+      ],
+      "width": 256
+    }
+  ],
+  "widths_measured": [
+    64,
+    96,
+    128,
+    192,
+    256
+  ]
+}

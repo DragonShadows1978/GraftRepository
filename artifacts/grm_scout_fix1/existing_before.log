@@ -1,0 +1,328 @@
+.....................F.................................................. [ 30%]
+FFF.FFFFF.F....F........................................................ [ 60%]
+........................................................................ [ 90%]
+......................                                                   [100%]
+=================================== FAILURES ===================================
+__________ test_registered_threshold_is_the_race_constant_not_a_refit __________
+
+    def test_registered_threshold_is_the_race_constant_not_a_refit():
+        """SC1 registers NO new number: the config carries the race's own float.
+    
+        If this ever fails, someone refit a serving threshold — the exact thing
+        the order forbids — and the demand loop must not run until it is put
+        back.
+        """
+        payload = grm_demand.load_registered()
+        assert payload["threshold"] == THRESHOLD
+        assert payload["carried_not_refit"] is True
+        assert payload["direction"] == "trigger_if_strictly_below"
+        assert payload["score"] == "per-token full-layer mean mounted_mass"
+        # The float is the race file's float, read from the race file.
+>       race = json.loads(RACE_THRESHOLDS.read_text(encoding="utf-8"))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_sc1_demand_loop.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_______ test_envelope_rule_reproduces_the_frozen_det1_threshold_exactly ________
+
+    def test_envelope_rule_reproduces_the_frozen_det1_threshold_exactly():
+        """The carried rule, carried: EXACT float equality, not a tolerance.
+    
+        If SC2's envelope drifted from ``fit_thresholds`` by even one ULP, the
+        'rule unchanged' claim would be false and every downstream number would
+        describe a different detector than the one production runs.
+        """
+>       rows = sc2._read_jsonl(sc2.RACE_CALIBRATION_ROWS)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_sc2_calibration_early_abort.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/mechanistic_rows.jsonl')
+
+    def _read_jsonl(path: Path) -> list[dict[str, Any]]:
+        if not path.is_file():
+>           raise CalibrationError(f"missing persisted rows: {path}")
+E           scripts.grm_sc2_calibration.CalibrationError: missing persisted rows: /mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/mechanistic_rows.jsonl
+
+scripts/grm_sc2_calibration.py:130: CalibrationError
+_______ test_minima_verdict_equals_detector_decision_on_every_frozen_row _______
+
+    def test_minima_verdict_equals_detector_decision_on_every_frozen_row():
+        """``min(tokens) < t`` IS ``detector_decision(row, "D-NGH", t)``.
+    
+        Checked on every frozen race row at every registered sweep point.  This
+        equality is load-bearing: SC1.1 and SC1.2 persisted per-turn minima rather
+        than token arrays, and without this pin Part A would be asserting a verdict
+        it could not derive.
+        """
+>       result = sc2.rule_equality_check()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_sc2_calibration_early_abort.py:88: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_sc2_calibration.py:496: in rule_equality_check
+    calibration_rows = _read_jsonl(RACE_CALIBRATION_ROWS)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/mechanistic_rows.jsonl')
+
+    def _read_jsonl(path: Path) -> list[dict[str, Any]]:
+        if not path.is_file():
+>           raise CalibrationError(f"missing persisted rows: {path}")
+E           scripts.grm_sc2_calibration.CalibrationError: missing persisted rows: /mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/mechanistic_rows.jsonl
+
+scripts/grm_sc2_calibration.py:130: CalibrationError
+_________ test_fire_index_matches_first_strictly_below_on_frozen_rows __________
+
+    def test_fire_index_matches_first_strictly_below_on_frozen_rows():
+        """Where DET1 fires, its index is the FIRST strictly-below position.
+    
+        Pinned directly against ``detector_decision`` rather than inferred, since
+        the early abort fires on exactly this index and must not fire one token
+        early or late.
+        """
+        checked = 0
+>       for row in (sc2._read_jsonl(sc2.RACE_CALIBRATION_ROWS)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    + sc2._read_jsonl(sc2.RACE_EVAL_ROWS)):
+
+tests/test_grm_sc2_calibration_early_abort.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/mechanistic_rows.jsonl')
+
+    def _read_jsonl(path: Path) -> list[dict[str, Any]]:
+        if not path.is_file():
+>           raise CalibrationError(f"missing persisted rows: {path}")
+E           scripts.grm_sc2_calibration.CalibrationError: missing persisted rows: /mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/mechanistic_rows.jsonl
+
+scripts/grm_sc2_calibration.py:130: CalibrationError
+_________ test_registered_split_is_deterministic_across_repeated_runs __________
+
+    def test_registered_split_is_deterministic_across_repeated_runs():
+>       first = sc2.registered_split(*_split_inputs())
+                                      ^^^^^^^^^^^^^^^
+
+tests/test_grm_sc2_calibration_early_abort.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_sc2_calibration_early_abort.py:132: in _split_inputs
+    inv = sc2.inventory()
+          ^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:176: in inventory
+    carried = float(_read_json(CARRIED_THRESHOLDS)["D-NGH"]["threshold"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json')
+
+    def _read_json(path: Path) -> dict[str, Any]:
+        if not path.is_file():
+>           raise CalibrationError(f"missing persisted receipt: {path}")
+E           scripts.grm_sc2_calibration.CalibrationError: missing persisted receipt: /mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json
+
+scripts/grm_sc2_calibration.py:137: CalibrationError
+___________ test_split_sets_are_non_empty_and_match_the_registration ___________
+
+    def test_split_sets_are_non_empty_and_match_the_registration():
+        registration = json.loads(
+>           (ROOT / "artifacts" / "grm_sc2" / "registration.json").read_text())
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_sc2_calibration_early_abort.py:149: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_sc2/registration.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_sc2/registration.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+________________ test_held_out_contains_the_current_false_fire _________________
+
+    def test_held_out_contains_the_current_false_fire():
+        """The order requires ``sup_solace_fresh`` on the held-out side."""
+>       split = sc2.registered_split(*_split_inputs())
+                                      ^^^^^^^^^^^^^^^
+
+tests/test_grm_sc2_calibration_early_abort.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_sc2_calibration_early_abort.py:132: in _split_inputs
+    inv = sc2.inventory()
+          ^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:176: in inventory
+    carried = float(_read_json(CARRIED_THRESHOLDS)["D-NGH"]["threshold"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json')
+
+    def _read_json(path: Path) -> dict[str, Any]:
+        if not path.is_file():
+>           raise CalibrationError(f"missing persisted receipt: {path}")
+E           scripts.grm_sc2_calibration.CalibrationError: missing persisted receipt: /mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json
+
+scripts/grm_sc2_calibration.py:137: CalibrationError
+___________ test_sc1_2_arm0_rows_fold_into_the_race_rows_losslessly ____________
+
+    def test_sc1_2_arm0_rows_fold_into_the_race_rows_losslessly():
+        """De-duplication is measured, not assumed: every delta must be 0.0."""
+>       dedup = sc2.deduplicate(sc2.inventory())
+                                ^^^^^^^^^^^^^^^
+
+tests/test_grm_sc2_calibration_early_abort.py:169: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_sc2_calibration.py:176: in inventory
+    carried = float(_read_json(CARRIED_THRESHOLDS)["D-NGH"]["threshold"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json')
+
+    def _read_json(path: Path) -> dict[str, Any]:
+        if not path.is_file():
+>           raise CalibrationError(f"missing persisted receipt: {path}")
+E           scripts.grm_sc2_calibration.CalibrationError: missing persisted receipt: /mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json
+
+scripts/grm_sc2_calibration.py:137: CalibrationError
+_______ test_the_solace_instrument_disagreement_is_carried_not_collapsed _______
+
+    def test_the_solace_instrument_disagreement_is_carried_not_collapsed():
+        """Two lived instruments, two numbers, both kept.
+    
+        ``sup_solace_fresh`` measures 0.3181... on the lived battery and
+        0.29139... under the SC1.1 G2 same-process fork.  Collapsing them would
+        silently pick one, and it is the single lowest served number in the whole
+        inventory -- the one the envelope is most sensitive to.
+        """
+>       split = sc2.registered_split(*_split_inputs())
+                                      ^^^^^^^^^^^^^^^
+
+tests/test_grm_sc2_calibration_early_abort.py:184: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_sc2_calibration_early_abort.py:132: in _split_inputs
+    inv = sc2.inventory()
+          ^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:176: in inventory
+    carried = float(_read_json(CARRIED_THRESHOLDS)["D-NGH"]["threshold"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json')
+
+    def _read_json(path: Path) -> dict[str, Any]:
+        if not path.is_file():
+>           raise CalibrationError(f"missing persisted receipt: {path}")
+E           scripts.grm_sc2_calibration.CalibrationError: missing persisted receipt: /mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json
+
+scripts/grm_sc2_calibration.py:137: CalibrationError
+_________________ test_planted_rows_are_all_exactly_zero_mass __________________
+
+    def test_planted_rows_are_all_exactly_zero_mass():
+        """Why recall is near-trivial, stated as a test rather than a footnote.
+    
+        A withheld node is not mounted, so there is no mounted band to read and
+        the mass is exactly 0.0. Recall is therefore 'is the line above zero',
+        not evidence of fine discrimination -- and the receipt says so.
+        """
+>       planted = sc2.inventory()["planted"]
+                  ^^^^^^^^^^^^^^^
+
+tests/test_grm_sc2_calibration_early_abort.py:206: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_sc2_calibration.py:176: in inventory
+    carried = float(_read_json(CARRIED_THRESHOLDS)["D-NGH"]["threshold"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json')
+
+    def _read_json(path: Path) -> dict[str, Any]:
+        if not path.is_file():
+>           raise CalibrationError(f"missing persisted receipt: {path}")
+E           scripts.grm_sc2_calibration.CalibrationError: missing persisted receipt: /mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json
+
+scripts/grm_sc2_calibration.py:137: CalibrationError
+_________ test_the_candidate_is_the_envelope_over_the_calibration_set __________
+
+    def test_the_candidate_is_the_envelope_over_the_calibration_set():
+        """The reported number is the rule applied to the registered set. No fudge."""
+>       split = sc2.registered_split(*_split_inputs())
+                                      ^^^^^^^^^^^^^^^
+
+tests/test_grm_sc2_calibration_early_abort.py:270: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_sc2_calibration_early_abort.py:132: in _split_inputs
+    inv = sc2.inventory()
+          ^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:176: in inventory
+    carried = float(_read_json(CARRIED_THRESHOLDS)["D-NGH"]["threshold"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json')
+
+    def _read_json(path: Path) -> dict[str, Any]:
+        if not path.is_file():
+>           raise CalibrationError(f"missing persisted receipt: {path}")
+E           scripts.grm_sc2_calibration.CalibrationError: missing persisted receipt: /mnt/ForgeRealm/wt/grm-fix1/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json
+
+scripts/grm_sc2_calibration.py:137: CalibrationError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_sc1_demand_loop.py::test_registered_threshold_is_the_race_constant_not_a_refit
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_envelope_rule_reproduces_the_frozen_det1_threshold_exactly
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_minima_verdict_equals_detector_decision_on_every_frozen_row
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_fire_index_matches_first_strictly_below_on_frozen_rows
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_registered_split_is_deterministic_across_repeated_runs
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_split_sets_are_non_empty_and_match_the_registration
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_held_out_contains_the_current_false_fire
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_sc1_2_arm0_rows_fold_into_the_race_rows_losslessly
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_the_solace_instrument_disagreement_is_carried_not_collapsed
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_planted_rows_are_all_exactly_zero_mass
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_the_candidate_is_the_envelope_over_the_calibration_set
+11 failed, 227 passed, 2 warnings in 5.25s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

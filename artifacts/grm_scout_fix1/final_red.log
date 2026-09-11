@@ -1,0 +1,230 @@
+F.........F.FF.FFF.FFFF                                                  [100%]
+=================================== FAILURES ===================================
+______________ test_final_flush_only_fire_keeps_completed_answer _______________
+
+cpu_hooks = (namespace(sink_attention_tc=<function cpu_hooks.<locals>.<lambda> at 0x7ab39135b2e0>, sliding_sink_attention_tc=<func...mespace(layers=[namespace(self_attn=namespace(layer_type='full_attention', attention_mode='standard', layer_idx=0))])])
+
+    def test_final_flush_only_fire_keeps_completed_answer(cpu_hooks):
+        off_arena, off, expected = run([.9, .9, .9, .1], False)
+        arena, obs, result = run([.9, .9, .9, .1], True)
+        assert result == expected
+>       assert obs.finish() == off.finish()  # Before fix: captured 4 rows for ngen=3.
+               ^^^^^^^^^^^^
+
+tests/test_grm_scout_fix1_demand.py:46: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = DemandObserver(arena=<tests.test_grm_sc2_calibration_early_abort._ResumeArena object at 0x7ab3b91f32f0>, ngen=3, thres... 'physical_sink_mass': 0.9, 'live_mass': 0.0, 'learned_sink_mass': 0.0, 'full_attention_layers': 1}], early_abort=True)
+
+>   ???
+E   core.grm_demand.DemandError: observer captured 4 answer rows for ngen=3
+
+core/grm_demand.py:498: DemandError
+_______________________ test_single_token_flush_boundary _______________________
+
+cpu_hooks = (namespace(sink_attention_tc=<function cpu_hooks.<locals>.<lambda> at 0x7ab39135be20>, sliding_sink_attention_tc=<func...mespace(layers=[namespace(self_attn=namespace(layer_type='full_attention', attention_mode='standard', layer_idx=0))])])
+
+    def test_single_token_flush_boundary(cpu_hooks):
+        arena, obs, result = run([.9, .1], True, ngen=1)
+        assert result[0] == '3'
+>       assert len(obs.finish()) == 1
+                   ^^^^^^^^^^^^
+
+tests/test_grm_scout_fix1_demand.py:88: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = DemandObserver(arena=<tests.test_grm_sc2_calibration_early_abort._ResumeArena object at 0x7ab398d9e240>, ngen=1, thres... 'physical_sink_mass': 0.9, 'live_mass': 0.0, 'learned_sink_mass': 0.0, 'full_attention_layers': 1}], early_abort=True)
+
+>   ???
+E   core.grm_demand.DemandError: observer captured 2 answer rows for ngen=1
+
+core/grm_demand.py:498: DemandError
+____________________ test_rt1_receipt_projection[demoted0] _____________________
+
+demoted = []
+
+    @pytest.mark.parametrize('demoted', [[], [2]])
+    def test_rt1_receipt_projection(demoted):
+        fields = rt1_info_fields(demoted=demoted, split_members=[2, 3], ranking_before=[2, 0, 3])
+        base = build_route_receipt(session_id='fix1', turn_id='0', info={'admission_policy': 'A-DEC'})
+        result = build_route_receipt(session_id='fix1', turn_id='0', info={'admission_policy': 'A-DEC', **fields})
+        assert result['schema'] == base['schema'] == 'grm.route_receipt.v1'
+        for key, value in fields.items():
+>           assert result['admission'][key.removeprefix('admission_')] == value
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'split_child_demoted'
+
+tests/test_grm_scout_fix1_receipt.py:17: KeyError
+____________________ test_rt1_receipt_projection[demoted1] _____________________
+
+demoted = [2]
+
+    @pytest.mark.parametrize('demoted', [[], [2]])
+    def test_rt1_receipt_projection(demoted):
+        fields = rt1_info_fields(demoted=demoted, split_members=[2, 3], ranking_before=[2, 0, 3])
+        base = build_route_receipt(session_id='fix1', turn_id='0', info={'admission_policy': 'A-DEC'})
+        result = build_route_receipt(session_id='fix1', turn_id='0', info={'admission_policy': 'A-DEC', **fields})
+        assert result['schema'] == base['schema'] == 'grm.route_receipt.v1'
+        for key, value in fields.items():
+>           assert result['admission'][key.removeprefix('admission_')] == value
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'split_child_demoted'
+
+tests/test_grm_scout_fix1_receipt.py:17: KeyError
+__________________ test_capture_save_reload_round_trip[live] ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-756/test_capture_save_reload_round0')
+mode = 'live'
+
+    @pytest.mark.parametrize('mode', ['live', 'off', 'cache'])
+    def test_capture_save_reload_round_trip(tmp_path, mode):
+        repo = repository(tmp_path)
+        idx = repo.add_document('capture fixture 1234')
+        capture = dict(capture_pin='off' if mode == 'off' else 'live',
+                       capture_shift=None if mode == 'off' else 100,
+                       capture_shift_observed=None if mode == 'off' else 100,
+                       capture_shift_derived_from='fixture geometry',
+                       n_sink=4, arena_width=96, live_shift=100)
+        if mode == 'cache':
+            capture.update(capture_payload_source='live_cache_slice',
+                           capture_span_pos0=104, capture_pin_moves_payload=False)
+        repo.arena.grafts[idx].update(capture)
+        repo.save()
+        manifest = json.loads((tmp_path/'manifest.json').read_text())
+>       assert manifest['nodes'][idx]['capture'] == capture
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'capture'
+
+tests/test_grm_scout_fix1_manifest.py:30: KeyError
+___________________ test_capture_save_reload_round_trip[off] ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-756/test_capture_save_reload_round1')
+mode = 'off'
+
+    @pytest.mark.parametrize('mode', ['live', 'off', 'cache'])
+    def test_capture_save_reload_round_trip(tmp_path, mode):
+        repo = repository(tmp_path)
+        idx = repo.add_document('capture fixture 1234')
+        capture = dict(capture_pin='off' if mode == 'off' else 'live',
+                       capture_shift=None if mode == 'off' else 100,
+                       capture_shift_observed=None if mode == 'off' else 100,
+                       capture_shift_derived_from='fixture geometry',
+                       n_sink=4, arena_width=96, live_shift=100)
+        if mode == 'cache':
+            capture.update(capture_payload_source='live_cache_slice',
+                           capture_span_pos0=104, capture_pin_moves_payload=False)
+        repo.arena.grafts[idx].update(capture)
+        repo.save()
+        manifest = json.loads((tmp_path/'manifest.json').read_text())
+>       assert manifest['nodes'][idx]['capture'] == capture
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'capture'
+
+tests/test_grm_scout_fix1_manifest.py:30: KeyError
+__________________ test_capture_save_reload_round_trip[cache] __________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-756/test_capture_save_reload_round2')
+mode = 'cache'
+
+    @pytest.mark.parametrize('mode', ['live', 'off', 'cache'])
+    def test_capture_save_reload_round_trip(tmp_path, mode):
+        repo = repository(tmp_path)
+        idx = repo.add_document('capture fixture 1234')
+        capture = dict(capture_pin='off' if mode == 'off' else 'live',
+                       capture_shift=None if mode == 'off' else 100,
+                       capture_shift_observed=None if mode == 'off' else 100,
+                       capture_shift_derived_from='fixture geometry',
+                       n_sink=4, arena_width=96, live_shift=100)
+        if mode == 'cache':
+            capture.update(capture_payload_source='live_cache_slice',
+                           capture_span_pos0=104, capture_pin_moves_payload=False)
+        repo.arena.grafts[idx].update(capture)
+        repo.save()
+        manifest = json.loads((tmp_path/'manifest.json').read_text())
+>       assert manifest['nodes'][idx]['capture'] == capture
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'capture'
+
+tests/test_grm_scout_fix1_manifest.py:30: KeyError
+____________________ test_wc1_token_seats_and_resume_dedup _____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-756/test_wc1_token_seats_and_resum0')
+
+    def test_wc1_token_seats_and_resume_dedup(tmp_path):
+        first = write_session(tmp_path/'first', [row(1, [0, 1], 70), row(2, [], 0)])
+        resumed = write_session(tmp_path/'resume', [row(1, [0], 900), row(3, [3], 20)])
+        result = wc1._turn_stats([first, resumed])
+        assert result['turns_counted'] == 3
+        assert result['mean_resident_seats_per_turn'] == 1.0  # old graft-count key
+>       assert result['mean_resident_token_seats_per_turn'] == 30.0
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'mean_resident_token_seats_per_turn'
+
+tests/test_grm_scout_fix1_wc1.py:26: KeyError
+_______ test_wc1_missing_token_count_is_unknown_not_zero_or_partial_mean _______
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-756/test_wc1_missing_token_count_i0')
+
+    def test_wc1_missing_token_count_is_unknown_not_zero_or_partial_mean(tmp_path):
+        session = write_session(tmp_path/'s', [row(1, [0], 70), row(2, [1], None)])
+        result = wc1._turn_stats([session])
+        assert result['mean_resident_seats_per_turn'] == 1.0
+>       assert result['mean_resident_token_seats_per_turn'] is None
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'mean_resident_token_seats_per_turn'
+
+tests/test_grm_scout_fix1_wc1.py:34: KeyError
+_______________________ test_wc1_nested_receipt_fallback _______________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-756/test_wc1_nested_receipt_fallba0')
+
+    def test_wc1_nested_receipt_fallback(tmp_path):
+        r = row(1, [4], 52)
+        r['info']['route_receipt_record'] = r.pop('route_receipt')
+        result = wc1._turn_stats([write_session(tmp_path/'s', [r])])
+>       assert result['mean_resident_token_seats_per_turn'] == 52.
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'mean_resident_token_seats_per_turn'
+
+tests/test_grm_scout_fix1_wc1.py:42: KeyError
+______________________ test_wc1_print_labels_both_columns ______________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-756/test_wc1_print_labels_both_col0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ab3b8b86570>
+capsys = <_pytest.capture.CaptureFixture object at 0x7ab3b8b87890>
+
+    def test_wc1_print_labels_both_columns(tmp_path, monkeypatch, capsys):
+        entry = dict(score='1/1', all_probes='1/1', vs_96='reference',
+                     mean_resident_seats_per_turn=2., mean_resident_token_seats_per_turn=70.)
+        payload = dict(table=[{'width':96}], detail={'96':dict(census=entry)}, predictions=[])
+        monkeypatch.setattr(wc1, 'build_results', lambda: payload)
+        monkeypatch.setattr(wc1, 'ARTIFACT_DIR', tmp_path)
+        monkeypatch.setattr(wc1, 'RESULTS', tmp_path/'result.json')
+        wc1.main(['--print-table'])
+        output = capsys.readouterr().out
+>       assert 'grafts' in output and 'token_seats' in output
+E       AssertionError: assert ('grafts' in 'results=/tmp/pytest-of-vader/pytest-756/test_wc1_print_labels_both_col0/result.json\nsha256=e81baa8507b5ba8d582a71646...-----------------------------------------\n    96      -      1/1      -       -       -     2.0         -  (none)\n\n')
+
+tests/test_grm_scout_fix1_wc1.py:54: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_scout_fix1_demand.py::test_final_flush_only_fire_keeps_completed_answer
+FAILED tests/test_grm_scout_fix1_demand.py::test_single_token_flush_boundary
+FAILED tests/test_grm_scout_fix1_receipt.py::test_rt1_receipt_projection[demoted0]
+FAILED tests/test_grm_scout_fix1_receipt.py::test_rt1_receipt_projection[demoted1]
+FAILED tests/test_grm_scout_fix1_manifest.py::test_capture_save_reload_round_trip[live]
+FAILED tests/test_grm_scout_fix1_manifest.py::test_capture_save_reload_round_trip[off]
+FAILED tests/test_grm_scout_fix1_manifest.py::test_capture_save_reload_round_trip[cache]
+FAILED tests/test_grm_scout_fix1_wc1.py::test_wc1_token_seats_and_resume_dedup
+FAILED tests/test_grm_scout_fix1_wc1.py::test_wc1_missing_token_count_is_unknown_not_zero_or_partial_mean
+FAILED tests/test_grm_scout_fix1_wc1.py::test_wc1_nested_receipt_fallback - K...
+FAILED tests/test_grm_scout_fix1_wc1.py::test_wc1_print_labels_both_columns
+11 failed, 12 passed, 2 warnings in 0.51s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

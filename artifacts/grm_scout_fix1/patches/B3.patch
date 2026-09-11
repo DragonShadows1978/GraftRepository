@@ -1,0 +1,94 @@
+--- a/core/graft_repository.py
++++ b/core/graft_repository.py
+@@ -4617,6 +4617,12 @@
+         return tuple(protected)
+ 
+     def _node_manifest(self, g):
++        # Prior art: RS3 capture receipts / ordinary manifests (project, 2026).
++        # Persist the existing capture evidence without inventing geometry
++        # for older grafts. Payload format and capture behavior are unchanged.
++        capture = {key: value for key, value in g.items()
++                   if key.startswith("capture_")
++                   or key in ("n_sink", "arena_width", "live_shift")}
+         return {"kind": g.get("kind", "turn"),
+                 "text": g["text"], "ntok": g["ntok"],
+                 "sources": g.get("sources", []),
+@@ -4632,7 +4638,8 @@
+                 "cold_only": bool(g.get("cold_only", False)),
+                 "payload_pending": bool(g.get("payload_pending", False)),
+                 "native_node_id": g.get("native_node_id"),
+-                "provenance": g.get("provenance", [])}
++                "provenance": g.get("provenance", []),
++                **({"capture": capture} if capture else {})}
+ 
+     def flush_async(self):
+         """Start an async RAM-payload durability flush."""
+@@ -4782,6 +4789,9 @@
+                  "payload_pending": n.get("payload_pending", False),
+                  "recovered": n.get("payload_pending", False),
+                  "h": None}
++            # RS3 evidence returns to its original top-level graft fields;
++            # legacy manifests contribute no new fields (see _node_manifest).
++            g.update(n.get("capture", {}))
+             if n.get("native_node_id") is not None:
+                 native_id = int(n["native_node_id"])
+                 g["native_node_id"] = native_id
+--- /dev/null
++++ b/tests/test_grm_scout_fix1_manifest.py
+@@ -0,0 +1,56 @@
++"""Prior art: RS3 capture receipt and repository lifecycle CPU fake (2026).
++New coverage: ordinary manifest persistence, no payload recapture or GPU.
++"""
++import json
++import pytest
++from core.graft_repository import GraftRepository
++from tests.test_grm_runtime_lifecycle import FakeArena, FakeModel
++
++
++def repository(path):
++    return GraftRepository(FakeModel(), lambda s: s.split(), lambda ids: ' '.join(ids),
++                           str(path), autosave=False, arena_cls=FakeArena)
++
++
++@pytest.mark.parametrize('mode', ['live', 'off', 'cache'])
++def test_capture_save_reload_round_trip(tmp_path, mode):
++    repo = repository(tmp_path)
++    idx = repo.add_document('capture fixture 1234')
++    capture = dict(capture_pin='off' if mode == 'off' else 'live',
++                   capture_shift=None if mode == 'off' else 100,
++                   capture_shift_observed=None if mode == 'off' else 100,
++                   capture_shift_derived_from='fixture geometry',
++                   n_sink=4, arena_width=96, live_shift=100)
++    if mode == 'cache':
++        capture.update(capture_payload_source='live_cache_slice',
++                       capture_span_pos0=104, capture_pin_moves_payload=False)
++    repo.arena.grafts[idx].update(capture)
++    repo.save()
++    manifest = json.loads((tmp_path/'manifest.json').read_text())
++    assert manifest['nodes'][idx]['capture'] == capture
++    reloaded = repository(tmp_path)
++    node = reloaded.arena.grafts[idx]
++    assert {key: node[key] for key in capture} == capture
++    assert node['text'] == repo.arena.grafts[idx]['text']
++    assert node['ntok'] == repo.arena.grafts[idx]['ntok']
++    reloaded.arena._ensure_h([idx])
++    assert node['h'] == repo.arena.grafts[idx]['h']
++    reloaded.save()
++    assert json.loads((tmp_path/'manifest.json').read_text())['nodes'][idx]['capture'] == capture
++
++
++def test_old_manifest_without_capture_loads_unchanged(tmp_path):
++    repo = repository(tmp_path)
++    idx = repo.add_document('old capture fixture 9876')
++    repo.save()
++    path = tmp_path/'manifest.json'
++    manifest = json.loads(path.read_text())
++    manifest['nodes'][idx].pop('capture', None)
++    path.write_text(json.dumps(manifest))
++    reloaded = repository(tmp_path)
++    node = reloaded.arena.grafts[idx]
++    assert not any(k.startswith('capture_') for k in node)
++    assert not {'n_sink', 'arena_width', 'live_shift'} & node.keys()
++    reloaded.arena._ensure_h([idx])
++    assert node['h'] == repo.arena.grafts[idx]['h']
++    assert node['text'] == repo.arena.grafts[idx]['text']

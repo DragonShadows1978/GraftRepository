@@ -1,0 +1,1462 @@
+[
+  {
+    "width": 64,
+    "battery": "census",
+    "turn": 5,
+    "mount_fitted": [
+      1
+    ],
+    "manifest_ntok_sum": 45,
+    "recorded_token_seats": 45,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_session/arm1/e2e-1/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "census",
+    "turn": 9,
+    "mount_fitted": [
+      13
+    ],
+    "manifest_ntok_sum": 45,
+    "recorded_token_seats": 45,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_session/arm1/e2e-1/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "census",
+    "turn": 13,
+    "mount_fitted": [
+      17
+    ],
+    "manifest_ntok_sum": 53,
+    "recorded_token_seats": 53,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_session/arm1/e2e-2/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "census",
+    "turn": 16,
+    "mount_fitted": [
+      31,
+      33
+    ],
+    "manifest_ntok_sum": 64,
+    "recorded_token_seats": 64,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_session/arm1/e2e-2/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "census",
+    "turn": 19,
+    "mount_fitted": [
+      21
+    ],
+    "manifest_ntok_sum": 42,
+    "recorded_token_seats": 42,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "census",
+    "turn": 22,
+    "mount_fitted": [
+      46
+    ],
+    "manifest_ntok_sum": 51,
+    "recorded_token_seats": 51,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "census",
+    "turn": 24,
+    "mount_fitted": [
+      39
+    ],
+    "manifest_ntok_sum": 42,
+    "recorded_token_seats": 42,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "census",
+    "turn": 26,
+    "mount_fitted": [
+      54
+    ],
+    "manifest_ntok_sum": 42,
+    "recorded_token_seats": 42,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "census",
+    "turn": 30,
+    "mount_fitted": [
+      69
+    ],
+    "manifest_ntok_sum": 43,
+    "recorded_token_seats": 43,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "census",
+    "turn": 33,
+    "mount_fitted": [
+      82
+    ],
+    "manifest_ntok_sum": 44,
+    "recorded_token_seats": 44,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 5,
+    "mount_fitted": [
+      1
+    ],
+    "manifest_ntok_sum": 45,
+    "recorded_token_seats": 45,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 9,
+    "mount_fitted": [
+      13
+    ],
+    "manifest_ntok_sum": 45,
+    "recorded_token_seats": 45,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 13,
+    "mount_fitted": [
+      17
+    ],
+    "manifest_ntok_sum": 53,
+    "recorded_token_seats": 53,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 16,
+    "mount_fitted": [
+      31,
+      33
+    ],
+    "manifest_ntok_sum": 64,
+    "recorded_token_seats": 64,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 19,
+    "mount_fitted": [
+      21
+    ],
+    "manifest_ntok_sum": 42,
+    "recorded_token_seats": 42,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 22,
+    "mount_fitted": [
+      46
+    ],
+    "manifest_ntok_sum": 51,
+    "recorded_token_seats": 51,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 24,
+    "mount_fitted": [
+      39
+    ],
+    "manifest_ntok_sum": 42,
+    "recorded_token_seats": 42,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 26,
+    "mount_fitted": [
+      54
+    ],
+    "manifest_ntok_sum": 42,
+    "recorded_token_seats": 42,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 30,
+    "mount_fitted": [
+      69
+    ],
+    "manifest_ntok_sum": 43,
+    "recorded_token_seats": 43,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 33,
+    "mount_fitted": [
+      82
+    ],
+    "manifest_ntok_sum": 44,
+    "recorded_token_seats": 44,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 70,
+    "mount_fitted": [
+      86
+    ],
+    "manifest_ntok_sum": 43,
+    "recorded_token_seats": 43,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-3/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 80,
+    "mount_fitted": [
+      93
+    ],
+    "manifest_ntok_sum": 45,
+    "recorded_token_seats": 45,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-4/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 90,
+    "mount_fitted": [
+      100
+    ],
+    "manifest_ntok_sum": 47,
+    "recorded_token_seats": 47,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-4/session/repository/manifest.json"
+  },
+  {
+    "width": 64,
+    "battery": "longhorizon",
+    "turn": 100,
+    "mount_fitted": [
+      107
+    ],
+    "manifest_ntok_sum": 44,
+    "recorded_token_seats": 44,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_session/lh-5/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "census",
+    "turn": 5,
+    "mount_fitted": [
+      0
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-1/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "census",
+    "turn": 9,
+    "mount_fitted": [
+      4
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-1/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "census",
+    "turn": 13,
+    "mount_fitted": [
+      6
+    ],
+    "manifest_ntok_sum": 92,
+    "recorded_token_seats": 92,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-2/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "census",
+    "turn": 16,
+    "mount_fitted": [
+      12
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-2/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "census",
+    "turn": 19,
+    "mount_fitted": [
+      8
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "census",
+    "turn": 22,
+    "mount_fitted": [
+      19
+    ],
+    "manifest_ntok_sum": 89,
+    "recorded_token_seats": 89,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "census",
+    "turn": 24,
+    "mount_fitted": [
+      16
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "census",
+    "turn": 26,
+    "mount_fitted": [
+      23
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "census",
+    "turn": 30,
+    "mount_fitted": [
+      30
+    ],
+    "manifest_ntok_sum": 82,
+    "recorded_token_seats": 82,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "census",
+    "turn": 33,
+    "mount_fitted": [],
+    "manifest_ntok_sum": 0,
+    "recorded_token_seats": 0,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 5,
+    "mount_fitted": [
+      0
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 9,
+    "mount_fitted": [
+      4
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 13,
+    "mount_fitted": [
+      6
+    ],
+    "manifest_ntok_sum": 92,
+    "recorded_token_seats": 92,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 16,
+    "mount_fitted": [
+      12
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 19,
+    "mount_fitted": [
+      8
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 22,
+    "mount_fitted": [
+      19
+    ],
+    "manifest_ntok_sum": 89,
+    "recorded_token_seats": 89,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 24,
+    "mount_fitted": [
+      16
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 26,
+    "mount_fitted": [
+      23
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 30,
+    "mount_fitted": [
+      30
+    ],
+    "manifest_ntok_sum": 82,
+    "recorded_token_seats": 82,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 33,
+    "mount_fitted": [],
+    "manifest_ntok_sum": 0,
+    "recorded_token_seats": 0,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 70,
+    "mount_fitted": [
+      37
+    ],
+    "manifest_ntok_sum": 82,
+    "recorded_token_seats": 82,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-3/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 80,
+    "mount_fitted": [
+      40
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-4/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 90,
+    "mount_fitted": [
+      43
+    ],
+    "manifest_ntok_sum": 92,
+    "recorded_token_seats": 92,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-4/session/repository/manifest.json"
+  },
+  {
+    "width": 96,
+    "battery": "longhorizon",
+    "turn": 100,
+    "mount_fitted": [
+      46
+    ],
+    "manifest_ntok_sum": 83,
+    "recorded_token_seats": 83,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-5/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "census",
+    "turn": 5,
+    "mount_fitted": [
+      0
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/census_session/arm1/e2e-1/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "census",
+    "turn": 9,
+    "mount_fitted": [
+      4
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/census_session/arm1/e2e-1/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "census",
+    "turn": 13,
+    "mount_fitted": [
+      6,
+      7
+    ],
+    "manifest_ntok_sum": 107,
+    "recorded_token_seats": 107,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/census_session/arm1/e2e-2/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "census",
+    "turn": 16,
+    "mount_fitted": [
+      12,
+      13
+    ],
+    "manifest_ntok_sum": 99,
+    "recorded_token_seats": 99,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/census_session/arm1/e2e-2/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "census",
+    "turn": 19,
+    "mount_fitted": [
+      8
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "census",
+    "turn": 22,
+    "mount_fitted": [
+      19,
+      20
+    ],
+    "manifest_ntok_sum": 103,
+    "recorded_token_seats": 103,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "census",
+    "turn": 24,
+    "mount_fitted": [
+      16
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "census",
+    "turn": 26,
+    "mount_fitted": [
+      23
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "census",
+    "turn": 30,
+    "mount_fitted": [
+      30
+    ],
+    "manifest_ntok_sum": 82,
+    "recorded_token_seats": 82,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "census",
+    "turn": 33,
+    "mount_fitted": [],
+    "manifest_ntok_sum": 0,
+    "recorded_token_seats": 0,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 5,
+    "mount_fitted": [
+      0
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 9,
+    "mount_fitted": [
+      4
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 13,
+    "mount_fitted": [
+      6,
+      7
+    ],
+    "manifest_ntok_sum": 107,
+    "recorded_token_seats": 107,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 16,
+    "mount_fitted": [
+      12,
+      13
+    ],
+    "manifest_ntok_sum": 99,
+    "recorded_token_seats": 99,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 19,
+    "mount_fitted": [
+      8
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 22,
+    "mount_fitted": [
+      19,
+      20
+    ],
+    "manifest_ntok_sum": 103,
+    "recorded_token_seats": 103,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 24,
+    "mount_fitted": [
+      16
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 26,
+    "mount_fitted": [
+      23
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 30,
+    "mount_fitted": [
+      30
+    ],
+    "manifest_ntok_sum": 82,
+    "recorded_token_seats": 82,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 33,
+    "mount_fitted": [],
+    "manifest_ntok_sum": 0,
+    "recorded_token_seats": 0,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 70,
+    "mount_fitted": [
+      37
+    ],
+    "manifest_ntok_sum": 82,
+    "recorded_token_seats": 82,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-3/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 80,
+    "mount_fitted": [
+      40
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-4/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 90,
+    "mount_fitted": [
+      43
+    ],
+    "manifest_ntok_sum": 92,
+    "recorded_token_seats": 92,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-4/session/repository/manifest.json"
+  },
+  {
+    "width": 128,
+    "battery": "longhorizon",
+    "turn": 100,
+    "mount_fitted": [
+      46
+    ],
+    "manifest_ntok_sum": 83,
+    "recorded_token_seats": 83,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "census",
+    "turn": 5,
+    "mount_fitted": [
+      0
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/census_session/arm1/e2e-1/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "census",
+    "turn": 9,
+    "mount_fitted": [
+      4
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/census_session/arm1/e2e-1/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "census",
+    "turn": 13,
+    "mount_fitted": [
+      6,
+      7
+    ],
+    "manifest_ntok_sum": 107,
+    "recorded_token_seats": 107,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/census_session/arm1/e2e-2/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "census",
+    "turn": 16,
+    "mount_fitted": [
+      12,
+      13
+    ],
+    "manifest_ntok_sum": 99,
+    "recorded_token_seats": 99,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/census_session/arm1/e2e-2/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "census",
+    "turn": 19,
+    "mount_fitted": [
+      8
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "census",
+    "turn": 22,
+    "mount_fitted": [
+      19,
+      20
+    ],
+    "manifest_ntok_sum": 103,
+    "recorded_token_seats": 103,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "census",
+    "turn": 24,
+    "mount_fitted": [
+      16
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "census",
+    "turn": 26,
+    "mount_fitted": [
+      23
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "census",
+    "turn": 30,
+    "mount_fitted": [
+      30
+    ],
+    "manifest_ntok_sum": 82,
+    "recorded_token_seats": 82,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "census",
+    "turn": 33,
+    "mount_fitted": [],
+    "manifest_ntok_sum": 0,
+    "recorded_token_seats": 0,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 5,
+    "mount_fitted": [
+      0
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 9,
+    "mount_fitted": [
+      4
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 13,
+    "mount_fitted": [
+      6,
+      7
+    ],
+    "manifest_ntok_sum": 107,
+    "recorded_token_seats": 107,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 16,
+    "mount_fitted": [
+      12,
+      13
+    ],
+    "manifest_ntok_sum": 99,
+    "recorded_token_seats": 99,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 19,
+    "mount_fitted": [
+      8
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 22,
+    "mount_fitted": [
+      19,
+      20
+    ],
+    "manifest_ntok_sum": 103,
+    "recorded_token_seats": 103,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 24,
+    "mount_fitted": [
+      16
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 26,
+    "mount_fitted": [
+      23
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 30,
+    "mount_fitted": [
+      30
+    ],
+    "manifest_ntok_sum": 82,
+    "recorded_token_seats": 82,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 33,
+    "mount_fitted": [],
+    "manifest_ntok_sum": 0,
+    "recorded_token_seats": 0,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 70,
+    "mount_fitted": [
+      37
+    ],
+    "manifest_ntok_sum": 82,
+    "recorded_token_seats": 82,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-3/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 80,
+    "mount_fitted": [
+      40
+    ],
+    "manifest_ntok_sum": 86,
+    "recorded_token_seats": 86,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-4/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 90,
+    "mount_fitted": [
+      43
+    ],
+    "manifest_ntok_sum": 92,
+    "recorded_token_seats": 92,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-4/session/repository/manifest.json"
+  },
+  {
+    "width": 192,
+    "battery": "longhorizon",
+    "turn": 100,
+    "mount_fitted": [
+      46
+    ],
+    "manifest_ntok_sum": 83,
+    "recorded_token_seats": 83,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "census",
+    "turn": 5,
+    "mount_fitted": [
+      0,
+      1,
+      2
+    ],
+    "manifest_ntok_sum": 222,
+    "recorded_token_seats": 222,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-1/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "census",
+    "turn": 9,
+    "mount_fitted": [
+      2,
+      4
+    ],
+    "manifest_ntok_sum": 172,
+    "recorded_token_seats": 172,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-1/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "census",
+    "turn": 13,
+    "mount_fitted": [
+      6,
+      7
+    ],
+    "manifest_ntok_sum": 107,
+    "recorded_token_seats": 107,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-2/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "census",
+    "turn": 16,
+    "mount_fitted": [
+      12,
+      13
+    ],
+    "manifest_ntok_sum": 99,
+    "recorded_token_seats": 99,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-2/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "census",
+    "turn": 19,
+    "mount_fitted": [
+      4,
+      8,
+      12
+    ],
+    "manifest_ntok_sum": 251,
+    "recorded_token_seats": 251,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "census",
+    "turn": 22,
+    "mount_fitted": [
+      19,
+      20
+    ],
+    "manifest_ntok_sum": 103,
+    "recorded_token_seats": 103,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "census",
+    "turn": 24,
+    "mount_fitted": [
+      16
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-3/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "census",
+    "turn": 26,
+    "mount_fitted": [
+      23
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "census",
+    "turn": 30,
+    "mount_fitted": [
+      4,
+      30
+    ],
+    "manifest_ntok_sum": 168,
+    "recorded_token_seats": 168,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "census",
+    "turn": 33,
+    "mount_fitted": [],
+    "manifest_ntok_sum": 0,
+    "recorded_token_seats": 0,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-4/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 5,
+    "mount_fitted": [
+      0,
+      1,
+      2
+    ],
+    "manifest_ntok_sum": 222,
+    "recorded_token_seats": 222,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 9,
+    "mount_fitted": [
+      2,
+      4
+    ],
+    "manifest_ntok_sum": 172,
+    "recorded_token_seats": 172,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 13,
+    "mount_fitted": [
+      6,
+      7
+    ],
+    "manifest_ntok_sum": 107,
+    "recorded_token_seats": 107,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 16,
+    "mount_fitted": [
+      12,
+      13
+    ],
+    "manifest_ntok_sum": 99,
+    "recorded_token_seats": 99,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 19,
+    "mount_fitted": [
+      8
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 22,
+    "mount_fitted": [
+      19,
+      20
+    ],
+    "manifest_ntok_sum": 103,
+    "recorded_token_seats": 103,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 24,
+    "mount_fitted": [
+      4,
+      16,
+      19
+    ],
+    "manifest_ntok_sum": 254,
+    "recorded_token_seats": 254,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 26,
+    "mount_fitted": [
+      23
+    ],
+    "manifest_ntok_sum": 79,
+    "recorded_token_seats": 79,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 30,
+    "mount_fitted": [
+      4,
+      30
+    ],
+    "manifest_ntok_sum": 168,
+    "recorded_token_seats": 168,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 33,
+    "mount_fitted": [],
+    "manifest_ntok_sum": 0,
+    "recorded_token_seats": 0,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-1/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 70,
+    "mount_fitted": [
+      37,
+      40,
+      55
+    ],
+    "manifest_ntok_sum": 253,
+    "recorded_token_seats": 253,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-3/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 80,
+    "mount_fitted": [
+      40,
+      108
+    ],
+    "manifest_ntok_sum": 175,
+    "recorded_token_seats": 175,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-4/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 90,
+    "mount_fitted": [
+      43
+    ],
+    "manifest_ntok_sum": 92,
+    "recorded_token_seats": 92,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-4/session/repository/manifest.json"
+  },
+  {
+    "width": 256,
+    "battery": "longhorizon",
+    "turn": 100,
+    "mount_fitted": [
+      46,
+      150
+    ],
+    "manifest_ntok_sum": 172,
+    "recorded_token_seats": 172,
+    "equal": true,
+    "manifest": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/repository/manifest.json"
+  }
+]

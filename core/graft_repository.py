@@ -4617,6 +4617,12 @@ class GraftRepository:
         return tuple(protected)
 
     def _node_manifest(self, g):
+        # Prior art: RS3 capture receipts / ordinary manifests (project, 2026).
+        # Persist the existing capture evidence without inventing geometry
+        # for older grafts. Payload format and capture behavior are unchanged.
+        capture = {key: value for key, value in g.items()
+                   if key.startswith("capture_")
+                   or key in ("n_sink", "arena_width", "live_shift")}
         return {"kind": g.get("kind", "turn"),
                 "text": g["text"], "ntok": g["ntok"],
                 "sources": g.get("sources", []),
@@ -4632,7 +4638,8 @@ class GraftRepository:
                 "cold_only": bool(g.get("cold_only", False)),
                 "payload_pending": bool(g.get("payload_pending", False)),
                 "native_node_id": g.get("native_node_id"),
-                "provenance": g.get("provenance", [])}
+                "provenance": g.get("provenance", []),
+                **({"capture": capture} if capture else {})}
 
     def flush_async(self):
         """Start an async RAM-payload durability flush."""
@@ -4782,6 +4789,9 @@ class GraftRepository:
                  "payload_pending": n.get("payload_pending", False),
                  "recovered": n.get("payload_pending", False),
                  "h": None}
+            # RS3 evidence returns to its original top-level graft fields;
+            # legacy manifests contribute no new fields (see _node_manifest).
+            g.update(n.get("capture", {}))
             if n.get("native_node_id") is not None:
                 native_id = int(n["native_node_id"])
                 g["native_node_id"] = native_id

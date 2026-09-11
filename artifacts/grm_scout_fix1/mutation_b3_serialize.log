@@ -1,0 +1,91 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+__________________ test_capture_save_reload_round_trip[live] ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-737/test_capture_save_reload_round0')
+mode = 'live'
+
+    @pytest.mark.parametrize('mode', ['live', 'off', 'cache'])
+    def test_capture_save_reload_round_trip(tmp_path, mode):
+        repo = repository(tmp_path)
+        idx = repo.add_document('capture fixture 1234')
+        capture = dict(capture_pin='off' if mode == 'off' else 'live',
+                       capture_shift=None if mode == 'off' else 100,
+                       capture_shift_observed=None if mode == 'off' else 100,
+                       capture_shift_derived_from='fixture geometry',
+                       n_sink=4, arena_width=96, live_shift=100)
+        if mode == 'cache':
+            capture.update(capture_payload_source='live_cache_slice',
+                           capture_span_pos0=104, capture_pin_moves_payload=False)
+        repo.arena.grafts[idx].update(capture)
+        repo.save()
+        manifest = json.loads((tmp_path/'manifest.json').read_text())
+>       assert manifest['nodes'][idx]['capture'] == capture
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'capture'
+
+tests/test_grm_scout_fix1_manifest.py:30: KeyError
+___________________ test_capture_save_reload_round_trip[off] ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-737/test_capture_save_reload_round1')
+mode = 'off'
+
+    @pytest.mark.parametrize('mode', ['live', 'off', 'cache'])
+    def test_capture_save_reload_round_trip(tmp_path, mode):
+        repo = repository(tmp_path)
+        idx = repo.add_document('capture fixture 1234')
+        capture = dict(capture_pin='off' if mode == 'off' else 'live',
+                       capture_shift=None if mode == 'off' else 100,
+                       capture_shift_observed=None if mode == 'off' else 100,
+                       capture_shift_derived_from='fixture geometry',
+                       n_sink=4, arena_width=96, live_shift=100)
+        if mode == 'cache':
+            capture.update(capture_payload_source='live_cache_slice',
+                           capture_span_pos0=104, capture_pin_moves_payload=False)
+        repo.arena.grafts[idx].update(capture)
+        repo.save()
+        manifest = json.loads((tmp_path/'manifest.json').read_text())
+>       assert manifest['nodes'][idx]['capture'] == capture
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'capture'
+
+tests/test_grm_scout_fix1_manifest.py:30: KeyError
+__________________ test_capture_save_reload_round_trip[cache] __________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-737/test_capture_save_reload_round2')
+mode = 'cache'
+
+    @pytest.mark.parametrize('mode', ['live', 'off', 'cache'])
+    def test_capture_save_reload_round_trip(tmp_path, mode):
+        repo = repository(tmp_path)
+        idx = repo.add_document('capture fixture 1234')
+        capture = dict(capture_pin='off' if mode == 'off' else 'live',
+                       capture_shift=None if mode == 'off' else 100,
+                       capture_shift_observed=None if mode == 'off' else 100,
+                       capture_shift_derived_from='fixture geometry',
+                       n_sink=4, arena_width=96, live_shift=100)
+        if mode == 'cache':
+            capture.update(capture_payload_source='live_cache_slice',
+                           capture_span_pos0=104, capture_pin_moves_payload=False)
+        repo.arena.grafts[idx].update(capture)
+        repo.save()
+        manifest = json.loads((tmp_path/'manifest.json').read_text())
+>       assert manifest['nodes'][idx]['capture'] == capture
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'capture'
+
+tests/test_grm_scout_fix1_manifest.py:30: KeyError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_scout_fix1_manifest.py::test_capture_save_reload_round_trip[live]
+FAILED tests/test_grm_scout_fix1_manifest.py::test_capture_save_reload_round_trip[off]
+FAILED tests/test_grm_scout_fix1_manifest.py::test_capture_save_reload_round_trip[cache]
+3 failed, 2 warnings in 0.27s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
